@@ -1,3 +1,21 @@
+2011-12-08  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AccessibilityController should support listening to notifications on all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=72866
+
+        Changes accessibilitySetShouldRepostNotifications from an instance method
+        into a class method so that it can be used for global notification listeners,
+        not just for listeners on a particular object.
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/notification-listeners.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapper.h:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (+[WebAccessibilityObjectWrapper accessibilitySetShouldRepostNotifications:]):
+        (-[WebAccessibilityObjectWrapper accessibilityPostedNotification:]):
+
 2011-12-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Rename createScriptCallStack() without parameters to createScriptCallStackForInspector().

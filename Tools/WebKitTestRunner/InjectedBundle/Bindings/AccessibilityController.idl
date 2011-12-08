@@ -30,8 +30,8 @@ module WTR {
         readonly attribute AccessibilityUIElement focusedElement;
         AccessibilityUIElement elementAtPoint(in int x, in int y);
         
-        void addNotificationListener(in AccessibilityUIElement element, in object functionCallback);
-        void notificationReceived(in AccessibilityUIElement element, in DOMString eventName);
+        boolean addNotificationListener(in object functionCallback);
+        boolean removeNotificationListener();
 
         void logFocusEvents();
         void logValueChangeEvents();

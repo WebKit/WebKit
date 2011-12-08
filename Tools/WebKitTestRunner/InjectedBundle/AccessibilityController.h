@@ -49,18 +49,23 @@ public:
     PassRefPtr<AccessibilityUIElement> focusedElement();
     PassRefPtr<AccessibilityUIElement> elementAtPoint(int x, int y);
 
+    bool addNotificationListener(JSValueRef functionCallback);
+    bool removeNotificationListener();
+
     // Here for consistency with DRT. Not implemented because they don't do anything on the Mac.
     void logFocusEvents() { }
     void logValueChangeEvents() { }
     void logScrollingStartEvents() { }
     void logAccessibilityEvents() { }
-    void addNotificationListener(AccessibilityUIElement*, JSValueRef functionCallback) { }
-    void notificationReceived(AccessibilityUIElement*, JSStringRef eventName) { }
     
     void resetToConsistentState() { }
 
 private:
     AccessibilityController();
+
+#if PLATFORM(MAC)
+    RetainPtr<NotificationHandler> m_globalNotificationHandler;
+#endif
 };
 
 } // namespace WTR

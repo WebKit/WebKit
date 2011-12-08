@@ -97,10 +97,11 @@ void AccessibilityController::setLogAccessibilityEvents(bool logAccessibilityEve
     loggingAccessibilityEvents = true;
 }
 
-void AccessibilityController::addNotificationListener(PlatformUIElement, JSObjectRef)
+bool AccessibilityController::addNotificationListener(JSObjectRef)
 {
+    return false;
 }
 
-void AccessibilityController::notificationReceived(PlatformUIElement, const std::string&)
+void AccessibilityController::removeNotificationListener()
 {
 }

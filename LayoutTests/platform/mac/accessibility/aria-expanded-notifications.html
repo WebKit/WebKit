@@ -29,11 +29,11 @@
     var notifyCount = 0;
     var notifyName = 0;
     // The order of notifications should be Row Count, Row Collapsed, Row Count, Row Expanded
-    function notifyCallback(notification) {  
+    function notifyCallback(element, notification) {  
         notifyName = notification;
         document.getElementById("notifications").innerHTML += "Notification: " + notifyName + "<br>";
         if (notifyCount == 3) {
-            axTree.removeNotificationListener();
+            accessibilityController.removeNotificationListener();
             window.layoutTestController.notifyDone();
         }
         notifyCount++;
@@ -47,7 +47,7 @@
 
         axTree = window.accessibilityController.focusedElement;
 
-        var addedNotification = axTree.addNotificationListener(notifyCallback);
+        var addedNotification = accessibilityController.addNotificationListener(notifyCallback);
         shouldBe("addedNotification", "true");
 
         // the first aria-expanded should generate row count, row collapsed.

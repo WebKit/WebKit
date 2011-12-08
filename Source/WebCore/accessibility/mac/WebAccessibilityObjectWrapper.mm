@@ -3177,7 +3177,7 @@ static RenderObject* rendererForView(NSView* view)
 
 // This is set by DRT when it wants to listen for notifications.
 static BOOL accessibilityShouldRepostNotifications;
-- (void)accessibilitySetShouldRepostNotifications:(BOOL)repost
++ (void)accessibilitySetShouldRepostNotifications:(BOOL)repost
 {
     accessibilityShouldRepostNotifications = repost;
 }
@@ -3186,7 +3186,7 @@ static BOOL accessibilityShouldRepostNotifications;
 {
     if (accessibilityShouldRepostNotifications) {
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:nil userInfo:userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:self userInfo:userInfo];
     }
 }
 

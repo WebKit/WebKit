@@ -54,8 +54,15 @@ public:
 
     void resetToConsistentState();
 
-    void addNotificationListener(PlatformUIElement, JSObjectRef functionCallback);
-    void notificationReceived(PlatformUIElement, const std::string& eventName);
+    // Global notification listener, captures notifications on any object.
+    bool addNotificationListener(JSObjectRef functionCallback);
+    void removeNotificationListener();
+
+#if PLATFORM(WIN)
+    // Helper methods so this class can add the listeners on behalf of AccessibilityUIElement.
+    void winAddNotificationListener(PlatformUIElement, JSObjectRef functionCallback);
+    void winNotificationReceived(PlatformUIElement, const std::string& eventName);
+#endif
 
 private:
     static JSClassRef getJSClass();
@@ -68,6 +75,10 @@ private:
     HWINEVENTHOOK m_allEventsHook;
     HWINEVENTHOOK m_notificationsEventHook;
     HashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
+#endif
+
+#if PLATFORM(MAC)
+    RetainPtr<NotificationHandler> m_globalNotificationHandler;
 #endif
 };
 

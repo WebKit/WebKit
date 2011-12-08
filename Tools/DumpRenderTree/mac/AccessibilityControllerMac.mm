@@ -27,6 +27,7 @@
 #import "DumpRenderTree.h"
 #import "AccessibilityController.h"
 
+#import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 #import <AppKit/NSColor.h>
 #import <Foundation/Foundation.h>
@@ -40,6 +41,8 @@ AccessibilityController::AccessibilityController()
 
 AccessibilityController::~AccessibilityController()
 {
+    // The notification handler should be nil because removeNotificationListener() should have been called in the test.
+    ASSERT(!m_globalNotificationHandler);
 }
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
@@ -81,10 +84,25 @@ void AccessibilityController::setLogAccessibilityEvents(bool)
 {
 }
 
-void AccessibilityController::addNotificationListener(PlatformUIElement, JSObjectRef)
+bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)
 {
+    if (!functionCallback)
+        return false;
+ 
+    // Mac programmers should not be adding more than one global notification listener.
+    // Other platforms may be different.
+    if (m_globalNotificationHandler)
+        return false;
+    m_globalNotificationHandler = [[AccessibilityNotificationHandler alloc] init];
+    [m_globalNotificationHandler.get() setCallback:functionCallback];
+    [m_globalNotificationHandler.get() startObserving];
+
+    return true;
 }
 
-void AccessibilityController::notificationReceived(PlatformUIElement, const std::string&)
+void AccessibilityController::removeNotificationListener()
 {
+    // Mac programmers should not be trying to remove a listener that's already removed.
+    ASSERT(m_globalNotificationHandler);
+    m_globalNotificationHandler.clear();
 }

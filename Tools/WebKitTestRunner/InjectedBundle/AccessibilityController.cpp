@@ -92,6 +92,12 @@ PassRefPtr<AccessibilityUIElement> AccessibilityController::elementAtPoint(int x
     RefPtr<AccessibilityUIElement> uiElement = rootElement();
     return uiElement->elementAtPoint(x, y);
 }
+
+// Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.
+#if !PLATFORM(MAC)
+bool AccessibilityController::addNotificationListener(JSValueRef) { return false; }
+bool AccessibilityController::removeNotificationListener() { return false; }
+#endif
     
 } // namespace WTR
 

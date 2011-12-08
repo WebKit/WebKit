@@ -45,6 +45,8 @@ AccessibilityController::AccessibilityController(TestShell* shell)
 {
 
     bindMethod("logAccessibilityEvents", &AccessibilityController::logAccessibilityEventsCallback);
+    bindMethod("addNotificationListener", &AccessibilityController::addNotificationListenerCallback);
+    bindMethod("removeNotificationListener", &AccessibilityController::removeNotificationListenerCallback);
 
     bindProperty("focusedElement", &AccessibilityController::focusedElementGetterCallback);
     bindProperty("rootElement", &AccessibilityController::rootElementGetterCallback);
@@ -93,13 +95,41 @@ bool AccessibilityController::shouldLogAccessibilityEvents()
 
 void AccessibilityController::notificationReceived(const WebKit::WebAccessibilityObject& target, const char* notificationName)
 {
+    // Call notification listeners on the element.
     AccessibilityUIElement* element = m_elements.getOrCreate(target);
     element->notificationReceived(notificationName);
+
+    // Call global notification listeners.
+    size_t callbackCount = m_notificationCallbacks.size();
+    for (size_t i = 0; i < callbackCount; i++) {
+        CppVariant arguments[2];
+        arguments[0].set(*element->getAsCppVariant());
+        arguments[1].set(notificationName);
+        CppVariant invokeResult;
+        m_notificationCallbacks[i].invokeDefault(arguments, 2, invokeResult);
+    }
 }
 
 void AccessibilityController::logAccessibilityEventsCallback(const CppArgumentList&, CppVariant* result)
 {
     m_logAccessibilityEvents = true;
+    result->setNull();
+}
+
+void AccessibilityController::addNotificationListenerCallback(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 1 || !arguments[0].isObject()) {
+        result->setNull();
+        return;
+    }
+
+    m_notificationCallbacks.push_back(arguments[0]);
+    result->setNull();
+}
+
+void AccessibilityController::removeNotificationListenerCallback(const CppArgumentList&, CppVariant* result)
+{
+    // FIXME: Implement this.
     result->setNull();
 }
 

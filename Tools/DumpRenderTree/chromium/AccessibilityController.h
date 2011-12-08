@@ -64,6 +64,8 @@ private:
     // Bound methods and properties
     void logAccessibilityEventsCallback(const CppArgumentList&, CppVariant*);
     void fallbackCallback(const CppArgumentList&, CppVariant*);
+    void addNotificationListenerCallback(const CppArgumentList&, CppVariant*);
+    void removeNotificationListenerCallback(const CppArgumentList&, CppVariant*);
 
     void focusedElementGetterCallback(CppVariant*);
     void rootElementGetterCallback(CppVariant*);
@@ -72,6 +74,8 @@ private:
     WebKit::WebAccessibilityObject m_rootElement;
 
     AccessibilityUIElementList m_elements;
+
+    std::vector<CppVariant> m_notificationCallbacks;
 
     TestShell* m_shell;
 };

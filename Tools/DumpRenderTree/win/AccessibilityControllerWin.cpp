@@ -269,7 +269,7 @@ static void CALLBACK notificationListenerProc(HWINEVENTHOOK, DWORD event, HWND h
 
     COMPtr<IAccessible> childAccessible(Query, childDispatch);
 
-    sharedFrameLoadDelegate->accessibilityController()->notificationReceived(childAccessible, stringEvent(event));
+    sharedFrameLoadDelegate->accessibilityController()->winNotificationReceived(childAccessible, stringEvent(event));
 
     VariantClear(&vChild);
 }
@@ -281,7 +281,16 @@ static COMPtr<IAccessibleComparable> comparableObject(const COMPtr<IServiceProvi
     return comparable;
 }
 
-void AccessibilityController::notificationReceived(PlatformUIElement element, const string& eventName)
+bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)
+{
+    return false;
+}
+
+void AccessibilityController::removeNotificationListener()
+{
+}
+
+void AccessibilityController::winNotificationReceived(PlatformUIElement element, const string& eventName)
 {
     for (HashMap<PlatformUIElement, JSObjectRef>::iterator it = m_notificationListeners.begin(); it != m_notificationListeners.end(); ++it) {
         COMPtr<IServiceProvider> thisServiceProvider(Query, it->first);
@@ -311,7 +320,7 @@ void AccessibilityController::notificationReceived(PlatformUIElement element, co
     }
 }
 
-void AccessibilityController::addNotificationListener(PlatformUIElement element, JSObjectRef functionCallback)
+void AccessibilityController::winAddNotificationListener(PlatformUIElement element, JSObjectRef functionCallback)
 {
     if (!m_notificationsEventHook)
         m_notificationsEventHook = SetWinEventHook(EVENT_MIN, EVENT_MAX, GetModuleHandle(0), notificationListenerProc, GetCurrentProcessId(), 0, WINEVENT_INCONTEXT);

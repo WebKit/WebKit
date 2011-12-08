@@ -77,6 +77,8 @@
 		5DB9AC9F0F722C3600684641 /* WebKitWeightWatcher800.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */; };
 		5DB9ACA00F722C3600684641 /* WebKitWeightWatcher900.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */; };
 		5DE8AE4413A2C15900D6A37D /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DE8AE4313A2C15800D6A37D /* libWebCoreTestSupport.dylib */; };
+		80045AED147718E7008290A8 /* AccessibilityNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */; };
+		80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */; };
 		8465E2C70FFA8DF2003B8342 /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */; };
 		933BF5AB0F93FA5C000F0441 /* PlainTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 933BF5A90F93FA5C000F0441 /* PlainTextController.h */; };
 		933BF5AC0F93FA5C000F0441 /* PlainTextController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933BF5AA0F93FA5C000F0441 /* PlainTextController.mm */; };
@@ -258,6 +260,8 @@
 		53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5DE8AE4313A2C15800D6A37D /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessibilityNotificationHandler.h; path = mac/AccessibilityNotificationHandler.h; sourceTree = "<group>"; };
+		80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityNotificationHandler.mm; path = mac/AccessibilityNotificationHandler.mm; sourceTree = "<group>"; };
 		8465E2C60FFA8DF2003B8342 /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		933BF5A90F93FA5C000F0441 /* PlainTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlainTextController.h; path = mac/PlainTextController.h; sourceTree = "<group>"; };
@@ -438,6 +442,8 @@
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */,
+				80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */,
 				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
 				BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */,
 				BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */,
@@ -679,6 +685,7 @@
 				29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */,
 				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
 				417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */,
+				80045AED147718E7008290A8 /* AccessibilityNotificationHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -879,6 +886,7 @@
 				29CFBA11122736E600BC30C0 /* AccessibilityTextMarker.cpp in Sources */,
 				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
 				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
+				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

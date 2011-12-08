@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "DumpRenderTree.h"
+#import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 
 #import <Foundation/Foundation.h>
@@ -60,7 +61,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 
 @interface NSObject (WebKitAccessibilityAdditions)
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount;
-- (void)accessibilitySetShouldRepostNotifications:(BOOL)repost;
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
 - (NSUInteger)accessibilityArrayAttributeCount:(NSString *)attribute;
 @end
@@ -84,66 +84,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (JSStringRef)createJSStringRef
 {
     return JSStringCreateWithCFString((CFStringRef)self);
-}
-
-@end
-
-@interface AccessibilityNotificationHandler : NSObject
-{
-    id m_platformElement;
-    JSObjectRef m_notificationFunctionCallback;
-}
-
-@end
-
-@implementation AccessibilityNotificationHandler
-
-- (id)initWithPlatformElement:(id)platformElement
-{
-    self = [super init];
-
-    m_platformElement = platformElement;
-    
-    // Once an object starts requesting notifications, it's on for the duration of the program.
-    // This is to avoid any race conditions between tests turning this flag on and off. Instead
-    // AccessibilityNotificationHandler can just listen when they want to.
-    [m_platformElement accessibilitySetShouldRepostNotifications:YES];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_notificationReceived:) name:@"AXDRTNotification" object:nil];
-
-    return self;
-}
- 
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    JSValueUnprotect([mainFrame globalContext], m_notificationFunctionCallback);
-    m_notificationFunctionCallback = 0;
-    
-    [super dealloc];
-}
-
-- (void)_notificationReceived:(NSNotification *)notification
-{
-    NSString *notificationName = [[notification userInfo] objectForKey:@"notificationName"];
-    if (!notificationName)
-        return;
-    
-    JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);
-    JSValueRef argument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
-    JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 1, &argument, 0);
-}
-
-- (void)setCallback:(JSObjectRef)callback
-{
-    if (!callback)
-        return;
- 
-    // Release the old callback.
-    if (m_notificationFunctionCallback) 
-        JSValueUnprotect([mainFrame globalContext], m_notificationFunctionCallback);
-    
-    m_notificationFunctionCallback = callback;
-    JSValueProtect([mainFrame globalContext], m_notificationFunctionCallback);
 }
 
 @end
@@ -1229,8 +1169,10 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     // Other platforms may be different.
     if (m_notificationHandler)
         return false;
-    m_notificationHandler = [[AccessibilityNotificationHandler alloc] initWithPlatformElement:platformUIElement()];
+    m_notificationHandler = [[AccessibilityNotificationHandler alloc] init];
+    [m_notificationHandler setPlatformElement:platformUIElement()];
     [m_notificationHandler setCallback:functionCallback];
+    [m_notificationHandler startObserving];
 
     return true;
 }

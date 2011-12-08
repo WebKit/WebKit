@@ -613,7 +613,7 @@ bool AccessibilityUIElement::addNotificationListener(JSObjectRef functionCallbac
     if (!functionCallback)
         return false;
 
-    sharedFrameLoadDelegate->accessibilityController()->addNotificationListener(m_element, functionCallback);
+    sharedFrameLoadDelegate->accessibilityController()->winAddNotificationListener(m_element, functionCallback);
     return true;
 }
 

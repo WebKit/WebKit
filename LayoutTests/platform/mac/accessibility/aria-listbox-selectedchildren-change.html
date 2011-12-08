@@ -20,13 +20,13 @@
 
     var listbox = 0;
     var notificationCount = 0;
-    function ariaCallback(notification) {
+    function ariaCallback(element, notification) {
         if (notification == "AXSelectedChildrenChanged") {
             notificationCount++;
 
             // We should get a total of 4 live region changes.
             if (notificationCount == 2) {
-               listbox.removeNotificationListener();
+               window.accessibilityController.removeNotificationListener();
                window.layoutTestController.notifyDone();
             }
         }
@@ -38,7 +38,7 @@
         document.getElementById("listbox").focus();
         listbox = window.accessibilityController.focusedElement;
 
-        var addedNotification = listbox.addNotificationListener(ariaCallback);
+        var addedNotification = window.accessibilityController.addNotificationListener(ariaCallback);
         shouldBe("addedNotification", "true");
 
         // These should each trigger a notification that the selected children changed.

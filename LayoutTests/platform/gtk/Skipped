@@ -423,6 +423,7 @@ accessibility/language-attribute.html
 accessibility/legend.html
 accessibility/lists.html
 accessibility/loading-iframe-updates-axtree.html
+accessibility/notification-listeners.html
 accessibility/onclick-handlers.html
 accessibility/placeholder.html
 accessibility/plugin.html

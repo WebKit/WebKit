@@ -97,6 +97,24 @@ static JSValueRef getElementAtPointCallback(JSContextRef context, JSObjectRef fu
     return AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->elementAtPoint(x, y));
 }
 
+static JSValueRef addNotificationListenerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeBoolean(context, false);
+    
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    JSObjectRef callback = JSValueToObject(context, arguments[0], exception);
+    bool succeeded = controller->addNotificationListener(callback);
+    return JSValueMakeBoolean(context, succeeded);
+}
+
+static JSValueRef removeNotificationListenerCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityController* controller = static_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    controller->removeNotificationListener();
+    return JSValueMakeUndefined(context);
+}
+
 JSClassRef AccessibilityController::getJSClass()
 {
     static JSStaticFunction staticFunctions[] = {
@@ -105,6 +123,8 @@ JSClassRef AccessibilityController::getJSClass()
         { "logScrollingStartEvents", logScrollingStartEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "logAccessibilityEvents", logAccessibilityEventsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "elementAtPoint", getElementAtPointCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "addNotificationListener", addNotificationListenerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "removeNotificationListener", removeNotificationListenerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

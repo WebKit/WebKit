@@ -1,0 +1,79 @@
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<p id="description"></p>
+
+<select id="select" value="Select"><option>A<option>B</select>
+
+<div id="slider" tabindex="0" role="slider" aria-valuenow="5">Slider</div>
+
+<div id="console"></div>
+
+<script>
+description("This tests that a notification listener on an element only listens to that one element, and that a global notification listener listens to all notifications.");
+
+function runTest() {
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    window.jsTestIsAsync = true;
+
+    window.selectNotificationCount = 0;
+    window.sliderNotificationCount = 0;
+    window.globalNotificationCount = 0;
+
+    if (window.accessibilityController) {
+        document.getElementById("select").focus();
+        window.select = accessibilityController.focusedElement;
+        select.addNotificationListener(function(notification) {
+            selectNotificationCount++;
+            debug("SELECT " + notification);
+        });
+
+        document.getElementById("slider").focus();
+        window.slider = accessibilityController.focusedElement;
+        slider.addNotificationListener(function(notification) {
+            sliderNotificationCount++;
+            debug("SLIDER " + notification);
+        });
+
+        accessibilityController.addNotificationListener(function(element, notification) {
+            if (element.isEqual(slider) || element.isEqual(select)) {
+                globalNotificationCount++;
+                debug("GLOBAL " + notification + " on element with role " + element.role);
+            }
+        });
+    }
+
+    // This should trigger a "invalid status changed" notification on the select.
+    document.getElementById("select").setAttribute("aria-invalid", "true");
+
+    // This should trigger a "value changed" notification on the slider.
+    document.getElementById("slider").setAttribute("aria-valuenow", "6");
+
+    window.setTimeout(function() {
+        shouldBe("selectNotificationCount", "1");
+        shouldBe("sliderNotificationCount", "1");
+        shouldBe("globalNotificationCount", "2");
+
+        if (window.accessibilityController) {
+            accessibilityController.removeNotificationListener();
+            select.removeNotificationListener();
+            slider.removeNotificationListener();
+        }
+
+        finishJSTest();
+    }, 10);
+}
+
+runTest();
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

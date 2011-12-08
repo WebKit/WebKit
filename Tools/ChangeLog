@@ -1,3 +1,85 @@
+2011-12-08  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Accessibility: AccessibilityController should support listening to notifications on all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=72866
+
+        Adds addNotificationListener and removeNotificationListener methods
+        to AccessibilityController, to listen to notifications on any element
+        rather than a specific element. Mac (DRT and WKTR) and Chromium (DRT)
+        implementations are all contained in this change.
+
+        On Mac, refactors AccessibilityNotificationHandler into its own
+        source file that can be used by both AccessibilityController and
+        AccessibilityUIElement. (Both DRT and WKTR.)
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (addNotificationListenerCallback):
+        (removeNotificationListenerCallback):
+        (AccessibilityController::getJSClass):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/chromium/AccessibilityController.cpp:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::notificationReceived):
+        (AccessibilityController::addNotificationListenerCallback):
+        (AccessibilityController::removeNotificationListenerCallback):
+        * DumpRenderTree/chromium/AccessibilityController.h:
+        * DumpRenderTree/gtk/AccessibilityControllerGtk.cpp:
+        (AccessibilityController::addNotificationListener):
+        (AccessibilityController::removeNotificationListener):
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::addNotificationListener):
+        (AccessibilityController::removeNotificationListener):
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.h: Added.
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.mm: Added.
+        (-[NSString createJSStringRef]):
+        (-[AccessibilityNotificationHandler init]):
+        (-[AccessibilityNotificationHandler setPlatformElement:]):
+        (-[AccessibilityNotificationHandler dealloc]):
+        (-[AccessibilityNotificationHandler setCallback:]):
+        (-[AccessibilityNotificationHandler startObserving]):
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::addNotificationListener):
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (notificationListenerProc):
+        (AccessibilityController::addNotificationListener):
+        (AccessibilityController::removeNotificationListener):
+        (AccessibilityController::winNotificationReceived):
+        (AccessibilityController::winAddNotificationListener):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::addNotificationListener):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::addNotificationListener):
+        (WTR::AccessibilityController::removeNotificationListener):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        (WTR::AccessibilityController::logAccessibilityEvents):
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarker.cpp:
+        (WTR::AccessibilityTextMarker::AccessibilityTextMarker):
+        * WebKitTestRunner/InjectedBundle/AccessibilityTextMarkerRange.cpp:
+        (WTR::AccessibilityTextMarkerRange::AccessibilityTextMarkerRange):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm: Added.
+        (WTR::AccessibilityController::addNotificationListener):
+        (WTR::AccessibilityController::removeNotificationListener):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.h: Added.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm: Added.
+        (-[NSString createJSStringRef]):
+        (-[AccessibilityNotificationHandler init]):
+        (-[AccessibilityNotificationHandler setPlatformElement:]):
+        (-[AccessibilityNotificationHandler dealloc]):
+        (-[AccessibilityNotificationHandler setCallback:]):
+        (-[AccessibilityNotificationHandler startObserving]):
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::verticalScrollbar):
+        (WTR::AccessibilityUIElement::addNotificationListener):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2011-12-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed buildfix after r102352.

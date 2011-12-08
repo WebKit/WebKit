@@ -582,6 +582,7 @@ accessibility/media-element.html
 accessibility/nochildren-elements.html
 accessibility/non-data-table-cell-title-ui-element.html
 accessibility/non-native-image-crash.html
+accessibility/notification-listeners.html
 accessibility/onclick-handlers.html
 accessibility/aria-option-role.html
 accessibility/placeholder.html
