@@ -1,3 +1,21 @@
+2011-12-07  Noel Gordon  <noel.gordon@gmail.com>
+
+        WebPImageDecoder should not do a full image decode if progressive decoding is active
+        https://bugs.webkit.org/show_bug.cgi?id=74041
+
+        Reviewed by Adam Barth.
+
+        If the decoder input data state reaches allDataReceived during a progressive image
+        decode, the decoder performs a full image decode.
+
+        On allDataReceived, check if we already have a decoder, and if so, continue to run
+        the progressive decoder.
+
+        No new tests. No change in behavior.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):
+
 2011-12-07  Alexandre Elias  <aelias@google.com>
 
         [chromium] Add page-scale animation support to Impl thread

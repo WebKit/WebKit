@@ -120,7 +120,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
     }
 
     int newLastVisibleRow = 0; // Last completed row.
-    if (allDataReceived) {
+    if (allDataReceived && !m_decoder) {
         if (!WebPDecodeRGBInto(dataBytes, dataSize, m_rgbOutput.data(), m_rgbOutput.size(), stride))
             return setFailed();
         newLastVisibleRow = height;
