@@ -623,6 +623,7 @@ private:
     void runModal();
     void didCompleteRubberBandForMainFrame(const WebCore::IntSize&);
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
+    void recommendedScrollbarStyleDidChange(int32_t newStyle);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
     void didFailToInitializePlugin(const String& mimeType);

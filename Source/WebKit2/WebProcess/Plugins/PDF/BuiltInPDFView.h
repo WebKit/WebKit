@@ -139,7 +139,7 @@ private:
     virtual bool isOnActivePage() const;
     virtual void disconnectFromPage() { m_page = 0; }
     virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
-    virtual void scrollbarStyleChanged();
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
 
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working. 
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const;

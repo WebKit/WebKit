@@ -225,6 +225,7 @@ private:
     virtual void didCompleteAnimatedScroll() const;
 
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
+    virtual void recommendedScrollbarStyleDidChange(int32_t newStyle);
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
     
     virtual void numWheelEventHandlersChanged(unsigned);
