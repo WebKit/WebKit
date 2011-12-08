@@ -7,9 +7,13 @@
   if (window.layoutTestController)
       layoutTestController.dumpAsText();
   if (window.webkitRequestFileSystem) {
-      // These two calls should not cause a NULL pointer crash:
-      webkitRequestFileSystem(TEMPORARY, 100);
+      // These two calls should throw an exception but should NOT cause a NULL pointer crash:
       webkitResolveLocalFileSystemURL('');
-      document.getElementById('log').innerHTML = "PASS";
+      try {
+          webkitRequestFileSystem(TEMPORARY, 100);
+      }
+      catch(e) {
+          document.getElementById('log').innerHTML = "PASS";
+      }
   }
 </script>

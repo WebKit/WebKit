@@ -48,6 +48,9 @@ function successCallback(fs)
 
 if (window.webkitRequestFileSystem) {
     shouldThrow("webkitResolveLocalFileSystemURL()");
+    shouldThrow("webkitRequestFileSystem()");
+    shouldThrow("webkitRequestFileSystem(PERSISTENT)");
+    shouldThrow("webkitRequestFileSystem(PERSISTENT, 100)");
     webkitRequestFileSystem(window.TEMPORARY, 100, successCallback, errorCallback);
     window.jsTestIsAsync = true;
 } else
