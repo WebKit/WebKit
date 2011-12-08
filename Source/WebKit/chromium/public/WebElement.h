@@ -39,6 +39,7 @@ namespace WebCore { class Element; }
 
 namespace WebKit {
 class WebNamedNodeMap;
+struct WebRect;
 
     // Provides access to some properties of a DOM element node.
     class WebElement : public WebNode {
@@ -66,6 +67,12 @@ class WebNamedNodeMap;
         // element that has the lang attribute set, or from the HTTP
         // "Content-Language" header as a fallback.
         WEBKIT_EXPORT WebString computeInheritedLanguage() const;
+
+        // Returns the bounds of the element in viewport space. The bounds
+        // have been adjusted to include any transformations. This view is
+        // also called the Root View in WebKit.
+        // This function will update the layout if required.
+        WEBKIT_EXPORT WebRect boundsInViewportSpace();
 
 #if WEBKIT_IMPLEMENTATION
         WebElement(const WTF::PassRefPtr<WebCore::Element>&);

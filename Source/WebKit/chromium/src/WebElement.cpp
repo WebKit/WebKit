@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#include "platform/WebRect.h"
 #include "WebElement.h"
 #include "WebDocument.h"
 
@@ -106,6 +107,11 @@ void WebElement::requestFullScreen()
 WebDocument WebElement::document() const
 {
     return WebDocument(constUnwrap<Element>()->document());
+}
+
+WebRect WebElement::boundsInViewportSpace()
+{
+    return unwrap<Element>()->boundsInRootViewSpace();
 }
 
 WebElement::WebElement(const PassRefPtr<Element>& elem)

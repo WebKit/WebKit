@@ -1,3 +1,22 @@
+2011-12-07  Chris Sharp  <csharp@chromium.org>
+        
+        Exposing boundsInScreenSpace in WebElement.
+        https://bugs.webkit.org/show_bug.cgi?id=71579
+
+        Exposing boundsInScreenSpace through a new function,
+        boundsInViewportSpace, to assist in moving the Autofill UI out of
+        WebKit in Chromium. Renamed the exposed function to provide a better
+        meaning of what the function does in the Chromium code.
+        More information can be found at:
+        http://crbug.com/51644
+
+
+        Reviewed by Darin Fisher.
+
+        * public/WebElement.h:
+        * src/WebElement.cpp:
+        (WebKit::WebElement::boundsInViewportSpace):
+
 2011-12-07  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] Enable in Chromium trunk
