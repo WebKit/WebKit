@@ -1,0 +1,105 @@
+<!doctype html>
+<html style="direction:rtl">
+<head>
+<style>
+    .grey-box1 {
+        margin-left:10%;
+        margin-right:10%;
+        margin-top:15%;
+        height:120px
+    }
+        
+    .grey-box2 {
+        margin-left:10%;
+        margin-right:10%;
+        height:100%
+    }
+        
+    .grey-box3 { 
+        margin-left:10%;
+        margin-right:10%;
+        height:50px
+    }
+        
+    .green-box { 
+        position:absolute;
+        top:0;
+        width:50%;
+        text-align:right;
+        height:100%;
+        background-color:#00a000;
+        color:#00a000
+    }
+        
+    .greyColor { 
+        background-color:#cccccc
+    }
+        
+    #region1, #region2, #region3 { 
+        border:1px solid black
+    }
+        
+    #region1 { 
+        position:relative;
+        width:200px;
+        height:150px
+    }
+        
+    #region2 { 
+        position:relative;
+        width:300px;
+        height:180px
+    }
+
+    #region3 { 
+        position:relative;
+        width:120px;
+        height:120px
+    }
+</style>
+</head>
+
+<body>
+
+<p style="direction:ltr">The green positioned object should go through all three regions. Its right edge should align with
+the right side of the light grey boxes in each region. No red should be visible.</p>
+
+<div id="container">
+    <div id="region1">
+        <div class="grey-box1 greyColor">
+            <div class="green-box">
+                Some text.<br>
+                Some text.<br>
+                Some text.<br>
+                Some text.<br>
+                Some text.<br> 
+                Some text.<br> 
+                Some text.<br> 
+                Some text.<br> 
+            </div>
+        </div>
+    </div>
+    <div id="region2">
+        <div class="grey-box2 greyColor">
+            <div class="green-box">
+                Some text.<br>
+                Some text.<br>
+                Some text.<br>
+                Some text.<br>
+                Some text.<br> 
+                Some text.<br> 
+                Some text.<br> 
+                Some text.<br>
+                Some text.<br>
+                Some text.<br>
+            </div>
+        </div>
+    </div>
+    <div id="region3">
+        <div class="grey-box3 greyColor">
+            <div class="green-box">
+                 Some text.<br> 
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<!doctype html>
+
+ <style>
+ 
+    #greenBox {	
+        position:relative;
+        margin-left:10%;
+        margin-right:10%;
+        width:160px;
+        height:100%;
+        background-color:green;
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 150px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The green positioned object should only be as tall as the first region it
+is contained in. It should be centered in the first region, and no red
+should be visible.</p>
+
+<div id="container">
+    <div id="region1">
+        <div id="greenBox">
+        </div>
+    </div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>
