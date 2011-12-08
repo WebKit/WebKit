@@ -54,6 +54,10 @@ public:
     
     void hideFindIndicator();
 
+    bool isShowingOverlay() const { return m_isShowingFindIndicator && m_findPageOverlay; }
+
+    void deviceScaleFactorDidChange();
+
 private:
     // PageOverlay::Client.
     virtual void pageOverlayDestroyed(PageOverlay*);
@@ -63,7 +67,7 @@ private:
     virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
     Vector<WebCore::IntRect> rectsForTextMatches();
-    bool updateFindIndicator(WebCore::Frame* selectedFrame, bool isShowingOverlay);
+    bool updateFindIndicator(WebCore::Frame* selectedFrame, bool isShowingOverlay, bool shouldAnimate = true);
 
 private:
     WebPage* m_webPage;
