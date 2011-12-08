@@ -1,3 +1,12 @@
+2011-12-08  Elliot Poger  <epoger@google.com>
+
+        Chromium DEPS roll 112974 -> 113603
+        https://bugs.webkit.org/show_bug.cgi?id=74105
+
+        Reviewed by Adam Barth.
+
+        * DEPS:
+
 2011-12-08  Tony Chang  <tony@chromium.org>
 
         [chromium] remove headers from WebKit.gyp that moved into WebKit/chromium/public/platform
