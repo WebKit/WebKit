@@ -34,6 +34,7 @@ audio {
     height: inherit;
     position: relative;
     display: block;
+    direction: ltr;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {

@@ -1,3 +1,15 @@
+2011-12-07  Ami Fischman  <fischman@chromium.org>
+
+        Force LTR layout for media controls even in RTL documents.
+        https://bugs.webkit.org/show_bug.cgi?id=74024
+
+        Reviewed by Darin Adler.
+
+        Test: media/controls-layout-direction.html
+
+        * css/mediaControls.css:
+        (::-webkit-media-controls):
+
 2011-12-07  Mark Pilgrim  <pilgrim@chromium.org>
 
         [FileSystem API] requestFileSystem successCallback is required
