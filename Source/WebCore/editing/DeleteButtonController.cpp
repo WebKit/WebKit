@@ -31,6 +31,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CompositeEditCommand.h"
 #include "DeleteButton.h"
 #include "Document.h"
 #include "Editor.h"
@@ -360,19 +361,40 @@ void DeleteButtonController::disable()
     m_disableStack++;
 }
 
+class RemoveTargetCommand : public CompositeEditCommand {
+public:
+    static PassRefPtr<RemoveTargetCommand> create(Document* document, PassRefPtr<Node> target)
+    {
+        return adoptRef(new RemoveTargetCommand(document, target));
+    }
+
+private:
+    RemoveTargetCommand(Document* document, PassRefPtr<Node> target)
+        : CompositeEditCommand(document)
+        , m_target(target)
+    { }
+
+    void doApply()
+    {
+        removeNode(m_target);
+    }
+
+private:
+    RefPtr<Node> m_target;
+};
+
 void DeleteButtonController::deleteTarget()
 {
     if (!enabled() || !m_target)
         return;
 
-    RefPtr<Node> element = m_target;
     hide();
 
     // Because the deletion UI only appears when the selection is entirely
     // within the target, we unconditionally update the selection to be
     // a caret where the target had been.
-    Position pos = positionInParentBeforeNode(element.get());
-    applyCommand(RemoveNodeCommand::create(element.release()));
+    Position pos = positionInParentBeforeNode(m_target.get());
+    applyCommand(RemoveTargetCommand::create(m_frame->document(), m_target));
     m_frame->selection()->setSelection(VisiblePosition(pos));
 }
 

@@ -52,10 +52,13 @@ public:
 
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
-
+    
+    virtual bool isSimpleEditCommand() const { return false; }
+    virtual bool isCompositeEditCommand() const { return false; }
+    virtual bool isEditCommandComposition() const { return false; }
     virtual bool isTypingCommand() const;
     virtual bool isCreateLinkCommand() const;
-    
+
     virtual bool preservesTypingStyle() const;
 
     bool isTopLevelCommand() const { return !m_parent; }
@@ -65,8 +68,10 @@ public:
 
 protected:
     EditCommand(Document*);
+    EditCommand(Document*, const VisibleSelection&, const VisibleSelection&);
 
     Document* document() const { return m_document.get(); }
+    CompositeEditCommand* parent() const { return m_parent; }
 
     void setStartingSelection(const VisibleSelection&);
     void setEndingSelection(const VisibleSelection&);
@@ -91,7 +96,16 @@ private:
 class SimpleEditCommand : public EditCommand {
 protected:
     SimpleEditCommand(Document* document) : EditCommand(document) { }
+private:
+    virtual bool isSimpleEditCommand() const OVERRIDE { return true; }
 };
+
+inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)
+{
+    ASSERT(command);
+    ASSERT(command->isSimpleEditCommand());
+    return static_cast<SimpleEditCommand*>(command);
+}
 
 void applyCommand(PassRefPtr<EditCommand>);
 

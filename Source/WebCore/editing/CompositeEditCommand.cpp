@@ -70,6 +70,36 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document* document,
+    const VisibleSelection& startingSelection, const VisibleSelection endingSelection)
+{
+    return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection));
+}
+
+void EditCommandComposition::doApply()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void EditCommandComposition::doUnapply()
+{
+    size_t size = m_commands.size();
+    for (size_t i = size; i != 0; --i)
+        m_commands[i - 1]->unapply();
+}
+
+void EditCommandComposition::doReapply()
+{
+    size_t size = m_commands.size();
+    for (size_t i = 0; i != size; ++i)
+        m_commands[i]->reapply();
+}
+
+void EditCommandComposition::append(SimpleEditCommand* command)
+{
+    m_commands.append(command);
+}
+
 CompositeEditCommand::CompositeEditCommand(Document *document)
     : EditCommand(document)
 {
@@ -77,41 +107,58 @@ CompositeEditCommand::CompositeEditCommand(Document *document)
 
 CompositeEditCommand::~CompositeEditCommand()
 {
+    ASSERT(isTopLevelCommand() || !m_composition);
 }
 
 void CompositeEditCommand::doUnapply()
 {
-    size_t size = m_commands.size();
-    for (size_t i = size; i != 0; --i)
-        m_commands[i - 1]->unapply();
+    ASSERT_NOT_REACHED();
 }
 
 void CompositeEditCommand::doReapply()
 {
-    size_t size = m_commands.size();
-    for (size_t i = 0; i != size; ++i)
-        m_commands[i]->reapply();
+    ASSERT_NOT_REACHED();
+}
+
+EditCommandComposition* CompositeEditCommand::ensureComposition()
+{
+    CompositeEditCommand* command = this;
+    while (command && command->parent())
+        command = command->parent();
+    if (!command->m_composition)
+        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection());
+    return command->m_composition.get();
 }
 
 //
 // sugary-sweet convenience functions to help create and apply edit commands in composite commands
 //
-void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> cmd)
+void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCommand)
 {
-    cmd->setParent(this);
-    cmd->apply();
-    m_commands.append(cmd);
+    RefPtr<EditCommand> command = prpCommand;
+    command->setParent(this);
+    command->apply();
+    if (command->isSimpleEditCommand()) {
+        command->setParent(0);
+        ensureComposition()->append(toSimpleEditCommand(command.get()));
+    }
+    m_commands.append(command.release());
 }
 
-void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> command, const VisibleSelection& selection)
+void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> prpCommand, const VisibleSelection& selection)
 {
+    RefPtr<CompositeEditCommand> command = prpCommand;
     command->setParent(this);
     if (selection != command->endingSelection()) {
         command->setStartingSelection(selection);
         command->setEndingSelection(selection);
     }
     command->apply();
-    m_commands.append(command);
+    if (command->isSimpleEditCommand()) {
+        command->setParent(0);
+        ensureComposition()->append(toSimpleEditCommand(command.get()));
+    }
+    m_commands.append(command.release());
 }
 
 void CompositeEditCommand::applyStyle(const EditingStyle* style, EditAction editingAction)

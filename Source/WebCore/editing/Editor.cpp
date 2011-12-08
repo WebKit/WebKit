@@ -865,7 +865,7 @@ static void dispatchEditableContentChangedEvents(const EditCommand& command)
         endRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false), ec);
 }
 
-void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
+void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 {
     m_frame->document()->updateLayout();
 
@@ -888,12 +888,12 @@ void Editor::appliedEditing(PassRefPtr<EditCommand> cmd)
         // different from the last command
         m_lastEditCommand = cmd;
         if (client())
-            client()->registerCommandForUndo(m_lastEditCommand);
+            client()->registerCommandForUndo(toCompositeEditCommand(m_lastEditCommand.get())->ensureComposition());
     }
     respondToChangedContents(newSelection);
 }
 
-void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
+void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     m_frame->document()->updateLayout();
     
@@ -909,7 +909,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommand> cmd)
     respondToChangedContents(newSelection);
 }
 
-void Editor::reappliedEditing(PassRefPtr<EditCommand> cmd)
+void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     m_frame->document()->updateLayout();
     

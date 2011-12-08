@@ -48,9 +48,10 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 class Clipboard;
-class SpellingCorrectionController;
+class CompositeEditCommand;
 class DeleteButtonController;
 class EditCommand;
+class EditCommandComposition;
 class EditorClient;
 class EditorInternalCommand;
 class Frame;
@@ -60,10 +61,11 @@ class KillRing;
 class Pasteboard;
 class SimpleFontData;
 class SpellChecker;
+class SpellingCorrectionController;
 class Text;
 class TextCheckerClient;
-struct TextCheckingResult;
 class TextEvent;
+struct TextCheckingResult;
 
 struct CompositionUnderline {
     CompositionUnderline() 
@@ -164,9 +166,9 @@ public:
     void applyStyleToSelection(CSSStyleDeclaration*, EditAction);
     void applyParagraphStyleToSelection(CSSStyleDeclaration*, EditAction);
 
-    void appliedEditing(PassRefPtr<EditCommand>);
-    void unappliedEditing(PassRefPtr<EditCommand>);
-    void reappliedEditing(PassRefPtr<EditCommand>);
+    void appliedEditing(PassRefPtr<CompositeEditCommand>);
+    void unappliedEditing(PassRefPtr<EditCommandComposition>);
+    void reappliedEditing(PassRefPtr<EditCommandComposition>);
     void unappliedSpellCorrection(const VisibleSelection& selectionOfCorrected, const String& corrected, const String& correction);
 
     void setShouldStyleWithCSS(bool flag) { m_shouldStyleWithCSS = flag; }

@@ -1,3 +1,70 @@
+2011-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CompositeEditCommand should not be kept alive for undo and redo
+        https://bugs.webkit.org/show_bug.cgi?id=64414
+
+        Reviewed by Enrica Casucci.
+
+        This patch introduces EditCommandComposition that replaces CompositeEditCommand for
+        undo and redo purposes. Furthermore, we now keep a list of commands instead of a tree of commands
+        to unapply and reapply edit commands that composes an undoable action.
+
+        Each top-level CompositeEditCommand holds a ref-pointer to EditCommandComposition,
+        and applyCommandToComposite adds new SimpleEditCommands to the list.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::create):
+        (WebCore::EditCommandComposition::doApply): Never used.
+        (WebCore::EditCommandComposition::doUnapply):
+        (WebCore::EditCommandComposition::doReapply):
+        (WebCore::EditCommandComposition::append):
+        (WebCore::CompositeEditCommand::~CompositeEditCommand): Add an assertion to ensure we didn't create
+        a composition for CompositeEditCommands that have parents.
+        (WebCore::CompositeEditCommand::doUnapply): Never used.
+        (WebCore::CompositeEditCommand::doReapply): Never used.
+        (WebCore::CompositeEditCommand::ensureComposition): Creates and attaches a EditCommandComposition.
+        (WebCore::CompositeEditCommand::applyCommandToComposite): Append a SimpleEditCommand to the composition.
+
+        * editing/CompositeEditCommand.h:
+        (WebCore::EditCommandComposition::EditCommandComposition):
+        (WebCore::CompositeEditCommand::composition):
+        (WebCore::toEditCommandComposition):
+        (WebCore::toCompositeEditCommand):
+
+        * editing/DeleteButtonController.cpp: Wrap RemoveNodeCommand in RemoveTargetCommand since top level
+        commands are now required to be a CompositeEditCommand.
+        (WebCore::RemoveTargetCommand::create):
+        (WebCore::RemoveTargetCommand::RemoveTargetCommand):
+        (WebCore::RemoveTargetCommand::doApply):
+        (WebCore::DeleteButtonController::deleteTarget):
+
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand): New constructor; used by EditCommandComposition.
+        (WebCore::EditCommand::apply): Create a composition for a top-level command.
+        (WebCore::EditCommand::unapply): Since we clear m_parent of SimpleEditCommand as soon as they are
+        added to EditCommandComposition, we can't use isTopLevelCommand() to differentiate EditCommandComposition
+        from SimpleEditCommand. Use isEditCommandComposition() instead.
+        (WebCore::EditCommand::reapply): Ditto.
+        (WebCore::compositionIfPossible):
+        (WebCore::EditCommand::setStartingSelection): Update the starting selection of EditCommandComposition. 
+        (WebCore::EditCommand::setEndingSelection): Ditto.
+        (WebCore::EditCommand::setParent): Accepts a null pointer in order to avoid keeping a stale pointer in
+        m_parent inside SimpleEditCommand when CompositeEditCommand goes away.
+
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::isSimpleEditCommand):
+        (WebCore::EditCommand::isCompositeEditCommand):
+        (WebCore::EditCommand::isEditCommandComposition):
+        (WebCore::EditCommand::parent):
+        (WebCore::toSimpleEditCommand):
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing): Register a EditCommandComposition, instead of a CompositeEditCommand
+        to the undo stack.
+        (WebCore::Editor::unappliedEditing): Unapplied or reapplied commands are now always EditCommandComposition.
+        (WebCore::Editor::reappliedEditing):
+        * editing/Editor.h:
+
 2011-12-08  Stephen White  <senorblanco@chromium.org>
 
         Add missing V8 bindings to get CSS_FILTERS to compile in Chromium.

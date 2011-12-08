@@ -37,11 +37,31 @@ class HTMLElement;
 class StyledElement;
 class Text;
 
+class EditCommandComposition : public EditCommand {
+public:
+    static PassRefPtr<EditCommandComposition> create(Document*, const VisibleSelection&, const VisibleSelection);
+
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+    virtual void doReapply() OVERRIDE;
+    void append(SimpleEditCommand*);
+
+private:
+    EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
+        : EditCommand(document, startingSelection, endingSelection)
+    { }
+    virtual bool isEditCommandComposition() const OVERRIDE { return true; }
+
+    Vector<RefPtr<SimpleEditCommand> > m_commands;
+};
+
 class CompositeEditCommand : public EditCommand {
 public:
     virtual ~CompositeEditCommand();
 
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
+    EditCommandComposition* composition() { return m_composition.get(); }
+    EditCommandComposition* ensureComposition();
 
 protected:
     explicit CompositeEditCommand(Document*);
@@ -124,7 +144,25 @@ protected:
 private:
     virtual void doUnapply();
     virtual void doReapply();
+
+    bool isCompositeEditCommand() const OVERRIDE { return true; }
+
+    RefPtr<EditCommandComposition> m_composition;
 };
+
+inline EditCommandComposition* toEditCommandComposition(EditCommand* command)
+{
+    ASSERT(command);
+    ASSERT(command->isEditCommandComposition());
+    return static_cast<EditCommandComposition*>(command);
+}
+
+inline CompositeEditCommand* toCompositeEditCommand(EditCommand* command)
+{
+    ASSERT(command);
+    ASSERT(command->isCompositeEditCommand());
+    return static_cast<CompositeEditCommand*>(command);
+}
 
 } // namespace WebCore
 
