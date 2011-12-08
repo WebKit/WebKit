@@ -1,5 +1,21 @@
 2011-12-08  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 96777
+
+    2011-10-05  Darin Adler  <darin@apple.com>
+
+            [Mac] Use four more named cursors if present
+            https://bugs.webkit.org/show_bug.cgi?id=69488
+
+            Reviewed by Dan Bernstein.
+
+            * platform/mac/CursorMac.mm:
+            (WebCore::Cursor::ensurePlatformCursor): Use the names "Help", "Cell",
+            "ZoomIn", and "ZoomOut" to get those cursors. Structure the code so it
+            falls back if the cursors are not present.
+
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
     Merge 101290
 
     2011-11-28  Beth Dakin  <bdakin@apple.com>
