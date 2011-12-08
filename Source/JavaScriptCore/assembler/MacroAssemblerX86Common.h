@@ -446,6 +446,11 @@ public:
         load32(address, dest);
     }
 
+    void load16Unaligned(BaseIndex address, RegisterID dest)
+    {
+        load16(address, dest);
+    }
+
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         m_assembler.movl_mr_disp32(address.offset, address.base, dest);

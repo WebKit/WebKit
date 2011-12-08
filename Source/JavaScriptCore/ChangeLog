@@ -1,3 +1,29 @@
+2011-12-08  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74005
+        fix unaligned access memory in generatePatternCharacterOnce function
+        for SH4 platforms.
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load16Unaligned):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load16Unaligned):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load16Unaligned):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::lshift32):
+        (JSC::MacroAssemblerSH4::load8):
+        (JSC::MacroAssemblerSH4::load16):
+        (JSC::MacroAssemblerSH4::load16Unaligned):
+        (JSC::MacroAssemblerSH4::branch8):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load16Unaligned):
+        * jit/JIT.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+
 2011-12-08  Michael Saboff  <msaboff@apple.com>
 
         Add 8 bit paths for StringTypeAdapter classes

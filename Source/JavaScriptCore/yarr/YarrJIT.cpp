@@ -699,7 +699,7 @@ class YarrGenerator : private MacroAssembler {
 
                 if (m_charSize == Char8) {
                     BaseIndex address(input, index, TimesOne, (term->inputPosition - m_checked) * sizeof(char));
-                    load16(address, character);
+                    load16Unaligned(address, character);
                 } else {
                     BaseIndex address(input, index, TimesTwo, (term->inputPosition - m_checked) * sizeof(UChar));
                     load32WithUnalignedHalfWords(address, character);

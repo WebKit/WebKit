@@ -575,6 +575,11 @@ public:
         load32(setupArmAddress(address), dest);
     }
 
+    void load16Unaligned(BaseIndex address, RegisterID dest)
+    {
+        load16(setupArmAddress(address), dest);
+    }
+
     void load32(const void* address, RegisterID dest)
     {
         move(TrustedImmPtr(address), addressTempRegister);
