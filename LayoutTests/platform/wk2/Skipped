@@ -709,6 +709,7 @@ printing/page-rule-in-media-query.html
 printing/setPrinting.html
 printing/single-line-must-not-be-split-into-two-pages.html
 printing/simultaneous-position-float-change.html
+printing/width-overflow.html
 
 # WebKitTestRunner needs layoutTestController.elementDoesAutoCompleteForElementWithId
 # <https://bugs.webkit.org/show_bug.cgi?id=42696>

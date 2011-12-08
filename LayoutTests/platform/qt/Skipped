@@ -1687,6 +1687,7 @@ fast/dom/beforeload/remove-video-in-beforeload-listener.html
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
 printing/single-line-must-not-be-split-into-two-pages.html
+printing/width-overflow.html
 
 # Web Timing related bugs
 # https://bugs.webkit.org/show_bug.cgi?id=51245

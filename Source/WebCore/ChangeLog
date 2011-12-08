@@ -1,3 +1,24 @@
+2011-12-07  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION (r95249): Right side can be truncated when printing
+        https://bugs.webkit.org/show_bug.cgi?id=73868
+
+        Reviewed by Darin Adler.
+
+        When we print a page with an overflowed width, the right side of the page
+        can be truncated. This is due to a wrong rendering calculation.
+        Since 'maximumShrinkFactor' is a ratio based on 'pageSize',
+        'maximumShrinkFactor' should multiply (not 'originalPageSize') but 'pageSize'.
+        This bug happens if all the following conditions are met:
+            - pageLogicalWidth < docLogicalWidth
+            - originalPageSize.width * maximumShrinkFactor < docLogicalWidth
+            - docLogicalWidth < pageLogicalWidth * maximumShrinkFactor
+
+        Test: printing/width-overflow.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination):
+
 2011-12-07  Yong Li  <yoli@rim.com>
 
         Defer ScriptExecutionContext::Task's in Document when page loading is deferred.

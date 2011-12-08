@@ -956,6 +956,7 @@ http/tests/loading/preload-append-scan.php
 # https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
 printing/single-line-must-not-be-split-into-two-pages.html
+printing/width-overflow.html
 
 # BUG: Support for LayoutTestController::setWillSendRequestReturnsNull not implemented
 media/media-blocked-by-willsendrequest.html
