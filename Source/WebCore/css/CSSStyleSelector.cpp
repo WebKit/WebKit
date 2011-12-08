@@ -2708,18 +2708,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
         return;
 // uri || inherit
-    case CSSPropertyBorderImageSource:
-    {
-        HANDLE_INHERIT_AND_INITIAL(borderImageSource, BorderImageSource)
-        m_style->setBorderImageSource(styleImage(CSSPropertyBorderImageSource, value));
-        return;
-    }
-    case CSSPropertyWebkitMaskBoxImageSource:
-    {
-        HANDLE_INHERIT_AND_INITIAL(maskBoxImageSource, MaskBoxImageSource)
-        m_style->setMaskBoxImageSource(styleImage(CSSPropertyWebkitMaskBoxImageSource, value));
-        return;
-    }
     case CSSPropertyWordBreak:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(wordBreak, WordBreak)
         return;
@@ -3869,6 +3857,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMaskBoxImageSlice:
     case CSSPropertyBorderImageWidth:
     case CSSPropertyWebkitMaskBoxImageWidth:
+    case CSSPropertyBorderImageSource:
+    case CSSPropertyWebkitMaskBoxImageSource:
     case CSSPropertyBorderTop:
     case CSSPropertyBorderRight:
     case CSSPropertyBorderBottom:

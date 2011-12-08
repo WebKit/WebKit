@@ -1,3 +1,19 @@
+2011-12-07  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement border image source properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=73981
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyBorderImageSource::applyValue):
+        (WebCore::ApplyPropertyBorderImageSource::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-12-07  Noel Gordon  <noel.gordon@gmail.com>
 
         WebPImageDecoder should not do a full image decode if progressive decoding is active
