@@ -1,3 +1,15 @@
+2011-12-07  Michael Saboff  <msaboff@apple.com>
+
+        StringBuilderTest.Append and StringBuilderTest.ToStringPreserveCapacity are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=73995
+
+        Reenabled failing tests that the code part of the patch fixes.
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::TEST):
+
 2011-12-07  MORITA Hajime  <morrita@google.com>
 
         [filter-build-webkit] should not emit reset color when --no-color is given

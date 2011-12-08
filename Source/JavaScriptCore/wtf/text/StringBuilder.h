@@ -36,6 +36,7 @@ public:
     StringBuilder()
         : m_length(0)
         , m_is8Bit(true)
+        , m_valid16BitShadowLength(0)
         , m_bufferCharacters8(0)
     {
     }
@@ -169,6 +170,11 @@ public:
         if (!m_string.isNull())
             return m_string.characters();
         ASSERT(m_buffer);
+        if (m_buffer->has16BitShadow() && m_valid16BitShadowLength < m_length)
+            m_buffer->upconvertCharacters(m_valid16BitShadowLength, m_length);
+
+        m_valid16BitShadowLength = m_length;
+
         return m_buffer->characters();
     }
     
@@ -177,6 +183,9 @@ public:
         m_length = 0;
         m_string = String();
         m_buffer = 0;
+        m_bufferCharacters8 = 0;
+        m_is8Bit = true;
+        m_valid16BitShadowLength = 0;
     }
 
 private:
@@ -197,6 +206,7 @@ private:
     String m_string;
     RefPtr<StringImpl> m_buffer;
     bool m_is8Bit;
+    mutable unsigned m_valid16BitShadowLength;
     union {
         LChar* m_bufferCharacters8;
         UChar* m_bufferCharacters16;

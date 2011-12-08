@@ -66,7 +66,7 @@ TEST(StringBuilderTest, DefaultConstructor)
     expectEmpty(builder);
 }
 
-TEST(StringBuilderTest, DISABLED_Append)
+TEST(StringBuilderTest, Append)
 {
     StringBuilder builder;
     builder.append(String("0123456789"));
@@ -123,7 +123,7 @@ TEST(StringBuilderTest, ToString)
     ASSERT_EQ(String("0123456789abcdefghijklmnopqrstuvwxyzABC"), string1);
 }
 
-TEST(StringBuilderTest, DISABLED_ToStringPreserveCapacity)
+TEST(StringBuilderTest, ToStringPreserveCapacity)
 {
     StringBuilder builder;
     builder.append("0123456789");

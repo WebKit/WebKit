@@ -51,6 +51,11 @@ void StringBuilder::reifyString()
     m_string = (m_length == m_buffer->length())
         ? m_buffer.get()
         : StringImpl::create(m_buffer, 0, m_length);
+
+    if (m_buffer->has16BitShadow() && m_valid16BitShadowLength < m_length)
+        m_buffer->upconvertCharacters(m_valid16BitShadowLength, m_length);
+
+    m_valid16BitShadowLength = m_length;
 }
 
 void StringBuilder::resize(unsigned newSize)

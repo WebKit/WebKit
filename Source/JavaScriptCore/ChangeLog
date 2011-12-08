@@ -1,3 +1,30 @@
+2011-12-07  Michael Saboff  <msaboff@apple.com>
+
+        StringBuilderTest.Append and StringBuilderTest.ToStringPreserveCapacity are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=73995
+
+        Reviewed by Geoffrey Garen.
+
+        Problem was that a call to characters on an StringImpl associated
+        with a StringBuilder that is being appended to gets stale.
+        Added a new m_valid16BitShadowlen that keeps the length of
+        the 16 bit shadow that has been upconverted or will be up converted
+        with the first getCharacters().  When StringBuilder::characters or
+        ::reifyString is called, further characters are upconverted if
+        we have a shadow16bit copy and the m_valid16BitShadowlen is updated.
+
+        * JavaScriptCore.exp:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::reifyString):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::StringBuilder):
+        (WTF::StringBuilder::characters):
+        (WTF::StringBuilder::clear): Cleaned up as part of the change.
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::getData16SlowCase):
+        (WTF::StringImpl::upconvertCharacters):
+        * wtf/text/StringImpl.h:
+
 2011-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         Compare and Swap should be enabled on ARMv7

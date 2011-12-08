@@ -205,18 +205,22 @@ const UChar* StringImpl::getData16SlowCase() const
 
     m_copyData16 = static_cast<UChar*>(fastMalloc(len * sizeof(UChar)));
 
-    if (hasTerminatingNullCharacter()) {
-        len--;
-        m_copyData16[len] = '\0';
-    }
-
-    for (size_t i = 0; i < len; i++)
-        m_copyData16[i] = m_data8[i];
-
     m_hashAndFlags |= s_hashFlagHas16BitShadow;
+
+    upconvertCharacters(0, len);
 
     return m_copyData16;
 }
+
+void StringImpl::upconvertCharacters(unsigned start, unsigned end) const
+{
+    ASSERT(is8Bit());
+    ASSERT(has16BitShadow());
+
+    for (size_t i = start; i < end; i++)
+        m_copyData16[i] = m_data8[i];
+}
+    
 
 bool StringImpl::containsOnlyWhitespace()
 {

@@ -309,6 +309,7 @@ public:
     }
 
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
+    void upconvertCharacters(unsigned, unsigned) const;
     bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
     void setIsIdentifier(bool isIdentifier)
     {
