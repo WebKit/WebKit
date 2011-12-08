@@ -1,3 +1,29 @@
+2011-12-08  Stephen White  <senorblanco@chromium.org>
+
+        Use Skia's implementation of Gaussian blur when accelerated filters
+        are enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=73949
+
+        Reviewed by Zoltan Herczeg.
+
+        In the future, this will be covered by the SVG tests run in GPU mode.
+
+        * WebCore.gypi:
+        Add FEGaussianBlurSkia.cpp to the build.
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        Call out to platformApplySkia() when USE_SKIA is enabled.
+        * platform/graphics/filters/FEGaussianBlur.h:
+        platformApplySkia() declaration.
+        * platform/graphics/filters/skia: Added.
+        * platform/graphics/filters/skia/FEGaussianBlurSkia.cpp: Added.
+        (WebCore::FEGaussianBlur::platformApplySkia):
+        On the Skia port, use SkBlurImageFilter for drawing
+        Gaussian blurs in accelerated mode.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::copyImage):
+        Implement ImageBuffer::copyImage() with DontCopyBackingStore semantics.
+
 2011-12-08  Erik Arvidsson  <arv@chromium.org>
 
         CodeGeneratorV8: Fix issue with overloaded static conditional methods
