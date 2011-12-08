@@ -1,3 +1,14 @@
+2011-12-07  Xingnan Wang  <xingnan.wang@intel.com>
+
+        Implement the SSE optimization in SincResampler::process()
+        https://bugs.webkit.org/show_bug.cgi?id=73789
+
+        Reviewed by Benjamin Poulain.
+
+        Here is about 70% performance improvement on the hot spot of sample convolving.
+
+        * platform/audio/SincResampler.cpp:
+
 2011-12-07  Luke Macpherson   <macpherson@chromium.org>
 
         Implement border image source properties in CSSStyleApplyProperty.
