@@ -380,8 +380,43 @@ EditorState WebPage::editorState() const
     result.isContentRichlyEditable = frame->selection()->isContentRichlyEditable();
     result.isInPasswordField = frame->selection()->isInPasswordField();
     result.hasComposition = frame->editor()->hasComposition();
+
+#if PLATFORM(QT)
+    size_t location = 0;
+    size_t length = 0;
+    Element* scope = frame->selection()->rootEditableElement();
+
+    RefPtr<Range> range;
+    if (result.hasComposition && (range = frame->editor()->compositionRange())) {
+        TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
+        result.compositionStart = location;
+        result.compositionLength = length;
+        result.compositionRect = range->boundingBox();
+    }
+
+    if (!result.selectionIsNone && (range = frame->selection()->selection().firstRange())) {
+        TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
+
+        ExceptionCode ec = 0;
+        RefPtr<Range> tempRange = range->cloneRange(ec);
+        tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + location, ec);
+        IntRect rect = frame->editor()->firstRectForRange(tempRange.get());
+        bool baseIsFirst = frame->selection()->selection().isBaseFirst();
+
+        result.cursorPosition = (baseIsFirst) ? location + length : location;
+        result.anchorPosition = (baseIsFirst) ? location : location + length;
+        result.microFocus = frame->view()->contentsToWindow(rect);
+        result.selectedText = range->text();
+    }
+
+    if (result.isContentEditable && !result.isInPasswordField) {
+        result.surroundingText = scope->innerText();
+        result.surroundingText.remove(result.compositionStart, result.compositionLength);
+    }
+#endif
+
     result.shouldIgnoreCompositionSelectionChange = frame->editor()->ignoreCompositionSelectionChange();
-    
+
     return result;
 }
 

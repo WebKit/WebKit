@@ -307,6 +307,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Shared/CoreIPCSupport/WebContextMessageKinds.h \
 	Source/WebKit2/Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
 	Source/WebKit2/Shared/DrawingAreaInfo.h \
+	Source/WebKit2/Shared/EditorState.cpp \
 	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/cairo/LayerTreeContextCairo.cpp \

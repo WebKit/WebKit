@@ -183,28 +183,14 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     if (!frame)
         return;
 
+    EditorState state = m_page->editorState();
+
 #if PLATFORM(QT)
-    bool selectionIsNone = frame->selection()->isNone();
-    Element* scope = frame->selection()->rootEditableElement();
-
-    RefPtr<Range> range;
-    if (scope && !selectionIsNone && (range = frame->selection()->selection().firstRange())) {
-        size_t location = 0;
-        size_t length = 0;
-
-        TextIterator::getLocationAndLengthFromRange(scope, range.get(), location, length);
-
-        ExceptionCode ec = 0;
-        RefPtr<Range> tempRange = range->cloneRange(ec);
-        tempRange->setStart(tempRange->startContainer(ec), tempRange->startOffset(ec) + location, ec);
-        IntRect caretRect = frame->view()->contentsToWindow(frame->editor()->firstRectForRange(tempRange.get()));
-        IntRect nodeRect = frame->view()->contentsToWindow(scope->getRect());
-
-        m_page->send(Messages::WebPageProxy::FocusEditableArea(caretRect, nodeRect));
-    }
+    if (Element* scope = frame->selection()->rootEditableElement())
+        m_page->send(Messages::WebPageProxy::FocusEditableArea(state.microFocus, scope->getRect()));
 #endif
 
-    m_page->send(Messages::WebPageProxy::EditorStateChanged(m_page->editorState()));
+    m_page->send(Messages::WebPageProxy::EditorStateChanged(state));
 
 #if PLATFORM(WIN)
     // FIXME: This should also go into the selection state.

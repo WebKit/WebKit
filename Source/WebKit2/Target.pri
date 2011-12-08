@@ -71,6 +71,7 @@ HEADERS += \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
     Shared/DictionaryPopupInfo.h \
+    Shared/EditorState.h \
     Shared/FontInfo.h \
     Shared/ImageOptions.h \
     Shared/ImmutableArray.h \
@@ -405,6 +406,7 @@ SOURCES += \
     Shared/Plugins/PluginProcessCreationParameters.cpp \
     Shared/ChildProcess.cpp \
     Shared/DictionaryPopupInfo.cpp \
+    Shared/EditorState.cpp \
     Shared/FontInfo.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \

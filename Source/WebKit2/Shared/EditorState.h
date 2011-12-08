@@ -27,21 +27,31 @@
 #define EditorState_h
 
 #include "ArgumentCoders.h"
+#include <WebCore/IntRect.h>
 #include <wtf/NotFound.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 struct EditorState {
     EditorState()
-        : selectionIsNone(true)
+        : shouldIgnoreCompositionSelectionChange(false)
+        , selectionIsNone(true)
         , selectionIsRange(false)
         , isContentEditable(false)
         , isContentRichlyEditable(false)
         , isInPasswordField(false)
         , hasComposition(false)
-        , shouldIgnoreCompositionSelectionChange(false)
+#if PLATFORM(QT)
+        , cursorPosition(0)
+        , anchorPosition(0)
+        , compositionStart(0)
+        , compositionLength(0)
+#endif
     {
     }
+
+    bool shouldIgnoreCompositionSelectionChange;
 
     bool selectionIsNone; // This will be false when there is a caret selection.
     bool selectionIsRange;
@@ -49,13 +59,21 @@ struct EditorState {
     bool isContentRichlyEditable;
     bool isInPasswordField;
     bool hasComposition;
-    bool shouldIgnoreCompositionSelectionChange;
+#if PLATFORM(QT)
+    int cursorPosition;
+    int anchorPosition;
+    WebCore::IntRect microFocus;
+    WebCore::IntRect compositionRect;
+    int compositionStart;
+    int compositionLength;
+    WTF::String selectedText;
+    WTF::String surroundingText;
+#endif
+
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, EditorState&);
 };
 
 }
-
-namespace CoreIPC {
-template<> struct ArgumentCoder<WebKit::EditorState> : SimpleArgumentCoder<WebKit::EditorState> { };
-};
 
 #endif // EditorState_h

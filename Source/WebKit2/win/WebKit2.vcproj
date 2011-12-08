@@ -439,6 +439,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\EditorState.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\EditorState.h"
 				>
 			</File>

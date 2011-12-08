@@ -1,3 +1,24 @@
+2011-12-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Upsteam the Qt changes to the EditorState
+        https://bugs.webkit.org/show_bug.cgi?id=74080
+
+        Reviewed by Simon Hausmann.
+
+        We are not doing the serialization manually due to it not being a POD
+        structure anymore in the case of Qt.
+
+        * GNUmakefile.am:
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        * win/WebKit2.vcproj:
+
 2011-12-08  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] cleanup qmlplugin
