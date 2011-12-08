@@ -28,15 +28,17 @@
 #define ScriptProfiler_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+#include "InspectorValues.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
+#include <wtf/PassRefPtr.h>
 
 
 namespace WebCore {
 
 class InjectedScriptManager;
-class InspectorValue;
+class Page;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -59,7 +61,7 @@ public:
     static bool isSampling() { return false; }
     static bool hasHeapProfiler() { return false; }
     // FIXME: Implement this counter for JSC. See bug 73936 for more details.
-    static unsigned domNodeCount() { return 0; }
+    static PassRefPtr<InspectorArray> domNodeCount(Page*) { return 0; };
 };
 
 } // namespace WebCore

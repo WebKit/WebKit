@@ -38,6 +38,7 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+class InspectorDOMAgent;
 class InspectorFrontend;
 class InspectorState;
 class InspectorArray;
@@ -51,18 +52,19 @@ class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent> {
 public:
     typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page)
+    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent* domAgent)
     {
-        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state, page));
+        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state, page, domAgent));
     }
 
-    void getDOMNodeCount(ErrorString*, int* result);
+    void getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>* result);
 
     ~InspectorMemoryAgent();
 
 private:
-    InspectorMemoryAgent(InstrumentingAgents*, InspectorState*, Page*);
+    InspectorMemoryAgent(InstrumentingAgents*, InspectorState*, Page*, InspectorDOMAgent* domAgent);
     Page* m_page;
+    InspectorDOMAgent* m_domAgent;
 };
 
 } // namespace WebCore

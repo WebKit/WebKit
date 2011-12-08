@@ -47,14 +47,15 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 {
 }
 
-void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, int* result)
+void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>* result)
 {
-    *result = ScriptProfiler::domNodeCount();
+    *result = ScriptProfiler::domNodeCount(m_page);
 }
 
-InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page)
+InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent* domAgent)
     : InspectorBaseAgent<InspectorMemoryAgent>("Memory", instrumentingAgents, state)
     , m_page(page)
+    , m_domAgent(domAgent)
 {
 }
 

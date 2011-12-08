@@ -1,3 +1,23 @@
+2011-12-08  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: return node counts on the document / detached root basis
+        https://bugs.webkit.org/show_bug.cgi?id=74104
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/js/ScriptProfiler.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::domNodeCount):
+        * bindings/v8/ScriptProfiler.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getDOMNodeCount):
+        (WebCore::InspectorMemoryAgent::InspectorMemoryAgent):
+        * inspector/InspectorMemoryAgent.h:
+        (WebCore::InspectorMemoryAgent::create):
+
 2011-12-08  Andreas Kling  <kling@webkit.org>
 
         RenderObject: Rename styleSlowCase() to styleInRegion().

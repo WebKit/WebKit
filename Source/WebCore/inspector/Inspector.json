@@ -48,11 +48,21 @@
     {
         "domain": "Memory",
         "hidden": true,
+        "types": [
+            {
+                "id": "DOMGroup",
+                "type": "object",
+                "properties": [
+                    { "name": "size", "type": "integer" },
+                    { "name": "title", "type": "string" }
+                ]
+            }
+        ],
         "commands": [
             {
                 "name": "getDOMNodeCount",
                 "returns": [
-                    { "name": "count", "type": "integer" }
+                    { "name": "count", "type": "array", "items": { "$ref": "DOMGroup" }}
                 ]
             }
         ]

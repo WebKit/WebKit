@@ -31,16 +31,18 @@
 #ifndef ScriptProfiler_h
 #define ScriptProfiler_h
 
+#include "InspectorValues.h"
 #include "PlatformString.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class InjectedScriptManager;
-class InspectorValue;
+class Page;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -63,7 +65,7 @@ public:
     static bool isSampling() { return true; }
     static bool hasHeapProfiler() { return true; }
     static void initialize();
-    static unsigned domNodeCount();
+    static PassRefPtr<InspectorArray> domNodeCount(Page*);
 };
 
 } // namespace WebCore
