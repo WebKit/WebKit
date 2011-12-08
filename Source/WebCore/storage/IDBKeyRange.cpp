@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen)
+IDBKeyRange::IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType)
     : m_lower(lower)
     , m_upper(upper)
-    , m_lowerOpen(lowerOpen)
-    , m_upperOpen(upperOpen)
+    , m_lowerType(lowerType)
+    , m_upperType(upperType)
 {
 }
 
@@ -49,7 +49,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::only(PassRefPtr<IDBKey> prpKey, ExceptionCo
         return 0;
     }
 
-    return IDBKeyRange::create(key, key, false, false);
+    return IDBKeyRange::create(key, key, LowerBoundClosed, UpperBoundClosed);
 }
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode& ec)
@@ -59,7 +59,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::lowerBound(PassRefPtr<IDBKey> bound, bool o
         return 0;
     }
 
-    return IDBKeyRange::create(bound, 0, open, false);
+    return IDBKeyRange::create(bound, 0, open ? LowerBoundOpen : LowerBoundClosed, UpperBoundClosed);
 }
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(PassRefPtr<IDBKey> bound, bool open, ExceptionCode& ec)
@@ -69,7 +69,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::upperBound(PassRefPtr<IDBKey> bound, bool o
         return 0;
     }
 
-    return IDBKeyRange::create(0, bound, false, open);
+    return IDBKeyRange::create(0, bound, LowerBoundClosed, open ? UpperBoundOpen : UpperBoundClosed);
 }
 
 PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode& ec)
@@ -79,7 +79,7 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<
         return 0;
     }
 
-    return IDBKeyRange::create(lower, upper, lowerOpen, upperOpen);
+    return IDBKeyRange::create(lower, upper, lowerOpen ? LowerBoundOpen : LowerBoundClosed, upperOpen ? UpperBoundOpen : UpperBoundClosed);
 }
 
 } // namespace WebCore

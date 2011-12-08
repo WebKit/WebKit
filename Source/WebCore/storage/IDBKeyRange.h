@@ -39,16 +39,25 @@ typedef int ExceptionCode;
 
 class IDBKeyRange : public ThreadSafeRefCounted<IDBKeyRange> {
 public:
-    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen)
+    enum LowerBoundType {
+        LowerBoundOpen,
+        LowerBoundClosed
+    };
+    enum UpperBoundType {
+        UpperBoundOpen,
+        UpperBoundClosed
+    };
+
+    static PassRefPtr<IDBKeyRange> create(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType)
     {
-        return adoptRef(new IDBKeyRange(lower, upper, lowerOpen, upperOpen));
+        return adoptRef(new IDBKeyRange(lower, upper, lowerType, upperType));
     }
     ~IDBKeyRange() { }
 
     PassRefPtr<IDBKey> lower() const { return m_lower; }
     PassRefPtr<IDBKey> upper() const { return m_upper; }
-    bool lowerOpen() const { return m_lowerOpen; }
-    bool upperOpen() const { return m_upperOpen; }
+    bool lowerOpen() const { return m_lowerType == LowerBoundOpen; }
+    bool upperOpen() const { return m_upperType == UpperBoundOpen; }
 
     static PassRefPtr<IDBKeyRange> only(PassRefPtr<IDBKey> value, ExceptionCode&);
 
@@ -75,12 +84,12 @@ public:
     static PassRefPtr<IDBKeyRange> bound(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen, ExceptionCode&);
 
 private:
-    IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, bool lowerOpen, bool upperOpen);
+    IDBKeyRange(PassRefPtr<IDBKey> lower, PassRefPtr<IDBKey> upper, LowerBoundType lowerType, UpperBoundType upperType);
 
     RefPtr<IDBKey> m_lower;
     RefPtr<IDBKey> m_upper;
-    bool m_lowerOpen;
-    bool m_upperOpen;
+    LowerBoundType m_lowerType;
+    UpperBoundType m_upperType;
 };
 
 } // namespace WebCore
