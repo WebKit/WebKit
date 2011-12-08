@@ -1,3 +1,15 @@
+2011-12-08  Stephen White  <senorblanco@chromium.org>
+
+        Add missing V8 bindings to get CSS_FILTERS to compile in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=74091
+
+        Reviewed by Kenneth Russell.
+
+        Will be covered by tests in css3/filters (when enabled).
+
+        * bindings/v8/custom/V8WebKitCSSFilterValueCustom.cpp: Added.
+        (WebCore::V8WebKitCSSFilterValue::indexedPropertyGetter):
+
 2011-12-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73348
