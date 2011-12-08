@@ -364,6 +364,16 @@ void Internals::setZoomAnimatorTransform(Document *document, float scale, float 
 #endif
 }
 
+float Internals::getPageScaleFactor(Document *document, ExceptionCode& ec)
+{
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return document->page()->pageScaleFactor();
+}
+
 void Internals::setZoomParameters(Document* document, float scale, float x, float y, ExceptionCode& ec)
 {
     if (!document || !document->view() || !document->view()->frame()) {
@@ -615,25 +625,6 @@ bool Internals::unifiedTextCheckingEnabled(Document* document, ExceptionCode& ec
     }
 
     return document->frame()->settings()->unifiedTextCheckerEnabled();
-}
-
-float Internals::pageScaleFactor(Document *document, ExceptionCode& ec)
-{
-    if (!document || !document->page()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-
-    return document->page()->pageScaleFactor();
-}
-
-void Internals::setPageScaleFactor(Document* document, float scaleFactor, int x, int y, ExceptionCode& ec)
-{
-    if (!document || !document->page()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-    document->page()->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }
 
 int Internals::lastSpellCheckRequestSequence(Document* document, ExceptionCode& ec)

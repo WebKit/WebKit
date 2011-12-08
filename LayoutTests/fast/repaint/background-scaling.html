@@ -4,8 +4,8 @@
 <script type="text/javascript"> 
     function repaintTest()
     {
-        if (window.internals)
-            window.internals.setPageScaleFactor(document, 0.25, 0, 0);
+        if (window.layoutTestController)
+            eventSender.scalePageBy(0.2,0,0);
     }
 </script> 
 </head> 

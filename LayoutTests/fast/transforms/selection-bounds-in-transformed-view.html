@@ -4,9 +4,10 @@
     <div style="height: 100px;">target</div>
     <div style="height: 1000px;"></div>
     <script>
-        if (window.layoutTestController && window.internals) {
+        if (window.layoutTestController) {
             layoutTestController.dumpAsText();
-            window.internals.setPageScaleFactor(document, 2, 0, 0);
+
+            eventSender.scalePageBy(2, 0, 0);
         }
 
         document.execCommand("FindString", false, "target");

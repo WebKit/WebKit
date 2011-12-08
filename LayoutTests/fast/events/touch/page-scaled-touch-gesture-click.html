@@ -83,8 +83,8 @@ function endTest()
 }
 
 function runTest() {
-    if (window.internals) {
-        window.internals.setPageScaleFactor(document, 0.5, 0, 0);
+    if (window.eventSender) {
+        eventSender.scalePageBy(0.5, 0, 0);
     }
 
     var div = document.getElementById('touchtarget');

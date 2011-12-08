@@ -22,8 +22,8 @@
 
       function scalePage(scaleFactor) {
           var scaleOffset = 0;
-          if (window.internals) {
-            window.internals.setPageScaleFactor(document, scaleFactor, scaleOffset, scaleOffset);
+          if (window.eventSender) {
+            eventSender.scalePageBy(scaleFactor, scaleOffset, scaleOffset);
           }
       }
 

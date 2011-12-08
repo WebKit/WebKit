@@ -18,12 +18,12 @@
 </style>
 <script>
   function test() {
-    if (window.internals) {
+    if (window.internals)
       window.internals.setEnableCompositingForFixedPosition(document, true);
-      window.internals.setPageScaleFactor(document, 2, 0, 0);
-    }
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
       layoutTestController.dumpAsText(true);
+      eventSender.scalePageBy(2, 0, 0);
+    }
 
     var d = document.getElementById('frame').contentDocument.open();
     d.write("<div style='position:fixed; z-index: 1; left; 10px;'>TEST</div>");

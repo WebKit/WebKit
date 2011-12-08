@@ -3,7 +3,7 @@
 <script>
 function testRects()
 {
-    if (!window.layoutTestController || !window.internals)
+    if (!window.layoutTestController)
         return;
     layoutTestController.dumpAsText();
 
@@ -11,7 +11,7 @@ function testRects()
     range.selectNodeContents(document.getElementById('div'));
     var rect = range.getBoundingClientRect();
    
-    window.internals.setPageScaleFactor(document, 2, 0, 0);
+    eventSender.scalePageBy(2,0,0);
     var scaledRange = document.createRange();
     scaledRange.selectNodeContents(document.getElementById('div'));
     var scaledRect = scaledRange.getBoundingClientRect();

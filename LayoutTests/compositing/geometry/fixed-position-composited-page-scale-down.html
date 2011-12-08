@@ -18,12 +18,12 @@
 </style>
 <script>
   function scale() {
-    if (window.internals) {
+    if (window.internals)
       window.internals.setEnableCompositingForFixedPosition(document, true);
-      window.internals.setPageScaleFactor(document, 0.5, 0, 0);
-    }
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
       layoutTestController.dumpAsText(true);
+      eventSender.scalePageBy(0.5, 0, 0);
+    }
   }
 </script>
 </head>

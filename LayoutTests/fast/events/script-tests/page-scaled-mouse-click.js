@@ -43,13 +43,13 @@ function testEvents(button, description, expectedString) {
     clearEventLog();
 }
 
-if (window.eventSender && window.internals) {
+if (window.eventSender) {
     eventSender.mouseMoveTo(10, 10);
     // We are clicking in the same position on screen. As we scale or transform the page,
     // we expect the pageX and pageY event coordinates to change because different
     // parts of the document are under the mouse.
     testEvents(0, "Unscaled", "click(10, 10)");
 
-    window.internals.setPageScaleFactor(document, 0.5, 0, 0);
+    eventSender.scalePageBy(0.5, 0, 0);
     testEvents(0, "setPageScale(0.5)", "click(20, 20)");
 }

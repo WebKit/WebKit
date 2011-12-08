@@ -83,6 +83,7 @@ public:
 
     void setEnableScrollAnimator(Document*, bool enabled, ExceptionCode&);
     void setZoomAnimatorTransform(Document*, float scale, float tx, float ty, ExceptionCode&);
+    float getPageScaleFactor(Document*,  ExceptionCode&);
     void setZoomParameters(Document*, float scale, float x, float y, ExceptionCode&);
 
     void setMockScrollbarsEnabled(Document*, bool enabled, ExceptionCode&);
@@ -111,9 +112,6 @@ public:
 
     int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
     int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
-    
-    float pageScaleFactor(Document*,  ExceptionCode&);
-    void setPageScaleFactor(Document*, float scaleFactor, int x, int y, ExceptionCode&);
 
     static const char* internalsId;
 
