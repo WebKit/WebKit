@@ -160,7 +160,6 @@ LIST(APPEND WebCore_SOURCES
     platform/blackberry/SoundBlackBerry.cpp
     platform/blackberry/SystemTimeBlackBerry.cpp
     platform/blackberry/TemporaryLinkStubs.cpp
-    platform/blackberry/WheelEventBlackBerry.cpp
     platform/blackberry/WidgetBlackBerry.cpp
     platform/graphics/blackberry/FloatPointBlackBerry.cpp
     platform/graphics/blackberry/FloatRectBlackBerry.cpp

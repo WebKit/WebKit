@@ -1,3 +1,37 @@
+2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream 4 files into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=73541
+
+        Reviewed by Antonio Gomes.
+
+        Initial upstream of BlackBerry porting of PlatformScreen/
+        SSLKeyGenerator/Sound/Widget, no new tests.
+
+        * PlatformBlackBerry.cmake: Modified to remove empty file "WheelEventBlackBerry.cpp"
+        * platform/blackberry/PlatformScreenBlackBerry.cpp: Added.
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenDepth):
+        (WebCore::screenAvailableRect):
+        (WebCore::screenRect):
+        * platform/blackberry/SSLKeyGeneratorBlackBerry.cpp: Added.
+        (WebCore::getSupportedKeySizes):
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/blackberry/SoundBlackBerry.cpp: Added.
+        (WebCore::systemBeep):
+        * platform/blackberry/WidgetBlackBerry.cpp: Added.
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::paint):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::setFrameRect):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::Widget::show):
+        (WebCore::Widget::frameRect):
+
 2011-12-07  Kenichi Ishibashi  <bashi@chromium.org>
 
         Refactor CSSParser::parseFontFaceSrc()
