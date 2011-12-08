@@ -3803,3 +3803,5 @@ BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/chromium-complex-text-no
 BUGWK73991 WIN7 VISTA RELEASE : platform/win/fast/text/uniscribe-missing-glyph.html = IMAGE
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/bidi-neutral-run.html = TEXT
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = TEXT
+
+BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE PASS
