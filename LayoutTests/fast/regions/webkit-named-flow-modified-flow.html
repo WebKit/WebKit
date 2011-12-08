@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=66642 ([CSSRegions][CSSOM] Implement NamedFlow interface).
+    Modify the flow name for an existing flow thread. 
+    Getting the webkit flow name for the previous flow returns a valid object.
+    Getting the webkit flow name for the new flow returns a valid object.
+    On success, you should see a PASS below.
+    -->
+    <head>
+        <style>
+            .pass {
+                font-weight: bold;
+                color: green;
+            }
+
+            .fail {
+                font-weight: bold;
+                color: red;
+            }
+
+            .flow {
+                -webkit-flow-into: flow;
+            }
+
+            .flow2 {
+                -webkit-flow-into: flow2;
+            }
+
+            .noFlow {
+                -webkit-flow-into: none;
+            }
+        </style>
+    </head>
+    <body onload="test()">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=66642">66642: [CSSRegions]Implement NamedFlow interface</a></p>
+        <p>Getting the webkit flow name for the previous flow should return a non-null object.</p>
+        <p>Getting the webkit flow name for the new flow should return a non-null object.</p>
+        <p>On success, you should see PASS below.</p>
+        <div id="article" class="flow"></div>
+        <div id="result" class="fail">FAIL</div>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            function test()
+            {
+                var namedFlow = document.webkitGetFlowByName("flow");
+                var namedFlow2 = document.webkitGetFlowByName("flow2");
+                if (namedFlow && namedFlow2) {
+                    document.getElementById("result").innerText = "PASS";
+                    document.getElementById("result").className = "pass";
+                }
+            }
+
+            document.getElementById("article").className = "flow2";
+        </script>
+    </body>
+</html>

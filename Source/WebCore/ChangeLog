@@ -1,3 +1,54 @@
+2011-12-08  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions][CSSOM] Implement NamedFlow interface
+        https://bugs.webkit.org/show_bug.cgi?id=66642
+
+        Reviewed by David Hyatt.
+
+        Add WebKitNamedFlow to support the NamedFlow interface. No methods are
+        yet implemented on this interface. The NamedFlow object is a live object.
+        The first time user asks for it, it gets a valid JS object whose properties
+        will reflect the changes to the flow thread.
+
+        Tests: fast/regions/webkit-named-flow-existing-flow.html
+               fast/regions/webkit-named-flow-flow-added.html
+               fast/regions/webkit-named-flow-modified-flow.html
+               fast/regions/webkit-named-flow-non-existing-flow.html
+               fast/regions/webkit-named-flow-removed-flow.html
+               fast/regions/webkit-named-flow-same-object.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::webkitGetFlowByName):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+        * dom/WebKitNamedFlow.cpp: Added.
+        (WebCore::WebKitNamedFlow::WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::~WebKitNamedFlow):
+        * dom/WebKitNamedFlow.h: Added.
+        (WebCore::WebKitNamedFlow::create):
+        * dom/WebKitNamedFlow.idl: Added.
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::ensureNamedFlow):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::ensureRenderFlowThreadWithName):
+        * rendering/RenderView.h:
+
 2011-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r102321.

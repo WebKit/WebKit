@@ -118,6 +118,7 @@
 #include "ProcessingInstruction.h"
 #include "RegisteredEventListener.h"
 #include "RenderArena.h"
+#include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderTextControl.h"
@@ -142,6 +143,7 @@
 #include "TransformSource.h"
 #include "TreeWalker.h"
 #include "UserContentURLPattern.h"
+#include "WebKitNamedFlow.h"
 #include "XMLDocumentParser.h"
 #include "XMLHttpRequest.h"
 #include "XMLNSNames.h"
@@ -990,6 +992,15 @@ PassRefPtr<Element> Document::createElement(const QualifiedName& qName, bool cre
     ASSERT((qName.matches(imageTag) && e->tagQName().matches(imgTag) && e->tagQName().prefix() == qName.prefix()) || qName == e->tagQName());
 
     return e.release();
+}
+
+PassRefPtr<WebKitNamedFlow> Document::webkitGetFlowByName(const String& flowName)
+{
+    if (!renderer())
+        return 0;
+    if (RenderView* view = renderer()->view())
+        return view->ensureRenderFlowThreadWithName(flowName)->ensureNamedFlow();
+    return 0;
 }
 
 PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode& ec)

@@ -1,0 +1,7 @@
+Test for 66642: [CSSRegions]Implement NamedFlow interface
+
+Getting a WebKitNamedFlow object for a flow that was added should return a non-null object.
+
+On success, you should see PASS below.
+
+PASS

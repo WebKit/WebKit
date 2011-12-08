@@ -188,6 +188,7 @@ SET(WebCore_IDL_FILES
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
     dom/WebKitMutationObserver.idl
+    dom/WebKitNamedFlow.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
 
@@ -612,6 +613,7 @@ SET(WebCore_SOURCES
     dom/ViewportArguments.cpp
     dom/WebKitAnimationEvent.cpp
     dom/WebKitMutationObserver.cpp
+    dom/WebKitNamedFlow.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
     dom/WindowEventContext.cpp

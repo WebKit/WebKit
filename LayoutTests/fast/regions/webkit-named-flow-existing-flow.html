@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=66642 ([CSSRegions][CSSOM] Implement NamedFlow interface).
+    Test that getting a WebKitNamedFlow for an existing flow returns a non-null object.
+    On success, you should see a PASS below.
+    -->
+    <head>
+        <style>
+            .pass {
+                font-weight: bold;
+                color: green;
+            }
+
+            .fail {
+                font-weight: bold;
+                color: red;
+            }
+
+            .flow {
+                -webkit-flow-into: flow;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=66642">66642: [CSSRegions]Implement NamedFlow interface</a></p>
+        <p>Getting a WebKitNamedFlow object for an existing flow should return a non-null object.</p>
+        <p>On success, you should see PASS below.</p>
+        <div id="article" class="flow"></div>
+        <div id="result" class="fail">FAIL</div>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            var namedFlow = document.webkitGetFlowByName("flow");
+            if (namedFlow) {
+                document.getElementById("result").innerText = "PASS";
+                document.getElementById("result").className = "pass";
+            }
+        </script>
+    </body>
+</html>

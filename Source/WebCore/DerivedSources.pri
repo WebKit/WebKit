@@ -174,6 +174,7 @@ IDL_BINDINGS += \
     dom/TreeWalker.idl \
     dom/UIEvent.idl \
     dom/WebKitAnimationEvent.idl \
+    dom/WebKitNamedFlow.idl \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
     fileapi/Blob.idl \

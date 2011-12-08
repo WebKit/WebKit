@@ -550,6 +550,7 @@ DOM_CLASSES = \
     WebKitFlags \
     WebKitLoseContext \
     WebKitMutationObserver \
+	WebKitNamedFlow \
     WebKitPoint \
     WebKitTransitionEvent \
     WebSocket \

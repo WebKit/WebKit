@@ -43,6 +43,7 @@ namespace WebCore {
 class RenderFlowThread;
 class RenderStyle;
 class RenderRegion;
+class WebKitNamedFlow;
 
 typedef ListHashSet<RenderFlowThread*> RenderFlowThreadList;
 typedef HashCountedSet<RenderFlowThread*> RenderFlowThreadCountedSet;
@@ -74,6 +75,7 @@ public:
     
     void addFlowChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     void removeFlowChild(RenderObject*);
+    bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
 
     void addRegionToThread(RenderRegion*);
     void removeRegionFromThread(RenderRegion*);
@@ -124,6 +126,8 @@ public:
     void clearRenderObjectCustomStyle(const RenderObject*,
                                       const RenderRegion* oldStartRegion = 0, const RenderRegion* oldEndRegion = 0,
                                       const RenderRegion* newStartRegion = 0, const RenderRegion* newEndRegion = 0);
+
+    WebKitNamedFlow* ensureNamedFlow();
 
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
@@ -182,6 +186,7 @@ private:
     bool m_regionsInvalidated;
     bool m_regionsHaveUniformLogicalWidth;
     bool m_regionsHaveUniformLogicalHeight;
+    RefPtr<WebKitNamedFlow> m_namedFlow;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

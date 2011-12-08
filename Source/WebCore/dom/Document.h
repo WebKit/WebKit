@@ -130,6 +130,7 @@ class Text;
 class TextResourceDecoder;
 class DocumentParser;
 class TreeWalker;
+class WebKitNamedFlow;
 class XMLHttpRequest;
 class XPathEvaluator;
 class XPathExpression;
@@ -350,6 +351,8 @@ public:
     PassRefPtr<Node> importNode(Node* importedNode, bool deep, ExceptionCode&);
     virtual PassRefPtr<Element> createElementNS(const String& namespaceURI, const String& qualifiedName, ExceptionCode&);
     PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser);
+
+    PassRefPtr<WebKitNamedFlow> webkitGetFlowByName(const String&);
 
     /**
      * Retrieve all nodes that intersect a rect in the window's document, until it is fully enclosed by

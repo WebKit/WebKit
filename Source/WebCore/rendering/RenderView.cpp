@@ -879,7 +879,7 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     }
 }
 
-RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowThread)
+RenderFlowThread* RenderView::ensureRenderFlowThreadWithName(const AtomicString& flowThread)
 {
     if (!m_renderFlowThreadList)
         m_renderFlowThreadList = adoptPtr(new RenderFlowThreadList());
@@ -894,7 +894,7 @@ RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowT
     RenderFlowThread* flowRenderer = new (renderArena()) RenderFlowThread(document(), flowThread);
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
     addChild(flowRenderer);
-    
+
     m_renderFlowThreadList->add(flowRenderer);
     setIsRenderFlowThreadOrderDirty(true);
 

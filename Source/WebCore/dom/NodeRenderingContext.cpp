@@ -279,7 +279,7 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
 
     m_flowThread = m_style->flowThread();
     ASSERT(m_node->document()->renderView());
-    m_parentFlowRenderer = m_node->document()->renderView()->renderFlowThreadWithName(m_flowThread);
+    m_parentFlowRenderer = m_node->document()->renderView()->ensureRenderFlowThreadWithName(m_flowThread);
 }
 
 NodeRendererFactory::NodeRendererFactory(Node* node)

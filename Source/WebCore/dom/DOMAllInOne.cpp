@@ -136,6 +136,7 @@
 #include "UserTypingGestureIndicator.cpp"
 #include "ViewportArguments.cpp"
 #include "WebKitAnimationEvent.cpp"
+#include "WebKitNamedFlow.cpp"
 #include "WebKitTransitionEvent.cpp"
 #include "WheelEvent.cpp"
 #include "WindowEventContext.cpp"

@@ -40,6 +40,7 @@
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "TransformState.h"
+#include "WebKitNamedFlow.h"
 
 namespace WebCore {
 
@@ -815,5 +816,13 @@ void RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*&
     startRegion = range->startRegion();
     endRegion = range->endRegion();
 }
-    
+
+WebKitNamedFlow* RenderFlowThread::ensureNamedFlow()
+{
+    if (!m_namedFlow)
+        m_namedFlow = WebKitNamedFlow::create();
+
+    return m_namedFlow.get();
+}
+
 } // namespace WebCore

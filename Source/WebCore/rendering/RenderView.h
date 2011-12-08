@@ -172,7 +172,7 @@ public:
 
     IntRect documentRect() const;
 
-    RenderFlowThread* renderFlowThreadWithName(const AtomicString& flowThread);
+    RenderFlowThread* ensureRenderFlowThreadWithName(const AtomicString& flowThread);
     bool hasRenderFlowThreads() const { return m_renderFlowThreadList && !m_renderFlowThreadList->isEmpty(); }
     void layoutRenderFlowThreads();
     bool isRenderFlowThreadOrderDirty() const { return m_isRenderFlowThreadOrderDirty; }

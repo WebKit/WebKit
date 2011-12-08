@@ -468,6 +468,7 @@
 #include "JSWebKitCSSTransformValue.cpp"
 #include "JSWebKitCSSMatrix.cpp"
 #include "JSWebKitMutationObserver.cpp"
+#include "JSWebKitNamedFlow.cpp"
 #include "JSWebKitPoint.cpp"
 #include "JSWebKitTransitionEvent.cpp"
 #include "JSWebSocket.cpp"

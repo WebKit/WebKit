@@ -247,6 +247,8 @@ module core {
         [EnabledAtRuntime] void webkitCancelFullScreen();
 #endif
 
+        WebKitNamedFlow webkitGetFlowByName(in DOMString name);
+
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Event handler DOM attributes
         attribute [DontEnum] EventListener onabort;
