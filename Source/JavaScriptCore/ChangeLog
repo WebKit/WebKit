@@ -1,3 +1,22 @@
+2011-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE is overzealous with GetByVal
+        https://bugs.webkit.org/show_bug.cgi?id=74042
+
+        Reviewed by Oliver Hunt.
+        
+        Made sure that the purity of GetByVal and the limited-clobber-itude of PutByVal
+        is tested in all places that matter.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::byValIsPure):
+        (JSC::DFG::Propagator::clobbersWorld):
+        (JSC::DFG::Propagator::getByValLoadElimination):
+        (JSC::DFG::Propagator::checkStructureLoadElimination):
+        (JSC::DFG::Propagator::getByOffsetLoadElimination):
+        (JSC::DFG::Propagator::getPropertyStorageLoadElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+
 2011-12-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r102267.

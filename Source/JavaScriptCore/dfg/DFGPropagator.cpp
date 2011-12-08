@@ -958,7 +958,7 @@ private:
         return isBooleanPrediction(prediction) || !prediction;
     }
     
-    bool byValHasIntBase(Node& node)
+    bool byValIsPure(Node& node)
     {
         PredictedType prediction = m_graph[node.child2()].prediction();
         return (prediction & PredictInt32) || !prediction;
@@ -982,7 +982,7 @@ private:
         case LogicalNot:
             return !logicalNotIsPure(node);
         case GetByVal:
-            return !byValHasIntBase(node);
+            return !byValIsPure(node);
         default:
             ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
@@ -1052,10 +1052,14 @@ private:
             Node& node = m_graph[index];
             switch (node.op) {
             case GetByVal:
+                if (!byValIsPure(node))
+                    return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return index;
                 break;
             case PutByVal:
+                if (!byValIsPure(node))
+                    return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return node.child3();
                 break;
@@ -1124,7 +1128,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValHasIntBase(node)) {
+                if (byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -1167,7 +1171,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValHasIntBase(node)) {
+                if (byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -1203,7 +1207,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValHasIntBase(node)) {
+                if (byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -1390,12 +1394,12 @@ private:
             break;
             
         case GetByVal:
-            if (byValHasIntBase(node))
+            if (byValIsPure(node))
                 setReplacement(getByValLoadElimination(node.child1(), node.child2()));
             break;
             
         case PutByVal:
-            if (byValHasIntBase(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
+            if (byValIsPure(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
                 node.op = PutByValAlias;
             break;
             
