@@ -70,3 +70,8 @@
     font-size: smaller;
     color: #444;
 }
+
+input:disabled, isindex:disabled, textarea:disabled {
+    color: #545454; /* Color::light() for #000000. See RenderTextControl.cpp:disabledTextColor */
+}
+

@@ -1,3 +1,19 @@
+2011-12-07  Yosifumi Inoue  <yosin@chromium.org>
+
+        CSS color gets adjusted for disabled input elements
+        https://bugs.webkit.org/show_bug.cgi?id=54643
+
+        Reviewed by Kent Tamura.
+
+        No new tests. covered by existing tests. Need rebasing some existing tests for Chromimum.
+
+        Remove automatic color adjustment for disabled text control for Chromimum.
+
+        * css/themeChromium.css: Add CSS entries for default style for disabled input and textarea elements.
+        * WebCore/rendering/RenderTextControl.cpp:
+        (disabledTextColor): Removed for PLATFORM(CHROMIUM)
+        (RenderTextControl::adjustInnerTextStyle): Don't call disabledTextColor for Chromium.
+
 2011-12-07  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=74038

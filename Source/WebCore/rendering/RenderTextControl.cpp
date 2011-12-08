@@ -34,6 +34,7 @@ using namespace std;
 
 namespace WebCore {
 
+#if !PLATFORM(CHROMIUM)
 // Value chosen by observation.  This can be tweaked.
 static const int minColorContrastValue = 1300;
 // For transparent or translucent background color, use lightening.
@@ -57,6 +58,7 @@ static Color disabledTextColor(const Color& textColor, const Color& backgroundCo
     
     return disabledColor;
 }
+#endif
 
 RenderTextControl::RenderTextControl(Node* node)
     : RenderBlock(node)
@@ -119,8 +121,13 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
     textBlockStyle->setUnicodeBidi(style()->unicodeBidi());
 
     bool disabled = updateUserModifyProperty(node(), textBlockStyle);
-    if (disabled)
+    if (disabled) {
+#if PLATFORM(CHROMIUM)
+        textBlockStyle->setColor(textBlockStyle->visitedDependentColor(CSSPropertyColor));
+#else
         textBlockStyle->setColor(disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
+#endif
+    }
 }
 
 int RenderTextControl::textBlockHeight() const
