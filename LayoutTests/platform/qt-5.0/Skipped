@@ -2756,8 +2756,6 @@ fast/forms/input-appearance-maxlength.html
 fast/forms/input-appearance-preventDefault.html
 fast/forms/input-appearance-readonly.html
 fast/forms/input-appearance-selection.html
-fast/forms/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/input-appearance-spinbutton-layer.html
 fast/forms/input-appearance-spinbutton-visibility.html
 fast/forms/input-appearance-visibility.html
 fast/forms/input-baseline.html
@@ -2806,6 +2804,8 @@ fast/forms/menulist-no-overflow.html
 fast/forms/menulist-no-renderer-onmousedown.html
 fast/forms/menulist-style-color.html
 fast/forms/minWidthPercent.html
+fast/forms/number/input-appearance-spinbutton-disabled-readonly.html
+fast/forms/number/input-appearance-spinbutton-layer.html
 fast/forms/onselect-textfield.html
 fast/forms/option-index.html
 fast/forms/option-script.html
@@ -6320,12 +6320,12 @@ fast/forms/control-restrict-line-height.html
 fast/forms/focus-selection-textarea.html
 fast/forms/formmove3.html
 fast/forms/input-align.html
-fast/forms/input-appearance-number-rtl.html
 fast/forms/input-button-sizes.html
 fast/forms/input-text-word-wrap.html
 fast/forms/isindex-placeholder.html
 fast/forms/menulist-option-wrap.html
 fast/forms/menulist-separator-painting.html
+fast/forms/number/input-appearance-number-rtl.html
 fast/forms/search-styled.html
 fast/forms/select-baseline.html
 fast/forms/selectlist-minsize.html
