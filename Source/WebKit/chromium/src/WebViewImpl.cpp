@@ -343,6 +343,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_zoomLevel(0)
     , m_minimumZoomLevel(zoomFactorToZoomLevel(minTextSizeMultiplier))
     , m_maximumZoomLevel(zoomFactorToZoomLevel(maxTextSizeMultiplier))
+    , m_pageDefinedMinimumPageScaleFactor(-1)
+    , m_pageDefinedMaximumPageScaleFactor(-1)
     , m_minimumPageScaleFactor(minPageScaleFactor)
     , m_maximumPageScaleFactor(maxPageScaleFactor)
     , m_contextMenuAllowed(false)
@@ -1953,7 +1955,7 @@ float WebViewImpl::pageScaleFactor() const
     return page()->pageScaleFactor();
 }
 
-float WebViewImpl::computePageScaleFactorWithinLimits(float scaleFactor)
+float WebViewImpl::clampPageScaleFactorToLimits(float scaleFactor)
 {
     return min(max(scaleFactor, m_minimumPageScaleFactor), m_maximumPageScaleFactor);
 }
@@ -1970,15 +1972,15 @@ WebPoint WebViewImpl::clampOffsetAtScale(const WebPoint& offset, float scale)
 
     // Enforce the maximum and minimum scroll positions at the new scale.
     IntPoint clampedOffset = offset;
-    clampedOffset.clampNegativeToZero();
     clampedOffset = clampedOffset.shrunkTo(IntPoint(docWidthAtNewScale - viewWidth, docHeightAtNewScale - viewHeight));
+    clampedOffset.clampNegativeToZero();
     return clampedOffset;
 }
 
 void WebViewImpl::setPageScaleFactorPreservingScrollOffset(float scaleFactor)
 {
     // Pick a scale factor that is within the expected limits
-    scaleFactor = computePageScaleFactorWithinLimits(scaleFactor);
+    scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
     if (scaleFactor == pageScaleFactor())
         return;
 
@@ -1998,7 +2000,7 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     if (!scaleFactor)
         scaleFactor = 1;
 
-    scaleFactor = computePageScaleFactorWithinLimits(scaleFactor);
+    scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
     WebPoint clampedOrigin = clampOffsetAtScale(origin, scaleFactor);
     page()->setPageScaleFactor(scaleFactor, clampedOrigin);
 }
@@ -2064,24 +2066,43 @@ void WebViewImpl::enableAutoResizeMode(bool enable, const WebSize& minSize, cons
 
 void WebViewImpl::setPageScaleFactorLimits(float minPageScale, float maxPageScale)
 {
-    m_minimumPageScaleFactor = min(max(minPageScale, minPageScaleFactor), maxPageScaleFactor) * deviceScaleFactor();
-    m_maximumPageScaleFactor = max(min(maxPageScale, maxPageScaleFactor), minPageScaleFactor) * deviceScaleFactor();
+    m_pageDefinedMinimumPageScaleFactor = minPageScale;
+    m_pageDefinedMaximumPageScaleFactor = maxPageScale;
+    computePageScaleFactorLimits();
+}
 
-    if (m_size.width && mainFrame() && mainFrame()->contentsSize().width) {
+bool WebViewImpl::computePageScaleFactorLimits()
+{
+    if (m_pageDefinedMinimumPageScaleFactor == -1 || m_pageDefinedMaximumPageScaleFactor == -1)
+        return false;
+
+    if (!mainFrame() || !page() || !page()->mainFrame() || !page()->mainFrame()->view())
+        return false;
+
+    m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor) * deviceScaleFactor();
+    m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor) * deviceScaleFactor();
+
+    int viewWidthNotIncludingScrollbars = page()->mainFrame()->view()->visibleContentRect(false).width();
+    int contentsWidth = mainFrame()->contentsSize().width;
+    if (viewWidthNotIncludingScrollbars && contentsWidth) {
         // Limit page scaling down to the document width.
-        int viewWidth = m_size.width;
-        int unscaledContentWidth = mainFrame()->contentsSize().width / pageScaleFactor();
-        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidth) / unscaledContentWidth);
+        int unscaledContentWidth = contentsWidth / pageScaleFactor();
+        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidthNotIncludingScrollbars) / unscaledContentWidth);
+        m_maximumPageScaleFactor = max(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
     }
-    ASSERT(minPageScale <= maxPageScale);
+    ASSERT(m_minimumPageScaleFactor <= m_maximumPageScaleFactor);
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerTreeHost)
         m_layerTreeHost->setPageScaleFactorLimits(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 #endif
 
-    float clampedScale = computePageScaleFactorWithinLimits(pageScaleFactor());
-    if (clampedScale != pageScaleFactor())
+    float clampedScale = clampPageScaleFactorToLimits(pageScaleFactor());
+    if (clampedScale != pageScaleFactor()) {
         setPageScaleFactorPreservingScrollOffset(clampedScale);
+        return true;
+    }
+
+    return false;
 }
 
 float WebViewImpl::minimumPageScaleFactor() const
@@ -2589,6 +2610,21 @@ void WebViewImpl::layoutUpdated(WebFrameImpl* webframe)
     }
 
     m_client->didUpdateLayout();
+}
+
+void WebViewImpl::didChangeContentsSize()
+{
+    bool didClampScale = computePageScaleFactorLimits();
+
+    if (!didClampScale)
+        return;
+
+    if (!mainFrameImpl())
+        return;
+
+    FrameView* view = mainFrameImpl()->frameView();
+    if (view && view->needsLayout())
+        view->layout();
 }
 
 bool WebViewImpl::useExternalPopupMenus()

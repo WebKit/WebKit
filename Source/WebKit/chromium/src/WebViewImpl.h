@@ -335,6 +335,8 @@ public:
     // unless the view did not need a layout.
     void layoutUpdated(WebFrameImpl*);
 
+    void didChangeContentsSize();
+
     // Returns true if popup menus should be rendered by the browser, false if
     // they should be rendered by WebKit (which is the default).
     static bool useExternalPopupMenus();
@@ -461,7 +463,8 @@ public:
     bool hasVerticalScrollbar();
 
 private:
-    float computePageScaleFactorWithinLimits(float scale);
+    bool computePageScaleFactorLimits();
+    float clampPageScaleFactorToLimits(float scale);
     WebPoint clampOffsetAtScale(const WebPoint& offset, float scale);
 
     friend class WebView;  // So WebView::Create can call our constructor
@@ -568,8 +571,9 @@ private:
 
     double m_maximumZoomLevel;
 
+    float m_pageDefinedMinimumPageScaleFactor;
+    float m_pageDefinedMaximumPageScaleFactor;
     float m_minimumPageScaleFactor;
-
     float m_maximumPageScaleFactor;
 
     bool m_contextMenuAllowed;

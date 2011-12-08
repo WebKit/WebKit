@@ -550,6 +550,8 @@ IntRect ChromeClientImpl::rootViewToScreen(const IntRect& rect) const
 
 void ChromeClientImpl::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
+    m_webView->didChangeContentsSize();
+
     WebFrameImpl* webframe = WebFrameImpl::fromFrame(frame);
     if (webframe->client())
         webframe->client()->didChangeContentsSize(webframe, size);

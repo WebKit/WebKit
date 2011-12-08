@@ -1,3 +1,33 @@
+2011-12-07  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Preserve original pageScale limits in WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=72983
+
+        Reviewed by Darin Fisher.
+
+        Preserve the originally viewport-tag specified page scale limits, and
+        compute the final ones in a new private method
+        computePageScaleFactorLimits().  This is then called when contents
+        size change (which can affect the minimum).
+
+        Also clean up several minor bugs, namely clamping issues (reorder
+        clampNegativeToZero to avoid negative scroll offsets, and force max to
+        be greater than min), and incorrect behavior in the presence of
+        "solid" scrollbars.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::contentsSizeChanged):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::clampPageScaleFactorToLimits):
+        (WebKit::WebViewImpl::clampOffsetAtScale):
+        (WebKit::WebViewImpl::setPageScaleFactorPreservingScrollOffset):
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::setPageScaleFactorLimits):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        (WebKit::WebViewImpl::didChangeContentsSize):
+        * src/WebViewImpl.h:
+
 2011-12-07  Chris Sharp  <csharp@chromium.org>
         
         Exposing boundsInScreenSpace in WebElement.
