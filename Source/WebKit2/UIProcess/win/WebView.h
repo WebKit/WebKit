@@ -198,7 +198,7 @@ private:
     virtual void compositionSelectionChanged(bool);
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
     virtual void didInstallOrUninstallPageOverlay(bool);
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -1,5 +1,17 @@
 2011-12-08  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 99912
+
+    2011-11-10  Beth Dakin  <bdakin@apple.com>
+
+            Speculative build fix.
+
+            * UIProcess/win/WebView.cpp:
+            (WebKit::WebView::setFindIndicator):
+            * UIProcess/win/WebView.h:
+
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
     Merge 99911
 
     2011-11-10  Beth Dakin  <bdakin@apple.com>
