@@ -105,7 +105,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     return createScriptCallStack(stackTrace, maxStackSize, emptyStackIsAllowed);
 }
 
-PassRefPtr<ScriptCallStack> createScriptCallStack()
+PassRefPtr<ScriptCallStack> createScriptCallStackForInspector()
 {
     size_t maxStackSize = 1;
     if (InspectorInstrumentation::hasFrontends()) {

@@ -86,7 +86,7 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t m
     return ScriptCallStack::create(frames);
 }
 
-PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec)
+PassRefPtr<ScriptCallStack> createScriptCallStackForInspector(JSC::ExecState* exec)
 {
     size_t maxStackSize = 1;
     if (InspectorInstrumentation::hasFrontends()) {

@@ -1396,7 +1396,7 @@ END
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         push(@implContentDecls, <<END);
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, $numParameters));
-    RefPtr<ScriptCallStack> callStack(createScriptCallStack());
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());
     if (!callStack)
         return v8::Undefined();
 END
