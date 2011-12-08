@@ -1,3 +1,12 @@
+2011-12-08  Tony Chang  <tony@chromium.org>
+
+        [chromium] remove headers from WebKit.gyp that moved into WebKit/chromium/public/platform
+        https://bugs.webkit.org/show_bug.cgi?id=74106
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+
 2011-12-08  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Exclude the four RenderTableCellDeathTest death tests for Android
