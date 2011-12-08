@@ -60,6 +60,7 @@
 #define Atomics_h
 
 #include "Platform.h"
+#include "StdLibExtras.h"
 #include "UnusedParam.h"
 
 #if OS(WINDOWS)
@@ -119,10 +120,9 @@ inline int atomicDecrement(int volatile* addend) { return __gnu_cxx::__exchange_
 
 inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned newValue)
 {
-    // FIXME: Implement COMPARE_AND_SWAP on other architectures and compilers. Currently
-    // it only works on X86 or X86_64 with a GCC-style compiler.
 #if ENABLE(COMPARE_AND_SWAP)
     bool result;
+#if CPU(X86) || CPU(X86_64)
     asm volatile(
         "lock; cmpxchgl %3, %2\n\t"
         "sete %1"
@@ -130,6 +130,22 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
         : "r"(newValue)
         : "memory"
         );
+#elif CPU(ARM_THUMB2)
+    unsigned tmp;
+    asm volatile(
+        "movw %1, #1\n\t"
+        "ldrex %2, %0\n\t"
+        "cmp %3, %2\n\t"
+        "bne.n 0f\n\t"
+        "strex %1, %4, %0\n\t"
+        "0:"
+        : "+m"(*location), "=&r"(result), "=&r"(tmp)
+        : "r"(expected), "r"(newValue)
+        : "memory");
+    result = !result;
+#else
+#error "Bad architecture for compare and swap."
+#endif
     return result;
 #else
     UNUSED_PARAM(location);
@@ -142,22 +158,20 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
 
 inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* newValue)
 {
-    // FIXME: Implement COMPARE_AND_SWAP on other architectures and compilers. Currently
-    // it only works on X86 or X86_64 with a GCC-style compiler.
 #if ENABLE(COMPARE_AND_SWAP)
+#if CPU(X86_64)
     bool result;
     asm volatile(
-#if CPU(X86_64)
         "lock; cmpxchgq %3, %2\n\t"
-#else
-        "lock; cmpxchgl %3, %2\n\t"
-#endif
         "sete %1"
         : "+a"(expected), "=q"(result), "+m"(*location)
         : "r"(newValue)
         : "memory"
         );
     return result;
+#else
+    return weakCompareAndSwap(bitwise_cast<unsigned*>(location), bitwise_cast<unsigned>(expected), bitwise_cast<unsigned>(newValue));
+#endif
 #else // ENABLE(COMPARE_AND_SWAP)
     UNUSED_PARAM(location);
     UNUSED_PARAM(expected);

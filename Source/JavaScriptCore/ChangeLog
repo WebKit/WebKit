@@ -1,5 +1,19 @@
 2011-12-07  Filip Pizlo  <fpizlo@apple.com>
 
+        Compare and Swap should be enabled on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=74023
+
+        Reviewed by Geoff Garen.
+        
+        Implemented weakCompareAndSwap in terms of LDREX/STREX and enabled PARALLEL_GC.
+        It gives the expected speed-up on multi-core ARMv7 devices.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+        * wtf/Platform.h:
+
+2011-12-07  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE is overzealous with GetByVal
         https://bugs.webkit.org/show_bug.cgi?id=74042
 
