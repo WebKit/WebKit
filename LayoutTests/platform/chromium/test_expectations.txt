@@ -3617,13 +3617,6 @@ BUGWK71673 WIN LINUX : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
 
 BUGWK71278 SLOW WIN : fast/events/dispatch-message-string-data.html = PASS
 
-BUGWK71282 : inspector/extensions = CRASH PASS TIMEOUT
-BUGWK71282 : http/tests/inspector/extensions-headers.html = CRASH PASS TIMEOUT
-BUGWK71282 : http/tests/inspector/extensions-network-redirect.html = CRASH PASS TIMEOUT
-BUGWK71282 : http/tests/inspector/extensions-useragent.html = CRASH PASS TIMEOUT
-BUGWK71282 : http/tests/inspector/extensions-ignore-cache.html = CRASH PASS TIMEOUT
-// BUGWK71084 SLOW : http/tests/inspector/extensions-ignore-cache.html = PASS
-
 BUGWK70044 : svg/filters/invalidate-on-child-layout.svg = TEXT IMAGE IMAGE+TEXT
 
 BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
