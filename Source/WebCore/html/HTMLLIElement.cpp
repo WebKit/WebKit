@@ -62,13 +62,8 @@ bool HTMLLIElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEnt
 void HTMLLIElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == valueAttr) {
-        if (renderer() && renderer()->isListItem()) {
-            int requestedValue = attr->value().toInt();
-            if (requestedValue > 0)
-                toRenderListItem(renderer())->setExplicitValue(requestedValue);
-            else
-                toRenderListItem(renderer())->clearExplicitValue();
-        }
+        if (renderer() && renderer()->isListItem())
+            parseValue(attr->value());
     } else if (attr->name() == typeAttr) {
         if (attr->value() == "a")
             addCSSProperty(attr, CSSPropertyListStyleType, CSSValueLowerAlpha);
@@ -108,17 +103,20 @@ void HTMLLIElement::attach()
         if (!listNode)
             render->setNotInList(true);
 
-        const AtomicString& requestedValueString = fastGetAttribute(valueAttr);
-        if (requestedValueString.isNull())
-            render->clearExplicitValue();
-        else {
-            int requestedValue = requestedValueString.toInt();
-            if (requestedValue > 0)
-                render->setExplicitValue(requestedValue);
-            else
-                render->clearExplicitValue();
-        }
+        parseValue(fastGetAttribute(valueAttr));
     }
+}
+
+inline void HTMLLIElement::parseValue(const AtomicString& value)
+{
+    ASSERT(renderer() && renderer()->isListItem());
+
+    bool valueOK;
+    int requestedValue = value.toInt(&valueOK);
+    if (valueOK)
+        toRenderListItem(renderer())->setExplicitValue(requestedValue);
+    else
+        toRenderListItem(renderer())->clearExplicitValue();
 }
 
 }

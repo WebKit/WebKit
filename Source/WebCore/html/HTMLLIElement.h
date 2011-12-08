@@ -39,6 +39,8 @@ private:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
+
+    void parseValue(const AtomicString&);
 };
 
 } //namespace

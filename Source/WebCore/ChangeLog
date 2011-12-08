@@ -1,3 +1,25 @@
+2011-12-07  Florin Malita  <fmalita@google.com>
+
+        <li value="0"> behaves like <li> (the same for negative numbers)
+        https://bugs.webkit.org/show_bug.cgi?id=73911
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow LI values <= 0 and consolidate the value processing logic.
+
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseMappedAttribute):
+        Delegated value parsing to parseValue().
+
+        (WebCore::HTMLLIElement::attach):
+        Ditto. Explicit value null testing is no longer necessary,
+        as parseValue's toInt() performs an equivalent check.
+
+        (WebCore::HTMLLIElement::parseValue):
+        Consolidated value parsing logic.
+
+        * html/HTMLLIElement.h:
+
 2011-12-07  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Replace bool args in IDBKeyRange private methods with enum
