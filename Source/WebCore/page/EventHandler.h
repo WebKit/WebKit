@@ -150,12 +150,12 @@ public:
     bool tabsToLinks(KeyboardEvent*) const;
     bool tabsToAllFormControls(KeyboardEvent*) const;
 
-    bool mouseMoved(const PlatformMouseEvent&);
+    bool mouseMoved(const PlatformMouseEvent&, bool onlyUpdateScrollbars = false);
 
     void lostMouseCapture();
 
     bool handleMousePressEvent(const PlatformMouseEvent&);
-    bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* hoveredNode = 0);
+    bool handleMouseMoveEvent(const PlatformMouseEvent&, HitTestResult* hoveredNode = 0, bool onlyUpdateScrollbars = false);
     bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     bool handleWheelEvent(PlatformWheelEvent&);
     void defaultWheelEventHandler(Node*, WheelEvent*);

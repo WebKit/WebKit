@@ -1035,7 +1035,7 @@ static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent,
     return handled;
 }
 
-static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
+static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page, bool onlyUpdateScrollbars)
 {
     Frame* frame = page->mainFrame();
     if (!frame->view())
@@ -1058,7 +1058,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
         case WebCore::MouseEventReleased:
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
         case WebCore::MouseEventMoved:
-            return frame->eventHandler()->mouseMoved(platformMouseEvent);
+            return frame->eventHandler()->mouseMoved(platformMouseEvent, onlyUpdateScrollbars);
 
         default:
             ASSERT_NOT_REACHED();
@@ -1084,7 +1084,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
 
-        handled = handleMouseEvent(mouseEvent, m_page.get());
+        handled = handleMouseEvent(mouseEvent, m_page.get(), !windowIsFocused());
     }
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
