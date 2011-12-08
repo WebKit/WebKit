@@ -33,3 +33,6 @@ class MockPlatformInfo(object):
 
     def total_bytes_memory(self):
         return 2 * 1024 * 1024 * 1024  # 2GB is a reasonable amount of ram to mock.
+
+    def free_bytes_memory(self):
+        return 1 * 1024 * 1024 * 1024  # 1GB is a reasonable amount of ram to mock as free.

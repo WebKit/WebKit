@@ -55,15 +55,17 @@ class PortTest(unittest.TestCase):
 
     def test_default_child_processes(self):
         port = self.make_port()
+        # Even though the MockPlatformInfo shows 1GB free memory (enough for 5 DRT instances)
+        # we're still limited by the 2 mock cores we have:
         self.assertEqual(port.default_child_processes(), 2)
-        bytes_for_drt = 400 * 1024 * 1024
+        bytes_for_drt = 200 * 1024 * 1024
 
-        port.host.platform.total_bytes_memory = lambda: bytes_for_drt
+        port.host.platform.free_bytes_memory = lambda: bytes_for_drt
         expected_stdout = "This machine could support 2 child processes, but only has enough memory for 1.\n"
         child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stdout=expected_stdout)
         self.assertEqual(child_processes, 1)
 
-        port.host.platform.total_bytes_memory = lambda: bytes_for_drt - 1
+        port.host.platform.free_bytes_memory = lambda: bytes_for_drt - 1
         expected_stdout = "This machine could support 2 child processes, but only has enough memory for 0.\n"
         child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stdout=expected_stdout)
         self.assertEqual(child_processes, 0)

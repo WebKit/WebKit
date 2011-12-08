@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import platform
+import re
 
 
 # We use this instead of calls to platform directly to allow mocking.
@@ -48,4 +49,20 @@ class PlatformInfo(object):
         system_name = platform.system()
         if system_name == "Darwin":
             return int(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
+        return None
+
+    def _compute_free_bytes_from_vm_stat_output(self, vm_stat_output):
+        page_size_match = re.search(r"page size of (\d+) bytes", vm_stat_output)
+        free_pages_match = re.search(r"Pages free:\s+(\d+).", vm_stat_output)
+        if not page_size_match or not free_pages_match:
+            return None
+        free_page_count = int(free_pages_match.group(1))
+        page_size = int(page_size_match.group(1))
+        return free_page_count * page_size
+
+    def free_bytes_memory(self):
+        system_name = platform.system()
+        if system_name == "Darwin":
+            vm_stat_output = self._executive.run_command(["vm_stat"])
+            return self._compute_free_bytes_from_vm_stat_output(vm_stat_output)
         return None

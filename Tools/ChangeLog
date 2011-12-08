@@ -1,3 +1,25 @@
+2011-12-07  Eric Seidel  <eric@webkit.org>
+
+        Use free memory to determine if we have space for DRT instances instead of total memory
+        https://bugs.webkit.org/show_bug.cgi?id=74021
+
+        Reviewed by Adam Barth.
+
+        This will hopefully make the Mac buildbots behave better.
+
+        I also reduced the expected memory needed per DRT now that
+        we're properly accounting for the system memory in our calculations.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.total_bytes_memory):
+        (PlatformInfo._compute_free_bytes_from_vm_stat_output):
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.total_bytes_memory):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_default_child_processes):
+
 2011-12-07  Dirk Pranke  <dpranke@chromium.org>
 
         fix build-webkit --chromium after breakage in r102201

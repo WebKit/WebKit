@@ -166,10 +166,10 @@ class Port(object):
         """Return the number of DumpRenderTree instances to use for this port."""
         cpu_count = self._executive.cpu_count()
         # Make sure we have enough ram to support that many instances:
-        total_memory = self.host.platform.total_bytes_memory()
-        if total_memory:
-            bytes_per_drt = 400 * 1024 * 1024  # Assume each DRT needs 400MB to run.
-            supportable_instances = total_memory / bytes_per_drt
+        free_memory = self.host.platform.free_bytes_memory()
+        if free_memory:
+            bytes_per_drt = 200 * 1024 * 1024  # Assume each DRT needs 200MB to run.
+            supportable_instances = free_memory / bytes_per_drt
             if supportable_instances < cpu_count:
                 # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
                 print "This machine could support %s child processes, but only has enough memory for %s." % (cpu_count, supportable_instances)
