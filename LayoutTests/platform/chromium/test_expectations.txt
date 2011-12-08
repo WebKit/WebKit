@@ -3809,3 +3809,12 @@ BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = 
 BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE PASS
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
+
+// New tests added in r102388, just needs a new baseline.
+BUG_TONY : animations/cross-fade-background-image.html = PASS FAIL
+BUG_TONY : animations/cross-fade-border-image-source.html = PASS FAIL
+BUG_TONY : animations/cross-fade-list-style-image.html = PASS FAIL
+BUG_TONY : animations/cross-fade-webkit-mask-box-image.html = PASS FAIL
+BUG_TONY : animations/cross-fade-webkit-mask-image.html = PASS FAIL
+BUG_TONY : transitions/cross-fade-background-image.html = PASS FAIL
+BUG_TONY : transitions/cross-fade-border-image.html = PASS FAIL

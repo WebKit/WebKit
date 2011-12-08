@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 212: Failed to pause 'fill' transition on element 'rect7'
+CONSOLE MESSAGE: line 239: Failed to pause 'fill' transition on element 'rect7'
 Example
 PASS - "fill-opacity" property for "rect1" element at 1s saw something close to: 0.6
 PASS - "stroke-width" property for "rect1" element at 1s saw something close to: 3
