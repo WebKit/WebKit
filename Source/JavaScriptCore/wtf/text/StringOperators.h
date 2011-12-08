@@ -46,6 +46,22 @@ public:
         return operator String();
     }
 
+    bool is8Bit()
+    {
+        StringTypeAdapter<StringType1> adapter1(m_string1);
+        StringTypeAdapter<StringType2> adapter2(m_string2);
+        return adapter1.is8Bit() && adapter2.is8Bit();
+    }
+
+    void writeTo(LChar* destination)
+    {
+        ASSERT(is8Bit());
+        StringTypeAdapter<StringType1> adapter1(m_string1);
+        StringTypeAdapter<StringType2> adapter2(m_string2);
+        adapter1.writeTo(destination);
+        adapter2.writeTo(destination + adapter1.length());
+    }
+
     void writeTo(UChar* destination)
     {
         StringTypeAdapter<StringType1> adapter1(m_string1);
@@ -75,6 +91,10 @@ public:
     }
 
     unsigned length() { return m_buffer.length(); }
+
+    bool is8Bit() { return m_buffer.is8Bit(); }
+
+    void writeTo(LChar* destination) { m_buffer.writeTo(destination); }
     void writeTo(UChar* destination) { m_buffer.writeTo(destination); }
 
 private:

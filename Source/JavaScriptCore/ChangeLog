@@ -1,3 +1,29 @@
+2011-12-08  Michael Saboff  <msaboff@apple.com>
+
+        Add 8 bit paths for StringTypeAdapter classes
+        https://bugs.webkit.org/show_bug.cgi?id=73882
+
+        Reviewed by Darin Adler.
+
+        Added is8Bit() method and writeTo(LChar*) methods
+        to StringTypeAdapter<> classes.  The writeTo(LChar*)
+        method can be used if is8Bit() returns true.  The
+        non-native 8 bit classes contain ASSERT(is8Bit())
+        in their writeTo(LChar*).
+
+        Updated all of the various versions of tryMakeString() to
+        use 8 bit processing in the updated StringTypeAdapter<>
+        classes.
+
+        This has slight if any performance improvement on kraken.
+
+        * runtime/UStringConcatenate.h:
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeString):
+        * wtf/text/StringOperators.h:
+        (WTF::StringAppend::is8Bit):
+        (WTF::StringAppend::writeTo):
+
 2011-12-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CSE should know that CheckFunction is pure
