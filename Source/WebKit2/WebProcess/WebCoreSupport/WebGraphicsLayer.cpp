@@ -317,8 +317,9 @@ void WebGraphicsLayer::removeAnimation(const String& animationName)
 
 void WebGraphicsLayer::setContentsNeedsDisplay()
 {
+    RefPtr<Image> image = m_image;
     setContentsToImage(0);
-    setContentsToImage(m_image.get());
+    setContentsToImage(image.get());
 }
 
 void WebGraphicsLayer::setContentsToImage(Image* image)
@@ -326,15 +327,20 @@ void WebGraphicsLayer::setContentsToImage(Image* image)
     if (image == m_image)
         return;
     WebLayerTreeTileClient* client = layerTreeTileClient();
-    if (!client)
-        return;
+    int64_t newID = 0;
+    if (client) {
+        // We adopt first, in case this is the same frame - that way we avoid destroying and recreating the image.
+        newID = client->adoptImageBackingStore(image);
+        client->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
+        notifyChange();
+        if (m_layerInfo.imageBackingStoreID && newID == m_layerInfo.imageBackingStoreID)
+            return;
+    } else {
+        // If client not set yet there should be no backing store ID.
+        ASSERT(!m_layerInfo.imageBackingStoreID);
+        notifyChange();
+    }
 
-    // We adopt first, in case this is the same frame - that way we avoid destroying and recreating the image.
-    int64_t newID = client->adoptImageBackingStore(image);
-    client->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
-    notifyChange();
-    if (newID == m_layerInfo.imageBackingStoreID)
-        return;
     m_layerInfo.imageBackingStoreID = newID;
     m_image = image;
     m_layerInfo.imageIsUpdated = true;
@@ -420,6 +426,9 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 
     for (size_t i = 0; i < children().size(); ++i)
         m_layerInfo.children.append(toWebLayerID(children()[i]));
+
+    if (m_layerInfo.imageIsUpdated && m_image && !m_layerInfo.imageBackingStoreID)
+        m_layerInfo.imageBackingStoreID = layerTreeTileClient()->adoptImageBackingStore(m_image.get());
 
     m_layerTreeTileClient->didSyncCompositingStateForLayer(m_layerInfo);
     m_modified = false;

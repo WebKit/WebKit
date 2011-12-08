@@ -1,3 +1,18 @@
+2011-12-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Directly composited images doesn't render
+        https://bugs.webkit.org/show_bug.cgi?id=74058
+
+        Reviewed by Noam Rosenthal.
+
+        Attach image to WebGraphicsLayer even if layerTreeTileClient is not set
+        and create/assign remote image tiles later during sync.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::WebGraphicsLayer::setContentsToImage):
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+
 2011-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         REGRESSION(r102334): Various Qt WK2 layout tests crash
