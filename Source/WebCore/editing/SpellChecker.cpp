@@ -45,30 +45,36 @@
 
 namespace WebCore {
 
-class SpellChecker::SpellCheckRequest : public RefCounted<SpellChecker::SpellCheckRequest> {
-public:
-    SpellCheckRequest(int sequence, PassRefPtr<Range> range, const String& text, TextCheckingTypeMask mask)
-        : m_sequence(sequence)
-        , m_range(range)
-        , m_text(text)
-        , m_mask(mask)
-        , m_rootEditableElement(m_range->startContainer()->rootEditableElement())
-    {
-    }
+static const int unrequestedSequence = -1;
 
-    int sequence() const { return m_sequence; }
-    Range* range() const { return m_range.get(); }
-    const String& text() const { return m_text; }
-    TextCheckingTypeMask mask() const { return m_mask; }
-    Element* rootEditableElement() const { return m_rootEditableElement; }
+SpellCheckRequest::SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String& text, TextCheckingTypeMask mask)
+    : m_sequence(sequence)
+    , m_checkingRange(checkingRange)
+    , m_paragraphRange(paragraphRange)
+    , m_text(text)
+    , m_mask(mask)
+    , m_rootEditableElement(m_checkingRange->startContainer()->rootEditableElement())
+{
+}
 
-private:
-    int m_sequence;
-    RefPtr<Range> m_range;
-    String m_text;
-    TextCheckingTypeMask m_mask;
-    Element* m_rootEditableElement;
-};
+SpellCheckRequest::~SpellCheckRequest()
+{
+}
+
+// static
+PassRefPtr<SpellCheckRequest> SpellCheckRequest::create(TextCheckingTypeMask textCheckingOptions, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange)
+{
+    ASSERT(checkingRange);
+    ASSERT(paragraphRange);
+
+    String text = checkingRange->text();
+    if (!text.length())
+        return PassRefPtr<SpellCheckRequest>();
+
+    return adoptRef(new SpellCheckRequest(unrequestedSequence, checkingRange, paragraphRange, text, textCheckingOptions));
+}
+
+
 
 SpellChecker::SpellChecker(Frame* frame)
     : m_frame(frame)
@@ -88,17 +94,6 @@ TextCheckerClient* SpellChecker::client() const
     if (!page)
         return 0;
     return page->editorClient()->textChecker();
-}
-
-PassRefPtr<SpellChecker::SpellCheckRequest> SpellChecker::createRequest(TextCheckingTypeMask mask, PassRefPtr<Range> range)
-{
-    ASSERT(canCheckAsynchronously(range.get()));
-
-    String text = range->text();
-    if (!text.length())
-        return PassRefPtr<SpellCheckRequest>();
-
-    return adoptRef(new SpellCheckRequest(++m_lastRequestSequence, range, text, mask));
 }
 
 void SpellChecker::timerFiredToProcessQueuedRequest(Timer<SpellChecker>*)
@@ -125,21 +120,24 @@ bool SpellChecker::isCheckable(Range* range) const
     return range && range->firstNode() && range->firstNode()->renderer();
 }
 
-void SpellChecker::requestCheckingFor(TextCheckingTypeMask mask, PassRefPtr<Range> range)
+void SpellChecker::requestCheckingFor(PassRefPtr<SpellCheckRequest> request)
 {
-    if (!canCheckAsynchronously(range.get()))
+    if (!request || !canCheckAsynchronously(request->paragraphRange().get()))
         return;
 
-    RefPtr<SpellCheckRequest> request(createRequest(mask, range));
-    if (!request)
-        return;
+    ASSERT(request->sequence() == unrequestedSequence);
+    int sequence = ++m_lastRequestSequence;
+    if (sequence == unrequestedSequence)
+        sequence = ++m_lastRequestSequence;
+
+    request->setSequence(sequence);
 
     if (m_timerToProcessQueuedRequest.isActive() || m_processingRequest) {
-        enqueueRequest(request.release());
+        enqueueRequest(request);
         return;
     }
 
-    invokeRequest(request.release());
+    invokeRequest(request);
 }
 
 void SpellChecker::invokeRequest(PassRefPtr<SpellCheckRequest> request)
@@ -206,7 +204,7 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
     }
 
     int startOffset = 0;
-    PositionIterator start = m_processingRequest->range()->startPosition();
+    PositionIterator start = m_processingRequest->checkingRange()->startPosition();
     for (size_t i = 0; i < results.size(); ++i) {
         if (results[i].type != TextCheckingTypeSpelling && results[i].type != TextCheckingTypeGrammar)
             continue;
@@ -224,12 +222,12 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
         // spellings in the background. To avoid adding markers to the words modified by users or
         // JavaScript applications, retrieve the words in the specified region and compare them with
         // the original ones.
-        RefPtr<Range> range = Range::create(m_processingRequest->range()->ownerDocument(), start, end);
+        RefPtr<Range> range = Range::create(m_processingRequest->checkingRange()->ownerDocument(), start, end);
         // FIXME: Use textContent() compatible string conversion.
         String destination = range->text();
         String source = m_processingRequest->text().substring(results[i].location, results[i].length);
         if (destination == source)
-            m_processingRequest->range()->ownerDocument()->markers()->addMarker(range.get(), toMarkerType(results[i].type));
+            m_processingRequest->checkingRange()->ownerDocument()->markers()->addMarker(range.get(), toMarkerType(results[i].type));
 
         startOffset = results[i].location;
     }

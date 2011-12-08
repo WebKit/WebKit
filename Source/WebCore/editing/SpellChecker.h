@@ -26,10 +26,13 @@
 #ifndef SpellChecker_h
 #define SpellChecker_h
 
+#include "Element.h"
 #include "PlatformString.h"
+#include "Range.h"
 #include "TextChecking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -40,7 +43,30 @@ class Frame;
 class Node;
 class TextCheckerClient;
 struct TextCheckingResult;
-class Range;
+
+class SpellCheckRequest : public RefCounted<SpellCheckRequest> {
+public:
+    SpellCheckRequest(int sequence, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange, const String&, TextCheckingTypeMask);
+    ~SpellCheckRequest();
+
+    static PassRefPtr<SpellCheckRequest> create(TextCheckingTypeMask, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
+
+    void setSequence(int sequence) { m_sequence = sequence; }
+    int sequence() const { return m_sequence; }
+    PassRefPtr<Range> checkingRange() const { return m_checkingRange; }
+    PassRefPtr<Range> paragraphRange() const { return m_paragraphRange; }
+    const String& text() const { return m_text; }
+    TextCheckingTypeMask mask() const { return m_mask; }
+    PassRefPtr<Element> rootEditableElement() const { return m_rootEditableElement; }
+private:
+
+    int m_sequence;
+    RefPtr<Range> m_checkingRange;
+    RefPtr<Range> m_paragraphRange;
+    String m_text;
+    TextCheckingTypeMask m_mask;
+    RefPtr<Element> m_rootEditableElement;
+};
 
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);
@@ -50,7 +76,8 @@ public:
 
     bool isAsynchronousEnabled() const;
     bool isCheckable(Range*) const;
-    void requestCheckingFor(TextCheckingTypeMask, PassRefPtr<Range>);
+
+    void requestCheckingFor(PassRefPtr<SpellCheckRequest>);
     void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
     int lastRequestSequence() const
@@ -64,11 +91,9 @@ public:
     }
 
 private:
-    class SpellCheckRequest;
     typedef Deque<RefPtr<SpellCheckRequest> > RequestQueue;
 
     bool canCheckAsynchronously(Range*) const;
-    PassRefPtr<SpellCheckRequest> createRequest(TextCheckingTypeMask, PassRefPtr<Range>);
     TextCheckerClient* client() const;
     void timerFiredToProcessQueuedRequest(Timer<SpellChecker>*);
     void invokeRequest(PassRefPtr<SpellCheckRequest>);

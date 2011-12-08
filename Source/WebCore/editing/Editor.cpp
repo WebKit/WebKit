@@ -416,8 +416,8 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
     if (!nodeToCheck)
         return;
 
-    m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar),
-        Range::create(m_frame->document(), firstPositionInNode(nodeToCheck), lastPositionInNode(nodeToCheck)));
+    RefPtr<Range> rangeToCheck = Range::create(m_frame->document(), firstPositionInNode(nodeToCheck), lastPositionInNode(nodeToCheck));
+    m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(TextCheckingTypeSpelling | TextCheckingTypeGrammar), rangeToCheck, rangeToCheck));
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
@@ -2017,7 +2017,9 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
 
     bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
     if (asynchronous) {
-        m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(textCheckingOptions), paragraphToCheck.paragraphRange());
+        // In asynchronous mode, we intentionally check paragraph-wide sentence.
+        RefPtr<Range> paragraphRange = paragraphToCheck.paragraphRange();
+        m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), paragraphRange, paragraphRange));
         return;
     }
 

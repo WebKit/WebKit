@@ -1,3 +1,36 @@
+2011-12-08  Shinya Kawanaka  <shinyak@google.com>
+
+        Refactoring: Editor::requestCheckingFor should take SpellCheckRequest object.
+        https://bugs.webkit.org/show_bug.cgi?id=74033
+
+        Reviewed by Hajime Morita.
+
+        SpellChecker::requestCheckingFor takes SpellCheckRequest object in order to make it easy to
+        pass necessary information to requestCheckingFor.
+
+        No new tests. Covered by existing tests.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+          Uses the new interface.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): ditto.
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellCheckRequest::SpellCheckRequest):
+        (WebCore::SpellCheckRequest::~SpellCheckRequest):
+        (WebCore::SpellCheckRequest::create):
+          Creates a new SpellCheckRequest object.
+        (WebCore::SpellChecker::requestCheckingFor):
+          Uses the new interface.
+        (WebCore::SpellChecker::didCheck):
+        * editing/SpellChecker.h:
+        (WebCore::SpellCheckRequest::setSequence):
+        (WebCore::SpellCheckRequest::sequence):
+        (WebCore::SpellCheckRequest::checkingRange):
+        (WebCore::SpellCheckRequest::paragraphRange):
+        (WebCore::SpellCheckRequest::text):
+        (WebCore::SpellCheckRequest::mask):
+        (WebCore::SpellCheckRequest::rootEditableElement):
+
 2011-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r102323.
