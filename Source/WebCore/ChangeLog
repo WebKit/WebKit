@@ -1,3 +1,14 @@
+2011-12-07  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74038
+        [V8][Chromium] Support legacy argument order in window.postMessage/window.webkitPostMessage.
+
+        Reviewed by David Levin.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::isLegacyTargetOriginDesignation):
+        (WebCore::handlePostMessageCallback):
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream 4 files into WebCore/platform/blackberry

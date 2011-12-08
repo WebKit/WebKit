@@ -46,10 +46,13 @@ tryPostMessage('1', '*', 1, true);
 tryPostMessage('2', '*', 'c', true);
 tryPostMessage('3', '*', { x: 1 }, true);
 tryPostMessage('4', '*', window);  // Passes because window has a "length" attribute of value '0', so it looks like an array
+tryPostMessage('4a', window, '*'); // Legacy argument order.
 tryPostMessage('5', '*', null);
 tryPostMessage('6', '*', void 0);
 var channel1 = new MessageChannel;
 tryPostMessageFunction(window.postMessage, '7', '*', [channel1.port1, channel1.port2]);
+var channel1a = new MessageChannel;
+tryPostMessageFunction(window.postMessage, '7a', [channel1a.port1, channel1a.port2], '*');
 var channel2 = new MessageChannel;
 tryPostMessageFunction(window.webkitPostMessage, '7', '*', [channel2.port1, channel2.port2]);
 var channel3 = new MessageChannel;

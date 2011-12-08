@@ -286,6 +286,14 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
     return v8::Undefined();
 }
 
+static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
+{
+    if (value->IsString() || value->IsStringObject())
+        return true;
+    return false;
+}
+
+
 static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args, bool extendedTransfer)
 {
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
@@ -293,20 +301,28 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     DOMWindow* source = V8Proxy::retrieveFrameForCallingContext()->domWindow();
     ASSERT(source->frame());
 
-    // This function has variable arguments and can either be:
-    //   postMessage(message, port, targetOrigin);
-    // or
-    //   postMessage(message, targetOrigin);
+    // This function has variable arguments and can be:
+    // Per current spec:
+    //   postMessage(message, targetOrigin)
+    //   postMessage(message, targetOrigin, {sequence of transferrables})
+    // Legacy non-standard implementations in webkit allowed:
+    //   postMessage(message, {sequence of transferrables}, targetOrigin);
     MessagePortArray portArray;
     ArrayBufferArray arrayBufferArray;
     String targetOrigin;
     {
         v8::TryCatch tryCatch;
+        int targetOriginArgIndex = 1;
         if (args.Length() > 2) {
-            if (!extractTransferables(args[2], portArray, arrayBufferArray))
+            int transferablesArgIndex = 2;
+            if (isLegacyTargetOriginDesignation(args[2])) {
+                targetOriginArgIndex = 2;
+                transferablesArgIndex = 1;
+            }
+            if (!extractTransferables(args[transferablesArgIndex], portArray, arrayBufferArray))
                 return v8::Undefined();
         } 
-        targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[1]);
+        targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[targetOriginArgIndex]);
 
         if (tryCatch.HasCaught())
             return v8::Undefined();
