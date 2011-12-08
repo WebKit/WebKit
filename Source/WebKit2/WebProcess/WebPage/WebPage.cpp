@@ -409,7 +409,7 @@ EditorState WebPage::editorState() const
         result.selectedText = range->text();
     }
 
-    if (result.isContentEditable && !result.isInPasswordField) {
+    if (scope && result.isContentEditable && !result.isInPasswordField) {
         result.surroundingText = scope->innerText();
         result.surroundingText.remove(result.compositionStart, result.compositionLength);
     }
