@@ -6933,10 +6933,6 @@ tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
-fast/forms/number/input-appearance-number-rtl.html
-fast/forms/number/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/number/input-appearance-spinbutton-layer.html
-fast/forms/number/spin-in-multi-column.html
 
 # crashing test
 fast/text/regional-indicator-symobls.html
