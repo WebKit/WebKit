@@ -900,7 +900,7 @@ AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(Acces
     NSMutableDictionary* parameter = [NSMutableDictionary dictionary];
     [parameter setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
     [parameter setObject:[NSNumber numberWithInt:1] forKey:@"AXResultsLimit"];
-    if (startElement)
+    if (startElement && startElement->platformUIElement())
         [parameter setObject:(id)startElement->platformUIElement() forKey:@"AXStartElement"];
     if (searchKey)
         [parameter setObject:[NSString stringWithJSStringRef:searchKey] forKey:@"AXSearchKey"];

@@ -192,7 +192,9 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
     JSStringRef searchKey = 0;
     JSStringRef searchText = 0;
     if (argumentCount == 4) {
-        startElement = toAXElement(JSValueToObject(context, arguments[0], exception));
+        JSObjectRef startElementObject = JSValueToObject(context, arguments[0], exception);
+        if (startElementObject)
+            startElement = toAXElement(startElementObject);
         isDirectionNext = JSValueToBoolean(context, arguments[1]);
         if (JSValueIsString(context, arguments[2]))
             searchKey = JSValueToStringCopy(context, arguments[2], exception);

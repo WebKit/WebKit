@@ -1,3 +1,19 @@
+2011-12-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: platform/mac/accessibility/search-with-frames.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=74093
+
+        Reviewed by Darin Adler.
+
+        Take care of the case when an incoming element is null.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementForSearchPredicateCallback):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+
 2011-12-08  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] Visualize mock point ID's in the MiniBrowser
