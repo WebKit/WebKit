@@ -1,3 +1,14 @@
+2011-12-08  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Set opaque() for VideoLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=73858
+
+        Reviewed by James Robinson.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::isVideoFrameFormatOpaque):
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+
 2011-12-08  Elliot Poger  <epoger@google.com>
 
         Chromium DEPS roll 112974 -> 113603

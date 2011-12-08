@@ -62,6 +62,29 @@ static PassOwnPtr<WebMediaPlayer> createWebMediaPlayer(WebMediaPlayerClient* cli
     return adoptPtr(webFrame->client()->createMediaPlayer(webFrame, client));
 }
 
+static bool isVideoFrameFormatOpaque(WebVideoFrame::Format format)
+{
+    switch (format) {
+    case WebVideoFrame::FormatInvalid:
+    case WebVideoFrame::FormatEmpty:
+    case WebVideoFrame::FormatRGBA:
+    case WebVideoFrame::FormatNativeTexture:
+        return false;
+    case WebVideoFrame::FormatRGB555:
+    case WebVideoFrame::FormatRGB565:
+    case WebVideoFrame::FormatRGB24:
+    case WebVideoFrame::FormatRGB32:
+    case WebVideoFrame::FormatYV12:
+    case WebVideoFrame::FormatYV16:
+    case WebVideoFrame::FormatNV12:
+    case WebVideoFrame::FormatASCII:
+    case WebVideoFrame::FormatI420:
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool WebMediaPlayerClientImpl::m_isEnabled = false;
 
 bool WebMediaPlayerClientImpl::isEnabled()
@@ -577,6 +600,8 @@ VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
         WebVideoFrame* webkitVideoFrame = m_webMediaPlayer->getCurrentFrame();
         if (webkitVideoFrame)
             m_currentVideoFrame = adoptPtr(new VideoFrameChromiumImpl(webkitVideoFrame));
+        if (m_videoLayer)
+            m_videoLayer->setOpaque(webkitVideoFrame && isVideoFrameFormatOpaque(webkitVideoFrame->format()));
     }
     return m_currentVideoFrame.get();
 }
