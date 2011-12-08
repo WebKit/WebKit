@@ -165,6 +165,11 @@ module test {
         static void classMethod();
         static long classMethodWithOptional(in [Optional] long arg);
 
+        // Static method with conditional on overloaded methods
+
+        static [Conditional=Condition1] void overloadedMethod1(in long arg);
+        static [Conditional=Condition1] void overloadedMethod1(in DOMString type);
+
 #if defined(TESTING_V8)
         // 'EnabledAtRuntime' methods and attributes.
         [EnabledAtRuntime] void enabledAtRuntimeMethod1(in int intArg);

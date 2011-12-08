@@ -1,3 +1,33 @@
+2011-12-08  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Fixing support for static conditional overloaded functions.
+        https://bugs.webkit.org/show_bug.cgi?id=74068
+
+        Reviewed by Adam Barth.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Pushing "static" keyword after condition "#if".
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        (WebDOMTestObj::overloadedMethod1): Added newly generated bindings.
+        * bindings/scripts/test/CPP/WebDOMTestObj.h: Ditto.
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp: Ditto.
+        (webkit_dom_test_obj_overloaded_method1):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod11):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod12):
+        (WebCore::jsTestObjConstructorFunctionOverloadedMethod1):
+        * bindings/scripts/test/JS/JSTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.h: Ditto.
+        * bindings/scripts/test/ObjC/DOMTestObj.mm: Ditto.
+        (-[DOMTestObj overloadedMethod1:]):
+        * bindings/scripts/test/TestObj.idl: Ditto.
+        * bindings/scripts/test/V8/V8TestObj.cpp: Ditto.
+        (WebCore::TestObjInternal::overloadedMethod11Callback):
+        (WebCore::TestObjInternal::overloadedMethod12Callback):
+        (WebCore::TestObjInternal::overloadedMethod1Callback):
+        (WebCore::ConfigureV8TestObjTemplate):
+
 2011-12-08  Andreas Kling  <kling@webkit.org>
 
         Remove EventListenerMap destructor.

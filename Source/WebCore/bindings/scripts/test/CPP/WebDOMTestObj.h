@@ -181,6 +181,8 @@ public:
     void conditionalMethod3();
     void classMethod();
     int classMethodWithOptional(int arg);
+    void overloadedMethod1(int arg);
+    void overloadedMethod1(const WebDOMString& type);
 
     WebCore::TestObj* impl() const;
 

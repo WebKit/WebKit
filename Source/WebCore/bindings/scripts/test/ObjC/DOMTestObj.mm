@@ -768,6 +768,26 @@
     return IMPL->classMethodWithOptional(arg);
 }
 
+
+#if ENABLE(Condition1)
+- (void)overloadedMethod1:(int)arg
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->overloadedMethod1(arg);
+}
+
+#endif
+
+
+#if ENABLE(Condition1)
+- (void)overloadedMethod1:(NSString *)type
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->overloadedMethod1(type);
+}
+
+#endif
+
 @end
 
 WebCore::TestObj* core(DOMTestObj *wrapper)

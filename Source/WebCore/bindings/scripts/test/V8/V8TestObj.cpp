@@ -1285,6 +1285,37 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     return v8::Integer::New(TestObj::classMethodWithOptional(arg));
 }
 
+static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod11");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    EXCEPTION_BLOCK(int, arg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined)));
+    TestObj::overloadedMethod1(arg);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod12");
+    if (args.Length() < 1)
+        return throwError("Not enough arguments", V8Proxy::TypeError);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, MAYBE_MISSING_PARAMETER(args, 0, MissingIsUndefined));
+    TestObj::overloadedMethod1(type);
+    return v8::Handle<v8::Value>();
+}
+
+static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.overloadedMethod1");
+    if (args.Length() == 1)
+        return overloadedMethod11Callback(args);
+    if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined() || args[0]->IsString() || args[0]->IsObject())))
+        return overloadedMethod12Callback(args);
+    V8Proxy::throwTypeError();
+    return notHandledByInterceptor();
+}
+
 static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.enabledAtRuntimeMethod1");
@@ -1560,6 +1591,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     proto->Set(v8::String::New("customArgsAndException"), v8::FunctionTemplate::New(TestObjInternal::customArgsAndExceptionCallback, v8::Handle<v8::Value>(), customArgsAndExceptionSignature));
     desc->Set(v8::String::New("classMethod"), v8::FunctionTemplate::New(TestObjInternal::classMethodCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::New("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjInternal::classMethodWithOptionalCallback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::New("overloadedMethod1"), v8::FunctionTemplate::New(TestObjInternal::overloadedMethod1Callback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
     if (RuntimeEnabledFeatures::enabledAtRuntimeMethod1Enabled())
         proto->Set(v8::String::New("enabledAtRuntimeMethod1"), v8::FunctionTemplate::New(TestObjInternal::enabledAtRuntimeMethod1Callback, v8::Handle<v8::Value>(), defaultSignature));
     if (RuntimeEnabledFeatures::featureNameEnabled())

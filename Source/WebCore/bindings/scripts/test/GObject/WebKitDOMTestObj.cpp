@@ -415,6 +415,30 @@ webkit_dom_test_obj_class_method_with_optional(WebKitDOMTestObj* self, glong arg
     return res;
 }
 
+void
+webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, glong arg)
+{
+#if ENABLE(Condition1)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    item->overloadedMethod1(arg);
+#endif /* ENABLE(Condition1) */
+}
+
+void
+webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type)
+{
+#if ENABLE(Condition1)
+    g_return_if_fail(self);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestObj * item = WebKit::core(self);
+    g_return_if_fail(type);
+    WTF::String converted_type = WTF::String::fromUTF8(type);
+    item->overloadedMethod1(converted_type);
+#endif /* ENABLE(Condition1) */
+}
+
 glong
 webkit_dom_test_obj_get_read_only_int_attr(WebKitDOMTestObj* self)
 {

@@ -2071,6 +2071,13 @@ sub GenerateImplementation
 
             my $functionName = GetFunctionName($className, $function);
 
+            my $conditional = $function->signature->extendedAttributes->{"Conditional"};
+            if ($conditional) {
+                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
+                push(@implContent, "#if ${conditionalString}\n");
+            }
+
+
             if (!$isCustom && $isOverloaded) {
                 # Append a number to an overloaded method's name to make it unique:
                 $functionName = $functionName . $function->{overloadIndex};
@@ -2078,14 +2085,8 @@ sub GenerateImplementation
                 # don't generate a prototype for it in the header.
                 push(@implContent, "static ");
             }
-            
-            my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            my $conditional = $function->signature->extendedAttributes->{"Conditional"};
-            if ($conditional) {
-                my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
-                push(@implContent, "#if ${conditionalString}\n");
-            }
+            my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
             push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
             push(@implContent, "{\n");

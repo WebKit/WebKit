@@ -905,6 +905,30 @@ int WebDOMTestObj::classMethodWithOptional(int arg)
     return impl()->classMethodWithOptional(arg);
 }
 
+
+#if ENABLE(Condition1)
+void WebDOMTestObj::overloadedMethod1(int arg)
+{
+    if (!impl())
+        return;
+
+    impl()->overloadedMethod1(arg);
+}
+
+#endif
+
+
+#if ENABLE(Condition1)
+void WebDOMTestObj::overloadedMethod1(const WebDOMString& type)
+{
+    if (!impl())
+        return;
+
+    impl()->overloadedMethod1(type);
+}
+
+#endif
+
 WebCore::TestObj* toWebCore(const WebDOMTestObj& wrapper)
 {
     return wrapper.impl();

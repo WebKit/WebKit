@@ -173,6 +173,8 @@ enum {
 - (void)conditionalMethod3;
 - (void)classMethod;
 - (int)classMethodWithOptional:(int)arg;
+- (void)overloadedMethod1:(int)arg;
+- (void)overloadedMethod1:(NSString *)type;
 @end
 
 #endif
