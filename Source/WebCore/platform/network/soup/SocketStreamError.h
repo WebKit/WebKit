@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,8 +38,8 @@ namespace WebCore {
     class SocketStreamError : public SocketStreamErrorBase {
     public:
         SocketStreamError() { }
-        explicit SocketStreamError(int errorCode)
-            : SocketStreamErrorBase(errorCode)
+        explicit SocketStreamError(int errorCode, const gchar* description)
+            : SocketStreamErrorBase(errorCode, String(), String(description))
         {
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -102,7 +102,7 @@ SocketStreamHandle::~SocketStreamHandle()
 void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* error)
 {
     if (error) {
-        m_client->didFailSocketStream(this, SocketStreamError(error->code));
+        m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
         return;
     }
 
@@ -125,7 +125,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
 void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
 {
     if (error) {
-        m_client->didFailSocketStream(this, SocketStreamError(error->code));
+        m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
         return;
     }
 
@@ -155,15 +155,13 @@ void SocketStreamHandle::writeReady()
 
 int SocketStreamHandle::platformSend(const char* data, int length)
 {
-    if (!g_pollable_output_stream_is_writable(m_outputStream.get())) {
-        beginWaitingForSocketWritability();
-        return 0;
-    }
-
     GOwnPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, 0, &error.outPtr());
-    if (error && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK)) {
-        m_client->didFailSocketStream(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
+    if (error) {
+        if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK))
+            beginWaitingForSocketWritability();
+        else
+            m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
         return 0;
     }
 
@@ -185,7 +183,7 @@ void SocketStreamHandle::platformClose()
         GOwnPtr<GError> error;
         g_io_stream_close(G_IO_STREAM(m_socketConnection.get()), 0, &error.outPtr());
         if (error)
-            m_client->didFailSocketStream(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
+            m_client->didFailSocketStream(this, SocketStreamError(error->code, error->message));
         m_socketConnection = 0;
     }
 

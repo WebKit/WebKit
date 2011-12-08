@@ -1,3 +1,20 @@
+2011-12-08  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Provide more specific error description for SocketStreamError.
+        https://bugs.webkit.org/show_bug.cgi?id=74066
+
+        Reviewed by Martin Robinson.
+
+        No new tests because this change just improve error messages for unexpected failures.
+
+        * platform/network/soup/SocketStreamError.h: Add an argument for passing error description.
+        (WebCore::SocketStreamError::SocketStreamError):
+        * platform/network/soup/SocketStreamHandleSoup.cpp: Add error description for SocketStreamError.
+        (WebCore::SocketStreamHandle::connected):
+        (WebCore::SocketStreamHandle::readBytes):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+
 2011-12-08  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions][CSSOM] Implement NamedFlow interface
