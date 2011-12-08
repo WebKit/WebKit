@@ -1106,15 +1106,15 @@ BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 // the image change should be very slight (only in low-bits of color components)
 //
 BUGCR105305 CPU : fast/backgrounds/size/contain-and-cover-zoomed.html = IMAGE
-BUGCR105305 LINUX SNOWLEOPARD CPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGCR105305 LINUX MAC CPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGCR105305 CPU GPU : media/audio-repaint.html = IMAGE
-BUGCR105305 LINUX SNOWLEOPARD CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
+BUGCR105305 LINUX MAC CPU : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = IMAGE
 BUGCR105305 CPU : svg/css/composite-shadow-text.svg = IMAGE
 BUGCR105305 CPU : svg/css/text-gradient-shadow.svg = IMAGE
 BUGCR105305 CPU : svg/custom/gradient-stroke-width.svg = IMAGE
 BUGCR105305 CPU : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
 BUGCR105305 CPU : svg/custom/pattern-with-transformation.svg = IMAGE
-BUGCR105305 LINUX SNOWLEOPARD CPU : svg/text/text-gradient-positioning.svg = IMAGE
+BUGCR105305 LINUX MAC CPU : svg/text/text-gradient-positioning.svg = IMAGE
 BUGCR105305 : svg/text/selection-background-color.xhtml = PASS CRASH IMAGE
 BUGCR105305 : svg/text/selection-styles.xhtml = PASS CRASH IMAGE
 BUGCR105305 MAC : fast/borders/border-image-rotate-transform.html = IMAGE
@@ -1484,9 +1484,9 @@ BUGCR104128 CPU : fast/canvas/shadow-offset-6.html = IMAGE
 BUGCR104128 CPU : fast/canvas/shadow-offset-7.html = IMAGE
 BUGCR104128 CPU : fast/repaint/box-shadow-h.html = IMAGE
 BUGCR104128 CPU : fast/repaint/box-shadow-v.html = IMAGE
-BUGCR104128 LINUX SNOWLEOPARD CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
-BUGCR104128 LINUX SNOWLEOPARD CPU : fast/repaint/text-shadow.html = IMAGE
-BUGCR104128 LINUX SNOWLEOPARD CPU : fast/text/shadow-no-blur.html = IMAGE
+BUGCR104128 LINUX MAC CPU : fast/repaint/text-shadow-horizontal.html = IMAGE
+BUGCR104128 LINUX MAC CPU : fast/repaint/text-shadow.html = IMAGE
+BUGCR104128 LINUX MAC CPU : fast/text/shadow-no-blur.html = IMAGE
 BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/shadow-translucent-fill.html = IMAGE
 BUGCR104128 CPU : fast/text/stroking-decorations.html = IMAGE
 BUGCR104128 WIN LINUX SNOWLEOPARD CPU : fast/text/stroking.html = IMAGE
@@ -2601,7 +2601,7 @@ BUGCR69181 MAC : fast/js/large-expressions.html = TEXT
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = PASS IMAGE
 
 // New test added in r75720
-BUGCR69571 SKIP : plugins/destroy-on-setwindow.html = CRASH TEXT
+BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH TEXT
 
 // Failing after r75768, times out after r89503
 BUGCR69639 BUGWK63227 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TIMEOUT TEXT
@@ -2635,7 +2635,7 @@ BUGCR71418 LEOPARD CPU-CG : fast/borders/border-radius-split-inline.html = IMAGE
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS CRASH TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
-BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH
+BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH MISSING
 
 // It is failing since r77459.
 // Fix miscalculation of the overhang area used for painting. We were
