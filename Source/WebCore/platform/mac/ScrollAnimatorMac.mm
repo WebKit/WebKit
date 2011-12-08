@@ -668,6 +668,10 @@ void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
 {
     FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
  
+    bool positionChanged = adjustedPosition.x() != m_currentPosX || adjustedPosition.y() != m_currentPosY;
+    if (!positionChanged && !scrollableArea()->scrollOriginChanged())
+        return;
+
     m_currentPosX = adjustedPosition.x();
     m_currentPosY = adjustedPosition.y();
     notifyPositionChanged();

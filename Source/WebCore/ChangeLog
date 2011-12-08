@@ -1,3 +1,36 @@
+2011-12-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73348
+        REGRESSION: Assertion when loading a page with a scrollable RenderLayer 
+        -and corresponding-
+        <rdar://problem/10518918>
+
+        Reviewed by Darin Adler.
+
+        The main problem here is that certain delegate calls into AppKit for overlay 
+        scrollbars can cause AppKit to call back into WebKit looking for more information. 
+        The assertion happens when WebKit tells AppKit that the scroll position has 
+        changed during a layout, and AppKit immediately asks WebKit to convert some 
+        coordinates, and WebKit asserts that you shouldn't do that while a layout is still 
+        happening. It's still possible for AppKit to call this delegate method while a 
+        layout is happening, and we should guard against that. This patch, however, does 
+        not do that.
+
+        This change instead addresses the reason this assertion started happening much 
+        more frequently recently, which is that it recently became true that 
+        notifyPositionChanged() can be called when the position has not changed. To fix 
+        the assertion AND the bug that that change was intended to fix, we can just make 
+        sure that either the position OR the scroll origin has changed before calling 
+        notifyPositionChanged(). 
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint):
+
+        Call resetScrollOriginChanged() after the scroll instead of before so that we know 
+        whether or not to call notifyPositionChanged().
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
 2011-12-08  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Fixing support for static conditional overloaded functions.
