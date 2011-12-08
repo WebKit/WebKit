@@ -53,6 +53,7 @@ public:
         FlushLayerChanges,
         SetRootLayer
     };
+    virtual ~LayerTreeMessageToRenderer() { }
     virtual Type type() const = 0;
 };
 

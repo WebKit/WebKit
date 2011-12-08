@@ -1,3 +1,17 @@
+2011-12-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix the memory leak of AC layer update message contents on the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=74012
+
+        Reviewed by Noam Rosenthal.
+
+        Since the messages didn't have a virtual destructor, the destructor
+        of child class members wouldn't be called and would cause the all tile
+        update buffers, contained in a QImage, to be leaked as well.
+
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeMessageToRenderer::~LayerTreeMessageToRenderer):
+
 2011-12-08  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Upsteam the Qt changes to the EditorState
