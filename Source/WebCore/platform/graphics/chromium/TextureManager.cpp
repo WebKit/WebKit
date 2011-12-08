@@ -47,10 +47,10 @@ size_t memoryLimitBytes(size_t viewportMultiplier, const IntSize& viewportSize, 
 size_t TextureManager::highLimitBytes(const IntSize& viewportSize)
 {
     size_t viewportMultiplier, minMegabytes, maxMegabytes;
-    viewportMultiplier = 8;
+    viewportMultiplier = 12;
 #if OS(ANDROID)
     minMegabytes = 24;
-    maxMegabytes = 32;
+    maxMegabytes = 40;
 #else
     minMegabytes = 64;
     maxMegabytes = 128;
@@ -61,7 +61,7 @@ size_t TextureManager::highLimitBytes(const IntSize& viewportSize)
 size_t TextureManager::reclaimLimitBytes(const IntSize& viewportSize)
 {
     size_t viewportMultiplier, minMegabytes, maxMegabytes;
-    viewportMultiplier = 4;
+    viewportMultiplier = 6;
 #if OS(ANDROID)
     minMegabytes = 9;
     maxMegabytes = 32;
