@@ -1,3 +1,25 @@
+2011-12-07  Aaron Colwell  <acolwell@chromium.org>
+
+        Revert mixed content handling for video fix and follow-up test expectations & Skipped changes.
+        (r101883, r101918, r101927, r101981, r101986, r101997)
+        https://bugs.webkit.org/show_bug.cgi?id=72178
+
+        Reviewed by Adam Barth.
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequest):
+        * loader/cache/CachedRawResource.cpp:
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        (WebCore::cachedResourceTypeToTargetType):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+
 2011-12-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Introduce AssertMatchingEnums.cpp.

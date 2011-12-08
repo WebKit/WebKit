@@ -41,12 +41,6 @@ CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest)
 {
 }
 
-CachedRawResource::CachedRawResource(ResourceRequest& resourceRequest, Type type)
-    : CachedResource(resourceRequest, type)
-    , m_dataLength(0)
-{
-}
-
 void CachedRawResource::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
     CachedResourceHandle<CachedRawResource> protect(this);

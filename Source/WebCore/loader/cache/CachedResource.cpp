@@ -74,10 +74,6 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
         case CachedResource::LinkSubresource:
             return ResourceLoadPriorityVeryLow;
 #endif
-#if ENABLE(VIDEO)
-        case CachedResource::MediaResource:
-            return ResourceLoadPriorityMedium;
-#endif
 #if ENABLE(VIDEO_TRACK)
         case CachedResource::TextTrackResource:
             return ResourceLoadPriorityLow;
@@ -116,10 +112,6 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     case CachedResource::LinkSubresource:
         return ResourceRequest::TargetIsSubresource;
 #endif
-#if ENABLE(VIDEO)
-    case CachedResource::MediaResource:
-        return ResourceRequest::TargetIsMedia;
-#endif
 #if ENABLE(VIDEO_TRACK)
     case CachedResource::TextTrackResource:
         return ResourceRequest::TargetIsTextTrack;
@@ -128,49 +120,6 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     ASSERT_NOT_REACHED();
     return ResourceRequest::TargetIsSubresource;
 }
-
-CachedResource::Type CachedResource::targetTypeToCachedResourceType(ResourceRequest::TargetType type)
-{
-    switch (type) {
-    case ResourceRequest::TargetIsStyleSheet:
-        return CachedResource::CSSStyleSheet;
-    case ResourceRequest::TargetIsScript:
-        return CachedResource::Script;
-    case ResourceRequest::TargetIsFontResource:
-        return CachedResource::FontResource;
-    case ResourceRequest::TargetIsImage:
-    case ResourceRequest::TargetIsFavicon:
-        return CachedResource::ImageResource;
-    case ResourceRequest::TargetIsSubresource:
-        return CachedResource::RawResource;
-    case ResourceRequest::TargetIsWorker:
-    case ResourceRequest::TargetIsSharedWorker:
-        return CachedResource::Script;
-    case ResourceRequest::TargetIsObject:
-    case ResourceRequest::TargetIsMainFrame:
-    case ResourceRequest::TargetIsSubframe:
-    case ResourceRequest::TargetIsXHR:
-    case ResourceRequest::TargetIsUnspecified:
-        return CachedResource::RawResource;
-#if ENABLE(LINK_PREFETCH)
-    case ResourceRequest::TargetIsPrefetch:
-        return CachedResource::LinkPrefetch;
-    case ResourceRequest::TargetIsPrerender:
-        return CachedResource::LinkPrerender;
-#endif
-#if ENABLE(VIDEO)
-    case ResourceRequest::TargetIsMedia:
-        return CachedResource::MediaResource;
-#endif
-#if ENABLE(VIDEO_TRACK)
-    case ResourceRequest::TargetIsTextTrack:
-        return CachedResource::TextTrackResource;
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return CachedResource::RawResource;
-}
-
 #endif
 
 DEFINE_DEBUG_ONLY_GLOBAL(RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
