@@ -1,3 +1,11 @@
+2011-12-08  Nayan Kumar K  <nayankk@motorola.com>
+
+        Adding myself to committers list.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-07  Michael Saboff  <msaboff@apple.com>
 
         StringBuilderTest.Append and StringBuilderTest.ToStringPreserveCapacity are failing.
