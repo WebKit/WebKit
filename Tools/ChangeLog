@@ -1,3 +1,17 @@
+2011-12-07  MORITA Hajime  <morrita@google.com>
+
+        [filter-build-webkit] should not emit reset color when --no-color is given
+        https://bugs.webkit.org/show_bug.cgi?id=73992
+
+        Reviewed by Daniel Bates.
+
+        Stop printing control sequences when --no-color is given.
+        After this change, the filter runs nicely even on environments
+        like Emacs compilation-mode which cannot understand the control sequence.
+
+        * Scripts/filter-build-webkit:
+        (printLine):
+
 2011-12-07  Eric Seidel  <eric@webkit.org>
 
         Use free memory to determine if we have space for DRT instances instead of total memory

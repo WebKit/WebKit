@@ -178,13 +178,15 @@ sub printLine($$)
         elsif ($style == STYLE_ALERT)   { print OUTPUT_HANDLE "<p class=\"alert\">$line</p>"; }
         else                            { print OUTPUT_HANDLE "<p>$line</p>"; }
     } else {
-        my $colors = "reset";
         if ($useColor) {
+            my $colors = "reset";
             if ($style == STYLE_HEADER)  { $colors = "blue"; }
             if ($style == STYLE_SUCCESS) { $colors = "green"; }
             if ($style == STYLE_ALERT)   { $colors = "red"; }
+            print OUTPUT_HANDLE possiblyColored($colors, $line);
+        } else {
+            print OUTPUT_HANDLE $line;
         }
-        print OUTPUT_HANDLE possiblyColored($colors, $line);
     }
     print OUTPUT_HANDLE "\n";
 }
