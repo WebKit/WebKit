@@ -166,10 +166,11 @@ bool WebScrollbarImpl::onMouseDown(const WebInputEvent& event)
 
 bool WebScrollbarImpl::onMouseUp(const WebInputEvent& event)
 {
+    WebMouseEvent mouseup = *static_cast<const WebMouseEvent*>(&event);
     if (m_scrollbar->pressedPart() == NoPart)
         return false;
 
-    return m_scrollbar->mouseUp();
+    return m_scrollbar->mouseUp(PlatformMouseEventBuilder(m_scrollbar.get(), mouseup));
 }
 
 bool WebScrollbarImpl::onMouseMove(const WebInputEvent& event)

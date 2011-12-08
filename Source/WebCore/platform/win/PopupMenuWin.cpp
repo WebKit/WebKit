@@ -963,7 +963,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     // Put the point into coordinates relative to the scroll bar
                     mousePoint.move(-scrollBarRect.x(), -scrollBarRect.y());
                     PlatformMouseEvent event(hWnd, message, wParam, MAKELPARAM(mousePoint.x(), mousePoint.y()));
-                    scrollbar()->mouseUp();
+                    scrollbar()->mouseUp(event);
                     // FIXME: This is a hack to work around Scrollbar not invalidating correctly when it doesn't have a parent widget
                     RECT r = scrollBarRect;
                     ::InvalidateRect(popupHandle(), &r, TRUE);
