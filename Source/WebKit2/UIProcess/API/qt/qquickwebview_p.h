@@ -91,6 +91,8 @@ public:
     QQuickWebViewExperimental* experimental() const;
     static QQuickWebViewAttached* qmlAttachedProperties(QObject*);
 
+    static void platformInitialize(); // Only needed by WTR.
+
 public Q_SLOTS:
     void load(const QUrl&);
     void postMessage(const QString&);

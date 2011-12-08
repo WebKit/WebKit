@@ -1,3 +1,17 @@
+2011-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] WebKitTestRunner crashes with debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=74090
+
+        Reviewed by Tor Arne Vestbø.
+
+        Export private C++ API style platformInitialize function needed
+        by low-level WTR.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::platformInitialize):
+        * UIProcess/API/qt/qquickwebview_p.h:
+
 2011-12-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix non-animated pinch-zoom scale commit.

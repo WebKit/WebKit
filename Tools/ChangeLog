@@ -1,3 +1,14 @@
+2011-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] WebKitTestRunner crashes with debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=74090
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::platformInitialize): Call QQuickWebView::platformInitialize
+        to ensure WTF/JSC threading is initialized.
+
 2011-12-08  Dirk Pranke  <dpranke@chromium.org>
 
         fix build-webkit --chromium after breakage in r102201

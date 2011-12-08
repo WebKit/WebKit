@@ -31,6 +31,7 @@
 #include "qquickwebview_p_p.h"
 #include "qwebpreferences_p_p.h"
 
+#include <JavaScriptCore/InitializeThreading.h>
 #include <QtDeclarative/QQuickCanvas>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QInputDialog>
@@ -614,6 +615,12 @@ QQuickWebViewExperimental* QQuickWebView::experimental() const
 QQuickWebViewAttached* QQuickWebView::qmlAttachedProperties(QObject* object)
 {
     return new QQuickWebViewAttached(object);
+}
+
+void QQuickWebView::platformInitialize()
+{
+    JSC::initializeThreading();
+    WTF::initializeMainThread();
 }
 
 void QQuickWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)

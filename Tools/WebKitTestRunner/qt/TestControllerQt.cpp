@@ -35,6 +35,7 @@
 #include <QFileInfo>
 #include <QLibrary>
 #include <QObject>
+#include <qquickwebview_p.h>
 #include <QtGlobal>
 #include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
@@ -82,6 +83,7 @@ void TestController::notifyDone()
 
 void TestController::platformInitialize()
 {
+    QQuickWebView::platformInitialize();
 }
 
 void TestController::platformRunUntil(bool&, double timeout)
