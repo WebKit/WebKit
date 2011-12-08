@@ -69,7 +69,7 @@ public:
     void applyConstraints(const Constraints&);
 
     void setItemRectVisible(const QRectF&);
-    void animateItemRectVisible(const QRectF&);
+    bool animateItemRectVisible(const QRectF&);
 
     void wheelEvent(QWheelEvent*);
     void pagePositionRequest(const QPoint& pos);
@@ -120,7 +120,7 @@ private:
     qreal outerBoundedCSSScale(qreal);
 
     QRectF computePosRangeForItemAtScale(qreal itemScale) const;
-    void ensureContentWithinViewportBoundary(bool immediate = false);
+    bool ensureContentWithinViewportBoundary(bool immediate = false);
 
     void scaleContent(const QPointF& centerInContentCoordinates, qreal scale);
 

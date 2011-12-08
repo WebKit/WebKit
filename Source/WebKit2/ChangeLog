@@ -1,3 +1,22 @@
+2011-12-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix non-animated pinch-zoom scale commit.
+        https://bugs.webkit.org/show_bug.cgi?id=74007
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The update deferrer object was only destroyed at the end of the animation
+        and wouldn't be if the pinch-zoom was ended within legal bounds.
+        This patch also makes sure that the deferrer isn't destroyed and re-created
+        once the animation is started if it was already there.
+
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::animateItemRectVisible):
+        (WebKit::QtViewportInteractionEngine::scaleAnimationStateChanged):
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary):
+        (WebKit::QtViewportInteractionEngine::pinchGestureEnded):
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+
 2011-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         REGRESSION(r101683): QQuickWebView doesn't work with OpenGL/ES 2.0
