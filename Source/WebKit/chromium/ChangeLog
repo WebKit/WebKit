@@ -1,3 +1,17 @@
+2011-12-08  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Exclude the four RenderTableCellDeathTest death tests for Android
+        https://bugs.webkit.org/show_bug.cgi?id=73997
+
+        The ASSERT_DEATH macro is not yet available in Google Test when
+        building for Android, which causes compilation errors. This code
+        will be removed once support lands in the GTest version Chromium
+        uses. See https://bugs.webkit.org/show_bug.cgi?id=74089.
+
+        Reviewed by Julien Chaffraix.
+
+        * tests/RenderTableCellTest.cpp:
+
 2011-12-08  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: WebKit API addition of IDBObjectStore.count() and IDBIndex.count()

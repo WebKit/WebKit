@@ -110,6 +110,10 @@ TEST_F(RenderTableCellDeathTest, CanSetRowToMaxRowIndex)
     EXPECT_EQ(maxRowIndex, m_cell->row());
 }
 
+// FIXME: Re-enable these tests once ASSERT_DEATH is supported for Android.
+// See: https://bugs.webkit.org/show_bug.cgi?id=74089
+#if !OS(ANDROID)
+
 TEST_F(RenderTableCellDeathTest, CrashIfColumnOverflowOnSetting)
 {
     ASSERT_DEATH(m_cell->setCol(maxColumnIndex + 1), "");
@@ -129,6 +133,8 @@ TEST_F(RenderTableCellDeathTest, CrashIfSettingUnsetRowIndex)
 {
     ASSERT_DEATH(m_cell->setRow(unsetRowIndex), "");
 }
+
+#endif
 
 }
 
