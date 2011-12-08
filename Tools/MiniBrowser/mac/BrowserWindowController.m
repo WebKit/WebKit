@@ -667,6 +667,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // shouldInterruptJavaScript
         createNewPage,
         mouseDidMoveOverElement,
+        0, // decidePolicyForNotificationPermissionRequest
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

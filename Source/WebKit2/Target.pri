@@ -157,6 +157,7 @@ HEADERS += \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKNotification.h \
     UIProcess/API/C/WKNotificationManager.h \
+    UIProcess/API/C/WKNotificationPermissionRequest.h \
     UIProcess/API/C/WKNotificationProvider.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageGroup.h \
@@ -194,6 +195,11 @@ HEADERS += \
     UIProcess/GeolocationPermissionRequestProxy.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
+    UIProcess/Notifications/NotificationPermissionRequest.h \
+    UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h \
+    UIProcess/Notifications/WebNotification.h \
+    UIProcess/Notifications/WebNotificationManagerProxy.h \
+    UIProcess/Notifications/WebNotificationProvider.h \
     UIProcess/PageClient.h \
     UIProcess/Plugins/PluginInfoStore.h \
     UIProcess/Plugins/PluginProcessProxy.h \
@@ -232,9 +238,6 @@ HEADERS += \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebMediaCacheManagerProxy.h \
     UIProcess/WebNavigationData.h \
-    UIProcess/WebNotification.h \
-    UIProcess/WebNotificationManagerProxy.h \
-    UIProcess/WebNotificationProvider.h \
     UIProcess/WebOpenPanelResultListenerProxy.h \
     UIProcess/WebPageContextMenuClient.h \
     UIProcess/WebPageGroup.h \
@@ -304,6 +307,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
     WebProcess/MediaCache/WebMediaCacheManager.h \
+    WebProcess/Notifications/NotificationPermissionRequestManager.h \
     WebProcess/Notifications/WebNotificationManager.h \
     WebProcess/ResourceCache/WebResourceCacheManager.h \
     WebProcess/Plugins/Netscape/JSNPMethod.h \
@@ -477,6 +481,7 @@ SOURCES += \
     UIProcess/API/C/WKInspector.cpp \
     UIProcess/API/C/WKNotification.cpp \
     UIProcess/API/C/WKNotificationManager.cpp \
+    UIProcess/API/C/WKNotificationPermissionRequest.cpp \
     UIProcess/API/C/WKOpenPanelParameters.cpp \
     UIProcess/API/C/WKOpenPanelResultListener.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
@@ -510,6 +515,11 @@ SOURCES += \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
+    UIProcess/Notifications/NotificationPermissionRequest.cpp \
+    UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \
+    UIProcess/Notifications/WebNotification.cpp \
+    UIProcess/Notifications/WebNotificationManagerProxy.cpp \
+    UIProcess/Notifications/WebNotificationProvider.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/PluginProcessProxy.cpp \
     UIProcess/Plugins/PluginProcessManager.cpp \
@@ -548,9 +558,6 @@ SOURCES += \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebMediaCacheManagerProxy.cpp \
     UIProcess/WebNavigationData.cpp \
-    UIProcess/WebNotification.cpp \
-    UIProcess/WebNotificationManagerProxy.cpp \
-    UIProcess/WebNotificationProvider.cpp \
     UIProcess/WebOpenPanelResultListenerProxy.cpp \
     UIProcess/WebPageContextMenuClient.cpp \
     UIProcess/WebPageGroup.cpp \
@@ -636,6 +643,7 @@ SOURCES += \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
     WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
     WebProcess/MediaCache/WebMediaCacheManager.cpp \
+    WebProcess/Notifications/NotificationPermissionRequestManager.cpp \
     WebProcess/Notifications/WebNotificationManager.cpp \
     WebProcess/ResourceCache/WebResourceCacheManager.cpp \
     WebProcess/Plugins/Netscape/JSNPMethod.cpp \

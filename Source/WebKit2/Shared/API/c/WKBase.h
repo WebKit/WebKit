@@ -97,6 +97,7 @@ typedef const struct OpaqueWKMediaCacheManager* WKMediaCacheManagerRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
 typedef const struct OpaqueWKNotification* WKNotificationRef;
 typedef const struct OpaqueWKNotificationManager* WKNotificationManagerRef;
+typedef const struct OpaqueWKNotificationPermissionRequest* WKNotificationPermissionRequestRef;
 typedef const struct OpaqueWKNotificationProvider* WKNotificationProviderRef;
 typedef const struct OpaqueWKOpenPanelParameters* WKOpenPanelParametersRef;
 typedef const struct OpaqueWKOpenPanelResultListener* WKOpenPanelResultListenerRef;

@@ -23,61 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationManager_h
-#define WebNotificationManager_h
+#ifndef NotificationPermissionRequestManager_h
+#define NotificationPermissionRequestManager_h
 
-#include "MessageID.h"
+#include <WebCore/NotificationPresenter.h>
+#include <WebCore/VoidCallback.h>
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-}
 
 namespace WebCore {
-class Notification;
+class Notification;    
+class SecurityOrigin;
 }
 
 namespace WebKit {
 
 class WebPage;
-class WebProcess;
 
-class WebNotificationManager {
-    WTF_MAKE_NONCOPYABLE(WebNotificationManager);
+/// FIXME: Need to keep a queue of pending notifications which permission is still being requested.
+class NotificationPermissionRequestManager : public RefCounted<NotificationPermissionRequestManager> {
 public:
-    explicit WebNotificationManager(WebProcess*);
-    ~WebNotificationManager();
-
-    bool show(WebCore::Notification*, WebPage*);
-    void cancel(WebCore::Notification*, WebPage*);
-    // This callback comes from WebCore, not messaged from the UI process.
-    void didDestroyNotification(WebCore::Notification*, WebPage*);
-
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
+    static PassRefPtr<NotificationPermissionRequestManager> create(WebPage*);
+    
+    void startRequest(WebCore::SecurityOrigin*, PassRefPtr<WebCore::VoidCallback>);
+    void cancelRequest(WebCore::SecurityOrigin*);
+    
+    // Synchronous call to retrieve permission level for given security origin
+    WebCore::NotificationPresenter::Permission permissionLevel(WebCore::SecurityOrigin*);
+    
+    void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
+    
 private:
-    // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    NotificationPermissionRequestManager(WebPage*);
     
-    void didShowNotification(uint64_t notificationID);
-    void didClickNotification(uint64_t notificationID);
-    void didCloseNotifications(const Vector<uint64_t>& notificationIDs);
+    HashMap<uint64_t, RefPtr<WebCore::VoidCallback> > m_idToCallbackMap;
+    HashMap<RefPtr<WebCore::SecurityOrigin>, uint64_t> m_originToIDMap;
+    HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin> > m_idToOriginMap;
 
-    WebProcess* m_process;
-
-#if ENABLE(NOTIFICATIONS)
-    typedef HashMap<RefPtr<WebCore::Notification>, uint64_t> NotificationMap;
-    NotificationMap m_notificationMap;
-    
-    typedef HashMap<uint64_t, RefPtr<WebCore::Notification> > NotificationIDMap;
-    NotificationIDMap m_notificationIDMap;
-#endif
+    WebPage* m_page;
 };
+
+inline bool isRequestIDValid(uint64_t id)
+{
+    // This check makes sure that the ID is not equal to values needed by
+    // HashMap for bucketing.
+    return id && id != static_cast<uint64_t>(-1);
+}
 
 } // namespace WebKit
 
-#endif
+#endif // NotificationPermissionRequestManager_h

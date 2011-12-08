@@ -28,9 +28,12 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include "NotificationPermissionRequestManager.h"
 #include "WebNotificationManager.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/ScriptExecutionContext.h>
 
 using namespace WebCore;
 
@@ -74,20 +77,21 @@ void WebNotificationClient::notificationObjectDestroyed(Notification* notificati
 #endif
 }
 
-void WebNotificationClient::requestPermission(ScriptExecutionContext*, PassRefPtr<VoidCallback>)
+void WebNotificationClient::requestPermission(ScriptExecutionContext* context, PassRefPtr<VoidCallback> callback)
 {
-    notImplemented();
+    m_page->notificationPermissionRequestManager()->startRequest(context->securityOrigin(), callback);
 }
 
-void WebNotificationClient::cancelRequestsForPermission(ScriptExecutionContext*)
+void WebNotificationClient::cancelRequestsForPermission(ScriptExecutionContext* context)
 {
-    notImplemented();
+    m_page->notificationPermissionRequestManager()->cancelRequest(context->securityOrigin());
 }
 
-NotificationPresenter::Permission WebNotificationClient::checkPermission(ScriptExecutionContext*)
+NotificationPresenter::Permission WebNotificationClient::checkPermission(ScriptExecutionContext* context)
 {
-    notImplemented();
-    return NotificationPresenter::PermissionDenied;
+    if (!context || !context->isDocument())
+        return NotificationPresenter::PermissionDenied;
+    return m_page->notificationPermissionRequestManager()->permissionLevel(context->securityOrigin());
 }
 
 } // namespace WebKit

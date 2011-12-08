@@ -204,6 +204,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // shouldInterruptJavaScript
         createOtherPage,
         0, // mouseDidMoveOverElement
+        0, // decidePolicyForNotificationPermissionRequest
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -356,6 +357,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // shouldInterruptJavaScript
         createOtherPage,
         0, // mouseDidMoveOverElement
+        0, // decidePolicyForNotificationPermissionRequest
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

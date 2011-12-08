@@ -33,18 +33,10 @@
 
 namespace WebKit {
 
-WebNotification::WebNotification()
-{
-}
-
 WebNotification::WebNotification(const String& title, const String& body, uint64_t notificationID)
     : m_title(title)
     , m_body(body)
     , m_notificationID(notificationID)
-{
-}
-
-WebNotification::~WebNotification()
 {
 }
 

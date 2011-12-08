@@ -47,6 +47,7 @@ class APIObject;
 class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
 class NativeWebWheelEvent;
+class NotificationPermissionRequest;
 class WebData;
 class WebFrameProxy;
 class WebPageProxy;
@@ -99,6 +100,7 @@ public:
 
     bool runOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters*, WebOpenPanelResultListenerProxy*);
     bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, GeolocationPermissionRequestProxy*);
+    bool decidePolicyForNotificationPermissionRequest(WebPageProxy*, WebSecurityOrigin*, NotificationPermissionRequest*);
 
     // Printing.
     float headerHeight(WebPageProxy*, WebFrameProxy*);

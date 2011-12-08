@@ -194,6 +194,9 @@ messages -> WebPageProxy {
 
     # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, WTF::String originIdentifier)
+    
+    # Notification messages
+    RequestNotificationPermission(uint64_t requestID, WTF::String originIdentifier)
 
     # Spelling and grammar messages
 #if USE(UNIFIED_TEXT_CHECKING)  

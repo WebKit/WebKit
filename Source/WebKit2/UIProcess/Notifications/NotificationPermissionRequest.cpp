@@ -23,59 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotification_h
-#define WebNotification_h
+#include "config.h"
+#include "NotificationPermissionRequest.h"
 
-#include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/text/WTFString.h>
-
-namespace CoreIPC {
-
-class ArgumentDecoder;
-class ArgumentEncoder;
-
-} // namespace CoreIPC
+#include "NotificationPermissionRequestManagerProxy.h"
 
 namespace WebKit {
     
-class WebNotification : public APIObject {
-public:
-    static const Type APIType = TypeNotification;
-    
-    WebNotification();
-    static PassRefPtr<WebNotification> create(const String& title, const String& body, uint64_t notificationID)
-    {
-        return adoptRef(new WebNotification(title, body, notificationID));
-    }
-    virtual ~WebNotification();
-    
-    const String& title() const { return m_title; }
-    
-    const String& body() const { return m_body; }
-    
-    uint64_t notificationID() const { return m_notificationID; }
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebNotification&);
-
-private:
-    WebNotification(const String& title, const String& body, uint64_t notificationID);
-
-    virtual Type type() const { return APIType; }
-    
-    String m_title;
-    String m_body;
-    uint64_t m_notificationID;
-};
-
-inline bool isNotificationIDValid(uint64_t id)
+PassRefPtr<NotificationPermissionRequest> NotificationPermissionRequest::create(WebKit::NotificationPermissionRequestManagerProxy *manager, uint64_t notificationID)
 {
-    // This check makes sure that the ID is not equal to values needed by
-    // HashMap for bucketing.
-    return id && id != static_cast<uint64_t>(-1);
+    return adoptRef(new NotificationPermissionRequest(manager, notificationID));
+}
+
+NotificationPermissionRequest::NotificationPermissionRequest(NotificationPermissionRequestManagerProxy* manager, uint64_t notificationID)
+    : m_manager(manager)
+    , m_notificationID(notificationID)
+{
+}
+
+void NotificationPermissionRequest::allow()
+{
+    if (!m_manager)
+        return;
+    
+    m_manager->didReceiveNotificationPermissionDecision(m_notificationID, true);
+    m_manager = 0;
+}
+
+void NotificationPermissionRequest::deny()
+{
+    if (!m_manager)
+        return;
+    
+    m_manager->didReceiveNotificationPermissionDecision(m_notificationID, false);
+    m_manager = 0;
+}
+
+void NotificationPermissionRequest::invalidate()
+{
+    m_manager = 0;
 }
 
 } // namespace WebKit
-
-#endif // WebNotification_h

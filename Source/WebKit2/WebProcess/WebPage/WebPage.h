@@ -102,6 +102,7 @@ namespace WebKit {
 
 class DrawingArea;
 class InjectedBundleBackForwardList;
+class NotificationPermissionRequestManager;
 class PageOverlay;
 class PluginView;
 class SessionState;
@@ -309,6 +310,7 @@ public:
 
     FindController& findController() { return m_findController; }
     GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
+    NotificationPermissionRequestManager* notificationPermissionRequestManager();
 
     void pageDidScroll();
 #if USE(TILED_BACKING_STORE)
@@ -587,6 +589,7 @@ private:
 #endif
 
     void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
+    void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
@@ -693,6 +696,7 @@ private:
     RefPtr<WebContextMenu> m_contextMenu;
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
     GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
+    RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
 
     OwnPtr<WebCore::PrintContext> m_printContext;
 

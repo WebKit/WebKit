@@ -1,3 +1,135 @@
+2011-12-06  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Add permissions support (73960)
+        https://bugs.webkit.org/show_bug.cgi?id=73960
+        <rdar://problem/10357008>
+
+        Reviewed by Darin Adler.
+
+        * DerivedSources.make: Moved notification files to its own directory. Need to add that path.
+        * WebKit2.xcodeproj/project.pbxproj: New header and impl files.
+        * Target.pri: Ditto.
+        * GNUmakefile.am: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+        * win/WebKit2Common.vsprops: Add path to Notifications directory.
+
+        Implement permission functions, which go through permission request manager.
+
+        * WebProcess/WebCoreSupport/WebNotificationClient.cpp:
+        (WebKit::WebNotificationClient::requestPermission):
+        (WebKit::WebNotificationClient::cancelRequestsForPermission):
+        (WebKit::WebNotificationClient::checkPermission):
+
+        New NotificationPermissionRequestManager to make and cancel permission requests, and to retrieve current
+        policy.
+
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp: Added.
+        (WebKit::generateRequestID):
+        (WebKit::NotificationPermissionRequestManager::create):
+        (WebKit::NotificationPermissionRequestManager::NotificationPermissionRequestManager):
+        (WebKit::NotificationPermissionRequestManager::startRequest): Keep track of the provided callback once
+        policy decision is made.
+        (WebKit::NotificationPermissionRequestManager::cancelRequest):
+        (WebKit::NotificationPermissionRequestManager::permissionLevel): Retrieve level through a synchronous
+        message to the proxy.
+        (WebKit::NotificationPermissionRequestManager::didReceiveNotificationPermissionDecision): Invoke the callback.
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h: Added.
+        (WebKit::isRequestIDValid): Make sure any provided request IDs are valid.
+
+        Added new NotificationPermissionRequest class.
+
+        * UIProcess/Notifications/NotificationPermissionRequest.cpp: Added.
+        (WebKit::NotificationPermissionRequest::create):
+        (WebKit::NotificationPermissionRequest::NotificationPermissionRequest):
+        (WebKit::NotificationPermissionRequest::allow): Notify manager of decision.
+        (WebKit::NotificationPermissionRequest::deny): Ditto.
+        (WebKit::NotificationPermissionRequest::invalidate): Disassociate with manager.
+        (WebKit::NotificationPermissionRequest::type):
+        * UIProcess/Notifications/NotificationPermissionRequest.h: Added.
+
+        WKAPI support for NotificationPermissionRequest:
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKNotificationPermissionRequest.cpp: Added.
+        (WKNotificationPermissionRequestGetTypeID):
+        (WKNotificationPermissionRequestAllow):
+        (WKNotificationPermissionRequestDeny):
+        * UIProcess/API/C/WKNotificationPermissionRequest.h: Added.
+
+        Other additions to WK API:
+
+        * UIProcess/API/C/WKNotificationProvider.h: Added new callback for WKNotificationProviders, to return policy
+        for a given security origin.
+        * UIProcess/API/C/WKPage.h: Added new callback to WKPageUIClient to ask user to decide on policy.
+
+        New NotificationPermissionRequestManagerProxy to create requests.
+
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp: Added.
+        (WebKit::NotificationPermissionRequestManagerProxy::NotificationPermissionRequestManagerProxy):
+        (WebKit::NotificationPermissionRequestManagerProxy::invalidateRequests):
+        (WebKit::NotificationPermissionRequestManagerProxy::createRequest):
+        (WebKit::NotificationPermissionRequestManagerProxy::didReceiveNotificationPermissionDecision):
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h: Added.
+
+        Added new message to notification manager: NotificationPermissionLevel, to retrieve policy. The current
+        JS API retrieves the permission synchronously, so the message needs to be sent synchronously also.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in: Moved from Source/WebKit2/UIProcess/WebNotificationManagerProxy.messages.in.
+        * UIProcess/Notifications/WebNotificationProvider.cpp: Moved from Source/WebKit2/UIProcess/WebNotificationProvider.cpp.
+        (WebKit::WebNotificationProvider::policyForNotificationPermissionAtOrigin): Added.
+        * UIProcess/Notifications/WebNotificationProvider.h: Moved from Source/WebKit2/UIProcess/WebNotificationProvider.h.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage): Boilerplate to forward messages to notification manager.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp: Moved from Source/WebKit2/UIProcess/WebNotificationManagerProxy.cpp.
+        (WebKit::WebNotificationManagerProxy::create):
+        (WebKit::WebNotificationManagerProxy::WebNotificationManagerProxy):
+        (WebKit::WebNotificationManagerProxy::invalidate):
+        (WebKit::WebNotificationManagerProxy::initializeProvider):
+        (WebKit::WebNotificationManagerProxy::didReceiveMessage):
+        (WebKit::WebNotificationManagerProxy::didReceiveSyncMessage):
+        (WebKit::WebNotificationManagerProxy::show):
+        (WebKit::WebNotificationManagerProxy::cancel):
+        (WebKit::WebNotificationManagerProxy::didDestroyNotification):
+        (WebKit::WebNotificationManagerProxy::notificationPermissionLevel): Retrieve the policy from the provider.
+        (WebKit::WebNotificationManagerProxy::providerDidShowNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h: Moved from Source/WebKit2/UIProcess/WebNotificationManagerProxy.h.
+        (WebKit::WebNotificationManagerProxy::clearContext):
+        (WebKit::WebNotificationManagerProxy::type):
+
+        Added NotificationPermissionRequestManagerProxy to WebPageProxy, to allow a request for permission to
+        go through to the UI client. Added new message to WebPageProxy, RequestNotificationPermission.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close): Invalidate pending requests.
+        (WebKit::WebPageProxy::processDidCrash): Ditto.
+        (WebKit::WebPageProxy::requestNotificationPermission): Forward request to UI client.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::decidePolicyForNotificationPermissionRequest):
+        * UIProcess/WebUIClient.h:
+
+        Added new message DidReceiveNotificationPermissionDecision. The WebPage forwards the message to the
+        permission request manager.
+
+        * WebProcess/WebPage/WebPage.messages.in: Added new message DidReceiveNotificationPermissionDecision
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::notificationPermissionRequestManager): Create manager on request.
+        (WebKit::WebPage::didReceiveNotificationPermissionDecision):
+        * WebProcess/WebPage/WebPage.h:
+
+        Moving files to Notifications/ subdirectory.
+
+        * UIProcess/Notifications/WebNotification.cpp: Moved from Source/WebKit2/UIProcess/WebNotification.cpp.
+        * UIProcess/Notifications/WebNotification.h: Moved from Source/WebKit2/UIProcess/WebNotification.h.
+
 2011-12-08  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2] Initialize threading in UI process.

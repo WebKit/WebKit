@@ -30,6 +30,7 @@
 #include "WebContext.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
+#include "WebSecurityOrigin.h"
 #include <WebCore/NotificationContents.h>
 
 using namespace WTF;
@@ -47,10 +48,6 @@ WebNotificationManagerProxy::WebNotificationManagerProxy(WebContext* context)
 {
 }
 
-WebNotificationManagerProxy::~WebNotificationManagerProxy()
-{
-}
-
 void WebNotificationManagerProxy::invalidate()
 {
     m_provider.removeNotificationManager(this);
@@ -64,6 +61,11 @@ void WebNotificationManagerProxy::initializeProvider(const WKNotificationProvide
 void WebNotificationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     didReceiveWebNotificationManagerProxyMessage(connection, messageID, arguments);
+}
+
+void WebNotificationManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+{
+    didReceiveSyncWebNotificationManagerProxyMessage(connection, messageID, arguments, reply);
 }
 
 void WebNotificationManagerProxy::show(const String& title, const String& body, uint64_t notificationID)
@@ -101,6 +103,12 @@ void WebNotificationManagerProxy::didDestroyNotification(uint64_t notificationID
         return;
 
     m_provider.didDestroyNotification(notification.get());
+}
+
+void WebNotificationManagerProxy::notificationPermissionLevel(const String& originIdentifier, uint64_t& permissionLevel)
+{
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    permissionLevel = m_provider.policyForNotificationPermissionAtOrigin(origin.get());
 }
 
 void WebNotificationManagerProxy::providerDidShowNotification(uint64_t notificationID)

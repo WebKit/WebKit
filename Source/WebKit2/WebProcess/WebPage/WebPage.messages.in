@@ -172,6 +172,9 @@ messages -> WebPage {
 
     # Geolocation
     DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+    
+    # Notification
+    DidReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 

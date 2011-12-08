@@ -37,6 +37,8 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "NotificationPermissionRequest.h"
+#include "NotificationPermissionRequestManager.h"
 #include "PageClient.h"
 #include "PrintInfo.h"
 #include "SessionState.h"
@@ -146,6 +148,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrame(0)
     , m_userAgent(standardUserAgent())
     , m_geolocationPermissionRequestManager(this)
+    , m_notificationPermissionRequestManager(this)
     , m_estimatedProgress(0)
     , m_isInWindow(m_pageClient->isViewInWindow())
     , m_isVisible(m_pageClient->isViewVisible())
@@ -364,6 +367,7 @@ void WebPageProxy::close()
     }
 
     m_geolocationPermissionRequestManager.invalidateRequests();
+    m_notificationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
 
@@ -3133,6 +3137,7 @@ void WebPageProxy::processDidCrash()
     }
 
     m_geolocationPermissionRequestManager.invalidateRequests();
+    m_notificationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
 
@@ -3292,6 +3297,18 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
 
     if (!m_uiClient.decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
+        request->deny();
+}
+
+void WebPageProxy::requestNotificationPermission(uint64_t requestID, const String& originIdentifier)
+{
+    if (!isRequestIDValid(requestID))
+        return;
+
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    RefPtr<NotificationPermissionRequest> request = m_notificationPermissionRequestManager.createRequest(requestID);
+    
+    if (!m_uiClient.decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))
         request->deny();
 }
 

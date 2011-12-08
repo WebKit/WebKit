@@ -57,11 +57,12 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_HEA
 	$(WebKit2)/UIProcess/API/C/WKInspector.h \
 	$(WebKit2)/UIProcess/API/C/WKKeyValueStorageManager.h \
 	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
-	$(WebKit2)/UIProcess/API/C/WKNotification.h \
-	$(WebKit2)/UIProcess/API/C/WKNotificationManager.h \
-	$(WebKit2)/UIProcess/API/C/WKNotificationProvider.h \
 	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
 	$(WebKit2)/UIProcess/API/C/WKNavigationData.h \
+	$(WebKit2)/UIProcess/API/C/WKNotification.h \
+	$(WebKit2)/UIProcess/API/C/WKNotificationManager.h \
+	$(WebKit2)/UIProcess/API/C/WKNotificationPermissionRequest.h \
+	$(WebKit2)/UIProcess/API/C/WKNotificationProvider.h \
 	$(WebKit2)/UIProcess/API/C/WKOpenPanelParameters.h \
 	$(WebKit2)/UIProcess/API/C/WKOpenPanelResultListener.h \
 	$(WebKit2)/UIProcess/API/C/WKPageGroup.h \
@@ -485,6 +486,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/C/WKNotification.h \
 	Source/WebKit2/UIProcess/API/C/WKNotificationManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNotificationManager.h \
+	Source/WebKit2/UIProcess/API/C/WKNotificationPermissionRequest.cpp \
+	Source/WebKit2/UIProcess/API/C/WKNotificationPermissionRequest.h \
 	Source/WebKit2/UIProcess/API/C/WKNotificationProvider.h \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelParameters.cpp \
 	Source/WebKit2/UIProcess/API/C/WKOpenPanelParameters.h \
@@ -581,6 +584,16 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
 	Source/WebKit2/UIProcess/Launcher/ThreadLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ThreadLauncher.h \
+	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.cpp \
+	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.h \
+	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \
+	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h \
+	Source/WebKit2/UIProcess/Notifications/WebNotification.cpp \
+	Source/WebKit2/UIProcess/Notifications/WebNotification.h \
+	Source/WebKit2/UIProcess/Notifications/WebNotificationManagerProxy.cpp \
+	Source/WebKit2/UIProcess/Notifications/WebNotificationManagerProxy.h \
+	Source/WebKit2/UIProcess/Notifications/WebNotificationProvider.cpp \
+	Source/WebKit2/UIProcess/Notifications/WebNotificationProvider.h \
 	Source/WebKit2/UIProcess/PageClient.h \
 	Source/WebKit2/UIProcess/Plugins/PluginInfoStore.cpp \
 	Source/WebKit2/UIProcess/Plugins/PluginInfoStore.h \
@@ -659,12 +672,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.h \
-	Source/WebKit2/UIProcess/WebNotification.cpp \
-	Source/WebKit2/UIProcess/WebNotification.h \
-	Source/WebKit2/UIProcess/WebNotificationManagerProxy.cpp \
-	Source/WebKit2/UIProcess/WebNotificationManagerProxy.h \
-	Source/WebKit2/UIProcess/WebNotificationProvider.cpp \
-	Source/WebKit2/UIProcess/WebNotificationProvider.h \
 	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/WebLoaderClient.h \
 	Source/WebKit2/UIProcess/WebNavigationData.cpp \
@@ -795,6 +802,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.cpp \
 	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.h \
+	Source/WebKit2/WebProcess/Notifications/NotificationPermissionRequestManager.cpp \
+	Source/WebKit2/WebProcess/Notifications/NotificationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.cpp \
 	Source/WebKit2/WebProcess/Notifications/WebNotificationManager.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.cpp \
@@ -933,6 +942,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/UIProcess/gtk \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Launcher/gtk \
+	-I$(srcdir)/Source/WebKit2/UIProcess/Notifications \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/UIProcess/Plugins/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess \
@@ -1059,6 +1069,7 @@ vpath %.messages.in = \
 	$(WebKit2)/UIProcess/ApplicationCache \
 	$(WebKit2)/UIProcess/Downloads \
 	$(WebKit2)/UIProcess/Geolocation \
+	$(WebKit2)/UIProcess/Notifications \
 	$(WebKit2)/UIProcess/Plugins \
 	$(WebKit2)/UIProcess/ResourceCache \
 	$(WebKit2)/WebProcess \
@@ -1453,6 +1464,7 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/Shared/Plugins/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Downloads/*.in) \
+	$(shell ls $(WebKit2)/UIProcess/Notifications/*.in) \
 	$(shell ls $(WebKit2)/UIProcess/Plugins/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/ApplicationCache/*.in) \
@@ -1463,6 +1475,7 @@ EXTRA_DIST += \
 	$(shell ls $(WebKit2)/WebProcess/IconDatabase/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/KeyValueStorage/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/MediaCache/*.in) \
+	$(shell ls $(WebKit2)/WebProcess/Notifications/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/Plugins/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/ResourceCache/*.in) \
 	$(shell ls $(WebKit2)/WebProcess/WebCoreSupport/*.in) \

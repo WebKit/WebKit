@@ -36,6 +36,7 @@
 #if ENABLE(TOUCH_EVENTS)
 #include "NativeWebTouchEvent.h"
 #endif
+#include "NotificationPermissionRequestManagerProxy.h"
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
@@ -685,6 +686,8 @@ private:
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);
 
+    void requestNotificationPermission(uint64_t notificationID, const String& originIdentifier);
+    
 #if USE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntPoint&);
 #endif
@@ -869,6 +872,7 @@ private:
     ContextMenuState m_activeContextMenuState;
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
     GeolocationPermissionRequestManagerProxy m_geolocationPermissionRequestManager;
+    NotificationPermissionRequestManagerProxy m_notificationPermissionRequestManager;
 
     double m_estimatedProgress;
 

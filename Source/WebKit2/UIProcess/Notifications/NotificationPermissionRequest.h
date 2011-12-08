@@ -23,62 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationManagerProxy_h
-#define WebNotificationManagerProxy_h
+#ifndef NotificationPermissionRequest_h
+#define NotificationPermissionRequest_h
 
 #include "APIObject.h"
-#include "MessageID.h"
-#include "WebNotificationProvider.h"
-#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
-
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-}
 
 namespace WebKit {
 
-class ImmutableArray;
-class WebContext;
+class NotificationPermissionRequestManagerProxy;
 
-class WebNotificationManagerProxy : public APIObject {
+class NotificationPermissionRequest : public APIObject {
 public:
-    static const Type APIType = TypeNotificationManager;
+    static const Type APIType = TypeNotificationPermissionRequest;
     
-    static PassRefPtr<WebNotificationManagerProxy> create(WebContext*);
-    virtual ~WebNotificationManagerProxy();
+    static PassRefPtr<NotificationPermissionRequest> create(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
+    
+    void allow();
+    void deny();
     
     void invalidate();
-    void clearContext() { m_context = 0; }
-
-    void initializeProvider(const WKNotificationProvider*);
     
-    void providerDidShowNotification(uint64_t notificationID);
-    void providerDidClickNotification(uint64_t notificationID);
-    void providerDidCloseNotifications(ImmutableArray* notificationIDs);
-    
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
 private:
-    explicit WebNotificationManagerProxy(WebContext*);
+    NotificationPermissionRequest(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
     
     virtual Type type() const { return APIType; }
     
-    void didReceiveWebNotificationManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    
-    // Message handlers
-    void show(const WTF::String& title, const WTF::String& body, uint64_t notificationID);
-    void cancel(uint64_t notificationID);
-    void didDestroyNotification(uint64_t notificationID);
-    
-    typedef HashMap<uint64_t, RefPtr<WebNotification> > WebNotificationMap;
-    
-    WebContext* m_context;
-    WebNotificationProvider m_provider;
-    WebNotificationMap m_notifications;
+    NotificationPermissionRequestManagerProxy* m_manager;
+    uint64_t m_notificationID;    
 };
 
 } // namespace WebKit
 
-#endif // WebNotificationManagerProxy_h
+#endif // NotificationPermissionRequestProxy_h

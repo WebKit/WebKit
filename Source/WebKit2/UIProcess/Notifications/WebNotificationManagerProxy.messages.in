@@ -24,4 +24,6 @@ messages -> WebNotificationManagerProxy {
     Show(WTF::String title, WTF::String body, uint64_t notificationID);
     Cancel(uint64_t notificationID);
     DidDestroyNotification(uint64_t notificationID);
+
+    NotificationPermissionLevel(WTF::String originIdentifier) -> (uint64_t policy)
 }

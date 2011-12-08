@@ -1563,15 +1563,15 @@
 			Name="WebProcess"
 			>
 			<File
-				RelativePath="..\WebProcess\WebKitMain.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\WebProcess\WebConnectionToUIProcess.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\WebProcess\WebConnectionToUIProcess.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebProcess\WebKitMain.cpp"
 				>
 			</File>
 			<File
@@ -2714,6 +2714,14 @@
 				Name="Notifications (User)"
 				>
 				<File
+					RelativePath="..\WebProcess\Notifications\NotificationPermissionRequestManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Notifications\NotificationPermissionRequestManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\Notifications\WebNotificationManager.cpp"
 					>
 				</File>
@@ -3088,34 +3096,6 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebNavigationData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotification.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotification.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotificationManagerProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotificationManagerProxy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotificationManagerProxy.messages.in"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotificationProvider.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebNotificationProvider.h"
 				>
 			</File>
 			<File
@@ -3817,6 +3797,54 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Notifications (User)"
+				>
+				<File
+					RelativePath="..\UIProcess\Notifications\NotificationPermissionRequest.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\NotificationPermissionRequest.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\NotificationPermissionRequestManagerProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\NotificationPermissionRequestManagerProxy.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotification.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotification.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotificationManagerProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotificationManagerProxy.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotificationManagerProxy.messages.in"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotificationProvider.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Notifications\WebNotificationProvider.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

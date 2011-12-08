@@ -35,6 +35,7 @@
 #include "LayerTreeHost.h"
 #include "MessageID.h"
 #include "NetscapePlugin.h"
+#include "NotificationPermissionRequestManager.h"
 #include "PageOverlay.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
@@ -1877,6 +1878,15 @@ WebFullScreenManager* WebPage::fullScreenManager()
 }
 #endif
 
+NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()
+{
+    if (m_notificationPermissionRequestManager)
+        return m_notificationPermissionRequestManager.get();
+
+    m_notificationPermissionRequestManager = NotificationPermissionRequestManager::create(this);
+    return m_notificationPermissionRequestManager.get();
+}
+
 #if !PLATFORM(GTK) && !PLATFORM(MAC)
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
@@ -2151,6 +2161,11 @@ void WebPage::extendSandboxForFileFromOpenPanel(const SandboxExtension::Handle& 
 void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
     m_geolocationPermissionRequestManager.didReceiveGeolocationPermissionDecision(geolocationID, allowed);
+}
+
+void WebPage::didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed)
+{
+    notificationPermissionRequestManager()->didReceiveNotificationPermissionDecision(notificationID, allowed);
 }
 
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)

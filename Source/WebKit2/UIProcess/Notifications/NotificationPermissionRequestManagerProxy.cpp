@@ -24,52 +24,47 @@
  */
 
 #include "config.h"
-#include "WebNotificationProvider.h"
+#include "NotificationPermissionRequestManagerProxy.h"
 
-#include "WKAPICast.h"
-#include "WebNotification.h"
-#include "WebNotificationManagerProxy.h"
+#include "NotificationPermissionRequest.h"
+#include "WebPageMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
-void WebNotificationProvider::show(WebNotification* notification)
+NotificationPermissionRequestManagerProxy::NotificationPermissionRequestManagerProxy(WebPageProxy* page)
+    : m_page(page)
 {
-    if (!m_client.show)
-        return;
-    
-    m_client.show(toAPI(notification), m_client.clientInfo);
 }
 
-void WebNotificationProvider::cancel(WebNotification* notification)
+void NotificationPermissionRequestManagerProxy::invalidateRequests()
 {
-    if (!m_client.cancel)
-        return;
+    PendingRequestMap::const_iterator it = m_pendingRequests.begin();
+    PendingRequestMap::const_iterator end = m_pendingRequests.end();
+    for (; it != end; ++it)
+        it->second->invalidate();
     
-    m_client.cancel(toAPI(notification), m_client.clientInfo);
+    m_pendingRequests.clear();
 }
 
-void WebNotificationProvider::didDestroyNotification(WebNotification* notification)
+PassRefPtr<NotificationPermissionRequest> NotificationPermissionRequestManagerProxy::createRequest(uint64_t notificationID)
 {
-    if (!m_client.didDestroyNotification)
-        return;
-    
-    m_client.didDestroyNotification(toAPI(notification), m_client.clientInfo);
+    RefPtr<NotificationPermissionRequest> request = NotificationPermissionRequest::create(this, notificationID);
+    m_pendingRequests.add(notificationID, request.get());
+    return request.release();
 }
 
-void WebNotificationProvider::addNotificationManager(WebNotificationManagerProxy* manager)
+void NotificationPermissionRequestManagerProxy::didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow)
 {
-    if (!m_client.addNotificationManager)
+    if (!m_page->isValid())
         return;
     
-    m_client.addNotificationManager(toAPI(manager), m_client.clientInfo);
-}
-
-void WebNotificationProvider::removeNotificationManager(WebNotificationManagerProxy* manager)
-{
-    if (!m_client.removeNotificationManager)
+    RefPtr<NotificationPermissionRequest> request = m_pendingRequests.take(notificationID);
+    if (!request)
         return;
     
-    m_client.removeNotificationManager(toAPI(manager), m_client.clientInfo);
+    m_page->process()->send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allow), m_page->pageID());
 }
 
 } // namespace WebKit

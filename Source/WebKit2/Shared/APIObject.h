@@ -91,6 +91,7 @@ public:
         TypeNavigationData,
         TypeNotification,
         TypeNotificationManager,
+        TypeNotificationPermissionRequest,
         TypeOpenPanelParameters,
         TypeOpenPanelResultListener,
         TypePage,

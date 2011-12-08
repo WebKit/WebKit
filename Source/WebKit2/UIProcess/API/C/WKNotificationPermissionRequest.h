@@ -23,28 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationProvider_h
-#define WebNotificationProvider_h
+#ifndef WKNotificationPermissionRequest_h
+#define WKNotificationPermissionRequest_h
 
-#include "APIClient.h"
-#include "WKNotificationProvider.h"
-#include <wtf/Forward.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-class WebNotification;
-class WebNotificationManagerProxy;
-    
-class WebNotificationProvider : public APIClient<WKNotificationProvider, kWKNotificationProviderCurrentVersion> {
-public:
-    void show(WebNotification*);
-    void cancel(WebNotification*);
-    void didDestroyNotification(WebNotification*);
+WK_EXPORT WKTypeID WKNotificationPermissionRequestGetTypeID();
 
-    void addNotificationManager(WebNotificationManagerProxy*);
-    void removeNotificationManager(WebNotificationManagerProxy*);
-};
+WK_EXPORT void WKNotificationPermissionRequestAllow(WKNotificationPermissionRequestRef notificationPermissionRequest);
+WK_EXPORT void WKNotificationPermissionRequestDeny(WKNotificationPermissionRequestRef notificationPermissionRequest);
 
-} // namespace WebKit
+#ifdef __cplusplus
+}
+#endif
 
-#endif // WebNotificationProvider_h
+#endif // WKNotificationPermissionRequest_h

@@ -34,6 +34,7 @@
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
+#include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
@@ -329,6 +330,11 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() 
         || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
         m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()) {
+        m_context->notificationManagerProxy()->didReceiveSyncMessage(connection, messageID, arguments, reply);
         return;
     }
 

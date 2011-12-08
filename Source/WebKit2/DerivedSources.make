@@ -40,6 +40,7 @@ VPATH = \
     $(WebKit2)/WebProcess \
     $(WebKit2)/UIProcess \
     $(WebKit2)/UIProcess/Downloads \
+    $(WebKit2)/UIProcess/Notifications \
     $(WebKit2)/UIProcess/Plugins \
 #
 
