@@ -317,6 +317,7 @@ struct _Ewk_View_Smart_Data {
 
 /// Defines the modes of view.
 enum _Ewk_View_Mode {
+    EWK_VIEW_MODE_INVALID,
     EWK_VIEW_MODE_WINDOWED,
     EWK_VIEW_MODE_FLOATING,
     EWK_VIEW_MODE_FULLSCREEN,

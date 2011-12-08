@@ -143,17 +143,19 @@ struct _Ewk_Hit_Test {
 /// Represents actions of touch events.
 typedef enum {
     EWK_TOUCH_START,
-    EWK_TOUCH_END,
     EWK_TOUCH_MOVE,
+    EWK_TOUCH_END,
     EWK_TOUCH_CANCEL
 } Ewk_Touch_Event_Type;
 
 /// Represents states of touch events.
 typedef enum {
-    EWK_TOUCH_POINT_PRESSED,
     EWK_TOUCH_POINT_RELEASED,
+    EWK_TOUCH_POINT_PRESSED,
     EWK_TOUCH_POINT_MOVED,
-    EWK_TOUCH_POINT_CANCELLED
+    EWK_TOUCH_POINT_STATIONARY,
+    EWK_TOUCH_POINT_CANCELLED,
+    EWK_TOUCH_POINT_END
 } Ewk_Touch_Point_Type;
 
 /// Creates a type name for _Ewk_Touch_Point.

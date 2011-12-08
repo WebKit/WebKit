@@ -3755,53 +3755,16 @@ Eina_Bool ewk_view_mode_set(Evas_Object* ewkView, Ewk_View_Mode viewMode)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    switch (viewMode) {
-    case EWK_VIEW_MODE_WINDOWED:
-        priv->page->setViewMode(WebCore::Page::ViewModeWindowed);
-        break;
-    case EWK_VIEW_MODE_FLOATING:
-        priv->page->setViewMode(WebCore::Page::ViewModeFloating);
-        break;
-    case EWK_VIEW_MODE_FULLSCREEN:
-        priv->page->setViewMode(WebCore::Page::ViewModeFullscreen);
-        break;
-    case EWK_VIEW_MODE_MAXIMIZED:
-        priv->page->setViewMode(WebCore::Page::ViewModeMaximized);
-        break;
-    case EWK_VIEW_MODE_MINIMIZED:
-        priv->page->setViewMode(WebCore::Page::ViewModeMinimized);
-        break;
-    default:
-        return false;
-    }
-
+    priv->page->setViewMode(static_cast<WebCore::Page::ViewMode>(viewMode));
     return true;
 }
 
 Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
 {
-    Ewk_View_Mode mode = EWK_VIEW_MODE_WINDOWED;
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, mode);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, mode);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_VIEW_MODE_WINDOWED);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_VIEW_MODE_WINDOWED);
 
-    switch (priv->page->viewMode()) {
-    case WebCore::Page::ViewModeFloating:
-        mode = EWK_VIEW_MODE_FLOATING;
-        break;
-    case WebCore::Page::ViewModeFullscreen:
-        mode = EWK_VIEW_MODE_FULLSCREEN;
-        break;
-    case WebCore::Page::ViewModeMaximized:
-        mode = EWK_VIEW_MODE_MAXIMIZED;
-        break;
-    case WebCore::Page::ViewModeMinimized:
-        mode = EWK_VIEW_MODE_MINIMIZED;
-        break;
-    default:
-        break;
-    }
-
-    return mode;
+    return static_cast<Ewk_View_Mode>(priv->page->viewMode());
 }
 
 /**
@@ -3830,30 +3793,18 @@ void ewk_view_editor_client_contents_changed(Evas_Object* ewkView)
     evas_object_smart_callback_call(ewkView, "editorclient,contents,changed", 0);
 }
 
-Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibility_State pageVisibleState, Eina_Bool initialState)
+Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibility_State pageVisibilityState, Eina_Bool initialState)
 {
 #if ENABLE(PAGE_VISIBILITY_API)
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    switch (pageVisibleState) {
-    case EWK_PAGE_VISIBILITY_STATE_VISIBLE:
-        priv->page->setVisibilityState(WebCore::PageVisibilityStateVisible, initialState);
-        break;
-    case EWK_PAGE_VISIBILITY_STATE_HIDDEN:
-        priv->page->setVisibilityState(WebCore::PageVisibilityStateHidden, initialState);
-        break;
-    case EWK_PAGE_VISIBILITY_STATE_PRERENDER:
-        priv->page->setVisibilityState(WebCore::PageVisibilityStatePrerender, initialState);
-        break;
-    default:
-        return EINA_FALSE;
-    }
+    priv->page->setVisibilityState(static_cast<WebCore::PageVisibilityState>(pageVisibilityState), initialState);
 
-    return EINA_TRUE;
+    return true;
 #else
     DBG("PAGE_VISIBILITY_API is disabled.");
-    return EINA_FALSE;
+    return false;
 #endif
 }
 
@@ -3863,16 +3814,7 @@ Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object* ewkVi
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EWK_PAGE_VISIBILITY_STATE_VISIBLE);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EWK_PAGE_VISIBILITY_STATE_VISIBLE);
 
-    switch (priv->page->visibilityState()) {
-    case WebCore::PageVisibilityStateVisible:
-        return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
-    case WebCore::PageVisibilityStateHidden:
-        return EWK_PAGE_VISIBILITY_STATE_HIDDEN;
-    case WebCore::PageVisibilityStatePrerender:
-        return EWK_PAGE_VISIBILITY_STATE_PRERENDER;
-    default:
-        return EWK_PAGE_VISIBILITY_STATE_VISIBLE;
-    }
+    return static_cast<Ewk_Page_Visibility_State>(priv->page->visibilityState());
 #else
     DBG("PAGE_VISIBILITY_API is disabled.");
     return EWK_PAGE_VISIBILITY_STATE_VISIBLE;

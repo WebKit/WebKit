@@ -1,3 +1,19 @@
+2011-12-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Introduce AssertMatchingEnums.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=65238
+
+        Reviewed by Filip Pizlo.
+
+        Remove switch statement which convert EWK_TOUCH_PointType enum values to
+        WebCore::PlatformTouchPoint::State enum values.
+        Newly added AssertMatchingEnums.cpp assure that they are equal.
+
+        No new tests, no new functionality.
+
+        * platform/efl/PlatformTouchEventEfl.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+
 2011-12-07  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Clearing root surface should happen after damage tracking

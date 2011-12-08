@@ -933,8 +933,6 @@ Eina_Bool ewk_frame_feed_mouse_move(Evas_Object* ewkFrame, const Evas_Event_Mous
 
 Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type action, Eina_List* points, int metaState)
 {
-    Eina_Bool result = false;
-
 #if ENABLE(TOUCH_EVENTS)
     EINA_SAFETY_ON_NULL_RETURN_VAL(points, false);
     EWK_FRAME_SD_GET(ewkFrame, smartData);
@@ -945,28 +943,11 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
-    WebCore::TouchEventType type = WebCore::TouchStart;
-    switch (action) {
-    case EWK_TOUCH_START:
-        type = WebCore::TouchStart;
-        break;
-    case EWK_TOUCH_END:
-        type = WebCore::TouchEnd;
-        break;
-    case EWK_TOUCH_MOVE:
-        type = WebCore::TouchMove;
-        break;
-    case EWK_TOUCH_CANCEL:
-        type = WebCore::TouchCancel;
-        break;
-    default:
-        return false;
-    }
-
-    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), type, metaState);
-    result = smartData->frame->eventHandler()->handleTouchEvent(touchEvent);
+    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), static_cast<WebCore::TouchEventType>(action), metaState);
+    return smartData->frame->eventHandler()->handleTouchEvent(touchEvent);
+#else
+    return false;
 #endif
-    return result;
 }
 
 static inline Eina_Bool _ewk_frame_handle_key_scrolling(WebCore::Frame* frame, const WebCore::PlatformKeyboardEvent& keyEvent)
@@ -1071,14 +1052,7 @@ Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(const Evas_Object* ewk
     if (!controller)
         return EWK_TEXT_SELECTION_NONE;
 
-    switch (controller->selectionType()) {
-    case WebCore::VisibleSelection::CaretSelection:
-        return EWK_TEXT_SELECTION_CARET;
-    case WebCore::VisibleSelection::RangeSelection:
-        return EWK_TEXT_SELECTION_RANGE;
-    default:
-        return EWK_TEXT_SELECTION_NONE;
-    }
+    return static_cast<Ewk_Text_Selection_Type>(controller->selectionType());
 }
 
 /* internal methods ****************************************************/

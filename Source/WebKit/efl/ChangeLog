@@ -1,3 +1,26 @@
+2011-12-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Introduce AssertMatchingEnums.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=65238
+
+        Reviewed by Filip Pizlo.
+
+        Add AssertMatchingEnums.cpp to assert that various WebKit API enum values
+        match to WebCore defined enum values.
+
+        * CMakeListsEfl.txt: add AssertMatchingEnums.cpp.
+        * WebCoreSupport/AssertMatchingEnums.cpp: Added.
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event): remove switch statement wichi convert WebKit API enum value to WebCore defined enum values.
+        (ewk_frame_text_selection_type_get): Ditto.
+        * ewk/ewk_view.cpp:
+        (ewk_view_mode_set): Ditto.
+        (ewk_view_mode_get): Ditto.
+        (ewk_view_visibility_state_set): Ditto.
+        (ewk_view_visibility_state_get): Ditto.
+        * ewk/ewk_frame.h: fix order of enum values.
+        * ewk/ewk_view.h: add missing enum value.
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline
