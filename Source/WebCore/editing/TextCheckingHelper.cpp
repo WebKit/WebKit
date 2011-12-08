@@ -116,6 +116,15 @@ TextCheckingParagraph::TextCheckingParagraph(PassRefPtr<Range> checkingRange)
 {
 }
 
+TextCheckingParagraph::TextCheckingParagraph(PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange)
+    : m_checkingRange(checkingRange)
+    , m_paragraphRange(paragraphRange)
+    , m_checkingStart(-1)
+    , m_checkingEnd(-1)
+    , m_checkingLength(-1)
+{
+}
+
 TextCheckingParagraph::~TextCheckingParagraph()
 {
 }

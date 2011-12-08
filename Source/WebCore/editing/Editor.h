@@ -62,7 +62,6 @@ class SimpleFontData;
 class SpellChecker;
 class Text;
 class TextCheckerClient;
-class TextCheckingParagraph;
 struct TextCheckingResult;
 class TextEvent;
 
@@ -222,6 +221,7 @@ public:
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
+    void markAndReplaceFor(TextCheckingTypeMask, const Vector<TextCheckingResult>&, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void uppercaseWord();
@@ -405,7 +405,6 @@ private:
     void writeSelectionToPasteboard(Pasteboard*);
     void revealSelectionAfterEditingOperation();
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
-    void markAndReplaceFor(TextCheckingTypeMask, const Vector<TextCheckingResult>&, const TextCheckingParagraph& spellingParagraph, const TextCheckingParagraph& grammarParagraph);
     TextCheckingTypeMask resolveTextCheckingTypeMask(TextCheckingTypeMask);
 
     void selectComposition();

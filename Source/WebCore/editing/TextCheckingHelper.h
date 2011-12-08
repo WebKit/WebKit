@@ -31,6 +31,7 @@ class Position;
 class TextCheckingParagraph {
 public:
     explicit TextCheckingParagraph(PassRefPtr<Range> checkingRange);
+    TextCheckingParagraph(PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
     ~TextCheckingParagraph();
 
     int rangeLength() const;

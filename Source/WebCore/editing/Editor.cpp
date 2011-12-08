@@ -2010,34 +2010,27 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     if (!isSpellCheckingEnabledFor(editableNode))
         return;
 
-    TextCheckingParagraph spellingParagraph(spellingRange);
-    TextCheckingParagraph grammarParagraph(shouldMarkGrammar ? grammarRange : 0);
-
-    if (shouldMarkGrammar ? (spellingParagraph.isRangeEmpty() && grammarParagraph.isEmpty()) : spellingParagraph.isEmpty())
+    Range* rangeToCheck = shouldMarkGrammar ? grammarRange : spellingRange;
+    TextCheckingParagraph paragraphToCheck(rangeToCheck);
+    if (paragraphToCheck.isRangeEmpty() || paragraphToCheck.isEmpty())
         return;
 
     bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
     if (asynchronous) {
-        if (shouldMarkGrammar)
-            m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(textCheckingOptions), grammarParagraph.paragraphRange());
-        else
-            m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(textCheckingOptions), spellingParagraph.paragraphRange());
+        m_spellChecker->requestCheckingFor(resolveTextCheckingTypeMask(textCheckingOptions), paragraphToCheck.paragraphRange());
         return;
     }
 
     Vector<TextCheckingResult> results;
-    if (shouldMarkGrammar)
-        checkTextOfParagraph(textChecker(), grammarParagraph.textCharacters(), grammarParagraph.textLength(), 
-                                            resolveTextCheckingTypeMask(textCheckingOptions), results);
-    else
-        checkTextOfParagraph(textChecker(), spellingParagraph.textCharacters(), spellingParagraph.textLength(), 
-                                            resolveTextCheckingTypeMask(textCheckingOptions), results);
-
-    markAndReplaceFor(textCheckingOptions, results, spellingParagraph, grammarParagraph);
+    checkTextOfParagraph(textChecker(), paragraphToCheck.textCharacters(), paragraphToCheck.textLength(),
+        resolveTextCheckingTypeMask(textCheckingOptions), results);
+    markAndReplaceFor(textCheckingOptions, results, rangeToCheck, paragraphToCheck.paragraphRange());
 }
 
-void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const Vector<TextCheckingResult>& results, const TextCheckingParagraph& spellingParagraph, const TextCheckingParagraph& grammarParagraph)
+void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const Vector<TextCheckingResult>& results, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange)
 {
+    TextCheckingParagraph paragraph(checkingRange, paragraphRange);
+
     bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;
     bool shouldPerformReplacement = textCheckingOptions & TextCheckingTypeReplacement;
@@ -2055,11 +2048,11 @@ void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const V
         if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
             // Attempt to save the caret position so we can restore it later if needed
             Position caretPosition = m_frame->selection()->end();
-            selectionOffset = spellingParagraph.offsetTo(caretPosition, ASSERT_NO_EXCEPTION);
+            selectionOffset = paragraph.offsetTo(caretPosition, ASSERT_NO_EXCEPTION);
             restoreSelectionAfterChange = true;
-            if (selectionOffset > 0 && (selectionOffset > spellingParagraph.textLength() || spellingParagraph.textCharAt(selectionOffset - 1) == newlineCharacter))
+            if (selectionOffset > 0 && (selectionOffset > paragraph.textLength() || paragraph.textCharAt(selectionOffset - 1) == newlineCharacter))
                 adjustSelectionForParagraphBoundaries = true;
-            if (selectionOffset > 0 && selectionOffset <= spellingParagraph.textLength() && isAmbiguousBoundaryCharacter(spellingParagraph.textCharAt(selectionOffset - 1)))
+            if (selectionOffset > 0 && selectionOffset <= paragraph.textLength() && isAmbiguousBoundaryCharacter(paragraph.textCharAt(selectionOffset - 1)))
                 ambiguousBoundaryOffset = selectionOffset - 1;
         }
     }
@@ -2071,7 +2064,7 @@ void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const V
     int offsetDueToReplacement = 0;
 
     for (unsigned i = 0; i < results.size(); i++) {
-        int spellingRangeEndOffset = spellingParagraph.checkingEnd() + offsetDueToReplacement;
+        int spellingRangeEndOffset = paragraph.checkingEnd() + offsetDueToReplacement;
         const TextCheckingResult* result = &results[i];
         int resultLocation = result->location + offsetDueToReplacement;
         int resultLength = result->length;
@@ -2082,23 +2075,23 @@ void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const V
         // 2. Result falls within spellingRange.
         // 3. The word in question doesn't end at an ambiguous boundary. For instance, we would not mark
         //    "wouldn'" as misspelled right after apostrophe is typed.
-        if (shouldMarkSpelling && result->type == TextCheckingTypeSpelling && resultLocation >= spellingParagraph.checkingStart() && resultLocation + resultLength <= spellingRangeEndOffset && !resultEndsAtAmbiguousBoundary) {
+        if (shouldMarkSpelling && result->type == TextCheckingTypeSpelling && resultLocation >= paragraph.checkingStart() && resultLocation + resultLength <= spellingRangeEndOffset && !resultEndsAtAmbiguousBoundary) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
-            RefPtr<Range> misspellingRange = spellingParagraph.subrange(resultLocation, resultLength);
+            RefPtr<Range> misspellingRange = paragraph.subrange(resultLocation, resultLength);
             if (!m_spellingCorrector->isSpellingMarkerAllowed(misspellingRange))
                 continue;
             misspellingRange->startContainer()->document()->markers()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
-        } else if (shouldMarkGrammar && result->type == TextCheckingTypeGrammar && grammarParagraph.checkingRangeCovers(resultLocation, resultLength)) {
+        } else if (shouldMarkGrammar && result->type == TextCheckingTypeGrammar && paragraph.checkingRangeCovers(resultLocation, resultLength)) {
             ASSERT(resultLength > 0 && resultLocation >= 0);
             for (unsigned j = 0; j < result->details.size(); j++) {
                 const GrammarDetail* detail = &result->details[j];
                 ASSERT(detail->length > 0 && detail->location >= 0);
-                if (grammarParagraph.checkingRangeCovers(resultLocation + detail->location, detail->length)) {
-                    RefPtr<Range> badGrammarRange = grammarParagraph.subrange(resultLocation + detail->location, detail->length);
+                if (paragraph.checkingRangeCovers(resultLocation + detail->location, detail->length)) {
+                    RefPtr<Range> badGrammarRange = paragraph.subrange(resultLocation + detail->location, detail->length);
                     badGrammarRange->startContainer()->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
                 }
             }
-        } else if (resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingParagraph.checkingStart()
+        } else if (resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= paragraph.checkingStart()
                     && (result->type == TextCheckingTypeLink
                     || result->type == TextCheckingTypeQuote
                     || result->type == TextCheckingTypeDash
@@ -2117,7 +2110,7 @@ void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const V
             // 2. The result doesn't end at an ambiguous boundary.
             //    (FIXME: this is required until 6853027 is fixed and text checking can do this for us
             bool doReplacement = replacementLength > 0 && !resultEndsAtAmbiguousBoundary;
-            RefPtr<Range> rangeToReplace = spellingParagraph.subrange(resultLocation, resultLength);
+            RefPtr<Range> rangeToReplace = paragraph.subrange(resultLocation, resultLength);
             VisibleSelection selectionToReplace(rangeToReplace.get(), DOWNSTREAM);
 
             // adding links should be done only immediately after they are typed
@@ -2175,13 +2168,13 @@ void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const V
 
                 // Add a marker so that corrections can easily be undone and won't be re-corrected.
                 if (result->type == TextCheckingTypeCorrection)
-                    m_spellingCorrector->markCorrection(spellingParagraph.subrange(resultLocation, replacementLength), replacedString);
+                    m_spellingCorrector->markCorrection(paragraph.subrange(resultLocation, replacementLength), replacedString);
             }
         }
     }
 
     if (selectionChanged) {
-        TextCheckingParagraph extendedParagraph(spellingParagraph);
+        TextCheckingParagraph extendedParagraph(paragraph);
         // Restore the caret position if we have made any replacements
         extendedParagraph.expandRangeToNextEnd();
         if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= extendedParagraph.rangeLength()) {

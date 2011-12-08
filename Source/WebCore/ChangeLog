@@ -1,3 +1,23 @@
+2011-12-07  Shinya Kawanaka  <shinyak@google.com>
+
+        Editor::markAndReplaceFor should take Range instead of TextCheckingParagraph.
+        https://bugs.webkit.org/show_bug.cgi?id=74035
+
+        Reviewed by Hajime Morita.
+
+        Editor::markAndReplaceFor takes chekcing range and paragraph range instead of
+        spelling paragraph and grammar paragraph.
+
+        No new tests. Covered by existing tests.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markAndReplaceFor):
+        * editing/Editor.h:
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::TextCheckingParagraph):
+        * editing/TextCheckingHelper.h:
+
 2011-12-07  Ami Fischman  <fischman@chromium.org>
 
         Force LTR layout for media controls even in RTL documents.
