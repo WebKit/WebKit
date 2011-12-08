@@ -1,3 +1,28 @@
+2011-12-07  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Upstream the BlackBerry porting of network Resource
+        https://bugs.webkit.org/show_bug.cgi?id=73388
+
+        Reviewed by Rob Buis.
+
+        Other main contributors:
+        Joe Mason <jmason@rim.com>
+        Yong Li  <yoli@rim.com>
+        Gary Simmons  <gsimmons@rim.com>
+        Genevieve Mak <gmak@rim.com>
+        Chris Guan <chris.guan@torchmobile.com.cn>
+        Mike Lattanzio <mlattanzio@rim.com>
+
+        Initial upstream, can't be built yet, no new tests.
+
+        * platform/network/blackberry/ResourceError.h: Added.
+        * platform/network/blackberry/ResourceErrorBlackBerry.cpp: Added.
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp: Added.
+        * platform/network/blackberry/ResourceRequest.h: Added.
+        * platform/network/blackberry/ResourceRequestBlackBerry.cpp: Added.
+        * platform/network/blackberry/ResourceResponse.h: Added.
+        * platform/network/blackberry/ResourceResponseBlackBerry.cpp: Added.
+
 2011-12-07  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Plumb DPI info into PlatformScreen
