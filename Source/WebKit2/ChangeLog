@@ -1,3 +1,19 @@
+2011-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        REGRESSION(r101683): QQuickWebView doesn't work with OpenGL/ES 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=74077
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace Desktop OpenGL idiom of using gl_Vertex with a simple vertex attribute
+        that's tied to the same register 0 (by being the first in the array).
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (PageProxyMaterialShader::attributeNames): Define "vertex" attribute, which is
+        bound to register 0, which is the current vertex.
+        (PageProxyMaterialShader::vertexShader): Use the vertex attribute instead of the
+        built-in gl_Vertex, which is only present in Desktop GL.
+
 2011-12-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix the memory leak of AC layer update message contents on the UI process.

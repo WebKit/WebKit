@@ -226,7 +226,7 @@ struct PageProxyMaterialShader : public QSGMaterialShader {
     virtual void updateState(const RenderState& state, QSGMaterial* newMaterial, QSGMaterial* oldMaterial);
     virtual char const* const* attributeNames() const
     {
-        static char const* const attr[] = { 0 };
+        static char const* const attr[] = { "vertex", 0 };
         return attr;
     }
 
@@ -234,7 +234,8 @@ struct PageProxyMaterialShader : public QSGMaterialShader {
     // All real painting is gone by TextureMapper through LayerTreeHostProxy.
     virtual const char* vertexShader() const
     {
-        return "void main() { gl_Position = gl_Vertex; }";
+        return "attribute highp vec4 vertex; \n"
+               "void main() { gl_Position = vertex; }";
     }
 
     virtual const char* fragmentShader() const
