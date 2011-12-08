@@ -1,3 +1,19 @@
+2011-12-08  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2] Initialize threading in UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=70127
+
+        Reviewed by Anders Carlsson.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * Shared/APIObject.cpp: Added.
+        (WebKit::APIObject::APIObject):
+        * Shared/APIObject.h:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2011-12-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Directly composited images doesn't render

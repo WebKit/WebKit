@@ -403,6 +403,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\APIObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\APIObject.h"
 				>
 			</File>

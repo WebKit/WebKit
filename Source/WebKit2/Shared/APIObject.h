@@ -126,9 +126,7 @@ public:
     virtual Type type() const = 0;
 
 protected:
-    APIObject()
-    {
-    }
+    APIObject();
 };
 
 } // namespace WebKit

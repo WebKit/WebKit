@@ -129,6 +129,7 @@ SET(WebKit2_SOURCES
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/APIClientTraits.cpp
+    Shared/APIObject.cpp
     Shared/ChildProcess.cpp
     Shared/ImmutableArray.cpp
     Shared/ImmutableDictionary.cpp

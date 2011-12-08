@@ -393,6 +393,7 @@ SOURCES += \
     Shared/API/c/WKUserContentURLPattern.cpp \
     Shared/API/c/qt/WKImageQt.cpp \
     Shared/APIClientTraits.cpp \
+    Shared/APIObject.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
