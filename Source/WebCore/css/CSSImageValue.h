@@ -34,6 +34,7 @@ class CSSImageValue : public CSSPrimitiveValue {
 public:
     static PassRefPtr<CSSImageValue> create() { return adoptRef(new CSSImageValue); }
     static PassRefPtr<CSSImageValue> create(const String& url) { return adoptRef(new CSSImageValue(url)); }
+    static PassRefPtr<CSSImageValue> create(const String& url, StyleImage* image) { return adoptRef(new CSSImageValue(url, image)); }
     ~CSSImageValue();
 
     StyleCachedImage* cachedImage(CachedResourceLoader*);
@@ -50,6 +51,7 @@ protected:
 private:
     CSSImageValue();
     explicit CSSImageValue(const String& url);
+    explicit CSSImageValue(const String& url, StyleImage*);
 
     RefPtr<StyleImage> m_image;
     bool m_accessedImage;

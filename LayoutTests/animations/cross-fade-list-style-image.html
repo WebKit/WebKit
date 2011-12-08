@@ -1,0 +1,57 @@
+<html>
+<head>
+  <style>
+    #box {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        -webkit-animation: anim 1s linear infinite;
+    }
+    #boxShorthand {
+        position: absolute;
+        left: 400px;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        -webkit-animation: animShorthand 1s linear infinite;
+    }
+    #boxStatic {
+        position: absolute;
+        left: 100px;
+        top: 350px;
+        height: 100px;
+        width: 100px;
+        list-style: square -webkit-cross-fade(url(resources/blue-100.png), url(resources/green-100.png), 50%);
+    }
+    @-webkit-keyframes anim {
+        from { list-style-image: url(resources/blue-100.png); }
+        to   { list-style-image: url(resources/green-100.png); }
+    }
+    @-webkit-keyframes animShorthand {
+        from { list-style: square url(resources/blue-100.png); }
+        to   { list-style: square url(resources/green-100.png); }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 2.5, "box", "listStyleImage", 0.5, 0.05],
+      ["anim", 2.5, ["box", "static:boxStatic"], "listStyleImage", 0.5, 0.05],
+      ["animShorthand", 2.5, ["boxShorthand", "static:boxStatic"], "listStyleImage", 0.5, 0.05],
+    ];
+
+    var doPixelTest = true;
+    var disablePauseAPI = false;
+    runAnimationTest(expectedValues, null, undefined, disablePauseAPI, doPixelTest);
+  </script>
+</head>
+<body>
+<ul id="box"><li>one</li><li>two</li></ul>
+<ul id="boxStatic"><li>one</li><li>two</li></ul>
+<ul id="boxShorthand"><li>one</li><li>two</li></ul>
+<div id="result"></div>
+</body>
+</html>

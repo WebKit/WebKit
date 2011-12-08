@@ -50,6 +50,13 @@ CSSImageValue::CSSImageValue(const String& url)
 {
 }
 
+CSSImageValue::CSSImageValue(const String& url, StyleImage* image)
+    : CSSPrimitiveValue(ImageClass, url, CSS_URI)
+    , m_image(image)
+    , m_accessedImage(true)
+{
+}
+
 CSSImageValue::~CSSImageValue()
 {
 }

@@ -52,6 +52,9 @@ static bool subimageIsPending(CSSValue* value)
 
 static CachedImage* cachedImageForCSSValue(CSSValue* value, CachedResourceLoader* cachedResourceLoader)
 {
+    if (!value)
+        return 0;
+
     if (value->isImageValue()) {
         StyleCachedImage* styleCachedImage = static_cast<CSSImageValue*>(value)->cachedImage(cachedResourceLoader);
         if (!styleCachedImage)
@@ -104,6 +107,11 @@ IntSize CSSCrossfadeValue::fixedSize(const RenderObject* renderer)
     IntSize fromImageSize = cachedFromImage->imageForRenderer(renderer)->size();
     IntSize toImageSize = cachedToImage->imageForRenderer(renderer)->size();
 
+    // Rounding issues can cause transitions between images of equal size to return
+    // a different fixed size; avoid performing the interpolation if the images are the same size.
+    if (fromImageSize == toImageSize)
+        return fromImageSize;
+
     return IntSize(fromImageSize.width() * inversePercentage + toImageSize.width() * percentage,
         fromImageSize.height() * inversePercentage + toImageSize.height() * percentage);
 }
@@ -146,7 +154,7 @@ PassRefPtr<Image> CSSCrossfadeValue::image(RenderObject* renderer, const IntSize
 
     m_generatedImage = CrossfadeGeneratedImage::create(fromImage, toImage, m_percentageValue->getFloatValue(), fixedSize(renderer), size);
 
-    return m_generatedImage.get();
+    return m_generatedImage.release();
 }
 
 void CSSCrossfadeValue::crossfadeChanged(const IntRect&)

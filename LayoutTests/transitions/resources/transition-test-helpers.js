@@ -59,6 +59,16 @@ function compareRGB(rgb, expected, tolerance)
             isCloseEnough(parseInt(rgb[2]), expected[2], tolerance));
 }
 
+function parseCrossFade(s)
+{
+    var matches = s.match("-webkit-cross-fade\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
+
+    if (!matches)
+        return null;
+
+    return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
+}
+
 function checkExpectedValue(expected, index)
 {
     var time = expected[index][0];
@@ -109,6 +119,23 @@ function checkExpectedValue(expected, index)
     } else if (property == "lineHeight") {
         computedValue = parseInt(window.getComputedStyle(document.getElementById(elementId)).lineHeight);
         pass = isCloseEnough(computedValue, expectedValue, tolerance);
+    } else if (property == "background-image"
+               || property == "border-image-source"
+               || property == "border-image"
+               || property == "list-style-image"
+               || property == "-webkit-mask-image"
+               || property == "-webkit-mask-box-image") {
+        if (property == "border-image" || property == "-webkit-mask-image" || property == "-webkit-mask-box-image")
+            property += "-source";
+        
+        computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).cssText;
+        computedCrossFade = parseCrossFade(computedValue);
+
+        if (!computedCrossFade) {
+            pass = false;
+        } else {
+            pass = isCloseEnough(computedCrossFade.percent, expectedValue, tolerance);
+        }
     } else {
         var computedStyle = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);
         if (computedStyle.cssValueType == CSSValue.CSS_VALUE_LIST) {

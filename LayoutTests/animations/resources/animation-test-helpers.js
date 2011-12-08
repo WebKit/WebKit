@@ -22,7 +22,8 @@ Function parameters:
     
     [2] If a single string is passed, it is the id of the element to test. If an array with 2 elements is passed they
     are the ids of 2 elements, whose values are compared for equality. In this case the expected value is ignored
-    but the tolerance is used in the comparison.
+    but the tolerance is used in the comparison. If the second element is prefixed with "static:", no animation on that
+    element is required, allowing comparison with an unanimated "expected value" element.
     
     If a string with a '.' is passed, this is an element in an iframe. The string before the dot is the iframe id
     and the string after the dot is the element name in that iframe.
@@ -48,6 +49,16 @@ function matrixStringToArray(s)
     return m[0].split(",");
 }
 
+function parseCrossFade(s)
+{
+    var matches = s.match("-webkit-cross-fade\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
+
+    if (!matches)
+        return null;
+
+    return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
+}
+
 function checkExpectedValue(expected, index)
 {
     var animationName = expected[index][0];
@@ -59,6 +70,7 @@ function checkExpectedValue(expected, index)
 
     // Check for a pair of element Ids
     var compareElements = false;
+    var element2Static = false;
     var elementId2;
     if (typeof elementId != "string") {
         if (elementId.length != 2)
@@ -66,6 +78,12 @@ function checkExpectedValue(expected, index)
             
         elementId2 = elementId[1];
         elementId = elementId[0];
+
+        if (elementId2.indexOf("static:") == 0) {
+            elementId2 = elementId2.replace("static:", "");
+            element2Static = true;
+        }
+
         compareElements = true;
     }
     
@@ -84,7 +102,7 @@ function checkExpectedValue(expected, index)
         return;
     }
     
-    if (compareElements && animationName && hasPauseAnimationAPI && !layoutTestController.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId2)) {
+    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !layoutTestController.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId2)) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
@@ -140,6 +158,38 @@ function checkExpectedValue(expected, index)
         }
         else
             pass = isCloseEnough(computedValue, expectedValue, tolerance);
+    } else if (property == "backgroundImage"
+               || property == "borderImageSource"
+               || property == "listStyleImage"
+               || property == "webkitMaskImage"
+               || property == "webkitMaskBoxImage") {
+        var element;
+        if (iframeId)
+            element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
+        else
+            element = document.getElementById(elementId);
+
+        computedValue = window.getComputedStyle(element)[property];
+        computedCrossFade = parseCrossFade(computedValue);
+
+        if (!computedCrossFade) {
+            pass = false;
+        } else {
+            if (compareElements) {
+                computedValue2 = window.getComputedStyle(document.getElementById(elementId2))[property];
+                computedCrossFade2 = parseCrossFade(computedValue2);
+                if (computedCrossFade2) {
+                    pass = (isCloseEnough(computedCrossFade.percent, computedCrossFade2.percent, tolerance) &&
+                        computedCrossFade.from == computedCrossFade2.from &&
+                        computedCrossFade.to == computedCrossFade2.to);
+                }
+                else {
+                    pass = false;
+                }
+            } else {
+                pass = isCloseEnough(computedCrossFade.percent, expectedValue, tolerance);
+            }
+        }
     } else {
         var element;
         if (iframeId)

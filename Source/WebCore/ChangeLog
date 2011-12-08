@@ -1,3 +1,59 @@
+2011-12-08  Tim Horton  <timothy_horton@apple.com>
+
+        Enable animations of CSS images using -webkit-cross-fade
+        https://bugs.webkit.org/show_bug.cgi?id=74049
+        <rdar://problem/10209303>
+
+        Reviewed by Simon Fraser.
+
+        Add support for animating CSS images in the following properties:
+            - background(-image)
+            - border-image(-source)
+            - list-style(-image)
+            - -webkit-mask-box-image(-source)
+            - -webkit-mask-image(-source)
+        
+        This patch only adds support for transitioning between NinePieceImages
+        where all of the properties except the image itself are equal, and the
+        size of the images are equal. Other cases will not animate.
+        
+        Add animation blend functions for StyleImage and NinePieceImage.
+        
+        Apply the proper compositing operation to -webkit-cross-fade, and
+        fix handling of the destination and source areas to support scaling.
+
+        Tests: animations/cross-fade-background-image.html
+               animations/cross-fade-border-image-source.html
+               animations/cross-fade-list-style-image.html
+               animations/cross-fade-webkit-mask-box-image.html
+               animations/cross-fade-webkit-mask-image.html
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::cachedImageForCSSValue):
+        (WebCore::CSSCrossfadeValue::fixedSize):
+        (WebCore::CSSCrossfadeValue::image):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::CSSImageValue):
+        * css/CSSImageValue.h:
+        (WebCore::CSSImageValue::create):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::crossfadeBlend):
+        (WebCore::blendFunc):
+        (WebCore::RefCountedPropertyWrapper::RefCountedPropertyWrapper):
+        (WebCore::RefCountedPropertyWrapper::blend):
+        (WebCore::FillLayerRefCountedPropertyWrapper::FillLayerRefCountedPropertyWrapper):
+        (WebCore::FillLayerRefCountedPropertyWrapper::blend):
+        (WebCore::FillLayersPropertyWrapper::FillLayersPropertyWrapper):
+        (WebCore::AnimationBase::ensurePropertyMap):
+        (WebCore::addShorthandProperties):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawCrossfade):
+        (WebCore::CrossfadeGeneratedImage::draw):
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setMaskImage):
+
 2011-12-08  Stephen White  <senorblanco@chromium.org>
 
         Use Skia's implementation of Gaussian blur when accelerated filters

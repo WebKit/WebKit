@@ -30,6 +30,10 @@
 #include "AnimationBase.h"
 
 #include "AnimationControllerPrivate.h"
+#include "CSSCrossfadeValue.h"
+#include "CSSImageGeneratorValue.h"
+#include "CSSImageValue.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyLonghand.h"
 #include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
@@ -43,6 +47,8 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderStyle.h"
+#include "StyleCachedImage.h"
+#include "StyleGeneratedImage.h"
 #include "UnitBezier.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
@@ -224,6 +230,58 @@ static inline SVGLength blendFunc(const AnimationBase*, const SVGLength& from, c
 }
 #endif
 
+static inline PassRefPtr<StyleImage> crossfadeBlend(const AnimationBase*, StyleCachedImage* fromStyleImage, StyleCachedImage* toStyleImage, double progress)
+{
+    // If progress is at one of the extremes, we want getComputedStyle to show the image,
+    // not a completed cross-fade, so we hand back one of the existing images.
+    if (!progress)
+        return fromStyleImage;
+    if (progress == 1)
+        return toStyleImage;
+
+    CachedImage* fromCachedImage = static_cast<CachedImage*>(fromStyleImage->data());
+    CachedImage* toCachedImage = static_cast<CachedImage*>(toStyleImage->data());
+
+    RefPtr<CSSImageValue> fromImageValue = CSSImageValue::create(fromCachedImage->url(), fromStyleImage);
+    RefPtr<CSSImageValue> toImageValue = CSSImageValue::create(toCachedImage->url(), toStyleImage);
+    RefPtr<CSSCrossfadeValue> crossfadeValue = CSSCrossfadeValue::create(fromImageValue, toImageValue);
+
+    crossfadeValue->setPercentage(CSSPrimitiveValue::create(progress, CSSPrimitiveValue::CSS_NUMBER));
+
+    return StyleGeneratedImage::create(crossfadeValue.get());
+}
+
+static inline PassRefPtr<StyleImage> blendFunc(const AnimationBase* anim, StyleImage* from, StyleImage* to, double progress)
+{
+    if (!from || !to)
+        return to;
+
+    if (from->isCachedImage() && to->isCachedImage())
+        return crossfadeBlend(anim, static_cast<StyleCachedImage*>(from), static_cast<StyleCachedImage*>(to), progress);
+
+    // FIXME: Support transitioning generated images as well. (gradients, etc.)
+
+    return to;
+}
+
+static inline NinePieceImage blendFunc(const AnimationBase* anim, const NinePieceImage& from, const NinePieceImage& to, double progress)
+{
+    if (!from.hasImage() || !to.hasImage())
+        return to;
+
+    // FIXME (74112): Support transitioning between NinePieceImages that differ by more than image content.
+
+    if (from.imageSlices() != to.imageSlices() || from.borderSlices() != to.borderSlices() || from.outset() != to.outset() || from.fill() != to.fill() || from.horizontalRule() != to.horizontalRule() || from.verticalRule() != to.verticalRule())
+        return to;
+
+    if (from.image()->imageSize(anim->renderer(), 1.0) != to.image()->imageSize(anim->renderer(), 1.0))
+        return to;
+
+    RefPtr<StyleImage> newContentImage = blendFunc(anim, from.image(), to.image(), progress);
+
+    return NinePieceImage(newContentImage, from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
+}
+
 class PropertyWrapperBase;
 
 static void addShorthandProperties();
@@ -293,6 +351,24 @@ public:
 
 protected:
     void (RenderStyle::*m_setter)(T);
+};
+
+template <typename T>
+class RefCountedPropertyWrapper : public PropertyWrapperGetter<T*> {
+public:
+    RefCountedPropertyWrapper(int prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<T>))
+    : PropertyWrapperGetter<T*>(prop, getter)
+    , m_setter(setter)
+    {
+    }
+
+    virtual void blend(const AnimationBase* anim, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        (dst->*m_setter)(blendFunc(anim, (a->*PropertyWrapperGetter<T*>::m_getter)(), (b->*PropertyWrapperGetter<T*>::m_getter)(), progress));
+    }
+
+protected:
+    void (RenderStyle::*m_setter)(PassRefPtr<T>);
 };
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -568,6 +644,24 @@ protected:
     void (FillLayer::*m_setter)(T);
 };
 
+template <typename T>
+class FillLayerRefCountedPropertyWrapper : public FillLayerPropertyWrapperGetter<T*> {
+public:
+    FillLayerRefCountedPropertyWrapper(T* (FillLayer::*getter)() const, void (FillLayer::*setter)(PassRefPtr<T>))
+        : FillLayerPropertyWrapperGetter<T*>(getter)
+        , m_setter(setter)
+    {
+    }
+
+    virtual void blend(const AnimationBase* anim, FillLayer* dst, const FillLayer* a, const FillLayer* b, double progress) const
+    {
+        (dst->*m_setter)(blendFunc(anim, (a->*FillLayerPropertyWrapperGetter<T*>::m_getter)(), (b->*FillLayerPropertyWrapperGetter<T*>::m_getter)(), progress));
+    }
+
+protected:
+    void (FillLayer::*m_setter)(PassRefPtr<T>);
+};
+
 
 class FillLayersPropertyWrapper : public PropertyWrapperBase {
 public:
@@ -592,6 +686,9 @@ public:
             case CSSPropertyWebkitBackgroundSize:
             case CSSPropertyWebkitMaskSize:
                 m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<LengthSize>(&FillLayer::sizeLength, &FillLayer::setSizeLength);
+                break;
+            case CSSPropertyBackgroundImage:
+                m_fillLayerPropertyWrapper = new FillLayerRefCountedPropertyWrapper<StyleImage>(&FillLayer::image, &FillLayer::setImage);
                 break;
         }
     }
@@ -774,6 +871,16 @@ void AnimationBase::ensurePropertyMap()
 
         gPropertyWrappers->append(new PropertyWrapper<const Color&>(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor));
 
+        gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundImage, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
+        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyListStyleImage, &RenderStyle::listStyleImage, &RenderStyle::setListStyleImage));
+        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage));
+
+        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource));
+        gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage));
+
+        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource));
+        gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage));
+
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionY, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
@@ -896,10 +1003,10 @@ static void addPropertyWrapper(int propertyID, PropertyWrapperBase* wrapper)
 static void addShorthandProperties()
 {
     static const int animatableShorthandProperties[] = {
-        CSSPropertyBackground,      // for background-color, background-position
+        CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
         CSSPropertyFont, // for font-size, font-weight
-        CSSPropertyWebkitMask,      // for mask-position
+        CSSPropertyWebkitMask, // for mask-position
         CSSPropertyWebkitMaskPosition,
         CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft,
         CSSPropertyBorderColor,
@@ -907,6 +1014,7 @@ static void addShorthandProperties()
         CSSPropertyBorderWidth,
         CSSPropertyBorder,
         CSSPropertyBorderSpacing,
+        CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,
         CSSPropertyOutline,
         CSSPropertyPadding,

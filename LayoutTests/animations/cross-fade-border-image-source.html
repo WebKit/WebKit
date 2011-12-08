@@ -1,0 +1,62 @@
+<html>
+<head>
+  <style>
+    #box {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        background-color: green;
+        -webkit-animation: anim 1s linear infinite;
+        border-image: url() 5 5 5 5 /20px stretch stretch;
+    }
+    #boxShorthand {
+        position: absolute;
+        left: 100px;
+        top: 250px;
+        height: 100px;
+        width: 100px;
+        background-color: green;
+        -webkit-animation: animShorthand 1s linear infinite;
+    }
+    #boxStatic {
+        position: absolute;
+        left: 100px;
+        top: 400px;
+        height: 100px;
+        width: 100px;
+        background-color: green;
+        border-image: -webkit-cross-fade(url(resources/stripes-100.png), url(resources/green-100.png), 50%) 5 5 5 5 /20px stretch stretch;
+    }
+    @-webkit-keyframes anim {
+        from { border-image-source: url(resources/stripes-100.png); }
+        to   { border-image-source: url(resources/green-100.png); }
+    }
+    @-webkit-keyframes animShorthand {
+        from { border-image: url(resources/stripes-100.png) 5 5 5 5 /20px stretch stretch; }
+        to   { border-image: url(resources/green-100.png) 5 5 5 5 /20px stretch stretch; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      // FIXME: We can't test reading the borderImage shorthand because of bug #13658.
+      ["anim", 2.5, "box", "borderImageSource", 0.5, 0.05],
+      ["anim", 2.5, ["box", "static:boxStatic"], "borderImageSource", 0.5, 0.05],
+      ["animShorthand", 2.5, ["boxShorthand", "static:boxStatic"], "borderImageSource", 0.5, 0.05],
+    ];
+
+    var doPixelTest = true;
+    var disablePauseAPI = false;
+    runAnimationTest(expectedValues, null, undefined, disablePauseAPI, doPixelTest);
+  </script>
+</head>
+<body>
+<div id="box"></div>
+<div id="boxShorthand"></div>
+<div id="boxStatic"></div>
+<div id="result"></div>
+</body>
+</html>

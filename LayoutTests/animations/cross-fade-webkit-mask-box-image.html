@@ -1,0 +1,45 @@
+<html>
+<head>
+  <style>
+    #box {
+        position: absolute;
+        left: 100px;
+        top: 100px;
+        height: 200px;
+        width: 200px;
+        background-color: red;
+        -webkit-animation: anim 1s linear infinite;
+    }
+    #boxStatic {
+        position: absolute;
+        left: 100px;
+        top: 300px;
+        height: 200px;
+        width: 200px;
+        background-color: red;
+        -webkit-mask-box-image: -webkit-cross-fade(url(resources/stripes-100.png), url(resources/green-100.png), 25%) 75 stretch;
+    }
+    @-webkit-keyframes anim {
+        from { -webkit-mask-box-image: url(resources/stripes-100.png) 75 stretch; }
+        to   { -webkit-mask-box-image: url(resources/green-100.png) 75 stretch; }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 2.25, "box", "webkitMaskBoxImage", 0.25, 0.05],
+      ["anim", 2.25, ["box", "static:boxStatic"], "webkitMaskBoxImage", 0.25, 0.05]
+    ];
+
+    var doPixelTest = true;
+    var disablePauseAPI = false;
+    runAnimationTest(expectedValues, null, undefined, disablePauseAPI, doPixelTest);
+  </script>
+</head>
+<body>
+<img id="box" src="resources/green-100.png"/>
+<img id="boxStatic" src="resources/green-100.png"/>
+<div id="result"></div>
+</body>
+</html>
