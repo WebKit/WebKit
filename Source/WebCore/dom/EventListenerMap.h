@@ -47,7 +47,6 @@ typedef Vector<RegisteredEventListener, 1> EventListenerVector;
 class EventListenerMap {
 public:
     EventListenerMap();
-    ~EventListenerMap();
 
     bool isEmpty() const;
     bool contains(const AtomicString& eventType) const;

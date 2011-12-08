@@ -50,11 +50,6 @@ EventListenerMap::EventListenerMap()
 {
 }
 
-EventListenerMap::~EventListenerMap()
-{
-    clear();
-}
-
 bool EventListenerMap::isEmpty() const
 {
     if (m_hashMap)

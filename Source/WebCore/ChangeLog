@@ -1,3 +1,19 @@
+2011-12-08  Andreas Kling  <kling@webkit.org>
+
+        Remove EventListenerMap destructor.
+        <http://webkit.org/b/74096>
+
+        Reviewed by Darin Adler.
+
+        Let the compiler generate ~EventListenerMap(). We only needed it when the hash map
+        was managing raw pointers.
+
+        We're losing the no-iterators assertion from clear() by doing this, but that was
+        superfluous to begin with - we were just using it to avoid duplicating code.
+
+        * dom/EventListenerMap.cpp:
+        * dom/EventListenerMap.h:
+
 2011-12-08  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Provide more specific error description for SocketStreamError.
