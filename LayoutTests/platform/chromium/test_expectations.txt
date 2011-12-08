@@ -3805,3 +3805,5 @@ BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/bidi-neutral-run.html = 
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = TEXT
 
 BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE PASS
+
+BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
