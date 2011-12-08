@@ -736,12 +736,7 @@ RenderBlock* RenderObject::containingBlock() const
             o = o->parent();
         }
     } else {
-        while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
-                     || o->isTableCol() || o->isFrameSet() || o->isMedia()
-#if ENABLE(SVG)
-                     || o->isSVGContainer() || o->isSVGRoot()
-#endif
-                     ))
+        while (o && ((o->isInline() && !o->isReplaced()) || !o->isRenderBlock()))
             o = o->parent();
     }
 

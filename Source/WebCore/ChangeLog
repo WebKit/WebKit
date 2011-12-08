@@ -1,3 +1,20 @@
+2011-12-08  Andreas Kling  <kling@webkit.org>
+
+        Optimize RenderObject::containingBlock().
+        <http://webkit.org/b/74109>
+
+        Reviewed by David Hyatt.
+
+        When climbing the parent chain to locate the containing block-level element,
+        use !isRenderBlock() to reject renderers rather than checking against an arbitrary
+        list of non-block renderers and then rejecting anything that isn't a block anyway.
+
+        RenderObject::containingBlock() was very hot (2.0%) when scrolling on youtube.com.
+        This change takes it down to 1.0% (60% of which is RenderObject::isRenderBlock().)
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containingBlock):
+
 2011-12-08  Nayan Kumar K  <nayankk@motorola.com>
 
         Define DEBUG_GL_COMMANDS only in debug builds.
