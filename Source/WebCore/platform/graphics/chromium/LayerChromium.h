@@ -169,10 +169,8 @@ public:
     virtual void protectVisibleTileTextures() { }
     virtual bool needsContentsScale() const { return false; }
 
-    // These exist just for debugging (via drawDebugBorder()).
     void setDebugBorderColor(const Color&);
     void setDebugBorderWidth(float);
-    void drawDebugBorder();
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 

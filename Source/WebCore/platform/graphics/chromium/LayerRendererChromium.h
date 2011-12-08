@@ -172,8 +172,6 @@ private:
     ManagedTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
 
-    bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
-
     void setDrawViewportRect(const IntRect&, bool flipY);
 
     void releaseRenderSurfaceTextures();

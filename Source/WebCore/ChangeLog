@@ -1,3 +1,16 @@
+2011-12-08  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove dead code in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=74103
+
+        Reviewed by James Robinson.
+
+        Tested via the compiler.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-12-08  Eric Penner  <epenner@google.com>
 
         [chromium] Need to adjust memory limit and viewport multipliers.
