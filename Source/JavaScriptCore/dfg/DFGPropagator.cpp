@@ -1085,19 +1085,10 @@ private:
     bool checkFunctionElimination(JSFunction* function, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
-        for (NodeIndex index = m_compileIndex; index-- > start;) {
+        for (NodeIndex index = endIndexForPureCSE(); index-- > start;) {
             Node& node = m_graph[index];
-            switch (node.op) {
-            case CheckFunction:
-                if (node.child1() == child1 && node.function() == function)
-                    return true;
-                break;
-                
-            default:
-                if (clobbersWorld(index))
-                    return false;
-                break;
-            }
+            if (node.op == CheckFunction && node.child1() == child1 && node.function() == function)
+                return true;
         }
         return false;
     }

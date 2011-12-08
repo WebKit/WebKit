@@ -1,3 +1,15 @@
+2011-12-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CSE should know that CheckFunction is pure
+        https://bugs.webkit.org/show_bug.cgi?id=74044
+
+        Reviewed by Oliver Hunt.
+        
+        Possible slight win on V8, no regressions.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::checkFunctionElimination):
+
 2011-12-07  Michael Saboff  <msaboff@apple.com>
 
         StringBuilderTest.Append and StringBuilderTest.ToStringPreserveCapacity are failing.
