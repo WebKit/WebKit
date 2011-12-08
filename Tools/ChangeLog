@@ -1,3 +1,9 @@
+2011-12-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix after r102352.
+
+        * qmake/mkspecs/features/webkit2.prf:
+
 2011-12-08  Adam Roben  <aroben@apple.com>
 
         Make finding crash logs by PID work on Snow Leopard

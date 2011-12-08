@@ -54,6 +54,7 @@ VPATH = \
     WebProcess \
     UIProcess \
     UIProcess/Downloads \
+    UIProcess/Notifications \
     UIProcess/Plugins \
     Shared/Plugins
 
