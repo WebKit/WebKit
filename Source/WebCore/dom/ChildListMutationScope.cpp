@@ -40,7 +40,7 @@
 #include "Node.h"
 #include "StaticNodeList.h"
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ namespace {
 // and precede any additions. If this is violated (i.e. because of code changes elsewhere
 // in WebCore) it will likely result in both (a) ASSERTions failing, and (b) mutation records
 // being enqueued for delivery before the outer-most scope closes.
-class ChildListMutationAccumulator {
+class ChildListMutationAccumulator : public RefCounted<ChildListMutationAccumulator> {
     WTF_MAKE_NONCOPYABLE(ChildListMutationAccumulator);
 public:
     ChildListMutationAccumulator(PassRefPtr<Node>, PassOwnPtr<MutationObserverInterestGroup> observers);
@@ -95,7 +95,7 @@ private:
 
     typedef HashMap<Node*, unsigned> ScopingLevelMap;
     ScopingLevelMap m_scopingLevels;
-    HashMap<Node*, OwnPtr<ChildListMutationAccumulator> > m_accumulations;
+    HashMap<Node*, RefPtr<ChildListMutationAccumulator> > m_accumulations;
 
     static MutationAccumulationRouter* s_instance;
 };
@@ -216,7 +216,7 @@ MutationAccumulationRouter* MutationAccumulationRouter::instance()
 
 void MutationAccumulationRouter::childAdded(Node* target, Node* child)
 {
-    HashMap<Node*, OwnPtr<ChildListMutationAccumulator> >::iterator iter = m_accumulations.find(target);
+    HashMap<Node*, RefPtr<ChildListMutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
 
     if (iter->second)
@@ -225,7 +225,7 @@ void MutationAccumulationRouter::childAdded(Node* target, Node* child)
 
 void MutationAccumulationRouter::willRemoveChild(Node* target, Node* child)
 {
-    HashMap<Node*, OwnPtr<ChildListMutationAccumulator> >::iterator iter = m_accumulations.find(target);
+    HashMap<Node*, RefPtr<ChildListMutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
 
     if (iter->second)
@@ -242,9 +242,9 @@ void MutationAccumulationRouter::incrementScopingLevel(Node* target)
 
     OwnPtr<MutationObserverInterestGroup> observers = MutationObserverInterestGroup::createForChildListMutation(target);
     if (observers->isEmpty())
-        m_accumulations.set(target, nullptr);
+        m_accumulations.set(target, 0);
     else
-        m_accumulations.set(target, adoptPtr(new ChildListMutationAccumulator(target, observers.release())));
+        m_accumulations.set(target, adoptRef(new ChildListMutationAccumulator(target, observers.release())));
 }
 
 void MutationAccumulationRouter::decrementScopingLevel(Node* target)
@@ -258,7 +258,7 @@ void MutationAccumulationRouter::decrementScopingLevel(Node* target)
 
     m_scopingLevels.remove(iter);
 
-    OwnPtr<ChildListMutationAccumulator> record = m_accumulations.take(target);
+    RefPtr<ChildListMutationAccumulator> record = m_accumulations.take(target);
     if (record)
         record->enqueueMutationRecord();
 }

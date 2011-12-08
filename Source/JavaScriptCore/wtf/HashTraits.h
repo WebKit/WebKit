@@ -117,7 +117,6 @@ namespace WTF {
 
         typedef PassOwnPtr<P> PassOutType;
         static PassOwnPtr<P> passOut(OwnPtr<P>& value) { return value.release(); }
-        static PassOwnPtr<P> passOut(std::nullptr_t) { return nullptr; }
 
         typedef typename OwnPtr<P>::PtrType PeekType;
         static PeekType peek(const OwnPtr<P>& value) { return value.get(); }
