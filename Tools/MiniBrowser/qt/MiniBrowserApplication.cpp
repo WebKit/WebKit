@@ -28,6 +28,7 @@
 
 #include "MiniBrowserApplication.h"
 
+#include "BrowserWindow.h"
 #include "utils.h"
 #include <QRegExp>
 #include <QEvent>
@@ -92,16 +93,17 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         return QApplication::notify(target, event);
     }
 
-    QWindow* targetWindow = qobject_cast<QWindow*>(target);
+    BrowserWindow* browserWindow = qobject_cast<BrowserWindow*>(target);
+    Q_ASSERT(browserWindow);
     if (event->type() == QEvent::KeyRelease && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Control) {
         foreach (int id, m_heldTouchPoints)
             if (m_touchPoints.contains(id))
                 m_touchPoints[id].state = Qt::TouchPointReleased;
         m_heldTouchPoints.clear();
-        sendTouchEvent(targetWindow);
+        sendTouchEvent(browserWindow);
     }
 
-    if (targetWindow && isMouseEvent(event)) {
+    if (browserWindow && isMouseEvent(event)) {
         const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
 
         QWindowSystemInterface::TouchPoint touchPoint;
@@ -147,16 +149,18 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
                 it.value().state = Qt::TouchPointStationary;
         }
 
-        sendTouchEvent(targetWindow);
+        sendTouchEvent(browserWindow);
     }
 
     return QApplication::notify(target, event);
 }
 
-void MiniBrowserApplication::sendTouchEvent(QWindow* targetWindow)
+void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
 {
     m_pendingFakeTouchEventCount++;
-    QWindowSystemInterface::handleTouchEvent(targetWindow, QEvent::None, QTouchEvent::TouchScreen, m_touchPoints.values());
+    QWindowSystemInterface::handleTouchEvent(browserWindow, QEvent::None, QTouchEvent::TouchScreen, m_touchPoints.values());
+
+    browserWindow->updateVisualMockTouchPoints(m_touchPoints.values());
 
     // Get rid of touch-points that are no longer valid
     foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {

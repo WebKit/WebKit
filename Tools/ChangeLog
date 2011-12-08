@@ -1,3 +1,21 @@
+2011-12-08  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] Visualize mock points in the Qt MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=74074
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateVisualMockTouchPoints):
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+        (MiniBrowserApplication::sendTouchEvent):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        * MiniBrowser/qt/icons/touchpoint.png: Added.
+        * MiniBrowser/qt/qml/MockTouchPoint.qml: Added.
+
 2011-12-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] WebKitTestRunner crashes with debug builds

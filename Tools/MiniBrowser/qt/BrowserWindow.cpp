@@ -34,6 +34,7 @@
 
 #include <QDeclarativeEngine>
 #include <QDir>
+#include <QPointF>
 
 BrowserWindow::BrowserWindow(WindowOptions* options)
 {
@@ -80,6 +81,30 @@ BrowserWindow* BrowserWindow::newWindow(const QString& url)
     BrowserWindow* window = new BrowserWindow();
     window->load(url);
     return window;
+}
+
+void BrowserWindow::updateVisualMockTouchPoints(const QList<QWindowSystemInterface::TouchPoint>& touchPoints)
+{
+    foreach (const QWindowSystemInterface::TouchPoint& touchPoint, touchPoints) {
+        QString mockTouchPointIdentifier = QString("mockTouchPoint%1").arg(touchPoint.id);
+        QQuickItem* mockTouchPointItem = rootObject()->findChild<QQuickItem*>(mockTouchPointIdentifier, Qt::FindDirectChildrenOnly);
+
+        if (!mockTouchPointItem) {
+            QDeclarativeComponent touchMockPointComponent(engine(), QUrl("qrc:/qml/MockTouchPoint.qml"));
+            mockTouchPointItem = qobject_cast<QQuickItem*>(touchMockPointComponent.create());
+            mockTouchPointItem->setObjectName(mockTouchPointIdentifier);
+            mockTouchPointItem->setParent(rootObject());
+            mockTouchPointItem->setParentItem(rootObject());
+        }
+
+        QPointF position = touchPoint.area.topLeft();
+        position.rx() -= geometry().x();
+        position.ry() -= geometry().y();
+
+        mockTouchPointItem->setX(position.x());
+        mockTouchPointItem->setY(position.y());
+        mockTouchPointItem->setProperty("pressed", QVariant(touchPoint.state != Qt::TouchPointReleased));
+    }
 }
 
 void BrowserWindow::screenshot()

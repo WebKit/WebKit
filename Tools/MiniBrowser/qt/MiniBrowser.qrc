@@ -4,7 +4,9 @@
         <file>icons/previous.png</file>
         <file>icons/refresh.png</file>
         <file>icons/stop.png</file>
+        <file>icons/touchpoint.png</file>
         <file>qml/BrowserWindow.qml</file>
+        <file>qml/MockTouchPoint.qml</file>
         <file>useragentlist.txt</file>
     </qresource>
 </RCC>

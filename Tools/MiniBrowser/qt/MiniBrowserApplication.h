@@ -38,6 +38,8 @@
 #include <QUrl>
 #include "qwindowsysteminterface_qpa.h"
 
+class BrowserWindow;
+
 class WindowOptions : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool printLoadedUrls READ printLoadedUrls)
@@ -88,7 +90,7 @@ public:
     virtual bool notify(QObject*, QEvent*);
 
 private:
-    void sendTouchEvent(QWindow* targetWindow);
+    void sendTouchEvent(BrowserWindow*);
     void handleUserOptions();
 
 private:

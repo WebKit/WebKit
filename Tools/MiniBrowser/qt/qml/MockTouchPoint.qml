@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
- * Copyright (C) 2010 University of Szeged
+ * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * All rights reserved.
  *
@@ -26,35 +25,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BrowserWindow_h
-#define BrowserWindow_h
+import QtQuick 2.0
 
-#include "MiniBrowserApplication.h"
-#include <QStringList>
-#include <QtDeclarative/QQuickView>
+Item {
+    property bool pressed: false
 
-class QQuickWebView;
+    Image {
+        source: "../icons/touchpoint.png"
+        x: -(width / 2)
+        y: -(height / 2)
+        opacity: parent.pressed ? 0.8 : 0.0
 
-class BrowserWindow : public QQuickView {
-    Q_OBJECT
-
-public:
-    BrowserWindow(WindowOptions* = 0);
-    ~BrowserWindow();
-    void load(const QString& url);
-    QQuickWebView* webView() const;
-
-    void updateVisualMockTouchPoints(const QList<QWindowSystemInterface::TouchPoint>& touchPoints);
-
-public slots:
-    BrowserWindow* newWindow(const QString& url = "about:blank");
-
-protected slots:
-    void screenshot();
-
-private:
-    void updateUserAgentList();
-    QStringList m_userAgentList;
-};
-
-#endif
+        Behavior on opacity {
+            NumberAnimation { duration: 200 }
+        }
+    }
+}
