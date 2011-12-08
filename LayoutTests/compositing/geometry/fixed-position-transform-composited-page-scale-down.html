@@ -20,12 +20,12 @@
 </style>
 <script>
   function scale() {
-    if (window.internals)
+    if (window.internals) {
       window.internals.setEnableCompositingForFixedPosition(document, true);
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText(true);
-      eventSender.scalePageBy(0.5, 0, 0);
+      window.internals.setPageScaleFactor(document, 0.5, 0, 0);
     }
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText(true);
   }
 </script>
 </head>

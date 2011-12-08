@@ -1,3 +1,13 @@
+2011-12-08  Fady Samuel  <fsamuel@chromium.org>
+
+        Move scalePageBy from eventSender to window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=64512
+
+        Reviewed by Simon Fraser.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-12-07  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.

@@ -4,11 +4,11 @@
 
     <script>
         function init() {
-            if (!window.eventSender)
+            if (!window.eventSender || !window.internals)
                 return;
             // Scale the page and resize the frames to verify hit testing on the frameset
             var leftPanelWidth = window.innerWidth / 8;
-            eventSender.scalePageBy(0.5, 0, 0);
+            window.internals.setPageScaleFactor(document, 0.5, 0, 0);
             eventSender.mouseMoveTo(leftPanelWidth, window.innerHeight / 4);
             eventSender.mouseDown();
             eventSender.mouseMoveTo(2 * leftPanelWidth, window.innerHeight / 4);

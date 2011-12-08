@@ -55,7 +55,6 @@ module window {
         void setAcceleratedFiltersEnabled(in Document document, in boolean enabled) raises(DOMException);
         void setEnableScrollAnimator(in Document document, in boolean enabled) raises(DOMException);
         void setZoomAnimatorTransform(in Document document, in float scale, in float tx, in float ty) raises(DOMException);
-        float getPageScaleFactor(in Document document) raises(DOMException);
         void setZoomParameters(in Document document, in float scale, in float x, in float y) raises(DOMException);
         void setMockScrollbarsEnabled(in Document document, in boolean enabled) raises(DOMException);
 
@@ -84,6 +83,9 @@ module window {
 
         long lastSpellCheckRequestSequence(in Document document) raises (DOMException);
         long lastSpellCheckProcessedSequence(in Document document) raises (DOMException);
+
+        float pageScaleFactor(in Document document) raises(DOMException);
+        void setPageScaleFactor(in Document document, in float scaleFactor, in long x, in long y) raises(DOMException);
     };
 }
 

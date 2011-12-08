@@ -165,6 +165,7 @@ EXPORTS
         ?setShouldLayoutFixedElementsRelativeToFrame@FrameView@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
+        ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@12@@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z

@@ -1,3 +1,20 @@
+2011-12-08  Fady Samuel  <fsamuel@chromium.org>
+
+        Move scalePageBy from eventSender to window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=64512
+
+        Reviewed by Simon Fraser.
+
+        Added setPageScaleFactor to window.internals.
+        Renamed window.internals.getPageScaleFactor to window.internals.pageScaleFactor
+        to match the webkit style.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageScaleFactor):
+        (WebCore::Internals::setPageScaleFactor):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-12-08  Kentaro Hara  <haraken@chromium.org>
 
         Use the [Supplemental] IDL for webaudio attributes in Chromium
