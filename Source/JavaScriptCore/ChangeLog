@@ -1,3 +1,18 @@
+2011-12-09  David Levin  <levin@chromium.org>
+
+        Hash* iterators should allow comparison between const and const versions.
+        https://bugs.webkit.org/show_bug.cgi?id=73370
+
+        Reviewed by Darin Adler.
+
+        * wtf/HashTable.h: Add the operators needed to do this.
+        (WTF::HashTableConstIterator::operator==):
+        (WTF::HashTableConstIterator::operator!=):
+        (WTF::HashTableIterator::operator==):
+        (WTF::HashTableIterator::operator!=):
+        (WTF::operator==):
+        (WTF::operator!=):
+
 2011-12-09  Michael Saboff  <msaboff@apple.com>
 
         YARR: Multi-character read optimization for 8bit strings

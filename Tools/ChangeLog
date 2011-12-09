@@ -1,3 +1,16 @@
+2011-12-09  David Levin  <levin@chromium.org>
+
+        Hash* iterators should allow comparison between const and const versions.
+        https://bugs.webkit.org/show_bug.cgi?id=73370
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi: Add the new test file to the build.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Ditto.
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp: Added.
+        (TestWebKitAPI::TEST): Add a test for the new functionality.
+
 2011-12-09  Dirk Pranke  <dpranke@chromium.org>
 
         chromium: visual studio projects are busted when build_webkit_exes_from_webkit_gyp==0
