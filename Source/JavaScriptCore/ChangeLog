@@ -1,3 +1,15 @@
+2011-12-09  David Levin  <levin@chromium.org>
+
+        Regression(r53595): Sync xhr requests in workers aren't terminated on worker close.
+        https://bugs.webkit.org/show_bug.cgi?id=71695
+
+        Reviewed by Zoltan Herczeg.
+
+        * wtf/MessageQueue.h:
+        (WTF::MessageQueue::tryGetMessageIgnoringKilled): Added a way to get messages
+        even after the queue has been killed. This is useful when one wants to
+        kill a queue but then go through it to run clean up tasks from it.
+
 2011-12-09  Adrienne Walker  <enne@google.com>
 
         Fix HashMap<..., OwnPtr<...> >::add compilation errors

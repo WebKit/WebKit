@@ -134,6 +134,7 @@ void WorkerRunLoop::run(WorkerContext* context)
     do {
         result = runInMode(context, modePredicate);
     } while (result != MessageQueueTerminated);
+    runCleanupTasks(context);
 }
 
 MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const String& mode)
@@ -161,7 +162,7 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const Mo
         break;
 
     case MessageQueueMessageReceived:
-        task->performTask(context);
+        task->performTask(*this, context);
         break;
 
     case MessageQueueTimeout:
@@ -171,6 +172,21 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerContext* context, const Mo
     }
 
     return result;
+}
+
+void WorkerRunLoop::runCleanupTasks(WorkerContext* context)
+{
+    ASSERT(context);
+    ASSERT(context->thread());
+    ASSERT(context->thread()->threadID() == currentThread());
+    ASSERT(m_messageQueue.killed());
+
+    while (true) {
+        OwnPtr<WorkerRunLoop::Task> task = m_messageQueue.tryGetMessageIgnoringKilled();
+        if (!task)
+            return;
+        task->performTask(*this, context);
+    }
 }
 
 void WorkerRunLoop::terminate()
@@ -193,10 +209,10 @@ PassOwnPtr<WorkerRunLoop::Task> WorkerRunLoop::Task::create(PassOwnPtr<ScriptExe
     return adoptPtr(new Task(task, mode));
 }
 
-void WorkerRunLoop::Task::performTask(ScriptExecutionContext* context)
+void WorkerRunLoop::Task::performTask(const WorkerRunLoop& runLoop, ScriptExecutionContext* context)
 {
     WorkerContext* workerContext = static_cast<WorkerContext *>(context);
-    if (!workerContext->isClosing() || m_task->isCleanupTask())
+    if ((!workerContext->isClosing() && !runLoop.terminated()) || m_task->isCleanupTask())
         m_task->performTask(context);
 }
 
@@ -205,7 +221,6 @@ WorkerRunLoop::Task::Task(PassOwnPtr<ScriptExecutionContext::Task> task, const S
     , m_mode(mode.isolatedCopy())
 {
 }
-
 
 } // namespace WebCore
 

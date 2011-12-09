@@ -56,7 +56,7 @@ namespace WebCore {
         MessageQueueWaitResult runInMode(WorkerContext*, const String& mode);
 
         void terminate();
-        bool terminated() { return m_messageQueue.killed(); }
+        bool terminated() const { return m_messageQueue.killed(); }
 
         void postTask(PassOwnPtr<ScriptExecutionContext::Task>);
         void postTaskForMode(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode);
@@ -71,7 +71,7 @@ namespace WebCore {
             static PassOwnPtr<Task> create(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode);
             ~Task() { }
             const String& mode() const { return m_mode; }
-            void performTask(ScriptExecutionContext* context);
+            void performTask(const WorkerRunLoop&, ScriptExecutionContext*);
 
         private:
             Task(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode);
@@ -83,6 +83,10 @@ namespace WebCore {
     private:
         friend class RunLoopSetup;
         MessageQueueWaitResult runInMode(WorkerContext*, const ModePredicate&);
+
+        // Runs any clean up tasks that are currently in the queue and returns.
+        // This should only be called when the context is closed or loop has been terminated.
+        void runCleanupTasks(WorkerContext*);
 
         MessageQueue<Task> m_messageQueue;
         OwnPtr<WorkerSharedTimer> m_sharedTimer;

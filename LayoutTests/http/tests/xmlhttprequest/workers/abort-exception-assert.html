@@ -2,6 +2,7 @@
 <body>
 <p>XmlHttpRequest abort exception shouldn't assert.</p>
 <p>On success, you should see a single PASS below.</p>
+<script src="../../workers/resources/worker-util.js"></script>
 <script>
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
@@ -29,6 +30,11 @@
         // This is an (unlikley) race condition here in that the worker may not have started
         // the sync xhr call at this point, but it has been greatly lessened by the 100ms delay.
         worker.terminate();
+        waitUntilWorkerThreadsExit(doneWithTest);
+    }
+
+    function doneWithTest()
+    {
         log("PASS");
         if (window.layoutTestController)
             layoutTestController.notifyDone();
