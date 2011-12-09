@@ -3799,7 +3799,12 @@ BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE 
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
-BUGWK74157 SNOWLEOPARD : animations/cross-fade-border-image-source.html = IMAGE+TEXT
-BUGWK74157 SNOWLEOPARD LEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : animations/cross-fade-background-image.html = PASS IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : animations/cross-fade-border-image-source.html = PASS IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : animations/cross-fade-list-style-image.html = PASS IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : animations/cross-fade-webkit-mask-box-image.html = PASS IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : animations/cross-fade-webkit-mask-image.html = PASS IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : transitions/cross-fade-background-image.html = PASS IMAGE+TEXT
+BUGWK74157 SNOWLEOPARD LEOPARD  : transitions/cross-fade-border-image.html = PASS IMAGE+TEXT
 
 BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE
