@@ -517,13 +517,10 @@ public:
     void showTreeForThisAcrossFrame() const;
 #endif
 
-    void removeNodeListCacheIfPossible();
     void registerDynamicNodeList(DynamicNodeList*);
     void unregisterDynamicNodeList(DynamicNodeList*);
-    void notifyNodeListsChildrenChanged();
-    void notifyLocalNodeListsChildrenChanged();
-    void notifyNodeListsAttributeChanged();
-    void notifyLocalNodeListsAttributeChanged();
+    void invalidateNodeListsCacheAfterAttributeChanged();
+    void invalidateNodeListsCacheAfterChildrenChanged();
     void notifyLocalNodeListsLabelChanged();
     void removeCachedClassNodeList(ClassNodeList*, const String&);
 

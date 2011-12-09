@@ -843,9 +843,9 @@ void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, No
 {
     Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (!changedByParser && childCountDelta)
-        document()->nodeChildrenChanged(this);
+        document()->updateRangesAfterChildrenChanged(this);
     if (treeScope()->hasNodeListCaches())
-        notifyNodeListsChildrenChanged();
+        invalidateNodeListsCacheAfterChildrenChanged();
 }
 
 void ContainerNode::cloneChildNodes(ContainerNode *clone)

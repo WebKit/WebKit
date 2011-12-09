@@ -170,6 +170,8 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
  
     Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
+    invalidateNodeListsCacheAfterAttributeChanged();
+
     // FIXME: We should include entity references in the value
     
     String val = "";

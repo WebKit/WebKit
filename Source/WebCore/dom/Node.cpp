@@ -996,6 +996,14 @@ unsigned Node::nodeIndex() const
     return count;
 }
 
+static void removeNodeListCacheIfPossible(Node* node, NodeRareData* data)
+{
+    if (!data->nodeLists()->isEmpty())
+        return;
+    data->clearNodeLists();
+    node->treeScope()->removeNodeListCache();
+}
+
 void Node::registerDynamicNodeList(DynamicNodeList* list)
 {
     NodeRareData* data = ensureRareData();
@@ -1014,64 +1022,46 @@ void Node::unregisterDynamicNodeList(DynamicNodeList* list)
     if (list->hasOwnCaches()) {
         NodeRareData* data = rareData();
         data->nodeLists()->m_listsWithCaches.remove(list);
-        removeNodeListCacheIfPossible();
+        removeNodeListCacheIfPossible(this, data);
     }
 }
 
-inline void Node::notifyLocalNodeListsAttributeChanged()
+void Node::invalidateNodeListsCacheAfterAttributeChanged()
 {
-    if (!hasRareData())
-        return;
-    NodeRareData* data = rareData();
-    if (!data->nodeLists())
-        return;
+    for (Node* node = this; node; node = node->parentNode()) {
+        if (!node->hasRareData())
+            continue;
+        NodeRareData* data = node->rareData();
+        if (!data->nodeLists())
+            continue;
 
-    if (!isAttributeNode())
-        data->nodeLists()->invalidateCachesThatDependOnAttributes();
-    else
+        // For attribute nodes, we need to invalidate childNodes as well.
+        if (node->isAttributeNode())
+            data->nodeLists()->invalidateCaches();
+        else
+            data->nodeLists()->invalidateCachesThatDependOnAttributes();
+
+        removeNodeListCacheIfPossible(node, data);
+    }
+}
+
+void Node::invalidateNodeListsCacheAfterChildrenChanged()
+{
+    for (Node* node = this; node; node = node->parentNode()) {
+        if (!node->hasRareData())
+            continue;
+        NodeRareData* data = node->rareData();
+        if (!data->nodeLists())
+            continue;
+
         data->nodeLists()->invalidateCaches();
 
-    removeNodeListCacheIfPossible();
-}
+        NodeListsNodeData::NodeListSet::iterator end = data->nodeLists()->m_listsWithCaches.end();
+        for (NodeListsNodeData::NodeListSet::iterator it = data->nodeLists()->m_listsWithCaches.begin(); it != end; ++it)
+            (*it)->invalidateCache();
 
-void Node::notifyNodeListsAttributeChanged()
-{
-    for (Node *n = this; n; n = n->parentNode())
-        n->notifyLocalNodeListsAttributeChanged();
-}
-
-inline void Node::notifyLocalNodeListsChildrenChanged()
-{
-    if (!hasRareData())
-        return;
-    NodeRareData* data = rareData();
-    if (!data->nodeLists())
-        return;
-
-    data->nodeLists()->invalidateCaches();
-
-    NodeListsNodeData::NodeListSet::iterator end = data->nodeLists()->m_listsWithCaches.end();
-    for (NodeListsNodeData::NodeListSet::iterator i = data->nodeLists()->m_listsWithCaches.begin(); i != end; ++i)
-        (*i)->invalidateCache();
-
-    removeNodeListCacheIfPossible();
-}
-    
-void Node::removeNodeListCacheIfPossible()
-{
-    ASSERT(rareData()->nodeLists());
-
-    NodeRareData* data = rareData();
-    if (!data->nodeLists()->isEmpty())
-        return;
-    data->clearNodeLists();
-    treeScope()->removeNodeListCache();
-}
-
-void Node::notifyNodeListsChildrenChanged()
-{
-    for (Node* n = this; n; n = n->parentNode())
-        n->notifyLocalNodeListsChildrenChanged();
+        removeNodeListCacheIfPossible(node, data);
+    }
 }
 
 void Node::notifyLocalNodeListsLabelChanged()
@@ -2833,8 +2823,6 @@ void Node::dispatchSubtreeModifiedEvent()
     
     document()->incDOMTreeVersion();
 
-    notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
-    
     if (!document()->hasListenerType(Document::DOMSUBTREEMODIFIED_LISTENER))
         return;
 

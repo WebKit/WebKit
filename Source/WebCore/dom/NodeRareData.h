@@ -126,6 +126,7 @@ public:
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
+
     NodeListsNodeData* ensureNodeLists(Node* node)
     {
         if (!m_nodeLists)

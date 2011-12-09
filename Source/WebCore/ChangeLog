@@ -1,3 +1,38 @@
+2011-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        It's semantically incorrect to call notifyNodeListsAttributeChanged in dispatchSubtreeModifiedEvent
+        https://bugs.webkit.org/show_bug.cgi?id=74028
+
+        Reviewed by Darin Adler.
+
+        Remove a call to notifyNodeListsAttributeChanged in dispatchSubtreeModified and add explicit calls
+        to notifyNodeListsAttributeChanged at appropriate places.
+
+        Also merge notifyNodeListsChildrenChanged with notifyLocalNodeListsChildrenChanged, and
+        notifyNodeListsAttributeChanged with notifyLocalNodeListsAttributeChanged, and rename them to
+        invalidateNodeListsCacheAfterAttributeChanges and invalidateNodeListsCacheAfterNodeChanges respectively.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/Document.cpp:
+        (WebCore::Document::updateRangesAfterNodeChanges):
+        * dom/Document.h:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::addAttribute):
+        (WebCore::NamedNodeMap::removeAttribute):
+        * dom/Node.cpp:
+        (WebCore::removeNodeListCacheIfPossible):
+        (WebCore::Node::unregisterDynamicNodeList):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanges):
+        (WebCore::Node::invalidateNodeListsCacheAfterNodeChanges):
+        (WebCore::Node::dispatchSubtreeModifiedEvent):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+
 2011-12-08  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed, rolling out r102418.

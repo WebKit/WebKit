@@ -3410,7 +3410,7 @@ void Document::moveNodeIteratorsToNewDocument(Node* node, Document* newDocument)
     }
 }
 
-void Document::nodeChildrenChanged(ContainerNode* container)
+void Document::updateRangesAfterChildrenChanged(ContainerNode* container)
 {
     if (!disableRangeMutation(page()) && !m_ranges.isEmpty()) {
         HashSet<Range*>::const_iterator end = m_ranges.end();

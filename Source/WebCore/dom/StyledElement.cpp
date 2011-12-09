@@ -228,6 +228,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     } else if (attributeMap())
         attributeMap()->clearClass();
     setNeedsStyleRecalc();
+    invalidateNodeListsCacheAfterAttributeChanged();
     dispatchSubtreeModifiedEvent();
 }
 
