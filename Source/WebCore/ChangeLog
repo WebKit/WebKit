@@ -1,3 +1,16 @@
+2011-12-08  Hayato Ito  <hayato@chromium.org>
+
+        Suppress rendering of light children when ShadowRoot is dynamically created.
+        https://bugs.webkit.org/show_bug.cgi?id=72441
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/dom/shadow/dynamically-created-shadow-root-expected.html
+               fast/dom/shadow/dynamically-created-shadow-root.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setShadowRoot):
+
 2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Drop ENABLE_NO_LISTBOX_RENDERING, and make it a runtime decision.

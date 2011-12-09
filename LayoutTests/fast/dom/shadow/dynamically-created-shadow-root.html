@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+<div>
+This tests that dynamically created ShadowRoot should be rendered correctly.
+Can only run within DRT.
+</div>
+<div id="host">Light children should not be rendered.</div>
+<script>
+if (window.internals) {
+    var host = document.querySelector('#host');
+    var shadowRoot = window.internals.ensureShadowRoot(host);
+    shadowRoot.appendChild(document.createTextNode('Shadow should be rendered.'));
+}
+</script>
+</body>
+</html>

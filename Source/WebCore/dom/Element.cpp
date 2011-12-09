@@ -1238,8 +1238,11 @@ void Element::setShadowRoot(PassRefPtr<ShadowRoot> prpShadowRoot, ExceptionCode&
     shadowRoot->setShadowHost(this);
     if (inDocument())
         shadowRoot->insertedIntoDocument();
-    if (attached())
+    if (attached()) {
         shadowRoot->lazyAttach();
+        for (Node* child = firstChild(); child; child = child->nextSibling())
+            child->detach();
+    }
 }
 
 ShadowRoot* Element::ensureShadowRoot()
