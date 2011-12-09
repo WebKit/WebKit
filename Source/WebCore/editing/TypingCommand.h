@@ -103,6 +103,7 @@ private:
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
     virtual bool shouldRetainAutocorrectionIndicator() const { return m_shouldRetainAutocorrectionIndicator; }
     virtual void setShouldRetainAutocorrectionIndicator(bool retain) { m_shouldRetainAutocorrectionIndicator = retain; }
+    virtual bool shouldStopCaretBlinking() const { return true; }
     void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);

@@ -1,3 +1,31 @@
+2011-12-08  Van Lam  <vanlam@google.com>
+
+        Caret keeps blinking during forward-delete
+        https://bugs.webkit.org/show_bug.cgi?id=38564
+
+        Reviewed by Darin Adler.
+
+        Currently updateAppearance determines if the caret should stop blinking
+        based on whether or not the editing operation changed the position of
+        the caret; so the caret stops blinking in case of typing text and
+        backwards delete (which always displace the caret) but does not stop
+        blinking in the case of forward delete (which does not displace the
+        caret).
+
+        Added a boolean member function shouldStopCaretBlinking in EditCommand
+        which will return true if the object is a TypingCommand (my
+        understanding here is that all TypingCommands should stop the caret
+        from blinking for a cycle, currently 0.5 seconds). Then used this
+        function to stop the caret from blinking if the last editing command
+        is a TypingCommand.
+
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::shouldStopCaretBlinking):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::shouldStopCaretBlinking):
+
 2011-12-08  Adam Klein  <adamk@chromium.org>
 
         Use HashMap<Node*, OwnPtr<...>> in ChildListMutationScope

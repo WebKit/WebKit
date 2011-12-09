@@ -65,6 +65,7 @@ public:
 
     virtual bool shouldRetainAutocorrectionIndicator() const;
     virtual void setShouldRetainAutocorrectionIndicator(bool);
+    virtual bool shouldStopCaretBlinking() const { return false; }
 
 protected:
     EditCommand(Document*);
