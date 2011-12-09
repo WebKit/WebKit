@@ -49,6 +49,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLTextFormControlElement.h"
 #include "KURL.h"
 #include "MarkupAccumulator.h"
 #include "Range.h"
@@ -880,7 +881,8 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
         && block != editableRootForPosition(context->startPosition());
-    
+    bool useLineBreak = enclosingTextFormControl(context->startPosition());
+
     Vector<String> list;
     string.split('\n', true, list); // true gets us empty strings in the list
     size_t numLines = list.size();
@@ -891,7 +893,10 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
         if (s.isEmpty() && i + 1 == numLines) {
             // For last line, use the "magic BR" rather than a P.
             element = createBreakElement(document);
-            element->setAttribute(classAttr, AppleInterchangeNewline);            
+            element->setAttribute(classAttr, AppleInterchangeNewline);
+        } else if (useLineBreak) {
+            element = createBreakElement(document);
+            fillContainerFromString(fragment.get(), s);
         } else {
             if (useClonesOfEnclosingBlock)
                 element = block->cloneElementWithoutChildren();
