@@ -1,3 +1,36 @@
+2011-12-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Forced compositing mode breaks display of full-page PDFs in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=74122
+        <rdar://problem/9550059>
+
+        Reviewed by Dan Bernstein.
+        
+        Full page PDFs are displayed in WK2 in a subview of the WKView. However,
+        when the WKView is forced to use accelerated compositing, the layer obscures
+        the PDF subview.
+        
+        To fix this we have to drop out of compositing mode when the WKView is showing
+        a custom representation.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPageHasCustomRepresentation:]): Tell the drawing area that the view
+        gained or lost a custom representation.
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::pageCustomRepresentationChanged):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::pageCustomRepresentationChanged): Send a messgae to the web process
+        to indicate that the custom representation changed.
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::pageCustomRepresentationChanged):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::pageCustomRepresentationChanged): Enter or exit compositing mode
+        as appropriate when we gain or lost a custom represenetation.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+
 2011-12-08  Jer Noble  <jer.noble@apple.com>
 
         HiDPI: Switching a video element to full screen in HiDPI mode doesn't fit the screen correctly

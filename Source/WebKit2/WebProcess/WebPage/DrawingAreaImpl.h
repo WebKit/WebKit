@@ -82,6 +82,8 @@ private:
     virtual void didUpdate();
     virtual void suspendPainting();
     virtual void resumePainting();
+    
+    virtual void pageCustomRepresentationChanged();
 
     void sendDidUpdateBackingStoreState();
 

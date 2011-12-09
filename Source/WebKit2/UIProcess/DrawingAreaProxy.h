@@ -80,6 +80,8 @@ public:
     const WebCore::IntSize& size() const { return m_size; }
     void setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
 
+    virtual void pageCustomRepresentationChanged() { }
+
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     virtual void updateViewport();
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }

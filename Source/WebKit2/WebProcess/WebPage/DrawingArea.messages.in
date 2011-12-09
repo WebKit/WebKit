@@ -25,6 +25,7 @@ messages -> DrawingArea {
     DidUpdate()
     SuspendPainting()
     ResumePainting()
+    PageCustomRepresentationChanged()
 
 #if PLATFORM(MAC)
     // Used by TiledCoreAnimationDrawingArea.

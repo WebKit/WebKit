@@ -2445,10 +2445,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation
 {
+    bool hadPDFView = _data->_pdfViewController;
     _data->_pdfViewController = nullptr;
 
     if (pageHasCustomRepresentation)
         _data->_pdfViewController = PDFViewController::create(self);
+    
+    if (pageHasCustomRepresentation != hadPDFView)
+        _data->_page->drawingArea()->pageCustomRepresentationChanged();
 }
 
 - (void)_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference

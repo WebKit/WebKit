@@ -87,6 +87,8 @@ private:
     bool isInAcceleratedCompositingMode() const { return false; }
 #endif
 
+    virtual void pageCustomRepresentationChanged();
+
     void discardBackingStoreSoon();
     void discardBackingStore();
 

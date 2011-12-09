@@ -74,6 +74,7 @@ public:
     virtual void didInstallPageOverlay() { }
     virtual void didUninstallPageOverlay() { }
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) { }
+    virtual void pageCustomRepresentationChanged() { }
 
     virtual void setPaintingEnabled(bool) { }
 

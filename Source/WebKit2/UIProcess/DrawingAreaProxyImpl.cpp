@@ -369,6 +369,11 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 }
 #endif
 
+void DrawingAreaProxyImpl::pageCustomRepresentationChanged()
+{
+    m_webPageProxy->process()->send(Messages::DrawingArea::PageCustomRepresentationChanged(), m_webPageProxy->pageID());
+}
+
 void DrawingAreaProxyImpl::discardBackingStoreSoon()
 {
     if (!m_isBackingStoreDiscardable || m_discardBackingStoreTimer.isActive())

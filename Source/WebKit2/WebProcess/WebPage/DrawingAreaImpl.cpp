@@ -235,6 +235,18 @@ void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
     setNeedsDisplay(rect);
 }
 
+void DrawingAreaImpl::pageCustomRepresentationChanged()
+{
+    if (!m_alwaysUseCompositing)
+        return;
+
+    if (m_webPage->mainFrameHasCustomRepresentation()) {
+        if (m_layerTreeHost)
+            exitAcceleratedCompositingMode();
+    } else if (!m_layerTreeHost)
+        enterAcceleratedCompositingMode(0);
+}
+
 void DrawingAreaImpl::setPaintingEnabled(bool paintingEnabled)
 {
     m_isPaintingEnabled = paintingEnabled;
@@ -460,7 +472,7 @@ void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLay
 
 void DrawingAreaImpl::exitAcceleratedCompositingMode()
 {
-    if (m_alwaysUseCompositing)
+    if (m_alwaysUseCompositing && !m_webPage->mainFrameHasCustomRepresentation())
         return;
 
     ASSERT(!m_layerTreeStateIsFrozen);
