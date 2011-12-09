@@ -2185,7 +2185,10 @@ sub GenerateImplementation
             }
             push(@implContent, "}\n\n");
         }
-        die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($dataNode->extendedAttributes->{"CustomMarkFunction"}));
+        # Cached attributes are indeed allowed when there is a custom mark/visitChildren function.
+        # The custom function must make sure to account for the cached attribute.
+        # Uncomment the below line to temporarily enforce generated mark functions when cached attributes are present.
+        # die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($dataNode->extendedAttributes->{"CustomMarkFunction"}));
     }
 
     if ($numConstants > 0) {

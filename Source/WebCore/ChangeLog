@@ -1,3 +1,15 @@
+2011-12-09  Jarred Nicholls  <jarred@sencha.com>
+
+        [JSC] Allow cached attributes in bindings that declare a custom mark function
+        https://bugs.webkit.org/show_bug.cgi?id=74187
+
+        Reviewed by Oliver Hunt.
+
+        No new tests, current binding tests are sufficient.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
         Remove duplicate animation ivars
