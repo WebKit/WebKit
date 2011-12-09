@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 635x21
+          text run at (0,0) width 635: "PASS - \"backgroundImage\" property for \"box\" element at 2.5s saw something close to: 0.5"
+        RenderBR {BR} at (635,16) size 0x0
+        RenderText {#text} at (0,21) size 779x21
+          text run at (0,21) width 779: "PASS - \"backgroundImage\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (779,37) size 0x0
+        RenderText {#text} at (0,42) size 774x42
+          text run at (0,42) width 774: "PASS - \"backgroundImage\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to"
+          text run at (0,63) width 75: "each other"
+        RenderBR {BR} at (75,79) size 0x0
+layer at (100,100) size 100x100
+  RenderBlock (positioned) {DIV} at (100,100) size 100x100 [bgcolor=#FF0000]
+layer at (100,300) size 100x100
+  RenderBlock (positioned) {DIV} at (100,300) size 100x100 [bgcolor=#FF0000]
+layer at (100,200) size 100x100
+  RenderBlock (positioned) {DIV} at (100,200) size 100x100
