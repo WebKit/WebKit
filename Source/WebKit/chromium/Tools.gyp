@@ -29,14 +29,18 @@
 #
 
 {
-    # FIXME: Remove this conditional check once chromium's
+    'variables': {
+        'tools_dir': '../../../Tools',
+        'source_dir': '../..',
+    },
+     # FIXME: Remove this conditional check once chromium's
     # build/common.gypi is setting this flag to 0 by default. See
     # https://bugs.webkit.org/show_bug.cgi?id=68463.
-    'conditions': [
+   'conditions': [
          ['build_webkit_exes_from_webkit_gyp==0', {
             'includes': [
-                'DumpRenderTree/DumpRenderTree.gypi',
-                '../Source/WebKit/chromium/features.gypi',
+                '../../../Tools/DumpRenderTree/DumpRenderTree.gypi',
+                'features.gypi',
             ],
             'variables': {
                 'conditions': [
@@ -45,13 +49,13 @@
                     ['inside_chromium_build==0', {
                         # Webkit is being built outside of the full chromium project.
                         # e.g. via build-webkit --chromium
-                        'chromium_src_dir': '../Source/WebKit/chromium',
+                        'chromium_src_dir': '<(source_dir)/WebKit/chromium',
                     },{
                         # WebKit is checked out in src/chromium/third_party/WebKit
-                        'chromium_src_dir': '../../..',
+                        'chromium_src_dir': '../../../..',
                     }],
                 ],
-                'ahem_path': 'DumpRenderTree/qt/fonts/AHEM____.TTF',
+                'ahem_path': '<(tools_dir)/DumpRenderTree/qt/fonts/AHEM____.TTF',
             },
             'targets': [
                 {
@@ -61,11 +65,11 @@
                         '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support_gfx',
                     ],
                     'include_dirs': [
-                        '../Source/JavaScriptCore',
+                        '<(source_dir)/JavaScriptCore',
                         '<(DEPTH)',
                     ],
                     'sources': [
-                        'DumpRenderTree/chromium/ImageDiff.cpp',
+                        '<(tools_dir)/DumpRenderTree/chromium/ImageDiff.cpp',
                     ],
                     'conditions': [
                         ['OS=="android"', {
@@ -78,9 +82,9 @@
                     'type': 'executable',
                     'mac_bundle': 1,
                     'dependencies': [
-                        '../Source/WebKit/chromium/WebKit.gyp:inspector_resources',
-                        '../Source/WebKit/chromium/WebKit.gyp:webkit',
-                        '../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                        '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
+                        '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
+                        '<(source_dir)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                         '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                         '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
@@ -90,9 +94,9 @@
                     ],
                     'include_dirs': [
                         '<(chromium_src_dir)',
-                        '../Source/WebKit/chromium/public',
-                        '../Source/JavaScriptCore',
-                        '../Source/JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
+                        '<(source_dir)/WebKit/chromium/public',
+                        '<(source_dir)/JavaScriptCore',
+                        '<(source_dir)/JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
                         '<(DEPTH)',
                     ],
                     'defines': [
@@ -165,20 +169,20 @@
                         }],
                         ['OS=="mac"', {
                             'dependencies': [
-                                '../Source/WebKit/chromium/WebKit.gyp:copy_mesa',
+                                '<(source_dir)/WebKit/chromium/WebKit.gyp:copy_mesa',
                                 'LayoutTestHelper',
                             ],
                             'mac_bundle_resources': [
                                 '<(ahem_path)',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher200.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher300.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher400.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher500.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher600.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
-                                'DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher200.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher300.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher400.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher500.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher600.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
+                                '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
                                 '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                             ],
                         },{ # OS!="mac"
@@ -195,7 +199,7 @@
                                 'destination': '<(PRODUCT_DIR)',
                                 'files': [
                                     '<(ahem_path)',
-                                    'DumpRenderTree/chromium/fonts.conf',
+                                    '<(tools_dir)/DumpRenderTree/chromium/fonts.conf',
                                     '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
                                 ]
                             }],
@@ -223,7 +227,7 @@
                                 '<(chromium_src_dir)/build/linux/system.gyp:gtk',
                             ],
                             'include_dirs': [
-                                '../Source/WebKit/chromium/public/gtk',
+                                '<(source_dir)/WebKit/chromium/public/gtk',
                             ],
                         },{ # toolkit_uses_gtk != 1
                             'sources/': [
@@ -246,15 +250,15 @@
                         }],
                         ['inside_chromium_build==1 and component=="shared_library"', {
                             'sources': [
-                                '../Source/WebKit/chromium/src/ChromiumCurrentTime.cpp',
-                                '../Source/WebKit/chromium/src/ChromiumThreading.cpp',
+                                '<(source_dir)/WebKit/chromium/src/ChromiumCurrentTime.cpp',
+                                '<(source_dir)/WebKit/chromium/src/ChromiumThreading.cpp',
                             ],
                             'include_dirs': [
-                                '../Source/WebKit/chromium/public',
+                                '<(source_dir)/WebKit/chromium/public',
                             ],
                             'dependencies': [
-                                '../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
-                                '../Source/WTF/WTF.gyp/WTF.gyp:newwtf',
+                                '<(source_dir)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:newwtf',
                             ],
                         }],
                         ['inside_chromium_build==0', {
@@ -264,16 +268,16 @@
                         }],
                         ['inside_chromium_build==0 or component!="shared_library"', {
                             'dependencies': [
-                                '../Source/WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
+                                '<(source_dir)/WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
                             ],
                             'include_dirs': [
                                 # WARNING: Do not view this particular case as a precedent for
                                 # including WebCore headers in DumpRenderTree project.
-                                '../Source/WebCore/testing/v8', # for WebCoreTestSupport.h, needed to link in window.internals code.
+                                '<(source_dir)/WebCore/testing/v8', # for WebCoreTestSupport.h, needed to link in window.internals code.
                             ],
                             'sources': [
-                                '../Source/WebKit/chromium/src/WebTestingSupport.cpp',
-                                '../Source/WebKit/chromium/public/WebTestingSupport.h',
+                                '<(source_dir)/WebKit/chromium/src/WebTestingSupport.cpp',
+                                '<(source_dir)/WebKit/chromium/public/WebTestingSupport.h',
                             ],
                         }],
                     ],
@@ -287,8 +291,8 @@
                     ],
                     'include_dirs': [
                         '<(chromium_src_dir)',
-                        'DumpRenderTree/TestNetscapePlugIn',
-                        'DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders',
+                        '<(tools_dir)/DumpRenderTree/TestNetscapePlugIn',
+                        '<(tools_dir)/DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders',
                     ],
                     'conditions': [
                         ['OS=="mac"', {
@@ -303,7 +307,7 @@
                             },
                             'xcode_settings': {
                                 'GCC_SYMBOLS_PRIVATE_EXTERN': 'NO',
-                                'INFOPLIST_FILE': 'DumpRenderTree/TestNetscapePlugIn/mac/Info.plist',
+                                'INFOPLIST_FILE': '<(tools_dir)/DumpRenderTree/TestNetscapePlugIn/mac/Info.plist',
                             },
                         }],
                         ['os_posix == 1 and OS != "mac"', {
@@ -317,8 +321,8 @@
                                 'snprintf=_snprintf',
                             ],
                             'sources': [
-                                'DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.def',
-                                'DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc',
+                                '<(tools_dir)/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.def',
+                                '<(tools_dir)/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc',
                             ],
                             # The .rc file requires that the name of the dll is npTestNetscapePlugin.dll.
                             'product_name': 'npTestNetscapePlugin',
@@ -359,14 +363,14 @@
                     'targets': [{
                         'target_name': 'LayoutTestHelper',
                         'type': 'executable',
-                        'sources': ['DumpRenderTree/chromium/LayoutTestHelperWin.cpp'],
+                        'sources': ['<(tools_dir)/DumpRenderTree/chromium/LayoutTestHelperWin.cpp'],
                     }],
                 }],
                 ['OS=="mac"', {
                     'targets': [{
                         'target_name': 'LayoutTestHelper',
                         'type': 'executable',
-                        'sources': ['DumpRenderTree/chromium/LayoutTestHelper.mm'],
+                        'sources': ['<(tools_dir)/DumpRenderTree/chromium/LayoutTestHelper.mm'],
                         'link_settings': {
                             'libraries': [
                                 '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
