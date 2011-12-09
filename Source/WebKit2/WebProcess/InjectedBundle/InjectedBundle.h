@@ -64,6 +64,7 @@ typedef ::GModule* PlatformBundle;
 class ImmutableArray;
 class InjectedBundleScriptWorld;
 class WebCertificateInfo;
+class WebConnection;
 class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
@@ -89,6 +90,8 @@ public:
     void setHostAllowsAnyHTTPSCertificate(const String&);
     void setClientCertificate(const String& host, const String& certificateSystemStoreName, const WebCertificateInfo*);
 #endif
+
+    WebConnection* webConnectionToUIProcess() const;
 
     // TestRunner only SPI
     void setShouldTrackVisitedLinks(bool);

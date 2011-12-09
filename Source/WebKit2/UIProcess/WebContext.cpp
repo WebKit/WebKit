@@ -351,6 +351,8 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
         
         m_process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
     }
+
+    m_connectionClient.didCreateConnection(this, process->webConnection());
 }
 
 void WebContext::disconnectProcess(WebProcessProxy* process)

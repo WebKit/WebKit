@@ -23,34 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebConnection_h
-#define WebConnection_h
+#include "config.h"
+#include "InjectedBundleTest.h"
+#include "PlatformUtilities.h"
+#include <WebKit2/WKRetainPtr.h>
 
-#include "APIObject.h"
-#include "WebConnectionClient.h"
-#include <wtf/Forward.h>
+namespace TestWebKitAPI {
 
-namespace WebKit {
+/* WKConnectionClient */
+static void connectionDidReceiveMessage(WKConnectionRef connection, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
+{
+    // Post a simple message to the back to the application layer.
+    WKConnectionPostMessage(connection, Util::toWK("PongMessageName").get(), Util::toWK("PongMessageBody").get());
+}
 
-class WebConnection : public APIObject {
+class WKConnectionTest : public InjectedBundleTest {
 public:
-    static const Type APIType = TypeConnection;
+    WKConnectionTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
 
-    virtual ~WebConnection();
-
-    // Initialize the connection client.
-    void initializeConnectionClient(const WKConnectionClient*);
-
-    virtual void postMessage(const String&, APIObject*) = 0;
-
-protected:
-    virtual Type type() const { return APIType; }
-
-    void forwardDidReceiveMessageToClient(const String&, APIObject*);
-
-    WebConnectionClient m_client;
+    virtual void initialize(WKBundleRef bundle, WKTypeRef)
+    {
+        WKConnectionClient connectionClient;
+        memset(&connectionClient, 0, sizeof(connectionClient));
+        connectionClient.version = WKConnectionClientCurrentVersion;
+        connectionClient.clientInfo = 0;
+        connectionClient.didReceiveMessage = connectionDidReceiveMessage;
+        WKConnectionSetConnectionClient(WKBundleGetApplicationConnection(bundle), &connectionClient);
+    }
 };
 
-} // namespace WebKit
+static InjectedBundleTest::Register<WKConnectionTest> registrar("WKConnectionTest");
 
-#endif // WebConnection_h
+} // namespace TestWebKitAPI

@@ -1,3 +1,23 @@
+2011-12-09  Sam Weinig  <sam@webkit.org>
+
+        Expose a WKConnectionRef which represents the connection to/from the WebProcess/UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=74218
+
+        Reviewed by Anders Carlsson.
+
+        Add a test of the WKConnectionRef API.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKConnection.cpp: Added.
+        (TestWebKitAPI::didCreateConnection):
+        (TestWebKitAPI::connectionDidReceiveMessage):
+        (TestWebKitAPI::connectionDidClose):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WKConnection_Bundle.cpp: Added.
+        (TestWebKitAPI::connectionDidReceiveMessage):
+        (TestWebKitAPI::WKConnectionTest::WKConnectionTest):
+        (TestWebKitAPI::WKConnectionTest::initialize):
+
 2011-12-09  David Levin  <levin@chromium.org>
 
         Hash* iterators should allow comparison between const and const versions.

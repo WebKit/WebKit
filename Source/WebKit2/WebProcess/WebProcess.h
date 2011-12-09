@@ -81,6 +81,8 @@ public:
     CoreIPC::Connection* connection() const { return m_connection->connection(); }
     RunLoop* runLoop() const { return m_runLoop; }
 
+    WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_connection.get(); }
+
     WebPage* webPage(uint64_t pageID) const;
     void createWebPage(uint64_t pageID, const WebPageCreationParameters&);
     void removeWebPage(uint64_t pageID);

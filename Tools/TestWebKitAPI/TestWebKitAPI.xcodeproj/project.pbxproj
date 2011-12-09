@@ -62,6 +62,8 @@
 		BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BC7B61AA129A038700D174A4 /* WKPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */; };
+		BC901E241492ADCE0074A667 /* WKConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC901E221492ADCE0074A667 /* WKConnection.cpp */; };
+		BC901E331492AF390074A667 /* WKConnection_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC901E311492AF390074A667 /* WKConnection_Bundle.cpp */; };
 		BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90955C125548AA00083756 /* PlatformWebViewMac.mm */; };
 		BC90964C125561BF00083756 /* VectorBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90964B125561BF00083756 /* VectorBasic.cpp */; };
 		BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
@@ -207,6 +209,8 @@
 		BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = InjectedBundle.xcconfig; sourceTree = "<group>"; };
 		BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformUtilities.cpp; sourceTree = "<group>"; };
 		BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPreferences.cpp; sourceTree = "<group>"; };
+		BC901E221492ADCE0074A667 /* WKConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKConnection.cpp; sourceTree = "<group>"; };
+		BC901E311492AF390074A667 /* WKConnection_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKConnection_Bundle.cpp; sourceTree = "<group>"; };
 		BC90951B125533D700083756 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC90955C125548AA00083756 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC90957E12554CF900083756 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -387,8 +391,8 @@
 				C0C5D3BB14598B6F00A802A6 /* mac */,
 				BC90977B125571AE00083756 /* Resources */,
 				BC246D8C132F115A00B56D7C /* AboutBlankLoad.cpp */,
-				BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */,
 				BC246D98132F1FE100B56D7C /* CanHandleRequest.cpp */,
+				BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */,
 				F6F3F29013342FEB00A6BF19 /* CookieManager.cpp */,
 				BCB6803F126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp */,
 				BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */,
@@ -416,11 +420,13 @@
 				C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */,
 				C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
+				520BCF4B141EB09E00937EA8 /* WebArchive.cpp */,
+				520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */,
+				BC901E221492ADCE0074A667 /* WKConnection.cpp */,
+				BC901E311492AF390074A667 /* WKConnection_Bundle.cpp */,
 				BC7B619A1299FE9E00D174A4 /* WKPreferences.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
-				520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */,
-				520BCF4B141EB09E00937EA8 /* WebArchive.cpp */,
 			);
 			path = WebKit2;
 			sourceTree = "<group>";
@@ -688,6 +694,7 @@
 				37A6895F148A9B50005100FA /* SubresourceErrorCrash.mm in Sources */,
 				BC029B181486AD6400817DA9 /* RetainPtr.cpp in Sources */,
 				BC029B1C1486B25900817DA9 /* RetainPtr.mm in Sources */,
+				BC901E241492ADCE0074A667 /* WKConnection.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -709,6 +716,7 @@
 				33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */,
 				520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */,
 				C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */,
+				BC901E331492AF390074A667 /* WKConnection_Bundle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

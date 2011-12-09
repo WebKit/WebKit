@@ -71,6 +71,22 @@ void WebConnectionToUIProcess::postMessage(const String& messageName, APIObject*
 
 void WebConnectionToUIProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+    if (messageID.is<CoreIPC::MessageClassWebConnectionLegacy>()) {
+        switch (messageID.get<WebConnectionLegacyMessage::Kind>()) {
+            case WebConnectionLegacyMessage::PostMessage: {
+                String messageName;            
+                RefPtr<APIObject> messageBody;
+                InjectedBundleUserMessageDecoder messageDecoder(messageBody);
+                if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
+                    return;
+
+                forwardDidReceiveMessageToClient(messageName, messageBody.get());
+                return;
+            }
+        }
+        return;
+    }
+
     m_process->didReceiveMessage(connection, messageID, arguments);
 }
 

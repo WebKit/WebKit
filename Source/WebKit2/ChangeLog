@@ -1,3 +1,41 @@
+2011-12-09  Sam Weinig  <sam@webkit.org>
+
+        Expose a WKConnectionRef which represents the connection to/from the WebProcess/UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=74218
+
+        Reviewed by Anders Carlsson.
+
+        Test: WebKit2.WKConnectionTest in TestWebKitAPI
+
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::forwardDidReceiveMessageToClient):
+        * Shared/WebConnection.h:
+        Add helper for connection subclasses to dispatch to the client.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::didReceiveMessage):
+        Handle postMessage messages from the WebProcess.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidFinishLaunching):
+        Dispatch the notification that a connection to the WebProcess has
+        been established.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleGetApplicationConnection):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::webConnectionToUIProcess):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (WebKit::WebProcess::webConnectionToUIProcess):
+        Add accessor to get the connection to the UIProcess from
+        the bundle.
+
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::didReceiveMessage):
+        Handle postMessage messages from the UIProcess.
+        * WebProcess/WebProcess.h:
+
 2011-12-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Update WebGraphicLayer's child content scale in all child binding method.

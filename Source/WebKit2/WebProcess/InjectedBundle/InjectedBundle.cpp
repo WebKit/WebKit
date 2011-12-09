@@ -98,6 +98,11 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject
     returnData = returnDataTmp;
 }
 
+WebConnection* InjectedBundle::webConnectionToUIProcess() const
+{
+    return WebProcess::shared().webConnectionToUIProcess();
+}
+
 void InjectedBundle::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 {
     PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);

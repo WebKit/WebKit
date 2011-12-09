@@ -37,4 +37,9 @@ void WebConnection::initializeConnectionClient(const WKConnectionClient* client)
     m_client.initialize(client);
 }
 
+void WebConnection::forwardDidReceiveMessageToClient(const String& messageName, APIObject* messageBody)
+{
+    m_client.didReceiveMessage(this, messageName, messageBody);
+}
+
 } // namespace WebKit

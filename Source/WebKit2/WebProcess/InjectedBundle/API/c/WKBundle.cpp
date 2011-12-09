@@ -56,6 +56,11 @@ void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNa
         *returnDataRef = toAPI(returnData.release().leakRef());
 }
 
+WKConnectionRef WKBundleGetApplicationConnection(WKBundleRef bundleRef)
+{
+    return toAPI(toImpl(bundleRef)->webConnectionToUIProcess());
+}
+
 void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
 {
     toImpl(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
