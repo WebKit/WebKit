@@ -20,6 +20,9 @@
 
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
+  function backgroundOf(element) {
+    return getComputedStyle(element, null).getPropertyValue("background-color")
+  }
   function shouldHaveBackground(element, bg) {
     background = getComputedStyle(element, null).getPropertyValue("background-color")
     shouldBeEqualToString('background', bg)
@@ -32,29 +35,22 @@
 
     eventSender.dragMode = false;
     eventSender.mouseMoveTo(50, 50)
-    eventSender.leapForward(50)
-    eventSender.mouseMoveTo(60, 50)
-    eventSender.leapForward(50)
     shouldHaveBackground(box, 'rgb(255, 0, 0)')
     shouldHaveBackground(box2, 'rgb(0, 0, 0)')
 
     eventSender.mouseDown()
-    eventSender.leapForward(50)
     shouldHaveBackground(box, 'rgb(255, 255, 0)')
     shouldHaveBackground(box2, 'rgb(0, 0, 0)')
 
     eventSender.mouseMoveTo(50, 150)
-    eventSender.leapForward(50)
     shouldHaveBackground(box, 'rgb(0, 255, 0)')
     shouldHaveBackground(box2, 'rgb(0, 0, 0)')
 
     eventSender.mouseMoveTo(400, 50)
-    eventSender.leapForward(50)
     shouldHaveBackground(box, 'rgb(0, 255, 0)')
     shouldHaveBackground(box2, 'rgb(0, 0, 0)')
 
     eventSender.mouseUp()
-    eventSender.leapForward(50)
     shouldHaveBackground(box, 'rgb(0, 0, 0)')
     shouldHaveBackground(box2, 'rgb(0, 0, 0)')
   }
