@@ -1153,7 +1153,7 @@ TextDiff.compute = function(baseContent, newContent)
 /**
  * @constructor
  */
-Map = function()
+var Map = function()
 {
     this._map = {};
 }

@@ -1,3 +1,10 @@
+2011-12-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector utilities syntax fix.
+
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-12-09  Joone Hur  <joone.hur@collabora.co.uk>, Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk> 
 
         [GTK] Initial implementation of Accelerated Compositing using Clutter
