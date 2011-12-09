@@ -655,13 +655,13 @@ class YarrGenerator : private MacroAssembler {
     {
         YarrOp& op = m_ops[opIndex];
 
+        if (op.m_isDeadCode)
+            return;
+        
         // m_ops always ends with a OpBodyAlternativeEnd or OpMatchFailed
         // node, so there must always be at least one more node.
         ASSERT(opIndex + 1 < m_ops.size());
-        YarrOp& nextOp = m_ops[opIndex + 1];
-
-        if (op.m_isDeadCode)
-            return;
+        YarrOp* nextOp = &m_ops[opIndex + 1];
 
         PatternTerm* term = op.m_term;
         UChar ch = term->patternCharacter;
@@ -673,47 +673,90 @@ class YarrGenerator : private MacroAssembler {
         }
 
         const RegisterID character = regT0;
+        int maxCharactersAtOnce = m_charSize == Char8 ? 4 : 2;
+        unsigned ignoreCaseMask = 0;
+        unsigned currentCharacterMask = m_charSize == Char8 ? 0xff : 0xffff;
+        int allCharacters = ch;
+        int numberCharacters;
+        int startTermPosition = term->inputPosition;
 
-        if (nextOp.m_op == OpTerm) {
-            PatternTerm* nextTerm = nextOp.m_term;
-            if (nextTerm->type == PatternTerm::TypePatternCharacter
-                && nextTerm->quantityType == QuantifierFixedCount
-                && nextTerm->quantityCount == 1
-                && nextTerm->inputPosition == (term->inputPosition + 1)) {
+        // For case-insesitive compares, non-ascii characters that have different
+        // upper & lower case representations are converted to a character class.
+        ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
 
-                UChar ch2 = nextTerm->patternCharacter;
+        if ((m_pattern.m_ignoreCase) && (isASCIIAlpha(ch)))
+            ignoreCaseMask |= 32;
 
-                int shiftAmount = m_charSize == Char8 ? 8 : 16;
-                int mask = 0;
-                int chPair = ch | (ch2 << shiftAmount);
+        for (numberCharacters = 1; numberCharacters < maxCharactersAtOnce && nextOp->m_op == OpTerm; ++numberCharacters, nextOp = &m_ops[opIndex + numberCharacters]) {
+            PatternTerm* nextTerm = nextOp->m_term;
+            
+            if (nextTerm->type != PatternTerm::TypePatternCharacter
+                || nextTerm->quantityType != QuantifierFixedCount
+                || nextTerm->quantityCount != 1
+                || nextTerm->inputPosition != (startTermPosition + numberCharacters))
+                break;
 
-                // For case-insesitive compares, non-ascii characters that have different
-                // upper & lower case representations are converted to a character class.
-                ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(ch) || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
-                if (m_pattern.m_ignoreCase) {
-                    if (isASCIIAlpha(ch))
-                        mask |= 32;
-                    if (isASCIIAlpha(ch2))
-                        mask |= 32 << shiftAmount;
-                }
+            nextOp->m_isDeadCode = true;
 
-                if (m_charSize == Char8) {
-                    BaseIndex address(input, index, TimesOne, (term->inputPosition - m_checked) * sizeof(char));
-                    load16Unaligned(address, character);
-                } else {
-                    BaseIndex address(input, index, TimesTwo, (term->inputPosition - m_checked) * sizeof(UChar));
-                    load32WithUnalignedHalfWords(address, character);
-                }
-                if (mask)
-                    or32(Imm32(mask), character);
-                op.m_jumps.append(branch32(NotEqual, character, Imm32(chPair | mask)));
+            int shiftAmount = (m_charSize == Char8 ? 8 : 16) * numberCharacters;
+            currentCharacterMask = (m_charSize == Char8 ? 0xff : 0xffff) << shiftAmount;  
 
-                nextOp.m_isDeadCode = true;
+            UChar currentCharacter = nextTerm->patternCharacter;
+
+            if ((currentCharacter > 0xff) && (m_charSize == Char8)) {
+                // Have a 16 bit pattern character and an 8 bit string - short circuit
+                op.m_jumps.append(jump());
                 return;
+            }
+
+            // For case-insesitive compares, non-ascii characters that have different
+            // upper & lower case representations are converted to a character class.
+            ASSERT(!m_pattern.m_ignoreCase || isASCIIAlpha(currentCharacter) || (Unicode::toLower(currentCharacter) == Unicode::toUpper(currentCharacter)));
+
+            allCharacters |= (currentCharacter << shiftAmount);
+
+            if ((m_pattern.m_ignoreCase) && (isASCIIAlpha(currentCharacter)))
+                ignoreCaseMask |= 32 << shiftAmount;                    
+        }
+
+        if (m_charSize == Char8) {
+            switch (numberCharacters) {
+            case 1:
+                op.m_jumps.append(jumpIfCharNotEquals(ch, startTermPosition - m_checked, character));
+                return;
+            case 2: {
+                BaseIndex address(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
+                load16(address, character);
+                break;
+            }
+            case 3: {
+                BaseIndex address(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
+                load32WithUnalignedHalfWords(address, character);
+                and32(Imm32(0xffffff), character);
+                break;
+            }
+            case 4: {
+                BaseIndex address(input, index, TimesOne, (startTermPosition - m_checked) * sizeof(LChar));
+                load32WithUnalignedHalfWords(address, character);
+                break;
+            }
+            }
+        } else {
+            switch (numberCharacters) {
+            case 1:
+                op.m_jumps.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked, character));
+                return;
+            case 2:
+                BaseIndex address(input, index, TimesTwo, (term->inputPosition - m_checked) * sizeof(UChar));
+                load32WithUnalignedHalfWords(address, character);
+                break;
             }
         }
 
-        op.m_jumps.append(jumpIfCharNotEquals(ch, term->inputPosition - m_checked, character));
+        if (ignoreCaseMask)
+            or32(Imm32(ignoreCaseMask), character);
+        op.m_jumps.append(branch32(NotEqual, character, Imm32(allCharacters | ignoreCaseMask)));
+        return;
     }
     void backtrackPatternCharacterOnce(size_t opIndex)
     {
@@ -1305,7 +1348,7 @@ class YarrGenerator : private MacroAssembler {
                         sub32(Imm32(priorAlternative->m_minimumSize - alternative->m_minimumSize), index);
                 } else if (op.m_nextOp == notFound) {
                     // This is the reentry point for the End of 'once through' alternatives,
-                    // jumped to when the las alternative fails to match.
+                    // jumped to when the last alternative fails to match.
                     op.m_reentry = label();
                     sub32(Imm32(priorAlternative->m_minimumSize), index);
                 }

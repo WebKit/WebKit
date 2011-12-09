@@ -1,3 +1,19 @@
+2011-12-09  Michael Saboff  <msaboff@apple.com>
+
+        YARR: Multi-character read optimization for 8bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=74191
+
+        Reviewed by Oliver Hunt.
+
+        Changed generatePatternCharacterOnce to generate
+        code for 1 to 4 characters in the 8 bit case.
+        This is worth 29% improvement on SunSpider regexp-dna test.
+        It provides no benefit to v8-regexp.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generate): Spelling fix in comment.
+
 2011-12-09  David Levin  <levin@chromium.org>
 
         Regression(r53595): Sync xhr requests in workers aren't terminated on worker close.
