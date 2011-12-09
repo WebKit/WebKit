@@ -8,11 +8,7 @@ var wtu;
 var canvas;
 var gl;
 var shouldGenerateGLError;
-var extensionNames = [
-    "WEBKIT_WEBGL_lose_context",
-    "MOZ_WEBGL_lose_context",
-];
-var extensionName;
+var extension_name = "WEBKIT_lose_context";
 var extension;
 
 var buffer;
@@ -45,16 +41,11 @@ function init()
         window.initNonKhronosFramework(true);
     }
 
-    for (var ii = 0; ii < extensionNames.length; ++ii) {
-        extension = gl.getExtension(extensionNames[ii]);
-        if (extension) {
-            extensionName = extensionNames[ii];
-            break;
-        }
-    }
+    extension = gl.getExtension(extension_name);
     if (!extension) {
-        debug("Could not find lose_context extension under the following names: " + extensionNames.join(" "));
-        return false;
+        debug(extension_name + " extension not found.");
+        finish();
+        return;
     }
 
     canvas.addEventListener("webglcontextlost", testLostContext);
@@ -286,7 +277,7 @@ function testLostContext()
         "gl.getUniformLocation(program, 'vPosition')",
         "gl.getVertexAttrib(0, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)",
         "gl.getSupportedExtensions()",
-        "gl.getExtension('" + extensionName + "')",
+        "gl.getExtension('" + extension_name + "')",
     ];
     for (var i = 0; i < nullTests.length; ++i) {
         shouldBeNull(nullTests[i]);

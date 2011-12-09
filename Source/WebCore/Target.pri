@@ -3634,7 +3634,6 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLExtension.h \
         html/canvas/WebGLFramebuffer.h \
         html/canvas/WebGLGetInfo.h \
-        html/canvas/WebGLLoseContext.h \
         html/canvas/WebGLProgram.h \
         html/canvas/WebGLRenderbuffer.h \
         html/canvas/WebGLRenderingContext.h \
@@ -3645,6 +3644,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
         html/canvas/WebGLVertexArrayObjectOES.h \
+        html/canvas/WebKitLoseContext.h \
         platform/graphics/ANGLEWebKitBridge.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
@@ -3671,7 +3671,6 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLExtension.cpp \
         html/canvas/WebGLFramebuffer.cpp \
         html/canvas/WebGLGetInfo.cpp \
-        html/canvas/WebGLLoseContext.cpp \
         html/canvas/WebGLProgram.cpp \
         html/canvas/WebGLRenderbuffer.cpp \
         html/canvas/WebGLRenderingContext.cpp \
@@ -3682,6 +3681,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \
         html/canvas/WebGLVertexArrayObjectOES.cpp \
+        html/canvas/WebKitLoseContext.cpp \
         platform/graphics/ANGLEWebKitBridge.cpp \
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \

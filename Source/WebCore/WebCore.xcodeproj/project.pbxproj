@@ -3201,10 +3201,10 @@
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
-		93F1D5BA12D532C400832BEC /* WebGLLoseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1D5B712D532C400832BEC /* WebGLLoseContext.cpp */; };
-		93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5B812D532C400832BEC /* WebGLLoseContext.h */; };
-		93F1D5C012D5335600832BEC /* JSWebGLLoseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1D5BE12D5335600832BEC /* JSWebGLLoseContext.cpp */; };
-		93F1D5C112D5335600832BEC /* JSWebGLLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5BF12D5335600832BEC /* JSWebGLLoseContext.h */; };
+		93F1D5BA12D532C400832BEC /* WebKitLoseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1D5B712D532C400832BEC /* WebKitLoseContext.cpp */; };
+		93F1D5BB12D532C400832BEC /* WebKitLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5B812D532C400832BEC /* WebKitLoseContext.h */; };
+		93F1D5C012D5335600832BEC /* JSWebKitLoseContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F1D5BE12D5335600832BEC /* JSWebKitLoseContext.cpp */; };
+		93F1D5C112D5335600832BEC /* JSWebKitLoseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F1D5BF12D5335600832BEC /* JSWebKitLoseContext.h */; };
 		93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */; };
 		93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */; };
 		93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10402,11 +10402,11 @@
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93F19B1A08245E5A001E9ABC /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F1D31A0558CC5C00821BC0 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
-		93F1D5B712D532C400832BEC /* WebGLLoseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLLoseContext.cpp; path = canvas/WebGLLoseContext.cpp; sourceTree = "<group>"; };
-		93F1D5B812D532C400832BEC /* WebGLLoseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLLoseContext.h; path = canvas/WebGLLoseContext.h; sourceTree = "<group>"; };
-		93F1D5B912D532C400832BEC /* WebGLLoseContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLLoseContext.idl; path = canvas/WebGLLoseContext.idl; sourceTree = "<group>"; };
-		93F1D5BE12D5335600832BEC /* JSWebGLLoseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLLoseContext.cpp; sourceTree = "<group>"; };
-		93F1D5BF12D5335600832BEC /* JSWebGLLoseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLLoseContext.h; sourceTree = "<group>"; };
+		93F1D5B712D532C400832BEC /* WebKitLoseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebKitLoseContext.cpp; path = canvas/WebKitLoseContext.cpp; sourceTree = "<group>"; };
+		93F1D5B812D532C400832BEC /* WebKitLoseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitLoseContext.h; path = canvas/WebKitLoseContext.h; sourceTree = "<group>"; };
+		93F1D5B912D532C400832BEC /* WebKitLoseContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebKitLoseContext.idl; path = canvas/WebKitLoseContext.idl; sourceTree = "<group>"; };
+		93F1D5BE12D5335600832BEC /* JSWebKitLoseContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitLoseContext.cpp; sourceTree = "<group>"; };
+		93F1D5BF12D5335600832BEC /* JSWebKitLoseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitLoseContext.h; sourceTree = "<group>"; };
 		93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLContextEvent.cpp; path = canvas/WebGLContextEvent.cpp; sourceTree = "<group>"; };
 		93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLContextEvent.h; path = canvas/WebGLContextEvent.h; sourceTree = "<group>"; };
 		93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLContextEvent.idl; path = canvas/WebGLContextEvent.idl; sourceTree = "<group>"; };
@@ -15005,9 +15005,9 @@
 				77A17A7412F28642004E02F6 /* WebGLVertexArrayObjectOES.cpp */,
 				77A17A7512F28642004E02F6 /* WebGLVertexArrayObjectOES.h */,
 				77A17A7612F28642004E02F6 /* WebGLVertexArrayObjectOES.idl */,
-				93F1D5B712D532C400832BEC /* WebGLLoseContext.cpp */,
-				93F1D5B812D532C400832BEC /* WebGLLoseContext.h */,
-				93F1D5B912D532C400832BEC /* WebGLLoseContext.idl */,
+				93F1D5B712D532C400832BEC /* WebKitLoseContext.cpp */,
+				93F1D5B812D532C400832BEC /* WebKitLoseContext.h */,
+				93F1D5B912D532C400832BEC /* WebKitLoseContext.idl */,
 			);
 			name = canvas;
 			sourceTree = "<group>";
@@ -17930,8 +17930,6 @@
 				6E3FAD3714733F4000E42306 /* JSWebGLCompressedTextures.h */,
 				49C7B9841042D2D30009D447 /* JSWebGLFramebuffer.cpp */,
 				49C7B9851042D2D30009D447 /* JSWebGLFramebuffer.h */,
-				93F1D5BE12D5335600832BEC /* JSWebGLLoseContext.cpp */,
-				93F1D5BF12D5335600832BEC /* JSWebGLLoseContext.h */,
 				49C7B9881042D2D30009D447 /* JSWebGLProgram.cpp */,
 				49C7B9891042D2D30009D447 /* JSWebGLProgram.h */,
 				49C7B98A1042D2D30009D447 /* JSWebGLRenderbuffer.cpp */,
@@ -17950,6 +17948,8 @@
 				3194616113020B20004BB3F8 /* JSWebKitAnimation.h */,
 				319461FC13022BB8004BB3F8 /* JSWebKitAnimationList.cpp */,
 				319461FD13022BB8004BB3F8 /* JSWebKitAnimationList.h */,
+				93F1D5BE12D5335600832BEC /* JSWebKitLoseContext.cpp */,
+				93F1D5BF12D5335600832BEC /* JSWebKitLoseContext.h */,
 			);
 			name = HTML;
 			sourceTree = "<group>";
@@ -23597,7 +23597,6 @@
 				49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */,
 				6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */,
 				49C7B9981042D2D30009D447 /* JSWebGLFramebuffer.h in Headers */,
-				93F1D5C112D5335600832BEC /* JSWebGLLoseContext.h in Headers */,
 				49C7B99C1042D2D30009D447 /* JSWebGLProgram.h in Headers */,
 				49C7B99E1042D2D30009D447 /* JSWebGLRenderbuffer.h in Headers */,
 				49EED1471051969400099FAB /* JSWebGLRenderingContext.h in Headers */,
@@ -23614,6 +23613,7 @@
 				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
 				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
 				898785B5122CA2A7003AABDA /* JSWebKitFlags.h in Headers */,
+				93F1D5C112D5335600832BEC /* JSWebKitLoseContext.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSWebKitMutationObserver.h in Headers */,
 				494BD79E0F55C94C00747828 /* JSWebKitPoint.h in Headers */,
 				31C0FF400E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.h in Headers */,
@@ -24591,7 +24591,7 @@
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
 				BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */,
 				89878566122CA064003AABDA /* WebKitFlags.h in Headers */,
-				93F1D5BB12D532C400832BEC /* WebGLLoseContext.h in Headers */,
+				93F1D5BB12D532C400832BEC /* WebKitLoseContext.h in Headers */,
 				C6F0900F14327B6100685849 /* WebKitMutationObserver.h in Headers */,
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
@@ -26677,7 +26677,6 @@
 				49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */,
 				6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */,
 				49C7B9971042D2D30009D447 /* JSWebGLFramebuffer.cpp in Sources */,
-				93F1D5C012D5335600832BEC /* JSWebGLLoseContext.cpp in Sources */,
 				49C7B99B1042D2D30009D447 /* JSWebGLProgram.cpp in Sources */,
 				49C7B99D1042D2D30009D447 /* JSWebGLRenderbuffer.cpp in Sources */,
 				49EED1461051969400099FAB /* JSWebGLRenderingContext.cpp in Sources */,
@@ -26699,6 +26698,7 @@
 				4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				898785B4122CA2A7003AABDA /* JSWebKitFlags.cpp in Sources */,
+				93F1D5C012D5335600832BEC /* JSWebKitLoseContext.cpp in Sources */,
 				C6F0902C14327D4F00685849 /* JSWebKitMutationObserver.cpp in Sources */,
 				C6F0917F143A2BB900685849 /* JSWebKitMutationObserverCustom.cpp in Sources */,
 				494BD79D0F55C94C00747828 /* JSWebKitPoint.cpp in Sources */,
@@ -27484,7 +27484,7 @@
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
 				BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */,
-				93F1D5BA12D532C400832BEC /* WebGLLoseContext.cpp in Sources */,
+				93F1D5BA12D532C400832BEC /* WebKitLoseContext.cpp in Sources */,
 				C6F0900E14327B6100685849 /* WebKitMutationObserver.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,

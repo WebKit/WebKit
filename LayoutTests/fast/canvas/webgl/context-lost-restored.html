@@ -8,10 +8,7 @@ var wtu = WebGLTestUtils;
 var canvas;
 var gl;
 var shouldGenerateGLError;
-var extensionNames = [
-    "WEBKIT_WEBGL_lose_context",
-    "MOZ_WEBGL_lose_context",
-];
+var extension_name = "WEBKIT_lose_context";
 var extension;
 var bufferObjects;
 var program;
@@ -45,13 +42,9 @@ function setupTest()
     canvas.width = 1;
     canvas.height = 1;
     gl = wtu.create3DContext(canvas);
-    for (var ii = 0; ii < extensionNames.length; ++ii) {
-        extension = gl.getExtension(extensionNames[ii]);
-        if (extension)
-            break;
-    }
+    extension = gl.getExtension(extension_name);
     if (!extension) {
-        debug("Could not find lose_context extension under the following names: " + extensionNames.join(" "));
+        debug(extension_name + " extension not found.");
         return false;
     }
     return true;

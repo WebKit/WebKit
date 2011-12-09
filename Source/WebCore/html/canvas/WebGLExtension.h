@@ -34,7 +34,7 @@ class WebGLExtension {
 public:
     // Extension names are needed to properly wrap instances in JavaScript objects.
     enum ExtensionName {
-        WebKitWebGLLoseContextName, // WEBKIT_ prefix until extension is official
+        WebKitLoseContextName,
         OESTextureFloatName,
         OESStandardDerivativesName,
         OESVertexArrayObjectName,

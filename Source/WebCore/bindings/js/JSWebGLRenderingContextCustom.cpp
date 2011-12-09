@@ -43,7 +43,6 @@
 #include "JSUint8Array.h"
 #include "JSWebGLBuffer.h"
 #include "JSWebGLFramebuffer.h"
-#include "JSWebGLLoseContext.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLShader.h"
@@ -51,6 +50,7 @@
 #include "JSWebGLUniformLocation.h"
 #include "JSWebGLVertexArrayObjectOES.h"
 #include "JSWebKitCSSMatrix.h"
+#include "JSWebKitLoseContext.h"
 #include "NotImplemented.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
@@ -62,10 +62,10 @@
 #include "WebGLExtension.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
-#include "WebGLLoseContext.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLVertexArrayObjectOES.h"
+#include "WebKitLoseContext.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
 #include <wtf/FastMalloc.h>
@@ -182,8 +182,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     if (!extension)
         return jsNull();
     switch (extension->getName()) {
-    case WebGLExtension::WebKitWebGLLoseContextName:
-        return toJS(exec, globalObject, static_cast<WebGLLoseContext*>(extension));
+    case WebGLExtension::WebKitLoseContextName:
+        return toJS(exec, globalObject, static_cast<WebKitLoseContext*>(extension));
     case WebGLExtension::OESStandardDerivativesName:
         return toJS(exec, globalObject, static_cast<OESStandardDerivatives*>(extension));
     case WebGLExtension::OESTextureFloatName:

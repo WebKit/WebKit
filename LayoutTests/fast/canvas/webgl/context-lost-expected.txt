@@ -168,7 +168,7 @@ PASS gl.getUniform(program, uniformLocation) is null
 PASS gl.getUniformLocation(program, 'vPosition') is null
 PASS gl.getVertexAttrib(0, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING) is null
 PASS gl.getSupportedExtensions() is null
-PASS gl.getExtension('WEBKIT_WEBGL_lose_context') is null
+PASS gl.getExtension('WEBKIT_lose_context') is null
 PASS gl.isBuffer(buffer) is false
 PASS gl.isEnabled(gl.BLEND) is false
 PASS gl.isFramebuffer(framebuffer) is false

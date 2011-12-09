@@ -1,3 +1,38 @@
+2011-12-08  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed, rolling out r102418.
+        http://trac.webkit.org/changeset/102418
+        https://bugs.webkit.org/show_bug.cgi?id=71870
+
+        Caused Chromium build failure.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebKitLoseContext.cpp: Renamed from Source/WebCore/html/canvas/WebGLLoseContext.cpp.
+        (WebCore::WebKitLoseContext::WebKitLoseContext):
+        (WebCore::WebKitLoseContext::~WebKitLoseContext):
+        (WebCore::WebKitLoseContext::getName):
+        (WebCore::WebKitLoseContext::create):
+        (WebCore::WebKitLoseContext::loseContext):
+        (WebCore::WebKitLoseContext::restoreContext):
+        * html/canvas/WebKitLoseContext.h: Renamed from Source/WebCore/html/canvas/WebGLLoseContext.h.
+        * html/canvas/WebKitLoseContext.idl: Renamed from Source/WebCore/html/canvas/WebGLLoseContext.idl.
+
 2011-12-08  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Enable viewport metatag

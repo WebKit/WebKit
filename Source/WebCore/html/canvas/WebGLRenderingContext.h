@@ -56,7 +56,6 @@ class WebGLDebugRendererInfo;
 class WebGLDebugShaders;
 class WebGLExtension;
 class WebGLFramebuffer;
-class WebGLLoseContext;
 class WebGLObject;
 class WebGLProgram;
 class WebGLRenderbuffer;
@@ -64,6 +63,7 @@ class WebGLShader;
 class WebGLTexture;
 class WebGLUniformLocation;
 class WebGLVertexArrayObjectOES;
+class WebKitLoseContext;
 
 typedef int ExceptionCode;
 
@@ -484,7 +484,7 @@ public:
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
-    OwnPtr<WebGLLoseContext> m_webglLoseContext;
+    OwnPtr<WebKitLoseContext> m_webkitLoseContext;
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
     OwnPtr<WebGLCompressedTextures> m_webglCompressedTextures;

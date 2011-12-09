@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLLoseContext_h
-#define WebGLLoseContext_h
+#ifndef WebKitLoseContext_h
+#define WebKitLoseContext_h
 
 #include "WebGLExtension.h"
 #include <wtf/PassOwnPtr.h>
@@ -33,20 +33,20 @@ namespace WebCore {
 
 class WebGLRenderingContext;
 
-class WebGLLoseContext : public WebGLExtension {
+class WebKitLoseContext : public WebGLExtension {
 public:
-    static PassOwnPtr<WebGLLoseContext> create(WebGLRenderingContext*);
+    static PassOwnPtr<WebKitLoseContext> create(WebGLRenderingContext*);
 
-    virtual ~WebGLLoseContext();
+    virtual ~WebKitLoseContext();
     virtual ExtensionName getName() const;
 
     void loseContext();
     void restoreContext();
 
 private:
-    WebGLLoseContext(WebGLRenderingContext*);
+    WebKitLoseContext(WebGLRenderingContext*);
 };
 
 } // namespace WebCore
 
-#endif // WebGLLoseContext_h
+#endif // WebKitLoseContext_h
