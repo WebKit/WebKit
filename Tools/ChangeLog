@@ -1,3 +1,20 @@
+2011-12-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Use new qmake option in Qt5 to prevent dependency issues with GNUmake
+
+        The GNUmake + gcc_MD_depends options together produce .d files using GCC, but
+        this failed when moving files in the source tree, as the .d file would contain
+        stale dependencies on the old source file location. By keeping the object files
+        (and hence the depdendency files) in a proper tree structure inside the objects
+        directory we can prevent this failure.
+
+        A side benefit is that we can also have objects with the same name inside the
+        same project.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
 2011-12-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Update unit test after r102412.

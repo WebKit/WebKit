@@ -9,7 +9,7 @@ load(functions)
 # Assume we use GNU make and a non-ancient GCC (compatible)
 # compiler that supports the -MD option. Relies on changes
 # introduced in Qt 5 to work correctly.
-haveQt(5): CONFIG += GNUmake gcc_MD_depends
+haveQt(5): CONFIG += GNUmake gcc_MD_depends object_parallel_to_source
 
 # Expose if we are building inside Scratchbox
 SBOX_CHECK = $$(_SBOX_DIR)
