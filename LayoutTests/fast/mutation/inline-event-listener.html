@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<ol contenteditable oninput="document.body.innerHTML = observerRan ? 'FAILED' : 'PASSED'; if (window.layoutTestController) layoutTestController.notifyDone()">
+    <li>Press enter
+</ol>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var list = document.querySelector('ol');
+    var observerRan = false;
+    var observer = new WebKitMutationObserver(function() { observerRan = true; });
+    observer.observe(list, {childList: true, characterData: true});
+    list.focus();
+    if (window.eventSender)
+        eventSender.scheduleAsynchronousKeyDown('\n');
+</script>

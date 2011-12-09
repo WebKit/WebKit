@@ -270,6 +270,7 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("mouseUp", &EventSender::mouseUp);
     bindMethod("releaseTouchPoint", &EventSender::releaseTouchPoint);
     bindMethod("scheduleAsynchronousClick", &EventSender::scheduleAsynchronousClick);
+    bindMethod("scheduleAsynchronousKeyDown", &EventSender::scheduleAsynchronousKeyDown);
     bindMethod("setTouchModifier", &EventSender::setTouchModifier);
     bindMethod("textZoomIn", &EventSender::textZoomIn);
     bindMethod("textZoomOut", &EventSender::textZoomOut);
@@ -500,7 +501,8 @@ void EventSender::doMouseMove(const WebMouseEvent& e)
 
 void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
 {
-    result->setNull();
+    if (result)
+        result->setNull();
     if (arguments.size() < 1 || !arguments[0].isString())
         return;
     bool generateChar = false;
@@ -845,6 +847,22 @@ void EventSender::scheduleAsynchronousClick(const CppArgumentList& arguments, Cp
     result->setNull();
     postTask(new MouseDownTask(this, arguments));
     postTask(new MouseUpTask(this, arguments));
+}
+
+class KeyDownTask : public MethodTask<EventSender> {
+public:
+    KeyDownTask(EventSender* obj, const CppArgumentList& arg)
+        : MethodTask<EventSender>(obj), m_arguments(arg) { }
+    virtual void runIfValid() { m_object->keyDown(m_arguments, 0); }
+
+private:
+    CppArgumentList m_arguments;
+};
+
+void EventSender::scheduleAsynchronousKeyDown(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    postTask(new KeyDownTask(this, arguments));
 }
 
 void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVariant* result)

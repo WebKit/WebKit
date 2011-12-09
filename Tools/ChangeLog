@@ -1,3 +1,21 @@
+2011-12-08  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] V8LazyEventHandler breaks microtask delivery semantics
+        https://bugs.webkit.org/show_bug.cgi?id=73492
+
+        Reviewed by Adam Barth.
+
+        Add eventSender.scheduleAsynchronousKeyDown, needed to cause a
+        keypress event without any script on the stack.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::keyDown):
+        (KeyDownTask::KeyDownTask):
+        (KeyDownTask::runIfValid):
+        (EventSender::scheduleAsynchronousKeyDown):
+        * DumpRenderTree/chromium/EventSender.h:
+
 2011-12-08  Hayato Ito  <hayato@chromium.org>
 
         [gdb] Pretty printer for a 8-bit version of WTF::StringImpl and LChar*.

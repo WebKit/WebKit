@@ -1,3 +1,15 @@
+2011-12-08  Adam Klein  <adamk@chromium.org>
+
+        [MutationObservers] V8LazyEventHandler breaks microtask delivery semantics
+        https://bugs.webkit.org/show_bug.cgi?id=73492
+
+        Reviewed by Adam Barth.
+
+        Test: fast/mutation/inline-event-listener.html
+
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject): Call v8::Script::Run directly instead of going through V8Proxy.
+
 2011-12-08  Hayato Ito  <hayato@chromium.org>
 
         Suppress rendering of light children when ShadowRoot is dynamically created.

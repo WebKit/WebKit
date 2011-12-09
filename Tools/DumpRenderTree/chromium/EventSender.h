@@ -82,6 +82,7 @@ public:
     void mouseScrollBy(const CppArgumentList&, CppVariant*);
     void continuousMouseScrollBy(const CppArgumentList&, CppVariant*);
     void scheduleAsynchronousClick(const CppArgumentList&, CppVariant*);
+    void scheduleAsynchronousKeyDown(const CppArgumentList&, CppVariant*);
     void beginDragWithFiles(const CppArgumentList&, CppVariant*);
     CppVariant dragMode;
 

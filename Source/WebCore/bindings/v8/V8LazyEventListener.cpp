@@ -123,7 +123,9 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
     v8::Handle<v8::Script> script = V8Proxy::compileScript(codeExternalString, m_sourceURL, m_position);
     if (!script.IsEmpty()) {
-        v8::Local<v8::Value> value = proxy->runScript(script);
+        // Call v8::Script::Run() directly to avoid an erroneous call to V8RecursionScope::didLeaveScriptContext().
+        // FIXME: Remove this code when we stop doing the 'with' hack above.
+        v8::Local<v8::Value> value = script->Run();
         if (!value.IsEmpty()) {
             ASSERT(value->IsFunction());
 
