@@ -55,10 +55,10 @@ void RenderSVGContainer::layout()
     // RenderSVGRoot disables layoutState for the SVG rendering tree.
     ASSERT(!view()->layoutStateEnabled());
 
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() || selfWillPaint());
+
     // Allow RenderSVGViewportContainer to update its viewport.
     calcViewport();
-
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() || selfWillPaint());
 
     // Allow RenderSVGTransformableContainer to update its transform.
     bool updatedTransform = calculateLocalTransform();

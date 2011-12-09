@@ -1,3 +1,16 @@
+2011-12-08  Florin Malita  <fmalita@google.com>
+
+        Moving SVG elements on the page doesn't always erase element at the old position
+        https://bugs.webkit.org/show_bug.cgi?id=74002
+
+        Reviewed by Darin Adler.
+
+        Test: svg/repaint/container-repaint.svg
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        Save the old repaint bounds before updating the viewport.
+
 2011-12-08  Tim Horton  <timothy_horton@apple.com>
 
         Enable animations of CSS images using -webkit-cross-fade
