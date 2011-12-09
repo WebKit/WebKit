@@ -205,8 +205,10 @@ public:
     const_iterator begin() const { return m_data.begin(); }
     const_iterator end() const { return m_data.end(); }
 
-private:
+protected:
     InspectorObject();
+
+private:
     Dictionary m_data;
     Vector<String> m_order;
 };

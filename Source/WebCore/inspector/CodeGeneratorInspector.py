@@ -104,6 +104,12 @@ defines_map = parse_defines(arg_options.defines)
 
 class Capitalizer:
     @staticmethod
+    def lower_camel_case_to_upper(str):
+        if len(str) > 0 and str[0].islower():
+            str = str[0].upper() + str[1:]
+        return str
+
+    @staticmethod
     def upper_camel_case_to_lower(str):
         pos = 0
         while pos < len(str) and str[pos].isupper():
@@ -119,6 +125,43 @@ class Capitalizer:
             raise Exception("Unknown abbreviation %s" % possible_abbreviation)
         str = possible_abbreviation.lower() + str[pos:]
         return str
+
+    @staticmethod
+    def camel_case_to_capitalized_with_underscores(str):
+        if len(str) == 0:
+            return str
+        output = Capitalizer.split_camel_case_(str)
+        return "_".join(output).upper()
+
+    @staticmethod
+    def split_camel_case_(str):
+        output = []
+        pos_being = 0
+        pos = 1
+        has_oneletter = False
+        while pos < len(str):
+            if str[pos].isupper():
+                output.append(str[pos_being:pos].upper())
+                if pos - pos_being == 1:
+                    has_oneletter = True
+                pos_being = pos
+            pos += 1
+        output.append(str[pos_being:])
+        if has_oneletter:
+            array_pos = 0
+            while array_pos < len(output) - 1:
+                if len(output[array_pos]) == 1:
+                    array_pos_end = array_pos + 1
+                    while array_pos_end < len(output) and len(output[array_pos_end]) == 1:
+                        array_pos_end += 1
+                    if array_pos_end - array_pos > 1:
+                        possible_abbreviation = "".join(output[array_pos:array_pos_end])
+                        if possible_abbreviation.upper() in Capitalizer.ABBREVIATION:
+                            output[array_pos:array_pos_end] = [possible_abbreviation]
+                        else:
+                            array_pos = array_pos_end - 1
+                array_pos += 1
+        return output
 
     ABBREVIATION = frozenset(["XHR", "DOM", "CSS"])
 
@@ -186,6 +229,8 @@ class RawTypes(object):
             return RawTypes.Int
         elif json_type == "number":
             return RawTypes.Number
+        elif json_type == "any":
+            return RawTypes.Any
         else:
             raise Exception("Unknown type: %s" % json_type)
 
@@ -201,7 +246,7 @@ class RawTypes(object):
     class String(BaseType):
         @classmethod
         def get_c_param_type(cls, param_type, optional):
-            if param_type == ParamType.EVENT:
+            if param_type == ParamType.EVENT or param_type == ParamType.TYPE_BUILDER_OUTPUT:
                 return cls._ref_c_type
             else:
                 return cls._plain_c_type
@@ -296,7 +341,7 @@ class RawTypes(object):
     class Object(BaseType):
         @classmethod
         def get_c_param_type(cls, param_type, optional):
-            if param_type == ParamType.EVENT:
+            if param_type == ParamType.EVENT or param_type == ParamType.TYPE_BUILDER_OUTPUT:
                 return cls._ref_c_type
             else:
                 return cls._plain_c_type
@@ -321,6 +366,35 @@ class RawTypes(object):
 
         _plain_c_type = CParamType("RefPtr<InspectorObject>")
         _ref_c_type = CParamType("PassRefPtr<InspectorObject>")
+
+    class Any(BaseType):
+        @classmethod
+        def get_c_param_type(cls, param_type, optional):
+            if param_type == ParamType.EVENT or param_type == ParamType.TYPE_BUILDER_OUTPUT:
+                return cls._ref_c_type
+            else:
+                return cls._plain_c_type
+
+        @staticmethod
+        def get_getter_name():
+            return "Value"
+
+        get_setter_name = get_getter_name
+
+        @staticmethod
+        def get_c_initializer():
+            return "InspectorValue::create()"
+
+        @staticmethod
+        def get_js_bind_type():
+            raise Exception("Unsupported")
+
+        @staticmethod
+        def is_event_param_check_optional():
+            return True
+
+        _plain_c_type = CParamType("RefPtr<InspectorValue>")
+        _ref_c_type = CParamType("PassRefPtr<InspectorValue>")
 
     class Array(BaseType):
         @classmethod
@@ -358,38 +432,256 @@ class ParamType(object):
     INPUT = "input"
     OUTPUT = "output"
     EVENT = "event"
+    TYPE_BUILDER_OUTPUT = "typeBuilderOutput"
+
+# Collection of InspectorObject class methods that are likely to be overloaded in generated class.
+# We must explicitly import all overloaded methods or they won't be available to user.
+INSPECTOR_OBJECT_SETTER_NAMES = frozenset(["setValue", "setBoolean", "setNumber", "setString", "setValue", "setObject", "setArray"])
+
+
+class TypeBindings:
+    @staticmethod
+    def create_for_named_type_declaration(json_type, context_domain_name):
+        if json_type["type"] == "string":
+            if "enum" in json_type:
+
+                class EnumBinding:
+                    @staticmethod
+                    def generate_type_builder(output, forward_listener):
+                        enum = json_type["enum"]
+                        # TODO: doc
+                        output.append("namespace ")
+                        output.append(json_type["id"])
+                        output.append(" {\n")
+                        for enum_item in enum:
+                            item_c_name = enum_item.replace('-', '_')
+                            output.append("const char* const ")
+                            output.append(Capitalizer.upper_camel_case_to_lower(item_c_name))
+                            output.append(" = \"")
+                            output.append(enum_item)
+                            output.append("\";\n")
+                        output.append("} // namespace ")
+                        output.append(json_type["id"])
+                        output.append("\n\n")
+
+                return EnumBinding
+            else:
+
+                class PlainString:
+                    @staticmethod
+                    def generate_type_builder(output, forward_listener):
+                        if "description" in json_type:
+                            output.append("/* ")
+                            output.append(json_type["description"])
+                            output.append(" */\n")
+                        output.append("typedef String ")
+                        output.append(json_type["id"])
+                        output.append(";\n\n")
+                return PlainString
+
+        elif json_type["type"] == "object":
+            if "properties" in json_type:
+
+                class ClassBinding:
+                    @staticmethod
+                    def generate_type_builder(output, forward_listener):
+                        # TODO: doc
+                        output.append("class ")
+                        class_name = json_type["id"]
+                        output.append(class_name)
+                        output.append(" : public InspectorObject {\n")
+                        output.append("public:\n")
+
+                        properties = json_type["properties"]
+                        main_properties = []
+                        optional_properties = []
+                        for p in properties:
+                            if "optional" in p and p["optional"]:
+                                optional_properties.append(p)
+                            else:
+                                main_properties.append(p)
+
+                        output.append(
+"""    enum {
+        NO_FIELDS_SET = 0,
+""")
+
+                        state_enum_items = []
+                        if len(main_properties) > 0:
+                            pos = 0
+                            for p in main_properties:
+                                item_name = Capitalizer.camel_case_to_capitalized_with_underscores(p["name"]) + "_SET"
+                                state_enum_items.append(item_name)
+                                output.append("        %s = 1 << %s,\n" % (item_name, pos))
+                                pos += 1
+                            all_fields_set_value = "(" + (" | ".join(state_enum_items)) + ")"
+                        else:
+                            all_fields_set_value = "0"
+
+                        output.append(
+"""        ALL_FIELDS_SET = %s
+    };
+
+    template<int STATE>
+    class Builder {
+    private:
+        RefPtr<InspectorObject> m_result;
+
+        template<int STEP> Builder<STATE | STEP>& castState()
+        {
+            return *reinterpret_cast<Builder<STATE | STEP>*>(this);
+        }
+
+        Builder(PassRefPtr<%s> ptr)
+        {
+            COMPILE_ASSERT(STATE == NO_FIELDS_SET, builder_created_in_non_init_state);
+            m_result = ptr;
+        }
+        friend class %s;
+    public:
+""" % (all_fields_set_value, class_name, class_name))
+
+                        pos = 0
+                        for prop in main_properties:
+                            prop_name = prop["name"]
+                            param_raw_type = resolve_param_raw_type(prop, context_domain_name)
+                            output.append("""
+        Builder<STATE | %s>& set%s(%s value)
+        {
+            COMPILE_ASSERT(!(STATE & %s), property_%s_already_set);
+            m_result->set%s("%s", value);
+            return castState<%s>();
+        }
+"""
+                            % (state_enum_items[pos],
+                               Capitalizer.lower_camel_case_to_upper(prop_name),
+                               param_raw_type.get_c_param_type(ParamType.TYPE_BUILDER_OUTPUT, False).get_text(),
+                               state_enum_items[pos], prop_name,
+                               param_raw_type.get_setter_name(), prop_name, state_enum_items[pos]))
+
+                            pos += 1
+
+                        output.append("""
+        operator RefPtr<%s>& ()
+        {
+            COMPILE_ASSERT(STATE == ALL_FIELDS_SET, result_is_not_ready);
+            return *reinterpret_cast<RefPtr<%s>*>(&m_result);
+        }
+
+        operator PassRefPtr<%s> ()
+        {
+            return RefPtr<%s>(*this);
+        }
+    };
+
+"""
+                        % (class_name, class_name, class_name, class_name))
+
+                        output.append("    /*\n")
+                        output.append("     * Synthetic constructor:\n")
+                        output.append("     * RefPtr<%s> result = %s::create()" % (class_name, class_name))
+                        for prop in main_properties:
+                            output.append("\n     *     .set%s(...)" % Capitalizer.lower_camel_case_to_upper(prop["name"]))
+                        output.append(";\n     */\n")
+
+                        output.append(
+"""    static Builder<NO_FIELDS_SET> create()
+    {
+        return Builder<NO_FIELDS_SET>(adoptRef(new %s()));
+    }
+""" % class_name)
+
+                        for prop in optional_properties:
+                            param_raw_type = resolve_param_raw_type(prop, context_domain_name)
+                            setter_name = "set%s" % Capitalizer.lower_camel_case_to_upper(prop["name"])
+                            output.append("\n    void %s" % setter_name)
+                            output.append("(%s value)\n" % param_raw_type.get_c_param_type(ParamType.TYPE_BUILDER_OUTPUT, False).get_text())
+                            output.append("    {\n")
+                            output.append("        this->set%s(\"%s\", value);\n" % (param_raw_type.get_setter_name(), prop["name"]))
+                            output.append("    }\n")
+
+                            if setter_name in INSPECTOR_OBJECT_SETTER_NAMES:
+                                output.append("    using InspectorObject::%s;\n\n" % setter_name)
+
+                        output.append("};\n\n")
+                return ClassBinding
+            else:
+
+                class PlainObjectBinding:
+                    @staticmethod
+                    def generate_type_builder(output, forward_listener):
+                        # No-op
+                        pass
+                return PlainObjectBinding
+        else:
+            raw_type = RawTypes.get(json_type["type"])
+
+            class RawTypesBinding:
+                @staticmethod
+                def generate_type_builder(output, forward_listener):
+                    # No-op
+                    pass
+            return RawTypesBinding
 
 
 class TypeData(object):
-    def __init__(self, json_type, json_domain):
+    def __init__(self, json_type, json_domain, domain_data):
         self.json_type_ = json_type
         self.json_domain_ = json_domain
+        self.domain_data_ = domain_data
 
-        if "type" in json_type:
-            json_type_name = json_type["type"]
-            raw_type = RawTypes.get(json_type_name)
-        else:
+        if "type" not in json_type:
             raise Exception("Unknown type")
+
+        json_type_name = json_type["type"]
+        raw_type = RawTypes.get(json_type_name)
         self.raw_type_ = raw_type
+        self.binding_ = TypeBindings.create_for_named_type_declaration(json_type, json_domain["domain"])
 
     def get_raw_type(self):
         return self.raw_type_
+
+    def get_binding(self):
+        return self.binding_
+
+
+class DomainData:
+    def __init__(self, json_domain):
+        self.json_domain = json_domain
+        self.types_ = []
+
+    def add_type(self, type_data):
+        self.types_.append(type_data)
+
+    def name(self):
+        return self.json_domain["domain"]
+
+    def types(self):
+        return self.types_
 
 
 class TypeMap:
     def __init__(self, api):
         self.map_ = {}
+        self.domains_ = []
         for json_domain in api["domains"]:
             domain_name = json_domain["domain"]
 
             domain_map = {}
             self.map_[domain_name] = domain_map
 
+            domain_data = DomainData(json_domain)
+            self.domains_.append(domain_data)
+
             if "types" in json_domain:
                 for json_type in json_domain["types"]:
                     type_name = json_type["id"]
-                    type_data = TypeData(json_type, json_domain)
+                    type_data = TypeData(json_type, json_domain, domain_data)
                     domain_map[type_name] = type_data
+                    domain_data.add_type(type_data)
+
+    def domains(self):
+        return self.domains_
 
     def get(self, domain_name, type_name):
         return self.map_[domain_name][type_name]
@@ -425,6 +717,30 @@ json_api = json.loads(json_string)
 
 
 class Templates:
+    def get_this_script_path_(absolute_path):
+        absolute_path = os.path.abspath(absolute_path)
+        components = []
+
+        def fill_recursive(path_part, depth):
+            if depth <= 0 or path_part == '/':
+                return
+            fill_recursive(os.path.dirname(path_part), depth - 1)
+            components.append(os.path.basename(path_part))
+
+        # Typical path is /Source/WebCore/inspector/CodeGeneratorInspector.py
+        # Let's take 4 components from the real path then.
+        fill_recursive(absolute_path, 4)
+
+        return "/".join(components)
+
+    file_header_ = ("// File is generated by %s\n\n" % get_this_script_path_(sys.argv[0]) +
+"""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+""")
+
+
+
     frontend_domain_class = string.Template(
 """    class $domainClassName {
     public:
@@ -466,22 +782,32 @@ $code    if (m_inspectorFrontendChannel)
 }
 """)
 
-    frontend_h = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-#ifndef InspectorFrontend_h
+    frontend_h = string.Template(file_header_ +
+"""#ifndef InspectorFrontend_h
 #define InspectorFrontend_h
 
+#include "InspectorValues.h"
 #include <PlatformString.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class InspectorArray;
 class InspectorFrontendChannel;
+
+// Both InspectorObject and InspectorArray may or may not be declared at this point as defined by ENABLED_INSPECTOR.
+// Double-check we have them at least as forward declaration.
+class InspectorArray;
 class InspectorObject;
 
 typedef String ErrorString;
+
+#if ENABLE(INSPECTOR)
+
+namespace TypeBuilder {
+${typeBuilders}
+} // namespace TypeBuilder
+
+#endif // ENABLE(INSPECTOR)
 
 class InspectorFrontend {
 public:
@@ -497,10 +823,8 @@ ${fieldDeclarations}};
 #endif // !defined(InspectorFrontend_h)
 """)
 
-    backend_h = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-#ifndef InspectorBackendDispatcher_h
+    backend_h = string.Template(file_header_ +
+"""#ifndef InspectorBackendDispatcher_h
 #define InspectorBackendDispatcher_h
 
 #include <wtf/PassRefPtr.h>
@@ -570,10 +894,8 @@ $fieldDeclarations
 
 """)
 
-    backend_cpp = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
+    backend_cpp = string.Template(file_header_ +
+"""
 
 #include "config.h"
 #include "InspectorBackendDispatcher.h"
@@ -901,10 +1223,8 @@ bool InspectorBackendDispatcher::getCommandName(const String& message, String* r
 #endif // ENABLE(INSPECTOR)
 """)
 
-    frontend_cpp = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
+    frontend_cpp = string.Template(file_header_ +
+"""
 
 #include "config.h"
 #include "InspectorFrontend.h"
@@ -931,9 +1251,8 @@ $methods
 #endif // ENABLE(INSPECTOR)
 """)
 
-    backend_js = string.Template("""// Copyright (c) 2011 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+    backend_js = string.Template(file_header_ +
+"""
 
 $delegates
 $eventArgs
@@ -969,9 +1288,12 @@ class Generator:
     backend_forward_list = []
     backend_include_list = []
     frontend_constructor_init_list = []
+    type_builder_fragments = []
 
     @staticmethod
     def go():
+        Generator.process_types(type_map)
+
         for json_domain in json_api["domains"]:
             domain_name = json_domain["domain"]
             domain_name_lower = domain_name.lower()
@@ -1155,6 +1477,24 @@ class Generator:
 
         Generator.backend_js_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
 
+    @staticmethod
+    def process_types(type_map):
+        output = Generator.type_builder_fragments
+
+        class ForwardListener:
+            pass
+
+        for domain_data in type_map.domains():
+            output.append("namespace ")
+            output.append(domain_data.name())
+            output.append(" {\n")
+            for type_data in domain_data.types():
+                type_data.get_binding().generate_type_builder(output, ForwardListener)
+
+            output.append("} // ")
+            output.append(domain_data.name())
+            output.append("\n")
+
 Generator.go()
 
 backend_h_file = open(output_header_dirname + "/InspectorBackendDispatcher.h", "w")
@@ -1168,7 +1508,8 @@ backend_js_file = open(output_cpp_dirname + "/InspectorBackendStub.js", "w")
 
 frontend_h_file.write(Templates.frontend_h.substitute(None,
          fieldDeclarations=join(Generator.frontend_class_field_lines, ""),
-         domainClassList=join(Generator.frontend_domain_class_lines, "")))
+         domainClassList=join(Generator.frontend_domain_class_lines, ""),
+         typeBuilders=join(Generator.type_builder_fragments, "")))
 
 backend_h_file.write(Templates.backend_h.substitute(None,
     constructorInit=join(Generator.backend_constructor_init_list, "\n"),

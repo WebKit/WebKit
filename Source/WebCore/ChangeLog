@@ -1,3 +1,16 @@
+2011-12-09  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: [protocol] generate C++ classes for protocol JSON named types
+        https://bugs.webkit.org/show_bug.cgi?id=72835
+
+        Reviewed by NOBODY.
+
+        Extends python generator functionality.
+        Makes constructor in InspectorObject public.
+
+        * inspector/CodeGeneratorInspector.py:
+        * inspector/InspectorValues.h:
+
 2011-12-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Webkit should release TextureMapper GL objects if page paint node is deallocated.
