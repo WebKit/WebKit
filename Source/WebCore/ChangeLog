@@ -1,3 +1,19 @@
+2011-12-09  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rolling out r102416.
+        http://trac.webkit.org/changeset/102416
+        https://bugs.webkit.org/show_bug.cgi?id=73394
+
+        Chromium Win clobber builds are failing.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+        (main):
+        * WebCore.gypi:
+        * bindings/scripts/generate-bindings.pl:
+        * page/DOMWindow.idl:
+        * webaudio/DOMWindowWebAudio.idl: Removed.
+
 2011-12-09  Eric Carlson  <eric.carlson@apple.com>
 
         JSC wrappers for TextTrack and TextTrackCue should not be collected during event dispatch or when owner is reachable
