@@ -73,7 +73,6 @@ private:
     bool handleMouseMoveEvent(QMouseEvent*);
     bool handleMousePressEvent(QMouseEvent*);
     bool handleMouseReleaseEvent(QMouseEvent*);
-    bool handleMouseDoubleClickEvent(QMouseEvent*);
     bool handleWheelEvent(QWheelEvent*);
     bool handleHoverLeaveEvent(QHoverEvent*);
     bool handleHoverMoveEvent(QHoverEvent*);
@@ -86,8 +85,10 @@ private:
 
     void touchEvent(QTouchEvent*);
 
-    QPoint m_tripleClick;
-    QBasicTimer m_tripleClickTimer;
+    QPoint m_lastClick;
+    QBasicTimer m_clickTimer;
+    Qt::MouseButton m_previousClickButton;
+    int m_clickCount;
 };
 
 #endif /* QtWebPageEventHandler_h */

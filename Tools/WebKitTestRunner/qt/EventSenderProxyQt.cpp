@@ -246,7 +246,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
 
 void EventSenderProxy::updateClickCountForButton(int button)
 {
-    if (m_time - m_clickTime < QApplication::doubleClickInterval() / 1000.0 && m_position == m_clickPosition && button == m_clickButton) {
+    if (m_time - m_clickTime < QApplication::doubleClickInterval() && m_position == m_clickPosition && button == m_clickButton) {
         ++m_clickCount;
         m_clickTime = m_time;
         return;
@@ -306,6 +306,7 @@ void EventSenderProxy::mouseScrollBy(int, int)
 void EventSenderProxy::leapForward(int ms)
 {
     eventQueue[endOfQueue].m_delay = ms;
+    m_time += ms;
 }
 
 #if ENABLE(TOUCH_EVENTS)

@@ -1130,7 +1130,6 @@ fast/encoding/GBK/iso-ir-58.html
 fast/encoding/GBK/x-euc-cn.html
 fast/encoding/GBK/x-gbk.html
 fast/events/autoscroll.html
-fast/events/click-count.html
 fast/events/content-changed-during-drop.html
 fast/events/js-keyboard-event-creation.html
 fast/events/keypress-insert-tab.html

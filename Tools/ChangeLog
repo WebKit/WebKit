@@ -1,3 +1,17 @@
+2011-12-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt] Click's count is limited to three continuous clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=45666
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update m_time at every call to leapForward, so double clicks
+        event are correctly sent by EventSender.
+
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::updateClickCountForButton):
+        (WTR::EventSenderProxy::leapForward):
+
 2011-12-09  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Reduce top-level code in prepare-ChangeLog

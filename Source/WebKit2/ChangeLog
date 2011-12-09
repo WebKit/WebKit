@@ -1,3 +1,20 @@
+2011-12-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt] Click's count is limited to three continuous clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=45666
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Qt recognize "infinite" continuous mouse clicks.
+        handleMouseDoubleClickEvent merged into handleMousePressEvent.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+        (QtWebPageEventHandler::handleEvent):
+        (QtWebPageEventHandler::handleMousePressEvent):
+        (QtWebPageEventHandler::timerEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+
 2011-12-09  Sam Weinig  <sam@webkit.org>
 
         Expose a WKConnectionRef which represents the connection to/from the WebProcess/UIProcess

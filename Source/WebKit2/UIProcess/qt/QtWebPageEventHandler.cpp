@@ -83,6 +83,8 @@ QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, WebKit::QtViewpo
     , m_panGestureRecognizer(this)
     , m_pinchGestureRecognizer(this)
     , m_tapGestureRecognizer(this)
+    , m_previousClickButton(Qt::NoButton)
+    , m_clickCount(0)
 {
 }
 
@@ -94,36 +96,37 @@ bool QtWebPageEventHandler::handleEvent(QEvent* ev)
 {
     switch (ev->type()) {
     case QEvent::MouseMove:
-        return handleMouseMoveEvent(reinterpret_cast<QMouseEvent*>(ev));
+        return handleMouseMoveEvent(static_cast<QMouseEvent*>(ev));
     case QEvent::MouseButtonPress:
-        return handleMousePressEvent(reinterpret_cast<QMouseEvent*>(ev));
-    case QEvent::MouseButtonRelease:
-        return handleMouseReleaseEvent(reinterpret_cast<QMouseEvent*>(ev));
     case QEvent::MouseButtonDblClick:
-        return handleMouseDoubleClickEvent(reinterpret_cast<QMouseEvent*>(ev));
+        // If a MouseButtonDblClick was received then we got a MouseButtonPress before
+        // handleMousePressEvent will take care of double clicks.
+        return handleMousePressEvent(static_cast<QMouseEvent*>(ev));
+    case QEvent::MouseButtonRelease:
+        return handleMouseReleaseEvent(static_cast<QMouseEvent*>(ev));
     case QEvent::Wheel:
-        return handleWheelEvent(reinterpret_cast<QWheelEvent*>(ev));
+        return handleWheelEvent(static_cast<QWheelEvent*>(ev));
     case QEvent::HoverLeave:
-        return handleHoverLeaveEvent(reinterpret_cast<QHoverEvent*>(ev));
+        return handleHoverLeaveEvent(static_cast<QHoverEvent*>(ev));
     case QEvent::HoverEnter: // Fall-through, for WebKit the distinction doesn't matter.
     case QEvent::HoverMove:
-        return handleHoverMoveEvent(reinterpret_cast<QHoverEvent*>(ev));
+        return handleHoverMoveEvent(static_cast<QHoverEvent*>(ev));
     case QEvent::DragEnter:
-        return handleDragEnterEvent(reinterpret_cast<QDragEnterEvent*>(ev));
+        return handleDragEnterEvent(static_cast<QDragEnterEvent*>(ev));
     case QEvent::DragLeave:
-        return handleDragLeaveEvent(reinterpret_cast<QDragLeaveEvent*>(ev));
+        return handleDragLeaveEvent(static_cast<QDragLeaveEvent*>(ev));
     case QEvent::DragMove:
-        return handleDragMoveEvent(reinterpret_cast<QDragMoveEvent*>(ev));
+        return handleDragMoveEvent(static_cast<QDragMoveEvent*>(ev));
     case QEvent::Drop:
-        return handleDropEvent(reinterpret_cast<QDropEvent*>(ev));
+        return handleDropEvent(static_cast<QDropEvent*>(ev));
     case QEvent::KeyPress:
-        return handleKeyPressEvent(reinterpret_cast<QKeyEvent*>(ev));
+        return handleKeyPressEvent(static_cast<QKeyEvent*>(ev));
     case QEvent::KeyRelease:
-        return handleKeyReleaseEvent(reinterpret_cast<QKeyEvent*>(ev));
+        return handleKeyReleaseEvent(static_cast<QKeyEvent*>(ev));
     case QEvent::FocusIn:
-        return handleFocusInEvent(reinterpret_cast<QFocusEvent*>(ev));
+        return handleFocusInEvent(static_cast<QFocusEvent*>(ev));
     case QEvent::FocusOut:
-        return handleFocusOutEvent(reinterpret_cast<QFocusEvent*>(ev));
+        return handleFocusOutEvent(static_cast<QFocusEvent*>(ev));
     case QEvent::TouchBegin:
     case QEvent::TouchEnd:
     case QEvent::TouchUpdate:
@@ -154,27 +157,25 @@ bool QtWebPageEventHandler::handleMouseMoveEvent(QMouseEvent* ev)
 
 bool QtWebPageEventHandler::handleMousePressEvent(QMouseEvent* ev)
 {
-    if (m_tripleClickTimer.isActive() && (ev->pos() - m_tripleClick).manhattanLength() < qApp->styleHints()->startDragDistance()) {
-        m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount*/ 3));
-        return ev->isAccepted();
+    if (m_clickTimer.isActive()
+        && m_previousClickButton == ev->button()
+        && (ev->pos() - m_lastClick).manhattanLength() < qApp->styleHints()->startDragDistance()) {
+        m_clickCount++;
+    } else {
+        m_clickCount = 1;
+        m_previousClickButton = ev->button();
     }
 
-    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount*/ 1));
+    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, m_clickCount));
+
+    m_lastClick = ev->pos();
+    m_clickTimer.start(qApp->styleHints()->mouseDoubleClickInterval(), this);
     return ev->isAccepted();
 }
 
 bool QtWebPageEventHandler::handleMouseReleaseEvent(QMouseEvent* ev)
 {
     m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount*/ 0));
-    return ev->isAccepted();
-}
-
-bool QtWebPageEventHandler::handleMouseDoubleClickEvent(QMouseEvent* ev)
-{
-    m_webPageProxy->handleMouseEvent(NativeWebMouseEvent(ev, /*eventClickCount*/ 2));
-
-    m_tripleClickTimer.start(qApp->styleHints()->mouseDoubleClickInterval(), this);
-    m_tripleClick = ev->localPos().toPoint();
     return ev->isAccepted();
 }
 
@@ -272,8 +273,8 @@ void QtWebPageEventHandler::handleDoubleTapEvent(const QTouchEvent::TouchPoint& 
 void QtWebPageEventHandler::timerEvent(QTimerEvent* ev)
 {
     int timerId = ev->timerId();
-    if (timerId == m_tripleClickTimer.timerId())
-        m_tripleClickTimer.stop();
+    if (timerId == m_clickTimer.timerId())
+        m_clickTimer.stop();
     else
         QObject::timerEvent(ev);
 }
