@@ -426,17 +426,9 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return NSZeroPoint;
 
-    ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
-    Scrollbar* scrollbar;
-    if ([scrollerPainter isHorizontal])
-        scrollbar = [self scrollAnimator]->scrollableArea()->horizontalScrollbar();
-    else 
-        scrollbar = [self scrollAnimator]->scrollableArea()->verticalScrollbar();
+    ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
 
-    if (!scrollbar)
-        return NSZeroPoint;
-
-    return scrollbar->convertFromContainingView([self scrollAnimator]->scrollableArea()->currentMousePosition());
+    return _scrollbar->convertFromContainingView(_scrollbar->scrollableArea()->currentMousePosition());
 }
 
 - (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
@@ -448,7 +440,7 @@ enum FeatureToAnimate {
     if ([self scrollAnimator]->scrollbarPaintTimerIsActive() && !mustAnimate)
         return;
 
-    if ([self scrollAnimator]->scrollableArea()->shouldSuspendScrollAnimations() && !mustAnimate) {
+    if (_scrollbar->scrollableArea()->shouldSuspendScrollAnimations() && !mustAnimate) {
         [self scrollAnimator]->startScrollbarPaintTimer();
         return;
     }
@@ -462,7 +454,7 @@ enum FeatureToAnimate {
         scrollbarPartAnimation = nil;
     }
 
-    if (part == WebCore::ThumbPart && ![scrollerPainter isHorizontal]) {
+    if (part == WebCore::ThumbPart && _scrollbar->orientation() == VerticalScrollbar) {
         if (newAlpha == 1) {
             IntRect thumbRect = IntRect([scrollerPainter rectForPart:NSScrollerKnob]);
             [self scrollAnimator]->setVisibleScrollerThumbRect(thumbRect);
@@ -510,20 +502,20 @@ enum FeatureToAnimate {
 
     ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
 
-    ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
+    ScrollbarPainter scrollbarPainter = (ScrollbarPainter)scrollerImp;
 
     // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
-    [scrollerPainter setUiStateTransitionProgress:1 - [scrollerPainter uiStateTransitionProgress]];
+    [scrollbarPainter setUiStateTransitionProgress:1 - [scrollerImp uiStateTransitionProgress]];
 
     if (!_uiStateTransitionAnimation)
         _uiStateTransitionAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
                                                                                 featureToAnimate:UIStateTransition
-                                                                                     animateFrom:[scrollerPainter uiStateTransitionProgress]
+                                                                                     animateFrom:[scrollbarPainter uiStateTransitionProgress]
                                                                                        animateTo:1.0
                                                                                         duration:duration]);
     else {
         // If we don't need to initialize the animation, just reset the values in case they have changed.
-        [_uiStateTransitionAnimation.get() setStartValue:[scrollerPainter uiStateTransitionProgress]];
+        [_uiStateTransitionAnimation.get() setStartValue:[scrollbarPainter uiStateTransitionProgress]];
         [_uiStateTransitionAnimation.get() setEndValue:1.0];
         [_uiStateTransitionAnimation.get() setDuration:duration];
     }

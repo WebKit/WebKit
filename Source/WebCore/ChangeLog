@@ -1,3 +1,18 @@
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Minor cleanup in ScrollAnimatorMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=74211
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+        No need to get the scrollbar from the scroll animator anymore.
+
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        Try to get data from the scrollbar and/or the scrollable area instead of the scrollbar painter.
+
 2011-12-09  David Levin  <levin@chromium.org>
 
         Regression(r53595): Sync xhr requests in workers aren't terminated on worker close.
