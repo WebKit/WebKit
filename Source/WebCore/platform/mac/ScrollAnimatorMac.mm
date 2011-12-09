@@ -176,67 +176,67 @@ static NSSize abs(NSSize size)
 
 @interface WebScrollbarPainterControllerDelegate : NSObject
 {
-    WebCore::ScrollAnimatorMac* _animator;
+    ScrollableArea* _scrollableArea;
 }
-- (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
+- (id)initWithScrollableArea:(ScrollableArea*)scrollableArea;
 @end
 
 @implementation WebScrollbarPainterControllerDelegate
 
-- (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator
+- (id)initWithScrollableArea:(ScrollableArea*)scrollableArea
 {
     self = [super init];
     if (!self)
         return nil;
     
-    _animator = scrollAnimator;
+    _scrollableArea = scrollableArea;
     return self;
 }
 
-- (void)scrollAnimatorDestroyed
+- (void)invalidate
 {
-    _animator = 0;
+    _scrollableArea = 0;
 }
 
 - (NSRect)contentAreaRectForScrollerImpPair:(id)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_animator)
+    if (!_scrollableArea)
         return NSZeroRect;
 
-    WebCore::IntSize contentsSize = _animator->scrollableArea()->contentsSize();
+    WebCore::IntSize contentsSize = _scrollableArea->contentsSize();
     return NSMakeRect(0, 0, contentsSize.width(), contentsSize.height());
 }
 
 - (BOOL)inLiveResizeForScrollerImpPair:(id)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_animator)
+    if (!_scrollableArea)
         return NO;
 
-    return _animator->scrollableArea()->inLiveResize();
+    return _scrollableArea->inLiveResize();
 }
 
 - (NSPoint)mouseLocationInContentAreaForScrollerImpPair:(id)scrollerImpPair
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_animator)
+    if (!_scrollableArea)
         return NSZeroPoint;
 
-    return _animator->scrollableArea()->currentMousePosition();
+    return _scrollableArea->currentMousePosition();
 }
 
 - (NSPoint)scrollerImpPair:(id)scrollerImpPair convertContentPoint:(NSPoint)pointInContentArea toScrollerImp:(id)scrollerImp
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_animator)
+    if (!_scrollableArea)
         return NSZeroPoint;
 
     WebCore::Scrollbar* scrollbar = 0;
     if ([scrollerImp isHorizontal])
-        scrollbar = _animator->scrollableArea()->horizontalScrollbar();
+        scrollbar = _scrollableArea->horizontalScrollbar();
     else 
-        scrollbar = _animator->scrollableArea()->verticalScrollbar();
+        scrollbar = _scrollableArea->verticalScrollbar();
 
     // It is possible to have a null scrollbar here since it is possible for this delegate
     // method to be called between the moment when a scrollbar has been set to 0 and the
@@ -245,7 +245,9 @@ static NSSize abs(NSSize size)
     // issue.
     if (!scrollbar)
         return WebCore::IntPoint();
-    
+
+    ASSERT(scrollerImp == scrollbarPainterForScrollbar(scrollbar));
+
     return scrollbar->convertFromContainingView(WebCore::IntPoint(pointInContentArea));
 }
 
@@ -257,11 +259,12 @@ static NSSize abs(NSSize size)
 
 - (void)scrollerImpPair:(id)scrollerImpPair updateScrollerStyleForNewRecommendedScrollerStyle:(NSScrollerStyle)newRecommendedScrollerStyle
 {
-    if (!_animator)
+    if (!_scrollableArea)
         return;
 
     [scrollerImpPair setScrollerStyle:newRecommendedScrollerStyle];
-    _animator->updateScrollerStyle();
+
+    static_cast<ScrollAnimatorMac*>(_scrollableArea->scrollAnimator())->updateScrollerStyle();
 }
 
 @end
@@ -577,7 +580,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
 
 #if USE(SCROLLBAR_PAINTER)
-    m_scrollbarPainterControllerDelegate.adoptNS([[WebScrollbarPainterControllerDelegate alloc] initWithScrollAnimator:this]);
+    m_scrollbarPainterControllerDelegate.adoptNS([[WebScrollbarPainterControllerDelegate alloc] initWithScrollableArea:scrollableArea]);
     m_scrollbarPainterController = [[[NSClassFromString(@"NSScrollerImpPair") alloc] init] autorelease];
     [m_scrollbarPainterController.get() setDelegate:m_scrollbarPainterControllerDelegate.get()];
     [m_scrollbarPainterController.get() setScrollerStyle:wkRecommendedScrollerStyle()];
@@ -588,7 +591,7 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 {
 #if USE(SCROLLBAR_PAINTER)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_scrollbarPainterControllerDelegate.get() scrollAnimatorDestroyed];
+    [m_scrollbarPainterControllerDelegate.get() invalidate];
     [m_scrollbarPainterController.get() setDelegate:nil];
     [m_horizontalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
     [m_verticalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];

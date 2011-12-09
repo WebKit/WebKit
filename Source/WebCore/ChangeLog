@@ -1,3 +1,24 @@
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
+        WebScrollbarPainterControllerDelegate should know about the ScrollableArea, not the ScrollAnimatorMac
+        https://bugs.webkit.org/show_bug.cgi?id=74204
+
+        Reviewed by Sam Weinig.
+
+        It makes more logical sense to associate the WebScrollbarPainterControllerDelegate object with its ScrollableArea, since
+        painting has nothing to do with animation.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterControllerDelegate initWithScrollableArea:]):
+        (-[WebScrollbarPainterControllerDelegate invalidate]):
+        (-[WebScrollbarPainterControllerDelegate contentAreaRectForScrollerImpPair:]):
+        (-[WebScrollbarPainterControllerDelegate inLiveResizeForScrollerImpPair:]):
+        (-[WebScrollbarPainterControllerDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+
 2011-12-09  Jarred Nicholls  <jarred@sencha.com>
 
         [JSC] Allow cached attributes in bindings that declare a custom mark function
