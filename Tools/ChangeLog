@@ -1,3 +1,29 @@
+2011-12-08  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Add per-tile painting flag to DumpRenderTree and rename AcceleratedDrawing to AcceleratedPainting in chromium specific code.
+        https://bugs.webkit.org/show_bug.cgi?id=74017
+
+        Reviewed by James Robinson.
+        
+        Add support for command line flag enable-per-tile-painting in DumpRenderTree.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::setAcceleratedPaintingEnabled):
+        (TestShell::setPerTilePaintingEnabled):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumDriver._wrapper_options):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2011-12-08  Dirk Pranke  <dpranke@chromium.org>
 
         create a "SystemHost" object for webkitpy to slim down the Host object

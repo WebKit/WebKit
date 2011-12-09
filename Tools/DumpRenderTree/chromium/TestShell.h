@@ -137,7 +137,8 @@ public:
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
     void setLegacyAccelerated2dCanvasEnabled(bool enabled) { m_legacyAccelerated2dCanvasEnabled = enabled; }
-    void setAcceleratedDrawingEnabled(bool enabled) { m_acceleratedDrawingEnabled = enabled; }
+    void setAcceleratedPaintingEnabled(bool enabled) { m_acceleratedPaintingEnabled = enabled; }
+    void setPerTilePaintingEnabled(bool enabled) { m_perTilePaintingEnabled = enabled; }
 #if defined(OS_WIN)
     // Access to the finished event. Used by the static WatchDog thread.
     HANDLE finishedEvent() { return m_finishedEvent; }
@@ -226,7 +227,8 @@ private:
     bool m_forceCompositingMode;
     bool m_accelerated2dCanvasEnabled;
     bool m_legacyAccelerated2dCanvasEnabled;
-    bool m_acceleratedDrawingEnabled;
+    bool m_acceleratedPaintingEnabled;
+    bool m_perTilePaintingEnabled;
     WebPreferences m_prefs;
     bool m_stressOpt;
     bool m_stressDeopt;

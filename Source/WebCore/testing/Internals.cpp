@@ -651,4 +651,14 @@ int Internals::lastSpellCheckProcessedSequence(Document* document, ExceptionCode
     return checker->lastProcessedSequence();
 }
 
+void Internals::setPerTileDrawingEnabled(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->settings()->setPerTileDrawingEnabled(enabled);
+}
+
 }

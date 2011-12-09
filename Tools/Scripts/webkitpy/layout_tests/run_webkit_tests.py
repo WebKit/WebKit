@@ -212,14 +212,17 @@ def parse_args(args=None):
             action="store_false",
             dest="accelerated_2d_canvas",
             help="Don't use hardware-accelerated 2D Canvas calls"),
-        optparse.make_option("--accelerated-drawing",
+        optparse.make_option("--accelerated-painting",
             action="store_true",
             default=False,
-            help="Use hardware accelerated drawing of composited pages"),
+            help="Use hardware accelerated painting of composited pages"),
         optparse.make_option("--enable-hardware-gpu",
             action="store_true",
             default=False,
             help="Run graphics tests on real GPU hardware vs software"),
+        optparse.make_option("--per-tile-painting",
+            action="store_true",
+            help="Use per-tile painting of composited pages"),
     ]
 
     webkit_options = [

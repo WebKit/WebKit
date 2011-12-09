@@ -1,3 +1,21 @@
+2011-12-08  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Add per-tile painting flag to DumpRenderTree and rename AcceleratedDrawing to AcceleratedPainting in chromium specific code.
+        https://bugs.webkit.org/show_bug.cgi?id=74017
+
+        Reviewed by James Robinson.
+
+        Add per-tile drawing to page settings.
+
+        No new tests.
+
+        * page/Settings.h:
+        (WebCore::Settings::setPerTileDrawingEnabled):
+        (WebCore::Settings::perTileDrawingEnabled):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPerTileDrawingEnabled):
+        * testing/Internals.h:
+
 2011-12-08  Anders Carlsson  <andersca@apple.com>
 
         Add a scrollbarPainterForScrollbar helper function

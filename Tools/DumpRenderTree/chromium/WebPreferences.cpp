@@ -112,9 +112,10 @@ void WebPreferences::reset()
     compositeToTexture = false;
     accelerated2dCanvasEnabled = false;
     legacyAccelerated2dCanvasEnabled = false;
-    acceleratedDrawingEnabled = false;
+    acceleratedPaintingEnabled = false;
     forceCompositingMode = false;
     hixie76WebSocketProtocolEnabled = true;
+    perTilePaintingEnabled = false;
 }
 
 static void setStandardFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
@@ -216,8 +217,9 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setForceCompositingMode(forceCompositingMode);
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
     settings->setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2dCanvasEnabled);
-    settings->setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
+    settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
     settings->setHixie76WebSocketProtocolEnabled(hixie76WebSocketProtocolEnabled);
+    settings->setPerTilePaintingEnabled(perTilePaintingEnabled);
 
     // Fixed values.
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();

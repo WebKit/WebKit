@@ -50,7 +50,6 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_compositeToTextureEnabled(false)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
-    , m_perTilePainting(false)
 {
     ASSERT(settings);
 }
@@ -498,10 +497,14 @@ void WebSettingsImpl::setShouldDisplayTextDescriptions(bool enabled)
 #endif
 }
 
-
-void WebSettingsImpl::setPerTilePainting(bool enabled)
+void WebSettingsImpl::setAcceleratedPaintingEnabled(bool enabled)
 {
-    m_perTilePainting = enabled;
+    m_settings->setAcceleratedDrawingEnabled(enabled);
+}
+
+void WebSettingsImpl::setPerTilePaintingEnabled(bool enabled)
+{
+    m_settings->setPerTileDrawingEnabled(enabled);
 }
 
 } // namespace WebKit

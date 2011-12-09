@@ -106,8 +106,9 @@ struct WebPreferences {
     bool forceCompositingMode;
     bool accelerated2dCanvasEnabled;
     bool legacyAccelerated2dCanvasEnabled;
-    bool acceleratedDrawingEnabled;
+    bool acceleratedPaintingEnabled;
     bool hixie76WebSocketProtocolEnabled;
+    bool perTilePaintingEnabled;
 
     WebPreferences() { reset(); }
     void reset();

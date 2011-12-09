@@ -500,6 +500,9 @@ namespace WebCore {
         bool shouldDisplayTextDescriptions() const { return m_shouldDisplayTextDescriptions; }
 #endif
 
+        void setPerTileDrawingEnabled(bool enabled) { m_perTileDrawingEnabled = enabled; }
+        bool perTileDrawingEnabled() const { return m_perTileDrawingEnabled; }
+
     private:
         Page* m_page;
 
@@ -632,6 +635,7 @@ namespace WebCore {
         bool m_shouldDisplayCaptions : 1;
         bool m_shouldDisplayTextDescriptions : 1;
 #endif
+        bool m_perTileDrawingEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

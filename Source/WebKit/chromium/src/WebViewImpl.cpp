@@ -2939,7 +2939,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         if (!ccSettings.refreshRate)
             ccSettings.refreshRate = defaultRefreshRate;
 
-        ccSettings.perTilePainting = settings()->perTilePainting();
+        ccSettings.perTilePainting = page()->settings()->perTileDrawingEnabled();
 
         m_nonCompositedContentHost = NonCompositedContentHost::create(WebViewImplContentPainter::create(this));
         m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);

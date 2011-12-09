@@ -57,10 +57,11 @@ static const char optionEnableThreadedCompositing[] = "--enable-threaded-composi
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
 static const char optionEnableLegacyAccelerated2DCanvas[] = "--enable-legacy-accelerated-2d-canvas";
-static const char optionEnableAcceleratedDrawing[] = "--enable-accelerated-drawing";
+static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-painting";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableCompositeToTexture[] = "--enable-composite-to-texture";
 static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
+static const char optionEnablePerTilePainting[] = "--enable-per-tile-painting";
 
 static const char optionStressOpt[] = "--stress-opt";
 static const char optionStressDeopt[] = "--stress-deopt";
@@ -144,7 +145,8 @@ int main(int argc, char* argv[])
     bool forceCompositingMode = false;
     bool accelerated2DCanvasEnabled = false;
     bool legacyAccelerated2DCanvasEnabled = false;
-    bool acceleratedDrawingEnabled = false;
+    bool acceleratedPaintingEnabled = false;
+    bool perTilePaintingEnabled = false;
     bool stressOpt = false;
     bool stressDeopt = false;
     bool hardwareAcceleratedGL = false;
@@ -188,8 +190,8 @@ int main(int argc, char* argv[])
             accelerated2DCanvasEnabled = true;
         else if (argument == optionEnableLegacyAccelerated2DCanvas)
             legacyAccelerated2DCanvasEnabled = true;
-        else if (argument == optionEnableAcceleratedDrawing)
-            acceleratedDrawingEnabled = true;
+        else if (argument == optionEnableAcceleratedPainting)
+            acceleratedPaintingEnabled = true;
         else if (!argument.find(optionUseGraphicsContext3DImplementation)) {
             string implementation = argument.substr(strlen(optionUseGraphicsContext3DImplementation));
             if (!implementation.compare("IN_PROCESS")) 
@@ -198,7 +200,9 @@ int main(int argc, char* argv[])
               webkit_support::SetGraphicsContext3DImplementation(webkit_support::IN_PROCESS_COMMAND_BUFFER);
             else 
               fprintf(stderr, "Unknown GraphicContext3D implementation %s\n", implementation.c_str());
-        } else if (argument == optionStressOpt)
+        } else if (argument == optionEnablePerTilePainting)
+            perTilePaintingEnabled = true;
+        else if (argument == optionStressOpt)
             stressOpt = true;
         else if (argument == optionStressDeopt)
             stressDeopt = true;
@@ -237,7 +241,8 @@ int main(int argc, char* argv[])
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
         shell.setLegacyAccelerated2dCanvasEnabled(legacyAccelerated2DCanvasEnabled);
-        shell.setAcceleratedDrawingEnabled(acceleratedDrawingEnabled);
+        shell.setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
+        shell.setPerTilePaintingEnabled(perTilePaintingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);
         shell.setStressOpt(stressOpt);
         shell.setStressDeopt(stressDeopt);

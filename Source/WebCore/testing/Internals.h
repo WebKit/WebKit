@@ -113,6 +113,8 @@ public:
     int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
     int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
 
+    void setPerTileDrawingEnabled(Document*, bool enabled, ExceptionCode&);
+
     static const char* internalsId;
 
 private:

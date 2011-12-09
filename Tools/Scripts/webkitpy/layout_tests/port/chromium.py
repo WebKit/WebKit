@@ -424,9 +424,10 @@ class ChromiumDriver(Driver):
             'stress_deopt': '--stress-deopt',
             'threaded_compositing': '--enable-threaded-compositing',
             'accelerated_2d_canvas': '--enable-accelerated-2d-canvas',
-            'accelerated_drawing': '--enable-accelerated-drawing',
+            'accelerated_painting': '--enable-accelerated-painting',
             'accelerated_video': '--enable-accelerated-video',
             'enable_hardware_gpu': '--enable-hardware-gpu',
+            'per_tile_painting': '--enable-per-tile-painting',
         }
         for nrwt_option, drt_option in option_mappings.items():
             if self._port.get_option(nrwt_option):
