@@ -1,3 +1,15 @@
+2011-12-09  Oliver Hunt  <oliver@apple.com>
+
+        PutByValAlias unnecessarily clobbers GetIndexedPropertyStorage
+        https://bugs.webkit.org/show_bug.cgi?id=74223
+
+        Reviewed by Geoffrey Garen.
+
+        Don't clobber GetIndexedPropertyStorage when we see PutByValAlias
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::getIndexedPropertyStorageLoadElimination):
+
 2011-12-09  David Levin  <levin@chromium.org>
 
         Hash* iterators should allow comparison between const and const versions.

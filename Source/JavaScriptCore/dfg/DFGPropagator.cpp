@@ -1251,9 +1251,12 @@ private:
                 // Changing the structure or putting to the storage cannot
                 // change the property storage pointer.
                 break;
-
-            case PutByVal:
+                
             case PutByValAlias:
+                // PutByValAlias can't change the indexed storage pointer
+                break;
+                
+            case PutByVal:
                 if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && byValIsPure(node))
                     break;
                 return NoNode;
