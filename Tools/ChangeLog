@@ -1,3 +1,19 @@
+2011-12-08  Dirk Pranke  <dpranke@chromium.org>
+
+        create a "SystemHost" object for webkitpy to slim down the Host object
+        https://bugs.webkit.org/show_bug.cgi?id=72680
+
+        Reviewed by Eric Siedel.
+
+        This creates a SystemHost object that other objects that should
+        only have dependencies on functionality in webkitpy.common.system
+        can use; this will allow them to not require a full Host.
+
+        * Scripts/webkitpy/common/host.py:
+        * Scripts/webkitpy/common/host_mock.py:
+        * Scripts/webkitpy/common/system/systemhost.py: Added.
+        * Scripts/webkitpy/common/system/systemhost_mock.py: Added.
+
 2011-12-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: platform/mac/accessibility/search-with-frames.html crashes

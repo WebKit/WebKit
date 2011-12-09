@@ -31,31 +31,23 @@ from webkitpy.common.checkout.scm.scm_mock import MockSCM
 from webkitpy.common.net.bugzilla.bugzilla_mock import MockBugzilla
 from webkitpy.common.net.buildbot.buildbot_mock import MockBuildBot
 from webkitpy.common.net.web_mock import MockWeb
-from webkitpy.common.system.environment import Environment
-from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
-from webkitpy.common.system.user_mock import MockUser
-from webkitpy.common.system.workspace_mock import MockWorkspace
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.watchlist.watchlist_mock import MockWatchList
 
 # New-style ports need to move down into webkitpy.common.
 from webkitpy.layout_tests.port.factory import PortFactory
 
 
-class MockHost(object):
+class MockHost(MockSystemHost):
     def __init__(self, log_executive=False, executive_throws_when_run=None):
-        self.executive = MockExecutive(should_log=log_executive, should_throw_when_run=executive_throws_when_run)
-        self.user = MockUser()
-        self.platform = MockPlatformInfo()
-        self.workspace = MockWorkspace()
+        MockSystemHost.__init__(self, log_executive, executive_throws_when_run)
         self.web = MockWeb()
 
         self._checkout = MockCheckout()
         self._scm = MockSCM()
         # Various pieces of code (wrongly) call filesystem.chdir(checkout_root).
         # Making the checkout_root exist in the mock filesystem makes that chdir not raise.
-        self.filesystem = MockFileSystem(dirs=set([self._scm.checkout_root]))
+        self.filesystem.maybe_make_directory(self._scm.checkout_root)
 
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
@@ -66,9 +58,6 @@ class MockHost(object):
         self.port_factory = PortFactory(self)
 
         self._watch_list = MockWatchList()
-
-    def copy_current_environment(self):
-        return Environment({"MOCK_ENVIRON_COPY": '1'})
 
     def _initialize_scm(self, patch_directories=None):
         pass
