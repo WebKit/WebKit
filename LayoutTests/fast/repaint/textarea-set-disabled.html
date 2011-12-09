@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText(true);
+
+        function repaintTest()
+        {
+            document.getElementsByTagName('textarea')[0].disabled = true;
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+<form>
+  <textarea style="font: 10px Ahem; width: 100px; height: 100px;"></textarea>
+</form>
+</body>
+</html>
