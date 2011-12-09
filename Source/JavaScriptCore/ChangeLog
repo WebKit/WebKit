@@ -1,3 +1,16 @@
+2011-12-09  Adrienne Walker  <enne@google.com>
+
+        Fix HashMap<..., OwnPtr<...> >::add compilation errors
+        https://bugs.webkit.org/show_bug.cgi?id=74159
+
+        Reviewed by Darin Adler.
+
+        Add a constructor to OwnPtr that takes the empty value (nullptr_t)
+        from HashTraits so that this function can compile.
+
+        * wtf/OwnPtr.h:
+        (WTF::OwnPtr::OwnPtr):
+
 2011-12-09  Oliver Hunt  <oliver@apple.com>
 
         Avoid reloading storage pointer for indexed properties unnecessarily
