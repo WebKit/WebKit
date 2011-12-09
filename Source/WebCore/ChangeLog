@@ -1,3 +1,15 @@
+2011-12-08  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Enable viewport metatag
+        https://bugs.webkit.org/show_bug.cgi?id=73495
+
+        Reviewed by Darin Fisher.
+
+        Recompute viewpot parameters on frame rect resize.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+
 2011-12-08  Kent Tamura  <tkent@chromium.org>
 
         Build fix for r102419.

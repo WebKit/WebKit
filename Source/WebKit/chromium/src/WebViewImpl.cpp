@@ -347,6 +347,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_pageDefinedMaximumPageScaleFactor(-1)
     , m_minimumPageScaleFactor(minPageScaleFactor)
     , m_maximumPageScaleFactor(maxPageScaleFactor)
+    , m_pageScaleFactorIsSet(false)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
     , m_ignoreInputEvents(false)
@@ -1955,6 +1956,11 @@ float WebViewImpl::pageScaleFactor() const
     return page()->pageScaleFactor();
 }
 
+bool WebViewImpl::isPageScaleFactorSet() const
+{
+    return m_pageScaleFactorIsSet;
+}
+
 float WebViewImpl::clampPageScaleFactorToLimits(float scaleFactor)
 {
     return min(max(scaleFactor, m_minimumPageScaleFactor), m_maximumPageScaleFactor);
@@ -2003,6 +2009,7 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
     WebPoint clampedOrigin = clampOffsetAtScale(origin, scaleFactor);
     page()->setPageScaleFactor(scaleFactor, clampedOrigin);
+    m_pageScaleFactorIsSet = true;
 }
 
 float WebViewImpl::deviceScaleFactor() const
@@ -2675,6 +2682,9 @@ void WebViewImpl::startDragging(const WebDragData& dragData,
 void WebViewImpl::observeNewNavigation()
 {
     m_observedNewNavigation = true;
+    // FIXME: We need to make sure that m_pageScaleFactorIsSet is not reset
+    // on same page navigations.
+    m_pageScaleFactorIsSet = false;
 #ifndef NDEBUG
     m_newNavigationLoader = m_page->mainFrame()->loader()->documentLoader();
 #endif

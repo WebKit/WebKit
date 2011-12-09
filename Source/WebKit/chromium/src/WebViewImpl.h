@@ -164,6 +164,7 @@ public:
     virtual void zoomLimitsChanged(double minimumZoomLevel,
                                    double maximumZoomLevel);
     virtual float pageScaleFactor() const;
+    virtual bool isPageScaleFactorSet() const;
     virtual void setPageScaleFactorPreservingScrollOffset(float);
     virtual void setPageScaleFactor(float scaleFactor, const WebPoint& origin);
     virtual void setPageScaleFactorLimits(float minPageScale, float maxPageScale);
@@ -575,6 +576,8 @@ private:
     float m_pageDefinedMaximumPageScaleFactor;
     float m_minimumPageScaleFactor;
     float m_maximumPageScaleFactor;
+
+    bool m_pageScaleFactorIsSet;
 
     bool m_contextMenuAllowed;
 

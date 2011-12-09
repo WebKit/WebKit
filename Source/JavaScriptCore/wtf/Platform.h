@@ -857,6 +857,10 @@
 #define ENABLE_GESTURE_RECOGNIZER 0
 #endif
 
+#if !defined(ENABLE_VIEWPORT)
+#define ENABLE_VIEWPORT 0
+#endif
+
 #if !defined(ENABLE_NOTIFICATIONS)
 #define ENABLE_NOTIFICATIONS 0
 #endif

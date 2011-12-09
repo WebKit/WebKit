@@ -55,6 +55,7 @@
 #include "NavigationAction.h"
 #include "Node.h"
 #include "Page.h"
+#include "PlatformScreen.h"
 #include "PlatformSupport.h"
 #include "PopupContainer.h"
 #include "PopupMenuChromium.h"
@@ -559,6 +560,15 @@ void ChromeClientImpl::contentsSizeChanged(Frame* frame, const IntSize& size) co
 
 void ChromeClientImpl::layoutUpdated(Frame* frame) const
 {
+#if ENABLE(VIEWPORT)
+    if (!m_webView->isPageScaleFactorSet() && frame == frame->page()->mainFrame()) {
+        // If the page does not have a viewport tag, then compute a scale
+        // factor to make the page width fit the device width based on the
+        // default viewport parameters.
+        ViewportArguments viewport = frame->document()->viewportArguments();
+        dispatchViewportPropertiesDidChange(viewport);
+    }
+#endif
     m_webView->layoutUpdated(WebFrameImpl::fromFrame(frame));
 }
 
@@ -601,6 +611,47 @@ void ChromeClientImpl::setToolTip(const String& tooltipText, TextDirection dir)
         WebTextDirectionLeftToRight;
     m_webView->client()->setToolTipText(
         tooltipText, textDirection);
+}
+
+void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
+{
+#if ENABLE(VIEWPORT)
+    if (!m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
+        return;
+
+    ViewportArguments args;
+    if (arguments == args)
+        // Default viewport arguments passed in. This is a signal to reset the viewport.
+        args.width = ViewportArguments::ValueDesktopWidth;
+    else
+        args = arguments;
+
+    FrameView* frameView = m_webView->mainFrameImpl()->frameView();
+    int dpi = screenHorizontalDPI(frameView);
+    ASSERT(dpi > 0);
+
+    WebViewClient* client = m_webView->client();
+    WebRect deviceRect = client->windowRect();
+    // If the window size has not been set yet don't attempt to set the viewport
+    if (!deviceRect.width || !deviceRect.height)
+        return;
+
+    Settings* settings = m_webView->page()->settings();
+    // Call the common viewport computing logic in ViewportArguments.cpp.
+    ViewportAttributes computed = computeViewportAttributes(
+        args, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
+        dpi, IntSize(deviceRect.width, deviceRect.height));
+
+    int layoutWidth = computed.layoutSize.width();
+    int layoutHeight = computed.layoutSize.height();
+    m_webView->setFixedLayoutSize(IntSize(layoutWidth, layoutHeight));
+
+    // FIXME: Investigate the impact this has on layout/rendering if any.
+    // This exposes the correct device scale to javascript and media queries.
+    m_webView->setDeviceScaleFactor(computed.devicePixelRatio);
+    m_webView->setPageScaleFactorLimits(computed.minimumScale, computed.maximumScale);
+    m_webView->setPageScaleFactorPreservingScrollOffset(computed.initialScale * computed.devicePixelRatio);
+#endif
 }
 
 void ChromeClientImpl::print(Frame* frame)

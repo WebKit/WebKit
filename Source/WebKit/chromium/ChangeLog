@@ -1,3 +1,31 @@
+2011-12-08  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Enable viewport metatag
+        https://bugs.webkit.org/show_bug.cgi?id=73495
+
+        Reviewed by Darin Fisher.
+
+        Compute the appropriate fixed layout size, page, and device scale factors,
+        based on the viewport meta tag parameters.
+
+        See http://developer.android.com/guide/webapps/targeting.html for more information.
+
+
+        * features.gypi:
+        * public/WebView.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::layoutUpdated):
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/ChromeClientImpl.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::isPageScaleFactorSet):
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::observeNewNavigation):
+        * src/WebViewImpl.h:
+
 2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Drop ENABLE_NO_LISTBOX_RENDERING, and make it a runtime decision.

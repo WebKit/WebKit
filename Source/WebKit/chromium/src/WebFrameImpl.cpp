@@ -2088,7 +2088,8 @@ void WebFrameImpl::createFrameView()
     ASSERT(m_frame); // If m_frame doesn't exist, we probably didn't init properly.
 
     WebViewImpl* webView = viewImpl();
-    m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), webView->isFixedLayoutModeEnabled());
+    bool isMainFrame = webView->mainFrameImpl()->frame() == m_frame;
+    m_frame->createView(webView->size(), Color::white, webView->isTransparent(),  webView->fixedLayoutSize(), isMainFrame ? webView->isFixedLayoutModeEnabled() : 0);
     if (webView->shouldAutoResize())
         m_frame->view()->enableAutoSizeMode(true, webView->minAutoSize(), webView->maxAutoSize());
 

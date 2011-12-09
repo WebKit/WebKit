@@ -214,6 +214,10 @@ public:
     // is scaled up, < 1.0 is scaled down.
     virtual float pageScaleFactor() const = 0;
 
+    // Indicates wehther the page scale factor has been set since navigating
+    // to a new page.
+    virtual bool isPageScaleFactorSet() const = 0;
+
     // Scales the page and the scroll offset by a given factor, while ensuring
     // that the new scroll position does not go beyond the edge of the page.
     virtual void setPageScaleFactorPreservingScrollOffset(float) = 0;

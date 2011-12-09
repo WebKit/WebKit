@@ -1,3 +1,12 @@
+2011-12-08  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Enable viewport metatag
+        https://bugs.webkit.org/show_bug.cgi?id=73495
+
+        Reviewed by Darin Fisher.
+
+        * wtf/Platform.h: Added ENABLE(VIEWPORT) tag.
+
 2011-12-08  Adam Klein  <adamk@chromium.org>
 
         Use HashMap<Node*, OwnPtr<...>> in ChildListMutationScope
