@@ -32,12 +32,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# action_derivedsourceslist.py generates a single cpp file that includes
+# action_derivedsourcesallinone.py generates a single cpp file that includes
 # all v8 bindings cpp files generated from idls. Files can be assigned into
 # multiple output files, to reduce maximum compilation unit size and allow
 # parallel compilation.
 #
-# usage: action_derivedsourceslist.py IDL_FILES_LIST -- OUTPUT_FILE1 OUTPUT_FILE2 ...
+# usage: action_derivedsourcesallinone.py IDL_FILES_LIST -- OUTPUT_FILE1 OUTPUT_FILE2 ...
 #
 # Note that IDL_FILES_LIST is a text file containing the IDL file paths.
 
@@ -47,6 +47,9 @@ import os.path
 import re
 import subprocess
 import sys
+
+sys.path.append("../../../Tools/Scripts/")
+from webkitpy.common.system import path
 
 # A regexp for finding Conditional attributes in interface definitions.
 conditionalPattern = re.compile('interface[\s]*\[[^\]]*Conditional=([\_0-9a-zA-Z&|]*)')
@@ -186,7 +189,12 @@ def main(args):
     outputFileNames = args[inOutBreakIndex+1:]
 
     inputFile = open(inputFileName, 'r')
-    idlFileNames = inputFile.read().split('\n')
+    idlFileNames = []
+    for line in inputFile:
+        idlFileName = line[:-1].split(' ')[0]
+        if idlFileName.find("/cygdrive") == 0:
+            idlFileName = path.cygpath(idlFileName)
+        idlFileNames.append(idlFileName)
     inputFile.close()
 
     filesMetaData = extractMetaData(idlFileNames)
