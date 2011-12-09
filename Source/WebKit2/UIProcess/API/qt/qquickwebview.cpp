@@ -71,6 +71,9 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
 
     // Creates a page with the page creation parameters.
     pageProxy->init(eventHandler.data());
+
+    // Trigger setting of correct visibility flags after everything was allocated and initialized.
+    _q_onVisibleChanged();
 }
 
 QQuickWebViewPrivate::~QQuickWebViewPrivate()

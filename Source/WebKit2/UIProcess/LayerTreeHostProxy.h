@@ -55,6 +55,7 @@ public:
     void setRootCompositingLayer(WebLayerID);
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void paintToCurrentGLContext(const TransformationMatrix&, float);
+    void purgeGLResources();
     void setVisibleContentsRectAndScale(const IntRect&, float);
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 #if USE(TILED_BACKING_STORE)

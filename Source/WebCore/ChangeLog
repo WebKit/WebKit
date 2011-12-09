@@ -1,3 +1,19 @@
+2011-12-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Webkit should release TextureMapper GL objects if page paint node is deallocated.
+        https://bugs.webkit.org/show_bug.cgi?id=73591
+
+        Reviewed by Noam Rosenthal.
+
+        Implementation of helper function to remove all GL allocated tiles
+        when QQuickWebView gets removed from canvas.
+
+        Tested by new API test in WK2 (tst_QQuickWebView::removeFromCanvas).
+
+        * platform/graphics/texmap/TextureMapperNode.cpp:
+        (WebCore::TextureMapperNode::purgeNodeTexturesRecursive):
+        * platform/graphics/texmap/TextureMapperNode.h:
+
 2011-12-08  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream platform/network/blackberry/DeferredData.{h, cpp}, NetworkJob.{h, cpp} and NetworkManager.{h, cpp}

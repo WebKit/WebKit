@@ -66,6 +66,7 @@ LayerTreeHostQt::LayerTreeHostQt(WebPage* webPage)
     , m_shouldSyncRootLayer(true)
     , m_layerFlushTimer(this, &LayerTreeHostQt::layerFlushTimerFired)
     , m_layerFlushSchedulingEnabled(true)
+    , m_shouldRecreateBackingStore(false)
 {
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this);
@@ -212,6 +213,8 @@ void LayerTreeHostQt::setPageOverlayNeedsDisplay(const WebCore::IntRect& rect)
 
 bool LayerTreeHostQt::flushPendingLayerChanges()
 {
+    recreateBackingStoreIfNeeded();
+
     bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
     m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
@@ -427,6 +430,24 @@ bool LayerTreeHostQt::layerTreeTileUpdatesAllowed() const
     return !m_isSuspended && !m_waitingForUIProcess;
 }
 
+void LayerTreeHostQt::purgeBackingStores()
+{
+    m_shouldRecreateBackingStore = true;
+    WebGraphicsLayer* webRootLayer = toWebGraphicsLayer(m_rootLayer.get());
+    webRootLayer->purgeBackingStores();
+
+    ASSERT(!m_directlyCompositedImageRefCounts.size());
+}
+
+void LayerTreeHostQt::recreateBackingStoreIfNeeded()
+{
+    if (!m_shouldRecreateBackingStore)
+        return;
+
+    m_shouldRecreateBackingStore = false;
+    WebGraphicsLayer* webRootLayer = toWebGraphicsLayer(m_rootLayer.get());
+    webRootLayer->recreateBackingStoreIfNeeded();
+}
 #endif
 
 } // namespace WebKit

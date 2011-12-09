@@ -314,6 +314,7 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 void QQuickWebPagePrivate::resetPaintNode()
 {
     m_paintNode = 0;
+    pageProxy->purgeGLResources();
 }
 
 QQuickWebPagePrivate::~QQuickWebPagePrivate()

@@ -616,6 +616,14 @@ void TextureMapperNode::removeContentsTile(int id)
     m_externallyManagedTiles.remove(id);
 }
 
+void TextureMapperNode::purgeNodeTexturesRecursive()
+{
+    m_externallyManagedTiles.clear();
+
+    for (int i = m_children.size() - 1; i >= 0; --i)
+        m_children[i]->purgeNodeTexturesRecursive();
+}
+
 void TextureMapperNode::setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture* texture)
 {
     HashMap<int, ExternallyManagedTile>::iterator it = m_externallyManagedTiles.find(id);

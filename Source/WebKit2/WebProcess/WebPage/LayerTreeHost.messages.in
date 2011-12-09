@@ -24,5 +24,6 @@ messages -> LayerTreeHost {
     SetVisibleContentRectTrajectoryVector(WebCore::FloatPoint trajectoryVectory)
     SetVisibleContentRectAndScale(WebCore::IntRect contentRect, float scale)
     RenderNextFrame()
+    PurgeBackingStores()
 }
 #endif

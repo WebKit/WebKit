@@ -619,5 +619,17 @@ void LayerTreeHostProxy::setVisibleContentsRectAndScale(const IntRect& rect, flo
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::SetVisibleContentRectAndScale(rect, scale), m_drawingAreaProxy->page()->pageID());
 }
 
+void LayerTreeHostProxy::purgeGLResources()
+{
+    TextureMapperNode* node = toTextureMapperNode(rootLayer());
+
+    node->purgeNodeTexturesRecursive();
+    m_directlyCompositedImages.clear();
+
+    m_textureMapper.clear();
+
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeHost::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
+}
+
 }
 #endif

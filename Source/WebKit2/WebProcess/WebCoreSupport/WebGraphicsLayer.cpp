@@ -368,6 +368,7 @@ void WebGraphicsLayer::setNeedsDisplay()
 
 void WebGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
 {
+    recreateBackingStoreIfNeeded();
     m_mainBackingStore->invalidate(IntRect(rect));
     notifyChange();
 }
@@ -574,6 +575,38 @@ void WebGraphicsLayer::updateContentBuffers()
     m_inUpdateMode = false;
 }
 
+void WebGraphicsLayer::purgeBackingStores()
+{
+    for (size_t i = 0; i < children().size(); ++i) {
+        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
+        layer->purgeBackingStores();
+    }
+
+    if (m_mainBackingStore)
+        m_mainBackingStore.clear();
+
+    if (!m_layerInfo.imageBackingStoreID)
+        return;
+
+    layerTreeTileClient()->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
+    m_layerInfo.imageBackingStoreID = 0;
+}
+
+void WebGraphicsLayer::recreateBackingStoreIfNeeded()
+{
+    for (size_t i = 0; i < children().size(); ++i) {
+        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
+        layer->recreateBackingStoreIfNeeded();
+    }
+
+    if (!m_mainBackingStore) {
+        m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+        m_mainBackingStore->setContentsScale(m_contentsScale);
+    }
+
+    if (m_image)
+        setContentsNeedsDisplay();
+}
 #endif
 
 static PassOwnPtr<GraphicsLayer> createWebGraphicsLayer(GraphicsLayerClient* client)

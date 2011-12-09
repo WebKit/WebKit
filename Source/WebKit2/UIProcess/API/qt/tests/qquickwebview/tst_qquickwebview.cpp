@@ -50,6 +50,7 @@ private slots:
 
     void show();
     void showWebView();
+    void removeFromCanvas();
 
 private:
     inline QQuickWebView* webView() const;
@@ -244,7 +245,7 @@ void tst_QQuickWebView::showWebView()
 {
     webView()->setSize(QSizeF(300, 400));
 
-    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
+    webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/direct-image-compositing.html")));
     QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
 
     m_window->show();
@@ -252,6 +253,20 @@ void tst_QQuickWebView::showWebView()
     webView()->setVisible(true);
     QTest::qWait(200);
     webView()->setVisible(false);
+    QTest::qWait(200);
+}
+
+void tst_QQuickWebView::removeFromCanvas()
+{
+    showWebView();
+
+    // This should not crash.
+    QQuickItem* parent = webView()->parentItem();
+    QQuickItem noCanvasItem;
+    webView()->setParentItem(&noCanvasItem);
+    QTest::qWait(200);
+    webView()->setParentItem(parent);
+    webView()->setVisible(true);
     QTest::qWait(200);
 }
 

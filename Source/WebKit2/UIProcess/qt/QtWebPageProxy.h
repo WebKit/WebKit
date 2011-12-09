@@ -137,6 +137,7 @@ public:
     void setVisibleContentRectAndScale(const QRectF&, float);
     void setVisibleContentRectTrajectoryVector(const QPointF&);
     void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
+    void purgeGLResources();
 
     QWKHistory* history() const;
 

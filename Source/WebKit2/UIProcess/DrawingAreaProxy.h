@@ -88,6 +88,7 @@ public:
     virtual WebCore::IntRect contentsRect() const;
     virtual bool isBackingStoreReady() const { return true; }
     virtual void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float opacity) { }
+    LayerTreeHostProxy* layerTreeHostProxy() const { return m_layerTreeHostProxy.get(); }
 
 #if USE(TILED_BACKING_STORE)
     virtual void setVisibleContentsRectAndScale(const WebCore::IntRect& visibleContentsRect, float scale) { }

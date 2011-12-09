@@ -33,6 +33,7 @@
 
 #include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
+#include "LayerTreeHostProxy.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
 #include "QtDownloadManager.h"
@@ -424,6 +425,13 @@ void QtWebPageProxy::renderToCurrentGLContext(const TransformationMatrix& transf
     DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
     if (drawingArea)
         drawingArea->paintToCurrentGLContext(transform, opacity);
+}
+
+void QtWebPageProxy::purgeGLResources()
+{
+    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
+    if (drawingArea && drawingArea->layerTreeHostProxy())
+        drawingArea->layerTreeHostProxy()->purgeGLResources();
 }
 
 void QtWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)

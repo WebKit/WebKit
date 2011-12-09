@@ -131,6 +131,8 @@ public:
     void updateTileBuffersRecursively();
     void setContentsScale(float);
     void updateContentBuffers();
+    void purgeBackingStores();
+    void recreateBackingStoreIfNeeded();
 #endif
 
 private:

@@ -84,6 +84,7 @@ public:
     virtual void setVisibleContentRectTrajectoryVector(const WebCore::FloatPoint&) { }
     virtual void setVisibleContentRectForLayer(int layerID, const WebCore::IntRect&) { }
     virtual void renderNextFrame() { }
+    virtual void purgeBackingStores() { }
     virtual void didReceiveLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 

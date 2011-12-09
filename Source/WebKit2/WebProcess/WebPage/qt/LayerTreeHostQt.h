@@ -71,6 +71,7 @@ public:
     virtual void removeTile(WebLayerID, int tileID);
     virtual void setVisibleContentRectForLayer(int layerID, const WebCore::IntRect&);
     virtual void renderNextFrame();
+    virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
     virtual void setVisibleContentRectAndScale(const IntRect&, float scale);
     virtual void setVisibleContentRectTrajectoryVector(const FloatPoint&);
@@ -96,6 +97,7 @@ private:
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
     void sendLayersToUI();
+    void recreateBackingStoreIfNeeded();
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
@@ -119,6 +121,7 @@ private:
     void layerFlushTimerFired(WebCore::Timer<LayerTreeHostQt>*);
     WebCore::Timer<LayerTreeHostQt> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
+    bool m_shouldRecreateBackingStore;
 };
 
 }

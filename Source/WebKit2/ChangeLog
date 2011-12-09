@@ -1,3 +1,47 @@
+2011-12-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Webkit should release TextureMapper GL objects if page paint node is deallocated.
+        https://bugs.webkit.org/show_bug.cgi?id=73591
+
+        Reviewed by Noam Rosenthal.
+
+        Implement deallocation of TextureMapper GL objects when QQuickWebPage paint node deallocated.
+        Also adds purging GraphicsLayer backing stores on WebProcess side in order to force repainting
+        when page becomes visible and painting resumes and fixes incorrect initialization of view 
+        visibility state.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::resetPaintNode):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/html/direct-image-compositing.html: Added.
+        * UIProcess/API/qt/tests/html/resources/simple_image.png: Added.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::showWebView):
+        (tst_QQuickWebView::removeFromCanvas):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::layerTreeHostProxy):
+        * UIProcess/LayerTreeHostProxy.h:
+        * UIProcess/qt/LayerTreeHostProxyQt.cpp:
+        (WebKit::LayerTreeHostProxy::purgeGLResources):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::purgeGLResources):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setNeedsDisplayInRect):
+        (WebCore::WebGraphicsLayer::purgeBackingStores):
+        (WebCore::WebGraphicsLayer::recreateBackingStoreIfNeeded):
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::purgeBackingStores):
+        * WebProcess/WebPage/LayerTreeHost.messages.in:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostQt::purgeBackingStores):
+        (WebKit::LayerTreeHostQt::recreateBackingStoreIfNeeded):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h:
+
 2011-12-08  Simon Fraser  <simon.fraser@apple.com>
 
         Forced compositing mode breaks display of full-page PDFs in WK2

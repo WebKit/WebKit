@@ -158,6 +158,7 @@ public:
     void setTileBackBufferTextureForDirectlyCompositedImage(int id, const IntRect& sourceRect, const FloatRect& targetRect, BitmapTexture*);
     void clearAllDirectlyCompositedImageTiles();
     bool collectVisibleContentsRects(NodeRectMap&, const FloatRect&);
+    void purgeNodeTexturesRecursive();
 #endif
     void setID(int id) { m_id = id; }
     int id() const { return m_id; }
