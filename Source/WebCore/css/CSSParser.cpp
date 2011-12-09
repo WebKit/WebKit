@@ -1621,8 +1621,23 @@ bool CSSParser::parseValue(int propId, bool important)
         validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueBaseline || id == CSSValueStretch;
         break;
     case CSSPropertyWebkitFlexFlow:
-        // FIXME: -webkit-flex-flow takes a second "wrap" value.
+        // FIXME: Use parseShorthand once we add flex-direction and flex-wrap.
+        // [ row | row-reverse | column | column-reverse ] || [ nowrap | wrap | wrap-reverse ]?
         validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse;
+        if (!validPrimitive)
+            validPrimitive = id == CSSValueNowrap || id == CSSValueWrap || id == CSSValueWrapReverse;
+        else if (validPrimitive && num == 2) {
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            list->append(cssValuePool()->createIdentifierValue(id));
+
+            value = m_valueList->next();
+            if (value->id != CSSValueNowrap && value->id != CSSValueWrap && value->id != CSSValueWrapReverse)
+                return false;
+
+            list->append(cssValuePool()->createIdentifierValue(value->id));
+            addProperty(propId, list, important);
+            return true;
+        }
         break;
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,

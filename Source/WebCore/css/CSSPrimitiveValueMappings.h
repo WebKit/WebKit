@@ -1237,6 +1237,38 @@ template<> inline CSSPrimitiveValue::operator EFlexFlow() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexWrap e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case FlexNoWrap:
+        m_value.ident = CSSValueNowrap;
+        break;
+    case FlexWrap:
+        m_value.ident = CSSValueWrap;
+        break;
+    case FlexWrapReverse:
+        m_value.ident = CSSValueWrapReverse;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EFlexWrap() const
+{
+    switch (m_value.ident) {
+    case CSSValueNowrap:
+        return FlexNoWrap;
+    case CSSValueWrap:
+        return FlexWrap;
+    case CSSValueWrapReverse:
+        return FlexWrapReverse;
+    default:
+        ASSERT_NOT_REACHED();
+        return FlexNoWrap;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFloat e)
     : CSSValue(PrimitiveClass)
 {

@@ -1,3 +1,37 @@
+2011-12-09  Tony Chang  <tony@chromium.org>
+
+        add css parsing for flex-flow: wrap and wrap-reverse
+        https://bugs.webkit.org/show_bug.cgi?id=74008
+
+        Reviewed by Ojan Vafai.
+
+        Also save 2 bits in StyleFlexibleBoxData by changing the size of m_flexFlow (there are only 4 enum values).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Print the wrap value if it exists.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Parse a second token and put the values into a CSSValueList.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexWrap):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyFlexFlow::applyInheritValue): Does not inherit.
+        (WebCore::ApplyPropertyFlexFlow::applyInitialValue):
+        (WebCore::ApplyPropertyFlexFlow::applyValue): Special handler for setting two render style values from one
+        CSS property.
+        (WebCore::ApplyPropertyFlexFlow::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::flexWrap):
+        (WebCore::InheritedFlags::setFlexWrap):
+        (WebCore::InheritedFlags::initialFlexWrap):
+        * rendering/style/RenderStyleConstants.h: EFlexWrap to hold flex wrap values.
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h: 2 bits is enough to hold the 4 flexFlow values.
+
 2011-12-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Add RefPtrEfl specialization for evas_object.

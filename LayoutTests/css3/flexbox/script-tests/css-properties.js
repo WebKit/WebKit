@@ -101,25 +101,33 @@ shouldBeEqualToString('flexbox.style.webkitFlexAlign', '');
 shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexAlign', 'stretch');
 
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row');
+shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row nowrap');
 
 flexbox.style.webkitFlexFlow = 'foo';
 shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
 
-flexbox.style.webkitFlexFlow = 'row';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row');
+var flows = ['', 'row', 'row-reverse', 'column', 'column-reverse'];
+var wraps = ['', 'nowrap', 'wrap', 'wrap-reverse'];
+flows.forEach(function(flow) {
+    wraps.forEach(function(wrap) {
+        flexbox.style.webkitFlexFlow = flow + ' ' + wrap;
+        shouldBeEqualToString('flexbox.style.webkitFlexFlow', (flow + ' ' + wrap).replace(/^ /, '').replace(/ $/, ''));
+        if (!flow)
+            flow = 'row';
+        if (!wrap)
+            wrap = 'nowrap';
+        shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', flow + ' ' + wrap);
+    });
+});
 
-flexbox.style.webkitFlexFlow = 'row-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'row-reverse');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'row-reverse');
-
-flexbox.style.webkitFlexFlow = 'column';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column');
-
-flexbox.style.webkitFlexFlow = 'column-reverse';
-shouldBeEqualToString('flexbox.style.webkitFlexFlow', 'column-reverse');
-shouldBeEqualToString('window.getComputedStyle(flexbox, null).webkitFlexFlow', 'column-reverse');
+flexbox.style.webkitFlexFlow = '';
+flexbox.style.webkitFlexFlow = 'wrap wrap-reverse';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+flexbox.style.webkitFlexFlow = 'wrap-reverse column';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+flexbox.style.webkitFlexFlow = 'wrap row';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
+flexbox.style.webkitFlexFlow = 'column row';
+shouldBeEqualToString('flexbox.style.webkitFlexFlow', '');
 
 successfullyParsed = true;

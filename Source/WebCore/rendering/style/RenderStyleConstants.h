@@ -177,7 +177,8 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 
 enum EFlexPack { PackStart, PackEnd, PackCenter, PackJustify };
 enum EFlexAlign { AlignStart, AlignEnd, AlignCenter, AlignStretch, AlignBaseline };
-enum EFlexFlow { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse};
+enum EFlexFlow { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse };
+enum EFlexWrap { FlexNoWrap, FlexWrap, FlexWrapReverse };
 
 enum ETextSecurity {
     TSNONE, TSDISC, TSCIRCLE, TSSQUARE

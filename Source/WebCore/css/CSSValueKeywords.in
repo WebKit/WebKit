@@ -482,11 +482,13 @@ multiple
 // stretch
 
 // CSS_PROP_FLEX_FLOW
-// FIXME: Add the wrap values.
 row
 row-reverse
 column
 column-reverse
+// nowrap
+// wrap
+wrap-reverse
 
 // CSS_PROP_MARQUEE_DIRECTION
 forwards
