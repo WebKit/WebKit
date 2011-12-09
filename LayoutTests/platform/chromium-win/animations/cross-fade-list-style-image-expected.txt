@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 524x19
+          text run at (0,0) width 524: "PASS - \"listStyleImage\" property for \"box\" element at 2.5s saw something close to: 0.5"
+        RenderBR {BR} at (524,15) size 0x0
+        RenderText {#text} at (0,20) size 645x19
+          text run at (0,20) width 645: "PASS - \"listStyleImage\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (645,35) size 0x0
+        RenderText {#text} at (0,40) size 707x19
+          text run at (0,40) width 707: "PASS - \"listStyleImage\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (707,55) size 0x0
+layer at (100,116) size 140x100
+  RenderBlock (positioned) {UL} at (100,116) size 140x100
+    RenderListItem {LI} at (40,0) size 100x105
+      RenderListMarker at (-107,0) size 100x100
+      RenderText {#text} at (0,85) size 22x19
+        text run at (0,85) width 22: "one"
+    RenderListItem {LI} at (40,105) size 100x105
+      RenderListMarker at (-107,0) size 100x100
+      RenderText {#text} at (0,85) size 23x19
+        text run at (0,85) width 23: "two"
+layer at (100,366) size 140x100
+  RenderBlock (positioned) {UL} at (100,366) size 140x100
+    RenderListItem {LI} at (40,0) size 100x105
+      RenderListMarker at (-107,0) size 100x100
+      RenderText {#text} at (0,85) size 22x19
+        text run at (0,85) width 22: "one"
+    RenderListItem {LI} at (40,105) size 100x105
+      RenderListMarker at (-107,0) size 100x100
+      RenderText {#text} at (0,85) size 23x19
+        text run at (0,85) width 23: "two"
+layer at (400,116) size 140x100
+  RenderBlock (positioned) {UL} at (400,116) size 140x100
+    RenderListItem {LI} at (40,0) size 100x105
+      RenderListMarker at (-107,0) size 100x100
+      RenderText {#text} at (0,85) size 22x19
+        text run at (0,85) width 22: "one"
+    RenderListItem {LI} at (40,105) size 100x105
+      RenderListMarker at (-107,0) size 100x100
+      RenderText {#text} at (0,85) size 23x19
+        text run at (0,85) width 23: "two"
