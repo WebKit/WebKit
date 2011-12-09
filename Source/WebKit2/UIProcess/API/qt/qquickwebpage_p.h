@@ -24,7 +24,7 @@
 #include "qwebkitglobal.h"
 
 #include <QtCore/QSharedPointer>
-#include <QtDeclarative/QQuickItem>
+#include <QtQuick/QQuickItem>
 
 class QQuickWebView;
 class QQuickWebPagePrivate;

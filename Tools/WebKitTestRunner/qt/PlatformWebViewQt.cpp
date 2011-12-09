@@ -32,7 +32,7 @@
 
 #include <QApplication>
 #include <QDeclarativeProperty>
-#include <QQuickView>
+#include <QtQuick/QQuickView>
 #include <qwindowsysteminterface_qpa.h>
 
 namespace WTR {

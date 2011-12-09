@@ -1,3 +1,15 @@
+2011-12-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation with newly separated Qt 5 QtQuick module
+        https://bugs.webkit.org/show_bug.cgi?id=73990
+
+        Reviewed by Kenneth Rohde Christiansen, tweaked by Csaba Osztrogonác.
+
+        Fix QtQuick includes after move from QtDeclarative to QtQuick.
+
+        * MiniBrowser/qt/BrowserWindow.h:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+
 2011-12-08  Adam Klein  <adamk@chromium.org>
 
         [MutationObservers] V8LazyEventHandler breaks microtask delivery semantics

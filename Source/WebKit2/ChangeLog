@@ -1,3 +1,26 @@
+2011-12-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix compilation with newly separated Qt 5 QtQuick module
+        https://bugs.webkit.org/show_bug.cgi?id=73990
+
+        Reviewed by Kenneth Rohde Christiansen, tweaked by Csaba Osztrogonác.
+
+        Fix QtQuick includes after move from QtDeclarative to QtQuick.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/tests.pri: Tests need symbols from QtQuick, so link library.
+        * UIProcess/API/qt/tests/testwindow.h:
+        * UIProcess/qt/QtDialogRunner.cpp:
+        * UIProcess/qt/QtSGTileNode.cpp:
+        * UIProcess/qt/QtSGTileNode.h:
+        * UIProcess/qt/QtSGUpdateQueue.cpp:
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp:
+
 2011-12-09  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebKit2][gtk] Re-enable running TestWebKitSettings

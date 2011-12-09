@@ -23,7 +23,7 @@
 
 #include "PassOwnPtr.h"
 #include "QtSGTileNode.h"
-#include <QQuickItem>
+#include <QtQuick/QQuickItem>
 
 namespace WebKit {
 

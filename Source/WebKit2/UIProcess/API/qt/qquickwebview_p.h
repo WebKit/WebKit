@@ -22,7 +22,7 @@
 #define qquickwebview_p_h
 
 #include "qwebkitglobal.h"
-#include <QtDeclarative/qquickitem.h>
+#include <QtQuick/qquickitem.h>
 
 class QDeclarativeComponent;
 class QQuickWebPage;

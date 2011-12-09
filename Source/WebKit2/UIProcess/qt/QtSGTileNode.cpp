@@ -21,9 +21,9 @@
 #include "config.h"
 #include "QtSGTileNode.h"
 
-#include <QSGEngine>
-#include <QSGFlatColorMaterial>
-#include <QSGTexture>
+#include <QtQuick/QSGEngine>
+#include <QtQuick/QSGFlatColorMaterial>
+#include <QtQuick/QSGTexture>
 
 namespace WebKit {
 

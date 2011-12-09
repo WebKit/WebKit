@@ -31,7 +31,7 @@
 
 #include "MiniBrowserApplication.h"
 #include <QStringList>
-#include <QtDeclarative/QQuickView>
+#include <QtQuick/QQuickView>
 
 class QQuickWebView;
 

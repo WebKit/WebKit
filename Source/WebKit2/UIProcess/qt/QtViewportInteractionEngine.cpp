@@ -28,7 +28,7 @@
 #include <QScrollPrepareEvent>
 #include <QScrollerProperties>
 #include <QWheelEvent>
-#include <QtDeclarative/qquickitem.h>
+#include <QtQuick/qquickitem.h>
 
 namespace WebKit {
 

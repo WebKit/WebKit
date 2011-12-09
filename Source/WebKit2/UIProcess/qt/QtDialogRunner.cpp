@@ -24,7 +24,7 @@
 #include <QtDeclarative/QDeclarativeComponent>
 #include <QtDeclarative/QDeclarativeContext>
 #include <QtDeclarative/QDeclarativeEngine>
-#include <QtDeclarative/QQuickItem>
+#include <QtQuick/QQuickItem>
 #include <wtf/PassOwnPtr.h>
 
 QtDialogRunner::QtDialogRunner()

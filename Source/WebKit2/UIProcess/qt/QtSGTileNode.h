@@ -21,9 +21,9 @@
 #ifndef QtSGTileNode_h
 #define QtSGTileNode_h
 
-#include <QSGGeometryNode>
-#include <QSGOpaqueTextureMaterial>
-#include <QSGTextureMaterial>
+#include <QtQuick/QSGGeometryNode>
+#include <QtQuick/QSGOpaqueTextureMaterial>
+#include <QtQuick/QSGTextureMaterial>
 
 QT_BEGIN_NAMESPACE
 class QSGEngine;

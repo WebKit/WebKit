@@ -32,9 +32,9 @@
 #include "qwebpreferences_p_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
-#include <QtDeclarative/QQuickCanvas>
-#include <QtWidgets/QFileDialog>
-#include <QtWidgets/QInputDialog>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QtQuick/QQuickCanvas>
 #include <WKOpenPanelResultListener.h>
 
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef, WKPageGroupRef pageGroupRef)

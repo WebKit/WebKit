@@ -26,10 +26,10 @@
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p.h"
-#include <QtCore/QUrl>
-#include <QtDeclarative/QSGGeometryNode>
-#include <QtDeclarative/QQuickCanvas>
-#include <QtDeclarative/QSGMaterial>
+#include <QUrl>
+#include <QtQuick/QQuickCanvas>
+#include <QtQuick/QSGGeometryNode>
+#include <QtQuick/QSGMaterial>
 
 QQuickWebPage::QQuickWebPage(QQuickItem* parent)
     : QQuickItem(parent)

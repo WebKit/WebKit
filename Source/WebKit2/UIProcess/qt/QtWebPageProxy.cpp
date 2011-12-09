@@ -22,7 +22,7 @@
 #include "QtWebPageProxy.h"
 
 #include <qdeclarativeengine.h>
-#include <qquickcanvas.h>
+#include <QtQuick/qquickcanvas.h>
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include "qquickwebpage_p.h"

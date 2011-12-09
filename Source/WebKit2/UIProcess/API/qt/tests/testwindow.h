@@ -22,8 +22,8 @@
 
 #include <QResizeEvent>
 #include <QScopedPointer>
-#include <QtDeclarative/qquickitem.h>
-#include <QtDeclarative/qquickview.h>
+#include <QtQuick/qquickitem.h>
+#include <QtQuick/qquickview.h>
 
 // TestWindow: Utility class to ignore QQuickView details.
 class TestWindow : public QQuickView {

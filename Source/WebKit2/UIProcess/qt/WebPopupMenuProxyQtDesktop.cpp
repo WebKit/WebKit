@@ -29,8 +29,8 @@
 #include "PlatformPopupMenuData.h"
 #include <QAbstractItemView>
 #include <QCoreApplication>
-#include <QtDeclarative/QQuickCanvas>
-#include <QtDeclarative/QQuickItem>
+#include <QtQuick/QQuickCanvas>
+#include <QtQuick/QQuickItem>
 #include <QMouseEvent>
 #include <QStandardItemModel>
 #include "WebPopupItem.h"
