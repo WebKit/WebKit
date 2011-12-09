@@ -242,8 +242,8 @@ layer at (25,84) size 179x36 clip at (26,85) size 162x34 scrollHeight 82
         text run at (0,64) width 16: "uv"
         text run at (16,64) width 8: " "
 layer at (25,142) size 179x36 clip at (26,143) size 162x34 scrollHeight 82
-  RenderTextControl {TEXTAREA} at (16,3) size 179x36 [bgcolor=#EBEBE4] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 160x80 [color=#545454]
+  RenderTextControl {TEXTAREA} at (16,3) size 179x36 [color=#545454] [bgcolor=#EBEBE4] [border: (1px solid #545454)]
+    RenderBlock {DIV} at (3,3) size 160x80
       RenderText {#text} at (0,0) size 160x80
         text run at (0,0) width 136: "Lorem ipsum dolor"
         text run at (136,0) width 8: " "

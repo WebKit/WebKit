@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (235,9) width 82: " Normal state"
       RenderBlock {DIV} at (0,70) size 784x34
         RenderInline {LABEL} at (0,0) size 324x19
-          RenderTextControl {INPUT} at (2,2) size 231x30 [bgcolor=#EBEBE4] [border: (2px inset #000000)]
+          RenderTextControl {INPUT} at (2,2) size 231x30 [color=#545454] [bgcolor=#EBEBE4] [border: (2px inset #545454)]
             RenderDeprecatedFlexibleBox {DIV} at (2,3) size 227x24
               RenderBlock {DIV} at (0,0) size 212x24
           RenderText {#text} at (235,9) size 89x19
@@ -32,7 +32,7 @@ layer at (12,49) size 212x24
     RenderText {#text} at (1,0) size 11x23
       text run at (1,0) width 11: "0"
 layer at (12,83) size 212x24
-  RenderBlock {DIV} at (0,0) size 212x24 [color=#545454]
+  RenderBlock {DIV} at (0,0) size 212x24
     RenderText {#text} at (1,0) size 11x23
       text run at (1,0) width 11: "0"
 layer at (12,117) size 212x24
