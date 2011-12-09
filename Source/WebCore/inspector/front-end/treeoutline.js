@@ -38,8 +38,6 @@ function TreeOutline(listNode)
     this.selectedTreeElement = null;
     this._childrenListNode = listNode;
     this._childrenListNode.removeChildren();
-    this._knownTreeElements = [];
-    this._treeElementsExpandedState = [];
     this.expandTreeElementsWhenArrowing = false;
     this.root = true;
     this.hasChildren = false;
@@ -49,9 +47,10 @@ function TreeOutline(listNode)
 
     this._childrenListNode.tabIndex = 0;
     this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
+    
+    this._treeElementsMap = new Map();
+    this._expandedStateMap = new Map();
 }
-
-TreeOutline._knownTreeElementNextIdentifier = 1;
 
 TreeOutline.prototype.appendChild = function(child)
 {
@@ -80,8 +79,7 @@ TreeOutline.prototype.appendChild = function(child)
         current = current.traverseNextTreeElement(false, child, true);
     }
 
-    if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
-        child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
+    child.expanded = child.hasChildren && !!child.treeOutline._expandedStateMap.get(child.representedObject);
 
     if (!this._childrenListNode) {
         this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
@@ -131,8 +129,7 @@ TreeOutline.prototype.insertChild = function(child, index)
         current = current.traverseNextTreeElement(false, child, true);
     }
 
-    if (child.hasChildren && child.treeOutline._treeElementsExpandedState[child.identifier] !== undefined)
-        child.expanded = child.treeOutline._treeElementsExpandedState[child.identifier];
+    child.expanded = child.hasChildren && !!child.treeOutline._expandedStateMap.get(child.representedObject);
 
     if (!this._childrenListNode) {
         this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
@@ -245,11 +242,11 @@ TreeOutline.prototype.removeChildrenRecursive = function()
 
 TreeOutline.prototype._rememberTreeElement = function(element)
 {
-    if (!this._knownTreeElements[element.identifier])
-        this._knownTreeElements[element.identifier] = [];
-
+    if (!this._treeElementsMap.get(element.representedObject))
+        this._treeElementsMap.put(element.representedObject, []);
+        
     // check if the element is already known
-    var elements = this._knownTreeElements[element.identifier];
+    var elements = this._treeElementsMap.get(element.representedObject);
     if (elements.indexOf(element) !== -1)
         return;
 
@@ -259,8 +256,8 @@ TreeOutline.prototype._rememberTreeElement = function(element)
 
 TreeOutline.prototype._forgetTreeElement = function(element)
 {
-    if (this._knownTreeElements[element.identifier])
-        this._knownTreeElements[element.identifier].remove(element, true);
+    if (this._treeElementsMap.get(element.representedObject))
+        this._treeElementsMap.get(element.representedObject).remove(element, true);
 }
 
 TreeOutline.prototype._forgetChildrenRecursive = function(parentElement)
@@ -277,16 +274,9 @@ TreeOutline.prototype.getCachedTreeElement = function(representedObject)
     if (!representedObject)
         return null;
 
-    if ("__treeElementIdentifier" in representedObject) {
-        // If this representedObject has a tree element identifier, and it is a known TreeElement
-        // in our tree we can just return that tree element.
-        var elements = this._knownTreeElements[representedObject.__treeElementIdentifier];
-        if (elements) {
-            for (var i = 0; i < elements.length; ++i)
-                if (elements[i].representedObject === representedObject)
-                    return elements[i];
-        }
-    }
+    var elements = this._treeElementsMap.get(representedObject);
+    if (elements && elements.length)
+        return elements[0];
     return null;
 }
 
@@ -478,13 +468,6 @@ function TreeElement(title, representedObject, hasChildren)
 {
     this._title = title;
     this.representedObject = (representedObject || {});
-
-    if (this.representedObject.__treeElementIdentifier)
-        this.identifier = this.representedObject.__treeElementIdentifier;
-    else {
-        this.identifier = TreeOutline._knownTreeElementNextIdentifier++;
-        this.representedObject.__treeElementIdentifier = this.identifier;
-    }
 
     this._hidden = false;
     this._selectable = true;
@@ -742,8 +725,9 @@ TreeElement.prototype.collapse = function()
         this._childrenListNode.classList.remove("expanded");
 
     this.expanded = false;
+    
     if (this.treeOutline)
-        this.treeOutline._treeElementsExpandedState[this.identifier] = false;
+        this.treeOutline._expandedStateMap.put(this.representedObject, false);
 
     if (this.oncollapse)
         this.oncollapse(this);
@@ -770,7 +754,7 @@ TreeElement.prototype.expand = function()
 
     this.expanded = true;
     if (this.treeOutline)
-        this.treeOutline._treeElementsExpandedState[this.identifier] = true;
+        this.treeOutline._expandedStateMap.put(this.representedObject, true);
 
     if (this.treeOutline && (!this._childrenListNode || this._shouldRefreshChildren)) {
         if (this._childrenListNode && this._childrenListNode.parentNode)

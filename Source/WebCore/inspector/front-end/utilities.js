@@ -1149,3 +1149,44 @@ TextDiff.compute = function(baseContent, newContent)
     }
     return diffData;
 }
+
+/**
+ * @constructor
+ */
+Map = function()
+{
+    this._map = {};
+}
+
+Map._lastObjectIdentifier = 0;
+
+Map.prototype = {
+    /**
+     * @param {Object} key
+     */
+    put: function(key, value)
+    {
+        var objectIdentifier = key.__identifier;
+        if (!objectIdentifier) {
+            objectIdentifier = ++Map._lastObjectIdentifier;
+            key.__identifier = objectIdentifier;
+        }
+        this._map[objectIdentifier] = value;
+    },
+    
+    /**
+     * @param {Object} key
+     */
+    remove: function(key)
+    {
+        delete this._map[key.__identifier];
+    },
+    
+    /**
+     * @param {Object} key
+     */
+    get: function(key)
+    {
+        return this._map[key.__identifier];
+    },
+}

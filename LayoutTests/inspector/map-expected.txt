@@ -1,0 +1,100 @@
+Tests Map class.
+
+Bug 74084
+Dumping maps:
+  First map:
+    key1 : undefined
+    key2 : undefined
+  Second map:
+    key1 : undefined
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 2
+    key2 : undefined
+  Second map:
+    key1 : undefined
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : undefined
+  Second map:
+    key1 : undefined
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : undefined
+  Second map:
+    key1 : 1
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : undefined
+  Second map:
+    key1 : 2
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : 2
+  Second map:
+    key1 : 2
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : 2
+  Second map:
+    key1 : 2
+    key2 : 1
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : undefined
+  Second map:
+    key1 : 2
+    key2 : 1
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : undefined
+  Second map:
+    key1 : 2
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : 1
+    key2 : undefined
+  Second map:
+    key1 : 2
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : undefined
+    key2 : undefined
+  Second map:
+    key1 : 2
+    key2 : undefined
+
+Dumping maps:
+  First map:
+    key1 : undefined
+    key2 : undefined
+  Second map:
+    key1 : undefined
+    key2 : undefined
+
+
