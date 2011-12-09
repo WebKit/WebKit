@@ -470,15 +470,12 @@ enum FeatureToAnimate {
             [self scrollAnimator]->setVisibleScrollerThumbRect(IntRect());
     }
 
-    [NSAnimationContext beginGrouping];
-    [[NSAnimationContext currentContext] setDuration:duration];
     scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
                                                                        featureToAnimate:part == ThumbPart ? ThumbAlpha : TrackAlpha
                                                                             animateFrom:part == ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
                                                                               animateTo:newAlpha 
                                                                                duration:duration]);
     [scrollbarPartAnimation.get() startAnimation];
-    [NSAnimationContext endGrouping];
 }
 
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
@@ -518,8 +515,6 @@ enum FeatureToAnimate {
     // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollerPainter setUiStateTransitionProgress:1 - [scrollerPainter uiStateTransitionProgress]];
 
-    [NSAnimationContext beginGrouping];
-    [[NSAnimationContext currentContext] setDuration:duration];
     if (!_uiStateTransitionAnimation)
         _uiStateTransitionAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
                                                                                 featureToAnimate:UIStateTransition
@@ -533,7 +528,6 @@ enum FeatureToAnimate {
         [_uiStateTransitionAnimation.get() setDuration:duration];
     }
     [_uiStateTransitionAnimation.get() startAnimation];
-    [NSAnimationContext endGrouping];
 }
 
 - (void)scrollerImp:(id)scrollerImp overlayScrollerStateChangedTo:(NSUInteger)newOverlayScrollerState

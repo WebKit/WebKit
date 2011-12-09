@@ -1,5 +1,19 @@
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Remove NSAnimationContext calls
+        https://bugs.webkit.org/show_bug.cgi?id=74207
+
+        Reviewed by Sam Weinig.
+
+        NSAnimationContext is not used for NSAnimation subclasses, so the calls to beginGrouping/endGrouping and setDuration:
+        are essentially no-ops. Remove them.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
         Rename scrollAnimatorDestroyed to invalidate
         https://bugs.webkit.org/show_bug.cgi?id=74206
 
