@@ -1,3 +1,33 @@
+2011-12-08  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream BlackBerry porting of MIMETypeRegistry/KeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=73534
+
+        Reviewed by Rob Buis.
+
+        Other main contributors:
+        Mike Fenton <mifenton@rim.com>
+        Joe Mason <jmason@rim.com>
+        Max Feil <mfeil@qnx.com>
+        Lukas Sydorowski <lsydorowski@rim.com>
+        Crystal Zhang <haizhang@rim.com> 
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/MIMETypeRegistryBlackBerry.cpp: Added.
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::isApplicationPluginMIMEType):
+        * platform/blackberry/PlatformKeyboardEventBlackBerry.cpp: Added.
+        (WebCore::keyIdentifierForBlackBerryCharacter):
+        (WebCore::windowsKeyCodeForBlackBerryCharacter):
+        (WebCore::adjustCharacterFromOS):
+        (WebCore::toWebCorePlatformKeyboardEventType):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState):
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent):
+        (WebCore::PlatformKeyboardEvent::getCurrentModifierState):
+
 2011-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r101619.
