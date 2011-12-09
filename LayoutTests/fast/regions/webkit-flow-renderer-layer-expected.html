@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+
+<style>
+    .region{
+    	height:100px;
+    	width:100%;
+    }   
+    .regionScale{
+    	-webkit-transform: scale3d(1, 1, 1);
+    }
+    #DIV1 {
+        /* force a RenderLayer */
+        position: absolute;
+    }
+    #DIV5 {
+        position: absolute;
+        z-index: -1;
+    }
+</style>
+<body>
+
+<div class="region">
+    <div id="DIV1">DIV1 - flowA</div>
+</div>
+
+<div class="region regionScale">
+</div>
+
+<div class="region">
+    <div id="DIV3">
+        DIV3 - flowC
+        <div id="DIV4">DIV5 - flowC</div>  
+        <div id="DIV5">DIV4 - flowC</div>
+    </div>   
+</div>
+
+</body>
