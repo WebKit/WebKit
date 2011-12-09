@@ -67,6 +67,7 @@ use VCSUtils;
 sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($);
 sub changeLogNameFromArgs($);
+sub fetchBugDescriptionFromURL($);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
@@ -256,36 +257,17 @@ $emailAddress = changeLogEmailAddressFromArgs($emailAddress);
 
 print STDERR "  Change author: $name <$emailAddress>.\n";
 
+# Remove trailing parenthesized notes from user name (bit of hack).
+$name =~ s/\(.*?\)\s*$//g;
+
 my $bugURL;
 if ($bugNumber) {
     $bugURL = "https://bugs.webkit.org/show_bug.cgi?id=$bugNumber";
 }
 
 if ($bugNumber && !$bugDescription) {
-    my $bugXMLURL = "$bugURL&ctype=xml";
-    # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
-    # Pass --insecure because some cygwin installs have no certs we don't
-    # care about validating that bugs.webkit.org is who it says it is here.
-    my $descriptionLine = `curl --insecure --silent "$bugXMLURL" | grep short_desc`;
-    if ($descriptionLine !~ /<short_desc>(.*)<\/short_desc>/) {
-        # Maybe the reason the above did not work is because the curl that is installed doesn't
-        # support ssl at all.
-        if (`curl --version | grep ^Protocols` !~ /\bhttps\b/) {
-            print STDERR "  Could not get description for bug $bugNumber.\n";
-            print STDERR "  It looks like your version of curl does not support ssl.\n";
-            print STDERR "  If you are using macports, this can be fixed with sudo port install curl +ssl.\n";
-        } else {
-            print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
-            print STDERR "  The bug URL: $bugXMLURL\n";
-        }
-        exit 1;
-    }
-    $bugDescription = decodeEntities($1);
-    print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
+    $bugDescription = fetchBugDescriptionFromURL($bugURL);
 }
-
-# Remove trailing parenthesized notes from user name (bit of hack).
-$name =~ s/\(.*?\)\s*$//g;
 
 # Find the change logs.
 my %has_log;
@@ -486,6 +468,33 @@ sub changeLogEmailAddressFromArgs($)
     return `$GIT log --max-count=1 --pretty=\"format:%ae\" \"$gitCommit\"` if $gitCommit;
 
     return $emailAddressFromArgs || changeLogEmailAddress();
+}
+
+sub fetchBugDescriptionFromURL($)
+{
+    my ($bugURL) = @_;
+
+    my $bugXMLURL = "$bugURL&ctype=xml";
+    # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
+    # Pass --insecure because some cygwin installs have no certs we don't
+    # care about validating that bugs.webkit.org is who it says it is here.
+    my $descriptionLine = `curl --insecure --silent "$bugXMLURL" | grep short_desc`;
+    if ($descriptionLine !~ /<short_desc>(.*)<\/short_desc>/) {
+        # Maybe the reason the above did not work is because the curl that is installed doesn't
+        # support ssl at all.
+        if (`curl --version | grep ^Protocols` !~ /\bhttps\b/) {
+            print STDERR "  Could not get description for bug $bugNumber.\n";
+            print STDERR "  It looks like your version of curl does not support ssl.\n";
+            print STDERR "  If you are using macports, this can be fixed with sudo port install curl +ssl.\n";
+        } else {
+            print STDERR "  Bug $bugNumber has no bug description. Maybe you set wrong bug ID?\n";
+            print STDERR "  The bug URL: $bugXMLURL\n";
+        }
+        exit 1;
+    }
+    my $bugDescription = decodeEntities($1);
+    print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
+    return $bugDescription;
 }
 
 sub get_function_line_ranges($$)
