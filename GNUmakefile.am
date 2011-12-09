@@ -180,6 +180,11 @@ global_cppflags += \
 	-DWTF_USE_TEXTURE_MAPPER_OPENGL=1
 endif
 
+if USE_CLUTTER
+global_cppflags += \
+	-DWTF_USE_CLUTTER=1
+endif
+
 # ----
 # GTK+ 2.x/3.x support
 # ----

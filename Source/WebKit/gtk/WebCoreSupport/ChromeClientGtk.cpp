@@ -912,7 +912,10 @@ void ChromeClient::exitFullScreenForElement(WebCore::Element* element)
 #if USE(ACCELERATED_COMPOSITING)
 void ChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
 {
-    webViewSetRootGraphicsLayer(m_webView, rootLayer);
+    if (rootLayer)
+        webViewSetRootGraphicsLayer(m_webView, rootLayer);
+    else
+        webViewDetachRootGraphicsLayer(m_webView);
 }
 
 void ChromeClient::setNeedsOneShotDrawingSynchronization()
@@ -927,7 +930,14 @@ void ChromeClient::scheduleCompositingLayerSync()
 
 ChromeClient::CompositingTriggerFlags ChromeClient::allowedCompositingTriggers() const
 {
+     if (!platformPageClient())
+        return false;
+#if USE(CLUTTER)
+    // Currently, we only support CSS 3D Transforms.
+    return ThreeDTransformTrigger;
+#else
     return AllTriggers;
+#endif
 }
 #endif
 

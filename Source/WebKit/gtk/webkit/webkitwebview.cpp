@@ -856,6 +856,14 @@ static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allo
     WebKit::ChromeClient* chromeClient = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
     chromeClient->widgetSizeChanged(oldSize, IntSize(allocation->width, allocation->height));
     chromeClient->adjustmentWatcher()->updateAdjustmentsFromScrollbars();
+
+#if USE(ACCELERATED_COMPOSITING) && USE(CLUTTER)
+    if (webView->priv->rootLayerEmbedder) {
+        allocation->x = 0;
+        allocation->y = 0;
+        gtk_widget_size_allocate(GTK_WIDGET(webView->priv->rootLayerEmbedder), allocation);
+    }
+#endif
 }
 
 static void webkit_web_view_grab_focus(GtkWidget* widget)
@@ -4885,13 +4893,63 @@ void webViewExitFullscreen(WebKitWebView* webView)
 #if USE(ACCELERATED_COMPOSITING)
 void webViewSetRootGraphicsLayer(WebKitWebView* webView, GraphicsLayer* graphicsLayer)
 {
+#if USE(CLUTTER)
+    WebKitWebViewPrivate* priv = webView->priv;
+
+    // Create an instance of GtkClutterEmbed to host actors as web layers.
+    if (!priv->rootLayerEmbedder) {
+        priv->rootLayerEmbedder = gtk_clutter_embed_new();
+        gtk_container_add(GTK_CONTAINER(webView), priv->rootLayerEmbedder);
+        gtk_widget_show(priv->rootLayerEmbedder);
+    }
+
+    // Add a root layer to the stage.
+    if (graphicsLayer) {
+        priv->rootGraphicsLayer = graphicsLayer;
+        // set white background
+        ClutterColor stageColor = { 0xFF, 0xFF, 0xFF, 0xFF };
+        ClutterActor* stage = gtk_clutter_embed_get_stage(GTK_CLUTTER_EMBED(priv->rootLayerEmbedder));
+        clutter_stage_set_color(CLUTTER_STAGE (stage), &stageColor);
+        clutter_container_add_actor(CLUTTER_CONTAINER(stage), priv->rootGraphicsLayer->platformLayer());
+        clutter_actor_show_all(stage);
+    }
+#else
     notImplemented();
+#endif
 }
+
+void webViewDetachRootGraphicsLayer(WebKitWebView* webView)
+{
+#if USE(CLUTTER)
+    WebKitWebViewPrivate* priv = webView->priv;
+    // Detach the root layer from the hosting view.
+    gtk_container_remove(GTK_CONTAINER(webView), priv->rootLayerEmbedder);
+    priv->rootLayerEmbedder = 0;
+    priv->rootGraphicsLayer = 0;
+#else
+    notImplemented();
+#endif
+}
+
+#if USE(CLUTTER)
+static gboolean webViewSyncLayers(gpointer data)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(data);
+    core(webView)->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+
+    return FALSE;
+}
+#endif
 
 void webViewMarkForSync(WebKitWebView* webView, gboolean scheduleSync)
 {
+#if USE(CLUTTER)
+    g_timeout_add(0, webViewSyncLayers, webView);
+#else
     notImplemented();
+#endif
 }
+
 #endif
 
 namespace WebKit {

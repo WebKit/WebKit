@@ -1,3 +1,25 @@
+2011-12-09  Joone Hur  <joone.hur@collabora.co.uk>, Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk> 
+
+        [GTK] Initial implementation of Accelerated Compositing using Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=73319
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests added as this feature will be able to reuse the existing 
+        CSS3 transforms layout tests.
+
+        * GNUmakefile.am: Include WebCore/platform/graphics/clutter path.
+        * GNUmakefile.list.am: Add GraphicsLayerClutter.
+        * platform/clutter/GRefPtrClutter.cpp: Added.
+        (WTF::adoptGRef):
+        (WTF::ClutterActor):
+        * platform/clutter/GRefPtrClutter.h: Added.
+        * platform/graphics/GraphicsLayer.h: Define PlatformLayer type, which represents ClutterActor.
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp: Boilerplate implementation.
+        (WebCore::GraphicsLayerClutter::GraphicsLayerClutter):
+        (WebCore::GraphicsLayerClutter::platformLayer):
+        * platform/graphics/clutter/GraphicsLayerClutter.h: Boilerplate implementation.
+
 2011-12-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Introduce a Map class allowing to store values indexed by arbitrary objects.

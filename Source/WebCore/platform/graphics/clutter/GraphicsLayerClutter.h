@@ -29,7 +29,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "GRefPtrClutter.h"
 #include "GraphicsLayer.h"
+
+#include <clutter/clutter.h>
 
 namespace WebCore {
 
@@ -38,8 +41,12 @@ public:
     GraphicsLayerClutter(GraphicsLayerClient*);
     virtual ~GraphicsLayerClutter();
 
+    virtual ClutterActor* platformLayer() const;
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
+
+private:
+    GRefPtr<ClutterActor> m_layer;
 };
 
 } // namespace WebCore

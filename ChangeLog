@@ -1,3 +1,13 @@
+2011-12-09  Joone Hur  <joone.hur@collabora.co.uk>
+
+        [GTK] Initial implementation of Accelerated Compositing using Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=73319
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Export new compilation macros.
+        * configure.ac: Add clutter backend for Accelerated Compositing.
+
 2011-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r102323.

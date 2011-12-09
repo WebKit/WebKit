@@ -74,6 +74,11 @@ namespace WebCore {
 class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
 };
+#elif USE(CLUTTER)
+typedef struct _ClutterActor ClutterActor;
+namespace WebCore {
+typedef ClutterActor PlatformLayer;
+};
 #endif
 #else
 typedef void* PlatformLayer;

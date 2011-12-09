@@ -41,10 +41,17 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 GraphicsLayerClutter::GraphicsLayerClutter(GraphicsLayerClient* client)
     : GraphicsLayer(client)
 {
+    // ClutterRectangle will be used to show the debug border.
+    m_layer = adoptGRef(clutter_rectangle_new());
 }
 
 GraphicsLayerClutter::~GraphicsLayerClutter()
 {
+}
+
+ClutterActor* GraphicsLayerClutter::platformLayer() const
+{
+    return m_layer.get();
 }
 
 void GraphicsLayerClutter::setNeedsDisplay()

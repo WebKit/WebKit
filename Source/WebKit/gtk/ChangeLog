@@ -1,3 +1,28 @@
+2011-12-09  Joone Hur  <joone.hur@collabora.co.uk>
+
+        [GTK] Initial implementation of Accelerated Compositing using Clutter
+        https://bugs.webkit.org/show_bug.cgi?id=73319
+
+        This patch allows to add a GtkClutterEmbed to embed Clutter Actors in WebKitWebView and 
+        set the root GraphicsLayer to WebKitWebView when Accelerated Compositing needs to be enabled.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::attachRootGraphicsLayer): Set the root GraphicsLayer to WebKitWebView.
+        (WebKit::ChromeClient::allowedCompositingTriggers): Allow to support CSS 3D Transforms only.
+        * webkit/webkitglobals.cpp:
+        (webkitInit): Call gtk_clutter_init().
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_size_allocate): Set the size of GtkClutterEmbed when the view is changed.
+        (webkit_web_view_init)
+        (webViewSetRootGraphicsLayer): Add the GtkClutterEmbed to the WebKitWebView as a child.
+        (webViewDetachRootGraphicsLayer): Remove the GtkClutterEmbed from the WebKitWebView.
+        (webViewSyncLayers): Commit layer changes.
+        (webViewMarkForSync): Set to call webViewSyncLayers using g_timeout_add.
+        * webkit/webkitwebviewprivate.h:
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline

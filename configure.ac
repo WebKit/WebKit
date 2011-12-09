@@ -286,6 +286,8 @@ GSTREAMER_REQUIRED_VERSION=0.10
 GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=0.10.30
 ENCHANT_REQUIRED_VERSION=0.22
 LIBFFTW_REQUIRED_VERSION=3.2.2
+CLUTTER_REQUIRED_VERSION=1.8.2
+CLUTTER_GTK_REQUIRED_VERSION=1.0.2
 
 # Available modules
 #
@@ -397,7 +399,7 @@ AC_MSG_RESULT([$enable_webgl])
 # check whether to enable accelerated compositing support
 AC_MSG_CHECKING([whether to enable accelerated compositing support])
 AC_ARG_WITH(accelerated_compositing,
-            AC_HELP_STRING([--with-accelerated-compositing=@<:@no/opengl/cairo@:>@],
+            AC_HELP_STRING([--with-accelerated-compositing=@<:@no/opengl/cairo/clutter@:>@],
                            [use accelerated compositing (experimental) [default=no]]),
             [], [with_accelerated_compositing="no"])
 AC_MSG_RESULT([$with_accelerated_compositing])
@@ -1082,6 +1084,17 @@ if test "$enable_web_audio" = "yes"; then
     AC_SUBST([LIBFFTW_LIBS])
 fi
 
+if test "$with_accelerated_compositing" = "clutter"; then
+   PKG_CHECK_MODULES(CLUTTER, clutter-1.0 >= $CLUTTER_REQUIRED_VERSION)
+   PKG_CHECK_MODULES([CLUTTER_GTK],
+                     [clutter-gtk-1.0 >= $CLUTTER_GTK_REQUIRED_VERSION])
+
+   AC_SUBST(CLUTTER_CFLAGS)
+   AC_SUBST(CLUTTER_LIBS)
+   AC_SUBST(CLUTTER_GTK_CFLAGS)
+   AC_SUBST(CLUTTER_GTK_LIBS)
+fi
+
 # check for code coverage support
 if test "$enable_coverage" = "yes"; then
    COVERAGE_CFLAGS="-MD"
@@ -1156,9 +1169,10 @@ AM_CONDITIONAL([USE_PANGO], [test "$with_font_backend" = "pango"])
 AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 
 # Accelerated compositing conditional
-AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$with_accelerated_compositing" = "cairo" || test "$with_accelerated_compositing" = "opengl"])
+AM_CONDITIONAL([USE_ACCELERATED_COMPOSITING], [test "$with_accelerated_compositing" = "cairo" || test "$with_accelerated_compositing" = "opengl" || test "$with_accelerated_compositing" = "clutter"])
 AM_CONDITIONAL([USE_TEXTURE_MAPPER_CAIRO], [test "$with_accelerated_compositing" = "cairo"])
 AM_CONDITIONAL([USE_TEXTURE_MAPPER_GL], [test "$with_accelerated_compositing" = "opengl"])
+AM_CONDITIONAL([USE_CLUTTER], [test "$with_accelerated_compositing" = "clutter"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])

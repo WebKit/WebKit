@@ -5075,6 +5075,15 @@ endif  # END ENABLE_REQUEST_ANIMATION_FRAME
 # Compile with accelerated compositing support
 # ---
 if USE_ACCELERATED_COMPOSITING
+if USE_CLUTTER
+webcore_sources += \
+	Source/WebCore/platform/clutter/GRefPtrClutter.cpp \
+	Source/WebCore/platform/clutter/GRefPtrClutter.h \
+	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.cpp \
+	Source/WebCore/platform/graphics/clutter/GraphicsLayerClutter.h
+endif  # END USE_CLUTTER
+
+if USE_TEXTURE_MAPPER_CAIRO
 webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.h \
@@ -5082,7 +5091,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperNode.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
-if USE_TEXTURE_MAPPER_CAIRO
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/TextureMapperCairo.h

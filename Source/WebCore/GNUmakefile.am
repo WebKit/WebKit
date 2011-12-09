@@ -575,6 +575,12 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/texmap
 endif  # END USETEXTURE_MAPPER_GL
 
+if USE_CLUTTER
+webcore_cppflags += \
+	-I$(srcdir)/Source/WebCore/platform/clutter \
+	-I$(srcdir)/Source/WebCore/platform/graphics/clutter
+endif  # END USE_CLUTTER
+
 # ---
 # MHTML support
 # ---
@@ -801,6 +807,7 @@ libWebCore_la_CPPFLAGS = \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
 	$(CAIRO_CFLAGS) \
+	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
 	$(ENCHANT_CFLAGS) \
 	$(GEOCLUE_CFLAGS) \

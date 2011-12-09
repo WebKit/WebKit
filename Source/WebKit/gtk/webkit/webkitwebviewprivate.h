@@ -32,6 +32,11 @@
 #include "WidgetBackingStore.h"
 #include <webkit/webkitwebview.h>
 
+#if USE(ACCELERATED_COMPOSITING) && USE(CLUTTER)
+#include <clutter-gtk/clutter-gtk.h>
+#include <clutter/clutter.h>
+#endif
+
 namespace WebKit {
 WebCore::Page* core(WebKitWebView*);
 WebKitWebView* kit(WebCore::Page*);
@@ -92,6 +97,10 @@ struct _WebKitWebViewPrivate {
     WebCore::GtkClickCounter clickCounter;
     WebCore::GtkDragAndDropHelper dragAndDropHelper;
     bool selfScrolling;
+#if USE(ACCELERATED_COMPOSITING) && USE(CLUTTER)
+    WebCore::GraphicsLayer* rootGraphicsLayer;
+    GtkWidget* rootLayerEmbedder;
+#endif
 };
 
 void webkit_web_view_notify_ready(WebKitWebView*);
@@ -114,6 +123,7 @@ void webViewExitFullscreen(WebKitWebView* webView);
 
 #if USE(ACCELERATED_COMPOSITING)
 void webViewSetRootGraphicsLayer(WebKitWebView*, WebCore::GraphicsLayer*);
+void webViewDetachRootGraphicsLayer(WebKitWebView*);
 void webViewMarkForSync(WebKitWebView*, gboolean);
 #endif
 }
