@@ -1,3 +1,9 @@
+2011-12-08  Adrienne Walker  <enne@google.com>
+
+        Unreviewed contributor additions to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-08  David Reveman  <reveman@chromium.org>
 
         [Chromium] Add per-tile painting flag to DumpRenderTree and rename AcceleratedDrawing to AcceleratedPainting in chromium specific code.
