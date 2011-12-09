@@ -1,5 +1,22 @@
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Remove duplicate animation ivars
+        https://bugs.webkit.org/show_bug.cgi?id=74194
+
+        Reviewed by Sam Weinig.
+
+        Since we now have one WebScrollbarPainterDelegate for each scrollbar, we no longer need separate
+        vertical/horizontal animation objects, so get rid of them.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate cancelAnimations]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollAnimatorDestroyed]):
+
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
         WebScrollbarPartAnimation should only know about the scrollbar it's animating
         https://bugs.webkit.org/show_bug.cgi?id=74192
 

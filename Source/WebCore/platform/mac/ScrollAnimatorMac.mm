@@ -361,14 +361,9 @@ enum FeatureToAnimate {
 {
     WebCore::Scrollbar* _scrollbar;
 
-    RetainPtr<WebScrollbarPartAnimation> _verticalKnobAnimation;
-    RetainPtr<WebScrollbarPartAnimation> _horizontalKnobAnimation;
-
-    RetainPtr<WebScrollbarPartAnimation> _verticalTrackAnimation;
-    RetainPtr<WebScrollbarPartAnimation> _horizontalTrackAnimation;
-
-    RetainPtr<WebScrollbarPartAnimation> _verticalUIStateTransitionAnimation;
-    RetainPtr<WebScrollbarPartAnimation> _horizontalUIStateTransitionAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _knobAlphaAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _trackAlphaAnimation;
+    RetainPtr<WebScrollbarPartAnimation> _uiStateTransitionAnimation;
 }
 - (id)initWithScrollbar:(WebCore::Scrollbar*)scrollbar;
 - (void)cancelAnimations;
@@ -389,12 +384,9 @@ enum FeatureToAnimate {
 - (void)cancelAnimations
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_verticalKnobAnimation.get() stopAnimation];
-    [_horizontalKnobAnimation.get() stopAnimation];
-    [_verticalTrackAnimation.get() stopAnimation];
-    [_horizontalTrackAnimation.get() stopAnimation];
-    [_verticalUIStateTransitionAnimation.get() stopAnimation];
-    [_horizontalUIStateTransitionAnimation.get() stopAnimation];
+    [_knobAlphaAnimation.get() stopAnimation];
+    [_trackAlphaAnimation.get() stopAnimation];
+    [_uiStateTransitionAnimation.get() stopAnimation];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -491,11 +483,10 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return;
 
+    ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
+
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
-    if ([scrollerImp isHorizontal])
-        [self setUpAlphaAnimation:_horizontalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
-    else
-        [self setUpAlphaAnimation:_verticalKnobAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
+    [self setUpAlphaAnimation:_knobAlphaAnimation scrollerPainter:scrollerPainter part:WebCore::ThumbPart animateAlphaTo:newKnobAlpha duration:duration];
 }
 
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
@@ -503,11 +494,10 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return;
 
+    ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
+    
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
-    if ([scrollerImp isHorizontal])
-        [self setUpAlphaAnimation:_horizontalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
-    else
-        [self setUpAlphaAnimation:_verticalTrackAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
+    [self setUpAlphaAnimation:_trackAlphaAnimation scrollerPainter:scrollerPainter part:WebCore::BackTrackPart animateAlphaTo:newTrackAlpha duration:duration];
 }
 
 - (void)scrollerImp:(id)scrollerImp animateUIStateTransitionWithDuration:(NSTimeInterval)duration
@@ -518,27 +508,28 @@ enum FeatureToAnimate {
     if (!supportsUIStateTransitionProgress())
         return;
 
+    ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
+
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
-    RetainPtr<WebScrollbarPartAnimation> scrollbarPartAnimation = [scrollerPainter isHorizontal] ? _horizontalUIStateTransitionAnimation : _verticalUIStateTransitionAnimation;
 
     // UIStateTransition always animates to 1. In case an animation is in progress this avoids a hard transition.
     [scrollerPainter setUiStateTransitionProgress:1 - [scrollerPainter uiStateTransitionProgress]];
 
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:duration];
-    if (!scrollbarPartAnimation)
-        scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
-                                                                           featureToAnimate:UIStateTransition
-                                                                                animateFrom:[scrollerPainter uiStateTransitionProgress]
-                                                                                  animateTo:1.0
-                                                                                   duration:duration]);
+    if (!_uiStateTransitionAnimation)
+        _uiStateTransitionAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
+                                                                                featureToAnimate:UIStateTransition
+                                                                                     animateFrom:[scrollerPainter uiStateTransitionProgress]
+                                                                                       animateTo:1.0
+                                                                                        duration:duration]);
     else {
         // If we don't need to initialize the animation, just reset the values in case they have changed.
-        [scrollbarPartAnimation.get() setStartValue:[scrollerPainter uiStateTransitionProgress]];
-        [scrollbarPartAnimation.get() setEndValue:1.0];
-        [scrollbarPartAnimation.get() setDuration:duration];
+        [_uiStateTransitionAnimation.get() setStartValue:[scrollerPainter uiStateTransitionProgress]];
+        [_uiStateTransitionAnimation.get() setEndValue:1.0];
+        [_uiStateTransitionAnimation.get() setDuration:duration];
     }
-    [scrollbarPartAnimation.get() startAnimation];
+    [_uiStateTransitionAnimation.get() startAnimation];
     [NSAnimationContext endGrouping];
 }
 
@@ -552,12 +543,9 @@ enum FeatureToAnimate {
 {
     _scrollbar = 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_verticalKnobAnimation.get() scrollAnimatorDestroyed];
-    [_horizontalKnobAnimation.get() scrollAnimatorDestroyed];
-    [_verticalTrackAnimation.get() scrollAnimatorDestroyed];
-    [_horizontalTrackAnimation.get() scrollAnimatorDestroyed];
-    [_verticalUIStateTransitionAnimation.get() scrollAnimatorDestroyed];
-    [_horizontalUIStateTransitionAnimation.get() scrollAnimatorDestroyed];
+    [_knobAlphaAnimation.get() scrollAnimatorDestroyed];
+    [_trackAlphaAnimation.get() scrollAnimatorDestroyed];
+    [_uiStateTransitionAnimation.get() scrollAnimatorDestroyed];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
