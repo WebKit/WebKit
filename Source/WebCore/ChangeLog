@@ -1,3 +1,24 @@
+2011-12-08  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Upstream platform/network/blackberry/DeferredData.{h, cpp}, NetworkJob.{h, cpp} and NetworkManager.{h, cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=73791
+
+        Reviewed by Rob Buis.
+
+        Other main contributors:
+        Joe Mason <jmason@rim.com>
+        Lianghui Chen <liachen@rim.com>
+        Charles Wei <charles.wei@torchmobile.com.cn>
+
+        Initial upstream, can't be built yet, no new tests.
+
+        * platform/network/blackberry/DeferredData.cpp: Added.
+        * platform/network/blackberry/DeferredData.h: Added.
+        * platform/network/blackberry/NetworkJob.cpp: Added.
+        * platform/network/blackberry/NetworkJob.h: Added.
+        * platform/network/blackberry/NetworkManager.cpp: Added.
+        * platform/network/blackberry/NetworkManager.h: Added.
+
 2011-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         It's semantically incorrect to call notifyNodeListsAttributeChanged in dispatchSubtreeModifiedEvent
