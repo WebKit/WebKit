@@ -859,12 +859,13 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
 void CSSStyleSelector::initForRegionStyling(RenderRegion* region)
 {
     setRegionForStyling(region);
-    // Mark that the set of rules comes from region styling since we need to filter
-    // the properties that can be applied.
-    m_regionRules = adoptPtr(new RuleSet(true));
 
     if (!region)
         return;
+
+    // Mark that the set of rules comes from region styling since we need to filter
+    // the properties that can be applied.
+    m_regionRules = adoptPtr(new RuleSet(true));
 
     // From all the region style rules, select those that apply to the specified region.
     for (Vector<RefPtr<WebKitCSSRegionRule> >::iterator it = m_regionStyleRules.begin(); it != m_regionStyleRules.end(); ++it) {
