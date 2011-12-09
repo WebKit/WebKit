@@ -1,3 +1,14 @@
+2011-12-08  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Add CSS_FILTERS custom binding file to WebCore.gypi.
+        https://bugs.webkit.org/show_bug.cgi?id=74091
+
+        Reviewed by Adam Barth.
+
+        If it builds, you're happy.
+
+        * WebCore.gypi:
+
 2011-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Line breaks are lost when pasted into textarea text starting with a blank line set while textarea is hidden

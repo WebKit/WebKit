@@ -2264,6 +2264,7 @@
             'bindings/v8/custom/V8Uint8ArrayCustom.cpp',
             'bindings/v8/custom/V8WebGLRenderingContextCustom.cpp',
             'bindings/v8/custom/V8WebKitAnimationCustom.cpp',
+            'bindings/v8/custom/V8WebKitCSSFilterValueCustom.cpp',
             'bindings/v8/custom/V8WebKitMutationObserverCustom.cpp',
             'bindings/v8/custom/V8WebKitPointConstructor.cpp',
             'bindings/v8/custom/V8WebSocketCustom.cpp',
