@@ -6,8 +6,12 @@
 </head>
 <body>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
+    // Force intial layout.
+    document.body.offsetTop;
+
     layoutTestController.display();
+}
 </script>
 
 The textareas below should not overlap.
