@@ -1,3 +1,12 @@
+2011-12-08  Adam Klein  <adamk@chromium.org>
+
+        Use HashMap<Node*, OwnPtr<...>> in ChildListMutationScope
+        https://bugs.webkit.org/show_bug.cgi?id=73964
+
+        Reviewed by Darin Adler.
+
+        * wtf/HashTraits.h: Add passOut(std::nullptr_t) to allow callers to use HashMap::take on a HashMap of OwnPtrs.
+
 2011-12-08  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=74005
