@@ -1,3 +1,12 @@
+2011-12-09  Cary Clark  <caryclark@google.com>
+
+        Chromium DEPS roll to pick up new use_skia=1 default on Chromium-Mac
+        https://bugs.webkit.org/show_bug.cgi?id=74118
+
+        Reviewed by Adam Barth.
+
+        * DEPS:
+
 2011-12-08  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Enable viewport metatag

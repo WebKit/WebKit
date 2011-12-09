@@ -112,7 +112,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
     def __init__(self, host, port_name=None, os_version_string=None, **kwargs):
         # We're a little generic here because this code is reused by the
         # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
-        port_name = port_name or 'chromium-cg-mac'
+        port_name = port_name or 'chromium-mac'
         chromium.ChromiumPort.__init__(self, host, port_name=port_name, **kwargs)
         if port_name.endswith('-mac'):
             self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
