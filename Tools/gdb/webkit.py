@@ -40,34 +40,49 @@ import re
 import struct
 
 
+def guess_string_length(ptr):
+    """Guess length of string pointed by ptr.
+
+    Returns a tuple of (length, an error message).
+    """
+    # Try to guess at the length.
+    for i in xrange(0, 2048):
+        try:
+            if int((ptr + i).dereference()) == 0:
+                return i, ''
+        except RuntimeError:
+            # We indexed into inaccessible memory; give up.
+            return i, ' (gdb hit inaccessible memory)'
+    return 256, ' (gdb found no trailing NUL)'
+
+
 def ustring_to_string(ptr, length=None):
-    """Convert a pointer to UTF-16 data into a Python Unicode string.
+    """Convert a pointer to UTF-16 data into a Python string encoded with utf-8.
 
     ptr and length are both gdb.Value objects.
     If length is unspecified, will guess at the length."""
-    extra = ''
+    error_message = ''
     if length is None:
-        # Try to guess at the length.
-        for i in xrange(0, 2048):
-            try:
-                if int((ptr + i).dereference()) == 0:
-                    length = i
-                    break
-            except RuntimeError:
-                # We indexed into inaccessible memory; give up.
-                length = i
-                extra = u' (gdb hit inaccessible memory)'
-                break
-        if length is None:
-            length = 256
-            extra = u' (gdb found no trailing NUL)'
+        length, error_message = guess_string_length(ptr)
     else:
         length = int(length)
-
     char_vals = [int((ptr + i).dereference()) for i in xrange(length)]
-    string = struct.pack('H' * length, *char_vals).decode('utf-16', 'replace')
+    string = struct.pack('H' * length, *char_vals).decode('utf-16', 'replace').encode('utf-8')
+    return string + error_message
 
-    return string + extra
+
+def lstring_to_string(ptr, length=None):
+    """Convert a pointer to LChar* data into a Python (non-Unicode) string.
+
+    ptr and length are both gdb.Value objects.
+    If length is unspecified, will guess at the length."""
+    error_message = ''
+    if length is None:
+        length, error_message = guess_string_length(ptr)
+    else:
+        length = int(length)
+    string = ''.join([chr((ptr + i).dereference()) for i in xrange(length)])
+    return string + error_message
 
 
 class StringPrinter(object):
@@ -85,6 +100,12 @@ class UCharStringPrinter(StringPrinter):
         return ustring_to_string(self.val)
 
 
+class LCharStringPrinter(StringPrinter):
+    "Print a LChar*; we must guess at the length"
+    def to_string(self):
+        return lstring_to_string(self.val)
+
+
 class WTFAtomicStringPrinter(StringPrinter):
     "Print a WTF::AtomicString"
     def to_string(self):
@@ -100,50 +121,37 @@ class WTFCStringPrinter(StringPrinter):
         return vector['m_buffer']['m_buffer']
 
 
+class WTFStringImplPrinter(StringPrinter):
+    "Print a WTF::StringImpl"
+    def get_length(self):
+        return self.val['m_length']
+
+    def to_string(self):
+        if self.is_8bit():
+            return lstring_to_string(self.val['m_data8'], self.get_length())
+        return ustring_to_string(self.val['m_data16'], self.get_length())
+
+    def is_8bit(self):
+        return self.val['m_hashAndFlags'] & self.val['s_hashFlag8BitBuffer']
+
+
 class WTFStringPrinter(StringPrinter):
     "Print a WTF::String"
-    def get_length(self):
-        if not self.val['m_impl']['m_ptr']:
-            return 0
-        return self.val['m_impl']['m_ptr']['m_length']
+    def stringimpl_ptr(self):
+        return self.val['m_impl']['m_ptr']
 
-    def is_8bit(self):
-        return self.val['m_impl']['m_ptr']['m_hashAndFlags'] & self.val['m_impl']['m_ptr']['s_hashFlag8BitBuffer']
+    def get_length(self):
+        if not self.stringimpl_ptr():
+            return 0
+        return WTFStringImplPrinter(self.stringimpl_ptr().dereference()).get_length()
 
     def to_string(self):
-        if self.get_length() == 0:
+        if not self.stringimpl_ptr():
             return '(null)'
-
-        if self.is_8bit():
-            data_member = 'm_data8'
-        else:
-            data_member = 'm_data16'
-
-        return ustring_to_string(self.val['m_impl']['m_ptr'][data_member],
-                                 self.get_length())
+        return self.stringimpl_ptr().dereference()
 
 
-class JSCUStringPrinter(StringPrinter):
-    "Print a JSC::UString"
-    def get_length(self):
-        if not self.val['m_impl']['m_ptr']:
-            return 0
-        return self.val['m_impl']['m_ptr']['m_length']
-
-    def is_8bit(self):
-        return self.val['m_impl']['m_ptr']['m_hashAndFlags'] & self.val['m_impl']['m_ptr']['s_hashFlag8BitBuffer']
-
-    def to_string(self):
-        if self.get_length() == 0:
-            return ''
-
-        if self.is_8bit():
-            data_member = 'm_data8'
-        else:
-            data_member = 'm_data16'
-
-        return ustring_to_string(self.val['m_impl']['m_ptr'][data_member],
-                                 self.get_length())
+JSCUStringPrinter = WTFStringImplPrinter
 
 
 class JSCIdentifierPrinter(StringPrinter):
@@ -271,6 +279,7 @@ def add_pretty_printers():
         (re.compile("^WTF::AtomicString$"), WTFAtomicStringPrinter),
         (re.compile("^WTF::CString$"), WTFCStringPrinter),
         (re.compile("^WTF::String$"), WTFStringPrinter),
+        (re.compile("^WTF::StringImpl$"), WTFStringImplPrinter),
         (re.compile("^WebCore::KURLGooglePrivate$"), WebCoreKURLGooglePrivatePrinter),
         (re.compile("^WebCore::QualifiedName$"), WebCoreQualifiedNamePrinter),
         (re.compile("^JSC::UString$"), JSCUStringPrinter),
@@ -294,6 +303,8 @@ def add_pretty_printers():
             name = str(type.target().unqualified())
             if name == 'UChar':
                 return UCharStringPrinter(val)
+            if name == 'LChar':
+                return LCharStringPrinter(val)
         return None
 
     gdb.pretty_printers.append(lookup_function)

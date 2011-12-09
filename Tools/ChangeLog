@@ -1,3 +1,24 @@
+2011-12-08  Hayato Ito  <hayato@chromium.org>
+
+        [gdb] Pretty printer for a 8-bit version of WTF::StringImpl and LChar*.
+        https://bugs.webkit.org/show_bug.cgi?id=73980
+
+        Reviewed by Tony Chang.
+
+        * gdb/webkit.py:
+        (guess_string_length):
+        (ustring_to_string):
+        (lstring_to_string):
+        (LCharStringPrinter):
+        (LCharStringPrinter.to_string):
+        (WTFStringImplPrinter.get_length):
+        (WTFStringImplPrinter.to_string):
+        (WTFStringImplPrinter.is_8bit):
+        (WTFStringPrinter.stringimpl_ptr):
+        (WTFStringPrinter.get_length):
+        (WTFStringPrinter.to_string):
+        (add_pretty_printers.lookup_function):
+
 2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Drop ENABLE_NO_LISTBOX_RENDERING, and make it a runtime decision.
