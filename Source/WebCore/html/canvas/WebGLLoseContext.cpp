@@ -27,37 +27,37 @@
 
 #if ENABLE(WEBGL)
 
-#include "WebKitLoseContext.h"
+#include "WebGLLoseContext.h"
 
 #include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-WebKitLoseContext::WebKitLoseContext(WebGLRenderingContext* context)
+WebGLLoseContext::WebGLLoseContext(WebGLRenderingContext* context)
     : WebGLExtension(context)
 {
 }
 
-WebKitLoseContext::~WebKitLoseContext()
+WebGLLoseContext::~WebGLLoseContext()
 {
 }
 
-WebGLExtension::ExtensionName WebKitLoseContext::getName() const
+WebGLExtension::ExtensionName WebGLLoseContext::getName() const
 {
-    return WebKitLoseContextName;
+    return WebKitWebGLLoseContextName;
 }
 
-PassOwnPtr<WebKitLoseContext> WebKitLoseContext::create(WebGLRenderingContext* context)
+PassOwnPtr<WebGLLoseContext> WebGLLoseContext::create(WebGLRenderingContext* context)
 {
-    return adoptPtr(new WebKitLoseContext(context));
+    return adoptPtr(new WebGLLoseContext(context));
 }
 
-void WebKitLoseContext::loseContext()
+void WebGLLoseContext::loseContext()
 {
     m_context->forceLostContext(WebGLRenderingContext::SyntheticLostContext);
 }
 
-void WebKitLoseContext::restoreContext()
+void WebGLLoseContext::restoreContext()
 {
     m_context->forceRestoreContext();
 }

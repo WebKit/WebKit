@@ -28,7 +28,7 @@ module html {
         Conditional=WEBGL,
         GenerateIsReachable=ImplContext,
         OmitConstructor
-    ] WebKitLoseContext {
+    ] WebGLLoseContext {
         [StrictTypeChecking] void loseContext();
         [StrictTypeChecking] void restoreContext();
     };

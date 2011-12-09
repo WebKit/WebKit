@@ -546,6 +546,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLContextEvent.h \
 	DerivedSources/WebCore/JSWebGLFramebuffer.cpp \
 	DerivedSources/WebCore/JSWebGLFramebuffer.h \
+	DerivedSources/WebCore/JSWebGLLoseContext.cpp \
+	DerivedSources/WebCore/JSWebGLLoseContext.h \
 	DerivedSources/WebCore/JSWebGLProgram.cpp \
 	DerivedSources/WebCore/JSWebGLProgram.h \
 	DerivedSources/WebCore/JSWebGLRenderbuffer.cpp \
@@ -578,8 +580,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitCSSMatrix.h \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.h \
-	DerivedSources/WebCore/JSWebKitLoseContext.cpp \
-	DerivedSources/WebCore/JSWebKitLoseContext.h \
 	DerivedSources/WebCore/JSWebKitNamedFlow.cpp \
 	DerivedSources/WebCore/JSWebKitNamedFlow.h \
 	DerivedSources/WebCore/JSWebKitPoint.cpp \
@@ -4998,6 +4998,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLFramebuffer.h \
 	Source/WebCore/html/canvas/WebGLGetInfo.cpp \
 	Source/WebCore/html/canvas/WebGLGetInfo.h \
+	Source/WebCore/html/canvas/WebGLLoseContext.cpp \
+	Source/WebCore/html/canvas/WebGLLoseContext.h \
 	Source/WebCore/html/canvas/WebGLObject.cpp \
 	Source/WebCore/html/canvas/WebGLObject.h \
 	Source/WebCore/html/canvas/WebGLProgram.cpp \
@@ -5022,8 +5024,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/OESTextureFloat.h \
 	Source/WebCore/html/canvas/OESVertexArrayObject.cpp \
 	Source/WebCore/html/canvas/OESVertexArrayObject.h \
-	Source/WebCore/html/canvas/WebKitLoseContext.cpp \
-	Source/WebCore/html/canvas/WebKitLoseContext.h \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
 	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
 	Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp \

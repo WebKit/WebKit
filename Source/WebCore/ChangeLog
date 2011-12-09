@@ -1,3 +1,43 @@
+2011-12-08  Kenneth Russell  <kbr@google.com>
+
+        Rename WEBKIT_lose_context to WEBKIT_WEBGL_lose_context
+        https://bugs.webkit.org/show_bug.cgi?id=71870
+
+        Reviewed by James Robinson.
+
+        Rename largely done with do-webcore-rename with a couple of
+        necessary manual fixups. Ran WebGL layout tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLLoseContext.cpp: Copied from Source/WebCore/html/canvas/WebKitLoseContext.cpp.
+        (WebCore::WebGLLoseContext::WebGLLoseContext):
+        (WebCore::WebGLLoseContext::~WebGLLoseContext):
+        (WebCore::WebGLLoseContext::getName):
+        (WebCore::WebGLLoseContext::create):
+        (WebCore::WebGLLoseContext::loseContext):
+        (WebCore::WebGLLoseContext::restoreContext):
+        * html/canvas/WebGLLoseContext.h: Copied from Source/WebCore/html/canvas/WebKitLoseContext.h.
+        * html/canvas/WebGLLoseContext.idl: Copied from Source/WebCore/html/canvas/WebKitLoseContext.idl.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::maybeRestoreContext):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebKitLoseContext.cpp: Removed.
+        * html/canvas/WebKitLoseContext.h: Removed.
+        * html/canvas/WebKitLoseContext.idl: Removed.
+
 2011-12-08  Kentaro Hara  <haraken@chromium.org>
 
         Use the [Supplemental] IDL for webaudio attributes in Chromium

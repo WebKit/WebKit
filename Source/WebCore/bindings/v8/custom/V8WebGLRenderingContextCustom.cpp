@@ -39,7 +39,6 @@
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
-#include "V8WebKitLoseContext.h"
 #include "V8Float32Array.h"
 #include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
@@ -60,6 +59,7 @@
 #include "V8WebGLDebugRendererInfo.h"
 #include "V8WebGLDebugShaders.h"
 #include "V8WebGLFramebuffer.h"
+#include "V8WebGLLoseContext.h"
 #include "V8WebGLProgram.h"
 #include "V8WebGLRenderbuffer.h"
 #include "V8WebGLShader.h"
@@ -169,9 +169,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     v8::Handle<v8::Value> extensionObject;
     const char* referenceName = 0;
     switch (extension->getName()) {
-    case WebGLExtension::WebKitLoseContextName:
-        extensionObject = toV8(static_cast<WebKitLoseContext*>(extension));
-        referenceName = "webKitLoseContextName";
+    case WebGLExtension::WebKitWebGLLoseContextName:
+        extensionObject = toV8(static_cast<WebGLLoseContext*>(extension));
+        referenceName = "webKitWebGLLoseContextName";
         break;
     case WebGLExtension::OESStandardDerivativesName:
         extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension));
