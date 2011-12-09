@@ -54,10 +54,10 @@
 
                     { "name": "google-windows-1", "platform": "chromium-win" },
                     { "name": "google-windows-2", "platform": "chromium-win" },
-                    { "name": "google-mac-1", "platform": "chromium-cg-mac" },
-                    { "name": "google-mac-2", "platform": "chromium-cg-mac" },
-                    { "name": "google-mac-3", "platform": "chromium-cg-mac" },
-                    { "name": "google-mac-4", "platform": "chromium-cg-mac" },
+                    { "name": "google-mac-1", "platform": "chromium-mac" },
+                    { "name": "google-mac-2", "platform": "chromium-mac" },
+                    { "name": "google-mac-3", "platform": "chromium-mac" },
+                    { "name": "google-mac-4", "platform": "chromium-mac" },
                     { "name": "google-linux-1", "platform": "chromium-linux" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
                     { "name": "google-linux-android", "platform": "chromium-android" },
@@ -221,13 +221,13 @@
                       "slavenames": ["google-windows-2"]
                     },
                     {
-                      "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-cg-mac-release",
-                      "platform": "chromium-cg-mac", "configuration": "release", "architectures": ["i386"],
+                      "name": "Chromium Mac Release", "type": "Build", "builddir": "chromium-mac-release",
+                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-1", "google-mac-3"]
                     },
                     {
-                      "name": "Chromium Mac Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-cg-mac-release-tests",
-                      "platform": "chromium-cg-mac", "configuration": "release", "architectures": ["i386"],
+                      "name": "Chromium Mac Release (Tests)", "type": "NewBuildAndTest", "builddir": "chromium-mac-release-tests",
+                      "platform": "chromium-mac", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-mac-2", "google-mac-4"]
                     },
                     {

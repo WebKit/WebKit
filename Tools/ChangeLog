@@ -1,3 +1,18 @@
+2011-12-09  Tony Chang  <tony@chromium.org>
+
+        Switch the chromium mac bots to using skia test results
+        https://bugs.webkit.org/show_bug.cgi?id=74201
+
+        Reviewed by Ryosuke Niwa.
+
+        This is reverting http://trac.webkit.org/changeset/97781 and changing
+        the name in master.cfg to no longer have cg in the name.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (appendCustomBuildFlags):
+        (RunWebKitTests.start):
+
 2011-12-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Remove a wrongly placed ASSERT.
