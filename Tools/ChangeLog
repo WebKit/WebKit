@@ -1,3 +1,12 @@
+2011-12-09  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Remove a wrongly placed ASSERT.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+
 2011-12-09  Cary Clark  <caryclark@google.com>
 
         layout_test update to accommodate new use_skia=1 default on Chromium-Mac

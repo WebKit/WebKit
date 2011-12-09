@@ -94,7 +94,9 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     }
 
     BrowserWindow* browserWindow = qobject_cast<BrowserWindow*>(target);
-    Q_ASSERT(browserWindow);
+    if (!browserWindow)
+        return QApplication::notify(target, event);
+
     if (event->type() == QEvent::KeyRelease && static_cast<QKeyEvent*>(event)->key() == Qt::Key_Control) {
         foreach (int id, m_heldTouchPoints)
             if (m_touchPoints.contains(id))
@@ -103,7 +105,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         sendTouchEvent(browserWindow);
     }
 
-    if (browserWindow && isMouseEvent(event)) {
+    if (isMouseEvent(event)) {
         const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
 
         QWindowSystemInterface::TouchPoint touchPoint;
