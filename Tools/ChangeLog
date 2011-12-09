@@ -1,3 +1,10 @@
+2011-12-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update unit test after r102412.
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+
 2011-12-09  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION(r102105): run-bindings-tests should output full diff results
