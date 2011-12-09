@@ -1897,7 +1897,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
             Element* elt = static_cast<Element*>(node);
             const AtomicString& alt = elt->getAttribute(altAttr);
             // don't ignore an image that has an alt tag
-            if (!alt.isEmpty())
+            if (!alt.string().containsOnlyWhitespace())
                 return false;
             // informal standard is to ignore images with zero-length alt strings
             if (!alt.isNull())

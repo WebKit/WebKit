@@ -1,3 +1,15 @@
+2011-12-09  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit should ignore images with @alt matching only whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=74189
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/img-alt-tag-only-whitespace.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
         Remove NSAnimationContext calls

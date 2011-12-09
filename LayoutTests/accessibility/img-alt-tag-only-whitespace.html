@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" role="group" id="images">
+<img id="firstimage" alt=" " src="resources/cake.png"><br>
+<img alt="	" src="resources/cake.png"><br>
+<img alt="   Image " src="resources/cake.png"><br>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that images with alt tags that only have white space are ignored.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("images").focus();
+        var imagesGroup = accessibilityController.focusedElement;
+        shouldBe("imagesGroup.childrenCount", "1");
+        console.log("Image description: " + imagesGroup.childAtIndex(0).description);
+    }
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
