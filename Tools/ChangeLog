@@ -1,3 +1,18 @@
+2011-12-09  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r102105): run-bindings-tests should output full diff results
+        https://bugs.webkit.org/show_bug.cgi?id=74166
+
+        Reviewed by Adam Barth.
+
+        Since r102105, the output of run-bindings-tests is truncated to 500 characters.
+        run-bindings-tests should output full diff results.
+
+        * Scripts/webkitpy/bindings/main.py: Replaced e.message_with_output() with e.output.
+        (BindingsTests.generate_from_idl):
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.detect_changes):
+
 2011-12-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix compilation with newly separated Qt 5 QtQuick module
