@@ -1,3 +1,16 @@
+2011-12-09  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Fix tst_QQuickWebView::scrollRequest() API test
+        https://bugs.webkit.org/show_bug.cgi?id=73994
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/tests/html/scroll.html: Corrected html and
+        added some coloring.
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest): Corrected calculation
+        of expected value.
+
 2011-12-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix compilation with newly separated Qt 5 QtQuick module

@@ -273,12 +273,17 @@ void tst_QQuickWebView::removeFromCanvas()
 void tst_QQuickWebView::scrollRequest()
 {
     webView()->setSize(QSizeF(300, 400));
+    m_window->show();
+    webView()->setVisible(true);
+    QTest::qWait(200);
 
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
     QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
 
     // COMPARE with the position requested in the html
-    int y = -50 * webView()->page()->scale();
+    // Use qRound as that is also used when calculating the position
+    // in WebKit.
+    int y = -qRound(50 * webView()->page()->scale());
     QVERIFY(webView()->page()->pos().y() == y);
 }
 
