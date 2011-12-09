@@ -221,7 +221,7 @@ TOOLTIP_FONT_FAMILIES(1, new AtomicString("dejavu sans mono"))
     }
 }
 
-void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* renderer, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
+void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* renderer, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& visibleRect, WebCore::Settings* settings)
 {
 
     DEFINE_STATIC_LOCAL(Color, backgroundColor, (255, 255, 194));
@@ -292,25 +292,25 @@ void drawElementTitle(GraphicsContext& context, Node* node, RenderObject* render
     LayoutUnit dx = -borderWidthPx;
     LayoutUnit dy = borderWidthPx;
 
-    // If the tip sticks beyond the right of overlayRect, right-align the tip with the said boundary.
-    if (titleRect.maxX() + dx > overlayRect.maxX())
-        dx = overlayRect.maxX() - titleRect.maxX();
+    // If the tip sticks beyond the right of visibleRect, right-align the tip with the said boundary.
+    if (titleRect.maxX() + dx > visibleRect.maxX())
+        dx = visibleRect.maxX() - titleRect.maxX();
 
-    // If the tip sticks beyond the left of overlayRect, left-align the tip with the said boundary.
-    if (titleRect.x() + dx < overlayRect.x())
-        dx = overlayRect.x() - titleRect.x() - borderWidthPx;
+    // If the tip sticks beyond the left of visibleRect, left-align the tip with the said boundary.
+    if (titleRect.x() + dx < visibleRect.x())
+        dx = visibleRect.x() - titleRect.x() - borderWidthPx;
 
-    // If the tip sticks beyond the bottom of overlayRect, show the tip at top of bounding box.
-    if (titleRect.maxY() + dy > overlayRect.maxY()) {
+    // If the tip sticks beyond the bottom of visibleRect, show the tip at top of bounding box.
+    if (titleRect.maxY() + dy > visibleRect.maxY()) {
         dy = anchorBox.y() - titleRect.maxY() - borderWidthPx;
-        // If the tip still sticks beyond the bottom of overlayRect, bottom-align the tip with the said boundary.
-        if (titleRect.maxY() + dy > overlayRect.maxY())
-            dy = overlayRect.maxY() - titleRect.maxY();
+        // If the tip still sticks beyond the bottom of visibleRect, bottom-align the tip with the said boundary.
+        if (titleRect.maxY() + dy > visibleRect.maxY())
+            dy = visibleRect.maxY() - titleRect.maxY();
     }
 
-    // If the tip sticks beyond the top of overlayRect, show the tip at top of overlayRect.
-    if (titleRect.y() + dy < overlayRect.y())
-        dy = overlayRect.y() - titleRect.y() + borderWidthPx;
+    // If the tip sticks beyond the top of visibleRect, show the tip at top of visibleRect.
+    if (titleRect.y() + dy < visibleRect.y())
+        dy = visibleRect.y() - titleRect.y() + borderWidthPx;
 
     titleRect.move(dx, dy);
 
@@ -376,10 +376,10 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
     LayoutRect titleAnchorBox = boundingBox;
 
     FrameView* view = containingFrame->page()->mainFrame()->view();
-    FloatRect overlayRect = view->visibleContentRect();
-    if (!overlayRect.contains(boundingBox) && !boundingBox.contains(enclosingLayoutRect(overlayRect)))
-        overlayRect = view->visibleContentRect();
-    context.translate(-overlayRect.x(), -overlayRect.y());
+    FloatRect visibleRect = view->visibleContentRect();
+    // Don't translate the context if the frame is rendered in page coordinates.
+    if (!view->delegatesScrolling())
+        context.translate(-visibleRect.x(), -visibleRect.y());
 
     // RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
 #if ENABLE(SVG)
@@ -450,7 +450,7 @@ void drawNodeHighlight(GraphicsContext& context, HighlightData* highlightData)
         return;
 
     if (highlightData->showInfo)
-        drawElementTitle(context, node, renderer, boundingBox, titleAnchorBox, overlayRect, containingFrame->settings());
+        drawElementTitle(context, node, renderer, boundingBox, titleAnchorBox, visibleRect, containingFrame->settings());
 }
 
 void drawRectHighlight(GraphicsContext& context, Document* document, HighlightData* highlightData)
@@ -459,8 +459,9 @@ void drawRectHighlight(GraphicsContext& context, Document* document, HighlightDa
         return;
     FrameView* view = document->frame()->view();
 
-    FloatRect overlayRect = view->visibleContentRect();
-    context.translate(-overlayRect.x(), -overlayRect.y());
+    FloatRect visibleRect = view->visibleContentRect();
+    if (!view->delegatesScrolling())
+        context.translate(-visibleRect.x(), -visibleRect.y());
 
     FloatRect highlightRect(*(highlightData->rect));
     drawOutlinedQuad(context, highlightRect, highlightData->content, highlightData->contentOutline);

@@ -1,3 +1,20 @@
+2011-12-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Inspector: Don't translate the context when rendering the highlights on a tiled layer.
+        https://bugs.webkit.org/show_bug.cgi?id=74085
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When the frame view is using fixed layouting, the page overlay is the size of the whole
+        page and the context shouldn't be translated. The visible rect is still used in that
+        case to display element titles within the visible rect.
+
+        Also:
+        - Rename overlayRect to visibleRect to reduce confusion in this case.
+        - Remove the superfluous boundingBox check.
+
+        * inspector/DOMNodeHighlighter.cpp:
+
 2011-12-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector utilities syntax fix.
