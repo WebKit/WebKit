@@ -1,3 +1,24 @@
+2011-12-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Update WebGraphicLayer's child content scale in all child binding method.
+        https://bugs.webkit.org/show_bug.cgi?id=74101
+
+        Reviewed by Noam Rosenthal.
+
+        setChildren is currently the only method propagating the parent layer's content
+        scale to its children. This need to be done for addChild* as well.
+
+        This fixes the overlay layer not being rendered with the right scale when created
+        until the contents scale is modified again.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::setChildren):
+        (WebCore::WebGraphicsLayer::addChild):
+        (WebCore::WebGraphicsLayer::addChildAtIndex):
+        (WebCore::WebGraphicsLayer::addChildAbove):
+        (WebCore::WebGraphicsLayer::addChildBelow):
+        (WebCore::WebGraphicsLayer::replaceChild):
+
 2011-12-09  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Fix tst_QQuickWebView::scrollRequest() API test

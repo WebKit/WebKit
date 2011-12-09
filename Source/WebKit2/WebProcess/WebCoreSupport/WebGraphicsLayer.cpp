@@ -117,6 +117,7 @@ bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
 void WebGraphicsLayer::addChild(GraphicsLayer* layer)
 {
     GraphicsLayer::addChild(layer);
+    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -124,6 +125,7 @@ void WebGraphicsLayer::addChild(GraphicsLayer* layer)
 void WebGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
     GraphicsLayer::addChildAtIndex(layer, index);
+    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -131,6 +133,7 @@ void WebGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 void WebGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(layer, sibling);
+    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -138,6 +141,7 @@ void WebGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* siblin
 void WebGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(layer, sibling);
+    toWebGraphicsLayer(layer)->setContentsScale(m_contentsScale);
     toWebGraphicsLayer(layer)->notifyChange();
     notifyChange();
 }
@@ -149,6 +153,7 @@ bool WebGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newC
         return false;
     notifyChange();
     toWebGraphicsLayer(oldChild)->notifyChange();
+    toWebGraphicsLayer(newChild)->setContentsScale(m_contentsScale);
     toWebGraphicsLayer(newChild)->notifyChange();
     return true;
 }
