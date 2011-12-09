@@ -34,7 +34,6 @@
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-
 class Color;
 class GraphicsLayer;
 class GraphicsContext;
@@ -42,41 +41,44 @@ class IntPoint;
 class IntRect;
 class LayerChromium;
 class LayerPainterChromium;
+}
 
-class NonCompositedContentHost : public GraphicsLayerClient {
+namespace WebKit {
+
+class NonCompositedContentHost : public WebCore::GraphicsLayerClient {
 WTF_MAKE_NONCOPYABLE(NonCompositedContentHost);
 public:
-    static PassOwnPtr<NonCompositedContentHost> create(PassOwnPtr<LayerPainterChromium> contentPaint)
+    static PassOwnPtr<NonCompositedContentHost> create(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint)
     {
         return adoptPtr(new NonCompositedContentHost(contentPaint));
     }
     virtual ~NonCompositedContentHost();
 
-    void invalidateRect(const IntRect&);
-    void setBackgroundColor(const Color&);
-    void setScrollLayer(GraphicsLayer*);
-    void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition, float pageScale);
+    void invalidateRect(const WebCore::IntRect&);
+    void setBackgroundColor(const WebCore::Color&);
+    void setScrollLayer(WebCore::GraphicsLayer*);
+    void setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale);
     void protectVisibleTileTextures();
-    GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
+    WebCore::GraphicsLayer* topLevelRootLayer() const { return m_graphicsLayer.get(); }
 
 protected:
-    explicit NonCompositedContentHost(PassOwnPtr<LayerPainterChromium> contentPaint);
+    explicit NonCompositedContentHost(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint);
 
 private:
     // GraphicsLayerClient
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time);
-    virtual void notifySyncRequired(const GraphicsLayer*);
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clipRect);
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
-    LayerChromium* scrollLayer();
+    WebCore::LayerChromium* scrollLayer();
 
-    OwnPtr<GraphicsLayer> m_graphicsLayer;
-    OwnPtr<LayerPainterChromium> m_contentPaint;
-    IntSize m_viewportSize;
+    OwnPtr<WebCore::GraphicsLayer> m_graphicsLayer;
+    OwnPtr<WebCore::LayerPainterChromium> m_contentPaint;
+    WebCore::IntSize m_viewportSize;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // NonCompositedContentHost_h

@@ -1,3 +1,43 @@
+2011-12-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move NonCompositedContentHost to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=74047
+
+        Reviewed by Kenneth Russell.
+
+        Moves NonCompositedContentHost into WebKit/chromium/src. This class is a helper class designed to make it easier
+        for WebViewImpl to interface with the compositor. The compositor proper should not depend on this class, and
+        other clients of the compositor do not need this functionality.
+
+        Follow-up patches will transition this code from using compositor-internal interfaces directly to using
+        higher-level interfaces like the WebKit platform APIs. This patch simply does a file mv and updates namespaces
+        to keep things simpler.
+
+        Refactor only and covered by several unit tests.
+
+        * WebKit.gyp:
+        * src/NonCompositedContentHost.cpp: Renamed from Source/WebCore/platform/graphics/chromium/NonCompositedContentHost.cpp.
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::~NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setBackgroundColor):
+        (WebKit::NonCompositedContentHost::setScrollLayer):
+        (WebKit::NonCompositedContentHost::setViewport):
+        (WebKit::NonCompositedContentHost::scrollLayer):
+        (WebKit::NonCompositedContentHost::protectVisibleTileTextures):
+        (WebKit::NonCompositedContentHost::invalidateRect):
+        (WebKit::NonCompositedContentHost::notifyAnimationStarted):
+        (WebKit::NonCompositedContentHost::notifySyncRequired):
+        (WebKit::NonCompositedContentHost::paintContents):
+        (WebKit::NonCompositedContentHost::showDebugBorders):
+        (WebKit::NonCompositedContentHost::showRepaintCounter):
+        * src/NonCompositedContentHost.h: Renamed from Source/WebCore/platform/graphics/chromium/NonCompositedContentHost.h.
+        (WebKit::NonCompositedContentHost::create):
+        (WebKit::NonCompositedContentHost::topLevelRootLayer):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::nonCompositedContentHost):
+        * src/WebViewImpl.h:
+        * tests/LayerChromiumTest.cpp:
+
 2011-12-08  Sami Kyostila  <skyostil@google.com>
 
         [chromium] Layer contents scale change should trigger invalidation

@@ -3544,8 +3544,6 @@
             'platform/graphics/chromium/LayerTextureSubImage.cpp',
             'platform/graphics/chromium/LayerTextureSubImage.h',
             'platform/graphics/chromium/LayerTextureUpdater.h',
-            'platform/graphics/chromium/NonCompositedContentHost.cpp',
-            'platform/graphics/chromium/NonCompositedContentHost.h',
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
             'platform/graphics/chromium/PlatformCanvas.cpp',
             'platform/graphics/chromium/PlatformCanvas.h',

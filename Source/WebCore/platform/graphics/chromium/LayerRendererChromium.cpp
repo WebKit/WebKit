@@ -43,7 +43,6 @@
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
 #include "ManagedTexture.h"
-#include "NonCompositedContentHost.h"
 #include "NotImplemented.h"
 #include "PlatformColor.h"
 #include "RenderSurfaceChromium.h"

@@ -2851,7 +2851,7 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     setRootLayerNeedsDisplay();
 }
 
-WebCore::NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
+NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
 {
     return m_nonCompositedContentHost.get();
 }

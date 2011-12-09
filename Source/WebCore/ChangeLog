@@ -1,3 +1,17 @@
+2011-12-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move NonCompositedContentHost to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=74047
+
+        Reviewed by Kenneth Russell.
+
+        Updates WebCore.gypi to remove files no longer within WebCore and removes unused forward declaration and include
+        from LayerRendererChromium.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-12-08  Sami Kyostila  <skyostil@google.com>
 
         [chromium] Layer contents scale change should trigger invalidation

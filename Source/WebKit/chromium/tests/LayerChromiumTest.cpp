@@ -33,6 +33,7 @@
 #include <gtest/gtest.h>
 
 using namespace WebCore;
+using namespace WebKit;
 using namespace WebKitTests;
 using ::testing::Mock;
 using ::testing::_;

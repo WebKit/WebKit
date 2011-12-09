@@ -68,7 +68,6 @@ class CCLayerImpl;
 class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
-class NonCompositedContentHost;
 class TrackingTextureAllocator;
 class LayerRendererSwapBuffersCompleteCallbackAdapter;
 

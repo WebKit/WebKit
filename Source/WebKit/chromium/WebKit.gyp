@@ -431,6 +431,8 @@
                 'src/InspectorClientImpl.h',
                 'src/InspectorFrontendClientImpl.cpp',
                 'src/InspectorFrontendClientImpl.h',
+                'src/NonCompositedContentHost.cpp',
+                'src/NonCompositedContentHost.h',
                 'src/android/WebInputEventFactory.cpp',
                 'src/linux/WebFontInfo.cpp',
                 'src/linux/WebFontRendering.cpp',

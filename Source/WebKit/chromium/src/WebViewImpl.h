@@ -61,7 +61,6 @@ class GraphicsContext3D;
 class HistoryItem;
 class HitTestResult;
 class KeyboardEvent;
-class NonCompositedContentHost;
 class Page;
 class PlatformKeyboardEvent;
 class PopupContainer;
@@ -81,6 +80,7 @@ class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
 class GeolocationClientProxy;
+class NonCompositedContentHost;
 class SpeechInputClientImpl;
 class UserMediaClientImpl;
 class WebAccessibilityObject;
@@ -422,7 +422,7 @@ public:
     void setRootLayerNeedsDisplay();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
-    WebCore::NonCompositedContentHost* nonCompositedContentHost();
+    NonCompositedContentHost* nonCompositedContentHost();
 #endif
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation();
@@ -646,7 +646,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
-    OwnPtr<WebCore::NonCompositedContentHost> m_nonCompositedContentHost;
+    OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
     RefPtr<WebCore::CCLayerTreeHost> m_layerTreeHost;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;

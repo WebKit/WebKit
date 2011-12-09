@@ -33,12 +33,12 @@
 #include "LayerPainterChromium.h"
 #include "cc/CCLayerTreeHost.h"
 
-namespace WebCore {
+namespace WebKit {
 
-NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<LayerPainterChromium> contentPaint)
+NonCompositedContentHost::NonCompositedContentHost(PassOwnPtr<WebCore::LayerPainterChromium> contentPaint)
     : m_contentPaint(contentPaint)
 {
-    m_graphicsLayer = GraphicsLayer::create(this);
+    m_graphicsLayer = WebCore::GraphicsLayer::create(this);
 #ifndef NDEBUG
     m_graphicsLayer->setName("non-composited content");
 #endif
@@ -51,15 +51,15 @@ NonCompositedContentHost::~NonCompositedContentHost()
 {
 }
 
-void NonCompositedContentHost::setBackgroundColor(const Color& color)
+void NonCompositedContentHost::setBackgroundColor(const WebCore::Color& color)
 {
     if (color.isValid())
         m_graphicsLayer->platformLayer()->setBackgroundColor(color);
     else
-        m_graphicsLayer->platformLayer()->setBackgroundColor(Color::white);
+        m_graphicsLayer->platformLayer()->setBackgroundColor(WebCore::Color::white);
 }
 
-void NonCompositedContentHost::setScrollLayer(GraphicsLayer* layer)
+void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
 {
     m_graphicsLayer->setNeedsDisplay();
 
@@ -76,7 +76,7 @@ void NonCompositedContentHost::setScrollLayer(GraphicsLayer* layer)
     ASSERT(scrollLayer());
 }
 
-void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition, float pageScale)
+void NonCompositedContentHost::setViewport(const WebCore::IntSize& viewportSize, const WebCore::IntSize& contentsSize, const WebCore::IntPoint& scrollPosition, float pageScale)
 {
     if (!scrollLayer())
         return;
@@ -97,7 +97,7 @@ void NonCompositedContentHost::setViewport(const IntSize& viewportSize, const In
         m_graphicsLayer->deviceOrPageScaleFactorChanged();
 }
 
-LayerChromium* NonCompositedContentHost::scrollLayer()
+WebCore::LayerChromium* NonCompositedContentHost::scrollLayer()
 {
     if (!m_graphicsLayer->parent())
         return 0;
@@ -109,24 +109,24 @@ void NonCompositedContentHost::protectVisibleTileTextures()
     m_graphicsLayer->platformLayer()->protectVisibleTileTextures();
 }
 
-void NonCompositedContentHost::invalidateRect(const IntRect& rect)
+void NonCompositedContentHost::invalidateRect(const WebCore::IntRect& rect)
 {
-    m_graphicsLayer->setNeedsDisplayInRect(FloatRect(rect));
+    m_graphicsLayer->setNeedsDisplayInRect(WebCore::FloatRect(rect));
 }
 
-void NonCompositedContentHost::notifyAnimationStarted(const GraphicsLayer*, double /* time */)
+void NonCompositedContentHost::notifyAnimationStarted(const WebCore::GraphicsLayer*, double /* time */)
 {
     // Intentionally left empty since we don't support animations on the non-composited content.
 }
 
-void NonCompositedContentHost::notifySyncRequired(const GraphicsLayer*)
+void NonCompositedContentHost::notifySyncRequired(const WebCore::GraphicsLayer*)
 {
-    CCLayerTreeHost* layerTreeHost = m_graphicsLayer->platformLayer()->layerTreeHost();
+    WebCore::CCLayerTreeHost* layerTreeHost = m_graphicsLayer->platformLayer()->layerTreeHost();
     if (layerTreeHost)
         layerTreeHost->setNeedsCommit();
 }
 
-void NonCompositedContentHost::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
 {
     m_contentPaint->paint(context, clipRect);
 }
@@ -141,4 +141,4 @@ bool NonCompositedContentHost::showRepaintCounter() const
     return false;
 }
 
-} // namespace WebCore
+} // namespace WebKit
