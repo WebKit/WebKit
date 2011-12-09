@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function test() {
+    if (window.eventSender) {
+        var height = document.body.scrollHeight + 100;
+        eventSender.dragMode = false;
+        eventSender.mouseMoveTo(20, 100);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(20, height);
+        setTimeout(testAutoScroll, 200);
+        eventSender.keyDown('a');
+    } else {
+        debug("Test manually that scrolling does not stop if we press a key while autoscroll is happening.");
+    }
+}
+
+function testAutoScroll() {
+    shouldBe('document.body.scrollTop + window.innerHeight', 'document.body.scrollHeight');
+    finishJSTest();
+}
+
+successfullyParsed = true;
+</script>
+</head>
+<body onload="test()">
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+Lots of text</br>Lots of text</br>
+<div id="console"></div>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

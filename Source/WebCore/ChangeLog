@@ -1,3 +1,19 @@
+2011-12-08  Rakesh KN  <rakesh.kn@motorola.com>
+
+        keyboard event doesn't fire while moving mouse with button pressed
+        https://bugs.webkit.org/show_bug.cgi?id=73821
+
+        Reviewed by Alexey Proskuryakov.
+
+        Autoscroll should not stop on key press.
+
+        Test: fast/events/autoscroll-should-not-stop-on-keypress.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+        Removed the check for autoscroll so that autoscroll is not stopped on
+        key press and key event is processed. 
+
 2011-12-08  Anders Carlsson  <andersca@apple.com>
 
         Add scrollAnimator getter method to WebScrollbarPainterDelegate
