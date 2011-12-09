@@ -2684,37 +2684,35 @@ void SpeculativeJIT::compile(Node& node)
             break;            
         }
 
-        ASSERT(node.child3() == NoNode);
-        SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
-        GPRTemporary storage(this);
+        StorageOperand storage(this, node.child3());
         GPRTemporary resultTag(this);
-
-        GPRReg baseReg = base.gpr();
+        GPRTemporary resultPayload(this);
+        
         GPRReg propertyReg = property.gpr();
         GPRReg storageReg = storage.gpr();
         
         if (!m_compileOkay)
             return;
 
-        // Get the array storage. We haven't yet checked this is a JSArray, so this is only safe if
-        // an access with offset JSArray::storageOffset() is valid for all JSCells!
-        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
-
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
-        if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
-            speculationCheck(JSValueSource::unboxedCell(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
-        speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
+        {
+            SpeculateCellOperand base(this, node.child1());
+            GPRReg baseReg = base.gpr();
+            if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
+                speculationCheck(JSValueSource::unboxedCell(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+            speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
+        }
 
         // FIXME: In cases where there are subsequent by_val accesses to the same base it might help to cache
         // the storage pointer - especially if there happens to be another register free right now. If we do so,
         // then we'll need to allocate a new temporary for result.
         m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag.gpr());
         speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
-        m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), storageReg);
+        m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload.gpr());
 
-        jsValueResult(resultTag.gpr(), storageReg, m_compileIndex);
+        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
         break;
     }
 
@@ -3658,7 +3656,12 @@ void SpeculativeJIT::compile(Node& node)
         storageResult(resultGPR, m_compileIndex);
         break;
     }
-        
+
+    case GetIndexedPropertyStorage: {
+        compileGetIndexedPropertyStorage(node);
+        break;
+    }
+
     case GetByOffset: {
         StorageOperand storage(this, node.child1());
         GPRTemporary resultTag(this, storage);

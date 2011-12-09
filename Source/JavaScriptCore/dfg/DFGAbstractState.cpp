@@ -758,12 +758,71 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).set(node.structureTransitionData().newStructure);
         m_haveStructures = true;
         break;
-            
     case GetPropertyStorage:
         forNode(node.child1()).filter(PredictCell);
         forNode(nodeIndex).clear(); // The result is not a JS value.
         break;
-            
+    case GetIndexedPropertyStorage: {
+        PredictedType basePrediction = m_graph[node.child2()].prediction();
+        if (!(basePrediction & PredictInt32) && basePrediction) {
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].prediction() == PredictString) {
+            forNode(node.child1()).filter(PredictString);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateByteArray()) {
+            forNode(node.child1()).filter(PredictByteArray);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        
+        if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
+            forNode(node.child1()).filter(PredictInt8Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
+            forNode(node.child1()).filter(PredictInt16Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
+            forNode(node.child1()).filter(PredictInt32Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
+            forNode(node.child1()).filter(PredictUint8Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
+            forNode(node.child1()).filter(PredictUint16Array);
+            forNode(nodeIndex).set(PredictOther);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
+            forNode(node.child1()).filter(PredictUint32Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        forNode(node.child1()).filter(PredictArray);
+        forNode(nodeIndex).clear();
+        break; 
+    }
     case GetByOffset:
         forNode(node.child1()).filter(PredictCell);
         forNode(nodeIndex).makeTop();

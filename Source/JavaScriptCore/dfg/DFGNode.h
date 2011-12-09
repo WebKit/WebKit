@@ -233,6 +233,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(CheckStructure, NodeMustGenerate) \
     macro(PutStructure, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetPropertyStorage, NodeResultStorage) \
+    macro(GetIndexedPropertyStorage, NodeMustGenerate | NodeResultStorage) \
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetArrayLength, NodeResultInt32) \

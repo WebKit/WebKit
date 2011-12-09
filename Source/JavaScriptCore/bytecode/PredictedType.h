@@ -60,6 +60,7 @@ static const PredictedType PredictNumber        = 0x00018000; // It's either an 
 static const PredictedType PredictBoolean       = 0x00020000; // It's definitely a Boolean.
 static const PredictedType PredictOther         = 0x40000000; // It's definitely none of the above.
 static const PredictedType PredictTop           = 0x7fffffff; // It can be any of the above.
+static const PredictedType FixedIndexedStorageMask = PredictByteArray | PredictInt8Array | PredictInt16Array | PredictInt32Array | PredictUint8Array | PredictUint16Array | PredictUint32Array | PredictFloat32Array | PredictFloat64Array;
 
 typedef bool (*PredictionChecker)(PredictedType);
 
@@ -81,6 +82,11 @@ inline bool isFinalObjectPrediction(PredictedType value)
 inline bool isFinalObjectOrOtherPrediction(PredictedType value)
 {
     return !!(value & (PredictFinalObject | PredictOther)) && !(value & ~(PredictFinalObject | PredictOther));
+}
+
+inline bool isFixedIndexedStorageObjectPrediction(PredictedType value)
+{
+    return (value & FixedIndexedStorageMask) == value;
 }
 
 inline bool isStringPrediction(PredictedType value)

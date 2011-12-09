@@ -1,3 +1,44 @@
+2011-12-09  Oliver Hunt  <oliver@apple.com>
+
+        Avoid reloading storage pointer for indexed properties unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=74136
+
+        Reviewed by Filip Pizlo.
+
+        Add a node to represent loading property storage for indexed properties.
+        This allows us to reduce code generated for sequential access of arrays,
+        strings, etc.  This results in up to 5% improvement in code that is 
+        very heavy on indexed reads, such as matrix operations in typed arrays
+        and 20% faster on microbenchmarks.
+
+        Currently this is only supported by GetByVal and other similar indexed reads.
+
+        * bytecode/PredictedType.h:
+        (JSC::isFixedIndexedStorageObjectPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnByteArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-08  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Enable viewport metatag

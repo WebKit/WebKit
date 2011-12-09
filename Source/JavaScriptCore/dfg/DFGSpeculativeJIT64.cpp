@@ -2689,10 +2689,9 @@ void SpeculativeJIT::compile(Node& node)
             break;            
         }
 
-        ASSERT(node.child3() == NoNode);
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
-        GPRTemporary storage(this);
+        StorageOperand storage(this, node.child3());
 
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
@@ -2701,12 +2700,6 @@ void SpeculativeJIT::compile(Node& node)
         if (!m_compileOkay)
             return;
 
-        // Get the array storage. We haven't yet checked this is a JSArray, so this is only safe if
-        // an access with offset JSArray::storageOffset() is valid for all JSCells!
-        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
-
-        // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-        // If we have predicted the base to be type array, we can skip the check.
         if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
             speculationCheck(JSValueRegs(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
         speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
@@ -2714,7 +2707,7 @@ void SpeculativeJIT::compile(Node& node)
         // FIXME: In cases where there are subsequent by_val accesses to the same base it might help to cache
         // the storage pointer - especially if there happens to be another register free right now. If we do so,
         // then we'll need to allocate a new temporary for result.
-        GPRTemporary& result = storage;
+        GPRTemporary result(this);
         m_jit.loadPtr(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), result.gpr());
         speculationCheck(JSValueRegs(), NoNode, m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
 
@@ -2864,7 +2857,7 @@ void SpeculativeJIT::compile(Node& node)
     case PutByValAlias: {
         PredictedType basePrediction = at(node.child2()).prediction();
         ASSERT_UNUSED(basePrediction, (basePrediction & PredictInt32) || !basePrediction);
-            
+
         SpeculateCellOperand base(this, node.child1());
         SpeculateStrictInt32Operand property(this, node.child2());
         if (at(node.child1()).shouldSpeculateByteArray()) {
@@ -3608,6 +3601,11 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
         
         storageResult(resultGPR, m_compileIndex);
+        break;
+    }
+
+    case GetIndexedPropertyStorage: {
+        compileGetIndexedPropertyStorage(node);
         break;
     }
         

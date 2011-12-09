@@ -1207,8 +1207,11 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     case CharCodeAtIntrinsic: {
         if (firstArg + 1 != lastArg)
             return false;
-
-        NodeIndex charCode = addToGraph(StringCharCodeAt, get(firstArg), getToInt32(firstArg + 1));
+        if (!(m_graph[get(firstArg)].prediction() & PredictString))
+            return false;
+        
+        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(firstArg), getToInt32(firstArg + 1));
+        NodeIndex charCode = addToGraph(StringCharCodeAt, get(firstArg), getToInt32(firstArg + 1), storage);
         if (usesResult)
             set(resultOperand, charCode);
         return true;
@@ -1217,8 +1220,11 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     case CharAtIntrinsic: {
         if (firstArg + 1 != lastArg)
             return false;
-        
-        NodeIndex charCode = addToGraph(StringCharAt, get(firstArg), getToInt32(firstArg + 1));
+        if (!(m_graph[get(firstArg)].prediction() & PredictString))
+            return false;
+
+        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(firstArg), getToInt32(firstArg + 1));
+        NodeIndex charCode = addToGraph(StringCharAt, get(firstArg), getToInt32(firstArg + 1), storage);
         if (usesResult)
             set(resultOperand, charCode);
         return true;
@@ -1611,8 +1617,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
-
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property);
+            NodeIndex propertyStorage = addToGraph(GetIndexedPropertyStorage, base, property);
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property, propertyStorage);
             set(currentInstruction[1].u.operand, getByVal);
 
             NEXT_OPCODE(op_get_by_val);

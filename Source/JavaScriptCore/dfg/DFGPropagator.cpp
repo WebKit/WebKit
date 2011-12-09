@@ -472,11 +472,12 @@ private:
             break;
         }
             
-        case GetPropertyStorage: {
+        case GetPropertyStorage: 
+        case GetIndexedPropertyStorage: {
             changed |= setPrediction(PredictOther);
             break;
         }
-            
+
         case GetByOffset: {
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
@@ -809,7 +810,23 @@ private:
                 ASSERT_NOT_REACHED();
             break;
         }
-            
+        case GetIndexedPropertyStorage: {
+            PredictedType basePrediction = m_graph[node.child2()].prediction();
+            if (!(basePrediction & PredictInt32) && basePrediction) {
+                node.op = Phantom;
+                node.children.fixed.child1 = NoNode;
+                node.children.fixed.child2 = NoNode;
+                node.children.fixed.child3 = NoNode;
+            }
+            break;
+        }
+        case GetByVal:
+        case StringCharAt:
+        case StringCharCodeAt: {
+            if (node.child3() != NoNode && m_graph[node.child3()].op == Phantom)
+                node.children.fixed.child3 = NoNode;
+            break;
+        }
         default:
             break;
         }
@@ -1214,6 +1231,41 @@ private:
         }
         return NoNode;
     }
+
+    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, bool hasIntegerIndexPrediction)
+    {
+        NodeIndex start = startIndexForChildren(child1);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            switch (node.op) {
+            case GetIndexedPropertyStorage: {
+                PredictedType basePrediction = m_graph[node.child2()].prediction();
+                bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
+                if (node.child1() == child1 && hasIntegerIndexPrediction == nodeHasIntegerIndexPrediction)
+                    return index;
+                break;
+            }
+
+            case PutByOffset:
+            case PutStructure:
+                // Changing the structure or putting to the storage cannot
+                // change the property storage pointer.
+                break;
+
+            case PutByVal:
+            case PutByValAlias:
+                if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && byValIsPure(node))
+                    break;
+                return NoNode;
+
+            default:
+                if (clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
+        }
+        return NoNode;
+    }
     
     NodeIndex getScopeChainLoadElimination(unsigned depth)
     {
@@ -1403,11 +1455,18 @@ private:
             if (checkFunctionElimination(node.function(), node.child1()))
                 eliminate();
             break;
+                
+        case GetIndexedPropertyStorage: {
+            PredictedType basePrediction = m_graph[node.child2()].prediction();
+            bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
+            setReplacement(getIndexedPropertyStorageLoadElimination(node.child1(), nodeHasIntegerIndexPrediction));
+            break;
+        }
 
         case GetPropertyStorage:
             setReplacement(getPropertyStorageLoadElimination(node.child1()));
             break;
-            
+
         case GetByOffset:
             setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1()));
             break;
