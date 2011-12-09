@@ -97,7 +97,9 @@ PASS resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue i
 PASS resultElement.role is 'AXRole: AXTextField'
 PASS resultElement.role is 'AXRole: AXGroup'
 PASS resultElement.childAtIndex(0).stringValue is 'AXValue: sans-serif black bold text with underline'
-PASS resultElement.role is 'AXRole: AXLink'
+PASS resultElement.boolAttributeValue('AXVisited') is false
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
+PASS resultElement.boolAttributeValue('AXVisited') is true
 PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
 PASS resultElement.role is 'AXRole: AXStaticText'
 PASS resultElement.stringValue is 'AXValue: sans-serif black bold text with underline'

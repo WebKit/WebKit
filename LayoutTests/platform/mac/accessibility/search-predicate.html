@@ -43,201 +43,149 @@
     description("This tests the ability to search for accessible elements by key or text.");
     
     if (window.accessibilityController) {
+        window.layoutTestController.keepWebHistory();
+        
         document.getElementById("body").focus();
         var containerElement = accessibilityController.focusedElement;
         var startElement;
-        var isDirectionNext;
-        var searchKey;
-        var searchText = "";
         var resultElement;
         
         // Any element.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXAnyTypeSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXAnyTypeSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
         
         // Same level blockquote.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXBlockquoteSameLevelSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXBlockquoteSameLevelSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second blockquote level 1'");
         
         // Blockquote.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXBlockquoteSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXBlockquoteSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second blockquote level 1'");
         
         // Bold font.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXBoldFontSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXBoldFontSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: sans-serif black bold text with underline'");
         
         // Button.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXButtonSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXButtonSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXButton'");
         
         // Check box.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXCheckBoxSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXCheckBoxSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXCheckBox'");
         
         // Control.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXCheckBoxSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXCheckBoxSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXCheckBox'");
         
         // Different type element.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXDifferentTypeSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXDifferentTypeSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
         
         // Font change.
         startElement = accessibilityController.focusedElement.childAtIndex(2);
-        isDirectionNext = true;
-        searchKey = "AXFontChangeSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXFontChangeSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
         
         // Font color change.
         startElement = accessibilityController.focusedElement.childAtIndex(2);
-        isDirectionNext = true;
-        searchKey = "AXFontColorChangeSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXFontColorChangeSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
         
-        // Frame.
-        // FIXME: Handle this search key.
-        
         // Graphic.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXGraphicSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXGraphicSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXImage'");
         
         // Heading level 1.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingLevel1SearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel1SearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: first heading level 1'");
         
         // Heading level 2.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingLevel2SearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel2SearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
         
         // Heading level 3.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingLevel3SearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel3SearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 3'");
         
         // Heading level 4.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingLevel4SearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel4SearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 4'");
         
         // Heading level 5.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingLevel5SearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel5SearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 5'");
         
         // Heading level 6.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingLevel6SearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingLevel6SearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 6'");
         
         // Same level heading.
         startElement = accessibilityController.focusedElement.childAtIndex(6);
-        isDirectionNext = true;
-        searchKey = "AXHeadingSameLevelSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingSameLevelSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second heading level 1'");
         
         // Heading.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXHeadingSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXHeadingSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXHeading'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: first heading level 1'");
         
         // Italic font.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXItalicFontSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXItalicFontSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
         
         // Landmark.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXLandmarkSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLandmarkSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.subrole", "'AXSubrole: AXLandmarkBanner'");
         
         // Link.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXLinkSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLinkSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXLink'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
         
         // List.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXListSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXListSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXList'");
         
         // Live Region.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXLiveRegionSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXLiveRegionSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.stringAttributeValue('AXARIALive')", "'polite'");
         
@@ -246,91 +194,72 @@
         
         // Plain text.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXPlainTextSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXPlainTextSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
         
         // Radio group.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXRadioGroupSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXRadioGroupSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXRadioGroup'");
         
         // Same type element.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXSameTypeSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXSameTypeSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: second blockquote level 1'");
         
         // Static text.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXStaticTextSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXStaticTextSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: first blockquote level 1'");
         
         // Style change.
         startElement = accessibilityController.focusedElement.childAtIndex(2);
-        isDirectionNext = true;
-        searchKey = "AXStyleChangeSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXStyleChangeSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: serif blue italic text'");
         
         // Same level table.
         startElement = accessibilityController.focusedElement.childAtIndex(18);
-        isDirectionNext = true;
-        searchKey = "AXTableSameLevelSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXTableSameLevelSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXTable'");
         shouldBe("resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: second table heading level 1'");
         
         // Table.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXTableSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXTableSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXTable'");
         shouldBe("resultElement.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: first table heading level 1'");
         
         // Text field.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXTextFieldSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXTextFieldSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXTextField'");
         
         // Underline.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXUnderlineSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnderlineSearchKey", "");
         shouldBe("resultElement.role", "'AXRole: AXGroup'");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: sans-serif black bold text with underline'");
         
         // Unvisited link.
         startElement = accessibilityController.focusedElement.childAtIndex(0);
-        isDirectionNext = true;
-        searchKey = "AXUnvisitedLinkSearchKey";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
-        shouldBe("resultElement.role", "'AXRole: AXLink'");
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXUnvisitedLinkSearchKey", "");
+        shouldBe("resultElement.boolAttributeValue('AXVisited')", "false");
         shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
         
         // Visited link.
-        // FIXME: Handle this search key.
+        accessibilityController.focusedElement.childAtIndex(14).childAtIndex(0).press();
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, "AXVisitedLinkSearchKey", "");
+        shouldBe("resultElement.boolAttributeValue('AXVisited')", "true");
+        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
         
         // Previous text search.
         startElement = accessibilityController.focusedElement.childAtIndex(10);
-        isDirectionNext = false;
-        searchKey = "";
-        searchText = "sans-serif black bold text with underline";
-        resultElement = containerElement.uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "", "sans-serif black bold text with underline");
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: sans-serif black bold text with underline'");
     }
