@@ -105,7 +105,7 @@ static NSSize abs(NSSize size)
     return self;
 }
 
-- (void)scrollAnimatorDestroyed
+- (void)invalidate
 {
     _animator = 0;
 }
@@ -350,7 +350,7 @@ enum FeatureToAnimate {
     _scrollbar->invalidate();
 }
 
-- (void)scrollAnimatorDestroyed
+- (void)invalidate
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [self stopAnimation];
@@ -542,13 +542,13 @@ enum FeatureToAnimate {
     UNUSED_PARAM(newOverlayScrollerState);
 }
 
-- (void)scrollAnimatorDestroyed
+- (void)invalidate
 {
     _scrollbar = 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [_knobAlphaAnimation.get() scrollAnimatorDestroyed];
-    [_trackAlphaAnimation.get() scrollAnimatorDestroyed];
-    [_uiStateTransitionAnimation.get() scrollAnimatorDestroyed];
+    [_knobAlphaAnimation.get() invalidate];
+    [_trackAlphaAnimation.get() invalidate];
+    [_uiStateTransitionAnimation.get() invalidate];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -593,9 +593,9 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_scrollbarPainterControllerDelegate.get() invalidate];
     [m_scrollbarPainterController.get() setDelegate:nil];
-    [m_horizontalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
-    [m_verticalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
-    [m_scrollAnimationHelperDelegate.get() scrollAnimatorDestroyed];
+    [m_horizontalScrollbarPainterDelegate.get() invalidate];
+    [m_verticalScrollbarPainterDelegate.get() invalidate];
+    [m_scrollAnimationHelperDelegate.get() invalidate];
     END_BLOCK_OBJC_EXCEPTIONS;
 #endif
 }
@@ -874,7 +874,7 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
         return;
 
     ASSERT(m_verticalScrollbarPainterDelegate);
-    [m_verticalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+    [m_verticalScrollbarPainterDelegate.get() invalidate];
     m_verticalScrollbarPainterDelegate = nullptr;
 
     [painter setDelegate:nil];
@@ -911,7 +911,7 @@ void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
         return;
 
     ASSERT(m_horizontalScrollbarPainterDelegate);
-    [m_horizontalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+    [m_horizontalScrollbarPainterDelegate.get() invalidate];
     m_horizontalScrollbarPainterDelegate = nullptr;
 
     [painter setDelegate:nil];

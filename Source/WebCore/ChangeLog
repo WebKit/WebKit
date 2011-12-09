@@ -1,5 +1,23 @@
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Rename scrollAnimatorDestroyed to invalidate
+        https://bugs.webkit.org/show_bug.cgi?id=74206
+
+        Reviewed by Sam Weinig.
+
+        Since these methods can be called when both scrollbars are destroyed and the scroll animator itself is
+        destroyed, rename it to something more neutral.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollAnimationHelperDelegate invalidate]):
+        (-[WebScrollbarPartAnimation invalidate]):
+        (-[WebScrollbarPainterDelegate invalidate]):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
         WebScrollbarPainterControllerDelegate should know about the ScrollableArea, not the ScrollAnimatorMac
         https://bugs.webkit.org/show_bug.cgi?id=74204
 
