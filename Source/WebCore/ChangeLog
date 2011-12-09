@@ -1,3 +1,54 @@
+2011-12-09  Eric Carlson  <eric.carlson@apple.com>
+
+        JSC wrappers for TextTrack and TextTrackCue should not be collected during event dispatch or when owner is reachable
+        https://bugs.webkit.org/show_bug.cgi?id=72179
+
+        Reviewed by Geoff Garen.
+
+        Tests: media/track/text-track-cue-is-reachable.html
+               media/track/text-track-is-reachable.html
+
+        * GNUmakefile.list.am: Add JSTextTrackCueCustom.cpp and JSTextTrackCustom.cpp.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSTextTrackCueCustom.cpp: Added.
+        (WebCore::JSTextTrackCueOwner::isReachableFromOpaqueRoots): New.
+        (WebCore::JSTextTrackCueOwner::visitChildren): New.
+
+        * bindings/js/JSTextTrackCustom.cpp: Added.
+        (WebCore::JSTextTrackOwner::isReachableFromOpaqueRoots): New.
+        (WebCore::JSTextTrack::visitChildren): New, mark all cues.
+        * bindings/js/JSTextTrackCustom.h: Added.
+        (WebCore::root): New.
+
+        * bindings/js/JSTextTrackListCustom.cpp:
+        (WebCore::JSTextTrackList::visitChildren): New, mark all tracks.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::trackWillBeRemoved): TextTracks::remove now takes a TextTrack*.
+
+        * html/LoadableTextTrack.h:
+        (WebCore::LoadableTextTrack::trackElement): New, return the <track>.
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Initialize m_mediaElement.
+        * html/TextTrack.h:
+        (WebCore::TextTrack::setMediaElement): New.
+        (WebCore::TextTrack::mediaElement): Ditto.
+
+        * html/TextTrack.idl: Add CustomIsReachable and CustomMarkFunction.
+
+        * html/TextTrackCue.idl: Add CustomIsReachable.
+
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::append): Set track's media element.
+        (TextTrackList::remove): Clear track's media element. Take a raw ptr, not a PassRefPtr.
+        * html/track/TextTrackList.h:
+        * html/track/TextTrackList.idl: Add CustomMarkFunction
+
 2011-12-09  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit should ignore images with @alt matching only whitespace

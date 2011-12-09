@@ -31,7 +31,9 @@ module html {
         GenerateNativeConverter,
         Constructor(in DOMString id, in double startTime, in double endTime, in DOMString text, in [Optional=CallWithDefaultValue] DOMString settings, in [Optional=CallWithDefaultValue] boolean pauseOnExit),
         CallWith=ScriptExecutionContext,
-        EventTarget
+        EventTarget,
+        CustomMarkFunction,
+        CustomIsReachable
     ] TextTrackCue {
         readonly attribute TextTrack track;
         readonly attribute DOMString id;

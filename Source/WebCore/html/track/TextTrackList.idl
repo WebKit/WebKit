@@ -30,6 +30,7 @@ module html {
         EnabledAtRuntime=webkitVideoTrack,
         HasIndexGetter,
         EventTarget,
+        CustomMarkFunction,
         CustomIsReachable
     ] TextTrackList {
         readonly attribute unsigned long length;

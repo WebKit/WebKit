@@ -1,0 +1,16 @@
+Ensure that a TextTrack won't be collected if it has a custom property.
+
+** Validate.
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (video.textTracks[0].kind == 'captions') OK
+
+** Add a custom property to the track.
+RUN(video.textTracks[0].myProperty = 'egg salad!?')
+EXPECTED (video.textTracks[0].myProperty == 'egg salad!?') OK
+
+** Force garbage collection.
+EXPECTED (video.textTracks[0].cues.length == '4') OK
+EXPECTED (video.textTracks[0].myProperty == 'egg salad!?') OK
+
+END OF TEST
+

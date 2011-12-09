@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class HTMLMediaElement;
 class TextTrack;
 class TextTrackCue;
 class TextTrackCueList;
@@ -58,6 +59,9 @@ public:
         return adoptRef(new TextTrack(context, client, kind, label, language, AddTrack));
     }
     virtual ~TextTrack();
+    
+    void setMediaElement(HTMLMediaElement* element) { m_mediaElement = element; }
+    HTMLMediaElement* mediaElement() { return m_mediaElement; }
 
     String kind() const { return m_kind; }
     void setKind(const String&);
@@ -104,6 +108,7 @@ protected:
     RefPtr<TextTrackCueList> m_cues;
 
 private:
+    HTMLMediaElement* m_mediaElement;
     String m_kind;
     String m_label;
     String m_language;

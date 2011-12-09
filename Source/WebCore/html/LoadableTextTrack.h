@@ -59,6 +59,7 @@ public:
     virtual void clearClient();
     
     size_t trackElementIndex();
+    HTMLTrackElement* trackElement() { return m_trackElement; }
 
 private:
     // TextTrackLoaderClient

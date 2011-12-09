@@ -2208,7 +2208,7 @@ void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
     // When a track element's parent element changes and the old parent was a media element, 
     // then the user agent must remove the track element's corresponding text track from the 
     // media element's list of text tracks.
-    m_textTracks->remove(textTrack);
+    m_textTracks->remove(textTrack.get());
 }
 #endif
 

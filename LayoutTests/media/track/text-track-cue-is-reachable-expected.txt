@@ -1,0 +1,16 @@
+Ensure that a TextTrackCue won't be collected if it has a custom property.
+
+** Validate.
+EXPECTED (video.textTracks[0].cues.length == '4') OK
+EXPECTED (video.textTracks[0].cues[1].startTime == '31') OK
+
+** Add a custom property to a cue.
+RUN(video.textTracks[0].cues[1].myProperty = 'tuna salad?')
+EXPECTED (video.textTracks[0].cues[1].myProperty == 'tuna salad?') OK
+
+** Force garbage collection.
+EXPECTED (video.textTracks[0].cues.length == '4') OK
+EXPECTED (video.textTracks[0].cues[1].myProperty == 'tuna salad?') OK
+
+END OF TEST
+

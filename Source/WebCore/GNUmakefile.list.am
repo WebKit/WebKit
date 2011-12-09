@@ -853,6 +853,9 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSStyleSheetCustom.cpp \
 	Source/WebCore/bindings/js/JSStyleSheetListCustom.cpp \
 	Source/WebCore/bindings/js/JSTextCustom.cpp \
+	Source/WebCore/bindings/js/JSTextTrackCueCustom.cpp \
+	Source/WebCore/bindings/js/JSTextTrackCustom.cpp \
+	Source/WebCore/bindings/js/JSTextTrackCustom.h \
 	Source/WebCore/bindings/js/JSTextTrackListCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchCustom.cpp \
 	Source/WebCore/bindings/js/JSTouchListCustom.cpp \

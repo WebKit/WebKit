@@ -136,6 +136,8 @@
 #include "JSStyleSheetCustom.cpp"
 #include "JSStyleSheetListCustom.cpp"
 #include "JSTextCustom.cpp"
+#include "JSTextTrackCueCustom.cpp"
+#include "JSTextTrackCustom.cpp"
 #include "JSTextTrackListCustom.cpp"
 #include "JSTouchCustom.cpp"
 #include "JSTouchListCustom.cpp"

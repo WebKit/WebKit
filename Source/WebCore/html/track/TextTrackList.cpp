@@ -74,23 +74,26 @@ TextTrack* TextTrackList::item(unsigned index)
     return 0;
 }
 
-void TextTrackList::append(PassRefPtr<TextTrack> track)
+void TextTrackList::append(PassRefPtr<TextTrack> prpTrack)
 {
-    RefPtr<TextTrack> trackRef = track;
+    RefPtr<TextTrack> track = prpTrack;
     
-    if (trackRef->trackType() == TextTrack::AddTrack)
-        m_addTrackTracks.append(trackRef);
-    else if (trackRef->trackType() == TextTrack::TrackElement) {
+    if (track->trackType() == TextTrack::AddTrack)
+        m_addTrackTracks.append(track);
+    else if (track->trackType() == TextTrack::TrackElement) {
         // Insert tracks added for <track> element in tree order.
-        size_t index = static_cast<LoadableTextTrack*>(trackRef.get())->trackElementIndex();
-        m_elementTracks.insert(index, trackRef);
+        size_t index = static_cast<LoadableTextTrack*>(track.get())->trackElementIndex();
+        m_elementTracks.insert(index, track);
     } else
         ASSERT_NOT_REACHED();
 
-    scheduleAddTrackEvent(trackRef);
+    ASSERT(!track->mediaElement() || track->mediaElement() == owner());
+    track->setMediaElement(owner());
+
+    scheduleAddTrackEvent(track.release());
 }
 
-void TextTrackList::remove(PassRefPtr<TextTrack> track)
+void TextTrackList::remove(TextTrack* track)
 {
     Vector<RefPtr<TextTrack> >* tracks = 0;
 
@@ -104,8 +107,11 @@ void TextTrackList::remove(PassRefPtr<TextTrack> track)
     size_t index = tracks->find(track);
     if (index == notFound)
         return;
-    tracks->remove(index);
 
+    ASSERT(track->mediaElement() == owner());
+    track->setMediaElement(0);
+
+    tracks->remove(index);
 }
 
 const AtomicString& TextTrackList::interfaceName() const

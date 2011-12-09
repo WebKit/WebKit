@@ -53,7 +53,7 @@ public:
     unsigned length() const;
     TextTrack* item(unsigned index);
     void append(PassRefPtr<TextTrack>);
-    void remove(PassRefPtr<TextTrack>);
+    void remove(TextTrack*);
 
     // EventTarget
     virtual const AtomicString& interfaceName() const;

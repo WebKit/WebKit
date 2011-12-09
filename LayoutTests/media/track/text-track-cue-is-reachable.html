@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../video-test.js></script>
+        <script>
+
+            function forceGC()
+            {
+                if (window.GCController)
+                    return GCController.collect();
+            
+                // Force garbage collection
+                for (var ndx = 0; ndx < 99000; ndx++)
+                    var str = new String("1234");
+            }
+
+            function trackLoaded()
+            {
+                findMediaElement();
+
+                consoleWrite("** Validate.");
+                testExpected("video.textTracks[0].cues.length", 4);
+                testExpected("video.textTracks[0].cues[1].startTime", 31);
+
+                consoleWrite("<br>** Add a custom property to a cue.");
+                run("video.textTracks[0].cues[1].myProperty = 'tuna salad?'");
+                testExpected("video.textTracks[0].cues[1].myProperty", "tuna salad?");
+
+                consoleWrite("<br>** Force garbage collection.");
+                forceGC();
+                testExpected("video.textTracks[0].cues.length", 4);
+                testExpected("video.textTracks[0].cues[1].myProperty", "tuna salad?");
+
+                consoleWrite("");
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Ensure that a TextTrackCue won't be collected if it has a custom property.</p>
+        <video>
+            <track src="captions-webvtt/tc013-settings.vtt" kind="captions" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>

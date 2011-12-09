@@ -52,6 +52,19 @@ bool JSTextTrackListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> 
     return visitor.containsOpaqueRoot(root(textTrackList->owner()));
 }
 
+void JSTextTrackList::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSTextTrackList* jsTextTrackList = jsCast<JSTextTrackList*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(jsTextTrackList, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(jsTextTrackList->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(jsTextTrackList, visitor);
+    
+    TextTrackList* textTrackList = static_cast<TextTrackList*>(jsTextTrackList->impl());
+    visitor.addOpaqueRoot(root(textTrackList->owner()));
+    textTrackList->visitJSEventListeners(visitor);
+}
+    
 } // namespace WebCore
 
 #endif

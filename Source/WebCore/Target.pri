@@ -3574,9 +3574,12 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
             bindings/v8/custom/V8TrackEventCustom.cpp
     } else {
         SOURCES += \
+            bindings/js/JSTextTrackCueCustom.cpp \
+            bindings/js/JSTextTrackCustom.cpp \
+            bindings/js/JSTextTrackCustom.h \
             bindings/js/JSTrackCustom.cpp \
             bindings/js/JSTrackCustom.h \
-            bindings/js/JSTrackEventCustom.cpp
+            bindings/js/JSTrackEventCustom.cpp \
             bindings/js/JSTextTrackListCustom.cpp
     }
 }
