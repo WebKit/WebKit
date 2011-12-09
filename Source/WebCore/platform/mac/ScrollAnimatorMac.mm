@@ -592,8 +592,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     m_scrollbarPainterController = [[[NSClassFromString(@"NSScrollerImpPair") alloc] init] autorelease];
     [m_scrollbarPainterController.get() setDelegate:m_scrollbarPainterControllerDelegate.get()];
     [m_scrollbarPainterController.get() setScrollerStyle:wkRecommendedScrollerStyle()];
-
-    m_scrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
 #endif
 }
 
@@ -603,7 +601,8 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_scrollbarPainterControllerDelegate.get() scrollAnimatorDestroyed];
     [m_scrollbarPainterController.get() setDelegate:nil];
-    [m_scrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+    [m_horizontalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+    [m_verticalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
     [m_scrollAnimationHelperDelegate.get() scrollAnimatorDestroyed];
     END_BLOCK_OBJC_EXCEPTIONS;
 #endif
@@ -858,12 +857,18 @@ void ScrollAnimatorMac::didEndScrollGesture() const
 void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
-        [painter setDelegate:m_scrollbarPainterDelegate.get()];
-        [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
-        if (scrollableArea()->inLiveResize())
-            [painter setKnobAlpha:1];
-    }
+    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+    if (!painter)
+        return;
+
+    ASSERT(!m_verticalScrollbarPainterDelegate);
+    m_verticalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
+
+    [painter setDelegate:m_verticalScrollbarPainterDelegate.get()];
+    [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
+    if (scrollableArea()->inLiveResize())
+        [painter setKnobAlpha:1];
+
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -872,10 +877,16 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
-        [painter setDelegate:nil];
-        [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
-    }
+    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+    if (!painter)
+        return;
+
+    ASSERT(m_verticalScrollbarPainterDelegate);
+    [m_verticalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+    m_verticalScrollbarPainterDelegate = nullptr;
+
+    [painter setDelegate:nil];
+    [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -884,12 +895,17 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
-        [painter setDelegate:m_scrollbarPainterDelegate.get()];
-        [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
-        if (scrollableArea()->inLiveResize())
-            [painter setKnobAlpha:1];
-    }
+    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+    if (!painter)
+        return;
+
+    ASSERT(!m_horizontalScrollbarPainterDelegate);
+    m_horizontalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
+
+    [painter setDelegate:m_horizontalScrollbarPainterDelegate.get()];
+    [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
+    if (scrollableArea()->inLiveResize())
+        [painter setKnobAlpha:1];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -898,10 +914,16 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
-        [painter setDelegate:nil];
-        [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
-    }
+    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+    if (!painter)
+        return;
+
+    ASSERT(m_horizontalScrollbarPainterDelegate);
+    [m_horizontalScrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+    m_horizontalScrollbarPainterDelegate = nullptr;
+
+    [painter setDelegate:nil];
+    [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -914,7 +936,8 @@ void ScrollAnimatorMac::cancelAnimations()
 #if USE(SCROLLBAR_PAINTER)
     if (scrollbarPaintTimerIsActive())
         stopScrollbarPaintTimer();
-    [m_scrollbarPainterDelegate.get() cancelAnimations];
+    [m_horizontalScrollbarPainterDelegate.get() cancelAnimations];
+    [m_verticalScrollbarPainterDelegate.get() cancelAnimations];
 #endif
 }
 

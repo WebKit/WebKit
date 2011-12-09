@@ -106,7 +106,8 @@ private:
 #if USE(SCROLLBAR_PAINTER)
     RetainPtr<ScrollbarPainterController> m_scrollbarPainterController;
     RetainPtr<WebScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
-    RetainPtr<WebScrollbarPainterDelegate> m_scrollbarPainterDelegate;
+    RetainPtr<WebScrollbarPainterDelegate> m_horizontalScrollbarPainterDelegate;
+    RetainPtr<WebScrollbarPainterDelegate> m_verticalScrollbarPainterDelegate;
 
     void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*);
     Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;
