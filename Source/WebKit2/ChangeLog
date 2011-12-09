@@ -1,3 +1,18 @@
+2011-12-09  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebKit2][gtk] Re-enable running TestWebKitSettings
+        https://bugs.webkit.org/show_bug.cgi?id=70135
+
+        Reviewed by Martin Robinson.
+
+        Re-enable running TestWebKitSettings which was skipped as part
+        of https://bugs.webkit.org/show_bug.cgi?id=70129 due to the
+        bug https://bugs.webkit.org/show_bug.cgi?id=70127.
+
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (testWebKitSettings): Run testWebKitSettings.
+        (testWebKitSettingsNewWithSettings): Run testWebKitSettingsNewWithSettings.
+
 2011-12-08  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         [Qt] [WK2] Webkit should release TextureMapper GL objects if page paint node is deallocated.
