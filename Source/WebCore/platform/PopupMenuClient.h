@@ -63,7 +63,7 @@ public:
     virtual bool valueShouldChangeOnHotTrack() const = 0;
     virtual void setTextFromItem(unsigned listIndex) = 0;
 
-    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) { ASSERT_NOT_REACHED(); }
+    virtual void listBoxSelectItem(int /*listIndex*/, bool /*allowMultiplySelections*/, bool /*shift*/, bool /*fireOnChangeNow*/ = true) { ASSERT_NOT_REACHED(); }
     virtual bool multiple()
     {
         ASSERT_NOT_REACHED();

@@ -1,3 +1,12 @@
+2011-12-08  Kent Tamura  <tkent@chromium.org>
+
+        Build fix for r102419.
+        https://bugs.webkit.org/show_bug.cgi?id=73916
+
+        * platform/PopupMenuClient.h:
+        (WebCore::PopupMenuClient::listBoxSelectItem):
+        Remove unused argument names.
+
 2011-12-08  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.
