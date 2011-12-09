@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<ol contenteditable>
+    <li>Press enter
+</ol>
+<p>Then click here</p>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var list = document.querySelector('ol');
+    var p = document.querySelector('p');
+    var observerRuns = 0;
+    var observer = new WebKitMutationObserver(function() { ++observerRuns; });
+    observer.observe(list, {childList: true});
+    list.addEventListener('blur', function() {
+        document.body.innerHTML = observerRuns == 1 ? 'PASSED' : 'FAILED';
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    });
+    list.focus();
+    if (window.eventSender) {
+        eventSender.scheduleAsynchronousKeyDown('\n');
+        eventSender.mouseMoveTo(p.offsetLeft + p.offsetWidth / 2, p.offsetTop + p.offsetHeight / 2);
+        eventSender.scheduleAsynchronousClick();
+    }
+</script>
