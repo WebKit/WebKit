@@ -62,6 +62,8 @@ public:
 #if USE(SCROLLBAR_PAINTER)
     void setNewPainterForScrollbar(Scrollbar*, ScrollbarPainter);
     ScrollbarPainter painterForScrollbar(Scrollbar*);
+
+    static bool isCurrentlyDrawingIntoLayer();
 #endif
 
 protected:

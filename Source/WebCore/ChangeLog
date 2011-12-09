@@ -1,5 +1,23 @@
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Move the "is currently drawing into layer" flag out into ScrollbarThemeMac
+        https://bugs.webkit.org/show_bug.cgi?id=74217
+
+        Reviewed by Beth Dakin.
+
+        There's no need to store this flag inside ScrollAnimatorMac, just make it a global and put it in ScrollbarThemeMac instead.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate layer]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::isCurrentlyDrawingIntoLayer):
+        (WebCore::ScrollbarThemeMac::paint):
+
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
         Minor cleanup in ScrollAnimatorMac.mm
         https://bugs.webkit.org/show_bug.cgi?id=74211
 

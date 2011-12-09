@@ -413,7 +413,7 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return nil;
 
-    if (![self scrollAnimator]->isDrawingIntoLayer())
+    if (!ScrollbarThemeMac::isCurrentlyDrawingIntoLayer())
         return nil;
 
     // FIXME: This should attempt to return an actual layer.
@@ -558,7 +558,6 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     , m_scrollElasticityController(this)
     , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
 #endif
-    , m_drawingIntoLayer(false)
     , m_haveScrolledSincePageLoad(false)
     , m_needsScrollerStyleUpdate(false)
 {

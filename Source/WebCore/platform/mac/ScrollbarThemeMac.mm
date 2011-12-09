@@ -36,6 +36,7 @@
 #include <Carbon/Carbon.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/UnusedParam.h>
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
@@ -185,6 +186,14 @@ ScrollbarPainter ScrollbarThemeMac::painterForScrollbar(Scrollbar* scrollbar)
 {
     return scrollbarMap()->get(scrollbar).get();
 }
+
+static bool g_isCurrentlyDrawingIntoLayer;
+    
+bool ScrollbarThemeMac::isCurrentlyDrawingIntoLayer()
+{
+    return g_isCurrentlyDrawingIntoLayer;
+}
+
 #endif
 
 ScrollbarThemeMac::ScrollbarThemeMac()
@@ -513,9 +522,8 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         else
             value = 0;
     }
-    
-    ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
-    scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
+
+    TemporaryChange<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context->isCALayerContext());
     
     GraphicsContextStateSaver stateSaver(*context);
     context->clip(damageRect);
@@ -527,7 +535,6 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
                             (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
                             scrollbar->frameRect());
 
-    scrollAnimator->setIsDrawingIntoLayer(false);
     return true;
 #endif
 

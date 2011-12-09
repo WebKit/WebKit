@@ -82,9 +82,6 @@ public:
 
     void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);
 
-    void setIsDrawingIntoLayer(bool b) { m_drawingIntoLayer = b; }
-    bool isDrawingIntoLayer() const { return m_drawingIntoLayer; }
-
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
     virtual void setIsActive();
@@ -161,7 +158,6 @@ private:
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
 #endif
 
-    bool m_drawingIntoLayer;
     bool m_haveScrolledSincePageLoad;
     bool m_needsScrollerStyleUpdate;
     IntRect m_visibleScrollerThumbRect;
