@@ -48,6 +48,8 @@ public:
 
     virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
+    virtual bool delegatesMenuListRendering() const { return true; }
+
 protected:
 
     virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

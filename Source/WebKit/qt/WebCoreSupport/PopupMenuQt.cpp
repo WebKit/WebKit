@@ -57,12 +57,7 @@ bool SelectData::multiple() const
     if (!d)
         return false;
 
-#if ENABLE(NO_LISTBOX_RENDERING)
-    WebCore::ListPopupMenuClient* client = static_cast<WebCore::ListPopupMenuClient*>(d);
-    return client && client->multiple();
-#else
-    return false;
-#endif
+    return d->multiple();
 }
 
 SelectData::ItemType SelectData::itemType(int idx) const
@@ -137,13 +132,8 @@ void PopupMenuQt::selectItem(int index, bool ctrl, bool shift)
     if (!m_popupClient)
         return;
 
-#if ENABLE(NO_LISTBOX_RENDERING)
-    ListPopupMenuClient* client = static_cast<ListPopupMenuClient*>(m_popupClient);
-    if (client) {
-        client->listBoxSelectItem(index, ctrl, shift);
-        return;
-    }
-#endif
+    m_popupClient->listBoxSelectItem(index, ctrl, shift);
+    return;
 
     m_popupClient->valueChanged(index);
 }

@@ -117,7 +117,6 @@ void ExternalPopupMenu::didAcceptIndex(int index)
 
 void ExternalPopupMenu::didAcceptIndices(const WebVector<int>& indices)
 {
-#if ENABLE(NO_LISTBOX_RENDERING)
     if (!m_popupMenuClient) {
         m_webExternalPopupMenu = 0;
         return;
@@ -127,13 +126,12 @@ void ExternalPopupMenu::didAcceptIndices(const WebVector<int>& indices)
     // derefed. This ensures it does not get deleted while we are running this
     // method.
     RefPtr<ExternalPopupMenu> protect(this);
-    ListPopupMenuClient* listPopupMenuClient = static_cast<ListPopupMenuClient*>(m_popupMenuClient);
 
     if (!indices.size())
-        listPopupMenuClient->valueChanged(-1, true);
+        m_popupMenuClient->valueChanged(-1, true);
     else {
         for (size_t i = 0; i < indices.size(); ++i)
-            listPopupMenuClient->listBoxSelectItem(indices[i], (i > 0), false, (i == indices.size() - 1));
+            m_popupMenuClient->listBoxSelectItem(indices[i], (i > 0), false, (i == indices.size() - 1));
     }
 
     // The call to valueChanged above might have lead to a call to
@@ -142,10 +140,6 @@ void ExternalPopupMenu::didAcceptIndices(const WebVector<int>& indices)
         m_popupMenuClient->popupDidHide();
 
     m_webExternalPopupMenu = 0;
-
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void ExternalPopupMenu::didCancel()
@@ -186,11 +180,7 @@ void ExternalPopupMenu::getPopupMenuInfo(WebPopupMenuInfo* info)
     info->itemFontSize = static_cast<int>(m_popupMenuClient->menuStyle().font().size());
     info->selectedIndex = m_popupMenuClient->selectedIndex();
     info->rightAligned = m_popupMenuClient->menuStyle().textDirection() == WebCore::RTL;
-#if ENABLE(NO_LISTBOX_RENDERING)
-    // FIXME: Why is this cast safe?
-    ListPopupMenuClient* client = static_cast<ListPopupMenuClient*>(m_popupMenuClient);
-    info->allowMultipleSelection = client->multiple();
-#endif
+    info->allowMultipleSelection = m_popupMenuClient->multiple();
     info->items.swap(items);
 }
 

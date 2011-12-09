@@ -29,9 +29,6 @@
 #include "CollectionCache.h"
 #include "Event.h"
 #include "HTMLFormControlElement.h"
-#if PLATFORM(QT)
-#include "RenderThemeQt.h"
-#endif
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -91,9 +88,7 @@ public:
 
     void scrollToSelection();
 
-#if ENABLE(NO_LISTBOX_RENDERING)
     void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
-#endif
 
     bool canSelectAll() const;
     void selectAll();
@@ -198,19 +193,6 @@ private:
     bool m_activeSelectionState;
     mutable bool m_shouldRecalcListItems;
 };
-
-inline bool HTMLSelectElement::usesMenuList() const
-{
-#if ENABLE(NO_LISTBOX_RENDERING)
-#if PLATFORM(QT)
-    if (RenderThemeQt::useMobileTheme())
-        return true;
-#else
-    return true;
-#endif
-#endif
-    return !m_multiple && m_size <= 1;
-}
 
 HTMLSelectElement* toHTMLSelectElement(Node*);
 const HTMLSelectElement* toHTMLSelectElement(const Node*);

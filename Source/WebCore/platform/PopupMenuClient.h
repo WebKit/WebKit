@@ -63,20 +63,18 @@ public:
     virtual bool valueShouldChangeOnHotTrack() const = 0;
     virtual void setTextFromItem(unsigned listIndex) = 0;
 
+    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) { ASSERT_NOT_REACHED(); }
+    virtual bool multiple()
+    {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
     virtual FontSelector* fontSelector() const = 0;
     virtual HostWindow* hostWindow() const = 0;
 
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) = 0;
 };
-
-#if ENABLE(NO_LISTBOX_RENDERING)
-class ListPopupMenuClient : public PopupMenuClient {
-public:
-    virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true) = 0;
-    virtual bool multiple() = 0;
-};
-#endif
-
 
 }
 

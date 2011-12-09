@@ -1,3 +1,29 @@
+2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Drop ENABLE_NO_LISTBOX_RENDERING, and make it a runtime decision.
+        https://bugs.webkit.org/show_bug.cgi?id=73916
+
+        This was needed for Qt since the mobile theme, which can be picked
+        up at runtime, delegates the rendering of list boxes.
+
+        Reviewed by Kent Tamura.
+
+        No new tests, there's no functional change.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::usesMenuList):
+        * html/HTMLSelectElement.h:
+        * platform/PopupMenuClient.h:
+        (WebCore::PopupMenuClient::listBoxSelectItem):
+        (WebCore::PopupMenuClient::multiple):
+        * platform/qt/RenderThemeQtMobile.h:
+        (WebCore::RenderThemeQtMobile::delegatesMenuListRendering):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::multiple):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::delegatesMenuListRendering):
+
 2011-12-08  Kenneth Russell  <kbr@google.com>
 
         Rename WEBKIT_lose_context to WEBKIT_WEBGL_lose_context

@@ -45,6 +45,7 @@
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderTheme.h"
 #include "ScriptEventListener.h"
 #include "SpatialNavigation.h"
 #include <wtf/text/StringBuilder.h>
@@ -167,7 +168,6 @@ bool HTMLSelectElement::valueMissing() const
     return firstSelectionIndex < 0 || (!firstSelectionIndex && hasPlaceholderLabelOption());
 }
 
-#if ENABLE(NO_LISTBOX_RENDERING)
 void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
 {
     if (!multiple())
@@ -179,7 +179,16 @@ void HTMLSelectElement::listBoxSelectItem(int listIndex, bool allowMultiplySelec
             listBoxOnChange();
     }
 }
-#endif
+
+bool HTMLSelectElement::usesMenuList() const
+{
+    const Page* page = document()->page();
+    RefPtr<RenderTheme> renderTheme = page ? page->theme() : RenderTheme::defaultTheme();
+    if (renderTheme->delegatesMenuListRendering())
+        return true;
+
+    return !m_multiple && m_size <= 1;
+}
 
 int HTMLSelectElement::activeSelectionStartListIndex() const
 {

@@ -328,7 +328,6 @@ void RenderMenuList::valueChanged(unsigned listIndex, bool fireOnChange)
     select->optionSelectedByUser(select->listToOptionIndex(listIndex), fireOnChange);
 }
 
-#if ENABLE(NO_LISTBOX_RENDERING)
 void RenderMenuList::listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow)
 {
     toHTMLSelectElement(node())->listBoxSelectItem(listIndex, allowMultiplySelections, shift, fireOnChangeNow);
@@ -338,7 +337,6 @@ bool RenderMenuList::multiple()
 {
     return toHTMLSelectElement(node())->multiple();
 }
-#endif
 
 void RenderMenuList::didSetSelectedIndex(int listIndex)
 {

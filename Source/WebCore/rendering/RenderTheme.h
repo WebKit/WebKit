@@ -207,6 +207,8 @@ public:
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
     virtual bool shouldHaveSpinButton(HTMLInputElement*) const;
 
+    virtual bool delegatesMenuListRendering() const { return false; }
+
     virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width, bool multipleFilesAllowed);
 
 protected:

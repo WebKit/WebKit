@@ -1,3 +1,14 @@
+2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Drop ENABLE_NO_LISTBOX_RENDERING, and make it a runtime decision.
+        https://bugs.webkit.org/show_bug.cgi?id=73916
+
+        Reviewed by Kent Tamura.
+
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (SelectData::multiple):
+        (WebCore::PopupMenuQt::selectItem):
+
 2011-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix after r102262.

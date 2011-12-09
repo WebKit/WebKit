@@ -39,11 +39,7 @@ namespace WebCore {
 
 class RenderText;
 
-#if ENABLE(NO_LISTBOX_RENDERING)
-class RenderMenuList : public RenderDeprecatedFlexibleBox, private ListPopupMenuClient {
-#else
 class RenderMenuList : public RenderDeprecatedFlexibleBox, private PopupMenuClient {
-#endif
 
 public:
     RenderMenuList(Element*);
@@ -110,10 +106,8 @@ private:
     virtual HostWindow* hostWindow() const;
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
-#if ENABLE(NO_LISTBOX_RENDERING)
     virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);
     virtual bool multiple();
-#endif
 
     virtual bool hasLineIfEmpty() const { return true; }
 
