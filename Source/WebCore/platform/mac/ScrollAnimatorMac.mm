@@ -52,6 +52,20 @@ static bool supportsUIStateTransitionProgress()
     static bool globalSupportsUIStateTransitionProgress = [NSClassFromString(@"NSScrollerImp") instancesRespondToSelector:@selector(mouseEnteredScroller)];
     return globalSupportsUIStateTransitionProgress;
 }
+
+static ScrollbarThemeMac* macScrollbarTheme()
+{
+    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
+    return !scrollbarTheme->isMockTheme() ? static_cast<ScrollbarThemeMac*>(scrollbarTheme) : 0;
+}
+
+static ScrollbarPainter scrollbarPainterForScrollbar(Scrollbar* scrollbar)
+{
+    if (ScrollbarThemeMac* scrollbarTheme = macScrollbarTheme())
+        return scrollbarTheme->painterForScrollbar(scrollbar);
+
+    return nil;
+}
 #endif
 
 @interface NSObject (ScrollAnimationHelperDetails)
@@ -557,14 +571,6 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
     return adoptPtr(new ScrollAnimatorMac(scrollableArea));
 }
 
-#if USE(SCROLLBAR_PAINTER)
-static ScrollbarThemeMac* macScrollbarTheme()
-{
-    ScrollbarTheme* scrollbarTheme = ScrollbarTheme::theme();
-    return !scrollbarTheme->isMockTheme() ? static_cast<ScrollbarThemeMac*>(scrollbarTheme) : 0;
-}
-#endif
-
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
 #if USE(SCROLLBAR_PAINTER)
@@ -765,10 +771,8 @@ void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 #if USE(SCROLLBAR_PAINTER)
     if (!supportsUIStateTransitionProgress())
         return;
-    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
-        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar))
         [painter mouseEnteredScroller];
-    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -781,10 +785,8 @@ void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
 #if USE(SCROLLBAR_PAINTER)
     if (!supportsUIStateTransitionProgress())
         return;
-    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
-        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar))
         [painter mouseExitedScroller];
-    }
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -856,8 +858,7 @@ void ScrollAnimatorMac::didEndScrollGesture() const
 void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
-        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
         [painter setDelegate:m_scrollbarPainterDelegate.get()];
         [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
         if (scrollableArea()->inLiveResize())
@@ -871,8 +872,7 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
-        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
         [painter setDelegate:nil];
         [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
     }
@@ -884,8 +884,7 @@ void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
-        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
         [painter setDelegate:m_scrollbarPainterDelegate.get()];
         [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
         if (scrollableArea()->inLiveResize())
@@ -899,8 +898,7 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(SCROLLBAR_PAINTER)
-    if (ScrollbarThemeMac* theme = macScrollbarTheme()) {
-        ScrollbarPainter painter = theme->painterForScrollbar(scrollbar);
+    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar)) {
         [painter setDelegate:nil];
         [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
     }

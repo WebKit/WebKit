@@ -1,3 +1,20 @@
+2011-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Add a scrollbarPainterForScrollbar helper function
+        https://bugs.webkit.org/show_bug.cgi?id=74139
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (macScrollbarTheme):
+        (scrollbarPainterForScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+
 2011-12-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move NonCompositedContentHost to WebKit
