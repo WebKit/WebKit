@@ -1,3 +1,28 @@
+2011-12-08  James Robinson  <jamesr@chromium.org>
+
+        Improve handling of frame removal during requestAnimationFrame callback invocation
+        https://bugs.webkit.org/show_bug.cgi?id=74036
+
+        Reviewed by Adam Barth.
+
+        See bug for details.
+
+        Test: fast/animation/request-animation-frame-detach-element.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::~ScriptedAnimationController):
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        (WebCore::ScriptedAnimationController::scheduleAnimation):
+        * dom/ScriptedAnimationController.h:
+        (WebCore::ScriptedAnimationController::create):
+        (WebCore::ScriptedAnimationController::clearDocumentPointer):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::serviceScriptedAnimations):
+
 2011-12-08  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Use bitfield for bool data members in BitmapImage.

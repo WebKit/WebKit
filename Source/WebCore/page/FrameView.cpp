@@ -2085,8 +2085,13 @@ void FrameView::unscheduleRelayout()
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void FrameView::serviceScriptedAnimations(DOMTimeStamp time)
 {
+    Vector<RefPtr<Document> > documents;
+
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext())
-        frame->document()->serviceScriptedAnimations(time);
+        documents.append(frame->document());
+
+    for (size_t i = 0; i < documents.size(); ++i)
+        documents[i]->serviceScriptedAnimations(time);
 }
 #endif
 

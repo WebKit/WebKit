@@ -613,7 +613,9 @@ void Document::removedLastRef()
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
         // FIXME: consider using ActiveDOMObject.
-        m_scriptedAnimationController = nullptr;
+        if (m_scriptedAnimationController)
+            m_scriptedAnimationController->clearDocumentPointer();
+        m_scriptedAnimationController.clear();
 #endif
 
 #ifndef NDEBUG
@@ -1834,7 +1836,9 @@ void Document::detach()
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     // FIXME: consider using ActiveDOMObject.
-    m_scriptedAnimationController = nullptr;
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->clearDocumentPointer();
+    m_scriptedAnimationController.clear();
 #endif
 
     RenderObject* render = renderer();

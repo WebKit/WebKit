@@ -61,6 +61,10 @@ ScriptedAnimationController::ScriptedAnimationController(Document* document, Pla
     windowScreenDidChange(displayID);
 }
 
+ScriptedAnimationController::~ScriptedAnimationController()
+{
+}
+
 void ScriptedAnimationController::suspend()
 {
     ++m_suspendCount;
@@ -119,8 +123,17 @@ void ScriptedAnimationController::serviceScriptedAnimations(DOMTimeStamp time)
     // missing any callbacks, we keep iterating through the list of candiate callbacks and firing
     // them until nothing new becomes visible.
     bool firedCallback;
+
+    // Invoking callbacks may detach elements from our document, which clear's the document's
+    // reference to us, so take a defensive reference.
+    RefPtr<ScriptedAnimationController> protector(this);
     do {
         firedCallback = false;
+        // A previous iteration may have detached this Document from the DOM tree.
+        // If so, then we do not need to process any more callbacks.
+        if (!m_document)
+            continue;
+
         // A previous iteration may have invalidated style (or layout).  Update styles for each iteration
         // for now since all we check is the existence of a renderer.
         m_document->updateStyleIfNeeded();
@@ -161,6 +174,9 @@ void ScriptedAnimationController::windowScreenDidChange(PlatformDisplayID displa
 
 void ScriptedAnimationController::scheduleAnimation()
 {
+    if (!m_document)
+        return;
+
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     if (!m_useTimer) {

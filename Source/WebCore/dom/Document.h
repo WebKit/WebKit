@@ -1441,7 +1441,7 @@ private:
     unsigned m_wheelEventHandlerCount;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;
+    RefPtr<ScriptedAnimationController> m_scriptedAnimationController;
 #endif
 
     Timer<Document> m_pendingTasksTimer;

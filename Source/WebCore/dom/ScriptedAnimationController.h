@@ -35,8 +35,7 @@
 #include "Timer.h"
 #endif
 #include "PlatformScreen.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -46,17 +45,18 @@ class Document;
 class Element;
 class RequestAnimationFrameCallback;
 
-class ScriptedAnimationController
+class ScriptedAnimationController : public RefCounted<ScriptedAnimationController>
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    : public DisplayRefreshMonitorClient
+    , public DisplayRefreshMonitorClient
 #endif
 {
-WTF_MAKE_NONCOPYABLE(ScriptedAnimationController);
 public:
-    static PassOwnPtr<ScriptedAnimationController> create(Document* document, PlatformDisplayID displayID)
+    static PassRefPtr<ScriptedAnimationController> create(Document* document, PlatformDisplayID displayID)
     {
-        return adoptPtr(new ScriptedAnimationController(document, displayID));
+        return adoptRef(new ScriptedAnimationController(document, displayID));
     }
+    ~ScriptedAnimationController();
+    void clearDocumentPointer() { m_document = 0; }
 
     typedef int CallbackId;
 
@@ -70,7 +70,7 @@ public:
     void windowScreenDidChange(PlatformDisplayID);
 
 private:
-    explicit ScriptedAnimationController(Document*, PlatformDisplayID);
+    ScriptedAnimationController(Document*, PlatformDisplayID);
     
     typedef Vector<RefPtr<RequestAnimationFrameCallback> > CallbackList;
     CallbackList m_callbacks;
