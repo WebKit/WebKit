@@ -43,6 +43,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/PlatformTouchPointEfl.cpp
   platform/efl/PlatformWheelEventEfl.cpp
   platform/efl/PopupMenuEfl.cpp
+  platform/efl/RefPtrEfl.cpp
   platform/efl/RenderThemeEfl.cpp
   platform/efl/ScrollViewEfl.cpp
   platform/efl/ScrollbarEfl.cpp

@@ -1,3 +1,18 @@
+2011-12-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Add RefPtrEfl specialization for evas_object.
+        https://bugs.webkit.org/show_bug.cgi?id=73790
+
+        Reviewed by Ryosuke Niwa.
+
+        As evas_object is also based on reference count, RefPtr is applied for evas_object.
+
+        * PlatformEfl.cmake:
+        * platform/efl/RefPtrEfl.cpp: Added.
+        (WTF::refIfNotNull):
+        (WTF::derefIfNotNull):
+        * platform/efl/RefPtrEfl.h: Added.
+
 2011-12-09  Tony Chang  <tony@chromium.org>
 
         REGRESSION(102234): 2-3% layout regression
