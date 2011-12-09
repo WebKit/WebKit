@@ -398,6 +398,11 @@ enum FeatureToAnimate {
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+- (ScrollAnimatorMac*)scrollAnimator
+{
+    return _animator;
+}
+
 - (NSRect)convertRectToBacking:(NSRect)aRect
 {
     return aRect;
@@ -410,9 +415,11 @@ enum FeatureToAnimate {
 
 - (CALayer *)layer
 {
-    if (!_animator)
+    ScrollAnimatorMac* animator = [self scrollAnimator];
+    if (!animator)
         return nil;
-    if (!_animator->isDrawingIntoLayer())
+
+    if (!animator->isDrawingIntoLayer())
         return nil;
 
     // FIXME: This should attempt to return an actual layer.
@@ -422,38 +429,38 @@ enum FeatureToAnimate {
 
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(id)scrollerImp
 {
-    if (!_animator)
+    if (![self scrollAnimator])
         return NSZeroPoint;
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
     Scrollbar* scrollbar;
     if ([scrollerPainter isHorizontal])
-        scrollbar = _animator->scrollableArea()->horizontalScrollbar();
+        scrollbar = [self scrollAnimator]->scrollableArea()->horizontalScrollbar();
     else 
-        scrollbar = _animator->scrollableArea()->verticalScrollbar();
+        scrollbar = [self scrollAnimator]->scrollableArea()->verticalScrollbar();
 
     if (!scrollbar)
         return NSZeroPoint;
 
-    return scrollbar->convertFromContainingView(_animator->scrollableArea()->currentMousePosition());
+    return scrollbar->convertFromContainingView([self scrollAnimator]->scrollableArea()->currentMousePosition());
 }
 
 - (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(ScrollbarPainter)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
     // If the user has scrolled the page, then the scrollbars must be animated here. 
     // This overrides the early returns.
-    bool mustAnimate = _animator->haveScrolledSincePageLoad();
+    bool mustAnimate = [self scrollAnimator]->haveScrolledSincePageLoad();
 
-    if (_animator->scrollbarPaintTimerIsActive() && !mustAnimate)
+    if ([self scrollAnimator]->scrollbarPaintTimerIsActive() && !mustAnimate)
         return;
 
-    if (_animator->scrollableArea()->shouldSuspendScrollAnimations() && !mustAnimate) {
-        _animator->startScrollbarPaintTimer();
+    if ([self scrollAnimator]->scrollableArea()->shouldSuspendScrollAnimations() && !mustAnimate) {
+        [self scrollAnimator]->startScrollbarPaintTimer();
         return;
     }
 
     // At this point, we are definitely going to animate now, so stop the timer.
-    _animator->stopScrollbarPaintTimer();
+    [self scrollAnimator]->stopScrollbarPaintTimer();
 
     // If we are currently animating, stop
     if (scrollbarPartAnimation) {
@@ -464,16 +471,16 @@ enum FeatureToAnimate {
     if (part == WebCore::ThumbPart && ![scrollerPainter isHorizontal]) {
         if (newAlpha == 1) {
             IntRect thumbRect = IntRect([scrollerPainter rectForPart:NSScrollerKnob]);
-            _animator->setVisibleScrollerThumbRect(thumbRect);
+            [self scrollAnimator]->setVisibleScrollerThumbRect(thumbRect);
         } else
-            _animator->setVisibleScrollerThumbRect(IntRect());
+            [self scrollAnimator]->setVisibleScrollerThumbRect(IntRect());
     }
 
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:duration];
     scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
                                                                     animate:part == ThumbPart ? ThumbAlpha : TrackAlpha
-                                                                    scrollAnimator:_animator
+                                                                    scrollAnimator:[self scrollAnimator]
                                                                     animateFrom:part == ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
                                                                     animateTo:newAlpha 
                                                                     duration:duration]);
@@ -484,7 +491,7 @@ enum FeatureToAnimate {
 
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
 {
-    if (!_animator)
+    if (![self scrollAnimator])
         return;
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
@@ -496,7 +503,7 @@ enum FeatureToAnimate {
 
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
 {
-    if (!_animator)
+    if (![self scrollAnimator])
         return;
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
@@ -508,7 +515,7 @@ enum FeatureToAnimate {
 
 - (void)scrollerImp:(id)scrollerImp animateUIStateTransitionWithDuration:(NSTimeInterval)duration
 {
-    if (!_animator)
+    if (![self scrollAnimator])
         return;
 
     if (!supportsUIStateTransitionProgress())
@@ -525,7 +532,7 @@ enum FeatureToAnimate {
     if (!scrollbarPartAnimation) {
         scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
                                                                     animate:UIStateTransition
-                                                                    scrollAnimator:_animator
+                                                                    scrollAnimator:[self scrollAnimator]
                                                                     animateFrom:[scrollerPainter uiStateTransitionProgress]
                                                                     animateTo:1.0 
                                                                     duration:duration]);

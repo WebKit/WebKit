@@ -1,3 +1,19 @@
+2011-12-08  Anders Carlsson  <andersca@apple.com>
+
+        Add scrollAnimator getter method to WebScrollbarPainterDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=74146
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate scrollAnimator]):
+        (-[WebScrollbarPainterDelegate layer]):
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+
 2011-12-08  James Robinson  <jamesr@chromium.org>
 
         Improve handling of frame removal during requestAnimationFrame callback invocation
