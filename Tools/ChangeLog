@@ -1,3 +1,17 @@
+2011-12-09  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Reduce top-level code in prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=74172
+
+        Reviewed by Ryosuke Niwa.
+
+        The objective is to make prepare-ChangeLog a loadable Perl module for unit testing.
+        This requires to remove top-level code. This patch is one of the incremental refactorings
+        for that.
+
+        * Scripts/prepare-ChangeLog: Moved some top-level code into generateFunctionLists().
+        (generateFunctionLists):
+
 2011-12-09  Sam Weinig  <sam@webkit.org>
 
         Expose a WKConnectionRef which represents the connection to/from the WebProcess/UIProcess

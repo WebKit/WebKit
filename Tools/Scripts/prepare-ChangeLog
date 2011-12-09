@@ -78,6 +78,7 @@ sub findOriginalFileFromSvn($);
 sub determinePropertyChanges($$$);
 sub pluralizeAndList($$@);
 sub generateFileList(\@\@\%);
+sub generateFunctionLists(\@\%);
 sub isUnmodifiedStatus($);
 sub isModifiedStatus($);
 sub isAddedStatus($);
@@ -160,11 +161,8 @@ my $GIT = "git";
 
 # Find the list of modified files
 my @changed_files;
-my $changed_files_string;
-my %changed_line_ranges;
 my %function_lists;
 my @conflict_files;
-
 
 my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
 my @addedRegressionTests = ();
@@ -183,72 +181,7 @@ if (@conflict_files) {
     exit 1;
 }
 
-if (@changed_files) {
-    $changed_files_string = "'" . join ("' '", @changed_files) . "'";
-
-    # For each file, build a list of modified lines.
-    # Use line numbers from the "after" side of each diff.
-    print STDERR "  Reviewing diff to determine which lines changed.\n";
-    my $file;
-    open DIFF, "-|", diffCommand(@changed_files) or die "The diff failed: $!.\n";
-    while (<DIFF>) {
-        $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
-        if (defined $file) {
-            my ($start, $end) = extractLineRange($_);
-            if ($start >= 0 && $end >= 0) {
-                push @{$changed_line_ranges{$file}}, [ $start, $end ];
-            } elsif (/DO_NOT_COMMIT/) {
-                print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
-            }
-        }
-    }
-    close DIFF;
-}
-
-# For each source file, convert line range to function list.
-if (%changed_line_ranges) {
-    print STDERR "  Extracting affected function names from source files.\n";
-    foreach my $file (keys %changed_line_ranges) {
-        # Find all the functions in the file.
-        open SOURCE, $file or next;
-        my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
-        close SOURCE;
-    
-        # Find all the modified functions.
-        my @functions;
-        my %saw_function;
-        my @change_ranges = (@{$changed_line_ranges{$file}}, []);
-        my @change_range = (0, 0);
-        FUNCTION: foreach my $function_range_ref (@function_ranges) {
-            my @function_range = @$function_range_ref;
-    
-            # Advance to successive change ranges.
-            for (;; @change_range = @{shift @change_ranges}) {
-                last FUNCTION unless @change_range;
-    
-                # If past this function, move on to the next one.
-                next FUNCTION if $change_range[0] > $function_range[1];
-    
-                # If an overlap with this function range, record the function name.
-                if ($change_range[1] >= $function_range[0]
-                    and $change_range[0] <= $function_range[1]) {
-                    if (!$saw_function{$function_range[2]}) {
-                        $saw_function{$function_range[2]} = 1;
-                        push @functions, $function_range[2];
-                    }
-                    next FUNCTION;
-                }
-            }
-        }
-    
-        # Format the list of functions now.
-
-        if (@functions) {
-            $function_lists{$file} = "" if !defined $function_lists{$file};
-            $function_lists{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
-        }
-    }
-}
+generateFunctionLists(@changed_files, %function_lists);
 
 # Get some parameters for the ChangeLog we are about to write.
 my $date = changeLogDate($changeLogTimeZone);
@@ -412,7 +345,7 @@ if ($writeChangeLogs) {
 if ($spewDiff && @changed_files) {
     print STDERR "  Running diff to help you write the ChangeLog entries.\n";
     local $/ = undef; # local slurp mode
-    open DIFF, "-|", createPatchCommand($changed_files_string) or die "The diff failed: $!.\n";
+    open DIFF, "-|", createPatchCommand("'" . join ("' '", @changed_files) . "'") or die "The diff failed: $!.\n";
     print <DIFF>;
     close DIFF;
 }
@@ -436,6 +369,76 @@ if ($openChangeLogs && @logs) {
 # Done.
 exit;
 
+
+sub generateFunctionLists(\@\%)
+{
+    my ($changed_files, $function_lists) = @_;
+
+    my %changed_line_ranges;
+    if (@$changed_files) {
+        # For each file, build a list of modified lines.
+        # Use line numbers from the "after" side of each diff.
+        print STDERR "  Reviewing diff to determine which lines changed.\n";
+        my $file;
+        open DIFF, "-|", diffCommand(@$changed_files) or die "The diff failed: $!.\n";
+        while (<DIFF>) {
+            $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
+            if (defined $file) {
+                my ($start, $end) = extractLineRange($_);
+                if ($start >= 0 && $end >= 0) {
+                    push @{$changed_line_ranges{$file}}, [ $start, $end ];
+                } elsif (/DO_NOT_COMMIT/) {
+                    print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
+                }
+            }
+        }
+        close DIFF;
+    }
+
+    # For each source file, convert line range to function list.
+    if (%changed_line_ranges) {
+        print STDERR "  Extracting affected function names from source files.\n";
+        foreach my $file (keys %changed_line_ranges) {
+            # Find all the functions in the file.
+            open SOURCE, $file or next;
+            my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
+            close SOURCE;
+
+            # Find all the modified functions.
+            my @functions;
+            my %saw_function;
+            my @change_ranges = (@{$changed_line_ranges{$file}}, []);
+            my @change_range = (0, 0);
+            FUNCTION: foreach my $function_range_ref (@function_ranges) {
+                my @function_range = @$function_range_ref;
+
+                # Advance to successive change ranges.
+                for (;; @change_range = @{shift @change_ranges}) {
+                    last FUNCTION unless @change_range;
+
+                    # If past this function, move on to the next one.
+                    next FUNCTION if $change_range[0] > $function_range[1];
+
+                    # If an overlap with this function range, record the function name.
+                    if ($change_range[1] >= $function_range[0]
+                        and $change_range[0] <= $function_range[1]) {
+                        if (!$saw_function{$function_range[2]}) {
+                            $saw_function{$function_range[2]} = 1;
+                            push @functions, $function_range[2];
+                        }
+                        next FUNCTION;
+                    }
+                }
+            }
+
+            # Format the list of functions now.
+            if (@functions) {
+                $function_lists->{$file} = "" if !defined $function_lists->{$file};
+                $function_lists->{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
+            }
+        }
+    }
+}
 
 sub changeLogDate($)
 {
