@@ -274,35 +274,40 @@ enum FeatureToAnimate {
 
 @interface WebScrollbarPartAnimation : NSAnimation
 {
-    RetainPtr<ScrollbarPainter> _scrollerPainter;
+    Scrollbar* _scrollbar;
+    RetainPtr<ScrollbarPainter> _scrollbarPainter;
     FeatureToAnimate _featureToAnimate;
-    ScrollAnimatorMac* _animator;
     CGFloat _startValue;
     CGFloat _endValue;
 }
-- (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter animate:(FeatureToAnimate)featureToAnimate scrollAnimator:(ScrollAnimatorMac*)scrollAnimator animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
+- (id)initWithScrollbar:(Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
 @end
 
 @implementation WebScrollbarPartAnimation
 
-- (id)initWithScrollbarPainter:(ScrollbarPainter)scrollerPainter animate:(FeatureToAnimate)featureToAnimate scrollAnimator:(ScrollAnimatorMac*)scrollAnimator animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
+- (id)initWithScrollbar:(Scrollbar*)scrollbar featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
 {
     self = [super initWithDuration:duration animationCurve:NSAnimationEaseInOut];
     if (!self)
         return nil;
-    
-    _scrollerPainter = scrollerPainter;
+
+    _scrollbar = scrollbar;
     _featureToAnimate = featureToAnimate;
-    _animator = scrollAnimator;
     _startValue = startValue;
     _endValue = endValue;
-    
-    return self;    
+
+    [self setAnimationBlockingMode:NSAnimationNonblocking];
+
+    return self;
 }
 
-- (void)setScrollbarPainter:(ScrollbarPainter)scrollerPainter
+- (void)startAnimation
 {
-    _scrollerPainter = scrollerPainter;
+    ASSERT(_scrollbar);
+
+    _scrollbarPainter = scrollbarPainterForScrollbar(_scrollbar);
+
+    [super startAnimation];
 }
 
 - (void)setStartValue:(CGFloat)startValue
@@ -319,8 +324,7 @@ enum FeatureToAnimate {
 {
     [super setCurrentProgress:progress];
 
-    if (!_animator)
-        return;
+    ASSERT(_scrollbar);
 
     CGFloat currentValue;
     if (_startValue > _endValue)
@@ -330,21 +334,17 @@ enum FeatureToAnimate {
 
     switch (_featureToAnimate) {
     case ThumbAlpha:
-        [_scrollerPainter.get() setKnobAlpha:currentValue];
+        [_scrollbarPainter.get() setKnobAlpha:currentValue];
         break;
     case TrackAlpha:
-        [_scrollerPainter.get() setTrackAlpha:currentValue];
+        [_scrollbarPainter.get() setTrackAlpha:currentValue];
         break;
     case UIStateTransition:
-        [_scrollerPainter.get() setUiStateTransitionProgress:currentValue];
+        [_scrollbarPainter.get() setUiStateTransitionProgress:currentValue];
         break;
     }
 
-    // Invalidate the scrollbars so that they paint the animation
-    if (Scrollbar* verticalScrollbar = _animator->scrollableArea()->verticalScrollbar())
-        verticalScrollbar->invalidate();
-    if (Scrollbar* horizontalScrollbar = _animator->scrollableArea()->horizontalScrollbar())
-        horizontalScrollbar->invalidate();
+    _scrollbar->invalidate();
 }
 
 - (void)scrollAnimatorDestroyed
@@ -352,7 +352,7 @@ enum FeatureToAnimate {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [self stopAnimation];
     END_BLOCK_OBJC_EXCEPTIONS;
-    _animator = 0;
+    _scrollbar = 0;
 }
 
 @end
@@ -477,13 +477,11 @@ enum FeatureToAnimate {
 
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:duration];
-    scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
-                                                                    animate:part == ThumbPart ? ThumbAlpha : TrackAlpha
-                                                                    scrollAnimator:[self scrollAnimator]
-                                                                    animateFrom:part == ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
-                                                                    animateTo:newAlpha 
-                                                                    duration:duration]);
-    [scrollbarPartAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
+    scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
+                                                                       featureToAnimate:part == ThumbPart ? ThumbAlpha : TrackAlpha
+                                                                            animateFrom:part == ThumbPart ? [scrollerPainter knobAlpha] : [scrollerPainter trackAlpha]
+                                                                              animateTo:newAlpha 
+                                                                               duration:duration]);
     [scrollbarPartAnimation.get() startAnimation];
     [NSAnimationContext endGrouping];
 }
@@ -528,17 +526,14 @@ enum FeatureToAnimate {
 
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:duration];
-    if (!scrollbarPartAnimation) {
-        scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbarPainter:scrollerPainter 
-                                                                    animate:UIStateTransition
-                                                                    scrollAnimator:[self scrollAnimator]
-                                                                    animateFrom:[scrollerPainter uiStateTransitionProgress]
-                                                                    animateTo:1.0 
-                                                                    duration:duration]);
-        [scrollbarPartAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    } else {
+    if (!scrollbarPartAnimation)
+        scrollbarPartAnimation.adoptNS([[WebScrollbarPartAnimation alloc] initWithScrollbar:_scrollbar 
+                                                                           featureToAnimate:UIStateTransition
+                                                                                animateFrom:[scrollerPainter uiStateTransitionProgress]
+                                                                                  animateTo:1.0
+                                                                                   duration:duration]);
+    else {
         // If we don't need to initialize the animation, just reset the values in case they have changed.
-        [scrollbarPartAnimation.get() setScrollbarPainter:scrollerPainter];
         [scrollbarPartAnimation.get() setStartValue:[scrollerPainter uiStateTransitionProgress]];
         [scrollbarPartAnimation.get() setEndValue:1.0];
         [scrollbarPartAnimation.get() setDuration:duration];

@@ -1,3 +1,25 @@
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
+        WebScrollbarPartAnimation should only know about the scrollbar it's animating
+        https://bugs.webkit.org/show_bug.cgi?id=74192
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPartAnimation initWithScrollbar:featureToAnimate:animateFrom:animateTo:duration:]):
+        Change the designated initializer to just take the scrollbar. Also, make the animation non-blocking here
+        so we don't have to do it in all the call sites.
+
+        (-[WebScrollbarPartAnimation startAnimation]):
+        Update the scrollbar painter.
+
+        (-[WebScrollbarPartAnimation setCurrentProgress:]):
+        Just invalidate the scrollbar we're animating.
+
+        (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        Update call sites to use the new designated initializer.
+
 2011-12-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Inspector: Don't translate the context when rendering the highlights on a tiled layer.
