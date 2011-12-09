@@ -69,9 +69,9 @@ struct FrameData {
 public:
     FrameData()
         : m_frame(0)
+        , m_duration(0)
         , m_haveMetadata(false)
         , m_isComplete(false)
-        , m_duration(0)
         , m_hasAlpha(true) 
     {
     }
@@ -86,10 +86,10 @@ public:
     bool clear(bool clearMetadata);
 
     NativeImagePtr m_frame;
-    bool m_haveMetadata;
-    bool m_isComplete;
     float m_duration;
-    bool m_hasAlpha;
+    bool m_haveMetadata : 1;
+    bool m_isComplete : 1;
+    bool m_hasAlpha : 1;
 };
 
 // =================================================
@@ -275,22 +275,21 @@ protected:
 #endif
 
     Color m_solidColor;  // If we're a 1x1 solid color, this is the color to use to fill.
-    bool m_isSolidColor;  // Whether or not we are a 1x1 solid image.
-    bool m_checkedForSolidColor; // Whether we've checked the frame for solid color.
-
-    bool m_animationFinished;  // Whether or not we've completed the entire animation.
-
-    bool m_allDataReceived;  // Whether or not we've received all our data.
-
-    mutable bool m_haveSize; // Whether or not our |m_size| member variable has the final overall image size yet.
-    bool m_sizeAvailable; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
-    mutable bool m_hasUniformFrameSize;
 
     unsigned m_decodedSize; // The current size of all decoded frames.
     mutable unsigned m_decodedPropertiesSize; // The size of data decoded by the source to determine image properties (e.g. size, frame count, etc).
-
-    mutable bool m_haveFrameCount;
     size_t m_frameCount;
+
+    bool m_isSolidColor : 1; // Whether or not we are a 1x1 solid image.
+    bool m_checkedForSolidColor : 1; // Whether we've checked the frame for solid color.
+
+    bool m_animationFinished : 1; // Whether or not we've completed the entire animation.
+
+    bool m_allDataReceived : 1; // Whether or not we've received all our data.
+    mutable bool m_haveSize : 1; // Whether or not our |m_size| member variable has the final overall image size yet.
+    bool m_sizeAvailable : 1; // Whether or not we can obtain the size of the first image frame yet from ImageIO.
+    mutable bool m_hasUniformFrameSize : 1;
+    mutable bool m_haveFrameCount : 1;
 };
 
 }

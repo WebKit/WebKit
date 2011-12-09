@@ -1,3 +1,26 @@
+2011-12-08  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Use bitfield for bool data members in BitmapImage.
+        https://bugs.webkit.org/show_bug.cgi?id=74102
+
+        Reviewed by Darin Adler.
+
+        Class BitmapImage and FrameData has bool data members, we can use bitfield for those data
+        members to reduce the BitmapImage's memory footprint.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::FrameData::FrameData):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/openvg/ImageOpenVG.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+
 2011-12-08  Anders Carlsson  <andersca@apple.com>
 
         Fix a paste-o in ScrollAnimatorMac::updateScrollerStyle

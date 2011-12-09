@@ -60,6 +60,7 @@ BitmapImage::BitmapImage(TiledImageOpenVG* tiledImage, ImageObserver* observer)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
     , m_desiredFrameStartTime(0)
+    , m_frameCount(1)
     , m_isSolidColor(false)
     , m_checkedForSolidColor(false)
     , m_animationFinished(false)
@@ -68,7 +69,6 @@ BitmapImage::BitmapImage(TiledImageOpenVG* tiledImage, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_hasUniformFrameSize(true)
     , m_haveFrameCount(true)
-    , m_frameCount(1)
 {
     initPlatformData();
 

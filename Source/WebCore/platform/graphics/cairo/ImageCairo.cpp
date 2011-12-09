@@ -66,15 +66,15 @@ BitmapImage::BitmapImage(cairo_surface_t* surface, ImageObserver* observer)
     , m_repetitionCount(cAnimationNone)
     , m_repetitionCountStatus(Unknown)
     , m_repetitionsComplete(0)
+    , m_decodedSize(0)
+    , m_frameCount(1)
     , m_isSolidColor(false)
     , m_checkedForSolidColor(false)
     , m_animationFinished(true)
     , m_allDataReceived(true)
     , m_haveSize(true)
     , m_sizeAvailable(true)
-    , m_decodedSize(0)
     , m_haveFrameCount(true)
-    , m_frameCount(1)
 {
     initPlatformData();
 
