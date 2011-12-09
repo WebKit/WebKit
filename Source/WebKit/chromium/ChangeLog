@@ -1,3 +1,16 @@
+2011-12-08  Sami Kyostila  <skyostil@google.com>
+
+        [chromium] Layer contents scale change should trigger invalidation
+
+        https://bugs.webkit.org/show_bug.cgi?id=74086
+
+        When the contents scale of a layer is changed, the entire contents of
+        the layer should be marked dirty.
+
+        Reviewed by James Robinson.
+
+        * tests/LayerChromiumTest.cpp:
+
 2011-12-08  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Set opaque() for VideoLayerChromium

@@ -700,4 +700,37 @@ TEST_F(LayerChromiumTest, checkNonCompositedContentPropertyChangeCausesCommit)
     nonCompositedContentHost->setViewport(IntSize(30, 30), IntSize(20, 20), IntPoint(10, 10), 1);
 }
 
+class LayerChromiumWithContentScaling : public LayerChromium {
+public:
+    explicit LayerChromiumWithContentScaling(CCLayerDelegate* delegate)
+        : LayerChromium(delegate)
+    {
+    }
+
+    virtual bool needsContentsScale() const
+    {
+        return true;
+    }
+
+    void resetNeedsDisplay()
+    {
+        m_needsDisplay = false;
+    }
+};
+
+TEST_F(LayerChromiumTest, checkContentsScaleChangeTriggersNeedsDisplay)
+{
+    MockLayerDelegate mockDelegate;
+    RefPtr<LayerChromiumWithContentScaling> testLayer = adoptRef(new LayerChromiumWithContentScaling(&mockDelegate));
+
+    IntSize testBounds = IntSize(320, 240);
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setBounds(testBounds));
+
+    testLayer->resetNeedsDisplay();
+    EXPECT_FALSE(testLayer->needsDisplay());
+
+    EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setContentsScale(testLayer->contentsScale() + 1.f));
+    EXPECT_TRUE(testLayer->needsDisplay());
+}
+
 } // namespace

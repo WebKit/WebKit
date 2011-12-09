@@ -425,9 +425,10 @@ void LayerChromium::setDebugBorderWidth(float width)
 
 void LayerChromium::setContentsScale(float contentsScale)
 {
-    if (!needsContentsScale())
+    if (!needsContentsScale() || m_contentsScale == contentsScale)
         return;
     m_contentsScale = contentsScale;
+    setNeedsDisplay();
 }
 
 void LayerChromium::createRenderSurface()
