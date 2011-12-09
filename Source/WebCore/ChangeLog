@@ -1,3 +1,24 @@
+2011-12-08  Anders Carlsson  <andersca@apple.com>
+
+        WebScrollbarPainterDelegate should have a pointer to its Scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=74149
+
+        Reviewed by Darin Adler.
+
+        This is another step towards making the scroll animation code more robust.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate initWithScrollbar:WebCore::]):
+        (-[WebScrollbarPainterDelegate scrollAnimator]):
+        (-[WebScrollbarPainterDelegate layer]):
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+        (-[WebScrollbarPainterDelegate scrollAnimatorDestroyed]):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+
 2011-12-08  Rakesh KN  <rakesh.kn@motorola.com>
 
         keyboard event doesn't fire while moving mouse with button pressed

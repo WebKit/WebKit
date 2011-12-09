@@ -359,7 +359,7 @@ enum FeatureToAnimate {
 
 @interface WebScrollbarPainterDelegate : NSObject<NSAnimationDelegate>
 {
-    WebCore::ScrollAnimatorMac* _animator;
+    WebCore::Scrollbar* _scrollbar;
 
     RetainPtr<WebScrollbarPartAnimation> _verticalKnobAnimation;
     RetainPtr<WebScrollbarPartAnimation> _horizontalKnobAnimation;
@@ -370,19 +370,19 @@ enum FeatureToAnimate {
     RetainPtr<WebScrollbarPartAnimation> _verticalUIStateTransitionAnimation;
     RetainPtr<WebScrollbarPartAnimation> _horizontalUIStateTransitionAnimation;
 }
-- (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator;
+- (id)initWithScrollbar:(WebCore::Scrollbar*)scrollbar;
 - (void)cancelAnimations;
 @end
 
 @implementation WebScrollbarPainterDelegate
 
-- (id)initWithScrollAnimator:(WebCore::ScrollAnimatorMac*)scrollAnimator
+- (id)initWithScrollbar:(WebCore::Scrollbar*)scrollbar
 {
     self = [super init];
     if (!self)
         return nil;
     
-    _animator = scrollAnimator;
+    _scrollbar = scrollbar;
     return self;
 }
 
@@ -400,7 +400,7 @@ enum FeatureToAnimate {
 
 - (ScrollAnimatorMac*)scrollAnimator
 {
-    return _animator;
+    return static_cast<ScrollAnimatorMac*>(_scrollbar->scrollableArea()->scrollAnimator());
 }
 
 - (NSRect)convertRectToBacking:(NSRect)aRect
@@ -415,11 +415,10 @@ enum FeatureToAnimate {
 
 - (CALayer *)layer
 {
-    ScrollAnimatorMac* animator = [self scrollAnimator];
-    if (!animator)
+    if (!_scrollbar)
         return nil;
 
-    if (!animator->isDrawingIntoLayer())
+    if (![self scrollAnimator]->isDrawingIntoLayer())
         return nil;
 
     // FIXME: This should attempt to return an actual layer.
@@ -429,7 +428,7 @@ enum FeatureToAnimate {
 
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(id)scrollerImp
 {
-    if (![self scrollAnimator])
+    if (!_scrollbar)
         return NSZeroPoint;
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
@@ -491,7 +490,7 @@ enum FeatureToAnimate {
 
 - (void)scrollerImp:(id)scrollerImp animateKnobAlphaTo:(CGFloat)newKnobAlpha duration:(NSTimeInterval)duration
 {
-    if (![self scrollAnimator])
+    if (!_scrollbar)
         return;
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
@@ -503,7 +502,7 @@ enum FeatureToAnimate {
 
 - (void)scrollerImp:(id)scrollerImp animateTrackAlphaTo:(CGFloat)newTrackAlpha duration:(NSTimeInterval)duration
 {
-    if (![self scrollAnimator])
+    if (!_scrollbar)
         return;
 
     ScrollbarPainter scrollerPainter = (ScrollbarPainter)scrollerImp;
@@ -515,7 +514,7 @@ enum FeatureToAnimate {
 
 - (void)scrollerImp:(id)scrollerImp animateUIStateTransitionWithDuration:(NSTimeInterval)duration
 {
-    if (![self scrollAnimator])
+    if (!_scrollbar)
         return;
 
     if (!supportsUIStateTransitionProgress())
@@ -556,7 +555,7 @@ enum FeatureToAnimate {
 
 - (void)scrollAnimatorDestroyed
 {
-    _animator = 0;
+    _scrollbar = 0;
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [_verticalKnobAnimation.get() scrollAnimatorDestroyed];
     [_horizontalKnobAnimation.get() scrollAnimatorDestroyed];
@@ -869,7 +868,7 @@ void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
         return;
 
     ASSERT(!m_verticalScrollbarPainterDelegate);
-    m_verticalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
+    m_verticalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollbar:scrollbar]);
 
     [painter setDelegate:m_verticalScrollbarPainterDelegate.get()];
     [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
@@ -907,7 +906,7 @@ void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
         return;
 
     ASSERT(!m_horizontalScrollbarPainterDelegate);
-    m_horizontalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
+    m_horizontalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollbar:scrollbar]);
 
     [painter setDelegate:m_horizontalScrollbarPainterDelegate.get()];
     [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
