@@ -229,7 +229,8 @@ static NSSize abs(NSSize size)
 - (NSPoint)scrollerImpPair:(id)scrollerImpPair convertContentPoint:(NSPoint)pointInContentArea toScrollerImp:(id)scrollerImp
 {
     UNUSED_PARAM(scrollerImpPair);
-    if (!_scrollableArea)
+
+    if (!_scrollableArea || !scrollerImp)
         return NSZeroPoint;
 
     WebCore::Scrollbar* scrollbar = 0;
@@ -244,7 +245,7 @@ static NSSize abs(NSSize size)
     // of the clean-up work in ScrollbarThemeMac::unregisterScrollbar() to avoid this
     // issue.
     if (!scrollbar)
-        return WebCore::IntPoint();
+        return NSZeroPoint;
 
     ASSERT(scrollerImp == scrollbarPainterForScrollbar(scrollbar));
 

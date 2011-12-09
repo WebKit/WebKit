@@ -1,5 +1,16 @@
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
+        Fix assertion failure in ScrollAnimatorMac
+        https://bugs.webkit.org/show_bug.cgi?id=74222
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        This can be called with a nil scrollerImp, just return NSZeroPoint when that happens.
+
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
         Move the "is currently drawing into layer" flag out into ScrollbarThemeMac
         https://bugs.webkit.org/show_bug.cgi?id=74217
 
