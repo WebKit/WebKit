@@ -44,7 +44,7 @@ module storage {
         void moveTo(in DirectoryEntry parent, in [Optional, ConvertUndefinedOrNullToNullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void copyTo(in DirectoryEntry parent, in [Optional, ConvertUndefinedOrNullToNullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         DOMString toURL();
-        void remove(in [Optional, Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void remove(in [Callback] VoidCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void getParent(in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
     };
 }
