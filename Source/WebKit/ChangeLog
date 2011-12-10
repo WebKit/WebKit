@@ -1,3 +1,19 @@
+2011-12-09  Jacky Jiang  <zhajiang@rim.com>
+
+        Upstream BlackBerry API backing store files
+        https://bugs.webkit.org/show_bug.cgi?id=73668
+
+        Reviewed by Daniel Bates.
+
+        Contributed by Torch team, the main contributor is Adam Treat
+        <atreat@rim.com>.
+
+        Initial upstream, no new tests.
+
+        * blackberry/Api/BackingStore.cpp: Added.
+        * blackberry/Api/BackingStore.h: Added.
+        * blackberry/Api/BackingStore_p.h: Added.
+
 2011-12-06  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Upstream about: feature in WebKit/blackberry/WebCoreSupport/
