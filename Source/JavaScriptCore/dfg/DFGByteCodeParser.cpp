@@ -67,7 +67,7 @@ public:
         for (int i = 0; i < codeBlock->m_numVars; ++i)
             m_preservedVars.set(i);
     }
-
+    
     // Parse a full CodeBlock of bytecode.
     bool parse();
     
@@ -646,10 +646,17 @@ private:
             break;
             
         case ArithMul:
-            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex))
+            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)) {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+                printf("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
+#endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
-            else
+            } else {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+                printf("Making ArithMul @%u take faster slow case.\n", nodeIndex);
+#endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayNegZero);
+            }
             break;
             
         default:
@@ -672,6 +679,10 @@ private:
         
         if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex))
             return nodeIndex;
+        
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        printf("Making %s @%u safe at bc#%u because special fast-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif
         
         m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
         
@@ -874,7 +885,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Slow case count for call at @%lu bc#%u: %u.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+    printf("Slow case count for call at @%lu bc#%u: %u/%u.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount());
 #endif
             
     if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
@@ -1246,6 +1257,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 {
     bool shouldContinueParsing = true;
     
+    Interpreter* interpreter = m_globalData->interpreter;
+    Instruction* instructionsBegin = m_inlineStackTop->m_codeBlock->instructions().begin();
+    unsigned blockBegin = m_currentIndex;
+    
     // If we are the first basic block, introduce markers for arguments. This allows
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
@@ -1259,9 +1274,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
     }
 
-    Interpreter* interpreter = m_globalData->interpreter;
-    Instruction* instructionsBegin = m_inlineStackTop->m_codeBlock->instructions().begin();
-    unsigned blockBegin = m_currentIndex;
     while (true) {
         // Don't extend over jump destinations.
         if (m_currentIndex == limit) {
@@ -1691,6 +1703,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Identifier identifier = m_codeBlock->identifier(identifierNumber);
             StructureStubInfo& stubInfo = m_inlineStackTop->m_profiledBlock->getStubInfo(m_currentIndex);
             
+#if DFG_ENABLE(DEBUG_VERBOSE)
+            printf("Slow case count for GetById @%lu bc#%u: %u\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif
+            
             size_t offset = notFound;
             StructureSet structureSet;
             if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
@@ -1781,6 +1797,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             bool alreadyGenerated = false;
             
+#if DFG_ENABLE(DEBUG_VERBOSE)
+            printf("Slow case count for PutById @%lu bc#%u: %u\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif            
+
             if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
                 switch (stubInfo.accessType) {
                 case access_put_by_id_replace: {

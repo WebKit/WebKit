@@ -581,6 +581,11 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     }
 
     Label functionBody = label();
+    
+#if ENABLE(VALUE_PROFILER)
+    if (m_canBeOptimized)
+        add32(Imm32(1), AbsoluteAddress(&m_codeBlock->m_executionEntryCount));
+#endif
 
     privateCompileMainPass();
     privateCompileLinkPass();

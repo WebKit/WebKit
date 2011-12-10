@@ -48,8 +48,10 @@ extern int32_t executionCounterIncrementForReturn;
 
 extern unsigned desiredSpeculativeSuccessFailRatio;
 
-extern unsigned likelyToTakeSlowCaseThreshold;
-extern unsigned couldTakeSlowCaseThreshold;
+extern double likelyToTakeSlowCaseThreshold;
+extern double couldTakeSlowCaseThreshold;
+extern unsigned likelyToTakeSlowCaseMinimumCount;
+extern unsigned couldTakeSlowCaseMinimumCount;
 
 extern unsigned largeFailCountThresholdBase;
 extern unsigned largeFailCountThresholdBaseForLoop;

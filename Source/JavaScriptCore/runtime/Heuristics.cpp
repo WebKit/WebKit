@@ -62,8 +62,10 @@ int32_t executionCounterIncrementForReturn;
 
 unsigned desiredSpeculativeSuccessFailRatio;
 
-unsigned likelyToTakeSlowCaseThreshold;
-unsigned couldTakeSlowCaseThreshold;
+double likelyToTakeSlowCaseThreshold;
+double couldTakeSlowCaseThreshold;
+unsigned likelyToTakeSlowCaseMinimumCount;
+unsigned couldTakeSlowCaseMinimumCount;
 
 unsigned largeFailCountThresholdBase;
 unsigned largeFailCountThresholdBaseForLoop;
@@ -141,8 +143,10 @@ void initializeHeuristics()
 
     SET(desiredSpeculativeSuccessFailRatio, 6);
     
-    SET(likelyToTakeSlowCaseThreshold, 100);
-    SET(couldTakeSlowCaseThreshold,    10); // Shouldn't be zero because some ops will spuriously take slow case, for example for linking or caching.
+    SET(likelyToTakeSlowCaseThreshold,    0.15);
+    SET(couldTakeSlowCaseThreshold,       0.05); // Shouldn't be zero because some ops will spuriously take slow case, for example for linking or caching.
+    SET(likelyToTakeSlowCaseMinimumCount, 100);
+    SET(couldTakeSlowCaseMinimumCount,    10);
 
     SET(largeFailCountThresholdBase,        20);
     SET(largeFailCountThresholdBaseForLoop, 1);

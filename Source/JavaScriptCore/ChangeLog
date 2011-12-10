@@ -1,3 +1,36 @@
+2011-12-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG's interpretation of rare case profiles should be frequency-based not count-based
+        https://bugs.webkit.org/show_bug.cgi?id=74170
+
+        Reviewed by Geoff Garen.
+        
+        DFG optimizes for rare cases only when the rare case counter is above some threshold
+        and it also constitutes a large enough fraction of total function executions. Also
+        added some minor debug logic.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        (JSC::CodeBlock::executionEntryCount):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+
 2011-12-09  Oliver Hunt  <oliver@apple.com>
 
         PutByValAlias unnecessarily clobbers GetIndexedPropertyStorage

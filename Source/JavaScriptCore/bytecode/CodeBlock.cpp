@@ -1433,6 +1433,9 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other, SymbolTable* symTab)
 #if ENABLE(JIT)
     , m_globalResolveInfos(other.m_globalResolveInfos)
 #endif
+#if ENABLE(VALUE_PROFILER)
+    , m_executionEntryCount(0)
+#endif
     , m_jumpTargets(other.m_jumpTargets)
     , m_loopTargets(other.m_loopTargets)
     , m_identifiers(other.m_identifiers)
@@ -1481,6 +1484,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_codeType(codeType)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
+#if ENABLE(VALUE_PROFILER)
+    , m_executionEntryCount(0)
+#endif
     , m_symbolTable(symTab)
     , m_alternative(alternative)
     , m_speculativeSuccessCounter(0)
@@ -2232,16 +2238,6 @@ bool CodeBlock::shouldOptimizeNow()
     m_optimizationDelayCounter++;
     optimizeAfterWarmUp();
     return false;
-}
-#endif
-
-#if ENABLE(VALUE_PROFILER)
-void CodeBlock::resetRareCaseProfiles()
-{
-    for (unsigned i = 0; i < numberOfRareCaseProfiles(); ++i)
-        rareCaseProfile(i)->m_counter = 0;
-    for (unsigned i = 0; i < numberOfSpecialFastCaseProfiles(); ++i)
-        specialFastCaseProfile(i)->m_counter = 0;
 }
 #endif
 
