@@ -1,3 +1,13 @@
+2011-12-09  Eric Penner  <epenner@google.com>
+
+        [chromium] Prevent ASSERT in legitimate out-of-memory case.
+        https://bugs.webkit.org/show_bug.cgi?id=74215
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+
 2011-12-09   Arko Saha  <arko@motorola.com>
 
         NameNodeListCache should be invalidated when name attribute changes/modified.

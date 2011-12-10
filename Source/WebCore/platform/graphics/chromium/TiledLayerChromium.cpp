@@ -176,7 +176,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D*, CCTexture
 {
     // If this assert is hit, it means that paintContentsIfDirty hasn't been
     // called on this layer. Any layer that is updated should be painted first.
-    ASSERT(m_tiler);
+    ASSERT(m_skipsDraw || m_tiler);
 
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (m_skipsDraw || m_requestedUpdateRect.isEmpty() || !m_tiler || !m_tiler->numTiles())
