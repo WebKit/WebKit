@@ -1,3 +1,19 @@
+2011-12-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add the FileSystem functions of iOS
+        https://bugs.webkit.org/show_bug.cgi?id=74164
+
+        Reviewed by David Kilzer.
+
+        Two functions are needed on iOS for temporary files and directories.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/FileSystemIOS.h: Added.
+        * platform/ios/FileSystemIOS.mm: Added.
+        (WebCore::createTemporaryDirectory):
+        (WebCore::createTemporaryFile):
+
 2011-12-09  Jacky Jiang  <zhajiang@rim.com>
 
         Remove ResourceHandle::bufferedData() from ResourceHandleBlackBerry.cpp

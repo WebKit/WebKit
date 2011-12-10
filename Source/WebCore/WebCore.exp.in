@@ -1560,6 +1560,10 @@ _wkGetNSEventMomentumPhase
 _wkGetMacOSXVersionString
 #endif
 
+#if PLATFORM(IOS)
+__ZN7WebCore24createTemporaryDirectoryEP8NSString
+#endif
+
 _wkUnregisterUniqueIdForElement
 _wkAccessibilityHandleFocusChanged
 _wkGetAXTextMarkerTypeID
