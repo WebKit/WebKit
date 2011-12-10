@@ -68,9 +68,11 @@ private:
         
     }
 
+#ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE
     {
     }
+#endif
 
     String m_corrected;
     String m_correction;
