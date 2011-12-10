@@ -427,7 +427,7 @@ enum FeatureToAnimate {
     if (!_scrollbar)
         return NSZeroPoint;
 
-    ASSERT(scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
+    ASSERT_UNUSED(scrollerImp, scrollerImp == scrollbarPainterForScrollbar(_scrollbar));
 
     return _scrollbar->convertFromContainingView(_scrollbar->scrollableArea()->currentMousePosition());
 }

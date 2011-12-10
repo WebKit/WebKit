@@ -1,3 +1,10 @@
+2011-12-09  Anders Carlsson  <andersca@apple.com>
+
+        Fix Lion release build.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+
 2011-12-09  Mark Pilgrim  <pilgrim@chromium.org>
 
         [FileSystem API] Entry.remove successCallback is required
