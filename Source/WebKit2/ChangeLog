@@ -1,5 +1,13 @@
 2011-12-09  Mark Rowe  <mrowe@apple.com>
 
+        Fix the Snow Leopard build some more.
+
+        Move the #if to a location where it will do some good.
+
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm:
+
+2011-12-09  Mark Rowe  <mrowe@apple.com>
+
         Fix the Snow Leopard build.
 
         Wrap some code that is only applicable to Lion and newer in the appropriate #if's.

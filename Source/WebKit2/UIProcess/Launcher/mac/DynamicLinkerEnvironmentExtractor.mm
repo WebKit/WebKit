@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BUILDING_ON_SNOW_LEOPARD
-
 #include "config.h"
 #include "DynamicLinkerEnvironmentExtractor.h"
+
+#ifndef BUILDING_ON_SNOW_LEOPARD
 
 #include "EnvironmentVariables.h"
 #include <mach-o/loader.h>
