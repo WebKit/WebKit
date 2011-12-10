@@ -288,15 +288,6 @@ fast/files/apply-blob-url-to-img.html
 # https://bugs.webkit.org/show_bug.cgi?id=45575
 fast/files/workers
 
-# These worker tests are failing all the time
-# https://bugs.webkit.org/show_bug.cgi?id=70619
-fast/workers/shared-worker-lifecycle.html
-fast/workers/shared-worker-frame-lifecycle.html
-fast/workers/storage/interrupt-database.html
-fast/workers/worker-close-more.html
-fast/workers/dedicated-worker-lifecycle.html
-fast/workers/worker-lifecycle.html
-
 # viewport meta tag support
 fast/viewport
 
