@@ -1,5 +1,17 @@
 2011-12-09  Karl Koscher  <supersat@chromium.org>
 
+        [chromium] add accessors to WebDOMMessageEvent
+        https://bugs.webkit.org/show_bug.cgi?id=73346
+
+        Reviewed by Darin Fisher.
+
+        * public/WebDOMMessageEvent.h:
+        * src/WebDOMMessageEvent.cpp:
+        (WebKit::WebDOMMessageEvent::data):
+        (WebKit::WebDOMMessageEvent::origin):
+
+2011-12-09  Karl Koscher  <supersat@chromium.org>
+
         [chromium] add event methods to WebFrame
         https://bugs.webkit.org/show_bug.cgi?id=73259
 

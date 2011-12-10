@@ -60,4 +60,14 @@ void WebDOMMessageEvent::initMessageEvent(const WebString& type, bool canBubble,
     unwrap<MessageEvent>()->initMessageEvent(type, canBubble, cancelable, messageData, origin, lastEventId, window, ports.release());
 }
 
+WebSerializedScriptValue WebDOMMessageEvent::data() const
+{
+    return WebSerializedScriptValue(constUnwrap<MessageEvent>()->data());
+}
+
+WebString WebDOMMessageEvent::origin() const
+{
+    return WebString(constUnwrap<MessageEvent>()->origin());
+}
+
 } // namespace WebKit
