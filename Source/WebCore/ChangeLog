@@ -1,3 +1,9 @@
+2011-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Lion build fix attempt after r102527.
+
+        * editing/SpellingCorrectionCommand.cpp:
+
 2011-12-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fixes. Add missing header for CPP

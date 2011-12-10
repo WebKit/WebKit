@@ -55,17 +55,21 @@ private:
     {
     }
 
-    virtual void doApply()
+    virtual void doApply() OVERRIDE
     {
     }
 
-    virtual void doUnapply()
+    virtual void doUnapply() OVERRIDE
     {
         if (!m_hasBeenUndone) {
             document()->frame()->editor()->unappliedSpellCorrection(startingSelection(), m_corrected, m_correction);
             m_hasBeenUndone = true;
         }
         
+    }
+
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE
+    {
     }
 
     String m_corrected;
