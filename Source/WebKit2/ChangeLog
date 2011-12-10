@@ -1,3 +1,34 @@
+2011-12-07  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/74061> WebProcess and PluginProcess should inherit environment
+        variables provided in LC_DYLD_ENVIRONMENT of main executable binary.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.h: Added.
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm: Added.
+        (WebKit::DynamicLinkerEnvironmentExtractor::DynamicLinkerEnvironmentExtractor):
+        (WebKit::DynamicLinkerEnvironmentExtractor::processEnvironmentVariable): Parse out the name
+        and value from the environment string and add an entry to our variable map if the variable
+        is one that dyld would respect in LC_DYLD_ENVIRONMENT.
+        (WebKit::DynamicLinkerEnvironmentExtractor::processLoadCommand): Look for a LC_DYLD_ENVIRONMENT
+        load command and extract any environment string that we find within.
+        (WebKit::DynamicLinkerEnvironmentExtractor::processLoadCommands): Iterate over each
+        load command in the Mach-O file.
+        (WebKit::DynamicLinkerEnvironmentExtractor::processSingleArchitecture): Determine whether
+        the Mach-O file is of the correct architecture, and if so then process the load commands
+        found within.
+        (WebKit::DynamicLinkerEnvironmentExtractor::processFatFile): Process each architecture of the
+        Mach-O file in turn.
+        (WebKit::DynamicLinkerEnvironmentExtractor::getExtractedEnvironmentVariables): Add our
+        extracted variables to the passed-in EnvironmentVariables object. We skip adding any
+        variables that already exist so as to allow variables passed in the environment to override
+        those that we extract from the executable file.
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Extract the environment variables from the
+        main binary and add them to the launch environment of our subprocess.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-12-09  Sam Weinig  <sam@webkit.org>
 
         Add WKView implementation for quickLookPreviewItemsAtWindowLocation.

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ProcessLauncher.h"
 
+#import "DynamicLinkerEnvironmentExtractor.h"
 #import "EnvironmentVariables.h"
 #import "RunLoop.h"
 #import "WebProcess.h"
@@ -117,7 +118,7 @@ void ProcessLauncher::launchProcess()
     if (architecture == LaunchOptions::MatchCurrentArchitecture)
         architecture = _NSGetMachExecuteHeader()->cputype;
 
-    cpu_type_t cpuTypes[] = { architecture };    
+    cpu_type_t cpuTypes[] = { architecture };
     size_t outCount = 0;
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
 
@@ -135,6 +136,9 @@ void ProcessLauncher::launchProcess()
     pid_t processIdentifier;
 
     EnvironmentVariables environmentVariables;
+
+    DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], architecture);
+    environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
 
     // To make engineering builds work, if the path is outside of /System set up
     // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the
