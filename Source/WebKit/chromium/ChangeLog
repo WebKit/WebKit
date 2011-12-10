@@ -1,3 +1,26 @@
+2011-12-09  Karl Koscher  <supersat@chromium.org>
+
+        [chromium] add event methods to WebFrame
+        https://bugs.webkit.org/show_bug.cgi?id=73259
+
+        Reviewed by Darin Fisher.
+
+        * public/WebDOMEventListener.h: Use EventTarget instead of Node
+        * public/WebFrame.h: Add event methods
+        * src/WebDOMEventListener.cpp: Use EventTarget instead of Node
+        (WebKit::WebDOMEventListener::createEventListenerWrapper):
+        (WebKit::WebDOMEventListener::getEventListenerWrapper):
+        * src/WebDOMEventListenerPrivate.cpp: Use EventTarget instead of Node
+        (WebKit::WebDOMEventListenerPrivate::createEventListenerWrapper):
+        (WebKit::WebDOMEventListenerPrivate::getEventListenerWrapper):
+        * src/WebDOMEventListenerPrivate.h: Use EventTarget instead of Node
+        (WebKit::WebDOMEventListenerPrivate::ListenerInfo::ListenerInfo):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addEventListener): register a listener on a WebFrame
+        (WebKit::WebFrameImpl::removeEventListener): remove a listener on a WebFrame
+        (WebKit::WebFrameImpl::dispatchEvent): dispatch an event to a WebFrame
+        * src/WebFrameImpl.h: Add event methods
+
 2011-12-09  Dirk Pranke  <dpranke@chromium.org>
 
         chromium win build: revert build_webkit_exes_from_webkit_gyp change

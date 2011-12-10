@@ -53,14 +53,14 @@ void WebDOMEventListener::notifyEventListenerDeleted(EventListenerWrapper* wrapp
     m_private->eventListenerDeleted(wrapper);
 }
 
-EventListenerWrapper* WebDOMEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListener::createEventListenerWrapper(const WebString& eventType, bool useCapture, EventTarget* target)
 {
-    return m_private->createEventListenerWrapper(eventType, useCapture, node);
+    return m_private->createEventListenerWrapper(eventType, useCapture, target);
 }
 
-EventListenerWrapper* WebDOMEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListener::getEventListenerWrapper(const WebString& eventType, bool useCapture, EventTarget* target)
 {
-    return m_private->getEventListenerWrapper(eventType, useCapture, node);
+    return m_private->getEventListenerWrapper(eventType, useCapture, target);
 }
 
 } // namespace WebKit

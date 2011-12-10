@@ -36,7 +36,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class Node;
+class EventTarget;
 }
 
 namespace WebKit {
@@ -50,12 +50,12 @@ public:
     ~WebDOMEventListenerPrivate();
 
     EventListenerWrapper* createEventListenerWrapper(
-        const WebString& eventType, bool useCapture, WebCore::Node*);
+        const WebString& eventType, bool useCapture, WebCore::EventTarget*);
 
     // Gets the ListenerEventWrapper for a specific node.
     // Used by WebNode::removeDOMEventListener().
     EventListenerWrapper* getEventListenerWrapper(
-        const WebString& eventType, bool useCapture, WebCore::Node*);
+        const WebString& eventType, bool useCapture, WebCore::EventTarget*);
 
     // Called by the WebDOMEventListener when it is about to be deleted.
     void webDOMEventListenerDeleted();
@@ -66,18 +66,18 @@ public:
     struct ListenerInfo {
         ListenerInfo(const WebString& eventType, bool useCapture,
                      EventListenerWrapper* eventListenerWrapper,
-                     WebCore::Node* node)
+                     WebCore::EventTarget* target)
             : eventType(eventType)
             , useCapture(useCapture)
             , eventListenerWrapper(eventListenerWrapper)
-            , node(node)
+            , target(target)
         {
         }
 
         WebString eventType;
         bool useCapture;
         EventListenerWrapper* eventListenerWrapper;
-        WebCore::Node* node;
+        WebCore::EventTarget* target;
     };
 
 private:

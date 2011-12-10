@@ -47,19 +47,19 @@ WebDOMEventListenerPrivate::~WebDOMEventListenerPrivate()
 {
 }
 
-EventListenerWrapper* WebDOMEventListenerPrivate::createEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListenerPrivate::createEventListenerWrapper(const WebString& eventType, bool useCapture, EventTarget* target)
 {
     EventListenerWrapper* listenerWrapper = new EventListenerWrapper(m_webDOMEventListener);
-    WebDOMEventListenerPrivate::ListenerInfo listenerInfo(eventType, useCapture, listenerWrapper, node);
+    WebDOMEventListenerPrivate::ListenerInfo listenerInfo(eventType, useCapture, listenerWrapper, target);
     m_listenerWrappers.append(listenerInfo);
     return listenerWrapper;
 }
 
-EventListenerWrapper* WebDOMEventListenerPrivate::getEventListenerWrapper(const WebString& eventType, bool useCapture, Node* node)
+EventListenerWrapper* WebDOMEventListenerPrivate::getEventListenerWrapper(const WebString& eventType, bool useCapture, EventTarget* target)
 {
     Vector<WebDOMEventListenerPrivate::ListenerInfo>::const_iterator iter;
     for (iter = m_listenerWrappers.begin(); iter != m_listenerWrappers.end(); ++iter) {
-        if (iter->node == node)
+        if (iter->target == target)
           return iter->eventListenerWrapper;
     }
     ASSERT_NOT_REACHED();

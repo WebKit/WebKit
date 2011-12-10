@@ -85,6 +85,7 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EventHandler.h"
+#include "EventListenerWrapper.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FormState.h"
@@ -138,6 +139,8 @@
 #include "UserGestureIndicator.h"
 #include "WebAnimationControllerImpl.h"
 #include "WebConsoleMessage.h"
+#include "WebDOMEvent.h"
+#include "WebDOMEventListener.h"
 #include "WebDataSourceImpl.h"
 #include "WebDocument.h"
 #include "WebFindOptions.h"
@@ -1838,6 +1841,31 @@ void WebFrameImpl::handleIntentResult(int intentIdentifier, const WebString& rep
 
 void WebFrameImpl::handleIntentFailure(int intentIdentifier, const WebString& reply)
 {
+}
+
+void WebFrameImpl::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
+{
+    DOMWindow* window = m_frame->domWindow();
+
+    EventListenerWrapper* listenerWrapper =
+        listener->createEventListenerWrapper(eventType, useCapture, window);
+
+    m_frame->domWindow()->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
+}
+
+void WebFrameImpl::removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
+{
+    DOMWindow* window = m_frame->domWindow();
+
+    EventListenerWrapper* listenerWrapper =
+        listener->getEventListenerWrapper(eventType, useCapture, window);
+    window->removeEventListener(eventType, listenerWrapper, useCapture);
+}
+
+bool WebFrameImpl::dispatchEvent(const WebDOMEvent& event)
+{
+    ASSERT(!event.isNull());
+    return m_frame->domWindow()->dispatchEvent(event);
 }
 
 WebString WebFrameImpl::contentAsText(size_t maxChars) const

@@ -34,7 +34,7 @@
 #include "platform/WebCommon.h"
 
 #if WEBKIT_IMPLEMENTATION
-namespace WebCore { class Node; }
+namespace WebCore { class EventTarget; }
 #endif
 
 namespace WebKit {
@@ -55,8 +55,8 @@ public:
 
 #if WEBKIT_IMPLEMENTATION
     void notifyEventListenerDeleted(EventListenerWrapper*);
-    EventListenerWrapper* createEventListenerWrapper(const WebString& eventType, bool useCapture, WebCore::Node* node);
-    EventListenerWrapper* getEventListenerWrapper(const WebString& eventType, bool useCapture, WebCore::Node* node);
+    EventListenerWrapper* createEventListenerWrapper(const WebString& eventType, bool useCapture, WebCore::EventTarget*);
+    EventListenerWrapper* getEventListenerWrapper(const WebString& eventType, bool useCapture, WebCore::EventTarget*);
 #endif
 
 private:
