@@ -1,3 +1,12 @@
+2011-12-09  Konrad Piascik  <kpiascik@rim.com>
+
+        Remove unnecessary file DissasemblerARM.cpp from build system
+        https://bugs.webkit.org/show_bug.cgi?id=74184
+
+        Reviewed by Daniel Bates.
+
+        * PlatformBlackBerry.cmake:
+
 2011-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         DFG's interpretation of rare case profiles should be frequency-based not count-based
