@@ -1305,10 +1305,6 @@ fast/text/zero-width-characters-complex-script.html
 # https://bugs.webkit.org/show_bug.cgi?id=59391
 editing/text-iterator/findString.html
 
-# Unskip when https://bugs.webkit.org/show_bug.cgi?id=59571 is fixed
-fast/dom/shadow/gc-shadow.html
-fast/dom/shadow/no-renderers-for-light-children.html
-
 # Skipping newly added tests while I'm finding out what is wrong.
 # https://bugs.webkit.org/show_bug.cgi?id=59706
 http/tests/inspector/resource-tree/resource-tree-document-url.html
