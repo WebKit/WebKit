@@ -49,7 +49,7 @@ void HTMLMetaElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == contentAttr)
         process();
     else if (attr->name() == nameAttr) {
-        // Do nothing.
+        invalidateNodeListsCacheAfterAttributeChanged();
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

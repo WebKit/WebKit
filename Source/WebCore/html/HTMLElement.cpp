@@ -210,6 +210,8 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
             addCSSProperty(attr, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalIgnoringCase(value, "false"))
             addCSSProperty(attr, CSSPropertyWebkitUserDrag, CSSValueNone);
+    } else if (attr->name() == nameAttr) {
+        invalidateNodeListsCacheAfterAttributeChanged();
 #if ENABLE(MICRODATA)
     } else if (attr->name() == itempropAttr) {
         setItemProp(attr->value());

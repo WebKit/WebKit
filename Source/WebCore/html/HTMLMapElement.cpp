@@ -119,6 +119,9 @@ void HTMLMapElement::parseMappedAttribute(Attribute* attribute)
         m_name = document()->isHTMLDocument() ? mapName.lower() : mapName;
         if (inDocument())
             treeScope()->addImageMap(this);
+
+        if (attrName == nameAttr)
+            invalidateNodeListsCacheAfterAttributeChanged();
         return;
     }
 

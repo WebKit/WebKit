@@ -1,3 +1,37 @@
+2011-12-09   Arko Saha  <arko@motorola.com>
+
+        NameNodeListCache should be invalidated when name attribute changes/modified.
+        https://bugs.webkit.org/show_bug.cgi?id=70810
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/dom/getelementsbyname-invalidation-cache.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::parseMappedAttribute):
+
 2011-12-09  Anders Carlsson  <andersca@apple.com>
 
         Fix Lion release build.

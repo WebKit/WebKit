@@ -122,6 +122,7 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
             document->addNamedItem(newName);
         }
         m_name = newName;
+        invalidateNodeListsCacheAfterAttributeChanged();
     } else if (attr->name() == borderAttr)
         applyBorderAttribute(attr);
     else if (isIdAttributeName(attr->name())) {

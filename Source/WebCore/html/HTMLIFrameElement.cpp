@@ -84,6 +84,7 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
             document->addExtraNamedItem(newName);
         }
         m_name = newName;
+        invalidateNodeListsCacheAfterAttributeChanged();
     } else if (attr->name() == frameborderAttr) {
         // Frame border doesn't really match the HTML4 spec definition for iframes.  It simply adds
         // a presentational hint that the border should be off if set to zero.
