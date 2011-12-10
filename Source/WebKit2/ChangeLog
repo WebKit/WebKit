@@ -1,3 +1,13 @@
+2011-12-09  Sam Weinig  <sam@webkit.org>
+
+        Add WKView implementation for quickLookPreviewItemsAtWindowLocation.
+        <rdar://problem/10472505>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView quickLookPreviewItemsAtWindowLocation:]):
+
 2011-12-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Open shared memory files with shm_open.

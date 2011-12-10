@@ -2098,6 +2098,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     return NO;
 }
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+- (void)quickLookPreviewItemsAtWindowLocation:(NSPoint)location
+{
+    NSPoint locationInViewCoordinates = [self convertPoint:location fromView:nil];
+    _data->_page->performDictionaryLookupAtLocation(FloatPoint(locationInViewCoordinates.x, locationInViewCoordinates.y));
+}
+#endif
+
 @end
 
 @implementation WKView (Internal)
