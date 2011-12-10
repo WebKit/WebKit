@@ -24,6 +24,7 @@
 #include "qwebkitglobal.h"
 #include <QtQuick/qquickitem.h>
 
+class QWebNavigationRequest;
 class QDeclarativeComponent;
 class QQuickWebPage;
 class QQuickWebViewAttached;
@@ -114,7 +115,7 @@ Q_SIGNALS:
     void messageReceived(const QVariantMap& message);
     void linkHovered(const QUrl& url, const QString& title);
     void navigationStateChanged();
-    void navigationRequested(QObject* request);
+    void navigationRequested(QWebNavigationRequest* request);
 
 protected:
     virtual void geometryChanged(const QRectF&, const QRectF&);

@@ -1,5 +1,31 @@
 2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
+        [Qt] request parameter of QQuickWebView::navigationRequested is not a registered type
+        https://bugs.webkit.org/show_bug.cgi?id=73826
+
+        Reviewed by Tor Arne Vestbø.
+
+        Adding QWebNavigationRequest by moving NavigationRequest out of QtWebPagePolicyClient.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebnavigationrequest.cpp: Added.
+        (QWebNavigationRequestPrivate::QWebNavigationRequestPrivate):
+        (QWebNavigationRequestPrivate::~QWebNavigationRequestPrivate):
+        (QWebNavigationRequest::QWebNavigationRequest):
+        (QWebNavigationRequest::~QWebNavigationRequest):
+        (QWebNavigationRequest::setAction):
+        (QWebNavigationRequest::url):
+        (QWebNavigationRequest::button):
+        (QWebNavigationRequest::modifiers):
+        (QWebNavigationRequest::action):
+        * UIProcess/API/qt/qwebnavigationrequest_p.h: Added.
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction):
+        (QtWebPagePolicyClient::decidePolicyForResponse):
+
+2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
         [Qt][WK2] Unskip API tests
         https://bugs.webkit.org/show_bug.cgi?id=74180
 

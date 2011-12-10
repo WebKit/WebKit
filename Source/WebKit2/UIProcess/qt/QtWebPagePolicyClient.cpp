@@ -24,48 +24,10 @@
 #include "WKURLQt.h"
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
+#include "qwebnavigationrequest_p.h"
 #include <QtCore/QObject>
 #include <WKFramePolicyListener.h>
 #include <WKURLRequest.h>
-
-class NavigationRequest : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(QUrl url READ url CONSTANT FINAL)
-    Q_PROPERTY(int button READ button CONSTANT FINAL)
-    Q_PROPERTY(int modifiers READ modifiers CONSTANT FINAL)
-    Q_PROPERTY(int action READ action WRITE setAction NOTIFY actionChanged FINAL)
-
-public:
-    NavigationRequest(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
-        : m_url(url)
-        , m_button(button)
-        , m_modifiers(modifiers)
-        , m_action(QQuickWebView::AcceptRequest)
-    {
-    }
-
-    QUrl url() const { return m_url; }
-    int button() const { return int(m_button); }
-    int modifiers() const { return int(m_modifiers); }
-
-    int action() const { return int(m_action); }
-    void setAction(int action)
-    {
-        if (m_action == action)
-            return;
-        m_action = action;
-        emit actionChanged();
-    }
-
-Q_SIGNALS:
-    void actionChanged();
-
-private:
-    QUrl m_url;
-    Qt::MouseButton m_button;
-    Qt::KeyboardModifiers m_modifiers;
-    int m_action;
-};
 
 QtWebPagePolicyClient::QtWebPagePolicyClient(WKPageRef pageRef, QQuickWebView* webView)
     : m_webView(webView)
@@ -83,7 +45,7 @@ void QtWebPagePolicyClient::decidePolicyForNavigationAction(const QUrl& url, Qt:
 {
     // NOTE: even though the C API (and the WebKit2 IPC) supports an asynchronous answer, this is not currently working.
     // We are expected to call the listener immediately. See the patch for https://bugs.webkit.org/show_bug.cgi?id=53785.
-    NavigationRequest navigationRequest(url, mouseButton, keyboardModifiers);
+    QWebNavigationRequest navigationRequest(url, mouseButton, keyboardModifiers);
     emit m_webView->navigationRequested(&navigationRequest);
 
     switch (QQuickWebView::NavigationRequestAction(navigationRequest.action())) {
@@ -170,5 +132,3 @@ void QtWebPagePolicyClient::decidePolicyForResponse(WKPageRef page, WKFrameRef f
 
     WKFramePolicyListenerUse(listener);
 }
-
-#include "QtWebPagePolicyClient.moc"

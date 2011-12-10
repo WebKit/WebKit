@@ -1,3 +1,13 @@
+2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] request parameter of QQuickWebView::navigationRequested is not a registered type
+        https://bugs.webkit.org/show_bug.cgi?id=73826
+
+        Reviewed by Tor Arne Vestbø.
+
+        * declarative/plugin.cpp:
+        (WebKitQmlPlugin::registerTypes): Registering QWebNavigationRequest
+
 2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Drop ENABLE_NO_LISTBOX_RENDERING, and make it a runtime decision.

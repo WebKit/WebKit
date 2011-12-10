@@ -1,3 +1,12 @@
+2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] request parameter of QQuickWebView::navigationRequested is not a registered type
+        https://bugs.webkit.org/show_bug.cgi?id=73826
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/qtwebkit-export.map: Adding QWebNavigationRequest
+
 2011-12-09  Joone Hur  <joone.hur@collabora.co.uk>
 
         [GTK] Initial implementation of Accelerated Compositing using Clutter

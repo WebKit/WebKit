@@ -130,6 +130,9 @@ qwk_1.0 {
         *QWebPermissionRequest;
         non-virtual?thunk?to?QWebPermissionRequest*;
         QWebPermissionRequest::*;
+        *QWebNavigationRequest;
+        non-virtual?thunk?to?QWebNavigationRequest*;
+        QWebNavigationRequest::*;
 
 
         # WebKit 2 C API mangled in C++
