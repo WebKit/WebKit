@@ -3184,8 +3184,63 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 // CSS Grid Layout is not enabled yet.
 BUGWK60731 SKIP : fast/css-grid-layout = PASS
 
+// two regions reftests failing on Chromium
+BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions-rtl.html = PASS IMAGE
+BUGWK74219 : fast/regions/positioned-objects-block-static-spanning-regions.html = PASS IMAGE
+
 // Need to evaluate and update regions and exclusions tests.
-BUGWK57312 : fast/regions = PASS FAIL MISSING
+BUGWK74137 : fast/regions/bottom-overflow-out-of-first-region.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/float-pushed-width-change.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/floats-basic-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/flow-content-basic-vertical-rl.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/flow-content-basic-vertical.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/flow-content-basic.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/flows-dependency-dynamic-remove.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/flows-dependency-same-flow.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/multiple-directionality-changes-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/outline-sides-in-region.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-in-uniform-regions-dynamic.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-in-uniform-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-moving-below-floats-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-not-moving-below-floats-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-rtl-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-size-change-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-size-change-with-stacking-context-rtl.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/overflow-size-change-with-stacking-context.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/percentage-margins-mixed-ltr-dominant-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/percentage-margins-mixed-rtl-dominant-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/percentage-margins-rtl-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/percentage-margins-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/position-writing-modes-in-variable-width-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-clipped-spanning-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-in-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-in-rtl-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-inline-static-in-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-inline-static-in-rtl-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-inline-static-spanning-regions-rtl.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-inline-static-spanning-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-perpendicular-flows-in-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/positioned-objects-spanning-regions.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-overflow-auto-overflow-hidden.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-overflow-auto-overflow-visible.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-overflow-break.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-style-block-background-color.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-style-block-background-color2.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-style-image-background-color.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/region-style-inline-background-color.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/render-region-custom-style-mark.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/render-region-renderer.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/text-region-split-small-pagination.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/top-overflow-out-of-second-region.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-double-pagination-float-push.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-float-pushed-to-last-region.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-float-unable-to-push.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-floats-inside-regions-bounds.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-inlines-dynamic.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html = PASS FAIL MISSING
+BUGWK74137 : fast/regions/webkit-flow-inlines-inside-regions-bounds.html = PASS FAIL MISSING
 
 // CSS Filters support not yet enabled
 BUGWK68469 SKIP : css3/filters = PASS
