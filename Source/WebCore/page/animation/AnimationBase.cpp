@@ -371,6 +371,28 @@ protected:
     void (RenderStyle::*m_setter)(PassRefPtr<T>);
 };
 
+class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
+public:
+    StyleImagePropertyWrapper(int prop, StyleImage* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<StyleImage>))
+        : RefCountedPropertyWrapper<StyleImage>(prop, getter, setter)
+    {
+    }
+
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
+    {
+       // If the style pointers are the same, don't bother doing the test.
+       // If either is null, return false. If both are null, return true.
+       if (a == b)
+           return true;
+       if (!a || !b)
+            return false;
+            
+        StyleImage* imageA = (a->*m_getter)();
+        StyleImage* imageB = (b->*m_getter)();
+        return StyleImage::imagesEquivalent(imageA, imageB);
+    }
+};
+
 #if USE(ACCELERATED_COMPOSITING)
 class PropertyWrapperAcceleratedOpacity : public PropertyWrapper<float> {
 public:
@@ -662,6 +684,27 @@ protected:
     void (FillLayer::*m_setter)(PassRefPtr<T>);
 };
 
+class FillLayerStyleImagePropertyWrapper : public FillLayerRefCountedPropertyWrapper<StyleImage> {
+public:
+    FillLayerStyleImagePropertyWrapper(StyleImage* (FillLayer::*getter)() const, void (FillLayer::*setter)(PassRefPtr<StyleImage>))
+        : FillLayerRefCountedPropertyWrapper<StyleImage>(getter, setter)
+    {
+    }
+
+    virtual bool equals(const FillLayer* a, const FillLayer* b) const
+    {
+       // If the style pointers are the same, don't bother doing the test.
+       // If either is null, return false. If both are null, return true.
+       if (a == b)
+           return true;
+       if (!a || !b)
+            return false;
+
+        StyleImage* imageA = (a->*m_getter)();
+        StyleImage* imageB = (b->*m_getter)();
+        return StyleImage::imagesEquivalent(imageA, imageB);
+    }
+};
 
 class FillLayersPropertyWrapper : public PropertyWrapperBase {
 public:
@@ -688,7 +731,7 @@ public:
                 m_fillLayerPropertyWrapper = new FillLayerPropertyWrapper<LengthSize>(&FillLayer::sizeLength, &FillLayer::setSizeLength);
                 break;
             case CSSPropertyBackgroundImage:
-                m_fillLayerPropertyWrapper = new FillLayerRefCountedPropertyWrapper<StyleImage>(&FillLayer::image, &FillLayer::setImage);
+                m_fillLayerPropertyWrapper = new FillLayerStyleImagePropertyWrapper(&FillLayer::image, &FillLayer::setImage);
                 break;
         }
     }
@@ -872,13 +915,13 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<const Color&>(CSSPropertyBackgroundColor, &RenderStyle::backgroundColor, &RenderStyle::setBackgroundColor));
 
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundImage, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));
-        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyListStyleImage, &RenderStyle::listStyleImage, &RenderStyle::setListStyleImage));
-        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage));
+        gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyListStyleImage, &RenderStyle::listStyleImage, &RenderStyle::setListStyleImage));
+        gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyWebkitMaskImage, &RenderStyle::maskImage, &RenderStyle::setMaskImage));
 
-        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource));
+        gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyBorderImageSource, &RenderStyle::borderImageSource, &RenderStyle::setBorderImageSource));
         gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyBorderImage, &RenderStyle::borderImage, &RenderStyle::setBorderImage));
 
-        gPropertyWrappers->append(new RefCountedPropertyWrapper<StyleImage>(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource));
+        gPropertyWrappers->append(new StyleImagePropertyWrapper(CSSPropertyWebkitMaskBoxImageSource, &RenderStyle::maskBoxImageSource, &RenderStyle::setMaskBoxImageSource));
         gPropertyWrappers->append(new PropertyWrapper<const NinePieceImage&>(CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage));
 
         gPropertyWrappers->append(new FillLayersPropertyWrapper(CSSPropertyBackgroundPositionX, &RenderStyle::backgroundLayers, &RenderStyle::accessBackgroundLayers));

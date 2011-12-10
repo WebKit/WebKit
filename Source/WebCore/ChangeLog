@@ -1,3 +1,26 @@
+2011-12-09  Tim Horton  <timothy_horton@apple.com>
+
+        background-image transitions trigger between equivalent images
+        https://bugs.webkit.org/show_bug.cgi?id=74229
+        <rdar://problem/10558627>
+
+        Reviewed by Darin Adler.
+        Patch by Simon Fraser.
+
+        For animation property wrappers around StyleImage properties,
+        test the equivalence of the image itself, instead of equality of
+        the StyleImage pointer.
+
+        Test: transitions/equivalent-background-image-no-transition.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::StyleImagePropertyWrapper::StyleImagePropertyWrapper):
+        (WebCore::StyleImagePropertyWrapper::equals):
+        (WebCore::FillLayerStyleImagePropertyWrapper::FillLayerStyleImagePropertyWrapper):
+        (WebCore::FillLayerStyleImagePropertyWrapper::equals):
+        (WebCore::FillLayersPropertyWrapper::FillLayersPropertyWrapper):
+        (WebCore::AnimationBase::ensurePropertyMap):
+
 2011-12-09  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Small style fix on DragDataBlackBerry.cpp

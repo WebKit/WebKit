@@ -1,0 +1,50 @@
+<html>
+<head>
+    <style>
+    #foo {
+        -webkit-transition: all 0.05s linear, top 0.1s linear;
+        position: absolute;
+        top: 30px;
+        left: 10px;
+        width: 300px;
+        height: 300px;
+        background-image: -webkit-linear-gradient(red, green, blue);
+    }
+    #foo.trans {
+        top: 40px;
+    }
+    </style>
+    <script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    </script>
+</head>
+<body>
+    <div id="foo">This should not fire a background-image transition.</div>
+
+    <script type="text/javascript" charset="utf-8">
+
+    var finished = false;
+
+    document.getElementById('foo').addEventListener('webkitTransitionEnd', function(evt) {
+        if(evt.propertyName == "background-image" && !finished) {
+            document.getElementById('result').innerHTML = ("FAIL: saw a background-image transition");
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+            finished = true;
+        } else if(evt.propertyName == "top" && !finished) {
+            document.getElementById('result').innerHTML = ("PASS: no background-image transition");
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    });
+
+    document.getElementById("foo").className="trans";
+    </script>
+
+    <div id="result">
+    </div>
+</body>
+</html>
