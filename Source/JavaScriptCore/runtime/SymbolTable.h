@@ -125,7 +125,7 @@ namespace JSC {
     public:
         static PassRefPtr<SharedSymbolTable> create() { return adoptRef(new SharedSymbolTable); }
     private:
-        SharedSymbolTable() { }
+        SharedSymbolTable() { deprecatedTurnOffVerifier(); }
     };
     
 } // namespace JSC

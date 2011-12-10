@@ -1,3 +1,16 @@
+2011-12-09  David Levin  <levin@chromium.org>
+
+        REGRESSION(r101863-r102042): Assertion hit: m_verifier.isSafeToUse() in RefCountedBase::ref in FunctionCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=73886
+
+        Reviewed by Darin Adler.
+
+        * runtime/SymbolTable.h:
+        (JSC::SharedSymbolTable::SharedSymbolTable): Added deprecatedTurnOffVerifier for
+        another JavaScriptObject, since JavaScriptCore objects allow use on multiple threads.
+        Bug 58091 is about changing these deprecated calls to something else but that something
+        else will still need to be in all of these places.
+
 2011-12-09  Konrad Piascik  <kpiascik@rim.com>
 
         Remove unnecessary file DissasemblerARM.cpp from build system
