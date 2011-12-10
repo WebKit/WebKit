@@ -1,3 +1,18 @@
+2011-12-09  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: numerous counter-increment-* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=73360
+
+        Reviewed by Julien Chaffraix.
+
+        Allow counter-increment to handle integer underflow and overflow.
+        Also allow 'counter' to inherit.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyCounter::applyInheritValue):
+        (WebCore::ApplyPropertyCounter::applyValue):
+        (WebCore::ApplyPropertyCounter::createHandler):
+
 2011-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         There should be a way to count the number of nodes held by undo stack

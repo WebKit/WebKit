@@ -720,6 +720,33 @@ template <CounterBehavior counterBehavior>
 class ApplyPropertyCounter {
 public:
     static void emptyFunction(CSSStyleSelector*) { }
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        CounterDirectiveMap& map = selector->style()->accessCounterDirectives();
+        CounterDirectiveMap& parentMap = selector->parentStyle()->accessCounterDirectives();
+
+        typedef CounterDirectiveMap::iterator Iterator;
+        Iterator end = parentMap.end();
+        for (Iterator it = parentMap.begin(); it != end; ++it) {
+            CounterDirectives& directives = map.add(it->first, CounterDirectives()).first->second;
+            if (counterBehavior == Reset) {
+                directives.m_reset = it->second.m_reset;
+                directives.m_resetValue = it->second.m_resetValue;
+            } else {
+                // Inheriting a counter-increment means taking the parent's current value for the counter
+                // and adding it to itself.
+                directives.m_increment = it->second.m_increment;
+                directives.m_incrementValue = 0;
+                if (directives.m_increment) {
+                    float incrementValue = directives.m_incrementValue;
+                    directives.m_incrementValue = clampToInteger(incrementValue + it->second.m_incrementValue);
+                } else {
+                    directives.m_increment = true;
+                    directives.m_incrementValue = it->second.m_incrementValue;
+                }
+            }
+        }
+    }
     static void applyValue(CSSStyleSelector* selector, CSSValue* value)
     {
         if (!value->isValueList())
@@ -732,7 +759,7 @@ public:
 
         Iterator end = map.end();
         for (Iterator it = map.begin(); it != end; ++it)
-            if (counterBehavior)
+            if (counterBehavior == Reset)
                 it->second.m_reset = false;
             else
                 it->second.m_increment = false;
@@ -748,23 +775,24 @@ public:
                 continue;
 
             AtomicString identifier = static_cast<CSSPrimitiveValue*>(pair->first())->getStringValue();
-            // FIXME: What about overflow?
             int value = static_cast<CSSPrimitiveValue*>(pair->second())->getIntValue();
             CounterDirectives& directives = map.add(identifier.impl(), CounterDirectives()).first->second;
-            if (counterBehavior) {
+            if (counterBehavior == Reset) {
                 directives.m_reset = true;
                 directives.m_resetValue = value;
             } else {
-                if (directives.m_increment)
-                    directives.m_incrementValue += value;
-                else {
+                if (directives.m_increment) {
+                    float incrementValue = directives.m_incrementValue;
+                    directives.m_incrementValue = clampToInteger(incrementValue + value);
+                } else {
                     directives.m_increment = true;
                     directives.m_incrementValue = value;
                 }
             }
+            
         }
     }
-    static PropertyHandler createHandler() { return PropertyHandler(&emptyFunction, &emptyFunction, &applyValue); }
+    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &emptyFunction, &applyValue); }
 };
 
 

@@ -1,0 +1,7 @@
+PASS layoutTestController.counterValueForElementById('wrapper90') is '5'
+PASS layoutTestController.counterValueForElementById('test90') is '10'
+PASS layoutTestController.counterValueForElementById('test90a') is '15'
+PASS layoutTestController.counterValueForElementById('wrapper91') is '10'
+PASS layoutTestController.counterValueForElementById('test91') is '20'
+PASS layoutTestController.counterValueForElementById('test91a') is '30'
+
