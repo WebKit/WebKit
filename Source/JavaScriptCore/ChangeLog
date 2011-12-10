@@ -1,3 +1,15 @@
+2011-12-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unused variable in YarrJIT.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=74237
+
+        Reviewed by Andreas Kling.
+
+        Variable is set but not used so we can remove it.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+
 2011-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ArithMul power-of-two case does not check for overflow

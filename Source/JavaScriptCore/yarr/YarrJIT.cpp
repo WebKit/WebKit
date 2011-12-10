@@ -675,7 +675,6 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID character = regT0;
         int maxCharactersAtOnce = m_charSize == Char8 ? 4 : 2;
         unsigned ignoreCaseMask = 0;
-        unsigned currentCharacterMask = m_charSize == Char8 ? 0xff : 0xffff;
         int allCharacters = ch;
         int numberCharacters;
         int startTermPosition = term->inputPosition;
@@ -699,7 +698,6 @@ class YarrGenerator : private MacroAssembler {
             nextOp->m_isDeadCode = true;
 
             int shiftAmount = (m_charSize == Char8 ? 8 : 16) * numberCharacters;
-            currentCharacterMask = (m_charSize == Char8 ? 0xff : 0xffff) << shiftAmount;  
 
             UChar currentCharacter = nextTerm->patternCharacter;
 
