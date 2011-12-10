@@ -1,5 +1,17 @@
 2011-12-09  Dirk Pranke  <dpranke@chromium.org>
 
+        chromium win build: revert build_webkit_exes_from_webkit_gyp change
+        https://bugs.webkit.org/show_bug.cgi?id=74225
+
+        Reviewed by Tony Chang.
+
+        This change sets build_webkit_exes_from_webkit_gyp back to 1;
+        the "All.gyp" solution doesn't work on windows.
+
+        * gyp_webkit:
+
+2011-12-09  Dirk Pranke  <dpranke@chromium.org>
+
         chromium: visual studio projects are busted when build_webkit_exes_from_webkit_gyp==0
         https://bugs.webkit.org/show_bug.cgi?id=74212
 
