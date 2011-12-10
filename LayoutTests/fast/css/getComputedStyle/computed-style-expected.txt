@@ -145,7 +145,7 @@ zoom: 1;
 -webkit-flex-order: 0;
 -webkit-flex-pack: start;
 -webkit-flex-align: stretch;
--webkit-flex-flow: row;
+-webkit-flex-flow: row nowrap;
 -webkit-font-smoothing: auto;
 -webkit-highlight: none;
 -webkit-hyphenate-character: auto;

@@ -144,7 +144,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-flex-order: 0
     -webkit-flex-pack: start
     -webkit-flex-align: stretch
-    -webkit-flex-flow: row
+    -webkit-flex-flow: row nowrap
     -webkit-font-smoothing: auto
     -webkit-highlight: none
     -webkit-hyphenate-character: auto

@@ -288,8 +288,8 @@ rect: style.getPropertyValue(-webkit-flex-pack) : start
 rect: style.getPropertyCSSValue(-webkit-flex-pack) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-flex-align) : stretch
 rect: style.getPropertyCSSValue(-webkit-flex-align) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-flex-flow) : row
-rect: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-flex-flow) : row nowrap
+rect: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-font-smoothing) : auto
 rect: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-highlight) : none
@@ -792,8 +792,8 @@ g: style.getPropertyValue(-webkit-flex-pack) : start
 g: style.getPropertyCSSValue(-webkit-flex-pack) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-flex-align) : stretch
 g: style.getPropertyCSSValue(-webkit-flex-align) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-flex-flow) : row
-g: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-flex-flow) : row nowrap
+g: style.getPropertyCSSValue(-webkit-flex-flow) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-font-smoothing) : auto
 g: style.getPropertyCSSValue(-webkit-font-smoothing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-highlight) : none
