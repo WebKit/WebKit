@@ -255,6 +255,11 @@ WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBundlePageRef
     return toAPI(webImage.release().leakRef());
 }
 
+double WKBundlePageGetBackingScaleFactor(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->deviceScaleFactor();
+}
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef pageRef)
 {
