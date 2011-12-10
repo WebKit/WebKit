@@ -1,3 +1,9 @@
+2011-12-10  Andreas Kling  <kling@webkit.org>
+
+        Add my Apple e-mail to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-09  Dirk Pranke  <dpranke@chromium.org>
 
         chromium win build: revert build_webkit_exes_from_webkit_gyp change
