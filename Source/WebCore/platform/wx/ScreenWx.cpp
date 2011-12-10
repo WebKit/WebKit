@@ -28,6 +28,7 @@
 #include "Screen.h"
 #include "IntRect.h"
 #include "FloatRect.h"
+#include "NotImplemented.h"
 #include "Widget.h"
 
 #include <wx/defs.h>
@@ -35,17 +36,18 @@
 #include <wx/gdicmn.h>
 
 namespace WebCore {
-
-FloatRect scaleScreenRectToWidget(FloatRect rect, Widget*)
+    
+int screenHorizontalDPI(Widget*)
 {
-    return rect;
+    notImplemented();
+    return 0;
 }
-
-FloatRect scaleWidgetRectToScreen(FloatRect rect, Widget*)
+int screenVerticalDPI(Widget*)
 {
-    return rect;
+    notImplemented();
+    return 0;
 }
-
+    
 FloatRect screenRect(Widget* widget)
 {
 /*

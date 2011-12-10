@@ -309,6 +309,11 @@ sub AddIncludesForType
         $implIncludes{"WebDOMCustomVoidCallback.h"} = 1;
         return;
     }
+    
+    # Also include CSSImportRule so that the toWebKit methods for subclasses are found
+    if ($type eq "CSSRule") {
+        $implIncludes{"WebDOMCSSImportRule.h"} = 1;
+    }
 
     $implIncludes{"Node.h"} = 1 if $type eq "NodeList";
     $implIncludes{"CSSMutableStyleDeclaration.h"} = 1 if $type eq "CSSStyleDeclaration";

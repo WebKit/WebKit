@@ -1,3 +1,14 @@
+2011-12-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes. Add missing header for CPP
+        DOM bindings and add stubs for new DPI methods.
+        
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (AddIncludesForType):
+        * platform/wx/ScreenWx.cpp:
+        (WebCore::screenHorizontalDPI):
+        (WebCore::screenVerticalDPI):
+
 2011-12-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix. Remove an erroneous OVERRIDE.
