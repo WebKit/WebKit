@@ -1,3 +1,19 @@
+2011-11-09  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: outline-color-* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=71931
+
+        Reviewed by Julien Chaffraix.
+
+        Test: css2.1/20110323/outline-color-001.html
+
+        WebKit didn't paint the top block in this series of tests because it ignored the outline
+        of objects with a zero size. Fix this by taking account of both offset and width of the
+        outline when deciding whether to paint it. 
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline): paint the outline even when the block has zero size
+
 2011-12-10   Arko Saha  <arko@motorola.com>
 
         Microdata: Fix compilation error in MICRODATA enabled build.

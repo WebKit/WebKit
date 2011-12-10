@@ -1130,7 +1130,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
 
     Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
 
-    LayoutUnit offset = styleToUse->outlineOffset();
+    LayoutUnit outlineOffset = styleToUse->outlineOffset();
 
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
@@ -1143,13 +1143,14 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
         return;
 
     LayoutRect inner = paintRect;
-    inner.inflate(offset);
-
-    if (inner.isEmpty())
-        return;
+    inner.inflate(outlineOffset);
 
     LayoutRect outer = inner;
     outer.inflate(outlineWidth);
+
+    // FIXME: This prevents outlines from painting inside the object. See bug 12042
+    if (outer.isEmpty())
+        return;
 
     bool useTransparencyLayer = outlineColor.hasAlpha();
     if (useTransparencyLayer) {
