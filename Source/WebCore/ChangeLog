@@ -1,3 +1,30 @@
+2011-12-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        WebPImageDecoder progressive decodes fail to decode valid images
+        https://bugs.webkit.org/show_bug.cgi?id=74062
+
+        Reviewed by Adam Barth.
+
+        The WEBP header is followed by a so-called P0 header, then some data to
+        decode.  If a partial P0 header is received during progressive decodes,
+        WebPIDecGetRGB() returns false; that makes the decoder enter the failed
+        state, no image appears on the page.
+
+        James Zern (webp) recommended the following via e-mail:
+
+        WebPIUpdate() validates input data, and will return an error status for
+        malformed data (bit-stream error, invalid data).  Otherwise, it returns
+        OK or SUSPENDED.  OK means that decoding is done/complete/no-error, and
+        SUSPENDED means more input data is needed to complete decoding.  A NULL
+        return from WebPIDecGetRGB() is valid at this time due to a partial P0,
+        and should not be interpreted as a decoding failure.
+
+        No new tests. Not something DumpRenderTree can easily test.
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):  A NULL WebPIDecGetRGB() return is
+        acceptable here.  Return false instead of failing the decoder.
+
 2011-12-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Add the FileSystem functions of iOS

@@ -134,7 +134,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
         if (status != VP8_STATUS_OK && status != VP8_STATUS_SUSPENDED)
             return setFailed();
         if (!WebPIDecGetRGB(m_decoder, &newLastVisibleRow, 0, 0, 0))
-            return setFailed();
+            return false;
         ASSERT(newLastVisibleRow >= 0);
         ASSERT(newLastVisibleRow <= height);
     }
