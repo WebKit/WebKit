@@ -1,3 +1,14 @@
+2011-12-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Snow Leopard build.
+
+        Wrap some code that is only applicable to Lion and newer in the appropriate #if's.
+        
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.h:
+        * UIProcess/Launcher/mac/DynamicLinkerEnvironmentExtractor.mm:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] request parameter of QQuickWebView::navigationRequested is not a registered type

@@ -137,8 +137,10 @@ void ProcessLauncher::launchProcess()
 
     EnvironmentVariables environmentVariables;
 
+#ifndef BUILDING_ON_SNOW_LEOPARD
     DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], architecture);
     environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
+#endif
 
     // To make engineering builds work, if the path is outside of /System set up
     // DYLD_FRAMEWORK_PATH to pick up other frameworks, but don't do it for the

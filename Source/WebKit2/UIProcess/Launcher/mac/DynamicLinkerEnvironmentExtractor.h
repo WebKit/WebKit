@@ -26,6 +26,8 @@
 #ifndef DynamicLinkerEnvironmentExtractor_h
 #define DynamicLinkerEnvironmentExtractor_h
 
+#ifndef BUILDING_ON_SNOW_LEOPARD
+
 #include <mach/machine.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
@@ -58,5 +60,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // BUILDING_ON_SNOW_LEOPARD
 
 #endif // DynamicLinkerEnvironmentExtractor_h
