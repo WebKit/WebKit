@@ -47,7 +47,7 @@ public:
     void append(SimpleEditCommand*);
 
 #ifndef NDEBUG
-    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+    virtual void getNodesInCommand(HashSet<Node*>&);
 #endif
 
 private:

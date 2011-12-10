@@ -1,3 +1,9 @@
+2011-12-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix. Remove an erroneous OVERRIDE.
+
+        * editing/CompositeEditCommand.h:
+
 2011-12-09  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: numerous counter-increment-* tests fail
