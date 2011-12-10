@@ -1910,22 +1910,6 @@ static bool isPowerOfTwo(int32_t num)
     return num && !(num & (num - 1));
 }
 
-// This routine is copied from FastMalloc
-static int32_t logTwo(int32_t num)
-{
-    int32_t log = 0;
-    for (int32_t i = 4; i >= 0; --i) {
-        int32_t shift = (1 << i);
-        int32_t x = num >> shift;
-        if (x) {
-            num = x;
-            log += shift;
-        }
-    }
-    ASSERT(num == 1);
-    return log;
-}
-
 void SpeculativeJIT::compileSoftModulo(Node& node)
 {
     bool shouldGeneratePowerOfTwoCheck = true;
@@ -2092,47 +2076,6 @@ void SpeculativeJIT::compileSoftModulo(Node& node)
 void SpeculativeJIT::compileArithMul(Node& node)
 {
     if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
-        if (isInt32Constant(node.child2()) && !nodeMayOverflow(node.arithNodeFlags())) {
-            int32_t multiplier = valueOfInt32Constant(node.child2());
-            bool negative = false;
-            if (multiplier < 0) {
-                multiplier = -multiplier;
-                negative = true;
-            }
-
-            if (!multiplier) {
-                GPRTemporary result(this);
-                GPRReg resultGPR = result.gpr();
-
-                if (!nodeCanIgnoreNegativeZero(node.arithNodeFlags())) {
-                    SpeculateIntegerOperand op1(this, node.child1());
-                    speculationCheck(JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op1.gpr(), TrustedImm32(0)));
-                }
-
-                m_jit.move(TrustedImm32(0), resultGPR);
-                integerResult(resultGPR, m_compileIndex);
-                return;
-            }
-
-            if (isPowerOfTwo(multiplier)) {
-                int log = logTwo(multiplier);
-                SpeculateIntegerOperand op1(this, node.child1());
-                GPRTemporary result(this, op1);
-                GPRReg op1GPR = op1.gpr();
-                GPRReg resultGPR = result.gpr();
-
-                if (negative && !nodeCanIgnoreNegativeZero(node.arithNodeFlags()))
-                    speculationCheck(JSValueRegs(), NoNode, m_jit.branchTest32(MacroAssembler::Zero, op1GPR));
-
-                m_jit.lshift32(op1GPR, TrustedImm32(log), resultGPR);
-                if (negative)
-                    m_jit.neg32(resultGPR);
-
-                integerResult(resultGPR, m_compileIndex);
-                return;
-            }
-        }
-
         SpeculateIntegerOperand op1(this, node.child1());
         SpeculateIntegerOperand op2(this, node.child2());
         GPRTemporary result(this);
