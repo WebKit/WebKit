@@ -1,3 +1,18 @@
+2011-12-09  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Small style fix on DragDataBlackBerry.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74171
+
+        Reviewed by Rob Buis.
+
+        Style fix, no function impact, no new tests.
+
+        * platform/blackberry/DragDataBlackBerry.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+
 2011-12-09  Tony Chang  <tony@chromium.org>
 
         add css parsing for flex-flow: wrap and wrap-reverse

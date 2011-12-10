@@ -58,15 +58,14 @@ bool DragData::containsPlainText() const
     return false;
 }
 
-bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy) const
 {
     notImplemented();
     return false;
 }
 
-void DragData::asFilenames(WTF::Vector<String, 0u>& result) const
+void DragData::asFilenames(Vector<String>&) const
 {
-    // FIXME: remove explicit 0 size in result template once this is implemented
     notImplemented();
 }
 
@@ -82,14 +81,13 @@ String DragData::asPlainText(Frame*) const
     return String();
 }
 
-String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy, String*) const
 {
     notImplemented();
     return String();
 }
 
-WTF::PassRefPtr<DocumentFragment> DragData::asFragment(Frame*, PassRefPtr<Range> context,
-                                            bool allowPlainText, bool& chosePlainText) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame*, PassRefPtr<Range>, bool, bool&) const
 {
     notImplemented();
     return 0;
