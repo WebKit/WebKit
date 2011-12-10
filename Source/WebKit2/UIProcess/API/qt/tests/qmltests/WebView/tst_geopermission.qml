@@ -45,7 +45,6 @@ WebView {
         }
 
         function test_permissionRequest() {
-            skip("Waiting for qtlocation being included in the bot")
             compare(spy.count, 0)
             webView.load(Qt.resolvedUrl("../common/geolocation.html"))
             spy.wait()

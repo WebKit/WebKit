@@ -81,7 +81,6 @@ WebView {
         }
 
         function test_alertWithoutDialog() {
-            skip("Setting experimental properties from JS code isn't working")
             webView.experimental.alertDialog = null
             webView.load(Qt.resolvedUrl("../common/alert.html"))
             loadSpy.wait()
@@ -98,7 +97,6 @@ WebView {
         }
 
         function test_confirmWithoutDialog() {
-            skip("Setting experimental properties from JS code isn't working")
             webView.experimental.confirmDialog = null
             webView.load(Qt.resolvedUrl("../common/confirm.html"))
             loadSpy.wait()
@@ -116,7 +114,6 @@ WebView {
         }
 
         function test_promptWithoutDialog() {
-            skip("Setting experimental properties from JS code isn't working")
             webView.experimental.promptDialog = null
             webView.load(Qt.resolvedUrl("../common/prompt.html"))
             loadSpy.wait()
