@@ -42,9 +42,13 @@ public:
 private:
     InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsigned offset, const String& text);
 
-    virtual void doApply();
-    virtual void doUnapply();
-
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+    
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
+    
     RefPtr<Text> m_node;
     unsigned m_offset;
     String m_text;

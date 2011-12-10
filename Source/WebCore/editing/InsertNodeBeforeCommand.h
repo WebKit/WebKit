@@ -40,9 +40,13 @@ public:
 private:
     InsertNodeBeforeCommand(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore);
 
-    virtual void doApply();
-    virtual void doUnapply();
-
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+    
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
+    
     RefPtr<Node> m_insertChild;
     RefPtr<Node> m_refChild; 
 };

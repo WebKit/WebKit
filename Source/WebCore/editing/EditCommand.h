@@ -29,6 +29,10 @@
 #include "EditAction.h"
 #include "VisibleSelection.h"
 
+#ifndef NDEBUG
+#include <wtf/HashSet.h>
+#endif
+
 namespace WebCore {
 
 class CompositeEditCommand;
@@ -95,8 +99,19 @@ private:
 };
 
 class SimpleEditCommand : public EditCommand {
+public:
+
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) = 0;
+#endif
+
 protected:
     SimpleEditCommand(Document* document) : EditCommand(document) { }
+
+#ifndef NDEBUG
+    void addNodeAndDescendants(Node*, HashSet<Node*>&);
+#endif
+
 private:
     virtual bool isSimpleEditCommand() const OVERRIDE { return true; }
 };

@@ -103,5 +103,13 @@ void SplitTextNodeCommand::insertText1AndTrimText2()
         return;
     m_text2->deleteData(0, m_offset, ec);
 }
+
+#ifndef NDEBUG
+void SplitTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_text1.get(), nodes);
+    addNodeAndDescendants(m_text2.get(), nodes);
+}
+#endif
     
 } // namespace WebCore

@@ -71,4 +71,12 @@ void InsertNodeBeforeCommand::doUnapply()
     m_insertChild->remove(ec);
 }
 
+#ifndef NDEBUG
+void InsertNodeBeforeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_insertChild.get(), nodes);
+    addNodeAndDescendants(m_refChild.get(), nodes);
+}
+#endif
+
 }

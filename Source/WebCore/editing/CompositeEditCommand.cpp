@@ -100,6 +100,15 @@ void EditCommandComposition::append(SimpleEditCommand* command)
     m_commands.append(command);
 }
 
+#ifndef NDEBUG
+void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    size_t size = m_commands.size();
+    for (size_t i = 0; i < size; ++i)
+        m_commands[i]->getNodesInCommand(nodes);
+}
+#endif
+
 CompositeEditCommand::CompositeEditCommand(Document *document)
     : EditCommand(document)
 {

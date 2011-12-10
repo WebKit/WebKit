@@ -107,5 +107,14 @@ void SplitElementCommand::doReapply()
     
     executeApply();
 }
+
+#ifndef NDEBUG
+void SplitElementCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_element1.get(), nodes);
+    addNodeAndDescendants(m_element2.get(), nodes);
+    addNodeAndDescendants(m_atChild.get(), nodes);
+}
+#endif
     
 } // namespace WebCore

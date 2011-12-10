@@ -251,6 +251,14 @@ void EditCommand::setParent(CompositeEditCommand* parent)
     }
 }
 
+#ifndef NDEBUG
+void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& nodes)
+{
+    for (Node* node = startNode; node; node = node->traverseNextNode(startNode))
+        nodes.add(node);
+}
+#endif
+
 void applyCommand(PassRefPtr<EditCommand> command)
 {
     command->apply();

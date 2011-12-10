@@ -42,9 +42,13 @@ public:
 private:
     RemoveCSSPropertyCommand(Document*, PassRefPtr<StyledElement>, CSSPropertyID property);
 
-    virtual void doApply();
-    virtual void doUnapply();
-
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+    
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
+    
     RefPtr<StyledElement> m_element;
     CSSPropertyID m_property;
     String m_oldValue;

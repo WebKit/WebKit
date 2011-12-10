@@ -41,8 +41,12 @@ public:
 private:
     SetNodeAttributeCommand(PassRefPtr<Element>, const QualifiedName& attribute, const AtomicString& value);
 
-    virtual void doApply();
-    virtual void doUnapply();
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
 
     RefPtr<Element> m_element;
     QualifiedName m_attribute;

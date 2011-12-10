@@ -40,8 +40,12 @@ public:
 private:
     RemoveNodeCommand(PassRefPtr<Node>);
 
-    virtual void doApply();
-    virtual void doUnapply();
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+
+#ifndef NDEBUG
+    void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
 
     RefPtr<Node> m_node;
     RefPtr<ContainerNode> m_parent;

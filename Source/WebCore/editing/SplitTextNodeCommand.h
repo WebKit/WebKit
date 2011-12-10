@@ -42,10 +42,14 @@ public:
 private:
     SplitTextNodeCommand(PassRefPtr<Text>, int offset);
 
-    virtual void doApply();
-    virtual void doUnapply();
-    virtual void doReapply();
+    virtual void doApply() OVERRIDE;
+    virtual void doUnapply() OVERRIDE;
+    virtual void doReapply() OVERRIDE;
     void insertText1AndTrimText2();
+    
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
 
     RefPtr<Text> m_text1;
     RefPtr<Text> m_text2;

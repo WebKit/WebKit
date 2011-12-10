@@ -1,3 +1,60 @@
+2011-12-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        There should be a way to count the number of nodes held by undo stack
+        https://bugs.webkit.org/show_bug.cgi?id=74099
+
+        Reviewed by Enrica Casucci.
+
+        Add getNodesInCommand to all SimpleEditCommands and EditCommandComposition in debug builds.
+        We can easily aggregate the number of nodes held by the undo stack by calling
+        this function on each item in the undo stack.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::getNodesInCommand):
+        * editing/AppendNodeCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::getNodesInCommand):
+        * editing/CompositeEditCommand.h:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::getNodesInCommand):
+        * editing/DeleteFromTextNodeCommand.h:
+        * editing/EditCommand.cpp:
+        (WebCore::SimpleEditCommand::addNodeAndDescedents):
+        * editing/EditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::getNodesInCommand):
+        * editing/InsertIntoTextNodeCommand.h:
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::getNodesInCommand):
+        * editing/InsertNodeBeforeCommand.h:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::getNodesInCommand):
+        * editing/MergeIdenticalElementsCommand.h:
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::getNodesInCommand):
+        * editing/RemoveCSSPropertyCommand.h:
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::getNodesInCommand):
+        * editing/RemoveNodeCommand.h:
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::ReplaceNodeWithSpanCommand::getNodesInCommand):
+        * editing/ReplaceNodeWithSpanCommand.h:
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::getNodesInCommand):
+        * editing/SetNodeAttributeCommand.h:
+        * editing/SetSelectionCommand.h:
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::getNodesInCommand):
+        * editing/SplitElementCommand.h:
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::getNodesInCommand):
+        * editing/SplitTextNodeCommand.h:
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::getNodesInCommand):
+        * editing/WrapContentsInDummySpanCommand.h:
+
 2011-11-09  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: outline-color-* tests fail

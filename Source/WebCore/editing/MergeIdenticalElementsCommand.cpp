@@ -86,4 +86,12 @@ void MergeIdenticalElementsCommand::doUnapply()
         m_element1->appendChild(children[i].release(), ec);
 }
 
+#ifndef NDEBUG
+void MergeIdenticalElementsCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_element1.get(), nodes);
+    addNodeAndDescendants(m_element2.get(), nodes);
+}
+#endif
+
 } // namespace WebCore

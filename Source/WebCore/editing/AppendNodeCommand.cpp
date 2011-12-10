@@ -79,4 +79,12 @@ void AppendNodeCommand::doUnapply()
     m_node->remove(ec);
 }
 
+#ifndef NDEBUG
+void AppendNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_parent.get(), nodes);
+    addNodeAndDescendants(m_node.get(), nodes);
+}
+#endif
+
 } // namespace WebCore

@@ -54,4 +54,11 @@ void SetNodeAttributeCommand::doUnapply()
     m_oldValue = nullString;
 }
 
+#ifndef NDEBUG
+void SetNodeAttributeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_element.get(), nodes);
+}
+#endif
+
 } // namespace WebCore

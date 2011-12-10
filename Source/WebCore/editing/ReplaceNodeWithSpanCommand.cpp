@@ -85,4 +85,12 @@ void ReplaceNodeWithSpanCommand::doUnapply()
     swapInNodePreservingAttributesAndChildren(m_elementToReplace.get(), m_spanElement.get());
 }
 
+#ifndef NDEBUG
+void ReplaceNodeWithSpanCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_elementToReplace.get(), nodes);
+    addNodeAndDescendants(m_spanElement.get(), nodes);
+}
+#endif
+
 } // namespace WebCore

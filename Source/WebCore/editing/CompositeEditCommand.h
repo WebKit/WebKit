@@ -46,6 +46,10 @@ public:
     virtual void doReapply() OVERRIDE;
     void append(SimpleEditCommand*);
 
+#ifndef NDEBUG
+    virtual void getNodesInCommand(HashSet<Node*>&) OVERRIDE;
+#endif
+
 private:
     EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
         : EditCommand(document, startingSelection, endingSelection)

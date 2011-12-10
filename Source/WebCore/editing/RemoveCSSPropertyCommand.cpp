@@ -54,4 +54,11 @@ void RemoveCSSPropertyCommand::doUnapply()
     style->setProperty(m_property, m_oldValue, m_important);
 }
 
+#ifndef NDEBUG
+void RemoveCSSPropertyCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_element.get(), nodes);
+}
+#endif
+
 } // namespace WebCore

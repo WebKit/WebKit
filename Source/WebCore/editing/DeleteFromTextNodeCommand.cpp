@@ -76,4 +76,11 @@ void DeleteFromTextNodeCommand::doUnapply()
         document()->axObjectCache()->nodeTextChangeNotification(m_node->renderer(), AXObjectCache::AXTextInserted, m_offset, m_text);
 }
 
+#ifndef NDEBUG
+void DeleteFromTextNodeCommand::getNodesInCommand(HashSet<Node*>& nodes)
+{
+    addNodeAndDescendants(m_node.get(), nodes);
+}
+#endif
+
 } // namespace WebCore

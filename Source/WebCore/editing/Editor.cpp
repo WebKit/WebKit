@@ -890,6 +890,7 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
         if (client())
             client()->registerCommandForUndo(toCompositeEditCommand(m_lastEditCommand.get())->ensureComposition());
     }
+
     respondToChangedContents(newSelection);
 }
 
