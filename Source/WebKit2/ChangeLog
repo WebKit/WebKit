@@ -1,3 +1,26 @@
+2011-12-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Open shared memory files with shm_open.
+        https://bugs.webkit.org/show_bug.cgi?id=74078
+
+        Original patch by Kimmo Kinnunen
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Open shared memory files with shm_open. This uses mount point that is
+        intended to host shared memory files. Typically this is /dev/shm.
+
+        This fixes crashes when filesystem that hosts QDir::temp() is full.
+
+        This is also more well-defined with respect to question whether SHM
+        writes to temp dir would cause unintended wear if hosted on flash drives.
+
+        This also fixes performance problems regarding QDir::temp() and
+        mkostemp(), both of which appear to be long operations.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::create):
+
 2011-12-09  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         [Qt] Click's count is limited to three continuous clicks.

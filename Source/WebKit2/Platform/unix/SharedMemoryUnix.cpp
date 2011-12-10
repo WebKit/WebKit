@@ -105,8 +105,8 @@ void SharedMemory::Handle::adoptFromAttachment(int fileDescriptor, size_t size)
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
 #if PLATFORM(QT)
-    QString tempName = QDir::temp().filePath(QLatin1String("qwkshm.XXXXXX"));
-    QByteArray tempNameCSTR = tempName.toLocal8Bit();
+    QByteArray tempNameCSTR("/qwkshm.");
+    tempNameCSTR += QByteArray::number(qrand(), 36);
     char* tempNameC = tempNameCSTR.data();
 #elif PLATFORM(GTK)
     GOwnPtr<gchar> tempName(g_build_filename(g_get_tmp_dir(), "WK2SharedMemoryXXXXXX", NULL));
@@ -114,6 +114,12 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 #endif
 
     int fileDescriptor;
+#if PLATFORM(QT)
+    while ((fileDescriptor = shm_open(tempNameC, O_CREAT | O_CLOEXEC | O_RDWR, S_IRUSR | S_IWUSR)) == -1) {
+        if (errno != EINTR)
+            return 0;
+    }
+#else
     while ((fileDescriptor = mkstemp(tempNameC)) == -1) {
         if (errno != EINTR)
             return 0;
@@ -125,11 +131,15 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
             return 0;
         }
     }
-
+#endif
     while (ftruncate(fileDescriptor, size) == -1) {
         if (errno != EINTR) {
             while (close(fileDescriptor) == -1 && errno == EINTR) { }
+#if PLATFORM(QT)
+            shm_unlink(tempNameC);
+#else
             unlink(tempNameC);
+#endif
             return 0;
         }
     }
@@ -137,11 +147,19 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     void* data = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
     if (data == MAP_FAILED) {
         while (close(fileDescriptor) == -1 && errno == EINTR) { }
+#if PLATFORM(QT)
+        shm_unlink(tempNameC);
+#else
         unlink(tempNameC);
+#endif
         return 0;
     }
 
+#if PLATFORM(QT)
+    shm_unlink(tempNameC);
+#else
     unlink(tempNameC);
+#endif
 
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
     instance->m_data = data;
