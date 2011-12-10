@@ -1,3 +1,15 @@
+2011-12-10  Jarred Nicholls  <jarred@sencha.com>
+
+        [V8] Remove old ArrayBuffer guards from V8XMLHttpRequestCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74234
+
+        Reviewed by Adam Barth.
+
+        No new tests are necessary.
+
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::responseAccessorGetter):
+
 2011-12-10  Noel Gordon  <noel.gordon@gmail.com>
 
         WebPImageDecoder progressive decodes fail to decode valid images

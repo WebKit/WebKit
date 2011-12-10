@@ -96,7 +96,6 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
         return v8::Undefined();
 #endif
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     case XMLHttpRequest::ResponseTypeArrayBuffer:
         {
             ExceptionCode ec = 0;
@@ -107,7 +106,6 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
             }
             return toV8(arrayBuffer);
         }
-#endif
     }
 
     return v8::Undefined();
