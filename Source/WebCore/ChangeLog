@@ -1,3 +1,16 @@
+2011-12-09  Jacky Jiang  <zhajiang@rim.com>
+
+        Remove ResourceHandle::bufferedData() from ResourceHandleBlackBerry.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74197
+
+        The bufferedData() was removed in r95120.
+
+        Reviewed by Rob Buis.
+
+        Trivial fix, so no new tests.
+
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp:
+
 2011-12-09  Eric Penner  <epenner@google.com>
 
         [chromium] Prevent ASSERT in legitimate out-of-memory case.

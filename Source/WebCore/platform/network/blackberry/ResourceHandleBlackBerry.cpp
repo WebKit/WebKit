@@ -119,12 +119,6 @@ bool ResourceHandle::start(NetworkingContext* context)
     return NetworkManager::instance()->startJob(playerId, this, *frame, d->m_defersLoading);
 }
 
-bool ResourceHandle::supportsBufferedData()
-{
-    notImplemented();
-    return false;
-}
-
 void ResourceHandle::pauseLoad(bool pause)
 {
     if (NetworkManager::instance())
@@ -185,12 +179,6 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     error = syncLoader.resourceError();
     data = syncLoader.data();
     response = syncLoader.resourceResponse();
-}
-
-PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
-{
-    notImplemented();
-    return 0;
 }
 
 } // namespace WebCore
