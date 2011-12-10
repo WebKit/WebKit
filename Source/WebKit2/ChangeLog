@@ -1,3 +1,11 @@
+2011-12-10  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt.
+
+        Build error introduced by r102484.
+
+        * Target.pri:
+
 2011-12-09  Mark Rowe  <mrowe@apple.com>
 
         Fix the Snow Leopard build some more.
