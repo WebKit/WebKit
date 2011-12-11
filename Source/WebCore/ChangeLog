@@ -1,3 +1,15 @@
+2011-12-10  Andreas Kling  <kling@webkit.org>
+
+        Remove OS(SYMBIAN) block from Settings constructor.
+        <http://webkit.org/b/74248>
+
+        Reviewed by Benjamin Poulain.
+
+        Kill the last OS(SYMBIAN) block in WebKit!
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2011-12-11  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10561285> REGRESSION (r80438): First word on a line or after collapsed space may not be hyphenated even though it should
