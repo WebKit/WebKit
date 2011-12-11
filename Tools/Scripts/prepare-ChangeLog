@@ -68,6 +68,7 @@ sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($);
 sub changeLogNameFromArgs($);
 sub fetchBugDescriptionFromURL($);
+sub findChangeLogs(\%);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
@@ -202,57 +203,11 @@ if ($bugNumber && !$bugDescription) {
     $bugDescription = fetchBugDescriptionFromURL($bugURL);
 }
 
-# Find the change logs.
-my %has_log;
-my %files;
-foreach my $file (sort keys %function_lists) {
-    my $prefix = $file;
-    my $has_log = 0;
-    while ($prefix) {
-        $prefix =~ s-/[^/]+/?$-/- or $prefix = "";
-        $has_log = $has_log{$prefix};
-        if (!defined $has_log) {
-            $has_log = -f "${prefix}ChangeLog";
-            $has_log{$prefix} = $has_log;
-        }
-        last if $has_log;
-    }
-    if (!$has_log) {
-        print STDERR "No ChangeLog found for $file.\n";
-    } else {
-        push @{$files{$prefix}}, $file;
-    }
-}
-
-# Build the list of ChangeLog prefixes in the correct project order
-my @prefixes;
-my %prefixesSort;
-foreach my $prefix (keys %files) {
-    my $prefixDir = substr($prefix, 0, length($prefix) - 1); # strip trailing /
-    my $sortKey = lc $prefix;
-    $sortKey = "top level" unless length $sortKey;
-
-    if ($prefixDir eq "top level") {
-        $sortKey = "";
-    } elsif ($prefixDir eq "Tools") {
-        $sortKey = "-, just after top level";
-    } elsif ($prefixDir eq "WebBrowser") {
-        $sortKey = lc "WebKit, WebBrowser after";
-    } elsif ($prefixDir eq "Source/WebCore") {
-        $sortKey = lc "WebFoundation, WebCore after";
-    } elsif ($prefixDir eq "LayoutTests") {
-        $sortKey = lc "~, LayoutTests last";
-    }
-
-    $prefixesSort{$sortKey} = $prefix;
-}
-foreach my $prefixSort (sort keys %prefixesSort) {
-    push @prefixes, $prefixesSort{$prefixSort};
-}
+my ($files_in_change_log, $prefixes) = findChangeLogs(%function_lists);
 
 # Get the latest ChangeLog files from svn.
 my @logs = ();
-foreach my $prefix (@prefixes) {
+foreach my $prefix (@$prefixes) {
     push @logs, File::Spec->catfile($prefix || ".", "ChangeLog");
 }
 
@@ -278,7 +233,7 @@ if (@logs && $updateChangeLogs && $isSVN) {
 }
 
 # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
-foreach my $prefix (@prefixes) {
+foreach my $prefix (@$prefixes) {
     my $endl = "\n";
     my @old_change_log;
 
@@ -298,7 +253,7 @@ foreach my $prefix (@prefixes) {
         open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
     } else {
         open CHANGE_LOG, ">-" or die "Could not write to STDOUT\n.";
-        print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @prefixes) == 1;
+        print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1;
     }
 
     print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
@@ -323,7 +278,7 @@ foreach my $prefix (@prefixes) {
         }
     }
 
-    foreach my $file (sort @{$files{$prefix}}) {
+    foreach my $file (sort @{$files_in_change_log->{$prefix}}) {
         my $file_stem = substr $file, length $prefix;
         print CHANGE_LOG normalizeLineEndings("        * $file_stem:$function_lists{$file}\n", $endl);
     }
@@ -498,6 +453,58 @@ sub fetchBugDescriptionFromURL($)
     my $bugDescription = decodeEntities($1);
     print STDERR "  Description from bug $bugNumber:\n    \"$bugDescription\".\n";
     return $bugDescription;
+}
+
+sub findChangeLogs(\%)
+{
+    # Find the change logs.
+    my %has_log;
+    my %files_in_change_log;
+    foreach my $file (sort keys %function_lists) {
+        my $prefix = $file;
+        my $has_log = 0;
+        while ($prefix) {
+            $prefix =~ s-/[^/]+/?$-/- or $prefix = "";
+            $has_log = $has_log{$prefix};
+            if (!defined $has_log) {
+                $has_log = -f "${prefix}ChangeLog";
+                $has_log{$prefix} = $has_log;
+            }
+            last if $has_log;
+        }
+        if (!$has_log) {
+            print STDERR "No ChangeLog found for $file.\n";
+        } else {
+            push @{$files_in_change_log{$prefix}}, $file;
+        }
+    }
+
+    # Build the list of ChangeLog prefixes in the correct project order
+    my @prefixes;
+    my %prefixesSort;
+    foreach my $prefix (keys %files_in_change_log) {
+        my $prefixDir = substr($prefix, 0, length($prefix) - 1); # strip trailing /
+        my $sortKey = lc $prefix;
+        $sortKey = "top level" unless length $sortKey;
+
+        if ($prefixDir eq "top level") {
+            $sortKey = "";
+        } elsif ($prefixDir eq "Tools") {
+            $sortKey = "-, just after top level";
+        } elsif ($prefixDir eq "WebBrowser") {
+            $sortKey = lc "WebKit, WebBrowser after";
+        } elsif ($prefixDir eq "Source/WebCore") {
+            $sortKey = lc "WebFoundation, WebCore after";
+        } elsif ($prefixDir eq "LayoutTests") {
+            $sortKey = lc "~, LayoutTests last";
+        }
+
+        $prefixesSort{$sortKey} = $prefix;
+    }
+    foreach my $prefixSort (sort keys %prefixesSort) {
+        push @prefixes, $prefixesSort{$prefixSort};
+    }
+    return (\%files_in_change_log, \@prefixes);
 }
 
 sub get_function_line_ranges($$)
