@@ -1,3 +1,17 @@
+2011-12-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add KillRingNone.cpp to Mac build system
+        https://bugs.webkit.org/show_bug.cgi?id=74168
+
+        Reviewed by David Kilzer.
+
+        Add KillRingNone.cpp so it can be used on iOS, but
+        blacklist the file from the build in order to avoid
+        conflicts with KillRingMac.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-12-11  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: [protocol] alter some type names generated from Inspector.json
