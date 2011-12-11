@@ -1,3 +1,25 @@
+2011-12-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSC testapi is crashing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=74233
+
+        Reviewed by Sam Weinig.
+
+        Same error we've encountered before where we are calling the wrong version of 
+        visitChildren and objects that are still reachable aren't getting marked.
+        This problem will go away soon with the removal of vptrs for these sorts of 
+        optimizations in favor of using the ClassInfo, but for now we can simply give 
+        JSFinalObject a bogus virtual method that Visual Studio can't optimize away to
+        ensure that JSFinalObject will always have a unique vptr.  We don't have to worry 
+        about JSString or JSArray right now, which are the other two special cases for
+        visitChildren, since they already have their own virtual functions.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSObject.cpp:
+        (JSC::JSFinalObject::vtableAnchor):
+        * runtime/JSObject.h:
+
 2011-12-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unused variable in YarrJIT.cpp.

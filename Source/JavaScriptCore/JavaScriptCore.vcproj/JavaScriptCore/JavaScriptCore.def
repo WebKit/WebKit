@@ -361,6 +361,7 @@ EXPORTS
     ?visitChildren@JSGlobalThis@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?vtableAnchor@InternalFunction@JSC@@EAEXXZ
+    ?vtableAnchor@JSFinalObject@JSC@@EAEXXZ
     ?vtableAnchor@JSObject@JSC@@UAEXXZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z

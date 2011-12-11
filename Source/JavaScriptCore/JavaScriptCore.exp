@@ -618,6 +618,7 @@ __ZNK3WTF6String8toUInt64EPb
 __ZNK3WTF6String9substringEjj
 __ZNK3WTF8Collator7collateEPKtmS2_m
 __ZTVN3JSC12StringObjectE
+__ZTVN3JSC13JSFinalObjectE
 __ZTVN3JSC14JSGlobalObjectE
 __ZTVN3JSC14ScopeChainNodeE
 __ZTVN3JSC15JSWrapperObjectE

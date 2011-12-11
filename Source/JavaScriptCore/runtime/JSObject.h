@@ -382,6 +382,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         {
         }
 
+        virtual void vtableAnchor();
+
         static const unsigned StructureFlags = JSObject::StructureFlags;
 
         WriteBarrierBase<Unknown> m_inlineStorage[JSFinalObject_inlineStorageCapacity];

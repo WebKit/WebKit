@@ -52,6 +52,11 @@ const ClassInfo JSObject::s_info = { "Object", 0, 0, 0, CREATE_METHOD_TABLE(JSOb
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFinalObject) };
 
+void JSFinalObject::vtableAnchor()
+{
+    printf("Something Visual Studio can't optimize away.\n");
+}
+
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     // Add properties from the static hashtables of properties
