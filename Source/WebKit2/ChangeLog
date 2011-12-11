@@ -1,3 +1,9 @@
+2011-12-10  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the windows build.
+
+        * win/WebKit2.vcproj:
+
 2011-12-10  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt.

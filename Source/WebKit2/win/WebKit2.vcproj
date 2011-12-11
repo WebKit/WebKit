@@ -2863,6 +2863,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebContextConnectionClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextConnectionClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebContextInjectedBundleClient.cpp"
 				>
 			</File>
