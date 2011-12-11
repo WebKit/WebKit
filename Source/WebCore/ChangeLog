@@ -1,3 +1,18 @@
+2011-12-11  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10561285> REGRESSION (r80438): First word on a line or after collapsed space may not be hyphenated even though it should
+        https://bugs.webkit.org/show_bug.cgi?id=74239
+
+        Reviewed by Anders Carlsson.
+
+        Tests: fast/text/hyphenate-first-word-after-skipped-space-expected.html
+               fast/text/hyphenate-first-word-after-skipped-space.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating): Replaced the assumption that the character at lastSpace is a space
+        iff lastSpace is non-zero with a test of whether it is a space, in the sense that it should
+        not be counted as part of the prefix when comparing it to the value of hyphenate-limit-before.
+
 2011-12-10  Benjamin Poulain  <bpoulain@apple.com>
 
         #ifdef the parts of the Mac platform which should not be used on iOS
