@@ -69,6 +69,7 @@ sub changeLogEmailAddressFromArgs($);
 sub changeLogNameFromArgs($);
 sub fetchBugDescriptionFromURL($);
 sub findChangeLogs(\%);
+sub generateNewChangeLogs($$$\%);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
@@ -162,16 +163,14 @@ my $GIT = "git";
 
 # Find the list of modified files
 my @changed_files;
-my %function_lists;
+my %functionLists;
 my @conflict_files;
 
 my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
-my @addedRegressionTests = ();
-my $didChangeRegressionTests = 0;
 
-generateFileList(@changed_files, @conflict_files, %function_lists);
+my $addedRegressionTests = generateFileList(@changed_files, @conflict_files, %functionLists);
 
-if (!@changed_files && !@conflict_files && !keys %function_lists) {
+if (!@changed_files && !@conflict_files && !keys %functionLists) {
     print STDERR "  No changes found.\n";
     exit 1;
 }
@@ -182,7 +181,7 @@ if (@conflict_files) {
     exit 1;
 }
 
-generateFunctionLists(@changed_files, %function_lists);
+generateFunctionLists(@changed_files, %functionLists);
 
 # Get some parameters for the ChangeLog we are about to write.
 my $date = changeLogDate($changeLogTimeZone);
@@ -203,7 +202,7 @@ if ($bugNumber && !$bugDescription) {
     $bugDescription = fetchBugDescriptionFromURL($bugURL);
 }
 
-my ($files_in_change_log, $prefixes) = findChangeLogs(%function_lists);
+my ($filesInChangeLog, $prefixes) = findChangeLogs(%functionLists);
 
 # Get the latest ChangeLog files from svn.
 my @logs = ();
@@ -232,65 +231,7 @@ if (@logs && $updateChangeLogs && $isSVN) {
     }
 }
 
-# Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
-foreach my $prefix (@$prefixes) {
-    my $endl = "\n";
-    my @old_change_log;
-
-    if ($writeChangeLogs) {
-        my $changeLogPath = File::Spec->catfile($prefix || ".", "ChangeLog");
-        print STDERR "  Editing the ${changeLogPath} file.\n";
-        open OLD_CHANGE_LOG, ${changeLogPath} or die "Could not open ${changeLogPath} file: $!.\n";
-        # It's less efficient to read the whole thing into memory than it would be
-        # to read it while we prepend to it later, but I like doing this part first.
-        @old_change_log = <OLD_CHANGE_LOG>;
-        close OLD_CHANGE_LOG;
-        # We want to match the ChangeLog's line endings in case it doesn't match
-        # the native line endings for this version of perl.
-        if ($old_change_log[0] =~ /(\r?\n)$/g) {
-            $endl = "$1";
-        }
-        open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
-    } else {
-        open CHANGE_LOG, ">-" or die "Could not write to STDOUT\n.";
-        print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1;
-    }
-
-    print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
-
-    my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
-    $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
-
-    print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
-
-    $bugDescription = "Need a short description and bug URL (OOPS!)" unless $bugDescription;
-    print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
-    print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
-    print CHANGE_LOG normalizeLineEndings("\n", $endl);
-
-    print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
-
-    if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
-        if ($didChangeRegressionTests) {
-            print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @addedRegressionTests), $endl);
-        } else {
-            print CHANGE_LOG normalizeLineEndings("        No new tests. (OOPS!)\n\n", $endl);
-        }
-    }
-
-    foreach my $file (sort @{$files_in_change_log->{$prefix}}) {
-        my $file_stem = substr $file, length $prefix;
-        print CHANGE_LOG normalizeLineEndings("        * $file_stem:$function_lists{$file}\n", $endl);
-    }
-
-    if ($writeChangeLogs) {
-        print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
-    } else {
-        print CHANGE_LOG "\n";
-    }
-
-    close CHANGE_LOG;
-}
+generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, %functionLists);
 
 if ($writeChangeLogs) {
     print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -327,7 +268,7 @@ exit;
 
 sub generateFunctionLists(\@\%)
 {
-    my ($changed_files, $function_lists) = @_;
+    my ($changed_files, $functionLists) = @_;
 
     my %changed_line_ranges;
     if (@$changed_files) {
@@ -388,8 +329,8 @@ sub generateFunctionLists(\@\%)
 
             # Format the list of functions now.
             if (@functions) {
-                $function_lists->{$file} = "" if !defined $function_lists->{$file};
-                $function_lists->{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
+                $functionLists->{$file} = "" if !defined $functionLists->{$file};
+                $functionLists->{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
             }
         }
     }
@@ -459,8 +400,8 @@ sub findChangeLogs(\%)
 {
     # Find the change logs.
     my %has_log;
-    my %files_in_change_log;
-    foreach my $file (sort keys %function_lists) {
+    my %filesInChangeLog;
+    foreach my $file (sort keys %functionLists) {
         my $prefix = $file;
         my $has_log = 0;
         while ($prefix) {
@@ -475,14 +416,14 @@ sub findChangeLogs(\%)
         if (!$has_log) {
             print STDERR "No ChangeLog found for $file.\n";
         } else {
-            push @{$files_in_change_log{$prefix}}, $file;
+            push @{$filesInChangeLog{$prefix}}, $file;
         }
     }
 
     # Build the list of ChangeLog prefixes in the correct project order
     my @prefixes;
     my %prefixesSort;
-    foreach my $prefix (keys %files_in_change_log) {
+    foreach my $prefix (keys %filesInChangeLog) {
         my $prefixDir = substr($prefix, 0, length($prefix) - 1); # strip trailing /
         my $sortKey = lc $prefix;
         $sortKey = "top level" unless length $sortKey;
@@ -504,7 +445,72 @@ sub findChangeLogs(\%)
     foreach my $prefixSort (sort keys %prefixesSort) {
         push @prefixes, $prefixesSort{$prefixSort};
     }
-    return (\%files_in_change_log, \@prefixes);
+    return (\%filesInChangeLog, \@prefixes);
+}
+
+sub generateNewChangeLogs($$$\%)
+{
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists) = @_;
+
+    # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
+    foreach my $prefix (@$prefixes) {
+        my $endl = "\n";
+        my @old_change_log;
+
+        if ($writeChangeLogs) {
+            my $changeLogPath = File::Spec->catfile($prefix || ".", "ChangeLog");
+            print STDERR "  Editing the ${changeLogPath} file.\n";
+            open OLD_CHANGE_LOG, ${changeLogPath} or die "Could not open ${changeLogPath} file: $!.\n";
+            # It's less efficient to read the whole thing into memory than it would be
+            # to read it while we prepend to it later, but I like doing this part first.
+            @old_change_log = <OLD_CHANGE_LOG>;
+            close OLD_CHANGE_LOG;
+            # We want to match the ChangeLog's line endings in case it doesn't match
+            # the native line endings for this version of perl.
+            if ($old_change_log[0] =~ /(\r?\n)$/g) {
+                $endl = "$1";
+            }
+            open CHANGE_LOG, "> ${changeLogPath}" or die "Could not write ${changeLogPath}\n.";
+        } else {
+            open CHANGE_LOG, ">-" or die "Could not write to STDOUT\n.";
+            print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1;
+        }
+
+        print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
+
+        my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
+        $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
+
+        print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
+
+        $bugDescription = "Need a short description and bug URL (OOPS!)" unless $bugDescription;
+        print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
+        print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
+        print CHANGE_LOG normalizeLineEndings("\n", $endl);
+
+        print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
+
+        if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
+            if (@$addedRegressionTests) {
+                print CHANGE_LOG normalizeLineEndings(testListForChangeLog(sort @$addedRegressionTests), $endl);
+            } else {
+                print CHANGE_LOG normalizeLineEndings("        No new tests. (OOPS!)\n\n", $endl);
+            }
+        }
+
+        foreach my $file (sort @{$filesInChangeLog->{$prefix}}) {
+            my $file_stem = substr $file, length $prefix;
+            print CHANGE_LOG normalizeLineEndings("        * $file_stem:$functionLists->{$file}\n", $endl);
+        }
+
+        if ($writeChangeLogs) {
+            print CHANGE_LOG normalizeLineEndings("\n", $endl), @old_change_log;
+        } else {
+            print CHANGE_LOG "\n";
+        }
+
+        close CHANGE_LOG;
+    }
 }
 
 sub get_function_line_ranges($$)
@@ -1551,6 +1557,8 @@ sub pluralizeAndList($$@)
 sub generateFileList(\@\@\%)
 {
     my ($changedFiles, $conflictFiles, $functionLists) = @_;
+
+    my @addedRegressionTests;
     print STDERR "  Running status to find changed, added, or removed files.\n";
     open STAT, "-|", statusCommand(keys %paths) or die "The status failed: $!.\n";
     while (<STAT>) {
@@ -1603,7 +1611,6 @@ sub generateFileList(\@\@\%)
         if (isModifiedStatus($status) || isAddedStatus($status) || isModifiedStatus($propertyStatus)) {
             my @components = File::Spec->splitdir($file);
             if ($components[0] eq "LayoutTests") {
-                $didChangeRegressionTests = 1;
                 push @addedRegressionTests, $file
                     if isAddedStatus($status)
                        && $file =~ /\.([a-zA-Z]+)$/
@@ -1621,6 +1628,7 @@ sub generateFileList(\@\@\%)
         }
     }
     close STAT;
+    return \@addedRegressionTests;
 }
 
 sub isUnmodifiedStatus($)

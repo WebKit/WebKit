@@ -1,3 +1,20 @@
+2011-12-11  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Move top-level code to generate a new ChangeLog into a method
+        https://bugs.webkit.org/show_bug.cgi?id=74253
+
+        Reviewed by David Kilzer.
+
+        The objective is to make prepare-ChangeLog a loadable Perl module for unit testing,
+        which requires to remove top-level code and global variables. This patch is one of
+        the incremental refactorings for that.
+
+        * Scripts/prepare-ChangeLog: Moved top-level code to generate a new ChangeLog into generateNewChangeLogs().
+        (generateFunctionLists):
+        (findChangeLogs):
+        (generateNewChangeLogs):
+        (generateFileList): Removed an unnecessary variable $didChangeRegressionTests.
+
 2011-12-10  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] In prepare-ChangeLog, move top-level code to find ChangeLogs into a method
