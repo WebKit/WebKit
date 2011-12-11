@@ -48,6 +48,12 @@ DOMAIN_DEFINE_NAME_MAP = {
 }
 
 
+# Manually-filled map of type name replacements.
+TYPE_NAME_FIX_MAP = {
+    "RGBA": "Rgba",  # RGBA is reported to be conflicting with a define name in Windows CE.
+}
+
+
 cmdline_parser = optparse.OptionParser()
 cmdline_parser.add_option("--defines")
 cmdline_parser.add_option("--output_h_dir")
@@ -439,9 +445,40 @@ class ParamType(object):
 INSPECTOR_OBJECT_SETTER_NAMES = frozenset(["setValue", "setBoolean", "setNumber", "setString", "setValue", "setObject", "setArray"])
 
 
+def fix_type_name(json_name):
+    if json_name in TYPE_NAME_FIX_MAP:
+        fixed = TYPE_NAME_FIX_MAP[json_name]
+
+        class Result(object):
+            class_name = fixed
+
+            @staticmethod
+            def output_comment(output):
+                output.append("// Type originally was named '%s'.\n" % json_name)
+    else:
+
+        class Result(object):
+            class_name = json_name
+
+            @staticmethod
+            def output_comment(output):
+                pass
+
+    return Result
+
+
+
 class TypeBindings:
     @staticmethod
     def create_for_named_type_declaration(json_type, context_domain_name):
+        fixed_type_name = fix_type_name(json_type["id"])
+
+        def write_doc(output):
+            if "description" in json_type:
+                output.append("/* ")
+                output.append(json_type["description"])
+                output.append(" */\n")
+
         if json_type["type"] == "string":
             if "enum" in json_type:
 
@@ -449,9 +486,11 @@ class TypeBindings:
                     @staticmethod
                     def generate_type_builder(output, forward_listener):
                         enum = json_type["enum"]
-                        # TODO: doc
+                        write_doc(output)
+                        enum_name = fixed_type_name.class_name
+                        fixed_type_name.output_comment(output)
                         output.append("namespace ")
-                        output.append(json_type["id"])
+                        output.append(enum_name)
                         output.append(" {\n")
                         for enum_item in enum:
                             item_c_name = enum_item.replace('-', '_')
@@ -461,7 +500,7 @@ class TypeBindings:
                             output.append(enum_item)
                             output.append("\";\n")
                         output.append("} // namespace ")
-                        output.append(json_type["id"])
+                        output.append(enum_name)
                         output.append("\n\n")
 
                 return EnumBinding
@@ -470,12 +509,10 @@ class TypeBindings:
                 class PlainString:
                     @staticmethod
                     def generate_type_builder(output, forward_listener):
-                        if "description" in json_type:
-                            output.append("/* ")
-                            output.append(json_type["description"])
-                            output.append(" */\n")
+                        write_doc(output)
+                        fixed_type_name.output_comment(output)
                         output.append("typedef String ")
-                        output.append(json_type["id"])
+                        output.append(fixed_type_name.class_name)
                         output.append(";\n\n")
                 return PlainString
 
@@ -485,9 +522,10 @@ class TypeBindings:
                 class ClassBinding:
                     @staticmethod
                     def generate_type_builder(output, forward_listener):
-                        # TODO: doc
+                        write_doc(output)
+                        class_name = fixed_type_name.class_name
+                        fixed_type_name.output_comment(output)
                         output.append("class ")
-                        class_name = json_type["id"]
                         output.append(class_name)
                         output.append(" : public InspectorObject {\n")
                         output.append("public:\n")
@@ -1493,7 +1531,7 @@ class Generator:
 
             output.append("} // ")
             output.append(domain_data.name())
-            output.append("\n")
+            output.append("\n\n")
 
 Generator.go()
 

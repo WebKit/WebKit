@@ -1,3 +1,23 @@
+2011-12-11  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: [protocol] alter some type names generated from Inspector.json
+        https://bugs.webkit.org/show_bug.cgi?id=74247
+
+        Reviewed by Pavel Feldman.
+
+        Manually-filled map added that contains problem type names and its replacement.
+
+        * inspector/CodeGeneratorInspector.py:
+        (fix_type_name.Result):
+        (fix_type_name.Result.output_comment):
+        (fix_type_name):
+        (TypeBindings.create_for_named_type_declaration.write_doc):
+        (TypeBindings.create_for_named_type_declaration.EnumBinding.generate_type_builder):
+        (TypeBindings.create_for_named_type_declaration.PlainString.generate_type_builder):
+        (TypeBindings):
+        (TypeBindings.create_for_named_type_declaration.ClassBinding.generate_type_builder):
+        (Generator.process_types):
+
 2011-12-11  Andreas Kling  <kling@webkit.org>
 
         WK2/NetscapePlugin: Incorrect mouse event coordinates when frameScaleFactor != 1.
