@@ -31,8 +31,6 @@
 
 namespace WebCore {
 
-class StyledElement;
-
 class CSSMutableStyleDeclarationConstIterator {
 public:
     CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current);
@@ -173,28 +171,6 @@ private:
     Vector<CSSProperty, 4> m_properties;
 
     friend class CSSMutableStyleDeclarationConstIterator;
-};
-
-class CSSElementStyleDeclaration : public CSSMutableStyleDeclaration {
-public:
-    StyledElement* element() const { return m_element; }
-    void setElement(StyledElement* element) { m_element = element; }
-
-    virtual CSSStyleSheet* styleSheet() const;
-
-protected:
-    CSSElementStyleDeclaration(bool isInline)
-        : CSSMutableStyleDeclaration()
-        , m_element(0)
-    {
-        m_isElementStyleDeclaration = true;
-        m_isInlineStyleDeclaration = isInline;
-    }
-
-    virtual ~CSSElementStyleDeclaration() { }
-
-private:
-    StyledElement* m_element;
 };
 
 inline CSSMutableStyleDeclarationConstIterator::CSSMutableStyleDeclarationConstIterator(const CSSMutableStyleDeclaration* decl, CSSProperty* current)

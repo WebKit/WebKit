@@ -27,7 +27,7 @@
 #ifndef CSSInlineStyleDeclaration_h
 #define CSSInlineStyleDeclaration_h
 
-#include "CSSMutableStyleDeclaration.h"
+#include "CSSElementStyleDeclaration.h"
 
 namespace WebCore {
 

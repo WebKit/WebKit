@@ -2949,6 +2949,8 @@
 		8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */; };
 		8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */; };
 		8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */; };
+		8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C1091961494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp */; };
+		8C1091991494FB1200B5D3FE /* CSSElementStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C1091971494FB1200B5D3FE /* CSSElementStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */; };
 		8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */; };
 		8CADF2A9135C7B36009EF43F /* LevelDBComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */; };
@@ -10165,6 +10167,8 @@
 		8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBTransaction.h; sourceTree = "<group>"; };
 		8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBWriteBatch.cpp; sourceTree = "<group>"; };
 		8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBWriteBatch.h; sourceTree = "<group>"; };
+		8C1091961494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSElementStyleDeclaration.cpp; sourceTree = "<group>"; };
+		8C1091971494FB1200B5D3FE /* CSSElementStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSElementStyleDeclaration.h; sourceTree = "<group>"; };
 		8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RuntimeEnabledFeatures.cpp; path = generic/RuntimeEnabledFeatures.cpp; sourceTree = "<group>"; };
 		8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RuntimeEnabledFeatures.h; path = generic/RuntimeEnabledFeatures.h; sourceTree = "<group>"; };
 		8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBComparator.h; sourceTree = "<group>"; };
@@ -20679,6 +20683,8 @@
 				BCEA477D097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h */,
 				AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */,
 				AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */,
+				8C1091961494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp */,
+				8C1091971494FB1200B5D3FE /* CSSElementStyleDeclaration.h */,
 				5325E4D513A6C88B00404A36 /* CSSFlexValue.cpp */,
 				5325E4D613A6C88B00404A36 /* CSSFlexValue.h */,
 				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
@@ -21822,6 +21828,7 @@
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
 				FD31601612B0267600C1A359 /* AudioNodeInput.h in Headers */,
 				FD31601812B0267600C1A359 /* AudioNodeOutput.h in Headers */,
+				8C1091991494FB1200B5D3FE /* CSSElementStyleDeclaration.h in Headers */,
 				FD31601A12B0267600C1A359 /* AudioPannerNode.h in Headers */,
 				FD31601D12B0267600C1A359 /* AudioParam.h in Headers */,
 				FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */,
@@ -27682,6 +27689,7 @@
 				D7613AC414753E5600DB8606 /* JSWebKitNamedFlow.cpp in Sources */,
 				8A195933147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm in Sources */,
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
+				8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */,
 				4306E4E614955543007F17AC /* KillRingNone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,3 +1,32 @@
+2011-12-11  Andreas Kling  <kling@webkit.org>
+
+        Move CSSElementStyleDeclaration to its own cpp/h files.
+        <http://webkit.org/b/74256>
+
+        Reviewed by Sam Weinig.
+
+        CSSElementStyleDeclaration is old enough to move out of CSSMutableStyleDeclaration's
+        attic and into her own apartment. 
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.h:
+        * css/CSSElementStyleDeclaration.cpp: Added.
+        (WebCore::CSSElementStyleDeclaration::styleSheet):
+        * css/CSSElementStyleDeclaration.h: Added.
+        (WebCore::CSSElementStyleDeclaration::element):
+        (WebCore::CSSElementStyleDeclaration::setElement):
+        (WebCore::CSSElementStyleDeclaration::CSSElementStyleDeclaration):
+        (WebCore::CSSElementStyleDeclaration::~CSSElementStyleDeclaration):
+        * css/CSSInlineStyleDeclaration.h:
+        * css/CSSMutableStyleDeclaration.cpp:
+        * css/CSSMutableStyleDeclaration.h:
+        * dom/CSSMappedAttributeDeclaration.h:
+
 2011-12-11  Benjamin Poulain  <bpoulain@apple.com>
 
         Add KillRingNone.cpp to Mac build system

@@ -32498,6 +32498,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSElementStyleDeclaration.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSElementStyleDeclaration.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\CSSFlexValue.cpp"
 				>
 			</File>

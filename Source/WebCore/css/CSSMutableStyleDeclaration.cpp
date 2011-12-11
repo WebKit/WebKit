@@ -1064,11 +1064,4 @@ CSSProperty* CSSMutableStyleDeclaration::findPropertyWithId(int propertyID)
     return 0;
 }
 
-CSSStyleSheet* CSSElementStyleDeclaration::styleSheet() const
-{
-    if (m_element && m_element->document())
-        return m_element->document()->elementSheet();
-    return 0;
-}
-
 } // namespace WebCore

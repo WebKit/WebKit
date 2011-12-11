@@ -396,6 +396,7 @@ SOURCES += \
     css/CSSComputedStyleDeclaration.cpp \
     css/CSSCrossfadeValue.cpp \
     css/CSSCursorImageValue.cpp \
+    css/CSSElementStyleDeclaration.cpp \
     css/CSSFlexValue.cpp \
     css/CSSFontFace.cpp \
     css/CSSFontFaceRule.cpp \
@@ -1492,6 +1493,7 @@ HEADERS += \
     css/CSSComputedStyleDeclaration.h \
     css/CSSCrossfadeValue.h \
     css/CSSCursorImageValue.h \
+    css/CSSElementStyleDeclaration.h \
     css/CSSFlexValue.h \
     css/CSSFontFace.h \
     css/CSSFontFaceRule.h \
