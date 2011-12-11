@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (300, 300)
+CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (300, 300)
+CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (200, 200)
+CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (200, 200)
+CONSOLE MESSAGE: line 0: PLUGIN: mouseDown at (133, 133)
+CONSOLE MESSAGE: line 0: PLUGIN: mouseUp at (133, 133)
+

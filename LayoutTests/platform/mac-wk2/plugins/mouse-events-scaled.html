@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<embed style="position: absolute; left: 0; top: 0;" name="plg" type="application/x-webkit-test-netscape" windowedPlugin="false" width="1000" height="1000"></embed>
+<script>
+function fakeClick(x, y) {
+    eventSender.mouseMoveTo(300, 300);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+if (!window.layoutTestController)
+    document.write("This test does not work in manual mode.");
+else {
+    layoutTestController.dumpAsText();
+    
+    plg.windowedPlugin = false;
+    plg.eventLoggingEnabled = true;
+
+    eventSender.scalePageBy(1, 100, 100);
+    fakeClick(300, 300);
+    eventSender.scalePageBy(2, 100, 100);
+    fakeClick(300, 300);
+    eventSender.scalePageBy(3, 100, 100);
+    fakeClick(300, 300);
+
+    plg.eventLoggingEnabled = false;
+}
+</script>
+</body>
+</html>

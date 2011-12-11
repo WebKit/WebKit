@@ -125,8 +125,6 @@ public:
 #if PLATFORM(WIN)
     WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, bool didActivateWebView);
 #endif
-    
-    WebMouseEvent(const WebMouseEvent&, float pageScaleFactor);
 
     Button button() const { return static_cast<Button>(m_button); }
     const WebCore::IntPoint& position() const { return m_position; }

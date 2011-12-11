@@ -633,10 +633,8 @@ void PluginView::handleEvent(Event* event)
         // FIXME: Clicking in a scroll bar should not change focus.
         if (currentEvent->type() == WebEvent::MouseDown)
             focusPluginElement();
-        
-        // Adjust mouse coordinates to account for frameScaleFactor
-        WebMouseEvent eventWithScaledCoordinates(*static_cast<const WebMouseEvent*>(currentEvent), frame()->frameScaleFactor());
-        didHandleEvent = m_plugin->handleMouseEvent(eventWithScaledCoordinates);
+
+        didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
@@ -706,9 +704,16 @@ void PluginView::viewGeometryDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    // FIXME: Just passing a translation matrix isn't good enough.
-    IntPoint locationInWindowCoordinates = parent()->contentsToRootView(frameRect().location());
-    AffineTransform transform = AffineTransform::translation(locationInWindowCoordinates.x(), locationInWindowCoordinates.y());
+    ASSERT(frame());
+    float frameScaleFactor = frame()->frameScaleFactor();
+
+    IntPoint scaledFrameRectLocation(frameRect().location().x() * frameScaleFactor, frameRect().location().y() * frameScaleFactor);
+    IntPoint scaledLocationInRootViewCoordinates(parent()->contentsToRootView(scaledFrameRectLocation));
+
+    // FIXME: We still don't get the right coordinates for transformed plugins.
+    AffineTransform transform;
+    transform.translate(scaledLocationInRootViewCoordinates.x(), scaledLocationInRootViewCoordinates.y());
+    transform.scale(frameScaleFactor);
 
     // FIXME: The clip rect isn't correct.
     IntRect clipRect = boundsRect();

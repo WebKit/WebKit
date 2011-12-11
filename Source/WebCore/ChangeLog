@@ -1,3 +1,12 @@
+2011-12-11  Andreas Kling  <kling@webkit.org>
+
+        WK2/NetscapePlugin: Incorrect mouse event coordinates when frameScaleFactor != 1.
+        <http://webkit.org/b/74209> and <rdar://problem/10438197>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Export AffineTransform::scale(double).
+
 2011-12-10  Andreas Kling  <kling@webkit.org>
 
         Remove OS(SYMBIAN) block from Settings constructor.

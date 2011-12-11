@@ -1,3 +1,26 @@
+2011-12-11  Andreas Kling  <kling@webkit.org>
+
+        WK2/NetscapePlugin: Incorrect mouse event coordinates when frameScaleFactor != 1.
+        <http://webkit.org/b/74209> and <rdar://problem/10438197>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebEvent.h:
+        * Shared/WebMouseEvent.cpp:
+
+            Remove the WebMouseEvent "copy" constructor that applied a scale factor
+            to the coordinates of an existing event.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):
+
+            Pass the WebMouseEvent through to the plugin unmodified.
+
+        (WebKit::PluginView::viewGeometryDidChange):
+
+            Plumb a complex translate+scale transform through to the plugin, so coordinate
+            space transformations in will behave correctly with scale factors other than 1.
+
 2011-12-10  Sam Weinig  <sam@webkit.org>
 
         Try to fix the windows build.
