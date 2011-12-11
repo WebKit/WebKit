@@ -1,3 +1,26 @@
+2011-12-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        #ifdef the parts of the Mac platform which should not be used on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=74246
+
+        Reviewed by David Kilzer.
+
+        * Configurations/WebCore.xcconfig:
+        * platform/FileSystem.cpp:
+        * platform/mac/FileSystemMac.mm:
+        * platform/mac/Language.mm:
+        (+[WebLanguageChangeObserver _webkit_languagePreferencesDidChange]):
+        (WebCore::createHTTPStyleLanguageCode):
+        (WebCore::platformDefaultLanguage):
+        * platform/mac/LocalizedStringsMac.mm:
+        (WebCore::localizedString):
+        (+[WebCoreSharedBufferData initialize]):
+        * platform/mac/WebCoreNSStringExtras.h:
+        * platform/mac/WebCoreNSStringExtras.mm:
+        * platform/mac/WebFontCache.mm:
+        * platform/mac/WebNSAttributedStringExtras.mm: The value NSAttachmentCharacter is
+        not defined in the iOS SDK so we add it here.
+
 2011-12-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         The previous fix broke Lion release build. Fix that.

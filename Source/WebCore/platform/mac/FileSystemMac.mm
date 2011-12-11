@@ -32,7 +32,6 @@
 #import "PlatformString.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
-#import <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -66,6 +65,7 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
     return String::fromUTF8(temporaryFilePath.data());
 }
 
+#if !PLATFORM(IOS)
 bool canExcludeFromBackup()
 {
     return true;
@@ -77,5 +77,6 @@ bool excludeFromBackup(const String& path)
     CSBackupSetItemExcluded(pathAsURL(path).get(), TRUE, FALSE); 
     return true;
 }
+#endif
 
 } // namespace WebCore

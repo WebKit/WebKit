@@ -37,7 +37,11 @@ String localizedString(const char* key)
 {
     static NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
 
+#if !PLATFORM(IOS)
+    // Can be called on a dispatch queue when initializing strings on iOS.
+    // See LoadWebLocalizedStrings and <rdar://problem/7902473>.
     ASSERT(isMainThread());
+#endif
     
     RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
     NSString *notFound = @"localized string not found";

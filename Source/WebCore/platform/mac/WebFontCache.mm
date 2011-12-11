@@ -301,10 +301,12 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
     return [self internalFontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
 }
 
+#if !PLATFORM(IOS)
 + (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
     int desiredWeight = (desiredTraits & NSBoldFontMask) ? 9 : 5;
     return [self fontWithFamily:desiredFamily traits:desiredTraits weight:desiredWeight size:size];
 }
+#endif
 
 @end

@@ -100,7 +100,7 @@ String encodeForFileName(const String& inputStr)
     return String(buffer.data(), p - buffer.data());
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) || PLATFORM(IOS)
 
 bool canExcludeFromBackup()
 {

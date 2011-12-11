@@ -23,7 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "WebNSAttributedStringExtras.h"
+
+#if PLATFORM(IOS)
+enum {
+    NSAttachmentCharacter = 0xfffc    /* To denote attachments. */
+};
+#endif
 
 namespace WebCore {
 
