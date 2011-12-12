@@ -27,13 +27,19 @@
 #import "WKProcessGroup.h"
 #import "WKProcessGroupInternal.h"
 
+#import "WKConnectionInternal.h"
 #import "WKContext.h"
 #import "WKRetainPtr.h"
 #import "WKStringCF.h"
+#import <wtf/RetainPtr.h>
 
 @interface WKProcessGroupData : NSObject {
 @public
+    // Underlying context object.
     WKRetainPtr<WKContextRef> _contextRef;
+
+    // Delegate for callbacks.
+    id<WKProcessGroupDelegate> _delegate;
 }
 @end
 
@@ -41,6 +47,27 @@
 @end
 
 @implementation WKProcessGroup
+
+static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, const void* clientInfo)
+{
+    WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
+    if ([processGroup.delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)]) {
+        RetainPtr<WKConnection> connection = adoptNS([[WKConnection alloc] initWithConnectionRef:connectionRef]);
+        [processGroup.delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:connection.get()];
+    }
+}
+
+static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+{
+    WKContextConnectionClient connectionClient;
+    memset(&connectionClient, 0, sizeof(connectionClient));
+
+    connectionClient.version = kWKContextConnectionClientCurrentVersion;
+    connectionClient.clientInfo = processGroup;
+    connectionClient.didCreateConnection = didCreateConnection;
+
+    WKContextSetConnectionClient(contextRef, &connectionClient);
+}
 
 - (id)init
 {
@@ -60,6 +87,8 @@
     else
         _data->_contextRef = adoptWK(WKContextCreate());
 
+    setUpConnectionClient(self, _data->_contextRef.get());
+
     return self;
 }
 
@@ -67,6 +96,16 @@
 {
     [_data release];
     [super dealloc];
+}
+
+- (id<WKProcessGroupDelegate>)delegate
+{
+    return _data->_delegate;
+}
+
+- (void)setDelegate:(id<WKProcessGroupDelegate>)delegate
+{
+    _data->_delegate = delegate;
 }
 
 @end

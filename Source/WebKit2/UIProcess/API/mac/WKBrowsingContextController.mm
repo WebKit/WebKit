@@ -91,7 +91,6 @@ static inline NSURL *autoreleased(WKURLRef url)
     _data->_loadDelegate = loadDelegate;
 }
 
-
 #pragma mark Loading
 
 - (void)loadRequest:(NSURLRequest *)request

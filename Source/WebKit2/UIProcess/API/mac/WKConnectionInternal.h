@@ -23,28 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <WebKit2/WKBase.h>
+#import <WebKit2/WKConnection.h>
 
-@class WKProcessGroup, WKProcessGroupData, WKConnection;
+@interface WKConnection (Internal)
 
-@protocol WKProcessGroupDelegate <NSObject>
-
-- (void)processGroup:(WKProcessGroup *)processGroup didCreateConnectionToWebProcessPlugIn:(WKConnection *)connection;
-
-@end
-
-WK_EXPORT
-@interface WKProcessGroup : NSObject {
-@private
-    WKProcessGroupData *_data;
-}
-
-- (id)initWithInjectedBundleURL:(NSURL *)bundleURL;
-
-
-#pragma mark Delegates
-
-@property(assign) id<WKProcessGroupDelegate> delegate;
+- (id)initWithConnectionRef:(WKConnectionRef)connectionRef;
 
 @end

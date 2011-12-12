@@ -1,3 +1,36 @@
+2011-12-12  Sam Weinig  <sam@webkit.org>
+
+        Add WKConnection objective-c wrapper around WKConnectionRef
+        <rdar://problem/10446092>
+        https://bugs.webkit.org/show_bug.cgi?id=74324
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKConnection.h: Added.
+        * UIProcess/API/mac/WKConnection.mm: Added.
+        (-[WKConnection dealloc]):
+        (-[WKConnection connectionRef]):
+        (-[WKConnection delegate]):
+        (-[WKConnection setDelegate:]):
+        (didReceiveMessage):
+        (didClose):
+        (setUpClient):
+        (-[WKConnection initWithConnectionRef:]):
+        * UIProcess/API/mac/WKConnectionInternal.h: Added.
+        Added new class.
+
+        * UIProcess/API/mac/WKProcessGroup.h:
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (didCreateConnection):
+        (setUpConnectionClient):
+        (-[WKProcessGroup initWithInjectedBundleURL:]):
+        (-[WKProcessGroup delegate]):
+        (-[WKProcessGroup setDelegate:]):
+        Add WKProcessGroupDelegate to inform the user of when connections are established.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2011-12-12  Anders Carlsson  <andersca@apple.com>
 
         Rename QueueClient::willProcessMessageOnClientRunLoop
