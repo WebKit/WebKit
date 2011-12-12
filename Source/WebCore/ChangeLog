@@ -1,3 +1,35 @@
+2011-12-12  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream 5 files into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=73798
+
+        Reviewed by Rob Buis.
+
+        Main contributors:
+        Genevieve Mak <gmak@rim.com>
+        Mike Lattanzio  <mlattanzio@rim.com>
+        George Staikos <gstaikos@rim.com> 
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/PlatformTouchEventBlackBerry.cpp: Added.
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/blackberry/PlatformTouchPointBlackBerry.cpp: Added.
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+        * platform/blackberry/SharedBufferBlackBerry.cpp: Added.
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+        * platform/blackberry/SharedTimerBlackBerry.cpp: Added.
+        (WebCore::SharedTimerBlackBerry::SharedTimerBlackBerry):
+        (WebCore::SharedTimerBlackBerry::~SharedTimerBlackBerry):
+        (WebCore::SharedTimerBlackBerry::instance):
+        (WebCore::SharedTimerBlackBerry::start):
+        (WebCore::SharedTimerBlackBerry::stop):
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireInterval):
+        (WebCore::stopSharedTimer):
+        * platform/blackberry/SystemTimeBlackBerry.cpp: Added.
+        (WebCore::userIdleTime):
+
 2011-12-12  Alexander Pavlov  <apavlov@chromium.org>
 
         Implement a cache for CSSStyleRule::selectorText()
