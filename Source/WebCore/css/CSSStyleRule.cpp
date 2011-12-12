@@ -31,6 +31,8 @@
 #include "StyledElement.h"
 #include "StyleSheet.h"
 
+#include <wtf/text/StringBuilder.h>
+
 namespace WebCore {
 
 CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type type)
@@ -46,20 +48,51 @@ CSSStyleRule::~CSSStyleRule()
 {
     if (m_style)
         m_style->setParentRule(0);
+    cleanup();
+}
+
+typedef HashMap<const CSSStyleRule*, String> SelectorTextCache;
+static SelectorTextCache& selectorTextCache()
+{
+    DEFINE_STATIC_LOCAL(SelectorTextCache, cache, ());
+    return cache;
+}
+
+inline void CSSStyleRule::cleanup()
+{
+    if (m_hasCachedSelectorText) {
+        selectorTextCache().remove(this);
+        m_hasCachedSelectorText = false;
+    }
+}
+
+String CSSStyleRule::generateSelectorText() const
+{
+    if (isPageRule())
+        return static_cast<const CSSPageRule*>(this)->pageSelectorText();
+    else {
+        StringBuilder builder;
+        for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
+            if (s != selectorList().first())
+                builder.append(", ");
+            builder.append(s->selectorText());
+        }
+        return builder.toString();
+    }
 }
 
 String CSSStyleRule::selectorText() const
 {
-    if (isPageRule())
-        return static_cast<const CSSPageRule*>(this)->pageSelectorText();
-
-    String str;
-    for (CSSSelector* s = selectorList().first(); s; s = CSSSelectorList::next(s)) {
-        if (s != selectorList().first())
-            str += ", ";
-        str += s->selectorText();
+    if (m_hasCachedSelectorText) {
+        ASSERT(selectorTextCache().contains(this));
+        return selectorTextCache().get(this);
     }
-    return str;
+
+    ASSERT(!selectorTextCache().contains(this));
+    String text = generateSelectorText();
+    selectorTextCache().set(this, text);
+    m_hasCachedSelectorText = true;
+    return text;
 }
 
 void CSSStyleRule::setSelectorText(const String& selectorText)
@@ -85,6 +118,12 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     String oldSelectorText = this->selectorText();
     m_selectorList.adopt(selectorList);
+
+    if (m_hasCachedSelectorText) {
+        ASSERT(selectorTextCache().contains(this));
+        selectorTextCache().set(this, generateSelectorText());
+    }
+
     if (this->selectorText() == oldSelectorText)
         return;
 

@@ -110,6 +110,7 @@ public:
 protected:
     CSSRule(CSSStyleSheet* parent, Type type)
         : m_sourceLine(0)
+        , m_hasCachedSelectorText(false)
         , m_parentIsRule(false)
         , m_type(type)
         , m_parentStyleSheet(parent)
@@ -122,7 +123,8 @@ protected:
     ~CSSRule() { }
 
     // Only used by CSSStyleRule but kept here to maximize struct packing.
-    signed m_sourceLine : 27;
+    signed m_sourceLine : 26;
+    mutable bool m_hasCachedSelectorText : 1;
 
 private:
     bool m_parentIsRule : 1;

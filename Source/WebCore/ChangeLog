@@ -1,5 +1,32 @@
 2011-12-12  Alexander Pavlov  <apavlov@chromium.org>
 
+        Implement a cache for CSSStyleRule::selectorText()
+        https://bugs.webkit.org/show_bug.cgi?id=74269
+
+        This change is geared towards speeding up the CSS selector profiler,
+        its implementation tracked at https://bugs.webkit.org/show_bug.cgi?id=74004.
+        Using a proof-of-concept implementation of the profiler, this change reduces
+        the profiler temporal overhead on PerformanceTests/Parser/html5-full-render.html
+        roughly by 86% (from ~72 seconds down to ~10 seconds). This change also does not
+        considerably increase average memory usage, as reading selectorText is a relatively
+        rare case during normal web browsing.
+
+        Reviewed by Andreas Kling.
+
+        No new tests, as this functionality is covered by existing tests.
+
+        * css/CSSRule.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::~CSSStyleRule):
+        (WebCore::selectorTextCache):
+        (WebCore::CSSStyleRule::cleanup):
+        (WebCore::CSSStyleRule::generateSelectorText):
+        (WebCore::CSSStyleRule::selectorText):
+        (WebCore::CSSStyleRule::setSelectorText):
+        * css/CSSStyleRule.h:
+
+2011-12-12  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: [Styles] Modified selector text needs sanitization
         https://bugs.webkit.org/show_bug.cgi?id=74291
 
