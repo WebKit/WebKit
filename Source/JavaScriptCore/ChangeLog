@@ -1,4 +1,12 @@
 2011-12-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out *another* debugging change I committed accidentally.
+
+        Unreviewed.
+
+        * Configurations/Base.xcconfig:
+
+2011-12-11  Geoffrey Garen  <ggaren@apple.com>
         
         Rolled out a debug counter I committed accidentally.
 
