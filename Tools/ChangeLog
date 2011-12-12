@@ -1,3 +1,9 @@
+2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Add myself as a committer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Support customizing popup menus with QML
