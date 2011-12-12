@@ -63,29 +63,29 @@
 
 - (BOOL)allowsJavaScript
 {
-    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef));
+    return WKPreferencesGetJavaScriptEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
 }
 
 - (void)setAllowsJavaScript:(BOOL)allowsJavaScript
 {
-    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self.pageGroupRef), allowsJavaScript);
+    WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsJavaScript);
 }
 
 - (BOOL)allowsPlugIns
 {
-    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(self.pageGroupRef));
+    return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
 }
 
 - (void)setAllowsPlugIns:(BOOL)allowsPlugIns
 {
-    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(self.pageGroupRef), allowsPlugIns);
+    WKPreferencesSetPluginsEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsPlugIns);
 }
 
 @end
 
 @implementation WKBrowsingContextGroup (Internal)
 
-- (WKPageGroupRef)pageGroupRef
+- (WKPageGroupRef)_pageGroupRef
 {
     return _data->_pageGroupRef.get();
 }

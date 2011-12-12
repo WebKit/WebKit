@@ -1,3 +1,56 @@
+2011-12-12  Sam Weinig  <sam@webkit.org>
+
+        Prefix internal methods in Objective-C API files with an underscore
+        https://bugs.webkit.org/show_bug.cgi?id=74363
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController _pageRef]):
+        (-[WKBrowsingContextController loadRequest:]):
+        (-[WKBrowsingContextController loadFileURL:restrictToFilesWithin:]):
+        (-[WKBrowsingContextController stopLoading]):
+        (-[WKBrowsingContextController reload]):
+        (-[WKBrowsingContextController reloadFromOrigin]):
+        (-[WKBrowsingContextController goForward]):
+        (-[WKBrowsingContextController canGoForward]):
+        (-[WKBrowsingContextController goBack]):
+        (-[WKBrowsingContextController canGoBack]):
+        (-[WKBrowsingContextController activeURL]):
+        (-[WKBrowsingContextController provisionalURL]):
+        (-[WKBrowsingContextController committedURL]):
+        (-[WKBrowsingContextController title]):
+        (-[WKBrowsingContextController textZoom]):
+        (-[WKBrowsingContextController setTextZoom:]):
+        (-[WKBrowsingContextController pageZoom]):
+        (-[WKBrowsingContextController setPageZoom:]):
+        (-[WKBrowsingContextController setPaginationMode:]):
+        (-[WKBrowsingContextController paginationMode]):
+        (-[WKBrowsingContextController setPageLength:]):
+        (-[WKBrowsingContextController pageLength]):
+        (-[WKBrowsingContextController setGapBetweenPages:]):
+        (-[WKBrowsingContextController gapBetweenPages]):
+        (-[WKBrowsingContextController pageCount]):
+        (-[WKBrowsingContextController _initWithPageRef:]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup allowsJavaScript]):
+        (-[WKBrowsingContextGroup setAllowsJavaScript:]):
+        (-[WKBrowsingContextGroup allowsPlugIns]):
+        (-[WKBrowsingContextGroup setAllowsPlugIns:]):
+        (-[WKBrowsingContextGroup _pageGroupRef]):
+        * UIProcess/API/mac/WKBrowsingContextGroupInternal.h:
+        * UIProcess/API/mac/WKConnection.mm:
+        (-[WKConnection _initWithConnectionRef:]):
+        * UIProcess/API/mac/WKConnectionInternal.h:
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (didCreateConnection):
+        (-[WKProcessGroup _contextRef]):
+        * UIProcess/API/mac/WKProcessGroupInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:processGroup:browsingContextGroup:]):
+        (-[WKView browsingContextController]):
+
 2011-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit code shouldn't be calling applyCommand directly

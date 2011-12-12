@@ -100,7 +100,7 @@ static void setUpClient(WKConnection *connection, WKConnectionRef connectionRef)
     WKConnectionSetConnectionClient(connectionRef, &client);
 }
 
-- (id)initWithConnectionRef:(WKConnectionRef)connectionRef
+- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef
 {
     self = [super init];
     if (!self)

@@ -27,6 +27,6 @@
 
 @interface WKProcessGroup (Internal)
 
-@property(readonly) WKContextRef contextRef;
+@property(readonly) WKContextRef _contextRef;
 
 @end

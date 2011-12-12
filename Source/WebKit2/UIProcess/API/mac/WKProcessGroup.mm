@@ -52,7 +52,7 @@ static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, con
 {
     WKProcessGroup *processGroup = (WKProcessGroup *)clientInfo;
     if ([processGroup.delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)]) {
-        RetainPtr<WKConnection> connection = adoptNS([[WKConnection alloc] initWithConnectionRef:connectionRef]);
+        RetainPtr<WKConnection> connection = adoptNS([[WKConnection alloc] _initWithConnectionRef:connectionRef]);
         [processGroup.delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:connection.get()];
     }
 }
@@ -112,7 +112,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 
 @implementation WKProcessGroup (Internal)
 
-- (WKContextRef)contextRef
+- (WKContextRef)_contextRef
 {
     return _data->_contextRef.get();
 }

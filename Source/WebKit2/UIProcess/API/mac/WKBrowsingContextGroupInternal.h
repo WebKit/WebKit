@@ -27,6 +27,6 @@
 
 @interface WKBrowsingContextGroup (Internal)
 
-@property(readonly) WKPageGroupRef pageGroupRef;
+@property(readonly) WKPageGroupRef _pageGroupRef;
 
 @end

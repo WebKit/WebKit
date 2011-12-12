@@ -28,6 +28,6 @@
 @interface WKBrowsingContextController (Internal)
 
 /* This should only be called from associate view. */
-- (id)initWithPageRef:(WKPageRef)pageRef;
+- (id)_initWithPageRef:(WKPageRef)pageRef;
 
 @end

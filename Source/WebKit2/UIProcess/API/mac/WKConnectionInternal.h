@@ -27,6 +27,6 @@
 
 @interface WKConnection (Internal)
 
-- (id)initWithConnectionRef:(WKConnectionRef)connectionRef;
+- (id)_initWithConnectionRef:(WKConnectionRef)connectionRef;
 
 @end

@@ -217,7 +217,7 @@ struct WKViewInterpretKeyEventsParameters {
 
 - (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
 {
-    return [self initWithFrame:frame contextRef:processGroup.contextRef pageGroupRef:browsingContextGroup.pageGroupRef];
+    return [self initWithFrame:frame contextRef:processGroup._contextRef pageGroupRef:browsingContextGroup._pageGroupRef];
 }
 
 - (void)dealloc
@@ -237,7 +237,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (WKBrowsingContextController *)browsingContextController
 {
     if (!_data->_browsingContextController)
-        _data->_browsingContextController.adoptNS([[WKBrowsingContextController alloc] initWithPageRef:[self pageRef]]);
+        _data->_browsingContextController.adoptNS([[WKBrowsingContextController alloc] _initWithPageRef:[self pageRef]]);
     return _data->_browsingContextController.get();
 }
 
