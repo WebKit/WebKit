@@ -1,3 +1,25 @@
+2011-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Share code that checks for matching sets of transform operations
+        https://bugs.webkit.org/show_bug.cgi?id=74265
+
+        Reviewed by Dan Bernstein.
+        
+        Add TransformOperations::operationsMatch() and call it from the
+        three places that used this same code.
+        
+        Tested by existing tests.
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::validateTransformFunctionList):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::validateTransformFunctionList):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::fetchTransformOperationList):
+        * platform/graphics/transforms/TransformOperations.cpp:
+        (WebCore::TransformOperations::operationsMatch):
+        * platform/graphics/transforms/TransformOperations.h:
+
 2011-12-12  Antti Koivisto  <antti@apple.com>
 
         Cache visited link hash

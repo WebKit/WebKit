@@ -58,6 +58,8 @@ public:
         return false;
     }
     
+    bool operationsMatch(const TransformOperations&) const;
+    
     void clear()
     {
         m_operations.clear();

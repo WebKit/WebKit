@@ -263,21 +263,9 @@ void ImplicitAnimation::validateTransformFunctionList()
     if (val->operations().isEmpty())
         return;
         
-    // See if the keyframes are valid
-    if (val != toVal) {
-        // A list of length 0 matches anything
-        if (!toVal->operations().isEmpty()) {
-            // If the sizes of the function lists don't match, the lists don't match
-            if (val->operations().size() != toVal->operations().size())
-                return;
-        
-            // If the types of each function are not the same, the lists don't match
-            for (size_t j = 0; j < val->operations().size(); ++j) {
-                if (!val->operations()[j]->isSameType(*toVal->operations()[j]))
-                    return;
-            }
-        }
-    }
+    // An emtpy transform list matches anything.
+    if (val != toVal && !toVal->operations().isEmpty() && !val->operationsMatch(*toVal))
+        return;
 
     // Keyframes are valid
     m_transformFunctionListValid = true;

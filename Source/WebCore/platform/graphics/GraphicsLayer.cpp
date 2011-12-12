@@ -392,17 +392,12 @@ void GraphicsLayer::fetchTransformOperationList(const KeyframeValueList& valueLi
     for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
         const TransformOperations* val = operationsAt(valueList, i);
         
-        // a null transform matches anything
+        // An emtpy transform list matches anything.
         if (val->operations().isEmpty())
             continue;
             
-        if (firstVal->operations().size() != val->operations().size())
+        if (!firstVal->operationsMatch(*val))
             return;
-            
-        for (size_t j = 0; j < firstVal->operations().size(); ++j) {
-            if (!firstVal->operations().at(j)->isSameType(*val->operations().at(j)))
-                return;
-        }
     }
 
     // Keyframes are valid, fill in the list.

@@ -423,19 +423,12 @@ void KeyframeAnimation::validateTransformFunctionList()
         const KeyframeValue& currentKeyframe = m_keyframes[i];
         const TransformOperations* val = &currentKeyframe.style()->transform();
         
-        // A null transform matches anything
+        // An emtpy transform list matches anything.
         if (val->operations().isEmpty())
             continue;
         
-        // If the sizes of the function lists don't match, the lists don't match
-        if (firstVal->operations().size() != val->operations().size())
+        if (!firstVal->operationsMatch(*val))
             return;
-        
-        // If the types of each function are not the same, the lists don't match
-        for (size_t j = 0; j < firstVal->operations().size(); ++j) {
-            if (!firstVal->operations()[j]->isSameType(*val->operations()[j]))
-                return;
-        }
     }
 
     // Keyframes are valid
