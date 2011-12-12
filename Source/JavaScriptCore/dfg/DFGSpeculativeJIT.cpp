@@ -1980,6 +1980,8 @@ void SpeculativeJIT::compileSoftModulo(Node& node)
 #else
     GPRTemporary result(this);
     GPRTemporary scratch(this);
+    GPRTemporary scratch3(this);
+    GPRReg scratchGPR3 = scratch3.gpr();
     GPRReg resultGPR = result.gpr();
     GPRReg scratchGPR = scratch.gpr();
 #endif
@@ -2029,8 +2031,6 @@ void SpeculativeJIT::compileSoftModulo(Node& node)
     m_jit.assembler().cdq();
     m_jit.assembler().idivl_r(scratchGPR2);
 #elif CPU(ARM_THUMB2)
-    GPRTemporary scratch3(this);
-    GPRReg scratchGPR3 = scratch3.gpr();
     m_jit.countLeadingZeros32(scratchGPR2, scratchGPR);
     m_jit.countLeadingZeros32(resultGPR, scratchGPR3);
     m_jit.sub32(scratchGPR3, scratchGPR);

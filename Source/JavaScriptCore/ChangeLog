@@ -1,3 +1,13 @@
+2011-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        ARMv7 version of DFG soft modulo does register allocation inside of control flow
+        https://bugs.webkit.org/show_bug.cgi?id=74354
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+
 2011-12-12  Andy Wingo  <wingo@igalia.com>
 
         Simplify autotools configure.ac
