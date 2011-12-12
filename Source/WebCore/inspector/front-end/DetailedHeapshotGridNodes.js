@@ -343,7 +343,7 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     _createProvider: function(snapshot, nodeIndex)
     {
-        var showHiddenData = WebInspector.DetailedHeapshotView.prototype.showHiddenData;
+        var showHiddenData = WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get();
         return snapshot.createEdgesProvider(
             nodeIndex,
             "function(edge) {" +

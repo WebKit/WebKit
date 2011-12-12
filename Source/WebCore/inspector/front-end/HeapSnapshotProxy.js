@@ -340,9 +340,9 @@ WebInspector.HeapSnapshotProxy.prototype = {
         return this.callFactoryMethod(null, "createNodesProviderForDominator", "WebInspector.HeapSnapshotProviderProxy", nodeIndex, filter);
     },
 
-    createPathFinder: function(targetNodeIndex)
+    createPathFinder: function(targetNodeIndex, skipHidden)
     {
-        return this.callFactoryMethod(null, "createPathFinder", "WebInspector.HeapSnapshotPathFinderProxy", targetNodeIndex);
+        return this.callFactoryMethod(null, "createPathFinder", "WebInspector.HeapSnapshotPathFinderProxy", targetNodeIndex, skipHidden);
     },
 
     dispose: function()

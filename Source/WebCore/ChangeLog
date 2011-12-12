@@ -1,3 +1,24 @@
+2011-12-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium: UI: Detailed Heap snapshot shows too many objects' hidden properties.
+        https://bugs.webkit.org/show_bug.cgi?id=74289
+
+        WebCore objects have many hidden properties.
+        The Detailed Heap shapshot view shows all these props for a selected object.
+        The result view looks too heavy and users usually failed to find a useful information about the object.
+        Looks like such ability is unnecessary in the most cases.
+        I'd like to introduce a configurable property that will show/hide these props from the view.
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        * inspector/front-end/DetailedHeapshotView.js:
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy.prototype.createPathFinder):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+
 2011-12-12  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r102556.

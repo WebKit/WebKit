@@ -394,7 +394,7 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.H
 
 WebInspector.HeapSnapshotPathFinderState = function(snapshot, nodeIndex, rootFilter)
 {
-    this._pathFinder = snapshot.createPathFinder(nodeIndex, !WebInspector.DetailedHeapshotView.prototype.showHiddenData);
+    this._pathFinder = snapshot.createPathFinder(nodeIndex, !WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.get());
     this._pathFinder.updateRoots(rootFilter);
     this._foundCount = 0;
     this._foundCountMax = null;
@@ -1293,7 +1293,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
 WebInspector.DetailedHeapshotView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.DetailedHeapshotView.prototype.showHiddenData = true;
+WebInspector.settings.showHeapSnapshotObjectsHiddenProperties = WebInspector.settings.createSetting("showHeaSnapshotObjectsHiddenProperties", false);
 
 WebInspector.DetailedHeapshotProfileType = function()
 {
