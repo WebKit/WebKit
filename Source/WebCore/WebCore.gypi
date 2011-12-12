@@ -2724,6 +2724,7 @@
             'inspector/ContentSearchUtils.h',
             'inspector/DOMNodeHighlighter.cpp',
             'inspector/DOMNodeHighlighter.h',
+            'inspector/DOMWrapperVisitor.h',
             'inspector/IdentifiersFactory.cpp',
             'inspector/IdentifiersFactory.h',
             'inspector/InjectedScript.cpp',

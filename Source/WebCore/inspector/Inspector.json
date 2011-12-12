@@ -50,11 +50,22 @@
         "hidden": true,
         "types": [
             {
+                "id": "NodeCount",
+                "type": "object",
+                "properties": [
+                    { "name": "nodeName", "type": "string" },
+                    { "name": "count", "type": "integer" }
+                ],
+                "description": "Number of nodes with given name."
+            },
+            {
                 "id": "DOMGroup",
                 "type": "object",
                 "properties": [
                     { "name": "size", "type": "integer" },
-                    { "name": "title", "type": "string" }
+                    { "name": "title", "type": "string" },
+                    { "name": "documentURI", "type": "string", "optional": true },
+                    { "name": "nodeCount", "type": "array", "items": { "$ref": "NodeCount" }}
                 ]
             }
         ],

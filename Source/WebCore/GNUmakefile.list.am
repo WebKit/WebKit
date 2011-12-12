@@ -2027,6 +2027,7 @@ webcore_sources += \
 	Source/WebCore/inspector/ContentSearchUtils.h \
 	Source/WebCore/inspector/DOMNodeHighlighter.cpp \
 	Source/WebCore/inspector/DOMNodeHighlighter.h \
+	Source/WebCore/inspector/DOMWrapperVisitor.h \
 	Source/WebCore/inspector/IdentifiersFactory.cpp \
 	Source/WebCore/inspector/IdentifiersFactory.h \
 	Source/WebCore/inspector/InjectedScript.cpp \

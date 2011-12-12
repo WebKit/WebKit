@@ -31,14 +31,13 @@
 #include "config.h"
 #include "ScriptProfiler.h"
 
-#include "DOMNodeHighlighter.h"
+#include "DOMWrapperVisitor.h"
 #include "InjectedScript.h"
 #include "InspectorValues.h"
 #include "RetainedDOMInfo.h"
 #include "V8Binding.h"
 #include "V8DOMMap.h"
 #include "V8Node.h"
-#include <wtf/text/StringBuilder.h>
 
 #include <v8-profiler.h>
 
@@ -148,83 +147,20 @@ void ScriptProfiler::initialize()
 #endif // ENABLE(INSPECTOR)
 }
 
-namespace {
-
-class CounterVisitor : public DOMWrapperMap<Node>::Visitor {
-public:
-    CounterVisitor(Page* page, InspectorArray* counters) : m_page(page), m_counters(counters) { }
-
-    void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
-    {
-        if (node->document()->frame() && m_page != node->document()->frame()->page())
-            return;
-
-        Node* rootNode = node;
-        while (rootNode->parentNode())
-            rootNode = rootNode->parentNode();
-
-        if (m_roots.contains(rootNode))
-            return;
-        m_roots.add(rootNode);
-
-        unsigned count = 0;
-        Node* currentNode = rootNode;
-        while ((currentNode = currentNode->traverseNextNode(rootNode)))
-            ++count;
-
-        RefPtr<InspectorObject> entry = InspectorObject::create();
-        entry->setNumber("size", count);
-
-        entry->setString("title", rootNode->nodeType() == Node::ELEMENT_NODE ? elementTitle(static_cast<Element*>(rootNode)) : rootNode->nodeName());
-        if (rootNode->nodeType() == Node::DOCUMENT_NODE)
-            entry->setString("documentURI", static_cast<Document*>(rootNode)->documentURI());
-        m_counters->pushObject(entry);
-    }
-
-private:
-    String elementTitle(Element* element)
-    {
-        StringBuilder result;
-        bool isXHTML = element->document()->isXHTMLDocument();
-        result.append(isXHTML ? element->nodeName() : element->nodeName().lower());
-
-        const AtomicString& idValue = element->getIdAttribute();
-        String idString;
-        if (!idValue.isNull() && !idValue.isEmpty()) {
-            result.append("#");
-            result.append(idValue);
-        }
-
-        HashSet<AtomicString> usedClassNames;
-        if (element->hasClass() && element->isStyledElement()) {
-            const SpaceSplitString& classNamesString = static_cast<StyledElement*>(element)->classNames();
-            size_t classNameCount = classNamesString.size();
-            for (size_t i = 0; i < classNameCount; ++i) {
-                const AtomicString& className = classNamesString[i];
-                if (usedClassNames.contains(className))
-                    continue;
-                usedClassNames.add(className);
-                result.append(".");
-                result.append(className);
-            }
-        }
-        return result.toString();
-    }
-
-    HashSet<Node*> m_roots;
-    Page* m_page;
-    InspectorArray* m_counters;
-};
-
-} // namespace
-
-PassRefPtr<InspectorArray> ScriptProfiler::domNodeCount(Page* page)
+void ScriptProfiler::visitJSDOMWrappers(DOMWrapperVisitor* visitor)
 {
-    RefPtr<InspectorArray> result = InspectorArray::create();
-    CounterVisitor counterVisitor(page, result.get());
-    visitDOMNodes(&counterVisitor);
-    return result;
-}
+    class VisitorAdapter : public DOMWrapperMap<Node>::Visitor {
+    public:
+        VisitorAdapter(DOMWrapperVisitor* visitor) : m_visitor(visitor) { }
 
+        virtual void visitDOMWrapper(DOMDataStore*, Node* node, v8::Persistent<v8::Object>)
+        {
+            m_visitor->visitNode(node);
+        }
+    private:
+        DOMWrapperVisitor* m_visitor;
+    } adapter(visitor);
+    visitDOMNodes(&adapter);
+}
 
 } // namespace WebCore

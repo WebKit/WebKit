@@ -68458,6 +68458,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\DOMWrapperVisitor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\IdentifiersFactory.cpp"
 				>
 			</File>

@@ -6027,6 +6027,7 @@
 		F34742E81343635000531BC2 /* WorkerScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F34742E61343635000531BC2 /* WorkerScriptDebugServer.cpp */; };
 		F34742E91343635000531BC2 /* WorkerScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742E71343635000531BC2 /* WorkerScriptDebugServer.h */; };
 		F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */; };
+		F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = F35AE5AB14925F5B004D5776 /* DOMWrapperVisitor.h */; };
 		F3644AFF1119805900E0D537 /* InjectedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3644AFD1119805900E0D537 /* InjectedScript.cpp */; };
 		F3644B001119805900E0D537 /* InjectedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = F3644AFE1119805900E0D537 /* InjectedScript.h */; };
 		F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */; };
@@ -13411,6 +13412,7 @@
 		F34742E61343635000531BC2 /* WorkerScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptDebugServer.cpp; sourceTree = "<group>"; };
 		F34742E71343635000531BC2 /* WorkerScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerScriptDebugServer.h; sourceTree = "<group>"; };
 		F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstrumentingAgents.cpp; sourceTree = "<group>"; };
+		F35AE5AB14925F5B004D5776 /* DOMWrapperVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWrapperVisitor.h; sourceTree = "<group>"; };
 		F3644AFD1119805900E0D537 /* InjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScript.cpp; sourceTree = "<group>"; };
 		F3644AFE1119805900E0D537 /* InjectedScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScript.h; sourceTree = "<group>"; };
 		F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerInspectorController.cpp; sourceTree = "<group>"; };
@@ -14530,6 +14532,7 @@
 				59102FBA14327D3B003C9D04 /* ContentSearchUtils.h */,
 				4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */,
 				4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */,
+				F35AE5AB14925F5B004D5776 /* DOMWrapperVisitor.h */,
 				5913A23F13D49EBA00F5B05C /* IdentifiersFactory.cpp */,
 				5913A24013D49EBA00F5B05C /* IdentifiersFactory.h */,
 				F3644AFD1119805900E0D537 /* InjectedScript.cpp */,
@@ -24805,6 +24808,7 @@
 				265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */,
 				8A195932147EA16E00D1EA61 /* DOMWebKitNamedFlow.h in Headers */,
 				8A195934147EA16E00D1EA61 /* DOMWebKitNamedFlowInternal.h in Headers */,
+				F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */,
 				26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

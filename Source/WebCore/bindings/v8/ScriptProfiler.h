@@ -41,8 +41,8 @@
 
 namespace WebCore {
 
+class DOMWrapperVisitor;
 class InjectedScriptManager;
-class Page;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -65,7 +65,7 @@ public:
     static bool isSampling() { return true; }
     static bool hasHeapProfiler() { return true; }
     static void initialize();
-    static PassRefPtr<InspectorArray> domNodeCount(Page*);
+    static void visitJSDOMWrappers(DOMWrapperVisitor*);
 };
 
 } // namespace WebCore

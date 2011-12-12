@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
+class DOMWrapperVisitor;
 class InjectedScriptManager;
-class Page;
 
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
@@ -61,7 +61,7 @@ public:
     static bool isSampling() { return false; }
     static bool hasHeapProfiler() { return false; }
     // FIXME: Implement this counter for JSC. See bug 73936 for more details.
-    static PassRefPtr<InspectorArray> domNodeCount(Page*) { return 0; };
+    static void visitJSDOMWrappers(DOMWrapperVisitor*) { }
 };
 
 } // namespace WebCore

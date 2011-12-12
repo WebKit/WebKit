@@ -1894,6 +1894,7 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/ContentSearchUtils.h \
     inspector/DOMNodeHighlighter.h \
+    inspector/DOMWrapperVisitor.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
