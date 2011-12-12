@@ -1,3 +1,12 @@
+2011-12-11  Geoffrey Garen  <ggaren@apple.com>
+        
+        Rolled out a debug counter I committed accidentally.
+
+        Unreviewed.
+
+        * jit/JITStubs.cpp:
+        (JSC::arityCheckFor):
+
 2011-12-10  Geoffrey Garen  <ggaren@apple.com>
 
         v8 benchmark takes 12-13 million function call slow paths due to extra arguments

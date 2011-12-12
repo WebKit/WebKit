@@ -2201,18 +2201,6 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
     return result;
 }
 
-static size_t debugCount[5];
-struct DebugCounter {
-    ~DebugCounter()
-    {
-        for (size_t i = 0; i < 5; ++i)
-            fprintf(stderr, "DebugCounter[%ld]: %ld\n", i, debugCount[i]);
-    }
-    void count(int delta) { ++debugCount[std::min(4, delta)]; }
-};
-
-DebugCounter debugCounter;
-
 inline CallFrame* arityCheckFor(CallFrame* callFrame, RegisterFile* registerFile, CodeSpecializationKind kind)
 {
     JSFunction* callee = asFunction(callFrame->callee());
@@ -2225,8 +2213,6 @@ inline CallFrame* arityCheckFor(CallFrame* callFrame, RegisterFile* registerFile
         return 0;
 
     ASSERT(argumentCountIncludingThis < newCodeBlock->m_numParameters);
-
-    debugCounter.count(newCodeBlock->m_numParameters - argumentCountIncludingThis);
 
     // Too few arguments -- copy call frame and arguments, then fill in missing arguments with undefined.
     size_t delta = newCodeBlock->m_numParameters - argumentCountIncludingThis;
