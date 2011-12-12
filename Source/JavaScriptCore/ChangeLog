@@ -1,3 +1,13 @@
+2011-12-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG GetByVal CSE incorrectly assumes that a non-matching PutByVal cannot clobber
+        https://bugs.webkit.org/show_bug.cgi?id=74329
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::getByValLoadElimination):
+
 2011-12-09  Alexander Pavlov  <apavlov@chromium.org>
 
         WebKit does not enumerate over CSS properties in HTMLElement.style

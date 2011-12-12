@@ -1079,7 +1079,10 @@ private:
                     return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return node.child3();
-                break;
+                // We must assume that the PutByVal will clobber the location we're getting from.
+                // FIXME: We can do better; if we know that the PutByVal is accessing an array of a
+                // different type than the GetByVal, then we know that they won't clobber each other.
+                return NoNode;
             case PutStructure:
             case PutByOffset:
                 // GetByVal currently always speculates that it's accessing an
