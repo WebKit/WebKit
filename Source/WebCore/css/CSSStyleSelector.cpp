@@ -190,7 +190,9 @@ private:
     CSSStyleRule* m_rule;
     CSSSelector* m_selector;
     unsigned m_specificity;
-    unsigned m_position : 26;
+    // This number was picked fairly arbitrarily. We can probably lower it if we need to.
+    // Some simple testing showed <100,000 RuleData's on large sites.
+    unsigned m_position : 25;
     bool m_hasFastCheckableSelector : 1;
     bool m_hasMultipartSelector : 1;
     bool m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
@@ -200,6 +202,16 @@ private:
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
+    
+struct SameSizeAsRuleData {
+    void* a;
+    void* b;
+    unsigned c;
+    unsigned d;
+    unsigned e[4];
+};
+
+COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
 
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);

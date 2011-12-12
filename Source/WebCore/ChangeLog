@@ -1,3 +1,20 @@
+2011-12-12  Ojan Vafai  <ojan@chromium.org>
+
+        r102234 caused RuleData to use 33 bits in its bitmask
+        https://bugs.webkit.org/show_bug.cgi?id=74314
+
+        Reviewed by Antti Koivisto.
+
+        Lower m_position to something more reasonable. A million
+        should be plenty. Current large sites (e.g. gmail) seem to use
+        tens of thousands.
+
+        Added a COMPILE_ASSERT to ensure this doesn't regress.
+
+        No new tests.
+
+        * css/CSSStyleSelector.cpp:
+
 2011-12-12  James Robinson  <jamesr@chromium.org>
 
         Rename webkitCancelRequestAnimationFrame to webkitCancelAnimationFrame to match spec change
