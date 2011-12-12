@@ -259,7 +259,7 @@ void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Node*>& n
 }
 #endif
 
-void applyCommand(PassRefPtr<EditCommand> command)
+void applyCommand(PassRefPtr<CompositeEditCommand> command)
 {
     command->apply();
 }

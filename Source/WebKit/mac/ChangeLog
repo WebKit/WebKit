@@ -1,3 +1,13 @@
+2011-12-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit code shouldn't be calling applyCommand directly
+        https://bugs.webkit.org/show_bug.cgi?id=74337
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+
 2011-12-12  Brady Eidson  <beidson@apple.com>
 
         Page cache should support pages with plugins.

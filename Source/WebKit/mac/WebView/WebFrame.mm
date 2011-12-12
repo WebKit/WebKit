@@ -1048,15 +1048,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     if (_private->coreFrame->selection()->isNone() || !fragment)
         return;
-    ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::PreventNesting;
-    if (selectReplacement)
-        options |= ReplaceSelectionCommand::SelectReplacement;
-    if (smartReplace)
-        options |= ReplaceSelectionCommand::SmartReplace;
-    if (matchStyle)
-        options |= ReplaceSelectionCommand::MatchStyle;
-    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), core(fragment), options));
-    _private->coreFrame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+    _private->coreFrame->editor()->replaceSelectionWithFragment(core(fragment), selectReplacement, smartReplace, matchStyle);
 }
 
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace

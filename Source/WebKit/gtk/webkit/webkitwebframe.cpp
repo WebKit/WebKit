@@ -996,10 +996,9 @@ WebKitNetworkResponse* webkit_web_frame_get_network_response(WebKitWebFrame* fra
 void webkit_web_frame_replace_selection(WebKitWebFrame* frame, const char* text)
 {
     Frame* coreFrame = core(frame);
-    RefPtr<DocumentFragment> fragment = createFragmentFromText(
-        coreFrame->selection()->toNormalizedRange().get(), text);
-    applyCommand(ReplaceSelectionCommand::create(coreFrame->document(), fragment.get(),
-                                                 ReplaceSelectionCommand::SmartReplace | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
+    bool selectReplacement = false;
+    bool smartReplace = true;
+    coreFrame->editor()->replaceSelectionWithText(text, selectReplacement, smartReplace);
 }
 
 /**

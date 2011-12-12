@@ -95,7 +95,7 @@ private:
     RefPtr<Element> m_endingRootEditableElement;
     CompositeEditCommand* m_parent;
 
-    friend void applyCommand(PassRefPtr<EditCommand>);
+    friend void applyCommand(PassRefPtr<CompositeEditCommand>);
 };
 
 class SimpleEditCommand : public EditCommand {
@@ -123,7 +123,7 @@ inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)
     return static_cast<SimpleEditCommand*>(command);
 }
 
-void applyCommand(PassRefPtr<EditCommand>);
+void applyCommand(PassRefPtr<CompositeEditCommand>);
 
 } // namespace WebCore
 

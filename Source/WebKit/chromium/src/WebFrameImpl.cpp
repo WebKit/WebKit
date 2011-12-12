@@ -1122,10 +1122,9 @@ bool WebFrameImpl::willSuppressOpenerInNewFrame() const
 
 void WebFrameImpl::replaceSelection(const WebString& text)
 {
-    RefPtr<DocumentFragment> fragment = createFragmentFromText(
-        frame()->selection()->toNormalizedRange().get(), text);
-    applyCommand(ReplaceSelectionCommand::create(
-        frame()->document(), fragment.get(), ReplaceSelectionCommand::SmartReplace | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
+    bool selectReplacement = false;
+    bool smartReplace = true;
+    return frame()->editor()->replaceSelectionWithText(text, selectReplacement, smartReplace);
 }
 
 void WebFrameImpl::insertText(const WebString& text)
