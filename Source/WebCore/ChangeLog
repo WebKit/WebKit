@@ -1,3 +1,12 @@
+2011-12-12  Kenneth Russell  <kbr@google.com>
+
+        COMPILE_ASSERT in CSSStyleSelector.cpp doesn't compile on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=74327
+
+        Unreviewed build fix. True fix should follow under above bug.
+
+        * css/CSSStyleSelector.cpp:
+
 2011-12-12  David Grogan  <dgrogan@chromium.org>
 
         Fix compilation error when !ENABLE(WORKERS)

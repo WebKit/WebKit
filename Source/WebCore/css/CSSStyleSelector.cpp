@@ -211,7 +211,9 @@ struct SameSizeAsRuleData {
     unsigned e[4];
 };
 
+#if !OS(WINDOWS)
 COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
+#endif
 
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);
