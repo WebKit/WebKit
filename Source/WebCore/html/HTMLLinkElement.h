@@ -53,8 +53,7 @@ public:
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
-    // FIXME: This should be renamed isStyleSheetLoading as this is only used for stylesheets.
-    bool isLoading() const;
+    bool isStyleSheetLoading() const;
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }

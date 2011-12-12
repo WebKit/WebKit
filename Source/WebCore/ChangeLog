@@ -1,3 +1,22 @@
+2011-12-12  Renata Hodovan  <reni@webkit.org>
+
+        Fulfill FIXME in  HTMLLinkElement.h.
+        https://bugs.webkit.org/show_bug.cgi?id=74278
+
+        Rename HTMLLinkElement::isLoading() to isStyleSheetLoading().
+
+        Reviewed by Andreas Kling.
+
+        No new tests because the functionality remains the same.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::isStyleSheetLoading):
+        (WebCore::HTMLLinkElement::sheetLoaded):
+        * html/HTMLLinkElement.h:
+
 2011-11-25  Alexander Pavlov  <apavlov@chromium.org>
 
         WebKit does not enumerate over CSS properties in HTMLElement.style
