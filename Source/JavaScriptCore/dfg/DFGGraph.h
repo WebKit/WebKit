@@ -197,7 +197,7 @@ public:
         case GetLocal: {
             if (!operandIsArgument(node.local()))
                 return 0;
-            int argument = node.local() + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            int argument = operandToArgument(node.local());
             if (node.variableAccessData() != at(m_arguments[argument]).variableAccessData())
                 return 0;
             return profiledBlock->valueProfileForArgument(argument);

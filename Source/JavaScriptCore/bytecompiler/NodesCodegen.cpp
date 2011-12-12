@@ -319,11 +319,17 @@ inline CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode*
     if (generator.shouldEmitProfileHooks())
         m_profileHookRegister = generator.newTemporary();
 
-    newArgument(generator); // 'this' register.
-    if (!argumentsNode)
-        return;
-    for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next)
-        newArgument(generator);
+    size_t argumentCountIncludingThis = 1; // 'this' register.
+    if (argumentsNode) {
+        for (ArgumentListNode* node = argumentsNode->m_listNode; node; node = node->m_next)
+            ++argumentCountIncludingThis;
+    }
+
+    m_argv.grow(argumentCountIncludingThis);
+    for (int i = argumentCountIncludingThis - 1; i >= 0; --i) {
+        m_argv[i] = generator.newTemporary();
+        ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() + 1);
+    }
 }
 
 inline void CallArguments::newArgument(BytecodeGenerator& generator)

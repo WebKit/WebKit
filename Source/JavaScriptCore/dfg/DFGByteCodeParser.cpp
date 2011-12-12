@@ -76,14 +76,14 @@ private:
     void parseCodeBlock();
 
     // Helper for min and max.
-    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
+    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis);
     
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int firstArg, int lastArg, unsigned nextOffset, CodeSpecializationKind);
+    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
-    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg, PredictedType prediction);
+    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction);
     // Prepare to parse a block.
     void prepareToParseBlock();
     // Parse a single basic block of bytecode instructions.
@@ -199,7 +199,7 @@ private:
     // Used in implementing get/set, above, where the operand is an argument.
     NodeIndex getArgument(unsigned operand)
     {
-        unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+        unsigned argument = operandToArgument(operand);
         ASSERT(argument < m_numArguments);
 
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.argument(argument);
@@ -248,7 +248,7 @@ private:
     }
     void setArgument(int operand, NodeIndex value)
     {
-        unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+        unsigned argument = operandToArgument(operand);
         ASSERT(argument < m_numArguments);
 
         m_currentBlock->variablesAtTail.argument(argument) = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
@@ -266,7 +266,7 @@ private:
         NodeIndex nodeIndex;
         int index;
         if (operandIsArgument(operand)) {
-            index = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+            index = operandToArgument(operand);
             nodeIndex = m_currentBlock->variablesAtTail.argument(index);
         } else {
             index = operand;
@@ -578,15 +578,17 @@ private:
         
         addVarArgChild(get(currentInstruction[1].u.operand));
         int argCount = currentInstruction[2].u.operand;
+        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
+            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+
         int registerOffset = currentInstruction[3].u.operand;
-        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-        for (int argIdx = firstArg + (op == Construct ? 1 : 0); argIdx < firstArg + argCount; argIdx++)
-            addVarArgChild(get(argIdx));
+        int dummyThisArgument = op == Call ? 0 : 1;
+        for (int i = 0 + dummyThisArgument; i < argCount; ++i)
+            addVarArgChild(get(registerOffset + argumentToOperand(i)));
+
         NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(prediction));
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
             set(putInstruction[1].u.operand, call);
-        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
-            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
         return call;
     }
     
@@ -895,11 +897,9 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     else
         callType = UnknownFunction;
     if (callType != UnknownFunction) {
-        int argCount = currentInstruction[2].u.operand;
+        int argumentCountIncludingThis = currentInstruction[2].u.operand;
         int registerOffset = currentInstruction[3].u.operand;
-        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-        int lastArg = firstArg + argCount - 1;
-                
+
         // Do we have a result?
         bool usesResult = false;
         int resultOperand = 0; // make compiler happy
@@ -930,7 +930,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             if (!certainAboutExpectedFunction)
                 addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
             
-            if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
+            if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
                 if (!certainAboutExpectedFunction) {
                     // Need to keep the call target alive for OSR. We could easily optimize this out if we wanted
                     // to, since at this point we know that the call target is a constant. It's just that OSR isn't
@@ -940,14 +940,14 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 
                 return;
             }
-        } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, firstArg, lastArg, nextOffset, kind))
+        } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
             return;
     }
             
     addCall(interpreter, currentInstruction, op);
 }
 
-bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int firstArg, int lastArg, unsigned nextOffset, CodeSpecializationKind kind)
+bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
 {
     // First, the really simple checks: do we have an actual JS function?
     if (!expectedFunction)
@@ -959,7 +959,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // Does the number of arguments we're passing match the arity of the target? We could
     // inline arity check failures, but for simplicity we currently don't.
-    if (static_cast<int>(executable->parameterCount()) + 1 != lastArg - firstArg + 1)
+    if (static_cast<int>(executable->parameterCount()) + 1 != argumentCountIncludingThis)
         return false;
     
     // Have we exceeded inline stack depth, or are we trying to inline a recursive call?
@@ -1000,10 +1000,10 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // FIXME: Don't flush constants!
     
-    for (int arg = firstArg + 1; arg <= lastArg; ++arg)
-        flush(arg);
+    for (int i = 1; i < argumentCountIncludingThis; ++i)
+        flush(registerOffset + argumentToOperand(i));
     
-    int inlineCallFrameStart = m_inlineStackTop->remapOperand(lastArg) + 1;
+    int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
     
     // Make sure that the area used by the call frame is reserved.
     for (int arg = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize + codeBlock->m_numVars; arg-- > inlineCallFrameStart + 1;)
@@ -1123,23 +1123,23 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     return true;
 }
 
-bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg)
+bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
 {
     if (!usesResult)
         return true;
 
-    if (lastArg == firstArg) {
+    if (argumentCountIncludingThis == 1) { // Math.min()
         set(resultOperand, constantNaN());
         return true;
     }
      
-    if (lastArg == firstArg + 1) {
-        set(resultOperand, getToNumber(firstArg + 1));
+    if (argumentCountIncludingThis == 2) { // Math.min(x)
+        set(resultOperand, getToNumber(registerOffset + argumentToOperand(1)));
         return true;
     }
     
-    if (lastArg == firstArg + 2) {
-        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(firstArg + 1), getToNumber(firstArg + 2)));
+    if (argumentCountIncludingThis == 3) { // Math.min(x, y)
+        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1)), getToNumber(registerOffset + argumentToOperand(2))));
         return true;
     }
     
@@ -1147,7 +1147,9 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
     return false;
 }
 
-bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg, PredictedType prediction)
+// FIXME: We dead-code-eliminate unused Math intrinsics, but that's invalid because
+// they need to perform the ToNumber conversion, which can have side-effects.
+bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction)
 {
     switch (intrinsic) {
     case AbsIntrinsic: {
@@ -1157,10 +1159,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return true;
         }
         
-        // We don't care about the this argument. If we don't have a first
-        // argument then make this JSConstant(NaN).
-        int absArg = firstArg + 1;
-        if (absArg > lastArg) {
+        if (argumentCountIncludingThis == 1) { // Math.abs()
             set(resultOperand, constantNaN());
             return true;
         }
@@ -1168,21 +1167,21 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointAbs())
             return false;
 
-        set(resultOperand, addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(absArg)));
+        set(resultOperand, addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1))));
         return true;
     }
-        
+
     case MinIntrinsic:
-        return handleMinMax(usesResult, resultOperand, ArithMin, firstArg, lastArg);
+        return handleMinMax(usesResult, resultOperand, ArithMin, registerOffset, argumentCountIncludingThis);
         
     case MaxIntrinsic:
-        return handleMinMax(usesResult, resultOperand, ArithMax, firstArg, lastArg);
+        return handleMinMax(usesResult, resultOperand, ArithMax, registerOffset, argumentCountIncludingThis);
         
     case SqrtIntrinsic: {
         if (!usesResult)
             return true;
         
-        if (firstArg == lastArg) {
+        if (argumentCountIncludingThis == 1) { // Math.sqrt()
             set(resultOperand, constantNaN());
             return true;
         }
@@ -1190,15 +1189,15 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointSqrt())
             return false;
         
-        set(resultOperand, addToGraph(ArithSqrt, getToNumber(firstArg + 1)));
+        set(resultOperand, addToGraph(ArithSqrt, getToNumber(registerOffset + argumentToOperand(1))));
         return true;
     }
         
     case ArrayPushIntrinsic: {
-        if (firstArg + 1 != lastArg)
+        if (argumentCountIncludingThis != 2)
             return false;
         
-        NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(0), OpInfo(prediction), get(firstArg), get(firstArg + 1));
+        NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
         if (usesResult)
             set(resultOperand, arrayPush);
         
@@ -1206,36 +1205,44 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     }
         
     case ArrayPopIntrinsic: {
-        if (firstArg != lastArg)
+        if (argumentCountIncludingThis != 1)
             return false;
         
-        NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(0), OpInfo(prediction), get(firstArg));
+        NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
         if (usesResult)
             set(resultOperand, arrayPop);
         return true;
     }
 
     case CharCodeAtIntrinsic: {
-        if (firstArg + 1 != lastArg)
+        if (argumentCountIncludingThis != 2)
             return false;
-        if (!(m_graph[get(firstArg)].prediction() & PredictString))
+
+        int thisOperand = registerOffset + argumentToOperand(0);
+        if (!(m_graph[get(thisOperand)].prediction() & PredictString))
             return false;
         
-        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(firstArg), getToInt32(firstArg + 1));
-        NodeIndex charCode = addToGraph(StringCharCodeAt, get(firstArg), getToInt32(firstArg + 1), storage);
+        int indexOperand = registerOffset + argumentToOperand(1);
+        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(thisOperand), getToInt32(indexOperand));
+        NodeIndex charCode = addToGraph(StringCharCodeAt, get(thisOperand), getToInt32(indexOperand), storage);
+
         if (usesResult)
             set(resultOperand, charCode);
         return true;
     }
 
     case CharAtIntrinsic: {
-        if (firstArg + 1 != lastArg)
-            return false;
-        if (!(m_graph[get(firstArg)].prediction() & PredictString))
+        if (argumentCountIncludingThis != 2)
             return false;
 
-        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(firstArg), getToInt32(firstArg + 1));
-        NodeIndex charCode = addToGraph(StringCharAt, get(firstArg), getToInt32(firstArg + 1), storage);
+        int thisOperand = registerOffset + argumentToOperand(0);
+        if (!(m_graph[get(thisOperand)].prediction() & PredictString))
+            return false;
+
+        int indexOperand = registerOffset + argumentToOperand(1);
+        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(thisOperand), getToInt32(indexOperand));
+        NodeIndex charCode = addToGraph(StringCharAt, get(thisOperand), getToInt32(indexOperand), storage);
+
         if (usesResult)
             set(resultOperand, charCode);
         return true;
@@ -1267,7 +1274,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentBlock == m_graph.m_blocks[0].get() && !m_inlineStackTop->m_inlineCallFrame) {
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
-            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argument - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize)));
+            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argumentToOperand(argument))));
             m_graph.m_arguments[argument] = setArgument;
             m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, setArgument);
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
@@ -2207,7 +2214,7 @@ void ByteCodeParser::processPhiStack()
                 printf("      Did not find node, adding phi.\n");
 #endif
 
-                valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? varNo - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize : varNo)));
+                valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo))));
                 var = valueInPredecessor;
                 if (stackType == ArgumentPhiStack)
                     predecessorBlock->variablesAtHead.setArgumentFirstTime(varNo, valueInPredecessor);

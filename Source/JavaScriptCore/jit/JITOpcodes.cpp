@@ -1184,10 +1184,7 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
     unsigned dst = currentInstruction[1].u.operand;
 
     Jump argsCreated = branchTestPtr(NonZero, Address(callFrameRegister, sizeof(Register) * dst));
-    if (m_codeBlock->m_numParameters == 1)
-        JITStubCall(this, cti_op_create_arguments_no_params).call();
-    else
-        JITStubCall(this, cti_op_create_arguments).call();
+    JITStubCall(this, cti_op_create_arguments).call();
     emitPutVirtualRegister(dst);
     emitPutVirtualRegister(unmodifiedArgumentsRegister(dst));
     argsCreated.link(this);
@@ -1491,23 +1488,10 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     // regT1 now contains the integer index of the argument we want, including this
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT2);
     addSlowCase(branch32(AboveOrEqual, regT1, regT2));
-    
-    Jump skipOutofLineParams;
-    int numArgs = m_codeBlock->m_numParameters;
-    if (numArgs) {
-        Jump notInInPlaceArgs = branch32(AboveOrEqual, regT1, Imm32(numArgs));
-        addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT0);
-        loadPtr(BaseIndex(regT0, regT1, TimesEight, 0), regT0);
-        skipOutofLineParams = jump();
-        notInInPlaceArgs.link(this);
-    }
-    
-    addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT0);
-    mul32(TrustedImm32(sizeof(Register)), regT2, regT2);
-    subPtr(regT2, regT0);
-    loadPtr(BaseIndex(regT0, regT1, TimesEight, 0), regT0);
-    if (numArgs)
-        skipOutofLineParams.link(this);
+
+    neg32(regT1);
+    signExtend32ToPtr(regT1, regT1);
+    loadPtr(BaseIndex(callFrameRegister, regT1, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
     emitPutVirtualRegister(dst, regT0);
 }
 
@@ -1522,10 +1506,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     
     linkSlowCase(iter);
     linkSlowCase(iter);
-    if (m_codeBlock->m_numParameters == 1)
-        JITStubCall(this, cti_op_create_arguments_no_params).call();
-    else
-        JITStubCall(this, cti_op_create_arguments).call();
+    JITStubCall(this, cti_op_create_arguments).call();
     emitPutVirtualRegister(arguments);
     emitPutVirtualRegister(unmodifiedArgumentsRegister(arguments));
     

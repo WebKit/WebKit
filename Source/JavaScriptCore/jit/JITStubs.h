@@ -326,7 +326,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_del_by_val(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_div(STUB_ARGS_DECLARATION);

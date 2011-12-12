@@ -54,8 +54,6 @@ namespace JSC {
             CodeBlock = -1,
         };
 
-        enum { ProgramCodeThisRegister = -CallFrameHeaderSize - 1 };
-
         static const size_t defaultCapacity = 512 * 1024;
         static const size_t commitSize = 16 * 1024;
         // Allow 8k of excess registers before we start trying to reap the registerfile

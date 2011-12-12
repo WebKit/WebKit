@@ -64,9 +64,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
 
     JumpList slowCase;
     JumpList end;
-    if (m_codeBlock->usesArguments()
-        && arguments == m_codeBlock->argumentsRegister()
-        && m_codeBlock->m_numParameters == 1) {
+    if (m_codeBlock->usesArguments() && arguments == m_codeBlock->argumentsRegister()) {
         emitGetVirtualRegister(arguments, regT0);
         slowCase.append(branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(JSValue()))));
 
@@ -86,22 +84,25 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         emitFastArithReTagImmediate(regT0, regT2);
         storePtr(regT2, Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
 
-        // Initialize 'this' and copy arguments.
+        // Initialize 'this'.
+        emitGetVirtualRegister(thisValue, regT2);
+        storePtr(regT2, Address(regT1, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
+
+        // Copy arguments.
         neg32(regT0);
         signExtend32ToPtr(regT0, regT0);
-        emitGetVirtualRegister(thisValue, regT2);
-        storePtr(regT2, BaseIndex(regT1, regT0, TimesEight, -(RegisterFile::CallFrameHeaderSize * static_cast<int>(sizeof(Register)))));
         end.append(branchAddPtr(Zero, Imm32(1), regT0));
+        // regT0: -argumentCount
 
         Label copyLoop = label();
-        loadPtr(BaseIndex(callFrameRegister, regT0, TimesEight, -((RegisterFile::CallFrameHeaderSize + 1) * static_cast<int>(sizeof(Register)))), regT2);
-        storePtr(regT2, BaseIndex(regT1, regT0, TimesEight, -(RegisterFile::CallFrameHeaderSize * static_cast<int>(sizeof(Register)))));
+        loadPtr(BaseIndex(callFrameRegister, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT2);
+        storePtr(regT2, BaseIndex(regT1, regT0, TimesEight, CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))));
         branchAddPtr(NonZero, Imm32(1), regT0).linkTo(copyLoop, this);
 
         end.append(jump());
     }
 
-    if (m_codeBlock->m_numParameters == 1)
+    if (m_codeBlock->usesArguments() && arguments == m_codeBlock->argumentsRegister())
         slowCase.link(this);
 
     JITStubCall stubCall(this, cti_op_load_varargs);
@@ -110,7 +111,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
     stubCall.addArgument(Imm32(firstFreeRegister));
     stubCall.call(regT1);
 
-    if (m_codeBlock->m_numParameters == 1)
+    if (m_codeBlock->usesArguments() && arguments == m_codeBlock->argumentsRegister())
         end.link(this);
 }
 

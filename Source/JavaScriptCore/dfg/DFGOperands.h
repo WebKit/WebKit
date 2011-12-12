@@ -30,12 +30,15 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CallFrame.h"
 #include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
-// helper function to distinguish vars & temporaries from arguments.
+// argument 0 is 'this'.
 inline bool operandIsArgument(int operand) { return operand < 0; }
+inline int operandToArgument(int operand) { return -operand + CallFrame::thisArgumentOffset(); }
+inline int argumentToOperand(int argument) { return -argument + CallFrame::thisArgumentOffset(); }
 
 template<typename T> struct OperandValueTraits;
 
@@ -105,7 +108,7 @@ public:
     T& operand(int operand)
     {
         if (operandIsArgument(operand)) {
-            int argument = operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            int argument = operandToArgument(operand);
             return m_arguments[argument];
         }
         
@@ -117,7 +120,7 @@ public:
     void setOperand(int operand, const T& value)
     {
         if (operandIsArgument(operand)) {
-            int argument = operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            int argument = operandToArgument(operand);
             m_arguments[argument] = value;
             return;
         }

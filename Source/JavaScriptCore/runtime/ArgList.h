@@ -38,7 +38,7 @@ namespace JSC {
         friend class ArgList;
 
     private:
-        static const unsigned inlineCapacity = 8;
+        static const size_t inlineCapacity = 8;
         typedef Vector<Register, inlineCapacity> VectorType;
         typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
@@ -46,90 +46,57 @@ namespace JSC {
         // Constructor for a read-write list, to which you may append values.
         // FIXME: Remove all clients of this API, then remove this API.
         MarkedArgumentBuffer()
-            : m_isUsingInlineBuffer(true)
+            : m_size(0)
+            , m_capacity(inlineCapacity)
+            , m_buffer(&m_inlineBuffer[m_capacity - 1])
             , m_markSet(0)
-#ifndef NDEBUG
-            , m_isReadOnly(false)
-#endif
         {
-            m_buffer = m_vector.data();
-            m_size = 0;
-        }
-
-        // Constructor for a read-only list whose data has already been allocated elsewhere.
-        MarkedArgumentBuffer(Register* buffer, size_t size)
-            : m_buffer(buffer)
-            , m_size(size)
-            , m_isUsingInlineBuffer(true)
-            , m_markSet(0)
-#ifndef NDEBUG
-            , m_isReadOnly(true)
-#endif
-        {
-        }
-
-        void initialize(WriteBarrier<Unknown>* buffer, size_t size)
-        {
-            ASSERT(!m_markSet);
-            ASSERT(isEmpty());
-
-            m_buffer = reinterpret_cast<Register*>(buffer);
-            m_size = size;
-#ifndef NDEBUG
-            m_isReadOnly = true;
-#endif
         }
 
         ~MarkedArgumentBuffer()
         {
             if (m_markSet)
                 m_markSet->remove(this);
+
+            if (m_capacity != inlineCapacity)
+                delete [] &m_buffer[-(m_capacity - 1)];
         }
 
         size_t size() const { return m_size; }
         bool isEmpty() const { return !m_size; }
 
-        JSValue at(size_t i) const
+        JSValue at(int i) const
         {
-            if (i < m_size)
-                return m_buffer[i].jsValue();
-            return jsUndefined();
+            if (i >= m_size)
+                return jsUndefined();
+
+            return JSValue::decode(m_buffer[-i]);
         }
 
         void clear()
         {
-            m_vector.clear();
-            m_buffer = 0;
             m_size = 0;
         }
 
         void append(JSValue v)
         {
-            ASSERT(!m_isReadOnly);
+            if (m_size >= m_capacity)
+                return slowAppend(v);
 
-            if (m_isUsingInlineBuffer && m_size < inlineCapacity) {
-                m_vector.uncheckedAppend(v);
-                ++m_size;
-            } else {
-                // Putting this case all in one function measurably improves
-                // the performance of the fast "just append to inline buffer" case.
-                slowAppend(v);
-                ++m_size;
-                m_isUsingInlineBuffer = false;
-            }
+            m_buffer[-m_size] = JSValue::encode(v);
+            ++m_size;
         }
 
         void removeLast()
         { 
             ASSERT(m_size);
             m_size--;
-            m_vector.removeLast();
         }
 
         JSValue last() 
         {
             ASSERT(m_size);
-            return m_buffer[m_size - 1].jsValue();
+            return JSValue::decode(m_buffer[-(m_size - 1)]);
         }
         
         static void markLists(HeapRootVisitor&, ListSet&);
@@ -137,15 +104,11 @@ namespace JSC {
     private:
         void slowAppend(JSValue);
         
-        Register* m_buffer;
-        size_t m_size;
-        bool m_isUsingInlineBuffer;
-
-        VectorType m_vector;
+        int m_size;
+        int m_capacity;
+        EncodedJSValue m_inlineBuffer[inlineCapacity];
+        EncodedJSValue* m_buffer;
         ListSet* m_markSet;
-#ifndef NDEBUG
-        bool m_isReadOnly;
-#endif
 
     private:
         // Prohibits new / delete, which would break GC.
@@ -173,24 +136,24 @@ namespace JSC {
             , m_argCount(0)
         {
         }
-        
+
         ArgList(ExecState* exec)
-            : m_args(reinterpret_cast<JSValue*>(&exec[exec->hostThisRegister() + 1]))
+            : m_args(reinterpret_cast<JSValue*>(&exec[CallFrame::argumentOffset(0)]))
             , m_argCount(exec->argumentCount())
         {
         }
-        
+
         ArgList(const MarkedArgumentBuffer& args)
             : m_args(reinterpret_cast<JSValue*>(args.m_buffer))
             , m_argCount(args.size())
         {
         }
 
-        JSValue at(size_t idx) const
+        JSValue at(int i) const
         {
-            if (idx < m_argCount)
-                return m_args[idx];
-            return jsUndefined();
+            if (i >= m_argCount)
+                return jsUndefined();
+            return m_args[-i];
         }
 
         bool isEmpty() const { return !m_argCount; }
@@ -200,7 +163,7 @@ namespace JSC {
 
     private:
         JSValue* m_args;
-        size_t m_argCount;
+        int m_argCount;
     };
 
 } // namespace JSC

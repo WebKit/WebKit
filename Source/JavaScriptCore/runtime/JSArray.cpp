@@ -1265,22 +1265,22 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         args.append(get(exec, i));
 }
 
-void JSArray::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)
+void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)
 {
-    ASSERT(m_storage->m_length >= maxSize);
-    UNUSED_PARAM(maxSize);
-    WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    unsigned vectorEnd = min(maxSize, m_vectorLength);
+    ASSERT(length == this->length());
+    UNUSED_PARAM(length);
     unsigned i = 0;
+    WriteBarrier<Unknown>* vector = m_storage->m_vector;
+    unsigned vectorEnd = min(length, m_vectorLength);
     for (; i < vectorEnd; ++i) {
         WriteBarrier<Unknown>& v = vector[i];
         if (!v)
             break;
-        buffer[i] = v.get();
+        callFrame->setArgument(i, v.get());
     }
 
-    for (; i < maxSize; ++i)
-        buffer[i] = get(exec, i);
+    for (; i < length; ++i)
+        callFrame->setArgument(i, get(exec, i));
 }
 
 unsigned JSArray::compactForSorting()

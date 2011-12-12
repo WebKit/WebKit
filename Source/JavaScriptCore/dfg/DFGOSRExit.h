@@ -34,6 +34,7 @@
 #include "DFGCommon.h"
 #include "DFGCorrectableJumpPoint.h"
 #include "DFGGPRInfo.h"
+#include "DFGOperands.h"
 #include "MacroAssembler.h"
 #include "ValueProfile.h"
 #include "ValueRecovery.h"
@@ -112,14 +113,10 @@ struct OSRExit {
     {
         return index - m_arguments.size();
     }
-    int operandForArgument(int argument) const
-    {
-        return argument - m_arguments.size() - RegisterFile::CallFrameHeaderSize;
-    }
     int operandForIndex(int index) const
     {
         if (index < (int)m_arguments.size())
-            return operandForArgument(index);
+            return operandToArgument(index);
         return index - m_arguments.size();
     }
     

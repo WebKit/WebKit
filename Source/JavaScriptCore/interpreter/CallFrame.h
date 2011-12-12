@@ -143,17 +143,31 @@ namespace JSC  {
         inline Register& uncheckedR(int);
 
         // Access to arguments.
-        int hostThisRegister() { return -RegisterFile::CallFrameHeaderSize - argumentCountIncludingThis(); }
-        JSValue hostThisValue() { return this[hostThisRegister()].jsValue(); }
         size_t argumentCount() const { return argumentCountIncludingThis() - 1; }
         size_t argumentCountIncludingThis() const { return this[RegisterFile::ArgumentCount].i(); }
-        JSValue argument(int argumentNumber)
+        static int argumentOffset(size_t argument) { return s_firstArgumentOffset - argument; }
+        static int argumentOffsetIncludingThis(size_t argument) { return s_thisArgumentOffset - argument; }
+
+        JSValue argument(size_t argument)
         {
-            int argumentIndex = -RegisterFile::CallFrameHeaderSize - this[RegisterFile::ArgumentCount].i() + argumentNumber + 1;
-            if (argumentIndex >= -RegisterFile::CallFrameHeaderSize)
-                return jsUndefined();
-            return this[argumentIndex].jsValue();
+            if (argument >= argumentCount())
+                 return jsUndefined();
+            return this[argumentOffset(argument)].jsValue();
         }
+        void setArgument(size_t argument, JSValue value)
+        {
+            this[argumentOffset(argument)] = value;
+        }
+
+        static int thisArgumentOffset() { return argumentOffsetIncludingThis(0); }
+        JSValue thisValue() { return this[thisArgumentOffset()].jsValue(); }
+        void setThisValue(JSValue value) { this[thisArgumentOffset()] = value; }
+
+        static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + RegisterFile::CallFrameHeaderSize; }
+
+        // FIXME: Remove these.
+        int hostThisRegister() { return thisArgumentOffset(); }
+        JSValue hostThisValue() { return thisValue(); }
 
         static CallFrame* noCaller() { return reinterpret_cast<CallFrame*>(HostCallFrameFlag); }
 
@@ -182,6 +196,9 @@ namespace JSC  {
 
     private:
         static const intptr_t HostCallFrameFlag = 1;
+        static const int s_thisArgumentOffset = -1 - RegisterFile::CallFrameHeaderSize;
+        static const int s_firstArgumentOffset = s_thisArgumentOffset - 1;
+
 #ifndef NDEBUG
         RegisterFile* registerFile();
 #endif

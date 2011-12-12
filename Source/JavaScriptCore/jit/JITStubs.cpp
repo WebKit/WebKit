@@ -2201,51 +2201,50 @@ DEFINE_STUB_FUNCTION(void*, op_construct_jitCompile)
     return result;
 }
 
+static size_t debugCount[5];
+struct DebugCounter {
+    ~DebugCounter()
+    {
+        for (size_t i = 0; i < 5; ++i)
+            fprintf(stderr, "DebugCounter[%ld]: %ld\n", i, debugCount[i]);
+    }
+    void count(int delta) { ++debugCount[std::min(4, delta)]; }
+};
+
+DebugCounter debugCounter;
+
 inline CallFrame* arityCheckFor(CallFrame* callFrame, RegisterFile* registerFile, CodeSpecializationKind kind)
 {
     JSFunction* callee = asFunction(callFrame->callee());
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = &callee->jsExecutable()->generatedBytecodeFor(kind);
-    int argCount = callFrame->argumentCountIncludingThis();
-    ReturnAddressPtr pc = callFrame->returnPC();
+    int argumentCountIncludingThis = callFrame->argumentCountIncludingThis();
 
-    ASSERT(argCount != newCodeBlock->m_numParameters);
+    // This ensures enough space for the worst case scenario of zero arguments passed by the caller.
+    if (!registerFile->grow(callFrame->registers() + newCodeBlock->m_numParameters + newCodeBlock->m_numCalleeRegisters))
+        return 0;
 
-    CallFrame* oldCallFrame = callFrame->callerFrame();
+    ASSERT(argumentCountIncludingThis < newCodeBlock->m_numParameters);
 
-    Register* r;
-    if (argCount > newCodeBlock->m_numParameters) {
-        size_t numParameters = newCodeBlock->m_numParameters;
-        r = callFrame->registers() + numParameters;
-        Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
-        if (!registerFile->grow(newEnd))
-            return 0;
+    debugCounter.count(newCodeBlock->m_numParameters - argumentCountIncludingThis);
 
-        Register* argv = r - RegisterFile::CallFrameHeaderSize - numParameters - argCount;
-        for (size_t i = 0; i < numParameters; ++i)
-            argv[i + argCount] = argv[i];
-    } else {
-        size_t omittedArgCount = newCodeBlock->m_numParameters - argCount;
-        r = callFrame->registers() + omittedArgCount;
-        Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
-        if (!registerFile->grow(newEnd))
-            return 0;
+    // Too few arguments -- copy call frame and arguments, then fill in missing arguments with undefined.
+    size_t delta = newCodeBlock->m_numParameters - argumentCountIncludingThis;
+    Register* src = callFrame->registers();
+    Register* dst = callFrame->registers() + delta;
 
-        Register* argv = r - RegisterFile::CallFrameHeaderSize - omittedArgCount;
-        for (size_t i = 0; i < omittedArgCount; ++i)
-            argv[i] = jsUndefined();
-    }
+    int i;
+    int end = -CallFrame::offsetFor(argumentCountIncludingThis);
+    for (i = -1; i >= end; --i)
+        dst[i] = src[i];
 
-    callFrame = CallFrame::create(r);
-    callFrame->setCallerFrame(oldCallFrame);
-    callFrame->setArgumentCountIncludingThis(argCount);
-    callFrame->setCallee(callee);
-    callFrame->setScopeChain(callee->scope());
-    callFrame->setReturnPC(pc.value());
-    callFrame->setCodeBlock(newCodeBlock);
+    end -= delta;
+    for ( ; i >= end; --i)
+        dst[i] = jsUndefined();
 
-    ASSERT((void*)callFrame <= registerFile->end());
-    return callFrame;
+    CallFrame* newCallFrame = CallFrame::create(dst);
+    ASSERT((void*)newCallFrame <= registerFile->end());
+    return newCallFrame;
 }
 
 DEFINE_STUB_FUNCTION(void*, op_call_arityCheck)
@@ -2291,7 +2290,7 @@ inline void* lazyLinkFor(CallFrame* callFrame, CodeSpecializationKind kind)
         if (error)
             return 0;
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
-        if (callFrame->argumentCountIncludingThis() != static_cast<size_t>(codeBlock->m_numParameters)
+        if (callFrame->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->m_numParameters)
             || callLinkInfo->callType == CallLinkInfo::CallVarargs)
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
         else
@@ -2375,24 +2374,17 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_arguments)
     return JSValue::encode(JSValue(arguments));
 }
 
-DEFINE_STUB_FUNCTION(EncodedJSValue, op_create_arguments_no_params)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    Arguments* arguments = Arguments::createNoParameters(*stackFrame.globalData, stackFrame.callFrame);
-    return JSValue::encode(JSValue(arguments));
-}
-
 DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
+    CallFrame* callFrame = stackFrame.callFrame;
+    ASSERT(callFrame->codeBlock()->needsFullScopeChain());
     JSValue activationValue = stackFrame.args[0].jsValue();
     if (!activationValue) {
         if (JSValue v = stackFrame.args[1].jsValue()) {
-            if (!stackFrame.callFrame->codeBlock()->isStrictMode())
-                asArguments(v)->tearOff(*stackFrame.globalData);
+            if (!callFrame->codeBlock()->isStrictMode())
+                asArguments(v)->tearOff(callFrame);
         }
         return;
     }
@@ -2406,8 +2398,9 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_arguments)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    ASSERT(stackFrame.callFrame->codeBlock()->usesArguments() && !stackFrame.callFrame->codeBlock()->needsFullScopeChain());
-    asArguments(stackFrame.args[0].jsValue())->tearOff(*stackFrame.globalData);
+    CallFrame* callFrame = stackFrame.callFrame;
+    ASSERT(callFrame->codeBlock()->usesArguments() && !callFrame->codeBlock()->needsFullScopeChain());
+    asArguments(stackFrame.args[0].jsValue())->tearOff(callFrame);
 }
 
 DEFINE_STUB_FUNCTION(void, op_profile_will_call)

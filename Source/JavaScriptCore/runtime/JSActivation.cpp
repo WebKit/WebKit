@@ -33,6 +33,8 @@
 #include "Interpreter.h"
 #include "JSFunction.h"
 
+using namespace std;
+
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSActivation);
@@ -41,7 +43,7 @@ const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0, CR
 
 JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
     : Base(callFrame->globalData(), callFrame->globalData().activationStructure.get(), functionExecutable->symbolTable(), callFrame->registers())
-    , m_numParametersMinusThis(static_cast<int>(functionExecutable->parameterCount()))
+    , m_numCapturedArgs(max(callFrame->argumentCount(), functionExecutable->parameterCount()))
     , m_numCapturedVars(functionExecutable->capturedVariableCount())
     , m_requiresDynamicChecks(functionExecutable->usesEval())
     , m_argumentsRegister(functionExecutable->generatedBytecode().argumentsRegister())
@@ -77,10 +79,10 @@ void JSActivation::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (!registerArray)
         return;
 
-    visitor.appendValues(registerArray, thisObject->m_numParametersMinusThis);
+    visitor.appendValues(registerArray, thisObject->m_numCapturedArgs);
 
-    // Skip the call frame, which sits between the parameters and vars.
-    visitor.appendValues(registerArray + thisObject->m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, thisObject->m_numCapturedVars);
+    // Skip 'this' and call frame.
+    visitor.appendValues(registerArray + CallFrame::offsetFor(thisObject->m_numCapturedArgs + 1), thisObject->m_numCapturedVars);
 }
 
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)

@@ -83,9 +83,9 @@ namespace JSC {
 #if PLATFORM(IOS)
     // We use a smaller reentrancy limit on iPhone because of the high amount of
     // stack space required on the web thread.
-    enum { MaxLargeThreadReentryDepth = 93, MaxSmallThreadReentryDepth = 32 };
+    enum { MaxLargeThreadReentryDepth = 93, MaxSmallThreadReentryDepth = 16 };
 #else
-    enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 32 };
+    enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 16 };
 #endif // PLATFORM(IOS)
 
     class Interpreter {

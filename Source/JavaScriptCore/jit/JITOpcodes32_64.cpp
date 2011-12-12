@@ -1462,11 +1462,7 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 
     Jump argsCreated = branch32(NotEqual, tagFor(dst), TrustedImm32(JSValue::EmptyValueTag));
 
-    if (m_codeBlock->m_numParameters == 1)
-        JITStubCall(this, cti_op_create_arguments_no_params).call();
-    else
-        JITStubCall(this, cti_op_create_arguments).call();
-
+    JITStubCall(this, cti_op_create_arguments).call();
     emitStore(dst, regT1, regT0);
     emitStore(unmodifiedArgumentsRegister(dst), regT1, regT0);
 
@@ -1610,24 +1606,9 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, regT3));
     
-    Jump skipOutofLineParams;
-    int numArgs = m_codeBlock->m_numParameters;
-    if (numArgs) {
-        Jump notInInPlaceArgs = branch32(AboveOrEqual, regT2, Imm32(numArgs));
-        addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT1);
-        loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-        loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-        skipOutofLineParams = jump();
-        notInInPlaceArgs.link(this);
-    }
-
-    addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT1);
-    mul32(TrustedImm32(sizeof(Register)), regT3, regT3);
-    subPtr(regT3, regT1);
-    loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-    loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-    if (numArgs)
-        skipOutofLineParams.link(this);
+    neg32(regT2);
+    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
+    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT1);
     emitStore(dst, regT1, regT0);
 }
 
@@ -1642,11 +1623,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
 
     linkSlowCase(iter);
     linkSlowCase(iter);
-    if (m_codeBlock->m_numParameters == 1)
-        JITStubCall(this, cti_op_create_arguments_no_params).call();
-    else
-        JITStubCall(this, cti_op_create_arguments).call();
-    
+    JITStubCall(this, cti_op_create_arguments).call();
     emitStore(arguments, regT1, regT0);
     emitStore(unmodifiedArgumentsRegister(arguments), regT1, regT0);
     

@@ -1,3 +1,265 @@
+2011-12-10  Geoffrey Garen  <ggaren@apple.com>
+
+        v8 benchmark takes 12-13 million function call slow paths due to extra arguments
+        https://bugs.webkit.org/show_bug.cgi?id=74244
+
+        Reviewed by Filip Pizlo.
+        
+        .arguments function of order the Reversed
+        
+        10% speedup on v8-raytrace, 1.7% speedup on v8 overall, neutral on Kraken
+        and SunSpider.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfileForArgument): Clarified that the interface
+        to this function is an argument number.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        (JSC::BytecodeGenerator::isArgumentNumber): Switched to using CallFrame
+        helper functions for computing offsets for arguments, rather than doing
+        the math by hand.
+        
+        Switched to iterating argument offsets backwards (--) instead of forwards (++).
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::CallArguments::thisRegister):
+        (JSC::CallArguments::argumentRegister):
+        (JSC::CallArguments::registerOffset): Updated for arguments being reversed.
+
+        * bytecompiler/NodesCodegen.cpp: Allocate arguments in reverse order.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack): Use abstract argument indices
+        that just-in-time convert to bytecode operands (i.e., indexes in the register
+        file) through helper functions. This means only one piece of code needs
+        to know how arguments are laid out in the register file.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump): Ditto.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::valueProfileFor): Ditto.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction): The whole point of this patch:
+        Treat too many arguments as an arity match.
+
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::variableForIndex):
+        (JSC::DFG::OSRExit::operandForIndex): Use helper functions, as above.
+
+        * dfg/DFGOperands.h:
+        (JSC::DFG::operandToArgument):
+        (JSC::DFG::argumentToOperand): These are now the only two lines of code in
+        the DFG compiler that know how arguments are laid out in memory.
+
+        (JSC::DFG::Operands::operand):
+        (JSC::DFG::Operands::setOperand): Use helper functions, as above.
+
+        * dfg/DFGOperations.cpp: The whole point of this patch:
+        Treat too many arguments as an arity match.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall): Use helper functions, as above.
+        
+        Also, don't tag the caller frame slot as a cell, because it's not a cell.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall): Use helper functions, as above.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Use helper functions, as above.
+
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes): Use already-computed
+        argument virtual register instead of recomputing by hand.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callFrameSlot):
+        (JSC::DFG::SpeculativeJIT::argumentSlot):
+        (JSC::DFG::SpeculativeJIT::callFrameTagSlot):
+        (JSC::DFG::SpeculativeJIT::callFramePayloadSlot):
+        (JSC::DFG::SpeculativeJIT::argumentTagSlot):
+        (JSC::DFG::SpeculativeJIT::argumentPayloadSlot): Added a few helper
+        functions for dealing with callee arguments specifically. These still
+        build on top of our other helper functions, and have no direct knowledge
+        of how arguments are laid out in the register file.
+
+        (JSC::DFG::SpeculativeJIT::resetCallArguments):
+        (JSC::DFG::SpeculativeJIT::addCallArgument): Renamed argumentIndex to
+        argumentOffset to match CallFrame naming.
+
+        (JSC::DFG::SpeculativeJIT::valueSourceReferenceForOperand): Use helper
+        functions, as above.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::argumentOffset):
+        (JSC::ExecState::argumentOffsetIncludingThis):
+        (JSC::ExecState::argument):
+        (JSC::ExecState::setArgument):
+        (JSC::ExecState::thisArgumentOffset):
+        (JSC::ExecState::thisValue):
+        (JSC::ExecState::setThisValue):
+        (JSC::ExecState::offsetFor):
+        (JSC::ExecState::hostThisRegister):
+        (JSC::ExecState::hostThisValue): Added a bunch of helper functions for
+        computing where an argument is in the register file. Anything in the
+        runtime that needs to access arguments should use these helpers.
+
+        * interpreter/CallFrameClosure.h:
+        (JSC::CallFrameClosure::setThis):
+        (JSC::CallFrameClosure::setArgument):
+        (JSC::CallFrameClosure::resetCallFrame): This stuff is a lot simpler, now
+        that too many arguments counts as an arity match and doesn't require
+        preserving two copies of our arguments.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::slideRegisterWindowForCall): Only need to do something
+        special if the caller provided too few arguments.
+        
+        Key simplification: We never need to maintain two copies of our arguments
+        anymore.
+
+        (JSC::eval):
+        (JSC::loadVarargs): Use helper functions.
+
+        (JSC::Interpreter::unwindCallFrame): Updated for new interface.
+
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall): Seriously, though: use helper
+        functions.
+
+        (JSC::Interpreter::privateExecute): No need to check for stack overflow
+        when calling host functions because they have zero callee registers.
+
+        (JSC::Interpreter::retrieveArguments): Explicitly tear off the arguments
+        object, since there's no special constructor for this anymore.
+
+        * interpreter/Interpreter.h: Reduced the C++ re-entry depth because some
+        workers tests were hitting stack overflow in some of my testing. We should
+        make this test more exact in future.
+
+        * interpreter/RegisterFile.h: Death to all runtime knowledge of argument
+        location that does not belong to the CallFrame class!
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile): I am a broken record and I use helper functions.
+        
+        Also, the whole point of this patch: Treat too many arguments as an arity match.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileLoadVarargs): Updated the argument copying math to use
+        helper functions, for backwards-correctness. Removed the condition
+        pertaining to declared argument count because, now that arguments are
+        always in just one place, this optimization is valid for all functions.
+        Standardized the if predicate for each line of the optimization. This might
+        fix a bug, but I couldn't get the bug to crash in practice.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emitSlow_op_get_argument_by_val):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emitSlow_op_get_argument_by_val): Removed cti_op_create_arguments_no_params
+        optimization because it's no longer an optimization, now that arguments
+        are always contiguous in a known location.
+        
+        Updated argument access opcode math for backwards-correctness.
+
+        * jit/JITStubs.cpp:
+        (JSC::arityCheckFor): Updated just like slideRegisterWindowForCall. This
+        function is slightly different because it copies the call frame in
+        addition to the arguments. (In the Interpreter, the call frame is not
+        set up by this point.)
+
+        (JSC::lazyLinkFor): The whole point of this patch: Treat too many
+        arguments as an arity match.
+
+        (JSC::DEFINE_STUB_FUNCTION): Updated for new iterface to tearOff().
+
+        * jit/JITStubs.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadDoubleArgument):
+        (JSC::SpecializedThunkJIT::loadCellArgument):
+        (JSC::SpecializedThunkJIT::loadInt32Argument): Use helper functions! They
+        build strong bones and teeth!
+
+        * runtime/ArgList.cpp:
+        (JSC::ArgList::getSlice):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::at):
+        (JSC::MarkedArgumentBuffer::clear):
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::MarkedArgumentBuffer::removeLast):
+        (JSC::MarkedArgumentBuffer::last):
+        (JSC::ArgList::ArgList):
+        (JSC::ArgList::at): Updated for backwards-correctness. WTF::Vector doesn't
+        play nice with backwards-ness, so I changed to using manual allocation.
+        
+        Fixed a FIXME about not all values being marked in the case of out-of-line
+        arguments. I had to rewrite the loop anyway, and I didn't feel like
+        maintaining fidelity to its old bugs.
+
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::visitChildren):
+        (JSC::Arguments::copyToArguments):
+        (JSC::Arguments::fillArgList):
+        (JSC::Arguments::getOwnPropertySlotByIndex):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::putByIndex):
+        (JSC::Arguments::put):
+        (JSC::Arguments::tearOff):
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        (JSC::Arguments::Arguments):
+        (JSC::Arguments::argument):
+        (JSC::Arguments::finishCreation): Secondary benefit of this patch: deleted
+        lots of tricky code designed to maintain two different copies of function
+        arguments. Now that arguments are always contiguous in one place in memory,
+        this complexity can go away.
+        
+        Reduced down to one create function for the Arguments class, from three.
+
+        Moved tearOff() into an out-of-line function because it's huge.
+        
+        Moved logic about whether to tear off eagerly into the Arguments class,
+        so we didn't have to duplicate it elsewhere.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        (JSC::JSActivation::visitChildren): Renamed m_numParametersMinusThis to
+        m_numCapturedArgs because if the value really were m_numParametersMinusThis
+        we would be marking too much. (We shouldn't mark 'this' because it can't
+        be captured.) Also, use helper functions.
+
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::tearOff): Use helper functions.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::copyToArguments):
+        * runtime/JSArray.h: Use helper functions, as above.
+
 2011-12-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC testapi is crashing on Windows
@@ -20356,7 +20618,7 @@
         (JSC::PredictionTracker::copyLocalsFrom):
         (JSC::PredictionTracker::numberOfArguments):
         (JSC::PredictionTracker::numberOfVariables):
-        (JSC::PredictionTracker::argumentIndexForOperand):
+        (JSC::PredictionTracker::argumentOffsetForOperand):
         (JSC::PredictionTracker::predictArgument):
         (JSC::PredictionTracker::predict):
         (JSC::PredictionTracker::predictGlobalVar):
@@ -22091,7 +22353,7 @@
         (JSC::DFG::PredictionTracker::initializeSimilarTo):
         (JSC::DFG::PredictionTracker::numberOfArguments):
         (JSC::DFG::PredictionTracker::numberOfVariables):
-        (JSC::DFG::PredictionTracker::argumentIndexForOperand):
+        (JSC::DFG::PredictionTracker::argumentOffsetForOperand):
         (JSC::DFG::PredictionTracker::predictArgument):
         (JSC::DFG::PredictionTracker::predict):
         (JSC::DFG::PredictionTracker::predictGlobalVar):

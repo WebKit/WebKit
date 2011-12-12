@@ -217,7 +217,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         VariableAccessData* variableAccessData = node.variableAccessData();
         int operand = variableAccessData->operand();
         if (operandIsArgument(operand))
-            printf("%sarg%u(%s)", hasPrinted ? ", " : "", operand - codeBlock->thisRegister(), nameOfVariableAccessData(variableAccessData));
+            printf("%sarg%u(%s)", hasPrinted ? ", " : "", operandToArgument(operand), nameOfVariableAccessData(variableAccessData));
         else
             printf("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
         hasPrinted = true;

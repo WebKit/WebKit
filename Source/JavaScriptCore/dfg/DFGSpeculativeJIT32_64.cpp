@@ -1258,42 +1258,26 @@ void SpeculativeJIT::emitCall(Node& node)
     GPRReg calleePayloadGPR = callee.payloadGPR();
     use(calleeNodeIndex);
 
-    // the call instruction's first child is either the function (normal call) or the
+    // The call instruction's first child is either the function (normal call) or the
     // receiver (method call). subsequent children are the arguments.
-    int numArgs = node.numChildren() - 1;
+    int numPassedArgs = node.numChildren() - 1;
 
-    // For constructors, the this argument is not passed but we have to make space
-    // for it.
-    int numPassedArgs = numArgs + dummyThisArgument;
+    m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs + dummyThisArgument), callFramePayloadSlot(RegisterFile::ArgumentCount));
+    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::Int32Tag), callFrameTagSlot(RegisterFile::ArgumentCount));
+    m_jit.storePtr(GPRInfo::callFrameRegister, callFramePayloadSlot(RegisterFile::CallerFrame));
+    m_jit.store32(calleePayloadGPR, callFramePayloadSlot(RegisterFile::Callee));
+    m_jit.store32(calleeTagGPR, callFrameTagSlot(RegisterFile::Callee));
 
-    // amount of stuff (in units of sizeof(Register)) that we need to place at the
-    // top of the JS stack.
-    int callDataSize = 0;
-
-    // first there are the arguments
-    callDataSize += numPassedArgs;
-
-    // and then there is the call frame header
-    callDataSize += RegisterFile::CallFrameHeaderSize;
-
-    m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), payloadOfCallData(RegisterFile::ArgumentCount));
-    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::Int32Tag), tagOfCallData(RegisterFile::ArgumentCount));
-    m_jit.storePtr(GPRInfo::callFrameRegister, payloadOfCallData(RegisterFile::CallerFrame));
-    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), tagOfCallData(RegisterFile::CallerFrame));
-
-    for (int argIdx = 0; argIdx < numArgs; argIdx++) {
-        NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + argIdx];
+    for (int i = 0; i < numPassedArgs; i++) {
+        NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + i];
         JSValueOperand arg(this, argNodeIndex);
         GPRReg argTagGPR = arg.tagGPR();
         GPRReg argPayloadGPR = arg.payloadGPR();
         use(argNodeIndex);
 
-        m_jit.store32(argTagGPR, tagOfCallData(-callDataSize + argIdx + dummyThisArgument));
-        m_jit.store32(argPayloadGPR, payloadOfCallData(-callDataSize + argIdx + dummyThisArgument));
+        m_jit.store32(argTagGPR, argumentTagSlot(i + dummyThisArgument));
+        m_jit.store32(argPayloadGPR, argumentPayloadSlot(i + dummyThisArgument));
     }
-
-    m_jit.store32(calleeTagGPR, tagOfCallData(RegisterFile::Callee));
-    m_jit.store32(calleePayloadGPR, payloadOfCallData(RegisterFile::Callee));
 
     flushRegisters();
 
@@ -1308,8 +1292,8 @@ void SpeculativeJIT::emitCall(Node& node)
     slowPath.append(m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleePayloadGPR, targetToCheck));
     slowPath.append(m_jit.branch32(MacroAssembler::NotEqual, calleeTagGPR, TrustedImm32(JSValue::CellTag)));
     m_jit.loadPtr(MacroAssembler::Address(calleePayloadGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultPayloadGPR);
-    m_jit.storePtr(resultPayloadGPR, payloadOfCallData(RegisterFile::ScopeChain));
-    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), tagOfCallData(RegisterFile::ScopeChain));
+    m_jit.storePtr(resultPayloadGPR, callFramePayloadSlot(RegisterFile::ScopeChain));
+    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), callFrameTagSlot(RegisterFile::ScopeChain));
 
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
 

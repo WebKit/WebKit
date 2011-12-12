@@ -37,12 +37,6 @@ ASSERT_CLASS_FITS_IN_CELL(Arguments);
 
 const ClassInfo Arguments::s_info = { "Arguments", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(Arguments) };
 
-Arguments::~Arguments()
-{
-    if (d->extraArguments != d->extraArgumentsFixedBuffer)
-        delete [] d->extraArguments;
-}
-
 void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
@@ -52,94 +46,29 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSObject::visitChildren(thisObject, visitor);
 
     if (thisObject->d->registerArray)
-        visitor.appendValues(thisObject->d->registerArray.get(), thisObject->d->numParameters);
-
-    if (thisObject->d->extraArguments) {
-        unsigned numExtraArguments = thisObject->d->numArguments - thisObject->d->numParameters;
-        visitor.appendValues(thisObject->d->extraArguments, numExtraArguments);
-    }
-
+        visitor.appendValues(thisObject->d->registerArray.get(), thisObject->d->numArguments);
     visitor.append(&thisObject->d->callee);
-
     if (thisObject->d->activation)
         visitor.append(&thisObject->d->activation);
 }
 
-void Arguments::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)
+void Arguments::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)
 {
-    if (UNLIKELY(d->overrodeLength)) {
-        unsigned length = min(get(exec, exec->propertyNames().length).toUInt32(exec), maxSize);
-        for (unsigned i = 0; i < length; i++)
-            buffer[i] = get(exec, i);
-        return;
-    }
-
-    if (LIKELY(!d->deletedArguments)) {
-        unsigned parametersLength = min(min(d->numParameters, d->numArguments), maxSize);
-        unsigned i = 0;
-        for (; i < parametersLength; ++i)
-            buffer[i] = d->registers[d->firstParameterIndex + i].get();
-        for (; i < d->numArguments; ++i)
-            buffer[i] = d->extraArguments[i - d->numParameters].get();
-        return;
-    }
-    
-    unsigned parametersLength = min(min(d->numParameters, d->numArguments), maxSize);
-    unsigned i = 0;
-    for (; i < parametersLength; ++i) {
-        if (!d->deletedArguments[i])
-            buffer[i] = d->registers[d->firstParameterIndex + i].get();
+    ASSERT(length == this->length(exec));
+    for (size_t i = 0; i < length; ++i) {
+        if (!d->deletedArguments || !d->deletedArguments[i])
+            callFrame->setArgument(i, argument(i).get());
         else
-            buffer[i] = get(exec, i);
-    }
-    for (; i < d->numArguments; ++i) {
-        if (!d->deletedArguments[i])
-            buffer[i] = d->extraArguments[i - d->numParameters].get();
-        else
-            buffer[i] = get(exec, i);
+            callFrame->setArgument(i, get(exec, i));
     }
 }
 
 void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 {
-    if (UNLIKELY(d->overrodeLength)) {
-        unsigned length = get(exec, exec->propertyNames().length).toUInt32(exec); 
-        for (unsigned i = 0; i < length; i++) 
-            args.append(get(exec, i)); 
-        return;
-    }
-
-    if (LIKELY(!d->deletedArguments)) {
-        if (LIKELY(!d->numParameters)) {
-            args.initialize(d->extraArguments, d->numArguments);
-            return;
-        }
-
-        if (d->numParameters == d->numArguments) {
-            args.initialize(&d->registers[d->firstParameterIndex], d->numArguments);
-            return;
-        }
-
-        unsigned parametersLength = min(d->numParameters, d->numArguments);
-        unsigned i = 0;
-        for (; i < parametersLength; ++i)
-            args.append(d->registers[d->firstParameterIndex + i].get());
-        for (; i < d->numArguments; ++i)
-            args.append(d->extraArguments[i - d->numParameters].get());
-        return;
-    }
-
-    unsigned parametersLength = min(d->numParameters, d->numArguments);
-    unsigned i = 0;
-    for (; i < parametersLength; ++i) {
-        if (!d->deletedArguments[i])
-            args.append(d->registers[d->firstParameterIndex + i].get());
-        else
-            args.append(get(exec, i));
-    }
-    for (; i < d->numArguments; ++i) {
-        if (!d->deletedArguments[i])
-            args.append(d->extraArguments[i - d->numParameters].get());
+    uint32_t length = this->length(exec);
+    for (size_t i = 0; i < length; ++i) {
+        if (!d->deletedArguments || !d->deletedArguments[i])
+            args.append(argument(i).get());
         else
             args.append(get(exec, i));
     }
@@ -149,10 +78,7 @@ bool Arguments::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigne
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
     if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
-        if (i < thisObject->d->numParameters) {
-            slot.setValue(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get());
-        } else
-            slot.setValue(thisObject->d->extraArguments[i - thisObject->d->numParameters].get());
+        slot.setValue(thisObject->argument(i).get());
         return true;
     }
 
@@ -189,10 +115,7 @@ bool Arguments::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifi
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
-        if (i < thisObject->d->numParameters) {
-            slot.setValue(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get());
-        } else
-            slot.setValue(thisObject->d->extraArguments[i - thisObject->d->numParameters].get());
+        slot.setValue(thisObject->argument(i).get());
         return true;
     }
 
@@ -221,10 +144,7 @@ bool Arguments::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, cons
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
-        if (i < thisObject->d->numParameters) {
-            descriptor.setDescriptor(thisObject->d->registers[thisObject->d->firstParameterIndex + i].get(), None);
-        } else
-            descriptor.setDescriptor(thisObject->d->extraArguments[i - thisObject->d->numParameters].get(), None);
+        descriptor.setDescriptor(thisObject->argument(i).get(), None);
         return true;
     }
     
@@ -264,11 +184,8 @@ void Arguments::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyN
 void Arguments::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
     Arguments* thisObject = jsCast<Arguments*>(cell);
-    if (i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
-        if (i < thisObject->d->numParameters)
-            thisObject->d->registers[thisObject->d->firstParameterIndex + i].set(exec->globalData(), thisObject->d->activation ? static_cast<JSCell*>(thisObject->d->activation.get()) : cell, value);
-        else
-            thisObject->d->extraArguments[i - thisObject->d->numParameters].set(exec->globalData(), thisObject, value);
+    if (i < static_cast<unsigned>(thisObject->d->numArguments) && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
+        thisObject->argument(i).set(exec->globalData(), thisObject, value);
         return;
     }
 
@@ -282,10 +199,7 @@ void Arguments::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex && i < thisObject->d->numArguments && (!thisObject->d->deletedArguments || !thisObject->d->deletedArguments[i])) {
-        if (i < thisObject->d->numParameters)
-            thisObject->d->registers[thisObject->d->firstParameterIndex + i].set(exec->globalData(), thisObject->d->activation ? static_cast<JSCell*>(thisObject->d->activation.get()) : static_cast<JSCell*>(thisObject), value);
-        else
-            thisObject->d->extraArguments[i - thisObject->d->numParameters].set(exec->globalData(), thisObject, value);
+        thisObject->argument(i).set(exec->globalData(), thisObject, value);
         return;
     }
 
@@ -360,6 +274,57 @@ bool Arguments::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
         thisObject->createStrictModeCallerIfNecessary(exec);
 
     return JSObject::deleteProperty(thisObject, exec, propertyName);
+}
+
+void Arguments::tearOff(CallFrame* callFrame)
+{
+    if (isTornOff())
+        return;
+
+    if (!d->numArguments)
+        return;
+
+    d->registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[d->numArguments]);
+    d->registers = d->registerArray.get() + CallFrame::offsetFor(d->numArguments + 1);
+
+    if (!callFrame->isInlineCallFrame()) {
+        for (size_t i = 0; i < d->numArguments; ++i)
+            argument(i).set(callFrame->globalData(), this, callFrame->argument(i));
+        return;
+    }
+
+    InlineCallFrame* inlineCallFrame = callFrame->inlineCallFrame();
+    for (size_t i = 0; i < d->numArguments; ++i) {
+        ValueRecovery& recovery = inlineCallFrame->arguments[i + 1];
+        // In the future we'll support displaced recoveries (indicating that the
+        // argument was flushed to a different location), but for now we don't do
+        // that so this code will fail if that were to happen. On the other hand,
+        // it's much less likely that we'll support in-register recoveries since
+        // this code does not (easily) have access to registers.
+        JSValue value;
+        Register* location = &callFrame->registers()[CallFrame::argumentOffset(i)];
+        switch (recovery.technique()) {
+        case AlreadyInRegisterFile:
+            value = location->jsValue();
+            break;
+        case AlreadyInRegisterFileAsUnboxedInt32:
+            value = jsNumber(location->unboxedInt32());
+            break;
+        case AlreadyInRegisterFileAsUnboxedCell:
+            value = location->unboxedCell();
+            break;
+        case AlreadyInRegisterFileAsUnboxedBoolean:
+            value = jsBoolean(location->unboxedBoolean());
+            break;
+        case Constant:
+            value = recovery.constant();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        argument(i).set(callFrame->globalData(), this, value);
+    }
 }
 
 } // namespace JSC

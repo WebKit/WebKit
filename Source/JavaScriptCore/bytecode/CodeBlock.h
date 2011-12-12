@@ -651,12 +651,12 @@ namespace JSC {
         {
             return WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
         }
-        ValueProfile* valueProfileForArgument(int argumentIndex)
+        ValueProfile* valueProfileForArgument(int argument)
         {
-            int index = argumentIndex;
-            if (static_cast<unsigned>(index) >= m_valueProfiles.size())
+            size_t index = argument;
+            if (index >= m_valueProfiles.size())
                 return 0;
-            ValueProfile* result = valueProfile(argumentIndex);
+            ValueProfile* result = valueProfile(index);
             if (result->m_bytecodeOffset != -1)
                 return 0;
             return result;

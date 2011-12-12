@@ -41,25 +41,19 @@ struct CallFrameClosure {
     
     void setThis(JSValue value)
     {
-        newCallFrame[-RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis] = value;
-        if (argumentCountIncludingThis > parameterCountIncludingThis)
-            newCallFrame[-RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis - argumentCountIncludingThis] = value;
+        newCallFrame->setThisValue(value);
     }
 
     void setArgument(int argument, JSValue value)
     {
-        if (argument + 1 < parameterCountIncludingThis)
-            newCallFrame[argument + 1 - RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis] = value;
-
-        if (argumentCountIncludingThis > parameterCountIncludingThis)
-            newCallFrame[argument + 1 - RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis - argumentCountIncludingThis] = value;
+        newCallFrame->setArgument(argument, value);
     }
 
     void resetCallFrame()
     {
         newCallFrame->setScopeChain(scopeChain);
         for (int i = argumentCountIncludingThis; i < parameterCountIncludingThis; ++i)
-            newCallFrame[i - RegisterFile::CallFrameHeaderSize - parameterCountIncludingThis] = jsUndefined();
+            newCallFrame->setArgument(i, jsUndefined());
     }
 };
 

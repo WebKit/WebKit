@@ -890,20 +890,37 @@ private:
     void compileInstanceOfForObject(Node&, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchAndResultReg);
     void compileInstanceOf(Node&);
     
-    MacroAssembler::Address addressOfCallData(int idx)
+    // Access to our fixed callee CallFrame.
+    MacroAssembler::Address callFrameSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)));
+    }
+
+    // Access to our fixed callee CallFrame.
+    MacroAssembler::Address argumentSlot(int argument)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)));
     }
 
 #if USE(JSVALUE32_64)    
-    MacroAssembler::Address tagOfCallData(int idx)
+    MacroAssembler::Address callFrameTagSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
     }
 
-    MacroAssembler::Address payloadOfCallData(int idx)
+    MacroAssembler::Address callFramePayloadSlot(int slot)
     {
-        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + slot) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+    }
+
+    MacroAssembler::Address argumentTagSlot(int argument)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+    }
+
+    MacroAssembler::Address argumentPayloadSlot(int argument)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + argumentToOperand(argument)) * static_cast<int>(sizeof(Register)) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
 #endif
 
@@ -1045,26 +1062,26 @@ private:
     // stack. On other architectures we may need to sort values into the
     // correct registers.
 #if !NUMBER_OF_ARGUMENT_REGISTERS
-    unsigned m_callArgumentIndex;
-    void resetCallArguments() { m_callArgumentIndex = 0; }
+    unsigned m_callArgumentOffset;
+    void resetCallArguments() { m_callArgumentOffset = 0; }
 
     // These methods are using internally to implement the callOperation methods.
     void addCallArgument(GPRReg value)
     {
-        m_jit.poke(value, m_callArgumentIndex++);
+        m_jit.poke(value, m_callArgumentOffset++);
     }
     void addCallArgument(TrustedImm32 imm)
     {
-        m_jit.poke(imm, m_callArgumentIndex++);
+        m_jit.poke(imm, m_callArgumentOffset++);
     }
     void addCallArgument(TrustedImmPtr pointer)
     {
-        m_jit.poke(pointer, m_callArgumentIndex++);
+        m_jit.poke(pointer, m_callArgumentOffset++);
     }
     void addCallArgument(FPRReg value)
     {
-        m_jit.storeDouble(value, JITCompiler::Address(JITCompiler::stackPointerRegister, m_callArgumentIndex * sizeof(void*)));
-        m_callArgumentIndex += sizeof(double) / sizeof(void*);
+        m_jit.storeDouble(value, JITCompiler::Address(JITCompiler::stackPointerRegister, m_callArgumentOffset * sizeof(void*)));
+        m_callArgumentOffset += sizeof(double) / sizeof(void*);
     }
 
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
@@ -2075,7 +2092,7 @@ private:
     ValueSource& valueSourceReferenceForOperand(int operand)
     {
         if (operandIsArgument(operand)) {
-            int argument = operand + m_arguments.size() + RegisterFile::CallFrameHeaderSize;
+            int argument = operandToArgument(operand);
             return m_arguments[argument];
         }
         

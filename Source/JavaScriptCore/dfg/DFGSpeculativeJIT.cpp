@@ -963,9 +963,9 @@ void SpeculativeJIT::compile(BasicBlock& block)
 
             case InlineStart: {
                 InlineCallFrame* inlineCallFrame = node.codeOrigin.inlineCallFrame;
-                unsigned argumentsStart = inlineCallFrame->stackOffset - RegisterFile::CallFrameHeaderSize - inlineCallFrame->arguments.size();
-                for (unsigned i = 0; i < inlineCallFrame->arguments.size(); ++i) {
-                    ValueRecovery recovery = computeValueRecoveryFor(m_variables[argumentsStart + i]);
+                int argumentCountIncludingThis = inlineCallFrame->arguments.size();
+                for (int i = 0; i < argumentCountIncludingThis; ++i) {
+                    ValueRecovery recovery = computeValueRecoveryFor(m_variables[inlineCallFrame->stackOffset + CallFrame::argumentOffsetIncludingThis(i)]);
                     // The recovery cannot point to registers, since the call frame reification isn't
                     // as smart as OSR, so it can't handle that. The exception is the this argument,
                     // which we don't really need to be able to recover.
@@ -1020,8 +1020,8 @@ void SpeculativeJIT::compile(BasicBlock& block)
         }
         
 #if DFG_ENABLE(VERBOSE_VALUE_RECOVERIES)
-        for (int operand = -m_arguments.size() - RegisterFile::CallFrameHeaderSize; operand < -RegisterFile::CallFrameHeaderSize; ++operand)
-            computeValueRecoveryFor(operand).dump(stderr);
+        for (size_t i = 0; i < m_arguments.size(); ++i)
+            computeValueRecoveryFor(argumentToOperand(i)).dump(stderr);
         
         fprintf(stderr, " : ");
         
@@ -1054,8 +1054,9 @@ void SpeculativeJIT::checkArgumentTypes()
         m_variables[i] = ValueSource(ValueInRegisterFile);
     
     for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
-        VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
-        PredictedType predictedType = at(m_jit.graph().m_arguments[i]).variableAccessData()->prediction();
+        VariableAccessData* variableAccessData = at(m_jit.graph().m_arguments[i]).variableAccessData();
+        VirtualRegister virtualRegister = variableAccessData->local();
+        PredictedType predictedType = variableAccessData->prediction();
 #if USE(JSVALUE64)
         if (isInt32Prediction(predictedType))
             speculationCheck(JSValueRegs(), NoNode, m_jit.branchPtr(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));

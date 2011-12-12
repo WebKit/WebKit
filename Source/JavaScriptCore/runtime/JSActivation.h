@@ -89,7 +89,7 @@ namespace JSC {
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
-        int m_numParametersMinusThis;
+        int m_numCapturedArgs;
         int m_numCapturedVars : 31;
         bool m_requiresDynamicChecks : 1;
         int m_argumentsRegister;
@@ -117,17 +117,26 @@ namespace JSC {
     inline void JSActivation::tearOff(JSGlobalData& globalData)
     {
         ASSERT(!m_registerArray);
+        ASSERT(m_numCapturedVars + m_numCapturedArgs);
 
-        size_t numLocals = m_numCapturedVars + m_numParametersMinusThis;
+        int registerOffset = CallFrame::offsetFor(m_numCapturedArgs + 1);
+        size_t registerArraySize = registerOffset + m_numCapturedVars;
 
-        if (!numLocals)
-            return;
-
-        int registerOffset = m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
-        size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
-
-        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize, m_numParametersMinusThis + 1);
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[registerArraySize]);
         WriteBarrier<Unknown>* registers = registerArray.get() + registerOffset;
+
+        // Copy all arguments that can be captured by name or by the arguments object.
+        for (int i = 0; i < m_numCapturedArgs; ++i) {
+            int index = CallFrame::argumentOffset(i);
+            registers[index].set(globalData, this, m_registers[index].get());
+        }
+
+        // Skip 'this' and call frame.
+
+        // Copy all captured vars.
+        for (int i = 0; i < m_numCapturedVars; ++i)
+            registers[i].set(globalData, this, m_registers[i].get());
+
         setRegisters(registers, registerArray.release());
     }
 

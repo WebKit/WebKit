@@ -1217,47 +1217,34 @@ void SpeculativeJIT::emitCall(Node& node)
     GPRReg calleeGPR = callee.gpr();
     use(calleeNodeIndex);
     
-    // the call instruction's first child is either the function (normal call) or the
+    // The call instruction's first child is either the function (normal call) or the
     // receiver (method call). subsequent children are the arguments.
-    int numArgs = node.numChildren() - 1;
+    int numPassedArgs = node.numChildren() - 1;
     
-    int numPassedArgs = numArgs + dummyThisArgument;
+    m_jit.storePtr(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(numPassedArgs + dummyThisArgument))), callFrameSlot(RegisterFile::ArgumentCount));
+    m_jit.storePtr(GPRInfo::callFrameRegister, callFrameSlot(RegisterFile::CallerFrame));
+    m_jit.storePtr(calleeGPR, callFrameSlot(RegisterFile::Callee));
     
-    // amount of stuff (in units of sizeof(Register)) that we need to place at the
-    // top of the JS stack.
-    int callDataSize = 0;
-
-    // first there are the arguments
-    callDataSize += numPassedArgs;
-    
-    // and then there is the call frame header
-    callDataSize += RegisterFile::CallFrameHeaderSize;
-    
-    m_jit.storePtr(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(numPassedArgs))), addressOfCallData(RegisterFile::ArgumentCount));
-    m_jit.storePtr(GPRInfo::callFrameRegister, addressOfCallData(RegisterFile::CallerFrame));
-    
-    for (int argIdx = 0; argIdx < numArgs; argIdx++) {
-        NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + argIdx];
+    for (int i = 0; i < numPassedArgs; i++) {
+        NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + i];
         JSValueOperand arg(this, argNodeIndex);
         GPRReg argGPR = arg.gpr();
         use(argNodeIndex);
         
-        m_jit.storePtr(argGPR, addressOfCallData(-callDataSize + argIdx + dummyThisArgument));
+        m_jit.storePtr(argGPR, argumentSlot(i + dummyThisArgument));
     }
-    
-    m_jit.storePtr(calleeGPR, addressOfCallData(RegisterFile::Callee));
-    
+
     flushRegisters();
-    
+
     GPRResult result(this);
     GPRReg resultGPR = result.gpr();
 
     JITCompiler::DataLabelPtr targetToCheck;
     JITCompiler::Jump slowPath;
-    
+
     slowPath = m_jit.branchPtrWithPatch(MacroAssembler::NotEqual, calleeGPR, targetToCheck, MacroAssembler::TrustedImmPtr(JSValue::encode(JSValue())));
     m_jit.loadPtr(MacroAssembler::Address(calleeGPR, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), resultGPR);
-    m_jit.storePtr(resultGPR, addressOfCallData(RegisterFile::ScopeChain));
+    m_jit.storePtr(resultGPR, callFrameSlot(RegisterFile::ScopeChain));
 
     m_jit.addPtr(Imm32(m_jit.codeBlock()->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister);
     

@@ -658,10 +658,10 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
             return 0;
         }
         codeBlock = &functionExecutable->generatedBytecodeFor(kind);
-        if (execCallee->argumentCountIncludingThis() == static_cast<size_t>(codeBlock->m_numParameters))
-            codePtr = functionExecutable->generatedJITCodeFor(kind).addressForCall();
-        else
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->m_numParameters))
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
+        else
+            codePtr = functionExecutable->generatedJITCodeFor(kind).addressForCall();
     }
     CallLinkInfo& callLinkInfo = exec->codeBlock()->getCallLinkInfo(returnAddress);
     if (!callLinkInfo.seenOnce())

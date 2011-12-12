@@ -155,7 +155,7 @@ namespace JSC {
         }
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
-        void copyToRegisters(ExecState*, Register*, uint32_t);
+        void copyToArguments(ExecState*, CallFrame*, uint32_t length);
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
