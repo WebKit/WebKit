@@ -1,3 +1,16 @@
+2011-12-12  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream 3 files into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=74275
+
+        Reviewed by Rob Buis.
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/ContextMenuBlackBerry.cpp: Added.
+        * platform/blackberry/ContextMenuItemBlackBerry.cpp: Added.
+        * platform/blackberry/TemporaryLinkStubs.cpp: Added.
+
 2011-12-12  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Rendering issues with sliders and QStyle
