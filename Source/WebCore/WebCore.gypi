@@ -1496,7 +1496,6 @@
             'webaudio/BiquadFilterNode.idl',
             'webaudio/ConvolverNode.idl',
             'webaudio/DelayNode.idl',
-            'webaudio/DOMWindowWebAudio.idl',
             'webaudio/DynamicsCompressorNode.idl',
             'webaudio/HighPass2FilterNode.idl',
             'webaudio/JavaScriptAudioNode.idl',

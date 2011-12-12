@@ -1,5 +1,21 @@
 2011-12-12  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r102556.
+        http://trac.webkit.org/changeset/102556
+        https://bugs.webkit.org/show_bug.cgi?id=73394
+
+        clobber build failure
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+        (main):
+        * WebCore.gypi:
+        * bindings/scripts/generate-bindings.pl:
+        * page/DOMWindow.idl:
+        * webaudio/DOMWindowWebAudio.idl: Removed.
+
+2011-12-12  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed, rolling out r102558.
         http://trac.webkit.org/changeset/102558
         https://bugs.webkit.org/show_bug.cgi?id=74160
