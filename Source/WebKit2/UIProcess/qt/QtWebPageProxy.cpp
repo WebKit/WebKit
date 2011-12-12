@@ -363,35 +363,6 @@ QWKHistory* QtWebPageProxy::history() const
     return m_history;
 }
 
-void QtWebPageProxy::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
-{
-    QImage dragQImage;
-    if (dragImage)
-        dragQImage = dragImage->createQImage();
-    else if (dragData.platformData() && dragData.platformData()->hasImage())
-        dragQImage = qvariant_cast<QImage>(dragData.platformData()->imageData());
-
-
-    DragOperation dragOperationMask = dragData.draggingSourceOperationMask();
-    QMimeData* mimeData = const_cast<QMimeData*>(dragData.platformData());
-    Qt::DropActions supportedDropActions = QtWebPageEventHandler::dragOperationToDropActions(dragOperationMask);
-
-    QPoint clientPosition;
-    QPoint globalPosition;
-    Qt::DropAction actualDropAction = Qt::IgnoreAction;
-
-    if (QWindow* window = m_qmlWebView->canvas()) {
-        QDrag* drag = new QDrag(window);
-        drag->setPixmap(QPixmap::fromImage(dragQImage));
-        drag->setMimeData(mimeData);
-        actualDropAction = drag->exec(supportedDropActions);
-        globalPosition = QCursor::pos();
-        clientPosition = window->mapFromGlobal(globalPosition);
-    }
-
-    m_webPageProxy->dragEnded(clientPosition, globalPosition, QtWebPageEventHandler::dropActionToDragOperation(actualDropAction));
-}
-
 void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)
 {
     // This function is responsible for hooking up a DownloadProxy to our API layer

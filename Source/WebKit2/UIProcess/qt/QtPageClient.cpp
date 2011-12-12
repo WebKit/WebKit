@@ -82,7 +82,7 @@ void QtPageClient::didChangeViewportProperties(const WebCore::ViewportArguments&
 
 void QtPageClient::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {
-    m_qtWebPageProxy->startDrag(dragData, dragImage);
+    m_eventHandler->startDrag(dragData, dragImage);
 }
 
 void QtPageClient::handleDownloadRequest(DownloadProxy* download)

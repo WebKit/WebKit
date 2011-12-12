@@ -31,18 +31,16 @@
 #include <QTouchEvent>
 #include <WKPage.h>
 
+class QQuickWebView;
+
 using namespace WebKit;
 
 class QtWebPageEventHandler : public QObject {
     Q_OBJECT
 
 public:
-    QtWebPageEventHandler(WKPageRef, WebKit::QtViewportInteractionEngine* = 0);
+    QtWebPageEventHandler(WKPageRef, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0);
     ~QtWebPageEventHandler();
-
-    static Qt::DropAction dragOperationToDropAction(unsigned dragOperation);
-    static Qt::DropActions dragOperationToDropActions(unsigned dragOperations);
-    static WebCore::DragOperation dropActionToDragOperation(Qt::DropActions);
 
     bool handleEvent(QEvent*);
 
@@ -58,12 +56,15 @@ public:
 
     QtViewportInteractionEngine* interactionEngine() { return m_interactionEngine; }
 
+    void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
+
 protected:
     WebPageProxy* m_webPageProxy;
     QtViewportInteractionEngine* m_interactionEngine;
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
     QtTapGestureRecognizer m_tapGestureRecognizer;
+    QQuickWebView* m_webView;
 
 private:
     bool handleKeyPressEvent(QKeyEvent*);

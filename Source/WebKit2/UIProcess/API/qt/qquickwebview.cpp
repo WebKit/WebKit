@@ -61,7 +61,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
     pagePolicyClient.reset(new QtWebPagePolicyClient(pageProxy->pageRef(), q_ptr));
     pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
-    eventHandler.reset(new QtWebPageEventHandler(pageProxy->pageRef()));
+    eventHandler.reset(new QtWebPageEventHandler(pageProxy->pageRef(), q_ptr));
 
     // Any page setting should preferrable be set before creating the page, so set them here:
     setUseTraditionalDesktopBehaviour(false);

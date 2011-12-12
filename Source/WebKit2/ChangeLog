@@ -1,3 +1,28 @@
+2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Move startDrag implementation to QtWebPageEventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=73145
+
+        Reviewed by Simon Hausmann.
+
+        Move QtWebPageProxy::startDrag to QtWebPageEventHandler::startDrag
+        and call it straight from QtPageClient.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (dragOperationToDropAction):
+        (dragOperationToDropActions):
+        (dropActionToDragOperation):
+        Now these functions are static inline and not part of QtWebPageEventHandler
+        anymore.
+
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+        (QtWebPageEventHandler::startDrag):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::startDrag): removed.
+
 2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Support customizing popup menus with QML

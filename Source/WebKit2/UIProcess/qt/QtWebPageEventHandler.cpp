@@ -21,6 +21,7 @@
 #include "config.h"
 #include "QtWebPageEventHandler.h"
 
+#include "qquickwebview_p.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -28,6 +29,8 @@
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QGuiApplication>
+#include <QMimeData>
+#include <QtQuick/QQuickCanvas>
 #include <QStyleHints>
 #include <QTouchEvent>
 #include <WebCore/DragData.h>
@@ -35,7 +38,7 @@
 using namespace WebKit;
 using namespace WebCore;
 
-Qt::DropAction QtWebPageEventHandler::dragOperationToDropAction(unsigned dragOperation)
+static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
 {
     Qt::DropAction result = Qt::IgnoreAction;
     if (dragOperation & DragOperationCopy)
@@ -49,7 +52,7 @@ Qt::DropAction QtWebPageEventHandler::dragOperationToDropAction(unsigned dragOpe
     return result;
 }
 
-Qt::DropActions QtWebPageEventHandler::dragOperationToDropActions(unsigned dragOperations)
+static inline Qt::DropActions dragOperationToDropActions(unsigned dragOperations)
 {
     Qt::DropActions result = Qt::IgnoreAction;
     if (dragOperations & DragOperationCopy)
@@ -63,7 +66,7 @@ Qt::DropActions QtWebPageEventHandler::dragOperationToDropActions(unsigned dragO
     return result;
 }
 
-WebCore::DragOperation QtWebPageEventHandler::dropActionToDragOperation(Qt::DropActions actions)
+static inline WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
 {
     unsigned result = 0;
     if (actions & Qt::CopyAction)
@@ -77,12 +80,13 @@ WebCore::DragOperation QtWebPageEventHandler::dropActionToDragOperation(Qt::Drop
     return (DragOperation)result;
 }
 
-QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, WebKit::QtViewportInteractionEngine* viewportInteractionEngine)
+QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebView* qmlWebView, WebKit::QtViewportInteractionEngine* viewportInteractionEngine)
     : m_webPageProxy(toImpl(pageRef))
     , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(this)
     , m_pinchGestureRecognizer(this)
     , m_tapGestureRecognizer(this)
+    , m_webView(qmlWebView)
     , m_previousClickButton(Qt::NoButton)
     , m_clickCount(0)
 {
@@ -392,6 +396,34 @@ void QtWebPageEventHandler::focusEditableArea(const IntRect& caret, const IntRec
         return;
 
     m_interactionEngine->focusEditableArea(QRectF(caret), QRectF(area));
+}
+
+void QtWebPageEventHandler::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
+{
+    QImage dragQImage;
+    if (dragImage)
+        dragQImage = dragImage->createQImage();
+    else if (dragData.platformData() && dragData.platformData()->hasImage())
+        dragQImage = qvariant_cast<QImage>(dragData.platformData()->imageData());
+
+    DragOperation dragOperationMask = dragData.draggingSourceOperationMask();
+    QMimeData* mimeData = const_cast<QMimeData*>(dragData.platformData());
+    Qt::DropActions supportedDropActions = dragOperationToDropActions(dragOperationMask);
+
+    QPoint clientPosition;
+    QPoint globalPosition;
+    Qt::DropAction actualDropAction = Qt::IgnoreAction;
+
+    if (QWindow* window = m_webView->canvas()) {
+        QDrag* drag = new QDrag(window);
+        drag->setPixmap(QPixmap::fromImage(dragQImage));
+        drag->setMimeData(mimeData);
+        actualDropAction = drag->exec(supportedDropActions);
+        globalPosition = QCursor::pos();
+        clientPosition = window->mapFromGlobal(globalPosition);
+    }
+
+    m_webPageProxy->dragEnded(clientPosition, globalPosition, dropActionToDragOperation(actualDropAction));
 }
 
 #include "moc_QtWebPageEventHandler.cpp"
