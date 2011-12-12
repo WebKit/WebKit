@@ -60,6 +60,8 @@ EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
  * Returns whether HTTPS connections should check the received certificate and error out if it is invalid.
  *
  * By default, HTTPS connections are performed regardless of the validity of the certificate provided.
+ *
+ * @sa ewk_network_tls_ca_certificates_path_set
  */
 EAPI Eina_Bool        ewk_network_tls_certificate_check_get(void);
 
@@ -69,8 +71,44 @@ EAPI Eina_Bool        ewk_network_tls_certificate_check_get(void);
  * By default, HTTPS connections are performed regardless of the validity of the certificate provided.
  *
  * @param enable Whether to check the provided certificates or not.
+ *
+ * @sa ewk_network_tls_ca_certificates_path_set
  */
 EAPI void             ewk_network_tls_certificate_check_set(Eina_Bool enable);
+
+/**
+ * Returns the path to a file containing the platform's root X.509 CA certificates.
+ *
+ * The file is a list of concatenated PEM-format X.509 certificates used as root CA certificates.
+ * They are used to validate all the certificates received when a TLS connection (such as an HTTPS one) is made.
+ *
+ * If @c ewk_network_tls_certificate_check_get() returns @c EINA_TRUE, the certificates set by this function
+ * will be used to decide whether a certificate provided by a web site is invalid and the request should then
+ * be cancelled.
+ *
+ * By default, the path is not set, so all certificates are considered as not signed by a trusted root CA.
+ *
+ * @sa ewk_network_tls_certificate_check_set
+ */
+EAPI const char      *ewk_network_tls_ca_certificates_path_get(void);
+
+/**
+ * Sets the path to a file containing the platform's root X.509 CA certificates.
+ *
+ * The file is a list of concatenated PEM-format X.509 certificates used as root CA certificates.
+ * They are used to validate all the certificates received when a TLS connection (such as an HTTPS one) is made.
+ *
+ * If @c ewk_network_tls_certificate_check_get() returns @c EINA_TRUE, the certificates set by this function
+ * will be used to decide whether a certificate provided by a web site is invalid and the request should then
+ * be cancelled.
+ *
+ * By default, the path is not set, so all certificates are considered as not signed by a trusted root CA.
+ *
+ * @param path The path to the certificate bundle.
+ *
+ * @sa ewk_network_tls_certificate_check_set
+ */
+EAPI void             ewk_network_tls_ca_certificates_path_set(const char *path);
 
 /**
  * Returns the default @c SoupSession used by all views.

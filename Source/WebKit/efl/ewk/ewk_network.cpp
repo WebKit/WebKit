@@ -95,6 +95,26 @@ void ewk_network_tls_certificate_check_set(Eina_Bool checkCertificates)
 #endif
 }
 
+const char* ewk_network_tls_ca_certificates_path_get()
+{
+    const char* bundlePath = 0;
+
+#if USE(SOUP)
+    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
+    g_object_get(defaultSession, "ssl-ca-file", &bundlePath, NULL);
+#endif
+
+    return bundlePath;
+}
+
+void ewk_network_tls_ca_certificates_path_set(const char* bundlePath)
+{
+#if USE(SOUP)
+    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
+    g_object_set(defaultSession, "ssl-ca-file", bundlePath, NULL);
+#endif
+}
+
 SoupSession* ewk_network_default_soup_session_get()
 {
 #if USE(SOUP)

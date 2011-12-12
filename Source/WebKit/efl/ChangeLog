@@ -1,5 +1,17 @@
 2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Add API to manage root X.509 CA certificates.
+        https://bugs.webkit.org/show_bug.cgi?id=74300
+
+        Reviewed by Martin Robinson.
+
+        * ewk/ewk_network.cpp:
+        (ewk_network_tls_ca_certificates_path_get):
+        (ewk_network_tls_ca_certificates_path_set):
+        * ewk/ewk_network.h:
+
+2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Add API to control whether SSL certificates should be checked.
         https://bugs.webkit.org/show_bug.cgi?id=74299
 
