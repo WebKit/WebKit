@@ -20,14 +20,25 @@ function test()
         InspectorTest.dumpSelectedElementStyles(true);
         var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
         section.startEditingSelector();
-        section._selectorElement.textContent = "#inspectedChanged";
+        section._selectorElement.textContent = "hr, #inspected ";
         section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
         InspectorTest.runAfterPendingDispatches(step2);
     }
 
     function step2()
     {
-        InspectorTest.addResult("=== After selector modification ===");
+        InspectorTest.addResult("=== After non-affecting selector modification ===");
+        InspectorTest.dumpSelectedElementStyles(true);
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        section.startEditingSelector();
+        section._selectorElement.textContent = "#inspectedChanged";
+        section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("=== After affecting selector modification ===");
         InspectorTest.dumpSelectedElementStyles(true);
         InspectorTest.completeTest();
     }

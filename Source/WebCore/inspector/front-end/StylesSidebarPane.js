@@ -1207,8 +1207,13 @@ WebInspector.StylePropertiesSection.prototype = {
 
     editingSelectorCommitted: function(element, newContent, oldContent, context, moveDirection)
     {
-        if (newContent === oldContent)
+        if (newContent)
+            newContent = newContent.trim();
+        if (newContent === oldContent) {
+            // Revert to a trimmed version of the selector if need be.
+            this._selectorElement.textContent = newContent;
             return this._moveEditorFromSelector(moveDirection);
+        }
 
         function successCallback(newRule, doesAffectSelectedNode)
         {
