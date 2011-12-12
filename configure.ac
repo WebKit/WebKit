@@ -815,54 +815,16 @@ case "$with_jsengine" in
 esac
 AC_MSG_RESULT([$with_jsengine])
 
-if test "$with_jsengine" = "jsc"; then
-    AC_MSG_CHECKING([whether to enable JIT compilation])
-    AC_ARG_ENABLE([jit],
-                  AC_HELP_STRING([--enable-jit],
-                                 [Enable JIT compilation default=yes]),
-                  [],[enable_jit="yes"])
-    if test "$enable_jit" = "yes"; then
-        case "$host_cpu" in
-            arm*)
-                AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
-                AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
-                AC_DEFINE([ENABLE_YARR_JIT], [1], [Define to enable YARR JIT])
-            ;;
-            i*86|x86_64)
-                AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
-                AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
-                AC_DEFINE([ENABLE_YARR_JIT], [1], [Define to enable YARR JIT])
-                AC_DEFINE([ENABLE_JIT_OPTIMIZE_CALL], [1], [Define to enable optimizing calls])
-                AC_DEFINE([ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS], [1], [Define to enable optimized property access])
-                AC_DEFINE([ENABLE_JIT_OPTIMIZE_ARITHMETIC], [1], [Define to enable optimized arithmetic])
-                case "$host_cpu" in
-                    i*86)
-                        AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_VA_LIST], [1], [Use stub va_list])
-                    ;;
-                    x86_64)
-                        AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_REGISTER], [1], [Use stub register])
-                        AC_DEFINE([WTF_USE_ALTERNATE_JSIMMEDIATE], [1], [Use alternate JSImmediate])
-                    ;;
-                esac
-            ;;
-            sh4)
-                AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
-                AC_DEFINE([ENABLE_YARR_JIT], [1], [Define to enable YARR JIT])
-                AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
-                AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_REGISTER], [1], [Use stub register])
-            ;;
-            *)
-                enable_jit="no (CPU '$host_cpu' not supported)"
-            ;;
-        esac
-    else
-            AC_DEFINE([ENABLE_JIT], [0], [Define to enable JIT])
-    fi
-else
-    AC_DEFINE([ENABLE_JIT], [0], [Define to enable JIT])
-    enable_jit="no"
-fi
-
+AC_MSG_CHECKING([whether to enable JIT compilation])
+AC_ARG_ENABLE(jit,
+              AS_HELP_STRING([--enable-jit],
+                             [Enable JIT compilation (default: autodetect)]))
+case "$enable_jit" in
+  yes) JSC_CPPFLAGS="-DENABLE_JIT=1" ;;
+  no) JSC_CPPFLAGS="-DENABLE_JIT=0" ;;
+  *) enable_jit="autodetect" ;;
+esac
+AC_SUBST(JSC_CPPFLAGS)
 AC_MSG_RESULT([$enable_jit])
 
 # Opcode stats

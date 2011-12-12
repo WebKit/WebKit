@@ -1,3 +1,16 @@
+2011-12-12  Andy Wingo  <wingo@igalia.com>
+
+        Simplify autotools configure.ac
+        https://bugs.webkit.org/show_bug.cgi?id=74312
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Don't AC_DEFINE so many things.  Many of the
+        defines were stale (ENABLE_YARR, ENABLE_JIT_OPTIMIZE_CALL, etc),
+        and with Platform.h we don't need to make an explicit decision
+        here.  If the user does pass --enable-jit or --disable-jit, effect
+        that choice via setting JSC_CPPFLAGS.
+
 2011-12-12  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] History is not accessible in QML.

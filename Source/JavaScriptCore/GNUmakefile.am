@@ -42,6 +42,7 @@ libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@
 	$(javascriptcore_cppflags)
 
 javascriptcore_cppflags += \
+	$(JSC_CPPFLAGS) \
 	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/JavaScriptCore \
 	-I$(srcdir)/Source/JavaScriptCore/API \

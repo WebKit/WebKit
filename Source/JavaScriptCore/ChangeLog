@@ -1,3 +1,12 @@
+2011-12-12  Andy Wingo  <wingo@igalia.com>
+
+        Simplify autotools configure.ac
+        https://bugs.webkit.org/show_bug.cgi?id=74312
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add JSC_CPPFLAGS to javascriptcore_cppflags.
+
 2011-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG GetByVal CSE incorrectly assumes that a non-matching PutByVal cannot clobber
