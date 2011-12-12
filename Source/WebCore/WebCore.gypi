@@ -1506,6 +1506,7 @@
             'webaudio/RealtimeAnalyserNode.idl',
             'webaudio/WaveShaperNode.idl',
             'websockets/CloseEvent.idl',
+            'websockets/DOMWindowWebSocket.idl',
             'websockets/WebSocket.idl',
             'workers/AbstractWorker.idl',
             'workers/DedicatedWorkerContext.idl',

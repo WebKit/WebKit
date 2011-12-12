@@ -1,3 +1,21 @@
+2011-12-11  Kentaro Hara  <haraken@chromium.org>
+
+        Use [Supplemental] IDL in WebSocket
+        https://bugs.webkit.org/show_bug.cgi?id=74160
+
+        Reviewed by Adam Barth.
+
+        By using the [Supplemental] IDL, this patch moves declarations of WebSocket
+        attributes from DOMWindow.idl to websocket/DOMWindowWebSocket.idl,
+        which helps make WebSocket a self-contained module.
+
+        No new tests, no change in behavior.
+        Confirm that http/tests/websocket/* pass.
+
+        * WebCore.gypi: Added DOMWindowWebSocket.idl.
+        * page/DOMWindow.idl: Added the [Supplemented] IDL to WebSocket-related attributes. This [Supplemented] IDL will be removed after all platforms support the [Supplemental] IDL (See bug 73394 for more details).
+        * websockets/DOMWindowWebSocket.idl: Added. Used the [Supplemental=DOMWindow] IDL. The attributes in this IDL file are treated as if they are described in DOMWindow.idl.
+
 2011-12-11  Luke Macpherson   <macpherson@chromium.org>
 
         Implement webkit-line-grid and webkit-line-grid-snap CSS properties in CSSStyleApplyProperty.
