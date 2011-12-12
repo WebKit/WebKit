@@ -75,6 +75,26 @@ void ewk_network_state_notifier_online_set(Eina_Bool online)
     WebCore::networkStateNotifier().setOnLine(online);
 }
 
+Eina_Bool ewk_network_tls_certificate_check_get()
+{
+    bool checkCertificates = false;
+
+#if USE(SOUP)
+    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
+    g_object_get(defaultSession, "ssl-strict", &checkCertificates, NULL);
+#endif
+
+    return checkCertificates;
+}
+
+void ewk_network_tls_certificate_check_set(Eina_Bool checkCertificates)
+{
+#if USE(SOUP)
+    SoupSession* defaultSession = WebCore::ResourceHandle::defaultSession();
+    g_object_set(defaultSession, "ssl-strict", checkCertificates, NULL);
+#endif
+}
+
 SoupSession* ewk_network_default_soup_session_get()
 {
 #if USE(SOUP)

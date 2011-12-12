@@ -31,6 +31,8 @@
 extern "C" {
 #endif
 
+typedef struct _SoupSession SoupSession;
+
 /**
  * Sets the given proxy URI to network backend.
  *
@@ -54,7 +56,21 @@ EAPI const char      *ewk_network_proxy_uri_get(void);
  */
 EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
 
-typedef struct _SoupSession SoupSession;
+/**
+ * Returns whether HTTPS connections should check the received certificate and error out if it is invalid.
+ *
+ * By default, HTTPS connections are performed regardless of the validity of the certificate provided.
+ */
+EAPI Eina_Bool        ewk_network_tls_certificate_check_get(void);
+
+/**
+ * Sets whether HTTPS connections should check the received certificate and error out if it is invalid.
+ *
+ * By default, HTTPS connections are performed regardless of the validity of the certificate provided.
+ *
+ * @param enable Whether to check the provided certificates or not.
+ */
+EAPI void             ewk_network_tls_certificate_check_set(Eina_Bool enable);
 
 /**
  * Returns the default @c SoupSession used by all views.

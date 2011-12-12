@@ -28,6 +28,7 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "ewk_logging.h"
+#include "ewk_network.h"
 #include "ewk_private.h"
 #include "ewk_settings.h"
 #include "runtime/InitializeThreading.h"
@@ -184,6 +185,8 @@ Eina_Bool _ewk_init_body(void)
         ewk_settings_web_database_path_set(webkitDirectory.utf8().data());
         ewk_settings_application_cache_path_set(webkitDirectory.utf8().data());
     }
+
+    ewk_network_tls_certificate_check_set(false);
 
     // TODO: this should move to WebCore, already reported to webkit-gtk folks:
 #if USE(SOUP)

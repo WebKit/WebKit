@@ -1,3 +1,17 @@
+2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add API to control whether SSL certificates should be checked.
+        https://bugs.webkit.org/show_bug.cgi?id=74299
+
+        Reviewed by Martin Robinson.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body): Explicitly disable certificate checks by default.
+        * ewk/ewk_network.cpp:
+        (ewk_network_tls_certificate_check_get):
+        (ewk_network_tls_certificate_check_set):
+        * ewk/ewk_network.h:
+
 2011-12-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Introduce AssertMatchingEnums.cpp.
