@@ -3,6 +3,7 @@ var initialize_DetailedHeapshotTest = function() {
 InspectorTest.startProfilerTest = function(callback)
 {
     WebInspector.showPanel("profiles");
+    WebInspector.settings.showHeapSnapshotObjectsHiddenProperties.set(true);
 
     function profilerEnabled()
     {
