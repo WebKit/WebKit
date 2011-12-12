@@ -206,10 +206,11 @@
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
 
-@interface NSWindow (WebNSWindowDetails) 
+@interface NSWindow (WebNSWindowDetails)
 - (id)_oldFirstResponderBeforeBecoming;
 - (void)_enableScreenUpdatesIfNeeded;
 - (BOOL)_wrapsCarbonWindow;
+- (BOOL)_hasKeyAppearance;
 @end
 
 using namespace WebCore;
@@ -2508,7 +2509,7 @@ static inline IMP getMethod(id o, SEL s)
 - (void)_updateActiveState
 {
     if (_private && _private->page)
-        _private->page->focusController()->setActive([[self window] isKeyWindow]);
+        _private->page->focusController()->setActive([[self window] _hasKeyAppearance]);
 }
 
 static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
@@ -3348,10 +3349,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidBecomeKey:)
-            name:NSWindowDidBecomeKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidResignKey:)
-            name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
             name:WKWindowWillOrderOnScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOffScreen:)
@@ -3367,10 +3364,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 {
     NSWindow *window = [self window];
     if (window) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidBecomeKeyNotification object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:WKWindowWillOrderOnScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -3437,27 +3430,13 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         _private->page->windowScreenDidChange((PlatformDisplayID)[[[[[self window] screen] deviceDescription] objectForKey:@"NSScreenNumber"] intValue]);
 }
 
-- (void)_windowDidBecomeKey:(NSNotification *)notification
+- (void)_windowChangedKeyState
 {
-    NSWindow *keyWindow = [notification object];
-    if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
-        [self _updateActiveState];
-}
-
-- (void)_windowDidResignKey:(NSNotification *)notification
-{
-    NSWindow *formerKeyWindow = [notification object];
-    if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
-        [self _updateActiveState];
+    [self _updateActiveState];
 }
 
 - (void)_windowWillOrderOnScreen:(NSNotification *)notification
 {
-    // Update the active state here so WebViews in NSPopovers get the active state.
-    // This is needed because the normal NSWindowDidBecomeKeyNotification is not fired
-    // for NSPopover windows since they share key with their parent window.
-    [self _updateActiveState];
-
     if (![self shouldUpdateWhileOffscreen])
         [self setNeedsDisplay:YES];
 
@@ -3475,11 +3454,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
 - (void)_windowWillOrderOffScreen:(NSNotification *)notification
 {
-    // Update the active state here so WebViews in NSPopovers get the inactive state.
-    // This is needed because the normal NSWindowDidResignKeyNotification is not fired
-    // for NSPopover windows since they share key with their parent window.
-    [self _updateActiveState];
-    
     if (_private && _private->page)
         _private->page->suspendScriptedAnimations();    
 }

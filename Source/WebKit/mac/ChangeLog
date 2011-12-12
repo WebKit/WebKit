@@ -1,3 +1,22 @@
+2011-12-12  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/10328474> Text highlight changes to gray selection color when menu extra is shown
+
+        Reviewed by John Sullivan.
+
+        * WebView/WebView.mm:
+        (-[WebView _updateActiveState]): Changed to use -[NSWindow _hasKeyAppearance] instead
+        of -isKeyWindow. The former also returns YES when a menu extra is open.
+        (-[WebView addWindowObserversForWindow:]): Removed code to observe
+        NSWindowDidBecomeKeyNotification and NSWindowDidResignKeyNotification.
+        (-[WebView removeWindowObservers]): Removed code to stop observing the above.
+        (-[WebView _windowChangedKeyState]): Overridden this to call _updateActiveState.
+        This is called when the result of -_hasKeyAppearance changes.
+        (-[WebView _windowWillOrderOnScreen:]): Removed call to _updateActiveState,
+        previously needed for popovers, because _windowChangedKeyState is invoked
+        at the right time for them.
+        (-[WebView _windowWillOrderOffScreen:]): Ditto.
+
 2011-12-07  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.
