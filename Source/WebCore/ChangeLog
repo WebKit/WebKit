@@ -1,3 +1,27 @@
+2011-12-12  Noel Gordon  <noel.gordon@gmail.com>
+
+        WebPImageDecoder: Increase image/webp decoding performance 10-20%
+        https://bugs.webkit.org/show_bug.cgi?id=74263
+
+        Reviewed by Adam Barth.
+
+        Avoid copying data from the RGB buffer of decoded image output to the
+        backing pixel store. That is slow - costs 10% of the overall decoding
+        time at libwebp 0.1.2, and 20% at libwebp 0.1.3.
+
+        Instead, instruct the decoder to write the decoded pixels directly to
+        the backing pixel store.
+
+        No new tests. Covered by existing tests. No progressive decoding test
+        exists in DRT, see https://bugs.webkit.org/show_bug.cgi?id=74062
+
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (outputMode):  Define output pixel format. On little-endian machines,
+        output BGRA pixels to the backing store, for example.
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        (WebCore::WEBPImageDecoder::decode):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2011-12-11  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Add new CSS nth-children parsing tests
