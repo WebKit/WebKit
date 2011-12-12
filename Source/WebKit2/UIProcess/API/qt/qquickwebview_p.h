@@ -172,6 +172,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* promptDialog READ promptDialog WRITE setPromptDialog NOTIFY promptDialogChanged)
+    Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
     Q_PROPERTY(bool useTraditionalDesktopBehaviour READ useTraditionalDesktopBehaviour WRITE setUseTraditionalDesktopBehaviour)
 
 public:
@@ -184,6 +185,8 @@ public:
     void setConfirmDialog(QDeclarativeComponent*);
     QDeclarativeComponent* promptDialog() const;
     void setPromptDialog(QDeclarativeComponent*);
+    QDeclarativeComponent* itemSelector() const;
+    void setItemSelector(QDeclarativeComponent*);
 
     bool useTraditionalDesktopBehaviour() const;
 
@@ -194,6 +197,7 @@ Q_SIGNALS:
     void alertDialogChanged();
     void confirmDialogChanged();
     void promptDialogChanged();
+    void itemSelectorChanged();
     void downloadRequested(QWebDownloadItem* downloadItem);
     void permissionRequested(QWebPermissionRequest* permission);
 

@@ -1,3 +1,17 @@
+2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Support customizing popup menus with QML
+        https://bugs.webkit.org/show_bug.cgi?id=73560
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add an Item Selector to our WebView using the experimental API.
+
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/ItemSelector.qml: Added.
+
 2011-12-12  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] MiniBrowser should only visualize mock touch points when in non-desktop mode

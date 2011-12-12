@@ -28,6 +28,7 @@
 
 import QtQuick 2.0
 import QtWebKit 3.0
+import QtWebKit.experimental 3.0
 
 Rectangle {
     // Do not define anchors or an initial size here! This would mess up with QSGView::SizeRootObjectToView.
@@ -230,6 +231,8 @@ Rectangle {
                 console.log("Loaded:", webView.url);
             forceActiveFocus();
         }
+
+        experimental.itemSelector: ItemSelector { }
     }
 
     Keys.onPressed: {

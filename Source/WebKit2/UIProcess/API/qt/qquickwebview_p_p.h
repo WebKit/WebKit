@@ -48,6 +48,8 @@ class QQuickWebViewPrivate {
     friend class QQuickWebViewExperimental;
 
 public:
+    static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }
+
     QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
     virtual ~QQuickWebViewPrivate(); 
     void setPageProxy(QtWebPageProxy*);
@@ -81,6 +83,7 @@ public:
     QString runJavaScriptPrompt(const QString&, const QString& defaultValue, bool& ok);
 
     void setUseTraditionalDesktopBehaviour(bool enable);
+    void setViewInAttachedProperties(QObject*);
 
 private:
     // This class is responsible for collecting and applying all properties
@@ -109,8 +112,6 @@ private:
         QSize contentsSize;
     };
 
-    void setViewInAttachedProperties(QObject*);
-
     QScopedPointer<QtPageClient> pageClient;
     QScopedPointer<QtWebPageEventHandler> eventHandler;
 
@@ -127,6 +128,7 @@ private:
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;
     QDeclarativeComponent* promptDialog;
+    QDeclarativeComponent* itemSelector;
 
     WebCore::ViewportArguments viewportArguments;
     OwnPtr<PostTransitionState> postTransitionState;

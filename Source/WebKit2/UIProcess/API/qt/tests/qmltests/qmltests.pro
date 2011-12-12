@@ -23,6 +23,7 @@ OTHER_FILES += \
     DesktopBehavior/tst_navigationRequested.qml \
     WebView/tst_download.qml \
     WebView/tst_geopermission.qml \
+    WebView/tst_itemSelector.qml \
     WebView/tst_javaScriptDialogs.qml \
     WebView/tst_loadFail.qml \
     WebView/tst_loadHtml.qml \

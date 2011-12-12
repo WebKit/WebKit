@@ -42,6 +42,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     , alertDialog(0)
     , confirmDialog(0)
     , promptDialog(0)
+    , itemSelector(0)
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
     , isTransitioningToNewPage(false)
     , pageIsSuspended(false)
@@ -492,6 +493,21 @@ void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDia
         return;
     d->promptDialog = promptDialog;
     emit promptDialogChanged();
+}
+
+QDeclarativeComponent* QQuickWebViewExperimental::itemSelector() const
+{
+    Q_D(const QQuickWebView);
+    return d->itemSelector;
+}
+
+void QQuickWebViewExperimental::setItemSelector(QDeclarativeComponent* itemSelector)
+{
+    Q_D(QQuickWebView);
+    if (d->itemSelector == itemSelector)
+        return;
+    d->itemSelector = itemSelector;
+    emit itemSelectorChanged();
 }
 
 bool QQuickWebViewExperimental::useTraditionalDesktopBehaviour() const

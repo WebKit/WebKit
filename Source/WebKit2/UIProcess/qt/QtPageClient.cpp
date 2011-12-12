@@ -26,7 +26,6 @@
 #include "QtWebUndoCommand.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
-#include "WebPopupMenuProxyQtDesktop.h"
 #include <QGuiApplication>
 #include <QUndoStack>
 #include <WebCore/Cursor.h>

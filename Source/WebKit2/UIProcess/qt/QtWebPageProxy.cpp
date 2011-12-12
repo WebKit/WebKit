@@ -44,7 +44,7 @@
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
-#include "WebPopupMenuProxyQtDesktop.h"
+#include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include <QDrag>
@@ -184,7 +184,7 @@ void QtWebPageProxy::selectionChanged(bool, bool, bool, bool)
 
 PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*)
 {
-    return WebPopupMenuProxyQtDesktop::create(m_webPageProxy.get(), m_qmlWebView);
+    return WebPopupMenuProxyQt::create(m_webPageProxy.get(), m_qmlWebView);
 }
 
 WKPageRef QtWebPageProxy::pageRef() const

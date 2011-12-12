@@ -273,7 +273,6 @@ HEADERS += \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebGeolocationProviderQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
-    UIProcess/qt/WebPopupMenuProxyQtDesktop.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Cookies/WebCookieManager.h \
@@ -600,7 +599,6 @@ SOURCES += \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
-    UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \

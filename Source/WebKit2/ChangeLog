@@ -1,3 +1,67 @@
+2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Support customizing popup menus with QML
+        https://bugs.webkit.org/show_bug.cgi?id=73560
+
+        Reviewed by Tor Arne Vestbø.
+
+        Add a new property 'itemSelector' to WebView (experimental for now) that contains
+        the QML component used when it needs to spawn a popup menu. For example, <select>
+        HTML tag may trigger a popup menu.
+
+        When loaded the component will have the 'model' available in its context with two
+        properties: 'elementRect', describing the position of the element which spawned
+        the item selector, and 'items', which is a model ready to be used by ListView. The
+        'model' also have methods to accept/reject the selection.
+
+        Option groups are available as a property for each row in the 'items' model. This
+        can be used together with ListView to create sections, as demonstrated in the
+        MiniBrowser. QML tests were added as well.
+
+        The existing Desktop version is removed since after the Qt5 refactoring isn't
+        working correctly. Once Qt have its own QML components for popup, we hope to use
+        it as a default if no other popupMenu is specified.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewExperimental::itemSelector):
+        (QQuickWebViewExperimental::setItemSelector):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::get):
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_itemSelector.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/select.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        * UIProcess/qt/QtPageClient.cpp:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::createPopupMenuProxy):
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp:
+        (WebKit::PopupMenuItemModel::rowCount):
+        (WebKit::PopupMenuItemModel::Item::Item):
+        (WebKit::ItemSelectorContextObject::elementRect):
+        (WebKit::ItemSelectorContextObject::items):
+        (WebKit::ItemSelectorContextObject::reject):
+        (WebKit::ItemSelectorContextObject::ItemSelectorContextObject):
+        (WebKit::ItemSelectorContextObject::accept):
+        (WebKit::createRoleNamesHash):
+        (WebKit::PopupMenuItemModel::PopupMenuItemModel):
+        (WebKit::PopupMenuItemModel::data):
+        (WebKit::PopupMenuItemModel::select):
+        (WebKit::PopupMenuItemModel::selectedOriginalIndex):
+        (WebKit::PopupMenuItemModel::buildItems):
+        (WebKit::WebPopupMenuProxyQt::WebPopupMenuProxyQt):
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+        (WebKit::WebPopupMenuProxyQt::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyQt::selectIndex):
+        (WebKit::WebPopupMenuProxyQt::createItem):
+        (WebKit::WebPopupMenuProxyQt::createContext):
+        (WebKit::WebPopupMenuProxyQt::notifyValueChanged):
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        (WebKit::WebPopupMenuProxyQt::create):
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.cpp: Removed.
+        * UIProcess/qt/WebPopupMenuProxyQtDesktop.h: Removed.
+
 2011-12-11  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] QQuickWebView missing titleChanged signal tests

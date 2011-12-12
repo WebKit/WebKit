@@ -30,4 +30,5 @@ macx: QT += xml
 RESOURCES += MiniBrowser.qrc
 
 OTHER_FILES += \
-    qml/BrowserWindow.qml
+    qml/BrowserWindow.qml \
+    qml/ItemSelector.qml
