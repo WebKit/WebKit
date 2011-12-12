@@ -1,3 +1,15 @@
+2011-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] platform/gtk/fonts/custom-font-missing-glyphs.html fails on 64-bit Debug
+        https://bugs.webkit.org/show_bug.cgi?id=73771
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When using a fallback font during testing, always use DejaVu Sans. This prevents
+        falling back to DejaVu Serif on some systems.
+
+        * DumpRenderTree/gtk/fonts/fonts.conf: Fall back to DejaVu Sans.
+
 2011-12-08  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Add myself as a committer
