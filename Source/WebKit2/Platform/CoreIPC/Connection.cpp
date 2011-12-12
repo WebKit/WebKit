@@ -550,7 +550,10 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
 
     // Hand off the message to the connection queue clients.
     for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
-        if (!m_connectionQueueClients[i]->willProcessMessageOnClientRunLoop(this, incomingMessage.messageID(), incomingMessage.arguments())) {
+        bool didHandleMessage = false;
+
+        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, incomingMessage.messageID(), incomingMessage.arguments(), didHandleMessage);
+        if (didHandleMessage) {
             // A connection queue client handled the message, our work here is done.
             incomingMessage.releaseArguments();
             return;

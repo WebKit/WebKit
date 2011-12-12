@@ -119,9 +119,9 @@ Vector<HWND> WebConnectionToUIProcess::windowsToReceiveSentMessagesWhileWaitingF
 
 // CoreIPC::Connection::QueueClient
 
-bool WebConnectionToUIProcess::willProcessMessageOnClientRunLoop(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebConnectionToUIProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
 {
-    return m_process->willProcessMessageOnClientRunLoop(connection, messageID, arguments);
+    m_process->didReceiveWebProcessMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
 }
 
 } // namespace WebKit

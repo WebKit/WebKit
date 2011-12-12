@@ -1,3 +1,27 @@
+2011-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Rename QueueClient::willProcessMessageOnClientRunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=74325
+
+        Reviewed by Sam Weinig.
+
+        Rename the QueueClient willProcessMessageOnClientRunLoop function to didReceiveMessageOnConnectionWorkQueue
+        and give it an out parameter to indicate whether the message was handled or not. This makes it more clear that
+        the function is expected to handle the message.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+        * Platform/CoreIPC/Connection.h:
+        * Scripts/webkit2/messages.py:
+        (async_case_statement):
+        * Scripts/webkit2/messages_unittest.py:
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebConnectionToUIProcess.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebProcess.h:
+
 2011-12-12  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed cleanup fix.

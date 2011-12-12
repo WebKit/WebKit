@@ -102,7 +102,7 @@ public:
 
     class QueueClient {
     public:
-        virtual bool willProcessMessageOnClientRunLoop(Connection*, MessageID, ArgumentDecoder*) = 0;
+        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, MessageID, ArgumentDecoder*, bool& didHandleMessage) = 0;
 
     protected:
         virtual ~QueueClient() { }

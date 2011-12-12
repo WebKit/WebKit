@@ -58,7 +58,7 @@ private:
 #endif
 
     // CoreIPC::Connection::QueueClient
-    virtual bool willProcessMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, bool& didHandleMessage) OVERRIDE;
 
     WebProcess* m_process;
     RefPtr<CoreIPC::Connection> m_connection;

@@ -212,12 +212,11 @@ private:
 #endif
 
     // CoreIPC::Connection::QueueClient
-    virtual bool willProcessMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
+    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, bool& didHandleMessage) OVERRIDE;
 
     // Implemented in generated WebProcessMessageReceiver.cpp
-    bool willProcessWebProcessMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveWebProcessMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, bool& didHandleMessage);
 
     RefPtr<WebConnectionToUIProcess> m_connection;
 

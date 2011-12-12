@@ -696,12 +696,12 @@ void WebProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
 }
 
-bool WebProcess::willProcessMessageOnClientRunLoop(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
 {
-    if (messageID.is<CoreIPC::MessageClassWebProcess>())
-        return willProcessWebProcessMessageOnClientRunLoop(connection, messageID, arguments);
-
-    return true;
+    if (messageID.is<CoreIPC::MessageClassWebProcess>()) {
+        didReceiveWebProcessMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
+        return;
+    }
 }
 
 WebFrame* WebProcess::webFrame(uint64_t frameID) const
