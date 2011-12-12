@@ -37,7 +37,7 @@
 #include "MediaStreamComponent.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
-#include "WebMediaStreamSource.h"
+#include "platform/WebMediaStreamSource.h"
 #include "platform/WebString.h"
 #include <wtf/Vector.h>
 

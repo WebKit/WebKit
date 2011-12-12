@@ -32,7 +32,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "WebMediaStreamSource.h"
+#include "platform/WebMediaStreamSource.h"
 
 #include "MediaStreamSource.h"
 #include "platform/WebString.h"

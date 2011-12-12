@@ -40,8 +40,8 @@
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "UserMediaRequest.h"
-#include "WebMediaStreamSource.h"
 #include "WebSecurityOrigin.h"
+#include "platform/WebMediaStreamSource.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
 #include <wtf/Vector.h>

@@ -312,6 +312,7 @@
                 'public/platform/WebLayerTreeViewClient.h',
                 'public/platform/WebLocalizedString.h',
                 'public/platform/WebMediaStreamDescriptor.h',
+                'public/platform/WebMediaStreamSource.h',
                 'public/platform/WebMimeRegistry.h',
                 'public/platform/WebNonCopyable.h',
                 'public/platform/WebPeerConnectionHandler.h',

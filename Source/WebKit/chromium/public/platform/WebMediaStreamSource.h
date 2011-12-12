@@ -28,42 +28,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#if ENABLE(MEDIA_STREAM)
+#ifndef WebMediaStreamSource_h
+#define WebMediaStreamSource_h
 
-#include "UserMediaClientImpl.h"
+#include "platform/WebCommon.h"
+#include "platform/WebNonCopyable.h"
+#include "platform/WebPrivatePtr.h"
 
-#include "WebUserMediaClient.h"
-#include "WebUserMediaRequest.h"
-#include "WebViewClient.h"
-#include "WebViewImpl.h"
-#include "platform/WebMediaStreamSource.h"
-
-using namespace WebCore;
+namespace WebCore {
+class MediaStreamSource;
+}
 
 namespace WebKit {
 
-UserMediaClientImpl::UserMediaClientImpl(WebViewImpl* webView)
-    : m_client(webView->client() ? webView->client()->userMediaClient() : 0)
-{
-}
+class WebString;
 
-void UserMediaClientImpl::pageDestroyed()
-{
-}
+class WebMediaStreamSource {
+public:
+    enum Type {
+        TypeAudio,
+        TypeVideo
+    };
 
-void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> request, const MediaStreamSourceVector& sources)
-{
-    if (m_client)
-        m_client->requestUserMedia(request, sources);
-}
+    WebMediaStreamSource() { }
+    ~WebMediaStreamSource() { reset(); }
 
-void UserMediaClientImpl::cancelUserMediaRequest(UserMediaRequest* request)
-{
-    if (m_client)
-        m_client->cancelUserMediaRequest(WebUserMediaRequest(request));
-}
+    WEBKIT_EXPORT void initialize(const WebString& id, Type, const WebString& name);
+    WEBKIT_EXPORT void reset();
+    bool isNull() const { return m_private.isNull(); }
+
+    WEBKIT_EXPORT WebString id() const;
+    WEBKIT_EXPORT Type type() const;
+    WEBKIT_EXPORT WebString name() const;
+
+#if WEBKIT_IMPLEMENTATION
+    WebMediaStreamSource(const WTF::PassRefPtr<WebCore::MediaStreamSource>&);
+    WebMediaStreamSource& operator=(WebCore::MediaStreamSource*);
+    operator WTF::PassRefPtr<WebCore::MediaStreamSource>() const;
+    operator WebCore::MediaStreamSource*() const;
+#endif
+
+private:
+    WebPrivatePtr<WebCore::MediaStreamSource> m_private;
+};
 
 } // namespace WebKit
 
-#endif // ENABLE(MEDIA_STREAM)
+#endif // WebMediaStreamSource_h

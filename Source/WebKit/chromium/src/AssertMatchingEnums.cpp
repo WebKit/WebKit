@@ -80,7 +80,6 @@
 #include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
-#include "WebMediaStreamSource.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
 #include "WebReferrerPolicy.h"
@@ -95,6 +94,7 @@
 #include "WebView.h"
 #include "platform/WebClipboard.h"
 #include "platform/WebFileSystem.h"
+#include "platform/WebMediaStreamSource.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 

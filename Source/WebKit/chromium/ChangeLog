@@ -1,3 +1,26 @@
+2011-12-12  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Moving WebMediaStreamSource.h
+        https://bugs.webkit.org/show_bug.cgi?id=74081
+
+        Moving WebMediaStreamSource.h to public/platform.
+        Keeping a stub in public as to not affect chromium right now.
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebMediaStreamSource.h:
+        * public/platform/WebMediaStreamSource.h: Copied from Source/WebKit/chromium/public/WebMediaStreamSource.h.
+        (WebKit::WebMediaStreamSource::WebMediaStreamSource):
+        (WebKit::WebMediaStreamSource::~WebMediaStreamSource):
+        (WebKit::WebMediaStreamSource::isNull):
+        * src/AssertMatchingEnums.cpp:
+        * src/UserMediaClientImpl.cpp:
+        * src/WebMediaStreamDescriptor.cpp:
+        * src/WebMediaStreamRegistry.cpp:
+        * src/WebMediaStreamSource.cpp:
+        * src/WebUserMediaRequest.cpp:
+
 2011-12-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove forwarding headers for WebLayer APIs

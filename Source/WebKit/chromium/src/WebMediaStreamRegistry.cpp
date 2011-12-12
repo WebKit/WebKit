@@ -29,9 +29,10 @@
  */
 
 #include "config.h"
-#include "WebMediaStreamRegistry.h"
 
 #if ENABLE(MEDIA_STREAM)
+
+#include "WebMediaStreamRegistry.h"
 
 #include "KURL.h"
 #include "MediaStreamDescriptor.h"
