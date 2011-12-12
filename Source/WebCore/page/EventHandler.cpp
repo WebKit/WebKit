@@ -1612,14 +1612,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     if (m_lastScrollbarUnderMouse && m_mousePressed)
         return m_lastScrollbarUnderMouse->mouseMoved(mouseEvent);
 
-    // Mouse events should be treated as "read-only" in prepareMouseEvent if the mouse is 
-    // pressed and we are allowed to select OR if we're updating only scrollbars. This 
-    // means that :hover and :active freeze in the state they were in, rather than updating 
-    // for nodes the mouse moves over while you hold the mouse down (in the mouse pressed case)
-    // or while the window is not key (as in the onlyUpdateScrollbars case).
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::MouseMove;
-    if ((m_mousePressed && m_mouseDownMayStartSelect) || onlyUpdateScrollbars)
-        hitType |= HitTestRequest::ReadOnly;
     if (m_mousePressed)
         hitType |= HitTestRequest::Active;
 
@@ -2761,6 +2754,10 @@ void EventHandler::freeClipboard()
 
 void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
 {
+    // Send a hit test request so that RenderLayer gets a chance to update the :hover and :active pseudoclasses.
+    HitTestRequest request(HitTestRequest::MouseUp);
+    prepareMouseEvent(request, event);
+
     if (dragState().m_dragSrc && dragState().shouldDispatchEvents()) {
         dragState().m_dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
