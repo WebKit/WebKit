@@ -76,6 +76,7 @@ private:
     enum SubresourceLoaderState {
         Uninitialized,
         Initialized,
+        Revalidating,
         Finishing,
         Releasing
     };

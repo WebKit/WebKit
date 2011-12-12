@@ -1,3 +1,18 @@
+2011-12-12  Nate Chapin  <japhet@chromium.org>
+
+        A SubresourceLoader in the middle of revalidating
+        a resource should be treated as finishing (similar to
+        didFinishLoading and didFail) to ensure that willCancel()
+        doesn't declare the revalidation as having failed reentrantly.
+        https://bugs.webkit.org/show_bug.cgi?id=72762
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/cache/cancel-during-revalidation-succeeded.html
+
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveResponse):
+
 2011-12-12  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream 3 files into WebCore/platform/blackberry
