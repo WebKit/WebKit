@@ -7,7 +7,7 @@ var cancelFired = false;
 
 window.webkitRequestAnimationFrame(function() {
     cancelFired = true;
-    window.webkitCancelRequestAnimationFrame(secondCallbackId);
+    window.webkitCancelAnimationFrame(secondCallbackId);
 }, e);
 
 secondCallbackId = window.webkitRequestAnimationFrame(function() {

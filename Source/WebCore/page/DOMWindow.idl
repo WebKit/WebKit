@@ -241,9 +241,10 @@ module window {
         void clearInterval(in [Optional=CallWithDefaultValue] long handle);
 
 #if defined(ENABLE_REQUEST_ANIMATION_FRAME)
-        // WebKit animation extensions
+        // WebKit animation extensions, being standardized in the WebPerf WG
         long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback, in [Optional=CallWithDefaultValue] Element element);
-        void webkitCancelRequestAnimationFrame(in long id);
+        void webkitCancelAnimationFrame(in long id);
+        void webkitCancelRequestAnimationFrame(in long id); // This is a deprecated alias for webkitCancelAnimationFrame(). Remove this when removing vendor prefix.
 #endif
 
         // Base64

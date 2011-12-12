@@ -1584,10 +1584,10 @@ int DOMWindow::webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallb
     return 0;
 }
 
-void DOMWindow::webkitCancelRequestAnimationFrame(int id)
+void DOMWindow::webkitCancelAnimationFrame(int id)
 {
     if (Document* d = document())
-        d->webkitCancelRequestAnimationFrame(id);
+        d->webkitCancelAnimationFrame(id);
 }
 #endif
 

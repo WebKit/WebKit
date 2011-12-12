@@ -5,7 +5,7 @@ var e = document.getElementById("e");
 var id = window.webkitRequestAnimationFrame(function() {
 }, e);
 
-window.webkitCancelRequestAnimationFrame(id);
+window.webkitCancelAnimationFrame(id);
 
 if (window.layoutTestController)
     layoutTestController.display();

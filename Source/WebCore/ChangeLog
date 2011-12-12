@@ -1,3 +1,24 @@
+2011-12-12  James Robinson  <jamesr@chromium.org>
+
+        Rename webkitCancelRequestAnimationFrame to webkitCancelAnimationFrame to match spec change
+        https://bugs.webkit.org/show_bug.cgi?id=74231
+
+        Reviewed by Simon Fraser.
+
+        The RequestAnimationFrame spec has renamed cancelRequestAnimationFrame to cancelAnimationFrame in response to
+        feedback from Mozilla and Microsoft that the old name was too long and didn't parallel setTimeout/clearTimeout
+        and setInterval/clearInterval very well. This updates our IDL to match, while preserving the old name as an
+        alias to be compatible with current content.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitCancelAnimationFrame):
+        * dom/Document.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitCancelAnimationFrame):
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::webkitCancelRequestAnimationFrame):
+        * page/DOMWindow.idl:
+
 2011-12-12  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Remove assumption that empty surface is always at end of list
