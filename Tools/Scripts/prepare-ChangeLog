@@ -72,6 +72,8 @@ sub findChangeLogs(\%);
 sub getLatestChangeLogs($);
 sub resolveConflictedChangeLogs($);
 sub generateNewChangeLogs($$$\%);
+sub printDiff(\@);
+sub openChangeLogs($);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
 sub diffCommand(@);
@@ -164,26 +166,26 @@ my $SVN = "svn";
 my $GIT = "git";
 
 # Find the list of modified files
-my @changed_files;
+my @changedFiles;
 my %functionLists;
-my @conflict_files;
+my @conflictFiles;
 
 my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
 
-my $addedRegressionTests = generateFileList(@changed_files, @conflict_files, %functionLists);
+my $addedRegressionTests = generateFileList(@changedFiles, @conflictFiles, %functionLists);
 
-if (!@changed_files && !@conflict_files && !keys %functionLists) {
+if (!@changedFiles && !@conflictFiles && !keys %functionLists) {
     print STDERR "  No changes found.\n";
     exit 1;
 }
 
-if (@conflict_files) {
+if (@conflictFiles) {
     print STDERR "  The following files have conflicts. Run prepare-ChangeLog again after fixing the conflicts:\n";
-    print STDERR join("\n", @conflict_files), "\n";
+    print STDERR join("\n", @conflictFiles), "\n";
     exit 1;
 }
 
-generateFunctionLists(@changed_files, %functionLists);
+generateFunctionLists(@changedFiles, %functionLists);
 
 # Get some parameters for the ChangeLog we are about to write.
 my $date = changeLogDate($changeLogTimeZone);
@@ -220,28 +222,13 @@ if ($writeChangeLogs) {
 }
 
 # Write out another diff.
-if ($spewDiff && @changed_files) {
-    print STDERR "  Running diff to help you write the ChangeLog entries.\n";
-    local $/ = undef; # local slurp mode
-    open DIFF, "-|", createPatchCommand("'" . join ("' '", @changed_files) . "'") or die "The diff failed: $!.\n";
-    print <DIFF>;
-    close DIFF;
+if ($spewDiff && @changedFiles) {
+    printDiff(@changedFiles);
 }
 
 # Open ChangeLogs.
 if ($openChangeLogs && @$changeLogs) {
-    print STDERR "  Opening the edited ChangeLog files.\n";
-    my $editor = $ENV{CHANGE_LOG_EDITOR};
-    if ($editor) {
-        system ((split ' ', $editor), @$changeLogs);
-    } else {
-        $editor = $ENV{CHANGE_LOG_EDIT_APPLICATION};
-        if ($editor) {
-            system "open", "-a", $editor, @$changeLogs;
-        } else {
-            system "open", "-e", @$changeLogs;
-        }
-    }
+    openChangeLogs($changeLogs);
 }
 
 # Done.
@@ -250,15 +237,15 @@ exit;
 
 sub generateFunctionLists(\@\%)
 {
-    my ($changed_files, $functionLists) = @_;
+    my ($changedFiles, $functionLists) = @_;
 
     my %changed_line_ranges;
-    if (@$changed_files) {
+    if (@$changedFiles) {
         # For each file, build a list of modified lines.
         # Use line numbers from the "after" side of each diff.
         print STDERR "  Reviewing diff to determine which lines changed.\n";
         my $file;
-        open DIFF, "-|", diffCommand(@$changed_files) or die "The diff failed: $!.\n";
+        open DIFF, "-|", diffCommand(@$changedFiles) or die "The diff failed: $!.\n";
         while (<DIFF>) {
             $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
             if (defined $file) {
@@ -527,6 +514,35 @@ sub generateNewChangeLogs($$$\%)
         }
 
         close CHANGE_LOG;
+    }
+}
+
+sub printDiff(\@)
+{
+    my ($changedFiles) = @_;
+
+    print STDERR "  Running diff to help you write the ChangeLog entries.\n";
+    local $/ = undef; # local slurp mode
+    open DIFF, "-|", createPatchCommand("'" . join ("' '", @$changedFiles) . "'") or die "The diff failed: $!.\n";
+    print <DIFF>;
+    close DIFF;
+}
+
+sub openChangeLogs($)
+{
+    my ($changeLogs) = @_;
+
+    print STDERR "  Opening the edited ChangeLog files.\n";
+    my $editor = $ENV{CHANGE_LOG_EDITOR};
+    if ($editor) {
+        system ((split ' ', $editor), @$changeLogs);
+    } else {
+        $editor = $ENV{CHANGE_LOG_EDIT_APPLICATION};
+        if ($editor) {
+            system "open", "-a", $editor, @$changeLogs;
+        } else {
+            system "open", "-e", @$changeLogs;
+        }
     }
 }
 
