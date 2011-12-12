@@ -84,6 +84,8 @@ BUGWK74279 : fullscreen/full-screen-iframe-legacy.html = PASS TEXT
 
 BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
 
+BUGWK74297 DEBUG X86_64 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
