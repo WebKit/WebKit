@@ -100,17 +100,20 @@ private:
         {
             p->interactionEngine->reset();
             p->interactionEngine->applyConstraints(p->computeViewportConstraints());
+            p->interactionEngine->pagePositionRequest(position);
 
             if (contentsSize.isValid()) {
                 p->pageView->setWidth(contentsSize.width());
                 p->pageView->setHeight(contentsSize.height());
             }
 
+            position = QPoint();
             contentsSize = QSize();
         }
 
         QQuickWebViewPrivate* p;
         QSize contentsSize;
+        QPoint position;
     };
 
     QScopedPointer<QtPageClient> pageClient;

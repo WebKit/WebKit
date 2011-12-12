@@ -1,3 +1,15 @@
+2011-12-12  Michael Bruning  <michael.bruning@nokia.com>
+
+        [qt][wk2] Postpone scroll effects when page transition is ongoing.
+        https://bugs.webkit.org/show_bug.cgi?id=74177
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::scrollPositionRequested):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate::PostTransitionState::apply):
+
 2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt][WK2] Remove dead code from QtWebPageProxy

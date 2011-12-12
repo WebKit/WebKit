@@ -200,8 +200,15 @@ void QQuickWebViewPrivate::didChangeBackForwardList()
 
 void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
 {
-    if (!useTraditionalDesktopBehaviour)
-        interactionEngine->pagePositionRequest(pos);
+    if (useTraditionalDesktopBehaviour)
+        return;
+
+    if (isTransitioningToNewPage) {
+        postTransitionState->position = pos;
+        return;
+    }
+
+    interactionEngine->pagePositionRequest(pos);
 }
 
 void QQuickWebViewPrivate::updateVisibleContentRect()
