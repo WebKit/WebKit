@@ -3226,7 +3226,6 @@
             'platform/audio/ZeroPole.cpp',
             'platform/audio/ZeroPole.h',
             'platform/audio/chromium/AudioBusChromium.cpp',
-            'platform/audio/fftw/FFTFrameFFTW.cpp',
             'platform/audio/mac/AudioBusMac.mm',
             'platform/audio/mac/AudioDestinationMac.cpp',
             'platform/audio/mac/AudioDestinationMac.h',

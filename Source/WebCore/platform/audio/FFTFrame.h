@@ -47,10 +47,6 @@
 #include "mkl_dfti.h"
 #endif // USE(WEBAUDIO_MKL)
 
-#if USE(WEBAUDIO_FFTW)
-#include "fftw3.h"
-#endif // USE(WEBAUDIO_FFTW)
-
 #if USE(WEBAUDIO_FFMPEG)
 struct RDFTContext;
 #endif // USE(WEBAUDIO_FFMPEG)
@@ -149,30 +145,6 @@ private:
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_FFMPEG)
-
-#if USE(WEBAUDIO_FFTW)
-    fftwf_plan m_forwardPlan;
-    fftwf_plan m_backwardPlan;
-
-    enum Direction {
-        Forward,
-        Backward
-    };
-
-    // Both the real and imaginary data are stored here.
-    // The real data is stored first, followed by three float values of padding.
-    // The imaginary data is stored after the padding and is 16-byte aligned (if m_data itself is aligned).
-    // The reason we don't use separate arrays for real and imaginary is because the FFTW plans are shared
-    // between FFTFrame instances and require that the real and imaginary data pointers be the same distance apart.
-    AudioFloatArray m_data;
-
-    static Mutex *s_planLock;
-    static fftwf_plan* fftwForwardPlans;
-    static fftwf_plan* fftwBackwardPlans;
-
-    static fftwf_plan fftwPlanForSize(unsigned fftSize, Direction,
-                                      float*, float*, float*);
-#endif // USE(WEBAUDIO_FFTW)
 
 #endif // !USE_ACCELERATE_FFT
 };

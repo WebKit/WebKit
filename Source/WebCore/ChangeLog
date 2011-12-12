@@ -1,3 +1,22 @@
+2011-11-26  Adam Barth  <abarth@webkit.org>
+
+        Remove platform/audio/fftw
+        https://bugs.webkit.org/show_bug.cgi?id=73163
+
+        Reviewed by Eric Seidel.
+
+        The FFTW library is GPL, not LGPL, like WebKit.  This patch removes the
+        integration with the library so folks who use WebAudio don't
+        accidentially violate the GPL by linking in FFTW.
+
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/audio/FFTFrame.h:
+        * platform/audio/FFTFrameStub.cpp:
+        * platform/audio/fftw: Removed.
+        * platform/audio/fftw/FFTFrameFFTW.cpp: Removed.
+
 2011-12-12  Kenneth Russell  <kbr@google.com>
 
         COMPILE_ASSERT in CSSStyleSelector.cpp doesn't compile on Windows

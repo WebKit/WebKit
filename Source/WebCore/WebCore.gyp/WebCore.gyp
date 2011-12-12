@@ -1095,11 +1095,6 @@
             'include_dirs+++': ['../dom'],
           },
         }],
-        ['OS != "mac" and OS != "android" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
-          'include_dirs': [
-            '<(chromium_src_dir)/third_party/fftw/api',
-          ],
-        }],
       ],
     },
     {
@@ -1306,14 +1301,6 @@
             # This is needed because Event.h in this directory is blocked
             # by a system header on windows.
             'include_dirs++': ['../dom'],
-          },
-        }],
-        ['OS != "mac" and OS != "android" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
-          # This directory needs to be on the include path for multiple sub-targets of webcore.
-          'direct_dependent_settings': {
-            'include_dirs': [
-              '<(chromium_src_dir)/third_party/fftw/api',
-            ],
           },
         }],
         ['OS != "android" and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
@@ -1941,23 +1928,6 @@
         ['OS=="win"', {
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
-          },
-        }],
-        ['os_posix == 1 and OS != "mac" and OS != "android" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
-          # FIXME: (kbr) figure out how to make these dependencies
-          # work in a cross-platform way. Attempts to use
-          # "link_settings" and "libraries" in conjunction with the
-          # msvs-specific settings didn't work so far.
-          'all_dependent_settings': {
-            'ldflags': [
-              # FIXME: (kbr) build the FFTW into PRODUCT_DIR using GYP.
-              '-Lthird_party/fftw/.libs',
-            ],
-            'link_settings': {
-              'libraries': [
-                '-lfftw3f'
-              ],
-            },
           },
         }],
         ['enable_svg!=0', {
