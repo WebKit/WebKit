@@ -2504,53 +2504,6 @@ inline bool isValidRegionStyleProperty(int id)
     return false;
 }
 
-class SVGDisplayPropertyGuard {
-    WTF_MAKE_NONCOPYABLE(SVGDisplayPropertyGuard);
-public:
-    SVGDisplayPropertyGuard(Element*, RenderStyle*);
-    ~SVGDisplayPropertyGuard();
-private:
-#if ENABLE(SVG)
-    RenderStyle* m_style;
-    EDisplay m_originalDisplayPropertyValue;
-#endif
-};
-
-#if !ENABLE(SVG)
-inline SVGDisplayPropertyGuard::SVGDisplayPropertyGuard(Element*, RenderStyle*)
-{
-}
-
-inline SVGDisplayPropertyGuard::~SVGDisplayPropertyGuard()
-{
-}
-#else
-static inline bool isAcceptableForSVGElement(EDisplay displayPropertyValue)
-{
-    return displayPropertyValue == INLINE || displayPropertyValue == BLOCK || displayPropertyValue == NONE;
-}
-
-inline SVGDisplayPropertyGuard::SVGDisplayPropertyGuard(Element* element, RenderStyle* style)
-{
-    if (!(element && element->isSVGElement() && style->styleType() == NOPSEUDO)) {
-        m_originalDisplayPropertyValue = NONE;
-        m_style = 0;
-        return;
-    }
-    m_style = style;
-    m_originalDisplayPropertyValue = style->display();
-    ASSERT(isAcceptableForSVGElement(m_originalDisplayPropertyValue));
-}
-
-inline SVGDisplayPropertyGuard::~SVGDisplayPropertyGuard()
-{
-    if (!m_style || isAcceptableForSVGElement(m_style->display()))
-        return;
-    m_style->setDisplay(m_originalDisplayPropertyValue);
-}
-#endif
-
-
 // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
 // of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
 // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
@@ -2670,11 +2623,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyClear:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(clear, Clear)
         return;
-    case CSSPropertyDisplay: {
-        SVGDisplayPropertyGuard guard(m_element, m_style.get());
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
-        return;
-    }
     case CSSPropertyEmptyCells:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(emptyCells, EmptyCells)
         return;
@@ -3796,6 +3744,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:
     case CSSPropertyDirection:
+    case CSSPropertyDisplay:
     case CSSPropertyBackgroundAttachment:
     case CSSPropertyBackgroundClip:
     case CSSPropertyWebkitBackgroundClip:

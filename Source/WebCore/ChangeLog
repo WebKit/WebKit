@@ -1,3 +1,22 @@
+2011-12-11  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSS display property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=73500
+
+        Reviewed by Andreas Kling.
+
+        Refactoring only / no functionality changed.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyDisplay::isValidDisplayValue):
+        (WebCore::ApplyPropertyDisplay::applyInheritValue):
+        (WebCore::ApplyPropertyDisplay::applyInitialValue):
+        (WebCore::ApplyPropertyDisplay::applyValue):
+        (WebCore::ApplyPropertyDisplay::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-12-11  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Qt build.

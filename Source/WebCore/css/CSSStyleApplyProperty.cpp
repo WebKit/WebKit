@@ -1349,6 +1349,49 @@ public:
     }
 };
 
+class ApplyPropertyDisplay {
+private:
+    static inline bool isValidDisplayValue(CSSStyleSelector* selector, EDisplay displayPropertyValue)
+    {
+#if ENABLE(SVG)
+        if (selector->element() && selector->element()->isSVGElement() && selector->style()->styleType() == NOPSEUDO)
+            return (displayPropertyValue == INLINE || displayPropertyValue == BLOCK || displayPropertyValue == NONE);
+#endif
+        return true;
+    }
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        EDisplay display = selector->parentStyle()->display();
+        if (!isValidDisplayValue(selector, display))
+            return;
+        selector->style()->setDisplay(display);
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        selector->style()->setDisplay(RenderStyle::initialDisplay());
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        EDisplay display = *static_cast<CSSPrimitiveValue*>(value);
+
+        if (!isValidDisplayValue(selector, display))
+            return;
+
+        selector->style()->setDisplay(display);
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -1372,6 +1415,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
     setPropertyHandler(CSSPropertyWebkitBackgroundComposite, ApplyPropertyFillLayer<CompositeOperator, CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                        &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite>::createHandler());
+
+    setPropertyHandler(CSSPropertyDisplay, ApplyPropertyDisplay::createHandler());
 
     setPropertyHandler(CSSPropertyBackgroundImage, ApplyPropertyFillLayer<StyleImage*, CSSPropertyBackgroundImage, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
                        &FillLayer::isImageSet, &FillLayer::image, &FillLayer::setImage, &FillLayer::clearImage, &FillLayer::initialFillImage, &CSSStyleSelector::mapFillImage>::createHandler());
