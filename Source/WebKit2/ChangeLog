@@ -1,3 +1,16 @@
+2011-12-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed cleanup fix.
+
+        Add missing files from https://bugs.webkit.org/show_bug.cgi?id=73016
+
+        Also remove the files that should be removed.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_navigationHistory.qml: Added.
+        * UIProcess/qt/qwkhistory.cpp: Removed.
+        * UIProcess/qt/qwkhistory.h: Removed.
+        * UIProcess/qt/qwkhistory_p.h: Removed.
+
 2011-12-12  Michael Bruning  <michael.bruning@nokia.com>
 
         [qt][wk2] Postpone scroll effects when page transition is ongoing.
