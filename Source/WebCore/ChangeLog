@@ -1,3 +1,17 @@
+2011-12-11  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement webkit-line-grid and webkit-line-grid-snap CSS properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=74262
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-12-11  Kentaro Hara  <haraken@chromium.org>
 
         Use the [Supplemental] IDL for webaudio attributes in Chromium

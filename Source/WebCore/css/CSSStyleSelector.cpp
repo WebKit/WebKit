@@ -3284,16 +3284,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInitial)
             m_style->resetColumnRule();
         return;
-    case CSSPropertyWebkitLineGrid:
-        HANDLE_INHERIT_AND_INITIAL(lineGrid, LineGrid);
-        if (primitiveValue->getIdent() == CSSValueNone)
-            m_style->setLineGrid(nullAtom);
-        else
-            m_style->setLineGrid(primitiveValue->getStringValue());
-        return;
-    case CSSPropertyWebkitLineGridSnap:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(lineGridSnap, LineGridSnap)
-        return;
     case CSSPropertyWebkitRegionBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakBefore, RegionBreakBefore, PageBreak)
         return;
@@ -3898,6 +3888,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitHyphenateLimitAfter:
     case CSSPropertyWebkitHyphenateLimitBefore:
     case CSSPropertyWebkitHyphenateLimitLines:
+    case CSSPropertyWebkitLineGrid:
+    case CSSPropertyWebkitLineGridSnap:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
