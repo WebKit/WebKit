@@ -1,3 +1,19 @@
+2011-12-11  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSS resize property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=74162
+
+        Reviewed by Julien Chaffraix.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyResize::applyValue):
+        (WebCore::ApplyPropertyResize::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-12-11  Andreas Kling  <kling@webkit.org>
 
         Move CSSElementStyleDeclaration to its own cpp/h files.

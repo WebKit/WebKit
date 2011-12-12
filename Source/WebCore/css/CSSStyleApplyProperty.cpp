@@ -37,6 +37,7 @@
 #include "Pair.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "Settings.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 
@@ -1169,6 +1170,36 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
+class ApplyPropertyResize {
+public:
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+        EResize r = RESIZE_NONE;
+        switch (primitiveValue->getIdent()) {
+        case 0:
+            return;
+        case CSSValueAuto:
+            if (Settings* settings = selector->document()->settings())
+                r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
+            break;
+        default:
+            r = *primitiveValue;
+        }
+        selector->style()->setResize(r);
+    }
+
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefaultBase<EResize, &RenderStyle::resize, EResize, &RenderStyle::setResize, EResize, &RenderStyle::initialResize>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
 class ApplyPropertyVerticalAlign {
 public:
     static void applyValue(CSSStyleSelector* selector, CSSValue* value)
@@ -1519,6 +1550,8 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyPaddingBottom, ApplyPropertyLength<&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding>::createHandler());
     setPropertyHandler(CSSPropertyPaddingLeft, ApplyPropertyLength<&RenderStyle::paddingLeft, &RenderStyle::setPaddingLeft, &RenderStyle::initialPadding>::createHandler());
     setPropertyHandler(CSSPropertyPadding, ApplyPropertyExpanding<SuppressValue, CSSPropertyPaddingTop, CSSPropertyPaddingRight, CSSPropertyPaddingBottom, CSSPropertyPaddingLeft>::createHandler());
+
+    setPropertyHandler(CSSPropertyResize, ApplyPropertyResize::createHandler());
 
     setPropertyHandler(CSSPropertyVerticalAlign, ApplyPropertyVerticalAlign::createHandler());
 

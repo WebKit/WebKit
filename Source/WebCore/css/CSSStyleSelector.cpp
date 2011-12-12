@@ -2724,24 +2724,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
         return;
-
-    case CSSPropertyResize:
-    {
-        HANDLE_INHERIT_AND_INITIAL(resize, Resize)
-
-        if (!primitiveValue->getIdent())
-            return;
-
-        EResize r = RESIZE_NONE;
-        if (primitiveValue->getIdent() == CSSValueAuto) {
-            if (Settings* settings = m_checker.document()->settings())
-                r = settings->textAreasAreResizable() ? RESIZE_BOTH : RESIZE_NONE;
-        } else
-            r = *primitiveValue;
-
-        m_style->setResize(r);
-        return;
-    }
     case CSSPropertyFontSize:
     {
         FontDescription fontDescription = m_style->fontDescription();
@@ -3932,6 +3914,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyPaddingBottom:
     case CSSPropertyPaddingLeft:
     case CSSPropertyPadding:
+    case CSSPropertyResize:
     case CSSPropertySize:
     case CSSPropertyTextAlign:
     case CSSPropertyTextIndent:
