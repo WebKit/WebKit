@@ -139,7 +139,7 @@ private:
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }
 bool operator==(const AtomicString&, const LChar*);
 inline bool operator==(const AtomicString& a, const char* b) { return WTF::equal(a.impl(), reinterpret_cast<const LChar*>(b)); }
-inline bool operator==(const AtomicString& a, const Vector<UChar>& b) { return a.impl() && equal(a.impl(), b.data(), b.size()); }    
+inline bool operator==(const AtomicString& a, const Vector<UChar>& b) { return a.impl() && equal(static_cast<StringImpl*>(a.impl()), b.data(), b.size()); }    
 inline bool operator==(const AtomicString& a, const String& b) { return equal(a.impl(), b.impl()); }
 inline bool operator==(const LChar* a, const AtomicString& b) { return b == a; }
 inline bool operator==(const String& a, const AtomicString& b) { return equal(a.impl(), b.impl()); }

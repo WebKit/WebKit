@@ -1,3 +1,29 @@
+2011-12-12  Michael Saboff  <msaboff@apple.com>
+
+        Eliminate Duplicate word at a time equal code in StringImpl.cpp and StringHash.h
+        https://bugs.webkit.org/show_bug.cgi?id=73622
+
+        Reviewed by Oliver Hunt.
+
+        Moved equal(charType1 *, charType2, unsigned) template methods
+        from static StringImpl.cpp to StringImpl.h and then replaced the
+        processor specific character comparison code in StringHash::equal
+        with calls to these methods.
+
+        This change is worth 3% on SunSpider string-unpack-code as reported
+        by the SunSpider command line harness.  No other tests appear to
+        have measurable performance changes.
+
+        * wtf/text/AtomicString.h:
+        (WTF::operator==):
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::equal):
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF::LChar):
+        (WTF::UChar):
+        (WTF::equal):
+
 2011-12-12  Filip Pizlo  <fpizlo@apple.com>
 
         ARMv7 version of DFG soft modulo does register allocation inside of control flow
