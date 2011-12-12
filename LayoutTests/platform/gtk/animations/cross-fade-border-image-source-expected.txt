@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x72
+        RenderText {#text} at (0,0) size 595x17
+          text run at (0,0) width 595: "PASS - \"borderImageSource\" property for \"box\" element at 2.5s saw something close to: 0.5"
+        RenderBR {BR} at (594,14) size 1x0
+        RenderText {#text} at (0,18) size 723x17
+          text run at (0,18) width 723: "PASS - \"borderImageSource\" property for \"box\" and \"boxStatic\" elements at 2.5s are close enough to each other"
+        RenderBR {BR} at (722,32) size 1x0
+        RenderText {#text} at (0,36) size 751x35
+          text run at (0,36) width 751: "PASS - \"borderImageSource\" property for \"boxShorthand\" and \"boxStatic\" elements at 2.5s are close enough to each"
+          text run at (0,54) width 33: "other"
+        RenderBR {BR} at (32,68) size 1x0
+layer at (100,100) size 106x106
+  RenderBlock (positioned) {DIV} at (100,100) size 106x106 [bgcolor=#008000] [border:]
+layer at (100,250) size 106x106
+  RenderBlock (positioned) {DIV} at (100,250) size 106x106 [bgcolor=#008000] [border:]
+layer at (100,400) size 106x106
+  RenderBlock (positioned) {DIV} at (100,400) size 106x106 [bgcolor=#008000] [border:]
