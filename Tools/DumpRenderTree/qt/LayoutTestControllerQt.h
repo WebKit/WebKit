@@ -116,6 +116,7 @@ public slots:
     void dumpUserGestureInFrameLoadCallbacks();
     void dumpResourceLoadCallbacks();
     void dumpResourceResponseMIMETypes();
+    void dumpWillCacheResponse();
     void dumpHistoryCallbacks();
     void dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
     void setWillSendRequestReturnsNullOnRedirect(bool enabled);

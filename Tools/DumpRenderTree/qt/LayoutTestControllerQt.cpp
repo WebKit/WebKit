@@ -80,6 +80,7 @@ void LayoutTestController::reset()
     DumpRenderTreeSupportQt::dumpUserGestureInFrameLoader(false);
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
     DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(false);
+    DumpRenderTreeSupportQt::dumpWillCacheResponseCallbacks(false);
     DumpRenderTreeSupportQt::setDeferMainResourceDataLoad(true);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(false);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
@@ -291,6 +292,11 @@ void LayoutTestController::dumpResourceLoadCallbacks()
 void LayoutTestController::dumpResourceResponseMIMETypes()
 {
     DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(true);
+}
+
+void LayoutTestController::dumpWillCacheResponse()
+{
+    DumpRenderTreeSupportQt::dumpWillCacheResponseCallbacks(true);
 }
 
 void LayoutTestController::dumpHistoryCallbacks()

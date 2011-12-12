@@ -703,9 +703,6 @@ http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation
 http/tests/security/isolatedWorld/world-reuse.html
 
-# Missing layoutTestController.dumpWillCacheResponse
-http/tests/misc/willCacheResponse-delegate-callback.html
-
 # ------- broken ICO file decoding
 fast/images/favicon-as-image.html
 fast/images/icon-0colors.html

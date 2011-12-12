@@ -172,6 +172,7 @@ namespace WebCore {
 bool FrameLoaderClientQt::dumpFrameLoaderCallbacks = false;
 bool FrameLoaderClientQt::dumpProgressFinishedCallback = false;
 bool FrameLoaderClientQt::dumpUserGestureInFrameLoaderCallbacks = false;
+bool FrameLoaderClientQt::dumpWillCacheResponseCallbacks = false;
 bool FrameLoaderClientQt::dumpResourceLoadCallbacks = false;
 bool FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = false;
 bool FrameLoaderClientQt::sendRequestReturnsNull = false;
@@ -1109,6 +1110,10 @@ void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, u
 {
 
     m_response = response;
+    if (dumpWillCacheResponseCallbacks)
+        printf("%s - willCacheResponse: called\n",
+               qPrintable(dumpAssignedUrls[identifier]));
+
     if (dumpResourceLoadCallbacks)
         printf("%s - didReceiveResponse %s\n",
                qPrintable(dumpAssignedUrls[identifier]),

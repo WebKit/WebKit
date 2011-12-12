@@ -178,6 +178,7 @@ public:
     static void dumpResourceLoadCallbacks(bool b);
     static void dumpResourceResponseMIMETypes(bool b);
     static void dumpResourceLoadCallbacksPath(const QString& path);
+    static void dumpWillCacheResponseCallbacks(bool);
     static void setWillSendRequestReturnsNullOnRedirect(bool b);
     static void setWillSendRequestReturnsNull(bool b);
     static void setWillSendRequestClearHeaders(const QStringList& headers);

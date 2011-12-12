@@ -249,6 +249,7 @@ public:
     static bool dumpUserGestureInFrameLoaderCallbacks;
     static bool dumpResourceLoadCallbacks;
     static bool dumpResourceResponseMIMETypes;
+    static bool dumpWillCacheResponseCallbacks;
     static QString dumpResourceLoadCallbacksPath;
     static bool sendRequestReturnsNullOnRedirect;
     static bool sendRequestReturnsNull;

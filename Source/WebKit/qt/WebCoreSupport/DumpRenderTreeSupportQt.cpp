@@ -748,6 +748,11 @@ void DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(bool b)
     FrameLoaderClientQt::dumpResourceResponseMIMETypes = b;
 }
 
+void DumpRenderTreeSupportQt::dumpWillCacheResponseCallbacks(bool b)
+{
+    FrameLoaderClientQt::dumpWillCacheResponseCallbacks = b;
+}
+
 void DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(bool b)
 {
     FrameLoaderClientQt::sendRequestReturnsNullOnRedirect = b;
