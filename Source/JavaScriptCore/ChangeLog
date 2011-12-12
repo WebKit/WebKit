@@ -1,3 +1,18 @@
+2011-12-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        WebKit does not enumerate over CSS properties in HTMLElement.style
+        https://bugs.webkit.org/show_bug.cgi?id=23946
+
+        Reviewed by Darin Adler.
+
+        Add a few exports to follow the JSCSSStyleDeclaration.cpp changes,
+        introduce an std::sort() comparator function.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/text/WTFString.h:
+        (WTF::codePointCompareLessThan): Used by std::sort() to sort properties.
+
 2011-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck issues.

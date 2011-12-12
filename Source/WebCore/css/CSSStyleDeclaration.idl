@@ -27,6 +27,7 @@ module css {
         DelegatingPutFunction,
         HasNameGetter,
         HasIndexGetter,
+        CustomGetPropertyNames,
         V8DependentLifetime
     ] CSSStyleDeclaration {
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText

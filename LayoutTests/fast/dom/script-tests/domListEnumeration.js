@@ -173,7 +173,6 @@ shouldBe("resultArray[2].item", "cssRuleList.item(2)");
 //debug(escapeHTML(document.getElementsByTagName('style')));
 var cssStyleDeclaration = document.styleSheets[2].cssRules[0].style;
 resultArray = iterateList(cssStyleDeclaration);
-shouldBe("resultArray.length", "14");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "cssStyleDeclaration.item(0)");
 shouldBe("resultArray[1].i", "'1'");

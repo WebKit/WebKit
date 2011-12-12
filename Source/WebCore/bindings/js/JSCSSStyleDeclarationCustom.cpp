@@ -28,6 +28,7 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "JSCSSValue.h"
 #include "JSNode.h"
@@ -37,9 +38,11 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 using namespace WTF;
+using namespace std;
 
 namespace WebCore {
 
@@ -139,8 +142,6 @@ bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*,
     return isCSSPropertyName(propertyName);
 }
 
-// FIXME: You can get these properties, and set them (see putDelegate below),
-// but you should also be able to enumerate them.
 JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
 {
     JSCSSStyleDeclaration* thisObj = static_cast<JSCSSStyleDeclaration*>(asObject(slotBase));
@@ -193,6 +194,33 @@ JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState* exec)
 
     currentWorld(exec)->m_cssValueRoots.add(cssValue.get(), root(impl())); // Balanced by JSCSSValueOwner::finalize().
     return toJS(exec, globalObject(), WTF::getPtr(cssValue));
+}
+
+void JSCSSStyleDeclaration::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
+{
+    JSCSSStyleDeclaration* thisObject = jsCast<JSCSSStyleDeclaration*>(object);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+
+    unsigned length = thisObject->impl()->length();
+    for (unsigned i = 0; i < length; ++i)
+        propertyNames.add(Identifier::from(exec, i));
+
+    static Identifier* propertyIdentifiers = 0;
+    if (!propertyIdentifiers) {
+        Vector<String, numCSSProperties> jsPropertyNames;
+        for (int id = firstCSSProperty; id < firstCSSProperty + numCSSProperties; ++id)
+            jsPropertyNames.append(getJSPropertyName(static_cast<CSSPropertyID>(id)));
+        sort(jsPropertyNames.begin(), jsPropertyNames.end(), WTF::codePointCompareLessThan);
+
+        propertyIdentifiers = new Identifier[numCSSProperties];
+        for (int i = 0; i < numCSSProperties; ++i)
+            propertyIdentifiers[i] = Identifier(exec, jsPropertyNames[i].impl());
+    }
+
+    for (int i = 0; i < numCSSProperties; ++i)
+        propertyNames.add(propertyIdentifiers[i]);
+
+    Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
 
 } // namespace WebCore

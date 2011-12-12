@@ -1,3 +1,24 @@
+2011-11-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        WebKit does not enumerate over CSS properties in HTMLElement.style
+        https://bugs.webkit.org/show_bug.cgi?id=23946
+
+        Reviewed by Darin Adler.
+
+        This change generates a list of JavaScript mirrors of the CSS properties and allows to enumerate them
+        using the "in" operator on the CSSStyleDeclaration object.
+
+        Test: fast/css/style-enumerate-properties.html
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertyNames): Added.
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertyEnumerator): Added.
+        (WebCore::V8CSSStyleDeclaration::namedPropertyQuery): Added.
+        (WebCore::V8CSSStyleDeclaration::namedPropertyGetter): A small drive-by optimization (local initialization moved down).
+        * css/CSSStyleDeclaration.idl: Use a custom property enumerator.
+        * css/makeprop.pl: Add a function to convert CSS property names into JS ones, and a string comparator.
+
 2011-12-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: provide per Document Node count statistics
