@@ -69,6 +69,8 @@ sub changeLogEmailAddressFromArgs($);
 sub changeLogNameFromArgs($);
 sub fetchBugDescriptionFromURL($);
 sub findChangeLogs(\%);
+sub getLatestChangeLogs($);
+sub resolveConflictedChangeLogs($);
 sub generateNewChangeLogs($$$\%);
 sub firstDirectoryOrCwd();
 sub diffFromToString();
@@ -205,30 +207,10 @@ if ($bugNumber && !$bugDescription) {
 my ($filesInChangeLog, $prefixes) = findChangeLogs(%functionLists);
 
 # Get the latest ChangeLog files from svn.
-my @logs = ();
-foreach my $prefix (@$prefixes) {
-    push @logs, File::Spec->catfile($prefix || ".", "ChangeLog");
-}
+my $changeLogs = getLatestChangeLogs($prefixes);
 
-if (@logs && $updateChangeLogs && $isSVN) {
-    print STDERR "  Running 'svn update' to update ChangeLog files.\n";
-    open ERRORS, "-|", $SVN, "update", @logs
-        or die "The svn update of ChangeLog files failed: $!.\n";
-    my @conflictedChangeLogs;
-    while (my $line = <ERRORS>) {
-        print STDERR "    ", $line;
-        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+?)[\r\n]*$/;
-    }
-    close ERRORS;
-
-    if (@conflictedChangeLogs) {
-        print STDERR "  Attempting to merge conflicted ChangeLogs.\n";
-        my $resolveChangeLogsPath = File::Spec->catfile(dirname($0), "resolve-ChangeLogs");
-        open RESOLVE, "-|", $resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs
-            or die "Could not open resolve-ChangeLogs script: $!.\n";
-        print STDERR "    $_" while <RESOLVE>;
-        close RESOLVE;
-    }
+if (@$changeLogs && $updateChangeLogs && $isSVN) {
+    resolveConflictedChangeLogs($changeLogs);
 }
 
 generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, %functionLists);
@@ -247,17 +229,17 @@ if ($spewDiff && @changed_files) {
 }
 
 # Open ChangeLogs.
-if ($openChangeLogs && @logs) {
+if ($openChangeLogs && @$changeLogs) {
     print STDERR "  Opening the edited ChangeLog files.\n";
     my $editor = $ENV{CHANGE_LOG_EDITOR};
     if ($editor) {
-        system ((split ' ', $editor), @logs);
+        system ((split ' ', $editor), @$changeLogs);
     } else {
         $editor = $ENV{CHANGE_LOG_EDIT_APPLICATION};
         if ($editor) {
-            system "open", "-a", $editor, @logs;
+            system "open", "-a", $editor, @$changeLogs;
         } else {
-            system "open", "-e", @logs;
+            system "open", "-e", @$changeLogs;
         }
     }
 }
@@ -446,6 +428,41 @@ sub findChangeLogs(\%)
         push @prefixes, $prefixesSort{$prefixSort};
     }
     return (\%filesInChangeLog, \@prefixes);
+}
+
+sub getLatestChangeLogs($)
+{
+    my ($prefixes) = @_;
+
+    my @changeLogs = ();
+    foreach my $prefix (@$prefixes) {
+        push @changeLogs, File::Spec->catfile($prefix || ".", "ChangeLog");
+    }
+    return \@changeLogs;
+}
+
+sub resolveConflictedChangeLogs($)
+{
+    my ($changeLogs) = @_;
+
+    print STDERR "  Running 'svn update' to update ChangeLog files.\n";
+    open ERRORS, "-|", $SVN, "update", @$changeLogs
+        or die "The svn update of ChangeLog files failed: $!.\n";
+    my @conflictedChangeLogs;
+    while (my $line = <ERRORS>) {
+        print STDERR "    ", $line;
+        push @conflictedChangeLogs, $1 if $line =~ m/^C\s+(.+?)[\r\n]*$/;
+    }
+    close ERRORS;
+
+    return if !@conflictedChangeLogs;
+
+    print STDERR "  Attempting to merge conflicted ChangeLogs.\n";
+    my $resolveChangeLogsPath = File::Spec->catfile(dirname($0), "resolve-ChangeLogs");
+    open RESOLVE, "-|", $resolveChangeLogsPath, "--no-warnings", @conflictedChangeLogs
+        or die "Could not open resolve-ChangeLogs script: $!.\n";
+    print STDERR "    $_" while <RESOLVE>;
+    close RESOLVE;
 }
 
 sub generateNewChangeLogs($$$\%)

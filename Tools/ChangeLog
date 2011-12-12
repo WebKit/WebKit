@@ -1,5 +1,23 @@
 2011-12-11  Kentaro Hara  <haraken@chromium.org>
 
+        [Refactoring] Move top-level code to resolve conflicted ChangeLogs into a method
+        https://bugs.webkit.org/show_bug.cgi?id=74257
+
+        Reviewed by Ryosuke Niwa.
+
+        We are planning to write unit-tests for prepare-ChangeLog
+        in a run-leaks_unittest/ manner. This patch is one of the incremental
+        refactorings to remove all top-level code and global variables from
+        prepare-ChangeLog.
+
+        * Scripts/prepare-ChangeLog: Moved top-level code to get the latest ChangeLogs
+        into getLatestChangeLogs(), and moved top-level code to resolve conflicted ChangeLogs
+        into resolveConflictedChangeLogs().
+        (getLatestChangeLogs):
+        (resolveConflictedChangeLogs):
+
+2011-12-11  Kentaro Hara  <haraken@chromium.org>
+
         [Refactoring] Move top-level code to generate a new ChangeLog into a method
         https://bugs.webkit.org/show_bug.cgi?id=74253
 
