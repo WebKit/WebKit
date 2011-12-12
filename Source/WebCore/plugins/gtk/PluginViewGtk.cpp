@@ -576,17 +576,14 @@ void PluginView::updateWidgetAllocationAndClip()
 #endif
     }
 
-    GtkAllocation allocation(m_delayedAllocation);
-    m_delayedAllocation = IntRect();
-
-    // The goal is to avoid calling gtk_widget_size_allocate when necessary.
-    // It blocks the main loop and if the widget is offscreen or hasn't moved
-    // it isn't required.
+    // The goal is to try to avoid calling gtk_widget_size_allocate in the WebView's
+    // size-allocate method. It blocks the main loop and if the widget is offscreen
+    // or hasn't moved it isn't required.
 
     // Don't do anything if the allocation has not changed.
     GtkAllocation currentAllocation;
     gtk_widget_get_allocation(widget, &currentAllocation);
-    if (currentAllocation == allocation)
+    if (currentAllocation == m_delayedAllocation)
         return;
 
     // Don't do anything if both the old and the new allocations are outside the frame.
@@ -595,7 +592,7 @@ void PluginView::updateWidgetAllocationAndClip()
     if (currentAllocationRect.isEmpty() && m_clipRect.isEmpty())
         return;
 
-    gtk_widget_size_allocate(widget, &allocation);
+    g_object_set_data(G_OBJECT(widget), "delayed-allocation", &m_delayedAllocation);
 }
 
 void PluginView::setParentVisible(bool visible)

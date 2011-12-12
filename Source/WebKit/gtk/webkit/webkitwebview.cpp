@@ -841,17 +841,32 @@ static void webkit_web_view_get_preferred_height(GtkWidget* widget, gint* minimu
 }
 #endif
 
+static void updateChildAllocationFromPendingAllocation(GtkWidget* child, void*)
+{
+    if (!gtk_widget_get_visible(child))
+        return;
+
+    GtkAllocation* allocation = static_cast<GtkAllocation*>(g_object_get_data(G_OBJECT(child), "delayed-allocation"));
+    if (!allocation)
+        return;
+
+    g_object_set_data(G_OBJECT(child), "delayed-allocation", 0);
+    gtk_widget_size_allocate(child, allocation);
+    *allocation = IntRect();
+}
+
 static void webkit_web_view_size_allocate(GtkWidget* widget, GtkAllocation* allocation)
 {
     GTK_WIDGET_CLASS(webkit_web_view_parent_class)->size_allocate(widget, allocation);
 
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    Page* page = core(webView);
+    Page* page = core(WEBKIT_WEB_VIEW(widget));
     IntSize oldSize;
     if (FrameView* frameView = page->mainFrame()->view()) {
         oldSize = frameView->size();
         frameView->resize(allocation->width, allocation->height);
     }
+
+    gtk_container_forall(GTK_CONTAINER(widget), updateChildAllocationFromPendingAllocation, 0);
 
     WebKit::ChromeClient* chromeClient = static_cast<WebKit::ChromeClient*>(page->chrome()->client());
     chromeClient->widgetSizeChanged(oldSize, IntSize(allocation->width, allocation->height));

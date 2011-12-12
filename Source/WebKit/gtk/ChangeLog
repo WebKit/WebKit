@@ -1,3 +1,20 @@
+2011-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] gtk_widget_size_allocate for plugin widgets should happen in the WebView size-allocate method
+        https://bugs.webkit.org/show_bug.cgi?id=72805
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of immediately calling gtk_widget_size during painting, defer
+        this until the size-allocate method of the WebView.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::paint): If any child widgets have a pending allocation
+        call gtk_widget_size_allocate.
+        * webkit/webkitwebview.cpp:
+        (updateChildAllocationFromPendingAllocation): Added this helper.
+        (webkit_web_view_size_allocate): Call the helper on all child widgets.
+
 2011-12-09  Joone Hur  <joone.hur@collabora.co.uk>
 
         [GTK] Initial implementation of Accelerated Compositing using Clutter

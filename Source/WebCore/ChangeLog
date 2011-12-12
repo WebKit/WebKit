@@ -1,3 +1,19 @@
+2011-12-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] gtk_widget_size_allocate for plugin widgets should happen in the WebView size-allocate method
+        https://bugs.webkit.org/show_bug.cgi?id=72805
+
+        Reviewed by Gustavo Noronha Silva.
+
+        No new tests. This is only a performance tweak.
+
+        Instead of immediately calling gtk_widget_size during painting, defer
+        this until the size-allocate method of the WebView.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::updateWidgetAllocationAndClip): Instead of immediately changing
+        the widget allocation, just record it in a GObject data attachment.
+
 2011-12-12  Nate Chapin  <japhet@chromium.org>
 
         A SubresourceLoader in the middle of revalidating

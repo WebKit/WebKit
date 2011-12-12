@@ -565,6 +565,15 @@ void ChromeClient::paint(WebCore::Timer<ChromeClient>*)
     const IntRect& rect = m_dirtyRegion.bounds();
     gtk_widget_queue_draw_area(GTK_WIDGET(m_webView), rect.x(), rect.y(), rect.width(), rect.height());
 
+    HashSet<GtkWidget*> children = m_webView->priv->children;
+    HashSet<GtkWidget*>::const_iterator end = children.end();
+    for (HashSet<GtkWidget*>::const_iterator current = children.begin(); current != end; ++current) {
+        if (static_cast<GtkAllocation*>(g_object_get_data(G_OBJECT(*current), "delayed-allocation"))) {
+            gtk_widget_queue_resize_no_redraw(GTK_WIDGET(m_webView));
+            break;
+        }
+    }
+
     m_dirtyRegion = Region();
     m_lastDisplayTime = currentTime();
     m_repaintSoonSourceId = 0;
