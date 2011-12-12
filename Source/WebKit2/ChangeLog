@@ -1,5 +1,30 @@
 2011-12-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        Unreviewed build fix.
+
+        Add missing files from https://bugs.webkit.org/show_bug.cgi?id=73016
+
+        * UIProcess/API/qt/qwebnavigationhistory.cpp: Added.
+        (QWebNavigationListModelPrivate::QWebNavigationListModelPrivate):
+        (QWebNavigationListModelPrivate::createWebNavigationModel):
+        (QWebNavigationHistoryPrivate::QWebNavigationHistoryPrivate):
+        (QWebNavigationHistoryPrivate::createHistory):
+        (QWebNavigationHistoryPrivate::reset):
+        (QWebNavigationHistoryPrivate::goBackTo):
+        (QWebNavigationHistoryPrivate::goForwardTo):
+        (QWebNavigationListModel::QWebNavigationListModel):
+        (QWebNavigationListModel::~QWebNavigationListModel):
+        (QWebNavigationListModel::rowCount):
+        (QWebNavigationListModel::data):
+        (QWebNavigationHistory::QWebNavigationHistory):
+        (QWebNavigationHistory::~QWebNavigationHistory):
+        (QWebNavigationHistory::backItems):
+        (QWebNavigationHistory::forwardItems):
+        * UIProcess/API/qt/qwebnavigationhistory_p.h: Added.
+        * UIProcess/API/qt/qwebnavigationhistory_p_p.h: Added.
+
+2011-12-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Move postMessage/messageReceived APIS to experimental
 
         Reviewed by Tor Arne Vestbø.
