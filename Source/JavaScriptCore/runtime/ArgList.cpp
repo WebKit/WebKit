@@ -57,7 +57,7 @@ void MarkedArgumentBuffer::slowAppend(JSValue v)
     for (int i = 0; i < m_capacity; ++i)
         newBuffer[-i] = m_buffer[-i];
 
-    if (m_capacity != inlineCapacity)
+    if (m_capacity != static_cast<int>(inlineCapacity))
         delete [] &m_buffer[-(m_capacity - 1)];
 
     m_buffer = newBuffer;

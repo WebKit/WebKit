@@ -1,3 +1,12 @@
+2011-12-11  Sam Weinig  <sam@webkit.org>
+
+        Fix a signed vs. unsigned warning.
+
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        Cast inlineCapacity to an int to appease the warning. This is known OK
+        since inlineCapacity is defined to be 8.
+
 2011-12-11  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out *another* debugging change I committed accidentally.
