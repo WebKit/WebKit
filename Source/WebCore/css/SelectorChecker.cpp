@@ -34,6 +34,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "HTMLAnchorElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -225,16 +226,21 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
 {
     ASSERT(element->isLink());
 
-    const AtomicString* attr = linkAttribute(element);
-    if (!attr || attr->isNull())
+    const AtomicString* attribute = linkAttribute(element);
+    if (!attribute || attribute->isNull())
         return NotInsideLink;
 
     // An empty href refers to the document itself which is always visited. It is useful to check this explicitly so
     // that visited links can be tested in platform independent manner, without explicit support in the test harness.
-    if (attr->isEmpty())
+    if (attribute->isEmpty())
         return InsideVisitedLink;
+    
+    LinkHash hash;
+    if (element->hasTagName(aTag)) 
+        hash = static_cast<HTMLAnchorElement*>(element)->visitedLinkHash();
+    else
+        hash = visitedLinkHash(m_document->baseURL(), *attribute);
 
-    LinkHash hash = visitedLinkHash(m_document->baseURL(), *attr);
     if (!hash)
         return InsideUnvisitedLink;
 
@@ -249,7 +255,7 @@ EInsideLink SelectorChecker::determineLinkStateSlowCase(Element* element) const
     m_linksCheckedForVisitedState.add(hash);
 
 #if USE(PLATFORM_STRATEGIES)
-    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, m_document->baseURL(), *attr) ? InsideVisitedLink : InsideUnvisitedLink;
+    return platformStrategies()->visitedLinkStrategy()->isLinkVisited(page, hash, m_document->baseURL(), *attribute) ? InsideVisitedLink : InsideUnvisitedLink;
 #else
     return page->group().isLinkVisited(hash) ? InsideVisitedLink : InsideUnvisitedLink;
 #endif
@@ -1308,8 +1314,12 @@ void SelectorChecker::visitedStateChanged(LinkHash visitedHash)
     if (!m_linksCheckedForVisitedState.contains(visitedHash))
         return;
     for (Node* node = m_document; node; node = node->traverseNextNode()) {
-        const AtomicString* attr = linkAttribute(node);
-        if (attr && visitedLinkHash(m_document->baseURL(), *attr) == visitedHash)
+        LinkHash hash = 0;
+        if (node->hasTagName(aTag))
+            hash = static_cast<HTMLAnchorElement*>(node)->visitedLinkHash();
+        else if (const AtomicString* attr = linkAttribute(node))
+            hash = visitedLinkHash(m_document->baseURL(), *attr);
+        if (hash == visitedHash)
             node->setNeedsStyleRecalc();
     }
 }

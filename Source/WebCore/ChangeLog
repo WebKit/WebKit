@@ -1,3 +1,32 @@
+2011-12-12  Antti Koivisto  <antti@apple.com>
+
+        Cache visited link hash
+        https://bugs.webkit.org/show_bug.cgi?id=74095
+
+        Reviewed by Darin Adler.
+
+        Visited link hash is relatively expensive to compute. We can cache it for anchor elements
+        with minimal relative memory cost for faster style resolve.
+        
+        On my machine this speeds up style matching on full HTML spec by ~100ms or ~1% of the total
+        CPU usage. It makes link elements 8 bytes larger, a relatively minor increase to their overall size.
+        
+        Invalidate the hashes on base URL for completeness sake (lack of style invalidation means
+        that this scenario is not properly supported currently).
+
+        Covered by existing tests. No specific test for visited hash invalidation on dynamic base URL 
+        change as the effect is not testable due to lack of style invalidation.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::determineLinkStateSlowCase):
+        (WebCore::SelectorChecker::visitedStateChanged):
+        * html/Document.cpp:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::HTMLAnchorElement):
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLAnchorElement.h:
+        (WebCore::HTMLAnchorElement::visitedLinkHash):
+
 2011-12-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] gtk_widget_size_allocate for plugin widgets should happen in the WebView size-allocate method

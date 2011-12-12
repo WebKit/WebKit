@@ -50,6 +50,7 @@ HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document* doc
     : HTMLElement(tagName, document)
     , m_wasShiftKeyDownOnMouseDown(false)
     , m_linkRelations(0)
+    , m_cachedVisitedLinkHash(0)
 {
 }
 
@@ -221,6 +222,7 @@ void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
                 attr->setValue(nullAtom);
             }
         }
+        invalidateCachedVisitedLinkHash();
     } else if (attr->name() == nameAttr) {
         invalidateNodeListsCacheAfterAttributeChanged();
     } else if (attr->name() == titleAttr) {

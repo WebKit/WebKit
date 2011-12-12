@@ -25,6 +25,8 @@
 #define HTMLAnchorElement_h
 
 #include "HTMLElement.h"
+#include "HTMLNames.h"
+#include "LinkHash.h"
 
 namespace WebCore {
 
@@ -92,6 +94,9 @@ public:
 
     bool hasRel(uint32_t relation) const;
     void setRel(const String&);
+    
+    LinkHash visitedLinkHash() const;
+    void invalidateCachedVisitedLinkHash() { m_cachedVisitedLinkHash = 0; }
 
 protected:
     HTMLAnchorElement(const QualifiedName&, Document*);
@@ -131,7 +136,15 @@ private:
     RefPtr<Element> m_rootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown : 1;
     uint32_t m_linkRelations : 31;
+    mutable LinkHash m_cachedVisitedLinkHash;
 };
+
+inline LinkHash HTMLAnchorElement::visitedLinkHash() const
+{
+    if (!m_cachedVisitedLinkHash)
+        m_cachedVisitedLinkHash = WebCore::visitedLinkHash(document()->baseURL(), fastGetAttribute(HTMLNames::hrefAttr));
+    return m_cachedVisitedLinkHash; 
+}
 
 // Functions shared with the other anchor elements (i.e., SVG).
 

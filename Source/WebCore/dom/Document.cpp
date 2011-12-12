@@ -2432,6 +2432,7 @@ void Document::setURL(const KURL& url)
 
 void Document::updateBaseURL()
 {
+    KURL oldBaseURL = m_baseURL;
     // DOM 3 Core: When the Document supports the feature "HTML" [DOM Level 2 HTML], the base URI is computed using
     // first the value of the href attribute of the HTML BASE element if any, and the value of the documentURI attribute
     // from the Document interface otherwise.
@@ -2452,6 +2453,15 @@ void Document::updateBaseURL()
         m_elemSheet->setFinalURL(m_baseURL);
     if (m_mappedElementSheet)
         m_mappedElementSheet->setFinalURL(m_baseURL);
+    
+    if (!equalIgnoringFragmentIdentifier(oldBaseURL, m_baseURL)) {
+        // Base URL change changes any relative visited links.
+        // FIXME: There are other URLs in the tree that would need to be re-evaluated on dynamic base URL change. Style should be invalidated too.
+        for (Node* node = firstChild(); node; node = node->traverseNextNode()) {
+            if (node->hasTagName(aTag))
+                static_cast<HTMLAnchorElement*>(node)->invalidateCachedVisitedLinkHash();
+        }
+    }
 }
 
 void Document::setBaseURLOverride(const KURL& url)
