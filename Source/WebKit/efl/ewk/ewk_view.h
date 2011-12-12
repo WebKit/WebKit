@@ -58,6 +58,8 @@
  *  - "menubar,visible,get", Eina_Bool *: expects a @c EINA_TRUE if menubar is
  *    visible; @c EINA_FALSE, otherwise.
  *  - "menubar,visible,set", Eina_Bool: sets menubar visibility.
+ *  - "mixedcontent,displayed", void: any of the containing frames has loaded and displayed mixed content.
+ *  - "mixedcontent,run", void: any of the containing frames has loaded and run mixed content.
  *  - "ready", void: page is fully loaded.
  *  - "scrollbars,visible,get", Eina_Bool *: expects a @c EINA_TRUE if scrollbars
  *    are visible; @c EINA_FALSE, otherwise.
@@ -2276,6 +2278,40 @@ EAPI Eina_Bool ewk_view_visibility_state_set(Evas_Object* o, Ewk_Page_Visibility
  * @see ewk_view_visibility_state_set()
  */
 EAPI Ewk_Page_Visibility_State ewk_view_visibility_state_get(const Evas_Object *o);
+
+/**
+ * Returns whether the view has displayed mixed content.
+ *
+ * When a view has displayed mixed content, any of its frames has loaded an HTTPS URI
+ * which has itself loaded and displayed a resource (such as an image) from an insecure,
+ * that is, non-HTTPS, URI.
+ *
+ * The status is reset only when a load event occurs (eg. the page is reloaded or a new page is loaded).
+ *
+ * When one of the containing frames displays mixed content, the view emits the "mixedcontent,displayed" signal.
+ *
+ * @param o The view to query.
+ *
+ * @sa ewk_frame_mixed_content_displayed_get
+ */
+EAPI Eina_Bool ewk_view_mixed_content_displayed_get(const Evas_Object *o);
+
+/**
+ * Returns whether the view has run mixed content.
+ *
+ * When a view has run mixed content, any of its frames has loaded an HTTPS URI
+ * which has itself loaded and run a resource (such as an image) from an insecure,
+ * that is, non-HTTPS, URI.
+ *
+ * The status is reset only when a load event occurs (eg. the page is reloaded or a new page is loaded).
+ *
+ * When one of the containing frames runs mixed content, the view emits the "mixedcontent,run" signal.
+ *
+ * @param o The view to query.
+ *
+ * @sa ewk_frame_mixed_content_run_get
+ */
+EAPI Eina_Bool ewk_view_mixed_content_run_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

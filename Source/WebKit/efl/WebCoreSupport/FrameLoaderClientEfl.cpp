@@ -502,12 +502,12 @@ bool FrameLoaderClientEfl::shouldStopLoadingForHistoryItem(HistoryItem* item) co
 
 void FrameLoaderClientEfl::didDisplayInsecureContent()
 {
-    notImplemented();
+    ewk_frame_mixed_content_displayed_set(m_frame, true);
 }
 
 void FrameLoaderClientEfl::didRunInsecureContent(SecurityOrigin*, const KURL&)
 {
-    notImplemented();
+    ewk_frame_mixed_content_run_set(m_frame, true);
 }
 
 void FrameLoaderClientEfl::didDetectXSS(const KURL&, bool)

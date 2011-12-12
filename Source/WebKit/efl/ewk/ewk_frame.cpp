@@ -70,6 +70,8 @@ struct Ewk_Frame_Smart_Data {
     const char* uri;
     const char* name;
     bool editable : 1;
+    bool hasDisplayedMixedContent : 1;
+    bool hasRunMixedContent : 1;
 };
 
 struct Eina_Iterator_Ewk_Frame {
@@ -1451,6 +1453,9 @@ void ewk_frame_view_create_for_view(Evas_Object* ewkFrame, Evas_Object* view)
     const char* theme = ewk_view_theme_get(view);
     smartData->frame->view()->setEdjeTheme(theme);
     smartData->frame->view()->setEvasObject(ewkFrame);
+
+    ewk_frame_mixed_content_displayed_set(ewkFrame, false);
+    ewk_frame_mixed_content_run_set(ewkFrame, false);
 }
 
 ssize_t ewk_frame_source_get(const Evas_Object* ewkFrame, char** frameSource)
@@ -1563,6 +1568,18 @@ char* ewk_frame_plain_text_get(const Evas_Object* ewkFrame)
     return strdup(documentElement->innerText().utf8().data());
 }
 
+Eina_Bool ewk_frame_mixed_content_displayed_get(const Evas_Object* ewkFrame)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
+    return smartData->hasDisplayedMixedContent;
+}
+
+Eina_Bool ewk_frame_mixed_content_run_get(const Evas_Object* ewkFrame)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
+    return smartData->hasRunMixedContent;
+}
+
 /**
  * @internal
  * Reports uri changed and swap internal string reference.
@@ -1639,6 +1656,52 @@ void ewk_frame_editor_client_contents_changed(Evas_Object* ewkFrame)
     evas_object_smart_callback_call(ewkFrame, "editorclient,contents,changed", 0);
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
     ewk_view_editor_client_contents_changed(smartData->view);
+}
+
+/**
+ * @internal
+ * Defines whether the frame has displayed mixed content.
+ *
+ * When a frame has displayed mixed content, the currently loaded URI is secure (HTTPS) but it has
+ * loaded and displayed a resource, such as an image, from an insecure (HTTP) source.
+ *
+ * @param hasDisplayed Do or do not clear the flag from the frame. If @c true, the container view
+ *                     is also notified and it then emits the "mixedcontent,displayed" signal.
+ *
+ * Emits signal: "mixedcontent,displayed" with no parameters when @p hasDisplayed is @c true.
+ */
+void ewk_frame_mixed_content_displayed_set(Evas_Object* ewkFrame, bool hasDisplayed)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    smartData->hasDisplayedMixedContent = hasDisplayed;
+
+    if (hasDisplayed) {
+        ewk_view_mixed_content_displayed_set(smartData->view, true);
+        evas_object_smart_callback_call(ewkFrame, "mixedcontent,displayed", 0);
+    }
+}
+
+/**
+ * @internal
+ * Defines whether the frame has run mixed content.
+ *
+ * When a frame has run mixed content, the currently loaded URI is secure (HTTPS) but it has
+ * loaded and run a resource, such as a script, from an insecure (HTTP) source.
+ *
+ * @param hasDisplayed Do or do not clear the flag from the frame. If @c true, the container view
+ *                     is also notified and it then emits the "mixedcontent,run" signal.
+ *
+ * Emits signal: "mixedcontent,run" with no parameters when @p hasRun is @c true.
+ */
+void ewk_frame_mixed_content_run_set(Evas_Object* ewkFrame, bool hasRun)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData);
+    smartData->hasRunMixedContent = hasRun;
+
+    if (hasRun) {
+        ewk_view_mixed_content_run_set(smartData->view, true);
+        evas_object_smart_callback_call(ewkFrame, "mixedcontent,run", 0);
+    }
 }
 
 namespace EWKPrivate {

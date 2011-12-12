@@ -222,6 +222,11 @@ const char* ewk_settings_default_user_agent_get();
 void ewk_frame_editor_client_contents_changed(Evas_Object* o);
 void ewk_frame_editor_client_selection_changed(Evas_Object* o);
 
+void ewk_frame_mixed_content_displayed_set(Evas_Object* ewkFrame, bool hasDisplayed);
+void ewk_frame_mixed_content_run_set(Evas_Object* ewkFrame, bool hasRun);
+void ewk_view_mixed_content_displayed_set(Evas_Object* ewkView, bool hasDisplayed);
+void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun);
+
 #ifdef __cplusplus
 
 }

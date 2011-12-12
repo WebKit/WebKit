@@ -148,6 +148,8 @@ struct _Ewk_View_Private_Data {
     struct {
         bool viewCleared : 1;
         bool needTouchEvents : 1;
+        bool hasDisplayedMixedContent : 1;
+        bool hasRunMixedContent : 1;
     } flags;
     struct {
         const char* userAgent;
@@ -2847,6 +2849,9 @@ void ewk_view_frame_main_cleared(Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api->flush);
     smartData->api->flush(smartData);
+
+    ewk_view_mixed_content_displayed_set(ewkView, false);
+    ewk_view_mixed_content_run_set(ewkView, false);
 }
 
 /**
@@ -3767,6 +3772,20 @@ Ewk_View_Mode ewk_view_mode_get(const Evas_Object* ewkView)
     return static_cast<Ewk_View_Mode>(priv->page->viewMode());
 }
 
+Eina_Bool ewk_view_mixed_content_displayed_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->flags.hasDisplayedMixedContent;
+}
+
+Eina_Bool ewk_view_mixed_content_run_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    return priv->flags.hasRunMixedContent;
+}
+
 /**
  * @internal
  * Reports the view that editor client selection has changed.
@@ -3791,6 +3810,52 @@ void ewk_view_editor_client_selection_changed(Evas_Object* ewkView)
 void ewk_view_editor_client_contents_changed(Evas_Object* ewkView)
 {
     evas_object_smart_callback_call(ewkView, "editorclient,contents,changed", 0);
+}
+
+/**
+ * @internal
+ * Defines whether the view has displayed mixed content.
+ *
+ * When a view has displayed mixed content, any of its frames has loaded an HTTPS URI
+ * which has itself loaded and displayed a resource (such as an image) from an insecure,
+ * that is, non-HTTPS, URI.
+ *
+ * @param hasDisplayed Do or do not clear the flag from the view.
+ *
+ * Emits signal: "mixedcontent,displayed" with no parameters when @p hasDisplayed is @c true.
+ */
+void ewk_view_mixed_content_displayed_set(Evas_Object* ewkView, bool hasDisplayed)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    priv->flags.hasDisplayedMixedContent = hasDisplayed;
+
+    if (hasDisplayed)
+        evas_object_smart_callback_call(ewkView, "mixedcontent,displayed", 0);
+}
+
+/**
+ * @internal
+ * Defines whether the view has run mixed content.
+ *
+ * When a view has run mixed content, any of its frames has loaded an HTTPS URI
+ * which has itself loaded and run a resource (such as a script) from an insecure,
+ * that is, non-HTTPS, URI.
+ *
+ * @param hasRun Do or do not clear the flag from the view.
+ *
+ * Emits signal: "mixedcontent,run" with no parameters when @p hasRun is @c true.
+ */
+void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    priv->flags.hasRunMixedContent = hasRun;
+
+    if (hasRun)
+        evas_object_smart_callback_call(ewkView, "mixedcontent,run", 0);
 }
 
 Eina_Bool ewk_view_visibility_state_set(Evas_Object* ewkView, Ewk_Page_Visibility_State pageVisibilityState, Eina_Bool initialState)

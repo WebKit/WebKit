@@ -52,6 +52,8 @@
  *    from 0.0 to 1.0, connect to individual frames for fine grained).
  *  - "load,provisional", void: frame started provisional load.
  *  - "load,started", void: frame started loading the document.
+ *  - "mixedcontent,displayed", void: frame has loaded and displayed mixed content.
+ *  - "mixedcontent,run", void: frame has loaded and run mixed content.
  *  - "navigation,first", void: first navigation was occurred.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
@@ -841,6 +843,36 @@ EAPI Eina_List *ewk_frame_resources_location_get(const Evas_Object *o);
  *         or @c 0 in case of failure.
  */
 EAPI char* ewk_frame_plain_text_get(const Evas_Object* o);
+
+/**
+ * Returns whether the frame has displayed mixed content.
+ *
+ * When a frame has displayed mixed content, its current URI is an HTTPS one, but it has
+ * loaded and displayed a resource (such as an image) from an insecure (non-HTTPS) URI.
+ * Both the frame and the container view send a "mixedcontent,displayed" signal in this case.
+ *
+ * The status is reset only when a load event occurs (eg. the page is reloaded or a new page is loaded).
+ *
+ * @param o The frame to query.
+ *
+ * @sa ewk_view_mixed_content_displayed_get
+ */
+EAPI Eina_Bool ewk_frame_mixed_content_displayed_get(const Evas_Object *o);
+
+/**
+ * Returns whether the frame has run mixed content.
+ *
+ * When a frame has run mixed content, its current URI is an HTTPS one, but it has
+ * loaded and run a resource (such as an image) from an insecure (non-HTTPS) URI.
+ * Both the frame and the container view send a "mixedcontent,run" signal in this case.
+ *
+ * The status is reset only when a load event occurs (eg. the page is reloaded or a new page is loaded).
+ *
+ * @param o The frame to query.
+ *
+ * @sa ewk_view_mixed_content_run_get
+ */
+EAPI Eina_Bool ewk_frame_mixed_content_run_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

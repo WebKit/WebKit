@@ -1,5 +1,34 @@
 2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Add API to notify that mixed content has been loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=74301
+
+        Reviewed by Gustavo Noronha Silva.
+
+        When mixed content is displayed/run, both frames and views
+        emit the proper signals to notify API users.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didDisplayInsecureContent):
+        (WebCore::FrameLoaderClientEfl::didRunInsecureContent):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_create_for_view):
+        (ewk_frame_mixed_content_displayed_get):
+        (ewk_frame_mixed_content_run_get):
+        (ewk_frame_mixed_content_displayed_set):
+        (ewk_frame_mixed_content_run_set):
+        * ewk/ewk_frame.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_frame_main_cleared):
+        (ewk_view_mixed_content_displayed_get):
+        (ewk_view_mixed_content_run_get):
+        (ewk_view_mixed_content_displayed_set):
+        (ewk_view_mixed_content_run_set):
+        * ewk/ewk_view.h:
+
+2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Add API to manage root X.509 CA certificates.
         https://bugs.webkit.org/show_bug.cgi?id=74300
 
