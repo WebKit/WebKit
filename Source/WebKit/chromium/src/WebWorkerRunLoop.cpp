@@ -25,6 +25,8 @@
 #include "config.h"
 #include "WebWorkerRunLoop.h"
 
+#if ENABLE(WORKERS)
+
 #include "WorkerRunLoop.h"
 
 using namespace WebCore;
@@ -77,3 +79,5 @@ bool WebWorkerRunLoop::lessThan(const WebWorkerRunLoop& o) const
 }
 
 }
+
+#endif // ENABLE(WORKERS)

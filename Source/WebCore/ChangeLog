@@ -1,3 +1,13 @@
+2011-12-12  David Grogan  <dgrogan@chromium.org>
+
+        Fix compilation error when !ENABLE(WORKERS)
+        https://bugs.webkit.org/show_bug.cgi?id=74029
+
+        Reviewed by Yury Semikhatsky.
+
+        * storage/IDBFactory.cpp:
+        (WebCore::IDBFactory::open): add #if ENABLE(WORKERS) guard
+
 2011-12-12  Brady Eidson  <beidson@apple.com>
 
         Page cache should support pages with plugins.

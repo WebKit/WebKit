@@ -92,6 +92,7 @@ bool IDBFactoryBackendProxy::allowIDBFromWorkerThread(WorkerContext*, const Stri
 
 void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, WorkerContext* context, const String& dataDir)
 {
+#if ENABLE(WORKERS)
     WebSecurityOrigin origin(prpOrigin);
     if (!allowIDBFromWorkerThread(context, name, origin)) {
         callbacks->onError(WebIDBDatabaseError(0, "The user denied permission to access the database."));
@@ -101,6 +102,7 @@ void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* ca
     NewWebWorkerBase* webWorker = static_cast<NewWebWorkerBase*>(workerLoaderProxy);
     WebFrame* webFrame = webWorker->view()->mainFrame();
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
+#endif
 }
 
 void IDBFactoryBackendProxy::open(const String& name, IDBCallbacks* callbacks, PassRefPtr<SecurityOrigin> prpOrigin, Frame* frame, const String& dataDir)

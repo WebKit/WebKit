@@ -385,8 +385,10 @@ WebString WebDevToolsAgent::disconnectEventAsText()
         }
         String m_message;
     } channel;
+#if ENABLE(WORKERS)
     InspectorFrontend::Worker inspector(&channel);
     inspector.disconnectedFromWorker();
+#endif
     return channel.m_message;
 }
 

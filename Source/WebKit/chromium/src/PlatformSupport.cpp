@@ -1122,6 +1122,7 @@ bool PlatformSupport::popupsAllowed(NPP npp)
     return false;
 }
 
+#if ENABLE(WORKERS)
 void PlatformSupport::didStartWorkerRunLoop(WorkerRunLoop* loop)
 {
     webKitPlatformSupport()->didStartWorkerRunLoop(WebWorkerRunLoop(loop));
@@ -1132,7 +1133,6 @@ void PlatformSupport::didStopWorkerRunLoop(WorkerRunLoop* loop)
     webKitPlatformSupport()->didStopWorkerRunLoop(WebWorkerRunLoop(loop));
 }
 
-#if ENABLE(WORKERS)
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 {
     return WebWorkerClientImpl::createWorkerContextProxy(worker);
