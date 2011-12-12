@@ -162,7 +162,8 @@ void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
     m_pendingFakeTouchEventCount++;
     QWindowSystemInterface::handleTouchEvent(browserWindow, QEvent::None, QTouchEvent::TouchScreen, m_touchPoints.values());
 
-    browserWindow->updateVisualMockTouchPoints(m_touchPoints.values());
+    if (!m_windowOptions.useTraditionalDesktopBehavior())
+        browserWindow->updateVisualMockTouchPoints(m_touchPoints.values());
 
     // Get rid of touch-points that are no longer valid
     foreach (const QWindowSystemInterface::TouchPoint& touchPoint, m_touchPoints) {

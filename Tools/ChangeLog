@@ -1,3 +1,13 @@
+2011-12-12  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] MiniBrowser should only visualize mock touch points when in non-desktop mode
+        https://bugs.webkit.org/show_bug.cgi?id=74283
+
+        Reviewed by Simon Hausmann.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::sendTouchEvent):
+
 2011-12-12  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] In prepare-ChangeLog, move into a method the top-level code
