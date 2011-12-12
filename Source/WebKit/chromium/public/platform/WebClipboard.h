@@ -56,8 +56,6 @@ public:
         // Used on platforms like the X Window System that treat selection
         // as a type of clipboard.
         BufferSelection,
-        // Read-only buffer corresponding to the current drag operation, if any.
-        BufferDrag,
     };
 
     // Returns an identifier which can be used to determine whether the data

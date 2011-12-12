@@ -1,3 +1,16 @@
+2011-12-09  Daniel Cheng  <dcheng@chromium.org>
+
+        [chromium] Remove BufferDrag from WebClipboard::Buffer enum.
+        https://bugs.webkit.org/show_bug.cgi?id=74227
+
+        Reviewed by Tony Chang.
+
+        This enum value was intended for asynchronous data retrieval during drop operations; since
+        that was never implemented, I'm removing this enum value.
+
+        * public/platform/WebClipboard.h:
+        * src/AssertMatchingEnums.cpp:
+
 2011-12-12  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Moving WebMediaStreamSource.h
