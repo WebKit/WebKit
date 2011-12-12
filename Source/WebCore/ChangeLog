@@ -1,3 +1,10 @@
+2011-12-12  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Windows build fix after http://trac.webkit.org/changeset/102619 .
+        Remove OVERRIDE specifier from virtual destructor.
+
+        * html/HTMLPlugInImageElement.h:
+
 2011-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit code shouldn't be calling applyCommand directly

@@ -44,7 +44,7 @@ enum PreferPlugInsForImagesOption {
 // Base class for HTMLObjectElement and HTMLEmbedElement
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
-    virtual ~HTMLPlugInImageElement() OVERRIDE;
+    virtual ~HTMLPlugInImageElement();
 
     RenderEmbeddedObject* renderEmbeddedObject() const;
 
