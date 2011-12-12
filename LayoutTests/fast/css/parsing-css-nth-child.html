@@ -1,0 +1,100 @@
+<head>
+<style>
+#a:nth-child(1n+0) { color: green; }
+#b:nth-child(n+0)  { color: green; }
+#c:nth-child(n)    { color: green; }
+#d:nth-child(-n+0) { color: green; }
+#e:nth-child(-n)   { color: green; }
+
+#f:nth-child(1N+0) { color: green; }
+#g:nth-child(N+0)  { color: green; }
+#h:nth-child(N)    { color: green; }
+#i:nth-child(-N+0) { color: green; }
+#j:nth-child(-N)   { color: green; }
+
+#k:nth-child(+ 1n) { color: green; }
+#l:nth-child(-1N
+  -
+  123  ) { color: green; }
+#m:nth-child(  N- 123) { color: green; }
+#n:nth-child(  n +12 3) { color: green; }
+#o:nth-child( 23n
+
+ +
+
+123  ) { color: green; }
+#p:nth-child(  12 n ) { color: green; }
+#q:nth-child(+12n-0+1) { color: green; }
+#r:nth-child(+12N -- 1) { color: green; }
+#s:nth-child(+12 N ) { color: green; }
+#t:nth-child(+n+3) { color: green; }
+#u:nth-child( +n + 7 ) { color: green; }
+#v:nth-child(+ n + 7) { color: green; }
+</style>
+
+<script>
+
+/** Changes the result text font size. */
+function runTest()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var rules = document.styleSheets[0].cssRules;
+    var text = "";
+    for (var i = 0; i < rules.length; i++) {
+        text += rules.item(i).cssText;
+        text += "\n";
+    }
+
+    document.getElementById("result").appendChild(document.createTextNode(text));
+
+    if (document.getElementById("result").firstChild.data === document.getElementById("expected").firstChild.data)
+        document.getElementById("message").firstChild.data = "SUCCESS";
+    else
+        document.getElementById("message").firstChild.data = "FAILURE";
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+
+<p>Test parsing of CSS nth-child tokens.</p>
+
+<p id="message">TEST DID NOT COMPLETE</p>
+
+<p>Rules from the stylesheet:</p>
+
+<pre id="result"></pre>
+
+<p>Expected result:</p>
+
+<pre id="expected">#a:nth-child(1n+0) { color: green; }
+#b:nth-child(n+0) { color: green; }
+#c:nth-child(n) { color: green; }
+#d:nth-child(-n+0) { color: green; }
+#e:nth-child(-n) { color: green; }
+#f:nth-child(1N+0) { color: green; }
+#g:nth-child(N+0) { color: green; }
+#h:nth-child(N) { color: green; }
+#i:nth-child(-N+0) { color: green; }
+#j:nth-child(-N) { color: green; }
+#l:nth-child(-1N
+  -
+  123) { color: green; }
+#m:nth-child(N- 123) { color: green; }
+#o:nth-child(23n
+
+ +
+
+123) { color: green; }
+#t:nth-child(+n+3) { color: green; }
+#u:nth-child(+n + 7) { color: green; }
+</pre>
+
+<script>
+
+</script>
+</body>

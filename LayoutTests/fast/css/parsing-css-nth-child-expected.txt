@@ -1,0 +1,51 @@
+Test parsing of CSS nth-child tokens.
+
+SUCCESS
+
+Rules from the stylesheet:
+
+#a:nth-child(1n+0) { color: green; }
+#b:nth-child(n+0) { color: green; }
+#c:nth-child(n) { color: green; }
+#d:nth-child(-n+0) { color: green; }
+#e:nth-child(-n) { color: green; }
+#f:nth-child(1N+0) { color: green; }
+#g:nth-child(N+0) { color: green; }
+#h:nth-child(N) { color: green; }
+#i:nth-child(-N+0) { color: green; }
+#j:nth-child(-N) { color: green; }
+#l:nth-child(-1N
+  -
+  123) { color: green; }
+#m:nth-child(N- 123) { color: green; }
+#o:nth-child(23n
+
+ +
+
+123) { color: green; }
+#t:nth-child(+n+3) { color: green; }
+#u:nth-child(+n + 7) { color: green; }
+Expected result:
+
+#a:nth-child(1n+0) { color: green; }
+#b:nth-child(n+0) { color: green; }
+#c:nth-child(n) { color: green; }
+#d:nth-child(-n+0) { color: green; }
+#e:nth-child(-n) { color: green; }
+#f:nth-child(1N+0) { color: green; }
+#g:nth-child(N+0) { color: green; }
+#h:nth-child(N) { color: green; }
+#i:nth-child(-N+0) { color: green; }
+#j:nth-child(-N) { color: green; }
+#l:nth-child(-1N
+  -
+  123) { color: green; }
+#m:nth-child(N- 123) { color: green; }
+#o:nth-child(23n
+
+ +
+
+123) { color: green; }
+#t:nth-child(+n+3) { color: green; }
+#u:nth-child(+n + 7) { color: green; }
+
