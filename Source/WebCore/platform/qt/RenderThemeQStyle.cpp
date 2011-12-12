@@ -64,7 +64,9 @@
 #include <QLineEdit>
 #include <QMacStyle>
 #include <QPainter>
+#ifndef QT_NO_STYLE_PLASTIQUE
 #include <QPlastiqueStyle>
+#endif
 #include <QPushButton>
 #include <QStyleFactory>
 #include <QStyleOptionButton>
@@ -556,15 +558,33 @@ bool RenderThemeQStyle::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
     if (!p.isValid())
         return true;
 
+    const QPoint topLeft = r.location();
+    p.painter->translate(topLeft);
+
     QStyleOptionSlider option;
     initStyleOption(p.widget, option);
     option.subControls = QStyle::SC_SliderGroove;
     ControlPart appearance = initializeCommonQStyleOptions(option, o);
     option.rect = r;
+    option.rect.moveTo(QPoint(0, 0));
     if (appearance == SliderVerticalPart)
         option.orientation = Qt::Vertical;
     if (isPressed(o))
         option.state |= QStyle::State_Sunken;
+
+    // some styles need this to show a highlight on one side of the groove
+    HTMLInputElement* slider = o->node()->toInputElement();
+    if (slider) {
+        option.upsideDown = (appearance == SliderHorizontalPart) && !o->style()->isLeftToRightDirection();
+        // Use the width as a multiplier in case the slider values are <= 1
+        const int width = r.width() > 0 ? r.width() : 100;
+        option.maximum = slider->maximum() * width;
+        option.minimum = slider->minimum() * width;
+        if (!option.upsideDown)
+            option.sliderPosition = slider->valueAsNumber() * width;
+        else
+            option.sliderPosition = option.minimum + option.maximum - slider->valueAsNumber() * width;
+    }
 
     p.drawComplexControl(QStyle::CC_Slider, option);
 
@@ -573,7 +593,7 @@ bool RenderThemeQStyle::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
         focusOption.rect = r;
         p.drawPrimitive(QStyle::PE_FrameFocusRect, focusOption);
     }
-
+    p.painter->translate(-topLeft);
     return false;
 }
 
@@ -589,11 +609,15 @@ bool RenderThemeQStyle::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
     if (!p.isValid())
         return true;
 
+    const QPoint topLeft = r.location();
+    p.painter->translate(topLeft);
+
     QStyleOptionSlider option;
     initStyleOption(p.widget, option);
     option.subControls = QStyle::SC_SliderHandle;
     ControlPart appearance = initializeCommonQStyleOptions(option, o);
     option.rect = r;
+    option.rect.moveTo(QPoint(0, 0));
     if (appearance == SliderThumbVerticalPart)
         option.orientation = Qt::Vertical;
     if (isPressed(o)) {
@@ -602,7 +626,7 @@ bool RenderThemeQStyle::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
     }
 
     p.drawComplexControl(QStyle::CC_Slider, option);
-
+    p.painter->translate(-topLeft);
     return false;
 }
 

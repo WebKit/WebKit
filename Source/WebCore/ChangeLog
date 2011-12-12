@@ -1,3 +1,23 @@
+2011-12-12  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Rendering issues with sliders and QStyle
+        https://bugs.webkit.org/show_bug.cgi?id=73921
+
+        With QStyle's origins being deeply rooted with widgets,
+        several styles make wrong assumptions, leading to sliders
+        not being painted properly in WebKit. We can solve a lot
+        of problems by systematically translating the painter to
+        the top left corner of the render object.
+
+        Reviewed by Simon Hausmann.
+
+        No new tests. The Qt tests are ran with the Windows
+        style, this fixes some quirks affecting other styles.
+
+        * platform/qt/RenderThemeQStyle.cpp:
+        (WebCore::RenderThemeQStyle::paintSliderTrack):
+        (WebCore::RenderThemeQStyle::paintSliderThumb):
+
 2011-12-12  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream 5 files into WebCore/platform/blackberry
