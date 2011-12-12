@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="main">
+  <ul role="tabset">
+    <li role="tab" aria-selected="true">One</li><li role="tab">Two</li><li role="tab">Three</li>
+  </ul>
+  <div role="tabpanel">
+    <button id="button">This one does nothing</button>
+  </div>
+</div>
+
+<div role="checkbox">checkbox</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that when aria-hidden is toggled, it will clear out the cached children for non-ignored elements that are descendants.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+
+        // Verify we can access the button inside the tab panel.
+        shouldBe("body.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
+
+        // Toggle aria-hidden, and we should not be able to access the same elements anymore.
+        document.getElementById("main").setAttribute("aria-hidden", "true");
+        shouldBe("body.childAtIndex(0).role", "'AXRole: AXCheckBox'");
+
+        // Toggle aria-hidden off again and we should again be able to access elements inside the tab panel.
+        document.getElementById("main").setAttribute("aria-hidden", "false");
+        shouldBe("body.childAtIndex(3).childAtIndex(0).role", "'AXRole: AXButton'");
+
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

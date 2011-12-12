@@ -3532,13 +3532,13 @@ void AccessibilityRenderObject::addChildren()
     
     // add all unignored acc children
     for (RefPtr<AccessibilityObject> obj = firstChild(); obj; obj = obj->nextSibling()) {
-        if (obj->accessibilityIsIgnored()) {
+        
+        // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op), 
+        // or its visibility has changed. In the latter case, this child may have a stale child cached. 
+        // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
+        obj->clearChildren();
 
-            // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op), 
-            // or its visibility has changed. In the latter case, this child may have a stale child cached. 
-            // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
-            obj->clearChildren();
-            
+        if (obj->accessibilityIsIgnored()) {
             AccessibilityChildrenVector children = obj->children();
             unsigned length = children.size();
             for (unsigned i = 0; i < length; ++i)

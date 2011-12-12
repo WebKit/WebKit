@@ -50,6 +50,12 @@ private:
     virtual void detachFromParent() { m_parent = 0; }
 }; 
     
+inline AccessibilityMockObject* toAccessibilityMockObject(AccessibilityObject* object)
+{
+    ASSERT(!object || object->isMockObject());
+    return static_cast<AccessibilityMockObject*>(object);
+}
+    
 } // namespace WebCore 
 
 #endif // AccessibilityMockObject_h

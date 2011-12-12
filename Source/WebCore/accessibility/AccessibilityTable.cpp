@@ -279,6 +279,11 @@ void AccessibilityTable::clearChildren()
     AccessibilityRenderObject::clearChildren();
     m_rows.clear();
     m_columns.clear();
+
+    if (m_headerContainer) {
+        m_headerContainer->detachFromParent();
+        m_headerContainer = 0;
+    }
 }
 
 void AccessibilityTable::addChildren()
@@ -366,12 +371,13 @@ void AccessibilityTable::addChildren()
 AccessibilityObject* AccessibilityTable::headerContainer()
 {
     if (m_headerContainer)
-        return m_headerContainer;
+        return m_headerContainer.get();
     
-    m_headerContainer = static_cast<AccessibilityTableHeaderContainer*>(axObjectCache()->getOrCreate(TableHeaderContainerRole));
-    m_headerContainer->setParent(this);
-    
-    return m_headerContainer;
+    AccessibilityMockObject* tableHeader = toAccessibilityMockObject(axObjectCache()->getOrCreate(TableHeaderContainerRole));
+    tableHeader->setParent(this);
+
+    m_headerContainer = tableHeader;
+    return m_headerContainer.get();
 }
 
 AccessibilityObject::AccessibilityChildrenVector& AccessibilityTable::columns()

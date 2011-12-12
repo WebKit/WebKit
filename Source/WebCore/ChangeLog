@@ -1,3 +1,25 @@
+2011-12-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-hidden inheritance broken when applying to some descendants
+        https://bugs.webkit.org/show_bug.cgi?id=73940
+
+        Reviewed by Darin Adler.
+
+        When adding children, we were not updating the children cache for direct AX descendants.
+        This meant that toggling aria-hidden could result in a stale cache where elements would not be reachable.
+
+        Making this fix also exposed a problem in AccessibilityTable where the AccessibilityHeaderObject was not
+        being managed correctly as a mock element.
+
+        Test: platform/mac/accessibility/aria-hidden-changes-for-non-ignored-elements.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::clearChildren):
+        (WebCore::AccessibilityTable::headerContainer):
+        * accessibility/AccessibilityTable.h:
+
 2011-12-12  Jeremy Apthorp  <jeremya@chromium.org>
 
         When the mouse is dragged out of an :active element, it should lose :hover.
