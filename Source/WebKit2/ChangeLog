@@ -1,3 +1,16 @@
+2011-12-11  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] QQuickWebView missing titleChanged signal tests
+        https://bugs.webkit.org/show_bug.cgi?id=73923
+
+        Reviewed by Simon Hausmann.
+
+        Added tests for QQuickWebView tilteChanged signal.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_titleChanged.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/test3.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-12-11  Anders Carlsson  <andersca@apple.com>
 
         Crash when trying to garbage collect JavaScript objects
