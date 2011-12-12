@@ -509,6 +509,79 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForTransparentChild)
     EXPECT_EQ(parent->drawableContentRect(), IntRect());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyClipRectCullsRenderSurfaces)
+{
+    // The entire subtree of layers that are outside the clipRect should be culled away,
+    // and should not affect the renderSurfaceLayerList.
+    //
+    // The test tree is set up as follows:
+    //  - all layers except the leafNodes are forced to be a new renderSurface that have something to draw.
+    //  - parent is a large container layer.
+    //  - child has masksToBounds=true to cause clipping.
+    //  - grandChild is positioned outside of the child's bounds
+    //  - greatGrandChild is also kept outside child's bounds.
+    //
+    // In this configuration, grandChild and greatGrandChild are completely outside the
+    // clipRect, and they should never get scheduled on the list of renderSurfaces.
+    //
+
+    const TransformationMatrix identityMatrix;
+    RefPtr<LayerChromium> parent = LayerChromium::create(0);
+    RefPtr<LayerChromium> child = LayerChromium::create(0);
+    RefPtr<LayerChromium> grandChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> greatGrandChild = LayerChromium::create(0);
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode1 = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    RefPtr<LayerChromiumWithForcedDrawsContent> leafNode2 = adoptRef(new LayerChromiumWithForcedDrawsContent(0));
+    parent->createRenderSurface();
+    parent->addChild(child);
+    child->addChild(grandChild);
+    grandChild->addChild(greatGrandChild);
+
+    // leafNode1 ensures that parent and child are kept on the renderSurfaceLayerList,
+    // even though grandChild and greatGrandChild should be clipped.
+    child->addChild(leafNode1);
+    greatGrandChild->addChild(leafNode2);
+
+    setLayerPropertiesForTesting(parent.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+    setLayerPropertiesForTesting(grandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(45, 45), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(greatGrandChild.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(leafNode1.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(500, 500), false);
+    setLayerPropertiesForTesting(leafNode2.get(), identityMatrix, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(20, 20), false);
+
+    child->setMasksToBounds(true);
+    child->setOpacity(0.4);
+    grandChild->setOpacity(0.5);
+    greatGrandChild->setOpacity(0.4);
+
+    // Contaminate the grandChild and greatGrandChild's clipRect to reproduce the crash
+    // bug found in http://code.google.com/p/chromium/issues/detail?id=106734. In this
+    // bug, the clipRect was not re-computed for layers that create RenderSurfaces, and
+    // therefore leafNode2 thinks it should draw itself. As a result, an extra
+    // renderSurface remains on the renderSurfaceLayerList, which violates the assumption
+    // that an empty renderSurface will always be the last item on the list, which
+    // ultimately caused the crash.
+    //
+    // FIXME: it is also useful to test with this commented out. Eventually we should
+    // create several test cases that test clipRect/drawableContentRect computation.
+    child->setClipRect(IntRect(IntPoint::zero(), IntSize(20, 20)));
+    greatGrandChild->setClipRect(IntRect(IntPoint::zero(), IntSize(1234, 1234)));
+
+    Vector<RefPtr<LayerChromium> > renderSurfaceLayerList;
+    Vector<RefPtr<LayerChromium> > dummyLayerList;
+    int dummyMaxTextureSize = 512;
+
+    // FIXME: when we fix this "root-layer special case" behavior in CCLayerTreeHost, we will have to fix it here, too.
+    parent->setClipRect(IntRect(IntPoint::zero(), parent->bounds()));
+    renderSurfaceLayerList.append(parent);
+
+    CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(parent.get(), parent.get(), identityMatrix, identityMatrix, renderSurfaceLayerList, dummyLayerList, dummyMaxTextureSize);
+
+    ASSERT_EQ(2U, renderSurfaceLayerList.size());
+    EXPECT_EQ(parent->id(), renderSurfaceLayerList[0]->id());
+    EXPECT_EQ(child->id(), renderSurfaceLayerList[1]->id());
+}
+
 // FIXME:
 // continue working on https://bugs.webkit.org/show_bug.cgi?id=68942
 //  - add a test to verify clipping that changes the "center point"

@@ -434,10 +434,17 @@ static bool calculateDrawTransformsAndVisibilityInternal(LayerType* layer, Layer
             renderSurface->setReplicaDrawTransform(replicaDrawTransform);
         }
 
-        // If a render surface has no layer list, then it and none of its
-        // children needed to get drawn. Therefore, it should be the last layer
-        // in the render surface list and we can trivially remove it.
+        // If a render surface has no layer list, then it and none of its children needed to get drawn.
         if (!layer->renderSurface()->layerList().size()) {
+            // FIXME: Originally we asserted that this layer was already at the end of the
+            //        list, and only needed to remove that layer. For now, we remove the
+            //        entire subtree of surfaces to fix a crash bug. The root cause is
+            //        https://bugs.webkit.org/show_bug.cgi?id=74147 and we should be able
+            //        to put the original assert after fixing that.
+            while (renderSurfaceLayerList.last() != layer) {
+                renderSurfaceLayerList.last()->clearRenderSurface();
+                renderSurfaceLayerList.removeLast();
+            }
             ASSERT(renderSurfaceLayerList.last() == layer);
             renderSurfaceLayerList.removeLast();
             layer->clearRenderSurface();

@@ -1,3 +1,20 @@
+2011-12-12  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Remove assumption that empty surface is always at end of list
+        https://bugs.webkit.org/show_bug.cgi?id=74037
+
+        Reviewed by James Robinson.
+
+        Test case added to CCLayerTreeHostCommonTest.cpp, which reproduces
+        a crash reported in http://code.google.com/p/chromium/issues/detail?id=106734
+
+        This patch fixes the crash in a less risky way to be merged into
+        m17, but the root of the issue needs to be addressed in a
+        follow-up patch.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsAndVisibilityInternal):
+
 2011-12-12  Simon Fraser  <simon.fraser@apple.com>
 
         Share code that checks for matching sets of transform operations

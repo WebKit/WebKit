@@ -1,3 +1,13 @@
+2011-12-12  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Remove assumption that empty surface is always at end of list
+        https://bugs.webkit.org/show_bug.cgi?id=74037
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        (WebCore::TEST):
+
 2011-12-09  Daniel Cheng  <dcheng@chromium.org>
 
         [chromium] Remove BufferDrag from WebClipboard::Buffer enum.
