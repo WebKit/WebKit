@@ -41,16 +41,11 @@
 #include "QtWebPageEventHandler.h"
 #include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
-#include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
-#include "WebEditCommandProxy.h"
 #include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
-#include <QDrag>
-#include <QMimeData>
 #include <QUndoStack>
-#include <WebCore/DragData.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -175,10 +170,6 @@ void QtWebPageProxy::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
         m_undoStack->undo();
     else
         m_undoStack->redo();
-}
-
-void QtWebPageProxy::selectionChanged(bool, bool, bool, bool)
-{
 }
 
 PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*)

@@ -23,7 +23,6 @@
 
 #include "DrawingAreaProxy.h"
 #include "QtWebContext.h"
-#include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
@@ -37,7 +36,6 @@ QT_END_NAMESPACE
 class QtPageClient;
 class QQuickWebPage;
 class QQuickWebView;
-class QtWebError;
 class QtWebPageEventHandler;
 class QWebDownloadItem;
 class QWebNavigationHistory;
@@ -54,20 +52,6 @@ class QtWebPageProxy : public QObject {
     Q_OBJECT
 
 public:
-    enum WebAction {
-        NoWebAction = - 1,
-
-        Back,
-        Forward,
-        Stop,
-        Reload,
-
-        Undo,
-        Redo,
-
-        WebActionCount
-    };
-
     QtWebPageProxy(QQuickWebPage*, QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
@@ -90,7 +74,6 @@ public:
     bool canUndoRedo(WebPageProxy::UndoOrRedo);
     void executeUndoRedo(WebPageProxy::UndoOrRedo);
 
-    void selectionChanged(bool, bool, bool, bool);
     PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
 
     void didReceiveMessageFromNavigatorQtObject(const String&);
@@ -107,7 +90,6 @@ public:
     void reload();
 
     void updateNavigationState();
-    void updateEditorActions();
 
     WKPageRef pageRef() const;
 
@@ -168,10 +150,6 @@ protected:
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
 
 private:
-#if ENABLE(TOUCH_EVENTS)
-    void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
-#endif
-
     RefPtr<QtWebContext> m_context;
     OwnPtr<QWebNavigationHistory> m_navigationHistory;
 

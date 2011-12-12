@@ -1,3 +1,13 @@
+2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt][WK2] Remove dead code from QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=74296
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-12-12  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix.
