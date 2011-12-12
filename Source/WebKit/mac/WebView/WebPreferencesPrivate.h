@@ -219,6 +219,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (NSString *)pictographFontFamily;
 - (void)setPictographFontFamily:(NSString *)family;
 
+- (BOOL)pageCacheSupportsPlugins;
+- (void)setPageCacheSupportsPlugins:(BOOL)flag;
+
 // This is a global setting.
 - (BOOL)mockScrollbarsEnabled;
 - (void)setMockScrollbarsEnabled:(BOOL)flag;

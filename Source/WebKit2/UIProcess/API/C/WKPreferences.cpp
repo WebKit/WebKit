@@ -492,6 +492,16 @@ bool WKPreferencesGetPageCacheEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->usesPageCache();
 }
 
+void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef, bool pageCacheSupportsPlugins)
+{
+    toImpl(preferencesRef)->setPageCacheSupportsPlugins(pageCacheSupportsPlugins);
+}
+
+bool WKPreferencesGetPageCacheSupportsPlugins(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->pageCacheSupportsPlugins();
+}
+
 void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setPaginateDuringLayoutEnabled(enabled);

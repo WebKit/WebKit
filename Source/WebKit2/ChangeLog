@@ -1,3 +1,22 @@
+2011-12-12  Brady Eidson  <beidson@apple.com>
+
+        Page cache should support pages with plugins.
+        <rdar://problem/5190122> and https://bugs.webkit.org/show_bug.cgi?id=13634
+
+        Expose a WebKit2 preference for the page cache supporting plugins (on by default).
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesStore.h:
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPageCacheSupportsPlugins):
+        (WKPreferencesGetPageCacheSupportsPlugins):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-12-12  Sam Weinig  <sam@webkit.org>
 
         Add WKConnection objective-c wrapper around WKConnectionRef

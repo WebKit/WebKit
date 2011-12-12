@@ -22,6 +22,8 @@
 #define HTMLPlugInImageElement_h
 
 #include "HTMLPlugInElement.h"
+
+#include "RenderStyle.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -42,6 +44,8 @@ enum PreferPlugInsForImagesOption {
 // Base class for HTMLObjectElement and HTMLEmbedElement
 class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
+    virtual ~HTMLPlugInImageElement() OVERRIDE;
+
     RenderEmbeddedObject* renderEmbeddedObject() const;
 
     virtual void updateWidget(PluginCreationOption) = 0;
@@ -69,7 +73,13 @@ protected:
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
-    virtual void willMoveToNewOwnerDocument();
+    virtual void willMoveToNewOwnerDocument() OVERRIDE;
+    virtual void didMoveToNewOwnerDocument() OVERRIDE;
+    
+    virtual void documentWillBecomeInactive() OVERRIDE;
+    virtual void documentDidBecomeActive() OVERRIDE;
+
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -82,6 +92,8 @@ private:
     
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
+    bool m_needsDocumentActivationCallbacks;
+    RefPtr<RenderStyle> m_customStyleForPageCache;
 };
 
 } // namespace WebCore

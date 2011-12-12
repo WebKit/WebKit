@@ -691,7 +691,8 @@ protected:
     void setHasCustomWillOrDidRecalcStyle() { setFlag(true, HasCustomWillOrDidRecalcStyleFlag); }
     
     bool hasCustomStyleForRenderer() const { return getFlag(HasCustomStyleForRendererFlag); }
-    void setHasCustomStyleForRenderer() { setFlag(true, HasCustomStyleForRendererFlag); } 
+    void setHasCustomStyleForRenderer() { setFlag(true, HasCustomStyleForRendererFlag); }
+    void clearHasCustomStyleForRenderer() { clearFlag(HasCustomStyleForRendererFlag); }
 
 private:
     // Do not use this method to change the document of a node until after the node has been

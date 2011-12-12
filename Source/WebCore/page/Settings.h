@@ -229,6 +229,9 @@ namespace WebCore {
 
         void setUsesPageCache(bool);
         bool usesPageCache() const { return m_usesPageCache; }
+        
+        void setPageCacheSupportsPlugins(bool pageCacheSupportsPlugins) { m_pageCacheSupportsPlugins = pageCacheSupportsPlugins; }
+        bool pageCacheSupportsPlugins() const { return m_pageCacheSupportsPlugins; }
 
         void setShrinksStandaloneImagesToFit(bool);
         bool shrinksStandaloneImagesToFit() const { return m_shrinksStandaloneImagesToFit; }
@@ -561,7 +564,8 @@ namespace WebCore {
         bool m_needsLeopardMailQuirks : 1;
         bool m_isDOMPasteAllowed : 1;
         bool m_shrinksStandaloneImagesToFit : 1;
-        bool m_usesPageCache: 1;
+        bool m_usesPageCache : 1;
+        bool m_pageCacheSupportsPlugins : 1;
         bool m_showsURLsInToolTips : 1;
         bool m_showsToolTipOverTruncatedText : 1;
         bool m_forceFTPDirectoryListings : 1;

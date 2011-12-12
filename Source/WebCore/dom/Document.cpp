@@ -3940,8 +3940,10 @@ void Document::documentWillBecomeInactive()
 
 void Document::documentDidBecomeActive() 
 {
-    HashSet<Element*>::iterator end = m_documentActivationCallbackElements.end();
-    for (HashSet<Element*>::iterator i = m_documentActivationCallbackElements.begin(); i != end; ++i)
+    Vector<Element*> elements;
+    copyToVector(m_documentActivationCallbackElements, elements);
+    Vector<Element*>::iterator end = elements.end();
+    for (Vector<Element*>::iterator i = elements.begin(); i != end; ++i)
         (*i)->documentDidBecomeActive();
 
 #if USE(ACCELERATED_COMPOSITING)

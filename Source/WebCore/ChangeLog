@@ -1,3 +1,66 @@
+2011-12-12  Brady Eidson  <beidson@apple.com>
+
+        Page cache should support pages with plugins.
+        <rdar://problem/5190122> and https://bugs.webkit.org/show_bug.cgi?id=13634
+
+        Reviewed by Anders Carlsson.
+
+        By making plugin elements renderers go display:none when entering the page cache,
+        we destroy the plug-in in a cross platform way as well as handle invalidating script
+        objects created by that plugin.
+
+        By restoring the original style when leaving the page cache and forcing a style recalc
+        on the plugin element, the plugin is gracefully reinstantiated when the user goes back.
+
+        Test: plugins/netscape-plugin-page-cache-works.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::documentDidBecomeActive): Copy this collection before iterating over
+          it, as the callbacks might result in mutating the set.
+
+        * dom/Node.h:
+        (WebCore::Node::setHasCustomStyleForRenderer):
+        (WebCore::Node::clearHasCustomStyleForRenderer): Expose the ability to stop using a 
+          custom renderer and go back to the default renderer.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): Move the document inactivation call to the same place
+          we suspend active DOM objects. It is important this call be *after* the beforeunload event
+          is dispatched, and was coincidental non of the elements that using Document activation
+          had run in to this problem yet.
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame): If the page contains plugins but
+          the PageCacheSupportsPlugins setting is true, allow this page.
+
+        Kill and recreate the plugin by listening for Document activation callbacks and setting a custom
+        display:none render style:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::~HTMLPlugInImageElement): Unregister for document activation
+          callbacks.
+        (WebCore::HTMLPlugInImageElement::createRenderer): Once a renderer (ie. plugin instance) is
+          created, this element needs Document (in)activation callbacks.
+        (WebCore::HTMLPlugInImageElement::willMoveToNewOwnerDocument): Manage Document activation 
+          callback registration.
+        (WebCore::HTMLPlugInImageElement::didMoveToNewOwnerDocument): Ditto.
+        (WebCore::HTMLPlugInImageElement::documentWillBecomeInactive): Clone the element's current style
+          and set the clone's display value to None. Start using this custom style and force a style
+          recall. This destroys the renderer and therefore the plugin instance.
+        (WebCore::HTMLPlugInImageElement::documentDidBecomeActive): Stop using the custom style and
+          force a style recall to reinstantiate the plugin.
+        (WebCore::HTMLPlugInImageElement::customStyleForRenderer): Return the stand-in style that has
+          display:none set.
+        * html/HTMLPlugInImageElement.h:
+
+        Add a setting that allows runtime configuration of whether or not the page cache supports plugins:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setPageCacheSupportsPlugins):
+        (WebCore::Settings::pageCacheSupportsPlugins):
+
 2011-12-12  Ojan Vafai  <ojan@chromium.org>
 
         r102234 caused RuleData to use 33 bits in its bitmask

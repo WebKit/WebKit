@@ -1,0 +1,83 @@
+<html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    layoutTestController.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+}
+
+var savedTestObject = null;
+var currentTestStage = null;
+var hasHidden = false;
+
+function runTest()
+{
+    var plugin = document.getElementById("testPlugin");
+    
+    if (!savedTestObject)
+        savedTestObject = plugin.testObject;
+
+    try {
+        log("Accessing testObject.property");
+        savedTestObject.property;
+        log("Accessed testObject.property without exception");
+    } catch (e) {
+        log("While accessing testObject.property: " + e);
+    }
+
+    try {
+        log("Assigning to testObject.property");
+        savedTestObject.property = 'hello';
+        log("Assigned to testObject.property without exception");
+    } catch (e) {
+        log("While assigning to testObject.property: " + e);
+    }
+    
+    if (!hasHidden)
+        setTimeout("window.location.href = 'resources/go-back.html'", 0);
+    else {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    
+}
+
+function loaded() {
+    currentTestStage = "Initial load";
+    log("Page loaded");
+}
+
+function hidden() {
+    log("Page hidden");
+    hasHidden = true;
+}
+
+function shown() {
+    if (hasHidden)
+        currentTestStage = "Restored from page cache"
+    log("Page shown");
+}
+
+function pluginCreated()
+{
+    log("Plugin created");
+    setTimeout("runTest()", 0);
+}
+
+function log(message)
+{
+   document.getElementById("logging").innerHTML += currentTestStage + ": " + message + "<br>";
+}
+</script>
+
+<body onload="loaded()" onpagehide="hidden();" onpageshow="shown();">
+This tests that pages with plugins behave properly with the page cache.  This includes:<br>
+-The plugin being destroyed upon navigation away from the page.<br>
+-The plugin being recreated upon restoring the page from the page cache.<br>
+-Plugin script objects accessed the first time the plugin was created are appropriately invalidated after the page has been restored from the page cache.<br><br>
+Unfortunately there is no reliable way to get affirmative confirmation that the plugin was destroyed upon navigation away from the page.  For now we'll assume recreation means it had successfully been destroyed.<br>
+<embed id="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200" onNew="pluginCreated()"></embed><br>
+<div id="logging"></div>
+</body>
+</html>

@@ -1,3 +1,22 @@
+2011-12-12  Brady Eidson  <beidson@apple.com>
+
+        Page cache should support pages with plugins.
+        <rdar://problem/5190122> and https://bugs.webkit.org/show_bug.cgi?id=13634
+
+        Expose a WebKit preference for the page cache supporting plugins (on by default).
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences pageCacheSupportsPlugins]):
+        (-[WebPreferences setPageCacheSupportsPlugins:]):
+        * WebView/WebPreferencesPrivate.h:
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2011-12-12  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/10328474> Text highlight changes to gray selection color when menu extra is shown

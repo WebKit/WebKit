@@ -1557,6 +1557,17 @@ static NSString *classIBCreatorID = nil;
     [self _setStringValue: family forKey: WebKitPictographFontPreferenceKey];
 }
 
+- (BOOL)pageCacheSupportsPlugins
+{
+    return [self _boolValueForKey:WebKitPageCacheSupportsPluginsPreferenceKey];
+}
+
+- (void)setPageCacheSupportsPlugins:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitPageCacheSupportsPluginsPreferenceKey];
+
+}
+
 - (void)setSuppressIncrementalRendering:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitSuppressIncrementalRenderingKey];

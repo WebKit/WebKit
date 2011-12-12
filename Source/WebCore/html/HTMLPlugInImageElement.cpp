@@ -27,6 +27,7 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "Image.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
@@ -42,8 +43,15 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     // the same codepath in this class.
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
+    , m_needsDocumentActivationCallbacks(false)
 {
     setHasCustomWillOrDidRecalcStyle();
+}
+
+HTMLPlugInImageElement::~HTMLPlugInImageElement()
+{
+    if (m_needsDocumentActivationCallbacks)
+        document()->unregisterForDocumentActivationCallbacks(this);
 }
 
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
@@ -115,6 +123,13 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
 
 RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+    // Once a PlugIn Element creates its renderer, it needs to be told when the Document goes
+    // inactive or reactivates so it can clear the renderer before going into the page cache.
+    if (!m_needsDocumentActivationCallbacks) {
+        m_needsDocumentActivationCallbacks = true;
+        document()->registerForDocumentActivationCallbacks(this);
+    }
+    
     // Fallback content breaks the DOM->Renderer class relationship of this
     // class and all superclasses because createObject won't necessarily
     // return a RenderEmbeddedObject, RenderPart or even RenderWidget.
@@ -189,9 +204,56 @@ void HTMLPlugInImageElement::finishParsingChildren()
 
 void HTMLPlugInImageElement::willMoveToNewOwnerDocument()
 {
+    if (m_needsDocumentActivationCallbacks)
+        document()->unregisterForDocumentActivationCallbacks(this);
+
     if (m_imageLoader)
         m_imageLoader->elementWillMoveToNewOwnerDocument();
+
     HTMLPlugInElement::willMoveToNewOwnerDocument();
+}
+
+void HTMLPlugInImageElement::didMoveToNewOwnerDocument()
+{
+    if (m_needsDocumentActivationCallbacks)
+        document()->registerForDocumentActivationCallbacks(this);   
+    
+    HTMLPlugInElement::didMoveToNewOwnerDocument();
+}
+
+void HTMLPlugInImageElement::documentWillBecomeInactive()
+{
+    if (RenderStyle* rs = renderStyle()) {
+        m_customStyleForPageCache = RenderStyle::clone(rs);
+        m_customStyleForPageCache->setDisplay(NONE);
+    }
+
+    setHasCustomStyleForRenderer();
+
+    if (m_customStyleForPageCache)
+        recalcStyle(Force);
+        
+    HTMLPlugInElement::documentWillBecomeInactive();
+}
+
+void HTMLPlugInImageElement::documentDidBecomeActive()
+{
+    clearHasCustomStyleForRenderer();
+
+    if (m_customStyleForPageCache) {
+        m_customStyleForPageCache = 0;
+        recalcStyle(Force);
+    }
+    
+    HTMLPlugInElement::documentDidBecomeActive();
+}
+
+PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()
+{
+    if (!m_customStyleForPageCache)
+        return renderStyle();
+
+    return m_customStyleForPageCache;
 }
 
 void HTMLPlugInImageElement::updateWidgetCallback(Node* n, unsigned)

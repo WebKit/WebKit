@@ -1,0 +1,14 @@
+<script>
+function loaded()
+{
+    setTimeout("history.go(-1)", 0);
+}
+</script>
+<body onload="loaded();">This page should go back to the previous page.</body>
+<script>
+if (history.length == 0) {
+    document.innerHTML += "<br> But it won't work because there is no back history!";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
