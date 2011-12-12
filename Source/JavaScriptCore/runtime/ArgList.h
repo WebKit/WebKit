@@ -58,7 +58,7 @@ namespace JSC {
             if (m_markSet)
                 m_markSet->remove(this);
 
-            if (m_capacity != inlineCapacity)
+            if (m_capacity != static_cast<int>(inlineCapacity))
                 delete [] &m_buffer[-(m_capacity - 1)];
         }
 

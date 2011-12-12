@@ -1,5 +1,12 @@
 2011-12-11  Sam Weinig  <sam@webkit.org>
 
+        Fix another signed vs. unsigned warning
+
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer):
+
+2011-12-11  Sam Weinig  <sam@webkit.org>
+
         Fix a signed vs. unsigned warning.
 
         * runtime/ArgList.cpp:
