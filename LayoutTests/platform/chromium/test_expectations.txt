@@ -3871,3 +3871,5 @@ BUGWK74157 MAC : transitions/cross-fade-border-image.html = PASS FAIL
 BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE
 
 BUGWK74317 LINUX : transitions/cross-fade-border-image.html = PASS CRASH
+
+BUGWK74357 : plugins/netscape-plugin-page-cache-works.html = TEXT
