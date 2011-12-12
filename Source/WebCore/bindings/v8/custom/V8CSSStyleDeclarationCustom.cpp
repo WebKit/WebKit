@@ -32,6 +32,7 @@
 #include "V8CSSStyleDeclaration.h"
 
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSValue.h"
 #include "CSSPrimitiveValue.h"
@@ -47,6 +48,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
+
+using namespace WTF;
+using namespace std;
 
 namespace WebCore {
 
@@ -152,6 +156,42 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
     return propInfo;
 }
 
+v8::Handle<v8::Array> V8CSSStyleDeclaration::namedPropertyEnumerator(const v8::AccessorInfo& info)
+{
+    typedef Vector<String, numCSSProperties - 1> PreAllocatedPropertyVector;
+    DEFINE_STATIC_LOCAL(PreAllocatedPropertyVector, propertyNames, ());
+    DEFINE_STATIC_LOCAL(String, filterString, ("filter"));
+    static unsigned propertyNamesLength = 0;
+
+    if (propertyNames.isEmpty()) {
+        for (int id = firstCSSProperty; id < firstCSSProperty + numCSSProperties; ++id) {
+            String jsPropertyName = getJSPropertyName(static_cast<CSSPropertyID>(id));
+            // The "filter" property is present in the list but should not be provided in the enumeration.
+            // See a comment in the V8CSSStyleDeclaration::namedPropertyGetter() implementation.
+            // FIXME: this should be removed (see bug 73426).
+            if (jsPropertyName != filterString)
+                propertyNames.append(jsPropertyName);
+        }
+        sort(propertyNames.begin(), propertyNames.end(), codePointCompareLessThan);
+        propertyNamesLength = propertyNames.size();
+    }
+
+    v8::Handle<v8::Array> properties = v8::Array::New(propertyNamesLength);
+    for (unsigned i = 0; i < propertyNamesLength; ++i) {
+        String key = propertyNames.at(i);
+        ASSERT(!key.isNull());
+        properties->Set(v8::Integer::New(i), v8String(key));
+    }
+
+    return properties;
+}
+
+v8::Handle<v8::Integer> V8CSSStyleDeclaration::namedPropertyQuery(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.CSSStyleDeclaration.NamedPropertyQuery");
+    return v8::Integer::New(v8::None);
+}
+
 v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.CSSStyleDeclaration.NamedPropertyGetter");
@@ -160,14 +200,13 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::S
         return notHandledByInterceptor();
 
     // Search the style declaration.
-    CSSStyleDeclaration* imp = V8CSSStyleDeclaration::toNative(info.Holder());
     CSSPropertyInfo* propInfo = cssPropertyInfo(name);
 
     // Do not handle non-property names.
     if (!propInfo)
         return notHandledByInterceptor();
 
-
+    CSSStyleDeclaration* imp = V8CSSStyleDeclaration::toNative(info.Holder());
     RefPtr<CSSValue> cssValue = imp->getPropertyCSSValue(propInfo->propID);
     if (cssValue) {
         if (propInfo->hadPixelOrPosPrefix &&
