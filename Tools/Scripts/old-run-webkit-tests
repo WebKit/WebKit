@@ -232,21 +232,7 @@ if (isAppleMacWebKit()) {
         $platform = "mac";
     }
 } elsif (isQt()) {
-    if (isDarwin()) {
-        $platform = "qt-mac";
-    } elsif (isARM()) {
-        $platform = "qt-arm";
-    } elsif (getQtVersion() eq "4.8") {
-        $platform = "qt-4.8";
-    } elsif (getQtVersion() eq "5.0") {
-        $platform = "qt-5.0";
-    } elsif (isLinux()) {
-        $platform = "qt-linux";
-    } elsif (isWindows() || isCygwin()) {
-        $platform = "qt-win";
-    } else {
-        $platform = "qt";
-    }
+    $platform = "qt";
 } elsif (isGtk()) {
     $platform = "gtk";
 } elsif (isWx()) {
@@ -2198,8 +2184,32 @@ sub buildPlatformResultHierarchy()
         if ($platform eq "wincairo") {
             @platforms = $platform;
         }
-    } elsif ($platform =~ /^qt-/) {
-        push @platforms, $platform;
+    } elsif ($platform =~ /^qt/) {
+        if ($platform eq "qt-wk2") {
+            push @platforms, $platform;
+        }
+
+        if (isARM() || $platform eq "qt-arm") {
+            push @platforms, "qt-arm";
+        }
+
+        if (isDarwin() || $platform eq "qt-mac") {
+            push @platforms, "qt-mac";
+        }
+        elsif (isWindows() || isCygwin() || $platform eq "qt-win") {
+            push @platforms, "qt-win";
+        }
+        elsif (isLinux() || $platform eq "qt-linux") {
+            push @platforms, "qt-linux";
+        }
+
+        if (getQtVersion() eq "4.8" || $platform eq "qt-4.8") {
+            push @platforms, "qt-4.8";
+        }
+        elsif (getQtVersion() eq "5.0" || $platform eq "qt-5.0") {
+            push @platforms, "qt-5.0";
+        }
+
         push @platforms, "qt";
     } elsif ($platform =~ /^gtk-/) {
         push @platforms, $platform;
@@ -2223,18 +2233,34 @@ sub buildPlatformTestHierarchy(@)
 {
     my (@platformHierarchy) = @_;
 
-    my $wk2Platform;
-    for (my $i = 0; $i < @platformHierarchy; ++$i) {
-        if ($platformHierarchy[$i] =~ /-wk2/) {
-            $wk2Platform = splice @platformHierarchy, $i, 1;
-            last;
+    my @result;
+    if ($platform =~ /^qt/) {
+        for (my $i = 0; $i < @platformHierarchy; ++$i) {
+           push @result, $platformHierarchy[$i];
         }
+    } else {
+        my $wk2Platform;
+        for (my $i = 0; $i < @platformHierarchy; ++$i) {
+            if ($platformHierarchy[$i] =~ /-wk2/) {
+                $wk2Platform = splice @platformHierarchy, $i, 1;
+                last;
+            }
+        }
+
+       push @result, $platformHierarchy[0];
+       push @result, $wk2Platform if defined $wk2Platform;
+       push @result, $platformHierarchy[$#platformHierarchy] if @platformHierarchy >= 2;
     }
 
-    my @result;
-    push @result, $platformHierarchy[0];
-    push @result, $wk2Platform if defined $wk2Platform;
-    push @result, $platformHierarchy[$#platformHierarchy] if @platformHierarchy >= 2;
+    if ($verbose) {
+        my @searchPaths;
+        foreach my $searchPath (@result) {
+            my ($dir, $name) = splitpath($searchPath);
+            push @searchPaths, $name;
+        }
+        my $searchPathHierarchy = join(' -> ', @searchPaths);
+        print "Baseline search path: $searchPathHierarchy\n";
+    }
 
     return @result;
 }
@@ -2491,6 +2517,12 @@ sub readSkippedFiles($)
 
     # Add Qt WK1-only skipped tests.
     push(@skippedFileDirectories, catdir($platformBaseDirectory, "qt-wk1")) if (isQt() && !$useWebKitTestRunner);
+
+    if ($verbose) {
+        foreach my $skippedPath (@skippedFileDirectories) {
+            print "Using Skipped file: $skippedPath\n";
+        }
+    }
 
     foreach my $level (@skippedFileDirectories) {
         if (open SKIPPED, "<", "$level/Skipped") {

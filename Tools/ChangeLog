@@ -1,3 +1,19 @@
+2011-12-12  Ádám Kallai  <Kallai.Adam@stud.u-szeged.hu>
+
+        [Qt] Fix skip list search path and expected file search path in ORWT
+        https://bugs.webkit.org/show_bug.cgi?id=74281
+
+        Expected file search path fixed.
+
+        Print all used skipped list and expected search path in verbose mode similar to NRWT.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/old-run-webkit-tests:
+        (buildPlatformResultHierarchy):
+        (buildPlatformTestHierarchy):
+        (readSkippedFiles):
+
 2011-12-12  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
 
         [Qt] Missing layoutTestController.dumpWillCacheResponse
