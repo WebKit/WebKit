@@ -1,3 +1,24 @@
+2011-12-11  Shinya Kawanaka  <shinyak@google.com>
+
+        Asynchronous path synchronous path of SpellChecker should share the code to mark misspellings.
+        https://bugs.webkit.org/show_bug.cgi?id=73616
+
+        Reviewed by Hajime Morita.
+
+        Asynchronous spellchecking path should call the same method for the synchronous spellchecking path
+        to mark misspellings.
+
+        No new tests. Covered by existing tests.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markAndReplaceFor):
+          Takes SpellCheckRequest object.
+        * editing/Editor.h:
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheck):
+          Calls the same method of synchronous spellchecking path.
+
 2011-12-11  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSS display property in CSSStyleApplyProperty.

@@ -2015,24 +2015,30 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
     TextCheckingParagraph paragraphToCheck(rangeToCheck);
     if (paragraphToCheck.isRangeEmpty() || paragraphToCheck.isEmpty())
         return;
+    RefPtr<Range> paragraphRange = paragraphToCheck.paragraphRange();
 
     bool asynchronous = m_frame && m_frame->settings() && m_frame->settings()->asynchronousSpellCheckingEnabled() && !shouldShowCorrectionPanel;
+
+    // In asynchronous mode, we intentionally check paragraph-wide sentence.
+    RefPtr<SpellCheckRequest> request = SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), asynchronous ? paragraphRange : rangeToCheck, paragraphRange);
+
     if (asynchronous) {
-        // In asynchronous mode, we intentionally check paragraph-wide sentence.
-        RefPtr<Range> paragraphRange = paragraphToCheck.paragraphRange();
-        m_spellChecker->requestCheckingFor(SpellCheckRequest::create(resolveTextCheckingTypeMask(textCheckingOptions), paragraphRange, paragraphRange));
+        m_spellChecker->requestCheckingFor(request);
         return;
     }
 
     Vector<TextCheckingResult> results;
     checkTextOfParagraph(textChecker(), paragraphToCheck.textCharacters(), paragraphToCheck.textLength(),
         resolveTextCheckingTypeMask(textCheckingOptions), results);
-    markAndReplaceFor(textCheckingOptions, results, rangeToCheck, paragraphToCheck.paragraphRange());
+    markAndReplaceFor(request, results);
 }
 
-void Editor::markAndReplaceFor(TextCheckingTypeMask textCheckingOptions, const Vector<TextCheckingResult>& results, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange)
+void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vector<TextCheckingResult>& results)
 {
-    TextCheckingParagraph paragraph(checkingRange, paragraphRange);
+    ASSERT(request);
+
+    TextCheckingTypeMask textCheckingOptions = request->mask();
+    TextCheckingParagraph paragraph(request->checkingRange(), request->paragraphRange());
 
     bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;
     bool shouldMarkGrammar = textCheckingOptions & TextCheckingTypeGrammar;

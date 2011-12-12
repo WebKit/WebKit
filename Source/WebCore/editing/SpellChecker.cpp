@@ -163,37 +163,6 @@ void SpellChecker::enqueueRequest(PassRefPtr<SpellCheckRequest> request)
     m_requestQueue.append(request);
 }
 
-static bool forwardIterator(PositionIterator& iterator, int distance)
-{
-    int remaining = distance;
-    while (!iterator.atEnd()) {
-        if (iterator.node()->isCharacterDataNode()) {
-            int length = lastOffsetForEditing(iterator.node());
-            int last = length - iterator.offsetInLeafNode();
-            if (remaining < last) {
-                iterator.setOffsetInLeafNode(iterator.offsetInLeafNode() + remaining);
-                return true;
-            }
-
-            remaining -= last;
-            iterator.setOffsetInLeafNode(iterator.offsetInLeafNode() + last);
-        }
-
-        iterator.increment();
-    }
-
-    return false;    
-}
-
-static DocumentMarker::MarkerType toMarkerType(TextCheckingType type)
-{
-    if (type == TextCheckingTypeSpelling)
-        return DocumentMarker::Spelling;
-    ASSERT(type == TextCheckingTypeGrammar);
-    return DocumentMarker::Grammar;
-}
-
-// Currenntly ignoring TextCheckingResult::details but should be handled. See Bug 56368.
 void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& results)
 {
     ASSERT(m_processingRequest);
@@ -203,34 +172,7 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
         return;
     }
 
-    int startOffset = 0;
-    PositionIterator start = m_processingRequest->checkingRange()->startPosition();
-    for (size_t i = 0; i < results.size(); ++i) {
-        if (results[i].type != TextCheckingTypeSpelling && results[i].type != TextCheckingTypeGrammar)
-            continue;
-
-        // To avoid moving the position backward, we assume the given results are sorted with
-        // startOffset as the ones returned by [NSSpellChecker requestCheckingOfString:].
-        ASSERT(startOffset <= results[i].location);
-        if (!forwardIterator(start, results[i].location - startOffset))
-            break;
-        PositionIterator end = start;
-        if (!forwardIterator(end, results[i].length))
-            break;
-
-        // Users or JavaScript applications may change text while a spell-checker checks its
-        // spellings in the background. To avoid adding markers to the words modified by users or
-        // JavaScript applications, retrieve the words in the specified region and compare them with
-        // the original ones.
-        RefPtr<Range> range = Range::create(m_processingRequest->checkingRange()->ownerDocument(), start, end);
-        // FIXME: Use textContent() compatible string conversion.
-        String destination = range->text();
-        String source = m_processingRequest->text().substring(results[i].location, results[i].length);
-        if (destination == source)
-            m_processingRequest->checkingRange()->ownerDocument()->markers()->addMarker(range.get(), toMarkerType(results[i].type));
-
-        startOffset = results[i].location;
-    }
+    m_frame->editor()->markAndReplaceFor(m_processingRequest, results);
 
     if (m_lastProcessedSequence < sequence)
         m_lastProcessedSequence = sequence;

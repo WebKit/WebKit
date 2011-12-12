@@ -61,6 +61,7 @@ class KillRing;
 class Pasteboard;
 class SimpleFontData;
 class SpellChecker;
+class SpellCheckRequest;
 class SpellingCorrectionController;
 class Text;
 class TextCheckerClient;
@@ -223,7 +224,7 @@ public:
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
-    void markAndReplaceFor(TextCheckingTypeMask, const Vector<TextCheckingResult>&, PassRefPtr<Range> checkingRange, PassRefPtr<Range> paragraphRange);
+    void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void uppercaseWord();
