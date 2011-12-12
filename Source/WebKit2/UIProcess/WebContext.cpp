@@ -896,7 +896,7 @@ void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, u
     
 void WebContext::garbageCollectJavaScriptObjects()
 {
-    process()->send(Messages::WebProcess::GarbageCollectJavaScriptObjects(), 0);
+    sendToAllProcesses(Messages::WebProcess::GarbageCollectJavaScriptObjects());
 }
 
 } // namespace WebKit

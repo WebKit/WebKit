@@ -1,3 +1,15 @@
+2011-12-11  Anders Carlsson  <andersca@apple.com>
+
+        Crash when trying to garbage collect JavaScript objects
+        https://bugs.webkit.org/show_bug.cgi?id=74259
+        <rdar://problem/10556188>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::garbageCollectJavaScriptObjects):
+        Use sendToAllProcesses which is more correct and also handles m_process being null.
+
 2011-12-11  Andreas Kling  <kling@webkit.org>
 
         WK2/NetscapePlugin: Incorrect mouse event coordinates when frameScaleFactor != 1.
