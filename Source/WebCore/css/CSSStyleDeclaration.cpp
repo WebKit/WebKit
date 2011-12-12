@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSStyleDeclaration.h"
 
+#include "CSSElementStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSProperty.h"

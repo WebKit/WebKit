@@ -1,3 +1,12 @@
+2011-12-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Qt build.
+
+        Unreviewed.
+
+        * css/CSSStyleDeclaration.cpp: Maybe an #include will solve our problem?
+        Someday, compiler error messages will not suck. Today is not that day.
+
 2011-12-11  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSS resize property in CSSStyleApplyProperty.
