@@ -66,6 +66,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is cssRuleList.item(2)
 
 [object CSSStyleDeclaration]
+PASS resultArray.length is 14
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is cssStyleDeclaration.item(0)
 PASS resultArray[1].i is '1'

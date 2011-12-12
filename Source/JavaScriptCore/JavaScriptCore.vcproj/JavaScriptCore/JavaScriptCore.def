@@ -53,7 +53,6 @@ EXPORTS
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
     ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
-    ?add@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
     ?addBytes@MD5@WTF@@QAEXPBEI@Z
     ?addBytes@SHA1@WTF@@QAEXPBEI@Z
@@ -63,7 +62,6 @@ EXPORTS
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SAPAV12@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIAAVJSGlobalData@2@ABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
-    ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXAAVJSGlobalData@2@II@Z
     ?allocateSlowCase@AllocationSpace@JSC@@AAEPAXAAUSizeClass@MarkedSpace@2@@Z
@@ -133,7 +131,7 @@ EXPORTS
     ?currentThread@WTF@@YAIXZ
     ?currentThreadIsHoldingLock@JSLock@JSC@@SA_NXZ
     ?currentTime@WTF@@YANXZ
-    ?execute@ParallelEnvironment@WTF@@QAEXPAX@Z
+	?execute@ParallelEnvironment@WTF@@QAEXPAX@Z
     ?data@CString@WTF@@QBEPBDXZ
     ?dateToDaysFrom1970@WTF@@YANHHH@Z
     ?dayInMonthFromDayInYear@WTF@@YAHH_N@Z
@@ -315,7 +313,6 @@ EXPORTS
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?shrinkToFit@StringBuilder@WTF@@QAEXXZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
-    ?singleCharacterStringRep@SmallStrings@JSC@@QAEPAVStringImpl@WTF@@E@Z
     ?size@Heap@JSC@@QAEIXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?slowValidateCell@JSC@@YAXPAVJSCell@1@@Z

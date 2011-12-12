@@ -506,11 +506,6 @@ inline bool String::containsOnlyASCII() const
 
 WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
 
-inline bool codePointCompareLessThan(const String& a, const String& b)
-{
-    return codePointCompare(a.impl(), b.impl()) < 0;
-}
-
 inline size_t find(const LChar* characters, unsigned length, LChar matchCharacter, unsigned index = 0)
 {
     while (index < length) {

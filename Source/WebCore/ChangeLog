@@ -1,3 +1,15 @@
+2011-12-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Revert r102570 which broke SnowLeopard builders.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertyGetter):
+        * css/CSSStyleDeclaration.idl:
+        * css/makeprop.pl:
+
 2011-12-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium: UI: Detailed Heap snapshot shows too many objects' hidden properties.

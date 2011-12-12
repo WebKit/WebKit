@@ -1,3 +1,13 @@
+2011-12-12  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, build fix.
+
+        Revert r102570 which broke SnowLeopard builders.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * wtf/text/WTFString.h:
+
 2011-12-09  Alexander Pavlov  <apavlov@chromium.org>
 
         WebKit does not enumerate over CSS properties in HTMLElement.style
