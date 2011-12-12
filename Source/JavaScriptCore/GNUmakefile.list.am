@@ -129,7 +129,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
-	Source/JavaScriptCore/dfg/DFGIntrinsic.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
@@ -365,6 +364,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/InitializeThreading.h \
 	Source/JavaScriptCore/runtime/InternalFunction.cpp \
 	Source/JavaScriptCore/runtime/InternalFunction.h \
+	Source/JavaScriptCore/runtime/Intrinsic.h \
 	Source/JavaScriptCore/runtime/JSActivation.cpp \
 	Source/JavaScriptCore/runtime/JSActivation.h \
 	Source/JavaScriptCore/runtime/JSAPIValueWrapper.cpp \
@@ -650,6 +650,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/TCSpinLock.h \
 	Source/JavaScriptCore/wtf/TCSystemAlloc.cpp \
 	Source/JavaScriptCore/wtf/TCSystemAlloc.h \
+	Source/JavaScriptCore/wtf/TemporaryChange.h \
 	Source/JavaScriptCore/wtf/text/AtomicString.cpp \
 	Source/JavaScriptCore/wtf/text/AtomicString.h \
 	Source/JavaScriptCore/wtf/text/AtomicStringHash.h \

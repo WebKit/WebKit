@@ -1,3 +1,9 @@
+2011-12-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck issues.
+
+        * GNUmakefile.list.am:
+
 2011-12-11  Sam Weinig  <sam@webkit.org>
 
         Fix another signed vs. unsigned warning
