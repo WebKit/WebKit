@@ -1,3 +1,15 @@
+2011-12-12  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r102558.
+        http://trac.webkit.org/changeset/102558
+        https://bugs.webkit.org/show_bug.cgi?id=74160
+
+        clobber build failure
+
+        * WebCore.gypi:
+        * page/DOMWindow.idl:
+        * websockets/DOMWindowWebSocket.idl: Removed.
+
 2011-11-25  Alexander Pavlov  <apavlov@chromium.org>
 
         WebKit does not enumerate over CSS properties in HTMLElement.style

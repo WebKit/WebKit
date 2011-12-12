@@ -550,7 +550,7 @@ module window {
         attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceMotionEventConstructor DeviceMotionEvent;
         attribute [Conditional=DEVICE_ORIENTATION, EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
         attribute [Conditional=TOUCH_EVENTS] TouchEventConstructor TouchEvent;
-        attribute [Supplemented, Conditional=WEB_SOCKETS] CloseEventConstructor CloseEvent;
+        attribute [Conditional=WEB_SOCKETS] CloseEventConstructor CloseEvent;
         attribute StorageEventConstructor StorageEvent;
         attribute [Supplemented, Conditional=WEB_AUDIO] AudioProcessingEventConstructor AudioProcessingEvent;
         attribute [Supplemented, Conditional=WEB_AUDIO] OfflineAudioCompletionEventConstructor OfflineAudioCompletionEvent;
@@ -606,7 +606,7 @@ module window {
 #endif
 
 #if defined(ENABLE_WEB_SOCKETS) && ENABLE_WEB_SOCKETS
-        attribute [Supplemented, JSCCustomGetter, EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
+        attribute [JSCCustomGetter,EnabledAtRuntime] WebSocketConstructor WebSocket; // Usable with the new operator
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
