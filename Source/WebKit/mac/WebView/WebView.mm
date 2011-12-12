@@ -3361,8 +3361,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
             name:WKWindowWillOrderOffScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
             name:windowDidChangeBackingPropertiesNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
-            name:NSWindowDidChangeScreenNotification object:window];
     }
 }
 
