@@ -40,6 +40,7 @@ private:
     void didSameDocumentNavigationForFrame(const QUrl&);
     void didReceiveTitleForFrame(const QString&);
     void didFirstVisuallyNonEmptyLayoutForFrame();
+    void didChangeBackForwardList();
 
     void dispatchLoadSucceeded();
     void dispatchLoadFailed(WKErrorRef);
@@ -57,6 +58,7 @@ private:
     static void didChangeProgress(WKPageRef, const void* clientInfo);
     static void didFinishProgress(WKPageRef, const void* clientInfo);
     static void didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef, WKFrameRef, WKTypeRef userData, const void* clientInfo);
+    static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo);
 
     QQuickWebView* m_webView;
     int m_loadProgress;

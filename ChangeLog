@@ -1,3 +1,14 @@
+2011-12-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] History is not accessible in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=73016
+
+        Reviewed by Simon Hausmann.
+
+        Add the new QWebNavigationHistory in the map file.
+
+        * Source/qtwebkit-export.map:
+
 2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] request parameter of QQuickWebView::navigationRequested is not a registered type

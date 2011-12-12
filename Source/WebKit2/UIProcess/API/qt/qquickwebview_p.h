@@ -31,6 +31,7 @@ class QQuickWebViewAttached;
 class QQuickWebViewPrivate;
 class QQuickWebViewExperimental;
 class QWebDownloadItem;
+class QWebNavigationHistory;
 class QWebPreferences;
 class QWebPermissionRequest;
 
@@ -169,6 +170,7 @@ QML_DECLARE_TYPEINFO(QQuickWebView, QML_HAS_ATTACHED_PROPERTIES)
 
 class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QWebNavigationHistory* navigationHistory READ navigationHistory CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* promptDialog READ promptDialog WRITE setPromptDialog NOTIFY promptDialogChanged)
@@ -189,9 +191,12 @@ public:
     void setItemSelector(QDeclarativeComponent*);
 
     bool useTraditionalDesktopBehaviour() const;
+    QWebNavigationHistory* navigationHistory() const;
 
 public Q_SLOTS:
     void setUseTraditionalDesktopBehaviour(bool enable);
+    void goBackTo(int index);
+    void goForwardTo(int index);
 
 Q_SIGNALS:
     void alertDialogChanged();

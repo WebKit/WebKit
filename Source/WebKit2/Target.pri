@@ -180,6 +180,8 @@ HEADERS += \
     UIProcess/API/qt/qwebnavigationrequest_p.h \
     UIProcess/API/qt/qquickwebpage_p.h \
     UIProcess/API/qt/qquickwebpage_p_p.h \
+    UIProcess/API/qt/qwebnavigationhistory_p.h \
+    UIProcess/API/qt/qwebnavigationhistory_p_p.h \
     UIProcess/API/qt/qquickwebview_p.h \
     UIProcess/API/qt/qquickwebview_p_p.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
@@ -264,8 +266,6 @@ HEADERS += \
     UIProcess/qt/QtWebPagePolicyClient.h \
     UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/QtWebPageUIClient.h \
-    UIProcess/qt/qwkhistory.h \
-    UIProcess/qt/qwkhistory_p.h \
     UIProcess/qt/QtSGUpdateQueue.h \
     UIProcess/qt/QtSGTileNode.h \
     UIProcess/qt/QtViewportInteractionEngine.h \
@@ -498,6 +498,7 @@ SOURCES += \
     UIProcess/API/qt/qwebpermissionrequest.cpp \
     UIProcess/API/qt/qwebnavigationrequest.cpp \
     UIProcess/API/qt/qquickwebpage.cpp \
+    UIProcess/API/qt/qwebnavigationhistory.cpp \
     UIProcess/API/qt/qquickwebview.cpp \
     UIProcess/API/qt/qwebpreferences.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
@@ -586,7 +587,6 @@ SOURCES += \
     UIProcess/qt/QtWebPagePolicyClient.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/QtWebPageUIClient.cpp \
-    UIProcess/qt/qwkhistory.cpp \
     UIProcess/qt/QtSGUpdateQueue.cpp \
     UIProcess/qt/QtSGTileNode.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \

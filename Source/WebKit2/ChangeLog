@@ -1,3 +1,54 @@
+2011-12-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] History is not accessible in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=73016
+
+        Reviewed by Simon Hausmann.
+
+        Remove the old qwkhistory and create QWebNavigationHistory which is QML
+        friendly with data models you can plug to a view in QML
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didChangeBackForwardList):
+        (QQuickWebViewExperimental::navigationHistory):
+        (QQuickWebViewExperimental::goForwardTo):
+        (QQuickWebViewExperimental::goBackTo):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/qwebnavigationhistory.cpp: Added.
+        (QWebNavigationListModelPrivate::QWebNavigationListModelPrivate):
+        (QWebNavigationListModelPrivate::createWebNavigationModel):
+        (QWebNavigationHistoryPrivate::QWebNavigationHistoryPrivate):
+        (QWebNavigationHistoryPrivate::createHistory):
+        (QWebNavigationHistoryPrivate::reset):
+        (QWebNavigationHistoryPrivate::goBackTo):
+        (QWebNavigationHistoryPrivate::goForwardTo):
+        (QWebNavigationListModel::QWebNavigationListModel):
+        (QWebNavigationListModel::~QWebNavigationListModel):
+        (QWebNavigationListModel::rowCount):
+        (QWebNavigationListModel::data):
+        (QWebNavigationHistory::QWebNavigationHistory):
+        (QWebNavigationHistory::~QWebNavigationHistory):
+        (QWebNavigationHistory::backItems):
+        (QWebNavigationHistory::forwardItems):
+        * UIProcess/API/qt/qwebnavigationhistory_p.h: Added.
+        * UIProcess/API/qt/qwebnavigationhistory_p_p.h: Renamed from Source/WebKit2/UIProcess/qt/qwkhistory_p.h.
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_navigationHistory.qml: Added.
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (QtWebPageLoadClient::QtWebPageLoadClient):
+        (QtWebPageLoadClient::didChangeBackForwardList):
+        * UIProcess/qt/QtWebPageLoadClient.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::~QtWebPageProxy):
+        (QtWebPageProxy::goBackTo):
+        (QtWebPageProxy::goForwardTo):
+        (QtWebPageProxy::navigationHistory):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/qwkhistory.cpp: Removed.
+        * UIProcess/qt/qwkhistory.h: Removed.
+
 2011-12-09  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Move startDrag implementation to QtWebPageEventHandler

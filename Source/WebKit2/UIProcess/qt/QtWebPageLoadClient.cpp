@@ -45,6 +45,7 @@ QtWebPageLoadClient::QtWebPageLoadClient(WKPageRef pageRef, QQuickWebView* webVi
     loadClient.didChangeProgress = didChangeProgress;
     loadClient.didFinishProgress = didFinishProgress;
     loadClient.didFirstVisuallyNonEmptyLayoutForFrame = didFirstVisuallyNonEmptyLayoutForFrame;
+    loadClient.didChangeBackForwardList = didChangeBackForwardList;
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }
 
@@ -75,6 +76,11 @@ void QtWebPageLoadClient::didReceiveTitleForFrame(const QString& title)
 void QtWebPageLoadClient::didFirstVisuallyNonEmptyLayoutForFrame()
 {
     m_webView->d_func()->didFinishFirstNonEmptyLayout();
+}
+
+void QtWebPageLoadClient::didChangeBackForwardList()
+{
+    m_webView->d_func()->didChangeBackForwardList();
 }
 
 void QtWebPageLoadClient::dispatchLoadSucceeded()
@@ -181,4 +187,9 @@ void QtWebPageLoadClient::didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef, WKFr
     if (!WKFrameIsMainFrame(frame))
         return;
     toQtWebPageLoadClient(clientInfo)->didFirstVisuallyNonEmptyLayoutForFrame();
+}
+
+void QtWebPageLoadClient::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo)
+{
+    toQtWebPageLoadClient(clientInfo)->didChangeBackForwardList();
 }

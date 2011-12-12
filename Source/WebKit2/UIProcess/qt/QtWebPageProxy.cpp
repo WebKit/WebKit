@@ -28,14 +28,14 @@
 #include "qquickwebpage_p.h"
 #include "qwebdownloaditem_p.h"
 #include "qwebdownloaditem_p_p.h"
+#include "qwebnavigationhistory_p.h"
+#include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
 
 #include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
 #include "LayerTreeHostProxy.h"
-#include "qwkhistory.h"
-#include "qwkhistory_p.h"
 #include "QtDownloadManager.h"
 #include "QtPageClient.h"
 #include "QtWebPageEventHandler.h"
@@ -66,7 +66,7 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebV
     , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(pageClient, toImpl(pageGroupRef));
-    m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
+    m_navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(this, toAPI(m_webPageProxy->backForwardList())));
 }
 
 void QtWebPageProxy::init(QtWebPageEventHandler* eventHandler)
@@ -78,7 +78,6 @@ void QtWebPageProxy::init(QtWebPageEventHandler* eventHandler)
 QtWebPageProxy::~QtWebPageProxy()
 {
     m_webPageProxy->close();
-    delete m_history;
 }
 
 void QtWebPageProxy::showContextMenu(QSharedPointer<QMenu> menu)
@@ -210,6 +209,11 @@ void QtWebPageProxy::goBack()
     m_webPageProxy->goBack();
 }
 
+void QtWebPageProxy::goBackTo(int index)
+{
+    m_navigationHistory->d->goBackTo(index);
+}
+
 bool QtWebPageProxy::canGoForward() const
 {
     return m_webPageProxy->canGoForward();
@@ -218,6 +222,11 @@ bool QtWebPageProxy::canGoForward() const
 void QtWebPageProxy::goForward()
 {
     m_webPageProxy->goForward();
+}
+
+void QtWebPageProxy::goForwardTo(int index)
+{
+    m_navigationHistory->d->goForwardTo(index);
 }
 
 bool QtWebPageProxy::loading() const
@@ -358,9 +367,9 @@ void QtWebPageProxy::setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZ
     WKPageSetPageAndTextZoomFactors(pageRef(), pageZoomFactor, textZoomFactor);
 }
 
-QWKHistory* QtWebPageProxy::history() const
+QWebNavigationHistory* QtWebPageProxy::navigationHistory() const
 {
-    return m_history;
+    return m_navigationHistory.get();
 }
 
 void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)

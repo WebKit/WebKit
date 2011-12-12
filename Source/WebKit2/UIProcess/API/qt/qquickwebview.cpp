@@ -29,6 +29,8 @@
 
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
+#include "qwebnavigationhistory_p.h"
+#include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
@@ -189,6 +191,11 @@ void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportAr
         return;
 
     interactionEngine->applyConstraints(computeViewportConstraints());
+}
+
+void QQuickWebViewPrivate::didChangeBackForwardList()
+{
+    pageProxy->navigationHistory()->d->reset();
 }
 
 void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
@@ -480,6 +487,11 @@ void QQuickWebViewExperimental::setConfirmDialog(QDeclarativeComponent* confirmD
     emit confirmDialogChanged();
 }
 
+QWebNavigationHistory* QQuickWebViewExperimental::navigationHistory() const
+{
+    return d_ptr->pageProxy->navigationHistory();
+}
+
 QDeclarativeComponent* QQuickWebViewExperimental::promptDialog() const
 {
     Q_D(const QQuickWebView);
@@ -514,6 +526,16 @@ bool QQuickWebViewExperimental::useTraditionalDesktopBehaviour() const
 {
     Q_D(const QQuickWebView);
     return d->useTraditionalDesktopBehaviour;
+}
+
+void QQuickWebViewExperimental::goForwardTo(int index)
+{
+    d_ptr->pageProxy->goForwardTo(index);
+}
+
+void QQuickWebViewExperimental::goBackTo(int index)
+{
+    d_ptr->pageProxy->goBackTo(index);
 }
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)

@@ -40,8 +40,8 @@ class QQuickWebView;
 class QtWebError;
 class QtWebPageEventHandler;
 class QWebDownloadItem;
+class QWebNavigationHistory;
 class QWebPreferences;
-class QWKHistory;
 
 namespace WebKit {
 class QtWebContext;
@@ -97,8 +97,10 @@ public:
 
     bool canGoBack() const;
     void goBack();
+    void goBackTo(int index);
     bool canGoForward() const;
     void goForward();
+    void goForwardTo(int index);
     bool loading() const;
     void stop();
     bool canReload() const;
@@ -138,7 +140,7 @@ public:
     void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
     void purgeGLResources();
 
-    QWKHistory* history() const;
+    QWebNavigationHistory* navigationHistory() const;
 
     void contextMenuItemSelected(const WebContextMenuItemData& data)
     {
@@ -171,7 +173,7 @@ private:
 #endif
 
     RefPtr<QtWebContext> m_context;
-    QWKHistory* m_history;
+    OwnPtr<QWebNavigationHistory> m_navigationHistory;
 
     mutable OwnPtr<QWebPreferences> m_preferences;
 

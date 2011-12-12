@@ -63,6 +63,7 @@ public:
     void didFinishFirstNonEmptyLayout();
     void didChangeContentsSize(const QSize& newSize);
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
+    void didChangeBackForwardList();
 
     void scrollPositionRequested(const QPoint& pos);
     void updateViewportSize();

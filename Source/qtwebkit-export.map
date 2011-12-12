@@ -118,6 +118,12 @@ qwk_1.0 {
         *QQuickWebViewExperimental;
         non-virtual?thunk?to?QQuickWebViewExperimental*;
         QQuickWebViewExperimental::*;
+        *QWebNavigationHistory;
+        non-virtual?thunk?to?QWebNavigationHistory*;
+        QWebNavigationHistory::*;
+        *QWebNavigationListModel;
+        non-virtual?thunk?to?QWebNavigationListModel*;
+        QWebNavigationListModel::*;
         *QWebPreferences;
         non-virtual?thunk?to?QWebPreferences*;
         QWebPreferences::*;
