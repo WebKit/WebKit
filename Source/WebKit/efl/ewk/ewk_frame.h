@@ -177,6 +177,21 @@ typedef enum {
 } Ewk_Text_Selection_Type;
 
 /**
+ * Represents the validity of a X.509 certificate related to the current frame.
+ *
+ * A certificate is considered untrusted when any problem is found in it: it may have
+ * expired, the certificate's Common Name does not match the current host, the certificate
+ * does not validate against the current set of root CA certificates etc.
+ *
+ * @sa ewk_frame_certificate_status_get, ewk_network_tls_ca_certificates_path_set
+ */
+typedef enum {
+    EWK_CERTIFICATE_STATUS_NO_CERTIFICATE = 1 << 1, /**< No certificate provided (non-HTTPS connection). */
+    EWK_CERTIFICATE_STATUS_UNTRUSTED = 1 << 2, /**< The certificate provided is not trusted. */
+    EWK_CERTIFICATE_STATUS_TRUSTED = 1 << 3 /**< The certificate is valid and fully trusted. */
+} Ewk_Certificate_Status;
+
+/**
  * Retrieves the ewk_view object that owns this frame.
  *
  * @param o frame object to get view object
@@ -873,6 +888,11 @@ EAPI Eina_Bool ewk_frame_mixed_content_displayed_get(const Evas_Object *o);
  * @sa ewk_view_mixed_content_run_get
  */
 EAPI Eina_Bool ewk_frame_mixed_content_run_get(const Evas_Object *o);
+
+/**
+ * Returns the validity of the X.509 certificate related to the current frame.
+ */
+EAPI Ewk_Certificate_Status ewk_frame_certificate_status_get(Evas_Object *o);
 
 #ifdef __cplusplus
 }

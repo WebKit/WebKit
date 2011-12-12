@@ -1,5 +1,16 @@
 2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Add API to query the validity of a frame's SSL certificate.
+        https://bugs.webkit.org/show_bug.cgi?id=74302
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_certificate_status_get):
+        * ewk/ewk_frame.h:
+
+2011-12-12  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Add API to notify that mixed content has been loaded.
         https://bugs.webkit.org/show_bug.cgi?id=74301
 
