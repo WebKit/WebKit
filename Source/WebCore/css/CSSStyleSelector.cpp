@@ -992,12 +992,8 @@ bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
     return true;
 }
 
-bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
+bool CSSStyleSelector::canShareStyleWithElement(StyledElement* element) const
 {
-    if (!node->isStyledElement())
-        return false;
-
-    StyledElement* element = static_cast<StyledElement*>(node);
     RenderStyle* style = element->renderStyle();
 
     if (!style)
@@ -1080,17 +1076,17 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
     return true;
 }
 
-inline Node* CSSStyleSelector::findSiblingForStyleSharing(Node* node, unsigned& count) const
+inline StyledElement* CSSStyleSelector::findSiblingForStyleSharing(Node* node, unsigned& count) const
 {
     for (; node; node = node->previousSibling()) {
-        if (!node->isElementNode())
+        if (!node->isStyledElement())
             continue;
-        if (canShareStyleWithElement(node))
+        if (canShareStyleWithElement(static_cast<StyledElement*>(node)))
             break;
         if (count++ == cStyleSearchThreshold)
             return 0;
     }
-    return node;
+    return static_cast<StyledElement*>(node);
 }
 
 static inline bool parentStylePreventsSharing(const RenderStyle* parentStyle)
@@ -1117,17 +1113,17 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     // Check previous siblings and their cousins.
     unsigned count = 0;
     unsigned visitedNodeCount = 0;
-    Node* shareNode = 0;
+    StyledElement* shareElement = 0;
     Node* cousinList = m_styledElement->previousSibling();
     while (cousinList) {
-        shareNode = findSiblingForStyleSharing(cousinList, count);
-        if (shareNode)
+        shareElement = findSiblingForStyleSharing(cousinList, count);
+        if (shareElement)
             break;
         cousinList = locateCousinList(cousinList->parentElement(), visitedNodeCount);
     }
 
     // If we have exhausted all our budget or our cousins.
-    if (!shareNode)
+    if (!shareElement)
         return 0;
 
     // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
@@ -1139,7 +1135,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
     if (parentStylePreventsSharing(m_parentStyle))
         return 0;
-    return shareNode->renderStyle();
+    return shareElement->renderStyle();
 }
 
 void CSSStyleSelector::matchUARules(MatchResult& result)

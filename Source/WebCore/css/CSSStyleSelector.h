@@ -134,8 +134,8 @@ private:
     RenderStyle* locateSharedStyle();
     bool matchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;
-    Node* findSiblingForStyleSharing(Node*, unsigned& count) const;
-    bool canShareStyleWithElement(Node*) const;
+    StyledElement* findSiblingForStyleSharing(Node*, unsigned& count) const;
+    bool canShareStyleWithElement(StyledElement*) const;
 
     PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
 

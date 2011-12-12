@@ -1,3 +1,20 @@
+2011-12-11  Andreas Kling  <kling@webkit.org>
+
+        Micro-optimize CSSStyleSelector::findSiblingForStyleSharing().
+        <http://webkit.org/b/74261>
+
+        Reviewed by Antti Koivisto.
+
+        Move the isStyledElement() check from canShareStyleWithElement() into the
+        loop in findSiblingForStyleSharing(), and tighten up the argument/return
+        types to StyledElement* as appropriate.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::findSiblingForStyleSharing):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        * css/CSSStyleSelector.h:
+
 2011-12-11  Shinya Kawanaka  <shinyak@google.com>
 
         Asynchronous path synchronous path of SpellChecker should share the code to mark misspellings.
