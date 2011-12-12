@@ -1,3 +1,16 @@
+2011-12-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Move postMessage/messageReceived APIS to experimental
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::setPageProxy):
+        (QQuickWebViewExperimental::QQuickWebViewExperimental):
+        (QQuickWebViewExperimental::postMessage):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_messaging.qml:
+
 2011-12-12  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt][WK2] History is not accessible in QML.

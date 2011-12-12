@@ -97,7 +97,6 @@ public:
 
 public Q_SLOTS:
     void load(const QUrl&);
-    void postMessage(const QString&);
     void loadHtml(const QString& html, const QUrl& baseUrl = QUrl());
 
     void goBack();
@@ -113,7 +112,6 @@ Q_SIGNALS:
     void loadFailed(QQuickWebView::ErrorType errorType, int errorCode, const QUrl& url);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
-    void messageReceived(const QVariantMap& message);
     void linkHovered(const QUrl& url, const QString& title);
     void navigationStateChanged();
     void navigationRequested(QWebNavigationRequest* request);
@@ -197,6 +195,7 @@ public Q_SLOTS:
     void setUseTraditionalDesktopBehaviour(bool enable);
     void goBackTo(int index);
     void goForwardTo(int index);
+    void postMessage(const QString&);
 
 Q_SIGNALS:
     void alertDialogChanged();
@@ -205,6 +204,7 @@ Q_SIGNALS:
     void itemSelectorChanged();
     void downloadRequested(QWebDownloadItem* downloadItem);
     void permissionRequested(QWebPermissionRequest* permission);
+    void messageReceived(const QVariantMap& message);
 
 private:
     QQuickWebView* q_ptr;

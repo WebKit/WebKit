@@ -416,9 +416,7 @@ void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
 
 void QQuickWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)
 {
-    Q_Q(QQuickWebView);
     this->pageProxy.reset(pageProxy);
-    QObject::connect(pageProxy, SIGNAL(receivedMessageFromNavigatorQtObject(QVariantMap)), q, SIGNAL(messageReceived(QVariantMap)));
 }
 
 QQuickWebViewAttached::QQuickWebViewAttached(QObject* object)
@@ -441,6 +439,8 @@ QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
     , q_ptr(webView)
     , d_ptr(webView->d_ptr.data())
 {
+    Q_D(QQuickWebView);
+    QObject::connect(d->pageProxy.data(), SIGNAL(receivedMessageFromNavigatorQtObject(QVariantMap)), this, SIGNAL(messageReceived(QVariantMap)));
 }
 
 QQuickWebViewExperimental::~QQuickWebViewExperimental()
@@ -455,6 +455,12 @@ void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
         return;
 
     d->setUseTraditionalDesktopBehaviour(enable);
+}
+
+void QQuickWebViewExperimental::postMessage(const QString& message)
+{
+    Q_D(QQuickWebView);
+    d->pageProxy->postMessageToNavigatorQtObject(message);
 }
 
 QDeclarativeComponent* QQuickWebViewExperimental::alertDialog() const
@@ -568,12 +574,6 @@ void QQuickWebView::load(const QUrl& url)
 {
     Q_D(QQuickWebView);
     d->pageProxy->load(url);
-}
-
-void QQuickWebView::postMessage(const QString& message)
-{
-    Q_D(QQuickWebView);
-    d->pageProxy->postMessageToNavigatorQtObject(message);
 }
 
 void QQuickWebView::goBack()

@@ -1,13 +1,14 @@
 import QtQuick 2.0
 import QtTest 1.0
 import QtWebKit 3.0
+import QtWebKit.experimental 3.0
 
 Item {
     DesktopWebView {
         id: webView
         property variant lastMessage
         preferences.navigatorQtObjectEnabled: true
-        onMessageReceived: {
+        experimental.onMessageReceived: {
             lastMessage = message
         }
     }
@@ -16,7 +17,7 @@ Item {
         id: otherWebView
         property variant lastMessage
         preferences.navigatorQtObjectEnabled: true
-        onMessageReceived: {
+        experimental.onMessageReceived: {
             lastMessage = message
         }
     }
@@ -25,7 +26,7 @@ Item {
         id: disabledWebView
         property bool receivedMessage
         preferences.navigatorQtObjectEnabled: false
-        onMessageReceived: {
+        experimental.onMessageReceived: {
             receivedMessage = true
         }
     }
@@ -38,7 +39,7 @@ Item {
 
     SignalSpy {
         id: messageSpy
-        target: webView
+        target: webView.experimental
         signalName: "messageReceived"
     }
 
@@ -50,7 +51,7 @@ Item {
 
     SignalSpy {
         id: otherMessageSpy
-        target: otherWebView
+        target: otherWebView.experimental
         signalName: "messageReceived"
     }
 
@@ -76,7 +77,7 @@ Item {
         function test_basic() {
             webView.load(testUrl)
             loadSpy.wait()
-            webView.postMessage("HELLO")
+            webView.experimental.postMessage("HELLO")
             messageSpy.wait()
             compare(webView.lastMessage.data, "OLLEH")
             compare(webView.lastMessage.origin.toString(), testUrl.toString())
@@ -87,8 +88,8 @@ Item {
             otherWebView.load(testUrl)
             loadSpy.wait()
             otherLoadSpy.wait()
-            webView.postMessage("FIRST")
-            otherWebView.postMessage("SECOND")
+            webView.experimental.postMessage("FIRST")
+            otherWebView.experimental.postMessage("SECOND")
             messageSpy.wait()
             otherMessageSpy.wait()
             compare(webView.lastMessage.data, "TSRIF")
@@ -99,7 +100,7 @@ Item {
             disabledWebView.load(testUrl)
             verify(!disabledWebView.preferences.navigatorQtObjectEnabled)
             disabledWebViewLoadSpy.wait()
-            disabledWebView.postMessage("HI")
+            disabledWebView.experimental.postMessage("HI")
             wait(1000)
             verify(!disabledWebView.receivedMessage)
         }
