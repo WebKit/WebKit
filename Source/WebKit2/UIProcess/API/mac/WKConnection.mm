@@ -53,11 +53,6 @@
     [super dealloc];
 }
 
-- (WKConnectionRef)connectionRef
-{
-    return _data->_connectionRef.get();
-}
-
 #pragma mark Delegates
 
 - (id<WKConnectionDelegate>)delegate

@@ -1,3 +1,11 @@
+2011-12-12  Sam Weinig  <sam@webkit.org>
+
+        Remove unused getter on WKConnection.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKConnection.mm:
+
 2011-12-12  Brady Eidson  <beidson@apple.com>
 
         Page cache should support pages with plugins.
