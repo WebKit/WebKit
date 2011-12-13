@@ -1092,9 +1092,10 @@ GC3Denum WebGLRenderingContext::checkFramebufferStatus(GC3Denum target)
     }
     if (!m_framebufferBinding || !m_framebufferBinding->object())
         return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
-    if (m_framebufferBinding->isIncomplete(true))
-        return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
-    unsigned long result = m_context->checkFramebufferStatus(target);
+    GC3Denum result = m_framebufferBinding->checkStatus();
+    if (result != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+        return result;
+    result = m_context->checkFramebufferStatus(target);
     cleanupAfterGraphicsCall(false);
     return result;
 }
@@ -2159,7 +2160,7 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(GC3Denum t
     if (isContextLost() || !validateFramebufferFuncParameters(target, attachment))
         return WebGLGetInfo();
 
-    if (!m_framebufferBinding || !m_framebufferBinding->object() || m_framebufferBinding->isIncomplete(false)) {
+    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return WebGLGetInfo();
     }
@@ -4308,14 +4309,14 @@ GC3Denum WebGLRenderingContext::getBoundFramebufferColorFormat()
 int WebGLRenderingContext::getBoundFramebufferWidth()
 {
     if (m_framebufferBinding && m_framebufferBinding->object())
-        return m_framebufferBinding->getWidth();
+        return m_framebufferBinding->getColorBufferWidth();
     return m_drawingBuffer ? m_drawingBuffer->size().width() : m_context->getInternalFramebufferSize().width();
 }
 
 int WebGLRenderingContext::getBoundFramebufferHeight()
 {
     if (m_framebufferBinding && m_framebufferBinding->object())
-        return m_framebufferBinding->getHeight();
+        return m_framebufferBinding->getColorBufferHeight();
     return m_drawingBuffer ? m_drawingBuffer->size().height() : m_context->getInternalFramebufferSize().height();
 }
 

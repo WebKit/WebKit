@@ -49,8 +49,8 @@ public:
     WebGLObject* getAttachment(GC3Denum) const;
 
     GC3Denum getColorBufferFormat() const;
-    GC3Dsizei getWidth() const;
-    GC3Dsizei getHeight() const;
+    GC3Dsizei getColorBufferWidth() const;
+    GC3Dsizei getColorBufferHeight() const;
 
     // This should always be called before drawArray, drawElements, clear,
     // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
@@ -60,8 +60,11 @@ public:
     // needToInitializeRenderbuffers is true.
     bool onAccess(bool needToInitializeRenderbuffers);
 
-    // Return false does not mean COMPLETE, might still be INCOMPLETE.
-    bool isIncomplete(bool checkInternalFormat) const;
+    // Software version of glCheckFramebufferStatus(), except that when
+    // FRAMEBUFFER_COMPLETE is returned, it is still possible for
+    // glCheckFramebufferStatus() to return FRAMEBUFFER_UNSUPPORTED,
+    // depending on hardware implementation.
+    GC3Denum checkStatus() const;
 
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
 

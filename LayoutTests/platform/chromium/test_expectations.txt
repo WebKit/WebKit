@@ -2329,6 +2329,7 @@ BUGWEBGL WIN DEBUG : fast/canvas/webgl/texture-complete.html = PASS TEXT
 BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
 
 // These three failures are due to Mesa bugs
+BUGWEBGL : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TIMEOUT TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL LINUX MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT

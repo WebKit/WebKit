@@ -35,12 +35,47 @@ namespace WebCore {
 
 namespace {
 
-    // This function is only for depth/stencil/depth_stencil attachment.
-    // Currently we assume these attachments are all renderbuffers.
-    GC3Denum getInternalFormat(WebGLObject* buffer)
+    bool isAttachmentComplete(WebGLObject* attachedObject, GC3Denum attachment)
     {
-        ASSERT(buffer && buffer->isRenderbuffer());
-        return (reinterpret_cast<WebGLRenderbuffer*>(buffer))->getInternalFormat();
+        ASSERT(attachedObject && attachedObject->object());
+        ASSERT(attachedObject->isRenderbuffer());
+        WebGLRenderbuffer* buffer = reinterpret_cast<WebGLRenderbuffer*>(attachedObject);
+        switch (attachment) {
+        case GraphicsContext3D::DEPTH_ATTACHMENT:
+            if (buffer->getInternalFormat() != GraphicsContext3D::DEPTH_COMPONENT16)
+                return false;
+            break;
+        case GraphicsContext3D::STENCIL_ATTACHMENT:
+            if (buffer->getInternalFormat() != GraphicsContext3D::STENCIL_INDEX8)
+                return false;
+            break;
+        case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+            if (buffer->getInternalFormat() != GraphicsContext3D::DEPTH_STENCIL)
+                return false;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+        if (!buffer->getWidth() || !buffer->getHeight())
+            return false;
+        return true;
+    }
+
+    GC3Dsizei getImageWidth(WebGLObject* attachedObject)
+    {
+        ASSERT(attachedObject && attachedObject->object());
+        ASSERT(attachedObject->isRenderbuffer());
+        WebGLRenderbuffer* buffer = reinterpret_cast<WebGLRenderbuffer*>(attachedObject);
+        return buffer->getWidth();
+    }
+
+    GC3Dsizei getImageHeight(WebGLObject* attachedObject)
+    {
+        ASSERT(attachedObject && attachedObject->object());
+        ASSERT(attachedObject->isRenderbuffer());
+        WebGLRenderbuffer* buffer = reinterpret_cast<WebGLRenderbuffer*>(attachedObject);
+        return buffer->getHeight();
     }
 
     bool isUninitialized(WebGLObject* attachedObject)
@@ -168,7 +203,7 @@ void WebGLFramebuffer::removeAttachment(WebGLObject* attachment)
         return;
 }
 
-GC3Dsizei WebGLFramebuffer::getWidth() const
+GC3Dsizei WebGLFramebuffer::getColorBufferWidth() const
 {
     if (!object() || !isColorAttached())
         return 0;
@@ -180,7 +215,7 @@ GC3Dsizei WebGLFramebuffer::getWidth() const
     return 0;
 }
 
-GC3Dsizei WebGLFramebuffer::getHeight() const
+GC3Dsizei WebGLFramebuffer::getColorBufferHeight() const
 {
     if (!object() || !isColorAttached())
         return 0;
@@ -213,34 +248,67 @@ GC3Denum WebGLFramebuffer::getColorBufferFormat() const
     return 0;
 }
 
-bool WebGLFramebuffer::isIncomplete(bool checkInternalFormat) const
+GC3Denum WebGLFramebuffer::checkStatus() const
 {
     unsigned int count = 0;
+    GC3Dsizei width = 0, height = 0;
     if (isDepthAttached()) {
-        if (checkInternalFormat && getInternalFormat(m_depthAttachment.get()) != GraphicsContext3D::DEPTH_COMPONENT16)
-            return true;
+        if (!isAttachmentComplete(m_depthAttachment.get(), GraphicsContext3D::DEPTH_ATTACHMENT))
+            return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        width = getImageWidth(m_depthAttachment.get());
+        height = getImageHeight(m_depthAttachment.get());
         count++;
     }
     if (isStencilAttached()) {
-        if (checkInternalFormat && getInternalFormat(m_stencilAttachment.get()) != GraphicsContext3D::STENCIL_INDEX8)
-            return true;
+        if (!isAttachmentComplete(m_stencilAttachment.get(), GraphicsContext3D::STENCIL_ATTACHMENT))
+            return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        if (!count) {
+            width = getImageWidth(m_stencilAttachment.get());
+            height = getImageHeight(m_stencilAttachment.get());
+        } else {
+            if (width != getImageWidth(m_stencilAttachment.get()) || height != getImageHeight(m_stencilAttachment.get()))
+                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+        }
         count++;
     }
     if (isDepthStencilAttached()) {
-        if (checkInternalFormat && getInternalFormat(m_depthStencilAttachment.get()) != GraphicsContext3D::DEPTH_STENCIL)
-            return true;
+        if (!isAttachmentComplete(m_depthStencilAttachment.get(), GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT))
+            return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
         if (!isValid(m_depthStencilAttachment.get()))
-            return true;
+            return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
+        if (!count) {
+            width = getImageWidth(m_depthStencilAttachment.get());
+            height = getImageHeight(m_depthStencilAttachment.get());
+        } else {
+            if (width != getImageWidth(m_depthStencilAttachment.get()) || height != getImageHeight(m_depthStencilAttachment.get()))
+                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+        }
         count++;
     }
+    // WebGL specific: no conflicting DEPTH/STENCIL/DEPTH_STENCIL attachments.
     if (count > 1)
-        return true;
-    return false;
+        return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
+    if (isColorAttached()) {
+        // FIXME: if color buffer is texture, is ALPHA, LUMINANCE or LUMINANCE_ALPHA valid?
+        if (!getColorBufferFormat())
+            return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        if (!count) {
+            if (!getColorBufferWidth() || !getColorBufferHeight())
+                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+        } else {
+            if (width != getColorBufferWidth() || height != getColorBufferHeight())
+                return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_DIMENSIONS;
+        }
+    } else {
+        if (!count)
+            return GraphicsContext3D::FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+    }
+    return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
 }
 
 bool WebGLFramebuffer::onAccess(bool needToInitializeRenderbuffers)
 {
-    if (isIncomplete(true))
+    if (checkStatus() != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
         return false;
     if (needToInitializeRenderbuffers)
         return initializeRenderbuffers();

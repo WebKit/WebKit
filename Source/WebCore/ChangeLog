@@ -1,3 +1,22 @@
+2011-12-09  Zhenyao Mo  <zmo@google.com>
+
+        Implement GLES2 CheckFramebufferStatus() behavior
+        https://bugs.webkit.org/show_bug.cgi?id=74228
+
+        Reviewed by Kenneth Russell.
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::getColorBufferWidth): Add ColorBuffer to the function name - this is more accurate.
+        (WebCore::WebGLFramebuffer::getColorBufferHeight): Ditto.
+        (WebCore::WebGLFramebuffer::checkStatus): Implement full semantics of GLES2 glCheckFramebufferStatus().
+        (WebCore::WebGLFramebuffer::onAccess): Call checkStatus().
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::checkFramebufferStatus): Call checkStatus().
+        (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter): No longer check framebuffer status.
+        (WebCore::WebGLRenderingContext::getBoundFramebufferWidth): Call getColorBufferWidth.
+        (WebCore::WebGLRenderingContext::getBoundFramebufferHeight): Call getColorBufferHeight.
+
 2011-12-13  James Simonsen  <simonjam@chromium.org>
 
         [Navigation Timing] Use monotonicallyIncreasingTime() instead of currentTime()
