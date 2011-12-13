@@ -1,5 +1,14 @@
 2011-12-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] REGRESSION(102679): It broke Qt5-WK1 build
+        https://bugs.webkit.org/show_bug.cgi?id=74413
+
+        Unreviewed buildfix.
+
+        * qmake/mkspecs/features/webcore.prf: Temporarily revert a part of r102679 until a proper fix.
+
+2011-12-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed speculativ debug buildfix after r102679.
 
         * QtTestBrowser/QtTestBrowser.pro:
