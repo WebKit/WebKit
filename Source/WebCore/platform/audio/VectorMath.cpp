@@ -63,6 +63,15 @@ void vadd(const float* source1P, int sourceStride1, const float* source2P, int s
 #endif
 }
 
+void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
+{
+#if defined(__ppc__) || defined(__i386__)
+    ::vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
+#else
+    vDSP_vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
+#endif
+}
+
 #else
 
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
@@ -227,6 +236,66 @@ void vadd(const float* source1P, int sourceStride1, const float* source2P, int s
 #ifdef __SSE2__
     }
 #endif
+}
+
+void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
+{
+
+    int n = framesToProcess;
+
+#ifdef __SSE2__
+    if ((sourceStride1 == 1) && (sourceStride2 == 1) && (destStride == 1)) {
+
+        // If the source1P address is not 16-byte aligned, the first several frames (at most three) should be processed seperately.
+        while ((reinterpret_cast<uintptr_t>(source1P) & 0x0F) && n) {
+            *destP = *source1P * *source2P;
+            source1P++;
+            source2P++;
+            destP++;
+            n--;
+        }
+
+        // Now the source1P address aligned and start to apply SSE.
+        int tailFrames = n % 4;
+        float* endP = destP + n - tailFrames;
+        __m128 pSource1;
+        __m128 pSource2;
+        __m128 dest;
+
+        bool source2Aligned = !(reinterpret_cast<uintptr_t>(source2P) & 0x0F);
+        bool destAligned = !(reinterpret_cast<uintptr_t>(destP) & 0x0F);
+
+#define SSE2_MULT(loadInstr, storeInstr)                   \
+            while (destP < endP)                           \
+            {                                              \
+                pSource1 = _mm_load_ps(source1P);          \
+                pSource2 = _mm_##loadInstr##_ps(source2P); \
+                dest = _mm_mul_ps(pSource1, pSource2);     \
+                _mm_##storeInstr##_ps(destP, dest);        \
+                source1P += 4;                             \
+                source2P += 4;                             \
+                destP += 4;                                \
+            }
+
+        if (source2Aligned && destAligned) // Both aligned.
+            SSE2_MULT(load, store)
+        else if (source2Aligned && !destAligned) // Source2 is aligned but dest not.
+            SSE2_MULT(load, storeu)
+        else if (!source2Aligned && destAligned) // Dest is aligned but source2 not.
+            SSE2_MULT(loadu, store)
+        else // Neither aligned.
+            SSE2_MULT(loadu, storeu)
+
+        n = tailFrames;
+    }
+#endif
+    while (n) {
+        *destP = *source1P * *source2P;
+        source1P += sourceStride1;
+        source2P += sourceStride2;
+        destP += destStride;
+        n--;
+    }
 }
 
 #endif // OS(DARWIN)

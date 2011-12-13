@@ -382,15 +382,13 @@ void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, f
         return;
     }
 
-    // FIXME: this can potentially use SIMD optimizations with vector libraries.
     // We handle both the 1 -> N and N -> N case here.
     const float* source = sourceBus.channel(0)->data();
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex) {
         if (sourceBus.numberOfChannels() == numberOfChannels())
             source = sourceBus.channel(channelIndex)->data();
         float* destination = channel(channelIndex)->data();
-        for (unsigned i = 0; i < numberOfGainValues; ++i)
-            destination[i] = source[i] * gainValues[i];
+        vmul(source, 1, gainValues, 1, destination, 1, numberOfGainValues);
     }
 }
 

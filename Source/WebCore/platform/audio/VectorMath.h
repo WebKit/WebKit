@@ -34,6 +34,9 @@ namespace VectorMath {
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess);
 void vadd(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess);
 
+// For an element-by-element multiply of two float vectors.
+void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess);
+
 } // namespace VectorMath
 
 } // namespace WebCore
