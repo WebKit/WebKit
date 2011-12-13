@@ -213,6 +213,7 @@ HEADERS += \
     UIProcess/TiledDrawingAreaProxy.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebApplicationCacheManagerProxy.h \
+    UIProcess/WebBackForwardList.h \
     UIProcess/WebConnectionToWebProcess.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextConnectionClient.h \

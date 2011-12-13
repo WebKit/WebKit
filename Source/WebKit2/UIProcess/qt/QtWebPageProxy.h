@@ -73,30 +73,16 @@ public:
 
     void didReceiveMessageFromNavigatorQtObject(const String&);
 
-    bool canGoBack() const;
-    void goBack();
     void goBackTo(int index);
-    bool canGoForward() const;
-    void goForward();
     void goForwardTo(int index);
-    bool loading() const;
-    void stop();
-    bool canReload() const;
-    void reload();
 
     void updateNavigationState();
 
     WKPageRef pageRef() const;
 
-    void load(const QUrl& url);
-    void loadHTMLString(const QString& html, const QUrl& baseUrl);
-    QUrl url() const;
-
     void setDrawingAreaSize(const QSize&);
 
     QWebPreferences* preferences() const;
-
-    QString title() const;
 
     void setCustomUserAgent(const QString&);
     QString customUserAgent() const;

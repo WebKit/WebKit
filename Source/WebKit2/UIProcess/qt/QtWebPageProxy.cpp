@@ -155,18 +155,8 @@ void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& messag
 {
     QVariantMap variantMap;
     variantMap.insert(QLatin1String("data"), QString(message));
-    variantMap.insert(QLatin1String("origin"), url());
+    variantMap.insert(QLatin1String("origin"), m_qmlWebView->url());
     emit receivedMessageFromNavigatorQtObject(variantMap);
-}
-
-bool QtWebPageProxy::canGoBack() const
-{
-    return m_webPageProxy->canGoBack();
-}
-
-void QtWebPageProxy::goBack()
-{
-    m_webPageProxy->goBack();
 }
 
 void QtWebPageProxy::goBackTo(int index)
@@ -174,43 +164,9 @@ void QtWebPageProxy::goBackTo(int index)
     m_navigationHistory->d->goBackTo(index);
 }
 
-bool QtWebPageProxy::canGoForward() const
-{
-    return m_webPageProxy->canGoForward();
-}
-
-void QtWebPageProxy::goForward()
-{
-    m_webPageProxy->goForward();
-}
-
 void QtWebPageProxy::goForwardTo(int index)
 {
     m_navigationHistory->d->goForwardTo(index);
-}
-
-bool QtWebPageProxy::loading() const
-{
-    RefPtr<WebKit::WebFrameProxy> mainFrame = m_webPageProxy->mainFrame();
-    return mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-}
-
-void QtWebPageProxy::stop()
-{
-    m_webPageProxy->stopLoading();
-}
-
-bool QtWebPageProxy::canReload() const
-{
-    RefPtr<WebKit::WebFrameProxy> mainFrame = m_webPageProxy->mainFrame();
-    if (mainFrame)
-        return (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-    return m_webPageProxy->backForwardList()->currentItem();
-}
-
-void QtWebPageProxy::reload()
-{
-    m_webPageProxy->reload(/* reloadFromOrigin */ true);
 }
 
 void QtWebPageProxy::updateNavigationState()
@@ -265,33 +221,6 @@ void QtWebPageProxy::setNavigatorQtObjectEnabled(bool enabled)
 void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
 {
     m_context->postMessageToNavigatorQtObject(m_webPageProxy.get(), message);
-}
-
-void QtWebPageProxy::loadHTMLString(const QString& html, const QUrl& baseUrl)
-{
-    WKRetainPtr<WKURLRef> wkUrl(WKURLCreateWithQUrl(baseUrl));
-    WKRetainPtr<WKStringRef> wkHtmlString(WKStringCreateWithQString(html));
-
-    WKPageLoadHTMLString(pageRef(), wkHtmlString.get(), wkUrl.get());
-}
-
-void QtWebPageProxy::load(const QUrl& url)
-{
-    WKRetainPtr<WKURLRef> wkurl = adoptWK(WKURLCreateWithQUrl(url));
-    WKPageLoadURL(pageRef(), wkurl.get());
-}
-
-QUrl QtWebPageProxy::url() const
-{
-    WKRetainPtr<WKFrameRef> frame = WKPageGetMainFrame(pageRef());
-    if (!frame)
-        return QUrl();
-    return WKURLCopyQUrl(adoptWK(WKFrameCopyURL(frame.get())).get());
-}
-
-QString QtWebPageProxy::title() const
-{
-    return WKStringCopyQString(adoptWK(WKPageCopyTitle(toAPI(m_webPageProxy.get()))).get());
 }
 
 void QtWebPageProxy::setDrawingAreaSize(const QSize& size)

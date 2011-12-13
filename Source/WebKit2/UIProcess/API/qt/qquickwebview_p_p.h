@@ -37,6 +37,9 @@
 #include <QtCore/QScopedPointer>
 #include <wtf/OwnPtr.h>
 
+namespace WebKit {
+class WebPageProxy;
+}
 class QtWebPageProxy;
 
 QT_BEGIN_NAMESPACE
@@ -87,6 +90,8 @@ public:
     void setUseTraditionalDesktopBehaviour(bool enable);
     void setViewInAttachedProperties(QObject*);
 
+    WebKit::WebPageProxy* webPageProxy() const;
+
 private:
     // This class is responsible for collecting and applying all properties
     // on the viewport item, when transitioning from page A to page B is finished.
@@ -131,6 +136,8 @@ private:
 
     QQuickWebView* q_ptr;
     QScopedPointer<QtWebPageProxy> pageProxy;
+
+    OwnPtr<QWebNavigationHistory> navigationHistory;
 
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;
