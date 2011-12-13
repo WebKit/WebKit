@@ -1,3 +1,13 @@
+2011-12-13  Brady Eidson  <beidson@apple.com>
+
+        <http://webkit.org/b/74420> Disable deprecation warnings around more code where we 
+        cannot easily switch away from the deprecated APIs.
+
+        Reviewed by Mark Rowe.
+
+        * bindings/objc/DOMInternal.mm:
+        * bridge/objc/objc_instance.mm:
+
 2011-12-12  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: eof-002.htm fails
