@@ -1,3 +1,19 @@
+2011-12-12  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSS text-decoration property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=74258
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyTextDecoration::applyValue):
+        (WebCore::ApplyPropertyTextDecoration::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-12-12  Adrienne Walker  <enne@google.com>
 
         iframe fails to scroll in composited page

@@ -3050,18 +3050,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
     }
-    case CSSPropertyTextDecoration: {
-        // list of ident
-        HANDLE_INHERIT_AND_INITIAL(textDecoration, TextDecoration)
-        ETextDecoration t = RenderStyle::initialTextDecoration();
-        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-            CSSValue* item = i.value();
-            ASSERT(item->isPrimitiveValue());
-            t |= *static_cast<CSSPrimitiveValue*>(item);
-        }
-        m_style->setTextDecoration(t);
-        return;
-    }
 // shorthand properties
     case CSSPropertyBackground:
         if (isInitial) {
@@ -3866,6 +3854,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyResize:
     case CSSPropertySize:
     case CSSPropertyTextAlign:
+    case CSSPropertyTextDecoration:
     case CSSPropertyTextIndent:
     case CSSPropertyMaxHeight:
     case CSSPropertyHeight:
