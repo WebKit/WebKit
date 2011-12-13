@@ -31,6 +31,9 @@ namespace WebCore {
 class RenderThemeChromiumMac : public RenderThemeMac {
 public:
     static PassRefPtr<RenderTheme> create();
+
+    virtual Color disabledTextColor(const Color& textColor, const Color&) const OVERRIDE { return textColor; }
+
 protected:
 #if ENABLE(VIDEO)
     virtual void adjustMediaSliderThumbSize(RenderStyle*) const;

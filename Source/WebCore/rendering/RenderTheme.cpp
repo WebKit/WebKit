@@ -1091,6 +1091,30 @@ Color RenderTheme::tapHighlightColor()
 }
 #endif
 
+// Value chosen by observation. This can be tweaked.
+static const int minColorContrastValue = 1300;
+// For transparent or translucent background color, use lightening.
+static const int minDisabledColorAlphaValue = 128;
+
+Color RenderTheme::disabledTextColor(const Color& textColor, const Color& backgroundColor) const
+{
+    // The explicit check for black is an optimization for the 99% case (black on white).
+    // This also means that black on black will turn into grey on black when disabled.
+    Color disabledColor;
+    if (textColor.rgb() == Color::black || backgroundColor.alpha() < minDisabledColorAlphaValue || differenceSquared(textColor, Color::white) > differenceSquared(backgroundColor, Color::white))
+        disabledColor = textColor.light();
+    else
+        disabledColor = textColor.dark();
+    
+    // If there's not very much contrast between the disabled color and the background color,
+    // just leave the text color alone. We don't want to change a good contrast color scheme so that it has really bad contrast.
+    // If the the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
+    if (differenceSquared(disabledColor, backgroundColor) < minColorContrastValue)
+        return textColor;
+    
+    return disabledColor;
+}
+
 void RenderTheme::setCustomFocusRingColor(const Color& c)
 {
     customFocusRingColor() = c;

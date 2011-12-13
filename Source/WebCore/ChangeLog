@@ -1,3 +1,20 @@
+2011-12-12  Yosifumi Inoue  <yosin@chromium.org>
+
+        RenderTheme should have a function for disabled text color adjustment
+        https://bugs.webkit.org/show_bug.cgi?id=74143
+
+        Reviewed by Kent Tamura.
+
+        No new tests / existing tests cover this change.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::adjustInnerTextStyle): Use RenderTheme::disabledTextColor instead of PLATFORM wraped static function. 
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::disabledTextColor): Moved from RenderTextControl.cpp. This method implements for non-Chromium color.
+        * rendering/RenderTheme.h: Add new virtual method disabledTextColor.
+        * rendering/RenderThemeChromiumMac.h: Implementation of RenderTheme::disabledTextColor for Chrimium Mac.
+        * rendering/RenderThemeChromiumSkia.h: Implementation of RenderTheme::disabledTextColor for Chrimium.
+
 2011-12-12  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r102648.

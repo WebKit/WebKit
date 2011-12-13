@@ -25,6 +25,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "HitTestResult.h"
 #include "RenderText.h"
+#include "RenderTheme.h"
 #include "ScrollbarTheme.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -33,32 +34,6 @@
 using namespace std;
 
 namespace WebCore {
-
-#if !PLATFORM(CHROMIUM)
-// Value chosen by observation.  This can be tweaked.
-static const int minColorContrastValue = 1300;
-// For transparent or translucent background color, use lightening.
-static const int minDisabledColorAlphaValue = 128;
-
-static Color disabledTextColor(const Color& textColor, const Color& backgroundColor)
-{
-    // The explicit check for black is an optimization for the 99% case (black on white).
-    // This also means that black on black will turn into grey on black when disabled.
-    Color disabledColor;
-    if (textColor.rgb() == Color::black || backgroundColor.alpha() < minDisabledColorAlphaValue || differenceSquared(textColor, Color::white) > differenceSquared(backgroundColor, Color::white))
-        disabledColor = textColor.light();
-    else
-        disabledColor = textColor.dark();
-    
-    // If there's not very much contrast between the disabled color and the background color,
-    // just leave the text color alone.  We don't want to change a good contrast color scheme so that it has really bad contrast.
-    // If the the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
-    if (differenceSquared(disabledColor, backgroundColor) < minColorContrastValue)
-        return textColor;
-    
-    return disabledColor;
-}
-#endif
 
 RenderTextControl::RenderTextControl(Node* node)
     : RenderBlock(node)
@@ -121,13 +96,8 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
     textBlockStyle->setUnicodeBidi(style()->unicodeBidi());
 
     bool disabled = updateUserModifyProperty(node(), textBlockStyle);
-    if (disabled) {
-#if PLATFORM(CHROMIUM)
-        textBlockStyle->setColor(textBlockStyle->visitedDependentColor(CSSPropertyColor));
-#else
-        textBlockStyle->setColor(disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
-#endif
-    }
+    if (disabled)
+        textBlockStyle->setColor(theme()->disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
 }
 
 int RenderTextControl::textBlockHeight() const
