@@ -1,3 +1,15 @@
+2011-12-12  Daniel Bates  <dbates@webkit.org>
+
+        Unreviewed, rolling out r102656.
+        http://trac.webkit.org/changeset/102656
+        https://bugs.webkit.org/show_bug.cgi?id=74313
+
+        Broke the Mac, Windows and WinCairo builds. We need to look
+        into this patch some more.
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerLocation):
+
 2011-12-12  Konrad Piascik  <kpiascik@rim.com>
 
         2011-12-12  Konrad Piascik  <kpiascik@rim.com>

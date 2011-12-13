@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,8 +36,6 @@
 #include "EventListener.h"
 #include "JSNode.h"
 #include "Frame.h"
-#include <runtime/Executable.h>
-#include <runtime/JSFunction.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;
@@ -106,23 +103,10 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     return ustringToString(jsFunction->toString(scriptStateFromNode(jsListener->isolatedWorld(), document)));
 }
 
-bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, int& lineNumber)
+bool eventListenerHandlerLocation(Document*, EventListener*, String&, int&)
 {
-    const JSEventListener* jsListener = JSEventListener::cast(eventListener);
-    if (!jsListener)
-        return false;
-    JSC::JSObject* jsObject = jsListener->jsFunction(document);
-    if (!jsObject)
-        return false;
-    JSC::JSFunction* jsFunction = static_cast<JSFunction*>(jsObject);
-    if (!jsFunction || jsFunction->isHostFunction())
-        return false;
-    JSC::FunctionExecutable* funcExecutable = jsFunction->jsExecutable();
-    if (!funcExecutable)
-        return false;
-    lineNumber = funcExecutable->lineNo();
-    sourceName = ustringToString(funcExecutable->sourceURL());
-    return true;
+    // FIXME: Add support for getting function location.
+    return false;
 }
 
 } // namespace WebCore
