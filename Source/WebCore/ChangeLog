@@ -1,13 +1,14 @@
 2011-12-13  Tony Chang  <tony@chromium.org>
 
-        inline setting m_regionForStyling since region is rarely set
+        Inline all of initForRegionStyling except for the rarely used part for non-null regions.
         https://bugs.webkit.org/show_bug.cgi?id=74435
 
         Reviewed by Andreas Kling.
 
         * css/CSSStyleSelector.cpp:
-        (WebCore::CSSStyleSelector::initForRegionStyling):
-        (WebCore::CSSStyleSelector::initRegionRules):
+        (WebCore::CSSStyleSelector::initForRegionStyling): Inline setting of m_regionForStyling
+        (WebCore::CSSStyleSelector::initRegionRules): Move code that only
+        applies to CSSRegions into non-inlined code.
         * css/CSSStyleSelector.h:
 
 2011-12-13  James Simonsen  <simonjam@chromium.org>
