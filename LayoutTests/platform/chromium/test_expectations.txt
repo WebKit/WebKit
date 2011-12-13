@@ -669,7 +669,7 @@ BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEX
 // New test added in r82159
 BUGCR77706 : editing/spelling/grammar.html = FAIL
 // Chromium does not have a grammar checker.
-BUGWK56368 : editing/spelling/grammar-paste.html = FAIL
+BUGWK74393 : editing/spelling/grammar-paste.html = FAIL TIMEOUT
 
 // Needs grammar checking.
 BUGWK71792 : editing/spelling/markers.html = FAIL MISSING
