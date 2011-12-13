@@ -54,9 +54,12 @@ class QQuickWebViewPrivate {
 public:
     static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }
 
-    QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
-    virtual ~QQuickWebViewPrivate(); 
+    QQuickWebViewPrivate(QQuickWebView* viewport);
+    virtual ~QQuickWebViewPrivate();
+
+    void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
     void setPageProxy(QtWebPageProxy*);
+
     void initializeTouch(QQuickWebView* viewport);
     void initializeDesktop(QQuickWebView* viewport);
     void enableMouseEvents();
@@ -65,11 +68,9 @@ public:
     void loadDidCommit();
 
     void didFinishFirstNonEmptyLayout();
-    void didChangeContentsSize(const QSize& newSize);
     void didChangeViewportProperties(const WebCore::ViewportArguments& args);
     void didChangeBackForwardList();
 
-    void scrollPositionRequested(const QPoint& pos);
     void updateViewportSize();
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
@@ -91,6 +92,15 @@ public:
     void setViewInAttachedProperties(QObject*);
 
     WebKit::WebPageProxy* webPageProxy() const;
+
+    // PageClient.
+    WebCore::IntSize viewSize() const;
+    void didReceiveMessageFromNavigatorQtObject(const String& message);
+    void pageDidRequestScroll(const QPoint& pos);
+    void didChangeContentsSize(const QSize& newSize);
+    void processDidCrash();
+    void didRelaunchProcess();
+
 
 private:
     // This class is responsible for collecting and applying all properties
@@ -122,9 +132,9 @@ private:
         QPoint position;
     };
 
+    QtPageClient pageClient;
     QtWebUndoController undoController;
 
-    QScopedPointer<QtPageClient> pageClient;
     QScopedPointer<QtWebPageEventHandler> eventHandler;
 
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;
@@ -136,8 +146,6 @@ private:
 
     QQuickWebView* q_ptr;
     QScopedPointer<QtWebPageProxy> pageProxy;
-
-    OwnPtr<QWebNavigationHistory> navigationHistory;
 
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;

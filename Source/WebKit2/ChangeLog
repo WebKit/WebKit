@@ -1,3 +1,41 @@
+2011-12-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt][WK2] Make QtPageClient dispatch directly to WebView when possible
+        https://bugs.webkit.org/show_bug.cgi?id=74407
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::~QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::pageDidRequestScroll):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewPrivate::viewSize):
+        (QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject):
+        (QQuickWebViewExperimental::QQuickWebViewExperimental):
+        (QQuickWebView::QQuickWebView):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::QtPageClient):
+        (QtPageClient::setViewNeedsDisplay):
+        (QtPageClient::pageDidRequestScroll):
+        (QtPageClient::processDidCrash):
+        (QtPageClient::didRelaunchProcess):
+        (QtPageClient::didChangeContentsSize):
+        (QtPageClient::didChangeViewportProperties):
+        (QtPageClient::createPopupMenuProxy):
+        (QtPageClient::didReceiveMessageFromNavigatorQtObject):
+        (QtPageClient::viewSize):
+        (QtPageClient::isViewFocused):
+        (QtPageClient::isViewVisible):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient::initialize):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add support for javascript dialogs in WebKit2 GTK+ API

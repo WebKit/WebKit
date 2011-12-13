@@ -23,15 +23,10 @@
 
 #include "DrawingAreaProxy.h"
 #include "QtWebContext.h"
-#include "ViewportArguments.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
 #include <QMenu>
 #include <QSharedPointer>
-
-QT_BEGIN_NAMESPACE
-class QUndoStack;
-QT_END_NAMESPACE
 
 class QtPageClient;
 class QQuickWebPage;
@@ -52,31 +47,13 @@ class QtWebPageProxy : public QObject {
     Q_OBJECT
 
 public:
-    QtWebPageProxy(QQuickWebPage*, QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
 
-    void setViewNeedsDisplay(const WebCore::IntRect&);
-    WebCore::IntSize viewSize();
-    bool isViewFocused();
-    bool isViewVisible();
-
-    void pageDidRequestScroll(const WebCore::IntPoint&);
-    void processDidCrash();
-    void didRelaunchProcess();
-
-    void didChangeContentsSize(const WebCore::IntSize&);
-    void didChangeViewportProperties(const WebCore::ViewportArguments&);
-
-    PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
-
-    void didReceiveMessageFromNavigatorQtObject(const String&);
-
     void goBackTo(int index);
     void goForwardTo(int index);
-
-    void updateNavigationState();
 
     WKPageRef pageRef() const;
 
@@ -123,10 +100,8 @@ public Q_SLOTS:
 
 public:
     Q_SIGNAL void zoomableAreaFound(const QRect&);
-    Q_SIGNAL void receivedMessageFromNavigatorQtObject(const QVariantMap&);
 
 protected:
-    QQuickWebPage* m_qmlWebPage;
     QQuickWebView* m_qmlWebView;
     RefPtr<WebKit::WebPageProxy> m_webPageProxy;
 
@@ -135,8 +110,6 @@ private:
     OwnPtr<QWebNavigationHistory> m_navigationHistory;
 
     mutable OwnPtr<QWebPreferences> m_preferences;
-
-    OwnPtr<QUndoStack> m_undoStack;
 
     bool m_navigatorQtObjectEnabled;
 

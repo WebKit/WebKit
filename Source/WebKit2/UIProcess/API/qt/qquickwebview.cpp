@@ -36,11 +36,10 @@
 
 #include <JavaScriptCore/InitializeThreading.h>
 #include <QFileDialog>
-#include <QInputDialog>
 #include <QtQuick/QQuickCanvas>
 #include <WKOpenPanelResultListener.h>
 
-QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     : q_ptr(viewport)
     , alertDialog(0)
     , confirmDialog(0)
@@ -51,14 +50,21 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     , pageIsSuspended(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
-
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
     pageView.reset(new QQuickWebPage(viewport));
+}
 
-    pageClient.reset(new QtPageClient());
+QQuickWebViewPrivate::~QQuickWebViewPrivate()
+{
+    if (interactionEngine)
+        interactionEngine->disconnect();
+}
 
+// Note: we delay this initialization to make sure that QQuickWebView has its d-ptr in-place.
+void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+{
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(pageView.data(), q_ptr, pageClient.data(), contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(q_ptr, &pageClient, contextRef, pageGroupRef));
     pageViewPrivate->setPageProxy(pageProxy.data());
 
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
@@ -70,19 +76,13 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     setUseTraditionalDesktopBehaviour(false);
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
 
-    pageClient->initialize(pageProxy.data(), eventHandler.data(), &undoController);
+    pageClient.initialize(q_ptr, pageProxy.data(), eventHandler.data(), &undoController);
 
     // Creates a page with the page creation parameters.
     pageProxy->init(eventHandler.data());
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
-}
-
-QQuickWebViewPrivate::~QQuickWebViewPrivate()
-{
-    if (interactionEngine)
-        interactionEngine->disconnect();
 }
 
 void QQuickWebViewPrivate::enableMouseEvents()
@@ -198,7 +198,7 @@ void QQuickWebViewPrivate::didChangeBackForwardList()
     pageProxy->navigationHistory()->d->reset();
 }
 
-void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
+void QQuickWebViewPrivate::pageDidRequestScroll(const QPoint& pos)
 {
     if (useTraditionalDesktopBehaviour)
         return;
@@ -209,6 +209,21 @@ void QQuickWebViewPrivate::scrollPositionRequested(const QPoint& pos)
     }
 
     interactionEngine->pagePositionRequest(pos);
+}
+
+void QQuickWebViewPrivate::processDidCrash()
+{
+    emit q_ptr->navigationStateChanged();
+    eventHandler->resetGestureRecognizers();
+    WebCore::KURL url(WebCore::ParsedURLString, webPageProxy()->urlAtProcessExit());
+    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(QUrl(url).toString(QUrl::RemoveUserInfo)));
+}
+
+void QQuickWebViewPrivate::didRelaunchProcess()
+{
+    emit q_ptr->navigationStateChanged();
+    qWarning("WARNING: The web process has been successfully restarted.");
+    pageProxy->setDrawingAreaSize(viewSize());
 }
 
 void QQuickWebViewPrivate::updateVisibleContentRect()
@@ -411,6 +426,19 @@ WebKit::WebPageProxy* QQuickWebViewPrivate::webPageProxy() const
     return toImpl(pageProxy->pageRef());
 }
 
+WebCore::IntSize QQuickWebViewPrivate::viewSize() const
+{
+    return WebCore::IntSize(pageView->width(), pageView->height());
+}
+
+void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& message)
+{
+    QVariantMap variantMap;
+    variantMap.insert(QLatin1String("data"), QString(message));
+    variantMap.insert(QLatin1String("origin"), q_ptr->url());
+    emit q_ptr->experimental()->messageReceived(variantMap);
+}
+
 /*!
     \qmlsignal WebView::onNavigationRequested(request)
 
@@ -448,8 +476,6 @@ QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
     , q_ptr(webView)
     , d_ptr(webView->d_ptr.data())
 {
-    Q_D(QQuickWebView);
-    QObject::connect(d->pageProxy.data(), SIGNAL(receivedMessageFromNavigatorQtObject(QVariantMap)), this, SIGNAL(messageReceived(QVariantMap)));
 }
 
 QQuickWebViewExperimental::~QQuickWebViewExperimental()
@@ -559,14 +585,17 @@ QQuickWebView::QQuickWebView(QQuickItem* parent)
     , m_experimental(new QQuickWebViewExperimental(this))
 {
     Q_D(QQuickWebView);
+    d->initialize();
     d->initializeTouch(this);
 }
 
 QQuickWebView::QQuickWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, QQuickItem* parent)
     : QQuickItem(parent)
-    , d_ptr(new QQuickWebViewPrivate(this, contextRef, pageGroupRef))
+    , d_ptr(new QQuickWebViewPrivate(this))
     , m_experimental(new QQuickWebViewExperimental(this))
 {
+    Q_D(QQuickWebView);
+    d->initialize(contextRef, pageGroupRef);
 }
 
 QQuickWebView::~QQuickWebView()

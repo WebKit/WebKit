@@ -26,8 +26,10 @@
 #include "QtWebUndoController.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
+#include "WebPopupMenuProxyQt.h"
+#include "qquickwebview_p.h"
+#include "qquickwebview_p_p.h"
 #include <QGuiApplication>
-#include <QUndoStack>
 #include <WebCore/Cursor.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -37,7 +39,10 @@ using namespace WebKit;
 using namespace WebCore;
 
 QtPageClient::QtPageClient()
-    : m_qtWebPageProxy(0)
+    : m_webView(0)
+    , m_qtWebPageProxy(0)
+    , m_eventHandler(0)
+    , m_undoController(0)
 {
 }
 
@@ -52,32 +57,32 @@ PassOwnPtr<DrawingAreaProxy> QtPageClient::createDrawingAreaProxy()
 
 void QtPageClient::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    m_qtWebPageProxy->setViewNeedsDisplay(rect);
+    m_webView->page()->update();
 }
 
 void QtPageClient::pageDidRequestScroll(const IntPoint& pos)
 {
-    m_qtWebPageProxy->pageDidRequestScroll(pos);
+    QQuickWebViewPrivate::get(m_webView)->pageDidRequestScroll(pos);
 }
 
 void QtPageClient::processDidCrash()
 {
-    m_qtWebPageProxy->processDidCrash();
+    QQuickWebViewPrivate::get(m_webView)->processDidCrash();
 }
 
 void QtPageClient::didRelaunchProcess()
 {
-    m_qtWebPageProxy->didRelaunchProcess();
+    QQuickWebViewPrivate::get(m_webView)->didRelaunchProcess();
 }
 
 void QtPageClient::didChangeContentsSize(const IntSize& newSize)
 {
-    m_qtWebPageProxy->didChangeContentsSize(newSize);
+    QQuickWebViewPrivate::get(m_webView)->didChangeContentsSize(newSize);
 }
 
 void QtPageClient::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
-    m_qtWebPageProxy->didChangeViewportProperties(args);
+    QQuickWebViewPrivate::get(m_webView)->didChangeViewportProperties(args);
 }
 
 void QtPageClient::startDrag(const WebCore::DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
@@ -148,7 +153,7 @@ IntRect QtPageClient::windowToScreen(const IntRect& rect)
 
 PassRefPtr<WebPopupMenuProxy> QtPageClient::createPopupMenuProxy(WebPageProxy* webPageProxy)
 {
-    return m_qtWebPageProxy->createPopupMenuProxy(webPageProxy);
+    return WebPopupMenuProxyQt::create(toImpl(m_qtWebPageProxy->pageRef()), m_webView);
 }
 
 PassRefPtr<WebContextMenuProxy> QtPageClient::createContextMenuProxy(WebPageProxy*)
@@ -175,7 +180,7 @@ void QtPageClient::focusEditableArea(const IntRect& caret, const IntRect& area)
 
 void QtPageClient::didReceiveMessageFromNavigatorQtObject(const String& message)
 {
-    m_qtWebPageProxy->didReceiveMessageFromNavigatorQtObject(message);
+    QQuickWebViewPrivate::get(m_webView)->didReceiveMessageFromNavigatorQtObject(message);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -198,7 +203,7 @@ void QtPageClient::scrollView(const WebCore::IntRect& scrollRect, const WebCore:
 
 WebCore::IntSize QtPageClient::viewSize()
 {
-    return m_qtWebPageProxy->viewSize();
+    return QQuickWebViewPrivate::get(m_webView)->viewSize();
 }
 
 bool QtPageClient::isViewWindowActive()
@@ -209,18 +214,16 @@ bool QtPageClient::isViewWindowActive()
 
 bool QtPageClient::isViewFocused()
 {
-    if (!m_qtWebPageProxy)
+    if (!m_webView)
         return false;
-
-    return m_qtWebPageProxy->isViewFocused();
+    return m_webView->hasFocus();
 }
 
 bool QtPageClient::isViewVisible()
 {
-    if (!m_qtWebPageProxy)
+    if (!m_webView)
         return false;
-
-    return m_qtWebPageProxy->isViewVisible();
+    return m_webView->isVisible() && m_webView->page()->isVisible();
 }
 
 bool QtPageClient::isViewInWindow()

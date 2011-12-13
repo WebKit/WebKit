@@ -25,7 +25,6 @@
 #include <QtQuick/qquickcanvas.h>
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
-#include "qquickwebpage_p.h"
 #include "qwebdownloaditem_p.h"
 #include "qwebdownloaditem_p_p.h"
 #include "qwebnavigationhistory_p.h"
@@ -41,10 +40,7 @@
 #include "QtWebPageEventHandler.h"
 #include "WebBackForwardList.h"
 #include "WebContextMenuProxyQt.h"
-#include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
-#include "WKURLQt.h"
-#include <QUndoStack>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -52,11 +48,9 @@
 using namespace WebKit;
 using namespace WebCore;
 
-QtWebPageProxy::QtWebPageProxy(QQuickWebPage* qmlWebPage, QQuickWebView* qmlWebView, QtPageClient *pageClient, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : m_qmlWebPage(qmlWebPage)
-    , m_qmlWebView(qmlWebView)
+QtWebPageProxy::QtWebPageProxy(QQuickWebView* qmlWebView, QtPageClient *pageClient, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+    : m_qmlWebView(qmlWebView)
     , m_context(contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext())
-    , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(pageClient, toImpl(pageGroupRef));
@@ -106,57 +100,9 @@ void QtWebPageProxy::hideContextMenu()
         activeMenu->hide();
 }
 
-void QtWebPageProxy::setViewNeedsDisplay(const WebCore::IntRect&)
-{
-    m_qmlWebPage->update();
-}
-
-WebCore::IntSize QtWebPageProxy::viewSize()
-{
-    return WebCore::IntSize(m_qmlWebPage->width(), m_qmlWebPage->height());
-}
-
-bool QtWebPageProxy::isViewFocused()
-{
-    return m_qmlWebView->hasFocus();
-}
-
-bool QtWebPageProxy::isViewVisible()
-{
-    return m_qmlWebView->isVisible() && m_qmlWebPage->isVisible();
-}
-
-void QtWebPageProxy::pageDidRequestScroll(const IntPoint& pos)
-{
-    m_qmlWebView->d_func()->scrollPositionRequested(pos);
-}
-
-void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)
-{
-    m_qmlWebView->d_func()->didChangeContentsSize(newSize);
-}
-
-void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
-{
-    m_qmlWebView->d_func()->didChangeViewportProperties(args);
-}
-
-PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*)
-{
-    return WebPopupMenuProxyQt::create(m_webPageProxy.get(), m_qmlWebView);
-}
-
 WKPageRef QtWebPageProxy::pageRef() const
 {
     return toAPI(m_webPageProxy.get());;
-}
-
-void QtWebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& message)
-{
-    QVariantMap variantMap;
-    variantMap.insert(QLatin1String("data"), QString(message));
-    variantMap.insert(QLatin1String("origin"), m_qmlWebView->url());
-    emit receivedMessageFromNavigatorQtObject(variantMap);
 }
 
 void QtWebPageProxy::goBackTo(int index)
@@ -167,29 +113,6 @@ void QtWebPageProxy::goBackTo(int index)
 void QtWebPageProxy::goForwardTo(int index)
 {
     m_navigationHistory->d->goForwardTo(index);
-}
-
-void QtWebPageProxy::updateNavigationState()
-{
-    emit m_qmlWebView->navigationStateChanged();
-}
-
-void QtWebPageProxy::didRelaunchProcess()
-{
-    updateNavigationState();
-    qWarning("WARNING: The web process has been successfully restarted.");
-    setDrawingAreaSize(viewSize());
-}
-
-void QtWebPageProxy::processDidCrash()
-{
-    updateNavigationState();
-
-    ASSERT(m_eventHandler);
-    m_eventHandler->resetGestureRecognizers();
-
-    WebCore::KURL url(WebCore::ParsedURLString, m_webPageProxy->urlAtProcessExit());
-    qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(QUrl(url).toString(QUrl::RemoveUserInfo)));
 }
 
 QWebPreferences* QtWebPageProxy::preferences() const

@@ -29,6 +29,7 @@
 
 class QtWebPageEventHandler;
 class QtWebUndoController;
+class QQuickWebView;
 
 using namespace WebKit;
 
@@ -37,25 +38,28 @@ public:
     QtPageClient();
     ~QtPageClient();
 
-    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    // QQuickWebView.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
-    virtual void displayView();
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual WebCore::IntSize viewSize();
-    virtual bool isViewWindowActive();
     virtual bool isViewFocused();
     virtual bool isViewVisible();
+    virtual void didReceiveMessageFromNavigatorQtObject(const String&);
+    virtual void pageDidRequestScroll(const WebCore::IntPoint&);
+    virtual void didChangeContentsSize(const WebCore::IntSize&);
+    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
+    virtual void processDidCrash();
+    virtual void didRelaunchProcess();
+
+    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    virtual void displayView();
+    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual bool isViewWindowActive();
     virtual bool isViewInWindow();
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
 #endif // USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidRequestScroll(const WebCore::IntPoint&);
-    virtual void processDidCrash();
     virtual void pageClosed() { }
-    virtual void didRelaunchProcess();
-    virtual void didChangeContentsSize(const WebCore::IntSize&);
-    virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
@@ -85,21 +89,22 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&);
-    virtual void didReceiveMessageFromNavigatorQtObject(const String&);
     virtual void handleDownloadRequest(DownloadProxy*);
 
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
-    void initialize(QtWebPageProxy* pageProxy, QtWebPageEventHandler* eventHandler, QtWebUndoController* undoController)
+    void initialize(QQuickWebView* webView, QtWebPageProxy* pageProxy, QtWebPageEventHandler* eventHandler, QtWebUndoController* undoController)
     {
+        m_webView = webView;
         m_eventHandler = eventHandler;
         m_qtWebPageProxy = pageProxy;
         m_undoController = undoController;
     }
 
 private:
+    QQuickWebView* m_webView;
     QtWebPageProxy* m_qtWebPageProxy;
     QtWebPageEventHandler* m_eventHandler;
     QtWebUndoController* m_undoController;
