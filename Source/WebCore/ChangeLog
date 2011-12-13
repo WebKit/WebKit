@@ -1,3 +1,13 @@
+2011-12-12  Andreas Kling  <kling@webkit.org>
+
+        CollectionCache: Remove unused copy constructor and make it noncopyable.
+        <http://webkit.org/b/74378>
+
+        Reviewed by Simon Hausmann.
+
+        * html/CollectionCache.cpp:
+        * html/CollectionCache.h:
+
 2011-12-13  Jarred Nicholls  <jarred@sencha.com>
 
         XHR should use m_responseTypeCode internally to be consistent with WebKit coding style

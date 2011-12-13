@@ -30,19 +30,11 @@ namespace WebCore {
 class Element;
 
 struct CollectionCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(CollectionCache);
 public:
     CollectionCache();
-    CollectionCache(const CollectionCache&);
-    CollectionCache& operator=(const CollectionCache& other)
-    {
-        CollectionCache tmp(other);    
-        swap(tmp);
-        return *this;
-    }
 
     void reset();
-    void swap(CollectionCache&);
 
     void checkConsistency();
 
@@ -57,9 +49,6 @@ public:
     NodeCacheMap nameCache;
     bool hasLength;
     bool hasNameCache;
-
-private:
-    static void copyCacheMap(NodeCacheMap&, const NodeCacheMap&);
 };
 
 void append(CollectionCache::NodeCacheMap&, const AtomicString&, Element*);
