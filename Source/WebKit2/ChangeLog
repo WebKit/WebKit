@@ -1,3 +1,36 @@
+2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Initial UI client implementation for WebKit2 GTK +API
+        https://bugs.webkit.org/show_bug.cgi?id=69753
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitUIClient.cpp: Added.
+        (createNewPage): Call webkitWebViewCreateNewPage.
+        (showPage): Call webkitWebViewReadyToShowPage.
+        (closePage): Call webkitWebViewClosePage.
+        (webkitUIClientAttachUIClientToPage): Initialize UI client and
+        attach it to the given page.
+        (webkit_ui_client_init):
+        (webkit_ui_client_class_init):
+        * UIProcess/API/gtk/WebKitUIClient.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreate): Default implementation of signal
+        WebKitWebView::create that simply returns NULL.
+        (webkitWebViewConstructed): Create the default UI client.
+        (webkitWebViewAccumulatorObjectHandled):
+        (webkit_web_view_class_init):
+        (webkitWebViewCreateNewPage): Emit create signal.
+        (webkitWebViewReadyToShowPage): Emit ready-to-show signal.
+        (webkitWebViewClosePage): Emit close signal.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewCreateReadyClose):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2011-12-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt][WK2] Move load & navigation related functions out of QtWebPageProxy

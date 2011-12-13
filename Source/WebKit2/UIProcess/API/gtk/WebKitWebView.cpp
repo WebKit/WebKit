@@ -22,7 +22,9 @@
 #include "WebKitWebView.h"
 
 #include "WebKitBackForwardListPrivate.h"
+#include "WebKitMarshal.h"
 #include "WebKitSettingsPrivate.h"
+#include "WebKitUIClient.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebLoaderClient.h"
 #include "WebKitWebLoaderClientPrivate.h"
@@ -41,6 +43,14 @@ using namespace WebKit;
 using namespace WebCore;
 
 enum {
+    CREATE,
+    READY_TO_SHOW,
+    CLOSE,
+
+    LAST_SIGNAL
+};
+
+enum {
     PROP_0,
 
     PROP_WEB_CONTEXT,
@@ -57,11 +67,19 @@ struct _WebKitWebViewPrivate {
     CString activeURI;
 
     GRefPtr<WebKitWebLoaderClient> loaderClient;
+    GRefPtr<WebKitUIClient> uiClient;
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
 };
 
+static guint signals[LAST_SIGNAL] = { 0, };
+
 G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
+
+static GtkWidget* webkitWebViewCreate(WebKitWebView*)
+{
+    return 0;
+}
 
 static void webkitWebViewSetLoaderClient(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
 {
@@ -84,6 +102,10 @@ static void webkitWebViewConstructed(GObject* object)
 
     static GRefPtr<WebKitWebLoaderClient> defaultLoaderClient = adoptGRef(WEBKIT_WEB_LOADER_CLIENT(g_object_new(WEBKIT_TYPE_WEB_LOADER_CLIENT, NULL)));
     webkitWebViewSetLoaderClient(webView, defaultLoaderClient.get(), toAPI(page));
+
+    static GRefPtr<WebKitUIClient> defaultUIClient = adoptGRef(WEBKIT_UI_CLIENT(g_object_new(WEBKIT_TYPE_UI_CLIENT, NULL)));
+    priv->uiClient = defaultUIClient.get();
+    webkitUIClientAttachUIClientToPage(priv->uiClient.get(), toAPI(page));
 
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(WKPageGetBackForwardList(toAPI(page))));
     priv->settings = adoptGRef(webkit_settings_new());
@@ -138,6 +160,15 @@ static void webkit_web_view_init(WebKitWebView* webView)
     new (priv) WebKitWebViewPrivate();
 }
 
+static gboolean webkitWebViewAccumulatorObjectHandled(GSignalInvocationHint*, GValue* returnValue, const GValue* handlerReturn, gpointer)
+{
+    void* object = g_value_get_object(handlerReturn);
+    if (object)
+        g_value_set_object(returnValue, object);
+
+    return !object;
+}
+
 static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(webViewClass);
@@ -146,6 +177,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     gObjectClass->set_property = webkitWebViewSetProperty;
     gObjectClass->get_property = webkitWebViewGetProperty;
     gObjectClass->finalize = webkitWebViewFinalize;
+
+    webViewClass->create = webkitWebViewCreate;
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
@@ -207,6 +240,66 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         "The current active URI of the view",
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
+
+    /**
+     * WebKitWebView::create:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     *
+     * Emitted when the creation of a new #WebKitWebView is requested.
+     * If this signal is handled the signal handler should return the
+     * newly created #WebKitWebView.
+     *
+     * The new #WebKitWebView should not be displayed to the user
+     * until the #WebKitWebView::ready-to-show signal is emitted.
+     *
+     * Returns: (transfer full): a newly allocated #WebKitWebView widget
+     *    or %NULL to propagate the event further.
+     */
+    signals[CREATE] =
+        g_signal_new("create",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, create),
+                     webkitWebViewAccumulatorObjectHandled, 0,
+                     webkit_marshal_OBJECT__VOID,
+                     GTK_TYPE_WIDGET, 0);
+
+    /**
+     * WebKitWebView::ready-to-show:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     *
+     * Emitted after #WebKitWebView::create on the newly created #WebKitWebView
+     * when it should be displayed to the user. When this signal is emitted
+     * all the information about how the window should look, including
+     * size, position, whether the location, status and scrollbars
+     * should be displayed, is already set.
+     */
+    signals[READY_TO_SHOW] =
+        g_signal_new("ready-to-show",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, ready_to_show),
+                     0, 0,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebView::close:
+     * @webView: the #WebKitWebView on which the signal is emitted
+     *
+     * Emitted when closing a #WebKitWebView is requested. This occurs when a
+     * call is made from JavaScript's <function>window.close</function> function.
+     * It is the owner's responsibility to handle this signal to hide or
+     * destroy the #WebKitWebView, if necessary.
+     */
+    signals[CLOSE] =
+        g_signal_new("close",
+                     G_TYPE_FROM_CLASS(webViewClass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(WebKitWebViewClass, close),
+                     0, 0,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 }
 
 void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
@@ -240,6 +333,26 @@ void webkitWebViewUpdateURI(WebKitWebView* webView)
 
     webView->priv->activeURI = activeURI;
     g_object_notify(G_OBJECT(webView), "uri");
+}
+
+WKPageRef webkitWebViewCreateNewPage(WebKitWebView* webView)
+{
+    WebKitWebView* newWebView;
+    g_signal_emit(webView, signals[CREATE], 0, &newWebView);
+    if (!newWebView)
+        return 0;
+
+    return static_cast<WKPageRef>(WKRetain(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(newWebView)))));
+}
+
+void webkitWebViewReadyToShowPage(WebKitWebView* webView)
+{
+    g_signal_emit(webView, signals[READY_TO_SHOW], 0, NULL);
+}
+
+void webkitWebViewClosePage(WebKitWebView* webView)
+{
+    g_signal_emit(webView, signals[CLOSE], 0, NULL);
 }
 
 /**

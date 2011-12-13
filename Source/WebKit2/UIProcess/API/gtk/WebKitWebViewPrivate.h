@@ -34,5 +34,8 @@
 void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
 void webkitWebViewSetTitle(WebKitWebView*, const CString&);
 void webkitWebViewUpdateURI(WebKitWebView*);
+WKPageRef webkitWebViewCreateNewPage(WebKitWebView*);
+void webkitWebViewReadyToShowPage(WebKitWebView*);
+void webkitWebViewClosePage(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

@@ -57,6 +57,10 @@ struct _WebKitWebView {
 struct _WebKitWebViewClass {
     WebKitWebViewBaseClass parent;
 
+    GtkWidget *(* create)        (WebKitWebView *web_view);
+    void       (* ready_to_show) (WebKitWebView *web_view);
+    void       (* close)         (WebKitWebView *web_view);
+
     /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);

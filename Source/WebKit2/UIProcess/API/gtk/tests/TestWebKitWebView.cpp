@@ -19,7 +19,6 @@
 
 #include "config.h"
 #include "WebViewTest.h"
-#include "LoadTrackingTest.h"
 #include <wtf/gobject/GRefPtr.h>
 
 static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
@@ -76,12 +75,86 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_settings_get_enable_javascript(settings));
 }
 
+class UIClientTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(UIClientTest);
+
+    enum WebViewEvents {
+        Create,
+        ReadyToShow,
+        Close
+    };
+
+    static void viewClose(WebKitWebView* webView, UIClientTest* test)
+    {
+        g_assert(webView != test->m_webView);
+
+        test->m_webViewEvents.append(Close);
+        g_object_unref(webView);
+
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    static void viewReadyToShow(WebKitWebView* webView, UIClientTest* test)
+    {
+        g_assert(webView != test->m_webView);
+
+        test->m_webViewEvents.append(ReadyToShow);
+    }
+
+    static GtkWidget* viewCreate(WebKitWebView* webView, UIClientTest* test)
+    {
+        g_assert(webView == test->m_webView);
+
+        GtkWidget* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
+        g_object_ref_sink(newWebView);
+
+        test->m_webViewEvents.append(Create);
+
+        g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShow), test);
+        g_signal_connect(newWebView, "close", G_CALLBACK(viewClose), test);
+
+        return newWebView;
+    }
+
+    UIClientTest()
+    {
+        webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
+        g_signal_connect(m_webView, "create", G_CALLBACK(viewCreate), this);
+    }
+
+    ~UIClientTest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+    }
+
+    void waitUntilMainLoopFinishes()
+    {
+        g_main_loop_run(m_mainLoop);
+    }
+
+    Vector<WebViewEvents> m_webViewEvents;
+};
+
+static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body onLoad=\"window.open().close();\"></html>", 0);
+    test->waitUntilMainLoopFinishes();
+
+    Vector<UIClientTest::WebViewEvents>& events = test->m_webViewEvents;
+    g_assert_cmpint(events.size(), ==, 3);
+    g_assert_cmpint(events[0], ==, UIClientTest::Create);
+    g_assert_cmpint(events[1], ==, UIClientTest::ReadyToShow);
+    g_assert_cmpint(events[2], ==, UIClientTest::Close);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
     WebViewTest::add("WebKitWebView", "custom-charset", testWebViewCustomCharset);
     Test::add("WebKitWebView", "webviews-share-clients", testWebViewsShareClients);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
+    UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
 }
 
 void afterAll()
