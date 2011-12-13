@@ -1,3 +1,9 @@
+2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r102640.
+
+        * GNUmakefile.am: Add DownloadProxy sources again.
+
 2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt][WK2] Move undo & edit command PageClient callbacks into QtWebUndoController
