@@ -51,7 +51,7 @@ bool MyApp::OnInit()
         
     // create the main application window
     // see WebKit/wx/WebFrame.cpp for how to write a shell around wxWebView.
-    wxWebBrowserShell *frame = new wxWebBrowserShell(_T("wxWebKit Test App"));
+    wxWebBrowserShell *frame = new wxWebBrowserShell(_T("wxWebKit Test App"), "http://www.webkit.org");
 
 #ifndef NDEBUG
     frame->ShowDebugMenu(true);

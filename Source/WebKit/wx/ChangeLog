@@ -1,3 +1,29 @@
+2011-12-11  Robin Dunn  <robin@alldunn.com>
+
+        Add a URL argument to the wxWebView constructor,
+        and fix page calculations and margins on Windows and Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=74316
+
+        Reviewed by Kevin Ollivier.
+
+        * WebBrowserShell.cpp:
+        (wxWebBrowserShell::wxWebBrowserShell):
+        * WebBrowserShell.h:
+        * WebFrame.cpp:
+        (wxWebFramePrintout::wxWebFramePrintout):
+        (wxWebFramePrintout::~wxWebFramePrintout):
+        (wxWebFramePrintout::InitializeWithPageSize):
+        (wxWebFramePrintout::OnPreparePrinting):
+        (wxWebFramePrintout::OnPrintPage):
+        (wxWebFramePrintout::OnEndPrinting):
+        (wxWebFrame::Print):
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::Create):
+        * WebView.h:
+        * bindings/python/samples/simple.py:
+        (TestPanel.__init__):
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline

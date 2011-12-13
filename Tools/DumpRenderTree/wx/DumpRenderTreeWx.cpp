@@ -293,7 +293,7 @@ bool MyApp::OnInit()
     wxInitAllImageHandlers();
         
     // create the main application window
-    wxWebBrowserShell* webFrame = new wxWebBrowserShell(_T("wxWebKit DumpRenderTree App"));
+    wxWebBrowserShell* webFrame = new wxWebBrowserShell(_T("wxWebKit DumpRenderTree App"), "about:blank");
     SetTopWindow(webFrame);
     webView = webFrame->webview;
     webView->SetSize(wxSize(maxViewWidth, maxViewHeight));

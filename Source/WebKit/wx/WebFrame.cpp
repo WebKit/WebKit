@@ -98,10 +98,17 @@ public:
         m_printContext(frame),
         m_pageWidth(0.0),
         m_fromPage(1),
-        m_toPage(1)
+        m_toPage(1),
+        m_isPrinting(false)
     {
     }
 
+    ~wxWebFramePrintout() 
+    {
+        if (m_isPrinting)
+            m_printContext.end();
+    }
+  
     int GetPageCount() { return m_printContext.pageCount(); }
     void SetFirstPage(int page) { m_fromPage = page; }
     void SetLastPage(int page) { m_toPage = page; }
@@ -109,24 +116,23 @@ public:
     void InitializeWithPageSize(wxRect pageRect, bool isMM = true)
     {
         if (isMM) {
-            double mmToPixelsX = (double)wxGetDisplaySize().GetWidth() /
-                                    (double)wxGetDisplaySizeMM().GetWidth();
-            double mmToPixelsY = (double)wxGetDisplaySize().GetHeight() /
-                                    (double)wxGetDisplaySizeMM().GetHeight();
-            // convert mm to pixels
-            pageRect.x = pageRect.x * mmToPixelsX;
-            pageRect.y = pageRect.y * mmToPixelsY;
-            pageRect.width = pageRect.width * mmToPixelsX;
-            pageRect.height = pageRect.height * mmToPixelsY;
+            double mmToPoints = 2.8346;
+            // convert mm to points
+            pageRect.x = pageRect.x * mmToPoints;
+            pageRect.y = pageRect.y * mmToPoints;
+            pageRect.width = pageRect.width * mmToPoints;
+            pageRect.height = pageRect.height * mmToPoints;
         }
         m_pageWidth = pageRect.width;
         m_printContext.begin(m_pageWidth);
+        // isPrinting is from the perspective of the PrintContext, so we need this when we call begin.
+        m_isPrinting = true;
 
         float pageHeight = pageRect.height;
         m_printContext.computePageRects(WebCore::FloatRect(pageRect), /* headerHeight */ 0, /* footerHeight */ 0, /* userScaleFactor */ 1.0, pageHeight);
     }
     
-    void OnBeginPrinting()
+    void OnPreparePrinting()
     {
         wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
         pdc->SetMapMode(wxMM_POINTS);
@@ -135,7 +141,12 @@ public:
         pdc->GetSize(&pixelsW, &pixelsH);
         pixelsW = pdc->DeviceToLogicalXRel(pixelsW);
         pixelsH = pdc->DeviceToLogicalYRel(pixelsH);
-        InitializeWithPageSize(wxRect(0, 0, pixelsW, pixelsH - 40), false);
+#if __WXMSW__
+        // on Windows, the context has no margins, so add them ourselves.
+        pixelsW -= 30;
+        pixelsH -= 30;
+#endif
+        InitializeWithPageSize(wxRect(0, 0, pixelsW, pixelsH), false);
     }
     
     void GetPageInfo(int *minPage, int *maxPage, int *pageFrom, int *pageTo)
@@ -167,6 +178,10 @@ public:
         ASSERT(renderer);
         wxGraphicsContext* context = renderer->CreateContext(*pdc);
         wxGCDC gcdc(context);
+#if __WXMSW__
+        // see comment above about Windows contexts not having margins set.
+        gcdc.SetDeviceOrigin(15, 15);
+#endif
         if (!gcdc.IsOk())
             return false;
 
@@ -178,13 +193,15 @@ public:
     
     void OnEndPrinting()
     {
-        m_printContext.end();   
+        m_printContext.end();
+        m_isPrinting = false;
     }
     
 private:
     float m_pageWidth;
     int m_fromPage;
     int m_toPage;
+    bool m_isPrinting;
     WebCore::Frame *m_frame;
     WebCore::PrintContext m_printContext;
 };
@@ -612,41 +629,50 @@ void wxWebFrame::Print(bool showDialog)
     printdata.GetPrintData().SetNoCopies(1);
 #if wxCHECK_VERSION(2, 9, 2)
     printdata.GetPrintData().ConvertFromNative();
-#else
-    // due to wx bugs, we cannot get the actual native default paper type before showing the dialog until 2.9.2, 
-    // so pick a common default instead.
-    printdata.GetPrintData().SetPaperId(wxPAPER_LETTER);
 #endif
+
+    // make sure we have a valid paper type, if we don't, the to / from pages will both be 0
+    // and the dialog won't show.
+    if (printdata.GetPrintData().GetPaperId() == wxPAPER_NONE)
+        printdata.GetPrintData().SetPaperId(wxPAPER_LETTER);
 
     wxPageSetupDialogData pageSetup(printdata.GetPrintData());
 
     wxRect paperSize = pageSetup.GetPaperSize();
-#ifdef __WXMSW__
-    // On Windows, the paper size apparently includes the non-printable areas of the page.
-    // Guesstimate the printable page margins until we find a better solution.
+    // The paper size includes the non-printable areas of the page.
+    // Guesstimate the printable page margins until we find a way to precisely
+    // calculate the margins used by the device context on Mac.
     paperSize.Deflate(15, 15);
-#endif
+
     wxWebFramePrintout* printout = new wxWebFramePrintout(m_impl->frame);
     printout->InitializeWithPageSize(paperSize);
     
-    printdata.SetMinPage(1);
-    printdata.SetMaxPage(printout->GetPageCount());
-    printdata.SetFromPage(1);
-    printdata.SetToPage(printout->GetPageCount());
+    int pages = printout->GetPageCount();
+    ASSERT(pages > 0);
 
+    printdata.SetMinPage(1);
+    printdata.SetMaxPage(pages);
+    printdata.SetFromPage(1);
+    printdata.SetToPage(pages);
+
+    bool shouldPrint = true;
     if (showDialog) {
         wxPrintDialog dialog(0, &printdata);
-        if (dialog.ShowModal() == wxID_OK) {
+        shouldPrint = (dialog.ShowModal() == wxID_OK);
+        if (shouldPrint) {
             printdata = dialog.GetPrintDialogData();            
             printout->SetFirstPage(printdata.GetFromPage());
             printout->SetLastPage(printdata.GetToPage());
-        } else
-            return;
+        }
     }
     
-    wxPrinter printer(&printdata);
-        
-    printer.Print(0, printout, false);
+    if (shouldPrint) {
+        wxPrinter printer(&printdata);
+        printer.Print(0, printout, false);
+    }
+    
+    if (printout)
+        delete printout;
         
 #else
     wxFAIL_MSG(wxT("Printing is only supported in wxWidgets 2.9.1 and above."));

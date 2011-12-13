@@ -348,7 +348,7 @@ wxWebView::wxWebView() :
 {
 }
 
-wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position, 
+wxWebView::wxWebView(wxWindow* parent, const wxString& url, int id, const wxPoint& position, 
                      const wxSize& size, long style, const wxString& name) :
     m_textMagnifier(1.0),
     m_isInitialized(false),
@@ -356,10 +356,10 @@ wxWebView::wxWebView(wxWindow* parent, int id, const wxPoint& position,
     m_mouseWheelZooms(false),
     m_title(wxEmptyString)
 {
-    Create(parent, id, position, size, style, name);
+    Create(parent, url, id, position, size, style, name);
 }
 
-bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position, 
+bool wxWebView::Create(wxWindow* parent, const wxString& url, int id, const wxPoint& position, 
                        const wxSize& size, long style, const wxString& name)
 {
 #if OS(DARWIN)
@@ -421,7 +421,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
 
     // we need to do this so that objects like the focusController are properly
     // initialized so that the activate handler is run properly.
-    LoadURL(wxT("about:blank"));
+    LoadURL(url);
     
     m_isInitialized = true;
 

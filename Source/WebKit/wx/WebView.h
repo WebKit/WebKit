@@ -116,7 +116,9 @@ public:
     %pythonAppend wxWebView()  ""
 #endif
 
-    wxWebView(wxWindow* parent, int id = wxID_ANY,
+    wxWebView(wxWindow* parent,
+              const wxString& url = "about:blank", 
+              int id = wxID_ANY,
               const wxPoint& point = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = 0,
@@ -127,7 +129,9 @@ public:
     wxWebView();
 #endif
     
-    bool Create(wxWindow* parent, int id = wxID_ANY,
+    bool Create(wxWindow* parent,
+                const wxString& url = "about:blank", 
+                int id = wxID_ANY,
                 const wxPoint& point = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,

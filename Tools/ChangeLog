@@ -1,3 +1,15 @@
+2011-12-13  Robin Dunn  <robin@alldunn.com>
+
+        [wx] Add a URL argument to wxWebView constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=74316
+        
+        Reviewed by Kevin Ollivier.
+
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (MyApp::OnInit):
+        * wx/browser/browser.cpp:
+        (MyApp::OnInit):
+
 2011-12-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         watchlist: Add watchlist for EFL, CMake and libsoup code and put myself on it.

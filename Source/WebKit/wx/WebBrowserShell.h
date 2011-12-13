@@ -44,7 +44,7 @@ public:
 #if SWIG
     %pythonAppend wxWebBrowserShell "self._setOORInfo(self)"
 #endif
-    wxWebBrowserShell(const wxString& title);
+    wxWebBrowserShell(const wxString& title, const wxString& url = "about:blank");
 
 #ifndef SWIG
     ~wxWebBrowserShell();

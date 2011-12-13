@@ -44,7 +44,7 @@ class TestPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.webview = wx.webview.WebView(self, -1)
+        self.webview = wx.webview.WebView(self, self.current, -1)
 
 
         btn = wx.Button(self, -1, "Open", style=wx.BU_EXACTFIT)
@@ -82,7 +82,6 @@ class TestPanel(wx.Panel):
         sizer.Add(btnSizer, 0, wx.EXPAND)
         sizer.Add(self.webview, 1, wx.EXPAND)
 
-        self.webview.LoadURL(self.current)
         self.location.Append(self.current)
         
         self.webview.Bind(wx.webview.EVT_WEBVIEW_LOAD, self.OnStateChanged)
