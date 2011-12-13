@@ -28,6 +28,7 @@
 #include "QtWebPagePolicyClient.h"
 #include "QtWebPageProxy.h"
 #include "QtWebPageUIClient.h"
+#include "QtWebUndoController.h"
 
 #include "qquickwebview_p.h"
 #include "qquickwebpage_p.h"
@@ -115,6 +116,8 @@ private:
         QSize contentsSize;
         QPoint position;
     };
+
+    QtWebUndoController undoController;
 
     QScopedPointer<QtPageClient> pageClient;
     QScopedPointer<QtWebPageEventHandler> eventHandler;

@@ -28,6 +28,7 @@
 #include "ViewportArguments.h"
 
 class QtWebPageEventHandler;
+class QtWebUndoController;
 
 using namespace WebKit;
 
@@ -59,10 +60,13 @@ public:
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void toolTipChanged(const String&, const String&);
+
+    // QtWebUndoController
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
+
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
@@ -88,12 +92,17 @@ public:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
-    void setEventHandler(QtWebPageEventHandler* eventHandler) { m_eventHandler = eventHandler; }
-    void setPageProxy(QtWebPageProxy* pageProxy) { m_qtWebPageProxy = pageProxy; }
+    void initialize(QtWebPageProxy* pageProxy, QtWebPageEventHandler* eventHandler, QtWebUndoController* undoController)
+    {
+        m_eventHandler = eventHandler;
+        m_qtWebPageProxy = pageProxy;
+        m_undoController = undoController;
+    }
 
 private:
     QtWebPageProxy* m_qtWebPageProxy;
     QtWebPageEventHandler* m_eventHandler;
+    QtWebUndoController* m_undoController;
 };
 
 #endif /* QtPageClient_h */

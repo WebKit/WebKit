@@ -69,8 +69,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport, WKContextRef
     setUseTraditionalDesktopBehaviour(false);
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
 
-    pageClient->setEventHandler(eventHandler.data());
-    pageClient->setPageProxy(pageProxy.data());
+    pageClient->initialize(pageProxy.data(), eventHandler.data(), &undoController);
 
     // Creates a page with the page creation parameters.
     pageProxy->init(eventHandler.data());

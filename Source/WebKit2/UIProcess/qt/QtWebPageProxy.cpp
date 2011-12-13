@@ -39,7 +39,6 @@
 #include "QtDownloadManager.h"
 #include "QtPageClient.h"
 #include "QtWebPageEventHandler.h"
-#include "QtWebUndoCommand.h"
 #include "WebBackForwardList.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebPopupMenuProxyQt.h"
@@ -140,36 +139,6 @@ void QtWebPageProxy::didChangeContentsSize(const IntSize& newSize)
 void QtWebPageProxy::didChangeViewportProperties(const WebCore::ViewportArguments& args)
 {
     m_qmlWebView->d_func()->didChangeViewportProperties(args);
-}
-
-void QtWebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
-{
-    if (undoOrRedo == WebPageProxy::Undo) {
-        const QtWebUndoCommand* webUndoCommand = static_cast<const QtWebUndoCommand*>(m_undoStack->command(m_undoStack->index()));
-        if (webUndoCommand && webUndoCommand->inUndoRedo())
-            return;
-        m_undoStack->push(new QtWebUndoCommand(command));
-    }
-}
-
-void QtWebPageProxy::clearAllEditCommands()
-{
-    m_undoStack->clear();
-}
-
-bool QtWebPageProxy::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
-{
-    if (undoOrRedo == WebPageProxy::Undo)
-        return m_undoStack->canUndo();
-    return m_undoStack->canRedo();
-}
-
-void QtWebPageProxy::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
-{
-    if (undoOrRedo == WebPageProxy::Undo)
-        m_undoStack->undo();
-    else
-        m_undoStack->redo();
 }
 
 PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*)

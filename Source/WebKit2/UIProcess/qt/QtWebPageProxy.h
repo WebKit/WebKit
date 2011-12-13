@@ -69,11 +69,6 @@ public:
     void didChangeContentsSize(const WebCore::IntSize&);
     void didChangeViewportProperties(const WebCore::ViewportArguments&);
 
-    void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
-    void clearAllEditCommands();
-    bool canUndoRedo(WebPageProxy::UndoOrRedo);
-    void executeUndoRedo(WebPageProxy::UndoOrRedo);
-
     PassRefPtr<WebKit::WebPopupMenuProxy> createPopupMenuProxy(WebKit::WebPageProxy*);
 
     void didReceiveMessageFromNavigatorQtObject(const String&);

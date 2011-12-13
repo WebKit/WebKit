@@ -19,9 +19,29 @@
 */
 
 #include "config.h"
-#include "QtWebUndoCommand.h"
+#include "QtWebUndoController.h"
+
+#include "WebEditCommandProxy.h"
+#include <qglobal.h>
+#include <wtf/RefPtr.h>
 
 using namespace WebKit;
+
+class QtWebUndoCommand : public QUndoCommand {
+public:
+    QtWebUndoCommand(PassRefPtr<WebEditCommandProxy>, QUndoCommand* parent = 0);
+    ~QtWebUndoCommand();
+
+    void redo();
+    void undo();
+
+    bool inUndoRedo() const { return m_inUndoRedo; };
+
+private:
+    RefPtr<WebEditCommandProxy> m_command;
+    bool m_first;
+    bool m_inUndoRedo;
+};
 
 QtWebUndoCommand::QtWebUndoCommand(PassRefPtr<WebEditCommandProxy> command, QUndoCommand* parent)
     : QUndoCommand(parent)
@@ -59,4 +79,38 @@ void QtWebUndoCommand::undo()
         m_command->unapply();
 
     m_inUndoRedo = false;
+}
+
+QtWebUndoController::QtWebUndoController()
+{
+}
+
+void QtWebUndoController::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    if (undoOrRedo == WebPageProxy::Undo) {
+        const QtWebUndoCommand* webUndoCommand = static_cast<const QtWebUndoCommand*>(m_undoStack.command(m_undoStack.index()));
+        if (webUndoCommand && webUndoCommand->inUndoRedo())
+            return;
+        m_undoStack.push(new QtWebUndoCommand(command));
+    }
+}
+
+void QtWebUndoController::clearAllEditCommands()
+{
+    m_undoStack.clear();
+}
+
+bool QtWebUndoController::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    if (undoOrRedo == WebPageProxy::Undo)
+        return m_undoStack.canUndo();
+    return m_undoStack.canRedo();
+}
+
+void QtWebUndoController::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    if (undoOrRedo == WebPageProxy::Undo)
+        m_undoStack.undo();
+    else
+        m_undoStack.redo();
 }

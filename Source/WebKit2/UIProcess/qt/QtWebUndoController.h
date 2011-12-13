@@ -18,28 +18,27 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef QtWebUndoCommand_h
-#define QtWebUndoCommand_h
+#ifndef QtWebUndoController_h
+#define QtWebUndoController_h
 
-#include "WebEditCommandProxy.h"
-#include <QUndoCommand>
-#include <qglobal.h>
-#include <wtf/RefPtr.h>
+#include "PageClient.h"
+#include "WebPageProxy.h"
+#include <QUndoStack>
 
-class QtWebUndoCommand : public QUndoCommand {
+class QtWebUndoController {
 public:
-    QtWebUndoCommand(PassRefPtr<WebKit::WebEditCommandProxy>, QUndoCommand* parent = 0);
-    ~QtWebUndoCommand();
-
-    void redo();
-    void undo();
-
-    bool inUndoRedo() const { return m_inUndoRedo; };
+    QtWebUndoController();
 
 private:
-    RefPtr<WebKit::WebEditCommandProxy> m_command;
-    bool m_first;
-    bool m_inUndoRedo;
+    friend class QtPageClient;
+
+    // Page Client.
+    void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
+    void clearAllEditCommands();
+    bool canUndoRedo(WebKit::WebPageProxy::UndoOrRedo);
+    void executeUndoRedo(WebKit::WebPageProxy::UndoOrRedo);
+
+    QUndoStack m_undoStack;
 };
 
-#endif // QtWebUndoCommand_h
+#endif // QtWebUndoController_h

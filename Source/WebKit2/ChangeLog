@@ -1,3 +1,40 @@
+2011-12-12  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt][WK2] Move undo & edit command PageClient callbacks into QtWebUndoController
+        https://bugs.webkit.org/show_bug.cgi?id=74364
+
+        Reviewed by Simon Hausmann.
+
+        The four callbacks in PageClient related to Undo depend only on the QUndoStack. So we
+        move their handling to a QtWebUndoController (owned by QQuickWebViewPrivate). This also
+        make QtWebUndoCommand an implementation detail.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::registerEditCommand):
+        (QtPageClient::clearAllEditCommands):
+        (QtPageClient::canUndoRedo):
+        (QtPageClient::executeUndoRedo):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient::initialize):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/QtWebUndoController.cpp: Renamed from Source/WebKit2/UIProcess/qt/QtWebUndoCommand.cpp.
+        (QtWebUndoCommand::inUndoRedo):
+        (QtWebUndoCommand::QtWebUndoCommand):
+        (QtWebUndoCommand::~QtWebUndoCommand):
+        (QtWebUndoCommand::redo):
+        (QtWebUndoCommand::undo):
+        (QtWebUndoController::QtWebUndoController):
+        (QtWebUndoController::registerEditCommand):
+        (QtWebUndoController::clearAllEditCommands):
+        (QtWebUndoController::canUndoRedo):
+        (QtWebUndoController::executeUndoRedo):
+        * UIProcess/qt/QtWebUndoController.h: Renamed from Source/WebKit2/UIProcess/qt/QtWebUndoCommand.h.
+
 2011-12-12  Andreas Kling  <kling@webkit.org>
 
         Resizing Cappuccino is very laggy on WebKit since Safari 5.1

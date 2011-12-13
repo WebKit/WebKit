@@ -23,7 +23,7 @@
 
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageProxy.h"
-#include "QtWebUndoCommand.h"
+#include "QtWebUndoController.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
 #include <QGuiApplication>
@@ -108,22 +108,22 @@ void QtPageClient::toolTipChanged(const String&, const String& newTooltip)
 
 void QtPageClient::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    m_qtWebPageProxy->registerEditCommand(command, undoOrRedo);
+    m_undoController->registerEditCommand(command, undoOrRedo);
 }
 
 void QtPageClient::clearAllEditCommands()
 {
-    m_qtWebPageProxy->clearAllEditCommands();
+    m_undoController->clearAllEditCommands();
 }
 
 bool QtPageClient::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    return m_qtWebPageProxy->canUndoRedo(undoOrRedo);
+    return m_undoController->canUndoRedo(undoOrRedo);
 }
 
 void QtPageClient::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
-    m_qtWebPageProxy->executeUndoRedo(undoOrRedo);
+    m_undoController->executeUndoRedo(undoOrRedo);
 }
 
 FloatRect QtPageClient::convertToDeviceSpace(const FloatRect& rect)
