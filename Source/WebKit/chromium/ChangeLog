@@ -1,3 +1,13 @@
+2011-12-13  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r102693.
+        http://trac.webkit.org/changeset/102693
+        https://bugs.webkit.org/show_bug.cgi?id=74334
+
+        Broke Chromium Windows DRT build
+
+        * features.gypi:
+
 2011-12-13  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Pull in FreeType and decrease check-out complexity for Android
