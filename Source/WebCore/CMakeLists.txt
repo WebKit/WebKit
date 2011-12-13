@@ -915,6 +915,7 @@ SET(WebCore_SOURCES
 
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp
+    loader/DocumentLoadTiming.cpp
     loader/DocumentLoader.cpp
     loader/DocumentThreadableLoader.cpp
     loader/DocumentWriter.cpp
@@ -1176,6 +1177,7 @@ SET(WebCore_SOURCES
     platform/network/ProxyServer.cpp
     platform/network/ResourceErrorBase.cpp
     platform/network/ResourceHandle.cpp
+    platform/network/ResourceLoadTiming.cpp
     platform/network/ResourceRequestBase.cpp
     platform/network/ResourceResponseBase.cpp
     platform/network/SocketStreamHandleBase.cpp
