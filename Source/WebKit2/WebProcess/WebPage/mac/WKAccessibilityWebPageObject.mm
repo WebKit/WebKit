@@ -142,7 +142,7 @@ using namespace WebKit;
         return nil;
 
     if ([attribute isEqualToString:NSAccessibilityPositionAttribute]) {
-        WebCore::IntPoint point = m_page->accessibilityPosition();
+        const WebCore::FloatPoint& point = m_page->accessibilityPosition();
         return [NSValue valueWithPoint:NSMakePoint(point.x(), point.y())];
     }
     if ([attribute isEqualToString:NSAccessibilitySizeAttribute]) {

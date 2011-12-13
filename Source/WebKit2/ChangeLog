@@ -1,3 +1,38 @@
+2011-12-12  Andreas Kling  <kling@webkit.org>
+
+        Resizing Cappuccino is very laggy on WebKit since Safari 5.1
+        <http://webkit.org/b/71354> and <rdar://problem/10565998>
+
+        Reviewed by Anders Carlsson.
+
+        On Mac, we already cache the window rect through the WindowAndViewFramesChanged
+        message, so simply return that in WebChromeClient::windowRect() instead of
+        sending a synchronous query to the UIProcess.
+
+        Changed WindowAndViewFramesChanged to pass FloatRect/FloatPoint rather than
+        IntRect/IntPoint to match the ChromeClient::windowRect() return type.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::windowFrameInScreenCoordinates):
+        (WebKit::WebPage::viewFrameInWindowCoordinates):
+        (WebKit::WebPage::accessibilityPosition):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2011-12-12  Anders Carlsson  <andersca@apple.com>
 
         Add EventDispatcher class to WebKit2

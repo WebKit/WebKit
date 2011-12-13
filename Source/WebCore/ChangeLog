@@ -1,3 +1,12 @@
+2011-12-12  Andreas Kling  <kling@webkit.org>
+
+        Resizing Cappuccino is very laggy on WebKit since Safari 5.1
+        <http://webkit.org/b/71354> and <rdar://problem/10565998>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in: Export FloatPoint(const NSPoint&)
+
 2011-12-12  Jarred Nicholls  <jarred@sencha.com>
 
         [Qt] QTKIT-based video support must target OS X 10.5 or higher
