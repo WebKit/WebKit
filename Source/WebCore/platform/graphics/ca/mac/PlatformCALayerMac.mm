@@ -35,6 +35,7 @@
 #import "GraphicsLayerCA.h"
 #import "WebLayer.h"
 #import "WebTiledLayer.h"
+#import "WebTileCacheLayer.h"
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
 #import <QuartzCore/QuartzCore.h>
@@ -184,10 +185,13 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
                 layerClass = [WebLayer class];
                 break;
             case LayerTypeTransformLayer:
-                layerClass = NSClassFromString(@"CATransformLayer");
+                layerClass = [CATransformLayer class];
                 break;
             case LayerTypeWebTiledLayer:
                 layerClass = [WebTiledLayer class];
+                break;
+            case LayerTypeTileCacheLayer:
+                layerClass = [WebTileCacheLayer class];
                 break;
             case LayerTypeCustom:
                 break;

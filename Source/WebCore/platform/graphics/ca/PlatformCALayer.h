@@ -54,7 +54,15 @@ public:
     // LayerTypeRootLayer is used on some platforms. It has no backing store, so setNeedsDisplay
     // should not call CACFLayerSetNeedsDisplay, but rather just notify the renderer that it
     // has changed and should be re-rendered.
-    enum LayerType { LayerTypeLayer, LayerTypeWebLayer, LayerTypeTransformLayer, LayerTypeWebTiledLayer, LayerTypeRootLayer, LayerTypeCustom };
+    enum LayerType {
+        LayerTypeLayer,
+        LayerTypeWebLayer,
+        LayerTypeTransformLayer,
+        LayerTypeWebTiledLayer,
+        LayerTypeTileCacheLayer,
+        LayerTypeRootLayer,
+        LayerTypeCustom
+    };
     enum FilterType { Linear, Nearest, Trilinear };
 
     static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);

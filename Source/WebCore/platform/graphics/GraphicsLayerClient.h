@@ -54,6 +54,8 @@ class GraphicsLayerClient {
 public:
     virtual ~GraphicsLayerClient() {}
 
+    virtual bool shouldUseTileCache(const GraphicsLayer*) const { return false; }
+    
     // Callback for when hardware-accelerated animation started.
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) = 0;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebLayer_h
-#define WebLayer_h
+#import "config.h"
 
-#if USE(ACCELERATED_COMPOSITING)
+#import "WebTileCacheLayer.h"
 
-#import <QuartzCore/QuartzCore.h>
+@implementation WebTileCacheLayer
 
-namespace WebCore {
-    class GraphicsLayer;
-    class PlatformCALayer;
-    class PlatformCALayerClient;
-}
 
-#if defined(BUILDING_ON_LEOPARD)
-@interface CALayer(WebLayerInternal)
-- (CGAffineTransform)contentsTransform;
-- (void)setContentsTransform:(CGAffineTransform)t;
 @end
-#endif
-
-@interface WebLayer : CALayer 
-{
-}
-@end
-
-// Functions allows us to share implementation across WebTiledLayer and WebLayer
-void drawLayerContents(CGContextRef, CALayer *, WebCore::PlatformCALayer*);
-
-#endif // USE(ACCELERATED_COMPOSITING)
-
-#endif // WebLayer_h

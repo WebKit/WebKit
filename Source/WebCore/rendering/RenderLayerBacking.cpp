@@ -85,7 +85,18 @@ static inline bool isAcceleratedCanvas(RenderObject* renderer)
 RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
     , m_artificiallyInflatedBounds(false)
+    , m_isMainFrameRenderViewLayer(false)
+    , m_usingTiledCacheLayer(false)
 {
+    if (renderer()->isRenderView()) {
+        Frame* frame = toRenderView(renderer())->frameView()->frame();
+        Page* page = frame ? frame->page() : 0;
+        if (page && frame && page->mainFrame() == frame)
+            m_isMainFrameRenderViewLayer = true;
+    }
+    
+    m_usingTiledCacheLayer = false; // FIXME: At some point this will test m_isMainFrameRenderViewLayer and check a Setting.
+
     createPrimaryGraphicsLayer();
 }
 
@@ -110,6 +121,11 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
     return graphicsLayer.release();
 }
 
+bool RenderLayerBacking::shouldUseTileCache(const GraphicsLayer*) const
+{
+    return m_usingTiledCacheLayer;
+}
+
 void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
     String layerName;
@@ -117,12 +133,9 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     layerName = nameForLayer();
 #endif
     m_graphicsLayer = createGraphicsLayer(layerName);
-    if (renderer()->isRenderView()) {
-        Frame* frame = toRenderView(renderer())->frameView()->frame();
-        Page* page = frame ? frame->page() : 0;
-        if (page && frame && page->mainFrame() == frame)
-            m_graphicsLayer->setAppliesPageScale();
-    }
+
+    if (m_isMainFrameRenderViewLayer)
+        m_graphicsLayer->setAppliesPageScale();
     
     updateLayerOpacity(renderer()->style());
     updateLayerTransform(renderer()->style());
@@ -1042,6 +1055,9 @@ LayoutRect RenderLayerBacking::contentsBox() const
 
 bool RenderLayerBacking::paintingGoesToWindow() const
 {
+    if (m_usingTiledCacheLayer)
+        return false;
+
     if (m_owningLayer->isRootLayer())
         return compositor()->rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingFrame;
     

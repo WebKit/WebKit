@@ -1,3 +1,46 @@
+2011-12-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to substitute a different CALayer implementation for the main root layer
+        https://bugs.webkit.org/show_bug.cgi?id=74369
+
+        Reviewed by Anders Carlsson.
+        
+        Some platforms may wish to have the main root layer (which corresponds with
+        the main frame's RenderView's layer) implemented by a custom platform layer,
+        for example to contain a cache of tiles.
+        
+        Make this possible on Mac by adding a new method to GraphicsLayerClient(),
+        and implementing it in RenderLayerBacking. This new behavior is not yet enabled.
+        
+        Also clean up some WebLayer/WebTiledLayer code.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::shouldUseTileCache): New client method that indicates that the GraphicsLayer
+        should host a tile cache layer instead of a normal layer.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA): Ask the client, if any, whether to create a tile cache layer.
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: NSClassFromString(@"CATransformLayer") was for Leopard;
+        we can just use the classname now. Handle LayerTypeTileCacheLayer.
+        (PlatformCALayer::PlatformCALayer):
+        * platform/graphics/ca/mac/WebTileCacheLayer.h: Copied from Source/WebCore/platform/graphics/mac/WebLayer.h.
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm: Copied from Source/WebCore/platform/graphics/mac/WebLayer.h.
+        * platform/graphics/mac/WebLayer.h: Remove the setLayerNeedsDisplayInRect() hackery.
+        * platform/graphics/mac/WebLayer.mm: setLayerNeedsDisplayInRect() tried to share code between WebLayer and WebTiledLayer
+        by using Obj-C runtime methods to find the superclass. This causes infinite recursion if Web[Tiled]Layer is subclassed,
+        so remove it.
+        (-[WebLayer setNeedsDisplayInRect:]): Code moved here from setLayerNeedsDisplayInRect.
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplayInRect:]): Code copied here from setLayerNeedsDisplayInRect.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking): Find out, and cache if we're the main frame's layer.
+        (WebCore::RenderLayerBacking::shouldUseTileCache): Return m_usingTiledCacheLayer, which is always false for now.
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): Use m_isMainFrameRenderViewLayer.
+        (WebCore::RenderLayerBacking::paintingGoesToWindow): The tile cache layer needs to paint itself.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.h: m_compositeForFixedPosition was unused.
+
 2011-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r102357): respondToUnappliedEditing exits early for CreateLinkCommand

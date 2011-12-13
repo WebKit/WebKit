@@ -249,7 +249,11 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_allowTiledLayer(true)
     , m_uncommittedChanges(0)
 {
-    m_layer = PlatformCALayer::create(PlatformCALayer::LayerTypeWebLayer, this);
+    PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
+    if (client && client->shouldUseTileCache(this))
+        layerType = PlatformCALayer::LayerTypeTileCacheLayer;
+
+    m_layer = PlatformCALayer::create(layerType, this);
 
     updateDebugIndicators();
     noteLayerPropertyChanged(ContentsScaleChanged);

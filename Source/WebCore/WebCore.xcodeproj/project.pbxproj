@@ -241,6 +241,8 @@
 		0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */; };
 		0F580CFF0F12DE9B0051D689 /* RenderLayerBacking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */; };
+		0F580FA31496939100FB5BD8 /* WebTileCacheLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F580FA11496939100FB5BD8 /* WebTileCacheLayer.h */; };
+		0F580FA41496939100FB5BD8 /* WebTileCacheLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F580FA21496939100FB5BD8 /* WebTileCacheLayer.mm */; };
 		0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */; };
 		0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
@@ -7320,6 +7322,8 @@
 		0F580CFA0F12DE9B0051D689 /* RenderLayerCompositor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerCompositor.cpp; sourceTree = "<group>"; };
 		0F580CFB0F12DE9B0051D689 /* RenderLayerBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerBacking.h; sourceTree = "<group>"; };
 		0F580CFC0F12DE9B0051D689 /* RenderLayerBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerBacking.cpp; sourceTree = "<group>"; };
+		0F580FA11496939100FB5BD8 /* WebTileCacheLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebTileCacheLayer.h; path = ca/mac/WebTileCacheLayer.h; sourceTree = "<group>"; };
+		0F580FA21496939100FB5BD8 /* WebTileCacheLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebTileCacheLayer.mm; path = ca/mac/WebTileCacheLayer.mm; sourceTree = "<group>"; };
 		0F5B7A5210F65D7A00376302 /* RenderEmbeddedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderEmbeddedObject.cpp; sourceTree = "<group>"; };
 		0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderEmbeddedObject.h; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
@@ -15036,6 +15040,8 @@
 				2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */,
 				4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */,
 				4958782012A57DDF007238AC /* PlatformCALayerMac.mm */,
+				0F580FA11496939100FB5BD8 /* WebTileCacheLayer.h */,
+				0F580FA21496939100FB5BD8 /* WebTileCacheLayer.mm */,
 			);
 			name = mac;
 			sourceTree = "<group>";
@@ -24810,6 +24816,7 @@
 				8A195934147EA16E00D1EA61 /* DOMWebKitNamedFlowInternal.h in Headers */,
 				F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */,
 				26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */,
+				0F580FA31496939100FB5BD8 /* WebTileCacheLayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27695,6 +27702,7 @@
 				26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */,
 				8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */,
 				4306E4E614955543007F17AC /* KillRingNone.cpp in Sources */,
+				0F580FA41496939100FB5BD8 /* WebTileCacheLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

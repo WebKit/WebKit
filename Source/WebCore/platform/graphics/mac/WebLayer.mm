@@ -122,33 +122,6 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     CGContextRestoreGState(context);
 }
 
-void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::PlatformCALayerClient* layerContents, CGRect rect)
-{
-    if (layerContents && layerContents->platformCALayerDrawsContent()) {
-        struct objc_super layerSuper = { layer, class_getSuperclass(object_getClass(layer)) };
-#if defined(BUILDING_ON_LEOPARD)
-        rect = CGRectApplyAffineTransform(rect, [layer contentsTransform]);
-#else
-        if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
-            rect.origin.y = [layer bounds].size.height - rect.origin.y - rect.size.height;
-#endif
-        objc_msgSendSuper(&layerSuper, @selector(setNeedsDisplayInRect:), rect);
-
-#ifndef NDEBUG
-        if (layerContents->platformCALayerShowRepaintCounter()) {
-            CGRect bounds = [layer bounds];
-            CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 46, 25);
-#if defined(BUILDING_ON_LEOPARD)
-            indicatorRect = CGRectApplyAffineTransform(indicatorRect, [layer contentsTransform]);
-#else
-            if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
-                indicatorRect.origin.y = [layer bounds].size.height - indicatorRect.origin.y - indicatorRect.size.height;
-#endif
-            objc_msgSendSuper(&layerSuper, @selector(setNeedsDisplayInRect:), indicatorRect);
-        }
-#endif
-    }
-}
 
 - (id<CAAction>)actionForKey:(NSString *)key
 {
@@ -168,9 +141,29 @@ void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::PlatformCALayerClient* 
 
 - (void)setNeedsDisplayInRect:(CGRect)dirtyRect
 {
-    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
-    if (layer)
-        setLayerNeedsDisplayInRect(self, layer->owner(), dirtyRect);
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(self);
+    if (!platformLayer) {
+        [super setNeedsDisplayInRect:dirtyRect];
+        return;
+    }
+
+    if (PlatformCALayerClient* layerOwner = platformLayer->owner()) {
+        if (layerOwner->platformCALayerDrawsContent()) {
+            if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+                dirtyRect.origin.y = [self bounds].size.height - dirtyRect.origin.y - dirtyRect.size.height;
+
+            [super setNeedsDisplayInRect:dirtyRect];
+
+            if (layerOwner->platformCALayerShowRepaintCounter()) {
+                CGRect bounds = [self bounds];
+                CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
+                if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+                    indicatorRect.origin.y = [self bounds].size.height - indicatorRect.origin.y - indicatorRect.size.height;
+
+                [super setNeedsDisplayInRect:indicatorRect];
+            }
+        }
+    }
 }
 
 - (void)display

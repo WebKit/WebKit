@@ -66,9 +66,29 @@ using namespace WebCore;
 
 - (void)setNeedsDisplayInRect:(CGRect)dirtyRect
 {
-    PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
-    if (layer)
-        setLayerNeedsDisplayInRect(self, layer->owner(), dirtyRect);
+    PlatformCALayer* platformLayer = PlatformCALayer::platformCALayer(self);
+    if (!platformLayer) {
+        [super setNeedsDisplayInRect:dirtyRect];
+        return;
+    }
+
+    if (PlatformCALayerClient* layerOwner = platformLayer->owner()) {
+        if (layerOwner->platformCALayerDrawsContent()) {
+            if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+                dirtyRect.origin.y = [self bounds].size.height - dirtyRect.origin.y - dirtyRect.size.height;
+
+            [super setNeedsDisplayInRect:dirtyRect];
+
+            if (layerOwner->platformCALayerShowRepaintCounter()) {
+                CGRect bounds = [self bounds];
+                CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 52, 27);
+                if (layerOwner->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+                    indicatorRect.origin.y = [self bounds].size.height - indicatorRect.origin.y - indicatorRect.size.height;
+
+                [super setNeedsDisplayInRect:indicatorRect];
+            }
+        }
+    }
 }
 
 - (void)display

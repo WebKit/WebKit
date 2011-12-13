@@ -123,6 +123,7 @@ public:
     void updateAfterWidgetResize();
 
     // GraphicsLayerClient interface
+    virtual bool shouldUseTileCache(const GraphicsLayer*) const;
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime);
     virtual void notifySyncRequired(const GraphicsLayer*);
 
@@ -176,6 +177,8 @@ private:
     // Return the opacity value that this layer should use for compositing.
     float compositingOpacity(float rendererOpacity) const;
     
+    bool isMainFrameRenderViewLayer() const;
+    
     // Returns true if this compositing layer has no visible content.
     bool isSimpleContainerCompositingLayer() const;
     // Returns true if this layer has content that needs to be rendered by painting into the backing store.
@@ -214,6 +217,8 @@ private:
     LayoutRect m_compositedBounds;
 
     bool m_artificiallyInflatedBounds;      // bounds had to be made non-zero to make transform-origin work
+    bool m_isMainFrameRenderViewLayer;
+    bool m_usingTiledCacheLayer;
 };
 
 } // namespace WebCore
