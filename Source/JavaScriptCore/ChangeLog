@@ -1,3 +1,15 @@
+2011-12-13  Michael Saboff  <msaboff@apple.com>
+
+        Cleanup of StringImpl::equal in r102631 post commit
+        https://bugs.webkit.org/show_bug.cgi?id=74421
+
+        Reviewed by Darin Adler.
+
+        * wtf/text/AtomicString.h:
+        (WTF::operator==): Removed cast no longer needed.
+        * wtf/text/StringImpl.h:
+        (WTF::equal): Changed template to several overloaded methods.
+
 2011-12-12  Michael Saboff  <msaboff@apple.com>
 
         Eliminate Duplicate word at a time equal code in StringImpl.cpp and StringHash.h
