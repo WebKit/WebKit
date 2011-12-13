@@ -3,7 +3,7 @@
         build-jsc passing incorrect args to buildGtkProject
         https://bugs.webkit.org/show_bug.cgi?id=74308
 
-        Reviewed by NOBODY.
+        Reviewed by Gustavo Noronha Silva.
 
         * Scripts/build-webkit: Instead of invoking buildGtkProject with
         another argument about webkit2, unshift a --disable-webkit2
