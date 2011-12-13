@@ -1,3 +1,11 @@
+2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ API docs build.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options): Ignore WebKitUIClient since it's private
+        API.
+
 2011-12-13  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed, removed one of my email addresses to use the apprpriate one.
