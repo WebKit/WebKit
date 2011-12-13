@@ -97,7 +97,8 @@ TreeOutline.prototype.insertChild = function(child, index)
         current = current.traverseNextTreeElement(false, child, true);
     }
 
-    child.expanded = child.hasChildren && !!child.treeOutline._expandedStateMap.get(child.representedObject);
+    if (child.hasChildren && typeof(child.treeOutline._expandedStateMap.get(child.representedObject)) !== "undefined")
+        child.expanded = child.treeOutline._expandedStateMap.get(child.representedObject);
 
     if (!this._childrenListNode) {
         this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
