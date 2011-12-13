@@ -32,9 +32,18 @@ accessibility/aria-fallback-roles.html
 accessibility/aria-labelledby-overrides-aria-label.html
 accessibility/deleting-iframe-destroys-axcache.html
 accessibility/div-within-anchors-causes-crash.html
+accessibility/img-alt-tag-only-whitespace.html
+accessibility/multiselect-list-reports-active-option.html
 accessibility/platform-name.html
+accessibility/press-works-on-control-types.html
 accessibility/textbox-role-reports-selection.html
 
+animations/additive-transform-animations.html
+animations/cross-fade-background-image.html
+animations/cross-fade-border-image-source.html
+animations/cross-fade-list-style-image.html
+animations/cross-fade-webkit-mask-box-image.html
+animations/cross-fade-webkit-mask-image.html
 animations/missing-values-first-keyframe.html
 animations/missing-values-last-keyframe.html
 animations/state-at-end-event.html
@@ -92,8 +101,6 @@ css2.1
 
 css3
 
-dom/xhtml/level3/core/documentgetinputencoding03.xhtml
-dom/xhtml/level3/core/entitygetinputencoding02.xhtml
 dom/xhtml/level3/core/entitygetinputencoding03.xhtml
 dom/xhtml/level3/core/entitygetinputencoding04.xhtml
 dom/xhtml/level3/core/entitygetxmlencoding02.xhtml
@@ -102,19 +109,9 @@ dom/xhtml/level3/core/entitygetxmlencoding04.xhtml
 dom/xhtml/level3/core/entitygetxmlversion02.xhtml
 dom/xhtml/level3/core/entitygetxmlversion03.xhtml
 dom/xhtml/level3/core/entitygetxmlversion04.xhtml
-dom/xhtml/level3/core/nodegetbaseuri05.xhtml
-dom/xhtml/level3/core/nodegetbaseuri07.xhtml
-dom/xhtml/level3/core/nodegetbaseuri09.xhtml
-dom/xhtml/level3/core/nodegetbaseuri10.xhtml
-dom/xhtml/level3/core/nodegetbaseuri11.xhtml
-dom/xhtml/level3/core/nodegetbaseuri15.xhtml
 dom/xhtml/level3/core/nodegetbaseuri16.xhtml
-dom/xhtml/level3/core/nodegetbaseuri17.xhtml
-dom/xhtml/level3/core/nodegetbaseuri18.xhtml
 dom/xhtml/level3/core/nodegetbaseuri19.xhtml
 dom/xhtml/level3/core/nodegetbaseuri20.xhtml
-dom/xhtml/level3/core/nodelookupnamespaceuri01.xhtml
-dom/xhtml/level3/core/nodelookupprefix19.xhtml
 
 editing/deleting
 editing/execCommand
@@ -123,7 +120,10 @@ editing/input/style-change-during-input.html
 editing/inserting
 editing/pasteboard 
 editing/selection 
-editing/spelling/inline_spelling_markers.html 
+editing/spelling/inline_spelling_markers.html
+editing/spelling/markers.html
+editing/spelling/spellcheck-queue.html
+editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-backspace-between-lines.html 
 editing/spelling/spelling.html 
 editing/style 
@@ -176,7 +176,8 @@ fast/box-sizing/box-sizing.html
 fast/box-sizing/panels-one.html 
 fast/box-sizing/panels-two.html 
 fast/box-sizing/percentage-height.html 
-fast/canvas/DrawImageSinglePixelStretch.html 
+fast/canvas/DrawImageSinglePixelStretch.html
+fast/canvas/2d.text.draw.fill.maxWidth.gradient.html
 fast/canvas/canvas-bg.html
 fast/canvas/canvas-composite-canvas.html
 fast/canvas/canvas-composite-image.html
@@ -187,7 +188,7 @@ fast/canvas/canvas-strokePath-shadow.html
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html 
 fast/canvas/canvas-webkitLineDash.html
 fast/canvas/canvas-zoom.html 
-fast/canvas/fillText-shadow.html 
+fast/canvas/fillText-shadow.html
 fast/canvas/toDataURL-supportedTypes.html 
 fast/canvas/webgl
 fast/clip
@@ -235,13 +236,16 @@ fast/dom/importNodeXML.xhtml
 fast/dom/inner-text.html 
 fast/dom/isindex-001.html 
 fast/dom/isindex-002.html 
-fast/dom/navigator-cookieEnabled-no-crash.html 
+fast/dom/navigator-cookieEnabled-no-crash.html
+fast/dom/object-plugin-hides-properties.html
 fast/dom/onerror-img.html
 fast/dom/outerText.html 
 fast/dom/prototype-inheritance-2.html 
 fast/dom/row-inner-text.html
+fast/dom/rtl-scroll-to-leftmost-and-resize.html
 fast/dom/scroll-reveal-left-overflow.html 
-fast/dom/scroll-reveal-top-overflow.html 
+fast/dom/scroll-reveal-top-overflow.html
+fast/dom/setPrimitiveValue-exceptions.html
 fast/dom/vertical-scrollbar-in-rtl.html 
 fast/dom/window-domurl-crash.html 
 fast/dom/Document/CaretRangeFromPoint/basic.html
@@ -277,7 +281,8 @@ fast/dom/Window/btoa-pnglet.html
 fast/dom/Window/custom-constructors.html 
 fast/dom/Window/open-existing-pop-up-blocking.html 
 fast/dom/Window/timer-resume-on-navigation-back.html
-fast/dom/Window/webkitConvertPoint.html 
+fast/dom/Window/webkitConvertPoint.html
+fast/dom/Window/window-postmessage-arrays.html 
 fast/dom/Window/window-property-descriptors.html 
 fast/dom/Window/window-resize.html 
 fast/dom/beforeload/remove-video-in-beforeload-listener.html 
@@ -409,8 +414,10 @@ fast/transforms/transformed-caret.html
 fast/transforms/transformed-document-element.html 
 fast/transforms/transformed-focused-text-input.html 
 fast/transforms/transforms-with-opacity.html 
-fast/transforms/transforms-with-zoom.html 
+fast/transforms/transforms-with-zoom.html
+fast/workers/storage/interrupt-database.html
 fast/writing-mode
+fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 fast/xpath
 fast/xsl
 
@@ -423,6 +430,9 @@ fonts/serif.html
 
 inspector/debugger/breakpoint-manager.html
 inspector/debugger/raw-source-code.html
+inspector/extensions/extensions-console.html
+inspector/extensions/extensions-events.html
+inspector/extensions/extensions-panel.html
 inspector/styles/styles-invalid-color-values.html
 inspector/timeline/timeline-animation-frame.html 
 inspector/timeline/timeline-load-event.html
@@ -506,6 +516,8 @@ transforms/2d/hindi-rotated.html
 transforms/2d/transform-borderbox.html
 transforms/2d/transform-fixed-container.html
 transforms/2d/transform-origin-borderbox.html
+transitions/cross-fade-background-image.html
+transitions/cross-fade-border-image.html
 transitions/default-timing-function.html
 transitions/move-after-transition.html
 transitions/svg-text-shadow-transition.html
@@ -1059,6 +1071,7 @@ http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html
 accessibility/label-element-press.html
 
 # Accessibility tests without results or with Mac-specific results.
+accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-checkbox-text.html
 accessibility/aria-combobox.html
 accessibility/aria-controls-with-tabs.html
@@ -1101,6 +1114,7 @@ accessibility/media-element.html
 accessibility/nochildren-elements.html
 accessibility/non-data-table-cell-title-ui-element.html
 accessibility/non-native-image-crash.html
+accessibility/notification-listeners.html
 accessibility/onclick-handlers.html
 accessibility/aria-option-role.html
 accessibility/placeholder.html
@@ -1545,6 +1559,9 @@ svg/text/caret-in-svg-text.xhtml
 # textInputController.hasGrammarMarkers() is not implemented.
 editing/spelling/grammar.html
 
+# Needs grammar checking.
+editing/spelling/markers.html
+
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
 
@@ -1615,15 +1632,15 @@ printing/page-format-data.html
 
 # Implement spinbutton support in RenderThemeSafari 
 # https://bugs.webkit.org/show_bug.cgi?id=54662
-fast/forms/input-appearance-number-rtl.html
-fast/forms/input-appearance-spinbutton-disabled-readonly.html
-fast/forms/input-appearance-spinbutton-layer.html
-fast/forms/input-appearance-spinbutton-visibility.html
-fast/forms/input-number-events.html
-fast/forms/input-number-large-padding.html
-fast/forms/input-number-size.html
-fast/forms/input-spinbutton-capturing.html
-fast/forms/spin-button-gets-disabled-or-readonly.html
+fast/forms/number/input-appearance-number-rtl.html
+fast/forms/number/input-appearance-spinbutton-disabled-readonly.html
+fast/forms/number/input-appearance-spinbutton-layer.html
+fast/forms/number/input-appearance-spinbutton-visibility.html
+fast/forms/number/input-number-events.html
+fast/forms/number/input-number-large-padding.html
+fast/forms/number/input-number-size.html
+fast/forms/number/input-spinbutton-capturing.html
+fast/forms/number/spin-button-gets-disabled-or-readonly.html
 
 # Color input is not yet enabled.
 fast/forms/color
@@ -1796,6 +1813,11 @@ editing/pasteboard/onpaste-text-html-types.html
 
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
+editing/pasteboard/data-transfer-items-image-png.html
+
+# Custom MIME type support in DataTransfer not yet implemented.
+editing/pasteboard/clipboard-customData.html
+fast/events/drag-customData.html
 
 # Needs expectation update
 fast/dom/HTMLMeterElement/meter-element.html
@@ -1976,8 +1998,14 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
+# DRT doesn't support overridePreference("WebKit*FontMap"...)
+fast/text/international/locale-sensitive-fonts.html
+
 # Pointer Lock is not implemented.
 pointer-lock/
 
-# DRT doesn't support overridePreference("WebKit*FontMap"...)
-fast/text/international/locale-sensitive-fonts.html
+# https://bugs.webkit.org/show_bug.cgi?id=72435
+fast/dom/Window/window-postmessage-arrays.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=73493
+fast/canvas/webgl/arraybuffer-transfer-of-control.html
