@@ -93,26 +93,26 @@ PassRefPtr<Node> NamedNodeMap::getNamedItem(const QualifiedName& name) const
     return a->createAttrIfNeeded(m_element);
 }
 
-PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* arg, ExceptionCode& ec)
+PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
 {
-    if (!m_element || !arg) {
+    if (!m_element || !node) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
 
     // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
-    if (!arg->isAttributeNode()) {
+    if (!node->isAttributeNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return 0;
     }
-    Attr *attr = static_cast<Attr*>(arg);
+    Attr* attr = static_cast<Attr*>(node);
 
-    Attribute* a = attr->attr();
-    Attribute* old = getAttributeItem(a->name());
-    if (old == a)
-        return RefPtr<Node>(arg); // we know about it already
+    Attribute* attribute = attr->attr();
+    Attribute* oldAttribute = getAttributeItem(attribute->name());
+    if (oldAttribute == attribute)
+        return node; // we know about it already
 
-    // INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element object.
+    // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attr->ownerElement()) {
         ec = INUSE_ATTRIBUTE_ERR;
@@ -120,17 +120,17 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* arg, ExceptionCode& ec)
     }
 
     if (attr->isId())
-        m_element->updateId(old ? old->value() : nullAtom, a->value());
+        m_element->updateId(oldAttribute ? oldAttribute->value() : nullAtom, attribute->value());
 
     // ### slightly inefficient - resizes attribute array twice.
-    RefPtr<Node> r;
-    if (old) {
-        r = old->createAttrIfNeeded(m_element);
-        removeAttribute(a->name());
+    RefPtr<Attr> oldAttr;
+    if (oldAttribute) {
+        oldAttr = oldAttribute->createAttrIfNeeded(m_element);
+        removeAttribute(attribute->name());
     }
 
-    addAttribute(a);
-    return r.release();
+    addAttribute(attribute);
+    return oldAttr.release();
 }
 
 PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
@@ -143,19 +143,19 @@ PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
 // because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, ExceptionCode& ec)
 {
-    Attribute* a = getAttributeItem(name);
-    if (!a) {
+    Attribute* attribute = getAttributeItem(name);
+    if (!attribute) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
 
-    RefPtr<Attr> r = a->createAttrIfNeeded(m_element);
+    RefPtr<Attr> attr = attribute->createAttrIfNeeded(m_element);
 
-    if (r->isId())
-        m_element->updateId(a->value(), nullAtom);
+    if (attr->isId())
+        m_element->updateId(attribute->value(), nullAtom);
 
     removeAttribute(name);
-    return r.release();
+    return attr.release();
 }
 
 PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
