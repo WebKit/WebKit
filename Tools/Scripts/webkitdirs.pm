@@ -2022,7 +2022,7 @@ sub buildChromiumMakefile($$@)
     # will verify that the installed NDK is indeed available.
     if (isChromiumAndroid()) {
         $command .= "bash -c \"source " . sourceDir() . "/Source/WebKit/chromium/build/android/envsetup.sh && ";
-        $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/third_party/android-ndk-r7";
+        $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/android-ndk-r7";
         $ENV{WEBKIT_ANDROID_BUILD} = 1;
     }
 

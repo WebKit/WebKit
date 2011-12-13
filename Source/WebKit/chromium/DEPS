@@ -176,6 +176,10 @@ deps_os = {
     'third_party/openssl':
       From('chromium_deps', 'src/third_party/openssl'),
   },
+  'android': {
+    'third_party/freetype':
+      'https://git.chromium.org/chromium/src/third_party/freetype.git',
+  },
 }
 
 skip_child_includes = [

@@ -61,20 +61,17 @@ if (! -e ".gclient") {
 # When building WebKit's Chromium port for Android, we need the Android NDK as
 # it will allow us to cross-compile all sources to the target architecture.
 if (isChromiumAndroid()) {
-    if (! -e "third_party/android-ndk-r7") {
+    if (! -e "android-ndk-r7") {
         print "Installing the Android NDK, version 7...\n";
-        if (! -e "third_party/") {
-            mkdir "third_party";
-        }
         my $host_os = isLinux() ? "linux" : "darwin";
-        my $result = system("curl", "-o", "third_party/android-ndk-r7.tar.bz2", "http://dl.google.com/android/ndk/android-ndk-r7-" . $host_os . "-x86.tar.bz2");
+        my $result = system("curl", "-o", "android-ndk-r7.tar.bz2", "http://dl.google.com/android/ndk/android-ndk-r7-" . $host_os . "-x86.tar.bz2");
         die "Couldn't download the Android NDK." if $result;
 
-        $result = system("tar", "jxC", "third_party", "-f", "third_party/android-ndk-r7.tar.bz2");
+        $result = system("tar", "jx", "-f", "android-ndk-r7.tar.bz2");
         die "Couldn't extract the Android NDK." if $result;
     }
 
-    $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/third_party/android-ndk-r7";
+    $ENV{ANDROID_NDK_ROOT} = sourceDir() . "/Source/WebKit/chromium/android-ndk-r7";
     $ENV{WEBKIT_ANDROID_BUILD} = 1;
 }
 

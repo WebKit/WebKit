@@ -1,3 +1,20 @@
+2011-12-13  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Pull in FreeType and decrease check-out complexity for Android
+        https://bugs.webkit.org/show_bug.cgi?id=74401
+
+        Decrease the check-out complexity by removing the need to first run
+        "update-webkit-chromium --chromium" prior to running it with
+        "--chromium-android", which was caused by an unversioned third_party/
+        directory being created. This moves the Android NDK to Source/WebKit/
+        chromium/, coming from third_party/ in that directory.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/update-webkit-chromium:
+        * Scripts/webkitdirs.pm:
+        (buildChromiumMakefile):
+
 2011-12-13  Andy Wingo  <wingo@igalia.com> and Martin Robinson <mrobinson@igalia.com>
 
         build-jsc passing incorrect args to buildGtkProject

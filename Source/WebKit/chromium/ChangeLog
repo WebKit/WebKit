@@ -1,3 +1,17 @@
+2011-12-13  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Pull in FreeType and decrease check-out complexity for Android
+        https://bugs.webkit.org/show_bug.cgi?id=74401
+
+        Pull in FreeType in the third_party/ directory from a separate git
+        repository at Chromium. This introduces a new prerequisite for checking
+        out the Chromium WebKit port for Android, namely that git needs to be
+        available on the system. gclient can handle this just fine.
+
+        Reviewed by Adam Barth.
+
+        * DEPS:
+
 2011-12-13  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] compositing/masks layout tests fail with accelerated drawing
