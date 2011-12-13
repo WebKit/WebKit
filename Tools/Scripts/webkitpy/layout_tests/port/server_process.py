@@ -179,7 +179,7 @@ class ServerProcess:
         return self._read(deadline, retrieve_bytes_from_stdout_buffer)
 
     def _check_for_crash(self, wait_for_crash_reporter=True):
-        if self._proc.poll() != None:
+        if self.poll() != None:
             self.set_crashed(True, wait_for_crash_reporter)
             self.handle_interrupt()
 

@@ -1,3 +1,15 @@
+2011-12-13  János Badics  <dicska@gmail.com>
+
+        [NRWT] It crashes intermittently when there are WebProcess crashes
+        https://bugs.webkit.org/show_bug.cgi?id=73451
+
+        Use self.poll() instead of self._proc.poll() because it checks if self._proc is None or not.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._check_for_crash):
+
 2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ API docs build.
