@@ -71,9 +71,15 @@ namespace WebCore {
 using namespace HTMLNames;
 
 PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document* document,
-    const VisibleSelection& startingSelection, const VisibleSelection endingSelection)
+    const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand)
 {
-    return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection));
+    return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection, wasCreateLinkCommand));
+}
+
+EditCommandComposition::EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand)
+    : EditCommand(document, startingSelection, endingSelection)
+    , m_wasCreateLinkCommand(wasCreateLinkCommand)
+{
 }
 
 void EditCommandComposition::doApply()
@@ -135,8 +141,13 @@ EditCommandComposition* CompositeEditCommand::ensureComposition()
     while (command && command->parent())
         command = command->parent();
     if (!command->m_composition)
-        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection());
+        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection(), isCreateLinkCommand());
     return command->m_composition.get();
+}
+
+bool CompositeEditCommand::isCreateLinkCommand() const
+{
+    return false;
 }
 
 //

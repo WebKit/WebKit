@@ -38,6 +38,7 @@ namespace WebCore {
 
 class EditorClient;
 class EditCommand;
+class EditCommandComposition;
 class Frame;
 class TextCheckerClient;
 
@@ -88,7 +89,7 @@ public:
 
     void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
     void respondToAppliedEditing(EditCommand*) UNLESS_ENABLED({})
-    void respondToUnappliedEditing(EditCommand*) UNLESS_ENABLED({})
+    void respondToUnappliedEditing(EditCommandComposition*) UNLESS_ENABLED({ })
     void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
 
     void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })

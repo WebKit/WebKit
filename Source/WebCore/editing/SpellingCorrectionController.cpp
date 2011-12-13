@@ -436,9 +436,9 @@ void SpellingCorrectionController::respondToAppliedEditing(EditCommand* command)
     m_originalStringForLastDeletedAutocorrection = String();
 }
 
-void SpellingCorrectionController::respondToUnappliedEditing(EditCommand* command)
+void SpellingCorrectionController::respondToUnappliedEditing(EditCommandComposition* command)
 {
-    if (!command->isCreateLinkCommand())
+    if (!command->wasCreateLinkCommand())
         return;
     RefPtr<Range> range = Range::create(m_frame->document(), command->startingSelection().start(), command->startingSelection().end());
     if (!range)

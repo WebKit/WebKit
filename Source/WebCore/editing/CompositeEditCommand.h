@@ -39,24 +39,24 @@ class Text;
 
 class EditCommandComposition : public EditCommand {
 public:
-    static PassRefPtr<EditCommandComposition> create(Document*, const VisibleSelection&, const VisibleSelection);
+    static PassRefPtr<EditCommandComposition> create(Document*, const VisibleSelection&, const VisibleSelection&, bool wasCreateLinkCommand);
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;
     virtual void doReapply() OVERRIDE;
     void append(SimpleEditCommand*);
+    bool wasCreateLinkCommand() const { return m_wasCreateLinkCommand; }
 
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&);
 #endif
 
 private:
-    EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
-        : EditCommand(document, startingSelection, endingSelection)
-    { }
+    EditCommandComposition(Document*, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand);
     virtual bool isEditCommandComposition() const OVERRIDE { return true; }
 
     Vector<RefPtr<SimpleEditCommand> > m_commands;
+    bool m_wasCreateLinkCommand;
 };
 
 class CompositeEditCommand : public EditCommand {
@@ -66,6 +66,8 @@ public:
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
     EditCommandComposition* composition() { return m_composition.get(); }
     EditCommandComposition* ensureComposition();
+
+    virtual bool isCreateLinkCommand() const;
 
 protected:
     explicit CompositeEditCommand(Document*);

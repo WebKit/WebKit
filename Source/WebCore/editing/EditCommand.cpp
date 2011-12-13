@@ -219,11 +219,6 @@ bool EditCommand::isTypingCommand() const
     return false;
 }
 
-bool EditCommand::isCreateLinkCommand() const
-{
-    return false;
-}
-
 bool EditCommand::shouldRetainAutocorrectionIndicator() const
 {
     return false;

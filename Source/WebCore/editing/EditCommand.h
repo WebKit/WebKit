@@ -61,7 +61,6 @@ public:
     virtual bool isCompositeEditCommand() const { return false; }
     virtual bool isEditCommandComposition() const { return false; }
     virtual bool isTypingCommand() const;
-    virtual bool isCreateLinkCommand() const;
 
     virtual bool preservesTypingStyle() const;
 

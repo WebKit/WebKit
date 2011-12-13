@@ -1,3 +1,27 @@
+2011-12-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r102357): respondToUnappliedEditing exits early for CreateLinkCommand
+        https://bugs.webkit.org/show_bug.cgi?id=74356
+
+        Reviewed by Enrica Casucci.
+
+        The problem was that isCreateLinkCommand was called on EditCommandComposition by respondToUnappliedEditing.
+        Fixed the bug by propagating the value of isCreteLinkCommand from CompositeEditCommand to
+        EditCommandComposition via wasCreateLinkCommand.
+
+        Also move isCreateLinkCommand from EditCommand to CompositeEditCommand to prevent this mistake in the future.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::create):
+        (WebCore::EditCommandComposition::EditCommandComposition):
+        (WebCore::CompositeEditCommand::ensureComposition):
+        (WebCore::CompositeEditCommand::isCreateLinkCommand):
+        * editing/CompositeEditCommand.h:
+        (WebCore::EditCommandComposition::wasCreateLinkCommand):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::respondToUnappliedEditing):
+        * editing/SpellingCorrectionController.h:
+
 2011-12-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Revert RenderObject::style() to its state before region styling
