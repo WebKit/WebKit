@@ -32,12 +32,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# action_derivedsourceslist.py generates a single cpp file that includes
+# action_derivedsourcesallinone.py generates a single cpp file that includes
 # all v8 bindings cpp files generated from idls. Files can be assigned into
 # multiple output files, to reduce maximum compilation unit size and allow
 # parallel compilation.
 #
-# usage: action_derivedsourceslist.py IDL_FILES_LIST -- OUTPUT_FILE1 OUTPUT_FILE2 ...
+# usage: action_derivedsourcesallinone.py IDL_FILES_LIST -- OUTPUT_FILE1 OUTPUT_FILE2 ...
 #
 # Note that IDL_FILES_LIST is a text file containing the IDL file paths.
 
@@ -179,6 +179,19 @@ def writeContent(content, outputFileName):
     f.close()
 
 
+def resolveCygpath(cygdriveNames):
+    cmd = ['cygpath', '-f', '-', '-wa']
+    process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    idlFileNames = []
+    for fileName in cygdriveNames:
+        process.stdin.write("%s\n" % fileName)
+        process.stdin.flush()
+        idlFileNames.append(process.stdout.readline().rstrip())
+    process.stdin.close()
+    process.wait()
+    return idlFileNames
+
+
 def main(args):
     assert(len(args) > 3)
     inOutBreakIndex = args.index('--')
@@ -186,7 +199,17 @@ def main(args):
     outputFileNames = args[inOutBreakIndex+1:]
 
     inputFile = open(inputFileName, 'r')
-    idlFileNames = inputFile.read().split('\n')
+    idlFileNames = []
+    cygdriveNames = []
+    for line in inputFile:
+        idlFileName = line.rstrip().split(' ')[0]
+        if idlFileName.startswith("/cygdrive"):
+            cygdriveNames.append(idlFileName)
+        else:
+            idlFileNames.append(idlFileName)
+
+    if cygdriveNames:
+        idlFileNames.extend(resolveCygpath(cygdriveNames))
     inputFile.close()
 
     filesMetaData = extractMetaData(idlFileNames)
