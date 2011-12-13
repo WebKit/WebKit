@@ -255,6 +255,22 @@ sub GetMethodsAndAttributesFromParentClasses
     return @parentList;
 }
 
+sub FindSuperMethod
+{
+    my ($object, $dataNode, $functionName) = @_;
+    my $indexer;
+    $object->ForAllParents($dataNode, undef, sub {
+        my $interface = shift;
+        foreach my $function (@{$interface->functions}) {
+            if ($function->signature->name eq $functionName) {
+                $indexer = $function->signature;
+                return 'prune';
+            }
+        }
+    });
+    return $indexer;
+}
+
 sub IDLFileForInterface
 {
     my $object = shift;

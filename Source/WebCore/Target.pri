@@ -160,7 +160,6 @@ v8 {
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
         bindings/v8/custom/V8InjectedScriptManager.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
-        bindings/v8/custom/V8DOMSettableTokenListCustom.cpp \
         bindings/v8/custom/V8DOMStringMapCustom.cpp \
         bindings/v8/custom/V8DOMTokenListCustom.cpp
 

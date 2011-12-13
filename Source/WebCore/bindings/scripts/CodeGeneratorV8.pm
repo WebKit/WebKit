@@ -2016,18 +2016,15 @@ sub GenerateImplementationIndexer
 
     AddToImplIncludes("V8Collection.h");
 
+    if (!$indexer) {
+        $indexer = $codeGenerator->FindSuperMethod($dataNode, "item");
+    }
+
     my $indexerType = $indexer ? $indexer->type : 0;
 
     # FIXME: Remove this once toV8 helper methods are implemented (see https://bugs.webkit.org/show_bug.cgi?id=32563).
     if ($interfaceName eq "WebKitCSSKeyframesRule") {
         $indexerType = "WebKitCSSKeyframeRule";
-    }
-
-    # FIXME: The item() getter is not inherited from CSSValueList, seemingly due to the way
-    # the CodeGenerator->AddMethodsConstantsAndAttributesFromParentClasses() method works,
-    # so we need to set the indexerType manually in this case.
-    if ($interfaceName eq "WebKitCSSTransformValue") {
-        $indexerType = "CSSValue";
     }
 
     if ($indexerType && !$hasCustomSetter) {
@@ -2099,6 +2096,10 @@ sub GenerateImplementationNamedPropertyGetter
     my $hasGetter = $dataNode->extendedAttributes->{"HasNameGetter"} || $hasCustomGetter;
     if (!$hasGetter) {
         return;
+    }
+
+    if (!$namedPropertyGetter) {
+        $namedPropertyGetter = $codeGenerator->FindSuperMethod($dataNode, "namedItem");
     }
 
     if ($namedPropertyGetter && $namedPropertyGetter->type ne "Node" && !$namedPropertyGetter->extendedAttributes->{"Custom"} && !$hasCustomGetter) {
