@@ -32,8 +32,6 @@ class RenderThemeChromiumMac : public RenderThemeMac {
 public:
     static PassRefPtr<RenderTheme> create();
 
-    virtual Color disabledTextColor(const Color& textColor, const Color&) const OVERRIDE { return textColor; }
-
 protected:
 #if ENABLE(VIDEO)
     virtual void adjustMediaSliderThumbSize(RenderStyle*) const;
@@ -62,6 +60,7 @@ protected:
     virtual int popupInternalPaddingRight(RenderStyle*) const;
 
 private:
+    virtual Color disabledTextColor(const Color& textColor, const Color&) const OVERRIDE { return textColor; }
     virtual void updateActiveState(NSCell*, const RenderObject*);
     virtual String extraDefaultStyleSheet();
     virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE;

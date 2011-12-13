@@ -1,3 +1,17 @@
+2011-12-13  Yosifumi Inoue  <yosin@chromium.org>
+
+        RenderTheme should have a function for disabled text color adjustment
+        https://bugs.webkit.org/show_bug.cgi?id=74143
+
+        Change disabledTextColor to private method.
+
+        Reviewed by Kent Tamura.
+
+        No new tests / existing tests cover this change.
+
+        * rendering/RenderThemeChromiumMac.h: Change disabledTextColor to private.
+        * rendering/RenderThemeChromiumSkia.h: Change disabledTextColor to private.
+
 2011-12-12  Daniel Bates  <dbates@webkit.org>
 
         Unreviewed, rolling out r102656.

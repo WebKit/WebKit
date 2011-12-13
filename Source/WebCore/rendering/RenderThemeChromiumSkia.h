@@ -58,8 +58,6 @@ class RenderThemeChromiumSkia : public RenderTheme {
         virtual Color platformInactiveSelectionForegroundColor() const;
         virtual Color platformFocusRingColor() const;
 
-        virtual Color disabledTextColor(const Color& textColor, const Color&) const OVERRIDE { return textColor; }
-
         // To change the blink interval, override caretBlinkIntervalInternal instead of this one so that we may share layout test code an intercepts.
         virtual double caretBlinkInterval() const;
 
@@ -154,6 +152,7 @@ class RenderThemeChromiumSkia : public RenderTheme {
 #endif
 
 private:
+    virtual Color disabledTextColor(const Color& textColor, const Color&) const OVERRIDE { return textColor; }
     virtual bool shouldShowPlaceholderWhenFocused() const OVERRIDE;
 
     int menuListInternalPadding(RenderStyle*, int paddingType) const;
