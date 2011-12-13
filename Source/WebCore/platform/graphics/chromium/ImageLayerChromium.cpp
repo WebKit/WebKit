@@ -77,8 +77,6 @@ public:
         return adoptPtr(new Texture(this, ManagedTexture::create(manager)));
     }
 
-    virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
-
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat)
     {
         return PlatformColor::sameComponentOrder(textureFormat) ?

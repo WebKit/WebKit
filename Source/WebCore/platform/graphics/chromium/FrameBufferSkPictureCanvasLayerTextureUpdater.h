@@ -53,7 +53,6 @@ public:
     virtual ~FrameBufferSkPictureCanvasLayerTextureUpdater();
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager*);
-    virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 

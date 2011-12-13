@@ -101,7 +101,6 @@ private:
 
     GC3Denum m_textureFormat;
     bool m_skipsDraw;
-    LayerTextureUpdater::Orientation m_textureOrientation;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
 
     TilingOption m_tilingOption;

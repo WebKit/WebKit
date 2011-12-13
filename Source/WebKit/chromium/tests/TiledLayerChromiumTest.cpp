@@ -58,7 +58,6 @@ public:
     virtual ~FakeLayerTextureUpdater() { }
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager* manager) { return adoptPtr(new Texture(ManagedTexture::create(manager))); }
-    virtual Orientation orientation() { return BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum) { return SampledTexelFormatRGBA; }
     virtual void prepareToUpdate(const IntRect&, const IntSize&, int, float) { }
 };

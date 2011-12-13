@@ -288,13 +288,6 @@ void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const Int
             float fragmentTexScaleX = clampRect.width() / tileWidth;
             float fragmentTexScaleY = clampRect.height() / tileHeight;
 
-            // OpenGL coordinate system is bottom-up.
-            // If tile texture is top-down, we need to flip the texture coordinates.
-            if (m_textureOrientation == LayerTextureUpdater::TopDownOrientation) {
-                fragmentTexTranslateY = 1.0 - fragmentTexTranslateY;
-                fragmentTexScaleY *= -1.0;
-            }
-
             CCLayerQuad::Edge edgeX = contentQuad.right();
             if (i < (m_tiler->numTilesX() - 1)) {
                 FloatPoint p1(tileRect.maxX(), tileRect.y());

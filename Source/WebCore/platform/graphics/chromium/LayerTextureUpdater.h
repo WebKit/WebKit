@@ -60,19 +60,12 @@ public:
 
     virtual ~LayerTextureUpdater() { }
 
-    enum Orientation {
-        BottomUpOrientation,
-        TopDownOrientation,
-        InvalidOrientation,
-    };
     enum SampledTexelFormat {
         SampledTexelFormatRGBA,
         SampledTexelFormatBGRA,
         SampledTexelFormatInvalid,
     };
     virtual PassOwnPtr<Texture> createTexture(TextureManager*) = 0;
-    // Returns the orientation of the texture uploaded by this interface.
-    virtual Orientation orientation() = 0;
     // Returns the format of the texel uploaded by this interface.
     // This format should not be confused by texture internal format.
     // This format specifies the component order in the sampled texel.

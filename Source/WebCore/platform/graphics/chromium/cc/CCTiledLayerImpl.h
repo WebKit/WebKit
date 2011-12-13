@@ -49,7 +49,6 @@ public:
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
-    void setTextureOrientation(LayerTextureUpdater::Orientation textureOrientation) { m_textureOrientation = textureOrientation; }
     void setSampledTexelFormat(LayerTextureUpdater::SampledTexelFormat sampledTexelFormat) { m_sampledTexelFormat = sampledTexelFormat; }
     void setTilingData(const CCLayerTilingData& tiler);
     void syncTextureId(int, int, Platform3DObject textureId);
@@ -89,7 +88,6 @@ private:
     void drawTiles(LayerRendererChromium*, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad& contentQuad, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
 
     bool m_skipsDraw;
-    LayerTextureUpdater::Orientation m_textureOrientation;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
 
     OwnPtr<CCLayerTilingData> m_tiler;

@@ -147,6 +147,11 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsCo
     SkCanvas* canvas = buffer.initialize(context, allocator, texture);
 
     canvas->clipRect(SkRect(destRect));
+    // The compositor expects the textures to be upside-down so it can flip
+    // the final composited image. Ganesh renders the image upright so we
+    // need to do a y-flip.
+    canvas->translate(0.0, texture->size().height());
+    canvas->scale(1.0, -1.0);
     // Translate the origin of contentRect to that of destRect.
     // Note that destRect is defined relative to sourceRect.
     canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),

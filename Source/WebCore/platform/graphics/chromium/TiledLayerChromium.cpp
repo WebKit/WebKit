@@ -72,7 +72,6 @@ TiledLayerChromium::TiledLayerChromium(CCLayerDelegate* delegate)
     : LayerChromium(delegate)
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
     , m_skipsDraw(false)
-    , m_textureOrientation(LayerTextureUpdater::InvalidOrientation)
     , m_sampledTexelFormat(LayerTextureUpdater::SampledTexelFormatInvalid)
     , m_tilingOption(AutoTile)
 {
@@ -163,7 +162,6 @@ void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
     createTextureUpdater(host);
 
     setTextureFormat(host->layerRendererCapabilities().bestTextureFormat);
-    m_textureOrientation = textureUpdater()->orientation();
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
 }
 
@@ -250,7 +248,6 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     }
 
     tiledLayer->setSkipsDraw(m_skipsDraw);
-    tiledLayer->setTextureOrientation(m_textureOrientation);
     tiledLayer->setSampledTexelFormat(m_sampledTexelFormat);
     tiledLayer->setTilingData(*m_tiler);
 

@@ -1,3 +1,37 @@
+2011-12-13  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] compositing/masks layout tests fail with accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=72760
+
+        Reviewed by Stephen White.
+
+        Accelerated drawing path used to render bottom-up upright textures, which was opposite of what the software path rendered.
+        The textures produced by the accelerated path was flipped along Y in the shader to make it upside down as expected by the compositor.
+        This strategy does not work in case of masks which do not go through a shader and hence do not get flipped,
+        which results in a case where texture in the render surface is top-down, while that in the mask is bottom-up.
+        This patch makes accelerated drawing path render textures in the same orientation as the software path.
+        LayerTextureUpdater::Orientation was added to support the difference in texture orientation between software and accelerated paths.
+        Now that both paths produce textures in the same orientation, there is no need for it.
+
+        No new tests needed. Covered by existing compositing tests.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::drawTiles):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (WebCore::CCTiledLayerImpl::setSkipsDraw):
+
 2011-12-09  Zhenyao Mo  <zmo@google.com>
 
         Implement GLES2 CheckFramebufferStatus() behavior

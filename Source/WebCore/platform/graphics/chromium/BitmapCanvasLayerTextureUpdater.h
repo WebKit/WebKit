@@ -57,7 +57,6 @@ public:
     virtual ~BitmapCanvasLayerTextureUpdater();
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(TextureManager*);
-    virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels, float contentsScale);
     void updateTextureRect(GraphicsContext3D*, TextureAllocator*, ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect);
