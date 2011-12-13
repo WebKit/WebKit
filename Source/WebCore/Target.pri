@@ -3151,6 +3151,8 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             DEFINES+=NS_BUILD_32_LIKE_64
         }
 
+        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
+
     } else: contains(DEFINES, WTF_USE_GSTREAMER=1) {
         HEADERS += \
             platform/graphics/gstreamer/GRefPtrGStreamer.h \
