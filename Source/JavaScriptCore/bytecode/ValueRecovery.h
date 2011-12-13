@@ -32,6 +32,10 @@
 #include "VirtualRegister.h"
 #include <wtf/Platform.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace JSC {
 
 // Describes how to recover a given bytecode virtual register at a given
