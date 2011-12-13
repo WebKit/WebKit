@@ -495,7 +495,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, RegisterFile* registerFile, JSValue
     if (asObject(arguments)->classInfo() == &Arguments::s_info) {
         Arguments* argsObject = asArguments(arguments);
         unsigned argCount = argsObject->length(callFrame);
-        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + argCount + 1 + RegisterFile::CallFrameHeaderSize);
+        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
         if (argCount > Arguments::MaxArguments || !registerFile->grow(newCallFrame->registers())) {
             callFrame->globalData().exception = createStackOverflowError(callFrame);
             return 0;
@@ -509,7 +509,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, RegisterFile* registerFile, JSValue
     if (isJSArray(&callFrame->globalData(), arguments)) {
         JSArray* array = asArray(arguments);
         unsigned argCount = array->length();
-        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + argCount + 1 + RegisterFile::CallFrameHeaderSize);
+        CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
         if (argCount > Arguments::MaxArguments || !registerFile->grow(newCallFrame->registers())) {
             callFrame->globalData().exception = createStackOverflowError(callFrame);
             return 0;
@@ -522,7 +522,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, RegisterFile* registerFile, JSValue
 
     JSObject* argObject = asObject(arguments);
     unsigned argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
-    CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + argCount + 1 + RegisterFile::CallFrameHeaderSize);
+    CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
     if (argCount > Arguments::MaxArguments || !registerFile->grow(newCallFrame->registers())) {
         callFrame->globalData().exception = createStackOverflowError(callFrame);
         return 0;

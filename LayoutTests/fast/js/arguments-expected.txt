@@ -18,6 +18,13 @@ PASS access_2(1, 2, 3, 4, 5) is 2
 PASS access_3(1, 2, 3, 4, 5) is 3
 PASS access_4(1, 2, 3, 4, 5) is 4
 PASS access_5(1, 2, 3, 4, 5) is 5
+PASS argumentLengthIs5() is 5
+PASS argumentLengthIs5(1,2,3,4,5) is 5
+PASS argumentLengthIs5(1,2,3,4,5,6,7,8,9,10) is 5
+PASS duplicateArgumentAndReturnLast_call(1) is 1
+PASS duplicateArgumentAndReturnFirst_call(1) is 1
+PASS duplicateArgumentAndReturnLast_apply(1) is 1
+PASS duplicateArgumentAndReturnFirst_apply(1) is 1
 PASS tear_off_equal_access_1(1, 2, 3) is 1
 PASS tear_off_equal_access_2(1, 2, 3) is 2
 PASS tear_off_equal_access_3(1, 2, 3) is 3

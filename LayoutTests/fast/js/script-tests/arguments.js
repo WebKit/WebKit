@@ -27,6 +27,31 @@ function access_5(a, b, c)
     return arguments[4];
 }
 
+function argumentLengthIs5() {
+    arguments.length = 5;
+    return arguments.length;
+}
+
+function duplicateArgumentAndReturnLast_call(a) {
+    Array.prototype.push.call(arguments, a);
+    return arguments[1];
+}
+
+function duplicateArgumentAndReturnFirst_call(a) {
+    Array.prototype.push.call(arguments, a);
+    return arguments[0];
+}
+
+function duplicateArgumentAndReturnLast_apply(a) {
+    Array.prototype.push.apply(arguments, arguments);
+    return arguments[1];
+}
+
+function duplicateArgumentAndReturnFirst_apply(a) {
+    Array.prototype.push.apply(arguments, arguments);
+    return arguments[0];
+}
+
 shouldBe("access_1(1, 2, 3)", "1");
 shouldBe("access_2(1, 2, 3)", "2");
 shouldBe("access_3(1, 2, 3)", "3");
@@ -44,6 +69,14 @@ shouldBe("access_2(1, 2, 3, 4, 5)", "2");
 shouldBe("access_3(1, 2, 3, 4, 5)", "3");
 shouldBe("access_4(1, 2, 3, 4, 5)", "4");
 shouldBe("access_5(1, 2, 3, 4, 5)", "5");
+
+shouldBe("argumentLengthIs5()", "5");
+shouldBe("argumentLengthIs5(1,2,3,4,5)", "5");
+shouldBe("argumentLengthIs5(1,2,3,4,5,6,7,8,9,10)", "5");
+shouldBe("duplicateArgumentAndReturnLast_call(1)", "1");
+shouldBe("duplicateArgumentAndReturnFirst_call(1)", "1");
+shouldBe("duplicateArgumentAndReturnLast_apply(1)", "1");
+shouldBe("duplicateArgumentAndReturnFirst_apply(1)", "1");
 
 function f(a, b, c)
 {

@@ -1,3 +1,18 @@
+2011-12-13  Oliver Hunt  <oliver@apple.com>
+
+        Arguments object doesn't handle mutation of length property correctly
+        https://bugs.webkit.org/show_bug.cgi?id=74454
+
+        Reviewed by Gavin Barraclough.
+
+        Correct handling of arguments objects with overridden length property
+
+        * interpreter/Interpreter.cpp:
+        (JSC::loadVarargs):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::copyToArguments):
+        (JSC::Arguments::fillArgList):
+
 2011-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG GetByVal CSE rule should match PutByValAlias

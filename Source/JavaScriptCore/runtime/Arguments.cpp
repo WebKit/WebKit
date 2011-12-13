@@ -54,6 +54,12 @@ void Arguments::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 void Arguments::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)
 {
+    if (UNLIKELY(d->overrodeLength)) {
+        length = min(get(exec, exec->propertyNames().length).toUInt32(exec), length);
+        for (unsigned i = 0; i < length; i++)
+            callFrame->setArgument(i, get(exec, i));
+        return;
+    }
     ASSERT(length == this->length(exec));
     for (size_t i = 0; i < length; ++i) {
         if (!d->deletedArguments || !d->deletedArguments[i])
@@ -65,6 +71,12 @@ void Arguments::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t 
 
 void Arguments::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
 {
+    if (UNLIKELY(d->overrodeLength)) {
+        unsigned length = get(exec, exec->propertyNames().length).toUInt32(exec); 
+        for (unsigned i = 0; i < length; i++) 
+            args.append(get(exec, i)); 
+        return;
+    }
     uint32_t length = this->length(exec);
     for (size_t i = 0; i < length; ++i) {
         if (!d->deletedArguments || !d->deletedArguments[i])
