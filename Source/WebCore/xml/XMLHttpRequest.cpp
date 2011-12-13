@@ -206,7 +206,7 @@ XMLHttpRequest::State XMLHttpRequest::readyState() const
 
 String XMLHttpRequest::responseText(ExceptionCode& ec)
 {
-    if (responseTypeCode() != ResponseTypeDefault && responseTypeCode() != ResponseTypeText) {
+    if (m_responseTypeCode != ResponseTypeDefault && m_responseTypeCode != ResponseTypeText) {
         ec = INVALID_STATE_ERR;
         return "";
     }
@@ -215,7 +215,7 @@ String XMLHttpRequest::responseText(ExceptionCode& ec)
 
 Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 {
-    if (responseTypeCode() != ResponseTypeDefault && responseTypeCode() != ResponseTypeText && responseTypeCode() != ResponseTypeDocument) {
+    if (m_responseTypeCode != ResponseTypeDefault && m_responseTypeCode != ResponseTypeText && m_responseTypeCode != ResponseTypeDocument) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -244,7 +244,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
 #if ENABLE(XHR_RESPONSE_BLOB)
 Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec) const
 {
-    if (responseTypeCode() != ResponseTypeBlob) {
+    if (m_responseTypeCode != ResponseTypeBlob) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -1044,7 +1044,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     if (m_state < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
 
-    bool useDecoder = responseTypeCode() == ResponseTypeDefault || responseTypeCode() == ResponseTypeText || responseTypeCode() == ResponseTypeDocument;
+    bool useDecoder = m_responseTypeCode == ResponseTypeDefault || m_responseTypeCode == ResponseTypeText || m_responseTypeCode == ResponseTypeDocument;
 
     if (useDecoder && !m_decoder) {
         if (!m_responseEncoding.isEmpty())
@@ -1068,7 +1068,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));
-    else if (responseTypeCode() == ResponseTypeArrayBuffer) {
+    else if (m_responseTypeCode == ResponseTypeArrayBuffer) {
         // Buffer binary data.
         if (!m_binaryResponseBuilder)
             m_binaryResponseBuilder = SharedBuffer::create();

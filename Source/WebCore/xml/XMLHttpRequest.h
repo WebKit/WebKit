@@ -84,7 +84,7 @@ public:
     bool withCredentials() const { return m_includeCredentials; }
     void setWithCredentials(bool, ExceptionCode&);
 #if ENABLE(XHR_RESPONSE_BLOB)
-    bool asBlob() const { return responseTypeCode() == ResponseTypeBlob; }
+    bool asBlob() const { return m_responseTypeCode == ResponseTypeBlob; }
     void setAsBlob(bool, ExceptionCode&);
 #endif
     void open(const String& method, const KURL&, ExceptionCode&);
