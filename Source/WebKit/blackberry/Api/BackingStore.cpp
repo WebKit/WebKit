@@ -217,6 +217,8 @@ BackingStorePrivate::~BackingStorePrivate()
     delete back;
     m_backState = 0;
 
+    pthread_cond_destroy(&m_blitGenerationCond);
+    pthread_mutex_destroy(&m_blitGenerationLock);
     pthread_mutex_destroy(&m_mutex);
 }
 

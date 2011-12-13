@@ -1,3 +1,16 @@
+2011-12-13  Arvid Nilsson  <anilsson@rim.com>
+
+        [Blackberry] Fix a leak in BackingStore class
+
+        Don't leak the blit generation condvar and mutex.
+
+        https://bugs.webkit.org/show_bug.cgi?id=74444
+
+        Reviewed by Antonio Gomes.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::~BackingStorePrivate):
+
 2011-12-09  Jacky Jiang  <zhajiang@rim.com>
 
         Upstream BlackBerry API backing store files
