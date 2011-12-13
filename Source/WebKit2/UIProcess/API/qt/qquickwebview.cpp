@@ -706,12 +706,6 @@ void QQuickWebView::focusOutEvent(QFocusEvent* event)
     d->pageView->event(event);
 }
 
-void QQuickWebView::touchEvent(QTouchEvent* event)
-{
-    forceActiveFocus();
-    QQuickItem::touchEvent(event);
-}
-
 WKPageRef QQuickWebView::pageRef() const
 {
     Q_D(const QQuickWebView);

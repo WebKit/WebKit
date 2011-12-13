@@ -1,3 +1,14 @@
+2011-12-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Make sure that touch events result in the page view gaining focus
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::touchEvent): Force active focus.
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p.h: Remove ::touchEvent override.
+
 2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Initial UI client implementation for WebKit2 GTK +API

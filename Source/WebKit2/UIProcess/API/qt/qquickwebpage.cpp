@@ -156,6 +156,7 @@ bool QQuickWebPage::event(QEvent* ev)
 
 void QQuickWebPage::touchEvent(QTouchEvent* event)
 {
+    forceActiveFocus();
     this->event(event);
 }
 
