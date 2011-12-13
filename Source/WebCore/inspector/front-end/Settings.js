@@ -42,7 +42,9 @@ var Preferences = {
     localizeUI: true,
     exposeDisableCache: false,
     exposeWorkersInspection: false,
-    applicationTitle: "Web Inspector - %s"
+    applicationTitle: "Web Inspector - %s",
+    // FIXME: Remove once navigator is production-ready.
+    useScriptNavigator: false
 }
 
 var Capabilities = {

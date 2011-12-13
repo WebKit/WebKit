@@ -44,6 +44,7 @@ function TreeOutline(listNode)
     this.expanded = true;
     this.selected = false;
     this.treeOutline = this;
+    this.comparator = null;
 
     this._childrenListNode.tabIndex = 0;
     this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
@@ -54,45 +55,12 @@ function TreeOutline(listNode)
 
 TreeOutline.prototype.appendChild = function(child)
 {
-    if (!child)
-        throw("child can't be undefined or null");
-
-    var lastChild = this.children[this.children.length - 1];
-    if (lastChild) {
-        lastChild.nextSibling = child;
-        child.previousSibling = lastChild;
-    } else {
-        child.previousSibling = null;
-        child.nextSibling = null;
-    }
-
-    this.children.push(child);
-    this.hasChildren = true;
-    child.parent = this;
-    child.treeOutline = this.treeOutline;
-    child.treeOutline._rememberTreeElement(child);
-
-    var current = child.children[0];
-    while (current) {
-        current.treeOutline = this.treeOutline;
-        current.treeOutline._rememberTreeElement(current);
-        current = current.traverseNextTreeElement(false, child, true);
-    }
-
-    child.expanded = child.hasChildren && !!child.treeOutline._expandedStateMap.get(child.representedObject);
-
-    if (!this._childrenListNode) {
-        this._childrenListNode = this.treeOutline._childrenListNode.ownerDocument.createElement("ol");
-        this._childrenListNode.parentTreeElement = this;
-        this._childrenListNode.classList.add("children");
-        if (this.hidden)
-            this._childrenListNode.classList.add("hidden");
-    }
-
-    child._attach();
-
-    if (this.treeOutline.onadd)
-        this.treeOutline.onadd(child);
+    var insertionIndex;
+    if (this.treeOutline.comparator)
+        insertionIndex = insertionIndexForObjectInListSortedByFunction(child, this.children, this.treeOutline.comparator);
+    else
+        insertionIndex = this.children.length;
+    this.insertChild(child, insertionIndex);
 }
 
 TreeOutline.prototype.insertChild = function(child, index)

@@ -50,7 +50,7 @@ WebInspector.TabbedPane.prototype = {
 
         this._tabsElement.appendChild(tabElement);
 
-        this._tabs[id] = { tabElement: tabElement, view: view };
+        this._tabs[id] = { id: id, tabElement: tabElement, view: view };
     },
 
     /**
@@ -62,6 +62,8 @@ WebInspector.TabbedPane.prototype = {
             return false;
 
         if (this._currentTab) {
+            if (this._currentTab.id === id)
+                return;
             this._hideTab(this._currentTab)
             delete this._currentTab;
         }
@@ -95,6 +97,14 @@ WebInspector.TabbedPane.prototype = {
     {
         if (this.canHighlightLine())
             this._currentTab.view.highlightLine(line);
+    },
+
+    /**
+     * @return {Array.<Element>}
+     */
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return [ this._contentElement ];
     }
 }
 

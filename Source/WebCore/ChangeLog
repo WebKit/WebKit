@@ -1,3 +1,63 @@
+2011-12-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add scripts navigator sidebar to scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=73086
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/Images/domain.png: Added.
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.suggestedFileName):
+        * inspector/front-end/ScriptsNavigator.js: Added.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded.get if):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeRemoved):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype._removeSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeReplaced):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        (WebInspector.ScriptsPanel.prototype._updateExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._scriptSelectedInNavigator):
+        (WebInspector.ScriptsPanel.prototype._createDebugToolbar):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype.selectTab):
+        (WebInspector.TabbedPane.prototype.highlightLine):
+        (WebInspector.TabbedPane.prototype.elementsToRestoreScrollPositionsFor):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.get domain):
+        (WebInspector.UISourceCode.prototype.get folderName):
+        (WebInspector.UISourceCode.prototype.get displayName):
+        (WebInspector.UISourceCode.prototype._parseURL):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.tabbed-pane):
+        (.tabbed-pane-content):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/networkPanel.css:
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-navigator-resizer-widget):
+        (.scripts-navigator-domain-tree-item .icon):
+        (.scripts-navigator-folder-tree-item .icon):
+        (.scripts-navigator-script-tree-item .icon):
+        (.scripts.panel .navigator):
+        (#scripts-navigator-tabbed-pane .tabbed-pane-header):
+        (#scripts-navigator-tabbed-pane .tabbed-pane-content):
+        (.scripts.panel .navigator li):
+        (.scripts.panel .navigator :focus li.selected):
+        (.scripts.panel .navigator li.selected .selection):
+        (.scripts.panel .navigator :focus li.selected .selection):
+        (.scripts.panel .navigator .icon):
+        (.scripts.panel .base-navigator-tree-element-title):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline):
+        (TreeOutline.prototype.appendChild):
+
 2011-12-12  Andreas Kling  <kling@webkit.org>
 
         CollectionCache: Remove unused copy constructor and make it noncopyable.

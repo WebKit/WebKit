@@ -1677,12 +1677,14 @@ button.edit-source-status-bar-item.toggled-on .glyph {
 
 .tabbed-pane {
     -webkit-box-orient: vertical;
+    display: -webkit-box;
     height: 100%;
 }
 
 .tabbed-pane-content {
     -webkit-box-flex: 1;
     position: relative;
+    overflow: auto;
 }
 
 .tabbed-pane-header {

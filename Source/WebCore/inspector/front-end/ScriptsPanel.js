@@ -46,22 +46,45 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.editorToolbar = this._createEditorToolbar();
     this.debugToolbar = this._createDebugToolbar();
 
-    const initialSidebarWidth = 225;
-    const minimalViewsContainerWidthPercent = 34;
-    this.createSplitView(this.element, WebInspector.SplitView.SidebarPosition.Right, initialSidebarWidth);
+    const initialDebugSidebarWidth = 225;
+    const maximalDebugSidebarWidthPercent = 50;
+    this.createSplitView(this.element, WebInspector.SplitView.SidebarPosition.Right, initialDebugSidebarWidth);
     this.splitView.element.id = "scripts-split-view";
     this.splitView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
-    this.splitView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
+    this.splitView.minimalMainWidthPercent = 100 - maximalDebugSidebarWidthPercent;
 
     this.splitView.sidebarElement.appendChild(this.debugToolbar);
-    this.splitView.mainElement.appendChild(this.editorToolbar);
-
-    this.viewsContainerElement = this.splitView.mainElement;
 
     this.debugSidebarResizeWidgetElement = document.createElement("div");
     this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
     this.splitView.installResizer(this.debugSidebarResizeWidgetElement);
     this.editorToolbar.appendChild(this.debugSidebarResizeWidgetElement);
+
+    if (Preferences.useScriptNavigator) {
+        const initialNavigatorWidth = 225;
+        const minimalViewsContainerWidthPercent = 50;
+        this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
+        
+        this.editorView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
+        this.editorView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
+        this.editorView.show(this.splitView.mainElement);
+
+        this.editorView.mainElement.appendChild(this.editorToolbar);
+        
+        this._navigator = new WebInspector.ScriptsNavigator(this._presentationModel);
+        this._navigator.addEventListener(WebInspector.ScriptsNavigator.Events.ScriptSelected, this._scriptSelectedInNavigator, this)
+        this._navigator.show(this.editorView.sidebarElement);
+
+        this.viewsContainerElement = this.editorView.mainElement;
+
+        this._navigatorResizeWidgetElement = document.createElement("div");
+        this._navigatorResizeWidgetElement.id = "scripts-navigator-resizer-widget";
+        this.editorView.installResizer(this._navigatorResizeWidgetElement);
+        this.editorView.sidebarElement.appendChild(this._navigatorResizeWidgetElement);
+    } else {
+        this.splitView.mainElement.appendChild(this.editorToolbar);
+        this.viewsContainerElement = this.splitView.mainElement;
+    }
 
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
@@ -195,18 +218,20 @@ WebInspector.ScriptsPanel.prototype = {
 
     _uiSourceCodeAdded: function(event)
     {
-        var uiSourceCode = event.data;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
 
         if (!uiSourceCode.url) {
             // Anonymous sources are shown only when stepping.
             return;
         }
 
+        if (this._navigator)
+            this._navigator.addUISourceCode(uiSourceCode);
         this._addOptionToFilesSelect(uiSourceCode);
 
         var lastViewedURL = WebInspector.settings.lastViewedScriptFile.get();
-        if (!this._filesSelectElement.initialSelectionProcessed) {
-            this._filesSelectElement.initialSelectionProcessed = true;
+        if (!this._initialViewSelectionProcessed) {
+            this._initialViewSelectionProcessed = true;
             // Option we just added is the only option in files select.
             // We have to show corresponding source frame immediately.
             this._showSourceFrameAndAddToHistory(uiSourceCode);
@@ -219,7 +244,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     _uiSourceCodeRemoved: function(event)
     {
-        var uiSourceCode = event.data;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        
         if (uiSourceCode._sourceFrame)
             uiSourceCode._sourceFrame.detach();
     },
@@ -243,6 +269,9 @@ WebInspector.ScriptsPanel.prototype = {
         }
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
     _addOptionToFilesSelect: function(uiSourceCode)
     {
         var showScriptFolders = WebInspector.settings.showScriptFolders.get();
@@ -259,27 +288,28 @@ WebInspector.ScriptsPanel.prototype = {
 
         const indent = WebInspector.isMac() ? "" : "\u00a0\u00a0\u00a0\u00a0";
 
-        var names = this.folderAndDisplayNameForScriptURL(uiSourceCode.url);
-        option.displayName = names.displayName;
+        option.displayName = uiSourceCode.displayName;
 
         var contentScriptPrefix = uiSourceCode.isContentScript ? "2:" : "0:";
+        var folderName = uiSourceCode.folderName;
+        var domain = uiSourceCode.domain;
 
-        if (uiSourceCode.isContentScript && names.domain) {
+        if (uiSourceCode.isContentScript && domain) {
             // Render extension domain as a path in structured view
-            names.folderName = names.domain + (names.folderName ? names.folderName : "");
-            delete names.domain;
+            folderName = domain + (folderName ? folderName : "");
+            domain = "";
         }
 
-        var folderNameForSorting = contentScriptPrefix + (names.domain ? names.domain + "\t\t" : "") + names.folderName;
+        var folderNameForSorting = contentScriptPrefix + (domain ? domain + "\t\t" : "") + folderName;
 
         if (showScriptFolders) {
-            option.text = indent + (names.displayName ? names.displayName : WebInspector.UIString("(program)"));
-            option.nameForSorting = folderNameForSorting + "\t/\t" + names.displayName; // Use '\t' to make files stick to their folder.
+            option.text = indent + (uiSourceCode.displayName ? uiSourceCode.displayName : WebInspector.UIString("(program)"));
+            option.nameForSorting = folderNameForSorting + "\t/\t" + uiSourceCode.displayName; // Use '\t' to make files stick to their folder.
         } else {
-            option.text = names.displayName ? names.displayName : WebInspector.UIString("(program)");
+            option.text = uiSourceCode.displayName ? uiSourceCode.displayName : WebInspector.UIString("(program)");
             // Content script should contain its domain name as a prefix
-            if (uiSourceCode.isContentScript && names.folderName)
-                option.text = names.folderName + "/" + option.text;
+            if (uiSourceCode.isContentScript && folderName)
+                option.text = folderName + "/" + option.text;
             option.nameForSorting = contentScriptPrefix + option.text;
         }
         option.title = uiSourceCode.url;
@@ -308,18 +338,18 @@ WebInspector.ScriptsPanel.prototype = {
             insertOrdered(contentScriptSection);
         }
 
-        if (showScriptFolders && !uiSourceCode.isContentScript && names.domain && !select.domainOptions[names.domain]) {
+        if (showScriptFolders && !uiSourceCode.isContentScript && domain && !select.domainOptions[domain]) {
             var domainOption = document.createElement("option");
-            domainOption.text = "\u2014 " + names.domain + " \u2014";
-            domainOption.nameForSorting = "0:" + names.domain;
+            domainOption.text = "\u2014 " + domain + " \u2014";
+            domainOption.nameForSorting = "0:" + domain;
             domainOption.disabled = true;
-            select.domainOptions[names.domain] = domainOption;
+            select.domainOptions[domain] = domainOption;
             insertOrdered(domainOption);
         }
 
-        if (showScriptFolders && names.folderName && !select.folderOptions[folderNameForSorting]) {
+        if (showScriptFolders && folderName && !select.folderOptions[folderNameForSorting]) {
             var folderOption = document.createElement("option");
-            folderOption.text = names.folderName;
+            folderOption.text = folderName;
             folderOption.nameForSorting = folderNameForSorting;
             folderOption.disabled = true;
             select.folderOptions[folderNameForSorting] = folderOption;
@@ -330,34 +360,10 @@ WebInspector.ScriptsPanel.prototype = {
         uiSourceCode._option = option;
     },
 
-    folderAndDisplayNameForScriptURL: function(url)
-    {
-        var parsedURL = url.asParsedURL();
-        if (parsedURL)
-            url = parsedURL.path;
-
-        var folderName = "";
-        var displayName = url;
-
-        var pathLength = displayName.indexOf("?");
-        if (pathLength === -1)
-            pathLength = displayName.length;
-
-        var fromIndex = displayName.lastIndexOf("/", pathLength - 2);
-        if (fromIndex !== -1) {
-            folderName = displayName.substring(0, fromIndex);
-            displayName = displayName.substring(fromIndex + 1);
-        }
-
-        if (displayName.length > 80)
-            displayName = "\u2026" + displayName.substring(displayName.length - 80);
-
-        if (folderName.length > 80)
-            folderName = "\u2026" + folderName.substring(folderName.length - 80);
-
-        return { domain: (parsedURL ? parsedURL.host : ""), folderName: folderName, displayName: displayName };
-    },
-
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean} inEditMode
+     */
     setScriptSourceIsBeingEdited: function(uiSourceCode, inEditMode)
     {
         var option = uiSourceCode._option;
@@ -505,7 +511,8 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateBackAndForwardButtons();
 
         this._resetFilesSelect();
-        delete this._filesSelectElement.initialSelectionProcessed;
+
+        delete this._initialViewSelectionProcessed;
 
         this.functionsSelectElement.removeChildren();
         this.visibleView = null;
@@ -565,6 +572,10 @@ WebInspector.ScriptsPanel.prototype = {
         this._showSourceLine(uiLocation.uiSourceCode, uiLocation.lineNumber);
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {number} lineNumber
+     */
     _showSourceLine: function(uiSourceCode, lineNumber)
     {
         var sourceFrame = this._showSourceFrameAndAddToHistory(uiSourceCode);
@@ -572,6 +583,9 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.highlightLine(lineNumber);
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
     _showSourceFrameAndAddToHistory: function(uiSourceCode)
     {
         if (!uiSourceCode._option)
@@ -597,8 +611,13 @@ WebInspector.ScriptsPanel.prototype = {
         return sourceFrame;
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
     _showSourceFrame: function(uiSourceCode)
     {
+        if (this._navigator)
+            this._navigator.revealUISourceCode(uiSourceCode);
         this._filesSelectElement.selectedIndex = uiSourceCode._option.index;
 
         var sourceFrame = uiSourceCode._sourceFrame || this._createSourceFrame(uiSourceCode);
@@ -610,6 +629,9 @@ WebInspector.ScriptsPanel.prototype = {
         return sourceFrame;
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
     _createSourceFrame: function(uiSourceCode)
     {
         var sourceFrame = new WebInspector.JavaScriptSourceFrame(this, this._presentationModel, uiSourceCode);
@@ -620,8 +642,14 @@ WebInspector.ScriptsPanel.prototype = {
         return sourceFrame;
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
     _removeSourceFrame: function(uiSourceCode)
     {
+        if (this._navigator)
+            this._navigator.removeUISourceCode(uiSourceCode);
+        
         var option = uiSourceCode._option;
         // FIXME: find out why we are getting here with option detached.
         if (option && this._filesSelectElement === option.parentElement)
@@ -635,10 +663,13 @@ WebInspector.ScriptsPanel.prototype = {
         sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
     },
 
+    /**
+     * @param {Event} event
+     */
     _uiSourceCodeReplaced: function(event)
     {
-        var oldUISourceCodeList = event.data.oldUISourceCodeList;
-        var uiSourceCodeList = event.data.uiSourceCodeList;
+        var oldUISourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data.oldUISourceCodeList;
+        var uiSourceCodeList = /** @type {Array.<WebInspector.UISourceCode>} */ event.data.uiSourceCodeList;
 
         var visible = false;
         for (var i = 0; i < oldUISourceCodeList.length; ++i) {
@@ -657,7 +688,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _sourceFrameLoaded: function(event)
     {
-        var sourceFrame = event.target;
+        var sourceFrame = /** @type {WebInspector.JavaScriptSourceFrame} */ event.target;
         var uiSourceCode = sourceFrame._uiSourceCode;
 
         var messages = this._presentationModel.messagesForUISourceCode(uiSourceCode);
@@ -695,6 +726,9 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (!uiLocation.uiSourceCode._option) {
             // Anonymous scripts are not added to files select by default.
+            // FIXME: We should always add anonymous scripts to navigator (in a separate folder tree element)
+            if (this._navigator)
+                this._navigator.addUISourceCode(uiLocation.uiSourceCode);
             this._addOptionToFilesSelect(uiLocation.uiSourceCode);
         }
         var sourceFrame = this._showSourceFrameAndAddToHistory(uiLocation.uiSourceCode);
@@ -718,6 +752,12 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.refreshExpressions();
         this.sidebarPanes.callstack.selectedCallFrame = callFrame;
         this._updateExecutionLine(this._presentationModel.executionLineLocation);
+    },
+
+    _scriptSelectedInNavigator: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        this._showSourceFrameAndAddToHistory(uiSourceCode);
     },
 
     _filesSelectChanged: function(focusSource)
@@ -1000,7 +1040,7 @@ WebInspector.ScriptsPanel.prototype = {
         var debugToolbar = document.createElement("div");
         debugToolbar.className = "status-bar";
         debugToolbar.id = "scripts-debug-toolbar";
-        
+
         var title, handler, shortcuts;
         var platformSpecificModifier = WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta;
 

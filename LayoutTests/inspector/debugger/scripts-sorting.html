@@ -57,7 +57,7 @@ function test()
 
     function addOption(url, isContentScript)
     {
-        WebInspector.panels.scripts._addOptionToFilesSelect({ id: nextId++, url: url, isContentScript: isContentScript });
+        WebInspector.panels.scripts._addOptionToFilesSelect(new WebInspector.UISourceCode(nextId++, url, isContentScript, null, null));
     }
 
     function dumpScriptsList()

@@ -73,8 +73,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     suggestedFileName: function()
     {
-        var names = this._scriptsPanel.folderAndDisplayNameForScriptURL(this._uiSourceCode.url);
-        return names.displayName || "untitled.js";
+        return this._uiSourceCode.displayName || "untitled.js";
     },
 
     editContent: function(newContent, callback)

@@ -69385,6 +69385,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ScriptsNavigator.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\scriptsPanel.css"
 					>
 				</File>

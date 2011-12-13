@@ -112,6 +112,7 @@
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
     <file>ScriptsPanel.js</file>
+    <file>ScriptsNavigator.js</file>
     <file>ScriptsSearchScope.js</file>
     <file>SearchController.js</file>
     <file>Section.js</file>

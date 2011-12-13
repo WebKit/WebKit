@@ -124,6 +124,68 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
+     * @type {string}
+     */
+    get domain()
+    {
+        if (!this._domain)
+            this._parseURL();
+        
+        return this._domain;
+    },
+    
+    /**
+     * @type {string}
+     */
+    get folderName()
+    {
+        if (!this._folderName)
+            this._parseURL();
+        
+        return this._folderName;
+    },
+    
+    /**
+     * @type {string}
+     */
+    get displayName()
+    {
+        if (!this._displayName)
+            this._parseURL();
+        
+        return this._displayName;
+    },
+    
+    _parseURL: function()
+    {
+        var parsedURL = this.url.asParsedURL();
+        var url = parsedURL ? parsedURL.path : this.url;
+
+        var folderName = "";
+        var displayName = url;
+
+        var pathLength = displayName.indexOf("?");
+        if (pathLength === -1)
+            pathLength = displayName.length;
+
+        var fromIndex = displayName.lastIndexOf("/", pathLength - 2);
+        if (fromIndex !== -1) {
+            folderName = displayName.substring(0, fromIndex);
+            displayName = displayName.substring(fromIndex + 1);
+        }
+
+        if (displayName.length > 80)
+            displayName = "\u2026" + displayName.substring(displayName.length - 80);
+
+        if (folderName.length > 80)
+            folderName = "\u2026" + folderName.substring(folderName.length - 80);
+
+        this._domain = parsedURL ? parsedURL.host : "";
+        this._folderName = folderName;
+        this._displayName = displayName;
+    },
+
+    /**
      * @param {string} mimeType
      * @param {string} content
      */
