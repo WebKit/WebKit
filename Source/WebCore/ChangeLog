@@ -1,3 +1,16 @@
+2011-12-12  Konrad Piascik  <kpiascik@rim.com>
+
+        Implement the JavaScriptCore bindings for eventListenerHandlerLocation
+        https://bugs.webkit.org/show_bug.cgi?id=74313
+
+        Reviewed by Geoffrey Garen. 
+
+        Open any page in Web Inspector and look at the event listeners. They should now
+        link to the script which created them.
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerLocation):
+
 2011-12-12  Erik Arvidsson  <arv@chromium.org>
 
         [V8] CodeGeneratorV8.pm does not correctly work with inherited HasIndexGetter
