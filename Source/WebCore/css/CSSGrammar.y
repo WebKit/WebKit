@@ -1484,6 +1484,15 @@ function:
         $$.unit = CSSParserValue::Function;
         $$.function = f;
     } |
+    FUNCTION maybe_space expr TOKEN_EOF {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        CSSParserFunction* f = p->createFloatingFunction();
+        f->name = $1;
+        f->args = adoptPtr(p->sinkFloatingValueList($3));
+        $$.id = 0;
+        $$.unit = CSSParserValue::Function;
+        $$.function = f;
+    } |
     FUNCTION maybe_space ')' maybe_space {
         CSSParser* p = static_cast<CSSParser*>(parser);
         CSSParserFunction* f = p->createFloatingFunction();

@@ -1,3 +1,14 @@
+2011-12-12  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: eof-002.htm fails
+        https://bugs.webkit.org/show_bug.cgi?id=74309
+
+        Reviewed by Dean Jackson.
+
+        Test: css2.1/20110323/eof-002-expected.html
+
+        * css/CSSGrammar.y: Treat EOF during a function expression with an open parenthesis as a close parenthesis.
+
 2011-12-13  Adam Klein  <adamk@chromium.org>
 
         V8Proxy cleanup: replace custom logging methods with standard WebCore calls
