@@ -1,3 +1,24 @@
+2011-12-13  Ojan Vafai  <ojan@chromium.org>
+
+        Fix bug in the code review tool when readding a discarded comment
+        https://bugs.webkit.org/show_bug.cgi?id=74450
+
+        Reviewed by Adam Barth.
+
+        If you discard a comment that has a corresponding previousComment,
+        then we would incorrectly remove the comment baseline. So, the next
+        time you added a comment by clicking on the previousComment, we
+        would get undefined as the start line for the new comment.
+
+        All of this works fine until you try to restore the comment from
+        localStorage, at which point we throw an error because the start
+        line is undefined.
+
+        Also added some failsafes to better handle the case of corrupted comments.
+
+        * code-review-test.html:
+        * code-review.js:
+
 2011-11-15  Tony Chang  <tony@chromium.org>
 
         set a max-width on the codereview overall comments textarea

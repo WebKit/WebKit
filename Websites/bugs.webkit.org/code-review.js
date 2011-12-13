@@ -165,9 +165,19 @@ var CODE_REVIEW_UNITTEST;
     g_displayed_draft_comments = true;
 
     var comments = g_draftCommentSaver.saved_comments();
+    var errors = [];
     $(comments.comments).each(function() {
-      addDraftComment(this.start_line_id, this.end_line_id, this.contents);
+      try {
+        addDraftComment(this.start_line_id, this.end_line_id, this.contents);
+      } catch (e) {
+        errors.push({'start': this.start_line_id, 'end': this.end_line_id, 'contents': this.contents});
+      }
     });
+    
+    if (errors.length) {
+      console.log('DRAFT COMMENTS WITH ERRORS:', JSON.stringify(errors));
+      alert('Some draft comments failed to be added. See the console to manually resolve.');
+    }
     
     var overall_comments = comments['overall-comments'];
     if (overall_comments) {
@@ -181,9 +191,6 @@ var CODE_REVIEW_UNITTEST;
     this._localStorage = opt_localStorage || localStorage;
     this._save_comments = true;
   }
-
-  if (CODE_REVIEW_UNITTEST)
-    window['DraftCommentSaver'] = DraftCommentSaver;
 
   DraftCommentSaver.prototype._json = function() {
     var comments = $('.comment');
@@ -210,8 +217,12 @@ var CODE_REVIEW_UNITTEST;
     return JSON.stringify({'born-on': Date.now(), 'comments': comment_store, 'overall-comments': overall_comments});
   }
   
+  DraftCommentSaver.prototype.localStorageKey = function() {
+    return DraftCommentSaver._keyPrefix + this._attachment_id;
+  }
+  
   DraftCommentSaver.prototype.saved_comments = function() {
-    var serialized_comments = this._localStorage.getItem(DraftCommentSaver._keyPrefix + this._attachment_id);
+    var serialized_comments = this._localStorage.getItem(this.localStorageKey());
     if (!serialized_comments)
       return [];
 
@@ -222,17 +233,12 @@ var CODE_REVIEW_UNITTEST;
       this._erase_corrupt_comments();
       return {};
     }
-    
+
     var individual_comments = comments.comments;
-    if (comments && !individual_comments.length)
-      return comments;
-    
-    // Sanity check comments are as expected.
-    if (!comments || !individual_comments[0].contents) {
+    if (!comments || !comments['born-on'] || !individual_comments || (individual_comments.length && !individual_comments[0].contents)) {
       this._erase_corrupt_comments();
       return {};
-    }
-    
+    }    
     return comments;
   }
   
@@ -246,7 +252,7 @@ var CODE_REVIEW_UNITTEST;
     if (!this._save_comments)
       return;
 
-    var key = DraftCommentSaver._keyPrefix + this._attachment_id;
+    var key = this.localStorageKey();
     var value = this._json();
 
     if (this._attemptToWrite(key, value))
@@ -286,7 +292,7 @@ var CODE_REVIEW_UNITTEST;
   DraftCommentSaver._keyPrefix = 'draft-comments-for-attachment-';
 
   DraftCommentSaver.prototype.erase = function() {
-    this._localStorage.removeItem(DraftCommentSaver._keyPrefix + this._attachment_id);
+    this._localStorage.removeItem(this.localStorageKey());
   }
 
   DraftCommentSaver.prototype._eraseOldCommentsForAllReviews = function() {
@@ -342,9 +348,9 @@ var CODE_REVIEW_UNITTEST;
   }
   
   function unfreezeCommentFor(line) {
-      // FIXME: This query is overly complex because we place comment blocks
-      // after Lines.  Instead, comment blocks should be children of Lines.
-      findCommentPositionFor(line).next().next().filter('.frozenComment').each(handleUnfreezeComment);
+    // FIXME: This query is overly complex because we place comment blocks
+    // after Lines.  Instead, comment blocks should be children of Lines.
+    findCommentPositionFor(line).next().next().filter('.frozenComment').each(handleUnfreezeComment);
   }
 
   function createCommentFor(line) {
@@ -369,13 +375,14 @@ var CODE_REVIEW_UNITTEST;
     comment_block.hide().slideDown('fast', function() {
       $(this).children('textarea').focus();
     });
+    return comment_block;
   }
 
   function addCommentField(comment_block) {
     var id = $(comment_block).attr('data-comment-for');
     if (!id)
       id = comment_block.id;
-    addCommentFor($('#' + id));
+    return addCommentFor($('#' + id));
   }
   
   function handleAddCommentField() {
@@ -383,13 +390,13 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function addPreviousComment(line, author, comment_text) {
-    var line_id = line.attr('id');
+    var line_id = $(line).attr('id');
     var comment_block = $('<div data-comment-for="' + line_id + '" class="previousComment"></div>');
     var author_block = $('<div class="author"></div>').text(author + ':');
     var text_block = $('<div class="content"></div>').text(comment_text);
     comment_block.append(author_block).append(text_block).each(hoverify).click(handleAddCommentField);
-    addDataCommentBaseLine(line, line_id);
-    insertCommentFor(line, comment_block);
+    addDataCommentBaseLine($(line), line_id);
+    insertCommentFor($(line), comment_block);
   }
 
   function displayPreviousComments(comments) {
@@ -634,9 +641,6 @@ var CODE_REVIEW_UNITTEST;
     }
     return trac_links;
   }
-
-  if (CODE_REVIEW_UNITTEST)
-    window.tracLinks = tracLinks;
 
   function addExpandLinks(file_name) {
     if (file_name.indexOf('ChangeLog') != -1)
@@ -1070,9 +1074,28 @@ var CODE_REVIEW_UNITTEST;
       '<a href="javascript:" class="side-by-side-link">side-by-side</a>';
   }
 
-  $(document).ready(function() {
-    if (CODE_REVIEW_UNITTEST)
-      return;
+  function appendToolbar() {
+    $(document.body).append('<div id="toolbar">' +
+        '<div class="overallComments">' +
+          '<textarea placeholder="Overall comments"></textarea>' +
+        '</div>' +
+        '<div>' +
+          '<span id="statusBubbleContainer"></span>' +
+          '<span class="actions">' +
+            '<span class="links"><span class="bugLink"></span></span>' +
+            '<span id="flagContainer"></span>' +
+            '<button id="preview_comments">Preview</button>' +
+            '<button id="post_comments">Publish</button> ' +
+          '</span>' +
+        '</div>' +
+        '<div class="autosave-state"></div>' +
+        '</div>');
+
+    $('.overallComments textarea').bind('click', openOverallComments);
+    $('.overallComments textarea').bind('input', handleOverallCommentsInput);
+  }
+
+  function handleDocumentReady() {
     crawlDiff();
     fetchHistory();
     $(document.body).prepend('<div id="message">' +
@@ -1097,24 +1120,8 @@ var CODE_REVIEW_UNITTEST;
           '</div>' +
         '</div>' +
         '</div>');
-    $(document.body).append('<div id="toolbar">' +
-        '<div class="overallComments">' +
-            '<textarea placeholder="Overall comments"></textarea>' +
-        '</div>' +
-        '<div>' +
-          '<span id="statusBubbleContainer"></span>' +
-          '<span class="actions">' +
-              '<span class="links"><span class="bugLink"></span></span>' +
-              '<span id="flagContainer"></span>' +
-              '<button id="preview_comments">Preview</button>' +
-              '<button id="post_comments">Publish</button> ' +
-          '</span>' +
-        '</div>' +
-        '<div class="autosave-state"></div>' +
-        '</div>');
 
-    $('.overallComments textarea').bind('click', openOverallComments);
-    $('.overallComments textarea').bind('input', handleOverallCommentsInput);
+    appendToolbar();
 
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
     $('#reviewform').bind('load', handleReviewFormLoad);
@@ -1128,7 +1135,7 @@ var CODE_REVIEW_UNITTEST;
 
     updateToolbarAnchorState();
     loadDiffState();
-  });
+  };
 
   function handleReviewFormLoad() {
     var review_form_contents = $('#reviewform').contents();
@@ -1330,12 +1337,12 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function discardComment(comment_block) {
-    var line_id = comment_block.find('textarea').attr('data-comment-for');
+    var line_id = $(comment_block).find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
-    findCommentBlockFor(line).slideUp('fast', function() {
+    $(comment_block).slideUp('fast', function() {
       $(this).remove();
       line.removeAttr('data-has-comment');
-      trimCommentContextToBefore(line, line.attr('data-comment-base-line'));
+      trimCommentContextToBefore(line, line_id);
       saveDraftComments();
     });
   }
@@ -1368,9 +1375,10 @@ var CODE_REVIEW_UNITTEST;
   }
   
   function acceptComment(comment) {
-    var frozen_comment = freezeComment(comment);
+    var frozen_comment = freezeComment($(comment));
     focusOn(frozen_comment);
     saveDraftComments();
+    return frozen_comment;
   }
 
   $('.FileDiff').live('mouseenter', showFileDiffLinks);
@@ -1679,7 +1687,8 @@ var CODE_REVIEW_UNITTEST;
       if (numberFrom(id) > line_to_trim_to)
         return;
 
-      removeDataCommentBaseLine(this, comment_base_line);
+      if (!$('[data-comment-for=' + comment_base_line + ']').length)
+        removeDataCommentBaseLine(this, comment_base_line);
     });
   }
 
@@ -1972,4 +1981,20 @@ var CODE_REVIEW_UNITTEST;
     fillInReviewForm();
     $('#reviewform').contents().find('form').submit();
   });
+  
+  if (CODE_REVIEW_UNITTEST) {
+    window.DraftCommentSaver = DraftCommentSaver;
+    window.addPreviousComment = addPreviousComment;
+    window.tracLinks = tracLinks;
+    window.crawlDiff = crawlDiff;
+    window.discardComment = discardComment;
+    window.addCommentField = addCommentField;
+    window.acceptComment = acceptComment;
+    window.appendToolbar = appendToolbar;
+    window.eraseDraftComments = eraseDraftComments;
+    window.unfreezeComment = unfreezeComment;
+    window.g_draftCommentSaver = g_draftCommentSaver;
+  } else {
+    $(document).ready(handleDocumentReady)
+  }
 })();

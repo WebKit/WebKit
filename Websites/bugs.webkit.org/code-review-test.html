@@ -1,12 +1,19 @@
-<div>Tests for some of the easily unittestable parts of code-review.js. You should see a series of "PASSED" lines.</div>
+<div>Tests for some of the easily unittestable parts of code-review.js. You should see a series of "PASS" lines.</div>
 <div>FIXME: Run these as part of the layout test suite?</div>
 
-<script>CODE_REVIEW_UNITTEST = true</script>
+<script>
+CODE_REVIEW_UNITTEST = true;
+
+window.onerror = function(errorMsg, url, lineNumber) {
+  log('FAIL: Received an error at line ' + lineNumber);
+  return false;
+}
+</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 <script src="code-review.js"></script>
 <pre id="output"></pre>
+<div id="diff-content"></div>
 <script>
-
 function inherits(childConstructor, parentConstructor) {
   function tempConstructor() {};
   tempConstructor.prototype = parentConstructor.prototype;
@@ -69,11 +76,18 @@ function log(msg) {
     document.getElementById('output').innerHTML += msg + '\n\n';
 }
 
+function ASSERT(msg, assertion) {
+    if (assertion)
+        log('PASS');
+    else
+        log('FAIL: ' + msg);
+}
+
 function ASSERT_EQUAL(actual, expected) {
     if (actual == expected)
-        log('PASSED');
+        log('PASS');
     else
-        log('FAILED:\ngot:\n' + actual + '\nexpected:\n' + expected + '');
+        log('FAIL:\ngot:\n' + actual + '\nexpected:\n' + expected + '');
 }
 
 var links = tracLinks('foo/bar/baz.cpp', '');
@@ -168,4 +182,80 @@ var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
 ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
 
 
+function stripBornOn(json) {
+  return json.replace(/\"born\-on\"\:\d+,/, "");
+}
+
+function strippedSavedComments() {
+  return stripBornOn(localStorage[g_draftCommentSaver.localStorageKey()]);
+}
+
+function syncSlideUp(type, handler) {
+  handler.call(this);
+}
+
+function testReaddDiscardedCommentWithPreviousComment() {
+  document.getElementById('diff-content').innerHTML =
+      '<div class="FileDiff">' +
+        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+        '<div class="DiffSection">' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart add">' +
+              '<div class="Line LineContainer add">' +
+                '<span class="from lineNumber">&nbsp;</span><span class="to lineNumber">1</span><span class="text">first diff block first line</span>' +
+              '</div>' +
+              '<div class="Line LineContainer add">' +
+                '<span class="from lineNumber">&nbsp;</span><span class="to lineNumber">2</span><span class="text"></span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="clear_float"></div>' +
+          '</div>' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+              '<div class="Line LineContainer">' +
+                '<span class="from lineNumber">1</span><span class="to lineNumber">12</span><span class="text">second diff block first line</span>' +
+              '</div>' +
+              '</div><div class="clear_float">' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+  eraseDraftComments();
+  crawlDiff();
+  appendToolbar();
+
+  var line = document.getElementById('line0')
+  var author = "ojan@chromium.org";
+  var comment_text = "This change sux.";
+  addPreviousComment(line, author, comment_text);
+  var previous_comment = document.querySelector('.previousComment');
+  ASSERT("Line with only a previous comment should not have 'data-has-comment' attribute.", !line.getAttribute('data-has-comment'));
+
+  var new_comment = addCommentField(previous_comment);
+  new_comment.find('textarea').val("dummy content");
+  var frozen_comment = acceptComment(new_comment);
+
+  ASSERT_EQUAL(document.querySelectorAll('.comment').length, 1);
+  ASSERT_EQUAL(strippedSavedComments(), '{"comments":[{"start_line_id":"line0","end_line_id":"line0","contents":"dummy content"}],"overall-comments":""}');
+
+  unfreezeComment(frozen_comment);
+  // This is a hack to make slideUp synchronous so that we can keep this test from needing to be async.
+  jQuery.fn.slideUp = syncSlideUp;
+  discardComment(new_comment);
+
+  ASSERT('There should be no draft comments.', !document.querySelector('.comment'));
+  ASSERT_EQUAL(strippedSavedComments(), '{"comments":[],"overall-comments":""}');
+  ASSERT("Line with only a previous comment should not have 'data-has-comment' attribute.", !line.getAttribute('data-has-comment'));
+
+  new_comment = addCommentField(previous_comment);
+  new_comment.find('textarea').val("dummy content");
+  acceptComment(new_comment);
+
+  ASSERT_EQUAL(document.querySelectorAll('.comment').length, 1);
+  ASSERT_EQUAL(strippedSavedComments(), '{"comments":[{"start_line_id":"line0","end_line_id":"line0","contents":"dummy content"}],"overall-comments":""}');
+
+  document.getElementById('diff-content').innerHTML = '';
+}
+testReaddDiscardedCommentWithPreviousComment();
 </script>
