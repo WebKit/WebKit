@@ -6,6 +6,8 @@
 
 TEMPLATE = app
 
+INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
+
 SOURCES += \
     locationedit.cpp \
     launcherwindow.cpp \

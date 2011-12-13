@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "DumpRenderTreeSupportQt.h"
 #include "launcherwindow.h"
 #include "urlloader.h"
 

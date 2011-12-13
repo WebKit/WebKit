@@ -1,3 +1,10 @@
+2011-12-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed speculativ debug buildfix after r102679.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/main.cpp:
+
 2011-12-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Get rid of layering violations in includes
