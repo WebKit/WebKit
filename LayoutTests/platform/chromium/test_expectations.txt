@@ -3860,13 +3860,8 @@ BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE 
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
-BUGWK74157 MAC : animations/cross-fade-background-image.html = PASS FAIL
-BUGWK74157 MAC : animations/cross-fade-border-image-source.html = PASS FAIL
-BUGWK74157 MAC : animations/cross-fade-list-style-image.html = PASS FAIL
-BUGWK74157 MAC : animations/cross-fade-webkit-mask-box-image.html = PASS FAIL
-BUGWK74157 MAC : animations/cross-fade-webkit-mask-image.html = PASS FAIL
-BUGWK74157 MAC : transitions/cross-fade-background-image.html = PASS FAIL
-BUGWK74157 MAC : transitions/cross-fade-border-image.html = PASS FAIL
+BUGWK74157 MAC : animations/cross-fade-border-image-source.html = IMAGE+TEXT
+BUGWK74157 MAC : transitions/cross-fade-border-image.html = IMAGE+TEXT
 
 BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE
 
