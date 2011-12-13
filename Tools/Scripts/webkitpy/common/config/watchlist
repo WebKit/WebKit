@@ -109,6 +109,20 @@
         "CSS": {
             "filename": r"Source/WebCore/css/",
         },
+        "EFL": {
+            "filename": r"Source/WebKit/efl/"
+                        r"|Source/WebCore/platform/efl/"
+                        r"|Tools/EWebLauncher"
+                        r"|Tools/DumpRenderTree/efl/",
+        },
+        "CMake": {
+            "filename": r".*CMakeLists\w*\.txt"
+                        r"|.*\w+\.cmake"
+                        r"|Source/cmake/",
+        },
+        "SoupNetwork": {
+            "filename": r"Source/WebCore/platform/network/soup/",
+        },
     },
     "CC_RULES": {
         # Note: All email addresses listed must be registered with bugzilla.
@@ -133,6 +147,9 @@
         "QtWebKit2PublicAPI": [ "zoltan@webkit.org", ],
         "QtWebKit2PlatformSpecific": [ "zoltan@webkit.org", ],
         "CSS": [ "macpherson@chromium.org", ],
+        "EFL": [ "kubo@profusion.mobi", ],
+        "CMake": [ "kubo@profusion.mobi", ],
+        "SoupNetwork": [ "kubo@profusion.mobi", ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from fishd@chromium.org before submitting "

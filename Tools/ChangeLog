@@ -1,3 +1,12 @@
+2011-12-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        watchlist: Add watchlist for EFL, CMake and libsoup code and put myself on it.
+        https://bugs.webkit.org/show_bug.cgi?id=74430
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2011-12-13  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Pull in FreeType and decrease check-out complexity for Android
