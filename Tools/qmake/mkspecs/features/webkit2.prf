@@ -64,6 +64,9 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess/qt \
     $$SOURCE_DIR/WebKit2/PluginProcess
 
+# The WebKit2 Qt APIs depend on qwebkitglobal.h, which lives in WebKit
+WEBKIT2_INCLUDEPATH += $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/Api
+
 INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$WEBKIT2_GENERATED_SOURCES_DIR $$INCLUDEPATH
 
 needToLinkLibrary(WebKit2) {

@@ -1,3 +1,24 @@
+2011-12-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Get rid of layering violations in includes
+
+        WebKit/qt/API and WebKit/qt/WebCoreSupport should not be included
+        in the webcore.prf, but rather in each target that specificly needs
+        headers in these location. We used to include them directly in webcore
+        since we had layering violations between WebCore and WebKit, but now
+        that they are gone there's no reason to do that.
+
+        Reviewed by Simon Hausmann.
+
+        * bridge/qt/qt_instance.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        * platform/qt/CookieJarQt.cpp:
+        * platform/qt/RenderThemeQStyle.cpp:
+        * platform/qt/RenderThemeQt.cpp:
+
 2011-12-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add scripts navigator sidebar to scripts panel.

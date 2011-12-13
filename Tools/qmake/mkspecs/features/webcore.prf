@@ -112,8 +112,6 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/platform/graphics/qt \
     $$SOURCE_DIR/WebCore/platform/network/qt \
     $$SOURCE_DIR/WebCore/platform/qt \
-    $$SOURCE_DIR/WebKit/qt/Api \
-    $$SOURCE_DIR/WebKit/qt/WebCoreSupport \
     $$WEBCORE_INCLUDEPATH
 
 

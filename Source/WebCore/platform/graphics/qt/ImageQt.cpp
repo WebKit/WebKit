@@ -40,7 +40,6 @@
 #include "PlatformString.h"
 #include "ShadowBlur.h"
 #include "StillImageQt.h"
-#include "qwebsettings.h"
 
 #include <QApplication>
 #include <QDebug>

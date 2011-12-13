@@ -36,7 +36,6 @@
 #include "NotImplemented.h"
 #include "QWebPageClient.h"
 #include "SharedBuffer.h"
-#include "qwebpage.h"
 #include <QAbstractScrollArea>
 #include <QGraphicsObject>
 #include <QGLContext>

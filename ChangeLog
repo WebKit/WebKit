@@ -1,3 +1,17 @@
+2011-12-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Get rid of layering violations in includes
+
+        WebKit/qt/API and WebKit/qt/WebCoreSupport should not be included
+        in the webcore.prf, but rather in each target that specificly needs
+        headers in these location. We used to include them directly in webcore
+        since we had layering violations between WebCore and WebKit, but now
+        that they are gone there's no reason to do that.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2011-12-12  Andy Wingo  <wingo@igalia.com>
 
         Simplify autotools configure.ac

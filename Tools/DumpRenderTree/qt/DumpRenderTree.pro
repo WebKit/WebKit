@@ -16,7 +16,9 @@ load(webcore)
 
 CONFIG += qtwebkit
 
-INCLUDEPATH += $$PWD/..
+INCLUDEPATH += \
+    $$PWD/.. \
+    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
 
 !embedded: PKGCONFIG += fontconfig
 

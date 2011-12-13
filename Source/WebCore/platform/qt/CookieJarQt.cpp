@@ -33,7 +33,8 @@
 
 #include "Cookie.h"
 #include "Document.h"
-#include "FrameLoaderClientQt.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 #include "KURL.h"
 #include "NetworkingContext.h"
 #include "PlatformString.h"
@@ -43,6 +44,7 @@
 #include <QNetworkCookie>
 #include <QSqlQuery>
 #include <QStringList>
+#include <QVariant>
 
 namespace WebCore {
 

@@ -1,3 +1,21 @@
+2011-12-13  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Get rid of layering violations in includes
+
+        WebKit/qt/API and WebKit/qt/WebCoreSupport should not be included
+        in the webcore.prf, but rather in each target that specificly needs
+        headers in these location. We used to include them directly in webcore
+        since we had layering violations between WebCore and WebKit, but now
+        that they are gone there's no reason to do that.
+
+        Reviewed by Simon Hausmann.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/launcherwindow.h:
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * qmake/mkspecs/features/webcore.prf:
+        * qmake/mkspecs/features/webkit2.prf:
+
 2011-12-13  János Badics  <dicska@gmail.com>
 
         [NRWT] It crashes intermittently when there are WebProcess crashes

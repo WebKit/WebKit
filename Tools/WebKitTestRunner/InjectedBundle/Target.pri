@@ -62,7 +62,8 @@ CONFIG += plugin qtwebkit
 INCLUDEPATH += \
     $$PWD/.. \
     $$PWD/Bindings \
-    $${ROOT_WEBKIT_DIR}/Source/WebCore/testing/js
+    $${ROOT_WEBKIT_DIR}/Source/WebCore/testing/js \
+    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
 
 PREFIX_HEADER = $$PWD/../WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"

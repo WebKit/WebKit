@@ -33,7 +33,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
-#include "ChromeClientQt.h"
+#include "ChromeClient.h"
 #include "Color.h"
 #include "Font.h"
 #include "FontSelector.h"

@@ -35,7 +35,6 @@
 #include <qhash.h>
 #include <qmetaobject.h>
 #include <qmetatype.h>
-#include <qwebelement.h>
 
 namespace JSC {
 namespace Bindings {

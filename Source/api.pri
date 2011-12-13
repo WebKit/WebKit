@@ -79,6 +79,8 @@ HEADERS += \
     $$PWD/WebKit/qt/WebCoreSupport/TextCheckerClientQt.h \
     $$PWD/WebKit/qt/WebCoreSupport/PlatformStrategiesQt.h
 
+INCLUDEPATH += $$PWD/WebKit/qt/WebCoreSupport
+
 contains(DEFINES, ENABLE_VIDEO=1) {
     !contains(DEFINES, WTF_USE_QTKIT=1):!contains(DEFINES, WTF_USE_GSTREAMER=1):contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
         HEADERS += $$PWD/WebKit/qt/WebCoreSupport/FullScreenVideoWidget.h

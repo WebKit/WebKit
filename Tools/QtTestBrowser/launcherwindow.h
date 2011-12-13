@@ -56,7 +56,6 @@
 #include <qwebinspector.h>
 #include <qwebsettings.h>
 
-#include "DumpRenderTreeSupportQt.h"
 #include "mainwindow.h"
 #include "urlloader.h"
 #include "utils.h"

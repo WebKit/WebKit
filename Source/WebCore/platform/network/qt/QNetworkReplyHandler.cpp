@@ -33,8 +33,6 @@
 #include <QFileInfo>
 #include <QNetworkReply>
 #include <QNetworkCookie>
-#include <qwebframe.h>
-#include <qwebpage.h>
 
 #include <wtf/text/CString.h>
 
