@@ -1,3 +1,9 @@
+2011-12-13  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed, removed one of my email addresses to use the apprpriate one.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-12  Ádám Kallai  <Kallai.Adam@stud.u-szeged.hu>
 
         [Qt] Fix skip list search path and expected file search path in ORWT
