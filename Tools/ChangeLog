@@ -1,3 +1,17 @@
+2011-12-13  Andy Wingo  <wingo@igalia.com> and Martin Robinson <mrobinson@igalia.com>
+
+        build-jsc passing incorrect args to buildGtkProject
+        https://bugs.webkit.org/show_bug.cgi?id=74308
+
+        Reviewed by NOBODY.
+
+        * Scripts/build-webkit: Instead of invoking buildGtkProject with
+        another argument about webkit2, unshift a --disable-webkit2
+        argument onto the buildArgs.
+        * Scripts/webkitdirs.pm: Remove $enableWebKit2 arg. Only save autogen.sh
+        arguments for WebKit to prevent unnecessary reconfiguration when build-webkit
+        and build-jsc are run one after the other.
+
 2011-12-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(102679): It broke Qt5-WK1 build

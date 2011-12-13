@@ -1580,9 +1580,23 @@ sub getMD5HashForFile($)
     return md5_hex($contents);
 }
 
-sub runAutogenForAutotoolsProject($@)
+sub runAutogenForAutotoolsProjectIfNecessary($@)
 {
-    my ($dir, $prefix, $sourceDir, $saveArguments, $argumentsFile, @buildArgs) = @_;
+    my ($dir, $prefix, $sourceDir, $project, @buildArgs) = @_;
+
+    my $argumentsFile = "previous-autogen-arguments.txt";
+    if (-e "GNUmakefile") {
+        # Just assume that build-jsc will never be used to reconfigure JSC. Later
+        # we can go back and make this more complicated if the demand is there.
+        if ($project ne "WebKit") {
+            return;
+        }
+
+        # We only run autogen.sh again if the arguments passed have changed.
+        if (!mustReRunAutogen($sourceDir, $argumentsFile, @buildArgs)) {
+            return;
+        }
+    }
 
     print "Calling autogen.sh in " . $dir . "\n\n";
     print "Installation prefix directory: $prefix\n" if(defined($prefix));
@@ -1595,9 +1609,9 @@ sub runAutogenForAutotoolsProject($@)
         close(SUM);
     }
 
-    if ($saveArguments) {
-        # Write autogen.sh arguments to a file so that we can detect
-        # when they change and automatically re-run it.
+    # Only for WebKit, write the autogen.sh arguments to a file so that we can detect
+    # when they change and automatically re-run it.
+    if ($project eq 'WebKit') {
         open(AUTOTOOLS_ARGUMENTS, ">$argumentsFile");
         print AUTOTOOLS_ARGUMENTS join(" ", @buildArgs);
         close(AUTOTOOLS_ARGUMENTS);
@@ -1627,6 +1641,10 @@ sub mustReRunAutogen($@)
     chomp(my $previousArguments = <AUTOTOOLS_ARGUMENTS>);
     close(AUTOTOOLS_ARGUMENTS);
 
+    # We only care about the WebKit2 argument when we are building WebKit itself.
+    # build-jsc never passes --enable-webkit2, so if we didn't do this, autogen.sh
+    # would run for every single build on the bots, since it runs both build-webkit
+    # and build-jsc.
     my $joinedCurrentArguments = join(" ", @currentArguments);
     if ($previousArguments ne $joinedCurrentArguments) {
         print "Previous autogen arguments were: $previousArguments\n\n";
@@ -1660,7 +1678,7 @@ sub mustReRunAutogen($@)
 
 sub buildAutotoolsProject($@)
 {
-    my ($project, $clean, $enableWebKit2, @buildParams) = @_;
+    my ($project, $clean, @buildParams) = @_;
 
     my $make = 'make';
     my $dir = productDir();
@@ -1691,12 +1709,6 @@ sub buildAutotoolsProject($@)
         $makeArgs .= " jsc";
     }
 
-    # This is a temporary work-around to enable building WebKit2 on the bots,
-    # but ensuring that it does not ship until the API is stable.
-    if ($project eq "WebKit" and isGtk() and $enableWebKit2) {
-        push @buildArgs, "--enable-webkit2";
-    }
-
     $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
     push @buildArgs, "--prefix=" . $prefix if defined($prefix);
 
@@ -1725,15 +1737,7 @@ sub buildAutotoolsProject($@)
     # If GNUmakefile exists, don't run autogen.sh unless its arguments
     # have changed. The makefile should be smart enough to track autotools
     # dependencies and re-run autogen.sh when build files change.
-    my $autogenArgumentsFile = "previous-autogen-arguments.txt";
-    my $buildingWebKit = $project eq "WebKit";
-    if (!(-e "GNUmakefile")) {
-        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
-    }
-
-    if ($buildingWebKit and mustReRunAutogen($sourceDir, $autogenArgumentsFile, @buildArgs)) {
-        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $buildingWebKit, $autogenArgumentsFile, @buildArgs);
-    }
+    runAutogenForAutotoolsProjectIfNecessary($dir, $prefix, $sourceDir, $project, @buildArgs);
 
     my $gtkScriptsPath = "$sourceDir/Tools/gtk";
     my $runWithJhbuild = "$gtkScriptsPath/run-with-jhbuild";
@@ -1743,7 +1747,7 @@ sub buildAutotoolsProject($@)
 
     chdir ".." or die;
 
-    if ($buildingWebKit) {
+    if ($project eq 'WebKit') {
         my @docGenerationOptions = ($runWithJhbuild, "$gtkScriptsPath/generate-gtkdoc", "--skip-html");
         if ($debug) {
             push(@docGenerationOptions, "--debug");
@@ -1989,13 +1993,13 @@ sub buildQMakeQtProject($$@)
 
 sub buildGtkProject
 {
-    my ($project, $clean, $enableWebKit2, @buildArgs) = @_;
+    my ($project, $clean, @buildArgs) = @_;
 
     if ($project ne "WebKit" and $project ne "JavaScriptCore") {
         die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore\n";
     }
 
-    return buildAutotoolsProject($project, $clean, $enableWebKit2, @buildArgs);
+    return buildAutotoolsProject($project, $clean, @buildArgs);
 }
 
 sub buildChromiumMakefile($$@)

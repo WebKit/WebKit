@@ -749,7 +749,10 @@ for my $dir (@projects) {
 
     my $project = basename($dir);
     if (isGtk()) {
-        $result = buildGtkProject($project, $clean, !$noWebKit2, @options);
+        if (!$noWebKit2) {
+            unshift(@options, "--enable-webkit2");
+        }
+        $result = buildGtkProject($project, $clean, @options);
     } elsif (isQt()) {
         #FIXME: $dir should probably be $project.
         $result = buildQMakeQtProject($dir, $clean, @options);
