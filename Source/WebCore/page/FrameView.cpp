@@ -1539,7 +1539,7 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
         root->layer()->setBackingNeedsRepaintInRect(visibleContentRect());
     }
     if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
-        if (frameRenderer->containerForRepaint()) {
+        if (isEnclosedInCompositingLayer()) {
             LayoutRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),
                             frameRenderer->borderTop() + frameRenderer->paddingTop(),
                             visibleWidth(), visibleHeight());

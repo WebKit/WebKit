@@ -1,3 +1,19 @@
+2011-12-12  Adrienne Walker  <enne@google.com>
+
+        iframe fails to scroll in composited page
+        https://bugs.webkit.org/show_bug.cgi?id=72682
+
+        Reviewed by Simon Fraser.
+
+        FrameView::scrollContentsSlowPath only was catching the case where a
+        child iframe had a composited parent. Now detect if the child iframe
+        has any composited ancestor.
+
+        Test: compositing/iframes/scroll-grandchild-iframe.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsSlowPath):
+
 2011-12-12  Konrad Piascik  <kpiascik@rim.com>
 
         Implement the JavaScriptCore bindings for eventListenerHandlerLocation
