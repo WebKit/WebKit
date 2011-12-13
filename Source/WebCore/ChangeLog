@@ -1,3 +1,13 @@
+2011-12-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Revert RenderObject::style() to its state before region styling
+        https://bugs.webkit.org/show_bug.cgi?id=74315
+
+        Reviewed by Tony Chang.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::style):
+
 2011-12-12  Adam Klein  <adamk@chromium.org>
 
         Don't crash in StyleAttributeMutationScope if the style declaration's element has been GCed
