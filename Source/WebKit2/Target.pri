@@ -343,6 +343,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/DrawingAreaImpl.h \
+    WebProcess/WebPage/EventDispatcher.h \
     WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebContextMenu.h \
@@ -687,6 +688,7 @@ SOURCES += \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/DrawingAreaImpl.cpp \
     WebProcess/WebPage/EncoderAdapter.cpp \
+    WebProcess/WebPage/EventDispatcher.cpp \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \

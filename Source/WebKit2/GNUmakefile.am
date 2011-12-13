@@ -97,10 +97,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
 	DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp \
 	DerivedSources/WebKit2/DrawingAreaMessages.h \
-	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
 	DerivedSources/WebKit2/DrawingAreaProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/DownloadProxyMessages.h \
+	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
+	DerivedSources/WebKit2/EventDispatcherMessageReceiver.cpp \
+	DerivedSources/WebKit2/EventDispatcherMessages.h \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
 	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
@@ -879,6 +879,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/DrawingAreaImpl.h \
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.cpp \
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.h \
+	Source/WebKit2/WebProcess/WebPage/EventDispatcher.cpp \
+	Source/WebKit2/WebProcess/WebPage/EventDispatcher.h \
 	Source/WebKit2/WebProcess/WebPage/FindController.cpp \
 	Source/WebKit2/WebProcess/WebPage/FindController.h \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \

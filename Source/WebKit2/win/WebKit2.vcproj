@@ -1990,6 +1990,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\EventDispatcher.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\EventDispatcher.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\FindController.cpp"
 					>
 				</File>
@@ -4192,6 +4200,14 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\DrawingAreaProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\EventDispatcherMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\EventDispatcherMessages.h"
 				>
 			</File>
 			<File

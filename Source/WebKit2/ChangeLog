@@ -1,3 +1,46 @@
+2011-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Add EventDispatcher class to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=74344
+
+        Reviewed by Sam Weinig.
+
+        The EventDispatcher is a singleton which will be in charge of dispatching events to WebPage objects.
+
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add EventDispatcher.
+
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::WebConnectionToUIProcess):
+        (WebKit::WebConnectionToUIProcess::invalidate):
+        * WebProcess/WebConnectionToUIProcess.h:
+        WebConnectionToUIProcess doesn't need to be a QueueClient. Also, move the call to open into WebProcess since
+        we don't want to add queue clients after the connection has been opened.
+
+        * WebProcess/WebPage/EventDispatcher.cpp: Added.
+        (WebKit::EventDispatcher::EventDispatcher):
+        (WebKit::EventDispatcher::~EventDispatcher):
+        (WebKit::EventDispatcher::didReceiveMessageOnConnectionWorkQueue):
+        (WebKit::EventDispatcher::wheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in: Added.
+        Add new stub files.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+        Add the event dispatcher as a queue client.
+
+        * WebProcess/WebProcess.h:
+        Add an EventDispatcher member variable to the web process.
+
 2011-12-12  Sam Weinig  <sam@webkit.org>
 
         Prefix internal methods in Objective-C API files with an underscore

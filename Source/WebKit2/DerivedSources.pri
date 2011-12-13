@@ -62,6 +62,7 @@ MESSAGE_RECEIVERS = \
     AuthenticationManager.messages.in \
     DownloadProxy.messages.in \
     DrawingAreaProxy.messages.in \
+    EventDispatcher.messages.in \
     LayerTreeHostProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \

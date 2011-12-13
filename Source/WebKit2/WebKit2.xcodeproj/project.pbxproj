@@ -189,6 +189,10 @@
 		1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */; };
 		1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
+		1AA575FA1496B52600A4EE06 /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */; };
+		1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA575F91496B52600A4EE06 /* EventDispatcher.h */; };
+		1AA575FE1496B6F300A4EE06 /* EventDispatcher.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */; };
+		1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */; };
 		1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA5889011EE70400061B882 /* NetscapePluginStream.h */; };
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
 		1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAB4A8C1296F0A20023952F /* SandboxExtension.h */; };
@@ -1178,6 +1182,11 @@
 		1AA41AB412C02EC4002BE67B /* EditorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorState.h; sourceTree = "<group>"; };
 		1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMac.mm; sourceTree = "<group>"; };
 		1AA56F2811E92BC80061B882 /* PluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginController.h; sourceTree = "<group>"; };
+		1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatcher.cpp; sourceTree = "<group>"; };
+		1AA575F91496B52600A4EE06 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
+		1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventDispatcher.messages.in; sourceTree = "<group>"; };
+		1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatcherMessageReceiver.cpp; sourceTree = "<group>"; };
+		1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcherMessages.h; sourceTree = "<group>"; };
 		1AA5889011EE70400061B882 /* NetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginStream.h; sourceTree = "<group>"; };
 		1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePluginStream.cpp; sourceTree = "<group>"; };
 		1AAB4A8C1296F0A20023952F /* SandboxExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxExtension.h; sourceTree = "<group>"; };
@@ -2777,6 +2786,9 @@
 				1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */,
 				93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */,
 				93FC67A012D3CC7400A60610 /* EncoderAdapter.h */,
+				1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */,
+				1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */,
+				1AA575F91496B52600A4EE06 /* EventDispatcher.h */,
 				1A90C1F31264FD71003E44D4 /* FindController.cpp */,
 				1A90C1F21264FD71003E44D4 /* FindController.h */,
 				1A186EE912EF7618008E5F37 /* LayerTreeHost.cpp */,
@@ -3534,6 +3546,8 @@
 				1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */,
 				1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */,
 				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
+				1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */,
+				1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */,
 				1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */,
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
 				1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */,
@@ -4129,6 +4143,7 @@
 				BCA284D71492F2C7001F9042 /* WKConnection.h in Headers */,
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */,
+				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4274,6 +4289,7 @@
 			files = (
 				6D8A91A611F0EFD100DD01FE /* com.apple.WebProcess.sb in Resources */,
 				E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */,
+				1AA575FE1496B6F300A4EE06 /* EventDispatcher.messages.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4849,6 +4865,8 @@
 				31312620148FF82C00BA2A39 /* WebNotificationManager.cpp in Sources */,
 				BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */,
 				5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */,
+				1AA575FA1496B52600A4EE06 /* EventDispatcher.cpp in Sources */,
+				1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

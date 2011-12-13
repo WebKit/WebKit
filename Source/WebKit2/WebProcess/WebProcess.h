@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DrawingArea.h"
+#include "EventDispatcher.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
@@ -223,6 +224,8 @@ private:
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
+
+    EventDispatcher m_eventDispatcher;
 
     bool m_inDidClose;
 

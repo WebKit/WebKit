@@ -52,7 +52,8 @@ enum MessageClass {
     MessageClassWebPage,
     MessageClassWebProcess,
     MessageClassWebResourceCacheManager,
-
+    MessageClassEventDispatcher,
+    
     // Messages sent by the web process to the UI process.
     MessageClassDownloadProxy,
     MessageClassDrawingAreaProxy,

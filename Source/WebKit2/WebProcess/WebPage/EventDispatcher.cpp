@@ -23,44 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebConnectionToUIProcess_h
-#define WebConnectionToUIProcess_h
-
-#include "Connection.h"
-#include "WebConnection.h"
+#include "config.h"
+#include "EventDispatcher.h"
 
 namespace WebKit {
 
-class WebProcess;
+EventDispatcher::EventDispatcher()
+{
+}
 
-class WebConnectionToUIProcess : public WebConnection, CoreIPC::Connection::Client {
-public:
-    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*, CoreIPC::Connection::Identifier, RunLoop*);
+EventDispatcher::~EventDispatcher()
+{
+}
 
-    CoreIPC::Connection* connection() { return m_connection.get(); }
+void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
+{
+    if (messageID.is<CoreIPC::MessageClassEventDispatcher>()) {
+        didReceiveEventDispatcherMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
+        return;
+    }
+}
 
-    void invalidate();
-
-private:
-    WebConnectionToUIProcess(WebProcess*, CoreIPC::Connection::Identifier, RunLoop*);
-
-    // WebConnection
-    virtual void postMessage(const String&, APIObject*);
-
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-    virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
-#if PLATFORM(WIN)
-    virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
-#endif
-
-    WebProcess* m_process;
-    RefPtr<CoreIPC::Connection> m_connection;
-};
+void EventDispatcher::wheelEvent(const WebWheelEvent&)
+{
+}
 
 } // namespace WebKit
-
-#endif // WebConnectionToUIProcess_h

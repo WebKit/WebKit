@@ -43,15 +43,10 @@ WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process, CoreIPC:
 {
     m_connection->setDidCloseOnConnectionWorkQueueCallback(ChildProcess::didCloseOnConnectionWorkQueue);
     m_connection->setShouldExitOnSyncMessageSendFailure(true);
-    m_connection->addQueueClient(this);
-
-    m_connection->open();
 }
 
 void WebConnectionToUIProcess::invalidate()
 {
-    m_connection->removeQueueClient(this);
-
     m_connection->invalidate();
     m_connection = nullptr;
     m_process = 0;
@@ -116,12 +111,5 @@ Vector<HWND> WebConnectionToUIProcess::windowsToReceiveSentMessagesWhileWaitingF
     return m_process->windowsToReceiveSentMessagesWhileWaitingForSyncReply();
 }
 #endif
-
-// CoreIPC::Connection::QueueClient
-
-void WebConnectionToUIProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
-{
-    m_process->didReceiveWebProcessMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
-}
 
 } // namespace WebKit

@@ -49,6 +49,7 @@ MESSAGE_RECEIVERS = \
     DrawingArea \
     DrawingAreaProxy \
     DownloadProxy \
+    EventDispatcher \
     NPObjectMessageReceiver \
     PluginControllerProxy \
     PluginProcess \

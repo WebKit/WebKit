@@ -162,6 +162,11 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     ASSERT(!m_connection);
 
     m_connection = WebConnectionToUIProcess::create(this, serverIdentifier, runLoop);
+
+    m_connection->connection()->addQueueClient(&m_eventDispatcher);
+    m_connection->connection()->addQueueClient(this);
+
+    m_connection->connection()->open();
     m_runLoop = runLoop;
 
     startRandomCrashThreadIfRequested();
