@@ -1075,6 +1075,7 @@ private:
                     return index;
                 break;
             case PutByVal:
+            case PutByValAlias:
                 if (!byValIsPure(node))
                     return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))

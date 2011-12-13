@@ -1,3 +1,15 @@
+2011-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG GetByVal CSE rule should match PutByValAlias
+        https://bugs.webkit.org/show_bug.cgi?id=74390
+
+        Reviewed by Geoff Garen.
+        
+        Tiny win on some benchmarks. Maybe a 0.2% win on SunSpider.
+
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::getByValLoadElimination):
+
 2011-12-13  Andy Wingo  <wingo@igalia.com>
 
         Fix interpreter debug build.
