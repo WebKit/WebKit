@@ -1,3 +1,16 @@
+2011-12-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network item view does not correctly decode "+" in request parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=74422
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/network/request-parameters-decoding.html
+
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView.prototype._formatParameter):
+        (WebInspector.ResourceHeadersView.prototype._refreshParms):
+
 2011-12-13  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] compositing/masks layout tests fail with accelerated drawing

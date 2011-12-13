@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+
+function test()
+{
+    var value = "Test+%21%40%23%24%25%5E%26*%28%29_%2B+parameters.";
+    var parameterElement = WebInspector.ResourceHeadersView.prototype._formatParameter(value, "", true);
+    InspectorTest.addResult("Original value: " + value);
+    InspectorTest.addResult("Decoded value: " + parameterElement.textContent);
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+ <p>Tests how request headers are decoded in network item view.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=61205">Bug 74422</a>
+</body>
+</html>

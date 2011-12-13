@@ -127,12 +127,14 @@ WebInspector.ResourceHeadersView.prototype = {
     /**
      * @param {string} value
      * @param {string} className
+     * @param {boolean} decodeParameters
      */
-    _formatParameter: function(value, className)
+    _formatParameter: function(value, className, decodeParameters)
     {
         var errorDecoding = false;
 
-        if (this._decodeRequestParameters) {
+        if (decodeParameters) {
+            value = value.replace(/\+/g, " ");
             if (value.indexOf("%") >= 0) {
                 try {
                     value = decodeURIComponent(value);
@@ -140,7 +142,6 @@ WebInspector.ResourceHeadersView.prototype = {
                     errorDecoding = true;
                 }
             }
-            value = value.replace(/\+/g, " ");
         }
         var div = document.createElement("div");
         div.className = className;
@@ -236,8 +237,8 @@ WebInspector.ResourceHeadersView.prototype = {
 
         for (var i = 0; i < parms.length; ++i) {
             var paramNameValue = document.createDocumentFragment();
-            var name = this._formatParameter(parms[i].name + ":", "header-name");
-            var value = this._formatParameter(parms[i].value, "header-name source-code");
+            var name = this._formatParameter(parms[i].name + ":", "header-name", this._decodeRequestParameters);
+            var value = this._formatParameter(parms[i].value, "header-value source-code", this._decodeRequestParameters);
             paramNameValue.appendChild(name);
             paramNameValue.appendChild(value);
 
