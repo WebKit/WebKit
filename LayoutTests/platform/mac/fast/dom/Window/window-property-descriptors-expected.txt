@@ -556,6 +556,7 @@ PASS Object.getOwnPropertyDescriptor(window, 'stop') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'toLocaleString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'toString') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'valueOf') is undefined.
+PASS Object.getOwnPropertyDescriptor(window, 'webkitCancelAnimationFrame') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitCancelRequestAnimationFrame') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromNodeToPage') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'webkitConvertPointFromPageToNode') is undefined.
