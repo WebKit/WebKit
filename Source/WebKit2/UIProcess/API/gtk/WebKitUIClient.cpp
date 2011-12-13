@@ -43,6 +43,22 @@ static void closePage(WKPageRef page, const void*)
     webkitWebViewClosePage(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
 }
 
+static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef, const void*)
+{
+    webkitWebViewRunJavaScriptAlert(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(message)->string().utf8());
+}
+
+static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef, const void*)
+{
+    return webkitWebViewRunJavaScriptConfirm(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(message)->string().utf8());
+}
+
+static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void*)
+{
+    return webkitWebViewRunJavaScriptPrompt(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), toImpl(message)->string().utf8(),
+                                            toImpl(defaultValue)->string().utf8());
+}
+
 void webkitUIClientAttachUIClientToPage(WebKitUIClient* uiClient, WKPageRef wkPage)
 {
     WKPageUIClient wkUIClient = {
@@ -54,9 +70,9 @@ void webkitUIClientAttachUIClientToPage(WebKitUIClient* uiClient, WKPageRef wkPa
         0, // takeFocus
         0, // focus
         0, // unfocus
-        0, // runJavaScriptAlert
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
+        runJavaScriptAlert,
+        runJavaScriptConfirm,
+        runJavaScriptPrompt,
         0, // setStatusText
         0, // mouseDidMoveOverElement_deprecatedForUseWithV0
         0, // missingPluginButtonClicked

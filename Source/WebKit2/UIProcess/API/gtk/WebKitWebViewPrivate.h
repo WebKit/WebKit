@@ -28,6 +28,7 @@
 #define WebKitWebViewPrivate_h
 
 #include "WebKitWebView.h"
+#include <wtf/text/CString.h>
 #include <WebKit2/WebKit2.h>
 #include <wtf/text/CString.h>
 
@@ -37,5 +38,8 @@ void webkitWebViewUpdateURI(WebKitWebView*);
 WKPageRef webkitWebViewCreateNewPage(WebKitWebView*);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewClosePage(WebKitWebView*);
+void webkitWebViewRunJavaScriptAlert(WebKitWebView*, const CString& message);
+bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);
+WKStringRef webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText);
 
 #endif // WebKitWebViewPrivate_h

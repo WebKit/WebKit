@@ -36,6 +36,7 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKURL.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -46,6 +47,10 @@ enum {
     CREATE,
     READY_TO_SHOW,
     CLOSE,
+
+    SCRIPT_ALERT,
+    SCRIPT_CONFIRM,
+    SCRIPT_PROMPT,
 
     LAST_SIGNAL
 };
@@ -80,6 +85,49 @@ static GtkWidget* webkitWebViewCreate(WebKitWebView*)
 {
     return 0;
 }
+
+static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, GtkMessageType type, GtkButtonsType buttons, int defaultResponse, const char* message)
+{
+    GtkWidget* parent = gtk_widget_get_toplevel(GTK_WIDGET(webView));
+    GtkWidget* dialog = gtk_message_dialog_new(gtk_widget_is_toplevel(parent) ? GTK_WINDOW(parent) : 0,
+                                               GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", message);
+    GOwnPtr<char> title(g_strdup_printf("JavaScript - %s", webkit_web_view_get_uri(webView)));
+    gtk_window_set_title(GTK_WINDOW(dialog), title.get());
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
+
+    return dialog;
+}
+
+
+static gboolean webkitWebViewScriptAlert(WebKitWebView* webView, const char* message)
+{
+    GtkWidget* dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, GTK_RESPONSE_CLOSE, message);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+    return TRUE;
+}
+
+static gboolean webkitWebViewScriptConfirm(WebKitWebView* webView, const char* message, gboolean* confirmed)
+{
+    GtkWidget* dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, message);
+    *confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
+    gtk_widget_destroy(dialog);
+    return TRUE;
+}
+
+static gboolean webkitWebViewScriptPrompt(WebKitWebView* webView, const char* message, const char* defaultText, char** text)
+{
+    GtkWidget* dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, message);
+    GtkWidget* entry = gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(entry), defaultText);
+    gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), entry);
+    gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+    gtk_widget_show(entry);
+
+    *text = (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) ? g_strdup(gtk_entry_get_text(GTK_ENTRY(entry))) : 0;
+    return TRUE;
+}
+
 
 static void webkitWebViewSetLoaderClient(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
 {
@@ -179,6 +227,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     gObjectClass->finalize = webkitWebViewFinalize;
 
     webViewClass->create = webkitWebViewCreate;
+    webViewClass->script_alert = webkitWebViewScriptAlert;
+    webViewClass->script_confirm = webkitWebViewScriptConfirm;
+    webViewClass->script_prompt = webkitWebViewScriptPrompt;
 
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
@@ -300,6 +351,78 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                      0, 0,
                      g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebView::script-alert:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @message: the message text
+     *
+     * Emitted when JavaScript code calls <function>window.alert</function>. If the
+     * signal is not handled a message dialog with a single Close button will be
+     * shown with the message text.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to propagate the event further.
+     */
+    signals[SCRIPT_ALERT] =
+            g_signal_new("script-alert",
+                         G_TYPE_FROM_CLASS(webViewClass),
+                         G_SIGNAL_RUN_LAST,
+                         G_STRUCT_OFFSET(WebKitWebViewClass, script_alert),
+                         g_signal_accumulator_true_handled, 0,
+                         webkit_marshal_BOOLEAN__STRING,
+                         G_TYPE_BOOLEAN, 1,
+                         G_TYPE_STRING);
+
+    /**
+     * WebKitWebView::script-confirm:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @message: the message text
+     * @confirmed: (out): return location for confirm dialog response
+     *
+     * Emitted when JavaScript code calls <function>confirm</function>. If the
+     * signal is not handled a message dialog with OK and Cancel buttons will be
+     * shown with the message text. If OK button is clicked @confirmed will be
+     * set to %TRUE, otherwise it will be %FALSE.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to propagate the event further.
+     */
+    signals[SCRIPT_CONFIRM] =
+            g_signal_new("script-confirm",
+                         G_TYPE_FROM_CLASS(webViewClass),
+                         G_SIGNAL_RUN_LAST,
+                         G_STRUCT_OFFSET(WebKitWebViewClass, script_confirm),
+                         g_signal_accumulator_true_handled, 0,
+                         webkit_marshal_BOOLEAN__STRING_POINTER,
+                         G_TYPE_BOOLEAN, 2,
+                         G_TYPE_STRING, G_TYPE_POINTER);
+
+    /**
+     * WebKitWebView::script-prompt:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @message: the message text
+     * @default (allow-none): the default text
+     * @text: (out): return location for prompt dialog text response
+     *
+     * Emitted when JavaScript code calls <function>prompt</function>. If the
+     * signal is not handled a message dialog with OK and Cancel buttons and
+     * a text entry will be shown with the message text. If OK button is clicked
+     * @text will contain the text entered by the user, otherwise it will be %NULL.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to propagate the event further.
+     */
+    signals[SCRIPT_PROMPT] =
+            g_signal_new("script-prompt",
+                         G_TYPE_FROM_CLASS(webViewClass),
+                         G_SIGNAL_RUN_LAST,
+                         G_STRUCT_OFFSET(WebKitWebViewClass, script_prompt),
+                         g_signal_accumulator_true_handled, 0,
+                         webkit_marshal_BOOLEAN__STRING_STRING_POINTER,
+                         G_TYPE_BOOLEAN, 3,
+                         G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+
 }
 
 void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
@@ -353,6 +476,27 @@ void webkitWebViewReadyToShowPage(WebKitWebView* webView)
 void webkitWebViewClosePage(WebKitWebView* webView)
 {
     g_signal_emit(webView, signals[CLOSE], 0, NULL);
+}
+
+void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& message)
+{
+    gboolean returnValue;
+    g_signal_emit(webView, signals[SCRIPT_ALERT], 0, message.data(), &returnValue);
+}
+
+bool webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& message)
+{
+    gboolean returnValue, confirmed;
+    g_signal_emit(webView, signals[SCRIPT_CONFIRM], 0, message.data(), &confirmed, &returnValue);
+    return confirmed;
+}
+
+WKStringRef webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& message, const CString& defaultText)
+{
+    gboolean returnValue;
+    GOwnPtr<char> text;
+    g_signal_emit(webView, signals[SCRIPT_PROMPT], 0, message.data(), defaultText.data(), &text.outPtr(), &returnValue);
+    return text ? WKStringCreateWithUTF8CString(text.get()) : 0;
 }
 
 /**

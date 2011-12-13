@@ -1,3 +1,38 @@
+2011-12-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add support for javascript dialogs in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=71362
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (runJavaScriptAlert): Call webkitWebViewRunJavaScriptAlert().
+        (runJavaScriptConfirm): Call webkitWebViewRunJavaScriptConfirm().
+        (runJavaScriptPrompt): Call webkitWebViewRunJavaScriptPrompt().
+        (webkitUIClientAttachUIClientToPage): Add implementation for
+        runJavaScriptAlert, runJavaScriptConfirm and runJavaScriptPrompt
+        callbacks.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewCreateJavaScriptDialog):  Helper function to create
+        javascript dialogs.
+        (webkitWebViewScriptAlert): Default implementation of signal
+        WebKitWebView::script-alert that shows a message dialog.
+        (webkitWebViewScriptConfirm): Default implementation of signal
+        WebKitWebView::script-confirm that shows a question dialog.
+        (webkitWebViewScriptPrompt): Default implementation of signal
+        WebKitWebView::script-prompt that shows a question dialog with a
+        text entry.
+        (webkit_web_view_class_init):
+        (webkitWebViewRunJavaScriptAlert): Emit WebKitWebView::script-alert.
+        (webkitWebViewRunJavaScriptConfirm): Emit WebKitWebView::script-confirm.
+        (webkitWebViewRunJavaScriptPrompt): Emit WebKitWebView::script-prompt.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewJavaScriptDialogs):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2marshal.list:
+
 2011-12-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Make sure that touch events result in the page view gaining focus

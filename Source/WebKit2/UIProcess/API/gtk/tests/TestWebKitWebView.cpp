@@ -75,6 +75,11 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(webkit_settings_get_enable_javascript(settings));
 }
 
+static const char* kAlertDialogMessage = "WebKitGTK+ alert dialog message";
+static const char* kConfirmDialogMessage = "WebKitGTK+ confirm dialog message";
+static const char* kPromptDialogMessage = "WebKitGTK+ prompt dialog message";
+static const char* kPromptDialogReturnedText = "WebKitGTK+ prompt dialog returned text";
+
 class UIClientTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(UIClientTest);
@@ -83,6 +88,12 @@ public:
         Create,
         ReadyToShow,
         Close
+    };
+
+    enum ScriptType {
+        Alert,
+        Confirm,
+        Prompt
     };
 
     static void viewClose(WebKitWebView* webView, UIClientTest* test)
@@ -117,10 +128,56 @@ public:
         return newWebView;
     }
 
+    static gboolean scriptAlert(WebKitWebView*, const char* message, UIClientTest* test)
+    {
+        switch (test->m_scriptType) {
+        case UIClientTest::Alert:
+            g_assert_cmpstr(message, ==, kAlertDialogMessage);
+            break;
+        case UIClientTest::Confirm:
+            g_assert(test->m_scriptDialogConfirmed);
+            g_assert_cmpstr(message, ==, "confirmed");
+
+            break;
+        case UIClientTest::Prompt:
+            g_assert_cmpstr(message, ==, kPromptDialogReturnedText);
+            break;
+        }
+
+        g_main_loop_quit(test->m_mainLoop);
+
+        return TRUE;
+    }
+
+    static gboolean scriptConfirm(WebKitWebView*, const char* message, gboolean* confirmed, UIClientTest* test)
+    {
+        g_assert_cmpstr(message, ==, kConfirmDialogMessage);
+        g_assert(confirmed);
+        test->m_scriptDialogConfirmed = !test->m_scriptDialogConfirmed;
+        *confirmed = test->m_scriptDialogConfirmed;
+
+        return TRUE;
+    }
+
+    static gboolean scriptPrompt(WebKitWebView*, const char* message, const char* defaultText, char **text, UIClientTest* test)
+    {
+        g_assert_cmpstr(message, ==, kPromptDialogMessage);
+        g_assert_cmpstr(defaultText, ==, "default");
+        g_assert(text);
+        *text = g_strdup(kPromptDialogReturnedText);
+
+        return TRUE;
+    }
+
     UIClientTest()
+        : m_scriptType(Alert)
+        , m_scriptDialogConfirmed(true)
     {
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
         g_signal_connect(m_webView, "create", G_CALLBACK(viewCreate), this);
+        g_signal_connect(m_webView, "script-alert", G_CALLBACK(scriptAlert), this);
+        g_signal_connect(m_webView, "script-confirm", G_CALLBACK(scriptConfirm), this);
+        g_signal_connect(m_webView, "script-prompt", G_CALLBACK(scriptPrompt), this);
     }
 
     ~UIClientTest()
@@ -134,6 +191,8 @@ public:
     }
 
     Vector<WebViewEvents> m_webViewEvents;
+    ScriptType m_scriptType;
+    bool m_scriptDialogConfirmed;
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -148,6 +207,32 @@ static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
 
+static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
+{
+    static const char* htmlOnLoadFormat = "<html><body onLoad=\"%s\"></body></html>";
+    static const char* jsAlertFormat = "alert('%s')";
+    static const char* jsConfirmFormat = "do { confirmed = confirm('%s'); } while (!confirmed); alert('confirmed');";
+    static const char* jsPromptFormat = "alert(prompt('%s', 'default'));";
+
+    test->m_scriptType = UIClientTest::Alert;
+    GOwnPtr<char> alertDialogMessage(g_strdup_printf(jsAlertFormat, kAlertDialogMessage));
+    GOwnPtr<char> alertHTML(g_strdup_printf(htmlOnLoadFormat, alertDialogMessage.get()));
+    test->loadHtml(alertHTML.get(), 0);
+    test->waitUntilMainLoopFinishes();
+
+    test->m_scriptType = UIClientTest::Confirm;
+    GOwnPtr<char> confirmDialogMessage(g_strdup_printf(jsConfirmFormat, kConfirmDialogMessage));
+    GOwnPtr<char> confirmHTML(g_strdup_printf(htmlOnLoadFormat, confirmDialogMessage.get()));
+    test->loadHtml(confirmHTML.get(), 0);
+    test->waitUntilMainLoopFinishes();
+
+    test->m_scriptType = UIClientTest::Prompt;
+    GOwnPtr<char> promptDialogMessage(g_strdup_printf(jsPromptFormat, kPromptDialogMessage));
+    GOwnPtr<char> promptHTML(g_strdup_printf(htmlOnLoadFormat, promptDialogMessage.get()));
+    test->loadHtml(promptHTML.get(), 0);
+    test->waitUntilMainLoopFinishes();
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -155,6 +240,7 @@ void beforeAll()
     Test::add("WebKitWebView", "webviews-share-clients", testWebViewsShareClients);
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
+    UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
 }
 
 void afterAll()
