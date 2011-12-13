@@ -30,9 +30,12 @@
 #include "config.h"
 #include "V8CustomXPathNSResolver.h"
 
-#include "PlatformString.h"
+#include "ScriptCallStack.h"
+#include "ScriptExecutionContext.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include "V8Utilities.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -63,10 +66,8 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     }
 
     if (lookupNamespaceURIFunc.IsEmpty() && !m_resolver->IsFunction()) {
-        if (V8Proxy* proxy = V8Proxy::retrieve()) {
-            if (Frame* frame = proxy->frame())
-                logInfo(frame, "XPathNSResolver does not have a lookupNamespaceURI method.", String());
-        }
+        if (ScriptExecutionContext* context = getScriptExecutionContext())
+            context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.", 0, String(), 0);
         return String();
     }
 

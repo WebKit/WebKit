@@ -65,9 +65,6 @@ namespace WebCore {
     class V8IsolatedContext;
     class WorldContextHandle;
 
-    // FIXME: use standard logging facilities in WebCore.
-    void logInfo(Frame*, const String& message, const String& url);
-
     // The following Batch structs and methods are used for setting multiple
     // properties on an ObjectTemplate, used from the generated bindings
     // initialization (ConfigureXXXTemplate). This greatly reduces the binary
