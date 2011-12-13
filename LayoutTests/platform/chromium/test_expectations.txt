@@ -3937,10 +3937,11 @@ BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/bidi-neutral-run.html = 
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/thai-line-breaks.html = TEXT
 
 BUGWK74050 : compositing/reflections/nested-reflection-on-overflow.html = IMAGE PASS
+BUGWK74050 : compositing/reflections/reflection-in-composited.html = IMAGE PASS
 
 BUGWK74055 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
-BUGWK74157 MAC : animations/cross-fade-border-image-source.html = IMAGE+TEXT IMAGE
+BUGWK74157 MAC : animations/cross-fade-border-image-source.html = IMAGE+TEXT IMAGE TEXT
 BUGWK74157 MAC : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
 BUGWK74157 LEOPARD : animations/cross-fade-background-image.html = IMAGE+TEXT IMAGE
 BUGWK74157 LEOPARD : animations/cross-fade-list-style-image.html = IMAGE+TEXT IMAGE
