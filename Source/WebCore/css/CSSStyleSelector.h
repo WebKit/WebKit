@@ -131,6 +131,7 @@ private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
     void initElement(Element*);
     void initForRegionStyling(RenderRegion*);
+    void initRegionRules(RenderRegion*);
     RenderStyle* locateSharedStyle();
     bool matchesRuleSet(RuleSet*);
     Node* locateCousinList(Element* parent, unsigned& visitedNodeCount) const;

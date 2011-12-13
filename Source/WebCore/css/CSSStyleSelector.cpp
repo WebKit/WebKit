@@ -870,13 +870,17 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
     m_fontDirty = false;
 }
 
-void CSSStyleSelector::initForRegionStyling(RenderRegion* region)
+inline void CSSStyleSelector::initForRegionStyling(RenderRegion* region)
 {
     setRegionForStyling(region);
 
-    if (!region)
-        return;
+    if (region)
+        initRegionRules(region);
+}
 
+void CSSStyleSelector::initRegionRules(RenderRegion* region)
+{
+    ASSERT(region);
     // Mark that the set of rules comes from region styling since we need to filter
     // the properties that can be applied.
     m_regionRules = adoptPtr(new RuleSet(true));
