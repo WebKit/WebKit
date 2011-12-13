@@ -67,6 +67,9 @@ public:
             return;
 
         CSSInlineStyleDeclaration* inlineDecl = toCSSInlineStyleDeclaration(s_currentDecl);
+        if (!inlineDecl->element())
+            return;
+
         m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(inlineDecl->element(), HTMLNames::styleAttr);
         if (m_mutationRecipients->isEmpty()) {
             m_mutationRecipients.clear();
@@ -98,7 +101,7 @@ public:
         CSSInlineStyleDeclaration* inlineDecl = toCSSInlineStyleDeclaration(s_currentDecl);
         s_currentDecl = 0;
         s_shouldNotifyInspector = false;
-        if (inlineDecl->element()->document())
+        if (inlineDecl->element() && inlineDecl->element()->document())
             InspectorInstrumentation::didInvalidateStyleAttr(inlineDecl->element()->document(), inlineDecl->element());
     }
 

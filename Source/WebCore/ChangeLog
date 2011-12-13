@@ -1,3 +1,26 @@
+2011-12-12  Adam Klein  <adamk@chromium.org>
+
+        Don't crash in StyleAttributeMutationScope if the style declaration's element has been GCed
+        https://bugs.webkit.org/show_bug.cgi?id=74321
+
+        Reviewed by Ryosuke Niwa.
+
+        In r101101, Rafael Weinstein added code to CSSMutableStyleDeclaration.cpp
+        which depended on isInlineStyleDeclaration returning true iff the
+        element it pointed to was non-null (it will be nulled-out if the
+        element is garbage collected).
+
+        Then, in r101172, Andreas Kling changed the semantics so that
+        isInlineStyleDeclaration only described the type of the declaration,
+        not the state of the related element.
+
+        This change updates Rafael's code with an explicit check that the
+        element is still alive.
+
+        Test: fast/dom/css-inline-style-declaration-crash.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+
 2011-12-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: aria-hidden inheritance broken when applying to some descendants
