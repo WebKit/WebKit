@@ -1,3 +1,24 @@
+2011-12-13  Adam Klein  <adamk@chromium.org>
+
+        Reduce code duplication in Element::setAttribute methods
+        https://bugs.webkit.org/show_bug.cgi?id=74425
+
+        Reviewed by Ryosuke Niwa.
+
+        Two overloads of Element::setAttribute share almost all their code,
+        including tricky logic around updating the appropriate Attribute and
+        Attr objects and notifying the Inspector and MutationObservers.
+
+        This patch puts the common logic in a new setAttributeInternal method
+        which is called by the other two.
+
+        No new tests, refactoring only.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeInternal):
+        * dom/Element.h:
+
 2011-12-13  Brady Eidson  <beidson@apple.com>
 
         <http://webkit.org/b/74420> Disable deprecation warnings around more code where we 

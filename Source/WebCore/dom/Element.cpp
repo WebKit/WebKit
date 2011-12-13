@@ -635,47 +635,21 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
         return;
     }
 
-#if ENABLE(INSPECTOR)
-    if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::willModifyDOMAttr(document(), this);
-#endif
-
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    QualifiedName attributeName(nullAtom, localName, nullAtom);
-    
+
     // Allocate attribute map if necessary.
     Attribute* old = attributes(false)->getAttributeItem(localName, false);
-
-    document()->incDOMTreeVersion();
-
-#if ENABLE(MUTATION_OBSERVERS)
-    // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
-    if (!isSynchronizingStyleAttribute())
-        enqueueAttributesMutationRecord(this, attributeName, old ? old->value() : nullAtom);
-#endif
-
-    if (isIdAttributeName(old ? old->name() : attributeName))
-        updateId(old ? old->value() : nullAtom, value);
-
-    if (old && value.isNull())
-        m_attributeMap->removeAttribute(old->name());
-    else if (!old && !value.isNull())
-        m_attributeMap->addAttribute(createAttribute(attributeName, value));
-    else if (old && !value.isNull()) {
-        if (Attr* attrNode = old->attr())
-            attrNode->setValue(value);
-        else
-            old->setValue(value);
-        attributeChanged(old);
-    }
-
-#if ENABLE(INSPECTOR)
-    if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::didModifyDOMAttr(document(), this, name, value);
-#endif
+    setAttributeInternal(old, old ? old->name() : QualifiedName(nullAtom, localName, nullAtom), value);
 }
 
 void Element::setAttribute(const QualifiedName& name, const AtomicString& value, ExceptionCode&)
+{
+    // Allocate attribute map if necessary.
+    Attribute* old = attributes(false)->getAttributeItem(name);
+    setAttributeInternal(old, name, value);
+}
+
+void Element::setAttributeInternal(Attribute* old, const QualifiedName& name, const AtomicString& value)
 {
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
@@ -683,9 +657,6 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
 #endif
 
     document()->incDOMTreeVersion();
-
-    // Allocate attribute map if necessary.
-    Attribute* old = attributes(false)->getAttributeItem(name);
 
 #if ENABLE(MUTATION_OBSERVERS)
     // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
