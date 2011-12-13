@@ -1,3 +1,26 @@
+2011-12-13  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION (r102652): New window opens with zero size at produbanco.com
+        <http://webkit.org/b/74418> and <rdar://problem/10565998>
+
+        Reviewed by Anders Carlsson.
+
+        Don't use the cached window frame if it's empty (meaning we haven't received
+        a WindowAndViewFramesChanged message yet.) Instead use the synchronous
+        GetWindowFrame (WP->UIP) message.
+
+        This situation occurs when opening a new window via window.open(), in which
+        WebCore::createWindow() will query the windowRect() on the new window.
+
+        I spent a long time trying to write a layout test for this but couldn't come
+        up with something reliable. The windowRect() is non-empty before we get a
+        chance to run JS in/on the new window, and we can't check against the
+        requested geometry since it varies depending on whether the window manager
+        has shown the new window yet.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+
 2011-12-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt][WK2] Make QtPageClient dispatch directly to WebView when possible
