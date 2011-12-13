@@ -3872,4 +3872,6 @@ BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE
 
 BUGWK74317 LINUX : transitions/cross-fade-border-image.html = PASS CRASH
 
-BUGWK74357 : plugins/netscape-plugin-page-cache-works.html = TEXT
+BUGWK74357 : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
+
+BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = PASS IMAGE
