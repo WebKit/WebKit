@@ -451,6 +451,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     //     counter to 0; otherwise we set the counter to
     //     counterValueForOptimizeAfterWarmUp().
     
+    m_jit.add32(AssemblyHelpers::Imm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
+    
     m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.codeBlock()), GPRInfo::regT0);
     
     m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()), GPRInfo::regT2);

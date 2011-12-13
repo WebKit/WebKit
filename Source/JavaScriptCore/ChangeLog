@@ -1,3 +1,116 @@
+2011-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should know exactly why recompilation was triggered
+        https://bugs.webkit.org/show_bug.cgi?id=74362
+
+        Reviewed by Oliver Hunt.
+        
+        Each OSR exit is now individually counted, as well as counting the total number 
+        of OSR exits that occurred in a code block. If recompilation is triggered, we
+        check to see if there are OSR exit sites that make up a sufficiently large
+        portion of the total OSR exits that occurred. For any such OSR exit sites, we
+        add a description of the site (bytecode index, kind) to a data structure in the
+        corresponding baseline CodeBlock. Then, when we recompile the code, we immediately
+        know which speculations would be unwise based on the fact that previous such
+        speculations proved to be fruitless.
+        
+        This means 2% win on two of the SunSpider string tests, a 4% win on V8's deltablue,
+        and 5% on Kraken's imaging-darkroom. It is only a minor win in the averages, less
+        than 0.5%.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addFrequentExitSite):
+        (JSC::CodeBlock::exitProfile):
+        (JSC::CodeBlock::reoptimize):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/DFGExitProfile.cpp: Added.
+        (JSC::DFG::ExitProfile::ExitProfile):
+        (JSC::DFG::ExitProfile::~ExitProfile):
+        (JSC::DFG::ExitProfile::add):
+        (JSC::DFG::QueryableExitProfile::QueryableExitProfile):
+        (JSC::DFG::QueryableExitProfile::~QueryableExitProfile):
+        * bytecode/DFGExitProfile.h: Added.
+        (JSC::DFG::exitKindToString):
+        (JSC::DFG::exitKindIsCountable):
+        (JSC::DFG::FrequentExitSite::FrequentExitSite):
+        (JSC::DFG::FrequentExitSite::operator!):
+        (JSC::DFG::FrequentExitSite::operator==):
+        (JSC::DFG::FrequentExitSite::hash):
+        (JSC::DFG::FrequentExitSite::bytecodeOffset):
+        (JSC::DFG::FrequentExitSite::kind):
+        (JSC::DFG::FrequentExitSite::isHashTableDeletedValue):
+        (JSC::DFG::FrequentExitSiteHash::hash):
+        (JSC::DFG::FrequentExitSiteHash::equal):
+        (JSC::DFG::QueryableExitProfile::hasExitSite):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        (JSC::DFG::AssemblyHelpers::baselineCodeBlockFor):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnByteArray):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLength):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForObject):
+        (JSC::DFG::SpeculativeJIT::compileSoftModulo):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+
 2011-12-13  Michael Saboff  <msaboff@apple.com>
 
         Cleanup of StringImpl::equal in r102631 post commit

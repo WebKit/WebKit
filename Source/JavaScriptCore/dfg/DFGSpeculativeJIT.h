@@ -2029,37 +2029,37 @@ private:
 #endif
 
     // Add a speculation check without additional recovery.
-    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail)
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail)
     {
         if (!m_compileOkay)
             return;
-        m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this));
     }
     // Add a set of speculation checks without additional recovery.
-    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
     {
         Vector<MacroAssembler::Jump, 16> JumpVector = jumpsToFail.jumps();
         for (unsigned i = 0; i < JumpVector.size(); ++i)
-            speculationCheck(jsValueSource, nodeIndex, JumpVector[i]);
+            speculationCheck(kind, jsValueSource, nodeIndex, JumpVector[i]);
     }
     // Add a speculation check with additional recovery.
-    void speculationCheck(JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+    void speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
         if (!m_compileOkay)
             return;
         m_jit.codeBlock()->appendSpeculationRecovery(recovery);
-        m_jit.codeBlock()->appendOSRExit(OSRExit(jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
+        m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.valueProfileFor(nodeIndex), jumpToFail, this, m_jit.codeBlock()->numberOfSpeculationRecoveries()));
     }
 
     // Called when we statically determine that a speculation will fail.
-    void terminateSpeculativeExecution(JSValueRegs jsValueRegs, NodeIndex nodeIndex)
+    void terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex)
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
         fprintf(stderr, "SpeculativeJIT was terminated.\n");
 #endif
         if (!m_compileOkay)
             return;
-        speculationCheck(jsValueRegs, nodeIndex, m_jit.jump());
+        speculationCheck(kind, jsValueRegs, nodeIndex, m_jit.jump());
         m_compileOkay = false;
     }
     

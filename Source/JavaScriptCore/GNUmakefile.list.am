@@ -85,6 +85,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
 	Source/JavaScriptCore/bytecode/DataFormat.h \
+	Source/JavaScriptCore/bytecode/DFGExitProfile.cpp \
+	Source/JavaScriptCore/bytecode/DFGExitProfile.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
 	Source/JavaScriptCore/bytecode/Instruction.h \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \

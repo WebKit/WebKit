@@ -33,6 +33,7 @@
 #include "CodeOrigin.h"
 #include "DFGCommon.h"
 #include "DFGCorrectableJumpPoint.h"
+#include "DFGExitProfile.h"
 #include "DFGGPRInfo.h"
 #include "DFGOperands.h"
 #include "MacroAssembler.h"
@@ -81,7 +82,7 @@ private:
 // This structure describes how to exit the speculative path by
 // going into baseline code.
 struct OSRExit {
-    OSRExit(JSValueSource, ValueProfile*, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
+    OSRExit(ExitKind, JSValueSource, ValueProfile*, MacroAssembler::Jump, SpeculativeJIT*, unsigned recoveryIndex = 0);
     
     MacroAssemblerCodeRef m_code;
     
@@ -93,6 +94,9 @@ struct OSRExit {
     CodeOrigin m_codeOrigin;
     
     unsigned m_recoveryIndex;
+    
+    ExitKind m_kind;
+    uint32_t m_count;
     
     // Convenient way of iterating over ValueRecoveries while being
     // generic over argument versus variable.
@@ -120,6 +124,13 @@ struct OSRExit {
         return index - m_arguments.size();
     }
     
+    bool considerAddingAsFrequentExitSite(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)
+    {
+        if (!m_count || !exitKindIsCountable(m_kind))
+            return false;
+        return considerAddingAsFrequentExitSiteSlow(dfgCodeBlock, profiledCodeBlock);
+    }
+    
 #ifndef NDEBUG
     void dump(FILE* out) const;
 #endif
@@ -127,6 +138,9 @@ struct OSRExit {
     Vector<ValueRecovery, 0> m_arguments;
     Vector<ValueRecovery, 0> m_variables;
     int m_lastSetOperand;
+
+private:
+    bool considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock);
 };
 
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)

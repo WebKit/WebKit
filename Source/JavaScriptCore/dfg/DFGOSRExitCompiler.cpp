@@ -53,7 +53,7 @@ void compileOSRExit(ExecState* exec)
         recovery = &codeBlock->speculationRecovery(exit.m_recoveryIndex - 1);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    fprintf(stderr, "Generating OSR exit #%u for code block %p.\n", exitIndex, codeBlock);
+    fprintf(stderr, "Generating OSR exit #%u (bc#%u, @%u, %s) for code block %p.\n", exitIndex, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex, exitKindToString(exit.m_kind), codeBlock);
 #endif
 
     {

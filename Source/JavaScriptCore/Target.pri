@@ -55,6 +55,7 @@ SOURCES += \
     assembler/MacroAssemblerARM.cpp \
     assembler/MacroAssemblerSH4.cpp \
     bytecode/CodeBlock.cpp \
+    bytecode/DFGExitProfile.cpp \
     bytecode/JumpTable.cpp \
     bytecode/Opcode.cpp \
     bytecode/PredictedType.cpp \

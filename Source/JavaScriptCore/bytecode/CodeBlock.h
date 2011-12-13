@@ -33,6 +33,7 @@
 #include "CodeOrigin.h"
 #include "CompactJITCodeMap.h"
 #include "DFGCodeBlocks.h"
+#include "DFGExitProfile.h"
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
 #include "EvalCodeCache.h"
@@ -796,6 +797,14 @@ namespace JSC {
             ASSERT(hasCodeOrigins());
             return binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), getJITCode().offsetOf(returnAddress.value()))->codeOrigin;
         }
+        
+        bool addFrequentExitSite(const DFG::FrequentExitSite& site)
+        {
+            ASSERT(getJITType() == JITCode::BaselineJIT);
+            return m_exitProfile.add(site);
+        }
+
+        DFG::ExitProfile& exitProfile() { return m_exitProfile; }
 #endif
 
         // Constant Pool
@@ -1065,6 +1074,8 @@ namespace JSC {
         void reoptimize()
         {
             ASSERT(replacement() != this);
+            ASSERT(replacement()->alternative() == this);
+            replacement()->tallyFrequentExitSites();
             replacement()->jettison();
             countReoptimization();
             optimizeAfterWarmUp();
@@ -1092,6 +1103,12 @@ namespace JSC {
         
     private:
         friend class DFGCodeBlocks;
+        
+#if ENABLE(DFG_JIT)
+        void tallyFrequentExitSites();
+#else
+        void tallyFrequentExitSites() { }
+#endif
         
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
@@ -1212,6 +1229,10 @@ namespace JSC {
         };
         
         OwnPtr<DFGData> m_dfgData;
+        
+        // This is relevant to non-DFG code blocks that serve as the profiled code block
+        // for DFG code blocks.
+        DFG::ExitProfile m_exitProfile;
 #endif
 #if ENABLE(VALUE_PROFILER)
         SegmentedVector<ValueProfile, 8> m_valueProfiles;

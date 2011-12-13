@@ -67,6 +67,8 @@ double couldTakeSlowCaseThreshold;
 unsigned likelyToTakeSlowCaseMinimumCount;
 unsigned couldTakeSlowCaseMinimumCount;
 
+double osrExitProminenceForFrequentExitSite;
+
 unsigned largeFailCountThresholdBase;
 unsigned largeFailCountThresholdBaseForLoop;
 
@@ -147,6 +149,8 @@ void initializeHeuristics()
     SET(couldTakeSlowCaseThreshold,       0.05); // Shouldn't be zero because some ops will spuriously take slow case, for example for linking or caching.
     SET(likelyToTakeSlowCaseMinimumCount, 100);
     SET(couldTakeSlowCaseMinimumCount,    10);
+    
+    SET(osrExitProminenceForFrequentExitSite, 0.3);
 
     SET(largeFailCountThresholdBase,        20);
     SET(largeFailCountThresholdBaseForLoop, 1);

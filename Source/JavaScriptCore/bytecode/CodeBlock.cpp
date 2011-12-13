@@ -2241,6 +2241,28 @@ bool CodeBlock::shouldOptimizeNow()
 }
 #endif
 
+#if ENABLE(DFG_JIT)
+void CodeBlock::tallyFrequentExitSites()
+{
+    ASSERT(getJITType() == JITCode::DFGJIT);
+    ASSERT(alternative()->getJITType() == JITCode::BaselineJIT);
+    ASSERT(!!m_dfgData);
+    
+    CodeBlock* profiledBlock = alternative();
+    
+    for (unsigned i = 0; i < m_dfgData->osrExit.size(); ++i) {
+        DFG::OSRExit& exit = m_dfgData->osrExit[i];
+        
+        if (!exit.considerAddingAsFrequentExitSite(this, profiledBlock))
+            continue;
+        
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        fprintf(stderr, "OSR exit #%u (bc#%u, @%u, %s) for code block %p occurred frequently; counting as frequent exit site.\n", i, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex, DFG::exitKindToString(exit.m_kind), this);
+#endif
+    }
+}
+#endif // ENABLE(DFG_JIT)
+
 #if ENABLE(VERBOSE_VALUE_PROFILE)
 void CodeBlock::dumpValueProfiles()
 {

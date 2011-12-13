@@ -35,6 +35,7 @@ SET(JavaScriptCore_SOURCES
     API/OpaqueJSString.cpp
 
     bytecode/CodeBlock.cpp
+    bytecode/DFGExitProfile.cpp
     bytecode/JumpTable.cpp
     bytecode/Opcode.cpp
     bytecode/PredictedType.cpp

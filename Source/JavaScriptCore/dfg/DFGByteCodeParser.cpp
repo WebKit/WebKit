@@ -631,11 +631,13 @@ private:
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
     {
-        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
+        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         switch (m_graph[nodeIndex].op) {
@@ -648,12 +650,14 @@ private:
             break;
             
         case ArithMul:
-            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)) {
+            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
                 printf("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
 #endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
-            } else {
+            } else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                       || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
                 printf("Making ArithMul @%u take faster slow case.\n", nodeIndex);
 #endif
@@ -679,13 +683,17 @@ private:
         // care about when the outcome of the division is not an integer, which
         // is what the special fast case counter tells us.
         
-        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex))
+        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Making %s @%u safe at bc#%u because special fast-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+        printf("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
+        // FIXME: It might be possible to make this more granular. The DFG certainly can
+        // distinguish between negative zero and overflow in its exit profiles.
         m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
         
         return nodeIndex;
@@ -793,6 +801,8 @@ private:
         
         ScriptExecutable* executable() { return m_codeBlock->ownerExecutable(); }
         
+        QueryableExitProfile m_exitProfile;
+        
         // Remapping of identifier and constant numbers from the code block being
         // inlined (inline callee) to the code block that we're inlining into
         // (the machine code block, which is the transitive, though not necessarily
@@ -887,12 +897,14 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Slow case count for call at @%lu bc#%u: %u/%u.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount());
+    printf("Slow case count for call at @%lu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
             
     if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
         callType = ConstantFunction;
-    else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee && !m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex))
+    else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee
+             && !m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
         callType = LinkedFunction;
     else
         callType = UnknownFunction;
@@ -1167,7 +1179,10 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointAbs())
             return false;
 
-        set(resultOperand, addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1))));
+        NodeIndex nodeIndex = addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1)));
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+            m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
+        set(resultOperand, nodeIndex);
         return true;
     }
 
@@ -1668,7 +1683,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             StructureStubInfo& stubInfo = m_inlineStackTop->m_profiledBlock->getStubInfo(m_currentIndex);
             MethodCallLinkInfo& methodCall = m_inlineStackTop->m_profiledBlock->getMethodCallLinkInfo(m_currentIndex);
             
-            if (methodCall.seen && !!methodCall.cachedStructure && !stubInfo.seen) {
+            if (methodCall.seen
+                && !!methodCall.cachedStructure
+                && !stubInfo.seen
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 // It's monomorphic as far as we can tell, since the method_check was linked
                 // but the slow path (i.e. the normal get_by_id) never fired.
 
@@ -1711,12 +1729,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             StructureStubInfo& stubInfo = m_inlineStackTop->m_profiledBlock->getStubInfo(m_currentIndex);
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for GetById @%lu bc#%u: %u\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+            printf("Slow case count for GetById @%lu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
             
             size_t offset = notFound;
             StructureSet structureSet;
-            if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
+            if (stubInfo.seen
+                && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 switch (stubInfo.accessType) {
                 case access_get_by_id_self: {
                     Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
@@ -1805,10 +1825,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             bool alreadyGenerated = false;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            printf("Slow case count for PutById @%lu bc#%u: %u\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+            printf("Slow case count for PutById @%lu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif            
 
-            if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
+            if (stubInfo.seen
+                && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 switch (stubInfo.accessType) {
                 case access_put_by_id_replace: {
                     Structure* structure = stubInfo.u.putByIdReplace.baseObjectStructure.get();
@@ -2425,6 +2447,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
     , m_codeBlock(codeBlock)
     , m_profiledBlock(profiledBlock)
     , m_calleeVR(calleeVR)
+    , m_exitProfile(profiledBlock->exitProfile())
     , m_callsiteBlockHead(callsiteBlockHead)
     , m_returnValue(returnValueVR)
     , m_didReturn(false)

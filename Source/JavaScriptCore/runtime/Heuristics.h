@@ -53,6 +53,8 @@ extern double couldTakeSlowCaseThreshold;
 extern unsigned likelyToTakeSlowCaseMinimumCount;
 extern unsigned couldTakeSlowCaseMinimumCount;
 
+extern double osrExitProminenceForFrequentExitSite;
+
 extern unsigned largeFailCountThresholdBase;
 extern unsigned largeFailCountThresholdBaseForLoop;
 
