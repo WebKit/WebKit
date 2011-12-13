@@ -1,3 +1,14 @@
+2011-12-12  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r102648.
+        http://trac.webkit.org/changeset/102648
+        https://bugs.webkit.org/show_bug.cgi?id=74313
+
+        Broke the Snow Leopard and Windows builds
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerLocation):
+
 2011-12-12  Andreas Kling  <kling@webkit.org>
 
         Resizing Cappuccino is very laggy on WebKit since Safari 5.1
