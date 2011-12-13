@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/js-test-selection-shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Grammar checking for pasted text.');
+
+layoutTestController.waitUntilDone();
+
+var testRoot = document.createElement("div");
+document.body.insertBefore(testRoot, document.body.firstChild);
+
+var testTextArea = document.createElement("textarea");
+testRoot.appendChild(testTextArea);
+
+var testInput = document.createElement("input");
+testInput.setAttribute("type", "text");
+testRoot.appendChild(testInput);
+
+var testEditable = document.createElement("div");
+testEditable.setAttribute("contentEditable", "true");
+testRoot.appendChild(testEditable);
+
+var testSourcePlain = document.createElement("div");
+testSourcePlain.innerHTML = "You has the right.";
+testRoot.appendChild(testSourcePlain);
+
+var testSourceDecorated = document.createElement("div");
+testSourceDecorated.innerHTML = "I have a<b>n ki</b>wi. I have no idea.";
+testRoot.appendChild(testSourceDecorated);
+
+var testSourceMulti = document.createElement("div");
+testSourceMulti.innerHTML = "I have an grape. I have an muscat. I don't know.";
+testRoot.appendChild(testSourceMulti);
+
+var sel = window.getSelection();
+
+var tests = [];
+
+function done()
+{
+    var next = tests.shift();
+    if (next)
+        return window.setTimeout(next, 0);
+    testRoot.style.display = "none";
+
+    layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+    layoutTestController.notifyDone();
+}
+
+function findFirstTextNode(node)
+{
+    function iterToFindFirstTextNode(node)
+    {
+        if (node instanceof Text)
+            return node;
+
+        var childNodes = node.childNodes;
+        for (var i = 0; i < childNodes.length; ++i) {
+            var n = iterToFindFirstTextNode(childNodes[i]);
+            if (n)
+                return n;
+        }
+
+        return null;
+    }
+
+
+    if (node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement)
+        return iterToFindFirstTextNode(internals.shadowRoot(node));
+    else
+        return iterToFindFirstTextNode(node);
+}
+
+function verifyMarker(node, expectedMarked, needsFocus)
+{
+    if (true) {
+        if (node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement) {
+            node.focus();
+        } else {
+            sel.selectAllChildren(node);
+        }
+    }
+
+    var textNode = findFirstTextNode(node);
+    var num = internals.markerCountForNode(textNode, "grammar");
+    if (num != expectedMarked.length)
+        return false;
+    for (var i = 0; i < num; ++i) {
+        var range = internals.markerRangeForNode(textNode, "grammar", i);
+        if (range.toString() != expectedMarked[i])
+            return false;
+    }
+
+    return true;
+}
+
+function pasteAndVerify(source, dest, expectedMarked)
+{
+    sel.selectAllChildren(source);
+    document.execCommand("Copy");
+    if (dest instanceof HTMLInputElement || dest instanceof HTMLTextAreaElement) {
+        dest.value = "";
+        dest.focus();
+    } else {
+        dest.innerHTML = "";
+        sel.selectAllChildren(dest);
+    }
+    document.execCommand("Paste");
+
+    var nretry = 10;
+    var nsleep = 4;
+    function trial() { 
+        var verified = verifyMarker(dest, expectedMarked);
+        if (verified) {
+            testPassed(dest.tagName + " has a marker on '" + source.innerHTML + "'");
+            done();
+            return;
+        }
+
+        nretry--;
+        if (0 == nretry) {
+            testFailed(dest.tagName + " should have a marker on for '" + source.innerHTML + "'");
+            done();
+            return;
+        }
+        
+        nsleep *= 2;
+        window.setTimeout(trial, nsleep);
+    };
+    trial();
+};
+
+if (window.layoutTestController) {
+    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+}
+
+tests.push(function() { pasteAndVerify(testSourcePlain, testEditable, ["has"]); });
+tests.push(function() { pasteAndVerify(testSourceDecorated, testEditable, ["a"]); }); // Checks only 'a'.
+tests.push(function() { pasteAndVerify(testSourceMulti, testEditable, ["an", "an"]); });
+
+tests.push(function() { pasteAndVerify(testSourcePlain, testInput, ["has"]); });
+tests.push(function() { pasteAndVerify(testSourceDecorated, testInput, ["an"]); });
+tests.push(function() { pasteAndVerify(testSourceMulti, testInput, ["an", "an"]); });
+
+tests.push(function() { pasteAndVerify(testSourcePlain, testTextArea, ["has"]); });
+tests.push(function() { pasteAndVerify(testSourceDecorated, testTextArea, ["an"]); });
+tests.push(function() { pasteAndVerify(testSourceMulti, testTextArea, ["an", "an"]); });
+
+done();
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

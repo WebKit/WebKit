@@ -1281,6 +1281,7 @@ http/tests/inspector/network/network-disable-cache-xhrs.html
 
 # textInputController.hasGrammarMarker() is not implemented.
 editing/spelling/grammar.html
+editing/spelling/grammar-paste.html
 
 # layoutTestController::setTextDirection() is not implemented.
 fast/html/set-text-direction.html

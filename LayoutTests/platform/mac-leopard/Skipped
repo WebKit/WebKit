@@ -96,6 +96,7 @@ http/tests/media/video-seekable-stall.html
 
 # Available 10.6 or later
 editing/spelling/spellcheck-paste.html
+editing/spelling/grammar-paste.html
 fast/html/set-text-direction.html
 
 # Disable tests which started failing after r66961

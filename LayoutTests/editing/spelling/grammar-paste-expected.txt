@@ -1,0 +1,18 @@
+Grammar checking for pasted text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS DIV has a marker on 'You has the right.'
+PASS DIV has a marker on 'I have a<b>n ki</b>wi. I have no idea.'
+PASS DIV has a marker on 'I have an grape. I have an muscat. I don't know.'
+PASS INPUT has a marker on 'You has the right.'
+PASS INPUT has a marker on 'I have a<b>n ki</b>wi. I have no idea.'
+PASS INPUT has a marker on 'I have an grape. I have an muscat. I don't know.'
+PASS TEXTAREA has a marker on 'You has the right.'
+PASS TEXTAREA has a marker on 'I have a<b>n ki</b>wi. I have no idea.'
+PASS TEXTAREA has a marker on 'I have an grape. I have an muscat. I don't know.'
+

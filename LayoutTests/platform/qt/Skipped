@@ -994,6 +994,7 @@ editing/spelling/spelling-hasspellingmarker.html
 
 # textInputController.hasGrammarMarkers() is not implemented.
 editing/spelling/grammar.html
+editing/spelling/grammar-paste.html
 
 # Needs grammar checking.
 editing/spelling/markers.html
