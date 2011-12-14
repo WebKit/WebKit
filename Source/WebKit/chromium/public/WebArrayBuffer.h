@@ -64,7 +64,7 @@ public:
 
     bool isNull() const { return m_private.isNull(); }
     WEBKIT_EXPORT void* data() const;
-    unsigned byteLength() const;
+    WEBKIT_EXPORT unsigned byteLength() const;
 
 #if WEBKIT_USING_V8
     WEBKIT_EXPORT v8::Handle<v8::Value> toV8Value();
