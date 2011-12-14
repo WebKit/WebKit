@@ -217,18 +217,6 @@ void cancelCallOnMainThread(MainThreadFunction* function, void* context)
     }
 }
 
-static void callFunctionObject(void* context)
-{
-    Function<void ()>* function = static_cast<Function<void ()>*>(context);
-    (*function)();
-    delete function;
-}
-
-void callOnMainThread(const Function<void ()>& function)
-{
-    callOnMainThread(callFunctionObject, new Function<void ()>(function));
-}
-
 void setMainThreadCallbacksPaused(bool paused)
 {
     ASSERT(isMainThread());
