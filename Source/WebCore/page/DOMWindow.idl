@@ -212,12 +212,12 @@ module window {
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin)
             raises(DOMException);
-        [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in Array messagePorts, in DOMString targetOrigin)
+        [DoNotCheckDomainSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array messagePorts)
             raises(DOMException);
 
         [DoNotCheckDomainSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in DOMString targetOrigin)
             raises(DOMException);
-        [DoNotCheckDomainSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in Array transferList, in DOMString targetOrigin)
+        [DoNotCheckDomainSecurity, Custom] void webkitPostMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array transferList)
             raises(DOMException);
 #else
         // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.

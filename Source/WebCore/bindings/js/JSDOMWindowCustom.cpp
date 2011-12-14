@@ -705,8 +705,22 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransfer)
 {
     MessagePortArray messagePorts;
-    if (exec->argumentCount() > 2)
-        fillMessagePortArray(exec, exec->argument(1), messagePorts);
+
+    // This function has variable arguments and can be:
+    // Per current spec:
+    //   postMessage(message, targetOrigin)
+    //   postMessage(message, targetOrigin, {sequence of transferrables})
+    // Legacy non-standard implementations in webkit allowed:
+    //   postMessage(message, {sequence of transferrables}, targetOrigin);
+    int targetOriginArgIndex = 1;
+    if (exec->argumentCount() > 2) {
+        int transferablesArgIndex = 2;
+        if (exec->argument(2).isString()) {
+            targetOriginArgIndex = 2;
+            transferablesArgIndex = 1;
+        }
+        fillMessagePortArray(exec, exec->argument(transferablesArgIndex), messagePorts);
+    }
     if (exec->hadException())
         return jsUndefined();
 
@@ -716,7 +730,7 @@ static JSValue handlePostMessage(DOMWindow* impl, ExecState* exec, bool doTransf
     if (exec->hadException())
         return jsUndefined();
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, exec->argument((exec->argumentCount() == 2) ? 1 : 2));
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(targetOriginArgIndex));
     if (exec->hadException())
         return jsUndefined();
 

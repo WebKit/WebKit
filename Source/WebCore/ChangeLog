@@ -1,3 +1,19 @@
+2011-12-13  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73691
+        [JSC] Implement correct order of window.postMessage arguments.
+        This change supports a new signature of windowPostMessage:
+          postMessage(message, targetOrigin[, transferrables])
+        as well as the legacy webkit-proprietary:
+          postMessage(message, [transferrables,] targetOrigin)
+        The latter is only supported for cases when targetOrigin is a String.
+
+        Reviewed by David Levin.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::handlePostMessage):
+        * page/DOMWindow.idl:
+
 2011-12-13  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Avoid allocations if no observers are present
