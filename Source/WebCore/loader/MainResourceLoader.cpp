@@ -560,6 +560,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     // we no longer send the callback from within NSURLConnection for
     // initial requests.
     willSendRequest(r, ResourceResponse());
+    ASSERT(!deletionHasBegun());
 
     // <rdar://problem/4801066>
     // willSendRequest() is liable to make the call to frameLoader() return NULL, so we need to check that here

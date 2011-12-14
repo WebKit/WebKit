@@ -803,8 +803,10 @@ bool DocumentLoader::startLoadingMainResource(unsigned long identifier)
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.
     frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
-
-    if (!m_mainResourceLoader->load(m_request, m_substituteData)) {
+    
+    // Protect MainResourceLoader::load() method chain from setPrimaryLoadComplete() stomping m_mainResourceLoader.
+    RefPtr<MainResourceLoader> protectedMainResourceLoader(m_mainResourceLoader);
+    if (!protectedMainResourceLoader->load(m_request, m_substituteData)) {
         // FIXME: If this should really be caught, we should just ASSERT this doesn't happen;
         // should it be caught by other parts of WebKit or other parts of the app?
         LOG_ERROR("could not create WebResourceHandle for URL %s -- should be caught by policy handler level", m_request.url().string().ascii().data());

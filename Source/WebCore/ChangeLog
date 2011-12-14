@@ -1,3 +1,18 @@
+2011-12-14  Tom Sepez  <tsepez@chromium.org>
+
+        DocumentLoader should ref its mainResourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=74424
+
+        Reviewed by Adam Barth.
+
+        Tests: platform/chromium/http/tests/security/mixedContent/insecure-iframe-in-main-frame-allowed.html
+               platform/chromium/http/tests/security/mixedContent/insecure-iframe-in-main-frame-blocked.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::loadNow):
+
 2011-12-14  Stephen White  <senorblanco@chromium.org>
 
         CSS Filters should support GPU acceleration

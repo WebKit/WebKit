@@ -1,0 +1,13 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+CONSOLE MESSAGE: line 1: [blocked] The page at about:blank displayed insecure content from http://127.0.0.1:8080/security/mixedContent/resources/boring.html.
+
+frame "<!--framePath //<!--frame0-->-->" - didFailProvisionalLoadWithError
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test opens a window that loads an insecure iframe. We should not trigger a mixed content callback even though the main frame in the window is HTTPS and is displaying insecure content, because we've set the preference to block this.
