@@ -1496,10 +1496,12 @@ svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 svg/custom/use-css-events.svg
 svg/custom/glyph-selection-lang-attribute.svg
 svg/custom/image-small-width-height.svg
+svg/custom/relative-sized-use-on-symbol.xhtml
 svg/custom/small-rect-scale.svg
 svg/custom/svg-fonts-fallback.xhtml
 svg/custom/svg-fonts-without-missing-glyph.xhtml
 svg/custom/use-on-clip-path-with-transformation.svg
+svg/custom/use-on-symbol-inside-pattern.svg
 svg/dom/css-transforms.xhtml
 svg/filters/feColorMatrix-saturate.svg
 svg/overflow/overflow-on-inner-svg-element.svg
