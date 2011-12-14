@@ -1,3 +1,12 @@
+2011-12-14  David Kilzer  <ddkilzer@apple.com>
+
+        Remove definition of old ENABLE(YARR) macro
+        <http://webkit.org/b/74532>
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h: Removed ENABLE_YARR macros.
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         bind should handle member functions

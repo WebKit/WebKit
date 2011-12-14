@@ -590,12 +590,10 @@
 #if PLATFORM(IOS_SIMULATOR)
     #define ENABLE_INTERPRETER 1
     #define ENABLE_JIT 0
-    #define ENABLE_YARR 0
     #define ENABLE_YARR_JIT 0
 #else
     #define ENABLE_INTERPRETER 1
     #define ENABLE_JIT 1
-    #define ENABLE_YARR 1
     #define ENABLE_YARR_JIT 1
 #endif
 
