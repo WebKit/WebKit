@@ -1,0 +1,11 @@
+Test Worker constructor functionality. Should print a series of PASS messages, followed with DONE.
+
+PASS: toString exception propagated correctly.
+PASS: trying to create workers recursively resulted in an exception (RangeError: Maximum call stack size exceeded)
+PASS: invoking Worker constructor without arguments resulted in an exception (TypeError: Not enough arguments)
+PASS: invoking Worker constructor with empty script URL resulted in an exception (Error: SYNTAX_ERR: DOM Exception 12)
+PASS: invoking Worker constructor with invalid script URL resulted in an exception (Error: SYNTAX_ERR: DOM Exception 12)
+PASS: onerror invoked for a script that could not be loaded.
+PASS: Successfully created worker.
+DONE
+

@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 10: Uncaught ReferenceError: foo is not defined
+Test Worker script error handling functionality. Should print a series of PASS messages, followed with DONE.
+
+PASS: onerror invoked for a script that has invalid syntax.
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 1.
+PASS: event listener invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 1.
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: bar is not defined' at line 3.
+message from worker: "PASS: onerror in worker context invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 10 in worker-script-error-bubbled.js".
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 10.
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 10.
+PASS: message received from WorkerGlobalScope.onerror: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
+PASS: onerror invoked for an exception in setTimeout callback.
+DONE
+
