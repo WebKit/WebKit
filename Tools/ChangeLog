@@ -1,3 +1,15 @@
+2011-12-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't add WebCoreSupport and WebKit APIs to include WebCore's include path
+
+        Followup to r102679
+
+        https://bugs.webkit.org/show_bug.cgi?id=74413
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/webcore.prf:
+
 2011-12-14  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Mobile theme could use a little refresh
