@@ -55,6 +55,7 @@ enum ValueRecoveryTechnique {
     InPair,
 #endif
     InFPR,
+    UInt32InGPR,
     // It's in the register file, but at a different location.
     DisplacedInRegisterFile,
     // It's in the register file, at a different location, and it's unboxed.
@@ -114,6 +115,14 @@ public:
             result.m_technique = UnboxedBooleanInGPR;
         else
             result.m_technique = InGPR;
+        result.m_source.gpr = gpr;
+        return result;
+    }
+    
+    static ValueRecovery uint32InGPR(MacroAssembler::RegisterID gpr)
+    {
+        ValueRecovery result;
+        result.m_technique = UInt32InGPR;
         result.m_source.gpr = gpr;
         return result;
     }
@@ -186,7 +195,7 @@ public:
     
     MacroAssembler::RegisterID gpr() const
     {
-        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR);
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR);
         return m_source.gpr;
     }
     
@@ -247,8 +256,11 @@ public:
         case UnboxedBooleanInGPR:
             fprintf(out, "bool(%%r%d)", gpr());
             break;
+        case UInt32InGPR:
+            fprintf(out, "uint32(%%r%d)", gpr());
+            break;
         case InFPR:
-            fprintf(out, "%%r%d", fpr());
+            fprintf(out, "%%fr%d", fpr());
             break;
 #if USE(JSVALUE32_64)
         case InPair:

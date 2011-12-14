@@ -44,8 +44,6 @@ static double DFG_OPERATION fmodAsDFGOperation(double x, double y)
 #define fmodAsDFGOperation fmod
 #endif
 
-const double SpeculativeJIT::twoToThe32 = (double)0x100000000ull;
-
 void SpeculativeJIT::clearGenerationInfo()
 {
     for (unsigned i = 0; i < m_generationInfo.size(); ++i)
@@ -1459,6 +1457,56 @@ void SpeculativeJIT::compileValueToInt32(Node& node)
     integerResult(result.gpr(), m_compileIndex, op1.format());
 }
 
+void SpeculativeJIT::compileUInt32ToNumber(Node& node)
+{
+    if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
+        // We know that this sometimes produces doubles. So produce a double every
+        // time. This at least allows subsequent code to not have weird conditionals.
+            
+        IntegerOperand op1(this, node.child1());
+        FPRTemporary result(this);
+            
+        GPRReg inputGPR = op1.gpr();
+        FPRReg outputFPR = result.fpr();
+            
+        m_jit.convertInt32ToDouble(inputGPR, outputFPR);
+            
+        JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, inputGPR, TrustedImm32(0));
+        m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), outputFPR);
+        positive.link(&m_jit);
+            
+        doubleResult(outputFPR, m_compileIndex);
+        return;
+    }
+
+    IntegerOperand op1(this, node.child1());
+    GPRTemporary result(this, op1);
+
+    // Test the operand is positive. This is a very special speculation check - we actually
+    // use roll-forward speculation here, where if this fails, we jump to the baseline
+    // instruction that follows us, rather than the one we're executing right now. We have
+    // to do this because by this point, the original values necessary to compile whatever
+    // operation the UInt32ToNumber originated from might be dead.
+    speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op1.gpr(), TrustedImm32(0)));
+        
+    // Verify that we can do roll forward.
+    ASSERT(at(m_compileIndex + 1).op == SetLocal);
+    ASSERT(at(m_compileIndex + 1).codeOrigin == node.codeOrigin);
+    ASSERT(at(m_compileIndex + 2).codeOrigin != node.codeOrigin);
+        
+    // Now do the magic.
+    OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
+    Node& setLocal = at(m_compileIndex + 1);
+    exit.m_codeOrigin = at(m_compileIndex + 2).codeOrigin;
+    exit.m_lastSetOperand = setLocal.local();
+        
+    // Create the value recovery, and stuff it into the right place.
+    exit.valueRecoveryForOperand(setLocal.local()) = ValueRecovery::uint32InGPR(op1.gpr());
+
+    m_jit.move(op1.gpr(), result.gpr());
+    integerResult(result.gpr(), m_compileIndex, op1.format());
+}
+
 static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg source, FPRReg scratch)
 {
     // Unordered compare so we pick up NaN
@@ -1640,7 +1688,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
         FPRTemporary fresult(this);
         m_jit.convertInt32ToDouble(resultReg, fresult.fpr());
         JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, resultReg, TrustedImm32(0));
-        m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), fresult.fpr());
+        m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), fresult.fpr());
         positive.link(&m_jit);
         doubleResult(fresult.fpr(), m_compileIndex);
     }

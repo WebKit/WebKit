@@ -170,8 +170,6 @@ private:
 
     enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
     
-    static const double twoToThe32;
-
 public:
     SpeculativeJIT(JITCompiler&);
 
@@ -1969,6 +1967,7 @@ private:
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
     void compileValueToInt32(Node&);
+    void compileUInt32ToNumber(Node&);
     void compileGetByValOnByteArray(Node&);
     void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
     void compileArithMul(Node&);

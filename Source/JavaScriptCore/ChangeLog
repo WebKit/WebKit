@@ -1,3 +1,40 @@
+2011-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit for UInt32ToNumber should roll forward, not roll backward
+        https://bugs.webkit.org/show_bug.cgi?id=74463
+
+        Reviewed by Gavin Barraclough.
+        
+        Implements roll-forward OSR exit for UInt32ToNumber, which requires ValueRecoveries knowing
+        how to execute the slow path of UInt32ToNumber.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::lastOSRExit):
+        * bytecode/CodeOrigin.h:
+        (JSC::CodeOrigin::operator!=):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::uint32InGPR):
+        (JSC::ValueRecovery::gpr):
+        (JSC::ValueRecovery::dump):
+        * dfg/DFGAssemblyHelpers.cpp:
+        * dfg/DFGAssemblyHelpers.h:
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::valueRecoveryForOperand):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeUInt32ToNumber):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-13  Oliver Hunt  <oliver@apple.com>
 
         Arguments object doesn't handle mutation of length property correctly

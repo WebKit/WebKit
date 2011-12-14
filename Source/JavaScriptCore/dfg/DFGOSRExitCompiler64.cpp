@@ -119,6 +119,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     bool haveFPRs = false;
     bool haveConstants = false;
     bool haveUndefined = false;
+    bool haveUInt32s = false;
     
     for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
         const ValueRecovery& recovery = exit.valueRecovery(index);
@@ -140,6 +141,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 switch (exit.m_variables[recovery.virtualRegister()].technique()) {
                 case InGPR:
                 case UnboxedInt32InGPR:
+                case UInt32InGPR:
                 case InFPR:
                     if (!poisonedVirtualRegisters[recovery.virtualRegister()]) {
                         poisonedVirtualRegisters[recovery.virtualRegister()] = true;
@@ -155,6 +157,10 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         case UnboxedInt32InGPR:
         case AlreadyInRegisterFileAsUnboxedInt32:
             haveUnboxedInt32s = true;
+            break;
+            
+        case UInt32InGPR:
+            haveUInt32s = true;
             break;
             
         case InFPR:
@@ -180,6 +186,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         fprintf(stderr, "Displaced=%u ", numberOfDisplacedVirtualRegisters);
     if (haveUnboxedInt32s)
         fprintf(stderr, "UnboxedInt32 ");
+    if (haveUInt32s)
+        fprintf(stderr, "UInt32 ");
     if (haveFPRs)
         fprintf(stderr, "FPR ");
     if (haveConstants)
@@ -189,14 +197,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     fprintf(stderr, " ");
 #endif
     
-    EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * (numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters))));
+    EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * std::max(haveUInt32s ? 2u : 0u, numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters))));
 
     // From here on, the code assumes that it is profitable to maximize the distance
     // between when something is computed and when it is stored.
     
     // 5) Perform all reboxing of integers.
     
-    if (haveUnboxedInt32s) {
+    if (haveUnboxedInt32s || haveUInt32s) {
         for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
             const ValueRecovery& recovery = exit.valueRecovery(index);
             switch (recovery.technique()) {
@@ -208,6 +216,44 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             case AlreadyInRegisterFileAsUnboxedInt32:
                 m_jit.store32(AssemblyHelpers::Imm32(static_cast<uint32_t>(TagTypeNumber >> 32)), AssemblyHelpers::tagFor(static_cast<VirtualRegister>(exit.operandForIndex(index))));
                 break;
+                
+            case UInt32InGPR: {
+                // This occurs when the speculative JIT left an unsigned 32-bit integer
+                // in a GPR. If it's positive, we can just box the int. Otherwise we
+                // need to turn it into a boxed double.
+                
+                // We don't try to be clever with register allocation here; we assume
+                // that the program is using FPRs and we don't try to figure out which
+                // ones it is using. Instead just temporarily save fpRegT0 and then
+                // restore it. This makes sense because this path is not cheap to begin
+                // with, and should happen very rarely.
+                
+                GPRReg addressGPR = GPRInfo::regT0;
+                if (addressGPR == recovery.gpr())
+                    addressGPR = GPRInfo::regT1;
+                
+                m_jit.storePtr(addressGPR, scratchBuffer);
+                m_jit.move(AssemblyHelpers::TrustedImmPtr(scratchBuffer + 1), addressGPR);
+                m_jit.storeDouble(FPRInfo::fpRegT0, addressGPR);
+                
+                AssemblyHelpers::Jump positive = m_jit.branch32(AssemblyHelpers::GreaterThanOrEqual, recovery.gpr(), AssemblyHelpers::TrustedImm32(0));
+
+                m_jit.convertInt32ToDouble(recovery.gpr(), FPRInfo::fpRegT0);
+                m_jit.addDouble(AssemblyHelpers::AbsoluteAddress(&AssemblyHelpers::twoToThe32), FPRInfo::fpRegT0);
+                m_jit.boxDouble(FPRInfo::fpRegT0, recovery.gpr());
+                
+                AssemblyHelpers::Jump done = m_jit.jump();
+                
+                positive.link(&m_jit);
+                
+                m_jit.orPtr(GPRInfo::tagTypeNumberRegister, recovery.gpr());
+                
+                done.link(&m_jit);
+                
+                m_jit.loadDouble(addressGPR, FPRInfo::fpRegT0);
+                m_jit.loadPtr(scratchBuffer, addressGPR);
+                break;
+            }
                 
             default:
                 break;
@@ -226,6 +272,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         switch (recovery.technique()) {
         case InGPR:
         case UnboxedInt32InGPR:
+        case UInt32InGPR:
             if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
                 m_jit.storePtr(recovery.gpr(), scratchBuffer + scratchIndex++);
             else
@@ -395,6 +442,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             switch (recovery.technique()) {
             case InGPR:
             case UnboxedInt32InGPR:
+            case UInt32InGPR:
             case InFPR:
                 m_jit.loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
                 m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)virtualRegister));

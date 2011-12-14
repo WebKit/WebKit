@@ -427,6 +427,11 @@ namespace JSC {
             m_dfgData->osrExit.append(osrExit);
         }
         
+        DFG::OSRExit& lastOSRExit()
+        {
+            return m_dfgData->osrExit.last();
+        }
+        
         void appendSpeculationRecovery(const DFG::SpeculationRecovery& recovery)
         {
             createDFGDataIfNecessary();

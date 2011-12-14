@@ -1,0 +1,13 @@
+This tests that if the DFG fails to convert a uint32 to a number, it will OSR exit correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is 124500
+PASS foo({f:2147483648}, {f:32}) is 2147483648
+PASS foo({f:2147483648}, {f:31}) is 1
+PASS foo({f:2147483648}, {f:30}) is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

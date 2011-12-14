@@ -107,6 +107,12 @@ struct OSRExit {
             return m_arguments[index];
         return m_variables[index - m_arguments.size()];
     }
+    ValueRecovery& valueRecoveryForOperand(int operand)
+    {
+        if (operandIsArgument(operand))
+            return m_arguments[operandToArgument(operand)];
+        return m_variables[operand];
+    }
     bool isArgument(int index) const { return index < (int)m_arguments.size(); }
     bool isVariable(int index) const { return !isArgument(index); }
     int argumentForIndex(int index) const

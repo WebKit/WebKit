@@ -462,7 +462,7 @@ void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node& node)
     JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.gpr(), TrustedImm32(0));
     
     m_jit.convertInt32ToDouble(op1.gpr(), boxer.fpr());
-    m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), boxer.fpr());
+    m_jit.addDouble(JITCompiler::AbsoluteAddress(&AssemblyHelpers::twoToThe32), boxer.fpr());
     
     boxDouble(boxer.fpr(), result.gpr());
     
@@ -2201,34 +2201,7 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case UInt32ToNumber: {
-        if (!nodeCanSpeculateInteger(node.arithNodeFlags())) {
-            // We know that this sometimes produces doubles. So produce a double every
-            // time. This at least allows subsequent code to not have weird conditionals.
-            
-            IntegerOperand op1(this, node.child1());
-            FPRTemporary result(this);
-            
-            GPRReg inputGPR = op1.gpr();
-            FPRReg outputFPR = result.fpr();
-            
-            m_jit.convertInt32ToDouble(inputGPR, outputFPR);
-            
-            JITCompiler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, inputGPR, TrustedImm32(0));
-            m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), outputFPR);
-            positive.link(&m_jit);
-            
-            doubleResult(outputFPR, m_compileIndex);
-            break;
-        }
-
-        IntegerOperand op1(this, node.child1());
-        GPRTemporary result(this, op1);
-
-        // Test the operand is positive.
-        speculationCheck(Overflow, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::LessThan, op1.gpr(), TrustedImm32(0)));
-
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), m_compileIndex, op1.format());
+        compileUInt32ToNumber(node);
         break;
     }
 

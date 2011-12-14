@@ -305,6 +305,8 @@ public:
     }
     
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
+    
+    static const double twoToThe32;
 
 protected:
     JSGlobalData* m_globalData;

@@ -73,6 +73,8 @@ struct CodeOrigin {
     
     bool operator==(const CodeOrigin& other) const;
     
+    bool operator!=(const CodeOrigin& other) const { return !(*this == other); }
+    
 #ifndef NDEBUG
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
