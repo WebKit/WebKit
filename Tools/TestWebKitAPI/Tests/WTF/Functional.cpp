@@ -81,4 +81,28 @@ TEST(FunctionalTest, BinaryBind)
     ASSERT_EQ(2, subtractTwoFromFourFunction());
 }
 
+class A {
+public:
+    explicit A(int i)
+        : m_i(i)
+    {
+    }
+
+    int f() { return m_i; }
+    int addF(int j) { return m_i + j; }
+
+private:
+    int m_i;
+};
+
+TEST(FunctionalTest, MemberFunctionBind)
+{
+    A a(10);
+    Function<int ()> function1 = bind(&A::f, &a);
+    ASSERT_EQ(10, function1());
+
+    Function<int ()> function2 = bind(&A::addF, &a, 15);
+    ASSERT_EQ(25, function2());
+}
+
 } // namespace TestWebKitAPI

@@ -1,5 +1,20 @@
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
+        bind should handle member functions
+        https://bugs.webkit.org/show_bug.cgi?id=74529
+
+        Reviewed by Sam Weinig.
+
+        Add tests.
+
+        * TestWebKitAPI/Tests/WTF/Functional.cpp:
+        (TestWebKitAPI::A::A):
+        (TestWebKitAPI::A::f):
+        (TestWebKitAPI::A::addF):
+        (TestWebKitAPI::TEST):
+
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
         Add unary and binary bind overloads
         https://bugs.webkit.org/show_bug.cgi?id=74524
 

@@ -96,6 +96,42 @@ private:
     R (*m_function)(P0, P1);
 };
 
+template<typename R, typename C> class FunctionWrapper<R (C::*)()> {
+public:
+    typedef R ResultType;
+
+    explicit FunctionWrapper(R (C::*function)())
+        : m_function(function)
+    {
+    }
+
+    R operator()(C* c)
+    {
+        return (c->*m_function)();
+    }
+
+private:
+    R (C::*m_function)();
+};
+
+template<typename R, typename C, typename P0> class FunctionWrapper<R (C::*)(P0)> {
+public:
+    typedef R ResultType;
+
+    explicit FunctionWrapper(R (C::*function)(P0))
+        : m_function(function)
+    {
+    }
+
+    R operator()(C* c, P0 p0)
+    {
+        return (c->*m_function)(p0);
+    }
+
+private:
+    R (C::*m_function)(P0);
+};
+
 class FunctionImplBase : public ThreadSafeRefCounted<FunctionImplBase> {
 public:
     virtual ~FunctionImplBase() { }

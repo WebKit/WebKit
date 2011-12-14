@@ -1,3 +1,15 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        bind should handle member functions
+        https://bugs.webkit.org/show_bug.cgi?id=74529
+
+        Reviewed by Sam Weinig.
+
+        Add FunctionWrapper partial specializations for member function pointers.
+
+        * wtf/Functional.h:
+        (WTF::C::):
+
 2011-12-14  Gavin Barraclough  <barraclough@apple.com>
 
         DFG relies on returning a struct in registers
