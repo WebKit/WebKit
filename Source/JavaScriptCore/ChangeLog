@@ -1,3 +1,26 @@
+2011-12-13  Geoffrey Garen  <ggaren@apple.com>
+
+        <rdar://problem/10577239> GC Crash introduced in r102545
+
+        Reviewed by Gavin Barraclough.
+        
+        MarkedArgumentBuffer was still marking items in forwards order, even though
+        the argument order has been reversed.
+        
+        I fixed this bug, and replaced address calculation code with some helper
+        functions -- mallocBase() and slotFor() -- so it stays fixed everywhere.
+
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::markLists):
+        (JSC::MarkedArgumentBuffer::slowAppend):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::~MarkedArgumentBuffer):
+        (JSC::MarkedArgumentBuffer::at):
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::MarkedArgumentBuffer::last):
+        (JSC::MarkedArgumentBuffer::slotFor):
+        (JSC::MarkedArgumentBuffer::mallocBase):
+
 2011-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit for UInt32ToNumber should roll forward, not roll backward

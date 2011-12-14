@@ -58,8 +58,8 @@ namespace JSC {
             if (m_markSet)
                 m_markSet->remove(this);
 
-            if (m_capacity != static_cast<int>(inlineCapacity))
-                delete [] &m_buffer[-(m_capacity - 1)];
+            if (EncodedJSValue* base = mallocBase())
+                delete [] base;
         }
 
         size_t size() const { return m_size; }
@@ -70,7 +70,7 @@ namespace JSC {
             if (i >= m_size)
                 return jsUndefined();
 
-            return JSValue::decode(m_buffer[-i]);
+            return JSValue::decode(slotFor(i));
         }
 
         void clear()
@@ -83,7 +83,7 @@ namespace JSC {
             if (m_size >= m_capacity)
                 return slowAppend(v);
 
-            m_buffer[-m_size] = JSValue::encode(v);
+            slotFor(m_size) = JSValue::encode(v);
             ++m_size;
         }
 
@@ -96,13 +96,25 @@ namespace JSC {
         JSValue last() 
         {
             ASSERT(m_size);
-            return JSValue::decode(m_buffer[-(m_size - 1)]);
+            return JSValue::decode(slotFor(m_size - 1));
         }
         
         static void markLists(HeapRootVisitor&, ListSet&);
 
     private:
         void slowAppend(JSValue);
+        
+        EncodedJSValue& slotFor(int item) const
+        {
+            return m_buffer[-item];
+        }
+        
+        EncodedJSValue* mallocBase()
+        {
+            if (m_capacity == static_cast<int>(inlineCapacity))
+                return 0;
+            return &slotFor(m_capacity - 1);
+        }
         
         int m_size;
         int m_capacity;

@@ -46,7 +46,8 @@ void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootVisitor, ListSet& 
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedArgumentBuffer* list = *it;
-        heapRootVisitor.visit(reinterpret_cast<JSValue*>(list->m_buffer), list->m_size);
+        for (int i = 0; i < list->m_size; ++i)
+            heapRootVisitor.visit(reinterpret_cast<JSValue*>(&list->slotFor(i)));
     }
 }
 
@@ -57,13 +58,13 @@ void MarkedArgumentBuffer::slowAppend(JSValue v)
     for (int i = 0; i < m_capacity; ++i)
         newBuffer[-i] = m_buffer[-i];
 
-    if (m_capacity != static_cast<int>(inlineCapacity))
-        delete [] &m_buffer[-(m_capacity - 1)];
+    if (EncodedJSValue* base = mallocBase())
+        delete [] base;
 
     m_buffer = newBuffer;
     m_capacity = newCapacity;
 
-    m_buffer[-m_size] = JSValue::encode(v);
+    slotFor(m_size) = JSValue::encode(v);
     ++m_size;
 
     if (m_markSet)
@@ -75,7 +76,7 @@ void MarkedArgumentBuffer::slowAppend(JSValue v)
     // our Vector's inline capacity, though, our values move to the 
     // heap, where they do need explicit marking.
     for (int i = 0; i < m_size; ++i) {
-        Heap* heap = Heap::heap(JSValue::decode(m_buffer[-i]));
+        Heap* heap = Heap::heap(JSValue::decode(slotFor(i)));
         if (!heap)
             continue;
 
