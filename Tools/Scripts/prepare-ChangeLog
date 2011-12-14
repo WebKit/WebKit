@@ -72,26 +72,26 @@ sub findChangeLogs($);
 sub getLatestChangeLogs($);
 sub resolveConflictedChangeLogs($);
 sub generateNewChangeLogs($$$$$);
-sub printDiff($);
+sub printDiff($$$);
 sub openChangeLogs($);
 sub firstDirectoryOrCwd(\%);
-sub diffFromToString();
-sub diffCommand(@);
-sub statusCommand(@);
-sub createPatchCommand($);
-sub diffHeaderFormat();
+sub diffFromToString($$);
+sub diffCommand($$$);
+sub statusCommand($$$);
+sub createPatchCommand($$$);
+sub diffHeaderFormat($$);
 sub findOriginalFileFromSvn($);
 sub determinePropertyChanges($$$);
 sub pluralizeAndList($$@);
-sub generateFileList(\%);
-sub generateFunctionLists($$);
+sub generateFileList(\%$$);
+sub generateFunctionLists($$$$);
 sub isUnmodifiedStatus($);
 sub isModifiedStatus($);
-sub isAddedStatus($);
-sub isConflictStatus($);
-sub statusDescription($$$$);
+sub isAddedStatus($$);
+sub isConflictStatus($$$);
+sub statusDescription($$$$$$);
 sub propertyChangeDescription($);
-sub extractLineRange($);
+sub extractLineRange($$$);
 sub testListForChangeLog(@);
 sub get_function_line_ranges($$);
 sub get_function_line_ranges_for_c($$);
@@ -173,7 +173,7 @@ my $isSVN = isSVNDirectory(firstDirectoryOrCwd(%paths));
 $isSVN || $isGit || die "Couldn't determine your version control system.";
 
 # Find the list of modified files
-my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths);
+my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths, $isGit, $isSVN);
 
 if (!@$changedFiles && !@$conflictFiles && !keys %$functionLists) {
     print STDERR "  No changes found.\n";
@@ -186,7 +186,7 @@ if (@$conflictFiles) {
     exit 1;
 }
 
-generateFunctionLists($changedFiles, $functionLists);
+generateFunctionLists($changedFiles, $functionLists, $isGit, $isSVN);
 
 # Get some parameters for the ChangeLog we are about to write.
 $name = changeLogNameFromArgs($name);
@@ -223,7 +223,7 @@ if ($writeChangeLogs) {
 
 # Write out another diff.
 if ($spewDiff && @$changedFiles) {
-    printDiff($changedFiles);
+    printDiff($changedFiles, $isGit, $isSVN);
 }
 
 # Open ChangeLogs.
@@ -235,9 +235,9 @@ if ($openChangeLogs && @$changeLogs) {
 exit;
 
 
-sub generateFunctionLists($$)
+sub generateFunctionLists($$$$)
 {
-    my ($changedFiles, $functionLists) = @_;
+    my ($changedFiles, $functionLists, $isGit, $isSVN) = @_;
 
     my %changed_line_ranges;
     if (@$changedFiles) {
@@ -245,11 +245,11 @@ sub generateFunctionLists($$)
         # Use line numbers from the "after" side of each diff.
         print STDERR "  Reviewing diff to determine which lines changed.\n";
         my $file;
-        open DIFF, "-|", diffCommand(@$changedFiles) or die "The diff failed: $!.\n";
+        open DIFF, "-|", diffCommand($changedFiles, $isGit, $isSVN) or die "The diff failed: $!.\n";
         while (<DIFF>) {
-            $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat();
+            $file = makeFilePathRelative($1) if $_ =~ diffHeaderFormat($isGit, $isSVN);
             if (defined $file) {
-                my ($start, $end) = extractLineRange($_);
+                my ($start, $end) = extractLineRange($_, $isGit, $isSVN);
                 if ($start >= 0 && $end >= 0) {
                     push @{$changed_line_ranges{$file}}, [ $start, $end ];
                 } elsif (/DO_NOT_COMMIT/) {
@@ -520,13 +520,13 @@ sub generateNewChangeLogs($$$$$)
     }
 }
 
-sub printDiff($)
+sub printDiff($$$)
 {
-    my ($changedFiles) = @_;
+    my ($changedFiles, $isGit, $isSVN) = @_;
 
     print STDERR "  Running diff to help you write the ChangeLog entries.\n";
     local $/ = undef; # local slurp mode
-    open DIFF, "-|", createPatchCommand("'" . join ("' '", @$changedFiles) . "'") or die "The diff failed: $!.\n";
+    open DIFF, "-|", createPatchCommand("'" . join ("' '", @$changedFiles) . "'", $isGit, $isSVN) or die "The diff failed: $!.\n";
     print <DIFF>;
     close DIFF;
 }
@@ -1434,8 +1434,10 @@ sub processPaths(\@)
     return %result;
 }
 
-sub diffFromToString()
+sub diffFromToString($$)
 {
+    my ($isGit, $isSVN) = @_;
+
     return "" if $isSVN;
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
@@ -1444,56 +1446,58 @@ sub diffFromToString()
     return "HEAD" if $isGit;
 }
 
-sub diffCommand(@)
+sub diffCommand($$$)
 {
-    my @paths = @_;
+    my ($paths, $isGit, $isSVN) = @_;
 
-    my $pathsString = "'" . join("' '", @paths) . "'"; 
+    my $pathsString = "'" . join("' '", @$paths) . "'"; 
 
     my $command;
     if ($isSVN) {
         $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
     } elsif ($isGit) {
-        $command = "$GIT diff --no-ext-diff -U0 " . diffFromToString();
+        $command = "$GIT diff --no-ext-diff -U0 " . diffFromToString($isGit, $isSVN);
         $command .= " -- $pathsString" unless $gitCommit or $mergeBase;
     }
 
     return $command;
 }
 
-sub statusCommand(@)
+sub statusCommand($$$)
 {
-    my @files = @_;
+    my ($paths, $isGit, $isSVN) = @_;
 
-    my $filesString = "\"" . join ("\" \"", @files) . "\"";
+    my $filesString = "\"" . join ("\" \"", keys %$paths) . "\"";
     my $command;
     if ($isSVN) {
         $command = "$SVN stat $filesString";
     } elsif ($isGit) {
-        $command = "$GIT diff -r --name-status -M -C " . diffFromToString();
+        $command = "$GIT diff -r --name-status -M -C " . diffFromToString($isGit, $isSVN);
         $command .= " -- $filesString" unless $gitCommit;
     }
 
     return "$command 2>&1";
 }
 
-sub createPatchCommand($)
+sub createPatchCommand($$$)
 {
-    my ($changedFilesString) = @_;
+    my ($changedFilesString, $isGit, $isSVN) = @_;
 
     my $command;
     if ($isSVN) {
         $command = "'$FindBin::Bin/svn-create-patch' $changedFilesString";
     } elsif ($isGit) {
-        $command = "$GIT diff -M -C " . diffFromToString();
+        $command = "$GIT diff -M -C " . diffFromToString($isGit, $isSVN);
         $command .= " -- $changedFilesString" unless $gitCommit;
     }
 
     return $command;
 }
 
-sub diffHeaderFormat()
+sub diffHeaderFormat($$)
 {
+    my ($isGit, $isSVN) = @_;
+
     return qr/^Index: (\S+)[\r\n]*$/ if $isSVN;
     return qr/^diff --git a\/.+ b\/(.+)$/ if $isGit;
 }
@@ -1590,16 +1594,16 @@ sub pluralizeAndList($$@)
     return "$plural " . join(", ", @items[0 .. $#items - 1]) . " and " . $items[-1];
 }
 
-sub generateFileList(\%)
+sub generateFileList(\%$$)
 {
-    my ($paths) = @_;
+    my ($paths, $isGit, $isSVN) = @_;
 
     my @changedFiles;
     my @conflictFiles;
     my %functionLists;
     my @addedRegressionTests;
     print STDERR "  Running status to find changed, added, or removed files.\n";
-    open STAT, "-|", statusCommand(keys %$paths) or die "The status failed: $!.\n";
+    open STAT, "-|", statusCommand($paths, $isGit, $isSVN) or die "The status failed: $!.\n";
     while (<STAT>) {
         my $status;
         my $propertyStatus;
@@ -1623,7 +1627,7 @@ sub generateFileList(\%)
             if ($matches) {
                 $file = normalizePath($file);
                 $original = findOriginalFileFromSvn($file) if substr($_, 3, 1) eq "+";
-                my $isAdd = isAddedStatus($status);
+                my $isAdd = isAddedStatus($status, $isGit);
                 $propertyChanges = determinePropertyChanges($file, $isAdd, $original) if isModifiedStatus($propertyStatus) || $isAdd;
             } else {
                 print;  # error output from svn stat
@@ -1647,22 +1651,22 @@ sub generateFileList(\%)
 
         $file = makeFilePathRelative($file);
 
-        if (isModifiedStatus($status) || isAddedStatus($status) || isModifiedStatus($propertyStatus)) {
+        if (isModifiedStatus($status) || isAddedStatus($status, $isGit) || isModifiedStatus($propertyStatus)) {
             my @components = File::Spec->splitdir($file);
             if ($components[0] eq "LayoutTests") {
                 push @addedRegressionTests, $file
-                    if isAddedStatus($status)
+                    if isAddedStatus($status, $isGit)
                        && $file =~ /\.([a-zA-Z]+)$/
                        && $supportedTestExtensions{lc($1)}
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
             }
             push @changedFiles, $file if $components[$#components] ne "ChangeLog";
-        } elsif (isConflictStatus($status) || isConflictStatus($propertyStatus)) {
+        } elsif (isConflictStatus($status, $isGit, $isSVN) || isConflictStatus($propertyStatus, $isGit, $isSVN)) {
             push @conflictFiles, $file;
         }
         if (basename($file) ne "ChangeLog") {
-            my $description = statusDescription($status, $propertyStatus, $original, $propertyChanges);
+            my $description = statusDescription($status, $propertyStatus, $original, $propertyChanges, $isGit, $isSVN);
             $functionLists{$file} = $description if defined $description;
         }
     }
@@ -1692,9 +1696,9 @@ sub isModifiedStatus($)
     return $statusCodes{$status};
 }
 
-sub isAddedStatus($)
+sub isAddedStatus($$)
 {
-    my ($status) = @_;
+    my ($status, $isGit) = @_;
 
     my %statusCodes = (
         "A" => 1,
@@ -1705,9 +1709,9 @@ sub isAddedStatus($)
     return $statusCodes{$status};
 }
 
-sub isConflictStatus($)
+sub isConflictStatus($$$)
 {
-    my ($status) = @_;
+    my ($status, $isGit, $isSVN) = @_;
 
     my %svn = (
         "C" => 1,
@@ -1722,9 +1726,9 @@ sub isConflictStatus($)
     return $git{$status} if $isGit;
 }
 
-sub statusDescription($$$$)
+sub statusDescription($$$$$$)
 {
-    my ($status, $propertyStatus, $original, $propertyChanges) = @_;
+    my ($status, $propertyStatus, $original, $propertyChanges, $isGit, $isSVN) = @_;
 
     my $propertyDescription = defined $propertyChanges ? propertyChangeDescription($propertyChanges) : "";
 
@@ -1746,7 +1750,7 @@ sub statusDescription($$$$)
     $description = sprintf($git{$status}, $original) if $isGit && exists $git{$status};
     return unless defined $description;
 
-    $description .= $propertyDescription unless isAddedStatus($status);
+    $description .= $propertyDescription unless isAddedStatus($status, $isGit);
     return $description;
 }
 
@@ -1770,9 +1774,9 @@ sub propertyChangeDescription($)
     return $description;
 }
 
-sub extractLineRange($)
+sub extractLineRange($$$)
 {
-    my ($string) = @_;
+    my ($string, $isGit, $isSVN) = @_;
 
     my ($start, $end) = (-1, -1);
 

@@ -1,3 +1,32 @@
+2011-12-14  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] In prepare-ChangeLog, make $isGit and $isSVN be used only
+        through parameter passing
+        https://bugs.webkit.org/show_bug.cgi?id=74485
+
+        Reviewed by Ryosuke Niwa.
+
+        We are planning to write unit-tests for prepare-ChangeLog in a run-leaks_unittest
+        manner. This bug is one of the incremental refactorings to remove all top-level
+        code and global variables from prepare-ChangeLog. In this patch,
+        we make the following global variables be used only through parameter passing.
+            - $isGit
+            - $isSVN
+
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists):
+        (printDiff):
+        (diffFromToString):
+        (diffCommand):
+        (statusCommand):
+        (createPatchCommand):
+        (diffHeaderFormat):
+        (generateFileList):
+        (isAddedStatus):
+        (isConflictStatus):
+        (statusDescription):
+        (extractLineRange):
+
 2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] DeviceOrientationClientMockQt should be removed in favor of DeviceOrientationClientMock
