@@ -34,6 +34,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -61,7 +62,7 @@ public:
 
     const CCLayerTilingData& operator=(const CCLayerTilingData&);
 
-    class Tile {
+    class Tile: public RefCounted<Tile> {
         WTF_MAKE_NONCOPYABLE(Tile);
     public:
         Tile() : m_i(-1), m_j(-1) { }
@@ -84,10 +85,13 @@ public:
         static void constructDeletedValue(TileMapKey& slot) { slot = std::make_pair(-2, -2); }
         static bool isDeletedValue(TileMapKey value) { return value.first == -2 && value.second == -2; }
     };
-    typedef HashMap<TileMapKey, OwnPtr<Tile>, DefaultHash<TileMapKey>::Hash, TileMapKeyTraits> TileMap;
+    // FIXME: The mapped value in TileMap should really be an OwnPtr, as the
+    // refcount of a Tile should never be more than 1. However, HashMap
+    // doesn't easily support OwnPtr as a value.
+    typedef HashMap<TileMapKey, RefPtr<Tile>, DefaultHash<TileMapKey>::Hash, TileMapKeyTraits> TileMap;
 
-    void addTile(PassOwnPtr<Tile>, int, int);
-    PassOwnPtr<Tile> takeTile(int, int);
+    void addTile(PassRefPtr<Tile>, int, int);
+    PassRefPtr<Tile> takeTile(int, int);
     Tile* tileAt(int, int) const;
     const TileMap& tiles() const { return m_tiles; }
 
