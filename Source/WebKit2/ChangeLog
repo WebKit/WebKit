@@ -1,3 +1,17 @@
+2011-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Page size should be 0,0 when view widget is not realized
+        https://bugs.webkit.org/show_bug.cgi?id=74523
+
+        Reviewed by Martin Robinson.
+
+        We currently return 1,1 because GTK+ initializes widget allocation
+        as -1,-1,1,1.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewSize): Check whether widget is
+        realized and return IntSize() in that case.
+
 2011-12-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Move download handling out of QtWebPageProxy

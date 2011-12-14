@@ -87,6 +87,8 @@ void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCor
 
 WebCore::IntSize PageClientImpl::viewSize()
 {
+    if (!gtk_widget_get_realized(m_viewWidget))
+        return IntSize();
     GtkAllocation allocation;
     gtk_widget_get_allocation(m_viewWidget, &allocation);
     return IntSize(allocation.width, allocation.height);
