@@ -1,3 +1,418 @@
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98413
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            Plug-ins have no way to find out when the device scale factor changes
+            https://bugs.webkit.org/show_bug.cgi?id=67226
+
+            Reviewed by Sam Weinig.
+
+            Update test to check that the scale factor is updated correctly.
+
+            * platform/mac-wk2/plugins/contents-scale-factor.html:
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98403
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            Plug-ins have to use JavaScript to find out the current device scale factor
+            https://bugs.webkit.org/show_bug.cgi?id=67225
+            <rdar://problem/10048258>
+
+            Reviewed by Darin Adler.
+
+            Add tests.
+
+            * platform/mac-wk2/plugins/contents-scale-factor-expected.txt: Added.
+            * platform/mac-wk2/plugins/contents-scale-factor.html: Added.
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95386
+
+    2011-09-17  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68307
+
+            Crash in border image cssText. Make sure to null check all the components, since they're all
+            optional now.
+
+            Reviewed by Sam Weinig.
+
+            * fast/borders/border-image-slice-omission.html: Added.
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95129
+
+    2011-09-14  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=52736
+
+            Tiles were not being properly centered within border image sides for the "repeat"
+            keyword. This patch fixes the buggy math behind the pattern tiling to actually get
+            the initial phases correct.
+
+            Reviewed by Sam Weinig.
+
+            * fast/borders/border-image-massive-scale.html: Added.
+            * fast/borders/border-image-scaled-gradient.html: Added.
+            * platform/mac/fast/borders/border-image-massive-scale-expected.png: Added.
+            * platform/mac/fast/borders/border-image-massive-scale-expected.txt: Added.
+            * platform/mac/fast/borders/border-image-outset-expected.png:
+            * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.png:
+            * platform/mac/fast/borders/border-image-outset-split-inline-expected.png:
+            * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.png:
+            * platform/mac/fast/borders/border-image-scaled-gradient-expected.png: Added.
+            * platform/mac/fast/borders/border-image-scaled-gradient-expected.txt: Added.
+            * platform/mac/fast/borders/border-image-side-reduction-expected.png:
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95121
+
+    2011-09-14  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68103
+
+            Centered portions of border images don't render correctly. Make the tile scale factor have to be
+            explicitly passed in and modify paintNinePieceImage to compute it for all sides. The attempts to
+            implicitly compute the scale for the pattern based off the source and destination rects just don't
+            work, since the center image rects don't provide the right information to be able to infer the
+            scale factor.
+
+            Reviewed by Sam Weinig.
+
+            Reset all the existing fast/borders pixel results to Lion for these changes.
+
+            * platform/mac/fast/borders/bidi-002-expected.png:
+            * platform/mac/fast/borders/bidi-009a-expected.png:
+            * platform/mac/fast/borders/bidi-012-expected.png:
+            * platform/mac/fast/borders/block-mask-overlay-image-expected.png:
+            * platform/mac/fast/borders/border-antialiasing-expected.png:
+            * platform/mac/fast/borders/border-color-inherit-expected.png:
+            * platform/mac/fast/borders/border-fit-expected.png:
+            * platform/mac/fast/borders/border-image-01-expected.png:
+            * platform/mac/fast/borders/border-image-border-radius-expected.png:
+            * platform/mac/fast/borders/border-image-longhand-expected.png:
+            * platform/mac/fast/borders/border-image-omit-right-slice-expected.png:
+            * platform/mac/fast/borders/border-image-outset-expected.png:
+            * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.png:
+            * platform/mac/fast/borders/border-image-repeat-expected.png:
+            * platform/mac/fast/borders/border-image-rotate-transform-expected.png:
+            * platform/mac/fast/borders/border-image-scale-transform-expected.png:
+            * platform/mac/fast/borders/border-image-scaled-expected.png:
+            * platform/mac/fast/borders/border-image-scrambled-expected.png:
+            * platform/mac/fast/borders/border-image-slices-expected.png:
+            * platform/mac/fast/borders/border-image-source-expected.png:
+            * platform/mac/fast/borders/border-radius-circle-expected.png:
+            * platform/mac/fast/borders/border-radius-constraints-expected.png:
+            * platform/mac/fast/borders/border-radius-different-width-001-expected.png:
+            * platform/mac/fast/borders/border-radius-groove-01-expected.png:
+            * platform/mac/fast/borders/border-radius-groove-02-expected.png:
+            * platform/mac/fast/borders/border-radius-groove-03-expected.png:
+            * platform/mac/fast/borders/border-radius-huge-assert-expected.png:
+            * platform/mac/fast/borders/border-radius-inline-flow-expected.png:
+            * platform/mac/fast/borders/border-radius-inset-outset-expected.png:
+            * platform/mac/fast/borders/border-radius-split-inline-expected.png:
+            * platform/mac/fast/borders/border-radius-wide-border-01-expected.png:
+            * platform/mac/fast/borders/border-radius-wide-border-02-expected.png:
+            * platform/mac/fast/borders/border-radius-wide-border-03-expected.png:
+            * platform/mac/fast/borders/border-radius-wide-border-04-expected.png:
+            * platform/mac/fast/borders/border-styles-split-expected.png:
+            * platform/mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+            * platform/mac/fast/borders/borderRadiusArcs01-expected.png:
+            * platform/mac/fast/borders/borderRadiusDashed01-expected.png:
+            * platform/mac/fast/borders/borderRadiusDashed02-expected.png:
+            * platform/mac/fast/borders/borderRadiusDashed03-expected.png:
+            * platform/mac/fast/borders/borderRadiusDashed04-expected.png:
+            * platform/mac/fast/borders/borderRadiusDashed05-expected.png:
+            * platform/mac/fast/borders/borderRadiusDashed06-expected.png:
+            * platform/mac/fast/borders/borderRadiusDotted01-expected.png:
+            * platform/mac/fast/borders/borderRadiusDotted02-expected.png:
+            * platform/mac/fast/borders/borderRadiusDotted03-expected.png:
+            * platform/mac/fast/borders/borderRadiusDotted04-expected.png:
+            * platform/mac/fast/borders/borderRadiusDotted05-expected.png:
+            * platform/mac/fast/borders/borderRadiusDotted06-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble01-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble02-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble03-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble04-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble05-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble06-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble07-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble08-expected.png:
+            * platform/mac/fast/borders/borderRadiusDouble09-expected.png:
+            * platform/mac/fast/borders/borderRadiusGroove01-expected.png:
+            * platform/mac/fast/borders/borderRadiusGroove02-expected.png:
+            * platform/mac/fast/borders/borderRadiusInset01-expected.png:
+            * platform/mac/fast/borders/borderRadiusInvalidColor-expected.png:
+            * platform/mac/fast/borders/borderRadiusOutset01-expected.png:
+            * platform/mac/fast/borders/borderRadiusRidge01-expected.png:
+            * platform/mac/fast/borders/borderRadiusSolid01-expected.png:
+            * platform/mac/fast/borders/borderRadiusSolid02-expected.png:
+            * platform/mac/fast/borders/borderRadiusSolid03-expected.png:
+            * platform/mac/fast/borders/borderRadiusSolid04-expected.png:
+            * platform/mac/fast/borders/different-color-borders-expected.png:
+            * platform/mac/fast/borders/fieldsetBorderRadius-expected.png:
+            * platform/mac/fast/borders/inline-mask-overlay-image-expected.png:
+            * platform/mac/fast/borders/mixed-border-styles-expected.png:
+            * platform/mac/fast/borders/mixed-border-styles-radius-expected.png:
+            * platform/mac/fast/borders/mixed-border-styles-radius2-expected.png:
+            * platform/mac/fast/borders/outline-alpha-block-expected.png:
+            * platform/mac/fast/borders/outline-alpha-inline-expected.png:
+            * platform/mac/fast/borders/outline-offset-min-assert-expected.png:
+            * platform/mac/fast/borders/rtl-border-01-expected.png:
+            * platform/mac/fast/borders/rtl-border-02-expected.png:
+            * platform/mac/fast/borders/rtl-border-03-expected.png:
+            * platform/mac/fast/borders/rtl-border-04-expected.png:
+            * platform/mac/fast/borders/rtl-border-05-expected.png:
+            * platform/mac/fast/borders/table-borders-expected.png:
+            * platform/mac/fast/borders/webkit-border-radius-expected.png:
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95096
+
+    2011-09-13  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68050
+
+            Regressions in some layout tests from making border/mask/reflection nine-piece-image
+            parsing match the spec, which allows any of the pieces to be omitted and to also be
+            specifiable in any order.
+
+            When the higher level code suddenly allowed the image slices to be omitted, the fixup
+            for legacy compatibility for reflections and masks in the parseBorderImageSlice function
+            no longer happened because that function no longer got called.
+
+            The fix is to properly set the defaults to include the "fill" keyword, so the fixup is
+            applied to the NinePieceImages you create before you ever map anything in from the rules.
+
+            This also has the side effect of fixing -webkit-max-box-image-slice to actually dump as
+            "0 fill" instead of just "0", which is the correct initial value for this property.
+
+            Reviewed by Adam Roben.
+
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * svg/css/getComputedStyle-basic-expected.txt:
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95058
+
+    2011-09-13  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68040
+
+            Make sure border image sub-properties can be specified in any order.
+
+            Reviewed by Beth Dakin.
+
+            * fast/borders/border-image-scrambled.html: Added.
+            * platform/mac/fast/borders/border-image-scrambled-expected.png: Added.
+            * platform/mac/fast/borders/border-image-scrambled-expected.txt: Added.
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94912
+
+    2011-09-09  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67861
+
+            Implement border-image-outset (and the mask equivalents).
+
+            Reviewed by Beth Dakin.
+
+            * fast/borders/block-mask-overlay-image-outset.html: Added.
+            * fast/borders/block-mask-overlay-image.html~: Added.
+            * fast/borders/border-image-outset-in-shorthand.html: Added.
+            * fast/borders/border-image-outset-split-inline-vertical-lr.html: Added.
+            * fast/borders/border-image-outset-split-inline.html: Added.
+            * fast/borders/border-image-outset.html: Added.
+            * fast/borders/inline-mask-overlay-image-outset-vertical-rl.html: Added.
+            * fast/borders/inline-mask-overlay-image-outset.html: Added.
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+            * fast/reflections/reflection-computed-style-expected.txt:
+            * fast/reflections/reflection-masks-outset.html: Added.
+            * platform/mac/fast/borders/block-mask-overlay-image-outset-expected.png: Added.
+            * platform/mac/fast/borders/block-mask-overlay-image-outset-expected.txt: Added.
+            * platform/mac/fast/borders/border-image-outset-expected.png: Added.
+            * platform/mac/fast/borders/border-image-outset-expected.txt: Added.
+            * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.png: Added.
+            * platform/mac/fast/borders/border-image-outset-in-shorthand-expected.txt: Added.
+            * platform/mac/fast/borders/border-image-outset-split-inline-expected.png: Added.
+            * platform/mac/fast/borders/border-image-outset-split-inline-expected.txt: Added.
+            * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.png: Added.
+            * platform/mac/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt: Added.
+            * platform/mac/fast/borders/inline-mask-overlay-image-outset-expected.png: Added.
+            * platform/mac/fast/borders/inline-mask-overlay-image-outset-expected.txt: Added.
+            * platform/mac/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.png: Added.
+            * platform/mac/fast/borders/inline-mask-overlay-image-outset-vertical-rl-expected.txt: Added.
+            * platform/mac/fast/reflections/reflection-masks-outset-expected.png: Added.
+            * platform/mac/fast/reflections/reflection-masks-outset-expected.txt: Added.
+            * svg/css/getComputedStyle-basic-expected.txt:
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94597
+
+    2011-09-06  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67672
+
+            Improve background-size parsing. Make it actually dump auto values properly, and also make it omit
+            auto if it is the second value. Fix the parsing to not create a value list when only a singleton value
+            is specified.
+
+            Reviewed by Beth Dakin.
+
+            Covered well by existing tests.
+
+            * fast/backgrounds/size/parsing-background-size-values-expected.txt:
+            * fast/backgrounds/size/parsing-inherit-expected.txt:
+            * fast/backgrounds/size/resources/parsing-background-size-values.js:
+            * fast/backgrounds/size/resources/parsing-inherit.js:
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * fast/css/getComputedStyle/getComputedStyle-background-size-expected.txt:
+            * fast/css/value-list-out-of-bounds-crash.html:
+            * svg/css/getComputedStyle-basic-expected.txt:
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94595
+
+    2011-09-06  David Hyatt  <hyatt@apple.com>
+
+            Update some layout test results following the improved Pair parsing code that landed in r94593.
+
+            * fast/backgrounds/size/parsing-background-size-values-expected.txt:
+            * fast/backgrounds/size/resources/parsing-background-size-values.js:
+            * fast/reflections/reflection-computed-style-expected.txt:
+            * inspector/elements/elements-panel-styles-expected.txt:
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94593
+
+    2011-09-06  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67657
+
+            Implement border-image-width. This patch stops short of converting -webkit-border-image to a shorthand.
+            I'll do that in the next patch.
+
+            Note that unlike the -webkit-border-image syntax, border-image-width does not actually set the border
+            width values. It simply makes cuts into the border image drawing area (which for now is just the border
+            box, but that will change once border-image-outset is implemented).
+
+            This means we need additional storage for the slices, since they are now separate from the border widths.
+
+            For backwards compatibility, -webkit-border-image will continue to set the border widths when
+            border-image-width is specified in the -webkit-border-image shorthand.
+
+            Reviewed by Beth Dakin.
+
+            * fast/borders/border-image-longhand.html: Added.
+            * fast/borders/border-image-scaled.html: Added.
+            * fast/borders/border-image-side-reduction.html: Added.
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+            * fast/css/large-value-csstext-expected.txt:
+            * svg/css/getComputedStyle-basic-expected.txt:
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94420
+
+    2011-09-01  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67431
+
+            Implement border-image-repeat. Similar to how border-image-slice was implemented, the parsing of the two
+            repeat values has been moved into separate functions. The value is represented as a Pair (similar to how we
+            handle border radius).
+
+            Reviewed by Beth Dakin.
+
+            Added fast/borders/border-image-repeat.html.
+
+            * fast/borders/border-image-repeat.html: Added.
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * platform/mac/fast/borders/border-image-repeat-expected.png: Added.
+            * platform/mac/fast/borders/border-image-repeat-expected.txt: Added.
+            * svg/css/getComputedStyle-basic-expected.txt:
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94299
+
+    2011-08-31  David Hyatt  <hyatt@apple.com>
+
+            Implement border-image-slice. This will eventually be a component of the new border-image shorthand
+            property. It holds the cuts that you make into the border image along with a new optional "fill"
+            keyword that indicates whether or not the center should be filled with the middle slice of the image.
+
+            By default -webkit-border-image has always filled, but this does not match the specification. To preserve
+            backwards compatibility, -webkit-border-image will continue to fill by default, but this does slightly affect
+            computed style results, since the "fill" keyword will now be included in property dumps.
+
+            Reviewed by Beth Dakin.
+
+            Added fast/borders/border-image-slices.html.
+
+            * fast/borders/border-image-slices.html: Added.
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-with-zoom-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * fast/css/getComputedStyle/getComputedStyle-border-image-expected.txt:
+            * fast/css/uri-token-parsing-expected.txt:
+            * fast/css/uri-token-parsing.html:
+            * platform/mac/fast/borders/border-image-slices-expected.png: Added.
+            * platform/mac/fast/borders/border-image-slices-expected.txt: Added.
+            * svg/css/getComputedStyle-basic-expected.txt:
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94206
+
+    2011-08-31  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67300
+
+            Add the new border-image-source property (and its corresponding analogue for masks, mask-box-image-source).
+            Change the border-image parsing code to no longer consider "none" to represent the entire border-image
+            expression, but instead to just mean "none" for the image component of the expression.
+
+            Change the pending image code for border-image and mask-box-image to use the new *-source properties when
+            loading the image so that they're considered the same.
+
+            This is the first step towards eliminating the border-image parsing code in favor of just parsing it as
+            a shorthand instead, but for now I'm implementing each property one by one, and once they're all there,
+            we can cut over to border-image as a true shorthand.
+
+            Reviewed by Beth Dakin.
+
+            Added fast/borders/border-image-source.html.
+
+            * fast/borders/border-image-source.html: Added.
+            * fast/css/getComputedStyle/computed-style-expected.txt:
+            * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+            * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         DFG global variable CSE mishandles the cross-global-object inlining corner case

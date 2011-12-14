@@ -259,7 +259,6 @@ private:
 
     String m_assetURL;
     MediaPlayer::Preload m_preload;
-    FloatSize m_scaleFactor;
 
     IntSize m_cachedNaturalSize;
     mutable float m_cachedMaxTimeLoaded;

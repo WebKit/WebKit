@@ -79,7 +79,8 @@ private:
     virtual PlatformLayer* pluginLayer();
 #endif
     virtual bool isTransparent();
-    virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void deprecatedGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange();
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
@@ -105,6 +106,7 @@ private:
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
+    virtual void contentsScaleFactorChanged(float);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
 #endif
@@ -137,15 +139,14 @@ private:
     virtual bool isOnActivePage() const;
     virtual void disconnectFromPage() { m_page = 0; }
     virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
-    virtual void scrollbarStyleChanged();
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
 
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working. 
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const;
 
     PluginController* m_pluginController;
 
-    // In window coordinates.
-    WebCore::IntRect m_frameRect;
+    WebCore::IntSize m_pluginSize;
 
     WebCore::KURL m_sourceURL;
 

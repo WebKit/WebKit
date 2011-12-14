@@ -486,6 +486,7 @@ Could be worth adding to the API.
 - (BOOL)_postsAcceleratedCompositingNotifications;
 - (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag;
 - (BOOL)_isUsingAcceleratedCompositing;
+- (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context;
 
 // For DumpRenderTree
 - (BOOL)interactiveFormValidationEnabled;
@@ -558,6 +559,9 @@ Could be worth adding to the API.
 
 - (BOOL)_useFixedLayout;
 - (NSSize)_fixedLayoutSize;
+
+- (void)_setCustomBackingScaleFactor:(CGFloat)overrideScaleFactor;
+- (CGFloat)_backingScaleFactor;
 
 // Deprecated. Use the methods in pending public above instead.
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;

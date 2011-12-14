@@ -127,6 +127,11 @@ void DrawingAreaProxyImpl::sizeDidChange()
     backingStoreStateDidChange(RespondImmediately);
 }
 
+void DrawingAreaProxyImpl::deviceScaleFactorDidChange()
+{
+    backingStoreStateDidChange(RespondImmediately);
+}
+
 void DrawingAreaProxyImpl::visibilityDidChange()
 {
     if (!m_webPageProxy->isViewVisible()) {
@@ -215,7 +220,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
 #endif
 
     // If we have a backing store the right size, reuse it.
-    if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->scaleFactor() != updateInfo.scaleFactor))
+    if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor))
         m_backingStore = nullptr;
     incorporateUpdate(updateInfo);
 }
@@ -252,7 +257,7 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         return;
 
     if (!m_backingStore)
-        m_backingStore = BackingStore::create(updateInfo.viewSize, updateInfo.scaleFactor, m_webPageProxy);
+        m_backingStore = BackingStore::create(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
 
     m_backingStore->incorporateUpdate(updateInfo);
 
@@ -292,7 +297,7 @@ void DrawingAreaProxyImpl::sendUpdateBackingStoreState(RespondImmediatelyOrNot r
 
     m_isWaitingForDidUpdateBackingStoreState = respondImmediatelyOrNot == RespondImmediately;
 
-    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_size, m_scrollOffset), m_webPageProxy->pageID());
+    m_webPageProxy->process()->send(Messages::DrawingArea::UpdateBackingStoreState(m_nextBackingStoreStateID, respondImmediatelyOrNot == RespondImmediately, m_webPageProxy->deviceScaleFactor(), m_size, m_scrollOffset), m_webPageProxy->pageID());
     m_scrollOffset = IntSize();
 
     if (m_isWaitingForDidUpdateBackingStoreState) {

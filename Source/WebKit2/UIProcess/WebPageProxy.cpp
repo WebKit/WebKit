@@ -121,7 +121,9 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_backForwardList(WebBackForwardList::create(this))
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
-    , m_viewScaleFactor(1)
+    , m_pageScaleFactor(1)
+    , m_intrinsicDeviceScaleFactor(1)
+    , m_customDeviceScaleFactor(0)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -1134,12 +1136,47 @@ void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZ
     process()->send(Messages::WebPage::SetPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor), m_pageID); 
 }
 
-void WebPageProxy::scaleWebView(double scale, const IntPoint& origin)
+void WebPageProxy::scalePage(double scale, const IntPoint& origin)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::ScaleWebView(scale, origin), m_pageID);
+    process()->send(Messages::WebPage::ScalePage(scale, origin), m_pageID);
+}
+
+void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
+{
+    if (!isValid())
+        return;
+
+    if (m_intrinsicDeviceScaleFactor == scaleFactor)
+        return;
+
+    m_intrinsicDeviceScaleFactor = scaleFactor;
+    m_drawingArea->deviceScaleFactorDidChange();
+}
+
+float WebPageProxy::deviceScaleFactor() const
+{
+    if (m_customDeviceScaleFactor)
+        return m_customDeviceScaleFactor;
+    return m_intrinsicDeviceScaleFactor;
+}
+
+void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
+{
+    if (!isValid())
+        return;
+
+    if (m_customDeviceScaleFactor == customScaleFactor)
+        return;
+
+    float oldScaleFactor = deviceScaleFactor();
+
+    m_customDeviceScaleFactor = customScaleFactor;
+
+    if (deviceScaleFactor() != oldScaleFactor)
+        m_drawingArea->deviceScaleFactorDidChange();
 }
 
 void WebPageProxy::setUseFixedLayout(bool fixed)
@@ -1168,9 +1205,9 @@ void WebPageProxy::setFixedLayoutSize(const IntSize& size)
     process()->send(Messages::WebPage::SetFixedLayoutSize(size), m_pageID);
 }
 
-void WebPageProxy::viewScaleFactorDidChange(double scaleFactor)
+void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
 {
-    m_viewScaleFactor = scaleFactor;
+    m_pageScaleFactor = scaleFactor;
 }
 
 void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsEnabled)
@@ -2267,10 +2304,10 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient.didCountStringMatches(this, string, matchCount);
 }
 
-void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut)
+void WebPageProxy::setFindIndicator(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut, bool animate)
 {
     RefPtr<FindIndicator> findIndicator = FindIndicator::create(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImageScaleFactor, contentImageHandle);
-    m_pageClient->setFindIndicator(findIndicator.release(), fadeOut);
+    m_pageClient->setFindIndicator(findIndicator.release(), fadeOut, animate);
 }
 
 void WebPageProxy::didFindString(const String& string, uint32_t matchCount)
@@ -2313,7 +2350,7 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
 
     RefPtr<WebPopupMenuProxy> protectedActivePopupMenu = m_activePopupMenu;
 
-    protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_viewScaleFactor, items, data, selectedIndex);
+    protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
     protectedActivePopupMenu->invalidate();
     protectedActivePopupMenu = 0;
 }
@@ -2987,7 +3024,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_uiClient.canRunModal();
-    parameters.userSpaceScaleFactor = m_pageClient->userSpaceScaleFactor();
+    parameters.deviceScaleFactor = m_intrinsicDeviceScaleFactor;
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
@@ -3095,6 +3132,13 @@ void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverh
 void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
 {
     m_visibleScrollerThumbRect = scrollerThumb;
+}
+
+void WebPageProxy::recommendedScrollbarStyleDidChange(int32_t newStyle)
+{
+#if PLATFORM(MAC)
+    m_pageClient->recommendedScrollbarStyleDidChange(newStyle);
+#endif
 }
 
 void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)

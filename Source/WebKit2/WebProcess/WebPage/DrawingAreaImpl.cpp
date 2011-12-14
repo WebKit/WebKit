@@ -330,7 +330,7 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 {
 }
 
-void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
+void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset) 
 {
     ASSERT(!m_inUpdateBackingStoreState);
     m_inUpdateBackingStoreState = true;
@@ -340,13 +340,15 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImme
         m_backingStoreStateID = stateID;
         m_shouldSendDidUpdateBackingStoreState = true;
 
+        m_webPage->setDeviceScaleFactor(deviceScaleFactor); 
         m_webPage->setSize(size);
         m_webPage->layoutIfNeeded();
         m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
-        if (m_layerTreeHost)
+        if (m_layerTreeHost) {
+            m_layerTreeHost->deviceScaleFactorDidChange();
             m_layerTreeHost->sizeDidChange(size);
-        else
+        } else
             m_dirtyRegion = m_webPage->bounds();
     } else {
         ASSERT(size == m_webPage->size());
@@ -392,7 +394,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 
     if (m_isPaintingSuspended || (m_layerTreeHost && !m_layerTreeHost->participatesInDisplay())) {
         updateInfo.viewSize = m_webPage->size();
-        updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
+        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
 
         if (m_layerTreeHost) {
             layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -504,7 +506,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     UpdateInfo updateInfo;
     if (m_isPaintingSuspended) {
         updateInfo.viewSize = m_webPage->size();
-        updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
+        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
     } else
         display(updateInfo);
 
@@ -669,7 +671,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         return;
 
     updateInfo.viewSize = m_webPage->size();
-    updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
+    updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
 
     if (m_layerTreeHost)
         m_layerTreeHost->display(updateInfo);
@@ -678,7 +680,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         ASSERT(m_webPage->bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
-    bitmapSize.scale(m_webPage->userSpaceScaleFactor());
+    float deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
+    bitmapSize.scale(deviceScaleFactor);
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
     if (!bitmap)
         return;
@@ -703,8 +706,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
         
         updateInfo.updateRectBounds = bounds;
-    graphicsContext->scale(FloatSize(m_webPage->userSpaceScaleFactor(), m_webPage->userSpaceScaleFactor()));
-
+    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
+    
         graphicsContext->translate(-bounds.x(), -bounds.y());
 
         for (size_t i = 0; i < rects.size(); ++i) {

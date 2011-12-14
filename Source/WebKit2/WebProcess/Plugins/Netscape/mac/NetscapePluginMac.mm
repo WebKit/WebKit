@@ -179,6 +179,11 @@ mach_port_t NetscapePlugin::compositingRenderServerPort()
     return m_pluginController->compositingRenderServerPort();
 }
 
+double NetscapePlugin::contentsScaleFactor()
+{
+    return controller()->contentsScaleFactor();
+}
+
 #ifndef NP_NO_CARBON
 typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 
@@ -404,7 +409,7 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
     CGContextRef platformContext = context->platformContext();
 
     // Translate the context so that the origin is at the top left corner of the plug-in view.
-    context->translate(m_frameRect.x(), m_frameRect.y());
+    context->translate(m_frameRectInWindowCoordinates.x(), m_frameRectInWindowCoordinates.y());
 
     switch (m_eventModel) {
         case NPEventModelCocoa: {
@@ -415,8 +420,8 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
             NPCocoaEvent event = initializeEvent(NPCocoaEventDrawRect);
 
             event.data.draw.context = platformContext;
-            event.data.draw.x = dirtyRect.x() - m_frameRect.x();
-            event.data.draw.y = dirtyRect.y() - m_frameRect.y();
+            event.data.draw.x = dirtyRect.x() - m_frameRectInWindowCoordinates.x();
+            event.data.draw.y = dirtyRect.y() - m_frameRectInWindowCoordinates.y();
             event.data.draw.width = dirtyRect.width();
             event.data.draw.height = dirtyRect.height();
             
@@ -519,7 +524,7 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
 {
     switch (m_eventModel) {
         case NPEventModelCocoa: {
-            NPCocoaEvent event = initializeMouseEvent(mouseEvent, m_frameRect.location());
+            NPCocoaEvent event = initializeMouseEvent(mouseEvent, m_frameRectInWindowCoordinates.location());
 
             NPCocoaEvent* previousMouseEvent = m_currentMouseEvent;
             m_currentMouseEvent = &event;
@@ -586,8 +591,8 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
             NPCocoaEvent event = initializeEvent(NPCocoaEventScrollWheel);
             
             event.data.mouse.modifierFlags = modifierFlags(wheelEvent);
-            event.data.mouse.pluginX = wheelEvent.position().x() - m_frameRect.x();
-            event.data.mouse.pluginY = wheelEvent.position().y() - m_frameRect.y();
+            event.data.mouse.pluginX = wheelEvent.position().x() - m_frameRectInWindowCoordinates.x();
+            event.data.mouse.pluginY = wheelEvent.position().y() - m_frameRectInWindowCoordinates.y();
             event.data.mouse.buttonNumber = 0;
             event.data.mouse.clickCount = 0;
             event.data.mouse.deltaX = wheelEvent.delta().width();
@@ -615,7 +620,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& mouseEve
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeEvent(NPCocoaEventMouseEntered);
             
-            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRect.location());
+            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRectInWindowCoordinates.location());
             return NPP_HandleEvent(&event);
         }
 
@@ -641,7 +646,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEve
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeEvent(NPCocoaEventMouseExited);
             
-            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRect.location());
+            fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRectInWindowCoordinates.location());
             return NPP_HandleEvent(&event);
         }
 
@@ -894,6 +899,12 @@ void NetscapePlugin::windowAndViewFramesChanged(const IntRect& windowFrameInScre
 void NetscapePlugin::windowVisibilityChanged(bool)
 {
     // FIXME: Implement.
+}
+
+void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
+{
+    double contentsScaleFactor = scaleFactor;
+    NPP_SetValue(NPNVcontentsScaleFactor, &contentsScaleFactor);
 }
 
 uint64_t NetscapePlugin::pluginComplexTextInputIdentifier() const

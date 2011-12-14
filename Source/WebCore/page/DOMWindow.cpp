@@ -1333,7 +1333,7 @@ double DOMWindow::devicePixelRatio() const
     if (!page)
         return 0.0;
 
-    return page->chrome()->scaleFactor();
+    return page->deviceScaleFactor();
 }
 
 #if ENABLE(DATABASE)

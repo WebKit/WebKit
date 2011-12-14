@@ -115,11 +115,6 @@ FloatRect WebChromeClient::pageRect()
     return FloatRect(FloatPoint(), m_page->size());
 }
 
-float WebChromeClient::scaleFactor()
-{
-    return m_page->userSpaceScaleFactor();
-}
-
 void WebChromeClient::focus()
 {
     m_page->send(Messages::WebPageProxy::SetFocus(true));
@@ -803,6 +798,11 @@ void WebChromeClient::didCompleteAnimatedScroll() const
 void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
 {
     m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));
+}
+
+void WebChromeClient::recommendedScrollbarStyleDidChange(int32_t newStyle)
+{
+    m_page->send(Messages::WebPageProxy::RecommendedScrollbarStyleDidChange(newStyle));
 }
 
 bool WebChromeClient::shouldRubberBandInDirection(WebCore::ScrollDirection direction) const

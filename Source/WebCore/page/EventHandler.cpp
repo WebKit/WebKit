@@ -1501,7 +1501,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
     bool swallowClickEvent = mouseEvent.button() != RightButton && targetNode(mev) == m_clickNode && dispatchMouseEvent(eventNames().clickEvent, targetNode(mev), true, m_clickCount, mouseEvent, true);
 
     if (m_lastScrollbarUnderMouse)
-        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp();
+        swallowMouseUpEvent = m_lastScrollbarUnderMouse->mouseUp(mouseEvent);
 
     bool swallowMouseReleaseEvent = !swallowMouseUpEvent && handleMouseReleaseEvent(mev);
 
@@ -1526,10 +1526,13 @@ static RenderLayer* layerForNode(Node* node)
     return layer;
 }
 
-bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
+bool EventHandler::mouseMoved(const PlatformMouseEvent& event, bool onlyUpdateScrollbars)
 {
     HitTestResult hoveredNode = HitTestResult(IntPoint());
-    bool result = handleMouseMoveEvent(event, &hoveredNode);
+    bool result = handleMouseMoveEvent(event, &hoveredNode, onlyUpdateScrollbars);
+
+    if (onlyUpdateScrollbars)
+        return result;
 
     Page* page = m_frame->page();
     if (!page)
@@ -1549,7 +1552,7 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     return result;
 }
 
-bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, HitTestResult* hoveredNode)
+bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, HitTestResult* hoveredNode, bool onlyUpdateScrollbars)
 {
     // in Radar 3703768 we saw frequent crashes apparently due to the
     // part being null here, which seems impossible, so check for nil
@@ -1581,12 +1584,13 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     if (m_lastScrollbarUnderMouse && m_mousePressed)
         return m_lastScrollbarUnderMouse->mouseMoved(mouseEvent);
 
-    // Treat mouse move events while the mouse is pressed as "read-only" in prepareMouseEvent
-    // if we are allowed to select.
-    // This means that :hover and :active freeze in the state they were in when the mouse
-    // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
+    // Mouse events should be treated as "read-only" in prepareMouseEvent if the mouse is 
+    // pressed and we are allowed to select OR if we're updating only scrollbars. This 
+    // means that :hover and :active freeze in the state they were in, rather than updating 
+    // for nodes the mouse moves over while you hold the mouse down (in the mouse pressed case)
+    // or while the window is not key (as in the onlyUpdateScrollbars case).
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::MouseMove;
-    if (m_mousePressed && m_mouseDownMayStartSelect)
+    if ((m_mousePressed && m_mouseDownMayStartSelect) || onlyUpdateScrollbars)
         hitType |= HitTestRequest::ReadOnly;
     if (m_mousePressed)
         hitType |= HitTestRequest::Active;
@@ -1613,6 +1617,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
             scrollbar = mev.scrollbar();
 
         updateLastScrollbarUnderMouse(scrollbar, !m_mousePressed);
+        if (onlyUpdateScrollbars)
+            return true;
     }
 
     bool swallowEvent = false;
@@ -1700,7 +1706,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 
     if (m_lastScrollbarUnderMouse) {
         invalidateClick();
-        return m_lastScrollbarUnderMouse->mouseUp();
+        return m_lastScrollbarUnderMouse->mouseUp(mouseEvent);
     }
 
     HitTestRequest request(HitTestRequest::MouseUp);
@@ -3066,6 +3072,11 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, bool setL
         // Send mouse exited to the old scrollbar.
         if (m_lastScrollbarUnderMouse)
             m_lastScrollbarUnderMouse->mouseExited();
+
+        // Send mouse entered if we're setting a new scrollbar.
+        if (scrollbar && setLast)
+            scrollbar->mouseEntered();
+
         m_lastScrollbarUnderMouse = setLast ? scrollbar : 0;
     }
 }

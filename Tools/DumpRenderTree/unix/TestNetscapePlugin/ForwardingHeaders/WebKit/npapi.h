@@ -1,1 +1,1 @@
-#include <bridge/npapi.h>
+#include <plugins/npapi.h>

@@ -12,8 +12,8 @@ rect: style.getPropertyValue(background-position) : 0% 0%
 rect: style.getPropertyCSSValue(background-position) : [object CSSValueList]
 rect: style.getPropertyValue(background-repeat) : repeat
 rect: style.getPropertyCSSValue(background-repeat) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(background-size) : auto auto
-rect: style.getPropertyCSSValue(background-size) : [object CSSValueList]
+rect: style.getPropertyValue(background-size) : auto
+rect: style.getPropertyCSSValue(background-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-bottom-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(border-bottom-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-bottom-left-radius) : 0px
@@ -26,6 +26,16 @@ rect: style.getPropertyValue(border-bottom-width) : 0px
 rect: style.getPropertyCSSValue(border-bottom-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-collapse) : separate
 rect: style.getPropertyCSSValue(border-collapse) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-image-outset) : 0px
+rect: style.getPropertyCSSValue(border-image-outset) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-image-repeat) : stretch
+rect: style.getPropertyCSSValue(border-image-repeat) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-image-slice) : 100%
+rect: style.getPropertyCSSValue(border-image-slice) : [object CSSValue]
+rect: style.getPropertyValue(border-image-source) : none
+rect: style.getPropertyCSSValue(border-image-source) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(border-image-width) : 1
+rect: style.getPropertyCSSValue(border-image-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-left-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(border-left-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(border-left-style) : none
@@ -216,8 +226,8 @@ rect: style.getPropertyValue(-webkit-background-composite) : source-over
 rect: style.getPropertyCSSValue(-webkit-background-composite) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-origin) : padding-box
 rect: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-background-size) : auto auto
-rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-background-size) : auto
+rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-fit) : border
 rect: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
@@ -304,6 +314,16 @@ rect: style.getPropertyValue(-webkit-mask-attachment) : scroll
 rect: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-box-image) : none
 rect: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-box-image-outset) : 0px
+rect: style.getPropertyCSSValue(-webkit-mask-box-image-outset) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-box-image-repeat) : stretch
+rect: style.getPropertyCSSValue(-webkit-mask-box-image-repeat) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-box-image-slice) : 0 fill
+rect: style.getPropertyCSSValue(-webkit-mask-box-image-slice) : [object CSSValue]
+rect: style.getPropertyValue(-webkit-mask-box-image-source) : none
+rect: style.getPropertyCSSValue(-webkit-mask-box-image-source) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-mask-box-image-width) : auto
+rect: style.getPropertyCSSValue(-webkit-mask-box-image-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-clip) : border-box
 rect: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-composite) : source-over
@@ -316,8 +336,8 @@ rect: style.getPropertyValue(-webkit-mask-position) : 0% 0%
 rect: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-mask-repeat) : repeat
 rect: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-size) : auto auto
-rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-mask-size) : auto
+rect: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-nbsp-mode) : normal
 rect: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-perspective) : none
@@ -458,8 +478,8 @@ g: style.getPropertyValue(background-position) : 0% 0%
 g: style.getPropertyCSSValue(background-position) : [object CSSValueList]
 g: style.getPropertyValue(background-repeat) : repeat
 g: style.getPropertyCSSValue(background-repeat) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(background-size) : auto auto
-g: style.getPropertyCSSValue(background-size) : [object CSSValueList]
+g: style.getPropertyValue(background-size) : auto
+g: style.getPropertyCSSValue(background-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-bottom-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(border-bottom-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-bottom-left-radius) : 0px
@@ -472,6 +492,16 @@ g: style.getPropertyValue(border-bottom-width) : 0px
 g: style.getPropertyCSSValue(border-bottom-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-collapse) : separate
 g: style.getPropertyCSSValue(border-collapse) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-image-outset) : 0px
+g: style.getPropertyCSSValue(border-image-outset) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-image-repeat) : stretch
+g: style.getPropertyCSSValue(border-image-repeat) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-image-slice) : 100%
+g: style.getPropertyCSSValue(border-image-slice) : [object CSSValue]
+g: style.getPropertyValue(border-image-source) : none
+g: style.getPropertyCSSValue(border-image-source) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(border-image-width) : 1
+g: style.getPropertyCSSValue(border-image-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-left-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(border-left-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(border-left-style) : none
@@ -662,8 +692,8 @@ g: style.getPropertyValue(-webkit-background-composite) : source-over
 g: style.getPropertyCSSValue(-webkit-background-composite) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-origin) : padding-box
 g: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-background-size) : auto auto
-g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-background-size) : auto
+g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-fit) : border
 g: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
@@ -750,6 +780,16 @@ g: style.getPropertyValue(-webkit-mask-attachment) : scroll
 g: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-box-image) : none
 g: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-box-image-outset) : 0px
+g: style.getPropertyCSSValue(-webkit-mask-box-image-outset) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-box-image-repeat) : stretch
+g: style.getPropertyCSSValue(-webkit-mask-box-image-repeat) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-box-image-slice) : 0 fill
+g: style.getPropertyCSSValue(-webkit-mask-box-image-slice) : [object CSSValue]
+g: style.getPropertyValue(-webkit-mask-box-image-source) : none
+g: style.getPropertyCSSValue(-webkit-mask-box-image-source) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-mask-box-image-width) : auto
+g: style.getPropertyCSSValue(-webkit-mask-box-image-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-clip) : border-box
 g: style.getPropertyCSSValue(-webkit-mask-clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-composite) : source-over
@@ -762,8 +802,8 @@ g: style.getPropertyValue(-webkit-mask-position) : 0% 0%
 g: style.getPropertyCSSValue(-webkit-mask-position) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-mask-repeat) : repeat
 g: style.getPropertyCSSValue(-webkit-mask-repeat) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-size) : auto auto
-g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-mask-size) : auto
+g: style.getPropertyCSSValue(-webkit-mask-size) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-nbsp-mode) : normal
 g: style.getPropertyCSSValue(-webkit-nbsp-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-perspective) : none

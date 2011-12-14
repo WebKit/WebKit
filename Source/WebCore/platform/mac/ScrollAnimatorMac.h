@@ -47,8 +47,8 @@ class ScrollbarPainterControllerDelegate;
 class ScrollbarPainterDelegate;
 #endif
 
-#if USE(WK_SCROLLBAR_PAINTER)
-typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
+#if USE(SCROLLBAR_PAINTER)
+typedef id ScrollbarPainterController;
 #endif
 
 namespace WebCore {
@@ -85,7 +85,7 @@ public:
 
     virtual void setIsActive();
 
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
     void updateScrollerStyle();
 
     bool scrollbarPaintTimerIsActive() const;
@@ -99,8 +99,8 @@ private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 
-#if USE(WK_SCROLLBAR_PAINTER)
-    RetainPtr<WKScrollbarPainterControllerRef> m_scrollbarPainterController;
+#if USE(SCROLLBAR_PAINTER)
+    RetainPtr<ScrollbarPainterController> m_scrollbarPainterController;
     RetainPtr<ScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
     RetainPtr<id> m_scrollbarPainterDelegate;
 
@@ -113,6 +113,8 @@ private:
     virtual void mouseEnteredContentArea() const;
     virtual void mouseExitedContentArea() const;
     virtual void mouseMovedInContentArea() const;
+    virtual void mouseEnteredScrollbar(Scrollbar*) const;
+    virtual void mouseExitedScrollbar(Scrollbar*) const;
     virtual void willStartLiveResize();
     virtual void contentsResized() const;
     virtual void willEndLiveResize();

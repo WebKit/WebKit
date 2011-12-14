@@ -136,7 +136,7 @@ public:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) = 0;
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) = 0;
 
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut) = 0;
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate) = 0;
 #if PLATFORM(WIN)
     virtual void didInstallOrUninstallPageOverlay(bool) = 0;
 #endif
@@ -161,6 +161,7 @@ public:
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel) = 0;
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel) = 0;
     virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
+    virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
     
     virtual WKView* wkView() const = 0;
 #endif
@@ -176,8 +177,6 @@ public:
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects) = 0;
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
-
-    virtual float userSpaceScaleFactor() const = 0;
 };
 
 } // namespace WebKit

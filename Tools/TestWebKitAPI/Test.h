@@ -42,14 +42,6 @@ namespace TestWebKitAPI {
 #define ASSERT_NULL(expression) \
     ASSERT_TRUE(!(expression))
 
-#define TEST_ASSERT_RETURN(expression, returnValue) \
-    do { \
-        if (!(expression)) { \
-            EXPECT_FALSE(true) << #expression; \
-            return (returnValue); \
-        } \
-    } while (0)
-
 } // namespace TestWebKitAPI
 
 #endif // Test_h

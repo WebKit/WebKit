@@ -21,7 +21,7 @@
 #ifndef CSSBorderImageValue_h
 #define CSSBorderImageValue_h
 
-#include "CSSValue.h"
+#include "CSSBorderImageSliceValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -31,9 +31,10 @@ class Rect;
 
 class CSSBorderImageValue : public CSSValue {
 public:
-    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<Rect> sliceRect, int horizontalRule, int verticalRule)
+    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue> imageSlice,
+        PassRefPtr<CSSValue> borderSlice, PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat)
     {
-        return adoptRef(new CSSBorderImageValue(image, sliceRect, horizontalRule, verticalRule));
+        return adoptRef(new CSSBorderImageValue(image, imageSlice, borderSlice, outset, repeat));
     }
     virtual ~CSSBorderImageValue();
 
@@ -48,14 +49,21 @@ public:
 
     // These four values are used to make "cuts" in the image.  They can be numbers
     // or percentages.
-    RefPtr<Rect> m_imageSliceRect;
+    RefPtr<CSSBorderImageSliceValue> m_imageSlice;
+
+    // These four values are used to make "cuts" in the border image drawing area.
+    // They can be numbers, percentages or lengths.
+    RefPtr<CSSValue> m_borderSlice;
+
+    // The outset values are used to inflate the border image drawing area.
+    RefPtr<CSSValue> m_outset;
 
     // Values for how to handle the scaling/stretching/tiling of the image slices.
-    int m_horizontalSizeRule; // Rule for how to adjust the widths of the top/middle/bottom
-    int m_verticalSizeRule; // Rule for how to adjust the heights of the left/middle/right
+    RefPtr<CSSValue> m_repeat;
 
 private:
-    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<Rect> sliceRect, int horizontalRule, int verticalRule);
+    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<CSSBorderImageSliceValue>, PassRefPtr<CSSValue> borderSlice,
+        PassRefPtr<CSSValue> outset, PassRefPtr<CSSValue> repeat);
     virtual bool isBorderImageValue() const { return true; }
 };
 

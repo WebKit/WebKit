@@ -6,13 +6,18 @@ Computed style of an element whose parent's 'display' value is 'none':
     background-origin: padding-box
     background-position: 0% 0%
     background-repeat: repeat
-    background-size: auto auto
+    background-size: auto
     border-bottom-color: rgb(0, 0, 0)
     border-bottom-left-radius: 0px
     border-bottom-right-radius: 0px
     border-bottom-style: none
     border-bottom-width: 0px
     border-collapse: separate
+    border-image-outset: 0px
+    border-image-repeat: stretch
+    border-image-slice: 100%
+    border-image-source: none
+    border-image-width: 1
     border-left-color: rgb(0, 0, 0)
     border-left-style: none
     border-left-width: 0px
@@ -108,7 +113,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-background-clip: border-box
     -webkit-background-composite: source-over
     -webkit-background-origin: padding-box
-    -webkit-background-size: auto auto
+    -webkit-background-size: auto
     -webkit-border-fit: border
     -webkit-border-horizontal-spacing: 0px
     -webkit-border-image: none
@@ -146,13 +151,18 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-marquee-style: scroll
     -webkit-mask-attachment: scroll
     -webkit-mask-box-image: none
+    -webkit-mask-box-image-outset: 0px
+    -webkit-mask-box-image-repeat: stretch
+    -webkit-mask-box-image-slice: 0 fill
+    -webkit-mask-box-image-source: none
+    -webkit-mask-box-image-width: auto
     -webkit-mask-clip: border-box
     -webkit-mask-composite: source-over
     -webkit-mask-image: none
     -webkit-mask-origin: border-box
     -webkit-mask-position: 0% 0%
     -webkit-mask-repeat: repeat
-    -webkit-mask-size: auto auto
+    -webkit-mask-size: auto
     -webkit-nbsp-mode: normal
     -webkit-perspective: none
     -webkit-perspective-origin: 50% 50%

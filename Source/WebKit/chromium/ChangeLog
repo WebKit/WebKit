@@ -1,3 +1,91 @@
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 99493
+
+    2011-11-07  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=71490
+            Support uiStateTransitionProgress for scrollbars
+            -and corresponding-
+            <rdar://problem/9849612>
+
+            Reviewed by Sam Weinig.
+
+            Scrollbar::mouseUp() now takes a PlatformMouseEvent as a parameter.
+            * src/WebScrollbarImpl.cpp:
+            (WebKit::WebScrollbarImpl::onMouseUp):
+
+2011-11-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93303 
+
+    2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * src/ChromeClientImpl.cpp:
+        * src/ChromeClientImpl.h:
+        Removed deviceScaleFactor.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93040 
+
+    2011-08-10  Adam Roben  <aroben@apple.com>
+
+            Clear up scale factor terminology
+
+            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+            software is running, and one that is per-Page and can be controlled via API calls. This
+            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+            code use those names. It should introduce no behavior changes.
+
+            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+            device scale factor
+
+            Reviewed by Simon Fraser.
+
+            * src/ChromeClientImpl.cpp:
+            * src/ChromeClientImpl.h:
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91161 
+
+    2011-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+            Add code to attempt to align compositing layers to pixel boundaries when page scale changes
+            https://bugs.webkit.org/show_bug.cgi?id=64658
+
+            Reviewed by Dan Bernstein.
+
+            Removed implementations of backingScaleFactor() and pageScaleFactor() now
+            that GraphicsLayerClient has default implementations.
+
+            * src/PageOverlay.cpp:
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91137
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Have GraphicsLayer pull their contentsScale, rather than pushing it onto them
+            https://bugs.webkit.org/show_bug.cgi?id=64643
+
+            Reviewed by Darin Adler.
+
+            Impement new GraphicsLayerClient methods related to contents scale.
+
+            * src/PageOverlay.cpp:
+            (WebKit::OverlayGraphicsLayerClientImpl::backingScaleFactor):
+            (WebKit::OverlayGraphicsLayerClientImpl::pageScaleFactor):
+
 2011-10-21  Lucas Forschler  <lforschler@apple.com>
 
     Merge 95226

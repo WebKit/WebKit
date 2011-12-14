@@ -208,6 +208,10 @@ void RenderLayerCompositor::flushPendingLayerChanges()
     m_flushingLayers = false;
 }
 
+void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer*)
+{
+}
+
 RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const
 {
     if (!m_renderView->frameView())
@@ -1476,6 +1480,39 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
     }
 }
 
+float RenderLayerCompositor::deviceScaleFactor() const
+{
+    Frame* frame = m_renderView->frameView()->frame();
+    if (!frame)
+        return 1;
+    Page* page = frame->page();
+    if (!page)
+        return 1;
+    return page->deviceScaleFactor();
+}
+
+float RenderLayerCompositor::pageScaleFactor() const
+{
+    Frame* frame = m_renderView->frameView()->frame();
+    if (!frame)
+        return 1;
+    Page* page = frame->page();
+    if (!page)
+        return 1;
+    return page->mainFrame()->pageScaleFactor();
+}
+
+void RenderLayerCompositor::didCommitChangesForLayer(const GraphicsLayer*) const
+{
+    // Nothing to do here yet.
+}
+
+bool RenderLayerCompositor::keepLayersPixelAligned() const
+{
+    // When scaling, attempt to align compositing layers to pixel boundaries.
+    return true;
+}
+
 static bool shouldCompositeOverflowControls(ScrollView* view)
 {
     if (view->platformWidget())
@@ -1559,9 +1596,9 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
          return;
 
     if (!m_rootPlatformLayer) {
-        m_rootPlatformLayer = GraphicsLayer::create(0);
+        m_rootPlatformLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
-        m_rootPlatformLayer->setName("Root platform");
+        m_rootPlatformLayer->setName("content root");
 #endif
         m_rootPlatformLayer->setSize(FloatSize(m_renderView->maxXLayoutOverflow(), m_renderView->maxYLayoutOverflow()));
         m_rootPlatformLayer->setPosition(FloatPoint());
@@ -1576,7 +1613,7 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
             ASSERT(!m_clipLayer);
 
             // Create a layer to host the clipping layer and the overflow controls layers.
-            m_overflowControlsHostLayer = GraphicsLayer::create(0);
+            m_overflowControlsHostLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
             m_overflowControlsHostLayer->setName("overflow controls host");
 #endif
@@ -1584,13 +1621,13 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
             // Create a clipping layer if this is an iframe
             m_clipLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
-            m_clipLayer->setName("iframe Clipping");
+            m_clipLayer->setName("frame clipping");
 #endif
             m_clipLayer->setMasksToBounds(true);
             
             m_scrollLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
-            m_scrollLayer->setName("iframe scrolling");
+            m_scrollLayer->setName("frame scrolling");
 #endif
 
             // Hook them up
@@ -1804,32 +1841,15 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
     return false;
 }
 
-void RenderLayerCompositor::updateContentsScale(float scale, RenderLayer* layer)
+void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
 {
-    if (!layer)
-        layer = rootRenderLayer();
+    // Start at the RenderView's layer, since that's where the scale is applied.
+    RenderLayer* viewLayer = m_renderView->layer();
+    if (!viewLayer->isComposited())
+        return;
 
-    layer->updateContentsScale(scale);
-
-    if (layer->isStackingContext()) {
-        if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
-            size_t listSize = negZOrderList->size();
-            for (size_t i = 0; i < listSize; ++i)
-                updateContentsScale(scale, negZOrderList->at(i));
-        }
-
-        if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
-            size_t listSize = posZOrderList->size();
-            for (size_t i = 0; i < listSize; ++i)
-                updateContentsScale(scale, posZOrderList->at(i));
-        }
-    }
-
-    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
-        size_t listSize = normalFlowList->size();
-        for (size_t i = 0; i < listSize; ++i)
-            updateContentsScale(scale, normalFlowList->at(i));
-    }
+    if (GraphicsLayer* rootLayer = viewLayer->backing()->graphicsLayer())
+        rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
 } // namespace WebCore

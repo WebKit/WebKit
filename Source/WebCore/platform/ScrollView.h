@@ -59,6 +59,7 @@ public:
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void notifyPageThatContentAreaWillPaint() const;
     virtual bool isScrollCornerVisible() const;
+    virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const IntSize& newOffset);
@@ -195,6 +196,11 @@ public:
     // This gives us a means of blocking painting on our scrollbars until the first layout has occurred.
     void setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppress = false);
     bool scrollbarsSuppressed() const { return m_scrollbarsSuppressed; }
+
+    IntPoint rootViewToContents(const IntPoint&) const;
+    IntPoint contentsToRootView(const IntPoint&) const;
+    IntRect rootViewToContents(const IntRect&) const;
+    IntRect contentsToRootView(const IntRect&) const;
 
     // Event coordinates are assumed to be in the coordinate space of a window that contains
     // the entire widget hierarchy. It is up to the platform to decide what the precise definition

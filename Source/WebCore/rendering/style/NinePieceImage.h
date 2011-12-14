@@ -30,21 +30,28 @@
 namespace WebCore {
 
 enum ENinePieceImageRule {
-    StretchImageRule, RoundImageRule, RepeatImageRule
+    StretchImageRule, RoundImageRule, SpaceImageRule, RepeatImageRule
 };
 
 class NinePieceImage {
 public:
     NinePieceImage()
         : m_image(0)
+        , m_imageSlices(Length(100, Percent), Length(100, Percent), Length(100, Percent), Length(100, Percent))
+        , m_borderSlices(Length(1, Relative), Length(1, Relative), Length(1, Relative), Length(1, Relative))
+        , m_outset(0)
+        , m_fill(false)
         , m_horizontalRule(StretchImageRule)
         , m_verticalRule(StretchImageRule)
     {
     }
 
-    NinePieceImage(StyleImage* image, LengthBox slices, ENinePieceImageRule h, ENinePieceImageRule v) 
+    NinePieceImage(StyleImage* image, LengthBox imageSlices, bool fill, LengthBox borderSlices, LengthBox outset, ENinePieceImageRule h, ENinePieceImageRule v) 
       : m_image(image)
-      , m_slices(slices)
+      , m_imageSlices(imageSlices)
+      , m_borderSlices(borderSlices)
+      , m_outset(outset)
+      , m_fill(fill)
       , m_horizontalRule(h)
       , m_verticalRule(v)
     {
@@ -55,10 +62,26 @@ public:
 
     bool hasImage() const { return m_image != 0; }
     StyleImage* image() const { return m_image.get(); }
-    void setImage(StyleImage* image) { m_image = image; }
+    void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
     
-    const LengthBox& slices() const { return m_slices; }
-    void setSlices(const LengthBox& l) { m_slices = l; }
+    const LengthBox& imageSlices() const { return m_imageSlices; }
+    void setImageSlices(const LengthBox& slices) { m_imageSlices = slices; }
+
+    bool fill() const { return m_fill; }
+    void setFill(bool fill) { m_fill = fill; }
+
+    const LengthBox& borderSlices() const { return m_borderSlices; }
+    void setBorderSlices(const LengthBox& slices) { m_borderSlices = slices; }
+
+    const LengthBox& outset() const { return m_outset; }
+    void setOutset(const LengthBox& outset) { m_outset = outset; }
+    
+    static int computeOutset(Length outsetSide, int borderSide)
+    {
+        if (outsetSide.isRelative())
+            return outsetSide.value() * borderSide;
+        return outsetSide.value();
+    }
 
     ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_horizontalRule); }
     void setHorizontalRule(ENinePieceImageRule rule) { m_horizontalRule = rule; }
@@ -66,9 +89,41 @@ public:
     ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_verticalRule); }
     void setVerticalRule(ENinePieceImageRule rule) { m_verticalRule = rule; }
 
+    void copyImageSlicesFrom(const NinePieceImage& other)
+    {
+        m_imageSlices = other.m_imageSlices;
+        m_fill = other.m_fill;
+    }
+
+    void copyBorderSlicesFrom(const NinePieceImage& other)
+    {
+        m_borderSlices = other.m_borderSlices;
+    }
+    
+    void copyOutsetFrom(const NinePieceImage& other)
+    {
+        m_outset = other.m_outset;
+    }
+
+    void copyRepeatFrom(const NinePieceImage& other)
+    {
+        m_horizontalRule = other.m_horizontalRule;
+        m_verticalRule = other.m_verticalRule;
+    }
+
+    void setMaskDefaults()
+    {
+        m_imageSlices = LengthBox(0);
+        m_fill = true;
+        m_borderSlices = LengthBox();
+    }
+
 private:
     RefPtr<StyleImage> m_image;
-    LengthBox m_slices;
+    LengthBox m_imageSlices;
+    LengthBox m_borderSlices;
+    LengthBox m_outset;
+    bool m_fill : 1;
     unsigned m_horizontalRule : 2; // ENinePieceImageRule
     unsigned m_verticalRule : 2; // ENinePieceImageRule
 };

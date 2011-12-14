@@ -58,6 +58,7 @@ private:
         : m_direction(ReflectionBelow)
         , m_offset(0, Fixed)
     {
+         m_mask.setMaskDefaults();
     }
     
     CSSReflectionDirection m_direction;

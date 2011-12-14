@@ -41,6 +41,7 @@
 #include "HTMLNames.h"
 #include "Image.h"
 #include "Node.h"
+#include "Page.h"
 #include "Range.h"
 #include "RemoveNodeCommand.h"
 #include "RenderBox.h"
@@ -184,6 +185,20 @@ void DeleteButtonController::respondToChangedSelection(const VisibleSelection& o
         hide();
 }
 
+void DeleteButtonController::deviceScaleFactorChanged()
+{
+    if (!enabled())
+        return;
+    
+    HTMLElement* currentTarget = m_target.get();
+    hide();
+
+    // Setting m_containerElement to 0 will force the deletionUI to be re-created with
+    // artwork of the appropriate resolution in show().
+    m_containerElement = 0;
+    show(currentTarget);
+}
+
 void DeleteButtonController::createDeletionUI()
 {
     RefPtr<HTMLDivElement> container = HTMLDivElement::create(m_target->document());
@@ -240,7 +255,13 @@ void DeleteButtonController::createDeletionUI()
     style->setProperty(CSSPropertyHeight, String::number(buttonHeight) + "px");
     style->setProperty(CSSPropertyVisibility, CSSValueVisible);
 
-    RefPtr<Image> buttonImage = Image::loadPlatformResource("deleteButton");
+    float deviceScaleFactor = WebCore::deviceScaleFactor(m_frame);
+    RefPtr<Image> buttonImage;
+    if (deviceScaleFactor >= 2)
+        buttonImage = Image::loadPlatformResource("deleteButton@2x");
+    else
+        buttonImage = Image::loadPlatformResource("deleteButton");
+
     if (buttonImage->isNull())
         return;
 

@@ -79,7 +79,7 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
     , m_size(DefaultWidth, DefaultHeight)
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
-    , m_pageScaleFactor(document->frame() ? document->frame()->page()->chrome()->scaleFactor() : 1)
+    , m_deviceScaleFactor(document->frame() ? document->frame()->page()->deviceScaleFactor() : 1)
     , m_originClean(true)
     , m_hasCreatedImageBuffer(false)
 {
@@ -374,10 +374,10 @@ PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
 IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
     // Prevent under/overflow by ensuring the rect's bounds stay within integer-expressible range
-    int left = clampToInteger(floorf(logicalRect.x() * m_pageScaleFactor));
-    int top = clampToInteger(floorf(logicalRect.y() * m_pageScaleFactor));
-    int right = clampToInteger(ceilf(logicalRect.maxX() * m_pageScaleFactor));
-    int bottom = clampToInteger(ceilf(logicalRect.maxY() * m_pageScaleFactor));
+    int left = clampToInteger(floorf(logicalRect.x() * m_deviceScaleFactor));
+    int top = clampToInteger(floorf(logicalRect.y() * m_deviceScaleFactor));
+    int right = clampToInteger(ceilf(logicalRect.maxX() * m_deviceScaleFactor));
+    int bottom = clampToInteger(ceilf(logicalRect.maxY() * m_deviceScaleFactor));
 
     return IntRect(IntPoint(left, top), convertToValidDeviceSize(right - left, bottom - top));
 }
@@ -385,8 +385,8 @@ IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) 
 IntSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
 {
     // Prevent overflow by ensuring the rect's bounds stay within integer-expressible range
-    float width = clampToInteger(ceilf(logicalSize.width() * m_pageScaleFactor));
-    float height = clampToInteger(ceilf(logicalSize.height() * m_pageScaleFactor));
+    float width = clampToInteger(ceilf(logicalSize.width() * m_deviceScaleFactor));
+    float height = clampToInteger(ceilf(logicalSize.height() * m_deviceScaleFactor));
     return convertToValidDeviceSize(width, height);
 }
 

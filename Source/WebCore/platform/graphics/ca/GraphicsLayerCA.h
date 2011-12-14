@@ -56,9 +56,6 @@ public:
     virtual PlatformLayer* platformLayer() const;
     virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
-    virtual float contentsScale() const { return m_contentsScale; }
-    virtual void setContentsScale(float);
-
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer*);
     virtual void addChildAtIndex(GraphicsLayer*, int index);
@@ -118,7 +115,10 @@ public:
 
     virtual void layerDidDisplay(PlatformLayer*);
 
-    void recursiveCommitChanges();
+    virtual void setMaintainsPixelAlignment(bool);
+    virtual void deviceOrPageScaleFactorChanged();
+
+    void recursiveCommitChanges(float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
@@ -180,13 +180,15 @@ private:
         return m_runningAnimations.find(animationName) != m_runningAnimations.end();
     }
 
-    void commitLayerChangesBeforeSublayers();
+    void commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase);
     void commitLayerChangesAfterSublayers();
+
+    FloatPoint computePositionRelativeToBase(float& pageScale) const;
 
     FloatSize constrainedSize() const;
 
-    bool requiresTiledLayer(const FloatSize&) const;
-    void swapFromOrToTiledLayer(bool useTiledLayer);
+    bool requiresTiledLayer(float pageScaleFactor, const FloatSize&) const;
+    void swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase);
 
     CompositingCoordinatesOrientation defaultContentsOrientation() const;
     void updateContentsTransform();
@@ -195,6 +197,9 @@ private:
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
     virtual void setReplicatedByLayer(GraphicsLayer*);
+
+    void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
+        FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
@@ -263,16 +268,14 @@ private:
     // All these "update" methods will be called inside a BEGIN_BLOCK_OBJC_EXCEPTIONS/END_BLOCK_OBJC_EXCEPTIONS block.
     void updateLayerNames();
     void updateSublayerList();
-    void updateLayerPosition();
-    void updateLayerSize();
-    void updateAnchorPoint();
+    void updateGeometry(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateTransform();
     void updateChildrenTransform();
     void updateMasksToBounds();
     void updateContentsOpaque();
     void updateBackfaceVisibility();
-    void updateStructuralLayer();
-    void updateLayerDrawsContent();
+    void updateStructuralLayer(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
+    void updateLayerDrawsContent(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateLayerBackgroundColor();
 
     void updateContentsImage();
@@ -285,14 +288,14 @@ private:
     void updateLayerAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
-    void updateContentsScale();
+    void updateContentsScale(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
         StructuralLayerForPreserves3D,
         StructuralLayerForReplicaFlattening
     };
-    void ensureStructuralLayer(StructuralLayerPurpose);
+    void ensureStructuralLayer(StructuralLayerPurpose, float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
     void setAnimationOnLayer(PlatformCAAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);
@@ -307,33 +310,32 @@ private:
         NoChange = 0,
         NameChanged = 1 << 1,
         ChildrenChanged = 1 << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
-        PositionChanged = 1 << 3,
-        AnchorPointChanged = 1 << 4,
-        SizeChanged = 1 << 5,
-        TransformChanged = 1 << 6,
-        ChildrenTransformChanged = 1 << 7,
-        Preserves3DChanged = 1 << 8,
-        MasksToBoundsChanged = 1 << 9,
-        DrawsContentChanged = 1 << 10, // need this?
-        BackgroundColorChanged = 1 << 11,
-        ContentsOpaqueChanged = 1 << 12,
-        BackfaceVisibilityChanged = 1 << 13,
-        OpacityChanged = 1 << 14,
-        AnimationChanged = 1 << 15,
-        DirtyRectsChanged = 1 << 16,
-        ContentsImageChanged = 1 << 17,
-        ContentsMediaLayerChanged = 1 << 18,
-        ContentsCanvasLayerChanged = 1 << 19,
-        ContentsRectChanged = 1 << 20,
-        MaskLayerChanged = 1 << 21,
-        ReplicatedLayerChanged = 1 << 22,
-        ContentsNeedsDisplay = 1 << 23,
-        AcceleratesDrawingChanged = 1 << 24,
-        ContentsScaleChanged = 1 << 25
+        GeometryChanged = 1 << 3,
+        TransformChanged = 1 << 4,
+        ChildrenTransformChanged = 1 << 5,
+        Preserves3DChanged = 1 << 6,
+        MasksToBoundsChanged = 1 << 7,
+        DrawsContentChanged = 1 << 8, // need this?
+        BackgroundColorChanged = 1 << 9,
+        ContentsOpaqueChanged = 1 << 10,
+        BackfaceVisibilityChanged = 1 << 11,
+        OpacityChanged = 1 << 12,
+        AnimationChanged = 1 << 13,
+        DirtyRectsChanged = 1 << 14,
+        ContentsImageChanged = 1 << 15,
+        ContentsMediaLayerChanged = 1 << 16,
+        ContentsCanvasLayerChanged = 1 << 17,
+        ContentsRectChanged = 1 << 18,
+        MaskLayerChanged = 1 << 19,
+        ReplicatedLayerChanged = 1 << 20,
+        ContentsNeedsDisplay = 1 << 21,
+        AcceleratesDrawingChanged = 1 << 22,
+        ContentsScaleChanged = 1 << 23
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);
     void noteSublayersChanged();
+    void noteChangesForScaleSensitiveProperties();
 
     void repaintLayerDirtyRects();
 
@@ -356,6 +358,7 @@ private:
     
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_contentsLayerHasBackgroundColor : 1;
+    bool m_allowTiledLayer : 1;
 
     RetainPtr<CGImageRef> m_uncorrectedContentsImage;
     RetainPtr<CGImageRef> m_pendingContentsImage;
@@ -399,13 +402,9 @@ private:
     AnimationsMap m_runningAnimations;
 
     Vector<FloatRect> m_dirtyRects;
+    FloatSize m_pixelAlignmentOffset;
     
     LayerChangeFlags m_uncommittedChanges;
-
-    float clampedContentsScaleForScale(float) const;
-    float m_contentsScale;
-    
-    bool m_allowTiledLayer;
 };
 
 } // namespace WebCore

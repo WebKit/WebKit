@@ -62,7 +62,13 @@ public:
     virtual void notifySyncRequired(const GraphicsLayer*) = 0;
     
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) = 0;
-    
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const { }
+
+    // Multiplier for backing store size, related to high DPI.
+    virtual float deviceScaleFactor() const { return 1; }
+    // Page scale factor.
+    virtual float pageScaleFactor() const { return 1; }
+
     virtual bool showDebugBorders() const = 0;
     virtual bool showRepaintCounter() const = 0;
 };

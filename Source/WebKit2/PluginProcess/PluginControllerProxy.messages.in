@@ -24,7 +24,7 @@
 
 messages -> PluginControllerProxy {
     # Sent when the plug-in geometry changes.
-    GeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, WebKit::ShareableBitmap::Handle backingStoreHandle)
+    GeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, float scaleFactor, WebKit::ShareableBitmap::Handle backingStoreHandle)
 
     # Sent when a frame has finished loading.
     FrameDidFinishLoading(uint64_t requestID)

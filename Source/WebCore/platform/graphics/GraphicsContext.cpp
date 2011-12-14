@@ -481,7 +481,8 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
         image->drawTiled(this, rect, srcPoint, tileSize, styleColorSpace, op);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op, bool useLowQualityScale)
+void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect,
+    const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
@@ -495,10 +496,10 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
     if (useLowQualityScale) {
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
         setImageInterpolationQuality(InterpolationLow);
-        image->drawTiled(this, dest, srcRect, hRule, vRule, styleColorSpace, op);
+        image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
         setImageInterpolationQuality(previousInterpolationQuality);
     } else
-        image->drawTiled(this, dest, srcRect, hRule, vRule, styleColorSpace, op);
+        image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
@@ -737,6 +738,18 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
             p2.setY(p2.y() + 0.5f);
         }
     }
+}
+
+#if !USE(CG)
+void GraphicsContext::platformApplyDeviceScaleFactor()
+{
+}
+#endif
+
+void GraphicsContext::applyDeviceScaleFactor(float deviceScaleFactor)
+{
+    scale(FloatSize(deviceScaleFactor, deviceScaleFactor));
+    platformApplyDeviceScaleFactor();
 }
 
 }

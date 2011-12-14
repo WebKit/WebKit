@@ -94,10 +94,11 @@ public:
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
     // grabbing all events in that case anyway.
     bool mouseMoved(const PlatformMouseEvent&);
+    void mouseEntered();
     bool mouseExited();
     
     // Used by some platform scrollbars to know when they've been released from capture.
-    bool mouseUp();
+    bool mouseUp(const PlatformMouseEvent&);
 
     bool mouseDown(const PlatformMouseEvent&);
 

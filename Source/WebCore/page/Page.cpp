@@ -111,6 +111,16 @@ static void networkStateChanged()
         frames[i]->document()->dispatchWindowEvent(Event::create(eventName, false, false));
 }
 
+float deviceScaleFactor(Frame* frame)
+{
+    if (!frame)
+        return 1;
+    Page* page = frame->page();
+    if (!page)
+        return 1;
+    return page->deviceScaleFactor();
+}
+
 Page::Page(PageClients& pageClients)
     : m_chrome(adoptPtr(new Chrome(this, pageClients.chromeClient)))
     , m_dragCaretController(adoptPtr(new DragCaretController))
@@ -150,6 +160,7 @@ Page::Page(PageClients& pageClients)
     , m_cookieEnabled(true)
     , m_areMemoryCacheClientCallsEnabled(true)
     , m_mediaVolume(1)
+    , m_deviceScaleFactor(1)
     , m_javaScriptURLsAreAllowed(true)
     , m_didLoadUserStyleSheet(false)
     , m_userStyleSheetModificationTime(0)
@@ -590,6 +601,24 @@ void Page::setMediaVolume(float volume)
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         frame->document()->mediaVolumeDidChange();
     }
+}
+
+void Page::setDeviceScaleFactor(float scaleFactor)
+{
+    if (m_deviceScaleFactor == scaleFactor)
+        return;
+
+    m_deviceScaleFactor = scaleFactor;
+    setNeedsRecalcStyleInAllFrames();
+
+#if USE(ACCELERATED_COMPOSITING)
+    m_mainFrame->deviceOrPageScaleFactorChanged();
+#endif
+
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->editor()->deviceScaleFactorChanged();
+
+    backForward()->markPagesForFullStyleRecalc();
 }
 
 void Page::didMoveOnscreen()

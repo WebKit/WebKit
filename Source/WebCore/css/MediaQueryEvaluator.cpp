@@ -291,9 +291,9 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, F
 static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
     if (value)
-        return value->isPrimitiveValue() && compareValue(frame->page()->chrome()->scaleFactor(), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
+        return value->isPrimitiveValue() && compareValue(frame->page()->deviceScaleFactor(), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
 
-    return frame->page()->chrome()->scaleFactor() != 0;
+    return frame->page()->deviceScaleFactor() != 0;
 }
 
 static bool gridMediaFeatureEval(CSSValue* value, RenderStyle*, Frame*, MediaFeaturePrefix op)

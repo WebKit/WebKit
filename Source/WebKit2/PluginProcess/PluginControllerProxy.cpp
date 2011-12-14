@@ -70,6 +70,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
     , m_isComplexTextInputEnabled(false)
+    , m_contentsScaleFactor(creationParameters.contentsScaleFactor)
 #endif
     , m_windowNPObject(0)
     , m_pluginElementNPObject(0)
@@ -161,6 +162,12 @@ void PluginControllerProxy::paint()
 
     // Create a graphics context.
     OwnPtr<GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+
+#if PLATFORM(MAC)
+    // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
+    // which we currently don't have initiated in the plug-in process.
+    graphicsContext->scale(FloatSize(m_contentsScaleFactor, m_contentsScaleFactor));
+#endif
 
     graphicsContext->translate(-m_frameRect.x(), -m_frameRect.y());
 
@@ -435,12 +442,21 @@ void PluginControllerProxy::frameDidFail(uint64_t requestID, bool wasCancelled)
     m_plugin->frameDidFail(requestID, wasCancelled);
 }
 
-void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, const ShareableBitmap::Handle& backingStoreHandle)
+void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle)
 {
     m_frameRect = frameRect;
     m_clipRect = clipRect;
 
     ASSERT(m_plugin);
+
+#if PLATFORM(MAC)
+    if (contentsScaleFactor != m_contentsScaleFactor) {
+        m_contentsScaleFactor = contentsScaleFactor;
+        m_plugin->contentsScaleFactorChanged(m_contentsScaleFactor);
+    }
+#else
+    UNUSED_PARAM(contentsScaleFactor);
+#endif
 
     platformGeometryDidChange();
 
@@ -449,7 +465,7 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
         m_backingStore = ShareableBitmap::create(backingStoreHandle);
     }
 
-    m_plugin->geometryDidChange(frameRect, clipRect);
+    m_plugin->deprecatedGeometryDidChange(frameRect, clipRect);
 }
 
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& result)

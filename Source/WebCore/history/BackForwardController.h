@@ -67,6 +67,8 @@ public:
     HistoryItem* currentItem() { return itemAtIndex(0); }
     HistoryItem* forwardItem() { return itemAtIndex(1); }
 
+    void markPagesForFullStyleRecalc();
+
 private:
     Page* m_page;
     RefPtr<BackForwardList> m_client;

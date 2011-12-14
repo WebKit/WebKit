@@ -128,6 +128,10 @@ public:
 
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip);
 
+    virtual float deviceScaleFactor() const;
+    virtual float pageScaleFactor() const;
+    virtual void didCommitChangesForLayer(const GraphicsLayer*) const;
+
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
@@ -136,15 +140,15 @@ public:
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
     
-    void updateContentsScale(float);
-
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 
 private:
-    void createGraphicsLayer();
-    void destroyGraphicsLayer();
+    void createPrimaryGraphicsLayer();
+    void destroyGraphicsLayers();
+    
+    PassOwnPtr<GraphicsLayer> createGraphicsLayer(const String&);
 
     RenderBoxModelObject* renderer() const { return m_owningLayer->renderer(); }
     RenderLayerCompositor* compositor() const { return m_owningLayer->compositor(); }
@@ -190,9 +194,6 @@ private:
 
     static int graphicsLayerToCSSProperty(AnimatedPropertyID);
     static AnimatedPropertyID cssToGraphicsLayerProperty(int);
-
-    float pageScaleFactor() const;
-    float backingScaleFactor() const;
 
 #ifndef NDEBUG
     String nameForLayer() const;

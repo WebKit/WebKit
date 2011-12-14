@@ -88,7 +88,7 @@ private:
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
 
-    void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
+    void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
     virtual void exitAcceleratedCompositingMode();
@@ -120,8 +120,8 @@ private:
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
     virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString);
 
-    virtual float userSpaceScaleFactor() const;
-    
+    virtual void recommendedScrollbarStyleDidChange(int32_t newStyle);
+
     virtual WKView* wkView() const { return m_wkView; }
 
     WKView* m_wkView;

@@ -175,20 +175,6 @@ FloatRect WebChromeClient::pageRect()
     return [m_webView frame];
 }
 
-float WebChromeClient::scaleFactor()
-{
-    NSWindow *window = [m_webView window];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
-}
-
 void WebChromeClient::focus()
 {
     [[m_webView _UIDelegateForwarder] webViewFocus:m_webView];

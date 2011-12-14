@@ -56,6 +56,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_pageSize()
     , m_pageSizeType(PAGE_SIZE_AUTO)
 {
+    m_maskBoxImage.setMaskDefaults();
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInheritedData& o)

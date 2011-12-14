@@ -28,8 +28,8 @@ namespace WebCore {
 
 bool NinePieceImage::operator==(const NinePieceImage& o) const
 {
-    return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_slices == o.m_slices && m_horizontalRule == o.m_horizontalRule &&
-           m_verticalRule == o.m_verticalRule;
+    return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_imageSlices == o.m_imageSlices && m_fill == o.m_fill
+           && m_borderSlices == o.m_borderSlices && m_outset == o.m_outset && m_horizontalRule == o.m_horizontalRule && m_verticalRule == o.m_verticalRule;
 }
 
 }

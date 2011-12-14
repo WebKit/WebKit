@@ -98,6 +98,7 @@ private:
 #if PLATFORM(MAC)
     virtual void setComplexTextInputEnabled(bool);
     virtual mach_port_t compositingRenderServerPort();
+    virtual float contentsScaleFactor();
 #endif
 
     virtual String proxiesForURL(const String&);
@@ -111,7 +112,7 @@ private:
     // Message handlers.
     void frameDidFinishLoading(uint64_t requestID);
     void frameDidFail(uint64_t requestID, bool wasCancelled);
-    void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const ShareableBitmap::Handle& backingStoreHandle);
+    void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, float contentsScaleFactor, const ShareableBitmap::Handle& backingStoreHandle);
     void didEvaluateJavaScript(uint64_t requestID, const String& result);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data);
@@ -188,6 +189,9 @@ private:
 #if PLATFORM(MAC)
     // Whether complex text input is enabled for this plug-in.
     bool m_isComplexTextInputEnabled;
+
+    // The contents scale factor of this plug-in.
+    float m_contentsScaleFactor;
 
     // For CA plug-ins, this holds the information needed to export the layer hierarchy to the UI process.
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;

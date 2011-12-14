@@ -187,7 +187,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
-    , m_userSpaceScaleFactor(parameters.userSpaceScaleFactor)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
     , m_isShowingContextMenu(false)
@@ -764,22 +763,47 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
     return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
 }
 
-void WebPage::scaleWebView(double scale, const IntPoint& origin)
+void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     frame->scalePage(scale, origin);
 
-    send(Messages::WebPageProxy::ViewScaleFactorDidChange(scale));
+    send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
 
-double WebPage::viewScaleFactor() const
+double WebPage::pageScaleFactor() const
 {
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return 1;
     return frame->pageScaleFactor();
+}
+
+void WebPage::setDeviceScaleFactor(float scaleFactor)
+{
+    if (scaleFactor == m_page->deviceScaleFactor())
+        return;
+
+    m_page->setDeviceScaleFactor(scaleFactor);
+
+    // Tell all our plug-in views that the device scale factor changed.
+#if PLATFORM(MAC)
+    for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
+        (*it)->setDeviceScaleFactor(scaleFactor);
+#endif
+
+    if (m_findController.isShowingOverlay()) {
+        // We must have updated layout to get the selection rects right.
+        layoutIfNeeded();
+        m_findController.deviceScaleFactorDidChange();
+    }
+}
+
+float WebPage::deviceScaleFactor() const
+{
+    return m_page->deviceScaleFactor();
 }
 
 void WebPage::setUseFixedLayout(bool fixed)
@@ -864,22 +888,23 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     if (!frameView)
         return 0;
 
-    frameView->updateLayoutAndStyleIfNeededRecursive();
+    IntSize bitmapSize = rect.size();
+    float deviceScaleFactor = corePage()->deviceScaleFactor();
+    bitmapSize.scale(deviceScaleFactor);
 
-    PaintBehavior oldBehavior = frameView->paintBehavior();
-    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-
-    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
+    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, options);
     if (!snapshot->bitmap())
         return 0;
     
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-
-    graphicsContext->save();
+    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
-    frameView->paint(graphicsContext.get(), rect);
-    graphicsContext->restore();
 
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    PaintBehavior oldBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
+    frameView->paint(graphicsContext.get(), rect);
     frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
@@ -891,30 +916,21 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
     if (!frameView)
         return 0;
 
+    float combinedScaleFactor = scaleFactor * corePage()->deviceScaleFactor();
+    IntSize size(ceil(rect.width() * combinedScaleFactor), ceil(rect.height() * combinedScaleFactor));
+    RefPtr<WebImage> snapshot = WebImage::create(size, options);
+    if (!snapshot->bitmap())
+        return 0;
+
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    graphicsContext->applyDeviceScaleFactor(combinedScaleFactor);
+    graphicsContext->translate(-rect.x(), -rect.y());
+
     frameView->updateLayoutAndStyleIfNeededRecursive();
 
     PaintBehavior oldBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-
-    bool scale = scaleFactor != 1;
-    IntSize size = rect.size();
-    if (scale) 
-        size = IntSize(ceil(rect.width() * scaleFactor), ceil(rect.height() * scaleFactor));
-
-    RefPtr<WebImage> snapshot = WebImage::create(size, options);
-    if (!snapshot->bitmap())
-        return 0;
-    
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-    graphicsContext->save();
-    
-    if (scale)
-        graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
-    
-    graphicsContext->translate(-rect.x(), -rect.y());
     frameView->paintContents(graphicsContext.get(), rect);
-    graphicsContext->restore();
-
     frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
@@ -1022,7 +1038,7 @@ static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent,
     return handled;
 }
 
-static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
+static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page, bool onlyUpdateScrollbars)
 {
     Frame* frame = page->mainFrame();
     if (!frame->view())
@@ -1045,7 +1061,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
         case WebCore::MouseEventReleased:
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
         case WebCore::MouseEventMoved:
-            return frame->eventHandler()->mouseMoved(platformMouseEvent);
+            return frame->eventHandler()->mouseMoved(platformMouseEvent, onlyUpdateScrollbars);
 
         default:
             ASSERT_NOT_REACHED();
@@ -1071,7 +1087,13 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
 
-        handled = handleMouseEvent(mouseEvent, m_page.get());
+        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
+        // button is currently pressed. It is possible that neither of those things will be true since on 
+        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one 
+        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
+        // efficient scrollbars-only version of the event.
+        bool onlyUpdateScrollbars = !(m_page->focusController()->isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
+        handled = handleMouseEvent(mouseEvent, m_page.get(), onlyUpdateScrollbars);
     }
 
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));

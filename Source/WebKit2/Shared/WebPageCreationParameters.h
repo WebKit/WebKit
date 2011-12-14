@@ -71,7 +71,7 @@ struct WebPageCreationParameters {
     bool canRunBeforeUnloadConfirmPanel;
     bool canRunModal;
 
-    float userSpaceScaleFactor;
+    float deviceScaleFactor;
 
 #if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled;

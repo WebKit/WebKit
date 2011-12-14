@@ -253,7 +253,7 @@ public:
         ViewWindowIsActive = 1 << 0,
         ViewIsFocused = 1 << 1,
         ViewIsVisible = 1 << 2,
-        ViewIsInWindow = 1 << 3
+        ViewIsInWindow = 1 << 3,
     };
     typedef unsigned ViewStateFlags;
     void viewStateDidChange(ViewStateFlags flags);
@@ -358,8 +358,12 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
-    void scaleWebView(double scale, const WebCore::IntPoint& origin);
-    double viewScaleFactor() const { return m_viewScaleFactor; }
+    void scalePage(double scale, const WebCore::IntPoint& origin);
+    double pageScaleFactor() const { return m_pageScaleFactor; }
+
+    float deviceScaleFactor() const;
+    void setIntrinsicDeviceScaleFactor(float);
+    void setCustomDeviceScaleFactor(float);
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
@@ -382,7 +386,7 @@ public:
     void makeFirstResponder();
 #endif
 
-    void viewScaleFactorDidChange(double);
+    void pageScaleFactorDidChange(double);
 
     void setMemoryCacheClientCallsEnabled(bool);
 
@@ -391,7 +395,7 @@ public:
     void hideFindUI();
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
     void didCountStringMatches(const String&, uint32_t matchCount);
-    void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut);
+    void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, float contentImageScaleFactor, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut, bool animate);
     void didFindString(const String&, uint32_t matchCount);
     void didFailToFindString(const String&);
 #if PLATFORM(WIN)
@@ -619,6 +623,7 @@ private:
     void runModal();
     void didCompleteRubberBandForMainFrame(const WebCore::IntSize&);
     void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
+    void recommendedScrollbarStyleDidChange(int32_t newStyle);
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
     void didFailToInitializePlugin(const String& mimeType);
@@ -826,7 +831,9 @@ private:
 
     double m_textZoomFactor;
     double m_pageZoomFactor;
-    double m_viewScaleFactor;
+    double m_pageScaleFactor;
+    float m_intrinsicDeviceScaleFactor;
+    float m_customDeviceScaleFactor;
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;

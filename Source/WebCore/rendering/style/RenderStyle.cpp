@@ -1496,4 +1496,24 @@ TextEmphasisMark RenderStyle::textEmphasisMark() const
     return TextEmphasisMarkSesame;
 }
 
+void RenderStyle::getImageOutsets(const NinePieceImage& image, int& top, int& right, int& bottom, int& left) const
+{
+    top = NinePieceImage::computeOutset(image.outset().top(), borderTopWidth());
+    right = NinePieceImage::computeOutset(image.outset().right(), borderRightWidth());
+    bottom = NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth());
+    left = NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth());
+}
+
+void RenderStyle::getImageHorizontalOutsets(const NinePieceImage& image, int& left, int& right) const
+{
+    right = NinePieceImage::computeOutset(image.outset().right(), borderRightWidth());
+    left = NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth());
+}
+
+void RenderStyle::getImageVerticalOutsets(const NinePieceImage& image, int& top, int& bottom) const
+{
+    top = NinePieceImage::computeOutset(image.outset().top(), borderTopWidth());
+    bottom = NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth());
+}
+    
 } // namespace WebCore

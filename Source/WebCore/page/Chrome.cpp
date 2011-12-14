@@ -140,11 +140,6 @@ FloatRect Chrome::pageRect() const
     return m_client->pageRect();
 }
 
-float Chrome::scaleFactor()
-{
-    return m_client->scaleFactor();
-}
-
 void Chrome::focus() const
 {
     m_client->focus();

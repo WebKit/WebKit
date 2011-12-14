@@ -189,5 +189,7 @@ extern int pluginDatabaseClientCount;
 
     BOOL interactiveFormValidationEnabled;
     int validationMessageTimerMagnification;
+
+    float customDeviceScaleFactor;
 }
 @end

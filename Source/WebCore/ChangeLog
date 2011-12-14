@@ -1,3 +1,1969 @@
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 96777
+
+    2011-10-05  Darin Adler  <darin@apple.com>
+
+            [Mac] Use four more named cursors if present
+            https://bugs.webkit.org/show_bug.cgi?id=69488
+
+            Reviewed by Dan Bernstein.
+
+            * platform/mac/CursorMac.mm:
+            (WebCore::Cursor::ensurePlatformCursor): Use the names "Help", "Cell",
+            "ZoomIn", and "ZoomOut" to get those cursors. Structure the code so it
+            falls back if the cursors are not present.
+
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 101290
+
+    2011-11-28  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=72551
+            When the recommended scrollbar style changes, WKView's tracking options should 
+            adjust accordingly
+            -and corresponding-
+            <rdar://problem/10409328>
+
+            Reviewed by Darin Adler.
+
+            This new ChromeClient function is called when the recommended scrollbar style 
+            changes. This way, WebKit can respond to the change by adjusting its mouse 
+            tracking.
+            * page/ChromeClient.h:
+            (WebCore::ChromeClient::recommendedScrollbarStyleDidChange):
+
+            Existing ScrollableArea function scrollbarStyleChanged() now takes an int 
+            indicating the new scrollbar style and a bool indicating whether it is necessary 
+            to force an update. It used to be the case that this function was ONLY used to 
+            force an update (and only called when an updated was needed), but now that it must 
+            also call into the ChromeClient, it is necessary to include a bool tracking 
+            whether we need to force an update. New implementation on FrameView is responsible 
+            for calling ChromeClient, and then that calls into the pre-existing ScrollView 
+            function for the forceUpdate part.
+            * page/FrameView.cpp:
+            (WebCore::FrameView::scrollbarStyleChanged):
+            * page/FrameView.h:
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView:: scrollbarStyleChanged):
+            * platform/ScrollView.h:
+            * platform/ScrollableArea.h:
+            (WebCore::ScrollableArea::scrollbarStyleChanged):
+            * platform/mac/ScrollAnimatorMac.mm:
+            (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 100483
+
+    2011-11-16  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=72400
+            Scrollbar uiStateTransitionProgress requires tracking the mouse all the time
+            -and corresponding-
+            <rdar://problem/10409328>
+
+            Reviewed by Darin Adler.
+
+            This patch makes it so we track the mouse all the time when we have legacy 
+            scrollbars (rather than only tracking the mouse when the window is key). When 
+            we're in that mode, we want to do as little work as possible when handling the 
+            mouseMoved event so that this extra tracking has little to no performance impact. 
+            Also, we don't want to change basic behaviors by having normal web content hover 
+            effects start happening when a window is in the background. So this patch also 
+            introduces a way to handle a mouseMoved event that will only affect scrollbars.
+
+            EventHandler::mouseMoved() and EventHandler::handleMouseEvent() both now take a 
+            boolean parameter that indicates if we are only updating scrollbars. If that is 
+            the case, then we make our HitTestRequest ReadOnly, and we return early once 
+            updateLastScrollbarUnderMouse() is called.
+            * WebCore.exp.in:
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::mouseMoved):
+            (WebCore::EventHandler::handleMouseMoveEvent):
+
+            In addition to calling Scrollbar::mouseExited() when appropriate, this function 
+            now calls a new function, Scrollbar::mouseEntered() when appropriate. 
+            (WebCore::EventHandler::updateLastScrollbarUnderMouse):
+            * page/EventHandler.h:
+
+            Scrollbar::mouseMoved() used to be responsible for calling 
+            ScrollAnimator::mouseEnteredScrollbar(), but now Scrollbar::mouseEntered() takes 
+            care of that instead, much like how Scrollbar::mouseExited() takes care of calling 
+            the animator's exit function.
+            * platform/Scrollbar.cpp:
+            (WebCore::Scrollbar::mouseMoved):
+            (WebCore::Scrollbar::mouseEntered):
+            * platform/Scrollbar.h:
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
+        Fix a compiler error about implicit conversion from 64 to 32bit int.
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 99493
+
+    2011-11-07  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=71490
+            Support uiStateTransitionProgress for scrollbars
+            -and corresponding-
+            <rdar://problem/9849612>
+
+            Reviewed by Sam Weinig.
+
+            Step 1 of supporting uiStateTransitionProgress is knowing when the mouse has 
+            entered or exited a scrollbar. These changes to Scrollbar pass that information 
+            on to the ScrollAnimator. Also, Scrollbar::mouseUp() now takes a 
+            PlatformMouseEvent as a parameter. This is necessary because m_hoveredNode is not 
+            always up to date on a mouseUp, so mouseUp must hitTest the scrollbar to see if 
+            the mouse has exited the scrollbar.
+            * platform/Scrollbar.cpp:
+            (WebCore::Scrollbar::mouseMoved):
+            (WebCore::Scrollbar::mouseExited):
+            (WebCore::Scrollbar::mouseUp):
+            * platform/Scrollbar.h:
+
+            These changes are required now that Scrollbar::mouseUp() takes a parameter.
+            * WebCore.exp.in:
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::handleMouseDoubleClickEvent):
+            (WebCore::EventHandler::handleMouseReleaseEvent):
+            * platform/chromium/PopupListBox.cpp:
+            (WebCore::PopupListBox::handleMouseReleaseEvent):
+            * platform/win/PopupMenuWin.cpp:
+            (WebCore::PopupMenuWin::wndProc):
+
+            ScrollAnimator passes the information on to AppKit.
+            * platform/ScrollAnimator.h:
+            (WebCore::ScrollAnimator::mouseEnteredScrollbar):
+            (WebCore::ScrollAnimator::mouseExitedScrollbar):
+            * platform/mac/ScrollAnimatorMac.h:
+            (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+            (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+
+            There are several new pieces of AppKit api we must call into.
+            * platform/mac/NSScrollerImpDetails.h:
+
+            This is a temporary function that is needed for the time being since there is new 
+            AppKit api required for this to work.
+            * platform/mac/ScrollAnimatorMac.mm:
+            (supportsUIStateTransitionProgress):
+
+            I refactored WebScrollbarPartAnimation so that it can handle the 
+            uiStateTransitionProgress animation as well as the alpha animations it already 
+            handled. This mostly involved re-naming things and making use of a new enum called 
+            FeatureToAnimate which keeps track of what the instance of 
+            WebScrollbarPartAnimation is animating.
+            (-[WebScrollbarPartAnimation initWithScrollbarPainter:animate:scrollAnimator:animateFrom:animateTo:duration:]):
+            (-[WebScrollbarPartAnimation setScrollbarPainter:]):
+            (-[WebScrollbarPartAnimation setStartValue:]):
+            (-[WebScrollbarPartAnimation setEndValue:]):
+            (-[WebScrollbarPartAnimation setCurrentProgress:]):
+
+            WebScrollbarPainterDelegate has two new animations, 
+            _verticalUIStateTransitionAnimation, and _horizontalUIStateTransitionAnimation. It 
+            also responds to a few new delegate calls.
+            (-[WebScrollbarPainterDelegate cancelAnimations]):
+
+            This is a new delegate call needed for uiStateTransitionProgress.
+            (-[WebScrollbarPainterDelegate mouseLocationInScrollerForScrollerImp:]):
+
+            I re-named setUpAnimation to setUpAlphaAnimation since it does a lot of things 
+            that are specific to the alpha animation and I chose not to re-use it for 
+            uiStateTransition.
+            (-[WebScrollbarPainterDelegate setUpAlphaAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+            (-[WebScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+            (-[WebScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+
+            New delegate call for the uiStateTransition animation that sets up that animation 
+            and kicks it off.
+            (-[WebScrollbarPainterDelegate scrollerImp:animateUIStateTransitionWithDuration:]):
+            (-[WebScrollbarPainterDelegate scrollAnimatorDestroyed]):
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98892
+
+    2011-10-31  Anders Carlsson  <andersca@apple.com>
+
+            More work on making plug-ins work better with transforms
+            https://bugs.webkit.org/show_bug.cgi?id=71241
+
+            Reviewed by Darin Adler.
+
+            Export symbols used by WebKit2.
+
+            * WebCore.exp.in:
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98664
+
+    2011-10-27  Anders Carlsson  <andersca@apple.com>
+
+            Add a Plugin::geometryDidChange that will work with transforms
+            https://bugs.webkit.org/show_bug.cgi?id=71072
+
+            Reviewed by Simon Fraser.
+
+            Export symbols needed by WebKit2.
+
+            * WebCore.exp.in:
+
+2011-12-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 97514
+
+    2011-10-14  Jeff Miller  <jeffm@apple.com>
+
+            InjectedBundleHitTestResult::imageRect() should return rect in WKView coordinates
+            https://bugs.webkit.org/show_bug.cgi?id=69963
+
+            Add infrastructure to convert from any frame view's coordinate system to the
+            root view's coordinate system.
+
+            Reviewed by Simon Fraser.
+
+            No new tests (yet), this is covered by <https://bugs.webkit.org/show_bug.cgi?id=70136>.
+
+            * WebCore.exp.in: Exported WebCore::ScrollView::contentsToRootView(), used by InjectedBundleHitTestResult.cpp.
+
+            * platform/ScrollView.cpp:
+            (WebCore::ScrollView::rootViewToContents): Added (both point and rect versions).
+            (WebCore::ScrollView::contentsToRootView): Ditto.
+
+            * platform/ScrollView.h: Added member functions to convert to/from root view coordinates.
+
+            * platform/Widget.cpp:
+            (WebCore::Widget::convertFromRootView): Added (both point and rect versions).
+            (WebCore::Widget::convertToRootView): Ditto.
+
+            * platform/Widget.h: Added member functions to convert to/from root view coordinates.
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98406
+
+    2011-10-25  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=70852
+            Setting up a HiDPI base-level GraphicsContext should be more straightforward for 
+            WebKit2
+
+            Reviewed by Dan Bernstein.
+
+            This patch removes the old cg-only GraphicsContext::setBaseCTM() api, and adds 
+            platform-independent GraphicsContext::applyDeviceScaleFactor().
+            * WebCore.exp.in:
+            * platform/graphics/GraphicsContext.cpp:
+            (WebCore::GraphicsContext::platformApplyDeviceScaleFactor):
+            (WebCore::GraphicsContext::applyDeviceScaleFactor):
+            * platform/graphics/GraphicsContext.h:
+            * platform/graphics/cg/GraphicsContextCG.cpp:
+            (WebCore::GraphicsContext::platformApplyDeviceScaleFactor):
+
+            Since this patch removes GraphicsContext::setBaseCTM(), this code has been 
+            reverted to do what it used to do before that was added; it just calls into 
+            WebCoreSystemInterface directly.
+            * platform/graphics/cg/ImageCG.cpp:
+            (WebCore::Image::drawPattern):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98403
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            Plug-ins have to use JavaScript to find out the current device scale factor
+            https://bugs.webkit.org/show_bug.cgi?id=67225
+
+            Reviewed by Darin Adler.
+
+            Test: platform/mac-wk2/plugins/contents-scale-factor.html
+
+            Add NPNVcontentsScaleFactor, as per https://wiki.mozilla.org/NPAPI:ContentsScaleFactor.
+
+            * plugins/npapi.h:
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94598
+
+    2011-09-06  Anders Carlsson  <andersca@apple.com>
+
+            Move NPAPI headers in bridge to plugins
+            https://bugs.webkit.org/show_bug.cgi?id=67661
+
+            Reviewed by Darin Adler.
+
+            * WebCore.gypi:
+            * WebCore.pro:
+            * WebCore.vcproj/WebCore.vcproj:
+            * WebCore.xcodeproj/project.pbxproj:
+            Update build systems.
+
+            * bridge/npapi.h: Removed.
+            * bridge/npruntime.h: Removed.
+            * bridge/nptypes.h: Removed.
+            * plugins/npapi.h: Copied from Source/WebCore/bridge/npapi.h.
+            * plugins/npruntime.h: Copied from Source/WebCore/bridge/npruntime.h.
+            * plugins/nptypes.h: Copied from Source/WebCore/bridge/nptypes.h.
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 97886
+
+    2011-10-19  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=70396
+            Focus rings are too thin in HiDPI in WebKit2
+            -and corresponding-
+            <rdar://problem/10086876>
+
+            Reviewed by Dan Bernstein.
+
+            Rename wkSetPatternBaseCTM to wkSetBaseCTM
+            * WebCore.exp.in:
+            * platform/mac/WebCoreSystemInterface.h:
+            * platform/mac/WebCoreSystemInterface.mm:
+
+            New CG-only function calls into wkSetBaseCTM.
+            * platform/graphics/GraphicsContext.h:
+            * platform/graphics/cg/GraphicsContextCG.cpp:
+            (WebCore::GraphicsContext::setBaseCTM):
+
+            Call GraphicsContext::setBaseCTM() rather than calling into WebKitSystemInterface 
+            directly.
+            * platform/graphics/cg/ImageCG.cpp:
+            (WebCore::Image::drawPattern):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 97517
+
+    2011-10-14  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=70148
+            Should switch to CoreUI version of CorrectionDot, GrammarDot, and SpellingDot
+            -and corresponding-
+            <rdar://problem/10208281>
+
+            Reviewed by Anders Carlsson.
+
+            Use NS*Dot whenever it's available, and fallback to *Dot only when it is not.
+            * platform/graphics/mac/GraphicsContextMac.mm:
+            (WebCore::createPatternColor):
+            (WebCore::GraphicsContext::drawLineForTextChecking):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95697
+
+    2011-09-21  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67415
+            Text drawn via -webkit-background-clip:text is blurry at device scale factors >1.0
+            -and corresponding-
+            <rdar://problem/10060379>
+
+            Reviewed by Darin Adler.
+
+            New helper function RenderBoxModelObject scales the mask image by the 
+            deviceScaleFactor to get an image of the appropriate resolution. It also scales 
+            the image's GraphicsContext so that the clip is set up on the same scale. Back in 
+            paintFillLayerExtended() we still clip the image to the original maskRect to get 
+            everything scaled back to the appropriate size.
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::createDeviceScaledImageBuffer):
+            (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
+            Make the deviceScaleFactor convenience function just a namespace-level function in 
+            Page rather than a static member or Page.
+            * page/Page.cpp:
+            (WebCore::deviceScaleFactor):
+            * page/Page.h:
+
+            Pre-existing callers of Page::deviceScaleFactor(Frame*) must now use 
+            WebCore::deviceScaleFactor(Frame*)
+            * editing/DeleteButtonController.cpp:
+            (WebCore::DeleteButtonController::createDeletionUI):
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+            (WebCore::RenderImage::paintReplaced):
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::drawPlatformResizerImage):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95386
+
+    2011-09-17  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68307
+
+            Crash in border image cssText. Make sure to null check all the components, since they're all
+            optional now.
+
+            Reviewed by Sam Weinig.
+
+            Added fast/borders/border-image-slice-omission.html
+
+            * css/CSSBorderImageValue.cpp:
+            (WebCore::CSSBorderImageValue::cssText):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95244
+
+    2011-09-15  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67884
+            Delete button icon does not properly update when the device resolution changes 
+            dynamically
+            -and corresponding-
+            <rdar://problem/10104632>
+
+            Reviewed by Darin Adler.
+
+            In DeleteButtonController::deviceScaleFactorChanged(), if the delete button is 
+            currently showing, hide it and re-show it, forcing it to re-create the deletion 
+            UI.
+            * editing/DeleteButtonController.cpp:
+            (WebCore::DeleteButtonController::deviceScaleFactorChanged):
+            * editing/DeleteButtonController.h:
+            * editing/Editor.cpp:
+            (WebCore::Editor::deviceScaleFactorChanged):
+            * editing/Editor.h:
+
+            Iterate through all of the frames and propagate the deviceScaleFactorChange() 
+            message to Editor.
+            * page/Page.cpp:
+            (WebCore::Page::setDeviceScaleFactor):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95129
+
+    2011-09-14  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=52736
+
+            Tiles were not being properly centered within border image sides for the "repeat"
+            keyword. This patch fixes the buggy math behind the pattern tiling to actually get
+            the initial phases correct.
+
+            Reviewed by Sam Weinig.
+
+            Added new tests in fast/borders and updated broken existing tests.
+
+            * platform/graphics/Image.cpp:
+            (WebCore::Image::drawTiled):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95121
+
+    2011-09-14  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68103
+
+            Centered portions of border images don't render correctly. Make the tile scale factor have to be
+            explicitly passed in and modify paintNinePieceImage to compute it for all sides. The attempts to
+            implicitly compute the scale for the pattern based off the source and destination rects just don't
+            work, since the center image rects don't provide the right information to be able to infer the
+            scale factor.
+
+            Reviewed by Sam Weinig.
+
+            Reset all the existing fast/borders pixel results to Lion for these changes.
+
+            * platform/graphics/GraphicsContext.cpp:
+            (WebCore::GraphicsContext::drawTiledImage):
+            * platform/graphics/GraphicsContext.h:
+            * platform/graphics/Image.cpp:
+            (WebCore::Image::drawTiled):
+            * platform/graphics/Image.h:
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95103
+
+    2011-09-14  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68054
+            Return an image scale factor as well as an Image* from CachedImage::brokenImage()
+
+            Reviewed by Darin Adler.
+
+            CachedImage::brokenImage() now returns a pair<Image*, float> where the float 
+            represents the image's scale factor. This is important because currently, the 
+            broken image will either be only 1x or 2x, but a deviceScaleFactor could 
+            theoretically be something different (1.5, 3, etc). So it is not safe to assume 
+            that the image's scale factor is equivalent to the deviceScaleFactor, and 
+            hardcoding 2 for now is lame.
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::brokenImage):
+            (WebCore::CachedImage::image):
+            * loader/cache/CachedImage.h:
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+            (WebCore::RenderImage::paintReplaced):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95099
+
+    2011-09-14  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68040
+
+            Make sure border image sub-properties can be specified in any order.
+
+            Reviewed by Beth Dakin.
+
+            New tests in fast/borders.
+
+            * css/CSSParser.cpp:
+            (WebCore::BorderImageParseContext::BorderImageParseContext):
+            (WebCore::BorderImageParseContext::canAdvance):
+            (WebCore::BorderImageParseContext::setCanAdvance):
+            (WebCore::BorderImageParseContext::allowCommit):
+            (WebCore::BorderImageParseContext::allowImage):
+            (WebCore::BorderImageParseContext::allowImageSlice):
+            (WebCore::BorderImageParseContext::allowSlash):
+            (WebCore::BorderImageParseContext::requireWidth):
+            (WebCore::BorderImageParseContext::requireOutset):
+            (WebCore::BorderImageParseContext::commitImage):
+            (WebCore::BorderImageParseContext::commitImageSlice):
+            (WebCore::BorderImageParseContext::commitSlash):
+            (WebCore::BorderImageParseContext::commitBorderWidth):
+            (WebCore::BorderImageParseContext::commitBorderOutset):
+            (WebCore::BorderImageParseContext::commitRepeat):
+            (WebCore::CSSParser::parseBorderImage):
+            (WebCore::CSSParser::parseBorderImageRepeat):
+            (WebCore::CSSParser::parseBorderImageSlice):
+            (WebCore::CSSParser::parseBorderImageQuad):
+            * css/CSSParserValues.h:
+            (WebCore::CSSParserValueList::previous):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95096
+
+    2011-09-13  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68050
+
+            Regressions in some layout tests from making border/mask/reflection nine-piece-image
+            parsing match the spec, which allows any of the pieces to be omitted and to also be
+            specifiable in any order.
+
+            When the higher level code suddenly allowed the image slices to be omitted, the fixup
+            for legacy compatibility for reflections and masks in the parseBorderImageSlice function
+            no longer happened because that function no longer got called.
+
+            The fix is to properly set the defaults to include the "fill" keyword, so the fixup is
+            applied to the NinePieceImages you create before you ever map anything in from the rules.
+
+            This also has the side effect of fixing -webkit-max-box-image-slice to actually dump as
+            "0 fill" instead of just "0", which is the correct initial value for this property.
+
+            Reviewed by Adam Roben.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseBorderImageSlice):
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::applyProperty):
+            * rendering/style/StyleRareNonInheritedData.cpp:
+            (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+            * rendering/style/StyleReflection.h:
+            (WebCore::StyleReflection::StyleReflection):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95058
+
+    2011-09-13  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=68040
+
+            Make sure border image sub-properties can be specified in any order.
+
+            Reviewed by Beth Dakin.
+
+            New tests in fast/borders.
+
+            * css/CSSParser.cpp:
+            (WebCore::BorderImageParseContext::BorderImageParseContext):
+            (WebCore::BorderImageParseContext::canAdvance):
+            (WebCore::BorderImageParseContext::setCanAdvance):
+            (WebCore::BorderImageParseContext::allowCommit):
+            (WebCore::BorderImageParseContext::allowImage):
+            (WebCore::BorderImageParseContext::allowImageSlice):
+            (WebCore::BorderImageParseContext::allowSlash):
+            (WebCore::BorderImageParseContext::requireWidth):
+            (WebCore::BorderImageParseContext::requireOutset):
+            (WebCore::BorderImageParseContext::commitImage):
+            (WebCore::BorderImageParseContext::commitImageSlice):
+            (WebCore::BorderImageParseContext::commitSlash):
+            (WebCore::BorderImageParseContext::commitBorderWidth):
+            (WebCore::BorderImageParseContext::commitBorderOutset):
+            (WebCore::BorderImageParseContext::commitRepeat):
+            (WebCore::CSSParser::parseBorderImage):
+            (WebCore::CSSParser::parseBorderImageRepeat):
+            (WebCore::CSSParser::parseBorderImageSlice):
+            (WebCore::CSSParser::parseBorderImageQuad):
+            * css/CSSParserValues.h:
+            (WebCore::CSSParserValueList::previous):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95053
+
+    2011-09-13  Beth Dakin  <bdakin@apple.com>
+
+            Adding a comment I forgot to add before.
+
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95051.
+    This restored a broken Changelog, which isn't necessary for the branch anyway.
+
+    2011-09-13  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67885
+            Outline for the high-resolution broken image icon draws at 2x
+            -and corresponding-
+            <rdar://problem/10104637>
+
+            Reviewed by Dan Bernstein.
+
+            Scaled the image size to account for the deviceScaleFactor. 
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 95048
+
+    2011-09-13  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67885
+            Outline for the high-resolution broken image icon draws at 2x
+            -and corresponding-
+            <rdar://problem/10104637>
+
+            Reviewed by Dan Bernstein.
+
+            Scaled the image size to account for the deviceScaleFactor. 
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94980
+
+    2011-09-12  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67898
+            REGRESSION(r94900): fast/images/support-broken-image-delegate.html fails on Mac
+
+            Reviewed by Simon Fraser.
+
+            New function willPaintBrokenImage() returns true when there has been an error 
+            loading the image and the broken image icon will be used in its place. This is 
+            necessary since it is possible to have an error loading an image and to NOT use 
+            the broken image icon. 
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::willPaintBrokenImage):
+            * loader/cache/CachedImage.h:
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94912
+
+    2011-09-09  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67861
+
+            Implement border-image-outset (and the mask equivalents).
+
+            Reviewed by Beth Dakin.
+
+            Added new tests in fast/borders and fast/reflections.
+
+            * css/CSSBorderImageValue.cpp:
+            (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+            (WebCore::CSSBorderImageValue::cssText):
+            * css/CSSBorderImageValue.h:
+            (WebCore::CSSBorderImageValue::create):
+            Add m_outset field to CSSBorderImageValue and teach it how to dump the field as
+            part of cssText().
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::valueForNinePieceImageQuad):
+            (WebCore::valueForNinePieceImage):
+            (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            Add support for border-image-outset and -webkit-mask-box-image-outset. Refactor
+            the code so that border-image-width and border-image-outset use a common
+            function.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            (WebCore::BorderImageParseContext::BorderImageParseContext):
+            (WebCore::BorderImageParseContext::allowOutset):
+            (WebCore::BorderImageParseContext::commitSlash):
+            (WebCore::BorderImageParseContext::commitBorderWidth):
+            (WebCore::BorderImageParseContext::commitBorderOutset):
+            (WebCore::BorderImageParseContext::commitRepeat):
+            (WebCore::BorderImageParseContext::commitBorderImage):
+            (WebCore::CSSParser::parseBorderImage):
+            Teach the border image parsing code about outsets. This code will soon be
+            replaced by true shorthand parsing code, but for now keep it working and add
+            outset support to it.
+
+            (WebCore::BorderImageQuadParseContext::BorderImageQuadParseContext):
+            (WebCore::BorderImageQuadParseContext::commitBorderImageQuad):
+            (WebCore::CSSParser::parseBorderImageQuad):
+            (WebCore::CSSParser::parseBorderImageWidth):
+            (WebCore::CSSParser::parseBorderImageOutset):
+            * css/CSSParser.h:
+            Refactor the border-image-width code so that it can be shared by border-image-outset, since
+            they are extremely similar.
+
+            * css/CSSPropertyNames.in:
+            Add the new properties.
+
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::applyProperty):
+            (WebCore::CSSStyleSelector::mapNinePieceImage):
+            (WebCore::CSSStyleSelector::mapNinePieceImageQuad):
+            (WebCore::CSSStyleSelector::loadPendingImages):
+            * css/CSSStyleSelector.h:
+            Refactor the code so that width/outset share common mapping functions. Add support for outset.
+
+            * rendering/InlineFlowBox.cpp:
+            (WebCore::InlineFlowBox::addToLine):
+            (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+            (WebCore::InlineFlowBox::addBorderOutsetVisualOverflow):
+            (WebCore::InlineFlowBox::computeOverflow):
+            Add new functions for computing the visual overflow caused by border outsets. Fix bugs in
+            the shadow overflow code as well.
+
+            (WebCore::clipRectForNinePieceImageStrip):
+            (WebCore::InlineFlowBox::paintBoxDecorations):
+            (WebCore::InlineFlowBox::paintMask):
+            * rendering/InlineFlowBox.h:
+            Make sure the clip rect pushed when painting one piece of a split inline strip is expanded to
+            include the border and mask outsets. Always include the block direction expansion, and conditionally
+            include the inline direction expansion based off includeLogicalLeftEdge()/includeLogicalRightEdge().
+            clipRectForNinePieceImageStrip is a common function shared by masks and border images that does this
+            work.
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::computeOverflow):
+            * rendering/RenderBox.cpp:
+            (WebCore::RenderBox::maskClipRect):
+            (WebCore::RenderBox::addBoxShadowAndBorderOverflow):
+            * rendering/RenderBox.h:
+            Rename addShadowOverflow to addBoxShadowAndBorderOverflow. Have it compute both shadow and border image
+            outset overflow. Fix bugs with shadow overflow computation.
+
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::paintNinePieceImage):
+            Change painting to apply the outsets to inflate the border image drawing area.
+
+            * rendering/RenderEmbeddedObject.cpp:
+            (WebCore::RenderEmbeddedObject::layout):
+            * rendering/RenderIFrame.cpp:
+            (WebCore::RenderIFrame::layout):
+            Patched to call the renamed addBoxShadowAndBorderOverflow function instead of addShadowOverflow.
+
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::calculateRects):
+            Patched to no longer apply box-shadow to overflow clip areas when inflating the intersection area for the
+            layer bounds. Instead we generically apply all visual overflow so that border image outsets will also be
+            included. This fixes https://bugs.webkit.org/show_bug.cgi?id=37467.
+
+            * rendering/RenderReplaced.cpp:
+            (WebCore::RenderReplaced::layout):
+            Patched to call the renamed addBoxShadowAndBorderOverflow function instead of addShadowOverflow.
+
+            * rendering/style/NinePieceImage.cpp:
+            (WebCore::NinePieceImage::operator==):
+            * rendering/style/NinePieceImage.h:
+            (WebCore::NinePieceImage::NinePieceImage):
+            (WebCore::NinePieceImage::outset):
+            (WebCore::NinePieceImage::setOutset):
+            (WebCore::NinePieceImage::computeOutset):
+            (WebCore::NinePieceImage::copyOutsetFrom):
+            Add the outset field to NinePieceImage along with some helpers for manipulating outsets.
+
+            * rendering/style/RenderStyle.cpp:
+            (WebCore::RenderStyle::getImageOutsets):
+            (WebCore::RenderStyle::getImageHorizontalOutsets):
+            (WebCore::RenderStyle::getImageVerticalOutsets):
+            * rendering/style/RenderStyle.h:
+            (WebCore::InheritedFlags::hasBorderImageOutsets):
+            (WebCore::InheritedFlags::getBorderImageOutsets):
+            (WebCore::InheritedFlags::getBorderImageHorizontalOutsets):
+            (WebCore::InheritedFlags::getBorderImageVerticalOutsets):
+            (WebCore::InheritedFlags::getBorderImageInlineDirectionOutsets):
+            (WebCore::InheritedFlags::getBorderImageBlockDirectionOutsets):
+            (WebCore::InheritedFlags::getImageInlineDirectionOutsets):
+            (WebCore::InheritedFlags::getImageBlockDirectionOutsets):
+            Helpers for outset computation used by painting and overflow functions.
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94901
+
+    2011-09-09  Beth Dakin  <bdakin@apple.com>
+
+            Attempted Leopard build fix.
+
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::paintReplaced):
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::drawPlatformResizerImage):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94900
+
+    2011-09-09  Beth Dakin  <bdakin@apple.com>
+
+            Fix for https://bugs.webkit.org/show_bug.cgi?id=67819
+            Use high resolution platform images when the deviceScaleFactor > 1
+            -and corresponding-
+            <rdar://problem/10003098>
+
+            Reviewed by Darin Adler.
+
+            Add all of the new high resolution images. I also removed some tiffs from the 
+            project and replaced them with png equivalents (that are already checked into 
+            WebCore anyway). Since the high resolution images are pngs, it makes sense to use 
+            pngs for all of the images that load through Image::loadPlatformResource()
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/graphics/mac/ImageMac.mm:
+            (WebCore::Image::loadPlatformResource):
+
+            Load the @2x resource for deviceScaleFactors >= 2.
+            * editing/DeleteButtonController.cpp:
+            (WebCore::DeleteButtonController::createDeletionUI):
+
+            CachedImage::brokenImage() is no longer a static helper function, but a real 
+            member function. It also now loads the @2x resource for deviceScaleFactors >= 2 
+            and takes a parameter for the deviceScaleFactor. When CachedImage::image() returns 
+            the brokenImage(), it just returns the 1x version. brokenImage() has to be called 
+            directly to reliably return the deviceScaleFactor-appropriate resource.
+            * loader/cache/CachedImage.cpp:
+            (WebCore::CachedImage::brokenImage):
+            (WebCore::CachedImage::image):
+            * loader/cache/CachedImage.h:
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::drawPlatformResizerImage):
+            (WebCore::RenderLayer::paintResizer):
+            * rendering/RenderLayer.h:
+
+            New static function to retrieve the deviceScaleFactor for callers that do not have 
+            direct access to a Page.
+            * page/Page.cpp:
+            (WebCore::Page::deviceScaleFactor):
+            * page/Page.h:
+
+            Call CachedImage::brokenImage() for the broken-image image at an accurate 
+            resolution.
+            * rendering/RenderImage.cpp:
+            (WebCore::RenderImage::imageSizeForError):
+            (WebCore::RenderImage::paintReplaced):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94597
+
+    2011-09-06  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67672
+
+            Improve background-size parsing. Make it actually dump auto values properly, and also make it omit
+            auto if it is the second value. Fix the parsing to not create a value list when only a singleton value
+            is specified.
+
+            Reviewed by Beth Dakin.
+
+            Covered well by existing tests.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::fillSizeToCSSValue):
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseFillSize):
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::mapFillSize):
+
+2011-12-05  Lucas Forschler  <lforschler@apple.com>
+
+        Fixes to the branch made by Simon to get us building again.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::mapNinePieceImageWidth):
+        (WebCore::CSSStyleSelector::loadPendingImages):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::computeBorderImageSide):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+
+2011-12-02  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 90959
+
+    2011-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix non-debug builds.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::createGraphicsLayer):
+
+2011-12-02  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93445
+
+    2011-08-19  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=66590
+            Re-name scrollbar painter types
+
+            Reviewed by Sam Weinig.
+
+            Names changed to remove references to WebKitSystemInterface since the 
+            implementation is now in WebCore. And the type names changed to be more Objective-
+            Cish instead of C++ish
+            WTF_USE_WK_SCROLLBAR_PAINTER -> WTF_USE_SCROLLBAR_PAINTER
+            WKScrollbarPainterRef -> ScrollbarPainter
+            WKScrollbarPainterControllerRef -> ScrollbarPainterController
+
+            * platform/mac/NSScrollerImpDetails.h:
+            * platform/mac/ScrollAnimatorMac.h:
+            * platform/mac/ScrollAnimatorMac.mm:
+            (-[ScrollbarPartAnimation initWithScrollbarPainter:part:WebCore::scrollAnimator:WebCore::animateAlphaTo:duration:]):
+            (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+            (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+            (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+            (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+            (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+            (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+            (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+            (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+            (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+            (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+            (WebCore::ScrollAnimatorMac::willStartLiveResize):
+            (WebCore::ScrollAnimatorMac::contentsResized):
+            (WebCore::ScrollAnimatorMac::willEndLiveResize):
+            (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+            (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+            (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+            (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+            (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+            (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+            (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+            (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+            (WebCore::ScrollAnimatorMac::cancelAnimations):
+            (WebCore::ScrollAnimatorMac::setIsActive):
+            (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+            * platform/mac/ScrollViewMac.mm:
+            (WebCore::ScrollView::platformSetScrollbarOverlayStyle):
+            * platform/mac/ScrollbarThemeMac.h:
+            * platform/mac/ScrollbarThemeMac.mm:
+            (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+            (WebCore::updateArrowPlacement):
+            (WebCore::ScrollbarThemeMac::registerScrollbar):
+            (WebCore::ScrollbarThemeMac::setNewPainterForScrollbar):
+            (WebCore::ScrollbarThemeMac::painterForScrollbar):
+            (WebCore::ScrollbarThemeMac::scrollbarThickness):
+            (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+            (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+            (WebCore::ScrollbarThemeMac::hasThumb):
+            (WebCore::ScrollbarThemeMac::minimumThumbLength):
+            (WebCore::ScrollbarThemeMac::updateEnabledState):
+            (WebCore::scrollbarPainterPaint):
+            (WebCore::ScrollbarThemeMac::paint):
+
+2011-12-02  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93377
+
+    2011-08-18  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=66495
+            Lion-specific scroller SPIs can use forward declaration instead of 
+            WebKitSystemInterface
+
+            Reviewed by Sam Weinig.
+
+            * WebCore.exp.in:
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/mac/NSScrollerImpDetails.h: Added.
+            * platform/mac/ScrollAnimatorMac.h:
+            * platform/mac/ScrollAnimatorMac.mm:
+            (-[ScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+            (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+            (-[ScrollbarPartAnimation initWithScrollbarPainter:part:WebCore::scrollAnimator:WebCore::animateAlphaTo:duration:]):
+            (-[ScrollbarPartAnimation setCurrentProgress:]):
+            (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+            (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+            (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+            (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+            (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+            (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+            (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+            (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+            (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+            (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+            (WebCore::ScrollAnimatorMac::willStartLiveResize):
+            (WebCore::ScrollAnimatorMac::contentsResized):
+            (WebCore::ScrollAnimatorMac::willEndLiveResize):
+            (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+            (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+            (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+            (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+            (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+            (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+            (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+            (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+            (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+            (WebCore::ScrollAnimatorMac::initialScrollbarPaintTimerFired):
+            * platform/mac/ScrollbarThemeMac.h:
+            * platform/mac/ScrollbarThemeMac.mm:
+            (WebCore::ScrollbarThemeMac::registerScrollbar):
+            (WebCore::ScrollbarThemeMac::scrollbarThickness):
+            (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+            (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+            (WebCore::ScrollbarThemeMac::hasThumb):
+            (WebCore::ScrollbarThemeMac::minimumThumbLength):
+            (WebCore::ScrollbarThemeMac::updateEnabledState):
+            (WebCore::scrollbarPainterPaint):
+            (WebCore::ScrollbarThemeMac::paint):
+            * platform/mac/WebCoreSystemInterface.h:
+            * platform/mac/WebCoreSystemInterface.mm:
+
+2011-12-02  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 100809
+
+    2011-11-18  Beth Dakin  <bdakin@apple.com>
+
+        <rdar://problem/10466170> Regression: Scroll bars disappear and don't come back
+
+        Reviewed by Sam Weinig.
+
+        Fixing a merge issue. On TOT we use #if USE(SCROLLBAR_PAINTER), but on the branch 
+        it is still #if USE(WK_SCROLLBAR_PAINTER). Also, on the branch, all of the 
+        m_scrollbarPainterController functions go through WebKitSystemInterface instead of 
+        using forward declaration. We should consider merging those changes, but in the 
+        meantime, for this to work, we have to go back to the branch-style.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notityPositionChanged):
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94953
+
+    2011-09-06  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67657
+
+            Implement border-image-width. This patch stops short of converting -webkit-border-image to a shorthand.
+            I'll do that in the next patch.
+
+            Note that unlike the -webkit-border-image syntax, border-image-width does not actually set the border
+            width values. It simply makes cuts into the border image drawing area (which for now is just the border
+            box, but that will change once border-image-outset is implemented).
+
+            This means we need additional storage for the slices, since they are now separate from the border widths.
+
+            For backwards compatibility, -webkit-border-image will continue to set the border widths when
+            border-image-width is specified in the -webkit-border-image shorthand.
+
+            Reviewed by Beth Dakin.
+
+            Added new tests in fast/borders.
+
+            * css/CSSBorderImageSliceValue.cpp:
+            (WebCore::CSSBorderImageSliceValue::CSSBorderImageSliceValue):
+            (WebCore::CSSBorderImageSliceValue::cssText):
+            * css/CSSBorderImageSliceValue.h:
+            (WebCore::CSSBorderImageSliceValue::create):
+            (WebCore::CSSBorderImageSliceValue::slices):
+            Rename slices() to imageSlices() and add borderSlices() and m_borderSlices to hold the desired cuts
+            for the border image drawing area. Converted the slices over to the new Quad primitive value (a RectBase
+            subclass that is identical to Rect but dumps as a quad instead of a rect primitive).
+
+            * css/CSSBorderImageValue.cpp:
+            (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+            (WebCore::CSSBorderImageValue::cssText):
+            * css/CSSBorderImageValue.h:
+            (WebCore::CSSBorderImageValue::create):
+            Make CSSBorderImageValue take the border slices during construction now.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::valueForNinePieceImageSlice):
+            (WebCore::valueForNinePieceImageWidth):
+            (WebCore::valueForNinePieceImageRepeat):
+            (WebCore::valueForNinePieceImage):
+            (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            Add support for computed style via valueForNinePieceImageWidth. Patch all of the border image properties
+            to dump the most compact form possible for the property values, e.g., "stretch stretch" becomes "stretch."
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            (WebCore::CSSParser::parseReflect):
+            (WebCore::BorderImageParseContext::BorderImageParseContext):
+            (WebCore::BorderImageParseContext::commitImageSlice):
+            (WebCore::BorderImageParseContext::commitBorderWidth):
+            (WebCore::BorderImageParseContext::commitBorderImage):
+            (WebCore::CSSParser::parseBorderImage):
+            (WebCore::isBorderImageRepeatKeyword):
+            (WebCore::CSSParser::parseBorderImageRepeat):
+            (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+            (WebCore::CSSParser::parseBorderImageSlice):
+            (WebCore::BorderImageWidthParseContext::BorderImageWidthParseContext):
+            (WebCore::BorderImageWidthParseContext::allowNumber):
+            (WebCore::BorderImageWidthParseContext::allowFinalCommit):
+            (WebCore::BorderImageWidthParseContext::top):
+            (WebCore::BorderImageWidthParseContext::commitNumber):
+            (WebCore::BorderImageWidthParseContext::setAllowFinalCommit):
+            (WebCore::BorderImageWidthParseContext::setTop):
+            (WebCore::BorderImageWidthParseContext::commitBorderImageWidth):
+            (WebCore::CSSParser::parseBorderImageWidth):
+            * css/CSSParser.h:
+            Modify the border-image code to pass off border-image-width parsing to parseBorderImageWidth.
+
+            * css/CSSPrimitiveValue.cpp:
+            (WebCore::isValidCSSUnitTypeForDoubleConversion):
+            (WebCore::CSSPrimitiveValue::init):
+            (WebCore::CSSPrimitiveValue::cleanup):
+            (WebCore::CSSPrimitiveValue::getQuadValue):
+            (WebCore::CSSPrimitiveValue::cssText):
+            * css/CSSPrimitiveValue.h:
+            (WebCore::CSSPrimitiveValue::getQuadValue):
+            Add the new Quad value to CSSPrimitiveValue.
+
+            * css/CSSPropertyNames.in:
+            Add the new properties for border-image-width and -webkit-mask-box-image-width.
+
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::applyProperty):
+            (WebCore::CSSStyleSelector::mapNinePieceImage):
+            (WebCore::CSSStyleSelector::mapNinePieceImageSlice):
+            (WebCore::CSSStyleSelector::mapNinePieceImageWidth):
+            (WebCore::CSSStyleSelector::loadPendingImages):
+            * css/CSSStyleSelector.h:
+            Add the code to map the image width into border slices.
+
+            * css/Rect.h:
+            (WebCore::RectBase::top):
+            (WebCore::RectBase::right):
+            (WebCore::RectBase::bottom):
+            (WebCore::RectBase::left):
+            (WebCore::RectBase::setTop):
+            (WebCore::RectBase::setRight):
+            (WebCore::RectBase::setBottom):
+            (WebCore::RectBase::setLeft):
+            (WebCore::RectBase::RectBase):
+            (WebCore::RectBase::~RectBase):
+            (WebCore::Rect::create):
+            (WebCore::Rect::Rect):
+            (WebCore::Quad::create):
+            (WebCore::Quad::Quad):
+            Adding the new Quad value.
+
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::computeBorderImageSide):
+            (WebCore::RenderBoxModelObject::paintNinePieceImage):
+            Modify painting to treat the border slices as separate from the border widths.
+
+            * rendering/style/NinePieceImage.cpp:
+            (WebCore::NinePieceImage::operator==):
+            * rendering/style/NinePieceImage.h:
+            (WebCore::NinePieceImage::NinePieceImage):
+            (WebCore::NinePieceImage::imageSlices):
+            (WebCore::NinePieceImage::setImageSlices):
+            (WebCore::NinePieceImage::borderSlices):
+            (WebCore::NinePieceImage::setBorderSlices):
+            (WebCore::NinePieceImage::copyImageSlicesFrom):
+            (WebCore::NinePieceImage::copyBorderSlicesFrom):
+            * rendering/style/StyleRareNonInheritedData.cpp:
+            Add the border slices.
+
+            (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+            * rendering/style/StyleReflection.h:
+            (WebCore::StyleReflection::StyleReflection):
+            Make sure masks and reflections default border-image-width to auto instead of 1, since that matches
+            old behavior.
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94420
+
+    2011-09-01  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67431
+
+            Implement border-image-repeat. Similar to how border-image-slice was implemented, the parsing of the two
+            repeat values has been moved into separate functions. The value is represented as a Pair (similar to how we
+            handle border radius).
+
+            Reviewed by Beth Dakin.
+
+            Added fast/borders/border-image-repeat.html.
+
+            * css/CSSBorderImageValue.cpp:
+            (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+            (WebCore::CSSBorderImageValue::cssText):
+            * css/CSSBorderImageValue.h:
+            (WebCore::CSSBorderImageValue::create):
+            Modified the CSSBorderImageValue (you're living on borrowed time, my friend!) to have a CSSValue that
+            contains a Pair.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::valueForRepeatRule):
+            (WebCore::valueForNinePieceImageRepeat):
+            (WebCore::valueForNinePieceImage):
+            (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            Add support for the new properties. Break out the value retrieval for the image repeat rules into its
+            own function, valueForNinePieceImageRepeat.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            (WebCore::BorderImageParseContext::BorderImageParseContext):
+            (WebCore::BorderImageParseContext::allowRepeat):
+            (WebCore::BorderImageParseContext::commitSlice):
+            (WebCore::BorderImageParseContext::commitSlash):
+            (WebCore::BorderImageParseContext::commitWidth):
+            (WebCore::BorderImageParseContext::commitRepeat):
+            (WebCore::BorderImageParseContext::commitBorderImage):
+            (WebCore::CSSParser::parseBorderImage):
+            Modified the parsing of border image to call into parseBorderImageRepeat for the repeat values.
+
+            (WebCore::isBorderImageRepeatKeyword):
+            (WebCore::CSSParser::parseBorderImageRepeat):
+            The new parsing code for border-image-repeat is here. It will build up a CSSValue containing a Pair and
+            return the result.
+
+            * css/CSSParser.h:
+            * css/CSSPropertyNames.in:
+            Add the new properties.
+
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::applyProperty):
+            (WebCore::CSSStyleSelector::mapNinePieceImage):
+            (WebCore::CSSStyleSelector::mapNinePieceImageRepeat):
+            * css/CSSStyleSelector.h:
+            The mapping into the front end is done the same way as border-image-slice. Factor out the image repeat rules
+            portion into mapNinePieceImageRepeat.
+
+            * platform/graphics/Image.cpp:
+            (WebCore::Image::drawTiled):
+            * platform/graphics/Image.h:
+            Add the new 'space' value as a valid image tiling rule. It's not yet supported and, like the 'round' value,
+            is just mapped to 'repeat' for now.
+
+            * rendering/style/NinePieceImage.h:
+            (WebCore::NinePieceImage::copyRepeatFrom):
+            Helper for copying only the repeat rules from another NinePieceImage.
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94304
+
+    2011-09-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+            [CSS3 Backgrounds and Borders] Implement border-image-slice
+            https://bugs.webkit.org/show_bug.cgi?id=67321
+
+            * WebCore.pro: Unreviewed buildfix after Dave "scattered" Hyatt (r94299).
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94299
+
+    2011-08-31  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67321
+
+            Implement border-image-slice. This will eventually be a component of the new border-image shorthand
+            property. It holds the cuts that you make into the border image along with a new optional "fill"
+            keyword that indicates whether or not the center should be filled with the middle slice of the image.
+
+            By default -webkit-border-image has always filled, but this does not match the specification. To preserve
+            backwards compatibility, -webkit-border-image will continue to fill by default, but this does slightly affect
+            computed style results, since the "fill" keyword will now be included in property dumps.
+
+            Reviewed by Beth Dakin.
+
+            Added fast/borders/border-image-slices.html.
+
+            * CMakeLists.txt:
+            * WebCore.gypi:
+            * WebCore.pro:
+            * WebCore.vcproj/WebCore.vcproj:
+            * WebCore.xcodeproj/project.pbxproj:
+            * css/CSSBorderImageSliceValue.cpp: Added.
+            (WebCore::CSSBorderImageSliceValue::CSSBorderImageSliceValue):
+            (WebCore::CSSBorderImageSliceValue::~CSSBorderImageSliceValue):
+            (WebCore::CSSBorderImageSliceValue::cssText):
+            * css/CSSBorderImageSliceValue.h: Added.
+            (WebCore::CSSBorderImageSliceValue::create):
+            (WebCore::CSSBorderImageSliceValue::isBorderImageSliceValue):
+            Add a new CSSBorderImageSliceValue that holds both the four slices (as a CSS rect) and the
+            fill keyword (as a boolean). Note that the cssText() dumping of the slices has been refined
+            to be smarter, and it will no longer dump repeating values.
+
+            * css/CSSBorderImageValue.cpp:
+            (WebCore::CSSBorderImageValue::CSSBorderImageValue):
+            (WebCore::CSSBorderImageValue::cssText):
+            * css/CSSBorderImageValue.h:
+            (WebCore::CSSBorderImageValue::create):
+            CSSBorderImageValue now owns a CSSBorderImageSliceValue instead of just a CSS rect.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::valueForNinePieceImageSlice):
+            (WebCore::valueForNinePieceImage):
+            Add a new method, valueForNinePieceImageSlice, for getting the slices plus the fill value
+            from the NinePieceImage and putting it into a CSSBorderImageSliceValue. This method is now used by
+            valueForNinePieceImage to get the CSSBorderImageSliceValue that is part of the overall
+            CSSBorderImageValue.
+
+            (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            Adding support for the new properties: border-image-slice and -webkit-mask-box-image-slice.
+
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            (WebCore::BorderImageParseContext::BorderImageParseContext):
+            (WebCore::BorderImageParseContext::allowBreak):
+            (WebCore::BorderImageParseContext::commitImage):
+            (WebCore::BorderImageParseContext::commitSlice):
+            (WebCore::BorderImageParseContext::commitSlash):
+            (WebCore::BorderImageParseContext::commitBorderImage):
+            (WebCore::CSSParser::parseBorderImage):
+            Modify parseBorderImage to no longer parse the slices itself. Instead it farms out the parsing
+            to parseBorderImageSlice.
+
+            (WebCore::BorderImageSliceParseContext::BorderImageSliceParseContext):
+            (WebCore::BorderImageSliceParseContext::allowNumber):
+            (WebCore::BorderImageSliceParseContext::allowFill):
+            (WebCore::BorderImageSliceParseContext::allowFinalCommit):
+            (WebCore::BorderImageSliceParseContext::top):
+            (WebCore::BorderImageSliceParseContext::commitNumber):
+            (WebCore::BorderImageSliceParseContext::commitFill):
+            (WebCore::BorderImageSliceParseContext::setAllowFinalCommit):
+            (WebCore::BorderImageSliceParseContext::setTop):
+            (WebCore::BorderImageSliceParseContext::commitBorderImageSlice):
+            (WebCore::CSSParser::parseBorderImageSlice):
+            Slice parsing has now been broken out so that it can be parsed as a single property. In addition
+            support for the "fill" keyword has been added to control image filling.
+
+            * css/CSSParser.h:
+            Modified to add the new parseBorderImageSlice method.
+
+            * css/CSSPropertyNames.in:
+            Add the new properties: border-image-slice and -webkit-mask-box-image-slice.
+
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::applyProperty):
+            (WebCore::CSSStyleSelector::mapNinePieceImage):
+            Rework mapNinePieceImage to call mapNinePieceImageSlice so that the mapping can be done just for
+            the slices.
+
+            (WebCore::CSSStyleSelector::mapNinePieceImageSlice):
+            A new method that handles mapping just the slices into the front-end NinePieceImage.
+
+            (WebCore::CSSStyleSelector::loadPendingImages):
+            Modified to ensure the fill value is preserved when box-reflect makes a new NinePieceImage.
+
+            * css/CSSStyleSelector.h:
+            Added the new mapNinePieceImageSlice method.
+
+            * css/CSSValue.h:
+            (WebCore::CSSValue::isBorderImageSliceValue):
+            Virtual function for identifying border image slice values.
+
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::paintNinePieceImage):
+            The painting of the nine piece image has been modified to match the specification. The "fill"
+            keyword controls whether or not the middle is painted.
+
+            * rendering/style/NinePieceImage.cpp:
+            (WebCore::NinePieceImage::operator==):
+            The fill keyword has to be checked now for equality.
+
+            * rendering/style/NinePieceImage.h:
+            (WebCore::NinePieceImage::NinePieceImage):
+            (WebCore::NinePieceImage::fill):
+            (WebCore::NinePieceImage::setFill):
+            Added the fill keyword to the front end NinePieceImage.
+
+            (WebCore::NinePieceImage::copySlicesFrom):
+            Added a helper to copy only the slices over from another NinePieceImage. Used when inheriting
+            the border-image-slice property from a parent style.
+
+2011-11-30  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94206
+
+    2011-08-31  David Hyatt  <hyatt@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=67300
+
+            Add the new border-image-source property (and its corresponding analogue for masks, mask-box-image-source).
+            Change the border-image parsing code to no longer consider "none" to represent the entire border-image
+            expression, but instead to just mean "none" for the image component of the expression.
+
+            Change the pending image code for border-image and mask-box-image to use the new *-source properties when
+            loading the image so that they're considered the same.
+
+            This is the first step towards eliminating the border-image parsing code in favor of just parsing it as
+            a shorthand instead, but for now I'm implementing each property one by one, and once they're all there,
+            we can cut over to border-image as a true shorthand.
+
+            Reviewed by Beth Dakin.
+
+            Added fast/borders/border-image-source.html.
+
+            * css/CSSComputedStyleDeclaration.cpp:
+            (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+            * css/CSSParser.cpp:
+            (WebCore::CSSParser::parseValue):
+            (WebCore::CSSParser::parseBorderImage):
+            * css/CSSPropertyNames.in:
+            * css/CSSStyleSelector.cpp:
+            (WebCore::CSSStyleSelector::applyProperty):
+            (WebCore::CSSStyleSelector::mapNinePieceImage):
+            (WebCore::CSSStyleSelector::loadPendingImages):
+            * rendering/style/NinePieceImage.h:
+            (WebCore::NinePieceImage::setImage):
+            * rendering/style/RenderStyle.h:
+            (WebCore::InheritedFlags::borderImageSource):
+            (WebCore::InheritedFlags::maskBoxImageSource):
+            (WebCore::InheritedFlags::setBorderImageSource):
+            (WebCore::InheritedFlags::setMaskBoxImageSource):
+            (WebCore::InheritedFlags::initialBorderImageSource):
+            (WebCore::InheritedFlags::initialMaskBoxImageSource):
+
+2011-11-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93669 
+
+    2011-08-23  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=66244
+            Cached pages don't fully update when going back after changing the display scale 
+            factor
+            -and corresponding-
+            <rdar://problem/9955656>
+
+            Reviewed by Darin Adler.
+
+            This patch adds a generalized concept of needing a full style recalc to the 
+            BackForwardController. So when the display scale factor is changed, the 
+            BackForwardController can be informed that all pages will need a full style recalc 
+            when they come out of the cache. This same mechanism is also used to fix a long-
+            standing bug with full-page/text zoom.
+
+            Iterate through the HistoryItems and mark all CachedPages as needing a full style 
+            recalc.
+            * history/BackForwardController.cpp:
+            (WebCore::BackForwardController::markPagesForFullStyleRecalc):
+            * history/BackForwardController.h:
+
+            ChachedPage has a new bool -- m_needsFullStyleRecalc -- to track whether a full 
+            style recalc is needed when the CachedPage is restored.
+            * history/CachedPage.cpp:
+            (WebCore::CachedPage::CachedPage):
+            (WebCore::CachedPage::restore):
+            (WebCore::CachedPage::clear):
+            * history/CachedPage.h:
+            (WebCore::CachedPage::markForFullStyleRecalc):
+
+            HistoryItem actually takes care of calling into CachedPage.
+            * history/HistoryItem.cpp:
+            (WebCore::HistoryItem::markForFullStyleRecalc):
+            * history/HistoryItem.h:
+
+            Fix style recalc issues for full-page/text zoom by calling our new function on 
+            PageCache.
+            * page/Frame.cpp:
+            (WebCore::Frame::setPageAndTextZoomFactors):
+
+            Fix style recalc issues for display scale factor changes by calling our new 
+            function on PageCache.
+            * page/Page.cpp:
+            (WebCore::Page::setDeviceScaleFactor):
+
+2011-11-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93303
+
+    2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Removed Frame::deviceScaleFactorChanged, added Page::setDeviceScaleFactor.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::devicePixelRatio):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addDashboardRegions):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::deviceScaleFactor):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addDashboardRegions):
+        Changed to get the device scale factor from Page.
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        Removed Chrome[Client]::deviceScaleFactor.
+
+        * page/Frame.cpp:
+        * page/Frame.h:
+        Removed deviceScaleFactorChanged. Made deviceOrPageScaleFactorChanged public.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_deviceScaleFactor.
+        (WebCore::Page::setDeviceScaleFactor): Added. Code came from
+        Frame::deviceScaleFactorChanged.
+
+        * page/Page.h: Added m_deviceScaleFactor.
+        (WebCore::Page::deviceScaleFactor): Added simple getter.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93058
+
+    2011-08-15  Adam Roben  <aroben@apple.com>
+
+            Update pages' style and content scale when the window's backing scale factor changes
+
+            Unfortunately, I couldn't think of a way to test this in an automated fashion.
+
+            Fixes <http://webkit.org/b/66229> <rdar://problem/9906269> WebKit doesn't react to device
+            scale factor changes
+
+            Reviewed by Simon Fraser.
+
+            * WebCore.exp.in: Export Frame::deviceOrScaleFactorChanged.
+
+            * page/Frame.cpp:
+            (WebCore::Frame::deviceScaleFactorChanged):
+            * page/Frame.h:
+            Added this new function. We recalc style so that, e.g., device-scale-factor-dependent media
+            queries will be reevaluated, and we tell compositing layers about the new scale factor so
+            they can rerender at the new resolution.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93043
+
+    2011-08-15  Adam Roben  <aroben@apple.com>
+
+            Rename an instance of pageScaleFactorChanged I missed in r93040
+
+            I tried to make a test for this but failed. It would probably have been easier if we dumped
+            layers' content scales in layerTreeAsText output.
+
+            Followup to <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to
+            the device scale factor
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::deviceOrPageScaleFactorChanged):
+            * platform/graphics/ca/GraphicsLayerCA.h:
+            Renamed from pageScaleFactorChanged to match the base class.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93040
+
+    2011-08-10  Adam Roben  <aroben@apple.com>
+
+            Clear up scale factor terminology
+
+            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+            software is running, and one that is per-Page and can be controlled via API calls. This
+            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+            code use those names. It should introduce no behavior changes.
+
+            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+            device scale factor
+
+            Reviewed by Simon Fraser.
+
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+            * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+            Removed an unused member. This is unrelated to this patch.
+
+            * css/MediaQueryEvaluator.cpp:
+            * html/HTMLCanvasElement.cpp:
+            * html/HTMLCanvasElement.h:
+            * loader/EmptyClients.h:
+            * page/Chrome.cpp:
+            * page/Chrome.h:
+            * page/ChromeClient.h:
+            * page/DOMWindow.cpp:
+            * page/Frame.cpp:
+            * page/Frame.h:
+            * platform/graphics/GraphicsLayer.cpp:
+            * platform/graphics/GraphicsLayer.h:
+            * platform/graphics/GraphicsLayerClient.h:
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            * rendering/RenderInline.cpp:
+            * rendering/RenderLayerBacking.cpp:
+            * rendering/RenderLayerBacking.h:
+            * rendering/RenderLayerCompositor.cpp:
+            * rendering/RenderLayerCompositor.h:
+            * rendering/RenderObject.cpp:
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91161 
+
+    2011-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+            Add code to attempt to align compositing layers to pixel boundaries when page scale changes
+            https://bugs.webkit.org/show_bug.cgi?id=64658
+
+            Reviewed by Dan Bernstein.
+
+            Implemented a new behavior on GraphicsLayerCA which attempts to keep layers pixel
+            aligned as page scale changes.
+
+            This requires denoting which layer has the page scale on it (it is assumed to be
+            already aligned), via setAppliesPageScale(). We also now pass a scale and offset
+            down through the GraphicsLayer commits, which are used to map layer bounds to display
+            coordinates for rounding.
+
+            * platform/graphics/GraphicsLayer.h: New flags and getters/setters for pixel alignment,
+            and the layer that is the applier of the scale.
+            (WebCore::GraphicsLayer::setMaintainsPixelAlignment):
+            (WebCore::GraphicsLayer::maintainsPixelAlignment):
+            (WebCore::GraphicsLayer::setAppliesPageScale):
+            (WebCore::GraphicsLayer::appliesPageScale):
+
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::GraphicsLayer): Initialize the new flags.
+            (WebCore::GraphicsLayer::backingScaleFactor): Utility method that calls the client if there is one.
+            (WebCore::GraphicsLayer::pageScaleFactor): Ditto.
+
+            * platform/graphics/GraphicsLayerClient.h:
+            (WebCore::GraphicsLayerClient::backingScaleFactor): Provide default implementation.
+            (WebCore::GraphicsLayerClient::pageScaleFactor): Ditto.
+
+            * platform/graphics/ca/GraphicsLayerCA.h: Pass scale and base-relative offset around
+            to methods that need to update geometry during commit.
+            Some new methods related to pixel alignment.
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::computePositionRelativeToBase): For single-layer commits,
+            we have to compute the base-relative offset, and whether we're under the layer
+            applying the scale by walking up the tree.
+
+            (WebCore::GraphicsLayerCA::syncCompositingStateForThisLayerOnly): Call
+            computePositionRelativeToBase() to get scaling parameters for the target layer.
+
+            (WebCore::GraphicsLayerCA::recursiveCommitChanges): Pass flags related to scaling.
+            positionRelativeToBase is an offset relative to the ancestor layer known to be pixel
+            aligned. affectedByPageScale is true for layers which are descendants of the layer
+            which applies the scale.
+
+            (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers): Pass scale and offset.
+            (WebCore::GraphicsLayerCA::updateGeometry): Call computePixelAlignment() to get
+            pixel-aligned geometry. This only needs to be applied to layers which render content,
+            so re-organize the code to use the unchanged layer geometry for the structural layer,
+            but to apply the adjusted geometry to the m_layer.
+
+            (WebCore::GraphicsLayerCA::updateStructuralLayer): Pass scale and offset.
+            (WebCore::GraphicsLayerCA::ensureStructuralLayer): Ditto.
+            (WebCore::GraphicsLayerCA::updateLayerDrawsContent): Ditto.
+            (WebCore::GraphicsLayerCA::updateContentsScale): Ditto.
+            (WebCore::GraphicsLayerCA::requiresTiledLayer): Ditto.
+            (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Ditto.
+            (WebCore::GraphicsLayerCA::setKeepPixelAligned): When set, dirties flags
+            for properties that need to be recomputed.
+            (WebCore::GraphicsLayerCA::noteChangesForScaleSensitiveProperties):
+            (WebCore::isIntegral):
+            (WebCore::GraphicsLayerCA::computePixelAlignment): Map our bounds to screen
+            scale, round out to an integral rect, then map it back, adding a fudge factor
+            so that CA backing stores don't end up being smaller than we expect because
+            of integer truncation.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::createGraphicsLayer): Turn on pixel alignment if
+            the compositor says so.
+            (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): Set the RenderView's
+            layer as the one applying the scale, for the main frame.
+
+            * rendering/RenderLayerCompositor.h: New method.
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::keepLayersPixelAligned): Master switch for
+            pixel alignment. Default to on.
+            (WebCore::RenderLayerCompositor::ensureRootLayer): Give the two root-ish layers
+            a client so they can ask for page scale if necessary.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 89441 
+
+    2011-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+            Reviewed by Dan Bernstein.
+
+            Update position, bounds and anchor point in GraphicsLayerCA all at once
+            https://bugs.webkit.org/show_bug.cgi?id=63148
+
+            Since position, bounds and anchor point are inter-dependent, avoid
+            redundant work by simply updating them all at the same time.
+
+            No behavior changes, so no new tests.
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::setPosition):
+            (WebCore::GraphicsLayerCA::setAnchorPoint):
+            (WebCore::GraphicsLayerCA::setSize):
+            (WebCore::GraphicsLayerCA::setBoundsOrigin):
+            (WebCore::GraphicsLayerCA::setAllowTiledLayer):
+            (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+            (WebCore::GraphicsLayerCA::updateGeometry):
+            (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+            (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+            * platform/graphics/ca/GraphicsLayerCA.h:
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91140
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Another Windows build fix; make this method non-pure virtual.
+
+            * platform/graphics/GraphicsLayerClient.h:
+            (WebCore::GraphicsLayerClient::didCommitChangesForLayer):
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91138
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix Windows build.
+
+            * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+            (WebCore::MediaPlayerPrivate::backingScaleFactor):
+            (WebCore::MediaPlayerPrivate::pageScaleFactor):
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 91137
+
+    2011-07-15  Simon Fraser  <simon.fraser@apple.com>
+
+            Have GraphicsLayer pull their contentsScale, rather than pushing it onto them
+            https://bugs.webkit.org/show_bug.cgi?id=64643
+
+            Reviewed by Darin Adler.
+
+            RenderLayerBacking would set the contentsScale on GraphicsLayers
+            on creation, and update it when the pageScaleFactor changed. However,
+            RenderLayerBacking doesn't really know what contentsScale is best
+            for a layer, so instead, have GraphicsLayers call back through the
+            GraphicsLayerClient to get the two relevant scale factors, and do
+            their own computation of contentsScale.
+
+            No testable behavior changes.
+
+            * page/Frame.cpp:
+            (WebCore::Frame::pageScaleFactorChanged): No need to pass the scale.
+
+            * platform/graphics/GraphicsLayer.cpp:
+            (WebCore::GraphicsLayer::notePageScaleFactorChangedIncludingDescendants):
+            Recurse through the GraphicsLayer tree, calling pageScaleFactorChanged() on 
+            each layer.
+
+            * platform/graphics/GraphicsLayer.h:
+            (WebCore::GraphicsLayer::pageScaleFactorChanged):
+            Remove contentsScale/setContentsScale
+
+            * platform/graphics/GraphicsLayerClient.h:
+            Add methods to fetch the backingScaleFactor() and pageScaleFactor().
+
+            * platform/graphics/ca/GraphicsLayerCA.cpp:
+            (WebCore::GraphicsLayerCA::GraphicsLayerCA): m_uncommittedChanges
+            defaults to ContentsScaleChanged so we update contentsScale on
+            the first flush.
+
+            (WebCore::GraphicsLayerCA::setContentsToBackgroundColor):
+            This was the wrong time to call updateContentsRect() and setupContentsLayer();
+            those should be done at commit time, so moved to updateLayerBackgroundColor().
+            (WebCore::GraphicsLayerCA::recursiveCommitChanges): Note whether we
+            have any changes, and call didCommitChangesForLayer() on the client.
+            (WebCore::GraphicsLayerCA::updateLayerBackgroundColor): Code moved to here.
+            (WebCore::clampedContentsScaleForScale): No longer has any hysteresis
+            on the scale, and now just clamps.
+            (WebCore::GraphicsLayerCA::updateContentsScale): Fetch the scales
+            from the client, and multiply them, then clamp.
+            (WebCore::GraphicsLayerCA::requiresTiledLayer): This now takes
+            contentsScale into account when deciding to use tiled layer,
+            so that zooming in will cause layers to start tiling.
+            (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer): Don't call
+            setContentsScale(), but rather updateContentsScale().
+            (WebCore::GraphicsLayerCA::pageScaleFactorChanged): Set the bits
+            for properties that depend on the scale.
+            (WebCore::GraphicsLayerCA::noteChangesForScaleSensitiveProperties):
+            Note that contentsScale needs to be updated. At some point we might also
+            need to dirty other properties.
+            * platform/graphics/ca/GraphicsLayerCA.h: Moved the m_allowTiledLayer
+            bool for better packing. No need for a m_contentsScale member now.
+            * rendering/RenderLayer.cpp: Removed pageScaleFactorChanged().
+            * rendering/RenderLayer.h: Ditto.
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer): No need
+            to push the contents scale.
+            (WebCore::RenderLayerBacking::updateForegroundLayer): Ditto.
+            (WebCore::RenderLayerBacking::updateMaskLayer): Ditto.
+            (WebCore::RenderLayerBacking::pageScaleFactor): GraphicsLayerClient method.
+            (WebCore::RenderLayerBacking::backingScaleFactor): GraphicsLayerClient method.
+            (WebCore::RenderLayerBacking::didCommitChangesForLayer): Send through
+            to the compositor.
+            * rendering/RenderLayerBacking.h: GraphicsLayerClient methods.
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::didFlushChangesForLayer): We'll use
+            this later.
+            (WebCore::RenderLayerCompositor::backingScaleFactor): GraphicsLayerClient method.
+            (WebCore::RenderLayerCompositor::pageScaleFactor): Ditto.
+            (WebCore::RenderLayerCompositor::didCommitChangesForLayer): Ditto.
+            (WebCore::RenderLayerCompositor::ensureRootLayer): No need to push the contents scale.
+            (WebCore::RenderLayerCompositor::pageScaleFactorChanged): Just call notePageScaleFactorChangedIncludingDescendants()
+            on the root GraphicsLayer.
+            * rendering/RenderLayerCompositor.h: Added GraphicsLayerClient methods.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 90954
+
+    2011-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+            Factor some GraphicsLayer creation code in RenderLayerBacking
+            https://bugs.webkit.org/show_bug.cgi?id=64487
+
+            Reviewed by Sam Weinig.
+
+            Move the GraphicsLayer::create() calls into once place so that we
+            don't have lots of #ifndef NDEBUG in various places, and can share
+            more code in future.
+
+            No behavior change, so no new tests.
+
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::RenderLayerBacking):
+            (WebCore::RenderLayerBacking::~RenderLayerBacking):
+            (WebCore::RenderLayerBacking::createGraphicsLayer):
+            (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+            (WebCore::RenderLayerBacking::destroyGraphicsLayers):
+            (WebCore::RenderLayerBacking::updateLayerTransform):
+            (WebCore::RenderLayerBacking::updateClippingLayers):
+            (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+            (WebCore::RenderLayerBacking::updateForegroundLayer):
+            (WebCore::RenderLayerBacking::updateMaskLayer):
+            * rendering/RenderLayerBacking.h:
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 90925
+
+    2011-07-12  Simon Fraser  <simon.fraser@apple.com>
+
+            Rename compositing-related updateContentsScale() methods
+            https://bugs.webkit.org/show_bug.cgi?id=64430
+
+            Reviewed by Joseph Pecoraro.
+
+            Rename updateContentsScale() to something less presumptuous; layers may choose
+            to do something other than update their contents scale when the page scale factor
+            changes. pageScaleFactorChanged() is a better name.
+
+            * page/Frame.cpp:
+            (WebCore::Frame::pageScaleFactorChanged):
+            (WebCore::Frame::scalePage):
+            * page/Frame.h:
+            * rendering/RenderLayer.cpp:
+            (WebCore::RenderLayer::pageScaleFactorChanged):
+            * rendering/RenderLayer.h:
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::pageScaleFactorChanged):
+            * rendering/RenderLayerBacking.h:
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::pageScaleFactorChanged):
+            * rendering/RenderLayerCompositor.h:
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 100022
+
+    2011-11-11  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=72167
+        REGRESSION: Scroll position not restored on back after scroll 
+        -and corresponding-
+        <rdar://problem/10410684>
+
+        Reviewed by Simon Fraser.
+
+        We can't just return early if we are not on an active page. 
+        notifyPositionChanged() is called when a page is going into the page cache (and 
+        therefore when not on an active page). We should not notify AppKit that the page 
+        has scrolled in that case, but we still need to call 
+        ScrollAnimator::notifyPositionChanged();. So this patch removes the early return, 
+        and replaces it with a conditional around the relevant code.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+
+2011-11-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 99508
+
+    2011-11-07  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10405215> REGRESSION (r98178): World of Warcraft Launcher crashes in FrameView::isOnActivePage()
+            https://bugs.webkit.org/show_bug.cgi?id=71743
+
+            Reviewed by Beth Dakin.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::isOnActivePage): Added a check for a null m_frame.
+
 2011-11-15  Oliver Hunt  <oliver@apple.com>
 
         Merged JavaScriptCore up to r99898, and took all

@@ -259,6 +259,16 @@ double WKPageGetTextZoomFactor(WKPageRef pageRef)
     return toImpl(pageRef)->textZoomFactor();
 }
 
+double WKPageGetBackingScaleFactor(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->deviceScaleFactor();
+}
+
+void WKPageSetCustomBackingScaleFactor(WKPageRef pageRef, double customScaleFactor)
+{
+    toImpl(pageRef)->setCustomDeviceScaleFactor(customScaleFactor);
+}
+
 bool WKPageSupportsTextZoom(WKPageRef pageRef)
 {
     return toImpl(pageRef)->supportsTextZoom();
@@ -286,12 +296,12 @@ void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, d
 
 void WKPageSetScaleFactor(WKPageRef pageRef, double scale, WKPoint origin)
 {
-    toImpl(pageRef)->scaleWebView(scale, toIntPoint(origin));
+    toImpl(pageRef)->scalePage(scale, toIntPoint(origin));
 }
 
 double WKPageGetScaleFactor(WKPageRef pageRef)
 {
-    return toImpl(pageRef)->viewScaleFactor();
+    return toImpl(pageRef)->pageScaleFactor();
 }
 
 void WKPageSetUseFixedLayout(WKPageRef pageRef, bool fixed)

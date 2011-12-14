@@ -199,7 +199,7 @@ void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
 
 void WKBundlePageSetScaleAtOrigin(WKBundlePageRef pageRef, double scale, WKPoint origin)
 {
-    toImpl(pageRef)->scaleWebView(scale, toIntPoint(origin));
+    toImpl(pageRef)->scalePage(scale, toIntPoint(origin));
 }
 
 WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
@@ -253,6 +253,11 @@ WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBundlePageRef
 {
     RefPtr<WebImage> webImage = toImpl(pageRef)->scaledSnapshotInDocumentCoordinates(toIntRect(rect), scaleFactor, toImageOptions(options));
     return toAPI(webImage.release().leakRef());
+}
+
+double WKBundlePageGetBackingScaleFactor(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->deviceScaleFactor();
 }
 
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR

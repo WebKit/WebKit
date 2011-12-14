@@ -1407,8 +1407,8 @@ void RenderBlock::computeOverflow(int oldClientAfterEdge, bool recomputeFloats)
         addLayoutOverflow(rectToApply);
     }
         
-    // Add visual overflow from box-shadow and reflections.
-    addShadowOverflow();
+    // Add visual overflow from box-shadow and border-image-outset.
+    addBoxShadowAndBorderOverflow();
 }
 
 void RenderBlock::addOverflowFromBlockChildren()

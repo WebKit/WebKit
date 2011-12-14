@@ -54,7 +54,6 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_preload(MediaPlayer::Auto)
-    , m_scaleFactor(1, 1)
     , m_cachedMaxTimeLoaded(0)
     , m_cachedMaxTimeSeekable(0)
     , m_cachedDuration(invalidTime())

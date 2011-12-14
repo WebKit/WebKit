@@ -1512,4 +1512,12 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
     CGContextSetBlendMode(platformContext(), target);
 }
 
+void GraphicsContext::platformApplyDeviceScaleFactor()
+{
+    // CoreGraphics expects the base CTM of a HiDPI context to have the scale factor applied to it.
+    // Failing to change the base level CTM will cause certain CG features, such as focus rings,
+    // to draw with a scale factor of 1 rather than the actual scale factor.
+    wkSetBaseCTM(platformContext(), getCTM());
+}
+
 }

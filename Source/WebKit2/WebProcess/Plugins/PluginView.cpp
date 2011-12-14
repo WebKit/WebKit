@@ -403,6 +403,14 @@ void PluginView::setWindowIsFocused(bool windowIsFocused)
     m_plugin->windowFocusChanged(windowIsFocused);    
 }
 
+void PluginView::setDeviceScaleFactor(float scaleFactor)
+{
+    if (!m_isInitialized || !m_plugin)
+        return;
+
+    m_plugin->contentsScaleFactorChanged(scaleFactor);
+}
+
 void PluginView::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
 {
     if (!m_isInitialized || !m_plugin)
@@ -578,7 +586,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& dirtyRect)
         return; 
  
     if (m_snapshot) {
-        m_snapshot->paint(*context, frameRect().location(), m_snapshot->bounds());
+        m_snapshot->paint(*context, contentsScaleFactor(), frameRect().location(), m_snapshot->bounds());
         return;
     }
 
@@ -635,8 +643,7 @@ void PluginView::handleEvent(Event* event)
             focusPluginElement();
         
         // Adjust mouse coordinates to account for pageScaleFactor
-        float scaleFactor = frame()->pageScaleFactor();
-        WebMouseEvent eventWithScaledCoordinates(*(static_cast<const WebMouseEvent*>(currentEvent)), scaleFactor);
+        WebMouseEvent eventWithScaledCoordinates(*static_cast<const WebMouseEvent*>(currentEvent), frame()->pageScaleFactor());
         didHandleEvent = m_plugin->handleMouseEvent(eventWithScaledCoordinates);
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.
@@ -707,17 +714,19 @@ void PluginView::viewGeometryDidChange()
     if (!m_isInitialized || !m_plugin || !parent())
         return;
 
-    IntRect rect; 
- 
-    if (m_plugin->wantsWindowRelativeCoordinates()) { 
-        // Get the frame rect in window coordinates. 
-        rect = parent()->contentsToWindow(frameRect()); 
-        } else { 
-        // FIXME: The plug-in shouldn't know its location relative to its parent frame. 
-        rect = frameRect(); 
-    } 
- 
-    m_plugin->geometryDidChange(rect, clipRectInWindowCoordinates());
+    if (m_plugin->wantsWindowRelativeCoordinates()) {
+        // Get the frame rect in window coordinates.
+        IntRect rect = parent()->contentsToWindow(frameRect());
+        m_plugin->deprecatedGeometryDidChange(rect, clipRectInWindowCoordinates());
+    }
+
+    // FIXME: Just passing a translation matrix isn't good enough.
+    IntPoint locationInWindowCoordinates = parent()->contentsToRootView(frameRect().location());
+    AffineTransform transform = AffineTransform::translation(locationInWindowCoordinates.x(), locationInWindowCoordinates.y());
+
+    // FIXME: The clip rect isn't correct.
+    IntRect clipRect = boundsRect();
+    m_plugin->geometryDidChange(size(), clipRect, transform);
 }
 
 void PluginView::viewVisibilityDidChange()
@@ -1147,6 +1156,13 @@ mach_port_t PluginView::compositingRenderServerPort()
     return WebProcess::shared().compositingRenderServerPort();
 }
 
+float PluginView::contentsScaleFactor()
+{
+    if (Page* page = frame() ? frame()->page() : 0)
+        return page->deviceScaleFactor();
+        
+    return 1;
+}
 #endif
     
 String PluginView::proxiesForURL(const String& urlString)

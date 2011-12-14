@@ -30,6 +30,7 @@
 #include "Frame.h"
 
 #include "ApplyStyleCommand.h"
+#include "BackForwardController.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSProperty.h"
@@ -1038,17 +1039,20 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
         if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
             view->layout();
     }
+
+    if (page->mainFrame() == this)
+        page->backForward()->markPagesForFullStyleRecalc();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void Frame::updateContentsScale(float scale)
+void Frame::deviceOrPageScaleFactorChanged()
 {
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->updateContentsScale(scale);
+        child->deviceOrPageScaleFactorChanged();
 
     RenderView* root = contentRenderer();
     if (root && root->compositor())
-        root->compositor()->updateContentsScale(scale);
+        root->compositor()->deviceOrPageScaleFactorChanged();
 }
 #endif
 
@@ -1067,7 +1071,7 @@ void Frame::scalePage(float scale, const IntPoint& origin)
         document->recalcStyle(Node::Force);
 
 #if USE(ACCELERATED_COMPOSITING)
-        updateContentsScale(scale);
+        deviceOrPageScaleFactorChanged();
 #endif
     }
 

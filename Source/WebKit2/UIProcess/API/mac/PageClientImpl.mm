@@ -319,9 +319,9 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return WebContextMenuProxyMac::create(m_wkView, page);
 }
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut)
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut, bool animate)
 {
-    [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut];
+    [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
 }
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const CoreIPC::DataReference& data)
@@ -462,17 +462,31 @@ void PageClientImpl::recordAutocorrectionResponse(EditorClient::AutocorrectionRe
 #endif
 }
 
-float PageClientImpl::userSpaceScaleFactor() const
+void PageClientImpl::recommendedScrollbarStyleDidChange(int32_t newStyle)
 {
-    NSWindow *window = [m_wkView window];
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
+    NSArray *trackingAreas = [m_wkView trackingAreas];
+    NSUInteger count = [trackingAreas count];
+    ASSERT(count == 1);
+    
+    for (NSUInteger i = 0; i < count; ++i)
+        [m_wkView removeTrackingArea:[trackingAreas objectAtIndex:i]];
+
+    // Now re-create a tracking area with the appropriate options given the new scrollbar style
+    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
+    if (newStyle == NSScrollerStyleLegacy)
+        options |= NSTrackingActiveAlways;
+    else
+        options |= NSTrackingActiveInKeyWindow;
+
+    NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:[m_wkView frame]
+                                                                options:options
+                                                                  owner:m_wkView
+                                                               userInfo:nil];
+    [m_wkView addTrackingArea:trackingArea];
+    [trackingArea release];
 #else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
+    UNUSED_PARAM(newStyle);
 #endif
 }
 

@@ -31717,6 +31717,14 @@
 				RelativePath="..\css\CSSBorderImageValue.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\css\CSSBorderImageSliceValue.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\css\CSSBorderImageSliceValue.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\css\CSSCanvasValue.cpp"
 				>
@@ -64082,7 +64090,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\npapi.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\npfunctions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\npruntime.h"
 				>
 			</File>
 			<File
@@ -66254,15 +66270,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\bridge\npapi.h"
-				>
-			</File>
-			<File
 				RelativePath="..\bridge\npruntime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\bridge\npruntime.h"
 				>
 			</File>
 			<File

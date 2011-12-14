@@ -173,7 +173,6 @@ private:
     virtual void displayView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-    virtual float userSpaceScaleFactor() const { return 1; }
     
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
@@ -199,7 +198,7 @@ private:
     virtual void compositionSelectionChanged(bool);
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
     virtual void didInstallOrUninstallPageOverlay(bool);
 
 #if USE(ACCELERATED_COMPOSITING)

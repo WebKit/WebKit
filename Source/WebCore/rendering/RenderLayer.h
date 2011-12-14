@@ -595,6 +595,8 @@ private:
     void updateScrollCornerStyle();
     void updateResizerStyle();
 
+    void drawPlatformResizerImage(GraphicsContext*, IntRect resizerCornerRect);
+
     void updatePagination();
     bool isPaginated() const { return m_isPaginated; }
 
@@ -605,8 +607,6 @@ private:
     bool mustOverlapCompositedLayers() const { return m_mustOverlapCompositedLayers; }
     void setMustOverlapCompositedLayers(bool b) { m_mustOverlapCompositedLayers = b; }
 #endif
-
-    void updateContentsScale(float);
 
     friend class RenderLayerBacking;
     friend class RenderLayerCompositor;

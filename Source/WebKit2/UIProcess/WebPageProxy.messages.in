@@ -62,6 +62,7 @@ messages -> WebPageProxy {
     RunModal()
     DidCompleteRubberBandForMainFrame(WebCore::IntSize initialOverhang)
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
+    RecommendedScrollbarStyleDidChange(int32_t newStyle)
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidFailToInitializePlugin(WTF::String mimeType)
@@ -132,7 +133,7 @@ messages -> WebPageProxy {
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
     ValidateCommandCallback(WTF::String command, bool isEnabled, int32_t state, uint64_t callbackID)
 
-    ViewScaleFactorDidChange(double scaleFactor)
+    PageScaleFactorDidChange(double scaleFactor)
 
 #if PLATFORM(GTK)
     # Support for GTK+ platform keybindings
@@ -162,7 +163,7 @@ messages -> WebPageProxy {
 
     # Find messages
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
-    SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, float contentImageScaleFactor, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut)
+    SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, float contentImageScaleFactor, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut, bool animate)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
 #if PLATFORM(WIN)

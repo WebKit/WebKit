@@ -376,6 +376,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 @end
 
 @interface WebView (WebFileInternal)
+- (float)_deviceScaleFactor; 
 - (BOOL)_isLoading;
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
 - (WebFrame *)_focusedFrame;
@@ -2478,6 +2479,11 @@ static inline IMP getMethod(id o, SEL s)
     return NO;
 }
 
+- (void)_setBaseCTM:(CGAffineTransform)transform forContext:(CGContextRef)context
+{
+    WKSetBaseCTM(context, transform);
+}
+
 - (BOOL)interactiveFormValidationEnabled
 {
     return _private->interactiveFormValidationEnabled;
@@ -2829,6 +2835,21 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
         return IntSize();
 
     return view->fixedLayoutSize();
+}
+
+- (CGFloat)_backingScaleFactor
+{
+    return [self _deviceScaleFactor];
+}
+
+- (void)_setCustomBackingScaleFactor:(CGFloat)customScaleFactor
+{
+    float oldScaleFactor = [self _deviceScaleFactor];
+
+    _private->customDeviceScaleFactor = customScaleFactor;
+
+    if (oldScaleFactor != [self _deviceScaleFactor])
+        _private->page->setDeviceScaleFactor(customScaleFactor);
 }
 
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit
@@ -3323,6 +3344,10 @@ static bool needsWebViewInitThreadWorkaround()
     return _private->shouldCloseWithWindow;
 }
 
+// FIXME: Use AppKit constants for these when they are available.
+static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
+static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey"; 
+
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
@@ -3333,7 +3358,9 @@ static bool needsWebViewInitThreadWorkaround()
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
             name:WKWindowWillOrderOnScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOffScreen:) 
-            name:WKWindowWillOrderOffScreenNotification() object:window];            
+            name:WKWindowWillOrderOffScreenNotification() object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
+            name:windowDidChangeBackingPropertiesNotification object:window];
     }
 }
 
@@ -3349,6 +3376,8 @@ static bool needsWebViewInitThreadWorkaround()
             name:WKWindowWillOrderOnScreenNotification() object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self 
             name:WKWindowWillOrderOffScreenNotification() object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:windowDidChangeBackingPropertiesNotification object:window];
     }
 }
 
@@ -3396,6 +3425,8 @@ static bool needsWebViewInitThreadWorkaround()
         _private->page->didMoveOnscreen();
     }
     
+    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+    
     [self _updateActiveState];
 }
 
@@ -3436,6 +3467,16 @@ static bool needsWebViewInitThreadWorkaround()
 {
     if ([self shouldCloseWithWindow] && ([self window] == [self hostWindow] || ([self window] && ![self hostWindow]) || (![self window] && [self hostWindow])))
         [self close];
+}
+
+- (void)_windowDidChangeBackingProperties:(NSNotification *)notification
+{
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue]; 
+    CGFloat newBackingScaleFactor = [self _deviceScaleFactor];
+    if (oldBackingScaleFactor == newBackingScaleFactor) 
+        return; 
+
+    _private->page->setDeviceScaleFactor(newBackingScaleFactor);
 }
 
 - (void)setPreferences:(WebPreferences *)prefs
@@ -5565,6 +5606,23 @@ static WebFrameView *containingFrameView(NSView *view)
 }
 
 @implementation WebView (WebFileInternal)
+
+- (float)_deviceScaleFactor
+{
+    if (_private->customDeviceScaleFactor != 0)
+        return _private->customDeviceScaleFactor;
+
+    NSWindow *window = [self window];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        return [window backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        return [window userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
+}
 
 static inline uint64_t roundUpToPowerOf2(uint64_t num)
 {

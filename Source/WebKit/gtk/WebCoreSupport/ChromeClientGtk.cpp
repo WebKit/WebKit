@@ -136,12 +136,6 @@ FloatRect ChromeClient::pageRect()
     return IntRect(allocation.x, allocation.y, allocation.width, allocation.height);
 }
 
-float ChromeClient::scaleFactor()
-{
-    // Not implementable
-    return 1.0;
-}
-
 void ChromeClient::focus()
 {
     gtk_widget_grab_focus(GTK_WIDGET(m_webView));

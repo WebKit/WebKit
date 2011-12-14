@@ -2363,6 +2363,27 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
         context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
+void RenderLayer::drawPlatformResizerImage(GraphicsContext* context, IntRect resizerCornerRect)
+{
+    float deviceScaleFactor = WebCore::deviceScaleFactor(renderer()->frame());
+
+    RefPtr<Image> resizeCornerImage;
+    IntSize cornerResizerSize;
+    if (deviceScaleFactor >= 2) {
+        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageHiRes, (Image::loadPlatformResource("textAreaResizeCorner@2x").leakRef()));
+        resizeCornerImage = resizeCornerImageHiRes;
+        cornerResizerSize = resizeCornerImage->size();
+        cornerResizerSize.scale(0.5f);
+    } else {
+        DEFINE_STATIC_LOCAL(Image*, resizeCornerImageLoRes, (Image::loadPlatformResource("textAreaResizeCorner").leakRef()));
+        resizeCornerImage = resizeCornerImageLoRes;
+        cornerResizerSize = resizeCornerImage->size();
+    }
+
+    IntRect imageRect(resizerCornerRect.maxXMaxYCorner() - cornerResizerSize, cornerResizerSize);
+    context->drawImage(resizeCornerImage.get(), renderer()->style()->colorSpace(), imageRect);
+}
+
 void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
 {
     if (renderer()->style()->resize() == RESIZE_NONE)
@@ -2386,10 +2407,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
         return;
     }
 
-    // Paint the resizer control.
-    DEFINE_STATIC_LOCAL(RefPtr<Image>, resizeCornerImage, (Image::loadPlatformResource("textAreaResizeCorner")));
-    IntPoint imagePoint(absRect.maxX() - resizeCornerImage->width(), absRect.maxY() - resizeCornerImage->height());
-    context->drawImage(resizeCornerImage.get(), box->style()->colorSpace(), imagePoint);
+    drawPlatformResizerImage(context, absRect);
 
     // Draw a frame around the resizer (1px grey line) if there are any scrollbars present.
     // Clipping will exclude the right and bottom edges of this frame.
@@ -3474,24 +3492,12 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
         }
 
         // If we establish a clip at all, then go ahead and make sure our background
-        // rect is intersected with our layer's bounds.
-        // FIXME: This could be changed to just use generic visual overflow.
-        // See https://bugs.webkit.org/show_bug.cgi?id=37467 for more information.
-        if (const ShadowData* boxShadow = renderer()->style()->boxShadow()) {
-            IntRect overflow = layerBounds;
-            do {
-                if (boxShadow->style() == Normal) {
-                    IntRect shadowRect = layerBounds;
-                    shadowRect.move(boxShadow->x(), boxShadow->y());
-                    shadowRect.inflate(boxShadow->blur() + boxShadow->spread());
-                    overflow.unite(shadowRect);
-                }
-
-                boxShadow = boxShadow->next();
-            } while (boxShadow);
-            backgroundRect.intersect(overflow);
-        } else
-            backgroundRect.intersect(layerBounds);
+        // rect is intersected with our layer's bounds including our visual overflow,
+        // since any visual overflow like box-shadow or border-outset is not clipped by overflow:auto/hidden.
+        IntRect layerBoundsWithVisualOverflow = renderBox()->visualOverflowRect();
+        renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
+        layerBoundsWithVisualOverflow.move(x, y);
+        backgroundRect.intersect(layerBoundsWithVisualOverflow);
     }
 }
 
@@ -3595,9 +3601,10 @@ IntRect RenderLayer::localBoundingBox() const
     } else {
         RenderBox* box = renderBox();
         ASSERT(box);
-        if (box->hasMask())
+        if (box->hasMask()) {
             result = box->maskClipRect();
-        else {
+            box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
+        } else {
             IntRect bbox = box->borderBoxRect();
             result = bbox;
             IntRect overflowRect = box->visualOverflowRect();
@@ -4178,14 +4185,6 @@ void RenderLayer::updateReflectionStyle()
     newStyle->setMaskBoxImage(renderer()->style()->boxReflect()->mask());
     
     m_reflection->setStyle(newStyle.release());
-}
-
-void RenderLayer::updateContentsScale(float scale)
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_backing)
-        m_backing->updateContentsScale(scale);
-#endif
 }
 
 } // namespace WebCore

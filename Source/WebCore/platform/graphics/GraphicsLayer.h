@@ -313,11 +313,6 @@ public:
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }
     
-    // Change the scale at which the contents are rendered. Note that contentsScale may not return
-    // the same value passed to setContentsScale(), because of clamping and hysteresis.
-    virtual float contentsScale() const { return 1; }
-    virtual void setContentsScale(float) { }
-
     void dumpLayer(TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
     int repaintCount() const { return m_repaintCount; }
@@ -342,6 +337,18 @@ public:
 
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
+
+    virtual void setMaintainsPixelAlignment(bool maintainsAlignment) { m_maintainsPixelAlignment = maintainsAlignment; }
+    virtual bool maintainsPixelAlignment() const { return m_maintainsPixelAlignment; }
+    
+    void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
+    bool appliesPageScale() const { return m_appliesPageScale; }
+
+    float pageScaleFactor() const { return m_client ? m_client->pageScaleFactor() : 1; }
+    float deviceScaleFactor() const { return m_client ? m_client->deviceScaleFactor() : 1; }
+
+    virtual void deviceOrPageScaleFactorChanged() { }
+    void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer
@@ -397,6 +404,8 @@ protected:
     bool m_masksToBounds : 1;
     bool m_drawsContent : 1;
     bool m_acceleratesDrawing : 1;
+    bool m_maintainsPixelAlignment : 1;
+    bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
 
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents

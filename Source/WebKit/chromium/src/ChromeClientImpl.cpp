@@ -201,18 +201,6 @@ FloatRect ChromeClientImpl::pageRect()
     return windowRect();
 }
 
-float ChromeClientImpl::scaleFactor()
-{
-    // This is supposed to return the scale factor of the web page. It looks like
-    // the implementor of the graphics layer is responsible for doing most of the
-    // operations associated with scaling. However, this value is used ins some
-    // cases by WebCore. For example, this is used as a scaling factor in canvas
-    // so that things drawn in it are scaled just like the web page is.
-    //
-    // We don't currently implement scaling, so just return 1.0 (no scaling).
-    return 1.0;
-}
-
 void ChromeClientImpl::focus()
 {
     if (m_webView->client())

@@ -316,7 +316,7 @@ namespace WebCore {
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
                        CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect,
-                            Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
+                            const FloatSize& tileScaleFactor, Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
 
         void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntPoint&, CompositeOperator = CompositeSourceOver);
@@ -415,6 +415,11 @@ namespace WebCore {
         void concatCTM(const AffineTransform&);
         void setCTM(const AffineTransform&);
         AffineTransform getCTM() const;
+
+        // This function applies the device scale factor to the context, making the context capable of
+        // acting as a base-level context for a HiDPI environment.
+        void applyDeviceScaleFactor(float);
+        void platformApplyDeviceScaleFactor();
 
 #if OS(WINCE) && !PLATFORM(QT)
         void setBitmap(PassRefPtr<SharedBitmap>);

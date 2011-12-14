@@ -71,7 +71,8 @@ private:
     virtual PlatformLayer* pluginLayer();
 #endif
     virtual bool isTransparent();
-    virtual void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    virtual void deprecatedGeometryDidChange(const WebCore::IntRect& frameRectInWindowCoordinates, const WebCore::IntRect& clipRectInWindowCoordinates);
+    virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange();
     virtual void frameDidFinishLoading(uint64_t requestID);
     virtual void frameDidFail(uint64_t requestID, bool wasCancelled);
@@ -97,6 +98,7 @@ private:
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
+    virtual void contentsScaleFactorChanged(float);
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
 #endif
@@ -111,6 +113,8 @@ private:
 
     bool needsBackingStore() const;
     uint64_t windowNPObjectID();
+
+    void geometryDidChange();
 
     // Message handlers.
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
@@ -136,7 +140,10 @@ private:
     PluginController* m_pluginController;
 
     // The plug-in rect in window coordinates.
-    WebCore::IntRect m_frameRect;
+    WebCore::IntRect m_frameRectInWindowCoordinates;
+
+    // The plug-in clip rect in window coordinates.
+    WebCore::IntRect m_clipRectInWindowCoordinates;
 
     // This is the backing store that we paint when we're told to paint.
     RefPtr<ShareableBitmap> m_backingStore;

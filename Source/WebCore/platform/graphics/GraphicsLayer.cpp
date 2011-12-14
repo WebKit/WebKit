@@ -74,6 +74,8 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_masksToBounds(false)
     , m_drawsContent(false)
     , m_acceleratesDrawing(false)
+    , m_maintainsPixelAlignment(false)
+    , m_appliesPageScale(false)
     , m_paintingPhase(GraphicsLayerPaintAll)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
     , m_parent(0)
@@ -220,6 +222,22 @@ void GraphicsLayer::removeFromParent()
 
         setParent(0);
     }
+}
+
+void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
+{
+    deviceOrPageScaleFactorChanged();
+
+    if (m_maskLayer)
+        m_maskLayer->deviceOrPageScaleFactorChanged();
+
+    if (m_replicaLayer)
+        m_replicaLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+    for (size_t i = 0; i < numChildren; ++i)
+        childLayers[i]->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
 void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)

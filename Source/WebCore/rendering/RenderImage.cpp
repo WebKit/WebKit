@@ -85,9 +85,18 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
     ASSERT_ARG(newImage, newImage);
     ASSERT_ARG(newImage, newImage->image());
 
+    IntSize imageSize;
+    if (newImage->willPaintBrokenImage()) {
+        float deviceScaleFactor = WebCore::deviceScaleFactor(frame());
+        pair<Image*, float> brokenImageAndImageScaleFactor = newImage->brokenImage(deviceScaleFactor);
+        imageSize = brokenImageAndImageScaleFactor.first->size();
+        imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
+    } else
+        imageSize = newImage->image()->size();
+
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
-    return IntSize(paddingWidth + newImage->image()->width() * style()->effectiveZoom(), paddingHeight + newImage->image()->height() * style()->effectiveZoom());
+    return IntSize(paddingWidth + imageSize.width() * style()->effectiveZoom(), paddingHeight + imageSize.height() * style()->effectiveZoom());
 }
 
 // Sets the image height and width to fit the alt text.  Returns true if the
@@ -265,16 +274,22 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
             RefPtr<Image> image = m_imageResource->image();
 
             if (m_imageResource->errorOccurred() && !image->isNull() && usableWidth >= image->width() && usableHeight >= image->height()) {
+                float deviceScaleFactor = WebCore::deviceScaleFactor(frame());
+                // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
+                pair<Image*, float> brokenImageAndImageScaleFactor = m_imageResource->cachedImage()->brokenImage(deviceScaleFactor);
+                image = brokenImageAndImageScaleFactor.first;
+                IntSize imageSize = image->size();
+                imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
                 // Center the error image, accounting for border and padding.
-                int centerX = (usableWidth - image->width()) / 2;
+                int centerX = (usableWidth - imageSize.width()) / 2; 
                 if (centerX < 0)
                     centerX = 0;
-                int centerY = (usableHeight - image->height()) / 2;
+                int centerY = (usableHeight - imageSize.height()) / 2; 
                 if (centerY < 0)
                     centerY = 0;
                 imageX = leftBorder + leftPad + centerX + 1;
                 imageY = topBorder + topPad + centerY + 1;
-                context->drawImage(image.get(), style()->colorSpace(), IntPoint(tx + imageX, ty + imageY));
+                context->drawImage(image.get(), style()->colorSpace(), IntRect(tx + imageX, ty + imageY, imageSize.width(), imageSize.height()));
                 errorPictureDrawn = true;
             }
 

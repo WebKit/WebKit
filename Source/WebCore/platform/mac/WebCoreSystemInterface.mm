@@ -75,7 +75,7 @@ void (*wkQTClearMediaDownloadCache)();
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
 void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
-void (*wkSetPatternBaseCTM)(CGContextRef, CGAffineTransform);
+void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
 CGAffineTransform (*wkGetUserToBaseCTM)(CGContextRef);
 void (*wkSetUpFontCache)();
@@ -119,44 +119,7 @@ CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(const UniCh
 CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
 CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
 
-WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
-WKScrollbarPainterRef (*wkMakeScrollbarReplacementPainter)(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
-void (*wkScrollbarPainterSetDelegate)(WKScrollbarPainterRef, id scrollbarPainterDelegate);
-void (*wkScrollbarPainterSetEnabled)(WKScrollbarPainterRef, bool enabled);
-void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
-void (*wkScrollbarPainterForceFlashScrollers)(WKScrollbarPainterControllerRef);
-int (*wkScrollbarThickness)(int controlSize);
-int (*wkScrollbarMinimumThumbLength)(WKScrollbarPainterRef);
-int (*wkScrollbarMinimumTotalLengthNeededForThumb)(WKScrollbarPainterRef);
-CGFloat (*wkScrollbarPainterKnobAlpha)(WKScrollbarPainterRef);
-void (*wkSetScrollbarPainterKnobAlpha)(WKScrollbarPainterRef, CGFloat);
-CGFloat (*wkScrollbarPainterTrackAlpha)(WKScrollbarPainterRef);
-void (*wkSetScrollbarPainterTrackAlpha)(WKScrollbarPainterRef, CGFloat);
-bool (*wkScrollbarPainterIsHorizontal)(WKScrollbarPainterRef);
-CGRect (*wkScrollbarPainterKnobRect)(WKScrollbarPainterRef);
-void (*wkScrollbarPainterSetOverlayState)(WKScrollbarPainterRef, int overlayScrollerState);
-void (*wkSetScrollbarPainterKnobStyle)(WKScrollbarPainterRef, wkScrollerKnobStyle);
-
-WKScrollbarPainterControllerRef (*wkMakeScrollbarPainterController)(id painterControllerDelegate);
-void (*wkSetPainterForPainterController)(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
-WKScrollbarPainterRef (*wkVerticalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
-WKScrollbarPainterRef (*wkHorizontalScrollbarPainterForController)(WKScrollbarPainterControllerRef);
-int (*wkScrollbarPainterControllerStyle)(WKScrollbarPainterControllerRef);
-void (*wkSetScrollbarPainterControllerStyle)(WKScrollbarPainterControllerRef, int newStyle);
-void (*wkContentAreaScrolled)(WKScrollbarPainterControllerRef);
-void (*wkContentAreaWillPaint)(WKScrollbarPainterControllerRef);
-void (*wkMouseEnteredContentArea)(WKScrollbarPainterControllerRef);
-void (*wkMouseExitedContentArea)(WKScrollbarPainterControllerRef);
-void (*wkMouseMovedInContentArea)(WKScrollbarPainterControllerRef);
-void (*wkWillStartLiveResize)(WKScrollbarPainterControllerRef);
-void (*wkContentAreaResized)(WKScrollbarPainterControllerRef);
-void (*wkWillEndLiveResize)(WKScrollbarPainterControllerRef);
-void (*wkContentAreaDidShow)(WKScrollbarPainterControllerRef);
-void (*wkContentAreaDidHide)(WKScrollbarPainterControllerRef);
-void (*wkDidBeginScrollGesture)(WKScrollbarPainterControllerRef);
-void (*wkDidEndScrollGesture)(WKScrollbarPainterControllerRef);
-
-bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
+int (*wkRecommendedScrollerStyle)(void);
 
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 

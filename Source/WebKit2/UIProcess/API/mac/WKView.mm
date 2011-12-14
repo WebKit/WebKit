@@ -110,6 +110,10 @@ struct WKViewInterpretKeyEventsParameters {
     Vector<KeypressCommand>* commands;
 };
 
+@interface WKView (FileInternal)
+- (float)_intrinsicDeviceScaleFactor;
+@end
+
 @interface WKViewData : NSObject {
 @public
     OwnPtr<PageClientImpl> _pageClient;
@@ -223,8 +227,19 @@ struct WKViewInterpretKeyEventsParameters {
     InitWebCoreSystemInterface();
     RunLoop::initializeMainRunLoop();
 
+    // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
+    NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+        options |= NSTrackingActiveAlways;
+    else
+        options |= NSTrackingActiveInKeyWindow;
+#else
+    options |= NSTrackingActiveInKeyWindow;
+#endif
+    
     NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame
-                                                                options:(NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect)
+                                                                options:options
                                                                   owner:self
                                                                userInfo:nil];
     [self addTrackingArea:trackingArea];
@@ -1693,6 +1708,10 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     return ownsGrowBox;
 }
 
+// FIXME: Use AppKit constants for these when they are available.
+static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
+static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey";
+
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
@@ -1712,6 +1731,9 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
                                                      name:@"NSWindowDidOrderOffScreenNotification" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
                                                      name:@"_NSWindowDidBecomeVisible" object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
+                                                     name:windowDidChangeBackingPropertiesNotification object:window];
+
     }
 }
 
@@ -1729,6 +1751,8 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:windowDidChangeBackingPropertiesNotification object:window];
+
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -1776,6 +1800,8 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
         WKHideWordDefinitionWindow();
 #endif
     }
+
+_data->_page->setIntrinsicDeviceScaleFactor([self _intrinsicDeviceScaleFactor]);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -1819,6 +1845,16 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
+- (void)_windowDidChangeBackingProperties:(NSNotification *)notification
+{
+    CGFloat oldBackingScaleFactor = [[notification.userInfo objectForKey:backingPropertyOldScaleFactorKey] doubleValue]; 
+    CGFloat newBackingScaleFactor = [self _intrinsicDeviceScaleFactor]; 
+    if (oldBackingScaleFactor == newBackingScaleFactor) 
+        return; 
+
+    _data->_page->setIntrinsicDeviceScaleFactor(newBackingScaleFactor);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)
@@ -2198,7 +2234,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (void)_setFindIndicator:(PassRefPtr<FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut
+- (void)_setFindIndicator:(PassRefPtr<FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate
 {
     if (!findIndicator) {
         _data->_findIndicatorWindow = nullptr;
@@ -2208,7 +2244,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     if (!_data->_findIndicatorWindow)
         _data->_findIndicatorWindow = FindIndicatorWindow::create(self);
 
-    _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut);
+    _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut, animate);
 }
 
 - (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext
@@ -2547,6 +2583,24 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     _didReceiveUnhandledCommand = true;
     return YES;
+}
+
+@end
+
+@implementation WKView (FileInternal)
+
+- (float)_intrinsicDeviceScaleFactor
+{
+    NSWindow *window = [self window];
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        return [window backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        return [window userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
 }
 
 @end

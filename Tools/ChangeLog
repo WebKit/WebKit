@@ -1,3 +1,170 @@
+2011-12-08  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 101532
+
+    2011-11-29  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=72751
+            WebKit2.MouseMoveAfterCrash API test is failing 
+
+            Reviewed by Sam Weinig.
+
+            Like DumpRenderTree, the NSWindow should act as an active window.
+            * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+            (-[ActiveOffscreenWindow isKeyWindow]):
+            (TestWebKitAPI::PlatformWebView::PlatformWebView):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98413
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            Plug-ins have no way to find out when the device scale factor changes
+            https://bugs.webkit.org/show_bug.cgi?id=67226
+
+            Reviewed by Sam Weinig.
+
+            Keep a cached copy of the contents scale and update it when it changes.
+
+            * DumpRenderTree/TestNetscapePlugIn/Tests/mac/ContentsScaleFactor.cpp:
+            (ContentsScaleFactor::ContentsScaleFactor):
+            (ContentsScaleFactor::cachedContentsScaleFactor):
+            (ContentsScaleFactor::ScriptableObject::hasProperty):
+            (ContentsScaleFactor::ScriptableObject::getProperty):
+            (ContentsScaleFactor::NPP_New):
+            (ContentsScaleFactor::NPP_SetValue):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 98403
+
+    2011-10-25  Anders Carlsson  <andersca@apple.com>
+
+            Plug-ins have to use JavaScript to find out the current device scale factor
+            https://bugs.webkit.org/show_bug.cgi?id=67225
+            <rdar://problem/10048258>
+
+            Reviewed by Darin Adler.
+
+            Add a plug-in test for getting the contents scale factor.
+
+            * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+            * DumpRenderTree/TestNetscapePlugIn/Tests/mac/ContentsScaleFactor.cpp: Added.
+            (ContentsScaleFactor::ContentsScaleFactor):
+            (ContentsScaleFactor::contentsScaleFactor):
+            (ContentsScaleFactor::ScriptableObject::hasProperty):
+            (ContentsScaleFactor::ScriptableObject::getProperty):
+            (ContentsScaleFactor::ScriptableObject::pluginTest):
+            (ContentsScaleFactor::NPP_GetValue):
+
+2011-12-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 94598
+
+    2011-09-06  Anders Carlsson  <andersca@apple.com>
+
+            Move NPAPI headers in bridge to plugins
+            https://bugs.webkit.org/show_bug.cgi?id=67661
+
+            Update forwarding headers.
+
+            * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h:
+            * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h:
+
+2011-11-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 99315 
+
+    2011-08-18  Adam Roben  <aroben@apple.com>
+
+            Test that WebKit updates style when a WebView is moved between differently-scaled windows
+
+            Test for <http://webkit.org/b/66412> <rdar://problem/9971958> WebKit doesn't react when a
+            WebView is moved between windows with different backing scale factors
+
+            Reviewed by Anders Carlsson.
+
+            * TestWebKitAPI/JavaScriptTest.cpp:
+            (TestWebKitAPI::runJSTest): Moved a little bit of code from here...
+            (TestWebKitAPI::compareJSResult): ...to here. Also made the error message more similar to
+            gtest's built-in error messages.
+
+            * TestWebKitAPI/JavaScriptTest.h: Added overloads of runJSTest that take a WebView * and
+            WKView * for convenience on Mac. Added compareJSResult helper function for implementing
+            those overloads.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+
+            * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm: Added.
+            (-[FrameLoadDelegate initWithDidFinishLoadBoolean:]): Simple initializer.
+            (-[FrameLoadDelegate webView:didFinishLoadForFrame:]): Record that the load finished.
+            (TestWebKitAPI::didFinishLoadForFrame): Record that the load finished.
+            (TestWebKitAPI::setPageLoaderClient): Set up the client.
+            (TestWebKitAPI::DynamicDeviceScaleFactor::DynamicDeviceScaleFactor): Simple constructor.
+            (TestWebKitAPI::DynamicDeviceScaleFactor::createWindow): Creates a
+            SyntheticBackingScaleFactorWindow and returns it.
+            (TestWebKitAPI::DynamicDeviceScaleFactor::runTest): Loads devicePixelRatio.html and checks
+            that WebKit uses the correct scale factor when the WebView is not in a window, is put in a
+            window, is moved to a differently-scaled window, and is taken out of the window.
+            (TestWebKitAPI::DynamicDeviceScaleFactor::loadURL): Helper function with overloads for
+            WebKit1 and WebKit2.
+            (TestWebKitAPI::TEST_F): Runs the test, with overloads for WebKit1 and WebKit2.
+
+            * TestWebKitAPI/Tests/mac/devicePixelRatio.html: Added.
+
+            * TestWebKitAPI/mac/JavaScriptTestMac.mm: Added.
+            (TestWebKitAPI::runJSTest): Fairly simple overloads for WebView * and WKView *.
+
+            * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.h: Added.
+            * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.m: Added.
+            (-[SyntheticBackingScaleFactorWindow initWithContentRect:styleMask:backing:defer:]): Simple
+            initializer.
+            (-[SyntheticBackingScaleFactorWindow setBackingScaleFactor:]): Simple setter.
+
+            (-[SyntheticBackingScaleFactorWindow backingScaleFactor]):
+            (-[SyntheticBackingScaleFactorWindow userSpaceScaleFactor]):
+            Overrides of NSWindow methods that WebKit uses to determine the device scale factor.
+
+2011-11-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93052. 
+
+    2011-08-15  Adam Roben  <aroben@apple.com>
+
+            Teach TestWebKitAPI/gtest how to print JavaScript failures nicely
+
+            Failures now give output of the form: foo should be bar but is baz
+
+            Fixes <http://webkit.org/b/66240> It's hard to tell what the actual result of a failed JS
+            test is in TestWebKitAPI's output
+
+            Reviewed by David Levin.
+
+            * TestWebKitAPI/JavaScriptTest.cpp:
+            (TestWebKitAPI::JavaScriptCallbackContext::JavaScriptCallbackContext): Removed now-unused
+            members.
+            (TestWebKitAPI::javaScriptCallback): Changed to just store the result string in the context
+            object, rather than doing any testing of it here.
+            (TestWebKitAPI::runJSTest): Made this function a gtest predicate-formatter. This allows us
+            to use a pretty error message when the test fails.
+
+            * TestWebKitAPI/JavaScriptTest.h: Changed runJSTest to a predicate-formatter, and added nice
+            gtest-style macros that wrap it.
+
+            * TestWebKitAPI/Test.h: Removed now-unused TEST_ASSERT_RETURN.
+
+            * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+            (TestWebKitAPI::TEST): Changed to use the new macros.
+
+            * TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp:
+            (TestWebKitAPI::createSessionStateContainingFormData): Ditto. Note that this function no
+            longer returns 0 when the JS test fails. That shouldn't have any effect on whether or not
+            the test passes, though. Returning early seems to have been an unnecessary optimization.
+
+            * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+            (TestWebKitAPI::TEST): Changed to use the new macros.
+
 2011-11-15  Oliver Hunt  <oliver@apple.com>
 
         Merged JavaScriptCore up to r99898, and took all

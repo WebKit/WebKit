@@ -249,9 +249,8 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
-    , m_uncommittedChanges(NoChange)
-    , m_contentsScale(1)
     , m_allowTiledLayer(true)
+    , m_uncommittedChanges(ContentsScaleChanged)
 {
     m_layer = PlatformCALayer::create(PlatformCALayer::LayerTypeWebLayer, this);
 
@@ -381,7 +380,7 @@ void GraphicsLayerCA::setPosition(const FloatPoint& point)
         return;
 
     GraphicsLayer::setPosition(point);
-    noteLayerPropertyChanged(PositionChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
@@ -390,7 +389,7 @@ void GraphicsLayerCA::setAnchorPoint(const FloatPoint3D& point)
         return;
 
     GraphicsLayer::setAnchorPoint(point);
-    noteLayerPropertyChanged(AnchorPointChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setSize(const FloatSize& size)
@@ -399,7 +398,7 @@ void GraphicsLayerCA::setSize(const FloatSize& size)
         return;
 
     GraphicsLayer::setSize(size);
-    noteLayerPropertyChanged(SizeChanged);
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setTransform(const TransformationMatrix& t)
@@ -496,8 +495,8 @@ void GraphicsLayerCA::setAllowTiledLayer(bool allowTiledLayer)
 
     m_allowTiledLayer = allowTiledLayer;
     
-    // Handling this as a SizeChanged will cause use to switch in or out of tiled layer as needed
-    noteLayerPropertyChanged(SizeChanged);
+    // Handling this as a BoundsChanged will cause use to switch in or out of tiled layer as needed
+    noteLayerPropertyChanged(GeometryChanged);
 }
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -670,8 +669,6 @@ void GraphicsLayerCA::setContentsToBackgroundColor(const Color& color)
 #ifndef NDEBUG
         m_contentsLayer->setName("Background Color Layer");
 #endif
-        updateContentsRect();
-        setupContentsLayer(m_contentsLayer.get());
     } else {
         m_contentsLayerPurpose = NoContentsLayer;
         m_contentsLayer = 0;
@@ -785,6 +782,24 @@ void GraphicsLayerCA::layerDidDisplay(PlatformLayer* layer)
     }
 }
 
+FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) const
+{
+    pageScale = 1;
+
+    FloatPoint offset;
+    for (const GraphicsLayer* currLayer = this; currLayer; currLayer = currLayer->parent()) {
+        if (currLayer->appliesPageScale()) {
+            if (currLayer->client())
+                pageScale = currLayer->pageScaleFactor();
+            return offset;
+        }
+
+        offset += currLayer->position();
+    }
+
+    return FloatPoint();
+}
+
 void GraphicsLayerCA::syncCompositingState()
 {
     recursiveCommitChanges();
@@ -792,41 +807,58 @@ void GraphicsLayerCA::syncCompositingState()
 
 void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
 {
-    commitLayerChangesBeforeSublayers();
+    float pageScaleFactor;
+    FloatPoint offset = computePositionRelativeToBase(pageScaleFactor);
+    commitLayerChangesBeforeSublayers(pageScaleFactor, offset);
     commitLayerChangesAfterSublayers();
 }
 
-void GraphicsLayerCA::recursiveCommitChanges()
+void GraphicsLayerCA::recursiveCommitChanges(float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
-    commitLayerChangesBeforeSublayers();
+    bool hadChanges = m_uncommittedChanges;
+    
+    if (appliesPageScale()) {
+        pageScaleFactor = this->pageScaleFactor();
+        affectedByPageScale = true;
+    }
+
+    // Accumulate an offset from the ancestral pixel-aligned layer.
+    FloatPoint baseRelativePosition = positionRelativeToBase;
+    if (affectedByPageScale)
+        baseRelativePosition += m_position;
+    
+    commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition);
 
     if (m_maskLayer)
-        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesBeforeSublayers();
+        static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesBeforeSublayers(pageScaleFactor, baseRelativePosition);
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
-        curChild->recursiveCommitChanges();
+        curChild->recursiveCommitChanges(pageScaleFactor, baseRelativePosition, affectedByPageScale);
     }
 
     if (m_replicaLayer)
-        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges();
+        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
     if (m_maskLayer)
         static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers();
 
     commitLayerChangesAfterSublayers();
+
+    if (hadChanges && client())
+        client()->didCommitChangesForLayer(this);
 }
 
-void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
+void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     if (!m_uncommittedChanges)
         return;
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
     if (m_uncommittedChanges & (Preserves3DChanged | ReplicatedLayerChanged))
-        updateStructuralLayer();
+        updateStructuralLayer(pageScaleFactor, positionRelativeToBase);
 
     if (m_uncommittedChanges & NameChanged)
         updateLayerNames();
@@ -846,14 +878,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
     if (m_uncommittedChanges & ChildrenChanged)
         updateSublayerList();
 
-    if (m_uncommittedChanges & PositionChanged)
-        updateLayerPosition();
-    
-    if (m_uncommittedChanges & AnchorPointChanged)
-        updateAnchorPoint();
-    
-    if (m_uncommittedChanges & SizeChanged)
-        updateLayerSize();
+    if (m_uncommittedChanges & GeometryChanged)
+        updateGeometry(pageScaleFactor, positionRelativeToBase);
 
     if (m_uncommittedChanges & TransformChanged)
         updateTransform();
@@ -865,7 +891,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
         updateMasksToBounds();
     
     if (m_uncommittedChanges & DrawsContentChanged)
-        updateLayerDrawsContent();
+        updateLayerDrawsContent(pageScaleFactor, positionRelativeToBase);
 
     if (m_uncommittedChanges & ContentsOpaqueChanged)
         updateContentsOpaque();
@@ -895,7 +921,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
         updateAcceleratesDrawing();
     
     if (m_uncommittedChanges & ContentsScaleChanged)
-        updateContentsScale();
+        updateContentsScale(pageScaleFactor, positionRelativeToBase);
 }
 
 void GraphicsLayerCA::commitLayerChangesAfterSublayers()
@@ -967,92 +993,80 @@ void GraphicsLayerCA::updateSublayerList()
         m_layer->setSublayers(newSublayers);
 }
 
-void GraphicsLayerCA::updateLayerPosition()
+void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : m_size;
+    FloatPoint scaledPosition;
+    FloatPoint3D scaledAnchorPoint;
+    FloatSize scaledSize;
+    FloatSize pixelAlignmentOffset;
+    computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor, scaledSize);
+    if (needTiledLayer != m_usingTiledLayer)
+        swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
+
+    FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : scaledSize;
+    FloatRect adjustedBounds(FloatPoint() - pixelAlignmentOffset, usedSize);
+
+    // Update position.
     // Position is offset on the layer by the layer anchor point.
-    FloatPoint posPoint(m_position.x() + m_anchorPoint.x() * usedSize.width(),
-                          m_position.y() + m_anchorPoint.y() * usedSize.height());
-    
-    primaryLayer()->setPosition(posPoint);
+    FloatPoint adjustedPosition(scaledPosition.x() + scaledAnchorPoint.x() * usedSize.width(), scaledPosition.y() + scaledAnchorPoint.y() * usedSize.height());
 
-    if (LayerMap* layerCloneMap = primaryLayerClones()) {
+    if (m_structuralLayer) {
+        FloatPoint layerPosition(m_position.x() + m_anchorPoint.x() * m_size.width(), m_position.y() + m_anchorPoint.y() * m_size.height());
+        FloatRect layerBounds(FloatPoint(), m_size);
+        
+        m_structuralLayer->setPosition(layerPosition);
+        m_structuralLayer->setBounds(layerBounds);
+        m_structuralLayer->setAnchorPoint(m_anchorPoint);
+
+        if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
+            LayerMap::const_iterator end = layerCloneMap->end();
+            for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
+                PlatformCALayer* clone = it->second.get();
+                FloatPoint clonePosition = layerPosition;
+
+                if (m_replicaLayer && isReplicatedRootClone(it->first)) {
+                    // Maintain the special-case position for the root of a clone subtree,
+                    // which we set up in replicatedLayerRoot().
+                    clonePosition = positionForCloneRootLayer();
+                }
+
+                clone->setPosition(clonePosition);
+                clone->setBounds(layerBounds);
+                clone->setAnchorPoint(m_anchorPoint);
+            }
+        }
+
+        // If we have a structural layer, we just use 0.5, 0.5 for the anchor point of the main layer.
+        scaledAnchorPoint = FloatPoint(0.5f, 0.5f);
+        adjustedPosition = FloatPoint(scaledAnchorPoint.x() * usedSize.width() - pixelAlignmentOffset.width(), scaledAnchorPoint.y() * usedSize.height() - pixelAlignmentOffset.height());
+    }
+    
+    m_layer->setPosition(adjustedPosition);
+    m_layer->setBounds(adjustedBounds);
+    m_layer->setAnchorPoint(scaledAnchorPoint);
+
+    if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
-            FloatPoint clonePosition = posPoint;
-            if (m_replicaLayer && isReplicatedRootClone(it->first)) {
+            PlatformCALayer* clone = it->second.get();
+            FloatPoint clonePosition = adjustedPosition;
+
+            if (!m_structuralLayer && m_replicaLayer && isReplicatedRootClone(it->first)) {
                 // Maintain the special-case position for the root of a clone subtree,
                 // which we set up in replicatedLayerRoot().
                 clonePosition = positionForCloneRootLayer();
             }
-            it->second->setPosition(clonePosition);
+
+            clone->setPosition(clonePosition);
+            clone->setBounds(adjustedBounds);
+            clone->setAnchorPoint(scaledAnchorPoint);
         }
     }
-}
 
-void GraphicsLayerCA::updateLayerSize()
-{
-    FloatRect rect(0, 0, m_size.width(), m_size.height());
-    if (m_structuralLayer) {
-        m_structuralLayer->setBounds(rect);
-        
-        if (LayerMap* layerCloneMap = m_structuralLayerClones.get()) {
-            LayerMap::const_iterator end = layerCloneMap->end();
-            for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-                it->second->setBounds(rect);
-        }
-
-        // The anchor of the contents layer is always at 0.5, 0.5, so the position is center-relative.
-        CGPoint centerPoint = CGPointMake(m_size.width() / 2.0f, m_size.height() / 2.0f);
-        m_layer->setPosition(centerPoint);
-
-        if (LayerMap* layerCloneMap = m_layerClones.get()) {
-            LayerMap::const_iterator end = layerCloneMap->end();
-            for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-                it->second->setPosition(centerPoint);
-        }
-    }
-    
-    bool needTiledLayer = requiresTiledLayer(m_size);
-    if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer);
-    
-    if (m_usingTiledLayer) {
-        FloatSize sizeToUse = constrainedSize();
-        rect = CGRectMake(0, 0, sizeToUse.width(), sizeToUse.height());
-    }
-    
-    m_layer->setBounds(rect);
-    if (LayerMap* layerCloneMap = m_layerClones.get()) {
-        LayerMap::const_iterator end = layerCloneMap->end();
-        for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
-            it->second->setBounds(rect);
-    }
-    
     // Contents transform may depend on height.
     updateContentsTransform();
-
-    // Note that we don't resize m_contentsLayer. It's up the caller to do that.
-
-    // if we've changed the bounds, we need to recalculate the position
-    // of the layer, taking anchor point into account.
-    updateLayerPosition();
-}
-
-void GraphicsLayerCA::updateAnchorPoint()
-{
-    primaryLayer()->setAnchorPoint(m_anchorPoint);
-
-    if (LayerMap* layerCloneMap = primaryLayerClones()) {
-        LayerMap::const_iterator end = layerCloneMap->end();
-        for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {   
-            PlatformCALayer* currLayer = it->second.get();
-            currLayer->setAnchorPoint(m_anchorPoint);
-        }
-    }
-
-    updateLayerPosition();
 }
 
 void GraphicsLayerCA::updateTransform()
@@ -1129,12 +1143,12 @@ void GraphicsLayerCA::updateBackfaceVisibility()
     }
 }
 
-void GraphicsLayerCA::updateStructuralLayer()
+void GraphicsLayerCA::updateStructuralLayer(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    ensureStructuralLayer(structuralLayerPurpose());
+    ensureStructuralLayer(structuralLayerPurpose(), pageScaleFactor, positionRelativeToBase);
 }
 
-void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
+void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     if (purpose == NoStructuralLayer) {
         if (m_structuralLayer) {
@@ -1153,9 +1167,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
             m_structuralLayer = 0;
 
             // Update the properties of m_layer now that we no longer have a structural layer.
-            updateLayerPosition();
-            updateLayerSize();
-            updateAnchorPoint();
+            updateGeometry(pageScaleFactor, positionRelativeToBase);
             updateTransform();
             updateChildrenTransform();
 
@@ -1191,9 +1203,7 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     updateLayerNames();
 
     // Update the properties of the structural layer.
-    updateLayerPosition();
-    updateLayerSize();
-    updateAnchorPoint();
+    updateGeometry(pageScaleFactor, positionRelativeToBase);
     updateTransform();
     updateChildrenTransform();
     updateBackfaceVisibility();
@@ -1241,11 +1251,11 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
     return NoStructuralLayer;
 }
 
-void GraphicsLayerCA::updateLayerDrawsContent()
+void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    bool needTiledLayer = requiresTiledLayer(m_size);
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor, m_size);
     if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer);
+        swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
 
     if (m_drawsContent)
         m_layer->setNeedsDisplay();
@@ -1264,6 +1274,9 @@ void GraphicsLayerCA::updateLayerBackgroundColor()
 {
     if (!m_contentsLayer)
         return;
+
+    setupContentsLayer(m_contentsLayer.get());
+    updateContentsRect();
 
     if (m_backgroundColorSet)
         m_contentsLayer->setBackgroundColor(m_backgroundColor);
@@ -1955,40 +1968,24 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
     return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayerClones.get() : primaryLayerClones();
 }
 
-void GraphicsLayerCA::setContentsScale(float scale)
-{
-    float newScale = clampedContentsScaleForScale(scale);
-    if (newScale == m_contentsScale)
-        return;
-
-    m_contentsScale = newScale;
-    noteLayerPropertyChanged(ContentsScaleChanged);
-}
-
-float GraphicsLayerCA::clampedContentsScaleForScale(float scale) const
+static float clampedContentsScaleForScale(float scale)
 {
     // Define some limits as a sanity check for the incoming scale value
     // those too small to see.
     const float maxScale = 10.0f;
     const float minScale = 0.01f;
-    
-    // Avoid very slight scale changes that would be doing extra work for no benefit
-    const float maxAllowableDelta = 0.05f;
-
-    // Clamp
-    float result = max(minScale, min(scale, maxScale));
-
-    // If it hasn't changed much, don't do any work
-    return ((fabs(result - m_contentsScale) / m_contentsScale) < maxAllowableDelta) ? m_contentsScale : result;
+    return max(minScale, min(scale, maxScale));
 }
 
-void GraphicsLayerCA::updateContentsScale()
+void GraphicsLayerCA::updateContentsScale(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    bool needTiledLayer = requiresTiledLayer(m_size);
+    bool needTiledLayer = requiresTiledLayer(pageScaleFactor, m_size);
     if (needTiledLayer != m_usingTiledLayer)
-        swapFromOrToTiledLayer(needTiledLayer);
+        swapFromOrToTiledLayer(needTiledLayer, pageScaleFactor, positionRelativeToBase);
 
-    m_layer->setContentsScale(m_contentsScale);
+    float contentsScale = clampedContentsScaleForScale(pageScaleFactor * deviceScaleFactor());
+    
+    m_layer->setContentsScale(contentsScale);
     if (drawsContent())
         m_layer->setNeedsDisplay();
 }
@@ -2036,23 +2033,23 @@ FloatSize GraphicsLayerCA::constrainedSize() const
     return constrainedSize;
 }
 
-bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
+bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor, const FloatSize& size) const
 {
     if (!m_drawsContent || !m_allowTiledLayer)
         return false;
 
+    float contentsScale = pageScaleFactor * deviceScaleFactor();
+
     // FIXME: catch zero-size height or width here (or earlier)?
-    return size.width() > cMaxPixelDimension || size.height() > cMaxPixelDimension;
+    return size.width() * contentsScale > cMaxPixelDimension || size.height() * contentsScale > cMaxPixelDimension;
 }
 
-void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
+void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     ASSERT(useTiledLayer != m_usingTiledLayer);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);
-    m_layer->setContentsScale(m_contentsScale);
-
     m_usingTiledLayer = useTiledLayer;
     
     if (useTiledLayer) {
@@ -2076,16 +2073,14 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 
     updateContentsTransform();
 
-    updateLayerPosition();
-    updateLayerSize();
-    updateAnchorPoint();
+    updateGeometry(pageScaleFactor, positionRelativeToBase);
     updateTransform();
     updateChildrenTransform();
     updateMasksToBounds();
     updateContentsOpaque();
     updateBackfaceVisibility();
     updateLayerBackgroundColor();
-    
+    updateContentsScale(pageScaleFactor, positionRelativeToBase);
     updateOpacityOnLayer();
     
 #ifndef NDEBUG
@@ -2388,6 +2383,73 @@ void GraphicsLayerCA::updateOpacityOnLayer()
         
     }
 #endif
+}
+
+void GraphicsLayerCA::setMaintainsPixelAlignment(bool maintainsAlignment)
+{
+    if (maintainsAlignment == m_maintainsPixelAlignment)
+        return;
+
+    GraphicsLayer::setMaintainsPixelAlignment(maintainsAlignment);
+    noteChangesForScaleSensitiveProperties();
+}
+
+void GraphicsLayerCA::deviceOrPageScaleFactorChanged()
+{
+    noteChangesForScaleSensitiveProperties();
+}
+
+void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
+{
+    noteLayerPropertyChanged(GeometryChanged | ContentsScaleChanged);
+}
+
+static inline bool isIntegral(float value)
+{
+    return static_cast<int>(value) == value;
+}
+
+void GraphicsLayerCA::computePixelAlignment(float pageScaleFactor, const FloatPoint& positionRelativeToBase,
+    FloatPoint& position, FloatSize& size, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
+{
+    if (!m_maintainsPixelAlignment || isIntegral(pageScaleFactor) || !m_drawsContent || m_masksToBounds) {
+        position = m_position;
+        size = m_size;
+        anchorPoint = m_anchorPoint;
+        alignmentOffset = FloatSize();
+        return;
+    }
+    
+    FloatRect baseRelativeBounds(positionRelativeToBase, m_size);
+    FloatRect scaledBounds = baseRelativeBounds;
+    // Scale by the page scale factor to compute the screen-relative bounds.
+    scaledBounds.scale(pageScaleFactor);
+    // Round to integer boundaries.
+    FloatRect alignedBounds = enclosingIntRect(scaledBounds);
+    
+    // Convert back to layer coordinates.
+    alignedBounds.scale(1 / pageScaleFactor);
+    
+    // Epsilon is necessary to ensure that backing store size computation in CA, which involves integer truncation,
+    // will match our aligned bounds.
+    const float epsilon = 1e-5f;
+    alignedBounds.setSize(FloatSize(alignedBounds.size().width() + epsilon, alignedBounds.size().height() + epsilon));
+    
+    alignmentOffset = baseRelativeBounds.location() - alignedBounds.location();
+    position = m_position - alignmentOffset;
+    size = alignedBounds.size();
+
+    // Now we have to compute a new anchor point which compensates for rounding.
+    float anchorPointX = m_anchorPoint.x();
+    float anchorPointY = m_anchorPoint.y();
+    
+    if (alignedBounds.width())
+        anchorPointX = (baseRelativeBounds.width() * anchorPointX + alignmentOffset.width()) / alignedBounds.width();
+    
+    if (alignedBounds.height())
+        anchorPointY = (baseRelativeBounds.height() * anchorPointY + alignmentOffset.height()) / alignedBounds.height();
+     
+    anchorPoint = FloatPoint3D(anchorPointX, anchorPointY, m_anchorPoint.z() * pageScaleFactor);
 }
 
 void GraphicsLayerCA::noteSublayersChanged()
