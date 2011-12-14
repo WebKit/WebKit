@@ -32,6 +32,7 @@
     'variables': {
         'TestWebKitAPI_files': [
             'Tests/WTF/CheckedArithmeticOperations.cpp',
+            'Tests/WTF/Functional.cpp',
             'Tests/WTF/HashMap.cpp',
             'Tests/WTF/RedBlackTree.cpp',
             'Tests/WTF/StringBuilder.cpp',

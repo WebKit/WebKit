@@ -560,6 +560,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Float32Array.h \
 	Source/JavaScriptCore/wtf/Float64Array.h \
 	Source/JavaScriptCore/wtf/Forward.h \
+	Source/JavaScriptCore/wtf/Functional.h \
 	Source/JavaScriptCore/wtf/GetPtr.h \
 	Source/JavaScriptCore/wtf/gobject/GOwnPtr.cpp \
 	Source/JavaScriptCore/wtf/gobject/GOwnPtr.h \

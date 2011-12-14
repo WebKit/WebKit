@@ -159,6 +159,7 @@
             'wtf/FastMalloc.h',
             'wtf/FixedArray.h',
             'wtf/Forward.h',
+            'wtf/Functional.h',
             'wtf/GetPtr.h',
             'wtf/HashCountedSet.h',
             'wtf/HashFunctions.h',

@@ -640,6 +640,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\Functional.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\HashMap.cpp"
 					>
 				</File>

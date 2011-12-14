@@ -264,6 +264,7 @@
 		18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = 18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */; };
 		1A082779142168D70090CCAC /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A082777142168D70090CCAC /* BinarySemaphore.cpp */; };
 		1A08277A142168D70090CCAC /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A082778142168D70090CCAC /* BinarySemaphore.h */; };
+		1AA9E5511498093500001A8A /* Functional.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA9E5501498093500001A8A /* Functional.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2CFC5D1E12F45B48004914E2 /* CharacterNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CFC5B7A12F44714004914E2 /* CharacterNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41359CF30FDD89AD00206180 /* DateConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateConversion.h */; };
 		41359CF60FDD89CB00206180 /* DateMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41359CF40FDD89CB00206180 /* DateMath.cpp */; };
@@ -1006,6 +1007,7 @@
 		18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadIdentifierDataPthreads.h; sourceTree = "<group>"; };
 		1A082777142168D70090CCAC /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		1A082778142168D70090CCAC /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
+		1AA9E5501498093500001A8A /* Functional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Functional.h; sourceTree = "<group>"; };
 		1C9051420BA9E8A70081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = JavaScriptCore.xcconfig; path = ../Configurations/JavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
@@ -1944,6 +1946,7 @@
 				A73BE159148420520091204B /* Float32Array.h */,
 				A73BE15B148420520091204B /* Float64Array.h */,
 				935AF46909E9D9DB00ACD1D8 /* Forward.h */,
+				1AA9E5501498093500001A8A /* Functional.h */,
 				93B6A0DE0AA64DA40076DE27 /* GetPtr.h */,
 				657EEBBF094E445E008C9C7B /* HashCountedSet.h */,
 				65DFC92A08EA173A00F7300B /* HashFunctions.h */,
@@ -2988,6 +2991,7 @@
 				A73BE180148420A80091204B /* IntegralTypedArrayBase.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				0FBC0AE81496C7C700D4FBDD /* DFGExitProfile.h in Headers */,
+				1AA9E5511498093500001A8A /* Functional.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

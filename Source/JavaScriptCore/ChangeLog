@@ -1,3 +1,35 @@
+2011-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a very bare-bones implementation of bind and Function to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=74462
+
+        Reviewed by Sam Weinig.
+
+        In order to make it easier to package up function calls and send them across
+        threads, add a (currently very simple) implementation of WTF::bind and WTF::Function to a new
+        wtf/Functional.h header.
+
+        Currently, all bind can do is bind a nullary function and return a Function object that can be called and copied,
+        but I'll add more as the need arises.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/Functional.h: Added.
+        (WTF::R):
+        (WTF::FunctionImplBase::~FunctionImplBase):
+        (WTF::FunctionWrapper::ResultType):
+        (WTF::FunctionBase::isNull):
+        (WTF::FunctionBase::FunctionBase):
+        (WTF::FunctionBase::impl):
+        (WTF::bind):
+        * wtf/MainThread.cpp:
+        (WTF::callFunctionObject):
+        (WTF::callOnMainThread):
+        * wtf/MainThread.h:
+        * wtf/wtf.pro:
+
 2011-12-13  Geoffrey Garen  <ggaren@apple.com>
 
         <rdar://problem/10577239> GC Crash introduced in r102545

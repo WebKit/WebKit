@@ -1,3 +1,19 @@
+2011-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a very bare-bones implementation of bind and Function to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=74462
+
+        Reviewed by Sam Weinig.
+
+        Add basic tests for WTF::Function and WTF::bind.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/Functional.cpp: Added.
+        (TestWebKitAPI::returnFortyTwo):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2011-12-13  Robin Dunn  <robin@alldunn.com>
 
         [wx] Add a URL argument to wxWebView constructor.

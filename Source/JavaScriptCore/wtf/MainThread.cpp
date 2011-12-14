@@ -31,6 +31,7 @@
 
 #include "CurrentTime.h"
 #include "Deque.h"
+#include "Functional.h"
 #include "StdLibExtras.h"
 #include "Threading.h"
 
@@ -214,6 +215,18 @@ void cancelCallOnMainThread(MainThreadFunction* function, void* context)
             break;
         functionQueue().remove(i);
     }
+}
+
+static void callFunctionObject(void* context)
+{
+    Function<void ()>* function = static_cast<Function<void ()>*>(context);
+    (*function)();
+    delete function;
+}
+
+void callOnMainThread(const Function<void ()>& function)
+{
+    callOnMainThread(callFunctionObject, new Function<void ()>(function));
 }
 
 void setMainThreadCallbacksPaused(bool paused)

@@ -1,3 +1,14 @@
+2011-12-13  Anders Carlsson  <andersca@apple.com>
+
+        Add a very bare-bones implementation of bind and Function to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=74462
+
+        Reviewed by Sam Weinig.
+
+        Add a forwarding header for Functional.h.
+
+        * ForwardingHeaders/wtf/Functional.h: Added.
+
 2011-12-13  Adrienne Walker  <enne@google.com>
 
         [chromium] Use HashMap<..., OwnPtr<Tile>> for compositor tilemap

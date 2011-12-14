@@ -65,6 +65,7 @@ HEADERS += \
     Float32Array.h \
     Float64Array.h \
     Forward.h \
+    Functional.h \
     GetPtr.h \
     HashCountedSet.h \
     HashFunctions.h \

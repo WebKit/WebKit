@@ -817,6 +817,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Functional.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\GetPtr.h"
 			>
 		</File>
