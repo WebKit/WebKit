@@ -33,6 +33,7 @@
 
 #include "CSSMutableStyleDeclaration.h"
 #include "CachedMetadata.h"
+#include "Console.h"
 #include "DateExtension.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -42,6 +43,7 @@
 #include "FrameLoaderClient.h"
 #include "IDBFactoryBackendInterface.h"
 #include "InspectorInstrumentation.h"
+#include "Page.h"
 #include "PlatformSupport.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
@@ -117,6 +119,21 @@ typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
 typedef HashMap<int, v8::FunctionTemplate*> FunctionTemplateMap;
 
+static void addMessageToConsole(Page* page, const String& message, const String& sourceID, unsigned lineNumber)
+{
+    ASSERT(page);
+    Console* console = page->mainFrame()->domWindow()->console();
+    console->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, lineNumber, sourceID);
+}
+
+void logInfo(Frame* frame, const String& message, const String& url)
+{
+    Page* page = frame->page();
+    if (!page)
+        return;
+    addMessageToConsole(page, message, url, 0);
+}
+
 void V8Proxy::reportUnsafeAccessTo(Frame* target)
 {
     ASSERT(target);
@@ -126,6 +143,9 @@ void V8Proxy::reportUnsafeAccessTo(Frame* target)
 
     Frame* source = V8Proxy::retrieveFrameForEnteredContext();
     if (!source)
+        return;
+    Page* page = source->page();
+    if (!page)
         return;
 
     Document* sourceDocument = source->document();
@@ -137,10 +157,14 @@ void V8Proxy::reportUnsafeAccessTo(Frame* target)
     String str = "Unsafe JavaScript attempt to access frame with URL " + targetDocument->url().string() +
                  " from frame with URL " + sourceDocument->url().string() + ". Domains, protocols and ports must match.\n";
 
+    // Build a console message with fake source ID and line number.
+    const String kSourceID = "";
+    const int kLineNumber = 1;
+
     // NOTE: Safari prints the message in the target page, but it seems like
     // it should be in the source page. Even for delayed messages, we put it in
     // the source page.
-    sourceDocument->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, str);
+    addMessageToConsole(page, str, kSourceID, kLineNumber);
 }
 
 static void handleFatalErrorInV8()
