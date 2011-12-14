@@ -1,3 +1,20 @@
+2011-12-13  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream 3 files into WebCore/platform/blackberry
+        ClipboardBlackBerry.cpp/h, PasteboardBlackBerry.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74381
+
+        Reviewed by Rob Buis.
+
+        Main contributor:
+        Mike Fenton <mifenton@rim.com>
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/ClipboardBlackBerry.cpp: Added.
+        * platform/blackberry/ClipboardBlackBerry.h: Added.
+        * platform/blackberry/PasteboardBlackBerry.cpp: Added.
+
 2011-12-13  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r102726.
