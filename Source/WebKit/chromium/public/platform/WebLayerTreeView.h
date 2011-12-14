@@ -47,12 +47,14 @@ public:
             : acceleratePainting(false)
             , compositeOffscreen(false)
             , showFPSCounter(false)
-            , showPlatformLayerTree(false) { }
+            , showPlatformLayerTree(false)
+            , partialSwapEnabled(false) { }
 
         bool acceleratePainting;
         bool compositeOffscreen;
         bool showFPSCounter;
         bool showPlatformLayerTree;
+        bool partialSwapEnabled;
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCSettings() const;
 #endif

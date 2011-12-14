@@ -206,12 +206,9 @@ bool LayerRendererChromium::initialize()
     if (m_capabilities.contextHasCachedFrontBuffer)
         extensions->ensureEnabled("GL_CHROMIUM_front_buffer_cached");
 
-    m_capabilities.usingPartialSwap = extensions->supports("GL_CHROMIUM_post_sub_buffer");
+    m_capabilities.usingPartialSwap = settings().partialSwapEnabled && extensions->supports("GL_CHROMIUM_post_sub_buffer");
     if (m_capabilities.usingPartialSwap)
         extensions->ensureEnabled("GL_CHROMIUM_post_sub_buffer");
-    // FIXME: eventually we would like to have usingPartialSwap enabled by default,
-    //        whenever it is supported. For now, we force it off.
-    m_capabilities.usingPartialSwap = false;
 
     m_capabilities.usingMapSub = extensions->supports("GL_CHROMIUM_map_sub");
     if (m_capabilities.usingMapSub)

@@ -507,4 +507,9 @@ void WebSettingsImpl::setPerTilePaintingEnabled(bool enabled)
     m_settings->setPerTileDrawingEnabled(enabled);
 }
 
+void WebSettingsImpl::setPartialSwapEnabled(bool enabled)
+{
+    m_settings->setPartialSwapEnabled(enabled);
+}
+
 } // namespace WebKit

@@ -1,3 +1,18 @@
+2011-12-14  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb through flag for enabling partial swap
+        https://bugs.webkit.org/show_bug.cgi?id=74513
+
+        Reviewed by James Robinson.
+
+        * page/Settings.h:
+        (WebCore::Settings::setPartialSwapEnabled):
+        (WebCore::Settings::partialSwapEnabled):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCSettings::CCSettings):
+
 2011-12-14  Mike Reed  <reed@google.com>
 
         [skia] cache typeface in FontPlatformData

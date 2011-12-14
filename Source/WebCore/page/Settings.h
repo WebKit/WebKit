@@ -506,6 +506,9 @@ namespace WebCore {
         void setPerTileDrawingEnabled(bool enabled) { m_perTileDrawingEnabled = enabled; }
         bool perTileDrawingEnabled() const { return m_perTileDrawingEnabled; }
 
+        void setPartialSwapEnabled(bool enabled) { m_partialSwapEnabled = enabled; }
+        bool partialSwapEnabled() const { return m_partialSwapEnabled; }
+
     private:
         Page* m_page;
 
@@ -640,6 +643,7 @@ namespace WebCore {
         bool m_shouldDisplayTextDescriptions : 1;
 #endif
         bool m_perTileDrawingEnabled : 1;
+        bool m_partialSwapEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

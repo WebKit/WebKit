@@ -130,6 +130,7 @@ public:
     virtual void setShouldDisplayTextDescriptions(bool);
     virtual void setAcceleratedPaintingEnabled(bool);
     virtual void setPerTilePaintingEnabled(bool);
+    virtual void setPartialSwapEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;

@@ -74,7 +74,8 @@ struct CCSettings {
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , refreshRate(0)
-            , perTilePainting(false) { }
+            , perTilePainting(false)
+            , partialSwapEnabled(false) { }
 
     bool acceleratePainting;
     bool compositeOffscreen;
@@ -82,6 +83,7 @@ struct CCSettings {
     bool showPlatformLayerTree;
     double refreshRate;
     bool perTilePainting;
+    bool partialSwapEnabled;
 };
 
 // Provides information on an Impl's rendering capabilities back to the CCLayerTreeHost

@@ -1,3 +1,21 @@
+2011-12-14  Jonathan Backer  <backer@chromium.org>
+
+        [chromium] Plumb through flag for enabling partial swap
+        https://bugs.webkit.org/show_bug.cgi?id=74513
+
+        Reviewed by James Robinson.
+
+        * public/WebSettings.h:
+        * public/platform/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setPartialSwapEnabled):
+        * src/WebSettingsImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-12-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Roll chromium DEPS (r113807 -> r114356)

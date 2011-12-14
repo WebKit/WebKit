@@ -42,6 +42,7 @@ WebLayerTreeView::Settings::operator CCSettings() const
     settings.compositeOffscreen = compositeOffscreen;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
+    settings.partialSwapEnabled = partialSwapEnabled;
 
     // FIXME: showFPSCounter / showPlatformLayerTree aren't supported currently.
     settings.showFPSCounter = false;
