@@ -1,3 +1,21 @@
+2011-12-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Media url with fragment may not load
+        https://bugs.webkit.org/show_bug.cgi?id=74443
+
+        Reviewed by Darin Adler.
+
+        Test: media/media-extension-with-fragment.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource): Pass the KURL to MediaPlayer, let it extract a
+            String when it needs it.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load): Take a KURL, not a String. Look for the file extension in the 
+            last path component so we don't examine fragments and/or queries.
+        * platform/graphics/MediaPlayer.h:
+
 2011-12-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Remove some duplicate entries in Source/WebCore/PlatformBlackBerry.cmake

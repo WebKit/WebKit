@@ -34,6 +34,7 @@
 
 #include "Document.h"
 #include "IntRect.h"
+#include "KURL.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -207,7 +208,7 @@ public:
     IntSize size() const { return m_size; }
     void setSize(const IntSize& size);
 
-    bool load(const String& url, const ContentType&);
+    bool load(const KURL& url, const ContentType&);
     void cancelLoad();
 
     bool visible() const;

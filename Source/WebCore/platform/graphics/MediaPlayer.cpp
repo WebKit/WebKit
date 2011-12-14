@@ -331,19 +331,21 @@ MediaPlayer::~MediaPlayer()
     m_mediaPlayerClient = 0;
 }
 
-bool MediaPlayer::load(const String& url, const ContentType& contentType)
+bool MediaPlayer::load(const KURL& url, const ContentType& contentType)
 {
     String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
+    String urlString = url.string();
 
     // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
     if (type.isEmpty() || type == applicationOctetStream() || type == textPlain()) {
-        if (protocolIs(url, "data"))
-            type = mimeTypeFromDataURL(url);
+        if (protocolIs(urlString, "data"))
+            type = mimeTypeFromDataURL(urlString);
         else {
-            size_t pos = url.reverseFind('.');
+            String lastPathComponent = url.lastPathComponent();
+            size_t pos = lastPathComponent.reverseFind('.');
             if (pos != notFound) {
-                String extension = url.substring(pos + 1);
+                String extension = lastPathComponent.substring(pos + 1);
                 String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
                 if (!mediaType.isEmpty())
                     type = mediaType;
@@ -351,7 +353,7 @@ bool MediaPlayer::load(const String& url, const ContentType& contentType)
         }
     }
 
-    m_url = url;
+    m_url = urlString;
     m_contentMIMEType = type;
     m_contentTypeCodecs = typeCodecs;
     loadWithNextMediaEngine(0);

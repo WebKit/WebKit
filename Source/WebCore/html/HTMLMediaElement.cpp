@@ -892,7 +892,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         m_muted = true;
     updateVolume();
 
-    if (!m_player->load(url.string(), contentType))
+    if (!m_player->load(url, contentType))
         mediaLoadingFailed(MediaPlayer::FormatError);
 
     // If there is no poster to display, allow the media engine to render video frames as soon as
