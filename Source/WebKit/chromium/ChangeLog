@@ -1,3 +1,15 @@
+2011-12-14  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Roll chromium DEPS (r113807 -> r114356)
+        https://bugs.webkit.org/show_bug.cgi?id=74496
+
+        Reviewed by Tony Gentilcore.
+
+        Roll deps to r114356 and update the location of sfntly to
+        pick up the change at Chromium.
+
+        * DEPS:
+
 2011-12-13  Dirk Pranke  <dpranke@chromium.org>
 
         chromium port - remove nacl hack in DEPS/gyp_webkit
