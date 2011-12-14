@@ -93,14 +93,26 @@ bool HTMLSummaryElement::isMainSummary() const
     return 0;
 }
 
+static bool isClickableControl(Node* node)
+{
+    if (!node->isElementNode())
+        return false;
+    Element* element = toElement(node);
+    if (element->isFormControlElement())
+        return true;
+    Element* host = toElement(element->shadowAncestorNode());
+    return host && host->isFormControlElement();
+}
+
 void HTMLSummaryElement::defaultEventHandler(Event* event)
 {
     HTMLElement::defaultEventHandler(event);
     if (!isMainSummary() || !renderer() || !renderer()->isSummary() || !event->isMouseEvent() || event->type() != eventNames().clickEvent || event->defaultHandled())
         return;
-
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     if (mouseEvent->button() != LeftButton)
+        return;
+    if (isClickableControl(event->target()->toNode()))
         return;
 
     if (HTMLDetailsElement* details = detailsElement())

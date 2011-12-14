@@ -1,3 +1,19 @@
+2011-12-13  Hajime Morrita  <morrita@chromium.org>
+
+        HTML details summary not working with form controls
+        https://bugs.webkit.org/show_bug.cgi?id=74398
+
+        Reviewed by Kent Tamura.
+
+        Allowed HTMLSummaryElement to skip the toggle logic if the event
+        target is a form control.
+
+        Test: fast/html/details-click-controls.html
+
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::isClickableControl):
+        (WebCore::HTMLSummaryElement::defaultEventHandler):
+
 2011-12-13  James Wei <james.wei@intel.com> 
 
         Optimize to not use pow() in the inner loop in AudioParamTimeline
