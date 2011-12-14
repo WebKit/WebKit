@@ -155,6 +155,16 @@ static void initializeGtkFontSettings(const char* testURL)
         g_object_set(settings, "gtk-xft-rgba", "rgb", NULL);
     else
         g_object_set(settings, "gtk-xft-rgba", "none", NULL);
+
+    GdkScreen* screen = gdk_screen_get_default();
+    ASSERT(screen);
+    const cairo_font_options_t* screenOptions = gdk_screen_get_font_options(screen);
+    ASSERT(screenOptions);
+    cairo_font_options_t* options = cairo_font_options_copy(screenOptions);
+    // Turn off text metrics hinting, which quantizes metrics to pixels in device space.
+    cairo_font_options_set_hint_metrics(options, CAIRO_HINT_METRICS_OFF);
+    gdk_screen_set_font_options(screen, options);
+    cairo_font_options_destroy(options);
 }
 
 CString getTopLevelPath()

@@ -1,3 +1,14 @@
+2011-12-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Bad text rendering since r101343
+        https://bugs.webkit.org/show_bug.cgi?id=73744
+
+        Reviewed by Martin Robinson.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::setCairoFontOptionsFromFontConfigPattern): Keep Cairo
+        hint metrics unchanged for better visual font rendering results.
+
 2011-12-13  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed attempt for fixing windows build.

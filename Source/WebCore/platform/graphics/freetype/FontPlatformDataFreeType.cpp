@@ -98,9 +98,6 @@ void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcP
         cairo_font_options_set_hint_style(options, convertFontConfigHintStyle(integerResult));
     if (FcPatternGetBool(pattern, FC_HINTING, 0, &booleanResult) == FcResultMatch && !booleanResult)
         cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
-
-    // Turn off text metrics hinting, which quantizes metrics to pixels in device space.
-    cairo_font_options_set_hint_metrics(options, CAIRO_HINT_METRICS_OFF);
 }
 
 static cairo_font_options_t* getDefaultFontOptions()

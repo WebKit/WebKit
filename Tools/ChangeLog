@@ -1,3 +1,18 @@
+2011-12-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Bad text rendering since r101343
+        https://bugs.webkit.org/show_bug.cgi?id=73744
+
+        Reviewed by Martin Robinson.
+
+        Turn cairo hint metrics off for better font metrics reporting in
+        the tests. This is especially important for SVG.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGtkFontSettings):
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::initializeGtkSettings):
+
 2011-12-13  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Remove several global variables from prepare-ChangeLog
