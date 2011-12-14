@@ -1267,7 +1267,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, Rend
 
     initElement(element);
     initForStyleResolve(element, defaultParent);
-    initForRegionStyling(regionForStyling);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
@@ -1431,7 +1430,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     initElement(e);
 
     initForStyleResolve(e, parentStyle, pseudo);
-    initForRegionStyling(regionForStyling);
     m_style = RenderStyle::create();
 
     if (m_parentStyle)

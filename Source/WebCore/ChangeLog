@@ -1,3 +1,18 @@
+2011-12-14  Tony Chang  <tony@chromium.org>
+
+        Remove added calls to CSSStyleSelector to gain back another 2% in page cyclers
+        https://bugs.webkit.org/show_bug.cgi?id=74537
+
+        Reviewed by Ojan Vafai.
+
+        In r102234, calls to initForRegionStyling() were added in CSSStyleSelector.
+        There's still a 2% perf regression in chromium page cyclers, so try removing
+        these calls.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+
 2011-12-14  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb through flag for enabling partial swap
