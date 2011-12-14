@@ -1,5 +1,27 @@
 2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        COMPILE_ASSERT in CSSStyleSelector.cpp doesn't compile on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=74327
+
+        Reviewed by Darin Adler.
+
+        Always use unsigned instead of bool and unsigned in the bitfields of RuleData to shrink
+        its size under MSVC.
+
+        Unlike gcc and clang, MSVC pads each consecutive member variables of the same type
+        in bitfields. e.g. if you have:
+        sturct AB {
+            unsigned m_1 : 31;
+            bool m_2 : 1;
+        }
+        then MSVC pads m_1 and allocates sizeof(unsigned) * 2 for AB whereas gcc and clang
+        only allocate sizeof(unsigned) * 1 for AB.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleData::RuleData):
+
+2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         NodeChildList shouldn't be in NodeListNodeData
         https://bugs.webkit.org/show_bug.cgi?id=73969
 

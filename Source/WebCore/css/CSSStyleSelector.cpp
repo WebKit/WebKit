@@ -193,12 +193,12 @@ private:
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
     unsigned m_position : 25;
-    bool m_hasFastCheckableSelector : 1;
-    bool m_hasMultipartSelector : 1;
-    bool m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
-    bool m_containsUncommonAttributeSelector : 1;
+    unsigned m_hasFastCheckableSelector : 1;
+    unsigned m_hasMultipartSelector : 1;
+    unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
+    unsigned m_containsUncommonAttributeSelector : 1;
     unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    bool m_regionStyleRule : 1;
+    unsigned m_regionStyleRule : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
@@ -211,9 +211,7 @@ struct SameSizeAsRuleData {
     unsigned e[4];
 };
 
-#if !OS(WINDOWS)
 COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
-#endif
 
 class RuleSet {
     WTF_MAKE_NONCOPYABLE(RuleSet);
@@ -1894,7 +1892,7 @@ RuleData::RuleData(CSSStyleRule* rule, CSSSelector* selector, unsigned position,
     , m_specificity(selector->specificity())
     , m_position(position)
     , m_hasFastCheckableSelector(SelectorChecker::isFastCheckableSelector(selector))
-    , m_hasMultipartSelector(selector->tagHistory())
+    , m_hasMultipartSelector(!!selector->tagHistory())
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector))
