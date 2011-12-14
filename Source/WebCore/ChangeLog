@@ -1,3 +1,17 @@
+2011-12-14  Brian Salomon  <bsalomon@google.com>
+
+        [CHROMIUM/SKIA] Handle put[Un/Pre]multipliedImageData conversions in Skia rather than ImageBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=73953
+
+        Reviewed by Stephen White.
+
+        Tested by existing canvas2d layout tests.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+
 2011-12-14  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Remove SharedBufferBlackBerry.cpp from WebCore/platform/blackberry

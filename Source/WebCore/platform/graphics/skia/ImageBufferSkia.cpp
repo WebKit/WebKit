@@ -291,7 +291,7 @@ PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect
 
 template <Multiply multiplied>
 void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint,
-                  SkDevice* dstDevice, const IntSize& size)
+                  SkCanvas* canvas, const IntSize& size)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -320,52 +320,27 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     int numRows = endY - destY;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
+    SkBitmap srcBitmap;
+    srcBitmap.setConfig(SkBitmap::kARGB_8888_Config, numColumns, numRows, srcBytesPerRow);
+    srcBitmap.setPixels(source->data() + originY * srcBytesPerRow + originX * 4);
 
-    SkBitmap deviceBitmap = dstDevice->accessBitmap(true);
+    SkCanvas::Config8888 config8888;
+    if (multiplied == Premultiplied)
+        config8888 = SkCanvas::kRGBA_Premul_Config8888;
+    else
+        config8888 = SkCanvas::kRGBA_Unpremul_Config8888;
 
-    // If the device's bitmap doesn't have pixels we will make a temp and call writePixels on the device.
-    bool temporaryBitmap = !!deviceBitmap.getTexture();
-    SkBitmap destBitmap;
-
-    if (temporaryBitmap) {
-        destBitmap.setConfig(SkBitmap::kARGB_8888_Config, numColumns, numRows, srcBytesPerRow);
-        if (!destBitmap.allocPixels())
-            CRASH();
-    } else
-        deviceBitmap.extractSubset(&destBitmap, SkIRect::MakeXYWH(destX, destY, numColumns, numRows));
-
-    // Whether we made a temporary or not destBitmap is always configured to be written at 0,0
-    SkAutoLockPixels destAutoLock(destBitmap);
-    const unsigned char* srcRow = source->data() + originY * srcBytesPerRow + originX * 4;
-    for (int y = 0; y < numRows; ++y) {
-        SkPMColor* destRow = destBitmap.getAddr32(0, y);
-        for (int x = 0; x < numColumns; ++x) {
-            const unsigned char* srcPixel = &srcRow[x * 4];
-            if (multiplied == Unmultiplied) {
-                unsigned char alpha = srcPixel[3];
-                unsigned char r = SkMulDiv255Ceiling(srcPixel[0], alpha);
-                unsigned char g = SkMulDiv255Ceiling(srcPixel[1], alpha);
-                unsigned char b = SkMulDiv255Ceiling(srcPixel[2], alpha);
-                destRow[x] = SkPackARGB32(alpha, r, g, b);
-            } else
-                destRow[x] = SkPackARGB32NoCheck(srcPixel[3], srcPixel[0], srcPixel[1], srcPixel[2]);
-        }
-        srcRow += srcBytesPerRow;
-    }
-
-    // If we used a temporary then write it to the device
-    if (temporaryBitmap)
-        dstDevice->writePixels(destBitmap, destX, destY);
+    canvas->writePixels(srcBitmap, destX, destY, config8888);
 }
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
+    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas(), m_size);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
+    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas(), m_size);
 }
 
 template <typename T>
