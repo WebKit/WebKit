@@ -84,7 +84,9 @@ BUGWK74279 : fullscreen/full-screen-iframe-legacy.html = PASS TEXT
 
 BUGWK74288 : fast/events/overflow-events.html = PASS TEXT
 
-BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH
+BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = PASS TEXT
+
+BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
 
 // End of Flaky tests
 
