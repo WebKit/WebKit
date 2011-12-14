@@ -1,3 +1,28 @@
+2011-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: consider disabling network tracking while running the CPU profile.
+        https://bugs.webkit.org/show_bug.cgi?id=74221
+
+        The WebCore instrumentation on the backend affects the performance of inspected page.
+        As the result the CPU profiler's stats data are far away from the reality.
+        Solution: the profiler code will temporary disable the resource tracking on backend.
+        Side effect: the resource tree gets out of sinc because it uses Network Agent's notifications for updating the resource tree.
+        Solution: NetworkManager will report about the changes of the resource tracking state and ResourcePanel will re-fetch the resources tree.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.enableResourceTracking.networkAgentEnabled):
+        (WebInspector.NetworkManager.prototype.enableResourceTracking):
+        (WebInspector.NetworkManager.prototype.disableResourceTracking.networkAgentDisabled):
+        (WebInspector.NetworkManager.prototype.disableResourceTracking):
+        (WebInspector.NetworkManager.prototype.inflightResourceForURL):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype._onResourceTrackingEnabled):
+
 2011-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Fix PlatformScreen::screenAvailableRect when there's no view widget

@@ -35,6 +35,7 @@
  */
 WebInspector.ResourceTreeModel = function(networkManager)
 {
+    networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled, this._onResourceTrackingEnabled, this);
     networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
     networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdateDropped, this._onResourceUpdateDropped, this);
@@ -45,7 +46,9 @@ WebInspector.ResourceTreeModel = function(networkManager)
 
     PageAgent.enable();
 
+    NetworkAgent.enable();
     this._fetchResourceTree();
+
     InspectorBackend.registerPageDispatcher(new WebInspector.PageDispatcher(this));
 
     this._pendingConsoleMessages = {};
@@ -66,6 +69,11 @@ WebInspector.ResourceTreeModel.EventTypes = {
 }
 
 WebInspector.ResourceTreeModel.prototype = {
+    _onResourceTrackingEnabled: function()
+    {
+        this._fetchResourceTree();
+    },
+
     _fetchResourceTree: function()
     {
         this._frames = {};

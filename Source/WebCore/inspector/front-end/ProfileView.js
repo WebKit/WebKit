@@ -586,10 +586,13 @@ WebInspector.CPUProfileType.prototype = {
     {
         this._recording = !this._recording;
 
-        if (this._recording)
+        if (this._recording) {
+            WebInspector.networkManager.disableResourceTracking();
             ProfilerAgent.start();
-        else
+        } else {
             ProfilerAgent.stop();
+            WebInspector.networkManager.enableResourceTracking();
+        }
     },
 
     get welcomeMessage()

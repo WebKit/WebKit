@@ -38,7 +38,9 @@ WebInspector.NetworkManager = function()
     this._dispatcher = new WebInspector.NetworkDispatcher(this);
     if (WebInspector.settings.cacheDisabled.get())
         NetworkAgent.setCacheDisabled(true);
+
     NetworkAgent.enable();
+    this._resourceTracking = true;
 
     WebInspector.settings.cacheDisabled.addChangeListener(this._cacheDisabledSettingChanged, this);
 
@@ -48,6 +50,8 @@ WebInspector.NetworkManager = function()
 }
 
 WebInspector.NetworkManager.EventTypes = {
+    ResourceTrackingEnabled: "ResourceTrackingEnabled",
+    ResourceTrackingDisabled: "ResourceTrackingDisabled",
     ResourceStarted: "ResourceStarted",
     ResourceUpdated: "ResourceUpdated",
     ResourceFinished: "ResourceFinished",
@@ -70,6 +74,28 @@ WebInspector.NetworkManager.prototype = {
             NetworkAgent.getResponseBody(resource.requestId, callbackWrapper);
         else
             PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
+    },
+
+    enableResourceTracking: function()
+    {
+        function networkAgentEnabled()
+        {
+            this._resourceTracking = true;
+            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled);
+        }
+
+        NetworkAgent.enable(networkAgentEnabled.bind(this));
+    },
+
+    disableResourceTracking: function()
+    {
+        function networkAgentDisabled()
+        {
+            this._resourceTracking = false;
+            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingDisabled);
+        }
+
+        NetworkAgent.disable(networkAgentDisabled.bind(this));
     },
 
     inflightResourceForURL: function(url)
