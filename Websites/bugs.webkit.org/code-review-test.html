@@ -21,57 +21,6 @@ function inherits(childConstructor, parentConstructor) {
   childConstructor.prototype.constructor = childConstructor;
 }
 
-function MockLocalStorage() {
-    this.localStorageStore = {};
-    this.log = [];
-
-    this.getItem = function(key) {
-        this.log.push('getItem:' + key);
-        return this.localStorageStore[key];
-    };
-
-    this.setItem = function(key, value) {
-        // For testing sake, consider having more than 2 items to exceed the storage quota.
-        if (Object.keys(this.localStorageStore).length > 2) {
-            this.log.push('QuotaExceeded on setItem:' + key + ',' + value);
-            throw "QuotaExceeded";
-        }
-        this.log.push('setItem:' + key + ',' + value);
-        this.localStorageStore[key] = value;
-    };
-
-    this.removeItem = function(key) {
-        this.log.push('removeItem:' + key);
-        delete this.localStorageStore[key];
-    };
-
-    this.log_string = function() {
-        return this.log.join('\n');
-    };
-
-    this.key = function(i) {
-        return Object.keys(this.localStorageStore)[i];
-    };
-
-    this.__defineGetter__('length', function() {
-        return Object.keys(this.localStorageStore).length;
-    });
-}
-
-function MockDraftCommentSaver(attachment_id, opt_localStorage) {
-    DraftCommentSaver.call(this, attachment_id, opt_localStorage);
-}
-
-inherits(MockDraftCommentSaver, DraftCommentSaver)
-
-MockDraftCommentSaver.prototype._json = function() {
-    return "{MOCK JSON}";
-}
-
-MockDraftCommentSaver.prototype._should_remove_comments = function(message) {
-    return false;
-}
-
 function log(msg) {
     document.getElementById('output').innerHTML += msg + '\n\n';
 }
@@ -90,97 +39,151 @@ function ASSERT_EQUAL(actual, expected) {
         log('FAIL:\ngot:\n' + actual + '\nexpected:\n' + expected + '');
 }
 
-var links = tracLinks('foo/bar/baz.cpp', '');
-ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar/baz.h');
+function testTracLinks() {
+  var links = tracLinks('foo/bar/baz.cpp', '');
+  ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar/baz.h');
 
-var links = tracLinks('foo/bar.cpp/qux.mm', '');
-ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h');
-
-// Basic setItem.
-var ls = new MockLocalStorage();
-new MockDraftCommentSaver('1234', ls).save();
-ASSERT_EQUAL(ls.log_string(), 'setItem:draft-comments-for-attachment-1234,{MOCK JSON}');
-
-// Exceed quota, but succeed after erasing old reviews.
-var ls = new MockLocalStorage();
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-3': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
-};
-new MockDraftCommentSaver('1234', ls).save();
-ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nsetItem:draft-comments-for-attachment-1234,{MOCK JSON}');
-
-// Exceed quota after erasing old reviews and fail after prompt.
-var ls = new MockLocalStorage();
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
-    'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
-    'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
-};
-var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
-mockDraftSaver.save();
-// Second save to ensure that we stop trying to save when we fail the prompt.
-mockDraftSaver.save();
-ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nQuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}');
-
-// Exceed quota after erasing old reviews, but succeed after prompt.
-var ls = new MockLocalStorage();
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
-    'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
-    'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
-};
-var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
-mockDraftSaver._should_remove_comments = function() { return true; };
-mockDraftSaver.save();
-ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nQuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nremoveItem:draft-comments-for-attachment-4\nsetItem:draft-comments-for-attachment-1234,{MOCK JSON}');
-
-// Always exceeds quota, even after erasing all review comments. There should be no setItem calls.
-var ls = new MockLocalStorage();
-ls.setItem = function() {
-    this.log.push('QuotaExceeded on setItem:' + key + ',' + value);
-    throw "QuotaExceeded"; 
+  var links = tracLinks('foo/bar.cpp/qux.mm', '');
+  ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h');
 }
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
-    'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
-    'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
-};
-var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
-mockDraftSaver._should_remove_comments = function() { return true; };
-mockDraftSaver.save();
-// Second save to ensure that we stop trying to save when we fail the prompt.
-mockDraftSaver.save();
-ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nremoveItem:draft-comments-for-attachment-4');
 
-var ls = new MockLocalStorage();
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
-    'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[{"start_line_id": 1, "end_line_id": 2, "contents": "DUMMY CONTENTS"}, {"start_line_id": 3, "end_line_id": 4, "contents": "DUMMY CONTENTS 2"}]}'
-};
-var comments = new MockDraftCommentSaver('2', ls).saved_comments().comments;
-ASSERT_EQUAL(comments.length, 2);
-ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-2');
+function testDraftCommentSaver() {
+  function MockLocalStorage() {
+      this.localStorageStore = {};
+      this.log = [];
 
-var ls = new MockLocalStorage();
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': 'corrupt comments'
-};
-var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
-ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
+      this.getItem = function(key) {
+          this.log.push('getItem:' + key);
+          return this.localStorageStore[key];
+      };
 
-var ls = new MockLocalStorage();
-ls.localStorageStore = {
-    'draft-comments-for-attachment-1': '["also corrupt comments"]'
-};
-var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
-ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
+      this.setItem = function(key, value) {
+          // For testing sake, consider having more than 2 items to exceed the storage quota.
+          if (Object.keys(this.localStorageStore).length > 2) {
+              this.log.push('QuotaExceeded on setItem:' + key + ',' + value);
+              throw "QuotaExceeded";
+          }
+          this.log.push('setItem:' + key + ',' + value);
+          this.localStorageStore[key] = value;
+      };
 
+      this.removeItem = function(key) {
+          this.log.push('removeItem:' + key);
+          delete this.localStorageStore[key];
+      };
+
+      this.log_string = function() {
+          return this.log.join('\n');
+      };
+
+      this.key = function(i) {
+          return Object.keys(this.localStorageStore)[i];
+      };
+
+      this.__defineGetter__('length', function() {
+          return Object.keys(this.localStorageStore).length;
+      });
+  }
+
+  function MockDraftCommentSaver(attachment_id, opt_localStorage) {
+      DraftCommentSaver.call(this, attachment_id, opt_localStorage);
+  }
+
+  inherits(MockDraftCommentSaver, DraftCommentSaver)
+
+  MockDraftCommentSaver.prototype._json = function() {
+      return "{MOCK JSON}";
+  }
+
+  MockDraftCommentSaver.prototype._should_remove_comments = function(message) {
+      return false;
+  }
+
+  // Basic setItem.
+  var ls = new MockLocalStorage();
+  new MockDraftCommentSaver('1234', ls).save();
+  ASSERT_EQUAL(ls.log_string(), 'setItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Exceed quota, but succeed after erasing old reviews.
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  new MockDraftCommentSaver('1234', ls).save();
+  ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nsetItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Exceed quota after erasing old reviews and fail after prompt.
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
+  mockDraftSaver.save();
+  // Second save to ensure that we stop trying to save when we fail the prompt.
+  mockDraftSaver.save();
+  ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nQuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Exceed quota after erasing old reviews, but succeed after prompt.
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
+  mockDraftSaver._should_remove_comments = function() { return true; };
+  mockDraftSaver.save();
+  ASSERT_EQUAL(ls.log_string(), 'QuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\ngetItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nQuotaExceeded on setItem:draft-comments-for-attachment-1234,{MOCK JSON}\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nremoveItem:draft-comments-for-attachment-4\nsetItem:draft-comments-for-attachment-1234,{MOCK JSON}');
+
+  // Always exceeds quota, even after erasing all review comments. There should be no setItem calls.
+  var ls = new MockLocalStorage();
+  ls.setItem = function() {
+      this.log.push('QuotaExceeded on setItem:' + key + ',' + value);
+      throw "QuotaExceeded"; 
+  }
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-3': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}',
+      'draft-comments-for-attachment-4': '{"born-on": ' + (Date.now() - 100) + ', "comments":[]}'
+  };
+  var mockDraftSaver = new MockDraftCommentSaver('1234', ls);
+  mockDraftSaver._should_remove_comments = function() { return true; };
+  mockDraftSaver.save();
+  // Second save to ensure that we stop trying to save when we fail the prompt.
+  mockDraftSaver.save();
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\ngetItem:draft-comments-for-attachment-2\ngetItem:draft-comments-for-attachment-3\ngetItem:draft-comments-for-attachment-4\nremoveItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-2\nremoveItem:draft-comments-for-attachment-3\nremoveItem:draft-comments-for-attachment-4');
+
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '{"born-on": 100, "comments":[]}',
+      'draft-comments-for-attachment-2': '{"born-on": 100, "comments":[{"start_line_id": 1, "end_line_id": 2, "contents": "DUMMY CONTENTS"}, {"start_line_id": 3, "end_line_id": 4, "contents": "DUMMY CONTENTS 2"}]}'
+  };
+  var comments = new MockDraftCommentSaver('2', ls).saved_comments().comments;
+  ASSERT_EQUAL(comments.length, 2);
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-2');
+
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': 'corrupt comments'
+  };
+  var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
+
+  var ls = new MockLocalStorage();
+  ls.localStorageStore = {
+      'draft-comments-for-attachment-1': '["also corrupt comments"]'
+  };
+  var comments = new MockDraftCommentSaver('1', ls).saved_comments().comments;
+  ASSERT_EQUAL(ls.log_string(), 'getItem:draft-comments-for-attachment-1\nremoveItem:draft-comments-for-attachment-1');
+}
 
 function stripBornOn(json) {
   return json.replace(/\"born\-on\"\:\d+,/, "");
@@ -257,5 +260,17 @@ function testReaddDiscardedCommentWithPreviousComment() {
 
   document.getElementById('diff-content').innerHTML = '';
 }
-testReaddDiscardedCommentWithPreviousComment();
+
+function testIsChangeLog() {
+  ASSERT("Top-level ChangeLog file is a ChangeLog file", isChangeLog("ChangeLog"));
+  ASSERT("Second-level ChangeLog file is a ChangeLog file", isChangeLog("Tools/ChangeLog"));
+  ASSERT("prepare-ChangeLog is not a ChangeLog file", !isChangeLog("Tools/Scripts/prepare-ChangeLog"));
+  ASSERT("ChangeLog-script is not a ChangeLog file", !isChangeLog("Tools/Scripts/ChangeLog-script"));
+}
+
+for (var property in window) {
+  if (property.indexOf('test') == 0) {
+    window[property]();
+  }
+}
 </script>

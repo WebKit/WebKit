@@ -1,5 +1,19 @@
 2011-12-13  Ojan Vafai  <ojan@chromium.org>
 
+        Expanding context is broken for prepare-ChangeLog in the code review tool.
+        https://bugs.webkit.org/show_bug.cgi?id=74458
+
+        Reviewed by Adam Barth.
+
+        * code-review-test.html:
+        -Moved all the tests into test* functions.
+        -Automated calling all test* functions.
+        -Added testIsChangeLog.
+        * code-review.js:
+        Made the check for whether it's a ChangeLog file more robust.
+
+2011-12-13  Ojan Vafai  <ojan@chromium.org>
+
         Fix bug in the code review tool when readding a discarded comment
         https://bugs.webkit.org/show_bug.cgi?id=74450
 

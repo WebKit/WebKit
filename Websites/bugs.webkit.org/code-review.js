@@ -642,8 +642,12 @@ var CODE_REVIEW_UNITTEST;
     return trac_links;
   }
 
+  function isChangeLog(file_name) {
+    return file_name.match(/\/ChangeLog$/) || file_name == 'ChangeLog';
+  }
+
   function addExpandLinks(file_name) {
-    if (file_name.indexOf('ChangeLog') != -1)
+    if (isChangeLog(file_name))
       return;
 
     var file_diff = files[file_name];
@@ -1994,6 +1998,7 @@ var CODE_REVIEW_UNITTEST;
     window.eraseDraftComments = eraseDraftComments;
     window.unfreezeComment = unfreezeComment;
     window.g_draftCommentSaver = g_draftCommentSaver;
+    window.isChangeLog = isChangeLog;
   } else {
     $(document).ready(handleDocumentReady)
   }
