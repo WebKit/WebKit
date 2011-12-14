@@ -1,0 +1,41 @@
+<script>
+var childWindow;
+</script>
+This test makes sure that closing a window with a video element that has a poster image doesn't crash (radar 10576732 and https://bugs.webkit.org/show_bug.cgi?id=74533)<br>
+If it doesn't crash, it passes.<br>
+<button id="button" onclick="childWindow = window.open('resources/video-with-poster-as-object-fallback.html')">
+    Click here to open test window
+</button><br>
+<div id="result"></div><br>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    layoutTestController.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+    layoutTestController.setCanOpenWindows(true);
+    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+    var button = document.getElementById("button");
+    eventSender.mouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function childLoaded()
+{
+    childWindow.close();
+    setTimeout("checkClosed()", 0);
+}
+
+function checkClosed()
+{
+    if (childWindow.closed) {
+        document.getElementById("result").innerText = "Closed the window without crashing!";
+        if (window.layoutTestController)
+            setTimeout("layoutTestController.notifyDone();", 0);
+    }
+    setTimeout("checkClosed()", 0);
+}
+
+</script>

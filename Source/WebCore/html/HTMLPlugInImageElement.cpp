@@ -37,6 +37,7 @@ namespace WebCore {
 
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document* document, bool createdByParser, PreferPlugInsForImagesOption preferPlugInsForImagesOption)
     : HTMLPlugInElement(tagName, document)
+    , ActiveDOMObject(document, this)
     // m_needsWidgetUpdate(!createdByParser) allows HTMLObjectElement to delay
     // widget updates until after all children are parsed.  For HTMLEmbedElement
     // this delay is unnecessary, but it is simpler to make both classes share
@@ -202,27 +203,16 @@ void HTMLPlugInImageElement::finishParsingChildren()
         setNeedsStyleRecalc();    
 }
 
-void HTMLPlugInImageElement::willMoveToNewOwnerDocument()
+bool HTMLPlugInImageElement::canSuspend() const
 {
-    if (m_needsDocumentActivationCallbacks)
-        document()->unregisterForDocumentActivationCallbacks(this);
-
-    if (m_imageLoader)
-        m_imageLoader->elementWillMoveToNewOwnerDocument();
-
-    HTMLPlugInElement::willMoveToNewOwnerDocument();
+    return true;
 }
 
-void HTMLPlugInImageElement::didMoveToNewOwnerDocument()
+void HTMLPlugInImageElement::suspend(ReasonForSuspension reason)
 {
-    if (m_needsDocumentActivationCallbacks)
-        document()->registerForDocumentActivationCallbacks(this);   
-    
-    HTMLPlugInElement::didMoveToNewOwnerDocument();
-}
+    if (reason != DocumentWillBecomeInactive)
+        return;
 
-void HTMLPlugInImageElement::documentWillBecomeInactive()
-{
     if (RenderStyle* rs = renderStyle()) {
         m_customStyleForPageCache = RenderStyle::clone(rs);
         m_customStyleForPageCache->setDisplay(NONE);
@@ -232,11 +222,9 @@ void HTMLPlugInImageElement::documentWillBecomeInactive()
 
     if (m_customStyleForPageCache)
         recalcStyle(Force);
-        
-    HTMLPlugInElement::documentWillBecomeInactive();
 }
 
-void HTMLPlugInImageElement::documentDidBecomeActive()
+void HTMLPlugInImageElement::resume()
 {
     clearHasCustomStyleForRenderer();
 
@@ -244,8 +232,6 @@ void HTMLPlugInImageElement::documentDidBecomeActive()
         m_customStyleForPageCache = 0;
         recalcStyle(Force);
     }
-    
-    HTMLPlugInElement::documentDidBecomeActive();
 }
 
 PassRefPtr<RenderStyle> HTMLPlugInImageElement::customStyleForRenderer()

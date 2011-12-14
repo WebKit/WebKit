@@ -1,3 +1,21 @@
+2011-12-14  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10576732> and https://bugs.webkit.org/show_bug.cgi?id=74533
+        REGRESSION(r102619): Reproducible crash closing window with video + poster image inside an object element
+
+        Reviewed by Darin Adler.
+
+        Test: media/crash-closing-page-with-media-as-plugin-fallback.html
+
+        Switch HTMLPlugInImageElement from using document activation callbacks to using the ActiveDOMObject
+        mechanism which will prevent the unnecessary (and crashy) work at Document teardown:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::canSuspend):
+        (WebCore::HTMLPlugInImageElement::suspend):
+        (WebCore::HTMLPlugInImageElement::resume):
+        * html/HTMLPlugInImageElement.h:
+
 2011-12-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Compositor needs to set texture filtering on canvas layers
