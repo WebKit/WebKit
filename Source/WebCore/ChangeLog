@@ -1,3 +1,16 @@
+2011-12-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Scripts panel debug sidebar toolbar should not be scrolled out of the screen.
+        https://bugs.webkit.org/show_bug.cgi?id=74447
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.wasShown):
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-debug-toolbar):
+        (#scripts-debug-sidebar-contents):
+
 2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] DeviceOrientationClientMockQt should be removed in favor of DeviceOrientationClientMock

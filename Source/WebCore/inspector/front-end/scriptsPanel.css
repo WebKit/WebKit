@@ -50,7 +50,16 @@
 #scripts-debug-toolbar {
     position: relative;
     margin-top: -1px;
-    height: 23px;
+    height: 24px;
+}
+
+#scripts-debug-sidebar-contents {
+    position: absolute;
+    top: 22px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
 }
 
 #scripts-editor-toolbar {

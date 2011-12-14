@@ -53,7 +53,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.splitView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
     this.splitView.minimalMainWidthPercent = 100 - maximalDebugSidebarWidthPercent;
 
-    this.splitView.sidebarElement.appendChild(this.debugToolbar);
+    this.sidebarElement.appendChild(this.debugToolbar);
 
     this.debugSidebarResizeWidgetElement = document.createElement("div");
     this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
@@ -103,8 +103,12 @@ WebInspector.ScriptsPanel = function(presentationModel)
     } else
         this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
 
+    this._debugSidebarContentsElement = document.createElement("div");
+    this._debugSidebarContentsElement.id = "scripts-debug-sidebar-contents";
+    this.sidebarElement.appendChild(this._debugSidebarContentsElement);    
+
     for (var pane in this.sidebarPanes)
-        this.sidebarElement.appendChild(this.sidebarPanes[pane].element);
+        this._debugSidebarContentsElement.appendChild(this.sidebarPanes[pane].element);
 
     this.sidebarPanes.callstack.expanded = true;
 
@@ -201,7 +205,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         WebInspector.Panel.prototype.wasShown.call(this);
         if (Capabilities.nativeInstrumentationEnabled)
-            this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
+            this._debugSidebarContentsElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
         this.sidebarPanes.watchExpressions.show();
     },
 
