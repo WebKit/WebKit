@@ -33,7 +33,6 @@
 #include "TilingData.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
