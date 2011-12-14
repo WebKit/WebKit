@@ -22,6 +22,7 @@
 #if ENABLE(SVG)
 #include "SVGPathBlender.h"
 
+#include "AnimationUtilities.h"
 #include "SVGPathSeg.h"
 
 namespace WebCore {
@@ -37,30 +38,25 @@ SVGPathBlender::SVGPathBlender()
 // Helper functions
 static inline FloatPoint blendFloatPoint(const FloatPoint& a, const FloatPoint& b, float progress)
 {
-    return FloatPoint((b.x() - a.x()) * progress + a.x(), (b.y() - a.y()) * progress + a.y());
-}
-
-static inline float blendAnimatedFloat(float from, float to, float progress)
-{
-    return (to - from) * progress + from;
+    return FloatPoint(blend(a.x(), b.x(), progress), blend(a.y(), b.y(), progress));
 }
 
 float SVGPathBlender::blendAnimatedDimensonalFloat(float from, float to, FloatBlendMode blendMode)
 {
     if (m_fromMode == m_toMode)
-        return blendAnimatedFloat(from, to, m_progress);
+        return blend(from, to, m_progress);
     
     float fromValue = blendMode == BlendHorizontal ? m_fromCurrentPoint.x() : m_fromCurrentPoint.y();
     float toValue = blendMode == BlendHorizontal ? m_toCurrentPoint.x() : m_toCurrentPoint.y();
 
     // Transform toY to the coordinate mode of fromY
-    float animValue = blendAnimatedFloat(from, m_fromMode == AbsoluteCoordinates ? to + toValue : to - toValue, m_progress);
+    float animValue = blend(from, m_fromMode == AbsoluteCoordinates ? to + toValue : to - toValue, m_progress);
     
     if (m_isInFirstHalfOfAnimation)
         return animValue;
     
     // Transform the animated point to the coordinate mode, needed for the current progress.
-    float currentValue = blendAnimatedFloat(fromValue, toValue, m_progress);
+    float currentValue = blend(fromValue, toValue, m_progress);
     return m_toMode == AbsoluteCoordinates ? animValue + currentValue : animValue - currentValue;
 }
 
@@ -235,9 +231,9 @@ bool SVGPathBlender::blendArcToSegment()
         || !m_toSource->parseArcToSegment(toRx, toRy, toAngle, toLargeArc, toSweep, toTargetPoint))
         return false;
 
-    m_consumer->arcTo(blendAnimatedFloat(fromRx, toRx, m_progress),
-                      blendAnimatedFloat(fromRy, toRy, m_progress),
-                      blendAnimatedFloat(fromAngle, toAngle, m_progress),
+    m_consumer->arcTo(blend(fromRx, toRx, m_progress),
+                      blend(fromRy, toRy, m_progress),
+                      blend(fromAngle, toAngle, m_progress),
                       m_isInFirstHalfOfAnimation ? fromLargeArc : toLargeArc,
                       m_isInFirstHalfOfAnimation ? fromSweep : toSweep,
                       blendAnimatedFloatPoint(fromTargetPoint, toTargetPoint),

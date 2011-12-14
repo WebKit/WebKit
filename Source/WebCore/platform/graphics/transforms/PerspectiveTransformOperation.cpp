@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PerspectiveTransformOperation.h"
 
+#include "AnimationUtilities.h"
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -39,7 +40,7 @@ PassRefPtr<TransformOperation> PerspectiveTransformOperation::blend(const Transf
     
     if (blendToIdentity) {
         double p = m_p.calcFloatValue(1);
-        p = p + (1. - p) * progress; // FIXME: this seems wrong. https://bugs.webkit.org/show_bug.cgi?id=52700
+        p = WebCore::blend(p, 1.0, progress); // FIXME: this seems wrong. https://bugs.webkit.org/show_bug.cgi?id=52700
         return PerspectiveTransformOperation::create(Length(clampToPositiveInteger(p), Fixed));
     }
     

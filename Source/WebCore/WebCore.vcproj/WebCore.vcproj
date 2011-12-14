@@ -32385,6 +32385,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\animation\AnimationUtilities.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\animation\TimingFunction.h"
 					>
 				</File>

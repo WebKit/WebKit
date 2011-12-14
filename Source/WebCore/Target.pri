@@ -2050,6 +2050,7 @@ HEADERS += \
     page/WorkerNavigator.h \
     platform/animation/Animation.h \
     platform/animation/AnimationList.h \
+    platform/animation/AnimationUtilities.h \
     platform/Arena.h \
     platform/AsyncFileStream.h \
     platform/Clock.h \

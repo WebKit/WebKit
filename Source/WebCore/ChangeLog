@@ -1,3 +1,50 @@
+2011-12-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Share blend progress code
+        https://bugs.webkit.org/show_bug.cgi?id=74464
+
+        Reviewed by Dean Jackson.
+        
+        Lots of places in the code had copies of the animation interpolation
+        logic "from + (to - from) * progress", in various forms.
+        
+        Coalesce all these into calls to a few new inline functions in a new
+        AnimationUtilities.h header. Color and Length get their own blend fuctions
+        in their respective headers.
+
+        Covered by existing tests.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGradientValue.cpp:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        * platform/Length.h:
+        (WebCore::Length::blend):
+        * platform/animation/AnimationUtilities.h: Added.
+        (WebCore::blend):
+        * platform/graphics/Color.h:
+        (WebCore::blend):
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::PerspectiveTransformOperation::blend):
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+        * platform/graphics/transforms/ScaleTransformOperation.cpp:
+        (WebCore::ScaleTransformOperation::blend):
+        * platform/graphics/transforms/SkewTransformOperation.cpp:
+        (WebCore::SkewTransformOperation::blend):
+        * platform/graphics/transforms/TranslateTransformOperation.cpp:
+        (WebCore::TranslateTransformOperation::blend):
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::blend):
+        * svg/SVGPathBlender.cpp:
+        (WebCore::blendFloatPoint):
+        (WebCore::SVGPathBlender::blendAnimatedDimensonalFloat):
+        (WebCore::SVGPathBlender::blendArcToSegment):
+
 2011-12-13  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream 3 files into WebCore/platform/blackberry

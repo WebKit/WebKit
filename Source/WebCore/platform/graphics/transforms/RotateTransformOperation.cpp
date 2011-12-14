@@ -22,6 +22,7 @@
 #include "config.h"
 #include "RotateTransformOperation.h"
 
+#include "AnimationUtilities.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -47,7 +48,7 @@ PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOp
         return RotateTransformOperation::create(fromOp ? fromOp->m_x : m_x, 
                                                 fromOp ? fromOp->m_y : m_y, 
                                                 fromOp ? fromOp->m_z : m_z, 
-                                                fromAngle + (m_angle - fromAngle) * progress, m_type);
+                                                WebCore::blend(fromAngle, m_angle, progress), m_type);
     }
 
     const RotateTransformOperation* toOp = this;

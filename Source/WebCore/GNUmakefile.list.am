@@ -2460,6 +2460,7 @@ webcore_sources += \
 	Source/WebCore/platform/animation/Animation.h \
 	Source/WebCore/platform/animation/AnimationList.cpp \
 	Source/WebCore/platform/animation/AnimationList.h \
+	Source/WebCore/platform/animation/AnimationUtilities.h \
 	Source/WebCore/platform/animation/TimingFunction.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \

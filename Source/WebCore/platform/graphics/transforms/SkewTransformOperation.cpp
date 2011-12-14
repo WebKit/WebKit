@@ -22,6 +22,8 @@
 #include "config.h"
 #include "SkewTransformOperation.h"
 
+#include "AnimationUtilities.h"
+
 namespace WebCore {
 
 PassRefPtr<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
@@ -30,12 +32,12 @@ PassRefPtr<TransformOperation> SkewTransformOperation::blend(const TransformOper
         return this;
     
     if (blendToIdentity)
-        return SkewTransformOperation::create(m_angleX - m_angleX * progress, m_angleY - m_angleY * progress, m_type);
+        return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, progress), WebCore::blend(m_angleY, 0.0, progress), m_type);
     
     const SkewTransformOperation* fromOp = static_cast<const SkewTransformOperation*>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
-    return SkewTransformOperation::create(fromAngleX + (m_angleX - fromAngleX) * progress, fromAngleY + (m_angleY - fromAngleY) * progress, m_type);
+    return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, progress), WebCore::blend(fromAngleY, m_angleY, progress), m_type);
 }
 
 } // namespace WebCore

@@ -93,20 +93,6 @@ void CSSGradientValue::sortStopsIfNeeded()
     }
 }
 
-static inline int blend(int from, int to, float progress)
-{
-    return int(from + (to - from) * progress);
-}
-
-static inline Color blend(const Color& from, const Color& to, float progress)
-{
-    // FIXME: when we interpolate gradients using premultiplied colors, this should also do premultiplication.
-    return Color(blend(from.red(), to.red(), progress),
-        blend(from.green(), to.green(), progress),
-        blend(from.blue(), to.blue(), progress),
-        blend(from.alpha(), to.alpha(), progress));
-}
-
 struct GradientStop {
     Color color;
     float offset;
@@ -344,6 +330,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
                     float nextOffset = stops[firstZeroOrGreaterIndex].offset;
 
                     float interStopProportion = -prevOffset / (nextOffset - prevOffset);
+                    // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
                     Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, interStopProportion);
 
                     // Clamp the positions to 0 and set the color.

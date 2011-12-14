@@ -81,12 +81,12 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
 
 static inline int blendFunc(const AnimationBase*, int from, int to, double progress)
 {  
-    return lround(from + (to - from) * progress);
+    return blend(from, to, progress);
 }
 
 static inline double blendFunc(const AnimationBase*, double from, double to, double progress)
 {  
-    return from + (to - from) * progress;
+    return blend(from, to, progress);
 }
 
 static inline float blendFunc(const AnimationBase*, float from, float to, double progress)
@@ -94,23 +94,9 @@ static inline float blendFunc(const AnimationBase*, float from, float to, double
     return narrowPrecisionToFloat(from + (to - from) * progress);
 }
 
-static inline Color blendFunc(const AnimationBase* anim, const Color& from, const Color& to, double progress)
+static inline Color blendFunc(const AnimationBase*, const Color& from, const Color& to, double progress)
 {
-    // We need to preserve the state of the valid flag at the end of the animation
-    if (progress == 1 && !to.isValid())
-        return Color();
-
-    // Contrary to the name, RGBA32 actually stores ARGB, so we can initialize Color directly from premultipliedARGBFromColor().
-    // Also, premultipliedARGBFromColor() bails on zero alpha, so special-case that.
-    Color premultFrom = from.alpha() ? premultipliedARGBFromColor(from) : 0;
-    Color premultTo = to.alpha() ? premultipliedARGBFromColor(to) : 0;
-
-    Color premultBlended(blendFunc(anim, premultFrom.red(), premultTo.red(), progress),
-                 blendFunc(anim, premultFrom.green(), premultTo.green(), progress),
-                 blendFunc(anim, premultFrom.blue(), premultTo.blue(), progress),
-                 blendFunc(anim, premultFrom.alpha(), premultTo.alpha(), progress));
-
-    return Color(colorFromPremultipliedARGB(premultBlended.rgb()));
+    return blend(from, to, progress);
 }
 
 static inline Length blendFunc(const AnimationBase*, const Length& from, const Length& to, double progress)
@@ -147,13 +133,13 @@ static inline PassOwnPtr<ShadowData> blendFunc(const AnimationBase* anim, const 
     if (from->style() != to->style())
         return adoptPtr(new ShadowData(*to));
 
-    return adoptPtr(new ShadowData(blendFunc(anim, from->x(), to->x(), progress),
-                                   blendFunc(anim, from->y(), to->y(), progress), 
-                                   blendFunc(anim, from->blur(), to->blur(), progress),
-                                   blendFunc(anim, from->spread(), to->spread(), progress),
+    return adoptPtr(new ShadowData(blend(from->x(), to->x(), progress),
+                                   blend(from->y(), to->y(), progress), 
+                                   blend(from->blur(), to->blur(), progress),
+                                   blend(from->spread(), to->spread(), progress),
                                    blendFunc(anim, from->style(), to->style(), progress),
                                    from->isWebkitBoxShadow(),
-                                   blendFunc(anim, from->color(), to->color(), progress)));
+                                   blend(from->color(), to->color(), progress)));
 }
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)

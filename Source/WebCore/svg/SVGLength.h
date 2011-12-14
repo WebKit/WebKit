@@ -22,6 +22,7 @@
 #define SVGLength_h
 
 #if ENABLE(SVG)
+#include "AnimationUtilities.h"
 #include "SVGLengthContext.h"
 #include "SVGParsingError.h"
 #include "SVGPropertyTraits.h"
@@ -118,7 +119,7 @@ public:
         if (fromType == LengthTypePercentage || toType == LengthTypePercentage) {
             float fromPercent = from.valueAsPercentage() * 100;
             float toPercent = valueAsPercentage() * 100;
-            length.newValueSpecifiedUnits(LengthTypePercentage, fromPercent + (toPercent - fromPercent) * progress, ec);
+            length.newValueSpecifiedUnits(LengthTypePercentage, WebCore::blend(fromPercent, toPercent, progress), ec);
             if (ec)
                 return SVGLength();
             return length;
@@ -128,9 +129,9 @@ public:
             float fromValue = from.valueInSpecifiedUnits();
             float toValue = valueInSpecifiedUnits();
             if (isZero())
-                length.newValueSpecifiedUnits(fromType, fromValue + (toValue - fromValue) * progress, ec);
+                length.newValueSpecifiedUnits(fromType, WebCore::blend(fromValue, toValue, progress), ec);
             else
-                length.newValueSpecifiedUnits(toType, fromValue + (toValue - fromValue) * progress, ec);
+                length.newValueSpecifiedUnits(toType, WebCore::blend(fromValue, toValue, progress), ec);
             if (ec)
                 return SVGLength();
             return length;
@@ -149,7 +150,7 @@ public:
             return SVGLength();
 
         float toValue = valueInSpecifiedUnits();
-        length.newValueSpecifiedUnits(toType, fromValue + (toValue - fromValue) * progress, ec);
+        length.newValueSpecifiedUnits(toType, WebCore::blend(fromValue, toValue, progress), ec);
 
         if (ec)
             return SVGLength();

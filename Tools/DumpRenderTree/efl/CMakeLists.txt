@@ -51,6 +51,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/page
     ${WEBCORE_DIR}/page/animation
     ${WEBCORE_DIR}/platform
+    ${WEBCORE_DIR}/platform/animation
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/platform/graphics
     ${WEBCORE_DIR}/platform/graphics/cairo

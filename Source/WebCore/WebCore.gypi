@@ -730,6 +730,7 @@
             'platform/WindowsKeyboardCodes.h',
             'platform/animation/Animation.h',
             'platform/animation/AnimationList.h',
+            'platform/animation/AnimationUtilities.h',
             'platform/animation/TimingFunction.h',
             'platform/cf/BinaryPropertyList.h',
             'platform/cf/SchedulePair.h',
