@@ -1,3 +1,9 @@
+2011-12-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed speculative MIPS and SH4 buildfix after r102776.
+
+        * qmake/mkspecs/features/features.prf:
+
 2011-12-14  Andreas Kling  <kling@webkit.org>
 
         Make my e-mail address a little more awesome.
