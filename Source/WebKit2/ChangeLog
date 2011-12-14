@@ -1,3 +1,12 @@
+2011-12-14  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/10573872> NPN_GetValueForURL returns wrong value for NPNURLVProxy
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::proxiesForURL): Fix a copy-paste error.
+
 2011-12-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Move QWebPreferences out of QtWebPageProxy
