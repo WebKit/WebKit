@@ -31,6 +31,7 @@
 #include <QObject>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
@@ -45,7 +46,7 @@ class QWebNavigationListModelPrivate {
 public:
     QWebNavigationListModelPrivate(WKBackForwardListRef);
 
-    static QWebNavigationListModel* createWebNavigationModel(QObject*, WKBackForwardListRef);
+    static QWebNavigationListModel* createWebNavigationModel(WKBackForwardListRef);
 
     unsigned (*count)(WKBackForwardListRef);
     WKRetainPtr<WKBackForwardListRef> m_backForwardList;
@@ -54,17 +55,17 @@ public:
 
 class QWebNavigationHistoryPrivate {
 public:
-    static QWebNavigationHistory* createHistory(QtWebPageProxy*, WKBackForwardListRef);
+    static QWebNavigationHistory* createHistory(WKPageRef);
 
-    QWebNavigationHistoryPrivate(QtWebPageProxy*, WKBackForwardListRef);
+    QWebNavigationHistoryPrivate(WKPageRef);
     void reset();
     void goBackTo(int index);
     void goForwardTo(int index);
 
-    QtWebPageProxy* m_page;
+    WKRetainPtr<WKPageRef> m_page;
     WKRetainPtr<WKBackForwardListRef> m_backForwardList;
-    QWebNavigationListModel* m_backNavigationModel;
-    QWebNavigationListModel* m_forwardNavigationModel;
+    OwnPtr<QWebNavigationListModel> m_backNavigationModel;
+    OwnPtr<QWebNavigationListModel> m_forwardNavigationModel;
 };
 
 #endif /* qwebnavigationhistory_p_p_h */

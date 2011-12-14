@@ -31,7 +31,6 @@ class QtPageClient;
 class QQuickWebPage;
 class QQuickWebView;
 class QWebDownloadItem;
-class QWebNavigationHistory;
 class QWebPreferences;
 
 namespace WebKit {
@@ -47,9 +46,6 @@ class QtWebPageProxy : public QObject {
 public:
     QtWebPageProxy(QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
-
-    void goBackTo(int index);
-    void goForwardTo(int index);
 
     WKPageRef pageRef() const;
 
@@ -68,8 +64,6 @@ public:
     void setTextZoomFactor(qreal zoomFactor);
     void setPageZoomFactor(qreal zoomFactor);
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
-
-    QWebNavigationHistory* navigationHistory() const;
 
     void contextMenuItemSelected(const WebContextMenuItemData& data)
     {
@@ -94,7 +88,6 @@ protected:
 
 private:
     RefPtr<QtWebContext> m_context;
-    OwnPtr<QWebNavigationHistory> m_navigationHistory;
 
     mutable OwnPtr<QWebPreferences> m_preferences;
 

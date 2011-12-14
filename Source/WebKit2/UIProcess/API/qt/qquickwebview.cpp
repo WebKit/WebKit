@@ -72,6 +72,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
     pagePolicyClient.reset(new QtWebPagePolicyClient(pageProxy->pageRef(), q_ptr));
     pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
+    navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(pageProxy->pageRef()));
 
     // Any page setting should preferrable be set before creating the page, so set them here:
     setUseTraditionalDesktopBehaviour(false);
@@ -196,7 +197,7 @@ void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportAr
 
 void QQuickWebViewPrivate::didChangeBackForwardList()
 {
-    pageProxy->navigationHistory()->d->reset();
+    navigationHistory->d->reset();
 }
 
 void QQuickWebViewPrivate::pageDidRequestScroll(const QPoint& pos)
@@ -548,7 +549,7 @@ void QQuickWebViewExperimental::setConfirmDialog(QDeclarativeComponent* confirmD
 
 QWebNavigationHistory* QQuickWebViewExperimental::navigationHistory() const
 {
-    return d_ptr->pageProxy->navigationHistory();
+    return d_ptr->navigationHistory.get();
 }
 
 QDeclarativeComponent* QQuickWebViewExperimental::promptDialog() const
@@ -589,12 +590,12 @@ bool QQuickWebViewExperimental::useTraditionalDesktopBehaviour() const
 
 void QQuickWebViewExperimental::goForwardTo(int index)
 {
-    d_ptr->pageProxy->goForwardTo(index);
+    d_ptr->navigationHistory->d->goForwardTo(index);
 }
 
 void QQuickWebViewExperimental::goBackTo(int index)
 {
-    d_ptr->pageProxy->goBackTo(index);
+    d_ptr->navigationHistory->d->goBackTo(index);
 }
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)

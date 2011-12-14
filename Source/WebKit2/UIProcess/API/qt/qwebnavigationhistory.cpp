@@ -26,7 +26,6 @@
 #include "config.h"
 #include "qwebnavigationhistory_p.h"
 
-#include "QtWebPageProxy.h"
 #include "WKBackForwardList.h"
 #include "WKStringQt.h"
 #include "WKURL.h"
@@ -50,19 +49,19 @@ QWebNavigationListModelPrivate::QWebNavigationListModelPrivate(WKBackForwardList
 {
 }
 
-QWebNavigationListModel* QWebNavigationListModelPrivate::createWebNavigationModel(QObject* parent, WKBackForwardListRef list)
+QWebNavigationListModel* QWebNavigationListModelPrivate::createWebNavigationModel(WKBackForwardListRef list)
 {
-    QWebNavigationListModel* model = new QWebNavigationListModel(parent);
+    QWebNavigationListModel* model = new QWebNavigationListModel();
     model->d = new QWebNavigationListModelPrivate(list);
     return model;
 }
 
 
-QWebNavigationHistoryPrivate::QWebNavigationHistoryPrivate(QtWebPageProxy* page, WKBackForwardListRef list)
+QWebNavigationHistoryPrivate::QWebNavigationHistoryPrivate(WKPageRef page)
     : m_page(page)
-    , m_backForwardList(list)
-    , m_backNavigationModel(QWebNavigationListModelPrivate::createWebNavigationModel(page, list))
-    , m_forwardNavigationModel(QWebNavigationListModelPrivate::createWebNavigationModel(page, list))
+    , m_backForwardList(WKPageGetBackForwardList(page))
+    , m_backNavigationModel(adoptPtr(QWebNavigationListModelPrivate::createWebNavigationModel(m_backForwardList.get())))
+    , m_forwardNavigationModel(adoptPtr(QWebNavigationListModelPrivate::createWebNavigationModel(m_backForwardList.get())))
 {
     m_backNavigationModel->d->count = &WKBackForwardListGetBackListCount;
     m_backNavigationModel->d->indexSign = -1;
@@ -70,10 +69,10 @@ QWebNavigationHistoryPrivate::QWebNavigationHistoryPrivate(QtWebPageProxy* page,
     m_forwardNavigationModel->d->indexSign = 1;
 }
 
-QWebNavigationHistory* QWebNavigationHistoryPrivate::createHistory(QtWebPageProxy* page, WKBackForwardListRef list)
+QWebNavigationHistory* QWebNavigationHistoryPrivate::createHistory(WKPageRef page)
 {
     QWebNavigationHistory* history = new QWebNavigationHistory();
-    history->d = new QWebNavigationHistoryPrivate(page, list);
+    history->d = new QWebNavigationHistoryPrivate(page);
     return history;
 }
 
@@ -87,18 +86,18 @@ void QWebNavigationHistoryPrivate::goBackTo(int index)
 {
     WKRetainPtr<WKBackForwardListItemRef> itemRef = WKBackForwardListGetItemAtIndex(m_backForwardList.get(), -(index + 1));
     if (itemRef && m_page)
-        WKPageGoToBackForwardListItem(m_page->pageRef(), itemRef.get());
+        WKPageGoToBackForwardListItem(m_page.get(), itemRef.get());
 }
 
 void QWebNavigationHistoryPrivate::goForwardTo(int index)
 {
     WKRetainPtr<WKBackForwardListItemRef> itemRef = WKBackForwardListGetItemAtIndex(m_backForwardList.get(), index + 1);
     if (itemRef && m_page)
-        WKPageGoToBackForwardListItem(m_page->pageRef(), itemRef.get());
+        WKPageGoToBackForwardListItem(m_page.get(), itemRef.get());
 }
 
-QWebNavigationListModel::QWebNavigationListModel(QObject* parent)
-    : QAbstractListModel(parent)
+QWebNavigationListModel::QWebNavigationListModel()
+    : QAbstractListModel()
 {
     QHash<int, QByteArray> roles;
     roles[QWebNavigationHistory::UrlRole] = "url";
@@ -150,12 +149,12 @@ QWebNavigationHistory::~QWebNavigationHistory()
 
 QWebNavigationListModel* QWebNavigationHistory::backItems() const
 {
-    return d->m_backNavigationModel;
+    return d->m_backNavigationModel.get();
 }
 
 QWebNavigationListModel* QWebNavigationHistory::forwardItems() const
 {
-    return d->m_forwardNavigationModel;
+    return d->m_forwardNavigationModel.get();
 }
 
 #include "moc_qwebnavigationhistory_p.cpp"

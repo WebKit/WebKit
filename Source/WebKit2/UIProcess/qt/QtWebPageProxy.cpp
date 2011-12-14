@@ -27,8 +27,6 @@
 #include "qquickwebview_p_p.h"
 #include "qwebdownloaditem_p.h"
 #include "qwebdownloaditem_p_p.h"
-#include "qwebnavigationhistory_p.h"
-#include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
 
@@ -50,7 +48,6 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebView* qmlWebView, QtPageClient *pageClie
     , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(pageClient, toImpl(pageGroupRef));
-    m_navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(this, toAPI(m_webPageProxy->backForwardList())));
 }
 
 void QtWebPageProxy::init()
@@ -98,16 +95,6 @@ void QtWebPageProxy::hideContextMenu()
 WKPageRef QtWebPageProxy::pageRef() const
 {
     return toAPI(m_webPageProxy.get());;
-}
-
-void QtWebPageProxy::goBackTo(int index)
-{
-    m_navigationHistory->d->goBackTo(index);
-}
-
-void QtWebPageProxy::goForwardTo(int index)
-{
-    m_navigationHistory->d->goForwardTo(index);
 }
 
 QWebPreferences* QtWebPageProxy::preferences() const
@@ -164,11 +151,6 @@ void QtWebPageProxy::setPageZoomFactor(qreal zoomFactor)
 void QtWebPageProxy::setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor)
 {
     WKPageSetPageAndTextZoomFactors(pageRef(), pageZoomFactor, textZoomFactor);
-}
-
-QWebNavigationHistory* QtWebPageProxy::navigationHistory() const
-{
-    return m_navigationHistory.get();
 }
 
 void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)

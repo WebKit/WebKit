@@ -41,6 +41,7 @@ namespace WebKit {
 class WebPageProxy;
 }
 class QtWebPageProxy;
+class QWebNavigationHistory;
 
 QT_BEGIN_NAMESPACE
 class QDeclarativeComponent;
@@ -135,6 +136,7 @@ private:
 
     QtPageClient pageClient;
     QtWebUndoController undoController;
+    OwnPtr<QWebNavigationHistory> navigationHistory;
 
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;
     QScopedPointer<QtWebPagePolicyClient> pagePolicyClient;

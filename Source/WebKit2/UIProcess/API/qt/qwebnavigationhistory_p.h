@@ -48,7 +48,7 @@ public:
     QVariant data(const QModelIndex& index, int role) const;
 
 private:
-    QWebNavigationListModel(QObject* parent);
+    QWebNavigationListModel();
     QWebNavigationListModelPrivate* d;
     friend class QWebNavigationListModelPrivate;
     friend class QWebNavigationHistory;
@@ -77,8 +77,8 @@ private:
 
     QWebNavigationHistoryPrivate* d;
     friend class QWebNavigationHistoryPrivate;
-    friend class QtWebPageProxy;
     friend class QQuickWebViewPrivate;
+    friend class QQuickWebViewExperimental;
 };
 
 QML_DECLARE_TYPE(QWebNavigationHistory)
