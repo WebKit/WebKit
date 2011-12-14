@@ -1,3 +1,14 @@
+2011-12-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        [Qt] [WK2] Linking fails if GStreamer not installed after r102493
+        https://bugs.webkit.org/show_bug.cgi?id=74412
+
+        Reviewed by Simon Hausmann.
+
+        Add -lrt to fix WK2 linking when gstreamer is not used.
+
+        * Source/api.pri:
+
 2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
 
         [Qt] DeviceOrientationClientMockQt should be removed in favor of DeviceOrientationClientMock
