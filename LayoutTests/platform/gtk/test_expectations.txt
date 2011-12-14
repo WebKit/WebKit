@@ -6,6 +6,8 @@ BUGWK67007 DEBUG : fast/ruby/after-block-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/after-table-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-after-counter-doesnt-crash.html = CRASH
 BUGWK67007 DEBUG : fast/ruby/generated-before-and-after-counter-doesnt-crash.html = CRASH
+// The test hits an ASSERT in Debug.
+BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
 // Need rebaseline.
 BUGWK67408 : fast/forms/input-placeholder-visibility-1.html = FAIL

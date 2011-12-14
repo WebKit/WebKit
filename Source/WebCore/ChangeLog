@@ -1,3 +1,16 @@
+2011-12-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderBox::paintBoxDecorations when documentElement has no renderer
+        https://bugs.webkit.org/show_bug.cgi?id=64284
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: fast/dynamic/crash-paint-no-documentElement-renderer.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBackground): Check the documentElement's
+        renderer before using it which matches what RenderView does.
+
 2011-12-14  Tom Sepez  <tsepez@chromium.org>
 
         DocumentLoader should ref its mainResourceLoader.

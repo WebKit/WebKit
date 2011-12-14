@@ -955,7 +955,7 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
 {
     if (isRoot())
         paintRootBoxFillLayers(paintInfo);
-    else if (!isBody() || document()->documentElement()->renderer()->hasBackground()) {
+    else if (!isBody() || (document()->documentElement()->renderer() && document()->documentElement()->renderer()->hasBackground())) {
         // The <body> only paints its background if the root element has defined a background
         // independent of the body.
         if (!backgroundIsObscured())

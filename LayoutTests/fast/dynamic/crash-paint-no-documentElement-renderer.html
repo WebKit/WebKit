@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body onload="go()">
+<p>Bug 64284: Crash in RenderBox::paintBoxDecorations when documentElement has no renderer</p>
+<p>For this test to PASS, it should not ASSERT or CRASH.</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function go() {
+        document.open();
+        var oUElement = document.createElement("U");
+        oUElement.hidden=true;
+        oUElement.innerHTML="<style>*{-webkit-border-before-style:groove}";
+        document.appendChild(oUElement);
+        document.close();
+    }
+</script>
+</body>
+</html>
