@@ -4556,10 +4556,6 @@ fast/multicol/pagination-v-vertical-rl.html
 fast/text/justify-padding-distribution.html
 fast/css-generated-content/nested-tables-with-before-after-content-crash.html
 
-# [Qt] editing/pasteboard/4242293-1.html fails with Qt5
-# https://bugs.webkit.org/show_bug.cgi?id=73417
-editing/pasteboard/4242293-1.html
-
 # [Qt] editing/selection/click-in-margins-inside-editable-div.html fails with Qt5
 # https://bugs.webkit.org/show_bug.cgi?id=73418
 editing/selection/click-in-margins-inside-editable-div.html
