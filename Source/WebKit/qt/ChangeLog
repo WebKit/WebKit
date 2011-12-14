@@ -1,5 +1,20 @@
 2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
 
+        [Qt] Fix compilation of QtWebKit with --orientation-events without ENABLE_DEVICE_ORIENTATION
+        https://bugs.webkit.org/show_bug.cgi?id=74492
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::_q_orientationChanged):
+        * Api/qwebframe_p.h:
+        * WebCoreSupport/DeviceMotionProviderQt.cpp:
+        * WebCoreSupport/DeviceMotionProviderQt.h:
+        * WebCoreSupport/DeviceOrientationProviderQt.cpp:
+        * WebCoreSupport/DeviceOrientationProviderQt.h:
+
+2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
+
         Fix compilation for Qt with --minimal option after r102755.
 
         Reviewed by Csaba Osztrogonác.

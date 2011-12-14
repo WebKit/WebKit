@@ -136,9 +136,11 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
         $$PWD/WebKit/qt/WebCoreSupport/IconDatabaseClientQt.cpp
 }
 
-contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) || contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1) {
     haveQt(5): QT += sensors
+}
 
+contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     HEADERS += \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceMotionClientQt.h \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.h \

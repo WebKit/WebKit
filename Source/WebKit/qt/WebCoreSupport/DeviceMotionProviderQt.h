@@ -26,21 +26,28 @@
 #include <QAccelerometerFilter>
 #include <QObject>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-QTM_USE_NAMESPACE
-#endif
-
 namespace WebCore {
 
 class DeviceOrientationProviderQt;
 
-class DeviceMotionProviderQt : public QObject, public QAccelerometerFilter {
+class DeviceMotionProviderQt
+    : public QObject
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    , public QTM_NAMESPACE::QAccelerometerFilter {
+#else
+    , public QAccelerometerFilter {
+#endif
     Q_OBJECT
 public:
     DeviceMotionProviderQt();
     ~DeviceMotionProviderQt();
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    bool filter(QTM_NAMESPACE::QAccelerometerReading*);
+#else
     bool filter(QAccelerometerReading*);
+#endif
+
     void start();
     void stop();
     DeviceMotionData* currentDeviceMotion() const { return m_motion.get(); }
@@ -50,7 +57,11 @@ Q_SIGNALS:
 
 private:
     RefPtr<DeviceMotionData> m_motion;
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    QTM_NAMESPACE::QAccelerometer m_acceleration;
+#else
     QAccelerometer m_acceleration;
+#endif
     DeviceOrientationProviderQt* m_deviceOrientation;
 };
 

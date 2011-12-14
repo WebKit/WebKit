@@ -115,6 +115,10 @@
 #include <qregion.h>
 #include <qnetworkrequest.h>
 
+#if ENABLE(ORIENTATION_EVENTS) && QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+QTM_USE_NAMESPACE
+#endif
+
 using namespace WebCore;
 
 // from text/qfont.cpp
@@ -455,20 +459,20 @@ void QWebFramePrivate::_q_orientationChanged()
     WebCore::Frame* frame = core(q);
 
     switch (m_orientation.reading()->orientation()) {
-    case QtMobility::QOrientationReading::TopUp:
+    case QOrientationReading::TopUp:
         orientation = 0;
         break;
-    case QtMobility::QOrientationReading::TopDown:
+    case QOrientationReading::TopDown:
         orientation = 180;
         break;
-    case QtMobility::QOrientationReading::LeftUp:
+    case QOrientationReading::LeftUp:
         orientation = -90;
         break;
-    case QtMobility::QOrientationReading::RightUp:
+    case QOrientationReading::RightUp:
         orientation = 90;
         break;
-    case QtMobility::QOrientationReading::FaceUp:
-    case QtMobility::QOrientationReading::FaceDown:
+    case QOrientationReading::FaceUp:
+    case QOrientationReading::FaceDown:
         // WebCore unable to handle it
     default:
         return;
