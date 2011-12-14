@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-    class ClassNodeList : public DynamicNodeList {
+    class ClassNodeList : public DynamicSubtreeNodeList {
     public:
         static PassRefPtr<ClassNodeList> create(PassRefPtr<Node> rootNode, const String& classNames)
         {

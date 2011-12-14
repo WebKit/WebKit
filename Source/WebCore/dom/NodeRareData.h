@@ -22,6 +22,7 @@
 #ifndef NodeRareData_h
 #define NodeRareData_h
 
+#include "ChildNodeList.h"
 #include "ClassNodeList.h"
 #include "DOMSettableTokenList.h"
 #include "DynamicNodeList.h"
@@ -49,11 +50,9 @@ class TreeScope;
 struct NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef HashSet<DynamicNodeList*> NodeListSet;
+    typedef HashSet<DynamicSubtreeNodeList*> NodeListSet;
     NodeListSet m_listsWithCaches;
-    
-    RefPtr<DynamicNodeList::Caches> m_childNodeListCaches;
-    
+
     typedef HashMap<String, ClassNodeList*> ClassNodeListCache;
     ClassNodeListCache m_classNodeListCache;
 
@@ -126,12 +125,18 @@ public:
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
-
     NodeListsNodeData* ensureNodeLists(Node* node)
     {
         if (!m_nodeLists)
             createNodeLists(node);
         return m_nodeLists.get();
+    }
+    void clearChildNodeListCache();
+    DynamicNodeList::Caches* ensureChildNodeListCache()
+    {
+        if (!m_childNodeListCache)
+            m_childNodeListCache = DynamicNodeList::Caches::create();
+        return m_childNodeListCache.get();
     }
 
     short tabIndex() const { return m_tabIndex; }
@@ -236,6 +241,7 @@ private:
 
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
+    RefPtr<DynamicNodeList::Caches> m_childNodeListCache;
     OwnPtr<EventTargetData> m_eventTargetData;
     short m_tabIndex;
     bool m_tabIndexWasSetExplicitly : 1;

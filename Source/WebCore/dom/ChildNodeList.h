@@ -43,6 +43,8 @@ namespace WebCore {
         ChildNodeList(PassRefPtr<Node> rootNode, Caches*);
 
         virtual bool nodeMatches(Element*) const;
+
+        mutable RefPtr<DynamicNodeList::Caches> m_caches;
     };
 
 } // namespace WebCore

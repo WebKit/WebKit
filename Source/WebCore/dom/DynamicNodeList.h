@@ -31,52 +31,58 @@
 
 namespace WebCore {
 
-    class Element;
-    class Node;
+class Element;
+class Node;
 
-    class DynamicNodeList : public NodeList {
-    public:
-        struct Caches : RefCounted<Caches> {
-            static PassRefPtr<Caches> create();
-            void reset();
-
-            unsigned cachedLength;
-            Node* lastItem;
-            unsigned lastItemOffset;
-            bool isLengthCacheValid : 1;
-            bool isItemCacheValid : 1;
-        protected:
-            Caches();
-        };
-
-        virtual ~DynamicNodeList();
-
-        bool hasOwnCaches() const { return m_ownsCaches; }
-
-        // DOM methods & attributes for NodeList
-        virtual unsigned length() const;
-        virtual Node* item(unsigned index) const;
-        virtual Node* itemWithName(const AtomicString&) const;
-
-        // Other methods (not part of DOM)
-        void invalidateCache();
-        Node* rootNode() const { return m_rootNode.get(); }
-
+class DynamicNodeList : public NodeList {
+public:
+    struct Caches : RefCounted<Caches> {
+        static PassRefPtr<Caches> create();
+        void reset();
+        
+        unsigned cachedLength;
+        Node* lastItem;
+        unsigned lastItemOffset;
+        bool isLengthCacheValid : 1;
+        bool isItemCacheValid : 1;
     protected:
-        DynamicNodeList(PassRefPtr<Node> rootNode);
-        DynamicNodeList(PassRefPtr<Node> rootNode, Caches*);
-
-        virtual bool nodeMatches(Element*) const = 0;
-
-        RefPtr<Node> m_rootNode;
-        mutable RefPtr<Caches> m_caches;
-        bool m_ownsCaches;
-
-    private:
-        virtual bool isDynamicNodeList() const;
-        Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
-        Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
+        Caches();
     };
+    DynamicNodeList(PassRefPtr<Node> node)
+        : m_node(node)
+    { }
+    virtual ~DynamicNodeList() { }
+
+    // DOM methods & attributes for NodeList
+    virtual unsigned length() const = 0;
+    virtual Node* item(unsigned index) const = 0;
+    virtual Node* itemWithName(const AtomicString&) const;
+
+    // Other methods (not part of DOM)
+    Node* node() const { return m_node.get(); }
+
+protected:
+    virtual bool nodeMatches(Element*) const = 0;
+    RefPtr<Node> m_node;
+};
+
+class DynamicSubtreeNodeList : public DynamicNodeList {
+public:
+    virtual ~DynamicSubtreeNodeList();
+    virtual unsigned length() const OVERRIDE;
+    virtual Node* item(unsigned index) const OVERRIDE;
+    void invalidateCache();
+    Node* rootNode() const { return node(); }
+
+protected:
+    DynamicSubtreeNodeList(PassRefPtr<Node> rootNode);
+    mutable RefPtr<Caches> m_caches;
+
+private:
+    virtual bool isDynamicNodeList() const;
+    Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
+    Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
+};
 
 } // namespace WebCore
 

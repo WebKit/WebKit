@@ -28,35 +28,26 @@
 
 namespace WebCore {
 
-DynamicNodeList::DynamicNodeList(PassRefPtr<Node> rootNode)
-    : m_rootNode(rootNode)
+DynamicSubtreeNodeList::DynamicSubtreeNodeList(PassRefPtr<Node> node)
+    : DynamicNodeList(node)
     , m_caches(Caches::create())
-    , m_ownsCaches(true)
 {
-    m_rootNode->registerDynamicNodeList(this);
-}    
-
-DynamicNodeList::DynamicNodeList(PassRefPtr<Node> rootNode, DynamicNodeList::Caches* caches)
-    : m_rootNode(rootNode)
-    , m_caches(caches)
-    , m_ownsCaches(false)
-{
-    m_rootNode->registerDynamicNodeList(this);
-}    
-
-DynamicNodeList::~DynamicNodeList()
-{
-    m_rootNode->unregisterDynamicNodeList(this);
+    rootNode()->registerDynamicSubtreeNodeList(this);
 }
 
-unsigned DynamicNodeList::length() const
+DynamicSubtreeNodeList::~DynamicSubtreeNodeList()
+{
+    rootNode()->unregisterDynamicSubtreeNodeList(this);
+}
+
+unsigned DynamicSubtreeNodeList::length() const
 {
     if (m_caches->isLengthCacheValid)
         return m_caches->cachedLength;
 
     unsigned length = 0;
 
-    for (Node* n = m_rootNode->firstChild(); n; n = n->traverseNextNode(m_rootNode.get()))
+    for (Node* n = node()->firstChild(); n; n = n->traverseNextNode(rootNode()))
         length += n->isElementNode() && nodeMatches(static_cast<Element*>(n));
 
     m_caches->cachedLength = length;
@@ -65,10 +56,10 @@ unsigned DynamicNodeList::length() const
     return length;
 }
 
-Node* DynamicNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+Node* DynamicSubtreeNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset >= 0);
-    for (Node* n = start; n; n = n->traverseNextNode(m_rootNode.get())) {
+    for (Node* n = start; n; n = n->traverseNextNode(rootNode())) {
         if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
             if (!remainingOffset) {
                 m_caches->lastItem = n;
@@ -83,10 +74,10 @@ Node* DynamicNodeList::itemForwardsFromCurrent(Node* start, unsigned offset, int
     return 0; // no matching node in this subtree
 }
 
-Node* DynamicNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
+Node* DynamicSubtreeNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const
 {
     ASSERT(remainingOffset < 0);
-    for (Node* n = start; n; n = n->traversePreviousNode(m_rootNode.get())) {
+    for (Node* n = start; n; n = n->traversePreviousNode(rootNode())) {
         if (n->isElementNode() && nodeMatches(static_cast<Element*>(n))) {
             if (!remainingOffset) {
                 m_caches->lastItem = n;
@@ -101,10 +92,10 @@ Node* DynamicNodeList::itemBackwardsFromCurrent(Node* start, unsigned offset, in
     return 0; // no matching node in this subtree
 }
 
-Node* DynamicNodeList::item(unsigned offset) const
+Node* DynamicSubtreeNodeList::item(unsigned offset) const
 {
     int remainingOffset = offset;
-    Node* start = m_rootNode->firstChild();
+    Node* start = node()->firstChild();
     if (m_caches->isItemCacheValid) {
         if (offset == m_caches->lastItemOffset)
             return m_caches->lastItem;
@@ -121,14 +112,10 @@ Node* DynamicNodeList::item(unsigned offset) const
 
 Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
 {
-    if (m_rootNode->isDocumentNode() || m_rootNode->inDocument()) {
-        Element* node = m_rootNode->treeScope()->getElementById(elementId);
-        if (node && nodeMatches(node)) {
-            for (ContainerNode* p = node->parentNode(); p; p = p->parentNode()) {
-                if (p == m_rootNode)
-                    return node;
-            }
-        }
+    if (node()->isDocumentNode() || node()->inDocument()) {
+        Element* node = this->node()->treeScope()->getElementById(elementId);
+        if (node && nodeMatches(node) && node->isDescendantOf(this->node()))
+            return node;
         if (!node)
             return 0;
         // In the case of multiple nodes with the same name, just fall through.
@@ -145,31 +132,29 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     return 0;
 }
 
-bool DynamicNodeList::isDynamicNodeList() const
+bool DynamicSubtreeNodeList::isDynamicNodeList() const
 {
     return true;
 }
 
-void DynamicNodeList::invalidateCache()
+void DynamicSubtreeNodeList::invalidateCache()
 {
-    // This should only be called for node lists that own their own caches.
-    ASSERT(m_ownsCaches);
     m_caches->reset();
 }
 
-DynamicNodeList::Caches::Caches()
+DynamicSubtreeNodeList::Caches::Caches()
     : lastItem(0)
     , isLengthCacheValid(false)
     , isItemCacheValid(false)
 {
 }
 
-PassRefPtr<DynamicNodeList::Caches> DynamicNodeList::Caches::create()
+PassRefPtr<DynamicSubtreeNodeList::Caches> DynamicSubtreeNodeList::Caches::create()
 {
     return adoptRef(new Caches());
 }
 
-void DynamicNodeList::Caches::reset()
+void DynamicSubtreeNodeList::Caches::reset()
 {
     lastItem = 0;
     isLengthCacheValid = false;

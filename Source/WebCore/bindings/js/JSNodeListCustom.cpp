@@ -43,7 +43,7 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
         return false;
     if (!jsNodeList->impl()->isDynamicNodeList())
         return false;
-    return visitor.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->rootNode()));
+    return visitor.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->node()));
 }
 
 bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier& propertyName)

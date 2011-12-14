@@ -30,7 +30,7 @@
 namespace WebCore {
 
     // NodeList that limits to a particular tag.
-    class TagNodeList : public DynamicNodeList {
+    class TagNodeList : public DynamicSubtreeNodeList {
     public:
         static PassRefPtr<TagNodeList> create(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
         {

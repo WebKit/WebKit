@@ -31,7 +31,7 @@
 namespace WebCore {
 
     // NodeList which lists all Nodes in a Element with a given "name" attribute
-    class NameNodeList : public DynamicNodeList {
+    class NameNodeList : public DynamicSubtreeNodeList {
     public:
         static PassRefPtr<NameNodeList> create(PassRefPtr<Node> rootNode, const String& name)
         {

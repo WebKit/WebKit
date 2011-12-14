@@ -1,0 +1,3 @@
+This tests accessing the first element in childNodes after accessing the second element by its id. WebKit should retrieve each element correctly, and you should see 2 1 below:
+
+2 1

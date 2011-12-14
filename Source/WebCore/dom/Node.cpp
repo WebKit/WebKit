@@ -623,10 +623,7 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    NodeListsNodeData* nodeLists = ensureRareData()->ensureNodeLists(this);
-    if (!nodeLists->m_childNodeListCaches)
-        nodeLists->m_childNodeListCaches = DynamicNodeList::Caches::create();
-    return ChildNodeList::create(this, nodeLists->m_childNodeListCaches.get());
+    return ChildNodeList::create(this, ensureRareData()->ensureChildNodeListCache());
 }
 
 Node *Node::lastDescendant() const
@@ -1004,49 +1001,56 @@ static void removeNodeListCacheIfPossible(Node* node, NodeRareData* data)
     node->treeScope()->removeNodeListCache();
 }
 
-void Node::registerDynamicNodeList(DynamicNodeList* list)
+void Node::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
 {
     NodeRareData* data = ensureRareData();
     // We haven't been receiving notifications while there were no registered lists, so the cache is invalid now.
     if (data->nodeLists() && (!treeScope() || !treeScope()->hasNodeListCaches()))
         data->nodeLists()->invalidateCaches();
 
-    if (list->hasOwnCaches())
-        data->ensureNodeLists(this)->m_listsWithCaches.add(list);
+    data->ensureNodeLists(this)->m_listsWithCaches.add(list);
 }
 
-void Node::unregisterDynamicNodeList(DynamicNodeList* list)
+void Node::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
 {
-    ASSERT(rareData());
+    ASSERT(hasRareData());
     ASSERT(rareData()->nodeLists());
-    if (list->hasOwnCaches()) {
-        NodeRareData* data = rareData();
-        data->nodeLists()->m_listsWithCaches.remove(list);
-        removeNodeListCacheIfPossible(this, data);
-    }
+    NodeRareData* data = rareData();
+    data->nodeLists()->m_listsWithCaches.remove(list);
+    removeNodeListCacheIfPossible(this, data);
 }
 
 void Node::invalidateNodeListsCacheAfterAttributeChanged()
 {
+    if (hasRareData() && isAttributeNode()) {
+        NodeRareData* data = rareData();
+        ASSERT(!data->nodeLists());
+        data->clearChildNodeListCache();
+    }
+
+    if (!treeScope()->hasNodeListCaches())
+        return;
+
     for (Node* node = this; node; node = node->parentNode()) {
+        ASSERT(this == node || !node->isAttributeNode());
         if (!node->hasRareData())
             continue;
         NodeRareData* data = node->rareData();
         if (!data->nodeLists())
             continue;
 
-        // For attribute nodes, we need to invalidate childNodes as well.
-        if (node->isAttributeNode())
-            data->nodeLists()->invalidateCaches();
-        else
-            data->nodeLists()->invalidateCachesThatDependOnAttributes();
-
+        data->nodeLists()->invalidateCachesThatDependOnAttributes();
         removeNodeListCacheIfPossible(node, data);
     }
 }
 
 void Node::invalidateNodeListsCacheAfterChildrenChanged()
 {
+    if (hasRareData())
+        rareData()->clearChildNodeListCache();
+
+    if (!treeScope()->hasNodeListCaches())
+        return;
     for (Node* node = this; node; node = node->parentNode()) {
         if (!node->hasRareData())
             continue;
@@ -1080,7 +1084,6 @@ void Node::removeCachedClassNodeList(ClassNodeList* list, const String& classNam
 {
     ASSERT(rareData());
     ASSERT(rareData()->nodeLists());
-    ASSERT_UNUSED(list, list->hasOwnCaches());
 
     NodeListsNodeData* data = rareData()->nodeLists();
     ASSERT_UNUSED(list, list == data->m_classNodeListCache.get(className));
@@ -1091,7 +1094,6 @@ void Node::removeCachedNameNodeList(NameNodeList* list, const String& nodeName)
 {
     ASSERT(rareData());
     ASSERT(rareData()->nodeLists());
-    ASSERT_UNUSED(list, list->hasOwnCaches());
 
     NodeListsNodeData* data = rareData()->nodeLists();
     ASSERT_UNUSED(list, list == data->m_nameNodeListCache.get(nodeName));
@@ -1102,7 +1104,6 @@ void Node::removeCachedTagNodeList(TagNodeList* list, const AtomicString& name)
 {
     ASSERT(rareData());
     ASSERT(rareData()->nodeLists());
-    ASSERT_UNUSED(list, list->hasOwnCaches());
 
     NodeListsNodeData* data = rareData()->nodeLists();
     ASSERT_UNUSED(list, list == data->m_tagNodeListCache.get(name.impl()));
@@ -1113,20 +1114,19 @@ void Node::removeCachedTagNodeList(TagNodeList* list, const QualifiedName& name)
 {
     ASSERT(rareData());
     ASSERT(rareData()->nodeLists());
-    ASSERT_UNUSED(list, list->hasOwnCaches());
 
     NodeListsNodeData* data = rareData()->nodeLists();
     ASSERT_UNUSED(list, list == data->m_tagNodeListCacheNS.get(name.impl()));
     data->m_tagNodeListCacheNS.remove(name.impl());
 }
 
-void Node::removeCachedLabelsNodeList(DynamicNodeList* list)
+void Node::removeCachedLabelsNodeList(DynamicSubtreeNodeList* list)
 {
     ASSERT(rareData());
     ASSERT(rareData()->nodeLists());
-    ASSERT_UNUSED(list, list->hasOwnCaches());
-    
+
     NodeListsNodeData* data = rareData()->nodeLists();
+    ASSERT_UNUSED(list, list == data->m_labelsNodeListCache);
     data->m_labelsNodeListCache = 0;
 }
 
@@ -2389,13 +2389,6 @@ void Node::showTreeForThisAcrossFrame() const
 
 void NodeListsNodeData::invalidateCaches()
 {
-    if (m_childNodeListCaches) {
-        if (m_childNodeListCaches->hasOneRef())
-            m_childNodeListCaches.clear();
-        else
-            m_childNodeListCaches->reset();
-    }
-
     if (m_labelsNodeListCache)
         m_labelsNodeListCache->invalidateCache();
     TagNodeListCache::const_iterator tagCacheEnd = m_tagNodeListCache.end();
@@ -2436,9 +2429,6 @@ void NodeListsNodeData::invalidateMicrodataItemListCaches()
 bool NodeListsNodeData::isEmpty() const
 {
     if (!m_listsWithCaches.isEmpty())
-        return false;
-
-    if (m_childNodeListCaches)
         return false;
 
     if (!m_tagNodeListCache.isEmpty())
@@ -3007,6 +2997,17 @@ void NodeRareData::createNodeLists(Node* node)
     setNodeLists(NodeListsNodeData::create());
     if (TreeScope* treeScope = node->treeScope())
         treeScope->addNodeListCache();
+}
+
+void NodeRareData::clearChildNodeListCache()
+{
+    if (!m_childNodeListCache)
+        return;
+
+    if (m_childNodeListCache->hasOneRef())
+        m_childNodeListCache.clear();
+    else
+        m_childNodeListCache->reset();
 }
 
 } // namespace WebCore

@@ -1,5 +1,89 @@
 2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        NodeChildList shouldn't be in NodeListNodeData
+        https://bugs.webkit.org/show_bug.cgi?id=73969
+
+        Reviewed by Sam Weinig.
+
+        Move NodeChildList out of NodeListNodeData to separate it from the other node lists in order to
+        resolve the bug 73853. Unlike other DynamicNodeList, we don't need to invalidate NodeChildList
+        on ancestors when children change. Moving ChildNodeList out of NodeListNodeData makes this difference
+        apparent and makes DynamicNodeList::Caches in NodeListNodeData always held by a DynamicSubtreeNodeList,
+        eliminating the need for hasOwnCaches() checks in various places.
+
+        Also renamed the existing DynamicNodeList to DynamicSubtreeNodeList and re-introduced DynamicNodeList
+        from which DynamicSubtreeNodeList and ChildNodeList both inherit to share the code for itemWithName.
+
+        In addition, renamed registerDynamicNodeList and unregisterDynamicNodeList, which updates a counter for
+        TreeScope::hasNodeListCaches, to registerDynamicSubtreeNodeList and unregisterDynamicSubtreeNodeList
+        respectively. They are no longer called by ChildNodeList in order to avoid walking up the DOM tree
+        inside invalidateNodeListsCacheAfterAttributeChanged and invalidateNodeListsCacheAfterChildrenChanged.
+
+        Test: fast/dom/childnode-item-after-itemname.html
+
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::length):
+        (WebCore::ChildNodeList::item):
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ChildNodeList.h:
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        (WebCore::ClassNodeList::~ClassNodeList):
+        * dom/ClassNodeList.h:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::~DynamicSubtreeNodeList):
+        (WebCore::DynamicSubtreeNodeList::length):
+        (WebCore::DynamicSubtreeNodeList::itemForwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::itemBackwardsFromCurrent):
+        (WebCore::DynamicSubtreeNodeList::item):
+        (WebCore::DynamicNodeList::itemWithName):
+        (WebCore::DynamicSubtreeNodeList::isDynamicNodeList):
+        (WebCore::DynamicSubtreeNodeList::invalidateCache):
+        (WebCore::DynamicSubtreeNodeList::Caches::Caches):
+        (WebCore::DynamicSubtreeNodeList::Caches::create):
+        (WebCore::DynamicSubtreeNodeList::Caches::reset):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicNodeList::~DynamicNodeList):
+        (WebCore::DynamicNodeList::node):
+        (WebCore::DynamicSubtreeNodeList::rootNode):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        (WebCore::NameNodeList::~NameNodeList):
+        * dom/NameNodeList.h:
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+        (WebCore::Node::registerDynamicSubtreeNodeList):
+        (WebCore::Node::unregisterDynamicSubtreeNodeList):
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged):
+        (WebCore::Node::invalidateNodeListsCacheAfterChildrenChanged):
+        (WebCore::Node::removeCachedClassNodeList):
+        (WebCore::Node::removeCachedNameNodeList):
+        (WebCore::Node::removeCachedTagNodeList):
+        (WebCore::Node::removeCachedLabelsNodeList):
+        (WebCore::NodeListsNodeData::invalidateCaches):
+        (WebCore::NodeListsNodeData::isEmpty):
+        (WebCore::NodeRareData::clearChildNodeListCache):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::nodeLists):
+        (WebCore::NodeRareData::ensureChildNodeListCache):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        (WebCore::TagNodeList::~TagNodeList):
+        * dom/TagNodeList.h:
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/LabelsNodeList.h:
+
+2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Push more member functions from EditCommand to CompositeEditCommand
         https://bugs.webkit.org/show_bug.cgi?id=74249
 

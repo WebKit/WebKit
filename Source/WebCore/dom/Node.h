@@ -50,7 +50,7 @@ class ClassNodeList;
 class ContainerNode;
 class DOMSettableTokenList;
 class Document;
-class DynamicNodeList;
+class DynamicSubtreeNodeList;
 class Element;
 class Event;
 class EventContext;
@@ -517,8 +517,8 @@ public:
     void showTreeForThisAcrossFrame() const;
 #endif
 
-    void registerDynamicNodeList(DynamicNodeList*);
-    void unregisterDynamicNodeList(DynamicNodeList*);
+    void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
+    void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
     void invalidateNodeListsCacheAfterAttributeChanged();
     void invalidateNodeListsCacheAfterChildrenChanged();
     void notifyLocalNodeListsLabelChanged();
@@ -527,7 +527,7 @@ public:
     void removeCachedNameNodeList(NameNodeList*, const String&);
     void removeCachedTagNodeList(TagNodeList*, const AtomicString&);
     void removeCachedTagNodeList(TagNodeList*, const QualifiedName&);
-    void removeCachedLabelsNodeList(DynamicNodeList*);
+    void removeCachedLabelsNodeList(DynamicSubtreeNodeList*);
 
     PassRefPtr<NodeList> getElementsByTagName(const AtomicString&);
     PassRefPtr<NodeList> getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName);

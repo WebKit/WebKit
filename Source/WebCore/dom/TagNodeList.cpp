@@ -30,7 +30,7 @@
 namespace WebCore {
 
 TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : DynamicNodeList(rootNode)
+    : DynamicSubtreeNodeList(rootNode)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {
@@ -40,9 +40,9 @@ TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespac
 TagNodeList::~TagNodeList()
 {
     if (m_namespaceURI == starAtom)
-        m_rootNode->removeCachedTagNodeList(this, m_localName);
+        rootNode()->removeCachedTagNodeList(this, m_localName);
     else
-        m_rootNode->removeCachedTagNodeList(this, QualifiedName(nullAtom, m_localName, m_namespaceURI));
+        rootNode()->removeCachedTagNodeList(this, QualifiedName(nullAtom, m_localName, m_namespaceURI));
 }
 
 bool TagNodeList::nodeMatches(Element* testNode) const

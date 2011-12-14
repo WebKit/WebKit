@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class LabelsNodeList : public DynamicNodeList {
+class LabelsNodeList : public DynamicSubtreeNodeList {
 public:
     static PassRefPtr<LabelsNodeList> create(Node* forNode)
     {
