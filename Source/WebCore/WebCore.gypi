@@ -4784,6 +4784,7 @@
             'rendering/style/CounterDirectives.cpp',
             'rendering/style/CustomFilterOperation.h',
             'rendering/style/FillLayer.cpp',
+            'rendering/style/FilterOperation.cpp',
             'rendering/style/FilterOperation.h',
             'rendering/style/FilterOperations.cpp',
             'rendering/style/FilterOperations.h',

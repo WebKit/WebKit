@@ -211,6 +211,9 @@ void ImplicitAnimation::reset(RenderStyle* to)
         
     // set the transform animation list
     validateTransformFunctionList();
+#if ENABLE(CSS_FILTERS)
+    checkForMatchingFilterFunctionLists();
+#endif
 }
 
 void ImplicitAnimation::setOverridden(bool b)
@@ -267,9 +270,35 @@ void ImplicitAnimation::validateTransformFunctionList()
     if (val != toVal && !toVal->operations().isEmpty() && !val->operationsMatch(*toVal))
         return;
 
-    // Keyframes are valid
+    // Transform lists match.
     m_transformFunctionListValid = true;
 }
+
+#if ENABLE(CSS_FILTERS)
+void ImplicitAnimation::checkForMatchingFilterFunctionLists()
+{
+    m_filterFunctionListsMatch = false;
+    
+    if (!m_fromStyle || !m_toStyle)
+        return;
+        
+    const FilterOperations* val = &m_fromStyle->filter();
+    const FilterOperations* toVal = &m_toStyle->filter();
+
+    if (val->operations().isEmpty())
+        val = toVal;
+
+    if (val->operations().isEmpty())
+        return;
+        
+    // An emtpy filter list matches anything.
+    if (val != toVal && !toVal->operations().isEmpty() && !val->operationsMatch(*toVal))
+        return;
+
+    // Filter lists match.
+    m_filterFunctionListsMatch = true;
+}
+#endif
 
 double ImplicitAnimation::timeToNextService()
 {

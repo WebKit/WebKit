@@ -3257,6 +3257,7 @@ webcore_sources += \
 	Source/WebCore/rendering/style/FillLayer.cpp \
 	Source/WebCore/rendering/style/FillLayer.h \
 	Source/WebCore/rendering/style/FilterOperation.h \
+	Source/WebCore/rendering/style/FilterOperation.cpp \
 	Source/WebCore/rendering/style/FilterOperations.cpp \
 	Source/WebCore/rendering/style/FilterOperations.h \
 	Source/WebCore/rendering/style/KeyframeList.cpp \

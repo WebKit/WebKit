@@ -48,6 +48,21 @@ bool FilterOperations::operator==(const FilterOperations& o) const
     return true;
 }
 
+bool FilterOperations::operationsMatch(const FilterOperations& other) const
+{
+    size_t numOperations = operations().size();
+    // If the sizes of the function lists don't match, the lists don't match
+    if (numOperations != other.operations().size())
+        return false;
+    
+    // If the types of each function are not the same, the lists don't match
+    for (size_t i = 0; i < numOperations; ++i) {
+        if (!operations()[i]->isSameType(*other.operations()[i]))
+            return false;
+    }
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_FILTERS)

@@ -59,6 +59,36 @@ function parseCrossFade(s)
     return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
 }
 
+// Return an array of numeric filter params in 0-1.
+function getFilterParameters(s)
+{
+    var filterParams = s.match(/\((.+)\)/)[1];
+    var paramList = filterParams.split(' '); // FIXME: the spec may allow comma separation at some point.
+    
+    // Normalize percentage values.
+    for (var i = 0; i < paramList.length; ++i) {
+        var param = paramList[i];
+        paramList[i] = parseFloat(paramList[i]);
+        if (param.indexOf('%') != -1)
+            paramList[i] = paramList[i] / 100;
+    }
+
+    return paramList;
+}
+
+function filterParametersMatch(paramList1, paramList2, tolerance)
+{
+    if (paramList1.length != paramList2.length)
+        return false;
+
+    for (var i = 0; i < paramList1.length; ++i) {
+        var match = isCloseEnough(paramList1[i], paramList2[i], tolerance);
+        if (!match)
+            return false;
+    }
+    return true;
+}
+
 function checkExpectedValue(expected, index)
 {
     var animationName = expected[index][0];
@@ -128,7 +158,7 @@ function checkExpectedValue(expected, index)
                 pass = isCloseEnough(parseFloat(m1[i]), m2[i], tolerance);
                 if (!pass)
                     break;
-            }                
+            }
         } else {
             if (typeof expectedValue == "string")
                 pass = (computedValue == expectedValue);
@@ -143,6 +173,23 @@ function checkExpectedValue(expected, index)
                         break;
                 }
             }
+        }
+    } else if (property == "webkitFilter") {
+        var element;
+        if (iframeId)
+            element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
+        else
+            element = document.getElementById(elementId);
+ 
+        computedValue = window.getComputedStyle(element).webkitFilter;
+        var filterParameters = getFilterParameters(computedValue);
+
+        if (compareElements) {
+            computedValue2 = window.getComputedStyle(document.getElementById(elementId2)).webkitFilter;
+            var filter2Parameters = getFilterParameters(computedValue2);
+            pass = filterParametersMatch(filterParameters, filter2Parameters, tolerance);
+        } else {
+            pass = filterParametersMatch(filterParameters, getFilterParameters(expectedValue), tolerance);
         }
     } else if (property == "lineHeight") {
         var element;

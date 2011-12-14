@@ -40143,6 +40143,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\style\FilterOperation.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\style\FilterOperation.h"
 					>
 				</File>

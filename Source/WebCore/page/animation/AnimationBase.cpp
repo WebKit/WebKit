@@ -181,6 +181,40 @@ static inline TransformOperations blendFunc(const AnimationBase* anim, const Tra
     return result;
 }
 
+#if ENABLE(CSS_FILTERS)
+static inline FilterOperations blendFunc(const AnimationBase* anim, const FilterOperations& from, const FilterOperations& to, double progress)
+{    
+    FilterOperations result;
+
+    // If we have a filter function list, use that to do a per-function animation.
+    if (anim->filterFunctionListsMatch()) {
+        size_t fromSize = from.operations().size();
+        size_t toSize = to.operations().size();
+        size_t size = max(fromSize, toSize);
+        for (size_t i = 0; i < size; i++) {
+            RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
+            RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
+            RefPtr<FilterOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : (fromOp ? fromOp->blend(0, progress, true) : PassRefPtr<FilterOperation>(0));
+            if (blendedOp)
+                result.operations().append(blendedOp);
+            else {
+                RefPtr<FilterOperation> identityOp = PassthroughFilterOperation::create();
+                if (progress > 0.5)
+                    result.operations().append(toOp ? toOp : identityOp);
+                else
+                    result.operations().append(fromOp ? fromOp : identityOp);
+            }
+        }
+    } else {
+        // If the filter function lists don't match, we could try to cross-fade, but don't yet have a way to represent that in CSS.
+        // For now we'll just fail to animate.
+        result = to;
+    }
+
+    return result;
+}
+#endif // ENABLE(CSS_FILTERS)
+
 static inline EVisibility blendFunc(const AnimationBase* anim, EVisibility from, EVisibility to, double progress)
 {
     // Any non-zero result means we consider the object to be visible.  Only at 0 do we consider the object to be
@@ -957,6 +991,10 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<const TransformOperations&>(CSSPropertyWebkitTransform, &RenderStyle::transform, &RenderStyle::setTransform));
 #endif
 
+#if ENABLE(CSS_FILTERS)
+        gPropertyWrappers->append(new PropertyWrapper<const FilterOperations&>(CSSPropertyWebkitFilter, &RenderStyle::filter, &RenderStyle::setFilter));
+#endif
+
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyWebkitColumnRuleColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyWebkitTextStrokeColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyWebkitTextFillColor, &RenderStyle::textFillColor, &RenderStyle::setTextFillColor));
@@ -1075,18 +1113,21 @@ static PropertyWrapperBase* wrapperForProperty(int propertyID)
 AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim)
     : m_animState(AnimationStateNew)
     , m_isAnimating(false)
+    , m_isAccelerated(false)
+    , m_transformFunctionListValid(false)
+#if ENABLE(CSS_FILTERS)
+    , m_filterFunctionListsMatch(false)
+#endif
     , m_startTime(0)
     , m_pauseTime(-1)
     , m_requestedStartTime(0)
+    , m_totalDuration(-1)
+    , m_nextIterationDuration(-1)
     , m_object(renderer)
     , m_animation(const_cast<Animation*>(transition))
     , m_compAnim(compAnim)
-    , m_isAccelerated(false)
-    , m_transformFunctionListValid(false)
-    , m_nextIterationDuration(-1)
 {
     // Compute the total duration
-    m_totalDuration = -1;
     if (m_animation->iterationCount() > 0)
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
 }

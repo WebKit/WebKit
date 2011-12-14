@@ -1,3 +1,57 @@
+2011-12-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Make -webkit-filter animatable
+        https://bugs.webkit.org/show_bug.cgi?id=68476
+
+        Reviewed by Chris Marrin.
+        
+        Add -webkit-filter to the list of CSS properties that are animatable. Animate
+        it like we do transforms, by looking for matching lists of filter functions.
+        Each kind of filter operation has a blend() method that handles blending
+        for that filter.
+
+        Test: css3/filters/filter-animation.html
+
+        * GNUmakefile.list.am: Add FilterOperation.cpp to the build.
+        * Target.pri: Ditto
+        * WebCore.gypi: Ditto
+        * WebCore.vcproj/WebCore.vcproj: Ditto
+        * WebCore.xcodeproj/project.pbxproj: Ditto
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc): New blendFunc() for FilterOperations, which does per-filter blending.
+        (WebCore::AnimationBase::ensurePropertyMap): Make PropertyWrapper for filters.
+        (WebCore::AnimationBase::AnimationBase): Adjust initialization order.
+        * page/animation/AnimationBase.h: Adjusted the member variable order to minimize padding.
+        (WebCore::AnimationBase::filterFunctionListsMatch): Accessor for the flag.
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::validateTransformFunctionList): Adjust comment. The "is valid" terminology is confusing.
+        (WebCore::ImplicitAnimation::checkForMatchingFilterFunctionLists): New method to check for matching lists
+        of filter functions.
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::checkForMatchingFilterFunctionLists): New method to check for matching lists
+        of filter functions.
+        * page/animation/KeyframeAnimation.h:
+        * rendering/style/FilterOperation.cpp: Added.
+        (WebCore::BasicColorMatrixFilterOperation::blend):
+        (WebCore::BasicColorMatrixFilterOperation::passthroughAmount):
+        (WebCore::BasicComponentTransferFilterOperation::blend):
+        (WebCore::BasicComponentTransferFilterOperation::passthroughAmount): Different filters have
+        different values for m_amount for the "passthrough" behavior. This method returns the appropriate value.
+        (WebCore::GammaFilterOperation::blend):
+        (WebCore::BlurFilterOperation::blend):
+        (WebCore::DropShadowFilterOperation::blend):
+        * rendering/style/FilterOperation.h:
+        (WebCore::FilterOperation::blend):
+        (WebCore::PassthroughFilterOperation::create): New "no-op" filter.
+        (WebCore::PassthroughFilterOperation::operator==):
+        (WebCore::PassthroughFilterOperation::PassthroughFilterOperation):
+        * rendering/style/FilterOperations.cpp:
+        (WebCore::FilterOperations::operationsMatch):
+        * rendering/style/FilterOperations.h:
+
 2011-12-14  Adam Klein  <adamk@chromium.org>
 
         Broaden support for mutation observation of attributes

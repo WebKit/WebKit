@@ -77,6 +77,9 @@ protected:
     virtual bool affectsProperty(int) const;
 
     void validateTransformFunctionList();
+#if ENABLE(CSS_FILTERS)
+    void checkForMatchingFilterFunctionLists();
+#endif
 
 private:
     KeyframeAnimation(const Animation* animation, RenderObject*, int index, CompositeAnimation*, RenderStyle* unanimatedStyle);

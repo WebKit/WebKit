@@ -165,8 +165,12 @@ public:
         return !postActive() && affectsProperty(property);
     }
 
+    // FIXME: rename this using the "lists match" terminology.
     bool isTransformFunctionListValid() const { return m_transformFunctionListValid; }
-    
+#if ENABLE(CSS_FILTERS)
+    bool filterFunctionListsMatch() const { return m_filterFunctionListsMatch; }
+#endif
+
     // Freeze the animation; used by DumpRenderTree.
     void freezeAtTime(double t);
 
@@ -230,16 +234,22 @@ protected:
     AnimState m_animState;
 
     bool m_isAnimating;       // transition/animation requires continual timer firing
+    bool m_isAccelerated;
+    bool m_transformFunctionListValid;
+#if ENABLE(CSS_FILTERS)
+    bool m_filterFunctionListsMatch;
+#endif
     double m_startTime;
     double m_pauseTime;
     double m_requestedStartTime;
+
+    double m_totalDuration;
+    double m_nextIterationDuration;
+
     RenderObject* m_object;
 
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
-    bool m_isAccelerated;
-    bool m_transformFunctionListValid;
-    double m_totalDuration, m_nextIterationDuration;
     
 private:
     static void ensurePropertyMap();

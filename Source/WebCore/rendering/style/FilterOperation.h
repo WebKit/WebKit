@@ -56,6 +56,7 @@ public:
 #if ENABLE(CSS_SHADERS)
         CUSTOM,
 #endif
+        PASSTHROUGH,
         NONE
     };
 
@@ -63,6 +64,8 @@ public:
 
     virtual bool operator==(const FilterOperation&) const = 0;
     bool operator!=(const FilterOperation& o) const { return !(*this == o); }
+
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* /*from*/, double /*progress*/, bool /*blendToPassthrough*/ = false) { return 0; }
 
     virtual OperationType getOperationType() const { return m_type; }
     virtual bool isSameType(const FilterOperation& o) const { return o.getOperationType() == m_type; }
@@ -76,9 +79,25 @@ protected:
     OperationType m_type;
 };
 
-// Each of the individual operations are provided here. Once they actually
-// have code to apply their effect they'll move to separate files.
-// At the moment we're just storing the data for roundtripping.
+class PassthroughFilterOperation : public FilterOperation {
+public:
+    static PassRefPtr<PassthroughFilterOperation> create()
+    {
+        return adoptRef(new PassthroughFilterOperation());
+    }
+
+private:
+
+    virtual bool operator==(const FilterOperation& o) const
+    {
+        return isSameType(o);
+    }
+
+    PassthroughFilterOperation()
+        : FilterOperation(PASSTHROUGH)
+    {
+    }
+};
 
 class ReferenceFilterOperation : public FilterOperation {
 public:
@@ -110,7 +129,6 @@ private:
 
 // GRAYSCALE, SEPIA, SATURATE and HUE_ROTATE are variations on a basic color matrix effect.
 // For HUE_ROTATE, the angle of rotation is stored in m_amount.
-
 class BasicColorMatrixFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BasicColorMatrixFilterOperation> create(double amount, OperationType type)
@@ -120,8 +138,9 @@ public:
 
     double amount() const { return m_amount; }
 
-private:
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 
+private:
     virtual bool operator==(const FilterOperation& o) const
     {
         if (!isSameType(o))
@@ -129,7 +148,9 @@ private:
         const BasicColorMatrixFilterOperation* other = static_cast<const BasicColorMatrixFilterOperation*>(&o);
         return m_amount == other->m_amount;
     }
-
+    
+    double passthroughAmount() const;
+    
     BasicColorMatrixFilterOperation(double amount, OperationType type)
         : FilterOperation(type)
         , m_amount(amount)
@@ -140,7 +161,6 @@ private:
 };
 
 // INVERT and OPACITY are variations on a basic component transfer effect.
-
 class BasicComponentTransferFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BasicComponentTransferFilterOperation> create(double amount, OperationType type)
@@ -150,8 +170,9 @@ public:
 
     double amount() const { return m_amount; }
 
-private:
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 
+private:
     virtual bool operator==(const FilterOperation& o) const
     {
         if (!isSameType(o))
@@ -159,6 +180,8 @@ private:
         const BasicComponentTransferFilterOperation* other = static_cast<const BasicComponentTransferFilterOperation*>(&o);
         return m_amount == other->m_amount;
     }
+
+    double passthroughAmount() const;
 
     BasicComponentTransferFilterOperation(double amount, OperationType type)
         : FilterOperation(type)
@@ -180,8 +203,9 @@ public:
     double exponent() const { return m_exponent; }
     double offset() const { return m_offset; }
 
-private:
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 
+private:
     virtual bool operator==(const FilterOperation& o) const
     {
         if (!isSameType(o))
@@ -213,8 +237,9 @@ public:
     Length stdDeviationX() const { return m_stdDeviationX; }
     Length stdDeviationY() const { return m_stdDeviationY; }
 
-private:
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 
+private:
     virtual bool operator==(const FilterOperation& o) const
     {
         if (!isSameType(o))
@@ -234,6 +259,7 @@ private:
     Length m_stdDeviationY;
 };
 
+// FIXME: sharpen will be removed.
 class SharpenFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<SharpenFilterOperation> create(double amount, Length radius, double threshold, OperationType type)
@@ -246,7 +272,6 @@ public:
     double threshold() const { return m_threshold; }
 
 private:
-
     virtual bool operator==(const FilterOperation& o) const
     {
         if (!isSameType(o))
@@ -280,6 +305,8 @@ public:
     int stdDeviation() const { return m_stdDeviation; }
     Color color() const { return m_color; }
 
+    virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
+
 private:
 
     virtual bool operator==(const FilterOperation& o) const
@@ -299,7 +326,7 @@ private:
     {
     }
 
-    int m_x;
+    int m_x; // FIXME: x and y should be Lengths?
     int m_y;
     int m_stdDeviation;
     Color m_color;
