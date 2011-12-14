@@ -3321,7 +3321,6 @@ BUGWK74137 : fast/regions/flow-content-basic.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/flows-dependency-dynamic-remove.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/flows-dependency-same-flow.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/multiple-directionality-changes-in-variable-width-regions.html = PASS FAIL MISSING
-BUGWK74137 : fast/regions/outline-sides-in-region.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/overflow-in-uniform-regions-dynamic.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/overflow-in-uniform-regions.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/overflow-in-variable-width-regions.html = PASS FAIL MISSING
