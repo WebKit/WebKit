@@ -544,7 +544,7 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 
     ASSERT(m_isStarted);
 
-    IntSize backingStoreSize = m_pluginSize;
+    IntSize backingStoreSize = m_frameRectInWindowCoordinates.size();
     backingStoreSize.scale(contentsScaleFactor());
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);

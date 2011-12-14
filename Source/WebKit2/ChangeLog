@@ -1,3 +1,12 @@
+2011-12-14  Mark Rowe  <mrowe@apple.com>
+
+        Fix <rdar://problem/10565568>.
+        
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot): Base the backing store size on the correct member variable.
+
 2011-12-09  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98588
