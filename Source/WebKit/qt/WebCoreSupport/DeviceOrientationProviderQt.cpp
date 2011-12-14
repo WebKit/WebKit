@@ -20,65 +20,54 @@
 #include "config.h"
 #include "DeviceOrientationProviderQt.h"
 
-#include "DeviceOrientationClientMockQt.h"
-
 namespace WebCore {
 
 DeviceOrientationProviderQt::DeviceOrientationProviderQt()
 {
-    m_rotation.addFilter(this);
-    m_orientation = DeviceOrientation::create();
-
-    if (DeviceOrientationClientMockQt::mockIsActive)
-        activeClientMock();
+    m_sensor.addFilter(this);
+    m_lastOrientation = DeviceOrientation::create();
 }
 
-DeviceOrientationProviderQt::~DeviceOrientationProviderQt()
+void DeviceOrientationProviderQt::setController(DeviceOrientationController* controller)
 {
-    disconnect();
+    if (!controller)
+        stop();
+
+    m_controller = controller;
 }
 
 void DeviceOrientationProviderQt::start()
 {
-    m_rotation.start();
+    m_sensor.start();
 }
 
 void DeviceOrientationProviderQt::stop()
 {
-    m_rotation.stop();
+    m_sensor.stop();
 }
 
 bool DeviceOrientationProviderQt::filter(QRotationReading* reading)
 {
-    // Provide device orientation data according W3C spec:
-    // http://dev.w3.org/geo/api/spec-source-orientation.html
-    // Qt mobility provide these data via QRotationSensor using the
-    // QRotationReading class:
-    //  - the rotation around z axis (alpha) is given as z in QRotationReading;
-    //  - the rotation around x axis (beta) is given as x in QRotationReading;
-    //  - the rotation around y axis (gamma) is given as y in QRotationReading;
-    // See: http://doc.qt.nokia.com/qtmobility-1.0/qrotationreading.html
-    // The Z (alpha) rotation angle is checked via hasAlpha() private method,
-    // depending if the device is able do detect the alpha rotation. X (beta) and
-    // Y (gamma) axis are availble in this context.
-    m_orientation = DeviceOrientation::create(hasAlpha(), reading->z(),
-            /* x available */ true, reading->x(),
-            /* y available */ true, reading->y());
-    emit deviceOrientationChanged(m_orientation.get());
+    if (m_controller) {
+        // Provide device orientation data according W3C spec:
+        // http://dev.w3.org/geo/api/spec-source-orientation.html
+        // Qt mobility provide these data via QRotationSensor using the
+        // QRotationReading class:
+        //  - the rotation around z axis (alpha) is given as z in QRotationReading;
+        //  - the rotation around x axis (beta) is given as x in QRotationReading;
+        //  - the rotation around y axis (gamma) is given as y in QRotationReading;
+        // See: http://doc.qt.nokia.com/qtmobility-1.0/qrotationreading.html
+        // The Z (alpha) rotation angle is checked via hasAlpha() private method,
+        // depending if the device is able do detect the alpha rotation. X (beta) and
+        // Y (gamma) axis are availble in this context.
+        m_lastOrientation = DeviceOrientation::create(hasAlpha(), reading->z(),
+                /* x available */ true, reading->x(),
+                /* y available */ true, reading->y());
+        m_controller->didChangeDeviceOrientation(m_lastOrientation.get());
+    }
 
+    // We are the only filter, so no need to propagate.
     return false;
 }
 
-void DeviceOrientationProviderQt::changeDeviceOrientation(DeviceOrientation* orientation)
-{
-    m_orientation = orientation;
 }
-
-void DeviceOrientationProviderQt::activeClientMock()
-{
-    connect(DeviceOrientationClientMockQt::client(), SIGNAL(mockOrientationChanged(DeviceOrientation*)), SLOT(changeDeviceOrientation(DeviceOrientation*)));
-}
-
-}
-
-#include "moc_DeviceOrientationProviderQt.cpp"

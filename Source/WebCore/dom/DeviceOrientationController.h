@@ -53,6 +53,8 @@ public:
 
     bool isActive() { return !m_listeners.isEmpty(); }
 
+    DeviceOrientationClient* client() const { return m_client; }
+
 private:
     void timerFired(Timer<DeviceOrientationController>*);
 

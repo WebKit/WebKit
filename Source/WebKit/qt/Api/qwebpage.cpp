@@ -46,6 +46,7 @@
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
 #include "DeviceMotionClientQt.h"
+#include "DeviceOrientationClientMock.h"
 #include "DeviceOrientationClientQt.h"
 #include "DocumentLoader.h"
 #include "DragClientQt.h"
@@ -310,6 +311,8 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorIsInternalOnly(false)
     , m_lastDropAction(Qt::IgnoreAction)
 {
+    bool useMock = QWebPagePrivate::drtRun;
+
     WebCore::initializeWebCoreQt();
 
     Page::PageClients pageClients;
@@ -319,12 +322,16 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.dragClient = new DragClientQt(q);
     pageClients.inspectorClient = new InspectorClientQt(q);
 #if ENABLE(DEVICE_ORIENTATION)
-    pageClients.deviceOrientationClient = new DeviceOrientationClientQt(q);
+    if (useMock)
+        pageClients.deviceOrientationClient = new DeviceOrientationClientMock;
+    else
+        pageClients.deviceOrientationClient = new DeviceOrientationClientQt;
+
     pageClients.deviceMotionClient = new DeviceMotionClientQt(q);
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    if (QWebPagePrivate::drtRun)
-        pageClients.geolocationClient = new GeolocationClientMock();
+    if (useMock)
+        pageClients.geolocationClient = new GeolocationClientMock;
     else
         pageClients.geolocationClient = new GeolocationClientQt(q);
 #endif

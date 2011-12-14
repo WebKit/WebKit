@@ -21,41 +21,33 @@
 #define DeviceOrientationProviderQt_h
 
 #include "DeviceOrientation.h"
-#include "RefPtr.h"
+#include "DeviceOrientationController.h"
+#include <wtf/RefPtr.h>
 
-#include <QObject>
 #include <QRotationFilter>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 QTM_USE_NAMESPACE
+#endif
 
 namespace WebCore {
 
-class DeviceOrientationClientQt;
-
-class DeviceOrientationProviderQt : public QObject, public QRotationFilter {
-    Q_OBJECT
+class DeviceOrientationProviderQt : public QRotationFilter {
 public:
     DeviceOrientationProviderQt();
-    ~DeviceOrientationProviderQt();
 
+    void setController(DeviceOrientationController*);
     bool filter(QRotationReading*);
     void start();
     void stop();
-    bool isActive() const { return m_rotation.isActive(); }
-    DeviceOrientation* orientation() const { return m_orientation.get(); }
-    bool hasAlpha() const { return m_rotation.property("hasZ").toBool(); }
-
-Q_SIGNALS:
-    void deviceOrientationChanged(DeviceOrientation*);
-
-public Q_SLOTS:
-    void changeDeviceOrientation(DeviceOrientation*);
+    bool isActive() const { return m_sensor.isActive(); }
+    DeviceOrientation* lastOrientation() const { return m_lastOrientation.get(); }
+    bool hasAlpha() const { return m_sensor.property("hasZ").toBool(); }
 
 private:
-    void activeClientMock();
-
-    RefPtr<DeviceOrientation> m_orientation;
-    QRotationSensor m_rotation;
+    RefPtr<DeviceOrientation> m_lastOrientation;
+    DeviceOrientationController* m_controller;
+    QRotationSensor m_sensor;
 };
 
 }

@@ -156,9 +156,7 @@ public:
     static void removeWhiteListAccessFromOrigin(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     static void resetOriginAccessWhiteLists();
 
-    static void activeMockDeviceOrientationClient(bool b);
-    static void removeMockDeviceOrientation();
-    static void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
+    static void setMockDeviceOrientation(QWebPage*, bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
 
     static void resetGeolocationMock(QWebPage*);
     static void setMockGeolocationPermission(QWebPage*, bool allowed);

@@ -137,18 +137,18 @@ contains(DEFINES, ENABLE_ICONDATABASE=1) {
 }
 
 contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+    haveQt(5): QT += sensors
+
     HEADERS += \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceMotionClientQt.h \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.h \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.h \
-        $$PWD/WebKit/qt/WebCoreSupport/DeviceOrientationClientMockQt.h \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.h
 
     SOURCES += \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceMotionClientQt.cpp \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.cpp \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.cpp \
-        $$PWD/WebKit/qt/WebCoreSupport/DeviceOrientationClientMockQt.cpp \
         $$PWD/WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.cpp
 }
 

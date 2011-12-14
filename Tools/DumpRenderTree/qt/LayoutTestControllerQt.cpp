@@ -848,7 +848,9 @@ void LayoutTestController::setEditingBehavior(const QString& editingBehavior)
 
 void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
-    DumpRenderTreeSupportQt::setMockDeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
+    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
+    foreach (WebCore::WebPage* page, pages)
+        DumpRenderTreeSupportQt::setMockDeviceOrientation(page, canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
 void LayoutTestController::setGeolocationPermission(bool allow)

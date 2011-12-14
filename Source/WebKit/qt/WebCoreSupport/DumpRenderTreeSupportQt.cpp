@@ -34,7 +34,8 @@
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
 #include "DeviceOrientation.h"
-#include "DeviceOrientationClientMockQt.h"
+#include "DeviceOrientationClientMock.h"
+#include "DeviceOrientationController.h"
 #include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClientQt.h"
@@ -109,6 +110,14 @@ GeolocationClientMock* toGeolocationClientMock(GeolocationClient* client)
 {
      ASSERT(QWebPagePrivate::drtRun);
      return static_cast<GeolocationClientMock*>(client);
+}
+#endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+DeviceOrientationClientMock* toDeviceOrientationClientMock(DeviceOrientationClient* client)
+{
+    ASSERT(QWebPagePrivate::drtRun);
+    return static_cast<DeviceOrientationClientMock*>(client);
 }
 #endif
 
@@ -838,25 +847,12 @@ void DumpRenderTreeSupportQt::scalePageBy(QWebFrame* frame, float scalefactor, c
         page->setPageScaleFactor(scalefactor, origin);
 }
 
-void DumpRenderTreeSupportQt::activeMockDeviceOrientationClient(bool b)
+void DumpRenderTreeSupportQt::setMockDeviceOrientation(QWebPage* page, bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
 #if ENABLE(DEVICE_ORIENTATION)
-    DeviceOrientationClientMockQt::mockIsActive = b;
-#endif
-}
-
-void DumpRenderTreeSupportQt::removeMockDeviceOrientation()
-{
-#if ENABLE(DEVICE_ORIENTATION)
-    DeviceOrientationClientMockQt* client = DeviceOrientationClientMockQt::client();
-    delete client;
-#endif
-}
-
-void DumpRenderTreeSupportQt::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
-{
-#if ENABLE(DEVICE_ORIENTATION)
-    DeviceOrientationClientMockQt::client()->setOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
+    Page* corePage = QWebPagePrivate::core(page);
+    DeviceOrientationClientMock* mockClient = toDeviceOrientationClientMock(corePage->deviceOrientationController()->client());
+    mockClient->setOrientation(DeviceOrientation::create(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma));
 #endif
 }
 

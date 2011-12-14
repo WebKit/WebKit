@@ -1,3 +1,14 @@
+2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] DeviceOrientationClientMockQt should be removed in favor of DeviceOrientationClientMock
+        https://bugs.webkit.org/show_bug.cgi?id=74417
+
+        Reviewed by Simon Hausmann.
+
+        Based on original patch by Kenneth Christiansen.
+
+        * Source/api.pri:
+
 2011-12-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Switch to libjpeg for decoding

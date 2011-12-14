@@ -28,7 +28,7 @@ DeviceMotionProviderQt::DeviceMotionProviderQt()
 {
     m_acceleration.addFilter(this);
     m_motion = DeviceMotionData::create();
-    m_deviceOrientation = new DeviceOrientationProviderQt();
+    m_deviceOrientation = new DeviceOrientationProviderQt;
 }
 
 DeviceMotionProviderQt::~DeviceMotionProviderQt()
@@ -56,9 +56,9 @@ bool DeviceMotionProviderQt::filter(QAccelerometerReading* reading)
             /* z available */ true, reading->z());
 
     RefPtr<DeviceMotionData::RotationRate> rotation = DeviceMotionData::RotationRate::create(
-            m_deviceOrientation->hasAlpha(), m_deviceOrientation->orientation()->alpha(),
-            /* beta available */ true, m_deviceOrientation->orientation()->beta(),
-            /* gamma available */ true, m_deviceOrientation->orientation()->gamma());
+            m_deviceOrientation->hasAlpha(), m_deviceOrientation->lastOrientation()->alpha(),
+            /* beta available */ true, m_deviceOrientation->lastOrientation()->beta(),
+            /* gamma available */ true, m_deviceOrientation->lastOrientation()->gamma());
 
     m_motion = DeviceMotionData::create(accel,
             accel, /* FIXME: Needs to provide acceleration include gravity. */

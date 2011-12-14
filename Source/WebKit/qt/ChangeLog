@@ -1,3 +1,42 @@
+2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
+
+        [Qt] DeviceOrientationClientMockQt should be removed in favor of DeviceOrientationClientMock
+        https://bugs.webkit.org/show_bug.cgi?id=74417
+
+        Reviewed by Simon Hausmann.
+
+        Based on original patch by Kenneth Christiansen.
+
+        Already covered by current tests.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DeviceMotionProviderQt.cpp:
+        (WebCore::DeviceMotionProviderQt::DeviceMotionProviderQt):
+        (WebCore::DeviceMotionProviderQt::filter):
+        * WebCoreSupport/DeviceMotionProviderQt.h:
+        * WebCoreSupport/DeviceOrientationClientMockQt.cpp: Removed.
+        * WebCoreSupport/DeviceOrientationClientMockQt.h: Removed.
+        * WebCoreSupport/DeviceOrientationClientQt.cpp:
+        (WebCore::DeviceOrientationClientQt::DeviceOrientationClientQt):
+        (WebCore::DeviceOrientationClientQt::~DeviceOrientationClientQt):
+        (WebCore::DeviceOrientationClientQt::lastOrientation):
+        * WebCoreSupport/DeviceOrientationClientQt.h:
+        * WebCoreSupport/DeviceOrientationProviderQt.cpp:
+        (WebCore::DeviceOrientationProviderQt::DeviceOrientationProviderQt):
+        (WebCore::DeviceOrientationProviderQt::setController):
+        (WebCore::DeviceOrientationProviderQt::start):
+        (WebCore::DeviceOrientationProviderQt::stop):
+        (WebCore::DeviceOrientationProviderQt::filter):
+        * WebCoreSupport/DeviceOrientationProviderQt.h:
+        (WebCore::DeviceOrientationProviderQt::isActive):
+        (WebCore::DeviceOrientationProviderQt::lastOrientation):
+        (WebCore::DeviceOrientationProviderQt::hasAlpha):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (toDeviceOrientationClientMock):
+        (DumpRenderTreeSupportQt::setMockDeviceOrientation):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-12-12  Nándor Huszka  <huszka.nandor@stud.u-szeged.hu>
 
         [Qt] Missing layoutTestController.dumpWillCacheResponse
