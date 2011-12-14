@@ -1,3 +1,13 @@
+2011-12-13  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed attempt for fixing windows build.
+
+        - Included <wtf/MathExtras.h> which defined portable version of lround().
+        - Add some static_cast<> to suppress warnings.
+
+        * platform/animation/AnimationUtilities.h:
+        (WebCore::blend):
+
 2011-12-13  Wei Charles  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Add the new plugin files into the build system.

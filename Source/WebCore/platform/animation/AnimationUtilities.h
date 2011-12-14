@@ -26,13 +26,13 @@
 #ifndef AnimationUtilities_h
 #define AnimationUtilities_h
 
-#include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 inline int blend(int from, int to, double progress)
 {  
-    return lround(from + (to - from) * progress);
+    return static_cast<int>(lround(static_cast<double>(from) + static_cast<double>(to - from) * progress));
 }
 
 inline double blend(double from, double to, double progress)
