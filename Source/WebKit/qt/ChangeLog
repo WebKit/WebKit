@@ -1,5 +1,14 @@
 2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
 
+        Fix compilation for Qt with --minimal option after r102755.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
+2011-12-14  Alexander Færøy  <alexander.faeroy@nokia.com>
+
         [Qt] DeviceOrientationClientMockQt should be removed in favor of DeviceOrientationClientMock
         https://bugs.webkit.org/show_bug.cgi?id=74417
 

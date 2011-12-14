@@ -311,7 +311,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorIsInternalOnly(false)
     , m_lastDropAction(Qt::IgnoreAction)
 {
+#if ENABLE(DEVICE_ORIENTATION) || ENABLE(CLIENT_BASED_GEOLOCATION)
     bool useMock = QWebPagePrivate::drtRun;
+#endif
 
     WebCore::initializeWebCoreQt();
 
