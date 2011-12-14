@@ -1,3 +1,31 @@
+2011-12-14  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        [BlackBerry] Add notification support for the BlackBerry port
+        https://bugs.webkit.org/show_bug.cgi?id=73194
+
+        Reviewed by Nikolas Zimmermann.
+
+        Contributed by Torch team, the main contributor is Robin Qiu
+        <robin.qiu@torchmobile.com.cn>.
+
+        Initial upstream, no new tests.
+
+        * blackberry/WebCoreSupport/NotificationPresenterImpl.cpp: Added.
+        (WebKit::NotificationPresenterImpl::instance):
+        (WebKit::NotificationPresenterImpl::NotificationPresenterImpl):
+        (WebKit::NotificationPresenterImpl::~NotificationPresenterImpl):
+        (WebKit::NotificationPresenterImpl::show):
+        (WebKit::NotificationPresenterImpl::cancel):
+        (WebKit::NotificationPresenterImpl::notificationObjectDestroyed):
+        (WebKit::NotificationPresenterImpl::requestPermission):
+        (WebKit::NotificationPresenterImpl::onPermission):
+        (WebKit::NotificationPresenterImpl::cancelRequestsForPermission):
+        (WebKit::NotificationPresenterImpl::checkPermission):
+        (WebKit::NotificationPresenterImpl::notificationClicked):
+        * blackberry/WebCoreSupport/NotificationPresenterImpl.h: Added.
+        There is already a header file: Source/WebCore/notifications/NotificationPresenter.h.
+        To avoid conflicting with the it, I name my header file to NotificationPresenterImpl.
+
 2011-12-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Switch to libjpeg for decoding
