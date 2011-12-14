@@ -68,13 +68,13 @@ sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($);
 sub changeLogNameFromArgs($);
 sub fetchBugDescriptionFromURL($);
-sub findChangeLogs(\%);
+sub findChangeLogs($);
 sub getLatestChangeLogs($);
 sub resolveConflictedChangeLogs($);
-sub generateNewChangeLogs($$$\%);
-sub printDiff(\@);
+sub generateNewChangeLogs($$$$$);
+sub printDiff($);
 sub openChangeLogs($);
-sub firstDirectoryOrCwd();
+sub firstDirectoryOrCwd(\%);
 sub diffFromToString();
 sub diffCommand(@);
 sub statusCommand(@);
@@ -83,8 +83,8 @@ sub diffHeaderFormat();
 sub findOriginalFileFromSvn($);
 sub determinePropertyChanges($$$);
 sub pluralizeAndList($$@);
-sub generateFileList(\@\@\%);
-sub generateFunctionLists(\@\%);
+sub generateFileList(\%);
+sub generateFunctionLists($$);
 sub isUnmodifiedStatus($);
 sub isModifiedStatus($);
 sub isAddedStatus($);
@@ -105,9 +105,18 @@ sub reviewerAndDescriptionForGitCommit($);
 sub normalizeLineEndings($$);
 sub decodeEntities($);
 
+
+### Constant variables.
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
+my $SVN = "svn";
+my $GIT = "git";
+
+my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
+
+
+### Global variables for arguments.
 my $bugDescription;
 my $bugNumber;
 my $name;
@@ -155,40 +164,31 @@ if (!$parseOptionsResult || $showHelp) {
 
 die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit);
 
+
+### Main routine.
 my %paths = processPaths(@ARGV);
 
-my $isGit = isGitDirectory(firstDirectoryOrCwd());
-my $isSVN = isSVNDirectory(firstDirectoryOrCwd());
-
+my $isGit = isGitDirectory(firstDirectoryOrCwd(%paths));
+my $isSVN = isSVNDirectory(firstDirectoryOrCwd(%paths));
 $isSVN || $isGit || die "Couldn't determine your version control system.";
 
-my $SVN = "svn";
-my $GIT = "git";
-
 # Find the list of modified files
-my @changedFiles;
-my %functionLists;
-my @conflictFiles;
+my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths);
 
-my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
-
-my $addedRegressionTests = generateFileList(@changedFiles, @conflictFiles, %functionLists);
-
-if (!@changedFiles && !@conflictFiles && !keys %functionLists) {
+if (!@$changedFiles && !@$conflictFiles && !keys %$functionLists) {
     print STDERR "  No changes found.\n";
     exit 1;
 }
 
-if (@conflictFiles) {
+if (@$conflictFiles) {
     print STDERR "  The following files have conflicts. Run prepare-ChangeLog again after fixing the conflicts:\n";
-    print STDERR join("\n", @conflictFiles), "\n";
+    print STDERR join("\n", @$conflictFiles), "\n";
     exit 1;
 }
 
-generateFunctionLists(@changedFiles, %functionLists);
+generateFunctionLists($changedFiles, $functionLists);
 
 # Get some parameters for the ChangeLog we are about to write.
-my $date = changeLogDate($changeLogTimeZone);
 $name = changeLogNameFromArgs($name);
 $emailAddress = changeLogEmailAddressFromArgs($emailAddress);
 
@@ -206,7 +206,7 @@ if ($bugNumber && !$bugDescription) {
     $bugDescription = fetchBugDescriptionFromURL($bugURL);
 }
 
-my ($filesInChangeLog, $prefixes) = findChangeLogs(%functionLists);
+my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists);
 
 # Get the latest ChangeLog files from svn.
 my $changeLogs = getLatestChangeLogs($prefixes);
@@ -215,15 +215,15 @@ if (@$changeLogs && $updateChangeLogs && $isSVN) {
     resolveConflictedChangeLogs($changeLogs);
 }
 
-generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, %functionLists);
+generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL);
 
 if ($writeChangeLogs) {
     print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
 }
 
 # Write out another diff.
-if ($spewDiff && @changedFiles) {
-    printDiff(@changedFiles);
+if ($spewDiff && @$changedFiles) {
+    printDiff($changedFiles);
 }
 
 # Open ChangeLogs.
@@ -235,7 +235,7 @@ if ($openChangeLogs && @$changeLogs) {
 exit;
 
 
-sub generateFunctionLists(\@\%)
+sub generateFunctionLists($$)
 {
     my ($changedFiles, $functionLists) = @_;
 
@@ -365,12 +365,14 @@ sub fetchBugDescriptionFromURL($)
     return $bugDescription;
 }
 
-sub findChangeLogs(\%)
+sub findChangeLogs($)
 {
+    my ($functionLists) = @_;
+
     # Find the change logs.
     my %has_log;
     my %filesInChangeLog;
-    foreach my $file (sort keys %functionLists) {
+    foreach my $file (sort keys %$functionLists) {
         my $prefix = $file;
         my $has_log = 0;
         while ($prefix) {
@@ -452,9 +454,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$\%)
+sub generateNewChangeLogs($$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL) = @_;
 
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
@@ -480,6 +482,7 @@ sub generateNewChangeLogs($$$\%)
             print substr($prefix, 0, length($prefix) - 1) . ":\n\n" unless (scalar @$prefixes) == 1;
         }
 
+        my $date = changeLogDate($changeLogTimeZone);
         print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
 
         my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
@@ -517,7 +520,7 @@ sub generateNewChangeLogs($$$\%)
     }
 }
 
-sub printDiff(\@)
+sub printDiff($)
 {
     my ($changedFiles) = @_;
 
@@ -1587,13 +1590,16 @@ sub pluralizeAndList($$@)
     return "$plural " . join(", ", @items[0 .. $#items - 1]) . " and " . $items[-1];
 }
 
-sub generateFileList(\@\@\%)
+sub generateFileList(\%)
 {
-    my ($changedFiles, $conflictFiles, $functionLists) = @_;
+    my ($paths) = @_;
 
+    my @changedFiles;
+    my @conflictFiles;
+    my %functionLists;
     my @addedRegressionTests;
     print STDERR "  Running status to find changed, added, or removed files.\n";
-    open STAT, "-|", statusCommand(keys %paths) or die "The status failed: $!.\n";
+    open STAT, "-|", statusCommand(keys %$paths) or die "The status failed: $!.\n";
     while (<STAT>) {
         my $status;
         my $propertyStatus;
@@ -1651,17 +1657,17 @@ sub generateFileList(\@\@\%)
                        && !scalar(grep(/^resources$/i, @components))
                        && !scalar(grep(/^script-tests$/i, @components));
             }
-            push @{$changedFiles}, $file if $components[$#components] ne "ChangeLog";
+            push @changedFiles, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status) || isConflictStatus($propertyStatus)) {
-            push @{$conflictFiles}, $file;
+            push @conflictFiles, $file;
         }
         if (basename($file) ne "ChangeLog") {
             my $description = statusDescription($status, $propertyStatus, $original, $propertyChanges);
-            $functionLists->{$file} = $description if defined $description;
+            $functionLists{$file} = $description if defined $description;
         }
     }
     close STAT;
-    return \@addedRegressionTests;
+    return (\@changedFiles, \@conflictFiles, \%functionLists, \@addedRegressionTests);
 }
 
 sub isUnmodifiedStatus($)
@@ -1781,10 +1787,12 @@ sub extractLineRange($)
     return ($start, $end);
 }
 
-sub firstDirectoryOrCwd()
+sub firstDirectoryOrCwd(\%)
 {
+    my ($paths) = @_;
+
     my $dir = ".";
-    my @dirs = keys(%paths);
+    my @dirs = keys(%$paths);
 
     $dir = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]) if @dirs;
 
