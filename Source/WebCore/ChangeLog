@@ -1,3 +1,15 @@
+2011-12-13  James Wei <james.wei@intel.com> 
+
+        Optimize to not use pow() in the inner loop in AudioParamTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=73530
+
+        Reviewed by Kenneth Russell.
+
+        No new tests.
+
+        * webaudio/AudioParamTimeline.cpp:
+        (WebCore:AudioParamTimeline:valuesForTimeRangeImpl):
+
 2011-12-13  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed Chromium-Mac build fix trial.

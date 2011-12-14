@@ -245,16 +245,13 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
                 for (; writeIndex < fillToFrame; ++writeIndex)
                     values[writeIndex] = value;
             } else {
-                // Interpolate in log space.
-                value1 = log2f(value1);
-                value2 = log2f(value2);
-
-                // FIXME: optimize to not use pow() in inner loop, this is just a simple exponential ramp.
+                float numSampleFrames = deltaTime * sampleRate;
+                // The value goes exponentially from value1 to value2 in a duration of deltaTime seconds (corresponding to numSampleFrames).
+                // Compute the per-sample multiplier.
+                float multiplier = powf(value2 / value1, 1 / numSampleFrames);
                 for (; writeIndex < fillToFrame; ++writeIndex) {
-                    float x = (currentTime - time1) * k;
-                    value = (1 - x) * value1 + x * value2;
-                    value = powf(2.0f, value);
                     values[writeIndex] = value;
+                    value *= multiplier;
                     currentTime += sampleFrameTimeIncr;
                 }
             }
