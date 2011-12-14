@@ -1,3 +1,14 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Work around a bug in the MSVC2005 compiler
+        https://bugs.webkit.org/show_bug.cgi?id=74550
+
+        Reviewed by Sam Weinig.
+
+        Re-enable tests.
+
+        * TestWebKitAPI/Tests/WTF/Functional.cpp:
+
 2011-12-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Test fonts are not used with Qt5

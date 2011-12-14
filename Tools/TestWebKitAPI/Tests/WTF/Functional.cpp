@@ -28,8 +28,6 @@
 
 namespace TestWebKitAPI {
 
-#if !COMPILER(MSVC)
-
 static int returnFortyTwo()
 {
     return 42;
@@ -106,7 +104,5 @@ TEST(FunctionalTest, MemberFunctionBind)
     Function<int ()> function2 = bind(&A::addF, &a, 15);
     ASSERT_EQ(25, function2());
 }
-
-#endif // !COMPILER(MSVC)
 
 } // namespace TestWebKitAPI

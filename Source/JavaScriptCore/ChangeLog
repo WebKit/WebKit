@@ -1,3 +1,15 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Work around a bug in the MSVC2005 compiler
+        https://bugs.webkit.org/show_bug.cgi?id=74550
+
+        Reviewed by Sam Weinig.
+
+        Add template parameters for the return types of the partial specializations of BoundFunctionImpl.
+
+        * wtf/Functional.h:
+        (WTF::R):
+
 2011-12-13  Jon Lee  <jonlee@apple.com>
 
         Enable notifications on Mac.

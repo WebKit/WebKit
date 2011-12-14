@@ -149,14 +149,14 @@ public:
 template<typename FunctionWrapper, typename FunctionType>
 class BoundFunctionImpl;
 
-template<typename FunctionWrapper> class BoundFunctionImpl<FunctionWrapper, typename FunctionWrapper::ResultType ()> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+template<typename FunctionWrapper, typename R> class BoundFunctionImpl<FunctionWrapper, R ()> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 public:
     explicit BoundFunctionImpl(FunctionWrapper functionWrapper)
         : m_functionWrapper(functionWrapper)
     {
     }
 
-    virtual typename FunctionWrapper::ResultType operator()()
+    virtual R operator()()
     {
         return m_functionWrapper();
     }
@@ -165,7 +165,7 @@ private:
     FunctionWrapper m_functionWrapper;
 };
 
-template<typename FunctionWrapper, typename P0> class BoundFunctionImpl<FunctionWrapper, typename FunctionWrapper::ResultType (P0)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+template<typename FunctionWrapper, typename R, typename P0> class BoundFunctionImpl<FunctionWrapper, R (P0)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 
 public:
     BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0)
@@ -174,7 +174,7 @@ public:
     {
     }
 
-    virtual typename FunctionWrapper::ResultType operator()()
+    virtual R operator()()
     {
         return m_functionWrapper(m_p0);
     }
@@ -184,7 +184,7 @@ private:
     P0 m_p0;
 };
 
-template<typename FunctionWrapper, typename P0, typename P1> class BoundFunctionImpl<FunctionWrapper, typename FunctionWrapper::ResultType (P0, P1)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+template<typename FunctionWrapper, typename R, typename P0, typename P1> class BoundFunctionImpl<FunctionWrapper, R (P0, P1)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 public:
     BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1)
         : m_functionWrapper(functionWrapper)
