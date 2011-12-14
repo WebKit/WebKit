@@ -1,3 +1,12 @@
+2011-12-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Test fonts are not used with Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=72513
+
+        My last unreviewed buildfix for this crazy bug.
+
+        * qmake/mkspecs/features/features.prf:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Another attempt at fixing the Windows build.
