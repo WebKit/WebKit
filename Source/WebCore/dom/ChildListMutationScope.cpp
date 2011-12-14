@@ -218,18 +218,20 @@ void MutationAccumulationRouter::childAdded(Node* target, Node* child)
 {
     HashMap<Node*, OwnPtr<ChildListMutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
+    if (iter == m_accumulations.end() || !iter->second)
+        return;
 
-    if (iter->second)
-        iter->second->childAdded(child);
+    iter->second->childAdded(child);
 }
 
 void MutationAccumulationRouter::willRemoveChild(Node* target, Node* child)
 {
     HashMap<Node*, OwnPtr<ChildListMutationAccumulator> >::iterator iter = m_accumulations.find(target);
     ASSERT(iter != m_accumulations.end());
+    if (iter == m_accumulations.end() || !iter->second)
+        return;
 
-    if (iter->second)
-        iter->second->willRemoveChild(child);
+    iter->second->willRemoveChild(child);
 }
 
 void MutationAccumulationRouter::incrementScopingLevel(Node* target)
@@ -240,11 +242,12 @@ void MutationAccumulationRouter::incrementScopingLevel(Node* target)
         return;
     }
 
-    OwnPtr<MutationObserverInterestGroup> observers = MutationObserverInterestGroup::createForChildListMutation(target);
-    if (observers->isEmpty())
-        m_accumulations.set(target, nullptr);
-    else
+    if (OwnPtr<MutationObserverInterestGroup> observers = MutationObserverInterestGroup::createForChildListMutation(target))
         m_accumulations.set(target, adoptPtr(new ChildListMutationAccumulator(target, observers.release())));
+#ifndef NDEBUG
+    else
+        m_accumulations.set(target, nullptr);
+#endif
 }
 
 void MutationAccumulationRouter::decrementScopingLevel(Node* target)

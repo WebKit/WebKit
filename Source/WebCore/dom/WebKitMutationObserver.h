@@ -103,15 +103,15 @@ public:
     static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const QualifiedName& attributeName);
 
     bool isOldValueRequested();
-    bool isEmpty() { return m_observers.isEmpty(); }
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
 private:
-    MutationObserverInterestGroup(Node* target, WebKitMutationObserver::MutationType, const AtomicString& attributeName = nullAtom);
+    static PassOwnPtr<MutationObserverInterestGroup> createIfNeeded(Node* target, WebKitMutationObserver::MutationType, const AtomicString& attributeName, MutationRecordDeliveryOptions oldValueFlag);
+    MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers, MutationRecordDeliveryOptions oldValueFlag);
 
     inline bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }
 
     HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> m_observers;
-    WebKitMutationObserver::DeliveryFlags m_oldValueFlag;
+    MutationRecordDeliveryOptions m_oldValueFlag;
 };
 
 }

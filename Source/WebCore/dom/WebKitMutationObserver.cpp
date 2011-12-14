@@ -149,28 +149,40 @@ void WebKitMutationObserver::deliverAllMutations()
     deliveryInProgress = false;
 }
 
+PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node* target, WebKitMutationObserver::MutationType type, const AtomicString& attributeName, MutationRecordDeliveryOptions oldValueFlag)
+{
+    if (!target->mayHaveMutationObserversOfType(type))
+        return nullptr;
+
+    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
+    target->getRegisteredMutationObserversOfType(observers, type, attributeName);
+    if (observers.isEmpty())
+        return nullptr;
+
+    return adoptPtr(new MutationObserverInterestGroup(observers, oldValueFlag));
+}
+
 PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForChildListMutation(Node* target)
 {
-    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::ChildList));
+    MutationRecordDeliveryOptions oldValueFlag = 0;
+    return createIfNeeded(target, WebKitMutationObserver::ChildList, nullAtom, oldValueFlag);
 }
 
 PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForCharacterDataMutation(Node* target)
 {
-    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::CharacterData));
+    return createIfNeeded(target, WebKitMutationObserver::CharacterData, nullAtom, WebKitMutationObserver::CharacterDataOldValue);
 }
 
 PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForAttributesMutation(Node* target, const QualifiedName& attributeName)
 {
-    return adoptPtr(new MutationObserverInterestGroup(target, WebKitMutationObserver::Attributes, attributeName.localName()));
+    return createIfNeeded(target, WebKitMutationObserver::Attributes, attributeName.localName(), WebKitMutationObserver::AttributeOldValue);
 }
 
-MutationObserverInterestGroup::MutationObserverInterestGroup(Node* target, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)
+MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers, MutationRecordDeliveryOptions oldValueFlag)
+    : m_oldValueFlag(oldValueFlag)
 {
-    target->getRegisteredMutationObserversOfType(m_observers, type, attributeName);
-    if (type & WebKitMutationObserver::Attributes)
-        m_oldValueFlag = WebKitMutationObserver::AttributeOldValue;
-    else if (type & WebKitMutationObserver::CharacterData)
-        m_oldValueFlag = WebKitMutationObserver::CharacterDataOldValue;
+    ASSERT(!observers.isEmpty());
+    m_observers.swap(observers);
 }
 
 bool MutationObserverInterestGroup::isOldValueRequested()
@@ -184,9 +196,6 @@ bool MutationObserverInterestGroup::isOldValueRequested()
 
 void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRecord> prpMutation)
 {
-    if (m_observers.isEmpty())
-        return;
-
     RefPtr<MutationRecord> mutation = prpMutation;
     RefPtr<MutationRecord> mutationWithNullOldValue;
     for (HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {

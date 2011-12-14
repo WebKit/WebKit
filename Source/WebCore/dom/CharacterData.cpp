@@ -191,8 +191,8 @@ void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengt
 void CharacterData::dispatchModifiedEvent(const String& oldData)
 {
 #if ENABLE(MUTATION_OBSERVERS)
-    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(this);
-    mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(this, oldData));
+    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForCharacterDataMutation(this))
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createCharacterData(this, oldData));
 #endif
     if (parentNode())
         parentNode()->childrenChanged();

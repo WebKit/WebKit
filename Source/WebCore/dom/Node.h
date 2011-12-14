@@ -599,6 +599,7 @@ public:
 
 #if ENABLE(MUTATION_OBSERVERS)
     void getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>&, WebKitMutationObserver::MutationType, const AtomicString& attributeName = nullAtom);
+    bool mayHaveMutationObserversOfType(WebKitMutationObserver::MutationType);
     MutationObserverRegistration* registerMutationObserver(PassRefPtr<WebKitMutationObserver>);
     void unregisterMutationObserver(MutationObserverRegistration*);
     void registerTransientMutationObserver(MutationObserverRegistration*);

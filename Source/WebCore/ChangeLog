@@ -1,3 +1,36 @@
+2011-12-13  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Avoid allocations if no observers are present
+        https://bugs.webkit.org/show_bug.cgi?id=74423
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds Node::mayHaveMutationObserversOfType which can be used to check
+        if there are any observers at all which could receive a give type of mutation.
+        MutationObserverInterestGroup uses this to possibly exit early (returning
+        null) if no observers are present.
+
+        No tests needed. This patch is just a refactor.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationAccumulator::MutationAccumulationRouter::incrementScopingLevel):
+        * dom/Element.cpp:
+        (WebCore::enqueueAttributesMutationRecord):
+        * dom/Node.cpp:
+        (WebCore::Node::mayHaveMutationObserversOfType):
+        * dom/Node.h:
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::MutationObserverInterestGroup::createIfNeeded):
+        (WebCore::MutationObserverInterestGroup::createForChildListMutation):
+        (WebCore::MutationObserverInterestGroup::createForCharacterDataMutation):
+        (WebCore::MutationObserverInterestGroup::createForAttributesMutation):
+        (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup):
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/WebKitMutationObserver.h:
+
 2011-12-13  Robin Dunn  <robin@alldunn.com>
 
         Don't make the bitmap transparent when using theme drawing

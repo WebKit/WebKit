@@ -183,8 +183,8 @@ void Element::copyNonAttributeProperties(const Element*)
 #if ENABLE(MUTATION_OBSERVERS)
 static void enqueueAttributesMutationRecord(Element* target, const QualifiedName& attributeName, const AtomicString& oldValue)
 {
-    OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName);
-    mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
+    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName))
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
 }
 #endif
 

@@ -71,10 +71,8 @@ public:
             return;
 
         m_mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(inlineDecl->element(), HTMLNames::styleAttr);
-        if (m_mutationRecipients->isEmpty()) {
-            m_mutationRecipients.clear();
+        if (!m_mutationRecipients)
             return;
-        }
 
         AtomicString oldValue = m_mutationRecipients->isOldValueRequested() ? inlineDecl->element()->getAttribute(HTMLNames::styleAttr) : nullAtom;
         m_mutation = MutationRecord::createAttributes(inlineDecl->element(), HTMLNames::styleAttr, oldValue);

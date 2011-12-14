@@ -2714,6 +2714,11 @@ void Node::collectMatchingObserversForMutation(HashMap<WebKitMutationObserver*, 
     }
 }
 
+bool Node::mayHaveMutationObserversOfType(WebKitMutationObserver::MutationType type)
+{
+    return document()->hasSubtreeMutationObserverOfType(type) || (hasRareData() && (rareData()->mutationObserverRegistry() || rareData()->transientMutationObserverRegistry()));
+}
+
 void Node::getRegisteredMutationObserversOfType(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, WebKitMutationObserver::MutationType type, const AtomicString& attributeName)
 {
     collectMatchingObserversForMutation(observers, this, type, attributeName);
