@@ -1,3 +1,36 @@
+2011-12-14  Jacky Jiang  <zhajiang@rim.com>
+
+        Upstream text codec and web string files of BlackBerry API
+        https://bugs.webkit.org/show_bug.cgi?id=73586
+
+        Reviewed by Daniel Bates.
+
+        Initial upstream, no new tests.
+
+        * blackberry/Api/WebKitTextCodec.cpp: Added.
+        (BlackBerry::WebKit::isSameEncoding):
+        (BlackBerry::WebKit::isASCIICompatibleEncoding):
+        (BlackBerry::WebKit::transcode):
+        (BlackBerry::WebKit::base64DecodePolicyForWebCore):
+        (BlackBerry::WebKit::base64Decode):
+        (BlackBerry::WebKit::base64Encode):
+        (BlackBerry::WebKit::unescapeURL):
+        (BlackBerry::WebKit::escapeURL):
+        (BlackBerry::WebKit::getExtensionForMimeType):
+        * blackberry/Api/WebKitTextCodec.h: Added.
+        * blackberry/Api/WebString.cpp: Added.
+        (BlackBerry::WebKit::WebString::WebString):
+        (BlackBerry::WebKit::WebString::~WebString):
+        (BlackBerry::WebKit::WebString::fromUtf8):
+        (BlackBerry::WebKit::WebString::operator=):
+        (BlackBerry::WebKit::WebString::utf8):
+        (BlackBerry::WebKit::WebString::characters):
+        (BlackBerry::WebKit::WebString::length):
+        (BlackBerry::WebKit::WebString::isEmpty):
+        (BlackBerry::WebKit::WebString::equal):
+        (BlackBerry::WebKit::WebString::equalIgnoringCase):
+        * blackberry/Api/WebString.h: Added.
+
 2011-12-13  Arvid Nilsson  <anilsson@rim.com>
 
         [Blackberry] Fix a leak in BackingStore class
