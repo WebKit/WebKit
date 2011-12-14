@@ -71,7 +71,9 @@ double DistanceEffect::gain(double distance)
 
 double DistanceEffect::linearGain(double distance)
 {
-    return (1.0 - m_rolloffFactor * (distance - m_refDistance)) / (m_maxDistance - m_refDistance);
+    // We want a gain that decreases linearly from m_refDistance to
+    // m_maxDistance. The gain is 1 at m_refDistance.
+    return (1.0 - m_rolloffFactor * (distance - m_refDistance) / (m_maxDistance - m_refDistance));
 }
 
 double DistanceEffect::inverseGain(double distance)

@@ -1,3 +1,21 @@
+2011-12-14  Raymond Toy  <rtoy@google.com>
+
+        * platform/audio/Distance.h (WebCore): 
+
+        Incorrect calculation for DistanceEffect linearGain
+        https://bugs.webkit.org/show_bug.cgi?id=72871
+
+        Reviewed by Kenneth Russell.
+
+        Tests still need to be written for all distance models.  This
+        does not add a new API and just corrects an implementation error. 
+
+        * platform/audio/Distance.cpp:
+        (WebCore::DistanceEffect::linearGain): Implement correct
+        linearGain function.  (Fix proposed by davidgaleano@hotmail.com.)
+        * platform/audio/Distance.h: Add link to Open AL specification. 
+        
+
 2011-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: consider disabling network tracking while running the CPU profile.
