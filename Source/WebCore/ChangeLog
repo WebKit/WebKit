@@ -1,3 +1,29 @@
+2011-12-13  Adrienne Walker  <enne@google.com>
+
+        [chromium] Use HashMap<..., OwnPtr<Tile>> for compositor tilemap
+        https://bugs.webkit.org/show_bug.cgi?id=74154
+
+        Reviewed by James Robinson.
+
+        After r102410 landed, it's now possible to properly use an OwnPtr to
+        store tiles rather than hackily use a RefPtr.
+
+        Covered by the compositing/ layout tests.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::create):
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::TiledLayerChromium::createTile):
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::addTile):
+        (WebCore::CCLayerTilingData::takeTile):
+        (WebCore::CCLayerTilingData::tileAt):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::DrawableTile::create):
+        (WebCore::DrawableTile::DrawableTile):
+        (WebCore::CCTiledLayerImpl::createTile):
+
 2011-12-13  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73691

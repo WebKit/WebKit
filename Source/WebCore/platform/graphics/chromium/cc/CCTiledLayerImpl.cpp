@@ -42,11 +42,13 @@ class ManagedTexture;
 class DrawableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(DrawableTile);
 public:
-    DrawableTile() : m_textureId(0) { }
+    static PassOwnPtr<DrawableTile> create() { return adoptPtr(new DrawableTile()); }
 
     Platform3DObject textureId() const { return m_textureId; }
     void setTextureId(Platform3DObject textureId) { m_textureId = textureId; }
 private:
+    DrawableTile() : m_textureId(0) { }
+
     Platform3DObject m_textureId;
 };
 
@@ -92,9 +94,10 @@ DrawableTile* CCTiledLayerImpl::tileAt(int i, int j) const
 
 DrawableTile* CCTiledLayerImpl::createTile(int i, int j)
 {
-    RefPtr<DrawableTile> tile = adoptRef(new DrawableTile());
-    m_tiler->addTile(tile, i, j);
-    return tile.get();
+    OwnPtr<DrawableTile> tile(DrawableTile::create());
+    DrawableTile* addedTile = tile.get();
+    m_tiler->addTile(tile.release(), i, j);
+    return addedTile;
 }
 
 TransformationMatrix CCTiledLayerImpl::tilingTransform() const

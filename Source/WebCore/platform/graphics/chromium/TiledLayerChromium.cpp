@@ -52,7 +52,10 @@ namespace WebCore {
 class UpdatableTile : public CCLayerTilingData::Tile {
     WTF_MAKE_NONCOPYABLE(UpdatableTile);
 public:
-    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture) : m_texture(texture) { }
+    static PassOwnPtr<UpdatableTile> create(PassOwnPtr<LayerTextureUpdater::Texture> texture)
+    {
+        return adoptPtr(new UpdatableTile(texture));
+    }
 
     LayerTextureUpdater::Texture* texture() { return m_texture.get(); }
     ManagedTexture* managedTexture() { return m_texture->texture(); }
@@ -65,6 +68,8 @@ public:
     // Content-space rectangle that needs to be updated.
     IntRect m_updateRect;
 private:
+    explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture) : m_texture(texture) { }
+
     OwnPtr<LayerTextureUpdater::Texture> m_texture;
 };
 
@@ -278,11 +283,12 @@ UpdatableTile* TiledLayerChromium::tileAt(int i, int j) const
 
 UpdatableTile* TiledLayerChromium::createTile(int i, int j)
 {
-    RefPtr<UpdatableTile> tile = adoptRef(new UpdatableTile(textureUpdater()->createTexture(textureManager())));
-    m_tiler->addTile(tile, i, j);
-    tile->m_dirtyLayerRect = m_tiler->tileLayerRect(tile.get());
+    OwnPtr<UpdatableTile> tile(UpdatableTile::create(textureUpdater()->createTexture(textureManager())));
+    UpdatableTile* addedTile = tile.get();
+    m_tiler->addTile(tile.release(), i, j);
 
-    return tile.get();
+    addedTile->m_dirtyLayerRect = m_tiler->tileLayerRect(addedTile);
+    return addedTile;
 }
 
 void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
