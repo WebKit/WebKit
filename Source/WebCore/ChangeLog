@@ -1,3 +1,17 @@
+2011-12-13  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Initialize Settings::m_perTileDrawingEnabled properly.
+        https://bugs.webkit.org/show_bug.cgi?id=74476
+
+        Reviewed by James Robinson.
+
+        Add m_perTileDrawingEnabled(false) to WebCore::Settings initialize list.
+
+        No new tests.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2011-12-13  Anders Carlsson  <andersca@apple.com>
 
         Add a very bare-bones implementation of bind and Function to WTF
