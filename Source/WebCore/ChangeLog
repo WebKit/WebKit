@@ -1,3 +1,14 @@
+2011-12-14  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Remove SharedBufferBlackBerry.cpp from WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=74488
+
+        Reviewed by Rob Buis.
+
+        Remove dead code, no new tests.
+
+        * platform/blackberry/SharedBufferBlackBerry.cpp: Removed.
+
 2011-12-14  Kentaro Hara  <haraken@chromium.org>
 
         Use [Supplemental] IDL in WebSocket
