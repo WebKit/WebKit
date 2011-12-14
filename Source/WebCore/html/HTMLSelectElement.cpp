@@ -691,6 +691,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
     m_shouldRecalcListItems = false;
 
     HTMLOptionElement* foundSelected = 0;
+    HTMLOptionElement* firstOption = 0;
     for (Node* currentNode = this->firstChild(); currentNode;) {
         if (!currentNode->isHTMLElement()) {
             currentNode = currentNode->traverseNextSibling(this);
@@ -714,12 +715,16 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
             m_listItems.append(current);
 
             if (updateSelectedStates && !m_multiple) {
-                if (!foundSelected && (m_size <= 1 || toHTMLOptionElement(current)->selected())) {
-                    foundSelected = toHTMLOptionElement(current);
+                HTMLOptionElement* option = toHTMLOptionElement(current);
+                if (!firstOption)
+                    firstOption = option;
+                if (option->selected()) {
+                    if (foundSelected)
+                        foundSelected->setSelectedState(false);
+                    foundSelected = option;
+                } else if (m_size <= 1 && !foundSelected && !option->disabled()) {
+                    foundSelected = option;
                     foundSelected->setSelectedState(true);
-                } else if (foundSelected && toHTMLOptionElement(current)->selected()) {
-                    foundSelected->setSelectedState(false);
-                    foundSelected = toHTMLOptionElement(current);
                 }
             }
         }
@@ -735,6 +740,9 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
         // <select>'s subtree at this point.
         currentNode = currentNode->traverseNextSibling(this);
     }
+
+    if (!foundSelected && m_size <= 1 && firstOption && !firstOption->selected())
+        firstOption->setSelectedState(true);
 }
 
 int HTMLSelectElement::selectedIndex() const

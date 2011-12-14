@@ -14,3 +14,6 @@ BUGWK70765 : fast/forms/listbox-clip.html = TEXT
 BUGWK65361 : fast/forms/input-disabled-color.html = IMAGE+TEXT
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+
+BUGWK74270 : fast/forms/basic-selects.html = FAIL
+

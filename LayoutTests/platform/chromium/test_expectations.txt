@@ -1106,7 +1106,6 @@ BUGWK70748 CPU : fast/clip/overflow-border-radius-clip.html = IMAGE
 BUGWK70748 CPU : fast/css/box-shadow-and-border-radius.html = IMAGE
 BUGWK70748 CPU : fast/css/nested-rounded-corners.html = IMAGE
 BUGWK70748 CPU : fast/css/text-input-with-webkit-border-radius.html = IMAGE
-BUGWK70748 CPU : fast/forms/basic-selects.html = IMAGE
 BUGWK70748 CPU : fast/forms/validation-message-appearance.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
@@ -3953,6 +3952,8 @@ BUGWK73692 WIN LEOPARD : media/event-attributes.html = TEXT PASS
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
+
+BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 // Need rebaseline on Linux and Win GPU
 BUGWK73905 GPU LINUX : media/video-layer-crash.html = IMAGE+TEXT

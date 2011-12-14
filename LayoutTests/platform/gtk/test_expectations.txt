@@ -89,3 +89,6 @@ BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = 
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
+
+BUGWK74270 : fast/forms/basic-selects.html = FAIL
+

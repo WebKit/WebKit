@@ -1,3 +1,22 @@
+2011-12-13  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Default selection of select(menulist) should not be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=74270
+
+        Reviewed by Kent Tamura.
+
+        This patch changes default selection of select(menulist) element to
+          1. Selected option element. If there are multiple options which have
+             selected state, we pick the largest index option up. (same as current)
+          2. Non-disabled option element (new behavior)
+          3. The first option if all options are disabled. (new behavior)
+
+        Tests: fast/forms/select/menulist-disabled-option-expected.html
+               fast/forms/select/menulist-disabled-option.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::recalcListItems): Implement new logic for selection.
+
 2011-12-13  Simon Fraser  <simon.fraser@apple.com>
 
         Share blend progress code
