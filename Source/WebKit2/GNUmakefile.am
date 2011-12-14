@@ -1064,7 +1064,7 @@ BUILT_SOURCES += generate-webkit2-forwarding-headers
 
 $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2: $(webkit2gtk_headers)
 	$(AM_V_GEN)mkdir -p $(GENSOURCES_WEBKIT2)/webkit2gtk/include \
-	&& ln -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
+	&& ln -n -s -f ${shell pwd}/$(WebKit2)/UIProcess/API/gtk $@
 
 BUILT_SOURCES += $(GENSOURCES_WEBKIT2)/webkit2gtk/include/webkit2
 

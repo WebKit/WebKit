@@ -1,3 +1,13 @@
+2011-12-13  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am: make sure we do not derreference the target link
+        if it already exists, and replace it with the new one instead,
+        otherwise we end up with a gtk link inside
+        Source/WebKit2/UIProcess/API/gtk, which causes the documentation
+        build to produce warnings, and make the build fail.
+
 2011-12-13  Andreas Kling  <kling@webkit.org>
 
         REGRESSION (r102652): New window opens with zero size at produbanco.com
