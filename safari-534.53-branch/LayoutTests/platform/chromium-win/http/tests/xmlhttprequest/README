@@ -1,7 +1,0 @@
-- event-target.html
-  toString for XMLHttpRequests return [object XMLHttpRequest] with V8 and
-  [object JSXMLHttpRequest] with KJS.
-
-- XMLHttpRequestException
-  toString for exception prototypes and exception constructors differ 
-  with v8 and KJS.

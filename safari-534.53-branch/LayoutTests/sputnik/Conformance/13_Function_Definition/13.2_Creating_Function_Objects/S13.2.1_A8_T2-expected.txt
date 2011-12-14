@@ -1,6 +1,0 @@
-S13.2.1_A8_T2
-
-PASS 
-
-TEST COMPLETE
-

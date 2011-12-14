@@ -1,3 +1,0 @@
-PASS: document.querySelector(:unknownpseudo) throws: SyntaxError: Parse error
-PASS: document.querySelector(:-webkit-any(:unknownpseudo)) throws: SyntaxError: Parse error
-

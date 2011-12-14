@@ -1,6 +1,0 @@
-ALERT: Load should be deferred due to alert
-DESKTOP NOTIFICATION: icon http://127.0.0.1:8000/notifications/resources/icon-exists.png, title New E-mail, text Meet me tonight at 8!
-Sending notification, and then alert. Load should be deferred but continue after the alert.
-
-PASS: display event invoked.
-

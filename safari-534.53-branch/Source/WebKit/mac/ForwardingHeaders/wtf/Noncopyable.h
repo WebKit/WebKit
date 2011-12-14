@@ -1,1 +1,0 @@
-#import <JavaScriptCore/Noncopyable.h>

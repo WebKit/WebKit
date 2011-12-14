@@ -1,5 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 450x450
-  RenderSVGRoot {svg} at (265,259) size 163x65
-    RenderSVGPath {polygon} at (265,259) size 163x65 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [points="270 265 300 285 320 265 340 285 280 320 390 320 420 280"]

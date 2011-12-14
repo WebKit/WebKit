@@ -1,6 +1,0 @@
-PASS re('a') threw exception TypeError: '/a/' is not a function (evaluating 're('a')').
-PASS re.exec('a') is ['a']
-PASS successfullyParsed is true
-
-TEST COMPLETE
-DONE

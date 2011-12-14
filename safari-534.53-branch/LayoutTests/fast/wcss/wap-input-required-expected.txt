@@ -1,4 +1,0 @@
-There are three form control elements below, the first one is required and blank,validity.valueMissing should be true, the other two either don't have -wap-input-required applied, or the -wap-input-required indicates false, and are not required .
-
-  
-SUCCESS SUCCESS SUCCESS

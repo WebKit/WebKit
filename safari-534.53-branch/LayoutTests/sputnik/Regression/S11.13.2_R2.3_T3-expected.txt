@@ -1,6 +1,0 @@
-S11.13.2_R2.3_T3
-
-PASS 
-
-TEST COMPLETE
-

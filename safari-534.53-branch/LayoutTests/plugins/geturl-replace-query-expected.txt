@@ -1,4 +1,0 @@
-
-Test for bug 7656: Query string always appended to Flash URLs, instead of being replaced
-
-SUCCESS

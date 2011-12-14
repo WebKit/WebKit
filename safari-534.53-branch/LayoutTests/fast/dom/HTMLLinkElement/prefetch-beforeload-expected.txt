@@ -1,2 +1,0 @@
-PASS beforeload called
-This test will only print "PASS" or "FAIL" if link prefetches are enabled, otherwise it will show nothing below.

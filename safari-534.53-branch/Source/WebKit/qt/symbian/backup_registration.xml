@@ -1,5 +1,0 @@
-<?xml version="1.0" standalone="yes"?>
-<backup_registration>
-    <system_backup/>
-    <restore requires_reboot = "no"/>
-</backup_registration>

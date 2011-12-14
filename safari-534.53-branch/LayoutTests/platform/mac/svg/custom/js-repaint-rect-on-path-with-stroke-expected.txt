@@ -1,6 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 300x300
-  RenderSVGRoot {svg} at (50,30) size 126x90
-    RenderSVGPath {line} at (174,30) size 2x90 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=175.00] [y1=30.00] [x2=175.00] [y2=120.00]
-    RenderSVGPath {path} at (50,50) size 100x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,0.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [dash offset=210.00] [dash array={210.00}]}] [fill={[type=SOLID] [color=#008000]}] [data="M 200 50 L 300 75 L 200 100"]

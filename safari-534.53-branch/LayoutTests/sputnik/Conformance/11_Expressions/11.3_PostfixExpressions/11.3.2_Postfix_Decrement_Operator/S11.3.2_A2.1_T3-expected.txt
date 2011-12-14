@@ -1,6 +1,0 @@
-S11.3.2_A2.1_T3
-
-PASS ReferenceError: Postfix -- operator applied to value that is not a reference.
-
-TEST COMPLETE
-

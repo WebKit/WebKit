@@ -1,6 +1,0 @@
-S15.1_A2_T1
-
-PASS TypeError: '[object DOMWindow]' is not a function (evaluating 'this()')
-
-TEST COMPLETE
-

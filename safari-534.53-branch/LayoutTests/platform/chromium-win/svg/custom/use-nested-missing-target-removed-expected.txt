@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 7: Uncaught TypeError: Cannot set property 'id' of null
-PASS
-

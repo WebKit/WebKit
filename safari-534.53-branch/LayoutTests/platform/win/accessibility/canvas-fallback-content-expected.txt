@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 41: ReferenceError: Can't find variable: fallbackElement
-  
-

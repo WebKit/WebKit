@@ -1,1 +1,0 @@
-PASSED: Duplicate webkit-canvas styles removed without crash.

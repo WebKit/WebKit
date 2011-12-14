@@ -1,7 +1,0 @@
-
-This tests to make sure that HTMLInputElement::size returns a number, not a string. This is in violation of the DOM Level 1 spec, but is what FireFox does, so we match.
-
-You should see 2 lines with "SUCCESS" below:
-SUCCESS (value: "number")
-
-SUCCESS (value: "9")

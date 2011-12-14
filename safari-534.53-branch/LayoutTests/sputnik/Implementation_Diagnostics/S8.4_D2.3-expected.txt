@@ -1,6 +1,0 @@
-S8.4_D2.3
-
-FAIL SputnikError: #1: If index of elementh is greater or equals than string length an emty string returns
-
-TEST COMPLETE
-

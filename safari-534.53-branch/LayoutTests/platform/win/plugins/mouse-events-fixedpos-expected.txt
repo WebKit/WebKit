@@ -1,2 +1,0 @@
-
-Tests for widget positions being correctly updated after scrolling. rdar://problem/7559069

@@ -1,8 +1,0 @@
-S12.6.4_R1
-
-#1: passed
-#1: passed
-PASS 
-
-TEST COMPLETE
-

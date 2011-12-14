@@ -1,9 +1,0 @@
-SUCCESS!
-
-
-text
-block
-new ruby text
-more text
-ruby text
-

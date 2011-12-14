@@ -1,6 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (200,200) size 300x300
-    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGPath {rect} at (200,200) size 300x300 [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=200.00] [width=300.00] [height=300.00]

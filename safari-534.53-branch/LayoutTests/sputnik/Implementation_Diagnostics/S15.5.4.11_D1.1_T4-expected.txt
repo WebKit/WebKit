@@ -1,6 +1,0 @@
-S15.5.4.11_D1.1_T4
-
-FAIL No error detected
-
-TEST COMPLETE
-

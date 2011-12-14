@@ -1,4 +1,0 @@
-Test that SVG font URL with #hash does not prevent the same URL working for non-SVG font. The div height should be 16 (from the Ahem font).
-
-Hello world!
-div height = 16

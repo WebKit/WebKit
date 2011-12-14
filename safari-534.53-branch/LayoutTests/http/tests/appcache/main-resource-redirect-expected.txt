@@ -1,4 +1,0 @@
-Test that application cache is consulted again after a redirect response.
-
-PASS
-

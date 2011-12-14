@@ -1,6 +1,0 @@
-S7.8.3_A4.2_T6
-
-PASS 
-
-TEST COMPLETE
-

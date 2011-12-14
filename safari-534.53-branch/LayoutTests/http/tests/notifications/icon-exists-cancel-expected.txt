@@ -1,5 +1,0 @@
-DESKTOP NOTIFICATION: icon http://127.0.0.1:8000/notifications/resources/icon-exists.png, title Second E-mail, text Actually, meet me tonight at 9!
-Sending notification, cancelling it while the icon is loading and sending a second notification. Only the second notification should be displayed
-
-PASS: display event invoked.
-

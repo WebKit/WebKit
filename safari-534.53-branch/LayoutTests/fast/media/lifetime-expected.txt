@@ -1,4 +1,0 @@
-Test Media object lifetime.
-
-PASS
-

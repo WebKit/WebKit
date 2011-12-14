@@ -1,4 +1,0 @@
-This tests that a full screen element in a lower stacking context blocks a sibling in a higher stacking context. After entering full screen mode, only a black box should be visible. Click go full screen to run the test.
-EVENT(webkitfullscreenchange)
-END OF TEST
-

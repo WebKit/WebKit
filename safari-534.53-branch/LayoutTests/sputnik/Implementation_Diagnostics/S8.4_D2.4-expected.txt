@@ -1,6 +1,0 @@
-S8.4_D2.4
-
-FAIL SputnikError: #1: If index of elementh is less than 0 an emty string returns
-
-TEST COMPLETE
-

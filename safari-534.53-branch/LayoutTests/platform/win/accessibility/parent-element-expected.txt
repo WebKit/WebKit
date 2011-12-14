@@ -1,6 +1,0 @@
-This tests that elements return their correct parent element.
-
-
-
-PASS optionElement.parentElement().role is "list"
-

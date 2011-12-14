@@ -1,6 +1,0 @@
-S12.1_A1
-
-FAIL No error detected
-
-TEST COMPLETE
-

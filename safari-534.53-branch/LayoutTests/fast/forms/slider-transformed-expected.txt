@@ -1,2 +1,0 @@
-
-PASS: slider value set to 39

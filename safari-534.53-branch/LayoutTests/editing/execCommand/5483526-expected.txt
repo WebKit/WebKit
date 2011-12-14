@@ -1,7 +1,0 @@
-This tests for a hang when making a list out of a selection containing a table with empty cells. There should be three list items below, one with a table and two empty.
-
-1	2	3
-
-
-
-

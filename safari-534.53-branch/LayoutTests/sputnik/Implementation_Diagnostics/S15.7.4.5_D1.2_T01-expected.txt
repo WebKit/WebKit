@@ -1,6 +1,0 @@
-S15.7.4.5_D1.2_T01
-
-FAIL SputnikError: #3: Number.prototype.toFixed(20.1) should throw RangeError, not the SputnikError: #3: Number.prototype.toFixed(20.1) should throw RangeError
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S15.5.4.10_A1_T4
-
-FAIL TypeError: 'null' is not an object (evaluating '__matched.length')
-
-TEST COMPLETE
-

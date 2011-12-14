@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 28: [object Text]
-CONSOLE MESSAGE: line 29: 0
-CONSOLE MESSAGE: line 30: [object Text]
-CONSOLE MESSAGE: line 31: 1
-Tests: 
-Select a word via double-click. Delete. Then undo the delete. The space that got smart deleted should now be selected.
-foo bar baz
-FAILED

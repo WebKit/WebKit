@@ -1,6 +1,0 @@
-S11.6.2_A4_T2
-
-PASS 
-
-TEST COMPLETE
-

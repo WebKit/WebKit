@@ -1,6 +1,0 @@
-S8.7.2_A2
-
-PASS 
-
-TEST COMPLETE
-

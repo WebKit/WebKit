@@ -1,6 +1,0 @@
-S8.4_D1.2
-
-PASS 
-
-TEST COMPLETE
-

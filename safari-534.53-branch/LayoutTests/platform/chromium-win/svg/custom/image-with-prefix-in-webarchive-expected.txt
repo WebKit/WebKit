@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 5: Uncaught TypeError: Object [object Object] has no method 'dumpDOMAsWebArchive'
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg:svg} at (0,0) size 100x100
-    RenderImage {svg:image} at (0,0) size 100x100

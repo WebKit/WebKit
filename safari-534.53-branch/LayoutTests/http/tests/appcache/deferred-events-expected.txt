@@ -1,2 +1,0 @@
-Test that AppicationCache events are deferred until after onload has been fired.
-SUCCESS

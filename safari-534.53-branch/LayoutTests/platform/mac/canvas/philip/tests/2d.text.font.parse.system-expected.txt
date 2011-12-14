@@ -1,1 +1,0 @@
-Failed assertion ctx.font !== 'message-box' (got message-box[string], expected not message-box[string])

@@ -1,6 +1,0 @@
-S12.5_A9_T2
-
-FAIL No error detected
-
-TEST COMPLETE
-

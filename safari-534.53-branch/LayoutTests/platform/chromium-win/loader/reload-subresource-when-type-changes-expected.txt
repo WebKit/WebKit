@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token ILLEGAL
-PASS 1 of 3
-PASS 2 of 3
-PASS 3 of 3
-    

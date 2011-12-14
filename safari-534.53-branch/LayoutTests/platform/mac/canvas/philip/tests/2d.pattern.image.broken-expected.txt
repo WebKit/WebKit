@@ -1,3 +1,0 @@
-Failed assertion img.complete === false (got true[boolean], expected false[boolean])
-Failed assertion ctx.createPattern(img, 'repeat') === null (got [object CanvasPattern][object], expected [object])
-

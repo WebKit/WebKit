@@ -1,6 +1,0 @@
-S15.5.4.16_A1
-
-FAIL SputnikError: #0241->0294 
-
-TEST COMPLETE
-

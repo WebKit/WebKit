@@ -1,7 +1,0 @@
-This text should be black.
-
-This text should be red.
-
-This text should be black.
-
-PASS

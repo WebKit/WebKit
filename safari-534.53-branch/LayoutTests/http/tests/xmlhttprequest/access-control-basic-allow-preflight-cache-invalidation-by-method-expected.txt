@@ -1,5 +1,0 @@
-PASS: First PUT request.
-PASS: First request complete
-PASS: Second OPTIONS request was sent.
-PASS: Second request complete
-

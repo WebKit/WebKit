@@ -1,6 +1,0 @@
-S15.7.4.2_A2_T34
-
-PASS 
-
-TEST COMPLETE
-

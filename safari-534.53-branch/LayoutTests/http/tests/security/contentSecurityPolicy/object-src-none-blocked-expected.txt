@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 1: Refused to load object from 'data:application/x-webkit-test-netscape,alertwhenloaded' because of Content-Security-Policy.
-
-
-
---------
-Frame: '<!--framePath //<!--frame0-->-->'
---------
-

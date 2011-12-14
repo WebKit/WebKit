@@ -1,2 +1,0 @@
-This test passes if it says PASS below.
-PASS: test complete

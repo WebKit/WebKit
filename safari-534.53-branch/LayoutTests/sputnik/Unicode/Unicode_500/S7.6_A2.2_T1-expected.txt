@@ -1,6 +1,0 @@
-S7.6_A2.2_T1
-
-PASS 
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 80: ReferenceError: Can't find variable: WebKitBlobBuilder
-FAIL: Timed out waiting for notifyDone to be called
-

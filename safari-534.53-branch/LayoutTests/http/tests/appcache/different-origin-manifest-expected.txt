@@ -1,3 +1,0 @@
-Test that a different origin manifest is completely ignored.
-
-PASS

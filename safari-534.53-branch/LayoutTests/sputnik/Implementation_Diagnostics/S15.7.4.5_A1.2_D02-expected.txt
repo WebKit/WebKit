@@ -1,6 +1,0 @@
-S15.7.4.5_A1.2_D02
-
-FAIL SputnikError: #3: (new Number(1)).toFixed(20.1) should throw RangeError, not the SputnikError: #3: (new Number(1)).toFixed(20.1) should throw RangeError, see the diagnostics tests for this section
-
-TEST COMPLETE
-

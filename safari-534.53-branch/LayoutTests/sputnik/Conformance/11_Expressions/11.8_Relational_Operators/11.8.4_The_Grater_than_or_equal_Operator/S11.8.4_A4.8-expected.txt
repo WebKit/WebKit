@@ -1,6 +1,0 @@
-S11.8.4_A4.8
-
-PASS 
-
-TEST COMPLETE
-

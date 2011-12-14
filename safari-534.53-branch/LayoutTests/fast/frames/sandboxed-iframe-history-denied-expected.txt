@@ -1,4 +1,0 @@
-ALERT: PASS
-This test verifies that a sandboxed IFrame cannot navigate the top-level frame using the history API.
-
-

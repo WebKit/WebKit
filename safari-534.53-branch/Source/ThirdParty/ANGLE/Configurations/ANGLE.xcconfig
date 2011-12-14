@@ -1,5 +1,0 @@
-PRODUCT_NAME = ANGLE;
-
-HEADER_SEARCH_PATHS = include src;
-INSTALL_PATH = /usr/local/lib;
-PUBLIC_HEADERS_FOLDER_PATH = /usr/local/include/ANGLE;

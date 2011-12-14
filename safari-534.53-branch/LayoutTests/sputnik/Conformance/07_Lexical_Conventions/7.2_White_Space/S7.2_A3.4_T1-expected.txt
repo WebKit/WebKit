@@ -1,6 +1,0 @@
-S7.2_A3.4_T1
-
-PASS 
-
-TEST COMPLETE
-

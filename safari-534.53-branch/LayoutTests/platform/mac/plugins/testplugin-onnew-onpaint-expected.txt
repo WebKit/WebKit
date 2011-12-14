@@ -1,4 +1,0 @@
-
-New called
-Paint event was handled
-

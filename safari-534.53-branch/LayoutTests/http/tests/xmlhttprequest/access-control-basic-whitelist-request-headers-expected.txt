@@ -1,6 +1,0 @@
-Accept: *
-Accept-Language: ru
-Content-Language: ru
-Content-Type: text/plain
-
-

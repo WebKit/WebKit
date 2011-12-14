@@ -1,5 +1,0 @@
-PASS typeof children.namedItem('child') is 'undefined'
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

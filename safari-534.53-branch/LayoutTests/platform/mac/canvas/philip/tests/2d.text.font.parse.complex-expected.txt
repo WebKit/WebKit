@@ -1,1 +1,0 @@
-Failed assertion ctx.font === 'italic small-caps 12px "Unknown Font", sans-serif' (got small-caps italic 400 12px/2 Unknown Font, sans-serif[string], expected italic small-caps 12px "Unknown Font", sans-serif[string])

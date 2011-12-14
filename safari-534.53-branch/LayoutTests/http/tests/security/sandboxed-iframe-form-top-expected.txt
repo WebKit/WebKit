@@ -1,5 +1,0 @@
-This tests passes if the sandboxed frame cannot navigate the top frame.
-
-PASS
-
-

@@ -1,4 +1,0 @@
-Test for bug 51344: move left/right by character should not hang.
-
-Success
-Success

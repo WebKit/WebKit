@@ -1,7 +1,0 @@
-S15.5.2_D2
-
-SputnikError: #1: When more than one is provided exception throws
-PASS 
-
-TEST COMPLETE
-

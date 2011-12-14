@@ -1,1 +1,0 @@
-Success - a hugely nested SVG did not crash us.

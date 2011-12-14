@@ -1,6 +1,0 @@
-S11.8.3_A2.3_T1
-
-FAIL SputnikError: #1.2: ToNumber(second expression) is called first, and then ToNumber(first expression)
-
-TEST COMPLETE
-

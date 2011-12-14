@@ -1,3 +1,0 @@
-Test that WebSocket is not subject to HTTP connection limit. Should say PASS:
-
-PASS

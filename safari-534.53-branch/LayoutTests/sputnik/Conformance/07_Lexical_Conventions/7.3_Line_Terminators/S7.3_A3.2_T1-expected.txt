@@ -1,6 +1,0 @@
-S7.3_A3.2_T1
-
-PASS ReferenceError: Can't find variable: comment
-
-TEST COMPLETE
-

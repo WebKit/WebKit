@@ -1,5 +1,0 @@
-Tests that Web Inspector gets populated with DOM storages that were opened before inspector is shown.
-
-Domain: 127.0.0.1
-IsLocalStorage: false
-

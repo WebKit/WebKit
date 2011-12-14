@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 12: Uncaught Error: Code generation from strings disallowed for this context
-

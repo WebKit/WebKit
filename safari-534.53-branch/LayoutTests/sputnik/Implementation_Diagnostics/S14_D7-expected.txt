@@ -1,6 +1,0 @@
-S14_D7
-
-FAIL SputnikError: 3: Function declaration may be inside of "with" block 
-
-TEST COMPLETE
-

@@ -1,4 +1,0 @@
-Tests sorting in Comparison view of detailed heap snapshots.
-
-Heap profiler is disabled
-

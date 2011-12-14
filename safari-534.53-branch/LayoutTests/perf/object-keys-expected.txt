@@ -1,3 +1,0 @@
-Tests that Object.keys is linear.
-PASS
-

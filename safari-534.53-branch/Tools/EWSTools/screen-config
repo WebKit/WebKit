@@ -1,4 +1,0 @@
-screen -t style ./start-queue.sh style-queue
-screen -t qt ./start-queue.sh qt-ews
-screen -t kr ./start-queue.sh chromium-ews
-screen -t gtk ./start-queue.sh gtk-ews

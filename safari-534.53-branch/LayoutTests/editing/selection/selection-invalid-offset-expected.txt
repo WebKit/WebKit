@@ -1,8 +1,0 @@
-You should see six OKs below (and not hang): 
-OK
-OK
-OK
-OK
-OK
-OK
-

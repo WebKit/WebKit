@@ -1,2 +1,0 @@
-"unterminated string
-successfullyParsed = true

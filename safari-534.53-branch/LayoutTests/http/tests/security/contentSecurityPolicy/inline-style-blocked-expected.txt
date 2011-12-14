@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 1: Refused to apply inline style because of Content-Security-Policy.
-
-PASS

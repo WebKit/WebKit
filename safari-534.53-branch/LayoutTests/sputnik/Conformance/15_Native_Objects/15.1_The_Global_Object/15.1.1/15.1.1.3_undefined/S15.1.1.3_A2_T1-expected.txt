@@ -1,6 +1,0 @@
-S15.1.1.3_A2_T1
-
-FAIL SputnikError: #1: undefined = 1; Boolean(undefined) === true. Actual: false
-
-TEST COMPLETE
-

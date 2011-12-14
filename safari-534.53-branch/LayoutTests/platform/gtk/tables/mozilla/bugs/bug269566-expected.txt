@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x45
-  RenderBlock {HTML} at (0,0) size 800x45
-    RenderTable {BODY} at (8,8) size 182x29
-      RenderTableSection (anonymous) at (0,0) size 182x29
-        RenderTableRow (anonymous) at (0,0) size 182x29
-          RenderTableCell (anonymous) at (0,0) size 182x29 [r=0 c=0 rs=1 cs=1]
-            RenderImage {IMG} at (0,0) size 182x29

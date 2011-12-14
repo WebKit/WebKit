@@ -1,1 +1,0 @@
-This test includes content via a cross-origin document() command. It passes if the load fails and thus there is no text below this line.

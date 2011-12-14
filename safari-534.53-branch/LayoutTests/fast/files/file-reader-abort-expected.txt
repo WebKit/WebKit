@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 18: ReferenceError: Can't find variable: FileReader
-FAIL: Timed out waiting for notifyDone to be called
-
-Test that FileReader.abort works.
-

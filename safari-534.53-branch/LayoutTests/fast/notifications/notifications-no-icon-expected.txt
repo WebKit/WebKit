@@ -1,4 +1,0 @@
-DESKTOP NOTIFICATION: icon , title New E-mail, text Meet me tonight at 8!
-Sending notifications with permission...
-
-

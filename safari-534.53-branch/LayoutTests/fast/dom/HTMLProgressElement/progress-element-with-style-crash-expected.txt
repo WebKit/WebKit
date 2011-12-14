@@ -1,3 +1,0 @@
-Test for Bug 50341. It is not OK to crash.
-
-

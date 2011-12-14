@@ -1,3 +1,0 @@
-This tests that we don't crash when redoing an editing command after the search field has been detached and reattached.
-
-

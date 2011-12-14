@@ -1,6 +1,0 @@
-S12.13_A3_T6
-
-PASS 
-
-TEST COMPLETE
-

@@ -1,4 +1,0 @@
-Test application cache manifest parsing.
-
-SUCCESS
-

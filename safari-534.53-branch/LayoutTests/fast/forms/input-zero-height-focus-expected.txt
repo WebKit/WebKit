@@ -1,5 +1,0 @@
-Test for http://bugs.webkit.org/show_bug.cgi?id=13413 Failed assertion in RenderTextControl::setSelectionRange in Google Spreadsheets.
-
-This test should not ASSERT.
-
-

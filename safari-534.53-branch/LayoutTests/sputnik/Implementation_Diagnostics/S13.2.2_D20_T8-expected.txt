@@ -1,6 +1,0 @@
-S13.2.2_D20_T8
-
-PASS 
-
-TEST COMPLETE
-

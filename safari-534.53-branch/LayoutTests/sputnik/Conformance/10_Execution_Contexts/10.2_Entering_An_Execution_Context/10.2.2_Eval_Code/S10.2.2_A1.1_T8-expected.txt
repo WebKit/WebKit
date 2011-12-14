@@ -1,6 +1,0 @@
-S10.2.2_A1.1_T8
-
-PASS 
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-Test for bug 21886: window.HTMLOptionElement == "[object HTMLElementConstructor]" instead of HTMLOptionElementConstructor.
-
-SUCCESS

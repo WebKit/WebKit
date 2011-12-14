@@ -1,6 +1,0 @@
-S7.2_A2.1_T2
-
-PASS 
-
-TEST COMPLETE
-

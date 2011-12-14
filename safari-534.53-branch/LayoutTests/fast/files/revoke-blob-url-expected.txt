@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 13: ReferenceError: Can't find variable: webkitURL
-Test calling revokeObjectURL with no argument.
-
