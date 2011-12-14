@@ -444,10 +444,6 @@ accessibility/th-as-title-ui.html
 accessibility/transformed-element.html
 accessibility/visible-elements.html
 
-# Need support for dumping selection rectangles in pixel output
-# https://bugs.webkit.org/show_bug.cgi?id=53647
-editing/selection/transformed-selection-rects.html
-
 # Blurring and focusing from LayoutTestController do not work.
 # https://bugs.webkit.org/show_bug.cgi?id=53646
 # Test results show a caret and focus ring when there shouldn't be.
