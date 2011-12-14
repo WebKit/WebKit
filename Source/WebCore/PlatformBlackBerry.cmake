@@ -216,9 +216,11 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
         plugins/PluginDatabase.cpp
         plugins/PluginPackage.cpp
         plugins/PluginView.cpp
+        plugins/blackberry/NPCallbacksBlackBerry.cpp
         plugins/blackberry/PluginDataBlackBerry.cpp
         plugins/blackberry/PluginPackageBlackBerry.cpp
         plugins/blackberry/PluginViewBlackBerry.cpp
+        plugins/blackberry/PluginViewPrivateBlackBerry.cpp
     )
 ELSE ()
     LIST(APPEND WebCore_SOURCES

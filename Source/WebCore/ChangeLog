@@ -1,3 +1,14 @@
+2011-12-13  Wei Charles  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Add the new plugin files into the build system.
+        https://bugs.webkit.org/show_bug.cgi?id=74483
+
+        Reviewed by Daniel Bates.
+
+        No new tests, just add new files to the build system.
+
+        * PlatformBlackBerry.cmake:
+
 2011-12-13  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Default selection of select(menulist) should not be disabled
