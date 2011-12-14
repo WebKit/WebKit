@@ -136,13 +136,14 @@ FloatRect screenAvailableRect(Widget* widget)
 
 #if PLATFORM(X11)
     GtkWidget* container = GTK_WIDGET(widget->root()->hostWindow()->platformPageClient());
-    if (!container)
-        return FloatRect();
-
-    if (!gtk_widget_get_realized(container))
+    if (container && !gtk_widget_get_realized(container))
         return screenRect(widget);
 
-    GdkWindow* rootWindow = gtk_widget_get_root_window(container);
+    GdkScreen* screen = container ? getScreen(container) : gdk_screen_get_default();
+    if (!screen)
+        return FloatRect();
+
+    GdkWindow* rootWindow = gdk_screen_get_root_window(screen);
     GdkDisplay* display = gdk_window_get_display(rootWindow);
     Atom xproperty = gdk_x11_get_xatom_by_name_for_display(display, "_NET_WORKAREA");
 
