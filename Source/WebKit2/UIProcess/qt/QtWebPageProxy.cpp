@@ -24,8 +24,6 @@
 #include <QtQuick/qquickcanvas.h>
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
-#include "qwebpreferences_p.h"
-#include "qwebpreferences_p_p.h"
 
 #include "QtPageClient.h"
 #include "QtWebContext.h"
@@ -41,7 +39,6 @@ using namespace WebCore;
 QtWebPageProxy::QtWebPageProxy(QQuickWebView* qmlWebView, QtPageClient *pageClient, PassRefPtr<QtWebContext> context, WKPageGroupRef pageGroupRef)
     : m_qmlWebView(qmlWebView)
     , m_context(context)
-    , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(pageClient, toImpl(pageGroupRef));
 }
@@ -93,13 +90,6 @@ WKPageRef QtWebPageProxy::pageRef() const
     return toAPI(m_webPageProxy.get());;
 }
 
-QWebPreferences* QtWebPageProxy::preferences() const
-{
-    if (!m_preferences)
-        m_preferences = adoptPtr(QWebPreferencesPrivate::createPreferences(const_cast<QtWebPageProxy*>(this)));
-    return m_preferences.get();
-}
-
 void QtWebPageProxy::setCustomUserAgent(const QString& userAgent)
 {
     WKRetainPtr<WKStringRef> wkUserAgent(WKStringCreateWithQString(userAgent));
@@ -109,19 +99,6 @@ void QtWebPageProxy::setCustomUserAgent(const QString& userAgent)
 QString QtWebPageProxy::customUserAgent() const
 {
     return WKStringCopyQString(WKPageCopyCustomUserAgent(pageRef()));
-}
-
-void QtWebPageProxy::setNavigatorQtObjectEnabled(bool enabled)
-{
-    ASSERT(enabled != m_navigatorQtObjectEnabled);
-    // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
-    m_navigatorQtObjectEnabled = enabled;
-    m_context->setNavigatorQtObjectEnabled(m_webPageProxy.get(), enabled);
-}
-
-void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
-{
-    m_context->postMessageToNavigatorQtObject(m_webPageProxy.get(), message);
 }
 
 qreal QtWebPageProxy::textZoomFactor() const

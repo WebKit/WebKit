@@ -20,18 +20,18 @@
 #include "config.h"
 #include "qwebpreferences_p.h"
 
-#include "QtWebPageProxy.h"
 #include "WKPageGroup.h"
 #include "WKPreferences.h"
 #include "WKPreferencesPrivate.h"
 #include "WKRetainPtr.h"
 #include "WKStringQt.h"
+#include "qquickwebview_p_p.h"
 #include "qwebpreferences_p_p.h"
 
-QWebPreferences* QWebPreferencesPrivate::createPreferences(QtWebPageProxy* qtWebPageProxy)
+QWebPreferences* QWebPreferencesPrivate::createPreferences(QQuickWebViewPrivate* webViewPrivate)
 {
     QWebPreferences* prefs = new QWebPreferences;
-    prefs->d->qtWebPageProxy = qtWebPageProxy;
+    prefs->d->webViewPrivate = webViewPrivate;
     return prefs;
 }
 
@@ -54,8 +54,6 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetPrivateBrowsingEnabled(preferencesRef());
     case DnsPrefetchEnabled:
         return WKPreferencesGetDNSPrefetchingEnabled(preferencesRef());
-    case AcceleratedCompositingEnabled:
-        return WKPreferencesGetAcceleratedCompositingEnabled(preferencesRef());
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -88,9 +86,6 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         break;
     case DnsPrefetchEnabled:
         WKPreferencesSetDNSPrefetchingEnabled(preferencesRef(), enable);
-        break;
-    case AcceleratedCompositingEnabled:
-        WKPreferencesSetAcceleratedCompositingEnabled(preferencesRef(), enable);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -287,14 +282,14 @@ void QWebPreferences::setDnsPrefetchEnabled(bool enable)
 
 bool QWebPreferences::navigatorQtObjectEnabled() const
 {
-    return d->qtWebPageProxy->navigatorQtObjectEnabled();
+    return d->webViewPrivate->navigatorQtObjectEnabled();
 }
 
 void QWebPreferences::setNavigatorQtObjectEnabled(bool enable)
 {
     if (enable == navigatorQtObjectEnabled())
         return;
-    d->qtWebPageProxy->setNavigatorQtObjectEnabled(enable);
+    d->webViewPrivate->setNavigatorQtObjectEnabled(enable);
     emit navigatorQtObjectEnabledChanged();
 }
 
@@ -399,7 +394,7 @@ void QWebPreferences::setDefaultFixedFontSize(unsigned size)
 
 WKPreferencesRef QWebPreferencesPrivate::preferencesRef() const
 {
-    WKPageGroupRef pageGroupRef = WKPageGetPageGroup(qtWebPageProxy->pageRef());
+    WKPageGroupRef pageGroupRef = toAPI(webViewPrivate->webPageProxy()->pageGroup());
     return WKPageGroupGetPreferences(pageGroupRef);
 }
 

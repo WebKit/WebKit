@@ -97,6 +97,9 @@ public:
     void setUseTraditionalDesktopBehaviour(bool enable);
     void setViewInAttachedProperties(QObject*);
 
+    bool navigatorQtObjectEnabled() const;
+    void setNavigatorQtObjectEnabled(bool);
+
     WebKit::WebPageProxy* webPageProxy() const;
 
     // PageClient.
@@ -144,6 +147,7 @@ private:
     QtPageClient pageClient;
     QtWebUndoController undoController;
     OwnPtr<QWebNavigationHistory> navigationHistory;
+    OwnPtr<QWebPreferences> preferences;
 
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;
     QScopedPointer<QtWebPagePolicyClient> pagePolicyClient;
@@ -162,12 +166,14 @@ private:
 
     WebCore::ViewportArguments viewportArguments;
     OwnPtr<PostTransitionState> postTransitionState;
+    QFileDialog* fileDialog;
+    WKOpenPanelResultListenerRef openPanelResultListener;
+
     bool isTransitioningToNewPage;
     bool pageIsSuspended;
 
     bool useTraditionalDesktopBehaviour;
-    QFileDialog* fileDialog;
-    WKOpenPanelResultListenerRef openPanelResultListener;
+    bool m_navigatorQtObjectEnabled;
 };
 
 #endif // qquickwebview_p_p_h

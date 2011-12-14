@@ -22,7 +22,7 @@
 
 #include "WKPreferences.h"
 
-class QtWebPageProxy;
+class QQuickWebViewPrivate;
 
 class QWebPreferencesPrivate {
 public:
@@ -36,7 +36,6 @@ public:
         XSSAuditingEnabled,
         FrameFlatteningEnabled,
         PrivateBrowsingEnabled,
-        AcceleratedCompositingEnabled,
         DnsPrefetchEnabled
     };
 
@@ -55,7 +54,7 @@ public:
         DefaultFixedFontSize
     };
 
-    static QWebPreferences* createPreferences(QtWebPageProxy*);
+    static QWebPreferences* createPreferences(QQuickWebViewPrivate*);
 
     void setAttribute(WebAttribute attr, bool enable);
     bool testAttribute(WebAttribute attr) const;
@@ -68,7 +67,7 @@ public:
 
     WKPreferencesRef preferencesRef() const;
 
-    QtWebPageProxy* qtWebPageProxy;
+    QQuickWebViewPrivate* webViewPrivate;
 
     static QWebPreferencesPrivate* get(QWebPreferences*);
 };

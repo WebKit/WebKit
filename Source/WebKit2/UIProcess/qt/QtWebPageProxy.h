@@ -29,7 +29,6 @@
 
 class QtPageClient;
 class QQuickWebView;
-class QWebPreferences;
 
 namespace WebKit {
 class QtWebContext;
@@ -47,15 +46,8 @@ public:
 
     WKPageRef pageRef() const;
 
-    QWebPreferences* preferences() const;
-
     void setCustomUserAgent(const QString&);
     QString customUserAgent() const;
-
-    void setNavigatorQtObjectEnabled(bool);
-    bool navigatorQtObjectEnabled() const { return m_navigatorQtObjectEnabled; }
-
-    void postMessageToNavigatorQtObject(const QString&);
 
     qreal textZoomFactor() const;
     qreal pageZoomFactor() const;
@@ -82,10 +74,6 @@ protected:
 
 private:
     RefPtr<QtWebContext> m_context;
-
-    mutable OwnPtr<QWebPreferences> m_preferences;
-
-    bool m_navigatorQtObjectEnabled;
 
     QSharedPointer<QMenu> activeMenu;
 };

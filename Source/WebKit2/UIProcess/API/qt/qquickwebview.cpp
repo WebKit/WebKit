@@ -38,6 +38,7 @@
 #include "qwebdownloaditem_p_p.h"
 #include "qwebnavigationhistory_p.h"
 #include "qwebnavigationhistory_p_p.h"
+#include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
@@ -55,6 +56,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , postTransitionState(adoptPtr(new PostTransitionState(this)))
     , isTransitioningToNewPage(false)
     , pageIsSuspended(false)
+    , m_navigatorQtObjectEnabled(false)
 {
     viewport->setFlags(QQuickItem::ItemClipsChildrenToShape);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
@@ -82,7 +84,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     // Any page setting should preferrable be set before creating the page, so set them here:
     setUseTraditionalDesktopBehaviour(false);
-    QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
+    webPageProxy()->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
 
     pageClient.initialize(q_ptr, pageProxy.data(), pageViewPrivate->eventHandler.data(), &undoController);
 
@@ -470,6 +472,19 @@ void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
     attached->setView(q);
 }
 
+bool QQuickWebViewPrivate::navigatorQtObjectEnabled() const
+{
+    return m_navigatorQtObjectEnabled;
+}
+
+void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
+{
+    ASSERT(enabled != m_navigatorQtObjectEnabled);
+    // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
+    m_navigatorQtObjectEnabled = enabled;
+    context->setNavigatorQtObjectEnabled(webPageProxy(), enabled);
+}
+
 // FIXME: Remove this once QtWebPageProxy is removed.
 WebKit::WebPageProxy* QQuickWebViewPrivate::webPageProxy() const
 {
@@ -545,7 +560,7 @@ void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
 void QQuickWebViewExperimental::postMessage(const QString& message)
 {
     Q_D(QQuickWebView);
-    d->pageProxy->postMessageToNavigatorQtObject(message);
+    d->context->postMessageToNavigatorQtObject(d->webPageProxy(), message);
 }
 
 QDeclarativeComponent* QQuickWebViewExperimental::alertDialog() const
@@ -740,8 +755,10 @@ QString QQuickWebView::title() const
 
 QWebPreferences* QQuickWebView::preferences() const
 {
-    Q_D(const QQuickWebView);
-    return d->pageProxy->preferences();
+    QQuickWebViewPrivate* d = const_cast<QQuickWebViewPrivate*>(d_ptr.data());
+    if (!d->preferences)
+        d->preferences = adoptPtr(QWebPreferencesPrivate::createPreferences(d));
+    return d->preferences.get();
 }
 
 QQuickWebViewExperimental* QQuickWebView::experimental() const

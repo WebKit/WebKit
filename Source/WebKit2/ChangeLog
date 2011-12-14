@@ -1,3 +1,35 @@
+2011-12-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Move QWebPreferences out of QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=74525
+
+        Reviewed by Luiz Agostini.
+
+        This patch also uses internal WebKit API to set the Accelerate Compositing
+        directly instead of going thru QWebPreferencesPrivate. The previous approach was
+        always causing the QWebPreferences to be created making the "lazy initialization"
+        useless.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::navigatorQtObjectEnabled):
+        (QQuickWebViewPrivate::setNavigatorQtObjectEnabled):
+        (QQuickWebViewExperimental::postMessage):
+        (QQuickWebView::preferences):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::createPreferences):
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::navigatorQtObjectEnabled):
+        (QWebPreferences::setNavigatorQtObjectEnabled):
+        (QWebPreferencesPrivate::preferencesRef):
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-12-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Page size should be 0,0 when view widget is not realized
