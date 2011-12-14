@@ -1657,7 +1657,7 @@ void FrameSelection::updateAppearance()
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
     bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing);
     
-    EditCommand* lastEditCommand = m_frame ? m_frame->editor()->lastEditCommand() : 0;
+    CompositeEditCommand* lastEditCommand = m_frame ? m_frame->editor()->lastEditCommand() : 0;
     bool shouldStopBlinkingDueToTypingCommand = lastEditCommand && lastEditCommand->shouldStopCaretBlinking();
 
     // If the caret moved, stop the blink timer so we can restart with a

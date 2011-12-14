@@ -243,7 +243,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
 
     // get positions we want to use for applying style
     Position start = startPosition();
@@ -540,7 +540,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
 
     // adjust to the positions we want to use for applying style
     Position start = startPosition();
@@ -630,7 +630,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     // update document layout once before running the rest of the function
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
 
     RefPtr<EditingStyle> styleToApply = style;
     if (hasTextDirection) {

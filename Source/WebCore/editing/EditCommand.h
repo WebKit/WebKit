@@ -54,21 +54,10 @@ public:
     const VisibleSelection& startingSelection() const { return m_startingSelection; }
     const VisibleSelection& endingSelection() const { return m_endingSelection; }
 
-    Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
-    Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
-    
     virtual bool isSimpleEditCommand() const { return false; }
     virtual bool isCompositeEditCommand() const { return false; }
     virtual bool isEditCommandComposition() const { return false; }
-    virtual bool isTypingCommand() const;
-
-    virtual bool preservesTypingStyle() const;
-
     bool isTopLevelCommand() const { return !m_parent; }
-
-    virtual bool shouldRetainAutocorrectionIndicator() const;
-    virtual void setShouldRetainAutocorrectionIndicator(bool);
-    virtual bool shouldStopCaretBlinking() const { return false; }
 
 protected:
     EditCommand(Document*);
@@ -77,10 +66,8 @@ protected:
     Document* document() const { return m_document.get(); }
     CompositeEditCommand* parent() const { return m_parent; }
 
-    void setStartingSelection(const VisibleSelection&);
-    void setEndingSelection(const VisibleSelection&);
-
-    void updateLayout() const;
+    virtual void setStartingSelection(const VisibleSelection&);
+    virtual void setEndingSelection(const VisibleSelection&);
 
 private:
     virtual void doApply() = 0;
@@ -90,8 +77,6 @@ private:
     RefPtr<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
-    RefPtr<Element> m_startingRootEditableElement;
-    RefPtr<Element> m_endingRootEditableElement;
     CompositeEditCommand* m_parent;
 
     friend void applyCommand(PassRefPtr<CompositeEditCommand>);

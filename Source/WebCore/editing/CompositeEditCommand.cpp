@@ -78,6 +78,8 @@ PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document* docu
 
 EditCommandComposition::EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand)
     : EditCommand(document, startingSelection, endingSelection)
+    , m_startingRootEditableElement(startingSelection.rootEditableElement())
+    , m_endingRootEditableElement(endingSelection.rootEditableElement())
     , m_wasCreateLinkCommand(wasCreateLinkCommand)
 {
 }
@@ -104,6 +106,18 @@ void EditCommandComposition::doReapply()
 void EditCommandComposition::append(SimpleEditCommand* command)
 {
     m_commands.append(command);
+}
+
+void EditCommandComposition::setStartingSelection(const VisibleSelection& selection)
+{
+    EditCommand::setStartingSelection(selection);
+    m_startingRootEditableElement = selection.rootEditableElement();
+}
+
+void EditCommandComposition::setEndingSelection(const VisibleSelection& selection)
+{
+    EditCommand::setEndingSelection(selection);
+    m_endingRootEditableElement = selection.rootEditableElement();
 }
 
 #ifndef NDEBUG
@@ -148,6 +162,25 @@ EditCommandComposition* CompositeEditCommand::ensureComposition()
 bool CompositeEditCommand::isCreateLinkCommand() const
 {
     return false;
+}
+
+bool CompositeEditCommand::preservesTypingStyle() const
+{
+    return false;
+}
+
+bool CompositeEditCommand::isTypingCommand() const
+{
+    return false;
+}
+
+bool CompositeEditCommand::shouldRetainAutocorrectionIndicator() const
+{
+    return false;
+}
+
+void CompositeEditCommand::setShouldRetainAutocorrectionIndicator(bool)
+{
 }
 
 //
@@ -728,7 +761,7 @@ PassRefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* cont
     if (!container)
         return 0;
 
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
 
     RenderObject* renderer = container->renderer();
     if (!renderer || !renderer->isBlockFlow())
@@ -773,7 +806,7 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
     if (pos.isNull())
         return 0;
     
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
     
     // It's strange that this function is responsible for verifying that pos has not been invalidated
     // by an earlier call to this function.  The caller, applyBlockStyle, should do this.
@@ -1083,7 +1116,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         // FIXME: Trim text between beforeParagraph and afterParagraph if they aren't equal.
         insertNodeAt(createBreakElement(document()), beforeParagraph.deepEquivalent());
         // Need an updateLayout here in case inserting the br has split a text node.
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
     }
 
     RefPtr<Range> startToDestinationRange(Range::create(document(), firstPositionInNode(document()->documentElement()), destination.deepEquivalent().parentAnchoredEquivalent()));

@@ -361,7 +361,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         }
         
         // Make sure empty cell has some height, if a placeholder can be inserted.
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
         RenderObject *r = node->renderer();
         if (r && r->isTableCell() && toRenderTableCell(r)->contentHeight() <= 0) {
             Position firstEditablePosition = firstEditablePositionInNode(node.get());
@@ -528,7 +528,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
 void DeleteSelectionCommand::fixupWhitespace()
 {
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
     // FIXME: isRenderedCharacter should be removed, and we should use VisiblePosition::characterAfter and VisiblePosition::characterBefore
     if (m_leadingWhitespace.isNotNull() && !m_leadingWhitespace.isRenderedCharacter() && m_leadingWhitespace.deprecatedNode()->isTextNode()) {
         Text* textNode = static_cast<Text*>(m_leadingWhitespace.deprecatedNode());

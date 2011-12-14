@@ -427,7 +427,7 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
     }
 }
 
-void SpellingCorrectionController::respondToAppliedEditing(EditCommand* command)
+void SpellingCorrectionController::respondToAppliedEditing(CompositeEditCommand* command)
 {
     if (command->isTopLevelCommand() && !command->shouldRetainAutocorrectionIndicator())
         m_frame->document()->markers()->removeMarkers(DocumentMarker::CorrectionIndicator);

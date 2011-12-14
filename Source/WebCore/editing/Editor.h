@@ -91,7 +91,7 @@ public:
 
     Frame* frame() const { return m_frame; }
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
-    EditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
+    CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
     void handleKeyboardEvent(KeyboardEvent*);
     void handleInputMethodKeydown(KeyboardEvent*);
@@ -385,7 +385,7 @@ public:
 private:
     Frame* m_frame;
     OwnPtr<DeleteButtonController> m_deleteButtonController;
-    RefPtr<EditCommand> m_lastEditCommand;
+    RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Node> m_removedAnchor;
     RefPtr<Text> m_compositionNode;
     unsigned m_compositionStart;

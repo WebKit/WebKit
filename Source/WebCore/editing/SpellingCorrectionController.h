@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class CompositeEditCommand;
 class EditorClient;
 class EditCommand;
 class EditCommandComposition;
@@ -88,7 +89,7 @@ public:
     bool applyAutocorrectionBeforeTypingIfAppropriate() UNLESS_ENABLED({ return false; })
 
     void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
-    void respondToAppliedEditing(EditCommand*) UNLESS_ENABLED({})
+    void respondToAppliedEditing(CompositeEditCommand*) UNLESS_ENABLED({ })
     void respondToUnappliedEditing(EditCommandComposition*) UNLESS_ENABLED({ })
     void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
 

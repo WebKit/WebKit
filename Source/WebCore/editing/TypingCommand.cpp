@@ -240,7 +240,7 @@ TypingCommand* TypingCommand::lastTypingCommandIfStillOpenForTyping(Frame* frame
 {
     ASSERT(frame);
 
-    EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
+    CompositeEditCommand* lastEditCommand = frame->editor()->lastEditCommand();
     if (!lastEditCommand || !lastEditCommand->isTypingCommand() || !static_cast<TypingCommand*>(lastEditCommand)->isOpenForMoreTyping())
         return 0;
 

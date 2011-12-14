@@ -161,8 +161,8 @@ void IndentOutdentCommand::outdentParagraph()
                     splitElement(static_cast<Element*>(splitPointParent), splitPoint);
             }
         }
-        
-        updateLayout();
+
+        document()->updateLayoutIgnorePendingStylesheets();
         visibleStartOfParagraph = VisiblePosition(visibleStartOfParagraph.deepEquivalent());
         visibleEndOfParagraph = VisiblePosition(visibleEndOfParagraph.deepEquivalent());
         if (visibleStartOfParagraph.isNotNull() && !isStartOfParagraph(visibleStartOfParagraph))

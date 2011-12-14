@@ -47,6 +47,9 @@ public:
     void append(SimpleEditCommand*);
     bool wasCreateLinkCommand() const { return m_wasCreateLinkCommand; }
 
+    Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
+    Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
+
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&);
 #endif
@@ -54,8 +57,12 @@ public:
 private:
     EditCommandComposition(Document*, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand);
     virtual bool isEditCommandComposition() const OVERRIDE { return true; }
+    virtual void setStartingSelection(const VisibleSelection&) OVERRIDE;
+    virtual void setEndingSelection(const VisibleSelection&) OVERRIDE;
 
     Vector<RefPtr<SimpleEditCommand> > m_commands;
+    RefPtr<Element> m_startingRootEditableElement;
+    RefPtr<Element> m_endingRootEditableElement;
     bool m_wasCreateLinkCommand;
 };
 
@@ -68,6 +75,11 @@ public:
     EditCommandComposition* ensureComposition();
 
     virtual bool isCreateLinkCommand() const;
+    virtual bool isTypingCommand() const;
+    virtual bool preservesTypingStyle() const;
+    virtual bool shouldRetainAutocorrectionIndicator() const;
+    virtual void setShouldRetainAutocorrectionIndicator(bool);
+    virtual bool shouldStopCaretBlinking() const { return false; }
 
 protected:
     explicit CompositeEditCommand(Document*);

@@ -1,3 +1,67 @@
+2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Push more member functions from EditCommand to CompositeEditCommand
+        https://bugs.webkit.org/show_bug.cgi?id=74249
+
+        Reviewed by Enrica Casucci.
+
+        Moved startingRootEditableElement and endingRootEditableElement from EditCommand to EditCommandComposition,
+        and isTypingCommand, preservesTypingStyle, shouldRetainAutocorrectionIndicator,
+        setShouldRetainAutocorrectionIndicator, and shouldStopCaretBlinking from EditCommand to CompositeEditCommand.
+        Also removed EditCommand::updateLayout().
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::EditCommandComposition):
+        (WebCore::EditCommandComposition::setStartingSelection):
+        (WebCore::EditCommandComposition::setEndingSelection):
+        (WebCore::CompositeEditCommand::preservesTypingStyle):
+        (WebCore::CompositeEditCommand::isTypingCommand):
+        (WebCore::CompositeEditCommand::shouldRetainAutocorrectionIndicator):
+        (WebCore::CompositeEditCommand::setShouldRetainAutocorrectionIndicator):
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        (WebCore::EditCommandComposition::startingRootEditableElement):
+        (WebCore::EditCommandComposition::endingRootEditableElement):
+        (WebCore::CompositeEditCommand::shouldStopCaretBlinking):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::DeleteSelectionCommand::fixupWhitespace):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+        (WebCore::EditCommand::setStartingSelection):
+        (WebCore::EditCommand::setEndingSelection):
+        (WebCore::EditCommand::setParent):
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::isEditCommandComposition):
+        * editing/Editor.cpp:
+        (WebCore::dispatchEditableContentChangedEvents):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        * editing/Editor.h:
+        (WebCore::Editor::lastEditCommand):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::lastTypingCommandIfStillOpenForTyping):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::shouldRetainAutocorrectionIndicator):
+
 2011-12-14  Tony Chang  <tony@chromium.org>
 
         Fix compile on gcc on Mac.

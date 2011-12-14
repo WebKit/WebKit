@@ -87,8 +87,8 @@ void ApplyBlockElementCommand::doApply()
 
     formatSelection(startOfSelection, endOfSelection);
 
-    updateLayout();
-    
+    document()->updateLayoutIgnorePendingStylesheets();
+
     ASSERT(startScope == endScope);
     ASSERT(startIndex >= 0);
     ASSERT(startIndex <= endIndex);

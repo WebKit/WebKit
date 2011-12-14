@@ -348,7 +348,7 @@ void InsertParagraphSeparatorCommand::doApply()
     else
         insertNodeAfter(blockToInsert.get(), startBlock);
 
-    updateLayout();
+    document()->updateLayoutIgnorePendingStylesheets();
 
     // If the paragraph separator was inserted at the end of a paragraph, an empty line must be
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
@@ -384,7 +384,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Handle whitespace that occurs after the split
     if (splitText) {
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
         if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor)
             insertionPosition.moveToOffset(0);
         if (!insertionPosition.isRenderedCharacter()) {

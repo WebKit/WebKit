@@ -143,7 +143,7 @@ void InsertLineBreakCommand::doApply()
         Position endingPosition = firstPositionInNode(textNode);
         
         // Handle whitespace that occurs after the split
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
         if (!endingPosition.isRenderedCharacter()) {
             Position positionBeforeTextNode(positionInParentBeforeNode(textNode));
             // Clear out all whitespace and insert one non-breaking space

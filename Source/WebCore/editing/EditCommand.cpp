@@ -95,7 +95,7 @@ void EditCommand::apply()
     // RemoveNodeCommand, don't require a layout because the high level operations that 
     // use them perform one if one is necessary (like for the creation of VisiblePositions).
     if (isTopLevelCommand())
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
 
     {
         EventQueueScope scope;
@@ -107,13 +107,13 @@ void EditCommand::apply()
 
     if (isTopLevelCommand()) {
         ASSERT(isCompositeEditCommand());
+        CompositeEditCommand* command = toCompositeEditCommand(this);
         // Only need to call appliedEditing for top-level commands, and TypingCommands do it on their
         // own (see TypingCommand::typingAddedToOpenCommand).
-        if (!isTypingCommand())
-            frame->editor()->appliedEditing(toCompositeEditCommand(this));
+        if (!command->isTypingCommand())
+            frame->editor()->appliedEditing(command);
+        command->setShouldRetainAutocorrectionIndicator(false);
     }
-
-    setShouldRetainAutocorrectionIndicator(false);
 }
 
 void EditCommand::unapply()
@@ -128,7 +128,7 @@ void EditCommand::unapply()
     // RemoveNodeCommand, don't require a layout because the high level operations that 
     // use them perform one if one is necessary (like for the creation of VisiblePositions).
     if (isTopLevelCommand())
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
     
     DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
     deleteButtonController->disable();
@@ -151,7 +151,7 @@ void EditCommand::reapply()
     // RemoveNodeCommand, don't require a layout because the high level operations that 
     // use them perform one if one is necessary (like for the creation of VisiblePositions).
     if (isTopLevelCommand())
-        updateLayout();
+        document()->updateLayoutIgnorePendingStylesheets();
 
     DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
     deleteButtonController->disable();
@@ -181,15 +181,12 @@ static inline EditCommandComposition* compositionIfPossible(EditCommand* command
 
 void EditCommand::setStartingSelection(const VisibleSelection& s)
 {
-    Element* root = s.rootEditableElement();
     for (EditCommand* cmd = this; ; cmd = cmd->m_parent) {
         if (EditCommandComposition* composition = compositionIfPossible(cmd)) {
             ASSERT(cmd->isTopLevelCommand());
-            composition->m_startingSelection = s;
-            composition->m_startingRootEditableElement = root;
+            static_cast<EditCommand*>(composition)->setStartingSelection(s);
         }
         cmd->m_startingSelection = s;
-        cmd->m_startingRootEditableElement = root;
         if (!cmd->m_parent || cmd->m_parent->isFirstCommand(cmd))
             break;
     }
@@ -197,40 +194,13 @@ void EditCommand::setStartingSelection(const VisibleSelection& s)
 
 void EditCommand::setEndingSelection(const VisibleSelection &s)
 {
-    Element* root = s.rootEditableElement();
     for (EditCommand* cmd = this; cmd; cmd = cmd->m_parent) {
         if (EditCommandComposition* composition = compositionIfPossible(cmd)) {
             ASSERT(cmd->isTopLevelCommand());
-            composition->m_endingSelection = s;
-            composition->m_endingRootEditableElement = root;
+            static_cast<EditCommand*>(composition)->setEndingSelection(s);
         }
         cmd->m_endingSelection = s;
-        cmd->m_endingRootEditableElement = root;
     }
-}
-
-bool EditCommand::preservesTypingStyle() const
-{
-    return false;
-}
-
-bool EditCommand::isTypingCommand() const
-{
-    return false;
-}
-
-bool EditCommand::shouldRetainAutocorrectionIndicator() const
-{
-    return false;
-}
-
-void EditCommand::setShouldRetainAutocorrectionIndicator(bool)
-{
-}
-
-void EditCommand::updateLayout() const
-{
-    document()->updateLayoutIgnorePendingStylesheets();
 }
 
 void EditCommand::setParent(CompositeEditCommand* parent)
@@ -241,8 +211,6 @@ void EditCommand::setParent(CompositeEditCommand* parent)
     if (parent) {
         m_startingSelection = parent->m_endingSelection;
         m_endingSelection = parent->m_endingSelection;
-        m_startingRootEditableElement = parent->m_endingRootEditableElement;
-        m_endingRootEditableElement = parent->m_endingRootEditableElement;
     }
 }
 

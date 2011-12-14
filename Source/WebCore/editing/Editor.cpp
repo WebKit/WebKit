@@ -854,10 +854,8 @@ void Editor::outdent()
     applyCommand(IndentOutdentCommand::create(m_frame->document(), IndentOutdentCommand::Outdent));
 }
 
-static void dispatchEditableContentChangedEvents(const EditCommand& command)
+static void dispatchEditableContentChangedEvents(Element* startRoot, Element* endRoot)
 {
-    Element* startRoot = command.startingRootEditableElement();
-    Element* endRoot = command.endingRootEditableElement();
     ExceptionCode ec;
     if (startRoot)
         startRoot->dispatchEvent(Event::create(eventNames().webkitEditableContentChangedEvent, false, false), ec);
@@ -869,7 +867,9 @@ void Editor::appliedEditing(PassRefPtr<CompositeEditCommand> cmd)
 {
     m_frame->document()->updateLayout();
 
-    dispatchEditableContentChangedEvents(*cmd);
+    EditCommandComposition* composition = cmd->composition();
+    ASSERT(composition);
+    dispatchEditableContentChangedEvents(composition->startingRootEditableElement(), composition->endingRootEditableElement());
     VisibleSelection newSelection(cmd->endingSelection());
 
     m_spellingCorrector->respondToAppliedEditing(cmd.get());
@@ -898,7 +898,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     m_frame->document()->updateLayout();
     
-    dispatchEditableContentChangedEvents(*cmd);
+    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
     
     VisibleSelection newSelection(cmd->startingSelection());
     changeSelectionAfterCommand(newSelection, true, true);
@@ -914,7 +914,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 {
     m_frame->document()->updateLayout();
     
-    dispatchEditableContentChangedEvents(*cmd);
+    dispatchEditableContentChangedEvents(cmd->startingRootEditableElement(), cmd->endingRootEditableElement());
     
     VisibleSelection newSelection(cmd->endingSelection());
     changeSelectionAfterCommand(newSelection, true, true);
