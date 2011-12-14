@@ -1253,6 +1253,7 @@ static inline bool isAtShadowBoundary(Element* element)
 
 PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* element, RenderStyle* defaultParent, bool allowSharing, bool resolveForRootDefault, RenderRegion* regionForStyling)
 {
+    UNUSED_PARAM(regionForStyling);
     // Once an element has a renderer, we don't try to destroy it, since otherwise the renderer
     // will vanish if a style recalc happens during loading.
     if (allowSharing && !element->document()->haveStylesheetsLoaded() && !element->renderer()) {
@@ -1424,6 +1425,7 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
 
 PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle, RenderRegion* regionForStyling)
 {
+    UNUSED_PARAM(regionForStyling);
     if (!e)
         return 0;
 
