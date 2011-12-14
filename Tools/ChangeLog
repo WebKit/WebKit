@@ -1,3 +1,9 @@
+2011-12-14  Andreas Kling  <kling@webkit.org>
+
+        Make my e-mail address a little more awesome.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Rollout r102769, because it broke Qt-4.8 builds.
