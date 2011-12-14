@@ -1,3 +1,9 @@
+2011-12-13  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed Chromium-Mac build fix trial.
+
+        * platform/graphics/chromium/cc/CCLayerTilingData.h:
+
 2011-12-13  David Reveman  <reveman@chromium.org>
 
         [Chromium] Initialize Settings::m_perTileDrawingEnabled properly.
