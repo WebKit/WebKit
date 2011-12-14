@@ -1,3 +1,9 @@
+2011-12-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Rollout r102769, because it broke Qt-4.8 builds.
+
+        * qmake/mkspecs/features/webcore.prf:
+
 2011-12-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Test fonts are not used with Qt5

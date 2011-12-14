@@ -1,3 +1,9 @@
+2011-12-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Rollout r102769, because it broke Qt-4.8 builds.
+
+        * Source/api.pri:
+
 2011-12-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't add WebCoreSupport and WebKit APIs to include WebCore's include path
