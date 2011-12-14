@@ -28,6 +28,10 @@
 
 namespace TestWebKitAPI {
 
+// FIXME: Once we add FunctionWrapper specializations for __cdecl function types,
+// we can enable these tests on Windows.
+#if !COMPILER(MSVC)
+
 static int returnFortyTwo()
 {
     return 42;
@@ -80,6 +84,8 @@ TEST(FunctionalTest, BinaryBind)
     Function<int ()> subtractTwoFromFourFunction = bind(subtract, 4, 2);
     ASSERT_EQ(2, subtractTwoFromFourFunction());
 }
+
+#endif // !COMPILER(MSVC)
 
 class A {
 public:
