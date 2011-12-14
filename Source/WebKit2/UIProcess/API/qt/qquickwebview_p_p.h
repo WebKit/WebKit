@@ -21,8 +21,8 @@
 #ifndef qquickwebview_p_p_h
 #define qquickwebview_p_p_h
 
+#include "DrawingAreaProxy.h"
 #include "QtPageClient.h"
-#include "QtWebPageEventHandler.h"
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
 #include "QtWebPagePolicyClient.h"
@@ -50,6 +50,7 @@ QT_END_NAMESPACE
 class QQuickWebViewPrivate {
     Q_DECLARE_PUBLIC(QQuickWebView)
     friend class QQuickWebViewExperimental;
+    friend class QQuickWebPage;
 
 public:
     static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }
@@ -74,7 +75,7 @@ public:
     void updateViewportSize();
     QtViewportInteractionEngine::Constraints computeViewportConstraints();
 
-    void updateVisibleContentRect();
+    void updateVisibleContentRectAndScale();
 
     void _q_suspend();
     void _q_resume();
@@ -100,7 +101,7 @@ public:
     void didChangeContentsSize(const QSize& newSize);
     void processDidCrash();
     void didRelaunchProcess();
-
+    PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
 
 private:
     // This class is responsible for collecting and applying all properties
@@ -134,8 +135,6 @@ private:
 
     QtPageClient pageClient;
     QtWebUndoController undoController;
-
-    QScopedPointer<QtWebPageEventHandler> eventHandler;
 
     QScopedPointer<QtWebPageLoadClient> pageLoadClient;
     QScopedPointer<QtWebPagePolicyClient> pagePolicyClient;

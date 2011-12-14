@@ -31,7 +31,7 @@
 #include <QTouchEvent>
 #include <WKPage.h>
 
-class QQuickWebView;
+class QQuickWebPage;
 
 using namespace WebKit;
 
@@ -39,7 +39,7 @@ class QtWebPageEventHandler : public QObject {
     Q_OBJECT
 
 public:
-    QtWebPageEventHandler(WKPageRef, QQuickWebView*, WebKit::QtViewportInteractionEngine* = 0);
+    QtWebPageEventHandler(WKPageRef, QQuickWebPage*);
     ~QtWebPageEventHandler();
 
     bool handleEvent(QEvent*);
@@ -64,7 +64,7 @@ protected:
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
     QtTapGestureRecognizer m_tapGestureRecognizer;
-    QQuickWebView* m_webView;
+    QQuickWebPage* m_webPage;
 
 private:
     bool handleKeyPressEvent(QKeyEvent*);

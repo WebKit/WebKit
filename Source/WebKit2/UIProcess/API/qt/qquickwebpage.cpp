@@ -21,12 +21,11 @@
 #include "config.h"
 #include "qquickwebpage_p.h"
 
+#include "LayerTreeHostProxy.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageProxy.h"
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
-#include "qquickwebview_p.h"
-#include <QUrl>
 #include <QtQuick/QQuickCanvas>
 #include <QtQuick/QSGGeometryNode>
 #include <QtQuick/QSGMaterial>
@@ -142,12 +141,12 @@ void QQuickWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& old
 {
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
-        d->pageProxy->setDrawingAreaSize(newGeometry.size().toSize());
+        d->setDrawingAreaSize(newGeometry.size().toSize());
 }
 
 bool QQuickWebPage::event(QEvent* ev)
 {
-    if (d->pageProxy->eventHandler()->handleEvent(ev))
+    if (d->eventHandler.data()->handleEvent(ev))
         return true;
     if (ev->type() == QEvent::InputMethod)
         return false; // This is necessary to avoid an endless loop in connection with QQuickItem::event().
@@ -160,20 +159,19 @@ void QQuickWebPage::touchEvent(QTouchEvent* event)
     this->event(event);
 }
 
-QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* view)
-    : q(view)
-    , pageProxy(0)
-    , sgUpdateQueue(view)
+QQuickWebPagePrivate::QQuickWebPagePrivate(QQuickWebPage* q)
+    : q(q)
+    , webPageProxy(0)
+    , sgUpdateQueue(q)
     , paintingIsInitialized(false)
     , m_paintNode(0)
 {
 }
 
-void QQuickWebPagePrivate::setPageProxy(QtWebPageProxy* pageProxy)
+void QQuickWebPagePrivate::initialize(WebKit::WebPageProxy* webPageProxy)
 {
-    ASSERT(!this->pageProxy);
-    ASSERT(pageProxy);
-    this->pageProxy = pageProxy;
+    this->webPageProxy = webPageProxy;
+    eventHandler.reset(new QtWebPageEventHandler(toAPI(webPageProxy), q));
 }
 
 static float computeEffectiveOpacity(const QQuickItem* item)
@@ -186,6 +184,14 @@ static float computeEffectiveOpacity(const QQuickItem* item)
         return 0;
 
     return opacity * computeEffectiveOpacity(item->parentItem());
+}
+
+void QQuickWebPagePrivate::setDrawingAreaSize(const QSize& size)
+{
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
+    if (!drawingArea)
+        return;
+    drawingArea->setSize(WebCore::IntSize(size), WebCore::IntSize());
 }
 
 void QQuickWebPagePrivate::paintToCurrentGLContext()
@@ -201,6 +207,10 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     if (!clipRect.isValid())
         return;
 
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
+    if (!drawingArea)
+        return;
+
     // Make sure that no GL error code stays from previous QT operations.
     glGetError();
 
@@ -214,7 +224,8 @@ void QQuickWebPagePrivate::paintToCurrentGLContext()
     glScissor(left, bottom, width, height);
     ASSERT(!glGetError());
 
-    pageProxy->renderToCurrentGLContext(transform, opacity);
+    drawingArea->paintToCurrentGLContext(transform, opacity);
+
     glDisable(GL_SCISSOR_TEST);
     ASSERT(!glGetError());
 }
@@ -315,7 +326,9 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 void QQuickWebPagePrivate::resetPaintNode()
 {
     m_paintNode = 0;
-    pageProxy->purgeGLResources();
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
+    if (drawingArea && drawingArea->layerTreeHostProxy())
+        drawingArea->layerTreeHostProxy()->purgeGLResources();
 }
 
 QQuickWebPagePrivate::~QQuickWebPagePrivate()

@@ -33,13 +33,9 @@
 #include "qwebpreferences_p_p.h"
 
 #include "DownloadProxy.h"
-#include "DrawingAreaProxyImpl.h"
-#include "LayerTreeHostProxy.h"
 #include "QtDownloadManager.h"
 #include "QtPageClient.h"
-#include "QtWebPageEventHandler.h"
 #include "WebBackForwardList.h"
-#include "WebContextMenuProxyQt.h"
 #include "WKStringQt.h"
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKPageGroup.h>
@@ -57,9 +53,8 @@ QtWebPageProxy::QtWebPageProxy(QQuickWebView* qmlWebView, QtPageClient *pageClie
     m_navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(this, toAPI(m_webPageProxy->backForwardList())));
 }
 
-void QtWebPageProxy::init(QtWebPageEventHandler* eventHandler)
+void QtWebPageProxy::init()
 {
-    m_eventHandler = eventHandler;
     m_webPageProxy->initializeWebPage();
 }
 
@@ -146,14 +141,6 @@ void QtWebPageProxy::postMessageToNavigatorQtObject(const QString& message)
     m_context->postMessageToNavigatorQtObject(m_webPageProxy.get(), message);
 }
 
-void QtWebPageProxy::setDrawingAreaSize(const QSize& size)
-{
-    if (!m_webPageProxy->drawingArea())
-        return;
-
-    m_webPageProxy->drawingArea()->setSize(IntSize(size), IntSize());
-}
-
 qreal QtWebPageProxy::textZoomFactor() const
 {
     return WKPageGetTextZoomFactor(pageRef());
@@ -205,45 +192,6 @@ void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* downloadItem)
 
     QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
     emit m_qmlWebView->experimental()->downloadRequested(downloadItem);
-}
-
-PassOwnPtr<DrawingAreaProxy> QtWebPageProxy::createDrawingAreaProxy()
-{
-    return DrawingAreaProxyImpl::create(m_webPageProxy.get());
-}
-
-void QtWebPageProxy::renderToCurrentGLContext(const TransformationMatrix& transform, float opacity)
-{
-    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
-    if (drawingArea)
-        drawingArea->paintToCurrentGLContext(transform, opacity);
-}
-
-void QtWebPageProxy::purgeGLResources()
-{
-    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
-    if (drawingArea && drawingArea->layerTreeHostProxy())
-        drawingArea->layerTreeHostProxy()->purgeGLResources();
-}
-
-void QtWebPageProxy::setVisibleContentRectAndScale(const QRectF& visibleContentRect, float scale)
-{
-    if (!m_webPageProxy->drawingArea())
-        return;
-
-    QRect alignedVisibleContentRect = visibleContentRect.toAlignedRect();
-    m_webPageProxy->drawingArea()->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
-
-    // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
-    m_webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
-}
-
-void QtWebPageProxy::setVisibleContentRectTrajectoryVector(const QPointF& trajectoryVector)
-{
-    if (!m_webPageProxy->drawingArea())
-        return;
-
-    m_webPageProxy->drawingArea()->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
 #include "moc_QtWebPageProxy.cpp"

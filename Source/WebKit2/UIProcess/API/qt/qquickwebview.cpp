@@ -21,7 +21,9 @@
 #include "config.h"
 #include "qquickwebview_p.h"
 
+#include "DrawingAreaProxyImpl.h"
 #include "QtDialogRunner.h"
+#include "QtWebPageEventHandler.h"
 #include "QtWebPageProxy.h"
 #include "UtilsQt.h"
 #include "WebBackForwardList.h"
@@ -65,21 +67,20 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 {
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     setPageProxy(new QtWebPageProxy(q_ptr, &pageClient, contextRef, pageGroupRef));
-    pageViewPrivate->setPageProxy(pageProxy.data());
+    pageViewPrivate->initialize(webPageProxy());
 
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
     pagePolicyClient.reset(new QtWebPagePolicyClient(pageProxy->pageRef(), q_ptr));
     pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
-    eventHandler.reset(new QtWebPageEventHandler(pageProxy->pageRef(), q_ptr));
 
     // Any page setting should preferrable be set before creating the page, so set them here:
     setUseTraditionalDesktopBehaviour(false);
     QWebPreferencesPrivate::get(pageProxy->preferences())->setAttribute(QWebPreferencesPrivate::AcceleratedCompositingEnabled, true);
 
-    pageClient.initialize(q_ptr, pageProxy.data(), eventHandler.data(), &undoController);
+    pageClient.initialize(q_ptr, pageProxy.data(), pageViewPrivate->eventHandler.data(), &undoController);
 
     // Creates a page with the page creation parameters.
-    pageProxy->init(eventHandler.data());
+    pageProxy->init();
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
@@ -111,14 +112,14 @@ void QQuickWebViewPrivate::initializeDesktop(QQuickWebView* viewport)
         QObject::disconnect(interactionEngine.data(), SIGNAL(viewportTrajectoryVectorChanged(const QPointF&)), viewport, SLOT(_q_viewportTrajectoryVectorChanged(const QPointF&)));
     }
     interactionEngine.reset(0);
-    eventHandler->setViewportInteractionEngine(0);
+    pageView->d->eventHandler->setViewportInteractionEngine(0);
     enableMouseEvents();
 }
 
 void QQuickWebViewPrivate::initializeTouch(QQuickWebView* viewport)
 {
     interactionEngine.reset(new QtViewportInteractionEngine(viewport, pageView.data()));
-    eventHandler->setViewportInteractionEngine(interactionEngine.data());
+    pageView->d->eventHandler->setViewportInteractionEngine(interactionEngine.data());
     disableMouseEvents();
     QObject::connect(interactionEngine.data(), SIGNAL(contentSuspendRequested()), viewport, SLOT(_q_suspend()));
     QObject::connect(interactionEngine.data(), SIGNAL(contentResumeRequested()), viewport, SLOT(_q_resume()));
@@ -162,7 +163,7 @@ void QQuickWebViewPrivate::_q_resume()
         postTransitionState->apply();
     }
 
-    updateVisibleContentRect();
+    updateVisibleContentRectAndScale();
 }
 
 void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
@@ -214,7 +215,7 @@ void QQuickWebViewPrivate::pageDidRequestScroll(const QPoint& pos)
 void QQuickWebViewPrivate::processDidCrash()
 {
     emit q_ptr->navigationStateChanged();
-    eventHandler->resetGestureRecognizers();
+    pageView->d->eventHandler->resetGestureRecognizers();
     WebCore::KURL url(WebCore::ParsedURLString, webPageProxy()->urlAtProcessExit());
     qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(QUrl(url).toString(QUrl::RemoveUserInfo)));
 }
@@ -223,20 +224,37 @@ void QQuickWebViewPrivate::didRelaunchProcess()
 {
     emit q_ptr->navigationStateChanged();
     qWarning("WARNING: The web process has been successfully restarted.");
-    pageProxy->setDrawingAreaSize(viewSize());
+    pageView->d->setDrawingAreaSize(viewSize());
 }
 
-void QQuickWebViewPrivate::updateVisibleContentRect()
+PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
 {
+    return DrawingAreaProxyImpl::create(webPageProxy());
+}
+
+void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
+{
+    DrawingAreaProxy* drawingArea = webPageProxy()->drawingArea();
+    if (!drawingArea)
+        return;
+
     Q_Q(QQuickWebView);
     const QRectF visibleRectInPageViewCoordinates = q->mapRectToItem(pageView.data(), q->boundingRect()).intersected(pageView->boundingRect());
     float scale = pageView->scale();
-    pageProxy->setVisibleContentRectAndScale(visibleRectInPageViewCoordinates, scale);
+
+    QRect alignedVisibleContentRect = visibleRectInPageViewCoordinates.toAlignedRect();
+    drawingArea->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
+
+    // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
+    webPageProxy()->setFixedVisibleContentRect(alignedVisibleContentRect);
 }
 
 void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
 {
-    pageProxy->setVisibleContentRectTrajectoryVector(trajectoryVector);
+    DrawingAreaProxy* drawingArea = webPageProxy()->drawingArea();
+    if (!drawingArea)
+        return;
+    drawingArea->setVisibleContentRectTrajectoryVector(trajectoryVector);
 }
 
 void QQuickWebViewPrivate::_q_onVisibleChanged()
@@ -257,7 +275,7 @@ void QQuickWebViewPrivate::updateViewportSize()
     webPageProxy()->setViewportSize(viewportSize);
 
     interactionEngine->applyConstraints(computeViewportConstraints());
-    updateVisibleContentRect();
+    updateVisibleContentRectAndScale();
 }
 
 QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportConstraints()

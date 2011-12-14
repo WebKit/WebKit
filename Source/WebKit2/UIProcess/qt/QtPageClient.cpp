@@ -52,7 +52,7 @@ QtPageClient::~QtPageClient()
 
 PassOwnPtr<DrawingAreaProxy> QtPageClient::createDrawingAreaProxy()
 {
-    return m_qtWebPageProxy->createDrawingAreaProxy();
+    return QQuickWebViewPrivate::get(m_webView)->createDrawingAreaProxy();
 }
 
 void QtPageClient::setViewNeedsDisplay(const WebCore::IntRect& rect)

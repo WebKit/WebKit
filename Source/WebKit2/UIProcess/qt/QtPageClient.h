@@ -49,8 +49,8 @@ public:
     virtual void didChangeViewportProperties(const WebCore::ViewportArguments&);
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
-
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+
     virtual void displayView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual bool isViewWindowActive();
@@ -85,8 +85,8 @@ public:
     virtual void setCustomRepresentationZoomFactor(double) { }
     virtual void didChangeScrollbarsForMainFrame() const { }
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
+    virtual void findStringInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
+    virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&);
     virtual void handleDownloadRequest(DownloadProxy*);

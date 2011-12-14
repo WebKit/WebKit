@@ -26,7 +26,6 @@
 #include <QtCore/QSharedPointer>
 #include <QtQuick/QQuickItem>
 
-class QQuickWebView;
 class QQuickWebPagePrivate;
 class QWebPreferences;
 

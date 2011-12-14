@@ -1,3 +1,49 @@
+2011-12-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt][WK2] Remove DrawingArea and QtWebPageEventHandler code from QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=74414
+
+        Reviewed by Simon Hausmann.
+
+        This also moves QtWebPageEventHandler to inside QQuickWebPagePrivate, to avoid
+        the WebPage having a backpointer to the QQuickWebView.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::geometryChanged):
+        (QQuickWebPage::event):
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (QQuickWebPagePrivate::initialize):
+        (QQuickWebPagePrivate::setDrawingAreaSize):
+        (QQuickWebPagePrivate::paintToCurrentGLContext):
+        (QQuickWebPagePrivate::resetPaintNode):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::initializeDesktop):
+        (QQuickWebViewPrivate::initializeTouch):
+        (QQuickWebViewPrivate::_q_resume):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewPrivate::createDrawingAreaProxy):
+        (QQuickWebViewPrivate::updateVisibleContentRectAndScale):
+        (QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged):
+        (QQuickWebViewPrivate::updateViewportSize):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::createDrawingAreaProxy):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient::findStringInCustomRepresentation):
+        (QtPageClient::countStringMatchesInCustomRepresentation):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::QtWebPageEventHandler):
+        (QtWebPageEventHandler::startDrag):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-12-13  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix.

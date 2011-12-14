@@ -21,7 +21,6 @@
 #ifndef QtWebPageProxy_h
 #define QtWebPageProxy_h
 
-#include "DrawingAreaProxy.h"
 #include "QtWebContext.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
@@ -31,7 +30,6 @@
 class QtPageClient;
 class QQuickWebPage;
 class QQuickWebView;
-class QtWebPageEventHandler;
 class QWebDownloadItem;
 class QWebNavigationHistory;
 class QWebPreferences;
@@ -50,14 +48,10 @@ public:
     QtWebPageProxy(QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
-    PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
-
     void goBackTo(int index);
     void goForwardTo(int index);
 
     WKPageRef pageRef() const;
-
-    void setDrawingAreaSize(const QSize&);
 
     QWebPreferences* preferences() const;
 
@@ -75,11 +69,6 @@ public:
     void setPageZoomFactor(qreal zoomFactor);
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
 
-    void setVisibleContentRectAndScale(const QRectF&, float);
-    void setVisibleContentRectTrajectoryVector(const QPointF&);
-    void renderToCurrentGLContext(const WebCore::TransformationMatrix&, float);
-    void purgeGLResources();
-
     QWebNavigationHistory* navigationHistory() const;
 
     void contextMenuItemSelected(const WebContextMenuItemData& data)
@@ -88,12 +77,10 @@ public:
     }
 
     void handleDownloadRequest(DownloadProxy*);
-    void init(QtWebPageEventHandler*);
+    void init();
 
     void showContextMenu(QSharedPointer<QMenu>);
     void hideContextMenu();
-
-    QtWebPageEventHandler* eventHandler() { return m_eventHandler; }
 
 public Q_SLOTS:
     void didReceiveDownloadResponse(QWebDownloadItem* downloadItem);
@@ -114,7 +101,6 @@ private:
     bool m_navigatorQtObjectEnabled;
 
     QSharedPointer<QMenu> activeMenu;
-    QtWebPageEventHandler* m_eventHandler;
 };
 
 #endif /* QtWebPageProxy_h */

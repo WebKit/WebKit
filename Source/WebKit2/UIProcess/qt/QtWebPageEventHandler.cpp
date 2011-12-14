@@ -21,11 +21,11 @@
 #include "config.h"
 #include "QtWebPageEventHandler.h"
 
-#include "qquickwebview_p.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
 #include "QtViewportInteractionEngine.h"
+#include "qquickwebpage_p.h"
 #include <QDrag>
 #include <QGraphicsSceneMouseEvent>
 #include <QGuiApplication>
@@ -80,13 +80,12 @@ static inline WebCore::DragOperation dropActionToDragOperation(Qt::DropActions a
     return (DragOperation)result;
 }
 
-QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebView* qmlWebView, WebKit::QtViewportInteractionEngine* viewportInteractionEngine)
+QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* qmlWebPage)
     : m_webPageProxy(toImpl(pageRef))
-    , m_interactionEngine(viewportInteractionEngine)
     , m_panGestureRecognizer(this)
     , m_pinchGestureRecognizer(this)
     , m_tapGestureRecognizer(this)
-    , m_webView(qmlWebView)
+    , m_webPage(qmlWebPage)
     , m_previousClickButton(Qt::NoButton)
     , m_clickCount(0)
 {
@@ -414,7 +413,7 @@ void QtWebPageEventHandler::startDrag(const WebCore::DragData& dragData, PassRef
     QPoint globalPosition;
     Qt::DropAction actualDropAction = Qt::IgnoreAction;
 
-    if (QWindow* window = m_webView->canvas()) {
+    if (QWindow* window = m_webPage->canvas()) {
         QDrag* drag = new QDrag(window);
         drag->setPixmap(QPixmap::fromImage(dragQImage));
         drag->setMimeData(mimeData);
