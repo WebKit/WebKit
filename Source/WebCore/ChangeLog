@@ -1,3 +1,20 @@
+2011-12-14  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] padTemplate leak in webkitwebaudiosrc
+        https://bugs.webkit.org/show_bug.cgi?id=74495
+
+        Reviewed by Martin Robinson.
+
+        Use a GstPadTemplate smart pointer in webkit_web_audio_src_init to
+        avoid a memory leak after the ghost pad creation.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_init):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF::GstPadTemplate):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+
 2011-12-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in RenderBox::paintBoxDecorations when documentElement has no renderer

@@ -25,6 +25,7 @@
 
 typedef struct _GstElement GstElement;
 typedef struct _GstPad GstPad;
+typedef struct _GstPadTemplate GstPadTemplate;
 typedef struct _GstCaps GstCaps;
 typedef struct _GstTask GstTask;
 
@@ -37,6 +38,10 @@ template<> void derefGPtr<GstElement>(GstElement* ptr);
 template<> GRefPtr<GstPad> adoptGRef(GstPad* ptr);
 template<> GstPad* refGPtr<GstPad>(GstPad* ptr);
 template<> void derefGPtr<GstPad>(GstPad* ptr);
+
+template<> GRefPtr<GstPadTemplate> adoptGRef(GstPadTemplate* ptr);
+template<> GstPadTemplate* refGPtr<GstPadTemplate>(GstPadTemplate* ptr);
+template<> void derefGPtr<GstPadTemplate>(GstPadTemplate* ptr);
 
 template<> GstCaps* refGPtr<GstCaps>(GstCaps* ptr);
 template<> void derefGPtr<GstCaps>(GstCaps* ptr);

@@ -68,6 +68,27 @@ template <> void derefGPtr<GstPad>(GstPad* ptr)
         gst_object_unref(GST_OBJECT(ptr));
 }
 
+template <> GRefPtr<GstPadTemplate> adoptGRef(GstPadTemplate* ptr)
+{
+    ASSERT(!ptr || !GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    return GRefPtr<GstPadTemplate>(ptr, GRefPtrAdopt);
+}
+
+template <> GstPadTemplate* refGPtr<GstPadTemplate>(GstPadTemplate* ptr)
+{
+    if (ptr) {
+        gst_object_ref(GST_OBJECT(ptr));
+        gst_object_sink(GST_OBJECT(ptr));
+    }
+    return ptr;
+}
+
+template <> void derefGPtr<GstPadTemplate>(GstPadTemplate* ptr)
+{
+    if (ptr)
+        gst_object_unref(GST_OBJECT(ptr));
+}
+
 template <> GstCaps* refGPtr<GstCaps>(GstCaps* ptr)
 {
     if (ptr)
