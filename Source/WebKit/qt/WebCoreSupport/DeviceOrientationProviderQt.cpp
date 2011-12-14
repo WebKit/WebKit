@@ -27,6 +27,7 @@ QTM_USE_NAMESPACE
 namespace WebCore {
 
 DeviceOrientationProviderQt::DeviceOrientationProviderQt()
+    : m_controller(0)
 {
     m_sensor.addFilter(this);
     m_lastOrientation = DeviceOrientation::create();
