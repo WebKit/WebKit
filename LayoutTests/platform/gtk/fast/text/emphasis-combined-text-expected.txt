@@ -3,17 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 744x584
-      RenderBlock {P} at (0,0) size 83x584
-        RenderInline {SPAN} at (0,0) size 53x159
-          RenderText {#text} at (29,0) size 53x58
-            text run at (29,0) width 58: "\x{6587}\x{5B57}"
-          RenderInline {SPAN} at (0,0) size 53x73
-            RenderCombineText {#text} at (29,57) size 53x73
-              text run at (29,57) width 72: "900"
-          RenderText {#text} at (29,129) size 53x30
-            text run at (29,129) width 29: "\x{5E74}"
-        RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (131,0) size 82x584
+      RenderBlock {P} at (0,0) size 82x584
         RenderInline {SPAN} at (0,0) size 53x159
           RenderText {#text} at (28,0) size 53x58
             text run at (28,0) width 58: "\x{6587}\x{5B57}"
@@ -23,13 +13,23 @@ layer at (0,0) size 800x600
           RenderText {#text} at (28,129) size 53x30
             text run at (28,129) width 29: "\x{5E74}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (261,0) size 83x584
+      RenderBlock {P} at (130,0) size 80x584
         RenderInline {SPAN} at (0,0) size 53x159
-          RenderText {#text} at (29,0) size 53x58
-            text run at (29,0) width 58: "\x{6587}\x{5B57}"
+          RenderText {#text} at (26,0) size 53x58
+            text run at (26,0) width 58: "\x{6587}\x{5B57}"
           RenderInline {SPAN} at (0,0) size 53x73
-            RenderCombineText {#text} at (29,57) size 53x73
-              text run at (29,57) width 72: "900"
-          RenderText {#text} at (29,129) size 53x30
-            text run at (29,129) width 29: "\x{5E74}"
+            RenderCombineText {#text} at (26,57) size 53x73
+              text run at (26,57) width 72: "900"
+          RenderText {#text} at (26,129) size 53x30
+            text run at (26,129) width 29: "\x{5E74}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (258,0) size 82x584
+        RenderInline {SPAN} at (0,0) size 53x159
+          RenderText {#text} at (28,0) size 53x58
+            text run at (28,0) width 58: "\x{6587}\x{5B57}"
+          RenderInline {SPAN} at (0,0) size 53x73
+            RenderCombineText {#text} at (28,57) size 53x73
+              text run at (28,57) width 72: "900"
+          RenderText {#text} at (28,129) size 53x30
+            text run at (28,129) width 29: "\x{5E74}"
         RenderText {#text} at (0,0) size 0x0

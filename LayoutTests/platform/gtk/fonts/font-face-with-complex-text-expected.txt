@@ -12,6 +12,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,68) size 784x18
         RenderText {#text} at (0,0) size 280x17
           text run at (0,0) width 280: "This text should appear as a series of blocks:"
-      RenderBlock {P} at (0,102) size 784x16
-        RenderText {#text} at (0,0) size 784x17
-          text run at (0,0) width 784: "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
+      RenderBlock {P} at (0,102) size 784x32
+        RenderText {#text} at (0,0) size 753x32
+          text run at (0,0) width 753: "A B C D E F G H I J K L M N O P Q R S T U V X Y"
+          text run at (0,16) width 17: "Z"

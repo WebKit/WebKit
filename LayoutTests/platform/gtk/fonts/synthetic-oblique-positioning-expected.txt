@@ -7,8 +7,8 @@ layer at (8,200) size 200x40
   RenderBlock (positioned) {DIV} at (8,200) size 200x40
     RenderText {#text} at (0,0) size 80x40
       text run at (0,0) width 80: "A "
-    RenderInline {CITE} at (0,0) size 40x40
-      RenderText {#text} at (80,0) size 40x40
-        text run at (80,0) width 40: "B"
-    RenderText {#text} at (120,0) size 80x40
-      text run at (120,0) width 80: " C"
+    RenderInline {CITE} at (0,0) size 41x40
+      RenderText {#text} at (79,0) size 41x40
+        text run at (79,0) width 41: "B"
+    RenderText {#text} at (119,0) size 81x40
+      text run at (119,0) width 81: " C"

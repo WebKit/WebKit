@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x0
-layer at (100,563) size 300x27
-  RenderBlock (positioned) {FONT} at (100,563) size 300x27
-    RenderText {#text} at (0,0) size 300x26
-      text run at (0,0) width 300: "Hello World, And Stuff!"
+layer at (98,563) size 303x27
+  RenderBlock (positioned) {FONT} at (98,563) size 303x27
+    RenderText {#text} at (0,0) size 303x26
+      text run at (0,0) width 303: "Hello World, And Stuff!"

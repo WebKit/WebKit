@@ -157,37 +157,37 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (4,234) size 776x20 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 44x17
           text run at (1,1) width 44: "Times "
-        RenderInline {I} at (0,0) size 65x17
-          RenderText {#text} at (44,2) size 65x17
+        RenderInline {I} at (0,0) size 65x16
+          RenderText {#text} at (44,2) size 65x16
             text run at (44,2) width 65: "AHEM"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,270) size 784x18
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "Ahem (normal):"
       RenderBlock {DIV} at (4,304) size 776x18 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 80x17
-          text run at (1,1) width 80: "AHEM "
-        RenderInline {I} at (0,0) size 64x17
-          RenderText {#text} at (81,1) size 64x17
-            text run at (81,1) width 64: "AHEM"
+        RenderText {#text} at (1,1) size 81x16
+          text run at (1,1) width 81: "AHEM "
+        RenderInline {I} at (0,0) size 65x16
+          RenderText {#text} at (81,1) size 65x16
+            text run at (81,1) width 65: "AHEM"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,338) size 784x18
         RenderText {#text} at (0,0) size 333x17
           text run at (0,0) width 333: "Ahem (normal) followed by Ahem (synthetic bold):"
       RenderBlock {DIV} at (4,372) size 776x18 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 80x17
-          text run at (1,1) width 80: "AHEM "
-        RenderInline {B} at (0,0) size 64x17
-          RenderText {#text} at (81,1) size 64x17
-            text run at (81,1) width 64: "AHEM"
+        RenderText {#text} at (1,1) size 81x16
+          text run at (1,1) width 81: "AHEM "
+        RenderInline {B} at (0,0) size 65x16
+          RenderText {#text} at (81,1) size 65x16
+            text run at (81,1) width 65: "AHEM"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,406) size 784x18
         RenderText {#text} at (0,0) size 343x17
           text run at (0,0) width 343: "Ahem (normal) followed by Ahem (synthetic italics):"
       RenderBlock {DIV} at (4,440) size 776x18 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 80x17
-          text run at (1,1) width 80: "AHEM "
-        RenderInline {I} at (0,0) size 64x17
-          RenderText {#text} at (81,1) size 64x17
-            text run at (81,1) width 64: "AHEM"
+        RenderText {#text} at (1,1) size 81x16
+          text run at (1,1) width 81: "AHEM "
+        RenderInline {I} at (0,0) size 65x16
+          RenderText {#text} at (81,1) size 65x16
+            text run at (81,1) width 65: "AHEM"
         RenderText {#text} at (0,0) size 0x0

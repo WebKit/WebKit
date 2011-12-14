@@ -76,17 +76,17 @@ layer at (8,8) size 784x584
         text run at (40,176) width 33: "2 "
         text run at (72,176) width 33: "2 "
         text run at (104,176) width 17: "2"
-layer at (8,8) size 129x196
-  RenderBlock (positioned) {DIV} at (0,0) size 129x196 [color=#008000]
-    RenderBlock {DIV} at (0,0) size 129x49
-      RenderText {#text} at (0,17) size 129x32
-        text run at (0,17) width 129: "1111"
-    RenderBlock {DIV} at (0,49) size 129x49
+layer at (8,8) size 129x192
+  RenderBlock (positioned) {DIV} at (0,0) size 129x192 [color=#008000]
+    RenderBlock {DIV} at (0,0) size 129x48
+      RenderText {#text} at (0,16) size 129x32
+        text run at (0,16) width 129: "1111"
+    RenderBlock {DIV} at (0,48) size 129x48
       RenderText {#text} at (0,0) size 129x32
         text run at (0,0) width 129: "1111"
-    RenderBlock {DIV} at (0,98) size 129x49
+    RenderBlock {DIV} at (0,96) size 129x48
       RenderText {#text} at (0,0) size 129x32
         text run at (0,0) width 129: "1111"
-    RenderBlock {DIV} at (0,147) size 129x49
-      RenderText {#text} at (0,17) size 129x32
-        text run at (0,17) width 129: "1111"
+    RenderBlock {DIV} at (0,144) size 129x48
+      RenderText {#text} at (0,16) size 129x32
+        text run at (0,16) width 129: "1111"

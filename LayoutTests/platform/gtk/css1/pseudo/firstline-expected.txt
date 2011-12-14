@@ -30,9 +30,9 @@ layer at (0,0) size 784x655
           text run at (220,37) width 521: "If this precise combination does not occur, then the user agent has failed this test."
           text run at (0,55) width 678: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,284) size 768x72
-        RenderText {#text} at (0,0) size 762x53
-          text run at (0,0) width 609: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
-          text run at (608,0) width 154: "Thus, if the first line is"
+        RenderText {#text} at (0,0) size 766x53
+          text run at (0,0) width 613: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
+          text run at (612,0) width 154: "Thus, if the first line is"
           text run at (0,18) width 717: "not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this test"
           text run at (0,36) width 235: "(although the problem might be that "
         RenderInline {CODE} at (0,0) size 79x15
@@ -70,8 +70,8 @@ layer at (0,0) size 784x655
                   text run at (30,55) width 678: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,163) size 746x72
                 RenderText {#text} at (0,0) size 733x53
-                  text run at (0,0) width 609: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
-                  text run at (608,0) width 110: "Thus, if the first"
+                  text run at (0,0) width 613: "The first line of this paragraph, and only that one, should be displayed in small-caps style. "
+                  text run at (612,0) width 111: "Thus, if the first"
                   text run at (0,18) width 733: "line is not in small-caps style, OR if the entire paragraph turns out in small-caps, then the user agent has failed this"
                   text run at (0,36) width 261: "test (although the problem might be that "
                 RenderInline {CODE} at (0,0) size 79x15

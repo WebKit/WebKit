@@ -1,0 +1,10 @@
+Test for WebKit bug 73520
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.getComputedStyle(testDiv, 0).width should be 48px. Was 49px.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+aaa

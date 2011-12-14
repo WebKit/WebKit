@@ -50,14 +50,13 @@ layer at (0,0) size 784x1030
         RenderInline (generated) at (0,0) size 76x62 [color=#800000]
           RenderText {#text} at (0,1) size 76x62
             text run at (0,1) width 76: "\"W"
-        RenderText {#text} at (75,37) size 768x80
-          text run at (75,37) width 337: "e should check for quotation support,\" it was said. "
-          text run at (411,37) width 357: "The first two characters in this paragraph-- a double-"
-          text run at (0,64) width 696: "quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red). "
-          text run at (695,64) width 60: "Note that"
-          text run at (0,82) width 708: "the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but it is"
-          text run at (0,100) width 99: "recommended. "
-          text run at (98,100) width 463: "In addition, the entire first line should be in a small-caps font and green."
+        RenderText {#text} at (75,37) size 757x80
+          text run at (75,37) width 341: "e should check for quotation support,\" it was said. "
+          text run at (415,37) width 307: "The first two characters in this paragraph-- a"
+          text run at (0,64) width 741: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red)."
+          text run at (0,82) width 757: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but it"
+          text run at (0,100) width 114: "is recommended. "
+          text run at (113,100) width 462: "In addition, the entire first line should be in a small-caps font and green."
       RenderTable {TABLE} at (0,573) size 768x441 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 766x439
           RenderTableRow {TR} at (0,0) size 766x26
@@ -97,8 +96,8 @@ layer at (0,0) size 784x1030
                   RenderText {#text} at (0,1) size 76x62
                     text run at (0,1) width 76: "\"W"
                 RenderText {#text} at (75,37) size 744x80
-                  text run at (75,37) width 337: "e should check for quotation support,\" it was said. "
-                  text run at (411,37) width 302: "The first two characters in this paragraph-- a"
+                  text run at (75,37) width 341: "e should check for quotation support,\" it was said. "
+                  text run at (415,37) width 307: "The first two characters in this paragraph-- a"
                   text run at (0,64) width 741: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon (dark red)."
                   text run at (0,82) width 744: "Note that the inclusion of both the quotation mark and the 'W' in the first-letter style is not required under CSS1, but"
                   text run at (0,100) width 127: "it is recommended. "

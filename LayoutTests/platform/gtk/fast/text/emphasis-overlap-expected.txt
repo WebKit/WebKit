@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x178
-        RenderBlock {DIV} at (0,25) size 161x145
+      RenderBlock {DIV} at (0,0) size 784x176
+        RenderBlock {DIV} at (0,24) size 161x144
           RenderText {#text} at (0,0) size 161x32
             text run at (0,0) width 161: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -15,16 +15,16 @@ layer at (0,0) size 800x600
             text run at (128,32) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 129x32 [color=#0000FF]
-            RenderText {#text} at (0,81) size 129x32
-              text run at (0,81) width 129: "3333"
-          RenderText {#text} at (128,81) size 33x32
-            text run at (128,81) width 33: " "
+            RenderText {#text} at (0,80) size 129x32
+              text run at (0,80) width 129: "3333"
+          RenderText {#text} at (128,80) size 33x32
+            text run at (128,80) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,113) size 129x32
-            text run at (0,113) width 129: "4444"
-        RenderText {#text} at (161,150) size 4x17
-          text run at (161,150) width 4: " "
-        RenderBlock {DIV} at (165,25) size 161x145
+          RenderText {#text} at (0,112) size 129x32
+            text run at (0,112) width 129: "4444"
+        RenderText {#text} at (161,148) size 4x17
+          text run at (161,148) width 4: " "
+        RenderBlock {DIV} at (165,24) size 161x144
           RenderText {#text} at (0,0) size 161x32
             text run at (0,0) width 161: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -35,16 +35,16 @@ layer at (0,0) size 800x600
             text run at (128,32) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 129x32
-            RenderText {#text} at (0,81) size 129x32
-              text run at (0,81) width 129: "3333"
-          RenderText {#text} at (128,81) size 33x32
-            text run at (128,81) width 33: " "
+            RenderText {#text} at (0,80) size 129x32
+              text run at (0,80) width 129: "3333"
+          RenderText {#text} at (128,80) size 33x32
+            text run at (128,80) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,113) size 129x32
-            text run at (0,113) width 129: "4444"
-        RenderText {#text} at (326,150) size 4x17
-          text run at (326,150) width 4: " "
-        RenderBlock {DIV} at (330,8) size 161x162
+          RenderText {#text} at (0,112) size 129x32
+            text run at (0,112) width 129: "4444"
+        RenderText {#text} at (326,148) size 4x17
+          text run at (326,148) width 4: " "
+        RenderBlock {DIV} at (330,8) size 161x160
           RenderText {#text} at (0,0) size 161x32
             text run at (0,0) width 161: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -55,16 +55,16 @@ layer at (0,0) size 800x600
             text run at (128,32) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 129x32 [color=#0000FF]
-            RenderText {#text} at (0,98) size 129x32
-              text run at (0,98) width 129: "3333"
-          RenderText {#text} at (128,98) size 33x32
-            text run at (128,98) width 33: " "
+            RenderText {#text} at (0,96) size 129x32
+              text run at (0,96) width 129: "3333"
+          RenderText {#text} at (128,96) size 33x32
+            text run at (128,96) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,130) size 129x32
-            text run at (0,130) width 129: "4444"
+          RenderText {#text} at (0,128) size 129x32
+            text run at (0,128) width 129: "4444"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,178) size 784x178
-        RenderBlock {DIV} at (0,8) size 161x145
+      RenderBlock {DIV} at (0,176) size 784x176
+        RenderBlock {DIV} at (0,8) size 161x144
           RenderText {#text} at (0,0) size 161x32
             text run at (0,0) width 161: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -75,16 +75,16 @@ layer at (0,0) size 800x600
             text run at (128,32) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 129x32 [color=#008000]
-            RenderText {#text} at (0,81) size 129x32
-              text run at (0,81) width 129: "3333"
-          RenderText {#text} at (128,81) size 33x32
-            text run at (128,81) width 33: " "
+            RenderText {#text} at (0,80) size 129x32
+              text run at (0,80) width 129: "3333"
+          RenderText {#text} at (128,80) size 33x32
+            text run at (128,80) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,113) size 129x32
-            text run at (0,113) width 129: "4444"
+          RenderText {#text} at (0,112) size 129x32
+            text run at (0,112) width 129: "4444"
         RenderText {#text} at (161,11) size 4x17
           text run at (161,11) width 4: " "
-        RenderBlock {DIV} at (165,8) size 161x145
+        RenderBlock {DIV} at (165,8) size 161x144
           RenderText {#text} at (0,0) size 161x32
             text run at (0,0) width 161: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -95,16 +95,16 @@ layer at (0,0) size 800x600
             text run at (128,32) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 129x32
-            RenderText {#text} at (0,81) size 129x32
-              text run at (0,81) width 129: "3333"
-          RenderText {#text} at (128,81) size 33x32
-            text run at (128,81) width 33: " "
+            RenderText {#text} at (0,80) size 129x32
+              text run at (0,80) width 129: "3333"
+          RenderText {#text} at (128,80) size 33x32
+            text run at (128,80) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,113) size 129x32
-            text run at (0,113) width 129: "4444"
+          RenderText {#text} at (0,112) size 129x32
+            text run at (0,112) width 129: "4444"
         RenderText {#text} at (326,11) size 4x17
           text run at (326,11) width 4: " "
-        RenderBlock {DIV} at (330,8) size 161x162
+        RenderBlock {DIV} at (330,8) size 161x160
           RenderText {#text} at (0,0) size 161x32
             text run at (0,0) width 161: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -115,11 +115,11 @@ layer at (0,0) size 800x600
             text run at (128,32) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 129x32 [color=#008000]
-            RenderText {#text} at (0,98) size 129x32
-              text run at (0,98) width 129: "3333"
-          RenderText {#text} at (128,98) size 33x32
-            text run at (128,98) width 33: " "
+            RenderText {#text} at (0,96) size 129x32
+              text run at (0,96) width 129: "3333"
+          RenderText {#text} at (128,96) size 33x32
+            text run at (128,96) width 33: " "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,130) size 129x32
-            text run at (0,130) width 129: "4444"
+          RenderText {#text} at (0,128) size 129x32
+            text run at (0,128) width 129: "4444"
         RenderText {#text} at (0,0) size 0x0
