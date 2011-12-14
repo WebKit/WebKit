@@ -656,6 +656,112 @@ private:
             propagateNodePredictions(m_graph[m_compileIndex]);
     }
     
+    void vote(NodeIndex nodeIndex, VariableAccessData::Ballot ballot)
+    {
+        switch (m_graph[nodeIndex].op) {
+        case ValueToNumber:
+        case ValueToDouble:
+        case ValueToInt32:
+        case UInt32ToNumber:
+            nodeIndex = m_graph[nodeIndex].child1();
+            break;
+        default:
+            break;
+        }
+        
+        if (m_graph[nodeIndex].op == GetLocal)
+            m_graph[nodeIndex].variableAccessData()->vote(ballot);
+    }
+    
+    void vote(Node& node, VariableAccessData::Ballot ballot)
+    {
+        if (node.op & NodeHasVarArgs) {
+            for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                vote(m_graph.m_varArgChildren[childIdx], ballot);
+            return;
+        }
+        
+        if (node.child1() == NoNode)
+            return;
+        vote(node.child1(), ballot);
+        if (node.child2() == NoNode)
+            return;
+        vote(node.child2(), ballot);
+        if (node.child3() == NoNode)
+            return;
+        vote(node.child3(), ballot);
+    }
+    
+    void doRoundOfDoubleVoting()
+    {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("Voting on double uses of locals [%u]\n", m_count);
+#endif
+        for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
+            m_graph.m_variableAccessData[i].find()->clearVotes();
+        for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex) {
+            Node& node = m_graph[m_compileIndex];
+            switch (node.op) {
+            case ValueAdd:
+            case ArithAdd:
+            case ArithSub:
+            case ArithMul:
+            case ArithMin:
+            case ArithMax:
+            case ArithMod:
+            case ArithDiv: {
+                PredictedType left = m_graph[node.child1()].prediction();
+                PredictedType right = m_graph[node.child2()].prediction();
+                
+                VariableAccessData::Ballot ballot;
+                
+                if (isNumberPrediction(left) && isNumberPrediction(right) && !(Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child1()]) && node.canSpeculateInteger()))
+                    ballot = VariableAccessData::VoteDouble;
+                else
+                    ballot = VariableAccessData::VoteValue;
+                
+                vote(node.child1(), ballot);
+                vote(node.child2(), ballot);
+                break;
+            }
+                
+            case ArithAbs:
+                VariableAccessData::Ballot ballot;
+                if (!(m_graph[node.child1()].shouldSpeculateInteger() && node.canSpeculateInteger()))
+                    ballot = VariableAccessData::VoteDouble;
+                else
+                    ballot = VariableAccessData::VoteValue;
+                
+                vote(node.child1(), ballot);
+                break;
+                
+            case ArithSqrt:
+                vote(node.child1(), VariableAccessData::VoteDouble);
+                break;
+                
+            case ValueToNumber:
+            case ValueToDouble:
+                // Don't vote.
+                break;
+                
+            case SetLocal: {
+                PredictedType prediction = m_graph[node.child1()].prediction();
+                if (isDoublePrediction(prediction))
+                    node.variableAccessData()->vote(VariableAccessData::VoteDouble);
+                else if (!isNumberPrediction(prediction) || isInt32Prediction(prediction))
+                    node.variableAccessData()->vote(VariableAccessData::VoteValue);
+                break;
+            }
+                
+            default:
+                vote(node, VariableAccessData::VoteValue);
+                break;
+            }
+        }
+        for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
+            m_changed |= m_graph.m_variableAccessData[i].find()->tallyVotesForShouldUseDoubleFormat();
+    }
+    
     void propagatePredictions()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -667,6 +773,7 @@ private:
             // Forward propagation is near-optimal for both topologically-sorted and
             // DFS-sorted code.
             propagatePredictionsForward();
+            doRoundOfDoubleVoting();
             if (!m_changed)
                 break;
             
@@ -676,6 +783,7 @@ private:
             // found a sound solution and (2) short-circuits backward flow.
             m_changed = false;
             propagatePredictionsBackward();
+            doRoundOfDoubleVoting();
         } while (m_changed);
     }
     
@@ -688,7 +796,7 @@ private:
             m_graph[nodeIndex].op = ValueToDouble;
         }
     }
-    
+
     void fixupNode(Node& node)
     {
         if (!node.shouldGenerate())
@@ -711,11 +819,11 @@ private:
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
             
-            if (left && right && isNumberPrediction(left) && isNumberPrediction(right)) {
-                if (left & PredictDouble)
-                    toDouble(node.child2());
-                if (right & PredictDouble)
-                    toDouble(node.child1());
+            if (left && right
+                && isNumberPrediction(left) && isNumberPrediction(right)
+                && ((left & PredictDouble) || (right & PredictDouble))) {
+                toDouble(node.child1());
+                toDouble(node.child2());
             }
             break;
         }
@@ -736,11 +844,10 @@ private:
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
             
-            if (left && right) {
-                if (left & PredictDouble)
-                    toDouble(node.child2());
-                if (right & PredictDouble)
-                    toDouble(node.child1());
+            if (left && right
+                && ((left & PredictDouble) || (right & PredictDouble))) {
+                toDouble(node.child1());
+                toDouble(node.child2());
             }
             break;
         }

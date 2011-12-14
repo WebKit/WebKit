@@ -207,6 +207,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     }
         
     case SetLocal: {
+        if (node.variableAccessData()->shouldUseDoubleFormat()) {
+            forNode(node.child1()).filter(PredictNumber);
+            m_variables.operand(node.local()).set(PredictDouble);
+            break;
+        }
+        
         PredictedType predictedType = node.variableAccessData()->prediction();
         if (isInt32Prediction(predictedType))
             forNode(node.child1()).filter(PredictInt32);

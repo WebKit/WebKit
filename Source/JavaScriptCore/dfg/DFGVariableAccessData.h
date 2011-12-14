@@ -26,6 +26,7 @@
 #ifndef DFGVariableAccessData_h
 #define DFGVariableAccessData_h
 
+#include "DFGOperands.h"
 #include "PredictedType.h"
 #include "VirtualRegister.h"
 #include <wtf/Platform.h>
@@ -35,16 +36,22 @@ namespace JSC { namespace DFG {
 
 class VariableAccessData : public UnionFind<VariableAccessData> {
 public:
+    enum Ballot { VoteValue, VoteDouble };
+
     VariableAccessData()
         : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
         , m_prediction(PredictNone)
+        , m_shouldUseDoubleFormat(false)
     {
+        clearVotes();
     }
     
     VariableAccessData(VirtualRegister local)
         : m_local(local)
         , m_prediction(PredictNone)
+        , m_shouldUseDoubleFormat(false)
     {
+        clearVotes();
     }
     
     VirtualRegister local()
@@ -68,6 +75,56 @@ public:
         return find()->m_prediction;
     }
     
+    void clearVotes()
+    {
+        ASSERT(find() == this);
+        m_votes[VoteValue] = 0;
+        m_votes[VoteDouble] = 0;
+    }
+    
+    void vote(Ballot ballot)
+    {
+        ASSERT(static_cast<unsigned>(ballot) < 2);
+        m_votes[ballot]++;
+    }
+    
+    double doubleVoteRatio()
+    {
+        ASSERT(find() == this);
+        return static_cast<double>(m_votes[VoteDouble]) / m_votes[VoteValue];
+    }
+    
+    bool shouldUseDoubleFormatAccordingToVote()
+    {
+        // FIXME: make this work for arguments.
+        return !operandIsArgument(operand()) && ((isNumberPrediction(prediction()) && doubleVoteRatio() >= Heuristics::doubleVoteRatioForDoubleFormat) || isDoublePrediction(prediction()));
+    }
+    
+    bool shouldUseDoubleFormat()
+    {
+        ASSERT(find() == this);
+        return m_shouldUseDoubleFormat;
+    }
+    
+    bool tallyVotesForShouldUseDoubleFormat()
+    {
+        ASSERT(find() == this);
+        
+        bool newValueOfShouldUseDoubleFormat = shouldUseDoubleFormatAccordingToVote();
+        if (!newValueOfShouldUseDoubleFormat) {
+            // Assert that we're monotonically converting to force-double.
+            ASSERT(!m_shouldUseDoubleFormat);
+            return false;
+        }
+        
+        if (m_shouldUseDoubleFormat)
+            return false;
+        
+        m_shouldUseDoubleFormat = true;
+        mergePrediction(m_prediction, PredictDouble);
+        return true;
+    }
+    
 private:
     // This is slightly space-inefficient, since anything we're unified with
     // will have the same operand and should have the same prediction. But
@@ -76,6 +133,9 @@ private:
 
     VirtualRegister m_local;
     PredictedType m_prediction;
+    
+    float m_votes[2];
+    bool m_shouldUseDoubleFormat;
 };
 
 } } // namespace JSC::DFG

@@ -47,6 +47,7 @@ enum ValueRecoveryTechnique {
     AlreadyInRegisterFileAsUnboxedInt32,
     AlreadyInRegisterFileAsUnboxedCell,
     AlreadyInRegisterFileAsUnboxedBoolean,
+    AlreadyInRegisterFileAsUnboxedDouble,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
@@ -99,6 +100,13 @@ public:
     {
         ValueRecovery result;
         result.m_technique = AlreadyInRegisterFileAsUnboxedBoolean;
+        return result;
+    }
+    
+    static ValueRecovery alreadyInRegisterFileAsUnboxedDouble()
+    {
+        ValueRecovery result;
+        result.m_technique = AlreadyInRegisterFileAsUnboxedDouble;
         return result;
     }
     
@@ -246,6 +254,9 @@ public:
             break;
         case AlreadyInRegisterFileAsUnboxedBoolean:
             fprintf(out, "(bool)");
+            break;
+        case AlreadyInRegisterFileAsUnboxedDouble:
+            fprintf(out, "(double)");
             break;
         case InGPR:
             fprintf(out, "%%r%d", gpr());

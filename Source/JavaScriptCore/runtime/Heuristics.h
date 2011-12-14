@@ -66,6 +66,8 @@ extern unsigned maximumOptimizationDelay;
 extern double desiredProfileLivenessRate;
 extern double desiredProfileFullnessRate;
 
+extern double doubleVoteRatioForDoubleFormat;
+
 extern unsigned minimumNumberOfScansBetweenRebalance;
 extern unsigned gcMarkStackSegmentSize;
 extern unsigned minimumNumberOfCellsToKeep;

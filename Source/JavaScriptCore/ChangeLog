@@ -1,3 +1,74 @@
+2011-12-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should infer when local variables are doubles
+        https://bugs.webkit.org/show_bug.cgi?id=74480
+
+        Reviewed by Oliver Hunt.
+        
+        Introduced the notion that a local variable (though not an argument, yet!) can
+        be stored as a double, and will be guaranteed to always contain a double. This
+        requires more magic in the OSR (conversion in both entry and exit). The inference
+        is quite unorthodox: all uses of a variable vote on whether they think it should
+        be a double or a JSValue, based on how they use it. If they use it in an integer
+        or boxed value context, they vote JSValue. If they use it in a double context,
+        they vote double. This voting is interleaved in the propagator's fixpoint, so
+        that variables voted double then have a double prediction propagated from them.
+        This interleaving is needed because a variable that actually always contains an
+        integer that always gets used in arithmetic that involves doubles may end up
+        being voted double, which then means that all uses of the variable will see a
+        double rather than an integer.
+        
+        This is worth 18% to SunSpider/3d-cube, 7% to Kraken/audio-beat-detection, 7%
+        to Kraken/audio-fft, 6% to Kraken/imaging-darkroom, 20% to
+        Kraken/imaging-gaussian-blur, and just over 1% to Kraken/json-parse-financial.
+        It results in a 1% speed-up on SunSpider and a 4% speed-up in Kraken.  Similar
+        results on JSVALUE32_64, though with a bigger win on Kraken (5%) and no overall
+        win on SunSpider.
+
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::alreadyInRegisterFileAsUnboxedDouble):
+        (JSC::ValueRecovery::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::boxDouble):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::vote):
+        (JSC::DFG::Propagator::doRoundOfDoubleVoting):
+        (JSC::DFG::Propagator::propagatePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::ValueSource::dump):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::computeValueRecoveryFor):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::clearVotes):
+        (JSC::DFG::VariableAccessData::vote):
+        (JSC::DFG::VariableAccessData::doubleVoteRatio):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormat):
+        (JSC::DFG::VariableAccessData::tallyVotesForShouldUseDoubleFormat):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::tearOff):
+        * runtime/Heuristics.cpp:
+        (JSC::Heuristics::initializeHeuristics):
+        * runtime/Heuristics.h:
+
 2011-12-13  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

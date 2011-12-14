@@ -215,6 +215,7 @@ public:
     {
         moveDoubleToPtr(fpr, gpr);
         subPtr(GPRInfo::tagTypeNumberRegister, gpr);
+        jitAssertIsJSDouble(gpr);
         return gpr;
     }
     FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)

@@ -328,6 +328,13 @@ void Arguments::tearOff(CallFrame* callFrame)
         case AlreadyInRegisterFileAsUnboxedBoolean:
             value = jsBoolean(location->unboxedBoolean());
             break;
+        case AlreadyInRegisterFileAsUnboxedDouble:
+#if USE(JSVALUE64)
+            value = jsNumber(*bitwise_cast<double*>(location));
+#else
+            value = location->jsValue();
+#endif
+            break;
         case Constant:
             value = recovery.constant();
             break;

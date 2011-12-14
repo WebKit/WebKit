@@ -260,7 +260,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
 
     if (!skipped) {
         if (node.hasVariableAccessData())
-            printf("  predicting %s", predictionToString(node.variableAccessData()->prediction()));
+            printf("  predicting %s, double ratio %lf%s", predictionToString(node.variableAccessData()->prediction()), node.variableAccessData()->doubleVoteRatio(), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
         else if (node.hasVarNumber())
             printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
         else if (node.hasHeapPrediction())

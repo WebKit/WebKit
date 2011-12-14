@@ -80,6 +80,8 @@ unsigned maximumOptimizationDelay;
 double desiredProfileLivenessRate;
 double desiredProfileFullnessRate;
 
+double doubleVoteRatioForDoubleFormat;
+
 unsigned minimumNumberOfScansBetweenRebalance;
 unsigned gcMarkStackSegmentSize;
 unsigned minimumNumberOfCellsToKeep;
@@ -161,6 +163,8 @@ void initializeHeuristics()
     SET(maximumOptimizationDelay,   5);
     SET(desiredProfileLivenessRate, 0.75);
     SET(desiredProfileFullnessRate, 0.35);
+    
+    SET(doubleVoteRatioForDoubleFormat, 2);
     
     SET(minimumNumberOfScansBetweenRebalance, 10000);
     SET(gcMarkStackSegmentSize,               pageSize());

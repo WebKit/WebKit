@@ -2047,6 +2047,15 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
+        if (node.variableAccessData()->shouldUseDoubleFormat()) {
+            FPRTemporary result(this);
+            m_jit.loadDouble(JITCompiler::addressFor(node.local()), result.fpr());
+            VirtualRegister virtualRegister = node.virtualRegister();
+            m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
+            m_generationInfo[virtualRegister].initDouble(m_compileIndex, node.refCount(), result.fpr());
+            break;
+        }
+        
         GPRTemporary result(this);
         if (isInt32Prediction(value.m_type)) {
             m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
@@ -2104,38 +2113,48 @@ void SpeculativeJIT::compile(Node& node)
         // OSR exit, would not be visible to the old JIT in any way.
         m_codeOriginForOSR = nextNode.codeOrigin;
         
-        PredictedType predictedType = node.variableAccessData()->prediction();
-        if (isInt32Prediction(predictedType)) {
-            SpeculateIntegerOperand value(this, node.child1());
-            m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
+        if (node.variableAccessData()->shouldUseDoubleFormat()) {
+            SpeculateDoubleOperand value(this, node.child1());
+            m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
-        } else if (isArrayPrediction(predictedType)) {
-            SpeculateCellOperand cell(this, node.child1());
-            GPRReg cellGPR = cell.gpr();
-            if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
-                speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
-            m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
-            noResult(m_compileIndex);
-        } else if (isByteArrayPrediction(predictedType)) {
-            SpeculateCellOperand cell(this, node.child1());
-            GPRReg cellGPR = cell.gpr();
-            if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
-                speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
-            m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
-            noResult(m_compileIndex);
-        } else if (isBooleanPrediction(predictedType)) {
-            SpeculateBooleanOperand boolean(this, node.child1());
-            m_jit.storePtr(boolean.gpr(), JITCompiler::addressFor(node.local()));
-            noResult(m_compileIndex);
+            // Indicate that it's no longer necessary to retrieve the value of
+            // this bytecode variable from registers or other locations in the register file,
+            // but that it is stored as a double.
+            valueSourceReferenceForOperand(node.local()) = ValueSource(DoubleInRegisterFile);
         } else {
-            JSValueOperand value(this, node.child1());
-            m_jit.storePtr(value.gpr(), JITCompiler::addressFor(node.local()));
-            noResult(m_compileIndex);
-        }
+            PredictedType predictedType = node.variableAccessData()->prediction();
+            if (isInt32Prediction(predictedType)) {
+                SpeculateIntegerOperand value(this, node.child1());
+                m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
+                noResult(m_compileIndex);
+            } else if (isArrayPrediction(predictedType)) {
+                SpeculateCellOperand cell(this, node.child1());
+                GPRReg cellGPR = cell.gpr();
+                if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
+                    speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
+                m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
+                noResult(m_compileIndex);
+            } else if (isByteArrayPrediction(predictedType)) {
+                SpeculateCellOperand cell(this, node.child1());
+                GPRReg cellGPR = cell.gpr();
+                if (!isByteArrayPrediction(m_state.forNode(node.child1()).m_type))
+                    speculationCheck(BadType, JSValueRegs(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsByteArrayVPtr)));
+                m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
+                noResult(m_compileIndex);
+            } else if (isBooleanPrediction(predictedType)) {
+                SpeculateBooleanOperand boolean(this, node.child1());
+                m_jit.storePtr(boolean.gpr(), JITCompiler::addressFor(node.local()));
+                noResult(m_compileIndex);
+            } else {
+                JSValueOperand value(this, node.child1());
+                m_jit.storePtr(value.gpr(), JITCompiler::addressFor(node.local()));
+                noResult(m_compileIndex);
+            }
 
-        // Indicate that it's no longer necessary to retrieve the value of
-        // this bytecode variable from registers or other locations in the register file.
-        valueSourceReferenceForOperand(node.local()) = ValueSource::forPrediction(predictedType);
+            // Indicate that it's no longer necessary to retrieve the value of
+            // this bytecode variable from registers or other locations in the register file.
+            valueSourceReferenceForOperand(node.local()) = ValueSource::forPrediction(predictedType);
+        }
         break;
     }
 
