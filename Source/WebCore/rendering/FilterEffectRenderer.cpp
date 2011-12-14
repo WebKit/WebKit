@@ -244,7 +244,7 @@ void FilterEffectRenderer::prepare()
     // source image sizes set. We just need to attach the graphic
     // buffer if we have not yet done so.
     if (!m_graphicsBufferAttached) {
-        setSourceImage(ImageBuffer::create(IntSize(m_sourceDrawingRegion.width(), m_sourceDrawingRegion.height())));
+        setSourceImage(ImageBuffer::create(IntSize(m_sourceDrawingRegion.width(), m_sourceDrawingRegion.height()), ColorSpaceDeviceRGB, renderingMode()));
         m_graphicsBufferAttached = true;
     }
     m_sourceGraphic->clearResult();

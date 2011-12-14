@@ -88,6 +88,7 @@
 #include "ScaleTransformOperation.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
+#include "Settings.h"
 #include "SourceGraphic.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
@@ -4428,8 +4429,11 @@ void RenderLayer::updateReflectionStyle()
 void RenderLayer::updateOrRemoveFilterEffect()
 {
     if (hasFilter()) {
-        if (!m_filter)
+        if (!m_filter) {
             m_filter = FilterEffectRenderer::create();
+            RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
+            m_filter->setRenderingMode(renderingMode);
+        }
 
         m_filter->build(renderer()->style()->filter(), toRenderBox(renderer())->borderBoxRect());
     } else {

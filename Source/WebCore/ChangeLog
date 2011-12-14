@@ -1,3 +1,17 @@
+2011-12-14  Stephen White  <senorblanco@chromium.org>
+
+        CSS Filters should support GPU acceleration
+        https://bugs.webkit.org/show_bug.cgi?id=74441
+
+        Reviewed by Darin Adler.
+
+        Will be covered by existing CSS filters tests, when run in GPU mode.
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::prepare):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+
 2011-12-14  Brian Salomon  <bsalomon@google.com>
 
         [CHROMIUM/SKIA] Handle put[Un/Pre]multipliedImageData conversions in Skia rather than ImageBuffer
