@@ -364,6 +364,10 @@ public:
     
     PassRefPtr<RenderStyle> styleForRenderer();
 
+#if ENABLE(MUTATION_OBSERVERS)
+    void enqueueAttributesMutationRecordIfRequested(const QualifiedName&, const AtomicString& oldValue);
+#endif
+
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)

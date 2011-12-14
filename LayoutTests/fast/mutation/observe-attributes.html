@@ -1,17 +1,11 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
 <script src="../js/resources/js-test-pre.js"></script>
-</head>
-<body>
-<p id=description></p>
-<div id="console"></div>
 <script>
 
 window.jsTestIsAsync = true;
 var mutations, mutations2, mutationsWithOldValue;
 var calls;
+var div;
 
 function testBasic() {
     var div;
@@ -429,17 +423,21 @@ function testIDLAttribute() {
         observer.observe(div, { attributes: true, attributeOldValue: true });
         div.id = 'foo';
         div.id = 'bar';
+        div.id = null;
         setTimeout(finish, 0);
     }
 
     function finish() {
-        shouldBe('mutations.length', '2');
+        shouldBe('mutations.length', '3');
         shouldBe('mutations[0].type', '"attributes"');
         shouldBe('mutations[0].attributeName', '"id"');
         shouldBe('mutations[0].oldValue', 'null');
         shouldBe('mutations[1].type', '"attributes"');
         shouldBe('mutations[1].attributeName', '"id"');
         shouldBe('mutations[1].oldValue', '"foo"');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"id"');
+        shouldBe('mutations[2].oldValue', '"bar"');
         observer.disconnect();
         debug('');
         runNextTest();
@@ -786,6 +784,200 @@ function testStyleAttributePropertyAccessIgnoreNoop() {
     start();
 }
 
+function testMutateThroughAttrNodeValue() {
+    var observer;
+
+    function start() {
+        debug('Test that mutating an attribute through an attr node delivers mutation records');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('data-test', 'foo');
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.attributes['data-test'].value = 'bar';
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].target', 'div');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"data-test"');
+        shouldBe('mutations[0].oldValue', '"foo"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testMutateThroughAttrNodeChild() {
+    var observer;
+
+    function start() {
+        debug('Test that mutating an attribute by attaching a child to an attr node delivers mutation records');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('data-test', 'foo');
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.attributes['data-test'].appendChild(document.createTextNode('bar'));
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].target', 'div');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"data-test"');
+        shouldBe('mutations[0].oldValue', '"foo"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testSetAndRemoveAttributeNode() {
+    var observer;
+
+    function start() {
+        debug('Test that mutating via setAttributeNode delivers mutation records');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+
+        div = document.createElement('div');
+        div.id = 'myId';
+        div.setAttribute('data-test', 'foo');
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        var attr = document.createAttribute('data-test');
+        attr.value = 'bar';
+        div.setAttributeNode(attr);
+        attr = document.createAttribute('data-other');
+        attr.value = 'baz';
+        div.setAttributeNode(attr);
+        div.removeAttributeNode(div.attributes['id']);
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '3');
+        shouldBe('mutations[0].target', 'div');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"data-test"');
+        shouldBe('mutations[0].oldValue', '"foo"');
+        shouldBe('mutations[1].target', 'div');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"data-other"');
+        shouldBe('mutations[1].oldValue', 'null');
+        shouldBe('mutations[2].target', 'div');
+        shouldBe('mutations[2].type', '"attributes"');
+        shouldBe('mutations[2].attributeName', '"id"');
+        shouldBe('mutations[2].oldValue', '"myId"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testMixedNodeAndElementOperations() {
+    var observer;
+
+    function start() {
+        debug('Test that setAttribute on an attribute with an existing Attr delivers mutation records');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+
+        div = document.createElement('div');
+        var attr = document.createAttribute('data-test');
+        attr.value = 'foo';
+        div.setAttributeNode(attr);
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        div.setAttribute('data-test', 'bar');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '1');
+        shouldBe('mutations[0].target', 'div');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"data-test"');
+        shouldBe('mutations[0].oldValue', '"foo"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
+function testNamedNodeMapOperations() {
+    var observer;
+
+    function start() {
+        debug('Test that setNamedItem and removeNamedItem deliver mutation records');
+
+        mutations = null;
+        observer = new WebKitMutationObserver(function(mutations) {
+            window.mutations = mutations;
+        });
+
+        div = document.createElement('div');
+        div.setAttribute('data-test', 'foo');
+        observer.observe(div, { attributes: true, attributeOldValue: true });
+        var attr = document.createAttribute('data-test');
+        attr.value = 'bar';
+        div.attributes.setNamedItem(attr);
+        div.attributes.removeNamedItem('data-test');
+
+        setTimeout(finish, 0);
+    }
+
+    function finish() {
+        shouldBe('mutations.length', '2');
+        shouldBe('mutations[0].target', 'div');
+        shouldBe('mutations[0].type', '"attributes"');
+        shouldBe('mutations[0].attributeName', '"data-test"');
+        shouldBe('mutations[0].oldValue', '"foo"');
+        shouldBe('mutations[1].target', 'div');
+        shouldBe('mutations[1].type', '"attributes"');
+        shouldBe('mutations[1].attributeName', '"data-test"');
+        shouldBe('mutations[1].oldValue', '"bar"');
+
+        observer.disconnect();
+        debug('');
+        runNextTest();
+    }
+
+    start();
+}
+
 var tests = [
     testBasic,
     testWrongType,
@@ -804,7 +996,12 @@ var tests = [
     testAttributeFilterNonHTMLDocument,
     testStyleAttributePropertyAccess,
     testStyleAttributePropertyAccessOldValue,
-    testStyleAttributePropertyAccessIgnoreNoop
+    testStyleAttributePropertyAccessIgnoreNoop,
+    testMutateThroughAttrNodeValue,
+    testMutateThroughAttrNodeChild,
+    testSetAndRemoveAttributeNode,
+    testMixedNodeAndElementOperations,
+    testNamedNodeMapOperations
 ];
 var testIndex = 0;
 
@@ -824,5 +1021,3 @@ else
 
 </script>
 <script src="../js/resources/js-test-post.js"></script>
-</body>
-</html>

@@ -181,10 +181,12 @@ void Element::copyNonAttributeProperties(const Element*)
 }
 
 #if ENABLE(MUTATION_OBSERVERS)
-static void enqueueAttributesMutationRecord(Element* target, const QualifiedName& attributeName, const AtomicString& oldValue)
+void Element::enqueueAttributesMutationRecordIfRequested(const QualifiedName& attributeName, const AtomicString& oldValue)
 {
-    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(target, attributeName))
-        mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(target, attributeName, oldValue));
+    if (isSynchronizingStyleAttribute())
+        return;
+    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(this, attributeName))
+        mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(this, attributeName, oldValue));
 }
 #endif
 
@@ -195,10 +197,6 @@ void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
         RefPtr<Node> attrNode = m_attributeMap->removeNamedItem(name, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;
-#if ENABLE(MUTATION_OBSERVERS)
-        else
-            enqueueAttributesMutationRecord(this, name, attrNode->nodeValue());
-#endif
     }
 }
 
@@ -656,13 +654,11 @@ void Element::setAttributeInternal(Attribute* old, const QualifiedName& name, co
         InspectorInstrumentation::willModifyDOMAttr(document(), this);
 #endif
 
-    document()->incDOMTreeVersion();
-
 #if ENABLE(MUTATION_OBSERVERS)
-    // The call to attributeChanged below may dispatch DOMSubtreeModified, so it's important to enqueue a MutationRecord now.
-    if (!isSynchronizingStyleAttribute())
-        enqueueAttributesMutationRecord(this, name, old ? old->value() : nullAtom);
+    enqueueAttributesMutationRecordIfRequested(name, old ? old->value() : nullAtom);
 #endif
+
+    document()->incDOMTreeVersion();
 
     if (isIdAttributeName(name))
         updateId(old ? old->value() : nullAtom, value);
@@ -1523,10 +1519,6 @@ void Element::removeAttribute(const String& name, ExceptionCode& ec)
         RefPtr<Node> attrNode = m_attributeMap->removeNamedItem(localName, ec);
         if (ec == NOT_FOUND_ERR)
             ec = 0;
-#if ENABLE(MUTATION_OBSERVERS)
-        else
-            enqueueAttributesMutationRecord(this, QualifiedName(nullAtom, localName, nullAtom), attrNode->nodeValue());
-#endif
     }
     
     InspectorInstrumentation::didRemoveDOMAttr(document(), this, name);

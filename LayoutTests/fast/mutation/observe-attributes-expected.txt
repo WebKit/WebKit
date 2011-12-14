@@ -90,13 +90,16 @@ PASS mutations[0].attributeName is "foo"
 PASS mutations[0].oldValue is "bar"
 
 Testing setting an attribute via reflected IDL attribute.
-PASS mutations.length is 2
+PASS mutations.length is 3
 PASS mutations[0].type is "attributes"
 PASS mutations[0].attributeName is "id"
 PASS mutations[0].oldValue is null
 PASS mutations[1].type is "attributes"
 PASS mutations[1].attributeName is "id"
 PASS mutations[1].oldValue is "foo"
+PASS mutations[2].type is "attributes"
+PASS mutations[2].attributeName is "id"
+PASS mutations[2].oldValue is "bar"
 
 Testing that attributeFilter works as expected and ignores case with HTML elements.
 ...only foo, bar & boom should be received.
@@ -188,6 +191,53 @@ PASS mutations is null
 
 Testing that a no-op style property mutation does not create Mutation Records.
 PASS mutations is null
+
+Test that mutating an attribute through an attr node delivers mutation records
+PASS mutations.length is 1
+PASS mutations[0].target is div
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "data-test"
+PASS mutations[0].oldValue is "foo"
+
+Test that mutating an attribute by attaching a child to an attr node delivers mutation records
+PASS mutations.length is 1
+PASS mutations[0].target is div
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "data-test"
+PASS mutations[0].oldValue is "foo"
+
+Test that mutating via setAttributeNode delivers mutation records
+PASS mutations.length is 3
+PASS mutations[0].target is div
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "data-test"
+PASS mutations[0].oldValue is "foo"
+PASS mutations[1].target is div
+PASS mutations[1].type is "attributes"
+PASS mutations[1].attributeName is "data-other"
+PASS mutations[1].oldValue is null
+PASS mutations[2].target is div
+PASS mutations[2].type is "attributes"
+PASS mutations[2].attributeName is "id"
+PASS mutations[2].oldValue is "myId"
+
+Test that setAttribute on an attribute with an existing Attr delivers mutation records
+PASS mutations.length is 1
+PASS mutations[0].target is div
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "data-test"
+PASS mutations[0].oldValue is "foo"
+
+Test that setNamedItem and removeNamedItem deliver mutation records
+PASS mutations.length is 2
+PASS mutations[0].target is div
+PASS mutations[0].type is "attributes"
+PASS mutations[0].attributeName is "data-test"
+PASS mutations[0].oldValue is "foo"
+PASS mutations[1].target is div
+PASS mutations[1].type is "attributes"
+PASS mutations[1].attributeName is "data-test"
+PASS mutations[1].oldValue is "bar"
 
 PASS successfullyParsed is true
 

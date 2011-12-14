@@ -119,6 +119,10 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
         return 0;
     }
 
+#if ENABLE(MUTATION_OBSERVERS)
+    m_element->enqueueAttributesMutationRecordIfRequested(attribute->name(), oldAttribute ? oldAttribute->value() : nullAtom);
+#endif
+
     if (attr->isId())
         m_element->updateId(oldAttribute ? oldAttribute->value() : nullAtom, attribute->value());
 
@@ -148,6 +152,11 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
         ec = NOT_FOUND_ERR;
         return 0;
     }
+
+#if ENABLE(MUTATION_OBSERVERS)
+    if (m_element)
+        m_element->enqueueAttributesMutationRecordIfRequested(attribute->name(), attribute->value());
+#endif
 
     RefPtr<Attr> attr = attribute->createAttrIfNeeded(m_element);
 

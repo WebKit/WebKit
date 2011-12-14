@@ -130,6 +130,11 @@ void Attr::setValue(const AtomicString& value)
 
 void Attr::setValue(const AtomicString& value, ExceptionCode&)
 {
+#if ENABLE(MUTATION_OBSERVERS)
+    if (m_element)
+        m_element->enqueueAttributesMutationRecordIfRequested(m_attribute->name(), m_attribute->value());
+#endif
+
     if (m_element && m_element->isIdAttributeName(m_attribute->name()))
         m_element->updateId(m_element->getIdAttribute(), value);
 
@@ -167,7 +172,12 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
 {
     if (m_ignoreChildrenChanged > 0)
         return;
- 
+
+#if ENABLE(MUTATION_OBSERVERS)
+    if (m_element)
+        m_element->enqueueAttributesMutationRecordIfRequested(m_attribute->name(), m_attribute->value());
+#endif
+
     Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
     invalidateNodeListsCacheAfterAttributeChanged();

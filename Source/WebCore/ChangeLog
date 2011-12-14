@@ -1,3 +1,33 @@
+2011-12-14  Adam Klein  <adamk@chromium.org>
+
+        Broaden support for mutation observation of attributes
+        https://bugs.webkit.org/show_bug.cgi?id=74448
+
+        Reviewed by Ryosuke Niwa.
+
+        The previously-landed MutationObserver support for attributes was incomplete:
+        it didn't support mutations related to Attr nodes (methods on Attrs,
+        setAttributeNode/removeAttributeNode on Element, or methods on NamedNodeMap).
+
+        This patch adds full support of mutation observation for all these cases,
+        and adds test cases for all these situations.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue): Enqueue a mutation record when Attr.value is set from JS.
+        (WebCore::Attr::childrenChanged): Enqueue a mutation record when an Attr's value
+        changes to due additions/removals of Text children.
+        * dom/Element.cpp:
+        (WebCore::Element::enqueueAttributesMutationRecordIfRequested): Previously a static,
+        expose as part of Element's interface to allow it to be re-used by NamedNodeMap and Attr.
+        (WebCore::Element::removeAttribute): Remove enqueue call now handled by NamedNodeMap.
+        (WebCore::Element::setAttributeInternal): Fixup call of enqueueAttributesMutationRecordIfRequested.
+        * dom/Element.h:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem): Enqueue a mutation record when an attribute
+        is changed via Element.attributes.setNamedItem from JS.
+        (WebCore::NamedNodeMap::removeNamedItem): Enqueue a mutation record when an
+        attribute is removed, either via Element.attributes.removeNamedItem or Element.removeAttribute.
+
 2011-12-14  Raymond Toy  <rtoy@google.com>
 
         * platform/audio/Distance.h (WebCore): 
