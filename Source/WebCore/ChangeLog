@@ -1,3 +1,19 @@
+2011-12-14  Rakesh KN  <rakesh.kn@motorola.com>
+
+        [Non-Mac] Change event should be fired when changing option by using keyboard.
+        https://bugs.webkit.org/show_bug.cgi?id=74384
+
+        Reviewed by Kent Tamura.
+
+        Fire onchange event when option is changed using up/down/right/left/pageup/pagedown/home/end keys.
+
+        Test: fast/forms/select/menulist-onchange-fired-with-key-up-down.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler):
+        Setting the DispatchChangeEvent selection option flag when the option is selected using
+        up/down/right/left/pageup/pagedown/home/end keys.
+
 2011-12-13  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TreeOutline's is broken when li elements have padding-left different from 14px.
