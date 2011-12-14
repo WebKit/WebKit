@@ -43,7 +43,6 @@
 
 #ifdef Q_WS_X11
 #include <qx11info_x11.h>
-#include <fontconfig/fontconfig.h>
 #endif
 
 #ifdef Q_OS_WIN
@@ -150,10 +149,7 @@ int main(int argc, char* argv[])
     if (suppressQtDebugOutput)
         qInstallMsgHandler(messageHandler);
 
-#ifdef Q_WS_X11
-    FcInit();
     WebCore::DumpRenderTree::initializeFonts();
-#endif
 
     QApplication::setGraphicsSystem("raster");
     QApplication::setStyle(new QWindowsStyle);
@@ -250,8 +246,4 @@ int main(int argc, char* argv[])
         dumper.processArgsLine(args);
     }
     return app.exec();
-
-#ifdef Q_WS_X11
-    FcConfigSetCurrent(0);
-#endif
 }

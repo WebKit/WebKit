@@ -45,6 +45,11 @@ isEmpty(HAVE_QRAWFONT) {
     DEFINES += ENABLE_SVG_FONTS=0
 }
 
+# We need fontconfig to set up the test fonts for DumpRenderTree and WebKitTestRunner.
+haveQt(5):contains(config_test_fontconfig, yes)|haveQt(4):unix:!mac {
+    DEFINES += HAVE_FONTCONFIG=1
+}
+
 !contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=.): DEFINES += ENABLE_JAVASCRIPT_DEBUGGER=1
 !contains(DEFINES, ENABLE_GAMEPAD=.): DEFINES += ENABLE_GAMEPAD=0
 !contains(DEFINES, ENABLE_SQL_DATABASE=.): DEFINES += ENABLE_SQL_DATABASE=1

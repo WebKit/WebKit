@@ -102,9 +102,8 @@ public:
     WebPage *webPage() const { return m_page; }
     QList<WebPage*> getAllPages() const;
 
-#if defined(Q_WS_X11)
     static void initializeFonts();
-#endif
+
     void processArgsLine(const QStringList&);
     void setRedirectOutputFileName(const QString& fileName) { m_redirectOutputFileName = fileName; }
     void setRedirectErrorFileName(const QString& fileName) { m_redirectErrorFileName = fileName; }

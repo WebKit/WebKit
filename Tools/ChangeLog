@@ -1,3 +1,35 @@
+2011-12-14  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Test fonts are not used with Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=72513
+
+        Reviewed by Simon Hausmann.
+
+        Don't depend on Q_WS_X11 anymore since it's not the Qt5
+        way to detect the platform. Make the guards depend
+        on our own configtest for fontconfig. For Qt4 we can still
+        use the preassumption that we have it on Linux.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::initializeFonts):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/main.cpp:
+        (main): Additionally remove a nonsense piece of code that was
+        trying to reset the font settings - which is not necessary -
+        after we have already returned from main.
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts):
+        * WebKitTestRunner/Target.pri: Remove unnecessary fontconfig linkage
+        from WTR. It is not needed. We set up the fonts via the injected bundle.
+        * qmake/config.tests/fontconfig/fontconfig.cpp: Added.
+        (main):
+        * qmake/config.tests/fontconfig/fontconfig.pro: Added.
+        * qmake/mkspecs/features/features.prf:
+        * qmake/sync.profile:
+
 2011-12-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't add WebCoreSupport and WebKit APIs to include WebCore's include path

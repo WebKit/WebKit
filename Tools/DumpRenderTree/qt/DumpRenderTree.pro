@@ -26,6 +26,10 @@ QT = core gui network testlib
 macx: QT += xml
 haveQt(5): QT += widgets printsupport
 
+contains(config_test_fontconfig, yes) {
+    PKGCONFIG += fontconfig
+}
+
 HEADERS += \
     $$PWD/../WorkQueue.h \
     DumpRenderTreeQt.h \

@@ -37,8 +37,7 @@
 #include <QWidget>
 #include <QWindowsStyle>
 
-#ifdef Q_WS_X11
-#include <QX11Info>
+#if HAVE(FONTCONFIG)
 #include <fontconfig/fontconfig.h>
 #endif
 
@@ -48,7 +47,7 @@ namespace WTR {
 
 void activateFonts()
 {
-#if defined(Q_WS_X11)
+#if HAVE(FONTCONFIG)
     FcInit();
 
     static int numFonts = -1;

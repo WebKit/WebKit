@@ -59,6 +59,10 @@ load(webcore)
 
 CONFIG += plugin qtwebkit
 
+contains(config_test_fontconfig, yes) {
+    PKGCONFIG += fontconfig
+}
+
 INCLUDEPATH += \
     $$PWD/.. \
     $$PWD/Bindings \

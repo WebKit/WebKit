@@ -68,7 +68,7 @@
 #include <QtUiTools/QUiLoader>
 #endif
 
-#ifdef Q_WS_X11
+#if HAVE(FONTCONFIG)
 #include <fontconfig/fontconfig.h>
 #endif
 
@@ -628,9 +628,7 @@ void DumpRenderTree::open(const QUrl& url)
 #if !(QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
     QFontDatabase::removeAllApplicationFonts();
 #endif
-#if defined(Q_WS_X11)
     initializeFonts();
-#endif
 
     DumpRenderTreeSupportQt::dumpFrameLoader(url.toString().contains("loading/"));
     setTextOutputEnabled(true);
@@ -1142,10 +1140,12 @@ QList<WebPage*> DumpRenderTree::getAllPages() const
     return pages;
 }
 
-#if defined(Q_WS_X11)
 void DumpRenderTree::initializeFonts()
 {
+#if HAVE(FONTCONFIG)
     static int numFonts = -1;
+
+    FcInit();
 
     // Some test cases may add or remove application fonts (via @font-face).
     // Make sure to re-initialize the font set if necessary.
@@ -1179,7 +1179,7 @@ void DumpRenderTree::initializeFonts()
 
     appFontSet = FcConfigGetFonts(config, FcSetApplication);
     numFonts = appFontSet->nfont;
-}
 #endif
+}
 
 }

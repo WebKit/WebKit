@@ -34,8 +34,6 @@ load(webkit2)
 
 CONFIG += qtwebkit
 
-!embedded: PKGCONFIG += fontconfig
-
 DEFINES += USE_SYSTEM_MALLOC=1
 
 PREFIX_HEADER = WebKitTestRunnerPrefix.h
