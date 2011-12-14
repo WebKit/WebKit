@@ -70,8 +70,8 @@ static const float buttonPaddingBottom = 3;
 static const float menuListPadding = 9;
 static const float textFieldPadding = 5;
 static const float radiusFactor = 0.36;
-#if ENABLE(PROGRESS_TAG)
 static const float progressBarChunkPercentage = 0.2;
+#if ENABLE(PROGRESS_TAG)
 static const int progressAnimationGranularity = 2;
 #endif
 static const float sliderGrooveBorderRatio = 0.2;

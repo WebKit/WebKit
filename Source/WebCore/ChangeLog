@@ -1,3 +1,9 @@
+2011-12-14  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Unreviewed fix. Broke qt minimal release compilation.
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+
 2011-12-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Add different salt to different types of selectors. So the CSS fast
