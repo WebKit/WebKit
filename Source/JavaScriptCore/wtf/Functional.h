@@ -60,6 +60,42 @@ private:
     R (*m_function)();
 };
 
+template<typename R, typename P0> class FunctionWrapper<R (*)(P0)> {
+public:
+    typedef R ResultType;
+
+    explicit FunctionWrapper(R (*function)(P0))
+        : m_function(function)
+    {
+    }
+
+    R operator()(P0 p0)
+    {
+        return m_function(p0);
+    }
+
+private:
+    R (*m_function)(P0);
+};
+
+template<typename R, typename P0, typename P1> class FunctionWrapper<R (*)(P0, P1)> {
+public:
+    typedef R ResultType;
+
+    explicit FunctionWrapper(R (*function)(P0, P1))
+        : m_function(function)
+    {
+    }
+
+    R operator()(P0 p0, P1 p1)
+    {
+        return m_function(p0, p1);
+    }
+
+private:
+    R (*m_function)(P0, P1);
+};
+
 class FunctionImplBase : public ThreadSafeRefCounted<FunctionImplBase> {
 public:
     virtual ~FunctionImplBase() { }
@@ -91,6 +127,45 @@ public:
 
 private:
     FunctionWrapper m_functionWrapper;
+};
+
+template<typename FunctionWrapper, typename P0> class BoundFunctionImpl<FunctionWrapper, typename FunctionWrapper::ResultType (P0)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+
+public:
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0)
+        : m_functionWrapper(functionWrapper)
+        , m_p0(p0)
+    {
+    }
+
+    virtual typename FunctionWrapper::ResultType operator()()
+    {
+        return m_functionWrapper(m_p0);
+    }
+
+private:
+    FunctionWrapper m_functionWrapper;
+    P0 m_p0;
+};
+
+template<typename FunctionWrapper, typename P0, typename P1> class BoundFunctionImpl<FunctionWrapper, typename FunctionWrapper::ResultType (P0, P1)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+public:
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1)
+        : m_functionWrapper(functionWrapper)
+        , m_p0(p0)
+        , m_p1(p1)
+    {
+    }
+
+    virtual typename FunctionWrapper::ResultType operator()()
+    {
+        return m_functionWrapper(m_p0, m_p1);
+    }
+
+private:
+    FunctionWrapper m_functionWrapper;
+    P0 m_p0;
+    P1 m_p1;
 };
 
 class FunctionBase {
@@ -145,6 +220,18 @@ template<typename FunctionType>
 Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function)
 {
     return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType ()>(FunctionWrapper<FunctionType>(function))));
+}
+
+template<typename FunctionType, typename A1>
+Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1)
+{
+    return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1)>(FunctionWrapper<FunctionType>(function), a1)));
+}
+
+template<typename FunctionType, typename A1, typename A2>
+Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1, const A2& a2)
+{
+    return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1, A2)>(FunctionWrapper<FunctionType>(function), a1, a2)));
 }
 
 }

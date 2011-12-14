@@ -35,12 +35,50 @@ static int returnFortyTwo()
 
 TEST(FunctionalTest, Basic)
 {
-    Function<int()> emptyFunction;
+    Function<int ()> emptyFunction;
     ASSERT_TRUE(emptyFunction.isNull());
 
-    Function<int()> returnFortyTwoFunction = bind(returnFortyTwo);
+    Function<int ()> returnFortyTwoFunction = bind(returnFortyTwo);
     ASSERT_FALSE(returnFortyTwoFunction.isNull());
     ASSERT_EQ(42, returnFortyTwoFunction());
+}
+
+static int multiplyByTwo(int n)
+{
+    return n * 2;
+}
+
+static double multiplyByOneAndAHalf(double d)
+{
+    return d * 1.5;
+}
+
+TEST(FunctionalTest, UnaryBind)
+{
+    Function<int ()> multiplyFourByTwoFunction = bind(multiplyByTwo, 4);
+    ASSERT_EQ(8, multiplyFourByTwoFunction());
+
+    Function<double ()> multiplyByOneAndAHalfFunction = bind(multiplyByOneAndAHalf, 3);
+    ASSERT_EQ(4.5, multiplyByOneAndAHalfFunction());
+}
+
+static int multiply(int x, int y)
+{
+    return x * y;
+}
+
+static int subtract(int x, int y)
+{
+    return x - y;
+}
+
+TEST(FunctionalTest, BinaryBind)
+{
+    Function<int ()> multiplyFourByTwoFunction = bind(multiply, 4, 2);
+    ASSERT_EQ(8, multiplyFourByTwoFunction());
+
+    Function<int ()> subtractTwoFromFourFunction = bind(subtract, 4, 2);
+    ASSERT_EQ(2, subtractTwoFromFourFunction());
 }
 
 } // namespace TestWebKitAPI

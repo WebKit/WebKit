@@ -1,5 +1,17 @@
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
+        Add unary and binary bind overloads
+        https://bugs.webkit.org/show_bug.cgi?id=74524
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Functional.h:
+        (WTF::R):
+        (WTF::FunctionWrapper::ResultType):
+        (WTF::bind):
+
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
         Add back the callOnMainThread overload that takes a WTF::Function
         https://bugs.webkit.org/show_bug.cgi?id=74512
 
