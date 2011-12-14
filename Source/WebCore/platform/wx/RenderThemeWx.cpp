@@ -266,7 +266,7 @@ bool RenderThemeWx::paintButton(RenderObject* o, const PaintInfo& i, const IntRe
 {
     wxWindow* window = nativeWindowForRenderObject(o);
     wxDC* dc = static_cast<wxDC*>(i.context->platformContext());
-    LocalDC localDC(dc, r);
+    LocalDC localDC(dc, r, /*transparent =*/ true);
 
     int flags = 0;
     

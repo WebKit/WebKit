@@ -40,15 +40,23 @@ wxBitmap* transparentBitmap(int width, int height);
 class LocalDC {
 
 public:
-    LocalDC(wxDC* host, const IntRect& r)
+    LocalDC(wxDC* host, const IntRect& r, bool transparent = false)
     {
 #ifndef __WXMAC__
         m_host = host;
         int width = r.width();
         int height = r.height();
-        m_bitmap = new wxBitmap(width, height, 32);
-        // we scope this to make sure that wxAlphaPixelData isn't holding a ref
-        // to m_bitmap when we create the wxMemoryDC, as this will invoke a copy op.
+        // on MSW, some controls like scrollbars do not always draw properly when
+        // the bitmap is transparent. However, they draw into all pixels so this is
+        // not needed. So only make the bitmap transparent when needed.
+        int depth = 24;
+        if (transparent)
+            depth = 32;
+        m_bitmap = new wxBitmap(width, height, depth);
+        // we need the wxAlphaPixelData code to be in its own scope so that the
+        // pixData is deleted before we assign the bitmap to the wxMemoryDC,
+        // in order to avoid a copy.
+        if (transparent)
         {
             wxAlphaPixelData pixData(*m_bitmap, wxPoint(0,0), wxSize(width, height));
             ASSERT(pixData);
@@ -65,7 +73,6 @@ public:
                 }
             }
         }
-
         m_context = new wxMemoryDC(*m_bitmap);
         m_context->SetDeviceOrigin(-r.x(), -r.y());
         m_rect = r;
