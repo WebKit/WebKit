@@ -52,9 +52,18 @@ WebInspector.DatabaseTableView.prototype = {
         return [this.refreshButton.element];
     },
 
+    /**
+     * @param {string} tableName
+     * @return {string}
+     */
+    _escapeTableName: function(tableName)
+    {
+        return tableName.replace(/\"/g, "\"\"");
+    },
+    
     update: function()
     {
-        this.database.executeSql("SELECT * FROM " + this.tableName, this._queryFinished.bind(this), this._queryError.bind(this));
+        this.database.executeSql("SELECT * FROM \"" + this._escapeTableName(this.tableName) + "\"", this._queryFinished.bind(this), this._queryError.bind(this));
     },
 
     _queryFinished: function(columnNames, values)

@@ -1,3 +1,16 @@
+2011-12-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: DatabaseTableView should escape table name.
+        https://bugs.webkit.org/show_bug.cgi?id=74503
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/database-table-name-excaping.html
+
+        * inspector/front-end/DatabaseTableView.js:
+        (WebInspector.DatabaseTableView.prototype._escapeTableName):
+        (WebInspector.DatabaseTableView.prototype.update):
+
 2011-12-14  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] padTemplate leak in webkitwebaudiosrc

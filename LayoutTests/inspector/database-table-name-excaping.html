@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    var tableName = "table-name-with-dashes-and-\"quotes\"";
+    var escapedTableName = WebInspector.DatabaseTableView.prototype._escapeTableName(tableName, "", true);
+    InspectorTest.addResult("Original value: " + tableName);
+    InspectorTest.addResult("Escaped value: " + escapedTableName);
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+ <p>Tests how table names are escaped in database table view.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=61205">Bug 74422</a>
+</body>
+</html>
