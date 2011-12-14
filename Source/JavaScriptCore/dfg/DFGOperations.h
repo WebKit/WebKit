@@ -146,15 +146,41 @@ void* DFG_OPERATION operationLinkConstruct(ExecState*);
 // the return location from one of the calls out to one of the helper operations above.
 struct DFGHandler {
     DFGHandler(ExecState* exec, void* handler)
-        : exec(exec)
-        , handler(handler)
     {
+        u.s.exec = exec;
+        u.s.handler = handler;
     }
 
-    ExecState* exec;
-    void* handler;
+#if !CPU(X86_64)
+    uint64_t encoded()
+    {
+        COMPILE_ASSERT(sizeof(Union) == sizeof(uint64_t), DFGHandler_Union_is_64bit);
+        return u.encoded;
+    }
+#endif
+
+    union Union {
+        struct Struct {
+            ExecState* exec;
+            void* handler;
+        } s;
+        uint64_t encoded;
+    } u;
 };
-DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
+#if CPU(X86_64)
+typedef DFGHandler DFGHandlerEncoded;
+inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
+{
+    return DFGHandler(exec, handler);
+}
+#else
+typedef uint64_t DFGHandlerEncoded;
+inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
+{
+    return DFGHandler(exec, handler).encoded();
+}
+#endif
+DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
 
 // These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);

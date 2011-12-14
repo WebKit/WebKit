@@ -795,7 +795,7 @@ EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     return JSValue::encode(RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
-DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
+DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
 {
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
@@ -805,7 +805,7 @@ DFGHandler DFG_OPERATION lookupExceptionHandler(ExecState* exec, ReturnAddressPt
 
     void* catchRoutine = handler ? handler->nativeCode.executableAddress() : (void*)ctiOpThrowNotCaught;
     ASSERT(catchRoutine);
-    return DFGHandler(exec, catchRoutine);
+    return dfgHandlerEncoded(exec, catchRoutine);
 }
 
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)

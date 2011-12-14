@@ -1,3 +1,17 @@
+2011-12-14  Gavin Barraclough  <barraclough@apple.com>
+
+        DFG relies on returning a struct in registers
+        https://bugs.webkit.org/show_bug.cgi?id=74527
+
+        Reviewed by Geoff Garen.
+
+        This will not work on all platforms. Returning a uint64_t will more reliably achieve
+        what we want, on 32-bit platforms (on 64-bit, stick with the struct return).
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        (JSC::DFG::DFGHandler::dfgHandlerEncoded):
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add unary and binary bind overloads
