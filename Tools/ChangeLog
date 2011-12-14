@@ -1,3 +1,20 @@
+2011-12-14  João Paulo Rechi Vita  <jprvita@openbossa.org>
+
+        [Qt] [Gardening] Remove qt-4.7 layout tests dir
+        https://bugs.webkit.org/show_bug.cgi?id=74426
+
+        Building trunk now depends on Qt >= 4.8, so no need to keep this directory
+        on the tree.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.qt_version):
+        (QtPort.baseline_search_path):
+        (QtPort._skipped_file_search_paths):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest._assert_search_path):
+
 2011-12-14  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] In prepare-ChangeLog, make $isGit and $isSVN be used only

@@ -109,7 +109,7 @@ class QtPort(WebKitPort):
                     version = match.group('version')
                     break
         except OSError:
-            version = '4.7'
+            version = '4.8'
         return version
 
     def baseline_search_path(self):
@@ -118,9 +118,7 @@ class QtPort(WebKitPort):
             search_paths.append(self._wk2_port_name())
         search_paths.append(self.name())
         version = self.qt_version()
-        if '4.7' in version:
-            search_paths.append('qt-4.7')
-        elif '4.8' in version:
+        if '4.8' in version:
             search_paths.append('qt-4.8')
         elif version:
             search_paths.append('qt-5.0')
@@ -130,9 +128,7 @@ class QtPort(WebKitPort):
     def _skipped_file_search_paths(self):
         search_paths = set([self.port_name, self.name()])
         version = self.qt_version()
-        if '4.7' in version:
-            search_paths.add('qt-4.7')
-        elif '4.8' in version:
+        if '4.8' in version:
             search_paths.add('qt-4.8')
         elif version:
             search_paths.add('qt-5.0')
