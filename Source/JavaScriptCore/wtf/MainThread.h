@@ -46,6 +46,9 @@ void callOnMainThread(MainThreadFunction*, void* context);
 void callOnMainThreadAndWait(MainThreadFunction*, void* context);
 void cancelCallOnMainThread(MainThreadFunction*, void* context);
 
+template<typename> class Function;
+void callOnMainThread(const Function<void ()>&);
+    
 void setMainThreadCallbacksPaused(bool paused);
 
 bool isMainThread();

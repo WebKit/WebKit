@@ -1,3 +1,17 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add back the callOnMainThread overload that takes a WTF::Function
+        https://bugs.webkit.org/show_bug.cgi?id=74512
+
+        Reviewed by Darin Adler.
+
+        Add back the overload; the changes to WebCore should hopefully keep Windows building.
+
+        * wtf/MainThread.cpp:
+        (WTF::callFunctionObject):
+        (WTF::callOnMainThread):
+        * wtf/MainThread.h:
+
 2011-12-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should infer when local variables are doubles

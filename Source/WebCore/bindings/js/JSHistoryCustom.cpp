@@ -68,7 +68,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& pr
     const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         // Allow access to back(), forward() and go() from any frame.
-        if (entry->attributes() & Function) {
+        if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
                 slot.setCustom(this, nonCachingStaticBackFunctionGetter);
                 return true;
@@ -109,7 +109,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifi
     if (entry) {
         PropertySlot slot;
         // Allow access to back(), forward() and go() from any frame.
-        if (entry->attributes() & Function) {
+        if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
                 slot.setCustom(this, nonCachingStaticBackFunctionGetter);
                 descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());

@@ -1,3 +1,23 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add back the callOnMainThread overload that takes a WTF::Function
+        https://bugs.webkit.org/show_bug.cgi?id=74512
+
+        Reviewed by Darin Adler.
+
+        Explicitly qualify the Function enum flag, since MSVC2005 is too stupid to disambiguate
+        the Function class template and the enum flag.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertyDescriptor):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::getOwnPropertySlotDelegate):
+        (WebCore::JSHistory::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::getOwnPropertySlotDelegate):
+        (WebCore::JSLocation::getOwnPropertyDescriptorDelegate):
+
 2011-12-14  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r102688.

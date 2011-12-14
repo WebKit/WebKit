@@ -64,7 +64,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& p
 
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-    if (entry && (entry->attributes() & Function)) {
+    if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
             slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
             return true;
@@ -101,7 +101,7 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identif
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     PropertySlot slot;
-    if (entry && (entry->attributes() & Function)) {
+    if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
             slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
