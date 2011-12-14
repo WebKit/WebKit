@@ -1,0 +1,24 @@
+Menu 1
+Menu item 1.1
+Menu 2
+Menu item 2.1
+Menu item 2.2
+This tests that ARIA menu items are properly exposed as children for menu bars
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: menu bar
+PASS menuBar.childrenCount is 2
+AXRole: menu item
+PASS menuItem.childrenCount is 2
+AXRole: panel
+PASS menuSubItem1.childrenCount is 0
+AXRole: menu
+PASS menuSubItem2.childrenCount is 1
+AXRole: menu item
+PASS subMenuSubItem.childrenCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

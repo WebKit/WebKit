@@ -1,0 +1,7 @@
+LiveConnect 3.0 java array object inheritance JavaScript Array methods
+
+PASS b.valueOf() is b
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

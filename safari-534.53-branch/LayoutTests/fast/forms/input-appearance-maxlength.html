@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<input type="text" id="sp" style="-khtml-appearance:textfield" maxlength=5 value="123456"></input>
+
+<script>
+description('This test changes the value of the text field by simulating typing, and then gets the value.');
+
+var input = document.getElementById('sp');
+
+if (input.value != "12345") {
+    testPassed('Maxlength shouldn\'t work for default value.\n');
+} else {
+    testFailed('Maxlength unexpectedly works for default value.\n');
+}
+    
+input.value = "123";
+input.setSelectionRange(0, 3);
+input.focus();
+document.execCommand("InsertText", false, 'abcd');
+document.execCommand("InsertText", false, 'efghi');
+    
+if (input.value == "abcde") {
+    testPassed('Maxlength works for inserted text.\n');
+} else {
+    testFailed('Maxlength does not work for inserted text.\n');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

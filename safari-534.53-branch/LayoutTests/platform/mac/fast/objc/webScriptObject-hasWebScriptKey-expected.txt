@@ -1,0 +1,39 @@
+This tests -[WebScriptObject hasWebScriptKey:(NSString *)key]. It is the equivalent of JavaScript's `in`, to check for the existence of a JavaScript key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test with a newly created, local, object => {}
+PASS (key in object) is false
+PASS objCController.testHasWebScriptKey(key) is 0
+PASS (key in object) is true
+PASS objCController.testHasWebScriptKey(key) is 1
+PASS (key in object) is true
+PASS objCController.testHasWebScriptKey(key) is 1
+PASS (key in object) is false
+PASS objCController.testHasWebScriptKey(key) is 0
+
+Test with an existing, global, object => window
+PASS (key in object) is false
+PASS objCController.testHasWebScriptKey(key) is 0
+PASS (key in object) is true
+PASS objCController.testHasWebScriptKey(key) is 1
+PASS (key in object) is true
+PASS objCController.testHasWebScriptKey(key) is 1
+PASS (key in object) is false
+PASS objCController.testHasWebScriptKey(key) is 0
+
+Test with a DOM Object => document.body
+PASS (key in object) is false
+PASS objCController.testHasWebScriptKey(key) is 0
+PASS (key in object) is true
+PASS objCController.testHasWebScriptKey(key) is 1
+PASS (key in object) is true
+PASS objCController.testHasWebScriptKey(key) is 1
+PASS (key in object) is false
+PASS objCController.testHasWebScriptKey(key) is 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

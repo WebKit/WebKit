@@ -1,0 +1,55 @@
+#! /usr/bin/env python
+
+# Copyright (C) 2009 Kevin Ollivier  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+#
+# wxBrowser sample app build script for the waf build system
+
+import sys
+
+from settings import *
+
+include_paths = [os.path.join(wk_root, 'Source', 'WebCore', 'bindings', 'wx'),
+                os.path.join(wk_root, 'Source', 'WebKit', 'wx')]
+
+def set_options(opt):
+    common_set_options(opt)
+
+def configure(conf):
+    common_configure(conf)
+    
+def build(bld):
+    import Options
+
+    obj = bld.new_task_gen(
+        features = 'cxx cprogram',
+        includes = ' '.join(include_paths),
+        source = 'browser.cpp',
+        target = 'wxBrowser',
+        uselib = 'WX CURL ICU XSLT XML ' + get_config(),
+        libpath = [output_dir],
+        uselib_local = 'wxwebkit',
+        install_path = output_dir)
+        
+    if sys.platform.startswith('darwin'):
+        obj.mac_app = True

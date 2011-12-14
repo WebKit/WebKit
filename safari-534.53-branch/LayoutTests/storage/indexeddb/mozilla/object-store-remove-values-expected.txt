@@ -1,0 +1,80 @@
+Test IndexedDB: adds, gets, deletes, and re-gets a record in a variety of different object store configurations
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+indexedDB.open(name, description)
+db = event.target.result
+data = [
+        { name: 'inline key; key generator',
+          autoIncrement: true,
+          storedObject: {name: 'Lincoln'},
+          keyName: 'id',
+          keyValue: undefined,
+        },
+        { name: 'inline key; no key generator',
+          autoIncrement: false,
+          storedObject: {id: 1, name: 'Lincoln'},
+          keyName: 'id',
+          keyValue: undefined,
+        },
+        { name: 'out of line key; key generator',
+          autoIncrement: true,
+          storedObject: {name: 'Lincoln'},
+          keyName: undefined,
+          keyValue: undefined,
+        },
+        { name: 'out of line key; no key generator',
+          autoIncrement: false,
+          storedObject: {name: 'Lincoln'},
+          keyName: undefined,
+          keyValue: 1,
+        }
+    ];
+i = 0;
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });
+request = objectStore.add(test.storedObject);
+id = event.target.result;
+request = objectStore.get(id);
+PASS test.storedObject.name is event.target.result.name
+request = objectStore.delete(id);
+request = objectStore.get(id);
+PASS event.target.result === undefined is true
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });
+request = objectStore.add(test.storedObject);
+id = event.target.result;
+request = objectStore.get(id);
+PASS test.storedObject.name is event.target.result.name
+request = objectStore.delete(id);
+request = objectStore.get(id);
+PASS event.target.result === undefined is true
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });
+request = objectStore.add(test.storedObject);
+id = event.target.result;
+request = objectStore.get(id);
+PASS test.storedObject.name is event.target.result.name
+request = objectStore.delete(id);
+request = objectStore.get(id);
+PASS event.target.result === undefined is true
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });
+request = objectStore.add(test.storedObject, test.keyValue);
+id = event.target.result;
+request = objectStore.get(id);
+PASS test.storedObject.name is event.target.result.name
+request = objectStore.delete(id);
+request = objectStore.get(id);
+PASS event.target.result === undefined is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

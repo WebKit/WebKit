@@ -1,0 +1,9 @@
+Requires Java plugin installed and enabled. This tests that calling functions on Java Applet works.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+ FAIL document.testapplet.getString() == 'abcdefg' should be true. Threw exception TypeError: Object #<an HTMLAppletElement> has no method 'getString'
+PASS successfullyParsed is true
+
+TEST COMPLETE

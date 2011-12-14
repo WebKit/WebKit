@@ -1,0 +1,10 @@
+autowrap text area with dir=rtl. 
+
+nowrap text area with dir=rtl. 
+
+autowrap text area with dir=ltr. 
+
+vertical text.
+
+PASS 
+

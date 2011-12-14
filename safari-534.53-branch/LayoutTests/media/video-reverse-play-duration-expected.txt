@@ -1,0 +1,16 @@
+Tests that duration is not set to zero when playing in reverse to the origin.
+
+
+EVENT(canplaythrough)
+EXPECTED (video.duration > '0') OK
+EXPECTED (video.currentTime == '0') OK
+RUN(video.currentTime = 0.3)
+
+EVENT(seeked)
+EXPECTED (video.currentTime.toFixed(1) == '0.3') OK
+RUN(video.play())
+RUN(video.playbackRate = -1)
+
+EXPECTED (video.duration > '0') OK
+END OF TEST
+

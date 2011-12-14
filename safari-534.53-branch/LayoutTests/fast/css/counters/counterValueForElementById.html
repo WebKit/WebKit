@@ -1,0 +1,48 @@
+<head>
+    <meta charset="utf-8">
+    <style>
+        .reset { counter-reset: c; }
+        .increment { counter-increment: c; }
+        .increment2 { counter-increment: c 2; }
+        .show-before:before { content: counters(c, "."); }
+        .show-after:after { content: counters(c, "."); }
+        .show-twice:before { content: counters(c, ".") counters(c, "."); }
+        .show-greek:before { content: counters(c, ".", lower-greek); }
+        .show-three-greeks:before { content: counters(c, ".", lower-greek) counters(c, ".", lower-greek); }
+        .show-three-greeks:after { content: counters(c, ".", lower-greek); }
+    </style>
+    <script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div>This is the test for layoutTestController.counterValueForElementById</div>
+
+    <div class="reset"><span id="before" class="show-before"></span></div>
+    <div class="reset"><span id="after" class="show-after"></span></div>
+    <div class="reset"><span id="before_after" class="show-before show-after"></span></div>
+    <div class="reset"><span id="twice" class="show-twice"></span></div>
+    <div class="reset">
+        <span id="point" class="reset increment show-before">
+            <span id="two-points" class="reset increment2 show-before">
+                <span id="greek" class="show-greek"></span>
+                <span id="three-greeks" class="show-three-greeks"></span>
+            </span>
+        </span>
+    </div>
+
+    <div id="console"></div>
+
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+
+            shouldBe("layoutTestController.counterValueForElementById('before')", "'0'");
+            shouldBe("layoutTestController.counterValueForElementById('after')", "'0'");
+            shouldBe("layoutTestController.counterValueForElementById('before_after')", "'0 0'");
+            shouldBe("layoutTestController.counterValueForElementById('twice')", "'0 0'");
+            shouldBe("layoutTestController.counterValueForElementById('point')", "'0.1'");
+            shouldBe("layoutTestController.counterValueForElementById('two-points')", "'0.1.2'");
+            shouldBe("layoutTestController.counterValueForElementById('greek')", "'0.\u03b1.\u03b2'");
+            shouldBe("layoutTestController.counterValueForElementById('three-greeks')", "'0.\u03b1.\u03b2 0.\u03b1.\u03b2 0.\u03b1.\u03b2'");
+        }
+    </script>
+</body>

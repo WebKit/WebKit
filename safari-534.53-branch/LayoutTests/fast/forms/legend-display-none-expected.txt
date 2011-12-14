@@ -1,0 +1,5 @@
+Test that specifying display: none for a legend element works.
+
+PASS
+
+

@@ -1,0 +1,7 @@
+S15.3.4_A5
+
+#1.1: The Function prototype object is itself a Function object without [[create]] property TypeError: 'function () { [native code] }' is not a constructor (evaluating 'new Function.prototype')
+PASS 
+
+TEST COMPLETE
+

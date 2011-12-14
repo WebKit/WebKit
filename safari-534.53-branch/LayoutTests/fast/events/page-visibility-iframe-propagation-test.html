@@ -1,0 +1,125 @@
+<html>
+<body>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script src="../js/resources/js-test-pre.js"></script>
+
+<script>
+
+description("This test checks that Page Visibility state events are propagated to child frames.");
+
+var jsTestIsAsync = true;
+
+function makePageVisible() {
+    if (window.layoutTestController)
+        layoutTestController.setPageVisibility("visible");
+}
+
+function makePageHidden() {
+    if (window.layoutTestController)
+        layoutTestController.setPageVisibility("hidden");
+}
+
+function checkIsPageVisible() {
+    debug("Main Page:");
+    shouldBeEqualToString("document.webkitVisibilityState", "visible");
+    shouldBeTrue("document.webkitIsVisible");
+}
+
+function checkIsPageHidden() {
+    debug("Main Page:");
+    shouldBeEqualToString("document.webkitVisibilityState", "hidden");
+    shouldBeFalse("document.webkitIsVisible");
+}
+
+function checkIsChildFrameVisible() {
+    debug("Child Frame:");
+    shouldBeEqualToString("childFrame.contentDocument.webkitVisibilityState",
+                          "visible");
+    shouldBeTrue("childFrame.contentDocument.webkitIsVisible");
+}
+
+function checkIsChildFrameHidden() {
+    debug("Child Frame:");
+    shouldBeEqualToString("childFrame.contentDocument.webkitVisibilityState",
+                          "hidden");
+    shouldBeFalse("childFrame.contentDocument.webkitIsVisible");
+}
+
+// We will try to change the visibility states as:
+//  0 - visible. (Initial - i.e. on load).
+//  1 - hidden
+//  2 - visible
+var numVisibilityChanges = 0;
+
+var childFrame;
+
+function startTest() {
+    childFrame = document.getElementById("childFrame");
+    childFrame.contentDocument.addEventListener(
+        "webkitvisibilitystatechange", onChildFrameVisibilityChange, false);
+    document.addEventListener("webkitvisibilitystatechange",
+                              onVisibilityChange, false);
+
+    checkIsPageVisible();
+    checkIsChildFrameVisible();
+
+    numVisibilityChanges++;
+    makePageHidden();
+}
+
+var numFinishes = 0;
+function finishTest() {
+    numFinishes++;
+    if (numFinishes < 2) {
+      return;
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.resetPageVisibility();
+    }
+    finishJSTest();
+}
+
+function onVisibilityChange() {
+    if (numVisibilityChanges == 1) {
+        checkIsPageHidden();
+        return;
+    } else if (numVisibilityChanges == 2) {
+        checkIsPageVisible();
+        finishTest();
+        return;
+    } else {
+        testFailed("Too many visibility transitions");
+        finishTest();
+        return;
+    }
+}
+
+function onChildFrameVisibilityChange() {
+    if (numVisibilityChanges == 1) {
+        checkIsChildFrameHidden();
+        numVisibilityChanges++;
+        makePageVisible();
+        return;
+    } else if (numVisibilityChanges == 2) {
+        checkIsChildFrameVisible();
+        finishTest();
+        return;
+    } else {
+        testFailed("Child Frame: Too many visibility transitions");
+        finishTest();
+    }
+}
+
+var successfullyParsed = true;
+
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+
+<iframe id="childFrame" onload="startTest()"></iframe>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<p>Test that custom headers are not sent with OPTIONS preflight request.</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function resetStatus()
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "/resources/reset-temp-file.php?filename=access-control-preflight-headers-status", false);
+    req.send();
+}
+
+function sendRequest()
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/no-custom-header.php");
+    req.setRequestHeader("X-Custom-Header", "foobar");
+    req.onerror = function() {
+        document.body.appendChild(document.createTextNode("FAIL: onerror called"));
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    req.onload = function() {
+        document.body.appendChild(document.createTextNode(req.responseText));
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    req.send();
+}
+
+resetStatus();
+sendRequest();
+</script>

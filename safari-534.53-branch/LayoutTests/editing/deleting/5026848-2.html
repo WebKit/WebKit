@@ -1,0 +1,24 @@
+<html>
+<body>
+<p>This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved during a deletion.  You should see two 'Non-editable' pieces on either side of the editable piece below.</p>
+<div id="div" contenteditable="true">
+<table contenteditable="false">
+    <tr>
+        <td>Non-editable</td>
+        <td contenteditable="true">Editable <span id="start">content</span></td>
+        <td>Non-editable</td>
+    </tr>
+</table>
+Editable <span id="end">content</span>
+</div>
+
+<script>
+var sel = window.getSelection();
+var start = document.getElementById("start");
+var end = document.getElementById("end");
+sel.setBaseAndExtent(start, 0, end, 0);
+document.execCommand("Delete");
+</script>
+
+</body>
+</html>

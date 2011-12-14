@@ -1,0 +1,2 @@
+This tests XMLSerializer.serializeToString() on a DocumentType node that does not have a document associated with it. It should throw an INVALID_ACCESS_ERR DOMException.
+PASS: an Error: INVALID_ACCESS_ERR: DOM Exception 15 was thrown as expected.

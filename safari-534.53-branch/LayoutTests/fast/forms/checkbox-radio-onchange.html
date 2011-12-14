@@ -1,0 +1,13 @@
+<html>
+<body onload="document.getElementById('ch').click(); document.getElementById('rd2').click()">
+This is to test onchange of checkboxes and radio buttons.
+<br>
+<input type="checkbox" id="ch" onchange="document.getElementById('result').innerHTML = 'Test 1 Passed. onChange event fired for checkbox.\n'">Checkbox</input>
+<div id="result">Test 1 Failed. onChange didn't fire.</div>
+<input type="radio" id="rd" name="test">Radio 1</input>
+<input type="radio" id="rd2" name="test" onchange="document.getElementById('result2').innerHTML = 'Test 2 Passed. onChange event fired for radio button.\n'">Radio 2</input>
+<div id="result2">Test 2 Failed. onChange didn't fire.</div>
+
+
+</body>
+</html>

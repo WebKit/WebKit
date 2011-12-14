@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive">text</h3>
+<img src="test.gif" width=100 height=100 alt="alt text" tabindex=0 id="image">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA removing an element from a live region sends the correct notification.");
+
+    var liveRegion = 0;
+    function ariaCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+           alert("Successfully received " + notification);
+           liveRegion.removeNotificationListener();
+           window.layoutTestController.notifyDone();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("liveregion").focus();
+        liveRegion = window.accessibilityController.focusedElement;
+
+        var addedNotification = liveRegion.addNotificationListener(ariaCallback);
+        shouldBe("addedNotification", "true");
+
+        // this should trigger our live region callback for a removed element.
+        document.getElementById("liveregion").removeChild(document.getElementById("innerlive")); 
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

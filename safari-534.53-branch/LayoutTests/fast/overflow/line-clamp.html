@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <style>
+        div {
+            display: -webkit-inline-box;
+            width: 100px;
+            -webkit-box-orient: vertical;
+            overflow: hidden; 
+            border: solid thin grey; 
+        }
+        </style>
+    </head>
+    <body>
+        This tests the -webkit-line-clamp property<br><br>
+        <div style="-webkit-line-clamp: 50%;">
+            50% truncation.  This is an example of ellipsis-truncation of multi-line text.<a href="#">More</a>
+        </div>
+        <div style="-webkit-line-clamp: 0%;">
+            0% truncation.  This does the most truncation possible, truncating to 1 line.<a href="#">More</a>
+        </div>
+        <div style="-webkit-line-clamp: 2;">
+            2 lines.  This is an example of ellipsis-truncation of multi-line text.<a href="#">More</a>
+        </div>
+        <div style="-webkit-line-clamp: 0%; -webkit-line-clamp: 3;">
+            Backwards compatible truncation.  3 lines on the latest version of WebKit.  1 line on older versions of WebKit.<a href="#">More</a>
+        </div>
+        <div style="-webkit-line-clamp: 30%;">
+            30% truncation.  No link at the end.  This is an example of ellipsis-truncation of multi-line text.
+        </div>
+        <div style="-webkit-line-clamp: 3">
+            3 lines.  No link at the end.  This is an example of ellipsis-truncation of multi-line text.
+        </div>
+        <div style="-webkit-line-clamp: 0;">
+            0 lines.  This is an invalid value for -webkit-line-clamp.
+        </div>
+        <div style="-webkit-line-clamp: -1;">
+            -1 lines.  This is an invalid value for -webkit-line-clamp.
+        </div>
+        <div style="-webkit-line-clamp: -1%;">
+            -1%.  This is an invalid value for -webkit-line-clamp.
+        </div>
+        <div style="-webkit-line-clamp: 150%;">
+            150% truncation.  This does the least truncation possible, truncating nothing.
+        </div>
+    </body>
+</html>

@@ -1,0 +1,59 @@
+<html>
+<script src="resetCookies.js"></script>
+<script>
+resetCookies();
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+window.onmessage = function(evt)
+{
+    if (evt.data == "showCookies") {
+        showCookies();
+        return;
+    } else if (evt.data.split(" ")[0] == "sendXHR") {
+        sendXHR(evt.data.split(" ")[1]);
+        return;
+    } else if (evt.data == "resetCookiesAndNotifyDone") {
+        resetCookiesAndNotifyDone();
+        return;
+    } else
+        alert("Unknown message.");
+}
+
+var stage = 1;
+function showCookies()
+{
+    alert("Test stage " + stage++ + " document.cookie is: " + document.cookie);
+    parent.window.postMessage("done", "*");    
+}
+
+function sendXHR(queryCommand)
+{
+    var baseurl = "http://localhost:8000/cookies/resources/cookie-utility.php";
+    var url = queryCommand ? baseurl + "?queryfunction=" + queryCommand : baseurl;
+    alert(url);
+    var req = new XMLHttpRequest();
+    req.open('GET', url, false);
+    req.send();
+
+    if (req.status == 200)
+        alert("XHR response - " + req.responseText);
+    else
+        alert("xhr error");
+    
+    parent.window.postMessage("done", "*");    
+}
+
+function resetCookiesAndNotifyDone()
+{
+    resetCookies();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<body>
+HELLO THERE
+</body>
+</html>

@@ -1,0 +1,16 @@
+1. Test that no usable <source> element leaves the media element with networkState == NETWORK_NO_SOURCE
+
+++ ERROR, src = test.mp4, type = "audio/x-chicken-face"
+EXPECTED (event.target.tagName == 'SOURCE') OK
+EXPECTED (event.target.parentNode.networkState > '1') OK
+
+++ ERROR, src = test.ogv, type = "video/x-higglety-pigglety"
+EXPECTED (event.target.tagName == 'SOURCE') OK
+EXPECTED (event.target.parentNode.networkState > '1') OK
+
+++ ERROR, src = doesnotexist.mp4, type = ""
+EXPECTED (event.target.tagName == 'SOURCE') OK
+EXPECTED (event.target.parentNode.networkState == '3') OK
+
+END OF TEST
+

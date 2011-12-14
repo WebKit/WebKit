@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>currentColor basic test</title>
+ <style type="text/css">
+   div { height: 5em; width: 10em; }
+   #three { color: blue; }
+  </style>
+  <script>
+    function log(message) {
+      var console = document.getElementById("console");
+      console.appendChild(document.createTextNode(message + "\n"));
+    }
+    function runTest() {
+      if (window.layoutTestController) 
+        layoutTestController.dumpAsText();
+      var div = document.getElementById("two");
+      div.style.color = "green";
+      if (window.getComputedStyle(div).backgroundColor != "rgb(0, 128, 0)") {
+          log("FAILED");
+          return;
+      }
+      div = document.getElementById("three");
+      if (window.getComputedStyle(div).color != "rgb(0, 128, 0)") {
+          log("FAILED");
+          return;
+      }
+      log("PASSED");
+    }
+  </script>
+ </head>
+ <body onload="runTest()">
+  <div id="one" style="color:green; background: currentColor" ></div>
+  <div id="two" style="color:red; background: currentColor" ></div>
+  <div style="color:green">
+    <div id="three" style="color:currentColor; background: currentColor" ></div>
+  </div>
+  <div id="console"></div>
+ </body>
+</html>

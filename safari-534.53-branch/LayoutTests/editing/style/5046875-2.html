@@ -1,0 +1,13 @@
+<p>This tests for a bug where left justifying a paragraph amongst several that are centered would left justify all of them.  Only the second paragraph should be left justified. </p>
+<div id="div" contenteditable="true" style="text-align:center;">foo<br>bar<div>baz</div></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "paragraph");
+sel.modify("extend", "forward", "word");
+
+document.execCommand("JustifyLeft");
+</script>

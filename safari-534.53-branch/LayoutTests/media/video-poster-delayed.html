@@ -1,0 +1,53 @@
+<!DOCTYPE HTML5>
+
+<html>
+    <head>
+        <title>Delayed load of poster should not overwrite intrinsic size of video</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+        <style>
+            video {
+                border: 3px solid red;
+                background-color: magenta;
+            }
+        </style>
+        <script>
+            function start()
+            {
+                video = document.getElementById('video');
+
+                video.addEventListener("loadeddata", function(ev) {
+
+                    consoleWrite("<br><b>Video loaded</b><br>");
+
+                    testExpected("video.clientWidth", 320);
+                    testExpected("video.clientHeight", 240);
+                    testExpected("video.videoWidth", 320);
+                    testExpected("video.videoHeight", 240);
+
+                    video.poster = "content/abe.png";
+                    setTimeout(testAfterLoadingPoster, 100);
+                });
+
+                video.src = findMediaFile("video", "content/test");
+            }
+
+            function testAfterLoadingPoster()
+            {
+                consoleWrite("<br><b>Poster loaded</b><br>");
+
+                testExpected("video.clientWidth", 320);
+                testExpected("video.clientHeight", 240);
+                testExpected("video.videoWidth", 320);
+                testExpected("video.videoHeight", 240);
+
+                endTest();
+            }
+        </script>
+    </head>
+
+
+    <body onload="start()">
+        <video id=video></video>
+    </body>
+</html>

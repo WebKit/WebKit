@@ -1,0 +1,29 @@
+Test IndexedDB's constants.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webkitIDBDatabaseException.UNKNOWN_ERR is 1
+PASS webkitIDBDatabaseException.NON_TRANSIENT_ERR is 2
+PASS webkitIDBDatabaseException.NOT_FOUND_ERR is 3
+PASS webkitIDBDatabaseException.CONSTRAINT_ERR is 4
+PASS webkitIDBDatabaseException.DATA_ERR is 5
+PASS webkitIDBDatabaseException.NOT_ALLOWED_ERR is 6
+PASS webkitIDBDatabaseException.SERIAL_ERR is 7
+PASS webkitIDBDatabaseException.RECOVERABLE_ERR is 8
+PASS webkitIDBDatabaseException.TRANSIENT_ERR is 9
+PASS webkitIDBDatabaseException.TIMEOUT_ERR is 10
+PASS webkitIDBDatabaseException.DEADLOCK_ERR is 11
+PASS webkitIDBRequest.LOADING is 1
+PASS webkitIDBRequest.DONE is 2
+PASS webkitIDBCursor.NEXT is 0
+PASS webkitIDBCursor.NEXT_NO_DUPLICATE is 1
+PASS webkitIDBCursor.PREV is 2
+PASS webkitIDBCursor.PREV_NO_DUPLICATE is 3
+PASS webkitIDBTransaction.READ_WRITE is 0
+PASS webkitIDBTransaction.READ_ONLY is 1
+PASS webkitIDBTransaction.VERSION_CHANGE is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

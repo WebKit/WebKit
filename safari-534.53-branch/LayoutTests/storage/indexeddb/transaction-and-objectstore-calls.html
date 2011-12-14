@@ -1,0 +1,106 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's transaction and objectStore calls");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    request = evalAndLog("webkitIndexedDB.open('transaction-and-objectstore-calls', 'description')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("result = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cleanDatabase()
+{
+    trans = evalAndLog("trans = event.target.result");
+    deleteAllObjectStores(db);
+
+    evalAndLog("db.createObjectStore('a')");
+    evalAndLog("db.createObjectStore('b')");
+    evalAndLog("trans.addEventListener('complete', created, true)");
+    debug("");
+}
+
+function created()
+{
+    trans = evalAndLog("trans = db.transaction(['a'])");
+    evalAndLog("trans.objectStore('a')");
+    evalAndExpectException("trans.objectStore('b')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    trans = evalAndLog("trans = db.transaction(['a'])");
+    evalAndLog("trans.objectStore('a')");
+    evalAndExpectException("trans.objectStore('b')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    trans = evalAndLog("trans = db.transaction(['b'])");
+    evalAndLog("trans.objectStore('b')");
+    evalAndExpectException("trans.objectStore('a')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    trans = evalAndLog("trans = db.transaction(['a', 'b'])");
+    evalAndLog("trans.objectStore('a')");
+    evalAndLog("trans.objectStore('b')");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    trans = evalAndLog("trans = db.transaction(['b', 'a'])");
+    evalAndLog("trans.objectStore('a')");
+    evalAndLog("trans.objectStore('b')");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    trans = evalAndLog("trans = db.transaction([])");
+    evalAndLog("trans.objectStore('a')");
+    evalAndLog("trans.objectStore('b')");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    trans = evalAndLog("trans = db.transaction()");
+    evalAndLog("trans.objectStore('a')");
+    evalAndLog("trans.objectStore('b')");
+    evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    evalAndExpectException("db.transaction(['x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['a', 'x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['x', 'x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['a', 'x', 'b'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    debug("");
+
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

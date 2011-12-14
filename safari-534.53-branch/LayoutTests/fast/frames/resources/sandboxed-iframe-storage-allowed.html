@@ -1,0 +1,19 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-post-function.js"></script>
+<script>
+
+window.onload = function() {
+    shouldBeTrue("window.openDatabase('SandboxedIframeStorageAllowed', '1.0', '', 1) != null");
+    shouldBeTrue("window.localStorage != null");
+    shouldBeTrue("window.sessionStorage != null");
+}
+
+</script>
+</head>
+<body>
+    <div id="console"></div>
+</body>
+</html>

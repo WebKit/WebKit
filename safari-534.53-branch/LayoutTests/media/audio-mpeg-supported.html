@@ -1,0 +1,47 @@
+<html>
+    <body>
+
+    <p>Test that the audio element supports MPEG files.</p>
+
+    <audio controls></audio>
+    
+    <script src=video-test.js></script>
+    <script>
+        var timeupdateEventCount = 0;
+        mediaElement = document.getElementsByTagName('audio')[0];
+    
+        mediaElement.addEventListener('error', function() { 
+            consoleWrite("<span style='color:red'>FAIL</span> : caught 'error' event, audio.error = " + mediaElement.error.code);
+            endTest();
+        });
+    
+        mediaElement.addEventListener('canplaythrough', function() { 
+            consoleWrite("EVENT(canplaythrough)");
+            testExpected("mediaElement.currentTime", 0);
+            mediaElement.play(); 
+        });
+
+        function timeupdate()
+        {
+            ++timeupdateEventCount;
+
+            // wait 2 timeupdate events so we are sure the media engine is
+            // playing the media.
+            if (timeupdateEventCount == 2) {
+               // make sure time is advancing
+               testExpected("mediaElement.currentTime", 0, '>');
+               // reset the counter to prevent infinite loop if the
+               // test is re-executed manually.
+               timeupdateEventCount = 0;
+               endTest();
+            }
+        }
+    
+        mediaElement.addEventListener("timeupdate", timeupdate);
+        waitForEvent('play');
+    
+        mediaElement.src = "content/silence.mpg";
+    </script>
+
+    </body>
+</html>

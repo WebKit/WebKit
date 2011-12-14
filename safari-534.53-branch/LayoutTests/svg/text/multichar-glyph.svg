@@ -1,0 +1,131 @@
+<html xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%;">
+<body>
+<p>The left edges of the black boxes below should line up with the
+left edges of their containing red or green boxes. In addition, all
+the assertions below should pass.</p>
+
+<div style="width: 800px; height: 200px;">
+<svg xmlns="http://www.w3.org/2000/svg">
+<font>
+<font-face font-family="xyzzy" units-per-em="100" ascent="100" descent="500">
+</font-face>
+<glyph unicode="BD" d="M0,0 h40 v-80 h-40 z" horiz-adv-x="80">
+</glyph>
+<glyph unicode="GG" d="M0,0 h20 v-60 h-20 z" horiz-adv-x="70">
+</glyph>
+<glyph unicode="BB" d="M0,0 h20 v-70 h-20 z" horiz-adv-x="70">
+</glyph>
+<glyph unicode="B" d="M0,0 h30 v-40 h-30 z" horiz-adv-x="60">
+</glyph>
+<glyph unicode="D" d="M0,0 h30 v-40 h-30 z" horiz-adv-x="100">
+</glyph>
+<glyph unicode="G" d="M0,0 h30 v-40 h-30 z" horiz-adv-x="60">
+</glyph>
+</font>
+<rect x="0" y="10" width="70" height="160" fill="red"/>
+<rect x="70" y="10" width="100" height="150" fill="green"/>
+<rect x="170" y="10" width="70" height="140" fill="red"/>
+<rect x="240" y="10" width="70" height="130" fill="green"/>
+<rect x="310" y="10" width="80" height="120" fill="red"/>
+<rect x="390" y="10" width="60" height="110" fill="green"/>
+<text id="foo" y="10" font-family="xyzzy" font-size="100px" letter-spacing="0px" word-spacing="0px">GGDGGBBBDB</text>
+</svg>
+</div>
+<pre id="console" />
+<script>
+<![CDATA[
+
+function debug(msg)
+{
+    var span = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+    document.getElementById("console").appendChild(span); // insert it first so XHTML knows the namespace
+    span.innerHTML = msg + '<br />';
+}
+
+function escapeHTML(text)
+{
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+}
+
+function testPassed(msg)
+{
+    debug('<span><span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
+}
+
+function testFailed(msg)
+{
+    debug('<span><span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
+}
+
+function areArraysEqual(_a, _b)
+{
+    if (_a.length !== _b.length)
+        return false;
+    for (var i = 0; i < _a.length; i++)
+        if (_a[i] !== _b[i])
+            return false;
+    return true;
+}
+
+function isResultCorrect(_actual, _expected)
+{
+    if (_actual === _expected)
+        return true;
+    if (typeof(_expected) == "number" && isNaN(_expected))
+        return typeof(_actual) == "number" && isNaN(_actual);
+    if (Object.prototype.toString.call(_expected) == Object.prototype.toString.call([]))
+        return areArraysEqual(_actual, _expected);
+    return false;
+}
+
+function shouldBe(_a, _b)
+{
+  if (typeof _a != "string" || typeof _b != "string")
+    debug("WARN: shouldBe() expects string arguments");
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+  var _bv = eval(_b);
+
+  if (exception)
+    testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
+  else if (isResultCorrect(_av, _bv))
+    testPassed(_a + " is " + _b);
+  else if (typeof(_av) == typeof(_bv))
+    testFailed(_a + " should be " + _bv + ". Was " + _av + ".");
+  else
+    testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
+}
+
+var t = document.getElementById("foo");
+shouldBe("t.getStartPositionOfChar(0).x", '0');
+shouldBe("t.getStartPositionOfChar(1).x", '0');
+shouldBe("t.getStartPositionOfChar(2).x", '0 + 70');
+shouldBe("t.getStartPositionOfChar(3).x", '0 + 70 + 100');
+shouldBe("t.getStartPositionOfChar(4).x", '0 + 70 + 100');
+shouldBe("t.getStartPositionOfChar(5).x", '0 + 70 + 100 + 70');
+shouldBe("t.getStartPositionOfChar(6).x", '0 + 70 + 100 + 70');
+shouldBe("t.getStartPositionOfChar(7).x", '0 + 70 + 100 + 70 + 70');
+shouldBe("t.getStartPositionOfChar(8).x", '0 + 70 + 100 + 70 + 70');
+shouldBe("t.getStartPositionOfChar(9).x", '0 + 70 + 100 + 70 + 70 + 80');
+
+// The end positions of char n must map to the start position of char n-1.
+shouldBe("t.getEndPositionOfChar(0).x", '70');
+shouldBe("t.getEndPositionOfChar(1).x", '70');
+shouldBe("t.getEndPositionOfChar(2).x", '70 + 100');
+shouldBe("t.getEndPositionOfChar(3).x", '70 + 100 + 70');
+shouldBe("t.getEndPositionOfChar(4).x", '70 + 100 + 70');
+shouldBe("t.getEndPositionOfChar(5).x", '70 + 100 + 70 + 70');
+shouldBe("t.getEndPositionOfChar(6).x", '70 + 100 + 70 + 70');
+shouldBe("t.getEndPositionOfChar(7).x", '70 + 100 + 70 + 70 + 80');
+shouldBe("t.getEndPositionOfChar(8).x", '70 + 100 + 70 + 70 + 80');
+shouldBe("t.getEndPositionOfChar(9).x", '70 + 100 + 70 + 70 + 80 + 60');
+]]>
+</script>
+</body>
+</html>
+

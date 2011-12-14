@@ -1,0 +1,81 @@
+Tests that user can mutate DOM by means of elements panel.
+
+Edited Text
+Span contents
+
+Running: testSetUp
+
+Running: testRemove
+==== before ====
+- <div id="testRemove">
+      <div id="node-to-remove"></div>
+  </div>
+==== after ====
+- <div id="testRemove">
+  </div>
+
+Running: testSetNodeName
+==== before ====
+- <div id="testSetNodeName">
+      <div id="node-to-set-name"></div>
+  </div>
+==== after ====
+- <div id="testSetNodeName">
+      <span id="node-to-set-name" ></span>
+  </div>
+
+Running: testSetNodeValue
+==== before ====
+- <div id="testSetNodeValue">
+      <div id="node-to-set-value">Text</div>
+  </div>
+==== after ====
+- <div id="testSetNodeValue">
+      <div id="node-to-set-value">Edited Text</div>
+  </div>
+
+Running: testSetAttribute
+==== before ====
+- <div id="testSetAttribute">
+      <div foo="attribute value" id="node-to-set-attribute"></div>
+  </div>
+==== after ====
+- <div id="testSetAttribute">
+      <div id="node-to-set-attribute" bar="edited attribute"></div>
+  </div>
+
+Running: testRemoveAttribute
+==== before ====
+- <div id="testRemoveAttribute">
+      <div foo="attribute value" id="node-to-remove-attribute"></div>
+  </div>
+==== after ====
+- <div id="testRemoveAttribute">
+      <div id="node-to-remove-attribute"></div>
+  </div>
+
+Running: testAddAttribute
+==== before ====
+- <div id="testAddAttribute">
+      <div id="node-to-add-attribute"></div>
+  </div>
+==== after ====
+- <div id="testAddAttribute">
+      <div id="node-to-add-attribute" newattr="new-value"></div>
+  </div>
+
+Running: testEditAsHTML
+==== before ====
+- <div id="testEditAsHTML">
+    - <div id="node-to-edit-as-html">
+          <span id="span">Text</span>
+      </div>
+  </div>
+<div id="node-to-edit-as-html"><span id="span">Text</span></div>
+==== after ====
+- <div id="testEditAsHTML">
+    - <div foo="bar">
+          <span id="inner-span">Span contents</span>
+      </div>
+  </div>
+

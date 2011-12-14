@@ -1,0 +1,34 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+} 
+</script>
+<p>This is a test for execCommand("RemoveFormat").  You should see Some%20text before and after RemoveFormat is executed.  This test case is due to the WebKit bug 14062, regression (r21212).</p>
+<div id="div"><span id="test">Some text.</span></div>
+<p>Before: <span id="console1"></span></p>
+<p>After: <span id="console2"></span></p>
+
+<script>
+
+function log(message, k) {
+    var console = document.getElementById("console"+k);
+    var text = document.createTextNode(message);
+
+    console.appendChild(text);
+}
+
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+log(escape(e.innerHTML),1);
+
+r = document.createRange();
+r.selectNode(e);
+s.addRange(r);
+document.designMode = 'on';
+document.execCommand("RemoveFormat", false, "");
+
+log(escape(e.innerHTML),2);
+
+</script>

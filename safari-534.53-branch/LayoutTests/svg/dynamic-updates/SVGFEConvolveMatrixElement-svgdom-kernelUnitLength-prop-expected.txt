@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 42: TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.kernelUnitLengthX.baseVal = 0.05')
+FAIL: Timed out waiting for notifyDone to be called
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'kernelUnitLength' property of the SVGFEConvolveMatrixElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL convolveMatrixElement.kernelUnitLengthX.baseVal should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.kernelUnitLengthX.baseVal')
+FAIL convolveMatrixElement.kernelUnitLengthY.baseVal should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.kernelUnitLengthY.baseVal')
+

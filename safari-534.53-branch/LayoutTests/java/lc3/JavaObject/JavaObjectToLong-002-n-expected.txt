@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to long
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = NaN ;dt.setLong( dt ); dt.PUB_LONG should throw an exception. Was 0.
+FAIL dt.PUB_DOUBLE_REPRESENTATION = NaN ;dt.setLong( dt ); dt.getLong() should throw an exception. Was -9223372036854776000.
+PASS typeof dt.getLong() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

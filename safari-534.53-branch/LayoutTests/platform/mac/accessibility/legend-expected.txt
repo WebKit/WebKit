@@ -1,0 +1,11 @@
+Choose a shipping method:
+Overnight
+This tests that a fieldset's title ui element is the legend's static text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS titleUIElement.role is 'AXRole: AXGroup'
+PASS titleUIElement.childAtIndex(0).role is 'AXRole: AXStaticText'
+PASS titleUIElement.childAtIndex(0).stringValue is 'AXValue: Choose a shipping method:'
+

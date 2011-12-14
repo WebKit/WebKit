@@ -1,0 +1,3 @@
+PASS(element 'b1' matches expected value)
+PASS(element 'b2' matches expected value)
+

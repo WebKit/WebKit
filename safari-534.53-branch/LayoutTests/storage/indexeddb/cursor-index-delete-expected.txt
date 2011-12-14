@@ -1,0 +1,50 @@
+Test IndexedDB's openCursor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('cursor-index-delete')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+objectStore = db.createObjectStore('test')
+objectStore.createIndex('testIndex', 'x')
+objectStore.add({x: 1}, 'myKey1')
+objectStore.add({x: 2}, 'myKey2')
+objectStore.add({x: 3}, 'myKey3')
+objectStore.add({x: 4}, 'myKey4')
+openCursor1
+trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)
+trans.objectStore('test').index('testIndex').openCursor(keyRange)
+event.target.result.delete()
+PASS event.target.result.key is counter++
+event.target.result.continue()
+event.target.result.delete()
+PASS event.target.result.key is counter++
+event.target.result.continue()
+event.target.result.delete()
+PASS event.target.result.key is counter++
+event.target.result.continue()
+event.target.result.delete()
+PASS event.target.result.key is counter++
+event.target.result.continue()
+PASS counter is 5
+trans.objectStore('test').index('testIndex').openCursor(keyRange)
+PASS event.target.result is null
+trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)
+objectStore = trans.objectStore('test')
+objectStore.add({x: 1}, 'myKey1')
+openCursor2
+index = event.target.source.index('testIndex')
+index.openCursor(keyRange)
+PASS [object IDBCursorWithValue] is non-null.
+event.target.result.delete()
+index.get(1)
+event.preventDefault()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

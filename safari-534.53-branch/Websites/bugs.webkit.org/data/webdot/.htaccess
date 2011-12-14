@@ -1,0 +1,15 @@
+# Restrict access to .dot files to the public webdot server at research.att.com 
+# if research.att.com ever changes their IP, or if you use a different
+# webdot server, you'll need to edit this
+<FilesMatch \.dot$>
+  Allow from 192.20.225.0/24
+  Deny from all
+</FilesMatch>
+
+# Allow access to .png files created by a local copy of 'dot'
+<FilesMatch \.png$>
+  Allow from all
+</FilesMatch>
+
+# And no directory listings, either.
+Deny from all

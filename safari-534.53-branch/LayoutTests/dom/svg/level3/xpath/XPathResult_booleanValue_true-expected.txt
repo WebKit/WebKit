@@ -1,0 +1,1 @@
+XPathResult_booleanValue_true: Success

@@ -1,0 +1,62 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    extendSelectionForwardByLineCommand();
+    extendSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+A scenario I thought of based on my experiences with this bug: 
+<a href="rdar://problem/4045521">&lt;rdar://problem/4045521&gt;</a> Hitting return key with full line selected does not add blank line as it should
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Should see this content in the red box below (note that the insertion point should be at the start of the third line, immediately preceding "baz"):
+<div>foo</div><div><br></div><div>baz</div>
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+<div>foo</div><div>bar</div><div>bbaz</div>
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

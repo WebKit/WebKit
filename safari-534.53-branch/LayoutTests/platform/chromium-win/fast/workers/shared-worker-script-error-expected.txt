@@ -1,0 +1,6 @@
+Test SharedWorker script error handling functionality. Should print a series of PASS messages, followed with DONE.
+
+SUCCESS: unhandled error generated
+SUCCESS: error handled via onerror: Uncaught ReferenceError: generateError is not defined
+DONE
+

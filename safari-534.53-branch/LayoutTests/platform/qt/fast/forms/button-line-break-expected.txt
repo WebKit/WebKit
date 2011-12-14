@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x22
+        RenderInline {A} at (0,0) size 72x22 [color=#0000EE]
+          RenderText {#text} at (0,0) size 72x22
+            text run at (0,0) width 72: "Bug 50521"
+        RenderText {#text} at (72,0) size 656x22
+          text run at (72,0) width 656: " tests whether or not HTML line breaks such as <br> are honored. The tests here will only pass if"
+      RenderBlock {DIV} at (0,38) size 784x22
+        RenderText {#text} at (0,0) size 380x22
+          text run at (0,0) width 380: "All of the buttons below should show the same two lines:"
+      RenderBlock {DIV} at (0,60) size 784x58
+        RenderButton {BUTTON} at (2,2) size 56x54 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 44x42
+            RenderText {#text} at (6,0) size 32x21
+              text run at (6,0) width 32: "Test"
+            RenderBR {BR} at (37,16) size 1x0
+            RenderText {#text} at (0,21) size 44x21
+              text run at (0,21) width 44: "button"
+      RenderBlock {DIV} at (0,118) size 784x58
+        RenderButton {BUTTON} at (2,2) size 56x54 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 44x42
+            RenderText {#text} at (6,0) size 32x21
+              text run at (6,0) width 32: "Test"
+            RenderBR {BR} at (37,16) size 1x0
+            RenderText {#text} at (0,21) size 44x21
+              text run at (0,21) width 44: "button"
+      RenderBlock {DIV} at (0,176) size 784x58
+        RenderButton {BUTTON} at (2,2) size 64x54 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 52x42
+            RenderInline {B} at (0,0) size 52x42
+              RenderText {#text} at (9,0) size 34x21
+                text run at (9,0) width 34: "Test"
+              RenderBR {BR} at (42,16) size 1x0
+              RenderText {#text} at (0,21) size 52x21
+                text run at (0,21) width 52: "Button"
+      RenderBlock {DIV} at (0,234) size 784x58
+        RenderButton {BUTTON} at (2,2) size 64x54 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 52x42
+            RenderInline {B} at (0,0) size 52x42
+              RenderText {#text} at (9,0) size 34x21
+                text run at (9,0) width 34: "Test"
+              RenderBR {BR} at (42,16) size 1x0
+              RenderText {#text} at (0,21) size 52x21
+                text run at (0,21) width 52: "Button"

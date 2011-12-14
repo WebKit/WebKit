@@ -1,0 +1,73 @@
+#! /bin/bash
+#
+# Copyright (C) 2010 Carlos Lopez <clopez@igalia.com>, Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+set -e
+
+[ "${coredir}" ] || {
+    echo "Env var '\${coredir}' not defined!" >&2
+    exit 111
+}
+[ "${programpath}" ] || {
+    echo "Env var '\${programpath}' not defined" >&2
+    exit 111
+}
+[ "${arch}" ] || {
+    echo "Env var '\${arch}' not defined" >&2
+    exit 111
+}
+[ "${mailto}" ] || {
+    echo "Env var '\${mailto}' not defined" >&2
+    exit 111
+}
+
+
+inotifywait -q -m --format '%f' --exclude '.trace.html$' -e close_write "${coredir}" | \
+while read -r coredump
+do
+	if grep -qE '^core-when_[[:digit:]]{10\,12}-_-who_[[:print:]]+-_-why_' <<< "${coredump}"
+	then
+		# Get revision number from Subversion sources
+		rev=$(cd "${crashmon_src_path}" && svn info | sed -e '/^Revision:/s/Revision: //p' -e d)
+
+		# Get the who from the coredump name
+		programfile=$(echo "${coredump}"  \
+			| awk -F'-_-who_' '{ print $2 }'\
+			| awk -F'-_-why_' '{ print $1 }')
+
+		# Sometimes programfile gets cut when it is a long name:
+		# Search using wildcards
+		fullprogrampath=$(find "${programpath}" -executable -name "${programfile}"\* | head -n1)
+
+		( printf "<html><head><title>StackTrace for ${programfile} from svn"
+			printf " rev ${rev}</title></head>\n<body>Core dump file: "
+			printf "<a href=\"cores/${coredump}\">${coredump}</a><br/>\n"
+			printf "<pre>Executable crashed: ${fullprogrampath}</pre>\n"
+			printf "<br/><hr><b>Stack Trace:</b><hr><br/>\n<pre>"
+
+			gdb -ex "thread apply all bt" --batch "${fullprogrampath}" "${coredump}" 2>&1 \
+				| sed -e 's/\&/\&amp/g;s/</\&lt;/g;s/>/\&gt;/g;s/\"/\&quot;/g' -e "s/'/\&\#039;/g"
+
+			printf "</pre></body></html>\n"
+		) > "/var/www/svn_${rev}.${coredump}.trace.html"
+
+		# Make sure the web server can read it
+		chmod 644 "${coredump}"
+	fi
+done
+

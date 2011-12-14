@@ -1,0 +1,10 @@
+DESKTOP NOTIFICATION: icon http://localhost/my_icon.png, title New E-mail, text Meet me tonight at 8!
+DESKTOP NOTIFICATION CLOSED: New E-mail
+Sending notifications with permission...
+
+PASS: addEventListener(close) capture callback #1 invoked
+PASS: addEventListener(close) capture callback #2 invoked
+PASS: addEventListener(close) callback #1 invoked
+PASS: onclose attribute event callback invoked.
+PASS: addEventListener(close) callback #3 invoked
+

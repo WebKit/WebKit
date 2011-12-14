@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: End Script: user-script-audio-document.html
+CONSOLE MESSAGE: line 1: Start Script: test.wav
+CONSOLE MESSAGE: line 1: End Script: test.wav
+

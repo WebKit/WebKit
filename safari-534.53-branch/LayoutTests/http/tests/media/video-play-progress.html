@@ -1,0 +1,26 @@
+<html>
+  <head>
+      <script src=../../media-resources/media-file.js></script>
+      <script src=../../media-resources/video-test.js></script>
+      <script>
+          function start() {
+              findMediaElement();
+
+              var progressCount = 0;
+
+              // Make sure we've at least reached NETWORK_LOADING before waiting for progress.
+              waitForEvent('loadstart', function() {
+                  waitForEventAndEnd('progress')
+              } );
+
+              var mediaFile = findMediaFile("video", "resources/test");
+              video.src = "http://127.0.0.1:8000/" + mediaFile;
+              run("video.play()");
+          }
+      </script>
+    </head>
+    <body onload="start()">
+      <video></video>
+      <p>Test that at least one progress event is fired after starting to load the video.</p>
+    </body>
+</html>

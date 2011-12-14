@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="listbox" role="listbox">
+<div id="option1" role="option" aria-selected="true">Option</div>
+<div id="option2" role="option">Option</div>
+<div id="option3" role="option">Option</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when aria-selected is changed in a listbox, the correct notification is sent.");
+
+    var listbox = 0;
+    var notificationCount = 0;
+    function ariaCallback(notification) {
+        if (notification == "AXSelectedChildrenChanged") {
+            notificationCount++;
+
+            // We should get a total of 4 live region changes.
+            if (notificationCount == 2) {
+               listbox.removeNotificationListener();
+               window.layoutTestController.notifyDone();
+            }
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("listbox").focus();
+        listbox = window.accessibilityController.focusedElement;
+
+        var addedNotification = listbox.addNotificationListener(ariaCallback);
+        shouldBe("addedNotification", "true");
+
+        // These should each trigger a notification that the selected children changed.
+        document.getElementById("option2").setAttribute("aria-selected", "true");
+        document.getElementById("option2").setAttribute("aria-selected", "false");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

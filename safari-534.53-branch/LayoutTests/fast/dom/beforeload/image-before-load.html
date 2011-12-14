@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="resources/print.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+</script>
+
+<img style="display:none" onbeforeload="print('PASS', 'green'); return false;" onload="print('FAIL', 'red');" src="../../images/resources/test-load.jpg">
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=56264">bug 56264</a>: 
+Handle entering full screen security restrictions</p>
+<p>To test manually, click the "Go full screen" button - the page should enter full screen mode.</p>
+<script src="full-screen-test.js"></script>
+<script>
+function runTest() {
+    var frame = document.getElementById('frame');
+
+    waitForEvent(frame.contentDocument, 'webkitfullscreenchange', function() { 
+            test("document.getElementById('frame').contentDocument.width==document.width")
+            endTest();
+    });
+
+    runWithKeyDown(function() {
+
+        setTimeout(function() { 
+            consoleWrite("FAIL - did not enter full screen!"); 
+            endTest(); 
+        }, 50);
+
+        frame.contentDocument.documentElement.webkitRequestFullScreen();
+    });
+}
+</script>
+<iframe id="frame" src="resources/inner.html" width="300" height="100" onload="runTest()" webkitallowfullscreen>
+</iframe>

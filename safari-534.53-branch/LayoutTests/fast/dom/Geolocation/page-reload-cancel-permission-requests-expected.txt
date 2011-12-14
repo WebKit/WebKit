@@ -1,0 +1,10 @@
+Tests that when a page is reloaded, the frame is properly detached from the Geolocation object to ensure that no permission requests are in progress.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS numPendingRequests is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,129 @@
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<style>
+    #pusher {
+        width: 1000px;
+        height: 1000px;
+        outline: 1px solid black;
+    }
+</style>
+<div id="console"></div>
+<div id="testArea">
+    <div id="pusher">This box is here to create scrollbars.</div>
+</div>
+<script src="../../js/resources/js-test-post-function.js"></script>
+<script>
+    var event;
+
+    function sendTouchStart(x, y)
+    {
+        if (window.eventSender) {
+            eventSender.clearTouchPoints();
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+        }
+    }
+
+    function zoomPageIn()
+    {
+        if (window.eventSender) {
+            eventSender.zoomPageIn();
+        }
+    }
+
+    function zoomPageOut()
+    {
+        if (window.eventSender) {
+            eventSender.zoomPageOut();
+        }
+    }
+
+    function scrollPage(x, y)
+    {
+        window.scrollTo(x, y);
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    // Default.
+    function base(e)
+    {
+        event = e;
+        debug("Base");
+        shouldBe("event.touches[0].clientX", "100");
+        shouldBe("event.touches[0].clientY", "100");
+        shouldBe("event.touches[0].pageX", "100");
+        shouldBe("event.touches[0].pageY", "100");
+    }
+
+    window.addEventListener("touchstart", base, false);
+    
+    sendTouchStart(100, 100);
+    window.removeEventListener("touchstart", base, false);
+    
+    // Just zoomed.
+    function justZoomed(e)
+    {
+        event = e;
+        debug("\nJust zoomed");
+        shouldBe("event.touches[0].clientX", "83");
+        shouldBe("event.touches[0].clientY", "83");
+        shouldBe("event.touches[0].pageX", "83");
+        shouldBe("event.touches[0].pageY", "83");
+    }
+    window.addEventListener("touchstart", justZoomed, false);
+    zoomPageIn();
+    sendTouchStart(100, 100);
+    zoomPageOut();
+    window.removeEventListener("touchstart", justZoomed, false);
+
+    // Just scrolled.
+    function justScrolled(e)
+    {
+        event = e;
+        debug("\nJust scrolled");
+        shouldBe("event.touches[0].clientX", "100");
+        shouldBe("event.touches[0].clientY", "100");
+        shouldBe("event.touches[0].pageX", "150");
+        shouldBe("event.touches[0].pageY", "150");
+    }
+    window.addEventListener("touchstart", justScrolled, false);
+    scrollPage(50, 50);
+    sendTouchStart(100, 100);
+    scrollPage(0, 0);
+    window.removeEventListener("touchstart", justScrolled, false);
+
+    // Zoomed and scrolled.
+    function zoomedAndScrolled(e)
+    {
+        event = e;
+        debug("\nZoomed and scrolled");
+        shouldBe("event.touches[0].clientX", "84");
+        shouldBe("event.touches[0].clientY", "84");
+        shouldBe("event.touches[0].pageX", "133");
+        shouldBe("event.touches[0].pageY", "133");
+    }
+    window.addEventListener("touchstart", zoomedAndScrolled, false);
+    zoomPageIn();
+    scrollPage(50, 50);
+    sendTouchStart(100, 100);
+    zoomPageOut();
+    scrollPage(0, 0);
+    window.removeEventListener("touchstart", zoomedAndScrolled, false);
+
+    if (window.eventSender) {
+        eventSender.touchEnd();
+        eventSender.clearTouchPoints();
+    }
+    
+    if (window.layoutTestController) {
+        var area = document.getElementById('testArea');
+        area.parentNode.removeChild(area);
+        successfullyParsed = true;
+        isSuccessfullyParsed();
+        layoutTestController.notifyDone();
+    }
+</script>

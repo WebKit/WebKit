@@ -1,0 +1,16 @@
+Test that setting src to an invalid url triggers load(), which sets networkState to NETWORK_NO_SOURCE. Setting src to a valid url should then trigger the loading events and end up with networkState >= NETWORK_LOADING.
+
+
+EXPECTED (video.networkState == '0') OK
+RUN(video.src = 'bogus/movie.mpg')
+EVENT(loadstart)
+EXPECTED (video.networkState == '3') OK
+
+EVENT(loadstart)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EXPECTED (video.networkState >= '1') OK
+END OF TEST
+

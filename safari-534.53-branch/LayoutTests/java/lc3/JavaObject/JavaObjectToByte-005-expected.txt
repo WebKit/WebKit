@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to byte
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 127.6;dt.setByte( dt ); dt.PUB_BYTE is 127
+PASS dt.PUB_DOUBLE_REPRESENTATION = 127.6;dt.setByte( dt ); dt.getByte() is 127
+PASS typeof dt.getByte() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

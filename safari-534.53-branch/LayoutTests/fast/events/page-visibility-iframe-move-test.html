@@ -1,0 +1,80 @@
+<html>
+<body onload="startTest()">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script src="../js/resources/js-test-pre.js"></script>
+
+<script>
+
+description("This test checks that an iframe that moves between pages with different visibility will have the correct visibility value.");
+
+var jsTestIsAsync = true;
+
+var window2, iframe;
+var numVisibilityChanges = 0;
+
+function window2Loaded() {
+    debug("Window 2 Loaded");
+
+    iframe = window2.document.getElementById("iframe");
+
+    shouldBeTrue("window.document.webkitIsVisible");
+    shouldBeTrue("window2.document.webkitIsVisible");
+    shouldBeTrue("iframe.contentDocument.webkitIsVisible");
+
+    // Change the visibility of the current page to invisible.
+    if (window.layoutTestController) {
+        numVisibilityChanges++;
+        window.layoutTestController.setPageVisibility("hidden");
+    }
+}
+
+function onVisibilityChange() {
+    shouldBeFalse("window.document.webkitIsVisible");
+    shouldBeTrue("window2.document.webkitIsVisible");
+    shouldBeTrue("iframe.contentDocument.webkitIsVisible");
+
+    window.document.adoptNode(iframe);
+    window.document.body.appendChild(iframe);
+    debug("Adopted iframe to Window 1");
+
+    shouldBeFalse("window.document.webkitIsVisible");
+    shouldBeTrue("window2.document.webkitIsVisible");
+    shouldBeFalse("iframe.contentDocument.webkitIsVisible");
+
+    window2.close();
+
+    finishTest();
+}
+
+function startTest() {
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.setCanOpenWindows();
+    }
+
+    debug("Window 1 Loaded");
+    document.addEventListener("webkitvisibilitystatechange",
+                              onVisibilityChange, false);
+
+    window2 = window.open("resources/page-visibility-iframe-move-new-page.html");
+    window2.addEventListener("load", window2Loaded, false);
+}
+
+function finishTest() {
+    if (window.layoutTestController) {
+        layoutTestController.resetPageVisibility();
+    }
+    finishJSTest();
+}
+
+var successfullyParsed = true;
+
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+
+</body>
+</html>

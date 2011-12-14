@@ -1,0 +1,48 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+    function sendText(element, text) {
+        var event = document.createEvent('TextEvent');
+        event.initTextEvent('textInput', true, true, document.defaultView, text);
+        element.dispatchEvent(event);
+    }
+
+    function test() {
+        var tf = document.getElementById('tf');
+
+        var didFireOnChange = false;
+        tf.onchange = function() {
+          didFireOnChange = true;
+        }
+
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+
+        tf.focus();
+        sendText(tf, 'input value');
+        tf.blur();
+
+        debug('Should fire change event when type does not change.');
+        shouldBeTrue(didFireOnChange.toString());
+
+        didFireOnChange = false;
+        tf.focus();
+        sendText(tf, 'new input value');
+        tf.setAttribute('type', 'password');
+        tf.blur();
+
+        debug('Should *not* fire change event when type does not change.');
+        shouldBeFalse(didFireOnChange.toString());
+    }
+    </script>
+</head>
+<body onload="test()">
+    This tests that onchange is not fired after a form field's type changes.<br>
+    <form name="fm">
+        <input type="text" id="tf" />
+    </form>
+    <div id="console"></div>
+</body>
+</html>

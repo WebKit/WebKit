@@ -1,0 +1,44 @@
+<html>
+<head>
+<script>
+function test()
+{
+    var isindexElm = document.getElementById("isindex");
+    if (!location.search.length) {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        isindexElm.value = "This is a test";
+        isindexElm.focus();
+
+        if (window.eventSender)
+            eventSender.keyDown(String.fromCharCode(0x0d));
+    } else {
+        var expected = "?This+is+a+test";
+        if (location.search != expected)
+            log("FAIL: Expected \"" + expected + "\" but got \"" + location.search + "\"");
+        else
+            log("PASS");
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+
+function log(msg)
+{
+    document.getElementById("log").appendChild(document.createTextNode(msg + "\n"));
+}
+
+window.onload = test;
+</script>
+</head>
+<body>
+<p>This page tests that we correctly put the value of an <tt>&lt;isindex&gt;</tt> element into the form data.</p>
+<p>If you are running this test by hand, press the enter/return key on your keyboard to submit.</p>
+<isindex id="isindex"></isindex>
+<pre id="log"></pre>
+</body>
+</html>

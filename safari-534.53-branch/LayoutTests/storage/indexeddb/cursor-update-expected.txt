@@ -1,0 +1,182 @@
+Test IndexedDB's cursor update.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('cursor-update')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+objectStore = db.createObjectStore('basicStore')
+objectStore.add('myValue1', 'myKey1').onerror = unexpectedErrorCallback
+objectStore.add('myValue2', 'myKey2').onerror = unexpectedErrorCallback
+objectStore.add('myValue3', 'myKey3').onerror = unexpectedErrorCallback
+objectStore.add('myValue4', 'myKey4').onerror = unexpectedErrorCallback
+objectStore = db.createObjectStore('autoIncrementStore', {autoIncrement: true})
+objectStore.add('foo1').onerror = unexpectedErrorCallback
+objectStore.add('foo2').onerror = unexpectedErrorCallback
+objectStore.add('foo3').onerror = unexpectedErrorCallback
+objectStore.add('foo4').onerror = unexpectedErrorCallback
+objectStore = db.createObjectStore('keyPathStore', {keyPath: 'id'})
+objectStore.createIndex('numberIndex', 'number')
+objectStore.add({number: 1, id: 1}).onerror = unexpectedErrorCallback
+objectStore.add({number: 2, id: 2}).onerror = unexpectedErrorCallback
+objectStore.add({number: 3, id: 3}).onerror = unexpectedErrorCallback
+objectStore.add({number: 4, id: 4}).onerror = unexpectedErrorCallback
+openBasicCursor()
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+trans.objectStore('basicStore')
+objectStore.openCursor(keyRange)
+basicUpdateCursor()
+PASS event.target.source is objectStore
+event.target.result.update('myUpdatedValue' + counter++)
+event.target.source.continue()
+basicUpdateCursor()
+PASS event.target.source is objectStore
+event.target.result.update('myUpdatedValue' + counter++)
+event.target.source.continue()
+basicUpdateCursor()
+PASS event.target.source is objectStore
+event.target.result.update('myUpdatedValue' + counter++)
+event.target.source.continue()
+basicUpdateCursor()
+PASS event.target.source is objectStore
+event.target.result.update('myUpdatedValue' + counter++)
+event.target.source.continue()
+basicUpdateCursor()
+PASS event.target.source is objectStore
+PASS counter is 5
+trans.objectStore('basicStore').openCursor(keyRange)
+basicCheckCursor()
+PASS event.target.result.key is "myKey1"
+PASS event.target.result.value is "myUpdatedValue1"
+event.target.result.continue()
+basicCheckCursor()
+PASS event.target.result.key is "myKey2"
+PASS event.target.result.value is "myUpdatedValue2"
+event.target.result.continue()
+basicCheckCursor()
+PASS event.target.result.key is "myKey3"
+PASS event.target.result.value is "myUpdatedValue3"
+event.target.result.continue()
+basicCheckCursor()
+PASS event.target.result.key is "myKey4"
+PASS event.target.result.value is "myUpdatedValue4"
+event.target.result.continue()
+basicCheckCursor()
+PASS counter is 5
+trans.objectStore('autoIncrementStore').openCursor(keyRange)
+autoIncrementUpdateCursor()
+event.target.result.update('myUpdatedFoo' + counter++)
+event.target.source.continue()
+autoIncrementUpdateCursor()
+event.target.result.update('myUpdatedFoo' + counter++)
+event.target.source.continue()
+autoIncrementUpdateCursor()
+event.target.result.update('myUpdatedFoo' + counter++)
+event.target.source.continue()
+autoIncrementUpdateCursor()
+event.target.result.update('myUpdatedFoo' + counter++)
+event.target.source.continue()
+autoIncrementUpdateCursor()
+PASS counter is 5
+trans.objectStore('autoIncrementStore').openCursor(keyRange)
+autoIncrementCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value is "myUpdatedFoo1"
+event.target.result.continue()
+autoIncrementCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value is "myUpdatedFoo2"
+event.target.result.continue()
+autoIncrementCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value is "myUpdatedFoo3"
+event.target.result.continue()
+autoIncrementCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value is "myUpdatedFoo4"
+event.target.result.continue()
+autoIncrementCheckCursor()
+PASS counter is 5
+trans.objectStore('keyPathStore').openCursor(keyRange)
+keyPathUpdateCursor()
+event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
+event.preventDefault()
+event.target.source.update({id: counter, number: 100 + counter++})
+event.target.source.continue()
+keyPathUpdateCursor()
+event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
+event.preventDefault()
+event.target.source.update({id: counter, number: 100 + counter++})
+event.target.source.continue()
+keyPathUpdateCursor()
+event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
+event.preventDefault()
+event.target.source.update({id: counter, number: 100 + counter++})
+event.target.source.continue()
+keyPathUpdateCursor()
+event.target.result.update({id: 100 + counter, number: 100 + counter})
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
+event.preventDefault()
+event.target.source.update({id: counter, number: 100 + counter++})
+event.target.source.continue()
+keyPathUpdateCursor()
+PASS counter is 5
+trans.objectStore('keyPathStore').openCursor(keyRange)
+keyPathCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value.id is counter
+PASS event.target.result.value.number is 101
+event.target.result.continue()
+keyPathCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value.id is counter
+PASS event.target.result.value.number is 102
+event.target.result.continue()
+keyPathCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value.id is counter
+PASS event.target.result.value.number is 103
+event.target.result.continue()
+keyPathCheckCursor()
+PASS event.target.result.key is counter
+PASS event.target.result.value.id is counter
+PASS event.target.result.value.number is 104
+event.target.result.continue()
+keyPathCheckCursor()
+PASS counter is 5
+trans.objectStore('keyPathStore').index('numberIndex').openKeyCursor(keyRange)
+keyCursor()
+PASS event.target.result.key is counter + 100
+PASS event.target.result.primaryKey is counter
+event.target.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS event.target.result.key is counter + 100
+PASS event.target.result.primaryKey is counter
+event.target.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS event.target.result.key is counter + 100
+PASS event.target.result.primaryKey is counter
+event.target.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS event.target.result.key is counter + 100
+PASS event.target.result.primaryKey is counter
+event.target.result.update({id: counter, number: counter + 200})
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+keyCursor()
+PASS counter is 5
+transactionComplete()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

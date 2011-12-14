@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText()
+
+document.body.appendChild(document.createElement("p")).appendChild(document.createTextNode("This test passes if it does not cause a crash"));
+var canvas = document.body.appendChild(document.createElement("canvas"));
+canvas.width = "400";
+canvas.height = "400";
+var ctx = canvas.getContext('2d');
+ctx.shadowBlur = 10500000000;
+ctx.shadowColor = "green";
+ctx.fillRect(0, 0, 10, 10);
+</script>
+</body>
+

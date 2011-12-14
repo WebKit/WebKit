@@ -1,0 +1,138 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="resources/styles-history.css">
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    if (!WebInspector.mainResource)
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, runTestSuite);
+    else
+        runTestSuite();
+
+    var styleResource;
+    var styleSheetId;
+
+    function runTestSuite()
+    {
+        InspectorTest.runTestSuite([
+            function testSetUp(next)
+            {
+                function visitResource(resource)
+                {
+                    if (resource.url.indexOf("styles-history.css") === -1)
+                        return;
+                    styleResource = resource;
+                    next();
+                }
+                WebInspector.resourceTreeModel.forAllResources(visitResource);
+            },
+
+            function testSetResourceContentMinor(next)
+            {
+                function callback()
+                {
+                    dumpHistory();
+                    next();
+                }
+                styleResource.setContent("body {\n  margin: 15px;\n  padding: 10px;\n}", false, callback);
+            },
+
+            function testSetResourceContentMajor(next)
+            {
+                function callback()
+                {
+                    dumpHistory();
+                    next();
+                }
+                styleResource.setContent("body {\n  margin: 20px;\n  padding: 10px;\n}", true, callback);
+            },
+
+            function testSetContentViaModelMinor(next)
+            {
+                styleSheetForResource(step1);
+
+                function step1(styleSheet)
+                {
+                    var style = styleSheet.rules[0].style;
+                    var property = style.getLiveProperty("margin");
+                    property.setText("margin:25px;", false, step2);
+                }
+
+                function step2(error)
+                {
+                    dumpHistory();
+                    next();
+                }                
+            },
+            function testSetContentViaModelMajor(next)
+            {
+                styleSheetForResource(step1);
+
+                function step1(styleSheet)
+                {
+                    var style = styleSheet.rules[0].style;
+                    var property = style.getLiveProperty("margin");
+                    property.setText("margin:30px;", true, step2);
+                }
+
+                function step2(error)
+                {
+                    dumpHistory();
+                    next();
+                }                
+            }
+        ]);
+    }
+
+    function styleSheetForResource(callback)
+    {
+        CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
+        
+        function didGetAllStyleSheets(error, infos)
+        {
+            if (error) {
+                InspectorTest.addResult("Error:" + error);
+                callback(null);
+                return;
+            }
+
+            for (var i = 0; i < infos.length; ++i) {
+                var info = infos[i];
+                if (info.sourceURL.indexOf("styles-history.css") === -1)
+                    continue;
+                WebInspector.CSSStyleSheet.createForId(info.styleSheetId, callback);
+                return;
+            }
+            callback(null);
+        }
+    }
+
+    function dumpHistory()
+    {
+        InspectorTest.addResult("History length: " + styleResource.history.length);
+        for (var i = 0; i < styleResource.history.length; ++i)
+            styleResource.history[i].requestContent(dumpRevision.bind(this, i));
+        styleResource.requestContent(dumpRevision.bind(this, "<tip>"));
+    }
+
+    function dumpRevision(index, content)
+    {
+        InspectorTest.addResult("Item " + index + ":");
+        InspectorTest.addResult(content);
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests resources panel history.
+</p>
+</body>
+</html>

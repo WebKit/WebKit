@@ -1,0 +1,67 @@
+<body>
+<div id="result"></div>
+<div style="position: relative; height: 200px; overflow: auto;">
+    <div id="target" style="height: 75%; background-color: red;"></div>
+</div>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.onload = function () {
+        // Force a layout with offsetHeight, and then start toggling overflow.
+        target.offsetHeight;
+        toggleOverflow();
+    }
+
+    var callCount = 0;
+    var recursionDepth = 0;
+
+    var target = document.getElementById("target");
+    var result = document.getElementById("result");
+    
+    function pass()
+    {
+        result.innerHTML = "PASS";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    
+    function fail()
+    {
+        result.innerHTML = "FAIL";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    function toggleOverflow()
+    {
+        ++recursionDepth;
+        ++callCount;
+
+        // The code change associated with this test will cause this function to start 
+        // firing asynchronously.
+        if (recursionDepth > 2) {
+            fail();
+            return;
+        }
+
+        // If we have made it this far without a recursionDepth of 2 or greater, then we 
+        // can say that the test passed.
+        if (callCount > 8) {
+            pass();
+            return;
+        }
+
+        if (target.style.height === "75%")
+            target.style.height = "200%";
+        else
+            target.style.height = "75%";
+        target.offsetHeight;
+
+        --recursionDepth;
+    }
+    target.parentNode.addEventListener("overflowchanged", toggleOverflow);
+</script>
+</body>

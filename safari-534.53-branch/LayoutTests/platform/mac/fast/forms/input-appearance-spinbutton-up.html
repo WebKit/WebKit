@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<style>
+</style>
+</head>
+<body>
+<p>Test appearances of outer-spin-button with its up button highlighted.</p>
+<div id=console></div>
+<input type=number style="font-size: 18px;" id=number value=0>
+
+<script>
+if (window.eventSender) {
+    var input = document.getElementById('number');
+    eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 8, input.offsetTop + 6);
+    eventSender.mouseDown();
+} else {
+    document.getElementById('console').innerHTML = '<p>Manual test: Press the primary button of the pointing device on the upper button.  Check if the upper button is correctly highlighted.</p>';
+}
+</script>
+</body>
+</html>

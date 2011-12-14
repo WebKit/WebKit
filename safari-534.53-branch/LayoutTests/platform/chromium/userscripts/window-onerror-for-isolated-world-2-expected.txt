@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 30: Uncaught Error: Error in main world inline script.
+Test that window.onerror and "error" event listeners from isolated world are invoked for uncaught exceptions in user scripts running in isolate worlds as well as for exceptions in the main world.Bug 8519.
+
+user script window.onerror: Uncaught Error: Error in user script inline script. at :33
+user script error event listener: Uncaught Error: Error in user script inline script. at :33
+user script window.onerror: Uncaught Error: Error in main world load handler. at window-onerror-for-isolated-world-2.html:27
+user script error event listener: Uncaught Error: Error in main world load handler. at window-onerror-for-isolated-world-2.html:27
+user script window.onerror: Uncaught Error: Error in user script load handler. at :30
+user script error event listener: Uncaught Error: Error in user script load handler. at :30
+user script window.onerror: Uncaught Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-2.html:25
+user script error event listener: Uncaught Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-2.html:25
+user script window.onerror: Uncaught Error: Error in user script setTimeout callback. at :28
+user script error event listener: Uncaught Error: Error in user script setTimeout callback. at :28

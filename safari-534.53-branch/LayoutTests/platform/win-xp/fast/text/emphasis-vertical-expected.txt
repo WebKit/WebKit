@@ -1,0 +1,119 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (67,0) size 733x600
+  RenderBlock {HTML} at (0,0) size 733x600
+    RenderBody {BODY} at (8,8) size 0x584
+      RenderBlock (floating) {DIV} at (8,8) size 134x366 [border: (3px solid #000000)]
+        RenderText {#text} at (13,3) size 22x246
+          text run at (13,3) width 246: "\x{305B}\x{3063}\x{304B}\x{304F}\x{898B}\x{3064}\x{3051}\x{305F}\x{3059}\x{3070}\x{3089}\x{3057}\x{3044}\x{8A18}\x{4E8B}"
+        RenderInline {SPAN} at (0,0) size 54x359
+          RenderText {#text} at (13,249) size 54x359
+            text run at (13,249) width 113: "\x{304C}\x{3069}\x{3053}\x{306B}\x{3042}\x{3063}\x{305F}"
+            text run at (45,3) width 100: "\x{304B}\x{5FD8}\x{308C}\x{3066}\x{3057}\x{307E}"
+        RenderText {#text} at (45,103) size 22x166
+          text run at (45,103) width 166: "\x{3063}\x{305F}\x{7D4C}\x{9A13}\x{306F}\x{3042}\x{308A}\x{307E}\x{3059}\x{304B}"
+        RenderInline {SPAN} at (0,0) size 54x355
+          RenderText {#text} at (45,269) size 54x355
+            text run at (45,269) width 89: "\x{306A}\x{3089}\x{30BF}\x{30A4}\x{30C8}\x{30EB}"
+            text run at (77,3) width 163: "\x{3068}\x{30A2}\x{30C9}\x{30EC}\x{30B9}\x{3060}\x{3051}\x{3067}\x{306A}\x{304F}\x{3001}"
+        RenderText {#text} at (77,166) size 54x358
+          text run at (77,166) width 195: "\x{8A2A}\x{554F}\x{3057}\x{305F}\x{30A6}\x{30A7}\x{30D6}\x{30DA}\x{30FC}\x{30B8}\x{306E}\x{30B3}"
+          text run at (109,3) width 301: "\x{30F3}\x{30C6}\x{30F3}\x{30C4}\x{304B}\x{3089}\x{3082}\x{691C}\x{7D22}\x{3059}\x{308B}\x{3053}\x{3068}\x{304C}\x{3067}\x{304D}\x{307E}\x{3059}\x{3002}"
+      RenderBlock (floating) {DIV} at (158,8) size 169x366 [border: (3px solid #000000)]
+        RenderText {#text} at (25,3) size 22x50
+          text run at (25,3) width 50: "\x{305B}\x{3063}\x{304B}"
+        RenderInline {SPAN} at (0,0) size 22x97
+          RenderText {#text} at (25,53) size 22x97
+            text run at (25,53) width 97: "\x{304F}\x{898B}\x{3064}\x{3051}\x{305F}\x{3059}"
+        RenderInline {SPAN} at (0,0) size 22x63
+          RenderText {#text} at (25,150) size 22x63
+            text run at (25,150) width 63: "\x{3070}\x{3089}\x{3057}\x{3044}"
+        RenderInline {SPAN} at (0,0) size 22x70
+          RenderText {#text} at (25,213) size 22x70
+            text run at (25,213) width 70: "\x{8A18}\x{4E8B}\x{304C}\x{3069}"
+        RenderInline {SPAN} at (0,0) size 22x62
+          RenderText {#text} at (25,283) size 22x62
+            text run at (25,283) width 62: "\x{3053}\x{306B}\x{3042}\x{3063}"
+        RenderInline {SPAN} at (0,0) size 66x359
+          RenderText {#text} at (25,345) size 66x359
+            text run at (25,345) width 17: "\x{305F}"
+            text run at (69,3) width 84: "\x{304B}\x{5FD8}\x{308C}\x{3066}\x{3057}"
+        RenderInline {SPAN} at (0,0) size 22x83
+          RenderText {#text} at (69,87) size 22x83
+            text run at (69,87) width 83: "\x{307E}\x{3063}\x{305F}\x{7D4C}\x{9A13}"
+        RenderInline {SPAN} at (0,0) size 22x99
+          RenderText {#text} at (69,170) size 22x99
+            text run at (69,170) width 99: "\x{306F}\x{3042}\x{308A}\x{307E}\x{3059}\x{304B}"
+        RenderInline {SPAN} at (0,0) size 66x355
+          RenderText {#text} at (69,269) size 66x355
+            text run at (69,269) width 89: "\x{306A}\x{3089}\x{30BF}\x{30A4}\x{30C8}\x{30EB}"
+            text run at (113,3) width 14: "\x{3068}"
+        RenderInline {SPAN} at (0,0) size 22x126
+          RenderText {#text} at (113,17) size 22x126
+            text run at (113,17) width 126: "\x{30A2}\x{30C9}\x{30EC}\x{30B9}\x{3060}\x{3051}\x{3067}\x{306A}"
+        RenderInline {SPAN} at (0,0) size 22x107
+          RenderText {#text} at (113,143) size 22x107
+            text run at (113,143) width 107: "\x{304F}\x{3001}\x{8A2A}\x{554F}\x{3057}\x{305F}\x{30A6}"
+        RenderInline {SPAN} at (0,0) size 53x358
+          RenderText {#text} at (113,250) size 53x358
+            text run at (113,250) width 111: "\x{30A7}\x{30D6}\x{30DA}\x{30FC}\x{30B8}\x{306E}\x{30B3}"
+            text run at (144,3) width 32: "\x{30F3}\x{30C6}"
+        RenderText {#text} at (144,35) size 22x269
+          text run at (144,35) width 269: "\x{30F3}\x{30C4}\x{304B}\x{3089}\x{3082}\x{691C}\x{7D22}\x{3059}\x{308B}\x{3053}\x{3068}\x{304C}\x{3067}\x{304D}\x{307E}\x{3059}\x{3002}"
+      RenderBlock (floating) {DIV} at (343,8) size 169x366 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 22x50
+          text run at (3,3) width 50: "\x{305B}\x{3063}\x{304B}"
+        RenderInline {SPAN} at (0,0) size 22x97
+          RenderText {#text} at (3,53) size 22x97
+            text run at (3,53) width 97: "\x{304F}\x{898B}\x{3064}\x{3051}\x{305F}\x{3059}"
+        RenderInline {SPAN} at (0,0) size 22x63
+          RenderText {#text} at (3,150) size 22x63
+            text run at (3,150) width 63: "\x{3070}\x{3089}\x{3057}\x{3044}"
+        RenderInline {SPAN} at (0,0) size 22x70
+          RenderText {#text} at (3,213) size 22x70
+            text run at (3,213) width 70: "\x{8A18}\x{4E8B}\x{304C}\x{3069}"
+        RenderInline {SPAN} at (0,0) size 22x62
+          RenderText {#text} at (3,283) size 22x62
+            text run at (3,283) width 62: "\x{3053}\x{306B}\x{3042}\x{3063}"
+        RenderInline {SPAN} at (0,0) size 66x359
+          RenderText {#text} at (3,345) size 66x359
+            text run at (3,345) width 17: "\x{305F}"
+            text run at (47,3) width 84: "\x{304B}\x{5FD8}\x{308C}\x{3066}\x{3057}"
+        RenderInline {SPAN} at (0,0) size 22x83
+          RenderText {#text} at (47,87) size 22x83
+            text run at (47,87) width 83: "\x{307E}\x{3063}\x{305F}\x{7D4C}\x{9A13}"
+        RenderInline {SPAN} at (0,0) size 22x99
+          RenderText {#text} at (47,170) size 22x99
+            text run at (47,170) width 99: "\x{306F}\x{3042}\x{308A}\x{307E}\x{3059}\x{304B}"
+        RenderInline {SPAN} at (0,0) size 66x355
+          RenderText {#text} at (47,269) size 66x355
+            text run at (47,269) width 89: "\x{306A}\x{3089}\x{30BF}\x{30A4}\x{30C8}\x{30EB}"
+            text run at (91,3) width 14: "\x{3068}"
+        RenderInline {SPAN} at (0,0) size 22x126
+          RenderText {#text} at (91,17) size 22x126
+            text run at (91,17) width 126: "\x{30A2}\x{30C9}\x{30EC}\x{30B9}\x{3060}\x{3051}\x{3067}\x{306A}"
+        RenderInline {SPAN} at (0,0) size 22x107
+          RenderText {#text} at (91,143) size 22x107
+            text run at (91,143) width 107: "\x{304F}\x{3001}\x{8A2A}\x{554F}\x{3057}\x{305F}\x{30A6}"
+        RenderInline {SPAN} at (0,0) size 66x358
+          RenderText {#text} at (91,250) size 66x358
+            text run at (91,250) width 111: "\x{30A7}\x{30D6}\x{30DA}\x{30FC}\x{30B8}\x{306E}\x{30B3}"
+            text run at (135,3) width 32: "\x{30F3}\x{30C6}"
+        RenderText {#text} at (135,35) size 22x269
+          text run at (135,35) width 269: "\x{30F3}\x{30C4}\x{304B}\x{3089}\x{3082}\x{691C}\x{7D22}\x{3059}\x{308B}\x{3053}\x{3068}\x{304C}\x{3067}\x{304D}\x{307E}\x{3059}\x{3002}"
+      RenderBlock (floating) {DIV} at (528,8) size 189x366 [border: (3px solid #000000)]
+        RenderText {#text} at (25,3) size 22x246
+          text run at (25,3) width 246: "\x{305B}\x{3063}\x{304B}\x{304F}\x{898B}\x{3064}\x{3051}\x{305F}\x{3059}\x{3070}\x{3089}\x{3057}\x{3044}\x{8A18}\x{4E8B}"
+        RenderInline {SPAN} at (0,0) size 66x359
+          RenderText {#text} at (25,249) size 66x359
+            text run at (25,249) width 113: "\x{304C}\x{3069}\x{3053}\x{306B}\x{3042}\x{3063}\x{305F}"
+            text run at (69,3) width 100: "\x{304B}\x{5FD8}\x{308C}\x{3066}\x{3057}\x{307E}"
+        RenderText {#text} at (69,103) size 22x166
+          text run at (69,103) width 166: "\x{3063}\x{305F}\x{7D4C}\x{9A13}\x{306F}\x{3042}\x{308A}\x{307E}\x{3059}\x{304B}"
+        RenderInline {SPAN} at (0,0) size 66x355
+          RenderText {#text} at (69,269) size 66x355
+            text run at (69,269) width 89: "\x{306A}\x{3089}\x{30BF}\x{30A4}\x{30C8}\x{30EB}"
+            text run at (113,3) width 163: "\x{3068}\x{30A2}\x{30C9}\x{30EC}\x{30B9}\x{3060}\x{3051}\x{3067}\x{306A}\x{304F}\x{3001}"
+        RenderText {#text} at (113,166) size 66x358
+          text run at (113,166) width 195: "\x{8A2A}\x{554F}\x{3057}\x{305F}\x{30A6}\x{30A7}\x{30D6}\x{30DA}\x{30FC}\x{30B8}\x{306E}\x{30B3}"
+          text run at (157,3) width 301: "\x{30F3}\x{30C6}\x{30F3}\x{30C4}\x{304B}\x{3089}\x{3082}\x{691C}\x{7D22}\x{3059}\x{308B}\x{3053}\x{3068}\x{304C}\x{3067}\x{304D}\x{307E}\x{3059}\x{3002}"

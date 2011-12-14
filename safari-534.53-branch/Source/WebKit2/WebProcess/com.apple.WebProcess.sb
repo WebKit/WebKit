@@ -1,0 +1,215 @@
+(version 1)
+(deny default (with partial-symbolication))
+(allow ipc-posix-shm system-audit system-socket file-read-metadata)
+
+(import "system.sb")
+(import "com.apple.corefoundation.sb")
+
+;; Distributed notifications, local pasteboard client
+(corefoundation)
+
+;; Utility functions for home directory relative path filters
+(define (home-regex home-relative-regex)
+  (regex (string-append "^" (regex-quote (param "HOME_DIR")) home-relative-regex)))
+
+(define (home-subpath home-relative-subpath)
+  (subpath (string-append (param "HOME_DIR") home-relative-subpath)))
+
+(define (home-literal home-relative-literal)
+  (literal (string-append (param "HOME_DIR") home-relative-literal)))
+
+;; Read-only preferences and data
+(allow file-read*
+       ;; Basic system paths
+       (subpath "/Library/Dictionaries")
+       (subpath "/Library/Fonts")
+       (subpath "/Library/Frameworks")
+       (subpath "/Library/Keychains")
+       (subpath "/private/var/db/mds")
+       (subpath "/private/var/db/DetachedSignatures")
+       (regex #"^/private/etc/(hosts|group|passwd)$")
+
+       ;; Plugins
+       (subpath "/Library/Internet Plug-Ins")
+       (home-subpath "/Library/Internet Plug-Ins")
+
+       ;; System and user preferences
+       (literal "/Library/Preferences/.GlobalPreferences.plist")
+       (literal "/Library/Preferences/com.apple.crypto.plist")
+       (literal "/Library/Preferences/com.apple.security.plist")
+       (literal "/Library/Preferences/com.apple.security.common.plist")
+       (literal "/Library/Preferences/com.apple.security.revocation.plist")
+       (regex #"^/Library/Managed Preferences/[^/]+/com\.apple\.networkConnect\.plist$")
+       (home-literal "/Library/Preferences/.GlobalPreferences.plist")
+       (home-regex "/Library/Preferences/ByHost/\.GlobalPreferences\.")
+       (home-regex "/Library/Preferences/ByHost/com\.apple\.networkConnect\.")
+       (home-literal "/Library/Preferences/com.apple.ATS.plist")
+       (home-literal "/Library/Preferences/com.apple.DownloadAssessment.plist")
+       (home-literal "/Library/Preferences/com.apple.HIToolbox.plist")
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.plist")
+       (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
+       (home-literal "/Library/Preferences/com.apple.security.plist")
+       (home-literal "/Library/Preferences/com.apple.security.revocation.plist")
+       (home-literal "/Library/Application Support/SyncServices/Local/ClientsWithChanges/com.apple.Keychain")
+       (home-regex "/Library/Preferences/com\.apple\.driver\.(AppleBluetoothMultitouch\.mouse|AppleBluetoothMultitouch\.trackpad|AppleHIDMouse)\.plist$")
+
+       ;; On-disk WebKit2 framework location, to account for debug installations
+       ;; outside of /System/Library/Frameworks
+       (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
+
+       ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
+       (home-subpath "/Library/Fonts")
+
+       ;; FIXME: These should be removed when <rdar://problem/9217757> is fixed.
+       (home-subpath "/Library/Audio/Plug-Ins/Components")
+       (home-subpath "/Library/Preferences/QuickTime Preferences")
+       (home-literal "/Library/Caches/com.apple.coreaudio.components.plist")
+       (subpath "/Library/Audio/Plug-Ins/Components")
+       (subpath "/Library/Audio/Plug-Ins/HAL")
+       (subpath "/Library/Video/Plug-Ins")
+       (subpath "/Library/QuickTime")
+
+       ;; FIXME: This should be removed when <rdar://problem/9237619> is fixed.
+       (home-literal "/Library/Preferences/com.apple.universalaccess.plist")
+
+       ;; FIXME: This should be removed when <rdar://problem/9276253> is fixed.
+       (home-subpath "/Library/Keyboard Layouts")
+
+       ;; FIXME: This should be removed when <rdar://problem/9276268> is fixed.
+       (home-subpath "/Library/Input Methods")
+
+       (home-subpath "/Library/Dictionaries"))
+
+;; This should be updated when <rdar://problem/9355830> is fixed.
+;; Read-only extensions from UIProcess
+(if (defined? 'extension-class)
+    (allow file-read* (extension "com.apple.app-sandbox.read")))
+
+;; Read-write extensions from UIProcess
+(allow file-read* file-write* (extension))
+
+;; Writable preferences and temporary files
+(allow file*
+       (home-subpath "/Library/Caches/com.apple.WebProcess")
+       (home-regex "/Library/Preferences/ByHost/com\.apple\.HIToolbox\.")
+       (home-regex "/Library/Preferences/com\.apple\.WebProcess\.")
+       (home-subpath "/Library/Keychains")
+
+       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
+       (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
+
+(allow file-read-data
+       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
+       (home-literal "/Library/Preferences"))
+
+;; Non-user Security mds caches
+(allow file*
+    (subpath "/private/var/db/mds/system"))
+
+;; Darwin temporary files and Security mds caches, if present
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
+
+;; Database directory.
+(if (positive? (string-length (param "WEBKIT_DATABASE_DIR")))
+    (allow file* (subpath (param "WEBKIT_DATABASE_DIR"))))
+
+;; LocalStorage directory.
+(if (positive? (string-length (param "WEBKIT_LOCALSTORAGE_DIR")))
+    (allow file* (subpath (param "WEBKIT_LOCALSTORAGE_DIR"))))
+
+;; ApplicationCache directory.
+(if (positive? (string-length (param "WEBKIT_APPLICATION_CACHE_DIR")))
+    (allow file* (subpath (param "WEBKIT_APPLICATION_CACHE_DIR"))))
+
+;; The NSURLCache directory.
+(if (positive? (string-length (param "NSURL_CACHE_DIR")))
+    (allow file* (subpath (param "NSURL_CACHE_DIR"))))
+
+;; The bundle resource path of the UI process.
+(if (positive? (string-length (param "UI_PROCESS_BUNDLE_RESOURCE_DIR")))
+    (allow file-read* (subpath (param "UI_PROCESS_BUNDLE_RESOURCE_DIR"))))
+
+;; IOKit user clients
+(allow iokit-open
+       (iokit-connection "IOAccelerator")
+       (iokit-user-client-class "IOAccelerationUserClient")
+       (iokit-user-client-class "IOFramebufferSharedUserClient")
+       (iokit-user-client-class "AppleGraphicsControlClient")
+       (iokit-user-client-class "AGPMClient")
+       (iokit-user-client-class "IOHIDParamUserClient")
+       (iokit-user-client-class "RootDomainUserClient")
+       (iokit-user-client-class "IOSurfaceRootUserClient")
+       (iokit-user-client-class "IOSurfaceSendRight")
+       (iokit-user-client-class "IOAudioControlUserClient")
+       (iokit-user-client-class "IOAudioEngineUserClient"))
+
+;; Various services required by AppKit and other frameworks
+(allow mach-lookup
+       (global-name "com.apple.CoreServices.coreservicesd")
+       (global-name "com.apple.DiskArbitration.diskarbitrationd")
+       (global-name "com.apple.FileCoordination")
+       (global-name "com.apple.FontObjectsServer")
+       (global-name "com.apple.FontServer")
+       (global-name "com.apple.SecurityServer")
+       (global-name "com.apple.SystemConfiguration.configd")
+       (global-name "com.apple.SystemConfiguration.PPPController")
+       (global-name "com.apple.audio.VDCAssistant")
+       (global-name "com.apple.audio.audiohald")
+       (global-name "com.apple.audio.coreaudiod")
+       (global-name "com.apple.cookied")
+       (global-name "com.apple.cvmsServ")
+       (global-name "com.apple.networkd")
+       (global-name "com.apple.dock.server")
+       (global-name "com.apple.ocspd")
+       (global-name "com.apple.pasteboard.1")
+       (global-name "com.apple.system.opendirectoryd.api")
+       (global-name "com.apple.window_proxies")
+       (global-name "com.apple.windowserver.active")
+       (global-name-regex #"^com\.apple\.WebKit\.WebProcess-")
+
+       ;; FIXME: This should be removed when <rdar://problem/9276393> is fixed.
+       (global-name "com.apple.metadata.mds"))
+
+(allow system-socket (socket-domain AF_ROUTE))
+(allow system-socket (require-all (socket-domain AF_SYSTEM) (socket-protocol 2))) ; SYSPROTO_CONTROL
+(allow network-outbound
+       ;; Kernel controls
+       (control-name "com.apple.network.statistics")
+       (control-name "com.apple.netsrc")
+
+       ;; Local mDNSResponder for DNS, arbitrary outbound TCP
+       (literal "/private/var/run/mDNSResponder")
+       (remote tcp))
+
+;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
+(allow mach-lookup (global-name "com.apple.pubsub.ipc"))
+(allow network-outbound (regex #"^/private/tmp/launch-[^/]+/Render"))
+(allow file-read*
+       (home-literal "/Library/Preferences/com.apple.Safari.RSS.plist")
+       (home-literal "/Library/Preferences/com.apple.Syndication.plist"))
+
+;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
+(allow mach-lookup
+       (global-name "org.h5l.kcm")
+       (global-name "com.apple.system.logger")
+       (global-name "com.apple.system.notification_center"))
+(allow network-outbound
+       (remote udp))
+(allow file-read*
+        (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Kerberos.plist"))
+        (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.GSS.plist"))
+        (literal (string-append (param "HOME_DIR") "/Library/Preferences/edu.mit.Kerberos"))
+        (literal "/Library/Preferences/com.apple.Kerberos.plist")
+        (literal "/Library/Preferences/com.apple.GSS.plist")
+        (literal "/Library/Preferences/edu.mit.Kerberos")
+        (literal "/private/etc/krb5.conf")
+        (literal "/private/etc/services")
+        (literal "/private/etc/host"))
+
+;; FIXME: Should be removed after <rdar://problem/9422957> is fixed
+(deny file-read* file-write* (with no-log)
+      (home-literal "/Library/Caches/Cache.db"))

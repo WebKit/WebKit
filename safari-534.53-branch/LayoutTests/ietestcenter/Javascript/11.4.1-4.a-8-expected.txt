@@ -1,0 +1,11 @@
+11.4.1-4.a-8 (TestCases/chapter11/11.4/11.4.1/11.4.1-4.a-8.js) delete operator returns true for built-in objects (JSON)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+FAIL ES5Harness.testPassed should be true (of type boolean). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

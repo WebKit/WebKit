@@ -1,0 +1,7 @@
+main frame - has 1 onunload handler(s)
+PASS
+
+============== Back Forward List ==============
+curr->  (file test):fast/history/resources/history-replace-updates-current-item-done.html  **nav target**
+        (file test):fast/history/resources/history-replace-updates-current-item-goback.html  **nav target**
+===============================================

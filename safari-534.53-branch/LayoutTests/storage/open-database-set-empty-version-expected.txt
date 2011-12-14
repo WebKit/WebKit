@@ -1,0 +1,2 @@
+This tests that calling openDatabase with an empty version string sets the current version of that database to the empty string and subsequent attempts to open the database with a different expected version throw an exception.
+SUCCESS, an exception was thrown. Error: INVALID_STATE_ERR: DOM Exception 11

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable at (0,0) size 117x19
+        RenderTableSection (anonymous) at (0,0) size 117x19
+          RenderTableRow {DIV} at (0,0) size 117x19
+            RenderTableCell (anonymous) at (0,0) size 117x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 117x19
+                text run at (0,0) width 117: "Second line of text"
+      RenderBlock (anonymous) at (0,19) size 784x19
+        RenderText {#text} at (0,0) size 228x19
+          text run at (0,0) width 228: "There should be text below this line:"

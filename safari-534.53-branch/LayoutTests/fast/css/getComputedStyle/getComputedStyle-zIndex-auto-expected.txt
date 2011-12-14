@@ -1,0 +1,8 @@
+Non-positioned Div:
+    Computed Style = auto (Should be auto)
+    element.style.zIndex = 20 (Should be 20)
+
+Positioned Div:
+    Computed Style = 20 (Should be 20)
+    element.style.zIndex = 20 (Should be 20)
+

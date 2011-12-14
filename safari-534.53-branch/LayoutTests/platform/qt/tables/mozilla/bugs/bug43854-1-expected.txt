@@ -1,0 +1,82 @@
+layer at (0,0) size 942x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (0,0) size 800x584 [color=#FFFF00] [bgcolor=#000000]
+      RenderBlock {P} at (40,40) size 720x21
+        RenderInline {B} at (0,0) size 285x21
+          RenderText {#text} at (0,0) size 285x21
+            text run at (0,0) width 285: "All cell borders should look the same."
+      RenderTable {TABLE} at (40,77) size 902x216 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (1,1) size 900x214
+          RenderTableRow {TR} at (0,0) size 900x23
+            RenderTableCell {TD} at (0,0) size 900x23 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+              RenderBlock {P} at (1,1) size 898x21
+                RenderText {#text} at (376,0) size 146x21
+                  text run at (376,0) width 146: "look at cell borders..."
+          RenderTableRow {TR} at (0,23) size 900x191
+            RenderTableCell {TD} at (0,170) size 300x44 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderBlock {P} at (1,1) size 298x42
+                RenderText {#text} at (126,0) size 46x21
+                  text run at (126,0) width 46: "border"
+                RenderBR {BR} at (172,16) size 0x0
+                RenderText {#text} at (120,21) size 58x21
+                  text run at (120,21) width 58: "bottom?"
+            RenderTableCell {TD} at (300,23) size 300x191 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (1,1) size 298x189
+                RenderText {#text} at (122,0) size 54x21
+                  text run at (122,0) width 54: "this cell"
+                RenderBR {BR} at (176,16) size 0x0
+                RenderText {#text} at (126,21) size 46x21
+                  text run at (126,21) width 46: "border"
+                RenderBR {BR} at (172,37) size 0x0
+                RenderText {#text} at (136,42) size 26x21
+                  text run at (136,42) width 26: "fine"
+                RenderBR {BR} at (162,58) size 0x0
+                RenderText {#text} at (122,63) size 54x21
+                  text run at (122,63) width 54: "this cell"
+                RenderBR {BR} at (176,79) size 0x0
+                RenderText {#text} at (126,84) size 46x21
+                  text run at (126,84) width 46: "border"
+                RenderBR {BR} at (172,100) size 0x0
+                RenderText {#text} at (136,105) size 26x21
+                  text run at (136,105) width 26: "fine"
+                RenderBR {BR} at (162,121) size 0x0
+                RenderText {#text} at (122,126) size 54x21
+                  text run at (122,126) width 54: "this cell"
+                RenderBR {BR} at (176,142) size 0x0
+                RenderText {#text} at (126,147) size 46x21
+                  text run at (126,147) width 46: "border"
+                RenderBR {BR} at (172,163) size 0x0
+                RenderText {#text} at (136,168) size 26x21
+                  text run at (136,168) width 26: "fine"
+            RenderTableCell {TD} at (600,23) size 300x191 [color=#00FF00] [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderBlock {P} at (1,1) size 298x189
+                RenderText {#text} at (122,0) size 54x21
+                  text run at (122,0) width 54: "this cell"
+                RenderBR {BR} at (176,16) size 0x0
+                RenderText {#text} at (126,21) size 46x21
+                  text run at (126,21) width 46: "border"
+                RenderBR {BR} at (172,37) size 0x0
+                RenderText {#text} at (136,42) size 26x21
+                  text run at (136,42) width 26: "fine"
+                RenderBR {BR} at (162,58) size 0x0
+                RenderText {#text} at (122,63) size 54x21
+                  text run at (122,63) width 54: "this cell"
+                RenderBR {BR} at (176,79) size 0x0
+                RenderText {#text} at (126,84) size 46x21
+                  text run at (126,84) width 46: "border"
+                RenderBR {BR} at (172,100) size 0x0
+                RenderText {#text} at (136,105) size 26x21
+                  text run at (136,105) width 26: "fine"
+                RenderBR {BR} at (162,121) size 0x0
+                RenderText {#text} at (122,126) size 54x21
+                  text run at (122,126) width 54: "this cell"
+                RenderBR {BR} at (176,142) size 0x0
+                RenderText {#text} at (126,147) size 46x21
+                  text run at (126,147) width 46: "border"
+                RenderBR {BR} at (172,163) size 0x0
+                RenderText {#text} at (136,168) size 26x21
+                  text run at (136,168) width 26: "fine"

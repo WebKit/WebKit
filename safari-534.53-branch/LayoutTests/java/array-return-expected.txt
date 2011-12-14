@@ -1,0 +1,10 @@
+Test for bug 23742: Applet methods can not return arrays to JS.
+
+PASS stringArray.length is 3
+PASS stringArray[0] == "One" is true
+PASS stringList.getClass().getSimpleName() == "ArrayList" is true
+PASS stringList.get(0) == "One" is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+Test for bug 4820: hexadecimal HTML entities split across TCP packets are not parsed correctly.
+
+Should be a blank page (except for this description).

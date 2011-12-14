@@ -1,0 +1,32 @@
+Test read-only transactions in IndexedDB.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('transaction-read-only')
+openSuccess():
+db = event.target.result
+result = db.setVersion('version 1')
+Deleted all object stores.
+store = db.createObjectStore('store')
+store.put('x', 'y')
+trans = db.transaction()
+Expecting exception from trans.objectStore('store').put('a', 'b')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.READ_ONLY_ERR
+trans = db.transaction()
+Expecting exception from trans.objectStore('store').delete('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.READ_ONLY_ERR
+trans = db.transaction()
+cur = trans.objectStore('store').openCursor()
+PASS !event.target.result is false
+Expecting exception from event.target.result.delete()
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.READ_ONLY_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

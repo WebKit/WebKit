@@ -1,0 +1,34 @@
+<!-- Application plugins are plugins implemented by the WebKit client, as opposed to
+     third-party plugins such as Flash. Application plugins are exempted
+     from the pluginsEnabled check as it is the client that implicitly decides
+     whether or not they enabled when it chooses whether to implement them or not.
+
+     At the time of writing, only Qt clients can implement their own plugins. -->
+<html>
+<body>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.overridePreference("WebKitPluginsEnabled", false);
+    }
+</script>
+
+<!-- qt plugin widget: will be created -->
+<div>
+Qt Plugin:
+<object type="application/x-qt-plugin" classid="QProgressBar" name="progressbar1" height=30></object>
+</div>
+
+<!-- qt styled widget: will be created -->
+<div>
+Qt Styled Widget:
+<object type="application/x-qt-styled-widget" classid="QProgressBar" name="progressbar1" height=30></object>
+</div>
+
+<!-- third party plugin widget: will not be created -->
+<div>
+Third-party plugin:
+<embed name="plg" type="application/x-webkit-test-netscape" width=100 height=100></embed>
+</div>
+
+</body>
+</html>

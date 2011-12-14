@@ -1,0 +1,33 @@
+Test closing a database connection in IndexedDB.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('transaction-after-close')
+openSuccess():
+db = event.target.result
+request = db.setVersion('version 1')
+Deleted all object stores.
+store = db.createObjectStore('store')
+request = store.put('x', 'y')
+PASS Put success
+running first transaction
+currentTransaction = db.transaction([], webkitIDBTransaction.READ_WRITE)
+objectStore.put('a', 'b')
+db.close()
+Expecting exception from db.transaction([], webkitIDBTransaction.READ_WRITE)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+
+verify that we can reopen the db after calling close
+webkitIndexedDB.open('transaction-after-close')
+second_db = event.target.result
+currentTransaction = second_db.transaction([], webkitIDBTransaction.READ_WRITE)
+request = store.put('1', '2')
+PASS final put success
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

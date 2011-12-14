@@ -1,0 +1,63 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > H1 > DIV > BODY > HTML > #document to 4 of #text > H1 > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of H1 > DIV > BODY > HTML > #document to 0 of H1 > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 0 of H1 > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > SPAN > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > SPAN > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x163 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x55
+          RenderText {#text} at (0,0) size 66x26
+            text run at (0,0) width 66: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,27) size 736x27
+            text run at (0,27) width 736: "Pasting text which gets its style from an <H1> tag into a block of styled text."
+        RenderBlock {DIV} at (14,85) size 756x64
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,35) size 436x27
+            text run at (0,35) width 436: "Should see this content in the red box below: "
+          RenderInline {SPAN} at (0,0) size 88x27 [color=#FF0000]
+            RenderText {#text} at (436,35) size 23x27
+              text run at (436,35) width 23: "ab"
+            RenderInline {SPAN} at (0,0) size 46x36 [color=#000000]
+              RenderText {#text} at (459,27) size 46x36
+                text run at (459,27) width 46: "cde"
+            RenderText {#text} at (505,35) size 19x27
+              text run at (505,35) width 19: "fg"
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,187) size 784x41
+        RenderBlock {DIV} at (0,0) size 784x41 [border: (2px solid #FF0000)]
+          RenderInline {SPAN} at (0,0) size 88x27 [color=#FF0000]
+            RenderText {#text} at (2,10) size 23x27
+              text run at (2,10) width 23: "ab"
+            RenderInline {SPAN} at (0,0) size 65x36 [color=#000000]
+              RenderText {#text} at (25,2) size 46x36
+                text run at (25,2) width 46: "cde"
+              RenderInline {SPAN} at (0,0) size 19x27 [color=#FF0000]
+                RenderText {#text} at (71,10) size 19x27
+                  text run at (71,10) width 19: "fg"
+        RenderBlock (anonymous) at (0,41) size 784x0
+caret: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {SPAN} of child 1 {DIV} of child 3 {DIV} of body

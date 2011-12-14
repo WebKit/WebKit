@@ -1,0 +1,1 @@
+XPathResult_invalidIteratorState_STRING_TYPE: Success

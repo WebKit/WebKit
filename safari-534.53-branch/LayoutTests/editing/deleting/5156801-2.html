@@ -1,0 +1,18 @@
+<body>
+<p>This tests for a crash when deleting the contents of a table cell. You should just see 'Cached' below.</p>
+<div contenteditable="true"><table id="table" border=0 cellpadding=0 cellspacing=0><tr><td><br><a  href="fakelink.html">Cached</a><a  href=""fakelink.html">Similar</a></td></tr></table>
+</div>
+<script>
+s = window.getSelection();
+table = document.getElementById("table");
+s.setPosition(table, table.childNodes.length);
+s.modify("move", "backward", "character");
+document.execCommand("Delete");
+document.execCommand("Delete");
+document.execCommand("Delete");
+document.execCommand("Delete");
+document.execCommand("Delete");
+document.execCommand("Delete");
+document.execCommand("Delete");
+</script>
+</body>

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+<img src="test.gif" width=100 height=100 alt="alt text" id="image">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that changing the alt tag of an image in a live region triggers a live region notification.");
+
+    var liveRegionAlt = 0;
+    function ariaCallbackAlt(notification) {
+        if (notification == "AXLiveRegionChanged") {
+           alert("Successfully received " + notification);
+           liveRegionAlt.removeNotificationListener();
+           window.layoutTestController.notifyDone();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("liveregion").focus();
+        liveRegionAlt = window.accessibilityController.focusedElement;
+
+        var addedNotification = liveRegionAlt.addNotificationListener(ariaCallbackAlt);
+        shouldBe("addedNotification", "true");
+
+        // this should also trigger our live region change because its a text alternative change. 
+        document.getElementById("image").setAttribute('alt', "new image text");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

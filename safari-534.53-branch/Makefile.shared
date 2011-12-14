@@ -1,0 +1,18 @@
+SCRIPTS_PATH ?= ../Tools/Scripts
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+
+all:
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+
+debug d development dev develop: force
+	$(SCRIPTS_PATH)/set-webkit-configuration --debug
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+
+release r deployment dep deploy: force
+	$(SCRIPTS_PATH)/set-webkit-configuration --release
+	( xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+
+clean:
+	( xcodebuild $(OTHER_OPTIONS) -alltargets clean $(XCODE_OPTIONS) | grep -v setenv && exit $${PIPESTATUS[0]} )
+
+force: ;

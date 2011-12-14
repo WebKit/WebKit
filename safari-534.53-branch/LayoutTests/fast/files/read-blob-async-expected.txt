@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 7: ReferenceError: Can't find variable: WebKitBlobBuilder
+FAIL: Timed out waiting for notifyDone to be called
+
+Test reading a blob containing non-existent file
+

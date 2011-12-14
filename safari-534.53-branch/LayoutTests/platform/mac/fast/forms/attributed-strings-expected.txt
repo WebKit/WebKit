@@ -1,0 +1,10 @@
+test
+4
+test
+4
+test
+NSForegroundColor,NSToolTip,NSFont,NSObliqueness
+NSToolTip,NSForegroundColor,NSFont
+0.5
+undefined
+NSDeviceRGBColorSpace 1 0.5 1 0.5

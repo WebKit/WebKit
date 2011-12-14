@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+# Copyright (C) 2010 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This file is a temporary hack.
+# It will be removed as soon as all platforms are are ready to move to
+# new-run-webkit-tests and we can then update the buildbots to explicitly
+# call old-run-webkit-tests for any platforms which will never support
+# a Python run-webkit-tests.
+
+# This is intentionally written in Perl to guarantee support on
+# the same set of platforms as old-run-webkit-tests currently supports.
+# The buildbot master.cfg also currently passes run-webkit-tests to
+# perl directly instead of executing it in a shell.
+
+use strict;
+use warnings;
+
+use File::Spec;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+sub runningOnBuildBot()
+{
+    # This is a hack to detect if we're running on the buildbot so we can
+    # pass --verbose to new-run-webkit-tests.  This will be removed when we
+    # update the buildbot config to call new-run-webkit-tests explicitly.
+    my %isBuildBotUser = ("apple" => 1, "buildbot" => 1);
+    return $isBuildBotUser{$ENV{"USER"}};
+}
+
+sub useNewRunWebKitTests()
+{
+    # Change this check to control which platforms use
+    # new-run-webkit-tests by default.
+    # Example: return runningOnBuildBot() && isLeopard();
+    # would enable new-run-webkit-tests on only the leopard buildbots.
+    return 0;
+}
+
+my $harnessName = "old-run-webkit-tests";
+
+if (useNewRunWebKitTests()) {
+    $harnessName = "new-run-webkit-tests";
+    if (runningOnBuildBot()) {
+        push(@ARGV, "--verbose");
+        # old-run-webkit-tests treats --results-directory as $CWD relative.
+        # new-run-webkit-tests treats --results-directory as build directory relative.
+        # Override the passed in --results-directory by appending a new one
+        # (later arguments override earlier ones in Python's optparse).
+        push(@ARGV, "--results-directory");
+        # The buildbot always uses $SRCDIR/layout-test-results, hardcode it:
+        push(@ARGV, sourceDir() . "/layout-test-results");
+    }
+}
+
+my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);
+exec $harnessPath ($harnessPath, @ARGV) or die "Failed to execute $harnessPath";

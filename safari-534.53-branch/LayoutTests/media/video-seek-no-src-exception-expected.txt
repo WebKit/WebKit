@@ -1,0 +1,7 @@
+Test that seeking video with no 'src' attribute throws an INVALID_STATE_ERR exception.
+
+EXPECTED (video.networkState == '0') OK
+EXPECTED (video.readyState == '0') OK
+TEST(video.currentTime = 1.1) THROWS(DOMException.INVALID_STATE_ERR) OK
+END OF TEST
+

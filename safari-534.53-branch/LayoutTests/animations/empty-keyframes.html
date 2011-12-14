@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Empty keyframes</title>
+  <style type="text/css" media="screen">
+    #box {
+      -webkit-animation-name: test, test-one;
+      -webkit-animation-duration: 1s;
+    }
+    @-webkit-keyframes test {
+    }
+
+    @-webkit-keyframes test-one {
+      0% {}
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+  </script>
+</head>
+<body>
+  <p>Test for empty keyframes rule. Should not crash</p>
+<div id="box">
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var updatedFrameURL = "data:text/html,Updated contents of iframe";
+var updatedObjectURL = "data:text/html,Updated contents of object";
+
+function runTests()
+{
+    shouldBe("window.frames.length", "2");
+    shouldBe("window.frames[0].frameElement.name", '"frame"');
+    shouldBe("window.frames[1].frameElement.name", '"obj"');
+
+    document.getElementsByName('frame')[0].onload = handleLoad;
+    document.getElementsByName('obj')[0].onload = handleLoad;
+
+    debug("Loading '" + updatedFrameURL + "' in iframe...");
+    debug("Loading '" + updatedObjectURL + "' in object...");
+    open(updatedFrameURL, "frame");
+    open(updatedObjectURL, "obj");
+}
+
+var numLoads = 0;
+
+function handleLoad()
+{
+    numLoads++;
+    if (numLoads < 2)
+        return;
+ 
+    shouldBe("window.frames[0].location.toString()", '"' + updatedFrameURL + '"');
+    shouldBe("window.frames[1].location.toString()", '"' + updatedObjectURL + '"');
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+</script>
+
+</head>
+<body onload="runTests()">
+<p id="description"></p>
+<div id="console"></div>
+
+<iframe name="frame" src="data:text/html,Old contents of iframe"></iframe>
+<object name="obj" type="text/html" data="data:text/html,New contents of frame"></object>
+
+</body>
+</html>

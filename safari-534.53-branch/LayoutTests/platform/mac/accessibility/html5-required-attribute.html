@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<input type="text" id="text1" required>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the required attribute is returned correctly through accessibility.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("text1").focus();
+        shouldBeTrue("accessibilityController.focusedElement.isRequired");
+
+        document.getElementById("text1").removeAttribute("required");
+        shouldBeFalse("accessibilityController.focusedElement.isRequired");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

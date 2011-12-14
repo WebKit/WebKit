@@ -1,0 +1,13 @@
+<script>
+addEventListener("unload", function() {
+  document.getElementById("fm").submit();
+}, false);
+</script>
+<form id="fm" action="about:blank" method="POST"></form>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+window.location = "resources/pass-and-notify-done.html";
+</script>

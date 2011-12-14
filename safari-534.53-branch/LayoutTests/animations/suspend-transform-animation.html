@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    #box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        -webkit-animation-duration: 0.2s;
+        -webkit-animation-timing-function: linear;
+    }
+    
+    .move {
+        -webkit-animation-name: move;
+    }
+
+    @-webkit-keyframes move {
+        from { -webkit-transform: translateX(100px) scale(1); }
+        to   { -webkit-transform: translateX(400px) scale(1); }
+    }
+    
+    #safezone {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100px;
+        width: 300px;
+        left: 100px;
+        background-color: green;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    
+    function suspendAndWaitForCompletion()
+    {
+        if (window.layoutTestController)
+            layoutTestController.suspendAnimations();
+
+        window.setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 250);
+    }
+    
+    function doTest()
+    {
+        document.getElementById('box').addEventListener('webkitAnimationStart', function() {
+            suspendAndWaitForCompletion();
+        }, false)
+
+        document.getElementById('box').className = 'move';
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+<!-- When suspended, the red box should be hidden by the green box. You should see no red. -->
+<div id="box"></div>
+<div id="safezone"></div>
+
+<div id="result"></div>
+
+</body>
+</html>

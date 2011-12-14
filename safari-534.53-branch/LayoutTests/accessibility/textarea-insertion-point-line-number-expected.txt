@@ -1,0 +1,5 @@
+Test:0) Line Number: Pass [0->0]
+Test:1) Line Number: Pass [7->1]
+Test:2) Line Number: Pass [14->2]
+Not focused on text area line number: -1
+  

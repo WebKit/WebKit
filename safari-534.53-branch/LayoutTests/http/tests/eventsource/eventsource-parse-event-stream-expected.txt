@@ -1,0 +1,14 @@
+Test EventSource text/event-stream parsing. Should print a series of PASS messages followed by DONE.
+
+PASS: got open event
+PASS: received event with two newlines
+PASS: received event with data "simple"
+PASS: received event with data spanning multiple lines
+PASS: received event and lastEventId is "1"
+PASS: received event and lastEventId is still "1"
+PASS: received event and lastEventId has been cleared
+PASS: got open event from server
+PASS: received event and the event name has been reset
+PASS: received event with data that contains a colon
+DONE
+

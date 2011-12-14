@@ -1,0 +1,60 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x414
+  RenderBlock {HTML} at (0,0) size 800x414
+    RenderBody {BODY} at (8,8) size 646x398 [border: (3px solid #FF0000)]
+      RenderBlock {P} at (3,17) size 640x19 [color=#0000FF]
+        RenderText {#text} at (0,0) size 344x19
+          text run at (0,0) width 344: "-- Following text and list are whitespace:NORMAL only"
+      RenderBlock {P} at (3,50) size 640x38
+        RenderText {#text} at (0,0) size 248x19
+          text run at (0,0) width 248: "0123456789012345678901234567890"
+        RenderBR {BR} at (248,0) size 0x19
+        RenderText {#text} at (0,19) size 62x19
+          text run at (0,19) width 62: "X\x{9}XX\x{9}XXX"
+      RenderBlock {OL} at (3,102) size 640x57
+        RenderListItem {LI} at (40,0) size 600x19
+          RenderListMarker at (-20,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 21x19
+            text run at (0,0) width 21: "a\x{9}X"
+        RenderListItem {LI} at (40,19) size 600x19
+          RenderListMarker at (-20,0) size 16x19: "2"
+          RenderText {#text} at (0,0) size 29x19
+            text run at (0,0) width 29: "bb\x{9}X"
+        RenderListItem {LI} at (40,38) size 600x19
+          RenderListMarker at (-20,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 34x19
+            text run at (0,0) width 34: "ccc\x{9}X"
+      RenderBlock {P} at (3,173) size 640x19 [color=#0000FF]
+        RenderText {#text} at (0,0) size 312x19
+          text run at (0,0) width 312: "-- Following text and list are whitespace:PRE only"
+      RenderBlock {OL} at (3,206) size 640x57
+        RenderListItem {LI} at (40,0) size 600x19
+          RenderListMarker at (-20,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 25x19
+            text run at (0,0) width 25: "a\x{9}\x{9}X"
+        RenderListItem {LI} at (40,19) size 600x19
+          RenderListMarker at (-20,0) size 16x19: "2"
+          RenderText {#text} at (0,0) size 29x19
+            text run at (0,0) width 29: "bb\x{9}X"
+        RenderListItem {LI} at (40,38) size 600x19
+          RenderListMarker at (-20,0) size 16x19: "3"
+          RenderText {#text} at (0,0) size 34x19
+            text run at (0,0) width 34: "ccc\x{9}X"
+      RenderBlock {P} at (3,277) size 640x38
+        RenderText {#text} at (0,0) size 408x19
+          text run at (0,0) width 408: "012345678901234567890123456789012345678901234567890"
+        RenderBR {BR} at (408,0) size 0x19
+        RenderText {#text} at (0,19) size 167x19
+          text run at (0,19) width 167: "X\x{9}\x{9}XX\x{9}\x{9}XXX\x{9}\x{9}XXXX\x{9}\x{9}XXXXX"
+      RenderBlock {P} at (3,329) size 640x19 [color=#0000FF]
+        RenderText {#text} at (0,0) size 416x19
+          text run at (0,0) width 416: "-- Following text mixes whitespace:NORMAL and whitespace:PRE"
+      RenderBlock {P} at (3,362) size 640x19
+        RenderText {#text} at (0,0) size 388x19
+          text run at (0,0) width 388: "AAAA BBBB CCCC DDDD EEEE FFFF GGGG HHHH IIII JJJJ"
+        RenderInline {SPAN} at (0,0) size 16x19
+          RenderText {#text} at (388,0) size 16x19
+            text run at (388,0) width 16: "\x{9}\x{9}\x{9}\x{9}"
+        RenderText {#text} at (404,0) size 36x19
+          text run at (404,0) width 36: "KKKK"

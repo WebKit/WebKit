@@ -1,0 +1,60 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 404x117 [border: (2px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 399x19
+          RenderText {#text} at (8,0) size 383x19
+            text run at (8,0) width 383: "Communicator 4.5 Installers for Mac and Windows Platforms"
+        RenderTableSection {TBODY} at (2,21) size 399x93
+          RenderTableRow {TR} at (0,0) size 399x25
+            RenderTableCell {TH} at (0,10) size 115x5 [border: (3px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (115,0) size 107x25 [border: (3px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 104x20
+                text run at (2,4) width 104: "Macintosh PPC"
+            RenderTableCell {TH} at (222,0) size 86x25 [border: (3px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 83x20
+                text run at (2,4) width 83: "Windows 95"
+            RenderTableCell {TH} at (308,0) size 91x25 [border: (3px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,4) size 86x20
+                text run at (2,4) width 86: "Windows NT"
+          RenderTableRow {TR} at (0,25) size 399x22
+            RenderTableCell {TD} at (0,25) size 115x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 73x19
+                text run at (4,2) width 73: "Base Install"
+            RenderTableCell {TD} at (115,25) size 107x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (222,25) size 86x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (308,25) size 91x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+          RenderTableRow {TR} at (0,47) size 399x22
+            RenderTableCell {TD} at (0,47) size 115x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 102x19
+                text run at (4,2) width 102: "Complete Install"
+            RenderTableCell {TD} at (115,47) size 107x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (222,47) size 86x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (308,47) size 91x22 [border: (1px inset #808080)] [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+          RenderTableRow {TR} at (0,69) size 399x24
+            RenderTableCell {TD} at (0,69) size 115x24 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,2) size 110x19
+                text run at (4,2) width 110: "Pro Edition Install"
+            RenderTableCell {TD} at (115,69) size 107x24 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (222,69) size 86x24 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"
+            RenderTableCell {TD} at (308,69) size 91x24 [border: (1px inset #808080)] [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 22x19
+                text run at (2,2) width 22: "yes"

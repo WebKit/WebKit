@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x132
+  RenderBlock {HTML} at (0,0) size 800x125
+    RenderBody {BODY} at (8,14) size 784x97
+      RenderBlock (floating) {DIV} at (574,0) size 210x59 [bgcolor=#CC6666]
+        RenderText {#text} at (20,20) size 170x19
+          text run at (20,20) width 170: "DIV NUMBER 1: float:right;"
+      RenderBlock (floating) {DIV} at (503,59) size 281x59 [bgcolor=#99CC66]
+        RenderText {#text} at (20,20) size 241x19
+          text run at (20,20) width 241: "DIV NUMBER 2: clear:right; float:right;"
+      RenderBlock (floating) {DIV} at (0,59) size 201x59 [bgcolor=#6699FF]
+        RenderText {#text} at (20,20) size 161x19
+          text run at (20,20) width 161: "DIV NUMBER 3: float:left;"
+      RenderBlock {P} at (0,0) size 784x97
+        RenderText {#text} at (0,0) size 573x76
+          text run at (0,0) width 565: "The first element is floated to the right. The second element clears the right float and also"
+          text run at (0,19) width 549: "floats right. The third element is floated to the left, but is forced below the bottom of the"
+          text run at (0,38) width 573: "first element. Yet, somehow this paragraph comes at the end of the markup, and manages"
+          text run at (0,57) width 527: "to rise to the top of the page. This behavior is present in Firefox, Safari and Opera. "
+        RenderInline {A} at (0,0) size 360x39 [color=#0000EE]
+          RenderInline {STRONG} at (0,0) size 360x40
+            RenderText {#text} at (527,57) size 360x40
+              text run at (527,57) width 34: "Click"
+              text run at (201,77) width 280: "here for a real world example of this bug."

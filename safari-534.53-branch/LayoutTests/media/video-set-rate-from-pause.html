@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            function init() {
+                findMediaElement();
+                waitForEvent('canplaythrough', receivedCanPlayThrough);
+                video.src = findMediaFile("video", "content/test");
+            }
+
+            function receivedCanPlayThrough() {
+                waitForEvent('play', receivedPlay);
+                video.playbackRate = 0;
+                video.play();
+            }
+
+            function receivedPlay() {
+                waitForEventAndEnd('timeupdate');
+                video.playbackRate = 1;
+            }    
+        </script>
+    </head>
+    <body onload="init()">
+        <video controls></video>
+        <p>Test that setting a non-zero rate causes an async timeupdate event.</p>
+    </body>
+</html>

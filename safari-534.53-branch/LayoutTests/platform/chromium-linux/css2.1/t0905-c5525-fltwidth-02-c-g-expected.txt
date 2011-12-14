@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {HTML} at (0,0) size 800x54
+    RenderBody {BODY} at (8,8) size 784x17
+      RenderBlock {DIV} at (0,0) size 784x17
+        RenderBlock (floating) {P} at (0,0) size 392x46
+          RenderText {#text} at (0,0) size 340x45
+            text run at (0,0) width 340: "There should be a green square to the right,"
+            text run at (0,23) width 298: "roughly in the middle, horizontally. \x{21E8}"
+        RenderImage {IMG} at (392,0) size 15x15 [color=#FF0000]
+        RenderText {#text} at (0,0) size 0x0

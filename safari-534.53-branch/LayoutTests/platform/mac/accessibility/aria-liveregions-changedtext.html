@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive">text</h3>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that when you change text in a live region, the proper notification is sent.");
+
+    var liveRegionText = 0;
+    function ariaCallbackText(notification) {
+        if (notification == "AXLiveRegionChanged") {
+           alert("Successfully received " + notification);
+           liveRegionText.removeNotificationListener();
+           window.layoutTestController.notifyDone();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("liveregion").focus();
+        liveRegionText = window.accessibilityController.focusedElement;
+
+        var addedNotification = liveRegionText.addNotificationListener(ariaCallbackText);
+        shouldBe("addedNotification", "true");
+
+        // this should trigger our live region callback for a text change.
+        document.getElementById("innerlive").innerText = "changed text";
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

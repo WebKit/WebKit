@@ -1,0 +1,28 @@
+<?php
+    $title = "Running WebKit";
+    include("../header.inc");
+?>
+
+<h2>Running WebKit</h2>
+<ol>
+<li><p>Execute the <code>run-safari</code> <a href="/coding/scripts.html">script</a>
+to run Safari with the WebKit version you <a href="build.html">built</a>.</p>
+<p>Use the <code>--debug</code> option for a debug build:</p>
+<p class="code">run-safari --debug</p>
+</li>
+</ol>
+
+<div class="mac-instructions">
+<h4>Mac OS X</h4>
+<p>The <code>run-safari</code> script sets the <code>DYLD_FRAMEWORK_PATH</code> environment variable to point to your build products, 
+and then launches /Applications/Safari.app. <code>DYLD_FRAMEWORK_PATH</code> tells the system loader to prefer your build products over the frameworks installed in /System/Library/Frameworks.</p>
+</div>
+
+<div class="windows-instructions">
+<h4>Windows</h4>
+<p>The <code>run-safari</code> script launches the Safari executable with the <code>/frameworkPath</code> command line switch set to point to your build products.  The <code>/debug</code> command line switch will be set if you pass --debug to <code>run-safari.</code></p>
+</div>
+
+<?php
+    include("../footer.inc");
+?>

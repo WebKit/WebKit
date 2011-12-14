@@ -1,0 +1,3 @@
+Checks that deferred scripts with invalid URLs are ignored and subsequent deferred scripts executed.
+defer
+

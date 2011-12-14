@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to long
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -9223372036854776000.6;dt.setLong( dt ); dt.PUB_LONG should be -9223372036854776000. Was 0.
+PASS dt.PUB_DOUBLE_REPRESENTATION = -9223372036854776000.6;dt.setLong( dt ); dt.getLong() is -9223372036854776000
+PASS typeof dt.getLong() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,15 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
+
+FAIL TEST_CLASS.ambiguous( new String() ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Boolean() ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Number() ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Date() ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Function() ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( this ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new RegExp() ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( Math ) +'' should be FLOAT. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Object() ) +'' should be FLOAT. Was BYTE.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

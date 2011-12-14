@@ -1,0 +1,54 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+gc = window.gc || function()
+{
+    if (window.GCController)
+        return GCController.collect();
+    
+    for (var i = 0; i < 10000; ++i)
+        var s = new String("AAAA");
+}
+
+handler = function()
+{   
+    this.removeEventListener("DOMNodeRemoved", handler, false);
+    document.body.removeChild(object);
+}
+
+window.onload = function()
+{    
+    object = document.createElement("object");
+    
+    object.innerHTML = "<embed width=\"2\"/><element id=\"foo\"/>";
+    embed = object.firstChild;
+    
+    attr = document.createAttribute("width");
+    object.setAttributeNode(attr);
+    attr.appendChild(document.createTextNode(1));
+    attr.childNodes[0].addEventListener("DOMNodeRemoved", handler, false);
+    
+    document.body.appendChild(object);
+    
+    object = attr = null;
+    gc();
+    
+    setTimeout(finishTest, 0);
+}
+
+finishTest = function()
+{
+    document.getElementById("foo");
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body>PASS</body>
+</html>

@@ -1,0 +1,19 @@
+<html>
+    <body>
+        This tests that we don't crash if we clear a transitions duration during the transition end callback.
+        <div id="t" style="background-color:#000">test</div> 
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+            var el = document.getElementById('t');
+            el.addEventListener('webkitTransitionEnd', function(){
+                el.style.webkitTransitionDuration = '';
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            });
+            el.style.cssText += ';-webkit-transition:background-color 0.2s;background-color:#fff'
+        </script>
+    </body>
+</html>

@@ -1,0 +1,68 @@
+<html>
+<head>
+
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpDOMAsWebArchive();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.waitUntilDone();
+}
+
+var secondWindow = null;
+
+function startTest()
+{
+    secondWindow = window.open("resources/adopt-attribute-styled-body-second-window.html", "TestWindow");
+    if (!secondWindow) {
+        alert("When running this test under Safari, popup blocking must be disabled.");
+        return;
+    }
+    tryAdoptNode();
+}
+
+function tryAdoptNode()
+{
+    window.bodyToAdopt = secondWindow.document.getElementById("otherBody");
+    if (!secondWindow.doneWithBody || !window.bodyToAdopt) {
+        setTimeout("tryAdoptNode()", 10);
+        return;
+    }
+    
+    secondWindow.close();
+    
+    document.getElementById("iframeSpan").innerHTML = "<iframe src='resources/adopt-attribute-styled-body-iframe.html'></iframe>";
+
+    procedeAfterClosedWindow();
+}
+
+function procedeAfterClosedWindow()
+{
+    if (!secondWindow.closed || window.bodyToAdopt) {
+        setTimeout("procedeAfterClosedWindow()", 10);
+        return;
+    }
+    
+    secondWindow = null;
+    
+    if (window.GCController) {
+        GCController.collect();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        else
+            alert("How strange - You have window.GCController, but no window.layoutTestController.  How did this happen?");
+    }
+    else
+        alert("Now wait for garbage collection to have occured, then save the current page as a WebArchive.");
+}
+
+</script>
+</head>
+
+<body onload="startTest();">
+<span id="testSpan">This test takes a body with inline link color styling from a second window, moves it to the document of an iframe, makes sure the 
+second window has closed, then makes a WebArchive.  The test passes if it doesn't crash.  If running the test in Safari then garbage collection might get in the
+way of fulling testing the bug.  One should wait "awhile" before making the WebArchive.<br></span><br>
+<span id="iframeSpan"></span>
+</body>
+</html>

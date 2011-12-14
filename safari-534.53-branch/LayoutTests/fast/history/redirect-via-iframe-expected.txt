@@ -1,0 +1,10 @@
+This page is the target of a redirect.
+
+PASS: History item count should be 2 and is.
+
+
+============== Back Forward List ==============
+        (file test):fast/history/redirect-via-iframe.html  **nav target**
+            (file test):fast/history/resources/iframe-redirect.html#2 (in frame "<!--framePath //<!--frame0-->-->")
+curr->  (file test):fast/history/resources/redirect-target.html#2  **nav target**
+===============================================

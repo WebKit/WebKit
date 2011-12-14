@@ -1,0 +1,73 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
+  #                 Bradley Baetz <bbaetz@student.usyd.edu.au>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+
+[%# This script/template only handles one bug #%]
+[% bug = bugs.0 %]
+
+[% IF !header_done %]
+  [% filtered_desc = bug.short_desc FILTER html %]
+  [% filtered_timestamp = bug.delta_ts FILTER time %]
+  [% bodyclasses = ['bz_bug',
+                   "bz_status_$bug.bug_status",
+                   "bz_component_$bug.component",
+                   "bz_bug_$bug.bug_id"
+                   ]
+  %]
+  [% FOREACH group = bug.groups_in %]
+    [% bodyclasses.push("bz_group_$group.name") %]
+  [% END %]
+  [% PROCESS global/header.html.tmpl
+    title = "$terms.Bug $bug.bug_id &ndash; $filtered_desc"
+    header = "$terms.Bug&nbsp;$bug.bug_id"
+    subheader = filtered_desc
+    header_addl_info = "Last modified: $filtered_timestamp"
+    bodyclasses = bodyclasses
+    javascript_urls = [ "js/util.js", "js/field.js",
+                        "js/yui/yahoo-dom-event.js", "js/yui/calendar.js" ]
+    style_urls = [ "skins/standard/yui/calendar.css", "skins/standard/show_bug.css" ]
+    doc_section = "bug_page.html"
+  %]
+[% END %]
+
+[% IF nextbug %]
+  <hr>
+  <p>
+    The next [% terms.bug %] in your list is [% terms.bug %]
+    <a href="show_bug.cgi?id=[% bug.bug_id %]">[% bug.bug_id %]</a>:
+  </p>
+  <hr>
+[% END %]
+
+[% PROCESS bug/navigate.html.tmpl %]
+
+[% PROCESS bug/edit.html.tmpl %]
+
+<hr>
+
+[% PROCESS bug/navigate.html.tmpl bottom_navigator => 1%]
+
+<br>
+
+[% PROCESS global/footer.html.tmpl %]

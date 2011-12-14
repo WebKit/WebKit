@@ -1,0 +1,17 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    window.layoutTestController.dumpAsText();
+    window.layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+    window.layoutTestController.addUserStyleSheet("#thinger { display:none; }", true);
+}
+</script>
+</head>
+<body>
+If any thingers appear on this page, the test has failed.
+<Div id="thinger">thinger</div>
+<iframe src="resources/frame1.html"></iframe>
+</body>
+</html>

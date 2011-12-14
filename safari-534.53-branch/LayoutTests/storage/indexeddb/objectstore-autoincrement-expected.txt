@@ -1,0 +1,69 @@
+Test IndexedDB's IDBObjectStore auto-increment feature.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('objectstore-autoincrement')
+openSuccess():
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+createObjectStore():
+store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})
+db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})
+db.createObjectStore('PlainOldStore', {autoIncrement: false})
+storeNames = db.objectStoreNames
+PASS store.name is "StoreWithKeyPath"
+PASS store.keyPath is 'id'
+PASS storeNames.contains('StoreWithKeyPath') is true
+PASS storeNames.contains('StoreWithAutoIncrement') is true
+PASS storeNames.contains('PlainOldStore') is true
+PASS storeNames.length is 3
+setVersionCompleted():
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+store = trans.objectStore('StoreWithKeyPath')
+Insert into object store with auto increment and key path, with key in the object.
+store.add({name: 'Jeffersson', number: '7010', id: 3})
+addJefferssonSuccess():
+PASS event.target.result is 3
+Insert into object store with auto increment and key path, without key in the object.
+store.add({name: 'Lincoln', number: '7012'})
+addLincolnWithInjectKeySuccess():
+PASS event.target.result is 4
+store.get(4)
+getLincolnAfterInjectedKeySuccess():
+PASS event.target.result.name is "Lincoln"
+PASS event.target.result.number is "7012"
+PASS event.target.result.id is 4
+store = trans.objectStore('StoreWithAutoIncrement')
+Insert into object store with key gen using explicit key
+store.add({name: 'Lincoln', number: '7012'}, 5)
+addLincolnWithExplicitKeySuccess():
+PASS event.target.result is 5
+store.get(5)
+getLincolnSuccess():
+PASS event.target.result.name is "Lincoln"
+PASS event.target.result.number is "7012"
+store.put({name: 'Abraham', number: '2107'})
+putAbrahamSuccess():
+PASS event.target.result is 6
+store.get(6)
+getAbrahamSuccess():
+PASS event.target.result.name is "Abraham"
+PASS event.target.result.number is "2107"
+store = trans.objectStore('PlainOldStore')
+Try adding with no key to object store without auto increment.
+store.add({name: 'Adam'})
+addAdamError():
+PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
+event.preventDefault()
+store.add({name: 'Adam'}, 1)
+addAdamSuccess():
+PASS event.target.result is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

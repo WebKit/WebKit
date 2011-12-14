@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 37: TypeError: 'undefined' is not an object (evaluating 'turbulence.seed.baseVal = 5')
+FAIL: Timed out waiting for notifyDone to be called
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'seed' property of the SVGFETurbulenceElment object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL turbulence.seed.baseVal should be 10. Threw exception TypeError: 'undefined' is not an object (evaluating 'turbulence.seed.baseVal')
+

@@ -1,0 +1,31 @@
+<html>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+ 
+    <input placeholder="search" type="text" name="q" size="15" maxlength="255" id="searchterm" />
+    
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test makes sure that the placeholder is returned as the correct attribute");
+
+            var field = document.getElementById("searchterm").focus();
+            var fieldElement = accessibilityController.focusedElement;
+            shouldBe("fieldElement.stringAttributeValue('AXPlaceholderValue')", "'search'");
+
+        }
+        successfullyParsed = true;
+    </script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<html> 
+<head> 
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script> 
+if (window.layoutTestController) 
+    layoutTestController.dumpAsText(); 
+ 
+window.onload = function() { 
+    shouldBeTrue("(self.appletFrame1.document['app'].init) != undefined");
+    shouldBeTrue("(self.appletFrame2.document['app'].init) == undefined");
+
+    shouldBeTrue("(self.embedFrame1.document.getElementById('plugin').destroyStream) != undefined");
+    shouldBeTrue("(self.embedFrame2.document.getElementById('plugin').destroyStream) == undefined");
+
+    shouldBeTrue("(self.objectFrame1.document.getElementById('plugin').destroyStream) != undefined");
+    shouldBeTrue("(self.objectFrame2.document.getElementById('plugin').destroyStream) == undefined");
+
+    isSuccessfullyParsed();
+} 
+</script> 
+</head> 
+ 
+<body> 
+    <p id="description"></p>
+ 
+    <p>NOTE: The first sub-test will fail in DumpRenderTree, since DumpRenderTree
+    does not support applets. That sub-test must be run in Safari instead.</p> 
+
+    <div id="console"></div>
+
+    <!-- Applets -->
+    
+    <iframe id="appletFrame1" 
+            style="width: 200px; height: 100px;" 
+            src="resources/sandboxed-iframe-plugins-frame-applet.html"> 
+    </iframe> 
+    <iframe id="appletFrame2" 
+            style="width: 200px; height: 100px;" 
+            sandbox="allow-same-origin allow-scripts" 
+            src="resources/sandboxed-iframe-plugins-frame-applet.html"> 
+    </iframe> 
+
+    <!-- Embeds -->
+    
+    <iframe id="embedFrame1"
+            style="width: 200px; height: 100px;"
+            src="resources/sandboxed-iframe-plugins-frame-embed.html">
+    </iframe>
+    <iframe id="embedFrame2"
+            style="width: 200px; height: 100px;"
+            sandbox="allow-same-origin"
+            src="resources/sandboxed-iframe-plugins-frame-embed.html">
+    </iframe>
+
+    <!-- Objects -->
+    
+    <iframe id="objectFrame1"
+            style="width: 200px; height: 100px;"
+            src="resources/sandboxed-iframe-plugins-frame-object.html">
+    </iframe>
+    <iframe id="objectFrame2"
+            style="width: 200px; height: 100px;"
+            sandbox="allow-same-origin"
+            src="resources/sandboxed-iframe-plugins-frame-object.html">
+    </iframe>
+
+    <script>
+    description("This test verifies that sandboxing of plugins works as intended. Three tests are made, each in one sandboxed and one non-sandboxed IFrame: applets, embeds, and objects.");
+    var successfullyParsed = true;
+    </script>
+</body> 
+</html> 

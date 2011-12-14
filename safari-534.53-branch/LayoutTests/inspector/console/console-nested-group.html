@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function onload()
+{
+    console.group("outer group");
+    console.group("inner group");
+    console.log("Message inside inner group");
+    console.groupEnd();
+    console.groupEnd();
+    console.log("Message that must not be in any group");
+
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.dumpConsoleMessagesWithClasses();
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console.groupEnd messages won't be coalesced. <a href="https://bugs.webkit.org/show_bug.cgi?id=56114">Bug 56114</a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+function loaded() {
+    var selection = window.getSelection();
+    var range =  document.createRange();
+    range.selectNode(document.getElementById("selectMe"));
+    selection.addRange(range);
+  
+    var table = document.createElement("table");
+    document.getElementById('form').appendChild(table);
+}
+</script>
+</head>
+<body onload="loaded()">
+<table><tr><td id="selectMe">This test passes if it does not crash.</td></tr><form style="display:inline" id="form"></form></table>
+</body>
+</html>

@@ -1,0 +1,6 @@
+S15.4.4.7_A4_T3
+
+FAIL SputnikError: #1: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z") === 4294967298. Actual: 2
+
+TEST COMPLETE
+

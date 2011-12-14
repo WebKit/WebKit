@@ -1,0 +1,17 @@
+<p>This tests smart paste of a fragment that ends in a select element.  There should be no spaces added because the paste is performed in an empty paragraph.</p>
+<div contenteditable="true" id="copy">foo<select><option>1</option><option>2</option><option>3</option></select></div>
+<div contenteditable="true" id="paste"></div>
+
+<script>
+var copy = document.getElementById("copy");
+var paste = document.getElementById("paste");
+var sel = window.getSelection();
+
+sel.setPosition(copy, 0);
+sel.modify("extend", "forward", "word");
+sel.modify("extend", "forward", "word");
+document.execCommand("Copy");
+
+sel.setPosition(paste, 0);
+document.execCommand("Paste");
+</script>

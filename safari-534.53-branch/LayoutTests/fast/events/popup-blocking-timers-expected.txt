@@ -1,0 +1,16 @@
+Click Here
+Test calling window.open() directly. A popup should be allowed.
+PASS newWindow is non-null.
+Test calling window.open() with a 0 ms delay. A popup should be allowed.
+PASS newWindow is non-null.
+Test calling window.open() in a 100 ms interval. A popup should only be allowed on the first execution of the interval.
+PASS newWindow is non-null.
+Test calling window.open() in a 100 ms interval. A popup should only be allowed on the first execution of the interval.
+PASS newWindow is undefined.
+Test calling window.open() in a nested call to setTimeout(). A popup should not be allowed.
+PASS newWindow is undefined.
+Test calling window.open() with a 1000 ms delay. A popup should be allowed.
+PASS newWindow is non-null.
+Test calling window.open() with a 1001 ms delay. A popup should not be allowed.
+PASS newWindow is undefined.
+

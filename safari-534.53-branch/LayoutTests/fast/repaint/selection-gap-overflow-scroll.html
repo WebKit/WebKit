@@ -1,0 +1,33 @@
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        div#overflow { margin: 5px; padding: 10px; border: medium solid; width: 100px; height: 100px; overflow: auto; }
+        ::selection { background-color: red; }
+    </style>
+    <script type="text/javascript" src="resources/repaint.js"></script>
+    <script type="text/javascript">
+        function repaintTest()
+        {
+            getSelection().empty();
+        }
+    </script>
+</head>
+<body onload="runRepaintTest()">
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=12590">http://bugs.webkit.org/show_bug.cgi?id=12590</a>
+        REGRESSION: Text selection is weird in textareas in Trac wiki editing pages</i>.
+    </p>
+    <div id="overflow">
+        <div style="height: 100px;"></div>
+        <span id="target">Lorem<br>ipsum</span>
+    </div>
+    <script type="text/javascript">
+        var overflow = document.getElementById("overflow");
+        overflow.scrollTop = overflow.scrollHeight;
+        var selection = getSelection();
+        var target = document.getElementById("target");
+        selection.setBaseAndExtent(target, 0, target, 3);
+    </script>
+</body>
+</html>

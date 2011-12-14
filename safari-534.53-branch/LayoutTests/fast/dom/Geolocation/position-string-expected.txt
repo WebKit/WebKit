@@ -1,0 +1,14 @@
+Tests formatting of position.toString().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS position.coords.latitude is mockLatitude
+PASS position.coords.longitude is mockLongitude
+PASS position.coords.accuracy is mockAccuracy
+PASS position.toString() is "[object Geoposition]"
+PASS position.coords.toString() is "[object Coordinates]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

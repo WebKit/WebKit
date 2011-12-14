@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion boolean conversion
+
+FAIL dt.setShort( true ); dt.PUB_SHORT should throw an exception. Was 1.
+FAIL dt.setShort( true ); dt.getShort() should throw an exception. Was 1.
+FAIL typeof dt.getShort() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

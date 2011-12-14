@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<keygen id="keys" />
+<pre id="console">
+This tests the keygen element.
+
+</pre>
+<script>
+var keygen = document.getElementById('keys');
+shouldBe('keygen.options', 'undefined');  // keygen is not a select
+
+if (window.layoutTestController) {
+  var shadow = layoutTestController.shadowRoot(keygen);
+  shouldBe('shadow.firstChild.tagName', '"SELECT"');
+  shouldBe('layoutTestController.shadowRoot(shadow)', 'null');
+  shouldBe('layoutTestController.shadowRoot(shadow.firstChild)', 'null');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

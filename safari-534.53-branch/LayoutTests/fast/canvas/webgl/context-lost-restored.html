@@ -1,0 +1,130 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+<script>
+var wtu = WebGLTestUtils;
+var canvas;
+var gl;
+var shouldGenerateGLError;
+var extension_name = "WEBKIT_lose_context";
+var extension;
+var bufferObjects;
+var program;
+var texture;
+var texColor = [255, 10, 20, 255];
+
+function init()
+{
+    if (window.initNonKhronosFramework) {
+        window.initNonKhronosFramework(true);
+    }
+
+    description("Tests behavior under a restored context");
+
+    canvas = document.getElementById("canvas");
+    canvas.addEventListener("webglcontextlost", testLostContext);
+    canvas.addEventListener("webglcontextrestored", testRestoredContext);
+
+    gl = wtu.create3DContext(canvas);
+    shouldGenerateGLError = wtu.shouldGenerateGLError;
+
+    extension = gl.getExtension(extension_name);
+    if (!extension) {
+        debug(extension_name + " extension not found.");
+        finish();
+        return;
+    }
+
+    testOriginalContext();
+    extension.loseContext();
+}
+
+function testRendering()
+{
+    gl.clearColor(0, 0, 0, 255);
+    gl.colorMask(1, 1, 1, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    program = wtu.setupSimpleTextureProgram(gl);
+    bufferObjects = wtu.setupUnitQuad(gl);
+    texture = wtu.createColoredTexture(gl, canvas.width, canvas.height, texColor);
+
+    gl.uniform1i(gl.getUniformLocation(program, "tex"), 0);
+    wtu.drawQuad(gl, [0, 0, 0, 255]);
+
+    var compare = texColor.slice(0, 3);
+    wtu.checkCanvasRect(gl, 0, 0, canvas.width, canvas.height, compare, "shouldBe " + compare);
+
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+}
+
+function testOriginalContext()
+{
+    debug("Test valid context");
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    testRendering();
+    debug("");
+}
+
+function testLostContext()
+{
+    debug("Test lost context");
+    shouldBeTrue("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    debug("");
+}
+
+function testResources(expected)
+{
+    var tests = [
+        "gl.bindTexture(gl.TEXTURE_2D, texture)",
+        "gl.useProgram(program)",
+        "gl.bindBuffer(gl.ARRAY_BUFFER, bufferObjects[0])",
+    ];
+
+    for (var i = 0; i < tests.length; ++i)
+        shouldGenerateGLError(gl, expected, tests[i]);
+}
+
+function testRestoredContext()
+{
+    debug("Test restored context");
+    shouldBeFalse("gl.isContextLost()");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    // Validate that using old resources fails.
+    testResources(gl.INVALID_OPERATION);
+
+    testRendering();
+
+    // Validate new resources created in testRendering().
+    testResources(gl.NO_ERROR);
+    debug("");
+
+    finish();
+}
+
+function finish() {
+    successfullyParsed = true;
+    var epilogue = document.createElement("script");
+    epilogue.onload = function() {
+        if (window.nonKhronosFrameworkNotifyDone)
+            window.nonKhronosFrameworkNotifyDone();
+    };
+    epilogue.src = "../../js/resources/js-test-post.js";
+    document.body.appendChild(epilogue);
+}
+
+</script>
+</head>
+<body onload="init()">
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="1px" height="1px"></canvas>
+</body>
+</html>

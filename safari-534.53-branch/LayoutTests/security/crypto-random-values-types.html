@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/utilities.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests which types are valid for crypto.randomValues.");
+
+if (!window.ArrayBuffer)
+    debug("This test requres ArrayBuffers to run!");
+
+shouldBe("'crypto' in window", "true");
+shouldBe("'getRandomValues' in window.crypto", "true");
+
+shouldBeUndefined("crypto.getRandomValues(new Uint8Array(3))");
+shouldBeUndefined("crypto.getRandomValues(new Int8Array(3))");
+shouldBeUndefined("crypto.getRandomValues(new Uint16Array(3))");
+shouldBeUndefined("crypto.getRandomValues(new Int16Array(3))");
+shouldBeUndefined("crypto.getRandomValues(new Uint32Array(3))");
+shouldBeUndefined("crypto.getRandomValues(new Int32Array(3))");
+
+shouldThrow("crypto.getRandomValues(new Float32Array(3))");
+
+var successfullyParsed = true;
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,37 @@
+This test verifies that the functions of the Date prototype object are not generic, as documented in ECMA-262 rev3 section 15.9.5 Properties of the Date Prototype Object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL o.__proto__.toString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toDateString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toTimeString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toGMTString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toUTCString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toLocaleString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toLocaleDateString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.toLocaleTimeString() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getTime() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getYear() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getFullYear() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getMonth() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getDate() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getDay() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getHours() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getMinutes() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getSeconds() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getMilliseconds() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.getTimezoneOffset() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setTime() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setMilliseconds() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setSeconds() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setMinutes() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setHours() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setDate() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setMonth() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setFullYear() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+FAIL o.__proto__.setYear() should throw TypeError: Type error. Threw exception TypeError: this is not a Date object..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

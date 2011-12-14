@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 4: Error: Exception in eval.
+CONSOLE MESSAGE: line 4: Error: Exception in eval.
+Tests that when uncaught exception in eval'ed script ending with //@ sourceURL=url is logged into console, its stack trace will have the url as the script source. Bug 47252.
+
+Page reloaded.
+Error: Exception in eval.
+

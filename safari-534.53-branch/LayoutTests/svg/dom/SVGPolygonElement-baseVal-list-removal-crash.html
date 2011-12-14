@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function go() {
+    var oSVGPolygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    var oSVGPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    var oSVGPoint1 = oSVGPath.getPointAtLength();
+    oSVGPolygon.points.initialize(oSVGPoint1);
+    oSVGPolygon.points.removeItem(-9223372036854775802);
+    alert("Accessing old oSVGPoint1.x: " + oSVGPoint1.x);
+}
+</script>
+</head>
+<body onload="go()">
+This test passes if it doesn't crash.
+</body>
+</html>

@@ -1,0 +1,18 @@
+This page has an anonymous event handler. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. It should show the anonymous function at the same level as the onload handler. 
+
+Profile title: Anonymous event handler
+Thread_1 (no file) (line 0)
+   startTest anonymous-event-handler.html (line 11)
+      getElementById (no file) (line 0)
+      click (no file) (line 0)
+         (anonymous function) anonymous-event-handler.html (line 15)
+            insertNewText profiler-test-JS-resources.js (line 17)
+               createElement (no file) (line 0)
+               createTextNode (no file) (line 0)
+               appendChild (no file) (line 0)
+               getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+

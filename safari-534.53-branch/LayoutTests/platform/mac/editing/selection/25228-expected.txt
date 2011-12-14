@@ -1,0 +1,42 @@
+layer at (0,0) size 1100x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (0,0) size 800x585
+      RenderBlock {DIV} at (798,0) size 302x272 [border: (1px solid #FF0000)]
+        RenderText {#text} at (1,1) size 300x270
+          text run at (1,1) width 120: "This tests for a bug"
+          text run at (121,1) width 4: " "
+          text run at (1,19) width 249: "(https://bugs.webkit.org/show_bug.cgi?"
+          text run at (1,37) width 109: "id=25228) where"
+          text run at (110,37) width 4: " "
+          text run at (1,55) width 294: "SelectionController::absoluteCaretBounds was"
+          text run at (295,55) width 4: " "
+          text run at (1,73) width 169: "returning an inflated caret. "
+          text run at (170,73) width 110: "It would manifest"
+          text run at (280,73) width 4: " "
+          text run at (1,91) width 215: "itself during revealSelection calls. "
+          text run at (216,91) width 66: "Before the"
+          text run at (282,91) width 4: " "
+          text run at (1,109) width 279: "change we would reveal one pixel too much"
+          text run at (280,109) width 4: " "
+          text run at (1,127) width 154: "because of the inflation. "
+          text run at (155,127) width 146: "To run manually, place"
+          text run at (301,127) width 0: " "
+          text run at (1,145) width 297: "the caret just after the first character, scroll to 0,"
+          text run at (298,145) width 3: " "
+          text run at (1,163) width 161: "0 and hit the back arrow. "
+          text run at (162,163) width 124: "The caret should be"
+          text run at (286,163) width 4: " "
+          text run at (1,181) width 300: "right up against the edge of the window and the"
+          text run at (301,181) width 0: " "
+          text run at (1,199) width 232: "window should still be at scroll 0, 0. "
+          text run at (233,199) width 33: "If we"
+          text run at (266,199) width 4: " "
+          text run at (1,217) width 267: "change the way selections are revealed the"
+          text run at (268,217) width 4: " "
+          text run at (1,235) width 292: "results for this test might change and it may no"
+          text run at (293,235) width 4: " "
+          text run at (1,253) width 142: "longer test for the bug."
+      RenderBlock {DIV} at (0,272) size 2000x0
+caret: position 0 of child 0 {#text} of child 1 {DIV} of body

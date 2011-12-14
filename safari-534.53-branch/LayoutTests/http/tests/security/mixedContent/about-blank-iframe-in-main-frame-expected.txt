@@ -1,0 +1,19 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+main frame - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+frame "<!--framePath //<!--frame1-->-->" - didStartProvisionalLoadForFrame
+frame "<!--framePath //<!--frame1-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame1-->-->" - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame1-->-->" - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame1-->-->" - didFinishLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test opens a window iframe that loads an about:blank iframe. We should *not* trigger a mixed content callback because the about:blank iframes cannot be corrupted by active network attackers.

@@ -1,0 +1,13 @@
+<p>This tests for a bug where changing the alignment of an image would result in a selection that wasn't the one that was present before the alignment change.  The image should be centered and the caret should be the same before and after the operation.</p>
+<div id="div" contenteditable="true">foo<br><img src="../resources/abe.png"><br>baz</div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "paragraphBoundary");
+sel.modify("move", "forward", "character");
+
+document.execCommand("JustifyCenter");
+</script>

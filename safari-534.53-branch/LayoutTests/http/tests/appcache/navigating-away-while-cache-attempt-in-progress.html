@@ -1,0 +1,21 @@
+<html manifest="resources/navigating-away-while-cache-attempt-in-progress.manifest">
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    layoutTestController.waitUntilDone();
+}
+
+function navigateAway() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    else
+        window.location.href = "about:blank"
+}
+
+setTimeout(navigateAway, 1000);
+
+</script>
+<div>This tests that navigating away while a cache is loading does not crash.</div>
+<div>SUCCESS - did not crash</div>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test ensures WebKit clears IME composition inside an input element when the value is programmatically set. To manually test, type in "nihao" using Chinese IME and then press the down arrow key. The text must be replaced by "henhao" without composition marker.</p>
+<input id="test" type="text">
+<script>
+
+var test = document.getElementById('test');
+test.addEventListener('keyup', function(event) {
+    if (event.keyCode == 40)
+        test.value = 'henhao';
+});
+
+function log(message) {
+    test.style.display = 'none';
+    document.writeln(message);
+}
+
+function runTest() {
+    test.focus();
+    test.selectionStart = 0;
+    test.selectionEnd = 0;
+    textInputController.setMarkedText("nihao", 0, 5);
+
+    if (!textInputController.hasMarkedText())
+        return log('FAIL: nihao is not marked');
+    else if (textInputController.markedRange().toString() != "0,5")
+        return log('FAIL: marked range was ' + textInputController.markedRange().toString() + ' but expected 0,5');
+
+    eventSender.keyDown('downArrow');
+
+    if (textInputController.hasMarkedText())
+        return log('FAIL: marked text still exists');
+
+    log('PASS');
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    runTest();
+}
+
+</script>
+</body>
+</html>

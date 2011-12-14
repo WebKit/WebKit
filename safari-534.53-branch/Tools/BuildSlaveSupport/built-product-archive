@@ -1,0 +1,146 @@
+#!/usr/bin/python
+
+# Copyright (C) 2009 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import optparse, os, shutil, subprocess, sys
+
+buildDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
+
+def main():
+    parser = optparse.OptionParser("usage: %prog [options] [action]")
+    parser.add_option("--platform", dest="platform")
+    parser.add_option("--debug", action="store_const", const="debug", dest="configuration")
+    parser.add_option("--release", action="store_const", const="release", dest="configuration")
+
+    options, (action, ) = parser.parse_args()
+    if not options.platform:
+        parser.error("Platform is required")
+    if not options.configuration:
+        parser.error("Configuration is required")
+    if action not in ('archive', 'extract'):
+        parser.error("Action is required")
+
+    if action == 'archive':
+        archiveBuiltProduct(options.configuration, options.platform)
+    else:
+        extractBuiltProduct(options.configuration, options.platform)
+
+
+def archiveBuiltProduct(configuration, platform):
+    assert platform in ('mac', 'win','qt')
+
+    archiveFile = os.path.join(buildDirectory, configuration + ".zip")
+
+    try:
+        os.unlink(archiveFile)
+    except OSError, e:
+        if e.errno != 2:
+            raise
+
+    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+
+    if platform == 'mac':
+        return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", configurationBuildDirectory, archiveFile])
+    elif platform == 'win':
+        binDirectory = os.path.join(configurationBuildDirectory, "bin")
+        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
+        thinBinDirectory = os.path.join(thinDirectory, "bin")
+
+        if os.path.isdir(thinDirectory):
+            shutil.rmtree(thinDirectory)
+        os.mkdir(thinDirectory)
+
+        if subprocess.call(["cp", "-R", binDirectory, thinBinDirectory]):
+            return 1
+
+        if subprocess.call("rm -f %s" % os.path.join(thinBinDirectory, "*.ilk"), shell=True):
+            return 1
+
+        if subprocess.call(["zip", "-r", archiveFile, "bin"], cwd=thinDirectory):
+            return 1
+
+        shutil.rmtree(thinDirectory)
+
+    elif platform == 'qt':
+        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
+
+        if os.path.isdir(thinDirectory):
+            shutil.rmtree(thinDirectory)
+        os.mkdir(thinDirectory)
+
+        for dirname in ["bin", "lib", "JavaScriptCore"]:
+            fromDir = os.path.join(configurationBuildDirectory, dirname, "*")
+            toDir = os.path.join(thinDirectory, dirname)
+            os.makedirs(toDir)
+            if subprocess.call('cp -R %s %s' % (fromDir, toDir), shell=True):
+                return 1
+
+        for root, dirs, files in os.walk(thinDirectory, topdown=False):
+            for name in files:
+                if name.endswith(".o"):
+                    os.remove(os.path.join(root, name))
+
+        if subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=thinDirectory):
+            return 1
+
+def extractBuiltProduct(configuration, platform):
+    assert platform in ('mac', 'win','qt')
+
+    archiveFile = os.path.join(buildDirectory, configuration + ".zip")
+    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+
+    if platform == 'mac':
+        if os.path.isdir(configurationBuildDirectory):
+            shutil.rmtree(configurationBuildDirectory)
+
+        if subprocess.call(["ditto", "-x", "-k", archiveFile, buildDirectory]):
+            return 1
+        os.unlink(archiveFile)
+
+    elif platform == 'win':
+        binDirectory = os.path.join(configurationBuildDirectory, "bin")        
+        if os.path.isdir(binDirectory):
+            shutil.rmtree(binDirectory)
+
+        os.makedirs(binDirectory)
+
+        safariPath = subprocess.Popen('cygpath -w "$PROGRAMFILES"/Safari',
+                                      shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
+
+        if subprocess.call('cp -R "%s"/*.dll "%s"/*.resources %s' % (safariPath, safariPath, binDirectory), shell=True):
+            return 1
+
+        if subprocess.call(["unzip", "-o", archiveFile], cwd=configurationBuildDirectory):
+            return 1
+
+    elif platform == 'qt':
+        if os.path.isdir(configurationBuildDirectory):
+            shutil.rmtree(configurationBuildDirectory)
+
+        if subprocess.call(["unzip", "-o", archiveFile, "-d", configurationBuildDirectory], cwd=buildDirectory):
+            return 1
+        os.unlink(archiveFile)
+
+if __name__ == '__main__':
+    sys.exit(main())

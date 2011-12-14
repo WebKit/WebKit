@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="textfield" role="textbox" aria-multiline="true">a</div>
+<div tabindex="0" id="textarea" role="textbox" aria-multiline="false">b</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-multiline will change the role of a text control from a text field to a text area.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("textfield").focus();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTextField'");
+
+        document.getElementById("textarea").focus();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTextArea'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

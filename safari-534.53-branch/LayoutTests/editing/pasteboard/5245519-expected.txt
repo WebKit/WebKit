@@ -1,0 +1,2 @@
+This tests for a crash when pasting content that contains Apple-style-spans that don't have renderers.' You should see 'Hello World!'
+Hello World!

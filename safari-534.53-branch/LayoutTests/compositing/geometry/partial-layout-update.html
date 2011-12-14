@@ -1,0 +1,71 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>Partial layout compositing update</title>
+
+  <style type="text/css" media="screen">
+  .container {
+    position: relative;
+    width: 400px;
+    height: 200px;
+    border: 1px solid black;
+    overflow: hidden;
+  }
+
+  .panel {
+    position: absolute;
+    top: 0px;
+    left: 200px;
+    width: 200px;
+    height: 200px;
+    z-index: 3;
+    background-color: #bbb;
+    -webkit-transition: left 0.1s linear;
+  }
+
+  .box {
+    width: 100px;
+    height: 100px;
+  }
+
+  .panel .content {
+    background-color: green;
+    -webkit-transform: translateZ(0);
+  }
+  
+  .indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: red;
+  }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController)
+      layoutTestController.waitUntilDone();
+
+    function startProgram()
+    {
+      var panel = document.getElementById("panel");
+      panel.addEventListener('webkitTransitionEnd', function() {
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, false);
+      panel.style.left = "0";
+    }
+
+    window.addEventListener('load', startProgram, false)
+    </script>
+</head>
+<body>
+
+  <p>The green box should always obscure the red box below.</p>
+  <div class="container">
+    <div id="panel" class="panel">
+      <div class="indicator box"></div>
+      <div class="content box"></div>
+    </div>
+  </div>
+
+</body>
+</html>

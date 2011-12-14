@@ -1,0 +1,36 @@
+<html>
+<script>
+window.finish = function()
+{
+    if (layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+window.log = function(message) {
+     document.getElementById("result").innerHTML += message + "<br>";
+}
+
+window.failure = function(message) {
+    log("FAIL: " + message);
+    finish();
+}
+
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+    log("open page with data urls");
+    window.open("resources/cached-page-with-data-urls.html");
+}
+</script>
+
+<body onload="test()">
+<p>This tests that going back in history with page cache enabled is
+not going to crash/ASSERT when the previous page has data:// URLs.</p>
+<div id="result"></div>
+</body>
+</html>

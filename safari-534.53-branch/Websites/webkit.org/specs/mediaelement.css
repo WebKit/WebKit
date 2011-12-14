@@ -1,0 +1,170 @@
+
+/* stolen from http://www.whatwg.org/specs/web-apps/current-work/ */
+
+/* This was originally based on the W3C Working Draft stylesheet.
+ * Much has changed since those days. */
+
+html { margin: 0; padding: 0; color: black; background: white; }
+body { margin: 0; padding: 0; background: top left repeat-y; } /* fixed no-repeat for w3c-like */
+body, th, td { font-family: sans-serif; }
+
+@media print {
+  html { font-size: 10pt; }
+}
+
+:link { color: #00C; background: transparent }
+:visited { color: #609; background: transparent }
+:link:active, :visited:active { color: #C00; background: transparent }
+:link:hover, :visited:hover { background: #ffa; }
+code :link, code :visited { color: inherit; }
+
+h1, h2, h3, h4, h5, h6 { text-align: left }
+h1, h2, h3 { color: #3c790a /* w3c-like: #005A9C */; background: transparent; }
+h1 { font: 900 170% sans-serif } /* remove weights for w3c-like */
+h2 { font: 800 140% sans-serif } /* remove weights for w3c-like */
+h3 { font: 700 120% sans-serif } /* remove weights for w3c-like */
+h4 { font: bold 100% sans-serif }
+h5 { font: italic 100% sans-serif }
+h6 { font: small-caps 100% sans-serif }
+
+body { padding: 0 1em 2em 8.5em; line-height: 1.35; }
+pre { margin-left: 2em; /* overflow: auto; */ }
+h1 + h2 { margin-top: 0; }
+h2 { margin: 3em 0 1em 0; }
+h2 + h3 { margin-top: 0; }
+h3 { margin: 2em 0 1em 0; }
+h4 { margin: 1.5em 0 0.75em 0; }
+h5, h6 { margin: 1.5em 0 1em; }
+p { margin: 1em 0; }
+dl, dd { margin-top: 0; margin-bottom: 0; }
+dt { margin-top: 0.75em; margin-bottom: 0.25em; clear: left; }
+dt + dt { margin-top: 0; }
+dd dt { margin-top: 0.25em; margin-bottom: 0; }
+dd p { margin-top: 0; }
+dd dl + p { margin-top: 1em; }
+dd table + p { margin-top: 1em; }
+p + * > li, dd li { margin: 1em 0; }
+dt, dfn { font-weight: bold; font-style: normal; }
+pre, code { font-size: inherit; font-family: monospace; font-variant: normal; }
+pre strong { color: black; font: inherit; font-weight: bold; background: yellow; }
+pre em { font-weight: bolder; font-style: normal; }
+@media screen { code { color: orangered; } }
+var sub { vertical-align: bottom; font-size: smaller; position: relative; top: 0.1em; }
+table { border-collapse: collapse; border-style: hidden hidden none hidden; }
+table thead { border-bottom: solid; }
+table tbody th:first-child { border-left: solid; }
+table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
+blockquote { margin: 0 0 0 2em; border: 0; padding: 0; font-style: italic; }
+ins { background: green; color: white; /* color: green; border: solid thin lime; padding: 0.3em; line-height: 1.6em; */ text-decoration: none; }
+del { background: maroon; color: white; /* color: maroon; border: solid thin red; padding: 0.3em; line-height: 1.6em; */ text-decoration: line-through; }
+body ins, body del { display: block; }
+body * ins, body * del { display: inline; }
+
+
+/* classes and other specifics */
+
+ul.toc dfn, h1 dfn, h2 dfn, h3 dfn, h4 dfn, h5 dfn, h6 dfn { font: inherit; }
+img.extra { float: right; }
+hr.bookmark { border: dashed 2em black; background: yellow; }
+pre.idl { border: solid thin; background: #EEEEEE; color: black; padding: 0.5em; }
+pre.idl :link, pre.idl :visited { color: inherit; background: transparent; }
+code.property-name { background: #FFFFCC; color: black; }
+code.method-name { background: #CCCCFF; color: black; }
+code.parameter-name { background: #FFCCFF; color: black; }
+code.constant-name { background: #CCFFCC; color: black; }
+dl.switch { padding-left: 2em; }
+dl.switch dt { text-indent: -1.5em; }
+dl.switch dt:before { content: '\21AA'; padding: 0 0.5em 0 0; display: inline-block; width: 1em; text-align: right; line-height: 0.5em; }
+
+div.head { margin: 0 0 1em; padding: 1em 0 0 0; }
+div.head p { margin: 0; }
+div.head h1 { margin: 0; }
+div.head .logo { float: right; margin: 0 1em; }
+div.head .logo img { border: none } /* remove border from top image */
+div.head dl { margin: 1em 0; }
+p.copyright { font-size: x-small; font-style: oblique; margin: 0; }
+
+body > .toc > li { margin-top: 1em; margin-bottom: 1em; }
+body > .toc > li > .toc { margin-bottom: 0.5em; }
+body > .toc > li > .toc > li > .toc { margin-bottom: 0.25em; }
+
+.brief { margin-top: 1em; margin-bottom: 1em; line-height: 1.1; }
+.brief li { margin: 0; padding: 0; }
+
+[title=WIP], [title=TBW] { background: red; color: yellow; padding: 0.1em 0.3em; border: dotted white; margin: 0 0.7em 0 0.2em; }
+[title=SCS] { background: green; color: white; padding: 0.1em 0.3em; border-style: none dashed; margin: 0 0.7em 0 0.2em; }
+[title=WIP] :link, [title=WIP] :visited,
+[title=TBW] :link, [title=TBW] :visited,
+[title=SCS] :link, [title=SCS] :visited { background: transparent; color: inherit; }
+
+.issue { color: #E50000; background: white; opacity: 0.9; }
+.big-issue { color: #E50000; background: white; border: solid red; padding: 0.5em; margin: 1em 0; }
+.big-issue > :first-child { margin-top: 0; }
+p .big-issue { line-height: 3em; }
+.note { color: green; background: transparent; font-family: sans-serif; }
+.warning { color: red; background: transparent; }
+.note, .warning { font-weight: bolder; font-style: italic; padding: 0.5em 2em; }
+.note p:first-child, .warning p:first-child { margin-top: 0; }
+.note p:last-child, .warning p:last-child { margin-bottom: 0; }
+.warning:before { font-style: normal; }
+
+p.note:before { content: 'Note: '; }
+p.warning:before { content: '\26A0 Warning! '; }
+
+.issue {
+  position: absolute;
+  top: auto;
+  left: 0;
+  margin: -1.5em 0.2em 0.2em 0.2em;
+  border: solid thin;
+  padding: 0.35em;
+  width: 12em;
+  text-align: left;
+  font-size: 0.6em;
+}
+
+.issue:hover {
+  z-index: 1;
+}
+
+.issue:before {
+  content: '\25B6';
+  display: block;
+  text-align: right;
+  position: absolute;
+  left: 100%;
+  top: 0;
+}
+
+.critical { margin: 1em; border: double thick red; padding: 1em; background: #FFFFCC; }
+.critical > :first-child { margin-top: 0; }
+
+.example {
+  display: block;
+  color: #222222;
+  background: #FCFCFC;
+  border-left: double;
+  margin-left: 1em;
+  padding-left: 1em;
+}
+
+.hide { display: none }
+
+ul.toc {
+  list-style: disc;                /* Mac NS has problem with 'none' */
+  list-style: none;
+}
+
+@media aural {  
+  h1, h2, h3 { stress: 20; richness: 90 }
+  .hide { speak: none }
+  p.copyright { volume: x-soft; speech-rate: x-fast }
+  dt { pause-before: 20% }
+  code, pre { speak-punctuation: code } 
+}
+
+body.draft { background-image: url(/images/WD); }
+body.cfc { background-image: url(/images/CFC); }
+body.cfi { background-image: url(/images/CFI); }
+body.spec { background-image: url(/images/REC); }
+

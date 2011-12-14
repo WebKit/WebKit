@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html id="builder-picker">
+<head>
+    <title>Rebaseline Queue: Builders</title>
+    <script src="http://test-results.appspot.com/dashboards/builders.js"></script>
+    <link rel="stylesheet" href="/static/styles.css" type="text/css">
+</head>
+<body>
+
+<div id="builder-picker-controls">
+    <label for="builder-group">Group:</label>
+    <select id="builder-group">
+        <option disabled></option>
+    </select>
+
+    <label for="builder">Builder:</label>
+    <select id="builder">
+        <option disabled></option>
+    </select>
+</div>
+
+<iframe src="/static/builder-frame-empty.html" id="builder-frame"></iframe>
+
+<script>
+function init()
+{
+    var builderGroupMenu = document.getElementById('builder-group');
+    builderGroupMenu.addEventListener(
+        'change', handleBuilderGroupSelected, false);
+
+    var builderMenu = document.getElementById('builder');
+    builderMenu.addEventListener(
+        'change', handleBuilderSelected, false);
+
+    for (var builderGroupName in LAYOUT_TESTS_BUILDER_GROUPS) {
+        var builderGroupOption = document.createElement('option');
+        builderGroupOption.textContent = builderGroupOption.value =
+            builderGroupName;
+        builderGroupMenu.appendChild(builderGroupOption);
+    }
+}
+
+function handleBuilderGroupSelected()
+{
+    var builderGroupMenu = document.getElementById('builder-group');
+    var builderGroupName =
+        builderGroupMenu.options[builderGroupMenu.selectedIndex].value;
+    var builderGroup = LAYOUT_TESTS_BUILDER_GROUPS[builderGroupName];
+
+    var builderMenu = document.getElementById('builder');
+    while (builderMenu.options[1]) {
+        builderMenu.removeChild(builderMenu.options[1]);
+    }
+
+    for (var builderName in builderGroup.builders) {
+        var builderOption = document.createElement('option');
+        builderOption.textContent = builderOption.value = builderName;
+        builderMenu.appendChild(builderOption);
+    }
+}
+
+function handleBuilderSelected()
+{
+    var builderMenu = document.getElementById('builder');
+    var builderName = builderMenu.options[builderMenu.selectedIndex].value;
+    document.getElementById('builder-frame').src =
+        '/builder/' + builderName + '/queue/edit';
+}
+
+init();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+S15.2.4_A3
+
+TypeError: '[object Object]' is not a function (evaluating 'Object.prototype()')
+PASS 
+
+TEST COMPLETE
+

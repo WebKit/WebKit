@@ -1,0 +1,39 @@
+<p>This test checks for a NULL document crash that can happen when setting
+location. If the test passes, you'll see a PASS message below.</p>
+<hr>
+<pre id="pre"></pre>
+<iframe style="visibility:hidden" src="does-not-exist.bogus"></iframe> <!-- forces asynchronous load -->
+<script>
+<!--
+function log(s)
+{
+    document.getElementById("pre").appendChild(document.createTextNode(s));
+}
+
+function test()
+{
+    frames[0].location = "javascript:'<script>parent.pass()</script>'";
+}
+
+function pass()
+{
+    log("PASS: You didn't crash.");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function main()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }    
+    
+    // setTimeout forces execution in the context of the frame
+    frames[0].setTimeout(test, 0);
+}
+
+main();
+-->
+</script>

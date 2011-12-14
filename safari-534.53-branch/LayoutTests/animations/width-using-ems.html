@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test of width Animation Using em Units</title>
+  <style type="text/css" media="screen">
+    body {
+        font-family: "arial";
+        font-size: 10px;    
+    }
+    
+    #box {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        border: 1px solid black;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        from { width: 10em; }
+        to   { width: 20em; }
+    }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim", 0.333, "box", "width", 133, 10],
+    ];
+    
+    runAnimationTest(expectedValues);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the width property using 'em' units. It tests whether or not we are properly 
+getting the default font-size.
+<div id="box">
+Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. 
+</div>
+<div id="result">
+</div>
+</body>
+</html>

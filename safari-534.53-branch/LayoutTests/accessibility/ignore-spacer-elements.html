@@ -1,0 +1,36 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+ 
+    <!-- This test makes sure that spacer elements are not returned as elements. There should only be 4 elements returned -->
+ 
+   <b>First</b>
+   <b>Second</b>
+   <a href="http://www.apple.com">Apple</a>
+   <a href="http://www.yahoo.com">Yahoo</a>
+
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var container = accessibilityController.focusedElement.childAtIndex(0);
+            
+            if (container.childrenCount == 4) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

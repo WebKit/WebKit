@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=480"/>
+
+	<script>
+	    window.layoutTestController && window.layoutTestController.layerTreeAsText();
+
+	    function init() {
+	        var ctx = document.getElementById("world").getContext("2d");
+	        ctx.fillStyle = "red";
+	        ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+	    }
+	</script>
+
+	<style>
+        #headerbar {
+            width: 100px;
+            height: 50px;
+            background-color: green;
+            position: absolute;
+        }
+	</style>
+</head>
+<body onLoad="init()">
+	<div id="headerbar"></div>
+	<canvas id="world" width="100" height="50"></canvas>
+</body>
+</html>

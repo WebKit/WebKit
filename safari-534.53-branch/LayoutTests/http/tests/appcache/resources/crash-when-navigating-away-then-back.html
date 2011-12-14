@@ -1,0 +1,22 @@
+<html manifest="crash-when-navigating-away-then-back.manifest">
+<script>
+
+function cached()
+{
+    window.close();
+    window.opener.closedWindow();
+}
+
+function noupdate()
+{
+    window.opener.document.getElementById('result').innerHTML = 'SUCCESS';
+    window.close();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.addEventListener('cached', cached, false);
+applicationCache.addEventListener('noupdate', noupdate, false);
+
+</script>
+</html>

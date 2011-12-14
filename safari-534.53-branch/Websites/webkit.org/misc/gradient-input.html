@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+<title>Gradient text field</title>
+<style>
+.fancy {
+    border: 0px;
+    padding: 5px 10px 5px 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#0066FF), to(#0058DB), color-stop(.4,#ADCEFF));
+    background-image: -moz-linear-gradient(19% 75% 90deg, #0058DB, #ADCEFF, #0066FF 60%);
+    height: 30px;
+    width: 300px;
+    font-size: 1em;
+    color: white;
+    -webkit-box-shadow: 2px 2px 2px #666666;
+    -moz-box-shadow: 2px 2px 2px #666666;
+    text-shadow: 2px 2px 2px #666666;
+}
+</style>
+</head>
+<body>
+<p>This is a highly styled text field with a linear gradient background.</p>
+<input type=text class=fancy value="What a fancy text field!">
+</body>

@@ -1,0 +1,110 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('objectstore-removeobjectstore')");
+    request.onsuccess = startSetVersion;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function startSetVersion()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function deleteExisting()
+{
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+
+    deleteAllObjectStores(db);
+
+    store = evalAndLog("store = db.createObjectStore('storeName', null)");
+
+    window.index = evalAndLog("store.createIndex('indexName', '')");
+    shouldBeTrue("store.indexNames.contains('indexName')");
+
+    request = evalAndLog("store.add('value', 'key')");
+    request.onsuccess = getValue;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function getValue()
+{
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+
+    request = evalAndLog("store.get('key')");
+    request.onsuccess = addIndex;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function addIndex()
+{
+    shouldBeEqualToString("event.target.result", "value");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function deleteObjectStore()
+{
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    evalAndLog("db.deleteObjectStore('storeName')");
+    createObjectStoreAgain();
+}
+
+function createObjectStoreAgain()
+{
+    evalAndLog("db.createObjectStore('storeName', null)");
+    getValueAgain();
+}
+
+function getValueAgain()
+{
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    transaction.onabort = unexpectedErrorCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+
+    request = evalAndLog("store.get('key')");
+    request.onsuccess = verifyNotFound;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function verifyNotFound()
+{
+    shouldBe("event.target.result", "undefined");
+    shouldBeFalse("event.target.source.indexNames.contains('indexName')");
+
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

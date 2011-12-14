@@ -1,0 +1,52 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+
+<style>
+body { margin: 0; padding: 0 }
+</style>
+<script type="text/javascript">
+function step4()
+{
+    eventSender.mouseUp();
+    layoutTestController.notifyDone();
+}
+
+function step3()
+{
+    eventSender.mouseDown();
+    window.setTimeout(step4, 1);
+}
+
+function step2()
+{
+    eventSender.mouseUp();
+    window.setTimeout(step3, 100);
+}
+
+function step1()
+{
+    eventSender.mouseDown();
+    window.setTimeout(step2, 1);
+}
+
+function step0()
+{
+    eventSender.mouseMoveTo(50, 10);
+    window.setTimeout(step1, 1);
+}
+
+step0();
+layoutTestController.waitUntilDone();
+</script>
+</head>
+<body>
+<pre>
+Test.
+Test.
+</body>
+</html>
+<!-- http://bugzilla.opendarwin.org/show_bug.cgi?id=3739 - only testing for crashing, not the actual results. -->

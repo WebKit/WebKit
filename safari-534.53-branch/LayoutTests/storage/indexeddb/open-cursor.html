@@ -1,0 +1,98 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's openCursor.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function emptyCursorSuccess()
+{
+    debug("Empty cursor opened successfully.")
+    // FIXME: check that we can iterate the cursor.
+    done();
+}
+
+function openEmptyCursor()
+{
+    debug("Opening an empty cursor.");
+    keyRange = webkitIDBKeyRange.lowerBound("InexistentKey");
+    request = evalAndLog("objectStore.openCursor(keyRange)");
+    request.onsuccess = emptyCursorSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cursorSuccess()
+{
+    debug("Cursor opened successfully.")
+    // FIXME: check that we can iterate the cursor.
+    shouldBe("event.target.result.direction", "0");
+    shouldBe("event.target.result.key", "'myKey'");
+    shouldBe("event.target.result.value", "'myValue'");
+    debug("");
+    try {
+        debug("Passing an invalid key into .continue().");
+        event.target.result.continue([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+    debug("");
+    openEmptyCursor();
+}
+
+function openCursor()
+{
+    debug("Opening cursor");
+    keyRange = webkitIDBKeyRange.lowerBound("myKey");
+    request = evalAndLog("event.target.source.openCursor(keyRange)");
+    request.onsuccess = cursorSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db);
+
+    var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
+    request = evalAndLog("objectStore.add('myValue', 'myKey')");
+    request.onsuccess = openCursor;
+    request.onerror = unexpectedErrorCallback;
+}
+ 
+function openSuccess()
+{
+    var db = evalAndLog("db = event.target.result");
+ 
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+ 
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('open-cursor')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

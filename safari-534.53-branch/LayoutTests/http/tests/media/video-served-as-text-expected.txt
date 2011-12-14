@@ -1,0 +1,6 @@
+EXPECTED (video.error == 'null') OK
+EVENT(loadstart)
+EVENT(loadedmetadata)
+loaded media file served as text OK
+END OF TEST
+

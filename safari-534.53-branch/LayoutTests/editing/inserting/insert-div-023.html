@@ -1,0 +1,54 @@
+<html> 
+<head>
+
+<style>
+body {
+    font-size: 24px; 
+}
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+}
+p {
+    border: 2px solid blue; 
+    padding: 12px; 
+}
+br {
+    background-color: green; 
+}
+
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 14; i++)
+        moveSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+    insertParagraphCommand();
+    typeCharacterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+
+Test inserting paragraphs and managing typing style correctly: "x" under "line 2" should be bold. Fix for this bug:
+<a href="rdar://problem/3939523">&lt;rdar://problem/3939523&gt;</a> in some cases, text does not retain style info after pressing return twice
+<div style="height: 12px"></div>
+
+<p id="test">line 1</p>
+<p><br class="khtml-block-placeholder"></p>
+<p><b>line 2</b></p>
+<p><br class="khtml-block-placeholder"></p>
+<p>line 3</p>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

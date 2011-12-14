@@ -1,0 +1,2 @@
+PASS: script error handler invoked
+

@@ -1,0 +1,46 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests Bugzilla Bug 9815: JavaScript TypeError loading Dean Edwards' JS compressor/obfuscator");
+
+function MyClass() 
+{
+}
+
+MyClass.runTest = function() 
+{
+    var objTest = new this.func;
+    return objTest.internalFunc;
+}
+
+MyClass.func = new Function("return this");
+
+MyClass.func.prototype = 
+{
+    internalFunc: function() { }
+}
+
+var actual = "" + MyClass.runTest();
+shouldBe("actual", "'function () { }'");
+
+successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.notifyDone();
+</script>
+</body>
+</html>

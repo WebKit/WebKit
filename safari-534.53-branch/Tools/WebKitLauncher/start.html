@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Loading WebKit...</title>
+        <meta http-equiv="refresh" content="1;URL=http://nightly.webkit.org/start/" />
+        <script type="text/javascript">
+            function getWebKitRevision()
+            {
+                var request = new XMLHttpRequest();
+                request.open("GET", "VERSION", false);
+                request.send();
+                var revision = parseInt(request.responseText);
+                if (isNaN(revision))
+                    return "";
+
+                return revision;
+            }
+
+            function getWebKitBranch()
+            {
+                var request = new XMLHttpRequest();
+                request.open("GET", "BRANCH", false);
+                request.send();
+                return (request.responseText || "trunk").replace(/\s/g, '')
+            }
+
+            var revision = getWebKitRevision();
+            var branch = getWebKitBranch();
+            document.location = "http://nightly.webkit.org/start/" + branch + "/" + revision;
+        </script>
+    </head>
+    <body>
+    </body>
+</html>

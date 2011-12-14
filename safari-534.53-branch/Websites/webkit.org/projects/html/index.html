@@ -1,0 +1,30 @@
+<?php
+    $title = "HTML and XHTML (HyperText Markup Language)";
+    include("../../header.inc");
+?>
+<h2>HTML and XHTML (HyperText Markup Language)</h2>
+
+<h3>Overview</h3>
+
+<p>This is the home page for work on WebKit's HTML and XHTML implementation.  HTML work generally falls into four categories:
+work on site compatibility and handling of invalid HTML, work on finishing HTML4 support, extensions to HTML like the 
+canvas element used in Dashboard, and XHTML work.
+</p>
+
+<h3>Get Involved!</h3>
+<a href="https://bugs.webkit.org/buglist.cgi?product=WebKit&amp;component=HTML+DOM&amp;resolution=---">
+View bugs in the HTML component in Bugzilla.</a>
+
+<dl>
+<dt>Complete HTML4 Support</dt>
+<dd>There are a handful of HTML4 issues remaining, including adding support for a few more attributes for legacy HTML
+to APPLET and OBJECT, implementing the BDO element, and implementing alignment inheritance in table columns.</dd>
+<dt>Improve XHTML</dt>
+<dd>We want to improve our XHTML rendering, making it as incremental as HTML and making sure entity support and scripts work properly.
+<dt>Extend HTML</dt>
+<dd>We are interested in the WhatWG work to extend HTML to have functionality that has not been covered in any other HTML specifications.
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

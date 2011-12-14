@@ -1,0 +1,14 @@
+Ensure various bit operators correctly tag the final result value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS aDouble>>27 is 0
+PASS aDouble>>27|0 is 0
+PASS aDouble>>0 is 100000000
+PASS aDouble>>0|0 is 100000000
+PASS aDouble|0 is 100000000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

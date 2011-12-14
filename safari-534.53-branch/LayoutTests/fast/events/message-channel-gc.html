@@ -1,0 +1,53 @@
+<body>
+<p>Test some cases of MessagePort garbage collection.</p>
+<pre id=log></pre>
+<script>
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+function done()
+{
+    channel.port1.close();
+    channel.port2.close();
+
+    gc();
+
+    log("DONE");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var channel = new MessageChannel;
+channel.port1.foo = "bar";
+
+gc();
+log("Should be 'bar': " + channel.port1.foo);
+
+channel.port1.onmessage = function() { log("onmessage"); }
+channel.port1.addEventListener("message", function() { log("message listener"); done(); }, false);
+
+gc();
+channel.port1.start();
+channel.port2.postMessage("msg");
+
+gc();
+
+</script>
+</body>

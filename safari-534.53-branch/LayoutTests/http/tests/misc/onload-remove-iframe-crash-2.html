@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>http://bugs.webkit.org/show_bug.cgi?id=9929</title>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.dumpAsText();
+        }
+
+        var reloaded = false;
+        function frameLoaded()
+        {
+            if (!reloaded) {
+                reloaded = true;
+                frames[0].location.reload();
+            } else {
+                if (window.layoutTestController) {
+                    alert("SUCCESS");
+                    layoutTestController.notifyDone();
+                }
+            }
+        }
+    </script>
+</head>
+<frameset cols="*">
+    <frame src="resources/onload-remove-iframe-crash-2.html">
+</frameset>
+</html>

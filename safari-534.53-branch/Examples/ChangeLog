@@ -1,0 +1,384 @@
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Modified property svn:ignore.
+
+2011-01-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update xcodeproj svn:ignore to include xcuserdata.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Modified property svn:ignore.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Modified property svn:ignore.
+
+2010-11-03  Darin Adler  <darin@apple.com>
+
+        Updated Xcode projects by opening them with Xcode 3.2.4.
+        Updated svn:ignore for Xcode projects.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj:
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj:
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+
+2010-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * NetscapeCoreAnimationMoviePlugin/main.m:
+        (NPP_New):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_HandleEvent):
+
+2010-06-10  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (NPP_New):
+        (NPP_NewStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_HandleEvent):
+
+2010-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        NPWindow is now null in the Cocoa event model.
+
+        * NetscapeInputMethodPlugin/main.m:
+        (handleDraw):
+        (NPP_HandleEvent):
+
+2009-07-10  Adam Roben  <aroben@apple.com>
+
+        Sort all our Xcode projects
+
+        Accomplished using sort-Xcode-project-file.
+
+        Requested by Dave Kilzer.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj:
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj:
+
+2009-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add Core Animation movie plug-in example.
+        
+        * NetscapeCoreAnimationMoviePlugin: Added.
+        * NetscapeCoreAnimationMoviePlugin/English.lproj: Added.
+        * NetscapeCoreAnimationMoviePlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeCoreAnimationMoviePlugin/Info.plist: Added.
+        * NetscapeCoreAnimationMoviePlugin/MovieControllerLayer.h: Added.
+        * NetscapeCoreAnimationMoviePlugin/MovieControllerLayer.m: Added.
+        (createImageNamed):
+        (-[MovieControllerLayer init]):
+        (-[MovieControllerLayer dealloc]):
+        (-[MovieControllerLayer _playPauseButtonRect]):
+        (-[MovieControllerLayer _sliderRect]):
+        (-[MovieControllerLayer _sliderThumbRect]):
+        (-[MovieControllerLayer _innerSliderRect]):
+        (-[MovieControllerLayer _drawPlayPauseButtonInContext:]):
+        (-[MovieControllerLayer _drawSliderInContext:]):
+        (-[MovieControllerLayer drawInContext:]):
+        (-[MovieControllerLayer _currentTime]):
+        (-[MovieControllerLayer _duration]):
+        (-[MovieControllerLayer _isPlaying]):
+        (-[MovieControllerLayer _updateTime:]):
+        (-[MovieControllerLayer _rateDidChange:]):
+        (-[MovieControllerLayer _timeDidChange:]):
+        (-[MovieControllerLayer actionForKey:]):
+        (-[MovieControllerLayer setMovie:]):
+        (-[MovieControllerLayer _setNewTimeForThumbCenterX:]):
+        (-[MovieControllerLayer handleMouseDown:]):
+        (-[MovieControllerLayer handleMouseUp:]):
+        (-[MovieControllerLayer handleMouseDragged:]):
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Added.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeCoreAnimationMoviePlugin/Pause.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/Play.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/SliderTrackCenter.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/SliderTrackLeft.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/SliderTrackRight.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/Thumb.tiff: Added.
+        * NetscapeCoreAnimationMoviePlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleMouseDown):
+        (togglePlayPause):
+        (handleMouseUp):
+        (handleMouseDragged):
+        (handleMouseEntered):
+        (handleMouseExited):
+        (handleKeyDown):
+        (handleScrollEvent):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeCoreAnimationMoviePlugin/test.html: Added.
+
+2009-04-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Update the example plug-in for new changes to the Cocoa event model.
+        
+        * NetscapeCocoaPlugin/main.m:
+        (handleDraw):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Update to match new API.
+        
+        * NetscapeInputMethodPlugin/main.m:
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (handleDraw):
+        (invalidatePlugin):
+        (handleFocusChanged):
+        (handleMouseMoved):
+        (handleMouseDown):
+        (handleTextFieldKeyDown):
+        (handleTextInput):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        There's no need to hold on to the QCComposition. Also, toggle between a gold and silver compass 
+        when a mouse button is pressed.
+        
+        * NetscapeCoreAnimationPlugin/Composition.qtz:
+        * NetscapeCoreAnimationPlugin/main.m:
+        (NPP_Destroy):
+        (handleMouseClick):
+        (NPP_GetValue):
+
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Revert some accidentally committed changes.
+        
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (handleDraw):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+
+2008-12-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add a sample Core Animation NPAPI plug-in.
+        
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (handleDraw):
+        (handleMouseEvent):
+        (NPP_HandleEvent):
+        * NetscapeCoreAnimationPlugin: Added.
+        * NetscapeCoreAnimationPlugin/Composition.qtz: Added.
+        * NetscapeCoreAnimationPlugin/English.lproj: Added.
+        * NetscapeCoreAnimationPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeCoreAnimationPlugin/Info.plist: Added.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Added.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeCoreAnimationPlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleMouseClick):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeCoreAnimationPlugin/test.html: Added.
+
+2008-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22555: Sort "children" sections in Xcode project files
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22555>
+
+        Reviewed by Eric Seidel.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj: Sorted.
+
+2008-08-20  Josh Aas  <joshmoz@gmail.com>
+
+        Reviewed and landed by Anders.
+
+        <rdar://problem/6163636> 
+        rename NPCocoaEvent's "event" struct to "data" (20446)
+
+        * NetscapeCocoaPlugin/main.m:
+        (handleMouseEvent):
+        (handleKeyboardEvent):
+        (NPP_HandleEvent):
+
+2008-05-22  Josh Aas  <joshmoz@gmail.com>
+
+        Reviewed by Anders.
+
+        Use correct enum.
+        
+        * NetscapeCocoaPlugin/main.m:
+        (NPP_New):
+        * NetscapeInputMethodPlugin/main.m:
+        (NPP_New):
+
+2008-05-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Alexey.
+
+        Add input method test plug-in.
+        
+        * NetscapeInputMethodPlugin: Added.
+        * NetscapeInputMethodPlugin/English.lproj: Added.
+        * NetscapeInputMethodPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeInputMethodPlugin/Info.plist: Added.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Added.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeInputMethodPlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleDraw):
+        (invalidatePlugin):
+        (handleFocusChanged):
+        (handleMouseMoved):
+        (handleMouseDown):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (selectionRange):
+        (NPP_InsertText):
+        (NPP_DoCommandBySelector):
+        (markedTextAttributes):
+        (NPP_SetMarkedText):
+        (NPP_UnmarkText):
+        (NPP_HasMarkedText):
+        (NPP_AttributedSubstringFromRange):
+        (NPP_MarkedRange):
+        (NPP_SelectedRange):
+        (NPP_FirstRectForCharacterRange):
+        (pluginTextInputFuncs):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeInputMethodPlugin/test.html: Added.
+
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Add NPN_PopUpContextMenu example.
+        
+        * NetscapeCocoaPlugin/MenuHandler.h: Added.
+        * NetscapeCocoaPlugin/MenuHandler.m: Added.
+        (-[MenuHandler _openURL:]):
+        (-[MenuHandler _disabledItem:]):
+        (-[MenuHandler validateUserInterfaceItem:]):
+        (-[MenuHandler initWithBrowserFuncs:instance:]):
+        (-[MenuHandler dealloc]):
+        (-[MenuHandler menu]):
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
+        * NetscapeCocoaPlugin/main.m:
+        (NPP_Destroy):
+        (handleMouseEvent):
+
+2008-05-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon, Tim and Mark.
+
+        Add a sample NPAPI plugin that uses the Cocoa event model.
+
+        * .: Added.
+        * ChangeLog: Added.
+        * NetscapeCocoaPlugin: Added.
+        * NetscapeCocoaPlugin/English.lproj: Added.
+        * NetscapeCocoaPlugin/English.lproj/InfoPlist.strings: Added.
+        * NetscapeCocoaPlugin/Info.plist: Added.
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Added.
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj: Added.
+        * NetscapeCocoaPlugin/main.m: Added.
+        (NP_Initialize):
+        (NP_GetEntryPoints):
+        (NP_Shutdown):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_SetWindow):
+        (NPP_NewStream):
+        (NPP_DestroyStream):
+        (NPP_WriteReady):
+        (NPP_Write):
+        (NPP_StreamAsFile):
+        (NPP_Print):
+        (handleDraw):
+        (eventType):
+        (invalidatePlugin):
+        (handleMouseEvent):
+        (handleKeyboardEvent):
+        (NPP_HandleEvent):
+        (NPP_URLNotify):
+        (NPP_GetValue):
+        (NPP_SetValue):
+        * NetscapeCocoaPlugin/test.html: Added.

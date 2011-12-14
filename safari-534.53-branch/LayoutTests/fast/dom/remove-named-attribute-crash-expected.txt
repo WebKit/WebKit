@@ -1,0 +1,5 @@
+Test for Bug 17876: REGRESSION (r31060): Attempting to visit Ofcom page causes crash.
+
+Loading this page should not cause a crash.
+
+PASS

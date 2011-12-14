@@ -1,0 +1,15 @@
+<script>
+    var xhr = new parent.XMLHttpRequest;
+    xhr.open("GET", "xmlhttprequest-constructor-in-detached-document-frame.html");
+    xhr.onreadystatechange = function(evt) {
+        if (evt.target.readyState == 4) {
+            parent.setTimeout("pass()", 0);
+            parent.document.body.removeChild(parent.document.getElementsByTagName("iframe")[0]);
+            var req = new XMLHttpRequest;
+            req.open("GET", "xmlhttprequest-constructor-in-detached-document-frame.html", false);
+            req.send(null);
+        }
+    }
+    xhr.send(null);
+    xhr = null;
+</script>

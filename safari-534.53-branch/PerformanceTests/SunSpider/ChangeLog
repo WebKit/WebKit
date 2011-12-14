@@ -1,0 +1,1083 @@
+2010-11-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Improved accuracy of command-line SunSpider.
+
+        * resources/sunspider-standalone-driver.js: Use the returned number of
+        elapsed milliseconds from "run" and "checkSyntax" instead of measuring
+        ourselves, for slightly more accurate numbers.
+
+2010-09-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+        https://bugs.webkit.org/show_bug.cgi?id=45924
+
+        Modify the SunSpider harness to allow a path to be passed to the --suite
+        argument, supress the normal prepend-"tests/" behaviour for suite names
+        containing a '/'.
+
+        Also wrap the code in an anonymous function to move variables out of global
+        scope (currently the harness cannot handle running tests the overwrite the
+        variable 'j').
+
+        * resources/sunspider-standalone-driver.js:
+        * sunspider:
+
+2010-08-27  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Added version 5 and version 6 of V8 tests with modifications similar
+        to the version 4 tests so they'll work with the SunSpider test harness.
+        Note that these files are external source and therefore don't conform 
+        to WebKit coding standards.
+        https://bugs.webkit.org/show_bug.cgi?id=44638
+
+        * tests/v8-v5: Added.
+        * tests/v8-v5/LIST: Added.
+        * tests/v8-v5/v8-crypto.js: Added.
+        * tests/v8-v5/v8-deltablue.js: Added.
+        * tests/v8-v5/v8-earley-boyer.js: Added.
+        * tests/v8-v5/v8-raytrace.js: Added.
+        * tests/v8-v5/v8-regexp.js: Added.
+        * tests/v8-v5/v8-richards.js: Added.
+        * tests/v8-v5/v8-splay.js: Added.
+        * tests/v8-v6: Added.
+        * tests/v8-v6/LIST: Added.
+        * tests/v8-v6/v8-crypto.js: Added.
+        * tests/v8-v6/v8-deltablue.js: Added.
+        * tests/v8-v6/v8-earley-boyer.js: Added.
+        * tests/v8-v6/v8-raytrace.js: Added.
+        * tests/v8-v6/v8-regexp.js: Added.
+        * tests/v8-v6/v8-richards.js: Added.
+        * tests/v8-v6/v8-splay.js: Added.
+
+2010-07-15  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        http://bugs.webkit.org/show_bug.cgi?id=42406
+        Output location of results file.
+
+        * sunspider:
+
+2010-05-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Browser-hosted version of SunSpider runs tests twice as many times as advertised
+        https://bugs.webkit.org/show_bug.cgi?id=39201
+
+        * make-hosted: Make sure to reset test list after every test suite.
+
+2010-05-07  Adam Roben  <aroben@apple.com>
+
+        Fix typo in sunspider-compare-results.js that caused incorrect
+        two-sample t statistics to be computed
+
+        Fixes <http://webkit.org/b/38768> SunSpider computes incorrect
+        two-sample t statistics
+
+        Reviewed by Darin Adler.
+
+        * resources/sunspider-compare-results.js:
+        (sunspiderCompareResults.resultLine): Fixed the calculation of the t
+        variable to match the definition of a two-sample t statistic. Looks
+        like this was just a simple typo.
+
+2010-04-05  Darin Adler  <darin@apple.com>
+
+        Updated the ignore property for changes to the contents here.
+
+        * .: Modified property svn:ignore.
+
+2010-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Add sunspider-0.9.1 to the site in preparation for announcing it.
+        https://bugs.webkit.org/show_bug.cgi?id=35206
+
+        * hosted/sunspider.css: Remove tabs, which I noticed where present while
+        copying to the WebKitSite directory.
+
+2010-01-11  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Sunspider parse-only tests don't run
+        https://bugs.webkit.org/show_bug.cgi?id=33489
+
+        Fix parse-only test list
+
+        * tests/parse-only/LIST:
+
+2009-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Make SunSpider version more prominent in the title
+        https://bugs.webkit.org/show_bug.cgi?id=32574
+
+        * hosted/sunspider.html:
+        * hosted/versions.html:
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html:
+
+2009-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make SunSpider refuse to compare results across content versions
+        https://bugs.webkit.org/show_bug.cgi?id=32573
+        
+        The results URL now includes a version indicator, and compare mode
+        will refuse to compare between versions.
+
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html:
+
+2009-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Some Browser-hosted SunSpider files are not valid HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=32536
+        
+        Made various fixes to validate as HTML5 with no warnings (mainly removing bogus
+        close tags and adding a meta charset declaration).
+
+        * hosted/sunspider.html:
+        * hosted/versions.html:
+        * resources/TEMPLATE.html:
+        * resources/driver-TEMPLATE.html:
+        * resources/results-TEMPLATE.html:
+
+2009-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Make sunspider-0.9.1 the default content set (both command-line and hosted)
+        https://bugs.webkit.org/show_bug.cgi?id=32537
+
+        * hosted/sunspider.html: Change default suite link.
+        * sunspider: Change default suite.
+        * sunspider-compare-results: Likewise.
+
+2009-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        in-browser SunSpider suffers excessive penalty under power management
+        https://bugs.webkit.org/show_bug.cgi?id=32505
+        
+        I have made a few changes to address this:
+        
+        1) Change how browser-hosted SunSpider loads tests - preload the content and write it in with
+        document.write to reduce triggering of progress UI.
+        2) Reduce time between tests to 10ms from 500ms, so that power management doesn't keep the CPU
+        stepped all the way down the whole time.
+        3) Run the test cycle an extra time for warmup before the runs that count.
+
+        * hosted/sunspider-record-result.js: Removed.
+        * make-hosted:
+        * resources/TEMPLATE.html:
+        * resources/driver-TEMPLATE.html:
+
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        SunSpider/tests/string-base64.js does not compute a valid base64 encoded string
+        https://bugs.webkit.org/show_bug.cgi?id=16806
+
+        Based on a patch by Eric Seidel.
+        
+        Fix the base64 computation to actually compute correct results. The impact on runtime of
+        the test is pretty small, but noticeable for some browsers. But at least it's not
+        doing a wrong and meaningless computation any more.
+        
+        * tests/sunspider-0.9.1/string-base64.js:
+        ():
+        (base64ToString):
+
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Fixing commit error...
+        
+        I accidentally committed my last patch in a form that broke Web-hosted SunSpider. Fixing.
+
+        * resources/driver-TEMPLATE.html:
+
+2009-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use JSON.parse instead of eval for Web-hosted SunSpider results processing
+        https://bugs.webkit.org/show_bug.cgi?id=32490
+
+        * hosted/json2.js: Added. Incorporated from json.org
+        * resources/driver-TEMPLATE.html: Fix an HTML validation bug I noticed.
+        * resources/results-TEMPLATE.html: Use JSON.parse instead of eval to process
+        results.
+
+2009-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Enable Web-hosted version of SunSpider to handle multiple versions
+        https://bugs.webkit.org/show_bug.cgi?id=32478
+
+        * make-hosted: Now generate the hosted version to be able to run both the
+        0.9 and the 0.9.1 test suites.
+        * hosted: Modified property svn:ignore.
+        * hosted/sunspider-driver.html: Removed.
+        * hosted/sunspider-results.html: Removed.
+        * hosted/sunspider.html:
+        * hosted/versions.html: Added.
+        * resources/TEMPLATE.html:
+        * resources/driver-TEMPLATE.html: Copied from hosted/sunspider-driver.html.
+        * resources/driver-TEMPLATE.html: Copied from hosted/sunspider-results.html.
+
+2009-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Give command-line sunspider the ability to handle multiple suites and versions
+        https://bugs.webkit.org/show_bug.cgi?id=32477
+        
+        Each suite/version's set of tests are now in a separate subdirectory of tests/, with a file named LIST
+        enumerating the tests. Current suites are:
+        
+        sunspider-0.9 - riginal SunSpider content 
+        sunspider-0.9.1 - SunSpider suite with a few tests fixed (and a few more to come)
+        ubench - "ubench" microbenchmark suite
+        v8-v4 - version 4 of the v8 benchmark
+        parse-only - some parser tests
+        
+        Sunspider can now be run with the --suite= parameter to select a
+        suite. The default is --suite=sunspider-0.9.
+
+        * .: Modified property svn:ignore to ignore new results directories.
+        * make-hosted: Generate based on sunspider-0.9 suite.
+        * resources/TEMPLATE.html: Fix an HTML compliance problem.
+        * resources/sunspider-standalone-driver.js: Become aware of suite names.
+        * sunspider: Modified to handle multiple suites as described above.
+        * sunspider-compare-results: ditto
+        * tests/LIST: Moved to tests/sunspider-0.9/ and tests/sunspider-0.9.1/
+        * tests/LIST-PARSE-ONLY: Moved to parse-only/LIST
+        * tests/LIST-UBENCH: Removed.
+        * tests/LIST-V8: Removed.
+        * tests/3d-cube.js: Moved to tests/sunspider-0.9 and tests/sunspider-0.9.1
+        * tests/3d-morph.js: ditto
+        * tests/3d-raytrace.js: ditto
+        * tests/access-binary-trees.js: ditto
+        * tests/access-fannkuch.js: ditto
+        * tests/access-nbody.js: ditto
+        * tests/access-nsieve.js: ditto
+        * tests/bitops-3bit-bits-in-byte.js: ditto
+        * tests/bitops-bits-in-byte.js: ditto
+        * tests/bitops-bitwise-and.js: ditto
+        * tests/bitops-nsieve-bits.js: ditto
+        * tests/controlflow-recursive.js: ditto
+        * tests/crypto-aes.js: ditto
+        * tests/crypto-md5.js: ditto
+        * tests/crypto-sha1.js: ditto
+        * tests/date-format-tofte.js: ditto
+        * tests/date-format-xparb.js: ditto
+        * tests/math-cordic.js: ditto
+        * tests/math-partial-sums.js: ditto
+        * tests/math-spectral-norm.js: ditto
+        * tests/regexp-dna.js: ditto
+        * tests/string-base64.js: ditto
+        * tests/string-fasta.js: ditto
+        * tests/string-tagcloud.js: ditto
+        * tests/string-unpack-code.js: ditto
+        * tests/string-validate-input.js: ditto
+        * tests/sunspider-0.9/: Added
+        * tests/sunspider-0.9/*.js: Moved from one level up
+        * tests/sunspider-0.9.1: Added.
+        * tests/sunspider-0.9.1/*.js: Moved from one level up.
+        * tests/v8-crypto.js: Moved to v8-v4/ directory.
+        * tests/v8-deltablue.js: ditto
+        * tests/v8-earley-boyer.js: ditto
+        * tests/v8-raytrace.js: ditto
+        * tests/v8-regexp.js: ditto
+        * tests/v8-richards.js: ditto
+        * tests/v8-splay.js: ditto
+        * tests/v8-v4: Added.
+
+2009-09-30  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Platform specific null device replaced with a platform independent.
+        https://bugs.webkit.org/show_bug.cgi?id=29544
+
+        * sunspider: Using File::Spec->devnull() instead of /dev/null and NUL.
+
+2009-09-21  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+
+        [Qt] Make sunspider script work on Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=29544
+
+        * sunspider:
+        Using platform specific null device instead of /dev/null.
+
+2009-06-19  Adam Treat  <adam.treat@torchmobile.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=26540
+        Currently the SunSpider test driver lacks an option to run a test suite that
+        will test JavaScriptCore parsing performance only.  This patch adds just such
+        a test suite and option to SunSpider as well as the jsc test shell.  I've included
+        three large javascript source files found in the wild: jquery, mootools and prototype.
+        Combined with the concatenation of all three, these form a new testsuite to measure
+        and test pure JavaScriptCore parsing performance.
+
+        * resources/sunspider-standalone-driver.js:
+          Load the js with parse-only flag if it is part of the parse-only suite.
+        * sunspider:
+          Add the parse-only suite to the list of options.
+        * sunspider-compare-results:
+          Add the parse-only suite to the list of options.
+        * tests/LIST-PARSE-ONLY: Added.
+        * tests/parse-only/concat-jquery-mootools-prototype.js: Added.
+          A very large concatenation of the scripts found below.  This js takes ~30ms to parse on my machine.
+        * tests/parse-only/jquery-1.3.2.js: Added.
+          Latest version from jquery.com.
+        * tests/parse-only/mootools-1.2.2-core-nc.js: Added.
+          Latest version from mootools.net.
+        * tests/parse-only/prototype-1.6.0.3.js: Added.
+          Latest version from prototypejs.org.
+
+2009-06-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Update V8 benchmark to version 4.
+        
+        Reviewed by Cameron Zwarich.
+
+        * tests/LIST-V8:
+        * tests/v8-crypto.js:
+        * tests/v8-deltablue.js:
+        * tests/v8-earley-boyer.js:
+        * tests/v8-raytrace.js:
+        * tests/v8-regexp.js: Added.
+        * tests/v8-richards.js:
+        * tests/v8-splay.js: Added.
+
+2009-05-26  Olivier DOLE  <odole@pleyo.com>
+
+        Reviewed by Maciej.
+
+        Store sunspider test suite results in a specific directory for each
+        different type of benchmark (sunspider, V8 or ubench).
+
+        * sunspider:
+        * sunspider-compare-results:
+
+2009-05-12  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * SunSpider.make:
+
+2009-05-11  Steve Falkenburg  <sfalken@apple.com>
+
+        Include SunSpider tests in production builds.
+        
+        Reviewed by Adam Roben.
+
+        * SunSpider.make: Added.
+        * xcopy.excludes: Added.
+
+2009-03-04  Oliver Hunt  <oliver@apple.com>
+
+        Added a few more tests to ubench
+
+        RS=Gavin Barraclough
+
+        Adding a couple of test to cover too few and too many arguments.  This
+        is needed to prevent regressions in all call paths from my current refactoring.
+
+        * tests/LIST-UBENCH:
+        * tests/ubench/function-correct-args.js: Added.
+        (f):
+        * tests/ubench/function-excess-args.js: Added.
+        (f):
+
+2008-10-30  Zoltan Horvath  <Horvath.Zoltan.6@stud.u-szeged.hu>
+
+        Fix a bug where when V8's or UBENCH's test suite list file is missing
+        the error message is suggesting that SunSpider's list file is missing.
+
+        Reviewed by Sam Weinig.
+
+        * sunspider:
+        (loadTestsList): Fix the error message to use the right list name.
+
+2008-10-07  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=18989
+
+        Remove global substitution from SunSpider regexp test, since only Firefox was honoring it and
+        we want all browsers to be doing the same thing on the test.
+
+        Reviewed by Maciej
+
+        * tests/regexp-dna.js:
+
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        The bleeding edge branch of V8 now supports passing fileanmes after
+        '-f', so the SunSpider script should be changed to do this again.
+        This allows all 3 major JavaScript engines to be used with the
+        unmodified SunSpider script.
+
+        * sunspider:
+
+2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a '--args' option to SunSpider, so that we can pass '-j' to TraceMonkey
+        and '--expose-gc' to V8. Also, rename the '--v8' option to '--v8-suite' and
+        correct the punctuation in its documentation.
+
+        * sunspider:
+
+2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20616: Incorporate V8 benchmarks in testing
+        <https://bugs.webkit.org/show_bug.cgi?id=20616>
+
+        This is a first attempt at running the V8 benchmarks within SunSpider,
+        with the --v8 option. The number of iterations is fixed for each
+        benchmark, and was chosen to make each of the benchmarks run between
+        500 ms and 600 ms in V8 on my machine, a 2.16 GHz MacBook Pro.
+
+        * sunspider:
+        * tests/LIST-V8: Added.
+        * tests/v8-crypto.js: Added.
+        * tests/v8-deltablue.js: Added.
+        * tests/v8-earley-boyer.js: Added.
+        * tests/v8-raytrace.js: Added.
+        * tests/v8-richards.js: Added.
+
+2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Not reviewed.
+
+        Remove a local change that was accidentally committed in r36034.
+
+        * resources/sunspider-standalone-driver.js:
+
+2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Make SunSpider work with JavaScript shells that don't take filenames
+        after a '-f' argument.
+
+        * sunspider:
+
+2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Timothy.
+
+        Remove the --squirrelfish option from SunSpider, as it is no longer needed.
+
+        * sunspider:
+        * tests/LIST-SQUIRRELFISH: Removed.
+
+2008-06-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        Roll out r31215 - with Mac OS X 10.5.3, there is no need to pause update daemon any more.
+
+        * sunspider:
+
+2008-04-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+        
+        - add newly working tests to squirrelfish list
+
+        * tests/LIST-SQUIRRELFISH: Add 3d-raytrace and string-unpack-code
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+        
+        - move ubench tests properly.
+
+        * tests/ubench: Added.
+        * tests/ubench/function-closure.js: Added.
+        * tests/ubench/function-empty.js: Added.
+        * tests/ubench/function-missing-args.js: Added.
+        * tests/ubench/function-sum.js: Added.
+        * tests/ubench/loop-empty-resolve.js: Added.
+        * tests/ubench/loop-empty.js: Added.
+        * tests/ubench/loop-sum.js: Added.
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+
+        * sunspider: Don't force --runs=1 in squirrelfish mode any more.
+
+2008-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+
+        - make --squirrelfish mode use the real harness, but a reduced set of tests
+
+        Also add a new ubench mode which runs the older squirrelfish microbenchmarks.
+
+        * sunspider:
+        * tests/LIST-SQUIRRELFISH:
+        * tests/LIST-UBENCH: Added.
+        * tests/squirrelfish: Moved to tests/ubench
+
+2008-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Removed an unused test.
+
+        * tests/squirrelfish/loop-resolve.js: Removed.
+
+2008-04-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        Add newly runnable tests to --squirrelfish mode.
+
+        * tests/LIST-SQUIRRELFISH:
+
+2008-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        A little more love for --squirrelfish mode:
+        
+        Fixed a misplaced sort. Results properly sort now.
+        
+        Added a test list just for squirrelfish, and updated it to include
+        all currently passing SunSpider tests.
+        
+        Fixed the pruning regexp to match 3d-morph.js.
+
+        * sunspider:
+
+2008-03-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        --squirrelfish mode: pared down tests for squirrelfish to chew on.
+
+        * sunspider:
+        * tests/LIST:
+        * tests/squirrelfish: Added.
+        * tests/squirrelfish/function-closure.js: Added.
+        * tests/squirrelfish/function-empty.js: Added.
+        * tests/squirrelfish/function-missing-args.js: Added.
+        * tests/squirrelfish/function-sum.js: Added.
+        * tests/squirrelfish/loop-empty-resolve.js: Added.
+        * tests/squirrelfish/loop-empty.js: Added.
+        * tests/squirrelfish/loop-resolve.js: Added.
+        * tests/squirrelfish/loop-sum.js: Added.
+
+2008-03-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        * sunspider: Pause update daemon on Darwin to make results reliable
+        again (workaround for <rdar://problem/5811127>).
+
+2008-02-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        * sunspider: add an error message when ./tests/LIST is not found
+
+2007-12-29  Alp Toker  <alp@atoker.com>
+
+        Fix typo.
+
+        * hosted/sunspider.html:
+
+2007-12-29  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        Provide the current URL in the SunSpider results page. Useful for
+        copying benchmark results out of browsers without a location bar or
+        where the location bar can't handle long URLs.
+
+        * hosted/sunspider-results.html:
+
+2007-12-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        * sunspider: increase default number of runs for more accurate numbers
+
+2007-12-18  Mark Rowe  <mrowe@apple.com>
+
+        Fix typo.
+
+        * hosted/sunspider.html:
+
+2007-12-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - give an extra digit of precision for small differences.
+
+        * resources/sunspider-compare-results.js:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - work around IE layout bugs
+
+        * hosted/sunspider.css:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - fix compare feature
+
+        * hosted/sunspider-results.html:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - Change the format of the output URL to be shorter, to meet IE constraints
+
+        * hosted/sunspider-driver.html:
+        * hosted/sunspider-results.html:
+
+2007-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - Add some explanatory test and a dumb logo to SunSpider web hosted version
+
+        * hosted/sunspider-driver.html:
+        * hosted/sunspider-results.html:
+        * hosted/sunspider.css:
+        * hosted/sunspider.html:
+
+2007-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - Make the web-hosted version of SunSpider look a little bit less drab.
+
+        * hosted/sunspider-driver.html:
+        * hosted/sunspider-results.html:
+        * hosted/sunspider.css: Added.
+        * hosted/sunspider.html:
+        * resources/TEMPLATE.html:
+
+2007-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam.
+        
+        - Change sunspider-compare-results output from showing "% faster" values to "x as fast" values.
+        
+        A sample of what new-style results would look like:
+        
+        TEST                   COMPARISON            FROM                 TO             DETAILS
+        ...
+        ** TOTAL **:           1.41x as fast     6613.6ms +/- 0.1%   4703.0ms +/- 0.1%     significant
+        ...
+            3bit-bits-in-byte: *1.36x as slow*     88.8ms +/- 0.6%    121.1ms +/- 0.6%     significant
+        
+        * resources/sunspider-compare-results.js:
+
+2007-11-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        * sunspider: add --shark-cache for L2 Cache Miss profiling
+
+2007-11-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=15925
+        SunSpider should check for Shark being installed
+
+        * sunspider: Explicitly test that shark command line tool is installed.
+
+2007-11-04  Darin Adler  <darin@apple.com>
+
+        * hosted/sunspider.html: Tweaked formatting a bit.
+
+2007-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - Add compare mode and a description of the benchmark to the hosted version.
+
+        * hosted/sunspider-results.html: Add compare mode - you can just paste in another results URL.
+        * hosted/sunspider.html: Added intro text.
+        * make-hosted: Copy new file.
+        * resources/sunspider-compare-results.js: Made more reusable by putting the implementation in
+        a function.
+        * resources/sunspider-standalone-compare.js: Added. Calls the function in the way standalone mode
+        expects.
+        * sunspider-compare-results: Use sunspider-standalone-compare.js.
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        * sunspider: Changed "--base" to "--set-baseline".
+
+2007-11-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * sunspider: Added a "--base" option that records the current test as a baseline.
+        Moved the code to find the newest .mshark file into a function (since I needed to use
+        it in the other script and I prefer to copy/paste a function).
+
+        * sunspider-compare-results: Added logic to compare the baseline with the last
+        run when you don't pass any parameters.
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - Added list of ECMAScript3 features that SunSpider does not cover currently.
+
+        * UNCOVERED: Added.
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - Give better error messages when sunspider-compare-results fails
+
+        * sunspider-compare-results:
+
+2007-10-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - fix Date tests to work in command-line SpiderMonkey
+
+        * tests/date-format-tofte.js:
+        * tests/date-format-xparb.js:
+
+2007-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * sunspider: Added --shark20 option, to run Shark at its highest sample
+        resolution instead of its default.
+
+2007-10-28  Adam Roben  <aroben@apple.com>
+
+        Fix SunSpider on Windows
+
+        Reviewed by Eric.
+
+        * sunspider: Don't use colons in filenames.
+
+2007-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam.
+
+        * resources/sunspider-analyze-results.js: Tweak the output format a little.
+        Change so that when there's only one run we don't write out confidence
+        intervals at all rather than writing "NaN" over and over again.
+
+        * sunspider: Use the time and date as a suffix on the results file, that way
+        all the results are left behind in the tmp directory. This will make it easy
+        for us to add features that compare past results in the future. Also rename
+        the .mshark files using the same scheme.
+
+        * sunspider-compare-results: Relax the parsing rules so we can parse the
+        results file exactly as it's emitted from sunspider.
+
+2007-10-25  Adam Roben  <aroben@apple.com>
+
+        Strip carriage returns from results
+
+        Carriage returns were screwing up sunspider-compare-results on
+        Windows.
+
+        Rubberstamped by Oliver.
+
+        * sunspider:
+
+2007-10-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        * sunspider: Open the profile in shark after completing a run.
+        * sunspider-compare-results: Tiny perl tweaks.
+
+2007-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - Don't hardcode my path to testkjs
+        
+        * sunspider-compare-results:
+
+2007-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - Add a compare script to compare results, and improve formatting of standard results a bit.
+
+        * resources/sunspider-analyze-results.js:
+        * resources/sunspider-compare-results.js: Added.
+        * sunspider-compare-results: Added.
+
+2007-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * resources/sunspider-analyze-results.js: Do the error range
+        properly, using the t-distribution instead of 1.96 (which was
+        based on the normal distribution).
+        
+        * sunspider: Print results in a way that will be friendlier to the
+        soon-to-come compare mode.
+
+2007-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Review.
+        
+        - add more tests (probably the final set for now)
+        
+        Already balanced. Added date, regexp, control flow, and a few
+        more string and object/array access tests.
+        
+        * tests/LIST:
+        * tests/access-fannkuch.js: Added.
+        * tests/access-nbody.js: Added.
+        * tests/controlflow-recursive.js: Added.
+        * tests/date-format-tofte.js: Added.
+        * tests/date-format-xparb.js: Added.
+        * tests/regexp-dna.js: Added.
+        * tests/string-validate-input.js: Added.
+
+2007-10-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        * sunspider: make --shark only sample from testkjs
+
+2007-10-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+        
+        - added crypto tests (already balanced)
+
+        * tests/LIST:
+        * tests/crypto-aes.js: Added.
+        * tests/crypto-md5.js: Added.
+        * tests/crypto-sha1.js: Added.
+
+2007-10-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam.
+        
+        - rebalance new tests
+        
+        Scaled the new tests so they take 400-600ms on a reasonably normal user setup:
+        
+        Internet Explorer 7, Window XP, Dell Latitude D810 with a 2.13GHz Pentium M
+
+        This balances them with the existing tests.
+
+        * tests/access-binary-trees.js:
+        * tests/access-nsieve.js:
+        * tests/bitops-nsieve-bits.js:
+        * tests/math-partial-sums.js:
+        * tests/math-spectral-norm.js:
+        * tests/string-fasta.js:
+
+2007-10-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+        
+        Add improved argument handling to sunspider, including
+        --runs=<number>, --tests=<pattern, --shark, and --help
+        Also re-factor code into subroutines
+
+        * sunspider: improved argument handling
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+
+        - Add more new tests, mostly from the computer language shootout. Not normalized yet.
+        
+        * TODO:
+        * tests/LIST:
+        * tests/access-binary-trees.js: Added.
+        * tests/access-nsieve.js: Added.
+        * tests/bitops-nsieve-bits.js: Added.
+        * tests/math-partial-sums.js: Added.
+        * tests/math-spectral-norm.js: Added.
+        * tests/string-fasta.js: Added.
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * TODO: Updated to note areas that are now well-covered.
+        
+        - Change the tests and the driver to avoid leaving large object
+        graphs hanging around, since that throws off the subsequent tests.
+        
+        * resources/sunspider-standalone-driver.js:
+        * tests/3d-cube.js:
+        * tests/3d-morph.js:
+        * tests/3d-raytrace.js:
+        * tests/bitops-bitwise-and.js:
+        * tests/string-base64.js:
+        * tests/string-tagcloud.js:
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Nikolas.
+        
+        - Rebalance test complexity.
+        
+        Scaled all the tests so they take 400-600ms on a reasonably normal user setup:
+        
+        Internet Explorer 7, Window XP, Dell Latitude D810 with a 2.13GHz Pentium M
+
+        However, for some tests, IE7 was a huge outlier compared to other
+        major browsers. For those tests, I used Firefox 2.0.0.8 on the
+        same OS and hardware as a normalization basis.
+        
+        * tests/3d-morph.js:
+        * tests/3d-raytrace.js:
+        * tests/bitops-3bit-bits-in-byte.js:
+        * tests/bitops-bits-in-byte.js:
+        * tests/bitops-bitwise-and.js:
+        * tests/math-cordic.js:
+        * tests/string-base64.js:
+        * tests/string-tagcloud.js:
+        * tests/string-unpack-code.js:
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - Fix the browser-hosted driver to be compatible with Safari 2
+
+        * hosted/sunspider-driver.html:
+
+2007-10-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Hyatt.
+        
+        - Add BSD license notice to cordic test, the original author said to do so.
+
+        * tests/math-cordic.js:
+
+2007-10-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - Support Windows and Windows browsers.
+
+        * hosted/sunspider-results.html: Display results correctly in IE.
+        * sunspider: tweaks to work on Windows, and with spaces in the path.
+
+2007-10-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+
+        * tests/string-tagcloud.js: Remove stray print()
+
+2007-10-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        Add some string test cases.
+
+        * tests/string-base64.js: Added. Does base64 encoding and decoding.
+        * tests/string-tagcloud.js: Added. Parses a JSON string and
+        generates tagcloud HTML markup based on the data.        
+        * tests/string-unpack-code.js: Added. Unpack compressed versions of
+        four of the most popular JavaScript libraries.
+        * tests/LIST: Added the new tests.
+
+2007-10-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+        * TODO: Updated with info on how to do the stats properly.
+
+        * hosted/sunspider-driver.html: Reduce timeout from 500 to 200 to
+        avoid overly slowing down the benchmark.
+
+        Added some 3D-related test cases.
+        
+        * tests/3d-cube.js: Added.
+        * tests/3d-morph.js: Added.
+        * tests/3d-raytrace.js: Added.
+        * tests/LIST:
+
+2007-10-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - New JavaScript benchmark
+        http://bugs.webkit.org/show_bug.cgi?id=15515
+        
+        A start on a new JavaScript benchmark, with standalone and
+        browser-hosted drivers.
+        
+        The test content is still incomplete and the drivers could use
+        some more features but there is enough here to make a good start.
+        
+        The drivers compute a 95% confidence interval on the mean for the
+        whole test, each category, and each individual test to make it
+        easier to tell whether differences are statistically
+        significant. The confidence interval can be narrowed by running
+        the test more times.
+        
+        * TODO: Added. Remaining things that need to be done.
+        * sunspider: Added. Perl script that acts as the standalone test driver.
+        * resources/sunspider-standalone-driver.js: Added. JavaScript part
+        of standalone test driver.
+        * resources/sunspider-analyze-results.js: Added. JavaScript statistical
+        analysis code.
+        * resources/TEMPLATE.html: Added. Template for browser-hosted tests.
+        * make-hosted: Added. Script to generate browser-hosted tests.
+        * hosted/sunspider.html: Added. Start page for browser-hosted test.
+        * hosted/sunspider-driver.html: Added. Driver for browser-hosted tests.
+        * hosted/sunspider-results.html: Added. Results page for browser-hosted
+        tests.
+        * hosted/sunspider-record-result.js: Added. Helper file for browser-hosted
+        tests.
+        * tests/LIST: Added. List of tests to use.
+        * tests/bitops-3bit-bits-in-byte.js: Added. Some initial test content.
+        * tests/bitops-bits-in-byte.js: Added. Ditto.
+        * tests/bitops-bitwise-and.js: Added. Ditto.
+        * tests/math-cordic.js: Added. Ditto.
+

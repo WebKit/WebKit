@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This page tests that the <tt>maxlength</tt> attribute of the <tt>&lt;input&gt;</tt> element works correctly. <a href="http://bugs.webkit.org/show_bug.cgi?id=14388">http://bugs.webkit.org/show_bug.cgi?id=14388</a></p>
+<div id="console"></div>
+
+<input id="input">
+
+<script>
+    var implicitMaxLength = 524288;
+    var testString = "";
+    var input = document.getElementById("input");
+
+    function attempt(length, expected)
+    {
+        debug("Attempting to insert " + length + " characters with maxLength = " + input.getAttribute("maxlength") + ".");
+
+        if (testString.length > length)
+            testString = "";
+
+        for (var i = testString.length; i < length; ++i)
+            testString += i % 10;
+
+        input.value = testString;
+        if (input.value.length == expected)
+            testPassed("");
+        else
+            testFailed("Expected " + domExpected + " characters to be inserted, but " + input.value.length + " characters were actually inserted.");
+    }
+
+    var stringLengthsToTest = [0, 5, 100, 101, 200, 524287, 524288, 524289, 530000];
+    var maxLengthsToTest = ["-1", "100", "524288", "600000"];
+
+    for (var i = 0; i < stringLengthsToTest.length; ++i) {
+        var stringLength = stringLengthsToTest[i];
+        for (var j = 0; j < maxLengthsToTest.length; ++j) {
+            var maxLength = maxLengthsToTest[j];
+            input.setAttribute("maxlength", maxLength);
+            var expected = Math.min(stringLength, implicitMaxLength);
+            attempt(stringLength, expected);
+        }
+    }
+
+    debug('Some tests for .maxLength property.');
+    input = document.createElement("input");
+    shouldBe("input.maxLength", "implicitMaxLength");
+    shouldThrow("input.maxLength = -1", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
+    input.maxLength = 100;
+    shouldBe("input.getAttribute('maxlength')", "'100'");
+
+    var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

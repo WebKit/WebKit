@@ -1,0 +1,19 @@
+<html>
+<head>
+<body>
+<embed id="testPlugin" 
+       type="application/x-webkit-test-netscape"
+       src="data:text/plain,"
+       test="window-geometry-initialized-before-set-window">
+</embed>
+
+<div>
+    This tests that a plugin's HWND is already sized and positioned before NPP_SetWindow is called.
+</div>
+<script>
+  if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+</script>
+</body>
+</html>
+

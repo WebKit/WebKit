@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebKitAPITestCommon"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\WebCore\ForwardingHeaders&quot;"
+		PreprocessorDefinitions="_CONSOLE;NOMINMAX"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="user32.lib ole32.lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib"
+		SubSystem="1"
+	/>
+  <Tool
+    Name="VCLinkerTool"
+    AdditionalOptions="/NXCOMPAT"
+	/>
+</VisualStudioPropertySheet>

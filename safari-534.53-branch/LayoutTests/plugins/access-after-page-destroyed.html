@@ -1,0 +1,30 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var w = open();
+var p = w.navigator.mimeTypes.item(0);
+w.close();
+w = open();
+p = w.navigator.mimeTypes.item(0);
+w.navigator.plugins.refresh();
+w.close();
+w = null;
+
+setTimeout(function(){
+    p.enabledPlugin;
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}, 50); // Pause is necessary for the page to get freed
+
+</script>
+</head>
+<body>
+If the page does not trigger a crash the test passed.
+</body>
+</html>

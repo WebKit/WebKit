@@ -1,0 +1,64 @@
+<p>This test verifies that an Objective-C reference to a DOM object remains valid
+after the frame that provided the DOM object navigates to a new location.
+</p>
+<p>If the test passes, you'll see a 'PASS' message below.
+</p>
+<hr>
+<pre id="log"></pre>
+
+<iframe id="iframe" src="data:text/html, " style="width: 0; height: 0; visibility: hidden"></iframe>
+
+<script>
+function log(s)
+{
+    document.getElementById("log").appendChild(document.createTextNode(s));
+}
+
+var iframe = document.getElementById("iframe");
+
+var count = 0;
+
+function runTest()
+{
+    // Use a possibly stale pointer.
+    objCController.accessStoredWebScriptObject(); 
+
+    // Repeat, just to be sure.
+    if (++count < 100) { // >
+        queueTest();
+        return;
+    }
+
+    log("PASS: You didn't crash.\n");
+    layoutTestController.notifyDone();
+}
+
+function queueTest()
+{
+    iframe.onload = runTest;
+    objCController.storeWebScriptObject(count % 2 == 0 ? iframe.contentWindow : iframe.contentDocument.documentElement);
+    iframe.contentWindow.location.reload();
+}
+
+function timeoutTest()
+{
+    log("FAIL: Test timed-out after " + count + " runs.\n");
+    layoutTestController.notifyDone();
+}
+
+window.onload = function onload()
+{
+    if (!("layoutTestController" in window) || !("objCController" in window)) {
+        var errorMessage = "FAIL: This test can only run inside DumpRenderTree on the mac.";
+        log(errorMessage);
+        throw errorMessage;
+    }
+
+    timeoutIdentifier = setTimeout(timeoutTest, 30000); // timeout after 30 seconds
+
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+
+    queueTest();
+}
+</script>

@@ -1,0 +1,15 @@
+Tests the Timeline API instrumentation of a Layout event
+
+Test data
+Layout Properties:
+{
+    startTime : <number>
+    data : {
+    }
+    children : <object>
+    endTime : <number>
+    type : "Layout"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
+

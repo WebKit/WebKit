@@ -1,0 +1,4394 @@
+2011-05-16  Huzaifa Sidhpurwala <huzaifas@redhat.com>
+
+       Reviewed by Adam Barth.
+
+       Add Huzaifa Sidhpurwala to the WebKit Security Group site.
+       https://bugs.webkit.org/show_bug.cgi?id=60686
+
+       * security/security-group-members.html:
+
+2011-05-11  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding Cris Neckar to the Webkit Security Group site.
+        https://bugs.webkit.org/show_bug.cgi?id=60668
+
+        * security/security-group-members.html:
+
+2011-05-11  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Mark Rowe.
+
+        Update Qt/Nokia Security contacts
+        https://bugs.webkit.org/show_bug.cgi?id=60650
+
+        Ademar (me) replaced Simon as the release manager and primary security
+        contact for QtWebKit. See:
+        http://lists.webkit.org/mailman/private.cgi/webkit-security/2011-February/000584.html
+
+        * security/security-group-members.html:
+
+2011-05-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add guidelines for feature addition to webkit.org (per disccusion at contributor meeting)
+        https://bugs.webkit.org/show_bug.cgi?id=59672
+
+        * coding/adding-features.html: Added.
+        * nav.inc:
+
+2011-04-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: adding image files for the blog post.
+
+        * blog-files/inspector/remote-debugging-attached.png: Added.
+        * blog-files/inspector/remote-debugging-discovery.png: Added.
+
+2011-04-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        change style guide to pre-increment in for-loops
+        https://bugs.webkit.org/show_bug.cgi?id=59619
+
+        This matches what a number of reviewers have been asking
+        for in code reviews.
+
+        * coding/coding-style.html:
+
+2011-04-26  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added instructions on how to work from behind proxy
+        and detailed the instructions refering to rebasing.
+        Windows build instructions do not work if you are behind a proxy
+        or have a Temp directory that you do not own directly.
+        https://bugs.webkit.org/show_bug.cgi?id=57246
+
+        * building/tools.html:
+
+2011-04-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add a diagram, explaning how  an event's relatedTarget interact with shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=58190
+
+        * misc/related-target-and-shadow-dom.svg: Added.
+
+2011-04-06  David Levin  <levin@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Augment style guidelines about meaningless parameters from text the unwritten rules email.
+        https://bugs.webkit.org/show_bug.cgi?id=55275
+
+        * coding/coding-style.html:
+
+2011-04-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Add Web Inspector stack trace, pause on exception and window.onerror
+        screenshots.
+
+        * blog-files/inspector/stack-traces-img/1.png: Added.
+        * blog-files/inspector/stack-traces-img/2.png: Added.
+        * blog-files/inspector/stack-traces-img/3.png: Added.
+        * blog-files/inspector/stack-traces-img/4.png: Added.
+        * blog-files/inspector/stack-traces-img/5.png: Added.
+        * blog-files/inspector/stack-traces-img/6.png: Added.
+        * blog-files/inspector/stack-traces-img/button.png: Added.
+
+2011-02-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add style guidelines about comments from the unwritten rules email.
+        https://bugs.webkit.org/show_bug.cgi?id=55272
+
+        * coding/coding-style.html: Added the guidelines.
+
+2011-02-09  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed. Add Web Inspector stylesheet resource diff screenshot.
+
+        * blog-files/inspector/css_rule_diff.png: Added.
+
+2011-02-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed. Add Web Inspector warning 10x10 PNG, move files from r77801 into the inspector/ directory.
+
+        * blog-files/inspector/css_as_authored.png: Renamed from Websites/webkit.org/blog-files/inspector-css-as-authored.png.
+        * blog-files/inspector/css_autocomplete.png: Renamed from Websites/webkit.org/blog-files/inspector-css-autocomplete.png.
+        * blog-files/inspector/css_unknown_properties.png: Renamed from Websites/webkit.org/blog-files/inspector-unknown-css-properties.png.
+        * blog-files/inspector/warning_10x10.png: Added.
+
+2011-02-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed. Add Web Inspector style editing screenshots.
+
+        * blog-files/inspector-css-as-authored.png: Added.
+        * blog-files/inspector-css-autocomplete.png: Added.
+        * blog-files/inspector-unknown-css-properties.png: Added.
+
+2011-01-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Proposal: Require cross-organizational seconds for reviewer nominations
+        https://bugs.webkit.org/show_bug.cgi?id=47597
+
+        This changes the committer/reviewer policy to require an additional
+        reviewer supporting a reviewer nomination to work for a different
+        company and different project affiliation from the nominee.
+
+        This means reviewer nominations would require four supporting reviewers,
+        one of which knows the reviewer through the community (irc, email, bugs)
+        ensuring that the nominee has the open-source collaboration skills
+        we so highly value here in WebKit.
+
+        * coding/commit-review-policy.html:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move JavaScriptCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=51604
+
+        * coding/assertion-guidelines.html:
+          - Update documentation to point to the new location of
+            JavaScriptCore.
+
+2010-12-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Rename WebKitTools to Tools
+        https://bugs.webkit.org/show_bug.cgi?id=49861
+
+        * asking_questions.html:
+        * building/tools.html:
+        * coding/scripts.html:
+
+2010-11-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        We should add a build step to comment out or remove the lines unsetting TEMP and TMP in the
+        .bashrc file.
+        https://bugs.webkit.org/show_bug.cgi?id=49189
+
+        * building/tools.html:
+        Add a line recommending bash shell users to comment out or remove those lines, with an
+        explanation as to why.
+
+2010-11-04  Orlando Leite  <orlleite@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Add Java for Mac OS X Developer Package to Installing Developer Tools web page
+
+        * building/tools.html:
+
+2010-10-29  Adam Roben  <aroben@apple.com>
+
+        Instruct developers to install the Feburary 2010 DirectX SDK, not just
+        any version
+
+        The February 2010 SDK is the last one with support for Visual Studio
+        2005.
+
+        I also removed some unnecessary instructions regarding the DirectX
+        SDK.
+
+        Fixes <http://webkit.org/b/48642> webkit.org should recommend a
+        specific version of the DirectX SDK
+
+        Reviewed by Steve Falkenburg.
+
+        * building/tools.html:
+
+2010-10-28  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Bug 46927 - Sunspider 0.9 web site should prominently link to Sunspider 0.9.1
+        Notes: 
+            -Created a new sunspider "landing" page which lists current and previous versions of SunSpider.
+            -Edited the .htaccess file to redirect the old pages to the new landing page.
+            -This should keep our search engine page rankings effective.
+        Potentially breaking:
+            -This COULD potentially break the SunSpider benchmark.
+            -Local testing with relative links seems to function as expected.
+            -The .htaccess 301 redirects are UNTESTED.
+            
+
+        * .htaccess:
+        * perf/sunspider: Added.
+        * perf/sunspider-0.9.1/sunspider.html: Removed.
+        * perf/sunspider-0.9.1/versions.html: Removed.
+        * perf/sunspider-0.9/sunspider.html: Removed.
+        * perf/sunspider/sunspider.css: Added.
+        * perf/sunspider/sunspider.html: Added.
+
+2010-10-19  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add DirectX SDK to Installing Developer Tools web page
+        https://bugs.webkit.org/show_bug.cgi?id=47911
+
+        * building/tools.html:
+
+2010-09-30  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add guideline for constructors doing implicit type conversion to coding style.
+        https://bugs.webkit.org/show_bug.cgi?id=47646
+
+        * coding/coding-style.html:
+
+2010-10-01  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Simon Fraser.
+
+        Bug 47013 - Main Web Inspector link on webkit.org links to old wiki page
+        https://bugs.webkit.org/show_bug.cgi?id=47013
+
+        * nav.inc: Removed the space from the web inspector wiki link.
+
+2010-09-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed HTML syntax fix for my recent change in the coding-style.
+
+        * coding/coding-style.html: Change "&gt" and "&lt" to "&gt;" and "&lt;".
+
+2010-09-22  Balazs Kelemen  <kb@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        check-webkit-style and the coding style guidelines page are inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=46099
+
+        * coding/coding-style.html:
+        Making clear that includes of system headers must come after includes of other headers.
+
+2010-09-16  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding a timeline screenshot for blocking and defer scripts
+        https://bugs.webkit.org/show_bug.cgi?id=45933
+
+        * blog-files/timeline-blocking-script.png: Added.
+        * blog-files/timeline-defer-script.png: Added.
+
+2010-09-14  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Exceptions are getting ignored on 64-bit Windows in the Web Process.
+        https://bugs.webkit.org/show_bug.cgi?id=45779
+
+        * building/tools.html:
+        Add instructions about how to optionally get hotfix 976038.
+
+2010-09-06  Robin Qiu  <robin.qiu@torchmobile.com.cn>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43982
+        This js file seems to be a popular script for detecting mobile WebKit but
+        it has a flaw that makes it fail on Android and BlackBerry.  
+
+        The issue is that it looks for "Mobile/" but Android and BlackBerry
+        use "Mobile" with no numbering after it.
+        Changed RegExp pattern " Mobile/" to " Mobile\\b".
+
+        * misc/WebKitDetect.js:
+        (WebKitDetect.isMobile):
+
+2010-08-27  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Minor revision, improve clarity and mention some
+        recent developments.
+
+2010-08-26  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Dumitru Daniliuc.
+
+        Fix misspelled words on WebKit.org contact.html,
+        demos/index.html, and quality/leakhunting.html
+        https://bugs.webkit.org/show_bug.cgi?id=44747
+
+        Fix some misspelled words on the WebKit.org site.
+
+        * contact.html: Change "bugreports" [sic] to "bug reports".
+        * demos/index.html: Change "testcase" [sic] to "test case".
+        * quality/leakhunting.html: Change "formating" [sic] to "formatting".
+
+2010-08-23  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up some HTML typos in crashlogs.html
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        * quality/crashlogs.html: Fixed "</code>>" typos added in
+        r56300.  Changed "<tt>" tag with style attribute to "<code>"
+        that was missed in r56300.
+
+2010-08-17  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Adele.
+
+        Adding a MathML Demo and screenshot.
+
+        * blog-files/riemann-screenshot.png: Added.
+        * demos/mathml: Added.
+        * demos/mathml/MathMLDemo.xhtml: Added.
+
+2010-08-17  Adam Roben  <aroben@apple.com>
+
+        Instruct developers to (optionally) install Debugging Tools for
+        Windows
+
+        These tools are used by some of our scripts, so are useful for
+        developers to have installed.
+
+        Fixes <http://webkit.org/b/44128> webkit.org building instructions
+        should recommend installing Debugging Tools for Windows
+
+        Reviewed by Sam Weinig.
+
+        * building/tools.html:
+
+2010-07-30  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Update SVG implementation status.
+
+        * projects/svg/status.xml:
+
+2010-07-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add a diagram explaining how a DOM element is attached to the site.
+        https://bugs.webkit.org/show_bug.cgi?id=42763
+
+        * coding/dom-element-attach.html: Added.
+        * coding/images/dom-element-attach-large.png: Added.
+        * coding/images/dom-element-attach-small.png: Added.
+        * coding/images/dom-element-attach.graffle: Added.
+        * coding/technical-articles.html: Added a link to the page with the diragram.
+
+2010-06-16  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Improve assertion macro documentation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40565
+
+        * coding/assertion-guidelines.html:
+
+2010-06-16  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Add an index of technical articles to the WebKit site.  This makes the
+        links to the RefPtr and Assertion documentation discoverable and
+        provides an easy way to find some useful blog posts.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40561
+
+        * coding/technical-articles.html: Added.
+        * nav.inc: Add link to technical articles.
+
+2010-06-15  Adam Roben  <aroben@apple.com>
+
+        Remove some unnecessary steps for setting up the debugger on Windows
+
+        Apparently update-webkit does this for you now.
+
+        Rubber-stamped by Steve Falkenburg.
+
+        * building/debug.html: Removed the first two Windows steps, which are
+        now unnecessary, and updated the third to reflect reality.
+
+2010-06-14  Adam Roben  <aroben@apple.com>
+
+        Improve instructions for debugging on Windows
+
+        Fixes <http://webkit.org/b/40585>.
+
+        Reviewed by Steve Falkenburg.
+
+        * building/debug.html: Improved the Windows instructions. We now
+        instruct users to set things up so that hitting F5 from WebKit.sln
+        will launch Safari with the WEBKITNIGHTLY environment variable
+        pointing to the location of the built WebKit.dll.
+
+        * building/console_vs2005.jpg: Removed.
+        * building/debug_vs2005.jpg: Removed.
+
+        * building/launch-debugger-vs2005.png: Added.
+        * building/set-as-startup-project-vs2005.png: Added.
+        * building/set-debugging-properties-vs2005.png: Added.
+
+2010-06-07  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add documentation on the various assertion macros in WebKit.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39950
+
+        * coding/assertion-guidelines.html: Added.
+
+2010-05-29  Sterling Swigart  <sswigart@google.com>
+
+        Reviewed by David Levin.
+
+        Adding tests to canvas.html performance test
+        https://bugs.webkit.org/show_bug.cgi?id=39883
+
+        * demos/canvas-perf/canvas.html:
+        Added tests for:
+            strokeText
+            fillText
+            strokeLine
+
+2010-05-25  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Update the style guide re: static member variables and structs
+        https://bugs.webkit.org/show_bug.cgi?id=39663
+
+        Per Darin Adler's proposal on webkit-dev.
+
+        All static member variables should be prefixed with s_.
+        m_ should not be used for public data members in structs.
+        Only structs should have public data members.
+
+        * coding/coding-style.html:
+
+2010-05-24  David Levin  <levin@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Improve canvas perf test accuracy.
+        https://bugs.webkit.org/show_bug.cgi?id=39635
+
+        * demos/canvas-perf/canvas.html:
+          1. Change the various tests to get the image data for the result
+             to help ensure that the operation has completed by the time,
+             and subtract out the time needed to do this.
+          2. Made the test more flexible about number of repetitions and
+             image size.
+          3. Make the tests run separately and have a pause between them
+             to allow for garbage collection so that results are more
+             consistent.
+          4. Added a standard logging function and shouldBe asserts to
+             verify that the correct scaling operations were happening.
+
+2010-05-20  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        Spelling correction; change "acces" [sic] to "access".
+
+        * quality/lifecycle.html:
+
+2010-05-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Update tools.html to mention that Tiger users require a newer Python
+        https://bugs.webkit.org/show_bug.cgi?id=38822
+
+        Also updated the instructions that only Tiger users need
+        to install a subversion client.  Newer OSes already have
+        subversion included in the install.
+
+        * building/tools.html:
+
+2010-05-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFont's VKern implementation missing
+        https://bugs.webkit.org/show_bug.cgi?id=38663
+
+        * projects/svg/status.xml:
+
+2010-05-05  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Commit and Review policy should encourage unofficial reviews
+        https://bugs.webkit.org/show_bug.cgi?id=38517
+
+        * coding/commit-review-policy.html:
+
+2010-05-04  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix the sticky-notes demo.
+        https://bugs.webkit.org/show_bug.cgi?id=38550
+
+        1. Exceptions thrown by openDatabase() should be treated as
+        failures.
+        2. Do not allow users to create new notes when openDatabase()
+        failed.
+
+        * demos/sticky-notes/index.html:
+
+2010-05-02  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG hkern implementation incomplete
+        https://bugs.webkit.org/show_bug.cgi?id=38407
+
+        We support hkern now. Mention this in the SVG status page. 
+
+        * projects/svg/status.xml:
+
+2010-04-29  Dean Jackson  <dino@apple.com>
+
+        Unreviewed. Make a note that we are no longer proposing
+        the evaluateMediaQuery method. Instead, we are following
+        the standard matchMedium method from CSS 3 View.
+
+        * specs/MediaQueriesExtensions.html:
+
+2010-04-18  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Update a label of the diagram to better match the
+        description in the text of the blog post.
+
+        * blog-files/loader-diagram.svg:
+
+2010-04-17  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.  Added loader diagram for upcoming blog post.
+
+        * blog-files/loader-diagram.svg: Added.
+
+2010-04-11  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Minor Updates and Cleanup to the Contributing Page
+        https://bugs.webkit.org/show_bug.cgi?id=37415
+
+        * coding/contributing.html:
+
+2010-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        (Not reviewed.)
+
+        Random demo to look cool on twitter.
+
+        * misc/gradient-input.html: Added.
+
+2010-04-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        (Not reviewed).
+
+        Adding images for inspector blog post. Previewed by Timothy Hatcher.
+
+        * blog-files/inspector/audits_launcher.png: Added.
+        * blog-files/inspector/audits_panel.png: Added.
+        * blog-files/inspector/console_panel.png: Added.
+        * blog-files/inspector/context_menu.png: Added.
+        * blog-files/inspector/css_highlighted_line.png: Added.
+        * blog-files/inspector/css_line_number_snippet.png: Added.
+        * blog-files/inspector/css_line_numbers.png: Added.
+        * blog-files/inspector/deactivate_breakpoints.png: Added.
+        * blog-files/inspector/evaluate_on_hover.png: Added.
+        * blog-files/inspector/evaluate_on_hover_2.png: Added.
+        * blog-files/inspector/inherited_styles.png: Added.
+        * blog-files/inspector/large_dom.png: Added.
+        * blog-files/inspector/large_resources.png: Added.
+        * blog-files/inspector/pseudo_elements.png: Added.
+        * blog-files/inspector/redirect_headers.png: Added.
+        * blog-files/inspector/redirect_headers_full.png: Added.
+        * blog-files/inspector/redirects.png: Added.
+        * blog-files/inspector/redirects_full.png: Added.
+        * blog-files/inspector/timeline_overview.png: Added.
+        * blog-files/inspector/timeline_panel.png: Added.
+        * blog-files/inspector/timeline_record_details.png: Added.
+
+2010-03-25  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Levin.
+
+        Asking Questions Page Grammar Fixes
+        https://bugs.webkit.org/show_bug.cgi?id=36608
+
+        * asking_questions.html:
+
+2010-03-25  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        New Asking Questions Page is not Valid HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=36605
+
+        * asking_questions.html: fixed issues raised by the validator.
+
+2010-03-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by David Levin.
+
+        Add a page on how to ask questions
+        https://bugs.webkit.org/show_bug.cgi?id=35223
+
+        * asking_questions.html: Added.
+        Add a page on how to ask questions based on Ariya Hidayat's mail: how
+        to get help effectively
+        (http://article.gmane.org/gmane.os.opendarwin.webkit.user/145/match=get+help+effectively)
+
+        * contact.html: Tweaked the wording to make it more clear what the
+        mailing list are used for. Also changed the formatting to better
+        underline the different mailing lists.
+
+2010-03-24  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders Carlsson..
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
+2010-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+        (Not reviewed.)
+
+        Add another example.
+
+        * demos/accessible-ascii-art/butterfly-figure.html: Added.
+
+2010-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+        (Not reviewed.)
+
+        Add example of accessible ASCII art for HTML WG.
+
+        * demos/accessible-ascii-art: Added.
+        * demos/accessible-ascii-art/butterfly.html: Added.
+
+2010-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        WebKit blog should be valid HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=36410
+
+        * blog/wp-content/themes/webkit/comments-popup.php:
+        * blog/wp-content/themes/webkit/footer.php:
+        * blog/wp-content/themes/webkit/header.php:
+
+2010-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a bunch of HTML5 validation errors on various pages.
+        https://bugs.webkit.org/show_bug.cgi?id=36409
+
+        * building/build.html:
+        * building/checkout.html:
+        * building/debug.html:
+        * building/run.html:
+        * building/tools.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * coding/major-objects.html:
+        * css/main.css:
+        (.asciiart):
+        * demos/index.html:
+        * header.inc:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/goals.html:
+        * projects/index.html:
+        * projects/mathml/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugwriting.html:
+        * quality/crashlogs.html:
+        * quality/lifecycle.html:
+        * quality/testing.html:
+        * quality/testwriting.html:
+
+2010-03-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        webkit.org should use the HTML5 doctype
+        https://bugs.webkit.org/show_bug.cgi?id=36407
+
+        * header.inc:
+        * misc/drosera/index.html:
+        * perf/slickspeed/system/index.php:
+        * perf/slickspeed/system/template.php:
+        * specs/index.html:
+
+2010-03-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        http://webkit.org/ has an HTML5 validation error
+        https://bugs.webkit.org/show_bug.cgi?id=36406
+
+        * nav.inc:
+
+2010-03-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Tweak canvas perf demo.
+
+        * demos/canvas-perf/canvas.html:
+
+2010-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Added canvas perf demo for whatwg.
+
+        * demos/canvas-perf: Added.
+        * demos/canvas-perf/canvas.html: Added.
+        * demos/canvas-perf/kraken.jpg: Added.
+
+2010-03-09  Adam Roben  <aroben@apple.com>
+
+        Add a link to the Contributors Meeting registration form in the
+        sidebar
+
+        Rubber-stamped in advance by Adele Peterson.
+
+        * nav.inc: Added a link underneath "Trac".
+
+2010-02-26  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Adele Peterson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
+2010-02-23  Jessie Berlin  <jberlin@webkit.org>
+
+        Reviewed by Eric Seidel and Adam Roben.
+
+        Debugging WebKit on Windows should mention WebKit.sln as an alternative to running debug-safari.
+        https://bugs.webkit.org/show_bug.cgi?id=35098
+
+        * building/debug.html:
+        Add instructions on how to build and run WebKit from within Visual Studio.
+
+2010-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam Barth.
+
+        Add sunspider-0.9.1 to the site in preparation for announcing it.
+        https://bugs.webkit.org/show_bug.cgi?id=35206
+
+        * perf/sunspider-0.9.1: Added.
+        * perf/sunspider-0.9.1/json2.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/driver.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/results.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/sunspider-test-contents.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9.1/sunspider-test-prefix.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/driver.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/results.html: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/sunspider-test-contents.js: Added.
+        * perf/sunspider-0.9.1/sunspider-0.9/sunspider-test-prefix.js: Added.
+        * perf/sunspider-0.9.1/sunspider-analyze-results.js: Added.
+        * perf/sunspider-0.9.1/sunspider-compare-results.js: Added.
+        * perf/sunspider-0.9.1/sunspider.css: Added.
+        * perf/sunspider-0.9.1/sunspider.html: Added.
+        * perf/sunspider-0.9.1/versions.html: Added.
+
+2010-02-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - demo.
+
+        Made some examples of using <details> for table descriptions.
+
+        * demos/hover-summary: Added.
+        * demos/hover-summary/details.css: Added.
+        * demos/hover-summary/details.js: Added.
+        (summaryClickListener):
+        ():
+        (window.onload):
+        * demos/hover-summary/example1.html: Added.
+        * demos/hover-summary/example2.html: Added.
+        * demos/hover-summary/horizontal-triangle.png: Added.
+        * demos/hover-summary/vertical-triangle.png: Added.
+
+2010-02-02  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by David Levin.
+
+        Clarified coding guidelines on wiki to allow indentation of
+        _nested_ namespaces.
+        https://bugs.webkit.org/show_bug.cgi?id=32137
+
+        * coding/coding-style.html:
+
+2010-01-24  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Added to contributing code page a pointer to the preferred
+        license text. Also added information about copyright lines.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34017
+
+        * coding/contributing.html:
+        * css/main.css:
+          - Added CSS class for books.
+
+2010-01-21  Chris Jerdonek  <cjerdonek@webkit.org>
+
+        Reviewed by David Levin.
+
+        Added screenshots and clearer instructions on how to submit
+        a patch for review.
+
+        https://bugs.webkit.org/show_bug.cgi?id=32542
+
+        Also added that a bug report should be selected or created
+        prior to submitting a patch.
+
+        * coding/contributing.html:
+        * coding/images: Added.
+        * coding/images/contribute_add_attachment.png: Added.
+        * coding/images/contribute_mark_review.png: Added.
+
+2010-01-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed; updated for truth (and readability).
+
+        Fixed some wrong listings and reorganized this page.
+
+        * security/security-group-members.html:
+
+2010-01-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG feImage support
+        https://bugs.webkit.org/show_bug.cgi?id=31905
+
+        Update SVG status page. We support feDisplacementMap and feImage now.
+
+        * projects/svg/status.xml:
+
+2009-12-20  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Removed outdated contact information from bug life cycle page.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32494
+
+        * quality/lifecycle.html:
+
+2009-12-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a style guideline concerning floating point literals
+        https://bugs.webkit.org/show_bug.cgi?id=32497
+
+        * coding/coding-style.html:
+
+2009-12-09  Marwan Al Jubeh  <marwan.aljubeh@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=31228
+        Set the WebKitOutputDir, WebKitLibrariesDir and Cygwin environment variables automatically
+        in Windows as part of running update_webkit.
+
+        * building/build.html:
+         - removed the reference to forgetting to set environment variables as a common source of errors
+           on Windows. This is because this patch would make it unnecessary for the user to set these
+           variables manually.
+
+2009-12-09  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Added the "using std::foo" rule to the coding style guidelines.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32301
+        
+        Added to the coding style guidelines the "using std::foo" rule
+        checked by the check-webkit-style script.  Also clarified the
+        "using" statement guidelines that apply to implementation files.
+
+        * coding/coding-style.html:
+
+2009-12-05  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Refactored web site documentation so that advice to add
+        WebKitTools/Scripts to your shell path does not appear 
+        on multiple pages.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=32112
+        
+        * building/build.html:
+        * building/checkout.html:
+        * building/run.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * coding/scripts.html: Added.
+        * quality/testing.html:
+
+2009-12-04  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add reference to the GTK and QT build wiki pages
+
+        https://bugs.webkit.org/show_bug.cgi?id=32088
+
+        * building/tools.html:
+        * css/main.css:
+
+2009-12-01  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Added clarifications to the web site regarding coding style and
+        code cleanup--
+
+        https://bugs.webkit.org/show_bug.cgi?id=31618
+
+        Changes include the following:
+
+        - Expanded the style guidelines regarding "using" statements.
+        - Made the style guidelines page validate as HTML.
+        - Added that legacy WebKit components should not be cleaned up.
+        - Added that it is more acceptable to update style when already
+          touching code.
+
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * projects/cleanup/index.html:
+
+2009-11-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Make 80 patches a formal requirement for reviewership
+        https://bugs.webkit.org/show_bug.cgi?id=31313
+        Per discussion on the webkit-reviewers list:
+        http://lists.webkit.org/mailman/private.cgi/webkit-reviewers/2009-November/000795.html
+
+        * coding/commit-review-policy.html:
+
+2009-11-18  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=31610
+
+        Adds property "min-width" to #title so that the width of the title
+        element on each page is at least 790px. In particular, this makes
+        the page <http://webkit.org/security/security-group-members.html>
+        consistent, in appearance, to the rest of the site.
+
+        * css/main.css:
+
+2009-11-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
+2009-11-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
+2009-11-13  Chris Jerdonek  <chris.jerdonek@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Added to the WebKit Coding Style Guidelines not to use 
+        "using namespace" statements in header files.
+
+        * coding/coding-style.html:
+
+2009-11-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix WebGL demos to work with renamed WebGL primitives
+
+        * blog-files/webgl/Earth.html:
+        * blog-files/webgl/ManyPlanetsDeep.html:
+        * blog-files/webgl/SpinningBox.html:
+        * blog-files/webgl/SpiritBox.html:
+        * blog-files/webgl/TeapotPerPixel.html:
+        * blog-files/webgl/TeapotPerVertex.html:
+        * blog-files/webgl/WebGL+CSS.html:
+        * blog-files/webgl/resources/CanvasMatrix.js:
+        (CanvasMatrix4.prototype.getAsWebGLFloatArray):
+        * blog-files/webgl/resources/utils3d.js:
+        (makeBox):
+        (makeSphere):
+        (doLoadObj):
+
+2009-11-06  Dirk Schulze  <krit@webkit.org>
+
+        Rubber stamped by Eric Seidel.
+
+        Update SVG status page. We support feMorphology now.
+        Set lightning filters to unimplemented.
+
+        * projects/svg/status.xml:
+
+2009-11-06  Jeff Schiller  <codedread@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        SVG Status page update
+        https://bugs.webkit.org/show_bug.cgi?id=31179
+
+        * projects/svg/status.xml:
+
+2009-11-03  Darin Adler  <darin@apple.com>
+
+        Set the MIME type for all PNG files in this directory.
+
+        * blog-files/3d-transforms/mighty-cubes.png: Added property svn:mime-type.
+        * blog-files/3d-transforms/poster-circle.png: Added property svn:mime-type.
+        * blog-files/InspectorDatabaseBrowser.png: Modified property svn:mime-type.
+        * blog-files/acid3-100.png: Modified property svn:mime-type.
+        * blog-files/acid3-full-rendering-pass.png: Modified property svn:mime-type.
+        * blog-files/acid3-rendering-reference.png: Modified property svn:mime-type.
+        * blog-files/acid3-screenshot.png: Modified property svn:mime-type.
+        * blog-files/acid3-timing-screenshot.png: Modified property svn:mime-type.
+        * blog-files/acid3-timing.png: Modified property svn:mime-type.
+        * blog-files/bounce.png: Added property svn:mime-type.
+        * blog-files/gebcnwebkitonly.png: Modified property svn:mime-type.
+        * blog-files/inspector-closure-scope.png: Added property svn:mime-type.
+        * blog-files/inspector-console-autocomplete.png: Added property svn:mime-type.
+        * blog-files/inspector-databases-panel-query-view.png: Added property svn:mime-type.
+        * blog-files/inspector-databases-panel.png: Added property svn:mime-type.
+        * blog-files/inspector-disabling-properties.png: Added property svn:mime-type.
+        * blog-files/inspector-elements-panel.png: Added property svn:mime-type.
+        * blog-files/inspector-event-scope.png: Added property svn:mime-type.
+        * blog-files/inspector-profiles-panel.png: Added property svn:mime-type.
+        * blog-files/inspector-resources-panel.png: Added property svn:mime-type.
+        * blog-files/inspector-scripts-panel.png: Added property svn:mime-type.
+        * blog-files/inspector-searching-elements.png: Added property svn:mime-type.
+        * blog-files/inspector-searching-profiles.png: Added property svn:mime-type.
+        * blog-files/inspector-status-bar-with-errors.png: Added property svn:mime-type.
+        * blog-files/inspector-toolbar.png: Added property svn:mime-type.
+        * blog-files/inspector-with-scope.png: Added property svn:mime-type.
+        * blog-files/inspector/breakpoints.png: Added property svn:mime-type.
+        * blog-files/inspector/colors.png: Added property svn:mime-type.
+        * blog-files/inspector/cookies.png: Added property svn:mime-type.
+        * blog-files/inspector/css_selectors.png: Added property svn:mime-type.
+        * blog-files/inspector/css_syntax_highlight.png: Added property svn:mime-type.
+        * blog-files/inspector/dom_storage.png: Added property svn:mime-type.
+        * blog-files/inspector/edit_attributes.png: Added property svn:mime-type.
+        * blog-files/inspector/enable.png: Added property svn:mime-type.
+        * blog-files/inspector/event_listeners.png: Added property svn:mime-type.
+        * blog-files/inspector/form_data.png: Added property svn:mime-type.
+        * blog-files/inspector/inline_highlight.png: Added property svn:mime-type.
+        * blog-files/inspector/inorder.png: Added property svn:mime-type.
+        * blog-files/inspector/inspect_inspector.png: Added property svn:mime-type.
+        * blog-files/inspector/inspect_inspector_small.png: Added property svn:mime-type.
+        * blog-files/inspector/load_lines.png: Added property svn:mime-type.
+        * blog-files/inspector/nodelist.png: Added property svn:mime-type.
+        * blog-files/inspector/scope_bar.png: Added property svn:mime-type.
+        * blog-files/inspector/watched_expression.png: Added property svn:mime-type.
+        * blog-files/kate-circle.png: Modified property svn:mime-type.
+        * blog-files/kate-gradient-rounded.png: Modified property svn:mime-type.
+        * blog-files/kate-gradient.png: Modified property svn:mime-type.
+        * blog-files/kate-reflected.png: Modified property svn:mime-type.
+        * blog-files/kate-vignette-mask.png: Modified property svn:mime-type.
+        * blog-files/kate.png: Modified property svn:mime-type.
+        * blog-files/leaves/images/apple-touch-icon.png: Added property svn:mime-type.
+        * blog-files/leaves/images/realLeaf1.png: Added property svn:mime-type.
+        * blog-files/leaves/images/realLeaf2.png: Added property svn:mime-type.
+        * blog-files/leaves/images/realLeaf3.png: Added property svn:mime-type.
+        * blog-files/leaves/images/realLeaf4.png: Added property svn:mime-type.
+        * blog-files/leaves/images/textBackground.png: Added property svn:mime-type.
+        * blog-files/maskspeedracer.png: Modified property svn:mime-type.
+        * blog-files/pulse.png: Added property svn:mime-type.
+        * blog-files/scrollbarpicture.png: Modified property svn:mime-type.
+        * blog-files/sfx-perf.png: Modified property svn:mime-type.
+        * blog-files/squirrelfish-webkit-graph.png: Modified property svn:mime-type.
+        * blog-files/squirrelfish.png: Modified property svn:mime-type.
+        * blog-files/vignette-mask.png: Modified property svn:mime-type.
+        * blog-files/webgl/resources/mars500x250.png: Modified property svn:mime-type.
+        * blog-files/wsj-nopreload.png: Modified property svn:mime-type.
+        * blog-files/wsj-preload.png: Modified property svn:mime-type.
+        * blog-files/wsj-vs.png: Modified property svn:mime-type.
+        * blog/wp-admin/images/align-center.png: Added property svn:mime-type.
+        * blog/wp-admin/images/align-left.png: Added property svn:mime-type.
+        * blog/wp-admin/images/align-none.png: Added property svn:mime-type.
+        * blog/wp-admin/images/align-right.png: Added property svn:mime-type.
+        * blog/wp-admin/images/archive-link.png: Added property svn:mime-type.
+        * blog/wp-admin/images/blue-grad.png: Added property svn:mime-type.
+        * blog/wp-admin/images/button-grad-active-vs.png: Added property svn:mime-type.
+        * blog/wp-admin/images/button-grad-active.png: Added property svn:mime-type.
+        * blog/wp-admin/images/button-grad-vs.png: Added property svn:mime-type.
+        * blog/wp-admin/images/button-grad.png: Added property svn:mime-type.
+        * blog/wp-admin/images/comment-grey-bubble.png: Added property svn:mime-type.
+        * blog/wp-admin/images/fade-butt.png: Modified property svn:mime-type.
+        * blog/wp-admin/images/fav-top.png: Added property svn:mime-type.
+        * blog/wp-admin/images/fav-vs.png: Added property svn:mime-type.
+        * blog/wp-admin/images/fav.png: Added property svn:mime-type.
+        * blog/wp-admin/images/generic.png: Added property svn:mime-type.
+        * blog/wp-admin/images/gray-grad.png: Added property svn:mime-type.
+        * blog/wp-admin/images/icons32-vs.png: Added property svn:mime-type.
+        * blog/wp-admin/images/icons32.png: Added property svn:mime-type.
+        * blog/wp-admin/images/list-vs.png: Added property svn:mime-type.
+        * blog/wp-admin/images/list.png: Added property svn:mime-type.
+        * blog/wp-admin/images/logo-ghost.png: Added property svn:mime-type.
+        * blog/wp-admin/images/marker.png: Added property svn:mime-type.
+        * blog/wp-admin/images/mask.png: Added property svn:mime-type.
+        * blog/wp-admin/images/menu-vs.png: Added property svn:mime-type.
+        * blog/wp-admin/images/menu.png: Added property svn:mime-type.
+        * blog/wp-admin/images/no.png: Added property svn:mime-type.
+        * blog/wp-admin/images/se.png: Added property svn:mime-type.
+        * blog/wp-admin/images/wheel.png: Added property svn:mime-type.
+        * blog/wp-admin/images/white-grad-active.png: Added property svn:mime-type.
+        * blog/wp-admin/images/white-grad.png: Added property svn:mime-type.
+        * blog/wp-admin/images/wordpress-logo.png: Modified property svn:mime-type.
+        * blog/wp-admin/images/yes.png: Added property svn:mime-type.
+        * blog/wp-content/Picture9.png: Modified property svn:mime-type.
+        * blog/wp-content/chucknorris.png: Modified property svn:mime-type.
+        * blog/wp-content/databaseexample.png: Modified property svn:mime-type.
+        * blog/wp-content/drosera.png: Modified property svn:mime-type.
+        * blog/wp-content/hitlist.png: Modified property svn:mime-type.
+        * blog/wp-content/rotate.png: Modified property svn:mime-type.
+        * blog/wp-content/svgtext.png: Modified property svn:mime-type.
+        * blog/wp-content/svgtextmini.png: Modified property svn:mime-type.
+        * blog/wp-content/svgtextmini_01.png: Modified property svn:mime-type.
+        * blog/wp-content/themes/classic/screenshot.png: Modified property svn:mime-type.
+        * blog/wp-content/themes/default/screenshot.png: Modified property svn:mime-type.
+        * blog/wp-content/uploads/2007/06/newinspector.png: Modified property svn:mime-type.
+        * blog/wp-content/webInspector.png: Modified property svn:mime-type.
+        * blog/wp-includes/images/crystal/archive.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/audio.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/code.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/default.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/document.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/interactive.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/spreadsheet.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/text.png: Added property svn:mime-type.
+        * blog/wp-includes/images/crystal/video.png: Added property svn:mime-type.
+        * blog/wp-includes/images/rss.png: Modified property svn:mime-type.
+        * blog/wp-includes/images/upload.png: Added property svn:mime-type.
+        * blog/wp-includes/images/wlw/wp-comments.png: Added property svn:mime-type.
+        * blog/wp-includes/images/wlw/wp-icon.png: Added property svn:mime-type.
+        * blog/wp-includes/images/wlw/wp-watermark.png: Added property svn:mime-type.
+        * blog/wp-includes/js/codepress/images/line-numbers.png: Added property svn:mime-type.
+        * blog/wp-includes/js/thickbox/macFFBgHack.png: Added property svn:mime-type.
+        * blog/wp-includes/js/thickbox/tb-close.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/plugins/wpeditimage/img/delete.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/plugins/wpeditimage/img/image.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/plugins/wpgallery/img/delete.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/plugins/wpgallery/img/edit.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/plugins/wpgallery/img/gallery.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/img/gotmoxie.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/img/sflogo.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/skins/default/img/buttons.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/skins/o2k7/img/button_bg.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/skins/o2k7/img/button_bg_black.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/skins/o2k7/img/button_bg_silver.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/skins/wp_theme/img/butt2.png: Added property svn:mime-type.
+        * blog/wp-includes/js/tinymce/themes/advanced/skins/wp_theme/img/button_bg.png: Added property svn:mime-type.
+        * demos/calendar/Images/AirPort4.png: Modified property svn:mime-type.
+        * demos/calendar/Images/AirPortError.png: Modified property svn:mime-type.
+        * demos/calendar/Images/disclosureTriangleSmallDown.png: Modified property svn:mime-type.
+        * demos/calendar/Images/disclosureTriangleSmallRight.png: Modified property svn:mime-type.
+        * demos/calendar/Images/statusbarBackground.png: Modified property svn:mime-type.
+        * demos/calendar/Images/statusbarResizerVertical.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/button.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonLeft.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonMiddle.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressed.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedLeft.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedMiddle.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedRight.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/buttonRight.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/camera.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/link.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/textAlign.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutline.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottom.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottomLeft.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottomRight.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineLeft.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineRight.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTop.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTopLeft.png: Modified property svn:mime-type.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTopRight.png: Modified property svn:mime-type.
+        * demos/editingToolbar/images/safari.png: Modified property svn:mime-type.
+        * demos/sticky-notes/deleteButton.png: Added property svn:mime-type.
+        * demos/sticky-notes/deleteButtonPressed.png: Added property svn:mime-type.
+        * demos/transitions-and-transforms/Horsehead.png: Modified property svn:mime-type.
+        * demos/transitions-and-transforms/Spaces.png: Modified property svn:mime-type.
+        * demos/transitions-and-transforms/Stacks.png: Modified property svn:mime-type.
+        * images/DroseraPic.png: Modified property svn:mime-type.
+        * misc/drosera/drosera.png: Modified property svn:mime-type.
+        * perf/slickspeed/logo.png: Modified property svn:mime-type.
+
+2009-11-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Adding images for an upcoming blog post.
+
+        * blog-files/inspector/breakpoints.png: Added.
+        * blog-files/inspector/colors.png: Added.
+        * blog-files/inspector/cookies.png: Added.
+        * blog-files/inspector/css_selectors.png: Added.
+        * blog-files/inspector/css_syntax_highlight.png: Added.
+        * blog-files/inspector/dom_storage.png: Added.
+        * blog-files/inspector/edit_attributes.png: Added.
+        * blog-files/inspector/enable.png: Added.
+        * blog-files/inspector/event_listeners.png: Added.
+        * blog-files/inspector/form_data.png: Added.
+        * blog-files/inspector/inline_highlight.png: Added.
+        * blog-files/inspector/inorder.png: Added.
+        * blog-files/inspector/inspect_inspector.png: Added.
+        * blog-files/inspector/inspect_inspector_small.png: Added.
+        * blog-files/inspector/load_lines.png: Added.
+        * blog-files/inspector/nodelist.png: Added.
+        * blog-files/inspector/scope_bar.png: Added.
+        * blog-files/inspector/watched_expression.png: Added.
+
+2009-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Updated BSD License
+
+        * coding/bsd-license.html: Updated to the latest version.
+
+2009-10-22  Mark Rowe  <mrowe@apple.com>
+
+        Update to WordPress 2.8.5.
+
+        * blog:
+
+2009-10-19  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Replace boolean operator indentation example with an if statement.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30538
+
+        * coding/coding-style.html: Replace boolean indenting example to use "if"
+
+2009-10-16  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Minor revision, updating a link and tweaking
+        wording a bit in few places.
+
+2009-10-14  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Document what state the build tree is expected to be in after a patch.
+
+        * coding/contributing.html:
+
+2009-10-11  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Change <a name> to id="" to fix styling problems
+        https://bugs.webkit.org/show_bug.cgi?id=30283
+
+        This prevents the headings from being styled like links.
+
+        * coding/contributing.html:
+
+2009-10-08  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        Added a basic description of the layout and rendering project and added links to the blog entries on rendering.
+
+        * projects/layout/index.html:
+
+2009-10-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=30196
+        Change style guidelines for indentation in header files
+
+        * coding/coding-style.html: Don't indent in a namespace in a header file.
+
+2009-10-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Add new Windows build prerequisite: Visual Studio 2005 Service Pack 1 ATL Security Update
+
+        * building/tools.html:
+
+2009-10-06  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Diagram needs to be linked from the home page
+        https://bugs.webkit.org/show_bug.cgi?id=30142
+
+        http://webkit.org/coding/major-objects.html was never linked from the home
+        page.
+
+        * nav.inc:
+
+2009-09-28  Alex Milowski  <alex@milowski.com>
+
+        <http://webkit.org/b/29098> Update to MathML project webpage
+
+        Reviewed by David Kilzer.
+
+        Updated MathML project page and added link to Wiki page.
+
+        * projects/mathml/index.html:
+
+2009-09-21  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add coding style guidelines for 'using namespace.'
+        https://bugs.webkit.org/show_bug.cgi?id=29499
+
+        * coding/coding-style.html:
+
+2009-09-21  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Add some example files for an upcoming blog post.
+
+        * blog-files/load-unload-example.html: Added.
+        * blog-files/pageshow-pagehide-example.html: Added.
+
+2009-09-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update contributing.html to mention recently added tools.
+        https://bugs.webkit.org/show_bug.cgi?id=29318
+
+        Update our contributing instructions to mention
+        the new tools (check-webkit-style and commit-queue)
+        recently added to make contributions easier.
+
+        * coding/contributing.html:
+         - Mention check-webkit-style as an optional helper tool.
+         - Mention checking the 'patch' checkbox.
+         - Mention the commit-queue as an optional helper tool.
+         - Remove "or in email" since patch reviews are all done via bugzilla.
+         - Encourage contributers to be responsible for getting their patch landed.  Provide a list of committers.
+         - Mention commit-queue as an optional help in getting your patch landed.
+         - Give an overview of the commit-queue process and link to the Commit Queue docs.
+
+2009-09-09  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Mark Rowe.
+
+        Add instructions to bug reporting guidlines on how and when
+        to apply port-specific keywords.
+
+        * quality/bugwriting.html:
+
+2009-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Update Security Group Members list.
+
+        * security/security-group-members.html:
+
+2009-09-06  Cameron McCormack  <cam@mcc.id.au>
+
+        Reviewed by Eric Seidel.
+
+        Drop <definition-src> support
+        https://bugs.webkit.org/show_bug.cgi?id=28991
+
+        When SVG 1.1 Second Edition is a Recommendation we can remove the
+        entry altogether.
+
+        * projects/svg/status.xml: Update page to state that <definition-src>
+        is not supported.
+
+2009-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade WordPress to the latest version.
+
+        * blog/wp-includes/version.php:
+        * blog/wp-login.php:
+
+2009-08-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        major-objects.html should show direct Frame <-> Document pointers
+        https://bugs.webkit.org/show_bug.cgi?id=28479
+
+        * coding/major-objects.html: Added pointers to diagram.
+
+2009-08-18  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Mention handy --bug flag of prepare-ChangeLog script.
+        https://bugs.webkit.org/show_bug.cgi?id=28425
+
+        * coding/contributing.html: Add a reference for --bug flag
+
+2009-08-12  Joe Mason  <joe.mason@torchmobile.com>
+
+        Reviewed by Adam Barth.
+
+        Better explanation of "Null after navigation" in object diagram
+        https://bugs.webkit.org/show_bug.cgi?id=28232
+
+        * coding/major-objects.html:
+
+2009-08-11  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Remove a few characters from the ASCII art to make it fit better in the
+        template.
+
+        * coding/major-objects.html:
+
+2009-08-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Document relation between major objects in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=28210
+
+        Added a diagram showing the relation between major objects.
+
+        * coding/major-objects.html: Added.
+
+2009-08-07  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix webkit-jobs link
+
+        * contact.html:
+
+2009-08-03  Mark Rowe  <mrowe@apple.com>
+
+        Update two WordPress plug-ins that we use.
+
+        * blog/wp-content/plugins/akismet/akismet.php:
+        * blog/wp-content/plugins/akismet/readme.txt:
+        * blog/wp-content/plugins/commentcontrol.php:
+
+2009-08-03  Mark Rowe  <mrowe@apple.com>
+
+        Add some missing files and delete some obsolete files.
+
+        * blog:
+
+2009-08-03  Mark Rowe  <mrowe@apple.com>
+
+        Update WordPress to the latest version.
+
+        * blog:
+
+2009-07-22  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Adam Treat.
+
+        Mention the new webkit-help and webkit-jobs mailinglist. Change
+        the description of webkit-dev to be more strict.
+
+        * contact.html:
+
+2009-07-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Adam Treat.
+
+        Coding style - Clarify some cases with spacing
+        https://bugs.webkit.org/show_bug.cgi?id=27499
+
+        Add explicit rule about no space before comma or semicolon.
+
+        * coding/coding-style.html:
+
+2009-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the font to match the rest of the blog site.
+
+        * blog-files/3d-transforms/image-flip.html:
+
+2009-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Move the image flip effect into an iframe to avoid the long
+        blog page tripping a bug on Leopard.
+
+        * blog-files/3d-transforms/image-flip.html: Added.
+
+2009-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        New demo files for an up-coming blog post.
+
+        * blog-files/3d-transforms/mighty-cubes.png: Added.
+        * blog-files/3d-transforms/morphing-cubes.html: Added.
+        * blog-files/3d-transforms/perspective-by-example.html: Added.
+        * blog-files/3d-transforms/poster-circle.html: Added.
+        * blog-files/3d-transforms/poster-circle.png: Added.
+        * blog-files/3d-transforms/transform-style.html: Added.
+
+2009-07-15  Joseph Pecoraro  <joepeck02@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Side bar linking to "DOM Interfaces" returns 404
+        https://bugs.webkit.org/show_bug.cgi?id=24000
+
+        * nav.inc:
+
+2009-07-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        JavaScript section of http://webkit.org is excessively out of date.
+
+        This removes old todo entries (like adding an API, which we've had since Leopard),
+        and adds an additional todo for a webkit-less Objective-C API.
+
+        * projects/javascript/index.html:
+
+2009-07-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Adam and Collin's affiliation is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=26954
+
+        This change corrects their affiliation.
+
+        * security/security-group-members.html:
+
+2009-06-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        * demos/index.html: Fix more typos etc.
+
+2009-06-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        * security/index.html: Fix some typos.
+
+2009-06-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Move security policy to security/index.html so that
+        webkit.org/security/ works.
+
+        * nav.inc:
+        * security/index.html: Copied from security/security-policy.html.
+        * security/security-policy.html: Removed.
+
+2009-06-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Add WebKit Security Policy and member list of the WebKit Security Group.
+
+        * nav.inc:
+        * security: Added.
+        * security/security-group-members.html: Added.
+        * security/security-policy.html: Added.
+
+2009-06-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt
+
+        Add a page indexing the various demo applications we have posted.
+
+        * demos/index.html: Added.
+        * nav.inc: Add a link to the demos page on the side bar
+        * css/main.css:  Add a style for date stamps based on the blog.
+
+        * demos/calendar/index.html: Added to redirect to Calendar.html.  I'm not moving Calendar.html to
+          index.html as the Calendar.html url has already been published and we should keep it working.
+
+        Move the drosera test code to /misc, as it is no longer a meaningful demo:
+        * demos/drosera: Removed.
+        * demos/drosera/demo.js: Removed.
+        * demos/drosera/drosera.png: Removed.
+        * demos/drosera/index.html: Removed.
+        * misc/drosera: Copied from demos/drosera.
+
+        Move the sticky notes example into /demos:
+        * demos/sticky-notes: Added.
+        * demos/sticky-notes/StickyNotes.manifest: Copied from misc/DatabaseExample.manifest.
+        * demos/sticky-notes/deleteButton.png: Copied from misc/deleteButton.png.
+        * demos/sticky-notes/deleteButtonPressed.png: Copied from misc/deleteButtonPressed.png.
+        * demos/sticky-notes/index.html: Copied from misc/DatabaseExample.html.
+        * misc/DatabaseExample.html: Changed to redirect to demos/sticky-notes/index.html.  I'm not removing
+          it altogether as the misc/DatabaseExample.html url has already been published and we should keep it working.
+        * misc/DatabaseExample.manifest: Removed.
+        * misc/deleteButton.png: Removed.
+        * misc/deleteButtonPressed.png: Removed.
+
+2009-06-10  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fixes https://bugs.webkit.org/show_bug.cgi?id=26309.
+        Update a few items in the testing language to:
+        (1) Reflect results are now generated with Leopard (not Tiger)
+        (2) Explain how to generate pixel-level layout tests.
+
+        * quality/testing.html:
+        * quality/testwriting.html:
+
+2009-06-05  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.com>
+
+        Bug 26188: Clarify some of the cases in the coding style guide
+
+        <https://bugs.webkit.org/show_bug.cgi?id=26188>
+
+        Reviewed and tweaked by David Kilzer.
+
+        Changed the coding style document to clarify some cases of ambiguity.
+
+        * coding/coding-style.html:
+
+2009-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, demo content.
+        
+        - Add doctype to Calendar demo.
+
+        * demos/calendar/Calendar.html:
+
+2009-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, demo content.
+        
+        - add Calendar demo.
+
+        * demos/calendar: Added.
+        * demos/calendar/Boom.aiff: Added.
+        * demos/calendar/Calendar.css: Added.
+        * demos/calendar/Calendar.html: Added.
+        * demos/calendar/Calendar.js: Added.
+        * demos/calendar/Calendar.manifest: Added.
+        * demos/calendar/CalendarApp.icns: Added.
+        * demos/calendar/Images: Added.
+        * demos/calendar/Images/AirPort4.png: Added.
+        * demos/calendar/Images/AirPortError.png: Added.
+        * demos/calendar/Images/disclosureTriangleSmallDown.png: Added.
+        * demos/calendar/Images/disclosureTriangleSmallRight.png: Added.
+        * demos/calendar/Images/statusbarBackground.png: Added.
+        * demos/calendar/Images/statusbarResizerVertical.png: Added.
+        * demos/calendar/LocationImage.js: Added.
+        * demos/calendar/Utilities.js: Added.
+        * demos/calendar/favicon.ico: Added.
+        * demos/calendar/mime.types: Added.
+
+2009-05-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        Prevent search engines from getting creative in their descriptions of webkit.org content.
+
+        * blog/wp-content/themes/webkit/header.php:
+        * header.inc:
+
+2009-05-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Update Contributing instructions after feedback from Julie Parent.
+        https://bugs.webkit.org/show_bug.cgi?id=25611
+
+        * coding/contributing.html: Add a few more comments on ChangeLogs
+
+2009-04-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Steve Falkenburg
+        
+        Fix the link for setting the Platform SDK paths in the Windows instructions.
+
+        * building/build.html:
+
+2009-04-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25186
+        There is no XSLT component in bugzilla
+
+        * projects/xslt/index.html: Changed to search by bug title.
+
+2009-02-20  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 23983: Remove illegal HTML tags from Sunspider web pages
+
+        <https://bugs.webkit.org/show_bug.cgi?id=23983>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * perf/sunspider-0.9/3d-cube.html: Removed </link> tag.
+        * perf/sunspider-0.9/3d-morph.html: Ditto.
+        * perf/sunspider-0.9/3d-raytrace.html: Ditto.
+        * perf/sunspider-0.9/access-binary-trees.html: Ditto.
+        * perf/sunspider-0.9/access-fannkuch.html: Ditto.
+        * perf/sunspider-0.9/access-nbody.html: Ditto.
+        * perf/sunspider-0.9/access-nsieve.html: Ditto.
+        * perf/sunspider-0.9/bitops-3bit-bits-in-byte.html: Ditto.
+        * perf/sunspider-0.9/bitops-bits-in-byte.html: Ditto.
+        * perf/sunspider-0.9/bitops-bitwise-and.html: Ditto.
+        * perf/sunspider-0.9/bitops-nsieve-bits.html: Ditto.
+        * perf/sunspider-0.9/controlflow-recursive.html: Ditto.
+        * perf/sunspider-0.9/crypto-aes.html: Ditto.
+        * perf/sunspider-0.9/crypto-md5.html: Ditto.
+        * perf/sunspider-0.9/crypto-sha1.html: Ditto.
+        * perf/sunspider-0.9/date-format-tofte.html: Ditto.
+        * perf/sunspider-0.9/date-format-xparb.html: Ditto.
+        * perf/sunspider-0.9/math-cordic.html: Ditto.
+        * perf/sunspider-0.9/math-partial-sums.html: Ditto.
+        * perf/sunspider-0.9/math-spectral-norm.html: Ditto.
+        * perf/sunspider-0.9/regexp-dna.html: Ditto.
+        * perf/sunspider-0.9/string-base64.html: Ditto.
+        * perf/sunspider-0.9/string-fasta.html: Ditto.
+        * perf/sunspider-0.9/string-tagcloud.html: Ditto.
+        * perf/sunspider-0.9/string-unpack-code.html: Ditto.
+        * perf/sunspider-0.9/string-validate-input.html: Ditto.
+        * perf/sunspider-0.9/sunspider-driver.html: Ditto.
+        * perf/sunspider-0.9/sunspider-results.html: Removed </link> and </input> tags.
+        * perf/sunspider-0.9/sunspider.html: Removed </link> tag.
+
+2009-01-19  Adam Roben  <aroben@apple.com>
+
+        Add links to some recommended Visual Studio hotfixes
+
+        Reviewed by Dave Hyatt.
+
+        * building/tools.html:
+
+2009-01-08  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Adele Petersen.
+        Landed by Pamela Greene.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=23139
+        Remove links to no-longer-existing Drosera project.
+        Also, clean up references to wiki in the nav.inc file.
+
+        * nav.inc: Correct paths to wiki, swap Drosera for Web Inspector.
+
+2008-12-30  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin Adler.
+        Landed by Pamela Greene.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=22908.
+        Update website so that newbies are told they must set the
+        WebKitOutputDir to get a valid build.
+
+        * building/build.html: Add language (and link) indicating the
+        importance of setting the WebKitOutputDir variable, as well
+        as a link to instructions on how to do so.
+
+2008-12-19  Dean Jackson  <dino@apple.com>
+
+        Media queries that return <integer> but are really boolean
+        are restricted to 0 and 1. This is in line with other
+        media features.
+
+        * specs/MediaQueriesExtensions.html:
+
+2008-12-03  Dean Jackson  <dino@apple.com>
+
+        Added links to the WebKit and Mozilla bugs for pointer-events.
+
+        * specs/PointerEventsProperty.html:
+
+2008-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Bug 22468: Coding style: config.h should only be included in implementation files, not in header
+        https://bugs.webkit.org/show_bug.cgi?id=22468
+
+        Clarified the rules about config.h inclusion and added 2 new examples to illustrate it. Also
+        added an explanation about the implementation files.
+
+        * coding/coding-style.html:
+
+2008-11-25  Dean Jackson  <dino@apple.com>
+
+        Add a new work-in-progress proposal for pointer-events in
+        HTML content. Also note that the Media Queries extensions
+        are not at all official.
+
+        * specs/MediaQueriesExtensions.html:
+        * specs/PointerEventsProperty.html: Added.
+        * specs/index.html:
+
+2008-11-25  Jack Wootten  <jackwootton@gmail.com>
+
+        Bug 20125: http://webkit.org/ missing link to key documentation for new developers.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20125>
+
+        Reviewed by David Kilzer.
+
+        * projects/documentation/index.html: Added link to "Introduction to
+        WebKit Objective-C Programming Guide".
+
+2008-11-24  Dean Jackson  <dino@apple.com>
+
+        Document the work-in-progress proposed extensions to
+        CSS 3 Media Queries.
+
+        * specs/MediaQueriesExtensions.html: Added.
+        * specs/index.html:
+
+2008-11-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig and Antti Koivisto.
+        
+        Clarified the last coding style rule, which was a baffling in its 
+        initial form.
+        
+        (Now let's see if our code ever starts following this rule!)
+
+        * coding/coding-style.html:
+
+2008-11-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Clarify an edge case for acronym capitalization.
+
+        * coding/coding-style.html:
+
+2008-11-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Update leaves animation sample.
+        
+        * blog-files/leaves/index.html:
+        * blog-files/leaves/leaves.css:
+
+2008-11-11  Dean Jackson  <dino@apple.com>
+
+        Removed quotes in animation name value.
+
+        * blog-files/pulse.html:
+
+2008-11-11  Dean Jackson  <dino@apple.com>
+
+        Added a smaller version of a screenshot.
+
+        * blog-files/leaves-screenshot-small.jpg: Added.
+
+2008-11-11  Dean Jackson  <dino@apple.com>
+
+        Add a bunch of examples for CSS Animation blog draft.
+
+        * blog-files/bounce.html: Added.
+        * blog-files/bounce.png: Added.
+        * blog-files/leaves-screenshot.jpg: Added.
+        * blog-files/leaves/images/apple-touch-icon.png: Added.
+        * blog-files/leaves/images/backgroundLeaves.jpg: Added.
+        * blog-files/leaves/images/realLeaf1.png: Added.
+        * blog-files/leaves/images/realLeaf2.png: Added.
+        * blog-files/leaves/images/realLeaf3.png: Added.
+        * blog-files/leaves/images/realLeaf4.png: Added.
+        * blog-files/leaves/images/textBackground.png: Added.
+        * blog-files/leaves/index.html: Added.
+        * blog-files/leaves/leaves.css: Added.
+        * blog-files/leaves/leaves.js: Added.
+        * blog-files/pulse.html: Added.
+        * blog-files/pulse.png: Added.
+
+2008-10-30  Cameron Zwarich  <zwarich@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update the link to Mac Subversion binaries.
+
+        * building/tools.html:
+
+2008-10-27  Antti Koivisto  <antti@apple.com>
+
+        Add a file.
+
+        * blog-files/squirrelfish-link-animated.svg: Added.
+
+2008-10-27  Antti Koivisto  <antti@apple.com>
+
+        Add some svg files.
+
+        * blog-files/cubes-7.svg: Added.
+        * blog-files/number-morph.svg: Added.
+
+2008-10-07  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Second draft.
+
+2008-10-04  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.6.2.
+
+        * blog:
+
+2008-09-26  Timothy Hatcher  <timothy@apple.com>
+
+        Add screenshots of searching in the Web Inspector.
+
+        Not reviewed.
+
+        * blog-files/inspector-searching-elements.png: Added.
+        * blog-files/inspector-searching-profiles.png: Added.
+
+2008-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+        
+        - add some screenshots.
+
+        * blog-files/acid3-screenshot.png: Added.
+        * blog-files/acid3-timing-screenshot.png: Added.
+
+2008-09-25  Darin Adler  <darin@apple.com>
+
+        * contact.html: Take a cut at making the role of webkitsdk-dev
+        clearer, specifying that it's Mac OS X specific and hosted at
+        Apple, not WebKit.
+
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Add new screenshots of the Web Inspector's Scope Variables pane.
+
+        Not reviewed.
+
+        * blog-files/inspector-closure-scope.png: Added.
+        * blog-files/inspector-event-scope.png: Added.
+        * blog-files/inspector-with-scope.png: Added.
+
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Add another screenshot of the Web Inspector.
+
+        Not reviewed.
+
+        * blog-files/inspector-disabling-properties.png: Added.
+
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Add new screenshots of the Web Inspector.
+
+        Not reviewed.
+
+        * blog-files/inspector-console-autocomplete.png: Added.
+        * blog-files/inspector-databases-panel-query-view.png: Added.
+        * blog-files/inspector-databases-panel.png: Added.
+        * blog-files/inspector-elements-panel.png: Added.
+        * blog-files/inspector-numeric-style-stepping.gif: Added.
+        * blog-files/inspector-profiles-panel.png: Added.
+        * blog-files/inspector-resources-panel.png: Added.
+        * blog-files/inspector-scripts-panel.png: Added.
+        * blog-files/inspector-status-bar-with-errors.png: Added.
+        * blog-files/inspector-toolbar.png: Added.
+
+2008-09-24  Timothy Hatcher  <timothy@apple.com>
+
+        Not reviewed.
+
+        * demos/drosera/demo.js: Add some console.profile() calls.
+
+2008-09-22  Alexander Orlov  <alexander.orlov@loxal.net>
+
+        Reviewed by Darin Adler.
+
+        * projects/performance/index.html: Remove dead link to the 24fun test.
+
+2008-09-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+
+        * blog-files/animation-demo.svg: Added.
+
+2008-09-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+
+        * blog-files/sfx-perf.png: Added.
+
+2008-08-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Modernize the bug reporting guidelines and make them a little less Mac-specific.
+
+        * quality/bugwriting.html:
+
+2008-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.6.1.
+
+        * blog:
+
+2008-08-01  Adam Roben  <aroben@apple.com>
+
+        Add a link to the instructions to use Apple's Safari for Windows
+        symbol server
+
+        Reviewed by Eric Seidel.
+
+        * building/debug.html:
+
+2008-07-28  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Mark Rowe.
+
+        Fix for bug: Website provides no guidance on debugging
+        <https://bugs.webkit.org/show_bug.cgi?id=3643>
+
+        * building/debug.html: added info about Xcode Debugging Guide.
+
+2008-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Update the Squirrelfish bytecode documentation.
+
+        * specs/squirrelfish-bytecode.html:
+
+2008-07-26  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Eric Seidel.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=19712>
+        Corrected validation errors in main.css file.
+
+        * css/main.css:
+
+2008-07-26  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix for bug: <https://bugs.webkit.org/show_bug.cgi?id=18186>
+        Added notes about unsupported Visual Studio versions.
+
+        * building/tools.html:
+
+2008-07-26  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Eric Seidel.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=16719>
+        Removed basic requirements for undetected version of WebKit.
+
+        * quality/reporting.html:
+
+2008-07-26  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Adele Petersen.
+
+        Fix for bug 7436: Truncated title on webkit DOM page.
+        <https://bugs.webkit.org/show_bug.cgi?id=7436>
+
+        * projects/dom/index.html: Added basic project informations.
+
+2008-07-24  Adam Roben  <aroben@apple.com>
+
+        Remove some redundant text accidentally checked in
+
+        * building/tools.html:
+
+2008-07-24  Adam Roben  <aroben@apple.com>
+
+        Fix a dead link to the Windows Platform SDK and related instructions
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * building/tools.html: Fixed a dead link.
+
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
+        Update Akismet plugin to 2.1.6.
+
+        * blog/wp-content/plugins/akismet/akismet.php:
+
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
+        Update to WordPress 2.6.
+
+        * blog:
+
+2008-07-18  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fixed indentation of example code for C++ pointers/references!
+
+        * coding/coding-style.html:
+
+2008-07-18  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by David Kilzer.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=12313>
+        Added code style guidelines for multi-line boolean expressions
+
+        * coding/coding-style.html:
+
+2008-07-02  Mark Rowe  <mrowe@apple.com>
+
+        Update a URL that was out of date.
+
+        * building/checkout.html:
+
+2008-07-01  Mark Rowe  <mrowe@apple.com>
+
+        Update the path to the configuration file.
+
+        * blog/wp-config.php:
+
+2008-06-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        * css/main.css: Reduced text shadow offsets.
+
+2008-06-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, web site fix.
+        
+        Remove blank lines in an attempt to fix feeds.
+
+        * blog/wp-content/themes/webkit/index.php:
+        * blog/wp-content/themes/webkit/links.php:
+
+2008-06-22  Aaron Digulla  <digulla@hepe.com>
+
+        Reviewed by Darin Adler.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18993
+        Bug 18993: Update of buttons in editing toolbar demo lags behind
+
+        * demos/editingToolbar/FancyToolbar.js:
+        * demos/editingToolbar/index.html:
+
+2008-06-16  Maciej Stachowiak  <mjs@apple.com>
+
+        A handy reference image.
+
+        * blog-files/acid3-timing.png: Added.
+
+2008-06-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+        
+        - tweak newly added markup.
+
+        * blog/wp-content/themes/webkit/header.php:
+
+2008-06-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adele.
+
+        - add short title and multisize icon
+        
+        * blog/wp-content/themes/webkit/header.php:
+        * images/surfin-safari.icns: Added.
+
+2008-06-04  Dean Jackson   <dino@apple.com>
+
+        Put index pages into specs dirs to make it easier to
+        find the documents.
+
+        * specs/index.html: Added.
+        * specs/CSSVisualEffects/index.html: Added.
+
+2008-06-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Add a snapshot of the squirrelfish bytecode docs.
+
+        * specs/squirrelfish-bytecode.html: Added.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Transparent background!
+
+        * blog-files/squirrelfish.png:
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Crop!
+
+        * blog-files/squirrelfish-webkit-graph.png:
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Renamed this file quiet down the peanut gallery.
+
+        * blog-files/squirrelfish-webkit-graph.png: Copied from blog-files/webkit-graph.png.
+        * blog-files/webkit-graph.png: Removed.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Added a graph.
+
+        * blog-files/webkit-graph.png: Added.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Moved the squirrelfish mascot to the right place.
+
+        * blog-files/squirrelfish.png: Copied from images/squirrelfish.png.
+        * images/squirrelfish.png: Removed.
+
+2008-06-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Uploaded the squirrelfish mascot.
+
+        * images/squirrelfish.png: Added.
+
+2008-05-23  William Siegrist  <wsiegrist@apple.com>
+
+        Reviewed by Mark Rowe
+
+        Rename duplicated "notice" id to "terms".
+
+        * css/main.css:
+        * nav.inc:
+
+2008-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jess.
+
+        Add manifest MIME type.
+        
+        * .htaccess:
+
+2008-05-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Make our Sticky notes example an offline web app.
+
+        * misc/DatabaseExample.html:
+        * misc/DatabaseExample.manifest: Added.
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Ooops, I made some mistakes trying to fix the validation errors. This time for sure.
+
+        * demos/transitions-and-transforms/index.html:
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Make the demo valid HTML5 (according to validator.nu) and add alt text to the images.
+
+        * demos/transitions-and-transforms/index.html:
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Tweaked demo visuals slightly.
+
+        * demos/transitions-and-transforms/leopard.css:
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Tweak CSS to look a little better while loading.
+
+        * demos/transitions-and-transforms/leopard.css:
+
+2008-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - new demo.
+        
+        Added a demo of CSS Transforms and Transitions.
+
+        * demos/transitions-and-transforms: Added.
+        * demos/transitions-and-transforms/Finder Coverflow.png: Added.
+        * demos/transitions-and-transforms/Horsehead.png: Added.
+        * demos/transitions-and-transforms/Mail Stationery.png: Added.
+        * demos/transitions-and-transforms/Quick Look.png: Added.
+        * demos/transitions-and-transforms/Spaces.png: Added.
+        * demos/transitions-and-transforms/Stacks.png: Added.
+        * demos/transitions-and-transforms/Time Machine.png: Added.
+        * demos/transitions-and-transforms/index.html: Added.
+        * demos/transitions-and-transforms/leopard.css: Added.
+        * demos/transitions-and-transforms/no-style.html: Added.
+
+2008-05-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a link to the Mac OS Forge terms of use.
+
+        * nav.inc:
+
+2008-04-25  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.5.1.  Another day, another security vulnerability in WordPress.
+
+        * blog:
+
+2008-04-21  Dean Jackson  <dino@apple.com>
+
+        Updated CSS Visual Effects proposals.
+        
+        CSS Animations
+
+        * described simplified sandwich model (that animations have no effect
+          outside their duration and last specified animation wins)
+        * diagram showing the above
+        * specified animations to start at style resolution or document load,
+          whichever is later.
+        * animation start events always have elapsedTime == 0
+
+        CSS Transforms
+
+        * removed text saying that elements cannot be drawn as intersecting.
+        * described that preserve-3d trees often need a flattening parent, otherwise
+          elements can be hidden behind their ancestor's background.
+        * describe that preserve-3d is not always possible, such as when
+          overflow is 'hidden'.
+
+        CSS Transitions
+
+        * no change
+
+        * specs/CSSVisualEffects/CSSAnimation.html:
+        * specs/CSSVisualEffects/CSSTransforms.html:
+        * specs/CSSVisualEffects/CSSTransitions.html:
+        * specs/CSSVisualEffects/sandwich.png: Added.
+
+2008-04-08  Dean Jackson  <dino@apple.com>
+
+        Add some updated proposals for CSS specifications, such as 
+        Transforms and Transitions which are already implemented in TOT.
+
+        * specs/CSSVisualEffects: Added.
+        * specs/CSSVisualEffects/CSSAnimation.html: Added.
+        * specs/CSSVisualEffects/CSSTransforms.html: Added.
+        * specs/CSSVisualEffects/CSSTransitions.html: Added.
+
+2008-03-31  Mark Rowe  <mrowe@apple.com>
+
+        Add some images that were missed in the WordPress 2.5 upgrade.
+
+        * blog/: 
+
+2008-03-31  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.5
+
+        * blog/:
+
+2008-03-28  Darin Adler  <darin@apple.com>
+
+        * building/build.html: Add another mention of using the Cygwin shell.
+        * building/tools.html: Fix a typo on the name Cygwin.
+
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        More screenshots for the blog.
+
+        * blog-files/acid3-full-rendering-pass.png: Added.
+        * blog-files/acid3-rendering-reference.png: Added.
+
+2008-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Screenshot for blog post.
+
+        * blog-files/acid3-100.png: Added.
+
+2008-03-23  Antti Koivisto  <antti@apple.com>
+
+        * blog-files/wsj-vs.png: Added.
+
+2008-03-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+        
+        Make our SVG status document slightly less inaccurate.
+
+        * projects/svg/status.xml:
+
+2008-03-21  Antti Koivisto  <antti@apple.com>
+        
+        Add some images for a blog post.
+
+        * blog-files/wsj-nopreload.png: Added.
+        * blog-files/wsj-preload.png: Added.
+
+2008-03-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - link "backtrace" to the page that explains how to get one
+
+        * quality/bugwriting.html:
+
+2008-03-15  Matt Lilek  <webkit@mattlilek.com>
+
+        Rubber-stamped by Mitz.
+
+        Update crash log page with instructions for Leopard.
+
+        * quality/crashlogs.html:
+
+2008-03-11  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
+        Fix bug http://bugs.webkit.org/show_bug.cgi?id=17280
+        Patch deletes an obsolete hitlist.html page and other references to it
+
+        * nav.inc: removed menu link to hitlist.html
+        * projects/compat/hitlist.html: Removed.
+        * projects/compat/index.html: removed reference to hitlist.html
+
+2008-03-06  Timothy Hatcher  <timothy@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Add a simple page that has various demo functions for Drosera.
+
+        * demos/drosera: Added.
+        * demos/drosera/demo.js: Added.
+        * demos/drosera/drosera.png: Added.
+        * demos/drosera/index.html: Added.
+
+2008-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        * building/tools.html:  Update link to Windows Platform SDK to its new location.
+
+2008-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a note about preferring if over else if when the previous if is terminated by a return statement.
+
+        * coding/coding-style.html:
+
+2008-02-08  Adam Roben  <aroben@apple.com>
+
+        * perf/slickspeed/config.ini: Fixed version number.
+
+2008-02-08  Adam Roben  <aroben@apple.com>
+
+        Update jQuery to v1.2.3
+
+        Rubberstamped by Mitz.
+
+        * perf/slickspeed/config.ini:
+        * perf/slickspeed/frameworks/jquery-1.2.3.js: Renamed from WebKitSite/perf/slickspeed/frameworks/jquery-1.2.1.js.
+
+2008-02-07  David Smith  <catfish.man@gmail.com>
+
+        Rubber stamped by weinig and bdash.
+        Update prototype.js to 1.6.0.2 to be a bit less unfair in comparative benchmarking.
+
+        * perf/slickspeed/frameworks/prototype.js:
+
+2008-02-07  David Smith  <catfish.man@gmail.com>
+
+        Rubber stamped by Mark Rowe
+        Fix a duplicate selector in the test.
+
+        * perf/slickspeed/selectors.list:
+
+2008-02-07  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Adam Roben.
+        Added :nth-child and :last-child to the list of selectors to test.
+
+        * perf/slickspeed/selectors.list:
+
+2008-02-05  Mark Rowe  <mrowe@apple.com>
+
+        Update WordPress to 2.3.3 which includes security fixes.
+
+        * blog/wp-admin/install-helper.php:
+        * blog/wp-includes/gettext.php:
+        * blog/wp-includes/pluggable.php:
+        * blog/wp-includes/version.php:
+        * blog/xmlrpc.php:
+
+2008-02-02  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Oliver.
+        
+        Update the selector benchmark/test now that WebKit supports :only-child and :last-child; 
+        Unfortunately, the javascript libraries don't appear to implement :*-of-type correctly, so that one remains disabled for now.
+
+        * perf/slickspeed/header.html: Typo fix, and updated the note to clarify that WebKit is no longer the only implementation causing us to leave some selectors disabled.
+        * perf/slickspeed/selectors.list: Added the new selectors
+
+2008-02-02  Mark Rowe  <mrowe@apple.com>
+
+        Add WordPress plugin to give more control over blog comment settings.
+
+        * blog/wp-content/plugins/commentcontrol.php: Added.
+
+2008-01-30  Jessica Kahn  <jess@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * coding/coding-style.html:
+        Adding a note about avoiding explicit nil/NO initialization of Objective-C instance variables.
+
+2008-01-21  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Darin Adler.
+        
+        Added a modified version of the MooTools SlickSpeed Selector Test/Benchmark to show off querySelectorAll. MIT licensed.
+
+        * perf/slickspeed: Added.
+        * perf/slickspeed/config.ini: Added.
+        * perf/slickspeed/footer.html: Added.
+        * perf/slickspeed/frameworks: Added.
+        * perf/slickspeed/frameworks/DomQuery.js: Added.
+        * perf/slickspeed/frameworks/dummy.js: Added.
+        * perf/slickspeed/frameworks/jquery-1.2.1.js: Added.
+        * perf/slickspeed/frameworks/prototype.js: Added.
+        * perf/slickspeed/header.html: Added.
+        * perf/slickspeed/index.php: Added.
+        * perf/slickspeed/instructions.txt: Added.
+        * perf/slickspeed/logo.png: Added.
+        * perf/slickspeed/selectors.list: Added.
+        * perf/slickspeed/style.css: Added.
+        * perf/slickspeed/system: Added.
+        * perf/slickspeed/system/index.php: Added.
+        * perf/slickspeed/system/slickspeed.js: Added.
+        * perf/slickspeed/system/template.php: Added.
+        * perf/slickspeed/template.html: Added.
+
+2008-01-17  Steve Falkenburg  <sfalken@apple.com>
+
+        Added Vista crash logging information.
+        
+        Reviewed by Adam.
+
+        * quality/crashlogs.html:
+
+2008-01-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        * projects/svg/status.xml: remove fixed bugs.
+
+2007-12-30  Mark Rowe  <mrowe@apple.com>
+
+        Unreviewed.  Update WordPress to 2.3.2, which includes security fixes.
+
+        * blog/wp-admin/admin.php:
+        * blog/wp-admin/includes/file.php:
+        * blog/wp-admin/install.php:
+        * blog/wp-admin/setup-config.php:
+        * blog/wp-app.php:
+        * blog/wp-includes/formatting.php:
+        * blog/wp-includes/functions.php:
+        * blog/wp-includes/pluggable.php:
+        * blog/wp-includes/post.php:
+        * blog/wp-includes/query.php:
+        * blog/wp-includes/taxonomy.php:
+        * blog/wp-includes/version.php:
+        * blog/wp-includes/wp-db.php:
+        * blog/wp-mail.php:
+        * blog/wp-settings.php:
+        * blog/xmlrpc.php:
+
+2007-12-29  Alp Toker  <alp@atoker.com>
+
+        Fix typo.
+
+        * perf/sunspider-0.9/sunspider.html:
+
+2007-12-29  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Maciej.
+
+        Provide the current URL in the SunSpider results page. Useful for
+        copying benchmark results out of browsers without a location bar or
+        where the location bar can't handle long URLs.
+
+        * perf/sunspider-0.9/sunspider-results.html:
+
+2007-12-21  David Smith  <catfish.man@gmail.com>
+
+        At bdash's suggestion, display a message if someone attempts to run the 'native' version of the getElementsByClassName benchmark in a browser that doesn't support that.
+
+        * blog-files/gebcnspeedtest.html:
+
+2007-12-21  David Smith  <catfish.man@gmail.com>
+
+        Add the benchmark from the previous commit as well.
+
+        * blog-files/gebcnspeedtest.html: Added.
+        * blog-files/prototype-for-gebcn-test.js: Added.
+
+2007-12-21  David Smith  <catfish.man@gmail.com>
+
+        Add a graph of benchmark results for an upcoming blog post.
+
+        * blog-files/gebcnwebkitonly.png: Added.
+
+2007-12-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin and Steve.
+        
+        Add instructions to install the QuickTime SDK for Windows.
+
+        * building/tools.html:
+
+2007-12-18  Mark Rowe  <mrowe@apple.com>
+
+        Fix typo.
+
+        * perf/sunspider-0.9/sunspider.html:
+
+2007-12-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Correct link to Visual Studio Express 2005.
+        Old link points to 2008.
+        
+        Reviewed by Mark.
+
+        * building/tools.html:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - work around IE layout bugs
+
+        * perf/sunspider-0.9/sunspider.css:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark.
+        
+        - fix compare feature
+
+        * perf/sunspider-0.9/sunspider-results.html:
+
+2007-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Mark.
+        
+        - Add a copy of SunSpider 0.9 to the site
+
+        * perf: Added.
+        * perf/sunspider-0.9: Added.
+        * perf/sunspider-0.9/3d-cube.html: Added.
+        * perf/sunspider-0.9/3d-morph.html: Added.
+        * perf/sunspider-0.9/3d-raytrace.html: Added.
+        * perf/sunspider-0.9/access-binary-trees.html: Added.
+        * perf/sunspider-0.9/access-fannkuch.html: Added.
+        * perf/sunspider-0.9/access-nbody.html: Added.
+        * perf/sunspider-0.9/access-nsieve.html: Added.
+        * perf/sunspider-0.9/bitops-3bit-bits-in-byte.html: Added.
+        * perf/sunspider-0.9/bitops-bits-in-byte.html: Added.
+        * perf/sunspider-0.9/bitops-bitwise-and.html: Added.
+        * perf/sunspider-0.9/bitops-nsieve-bits.html: Added.
+        * perf/sunspider-0.9/controlflow-recursive.html: Added.
+        * perf/sunspider-0.9/crypto-aes.html: Added.
+        * perf/sunspider-0.9/crypto-md5.html: Added.
+        * perf/sunspider-0.9/crypto-sha1.html: Added.
+        * perf/sunspider-0.9/date-format-tofte.html: Added.
+        * perf/sunspider-0.9/date-format-xparb.html: Added.
+        * perf/sunspider-0.9/math-cordic.html: Added.
+        * perf/sunspider-0.9/math-partial-sums.html: Added.
+        * perf/sunspider-0.9/math-spectral-norm.html: Added.
+        * perf/sunspider-0.9/regexp-dna.html: Added.
+        * perf/sunspider-0.9/string-base64.html: Added.
+        * perf/sunspider-0.9/string-fasta.html: Added.
+        * perf/sunspider-0.9/string-tagcloud.html: Added.
+        * perf/sunspider-0.9/string-unpack-code.html: Added.
+        * perf/sunspider-0.9/string-validate-input.html: Added.
+        * perf/sunspider-0.9/sunspider-analyze-results.js: Added.
+        * perf/sunspider-0.9/sunspider-compare-results.js: Added.
+        * perf/sunspider-0.9/sunspider-driver.html: Added.
+        * perf/sunspider-0.9/sunspider-record-result.js: Added.
+        * perf/sunspider-0.9/sunspider-results.html: Added.
+        * perf/sunspider-0.9/sunspider-test-prefix.js: Added.
+        * perf/sunspider-0.9/sunspider.css: Added.
+        * perf/sunspider-0.9/sunspider.html: Added.
+
+2007-12-16  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16446.
+
+        * building/debug.html:  Update to expand the win32 debugging instructions.
+
+2007-12-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        When developing the Database feature and dealing with UI Delegate issues, it is important to have
+        live examples on the web to help reproduce certain situations.
+
+        This file is a dumping ground for such examples, and starts out with one function - the ability to add
+        arbitrary amounts of data to a database to test the quota-related mechanisms of the UI
+
+        * misc/DatabaseTester.html: Added.
+
+2007-12-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben
+
+        * misc/DatabaseExample.html: Changed to differentiate failure between running with an
+          unsupported browser or some other error that prevented the database from opening.
+          In the future we can use ExceptionCodes returned from openDatabase(), but a good list
+          of those don't exist yet
+
+2007-12-05  Timothy Hatcher  <timothy@apple.com>
+
+        Add another Inspector screenshot for an upcoming blog post.
+
+        * blog-files/InspectorDatabaseBrowser.png: Added.
+
+2007-12-04  Alp Toker  <alp@atoker.com>
+
+        Reviewed by Mark Rowe.
+
+        Link to Planet WebKit.
+
+        * nav.inc:
+
+2007-12-02  Adam Roben  <aroben@apple.com>
+
+        Add another screenshot
+
+        * blog-files/InspectElementMenu.png: Added.
+
+2007-12-02  Adam Roben  <aroben@apple.com>
+
+        Add some Inspector screenshots for an upcoming blog post
+
+        Rubberstamped by Mark Rowe.
+
+        * blog-files/InspectorCSSEditing.png: Added.
+        * blog-files/InspectorFonts.png: Added.
+
+2007-11-30  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Adam.
+
+        Link to the commit and review policy.
+
+        * coding/contributing.html:
+        * nav.inc:
+
+2007-11-30  Darin Adler  <darin@apple.com>
+
+        * coding/commit-review-policy.html: A couple more typos and very
+        minor grammatical stuff. No substantive change.
+
+2007-11-30  Darin Adler  <darin@apple.com>
+
+        * coding/commit-review-policy.html: Fixed a typo, added a footer.
+
+2007-11-30  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Maciej.
+
+        Clean up a couple of typos from Maciej's last patch.
+
+        * coding/commit-review-policy.html:
+
+2007-11-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Bertrand.
+        
+        New commit and review policy.
+
+        * coding/commit-review-policy.html: Added.
+
+2007-11-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric.
+
+        Update coding style to cover control statements with no body.
+
+        * coding/coding-style.html:
+
+2007-11-17  Adam Roben  <aroben@apple.com>
+
+        Update Windows debugging instructions
+
+        Reviewed by Mark Rowe.
+
+        * building/debug.html:
+
+2007-11-14  Brady Eidson  <beidson@apple.com>
+
+        For future use
+
+        * images/DroseraPic.png: Added.
+
+2007-11-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        Update the DatabaseExample to use the new API
+
+        * misc/DatabaseExample.html:
+
+2007-11-12  Mark Rowe  <mrowe@apple.com>
+
+        * building/tools.html: Remove extra >.
+
+2007-11-09  Antti Koivisto  <antti@apple.com>
+
+        Rubber stamped by bdash.
+        
+        Add directory for blog resources (and one image).
+
+        * blog-files: Added.
+        * blog-files/touch-poster.png: Added.
+
+2007-11-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - removed a workaround for the bug fixed in the WebCore part of this
+          patch
+
+2007-11-04  Timothy Hatcher  <timothy@apple.com>
+
+        Land the HTML Editing Toolbar demo from WWDC 2007.
+
+        * demos: Added.
+        * demos/editingToolbar: Added.
+        * demos/editingToolbar/FancyToolbar.css: Added.
+        * demos/editingToolbar/FancyToolbar.js: Added.
+        * demos/editingToolbar/FancyToolbarImages: Added.
+        * demos/editingToolbar/FancyToolbarImages/button.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonMiddle.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressed.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedMiddle.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonPressedRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/buttonRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/camera.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/link.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/textAlign.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutline.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottom.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottomLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineBottomRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineRight.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTop.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTopLeft.png: Added.
+        * demos/editingToolbar/FancyToolbarImages/toolbarOutlineTopRight.png: Added.
+        * demos/editingToolbar/content.html: Added.
+        * demos/editingToolbar/images: Added.
+        * demos/editingToolbar/images/safari.png: Added.
+        * demos/editingToolbar/index.html: Added.
+
+2007-11-04  David D. Kilzer  <ddkilzer@webkit.org>
+
+        CIA has changed its hostname from cia.navi.cx to cia.vc
+        <http://bugs.webkit.org/show_bug.cgi?id=15829>
+
+        Reviewed by Mitz.
+
+        * contact.html: Updated links to CIA.
+
+2007-11-03  David D. Kilzer  <ddkilzer@webkit.org>
+
+        LGPL'ed files contain incorrect FSF address
+        <http://bugs.webkit.org/show_bug.cgi?id=14885>
+
+        Reviewed by NOBODY (follow-up fix).
+
+        * blog/wp-includes/class-snoopy.php:
+        * blog/wp-includes/gettext.php:
+        * blog/wp-includes/streams.php:
+
+2007-11-01  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Tim Hatcher.
+
+        * misc/DatabaseExample.html: Speed up default close speed to .25s
+
+2007-11-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        - Don't show the close button on the notes unless hovering over the note.
+        - Do transformation and fade when closing a note using the new transition properties.
+
+        * misc/DatabaseExample.html:
+
+2007-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade WordPress.
+
+        * blog: Updated.
+
+2007-10-29  Mark Rowe  <mrowe@apple.com>
+
+        Files that have been added or modified on the web server without making it in to SVN.
+
+        * .htaccess:
+        * blog/wp-content/databaseexample.png: Added.
+        * blog/wp-content/uploads: Added.
+        * blog/wp-content/uploads/2007: Added.
+        * blog/wp-content/uploads/2007/06: Added.
+        * blog/wp-content/uploads/2007/06/newinspector.png: Added.
+        * building/cygwin-downloader.zip: Added.
+
+2007-10-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Mark Rowe.
+
+        * images/download.png: Updated to say "Nightly builds" instead of
+       "Nightly (6 MB)" - the Mac version is ~15 MB now, and this isn't a direct
+       download link anyway.
+
+2007-10-21  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=15592
+          DOM Exception opening up client-side database example for the first time
+
+        There was a race condition when creating the WebKitStickyNotes table for the
+        first time in which the loaded() function (renamed to loadNotes()) could be
+        called before the table was created.  Prevent this by only calling loadNotes()
+        in an executeSql() callback after we know the table exists, or after we know
+        the table has been created.
+
+        * misc/DatabaseExample.html: Renamed loaded() function to loadNotes().
+        Created a new loaded() function.
+
+2007-10-20  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Adam.
+
+        Convert TIFFs to PNGs so that the demo page is fully-functional in the Gtk port.
+
+        * misc/DatabaseExample.html:
+        * misc/deleteButton.png: Added.
+        * misc/deleteButton.tiff: Removed.
+        * misc/deleteButtonPressed.png: Added.
+        * misc/deleteButtonPressed.tiff: Removed.
+
+2007-10-20  Adam Roben  <aroben@apple.com>
+
+        Make the notes sticky!
+
+        Reviewed by Mark.
+
+        * misc/DatabaseExample.html:
+        * misc/deleteButton.tiff: Added.
+        * misc/deleteButtonPressed.tiff: Added.
+
+2007-10-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix a couple of exceptions for first time users.
+
+        * misc/DatabaseExample.html:
+
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady.
+        
+        Make example actually work.
+        
+        * misc/DatabaseExample.html:
+
+2007-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Update example.
+        
+        * misc/DatabaseExample.html:
+
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim
+
+        Tiger's SQLite doesn't support CREATE TABLE IF NOT EXISTS :(
+
+        * misc/DatabaseExample.html:
+
+2007-10-19  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Sample database API usage
+
+        * misc/DatabaseExample.html: Added.
+
+2007-09-25  David Kilzer  <ddkilzer@webkit.org>
+
+        Reviewed by Adam.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=14885
+          LGPL'ed files contain incorrect FSF address
+
+        * blog/wp-content/plugins/wp-cache/wp-cache.php:
+        * blog/wp-includes/class-snoopy.php:
+        * blog/wp-includes/gettext.php:
+        * blog/wp-includes/js/tinymce/license.html:
+        * blog/wp-includes/streams.php:
+
+2007-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        - Limit custom list bullets to ordered lists only
+
+        * css/blue.css:
+        * css/gray.css:
+        * css/green.css:
+        * css/ie.css:
+        * css/main.css:
+        * css/pink.css:
+        * css/purple.css:
+        * css/yellow.css:
+
+2007-09-22  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
+
+        Reviewed by Adam.
+
+        * coding/coding-style.html:
+          - in section Other Punctuation
+            - syntax instead of synatax
+            - fix sample code alignment
+
+2007-09-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Forgot the JS file.
+
+        * misc/WebKitDetect.js: Added.
+
+2007-09-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed - copy of WebKitDetect script from wiki
+
+        * misc/WebKitDetect.html: Added.
+
+2007-08-20  Adam Roben  <aroben@apple.com>
+
+        Remove any mention of drwtsn32.log, as it is almost never useful for tracking down crashes
+
+        Reviewed by Oliver.
+
+        * quality/crashlogs.html:
+
+2007-07-26  Maciej Stachowiak  <mjs@apple.com>
+
+        - grammar fix pointed out by Mitz.
+
+        * projects/goals.html:
+
+2007-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adam.
+        
+        Added WebKit Project Goals.
+
+        * nav.inc: added a nav link.
+        * projects/goals.html: Added.
+
+2007-07-22  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Add information on getting a useful crash log on Mac and Windows.
+
+        * nav.inc:
+        * quality/crashlogs.html: Added.
+        * quality/mac_reportbox.jpg: Added.
+        * quality/mac_viewtrace.jpg: Added.
+        * quality/win_installwatson.jpg: Added.
+        * quality/win_watsongui.jpg: Added.
+        * quality/win_watsoninstalled.jpg: Added.
+
+2007-07-20  Mark Rowe  <mrowe@apple.com>
+
+        Replace symlink with a PHP-level include to allow use of git on Windows without cygwin.
+        WordPress will replace the file with a symlink when it's first accessed, and the PHP-level
+        include is functionally identical for our purposes on the first use.
+
+        * blog/wp-content/advanced-cache.php:
+
+2007-07-16  Charles Gaudette  <charles@gaudette-net.com>
+
+        Reviewed by Niko.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14628
+          broken link on webkit.org home page - "KHTML" points to http://khtml.info/
+
+        * index.html:
+
+2007-07-06  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Add info about VC++ Express forgetting SDK paths.
+
+        * building/build.html:
+
+2007-07-02  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14482
+          Add information about the NeedsReduction and HasReduction keywords to quality/reduction.html
+
+        * quality/reduction.html:
+
+2007-07-01  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=14481
+        Broken links on coding/lgpl-license.html
+
+        * coding/lgpl-license.html:
+
+2007-06-24  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Fix broken link.
+
+        * building/build.html:
+
+2007-06-23  Mark Rowe  <mrowe@apple.com>
+
+        Not reviewed.
+
+        * building/checkout.html: Update link to bypass caching proxy as it has a habit of breaking huge downloads.
+
+2007-06-12  Adam Roben  <aroben@apple.com>
+
+        Update the location of cygwin-downloader.zip.
+
+        Rubberstamped by Hyatt.
+
+        * building/tools.html:
+
+2007-06-12  Dave Hyatt  <hyatt@apple.com>
+  
+        Add Windows checkout/build instructions to the website.
+ 
+        * building/build.html:
+        * building/checkout.html:
+        * building/debug.html:
+        * building/tools.html: Added.
+        * building/run.html:
+        * css/main.css:
+        * index.html:
+        * nav.inc:
+
+2007-06-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Cleaned up formatting on the check out page.
+
+        * building/checkout.html:
+
+2007-06-08  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        Switch to using Internet Explorer's conditional comments to target IE-specific styles rather
+        than doing server-side user agent checks.  This resolves an issue some people were seeing where
+        caching would lead to a page generated for an Internet Explorer user being served to a Safari
+        user.  The visible symptom of this was many of the graphics were missing.
+
+        * blog/wp-content/themes/webkit/header.php:
+        * header.inc:
+
+2007-05-04  Mark Rowe  <mrowe@apple.com>
+
+        Upgrade to WordPress 2.2.  I didn't go to the effort of tracking down files
+        present in the old version which have since been removed, but it's unlikely
+        they'll ever cause a problem.
+
+2007-05-04  Mark Rowe  <mrowe@apple.com>
+
+        Add graphics used by existing blog posts into SVN.
+
+        * blog/wp-content/rotate.png: Added.
+        * blog/wp-content/drosera.png: Added.
+        * blog/wp-content/hitlist.png: Added.
+        * blog/wp-content/svgtextmini.png: Added.
+        * blog/wp-content/svgtextmini_01.png: Added.
+        * blog/wp-content/textfield_screenshot.jpg: Added.
+        * blog/wp-content/Picture9.png: Added.
+        * blog/wp-content/svgtext.png: Added.
+        * blog/wp-content/webInspector.png: Added.
+        * blog/wp-content/rotate.svg: Added.
+        * blog/wp-content/chucknorris.png: Added.
+
+2007-04-21  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=13350
+          Build Ahem into DumpRenderTree
+
+        * quality/testing.html: Removed the requirement to download and install
+        Ahem for running the tests.
+        * quality/testwriting.html: Added information about Ahem.
+
+2007-04-09  Adele Peterson  <adele@apple.com>
+
+        * blog/wp-content/chrome.jpg: Added.
+
+2007-04-05  Mark Malone  <markmalone@mac.com>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=13273
+        Bug 13273: DOM Interfaces Nav link should go somewhere more useful
+
+        * nav.inc: Link directly to the hierarchy.
+
+2007-03-26  Darin Adler  <darin@apple.com>
+
+        * coding/coding-style.html: Let's misquote George Orwell: "Wrong is right. Right is wrong."
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/coding-style.html: Put !important on right/wrong colors so they override the
+        green color that comes from the green.css stylesheet.
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: A couple minor wording tweaks.
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Put the operator name "new" in the oblique style as with other identifiers.
+
+2007-03-25  Mark Rowe  <mrowe@apple.com>
+
+        * coding/RefPtr.html: Fix grammar error that Mitz pointed out.
+        Replace raw ampersands in hyperlink URL with named entity.
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: A couple wording tweaks.
+
+2007-03-25  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: More formatting tweaks. Added a possible new topic for the document,
+        suggested by Anders.
+
+2007-03-24  Darin Adler  <darin@apple.com>
+
+        * css/main.css: Try tighter spacing for code examples.
+
+2007-03-24  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: <span> -> </span>
+
+2007-03-24  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: "smart pointer" -> "smart pointers"
+
+2007-03-24  Darin Adler  <darin@apple.com>
+
+        * coding/RefPtr.html: Added. First draft of a document about RefPtr.
+
+        Also tweaked the MIME types of a few files and removed a stray executable bit.
+
+2007-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        * building/checkout.html: By popular demand, the link to the svn 1.3 client has been removed.
+
+2007-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        * building/checkout.html: Got rid of "click here" link and restructured sentences
+        linking to svn clients.
+
+2007-03-21  David Kilzer  <ddkilzer@apple.com>
+
+        Reviewed by Adam.
+
+        * building/checkout.html: Add link to svn 1.4 client for Mac OS X 10.4.
+
+2007-03-21  Maciej Stachowiak  <mjs@apple.com>
+
+        - some specs to propose by email
+
+        * specs/HTML_Timed_Media_Elements.html: Added.
+        * specs/Timed_Media_CSS.html: Added.
+        * specs/Timed_Media_Elements-Open_Issues.html: Added.
+        * specs/mediaelement.css: Added.
+        * specs/movie-status-states.png: Added.
+
+2007-03-20  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Clear up the steps necessary to get a patch landed.
+
+        http://bugs.webkit.org/show_bug.cgi?id=12877 - Bug 12877: "Contributing Code" page could be clearer
+        http://bugs.webkit.org/show_bug.cgi?id=8690 - Bug 8690: Contributing code doesn't mention what to do with new files
+
+        * coding/contributing.html:
+
+2007-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Added a random JS benchmark.
+
+        * misc/morph.html: Added.
+
+2007-03-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by .
+
+        Silly wrapping change for testing a post-commit hook change.
+
+        * contact.html:
+
+2007-03-09  Darin Adler  <darin@apple.com>
+
+        * blog/wp-content/themes/webkit/style.css: Removed rule for code since
+        we want it to match pre, and the default font looks fine -- no need to
+        ask for "Courier New" explicitly.
+
+2007-03-09  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Tim Hatcher.
+
+        Sexy blog permalinks!
+
+        * blog/.htaccess: Added.
+
+2007-03-09  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam.
+
+        * building/checkout.html: Update repository URL.
+
+2007-03-07  Brady Eidson  <beidson@apple.com>
+
+        Whoops, its actually prepare-ChangeLog
+
+        * coding/contributing.html:
+
+2007-03-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders.
+
+        Explicitly mention the prepare-Changelog step for contributing patches
+
+        * coding/contributing.html:
+
+2007-02-25  Anders Carlsson  <acarlsson@apple.com>
+
+        Reviewed by Maciej.
+
+        * building/checkout.html:
+        Add Trac link to our SVN repository,
+
+2007-02-15  Darin Adler  <darin@apple.com>
+
+        * projects/performance/index.html: Fix i-Bench link.
+
+2007-02-08  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * nav.inc: Add link to very work-in-progress DOM documentation.
+
+2007-01-19  Nicholas Shanks  <contact@nickshanks.com>
+
+        Reviewed by Maciej.
+
+        Change doctype for webkit.org/blog/ admin interface to HTML 4.01.
+
+        * blog/wp-admin/admin-header.php:
+        * blog/wp-login.php:
+
+2007-01-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        * coding/coding-style.html: Added switch/case indentation rules
+
+2007-01-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by bdash.
+
+        * coding/coding-style.html: update to include style for header guards
+
+2007-01-10  Geoffrey Garen  <ggaren@apple.com>
+
+        * coding/coding-style.html: Fixed minor validation error.
+
+2007-01-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        Updated coding style guidelines to cover a lot of stuff previously absent.
+
+        * coding/coding-style.html:
+
+2007-01-04  Lars Naesbye Christensen  <larsnaesbye@stud.ku.dk>
+
+        Reviewed by Darin Adler.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11295
+        Nightly download size is misleading
+
+        * images/download.png: Changed the size to 6 MB.
+
+2007-01-01  Darin Adler  <darin@apple.com>
+
+        * quality/bugzilla.html: Fix a lingering reference to opendarwin.org.
+
+2006-12-06  Rob Buis  <buis@kde.org>
+
+        Reviewed by Brady.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10254
+        A few grammar and spelling corrections on the WebKit website
+
+        Grammar and spelling corrections by Jonathan Johnsson.
+
+        * coding/coding-style.html:
+        * projects/css/index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * quality/reduction.html:
+
+2006-11-21  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Maciej.
+
+        http://bugs.webkit.org/show_bug.cgi?id=11652
+        Bug 11652: Mailing list address and URL are incorrect
+
+        This also removes a lot of bit rot from the KWQ-era.
+
+        * coding/contributing.html:
+        * contact.html:
+        * projects/css/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/portability/index.html:
+        * projects/xslt/index.html:
+        * quality/lifecycle.html:
+        * quality/testwriting.html:
+
+2006-11-18  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Maciej.
+
+        Gender-neutrality fix.
+
+        * coding/contributing.html:
+
+2006-11-14  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Tim Hatcher.
+
+        Moved the web developer page to the wiki, adding link to the Drosera page.
+
+        * .htaccess: Add permanent redirect to the new page on the wiki.
+        * contact.html: Trac numbers are no longer one off.
+        * nav.inc:
+        * webdevelopers/index.html: Removed.
+        * webdevelopers/webkit_version.html: Removed.
+        * webdevelopers/webkit_version.js: Removed.
+        * webdevelopers/webkit_version_xl.html: Removed.
+        * webdevelopers/webkit_version_xl.js: Removed.
+
+2006-11-14  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Tim Hatcher.
+
+        http://bugs.webkit.org/show_bug.cgi?id=9529
+        Bug 9529: Navigation HTML duplicated on webkit.org web site
+
+        * blog/wp-content/themes/webkit/sidebar.php: Include navigation from nav.inc rather than duplicating it here.
+        * nav.inc: Generate WordPress archive list if included from within WordPress.
+
+2006-11-07  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        * projects/javascript/index.html: Update link to non-existent JavaScript Bugzilla
+        component to the correct JavaScriptCore.
+
+2006-11-06  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders.
+
+        Update the site with new wiki and Trac links.
+
+        * blog/wp-content/themes/webkit/sidebar.php:
+        * building/build.html:
+        * index.html:
+        * nav.inc:
+        * projects/svg/index.html:
+
+2006-10-31  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Mitz.
+
+        Update WebKit blog link to prevent pointless redirects.
+
+        * nav.inc:
+
+2006-10-25  Mitz Pettel  <mitz@webkit.org>
+
+        Reviewed by Adele.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=11412
+          Stray list item in coding/coding-style.html
+
+        * coding/coding-style.html:
+
+2006-10-25  Mark Rowe  <bdash@webkit.org>
+
+        Reviewed by Maciej.
+
+        Fix some HTML bugs in the coding style guidelines.
+
+        * coding/coding-style.html:
+
+2006-10-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        Split build, run, and debug steps into separate pages. Darin recommended
+        this a while back.
+
+        * building/build.html:
+        * building/checkout.html:
+        * building/debug.html: Added.
+        * building/run.html: Added.
+        * nav.inc:
+
+2006-10-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tim H.
+
+        * coding/coding-style.html: use css styles, add example for whitespace, add example for c++ constructors
+
+2006-09-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by anders.
+
+        * projects/svg/status.xml: update status to reflect current state of SVG development
+
+2006-09-21  Matt Lilek  <pewtermoose@gmail.com>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10975
+        Update the blog template to valid HTML 4.01 Strict.
+
+        * blog/wp-content/themes/webkit/comments-popup.php:
+        * blog/wp-content/themes/webkit/comments.php:
+        * blog/wp-content/themes/webkit/footer.php:
+        * blog/wp-content/themes/webkit/header.php:
+        * blog/wp-content/themes/webkit/style.css: Add missing semi-colon that the validator complained about.
+
+2006-09-21  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Eric.
+
+        http://bugs.webkit.org/show_bug.cgi?id=10966
+        Bug 10966: Updates to website
+
+        Resolves a few remaining validation issues, makes Bugzilla links consistent, and removes unneeded references to OpenDarwin.
+
+        * coding/coding-style.html:
+        * coding/lgpl-license.html:
+        * contact.html:
+        * index.html:
+        * projects/css/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * projects/xslt/index.html:
+        * webdevelopers/webkit_version.html:
+        * webdevelopers/webkit_version_xl.html:
+
+2006-09-21  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by TimH.
+
+        Updates to make static pages validate as HTML 4.01 Strict.
+
+        * building/build.html:
+        * coding/coding-style.html:
+        * header.inc:
+        * index.html: Move <style> tag into the document head.
+        * projects/cleanup/index.html:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html: Remove note about <label> not being implemented correctly.
+        * projects/html/index.html:
+        * projects/javascript/index.html:
+        * projects/performance/index.html:
+        * projects/portability/index.html: Change mention of Windows port to note that it is in progress rather than non-existant.
+        * projects/printing/index.html:
+        * projects/svg/index.html:
+        * projects/xslt/index.html:
+        * quality/bugwriting.html: Update WebKit version numbers to be accurate.  Move JS away from using innerHTML as W3C validator doesn't like it.
+        * quality/reduction.html:
+        * quality/reporting.html: Rename element IDs that start with numbers.  Update WebKit and Mac OS X version numbers to be accurate.
+        * quality/testing.html:
+
+2006-09-19  Brady Eidson  <beidson@apple.com>
+
+        http://bugs.webkit.org/show_bug.cgi?id=8220
+        Add the favicon.ico to the site.
+        Notice, users of shipping Safari won't see the updated favicon 
+        unless they clear their icon cache - ToT users can manually reload
+        the site and force the refresh  ;)
+
+        * favicon.ico: Added.
+
+2006-09-08  Kevin McCullough  <KMcCullough@apple.com>
+
+        Reviewed by Adel.
+
+        - this patch brought to you by the letter 'c'
+
+        * coding/coding-style.html:
+
+2006-08-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin Adler.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=10444
+          Navigation links overlap the Spam Karma 2 footer
+
+        * blog/wp-content/themes/webkit/style.css: Hide the footer altogether.
+
+2006-08-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 9302: WebKit nightly download image says ~2.5 MB when
+        universal binaries make it ~5.0 MB
+        http://bugs.webkit.org/show_bug.cgi?id=9302
+        
+        * images/download.png:
+
+2006-08-21  Timothy Hatcher  <timothy@apple.com>
+
+        Stamped by Maciej.
+        
+        Changes many opendarwin.org links to the proper webkit.org version.
+
+        * blog/wp-content/themes/webkit/sidebar.php:
+        * blog/wp-content/themes/webkit/style.css:
+        * building/build.html:
+        * coding/contributing.html:
+        * contact.html:
+        * index.html:
+        * nav.inc:
+        * projects/compat/hitlist.html:
+        * projects/css/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/javascript/index.html:
+        * projects/svg/index.html:
+        * projects/svg/svg-status.xsl:
+        * projects/xslt/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugzilla.html:
+        * quality/leakhunting.html:
+        * quality/lifecycle.html:
+        * quality/reporting.html:
+
+2006-08-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by TimH.
+
+        * projects/svg/status.xml: updated to reflect current SVG status
+
+2006-08-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimO.
+        
+        Tweaked the build instructions a bit.
+
+        * building/build.html:
+        * building/debug.png: Added.
+
+2006-08-02  Darin Adler  <darin@apple.com>
+
+        * building/checkout.html: Fix a typo: "OpenSource" instead of "Open Source".
+
+2006-08-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        - Added instructions for debugging in Xcode
+
+        * building/build-window.png: Added.
+        * building/build.html:
+        * building/custom-executable.png: Added.
+        * building/info-tab.png: Added.
+
+2006-07-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+        
+        - Tweaked the checkout and build instructions to make them simpler and
+        clearer.
+
+        * building/build.html:
+        * building/checkout.html:
+
+2006-06-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin Adler.
+
+        - see http://bugs.webkit.org/show_bug.cgi?id=9539
+        Another case error preventing build
+
+        * building/build.html: Building WebKit now requires Xcode 2.3.
+
+2006-06-21  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Anders.
+
+        * blog/wp-content/themes/webkit/sidebar.php:
+         Add link to Wiki in the navigation menu here too.
+         
+2006-06-21  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Anders.
+
+        * nav.inc: Add link to Wiki in the navigation menu.
+
+2006-06-15  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Patch by David Kilzer, reviewed by Geoffrey Garen, landed by Joost de Valk.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=9407
+
+        Improve wording of first paragraph of webkit site.
+
+        * index.html: 
+
+2006-06-08  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Include our own copies of the BSD and LGPL licenses.
+
+        * coding/bsd-license.html: Added.
+        * coding/lgpl-license.html: Added.
+        * nav.inc: link to our copies of the licenses
+
+2006-06-04  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by ggaren.
+
+        http://bugs.webkit.org/show_bug.cgi?id=9303
+        JavaScript error when loading WebKit blog page
+
+        * blog/wp-content/themes/webkit/sidebar.php: Removed unused JavaScript.  Synced with nav.inc.
+        * nav.inc: Removed evil tabs--whitespace change only.
+
+2006-05-24  Bradley Morrison  <bradley.morrison@nokia.com>
+
+        Reviewed by John Sullivan.
+
+        * quality/lifecycle.html: mentions case of PlatformOnly bugs
+                                  and 'other' bug databases.
+
+2006-05-25  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Adding Google Analytics tracking code, to create stats of our webpages.
+
+        * blog/wp-content/themes/webkit/footer.php:
+        * footer.inc:
+
+2006-05-23  Bradley Morrison  <bradley.morrison@nokia.com>
+
+        Reviewed by Timothy.
+
+        * index.html: Link to Nokia's S60 WebKit.
+
+2006-05-08  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Anders.
+
+        * building/checkout.html: changed link to point to universal binary. Thanks to Duncan Wilcox for hinting this one.
+
+2006-04-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        * projects/svg/status.xml: Update to reflect current status.
+
+2006-04-18  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Eric Seidel .
+
+        Added WebKit detection scripts and a small howto + a new section to our
+        website: Web Developers.
+
+        * nav.inc:
+        * webdevelopers: Added.
+        * webdevelopers/index.html: Added.
+        * webdevelopers/webkit_version.html: Added.
+        * webdevelopers/webkit_version.js: Added.
+        * webdevelopers/webkit_version_xl.html: Added.
+        * webdevelopers/webkit_version_xl.js: Added.
+
+2006-04-17  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by ggaren.
+
+        * blog/wp-config.php: passwords and users don't belong in SVN. 
+
+2006-04-16  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Maciej.
+
+        * quality/lifecycle.html: small textual change to my contact info;
+        * quality/reporting.html: added non-ADC bug report URL.
+
+2006-04-16  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Maciej.
+
+        * contact.html: added URL's for trac, CIA, webkit-unassigned and build bot. These probably need to be on other places to but we will do that later on.
+
+2006-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        * projects/compat/hitlist.html: Added Google Calendar to the list
+        in place of www.hangseng.com/ebanking
+
+2006-04-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        * quality/testing.html: fix run-mozilla-tests to run-javascriptcore-tests
+
+2006-04-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth. 
+
+        * projects/compat/hitlist.html: updated dates
+
+2006-03-23  David Kilzer  <ddkilzer@kilzer.ent>
+
+        Reviewed by Darin Adler.
+
+        - Fix http://bugs.webkit.org/show_bug.cgi?id=7918
+        Coding style doc uses illegal entity
+
+        * coding/coding-style.html: Changed &emdash; to &mdash;.
+
+2006-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by TimH.
+
+        * projects/compat/hitlist.html: Moved delta.com to the alumni list,
+        added description of alumni list.
+
+2006-03-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
+        Clarified that sites on the list aren't necessarily "broken."
+
+        * projects/compat/hitlist.html:
+
+2006-03-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
+        Updated links to gap and bananarepublic bugs.
+
+        * projects/compat/hitlist.html:
+
+2006-03-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin Adler.
+
+        Change "Mail.app" to "Mail".
+        
+        * index.html:
+        * projects/editing/index.html:
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Oops, accidentally deleted the archives links.
+
+        * blog/wp-content/themes/webkit/sidebar.php: Bring them back.
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
+        Some site cleanup.
+
+        * blog/wp-content/themes/webkit/sidebar.php: sync with the sidebar
+        for the rest of the site.
+        * quality/lifecycle.html: add Joost's homepage to his contact info.
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Doing penance after being set straight by Joost.
+
+        * projects/compat/hitlist.html: Remove slur against QA. My humblest 
+        apologies.
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej, Darin.
+
+        Added Safari Compatibility Hit List.
+
+        * nav.inc: Link to the hit list.
+        * projects/compat/hitlist.html: Added.
+        * projects/compat/index.html: Link to the hit list.
+
+2006-03-02  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * quality/reporting.html: display a nicer message to those using 10.2
+
+2006-02-26  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej, landed by Geoff.
+
+        Change "Deployment" to "Release" and "Development" to "Debug".
+        Update latest Xcode version from 2.2 to 2.2.1.
+
+        * building/build.html
+
+2006-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Accidentally wrote "Release" instead of "Debug" in my last patch.
+
+        * quality/leakhunting.html:
+
+2006-02-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Some quick proof-reading of the patch I just landed -- no review
+        necessary.
+
+        * quality/leakhunting.html:
+
+2006-02-21  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin, Geoff.
+
+        Added a page about leakhunting, based on the info Sullivan gave in two blogposts about it. (posts 20 and 24)
+
+        Added this page to the menu, adding in an extra section header
+"Testing" as well.
+
+        * nav.inc:
+        * quality/leakhunting.html: Added.
+
+2006-02-19  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin Adler.
+
+        Fixed Bugzilla URL's
+                
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/xslt/index.html:
+
+2006-02-19  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin Adler.
+
+        Made line-height global instead of just for p
+
+        Editing: 
+        fixed bugzilla link, added starting <p> to first paragraph
+        removed paragraph about tab-stops
+
+        * css/main.css:
+        * projects/editing/index.html:
+
+2006-02-17  Darin Adler  <darin@apple.com>
+
+        * coding/coding-style.html: Mention other non-function brace cases.
+
+2006-02-17  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Tim H.
+
+        Added left position and margin-bottom to blog footer.
+
+        * css/main.css:
+
+2006-02-16  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+        
+        Fixes PNGs with 8bit alpha on IE.
+
+        * css/ie.css: attach the pngbehavior.htc to img tags
+        * images/blank.png: Added.
+        * index.html: add the width and height to the download img
+        * pngbehavior.htc: Added.
+
+2006-02-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Changed by Darin on my machine.
+
+        * coding/coding-style.html: Re-merged in changes Darin made to the guidelines
+        a few days back. 
+
+2006-02-16  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Maciej.
+
+        Made the author name bold on the frontpage.
+        Moved the "Posted by" line up under the title and made the author name
+bold in single view.
+
+        * blog/wp-content/themes/webkit/index.php:
+        * blog/wp-content/themes/webkit/single.php:
+
+2006-02-15  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Tim H.
+
+        Updated the site to use the new layout.
+
+        * .htaccess: Added.
+        * ChangeLog:
+        * blog/wp-content/themes/classic: Removed.
+        * blog/wp-content/themes/classic/comments-popup.php: Removed.
+        * blog/wp-content/themes/classic/comments.php: Removed.
+        * blog/wp-content/themes/classic/footer.php: Removed.
+        * blog/wp-content/themes/classic/header.php: Removed.
+        * blog/wp-content/themes/classic/index.php: Removed.
+        * blog/wp-content/themes/classic/sidebar.php: Removed.
+        * blog/wp-content/themes/classic/style.css: Removed.
+        * blog/wp-content/themes/default: Removed.
+        * blog/wp-content/themes/default/404.php: Removed.
+        * blog/wp-content/themes/default/archive.php: Removed.
+        * blog/wp-content/themes/default/archives.php: Removed.
+        * blog/wp-content/themes/default/comments-popup.php: Removed.
+        * blog/wp-content/themes/default/comments.php: Removed.
+        * blog/wp-content/themes/default/footer.php: Removed.
+        * blog/wp-content/themes/default/header.php: Removed.
+        * blog/wp-content/themes/default/images: Removed.
+        * blog/wp-content/themes/default/images/kubrickbg.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickbgcolor.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickbgwide.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickfooter.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickheader.jpg: Removed.
+        * blog/wp-content/themes/default/index.php: Removed.
+        * blog/wp-content/themes/default/links.php: Removed.
+        * blog/wp-content/themes/default/page.php: Removed.
+        * blog/wp-content/themes/default/search.php: Removed.
+        * blog/wp-content/themes/default/searchform.php: Removed.
+        * blog/wp-content/themes/default/sidebar.php: Removed.
+        * blog/wp-content/themes/default/single.php: Removed.
+        * blog/wp-content/themes/default/style.css: Removed.
+        * blog/wp-content/themes/webkit/404.php:
+        * blog/wp-content/themes/webkit/archive.php:
+        * blog/wp-content/themes/webkit/archives.php:
+        * blog/wp-content/themes/webkit/footer.php:
+        * blog/wp-content/themes/webkit/header.php:
+        * blog/wp-content/themes/webkit/images: Removed.
+        * blog/wp-content/themes/webkit/images/bluebanner.png: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickbg.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickbgcolor.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickbgwide.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickfooter.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickheader.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/separator.png: Removed.
+        * blog/wp-content/themes/webkit/images/webkit-background.png: Removed.
+        * blog/wp-content/themes/webkit/index.php:
+        * blog/wp-content/themes/webkit/page.php:
+        * blog/wp-content/themes/webkit/search.php:
+        * blog/wp-content/themes/webkit/sidebar.php:
+        * blog/wp-content/themes/webkit/single.php:
+        * blog/wp-content/themes/webkit/style.css:
+        * building/build.html:
+        * building/checkout.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * contact.html:
+        * css: Added.
+        * css/blue.css: Added.
+        * css/gray.css: Added.
+        * css/green.css: Added.
+        * css/ie.css: Added.
+        * css/main.css: Added.
+        * css/pink.css: Added.
+        * css/purple.css: Added.
+        * css/yellow.css: Added.
+        * footer.inc: Added.
+        * header.inc: Added.
+        * images/blue-background.png: Added.
+        * images/blue-bullet.png: Added.
+        * images/bluebanner.png: Removed.
+        * images/download.png: Added.
+        * images/end.png: Added.
+        * images/gray-background.png: Added.
+        * images/green-background.png: Added.
+        * images/green-bullet.png: Added.
+        * images/icon-gold.png: Added.
+        * images/icon.png: Added.
+        * images/ie-nav.png: Added.
+        * images/middle.png: Added.
+        * images/nav.png: Added.
+        * images/pink-background.png: Added.
+        * images/pink-bullet.png: Added.
+        * images/purple-background.png: Added.
+        * images/purple-bullet.png: Added.
+        * images/separator.png: Removed.
+        * images/webkit-background.png: Removed.
+        * images/welcomeopen.gif: Removed.
+        * images/yellow-background.png: Added.
+        * images/yellow-bullet.png: Added.
+        * index.html:
+        * nav.inc: Added.
+        * projects/accessibility/index.html:
+        * projects/cleanup/index.html:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/dom/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/index.html:
+        * projects/javascript/index.html:
+        * projects/layout/index.html:
+        * projects/mathml/index.html:
+        * projects/performance/index.html:
+        * projects/plugins/index.html:
+        * projects/portability/index.html:
+        * projects/printing/index.html:
+        * projects/svg/index.html:
+        * projects/webkit/index.html:
+        * projects/xml/index.html:
+        * projects/xslt/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugwriting.html:
+        * quality/bugzilla.html:
+        * quality/lifecycle.html:
+        * quality/reduction.html:
+        * quality/reporting.html:
+        * quality/testing.html:
+        * quality/testwriting.html:
+        * sidebar.css: Removed.
+        * sidebar.html: Removed.
+        * webkitdev.css: Removed.
+
+2006-02-15  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Tim H.
+
+        Updated page to show 10.4.4 or 10.4.5
+        Added support for recognizing Shiira.
+
+        * quality/reporting.html:
+
+2006-02-12  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by eseidel.
+
+        Added a little piece of text to the page about reductions, pointing to the bugzilla page. 
+
+        Changed "Sign up for a" into "Create a" bugzilla account.
+
+        * quality/reduction.html:
+        * quality/reporting.html:
+
+2006-02-12  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin Adler.
+
+        Added a Bugzilla page, which contains information about creating a Bugzilla account, what editbugs and canconfirm
+        bits are and how to get them.
+        
+        Changed link in reporting page to link to Bugzilla page.
+        
+        * quality/bugzilla.html: Added.
+        * quality/reporting.html:
+
+2006-02-12  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by eseidel.
+
+        - Changed 10.2 paragraph to say Mac OS X instead of just OS X
+        - Detabified the file.
+
+        * quality/reporting.html:
+
+2006-02-10  Darin Adler  <darin@apple.com>
+
+        * index.html: Fixed a typo in a link.
+
+2006-02-10  Darin Adler  <darin@apple.com>
+
+        * building/checkout.html: Fixed a spelling mistake.
+
+2006-02-10  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Anders.
+
+        http://bugs.webkit.org/show_bug.cgi?id=7164
+        Code cleanup
+
+        Changed <div id="banner" to <h1 id="banner"
+        global cleanup of CSS and code
+
+        * building/build.html:
+        * building/checkout.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * contact.html:
+        * index.html:
+        * projects/accessibility/index.html:
+        * projects/cleanup/index.html:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/dom/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/index.html:
+        * projects/javascript/index.html:
+        * projects/layout/index.html:
+        * projects/mathml/index.html:
+        * projects/performance/index.html:
+        * projects/plugins/index.html:
+        * projects/portability/index.html:
+        * projects/printing/index.html:
+        * projects/svg/index.html:
+        * projects/webkit/index.html:
+        * projects/xml/index.html:
+        * projects/xslt/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugwriting.html:
+        * quality/lifecycle.html:
+        * quality/reduction.html:
+        * quality/reporting.html:
+        * quality/testing.html:
+        * quality/testwriting.html:
+        * webkitdev.css:
+
+2006-02-09  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin Adler. Landed by ap.
+        
+        - fixes from http://bugs.webkit.org/show_bug.cgi?id=4871
+        "Reporting Bugs" Page Should Prompt User To Test In Newest Version of WebKit
+        
+        * quality/reporting.html:
+        * webkitdev.css: Added margin-bottom for li.
+
+2006-02-07  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin Adler. Landed by Maciej.
+        
+        - Several fixes to the site
+        http://bugs.webkit.org/show_bug.cgi?id=7105
+
+        * blog/wp-content/themes/webkit/style.css:
+        * index.html:
+        * quality/bugwriting.html:
+        * quality/reduction.html:
+        * webkitdev.css:
+
+2006-02-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        General update to SVG project page, also link to status page.
+
+        * projects/svg/index.html:
+
+2006-02-05  Eric Seidel  <eseidel@apple.com>
+
+        Rubber stamped by darin.
+
+        * projects/svg/status.xml: Added.
+        * projects/svg/svg-status.css: Added.
+        * projects/svg/svg-status.xsl: Added.
+
+2006-02-05  Eric Seidel  <eseidel@apple.com>
+
+        Adding ChangeLog :)
+        
+        * ChangeLog: Added.

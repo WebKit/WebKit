@@ -1,0 +1,63 @@
+Canonicalization of IPv4 addresses.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL canonicalize('http:///') should be http:. Was http:/.
+PASS canonicalize('http://./') is 'http://./'
+PASS canonicalize('http://192.168.0.1/') is 'http://192.168.0.1/'
+FAIL canonicalize('http://0300.0250.00.01/') should be http://192.168.0.1/. Was http://0300.0250.00.01/.
+FAIL canonicalize('http://0xC0.0Xa8.0x0.0x1/') should be http://192.168.0.1/. Was http://0xC0.0Xa8.0x0.0x1/.
+PASS canonicalize('http://192.168.9.com/') is 'http://192.168.9.com/'
+PASS canonicalize('http://19a.168.0.1/') is 'http://19a.168.0.1/'
+PASS canonicalize('http://0308.0250.00.01/') is 'http://0308.0250.00.01/'
+FAIL canonicalize('http://0xCG.0xA8.0x0.0x1/') should be http://0xcg.0xa8.0x0.0x1/. Was http://0xCG.0xA8.0x0.0x1/.
+FAIL canonicalize('http://192/') should be http://0.0.0.192/. Was http://192/.
+FAIL canonicalize('http://0xC0a80001/') should be http://192.168.0.1/. Was http://0xC0a80001/.
+FAIL canonicalize('http://030052000001/') should be http://192.168.0.1/. Was http://030052000001/.
+FAIL canonicalize('http://000030052000001/') should be http://192.168.0.1/. Was http://000030052000001/.
+FAIL canonicalize('http://192.168/') should be http://192.0.0.168/. Was http://192.168/.
+FAIL canonicalize('http://192.0x00A80001/') should be http://192.168.0.1/. Was http://192.0x00A80001/.
+FAIL canonicalize('http://0xc0.052000001/') should be http://192.168.0.1/. Was http://0xc0.052000001/.
+FAIL canonicalize('http://192.168.1/') should be http://192.168.0.1/. Was http://192.168.1/.
+PASS canonicalize('http://192.168.0.0.1/') is 'http://192.168.0.0.1/'
+FAIL canonicalize('http://192.168.0.1./') should be http://192.168.0.1/. Was http://192.168.0.1./.
+FAIL canonicalize('http://192.168.0.1. hello/') should be http://192.168.0.1.%20hello/. Was http://192.168.0.1. hello/.
+PASS canonicalize('http://192.168.0.1../') is 'http://192.168.0.1../'
+PASS canonicalize('http://192.168..1/') is 'http://192.168..1/'
+PASS canonicalize('http://0x100.0/') is 'http://0x100.0/'
+PASS canonicalize('http://0x100.0.0/') is 'http://0x100.0.0/'
+PASS canonicalize('http://0x100.0.0.0/') is 'http://0x100.0.0.0/'
+PASS canonicalize('http://0.0x100.0.0/') is 'http://0.0x100.0.0/'
+PASS canonicalize('http://0.0.0x100.0/') is 'http://0.0.0x100.0/'
+PASS canonicalize('http://0.0.0.0x100/') is 'http://0.0.0.0x100/'
+PASS canonicalize('http://0.0.0x10000/') is 'http://0.0.0x10000/'
+PASS canonicalize('http://0.0x1000000/') is 'http://0.0x1000000/'
+PASS canonicalize('http://0x100000000/') is 'http://0x100000000/'
+FAIL canonicalize('http://0xFF.0/') should be http://255.0.0.0/. Was http://0xFF.0/.
+FAIL canonicalize('http://0xFF.0.0/') should be http://255.0.0.0/. Was http://0xFF.0.0/.
+FAIL canonicalize('http://0xFF.0.0.0/') should be http://255.0.0.0/. Was http://0xFF.0.0.0/.
+FAIL canonicalize('http://0.0xFF.0.0/') should be http://0.255.0.0/. Was http://0.0xFF.0.0/.
+FAIL canonicalize('http://0.0.0xFF.0/') should be http://0.0.255.0/. Was http://0.0.0xFF.0/.
+FAIL canonicalize('http://0.0.0.0xFF/') should be http://0.0.0.255/. Was http://0.0.0.0xFF/.
+FAIL canonicalize('http://0.0.0xFFFF/') should be http://0.0.255.255/. Was http://0.0.0xFFFF/.
+FAIL canonicalize('http://0.0xFFFFFF/') should be http://0.255.255.255/. Was http://0.0xFFFFFF/.
+FAIL canonicalize('http://0xFFFFFFFF/') should be http://255.255.255.255/. Was http://0xFFFFFFFF/.
+PASS canonicalize('http://276.256.0xf1a2.077777/') is 'http://276.256.0xf1a2.077777/'
+PASS canonicalize('http://192.168.0.257/') is 'http://192.168.0.257/'
+PASS canonicalize('http://192.168.0xa20001/') is 'http://192.168.0xa20001/'
+PASS canonicalize('http://192.015052000001/') is 'http://192.015052000001/'
+FAIL canonicalize('http://0X12C0a80001/') should be http://0x12c0a80001/. Was http://0X12C0a80001/.
+PASS canonicalize('http://276.1.2/') is 'http://276.1.2/'
+FAIL canonicalize('http://192.168.0.1 hello/') should be http://192.168.0.1%20hello/. Was http://192.168.0.1 hello/.
+FAIL canonicalize('http://0000000000000300.0x00000000000000fF.00000000000000001/') should be http://192.255.0.1/. Was http://0000000000000300.0x00000000000000fF.00000000000000001/.
+FAIL canonicalize('http://0000000000000300.0xffffffffFFFFFFFF.3022415481470977/') should be http://0000000000000300.0xffffffffffffffff.3022415481470977/. Was http://0000000000000300.0xffffffffFFFFFFFF.3022415481470977/.
+FAIL canonicalize('http://00000000000000000001/') should be http://0.0.0.1/. Was http://00000000000000000001/.
+PASS canonicalize('http://0000000000000000100000000000000001/') is 'http://0000000000000000100000000000000001/'
+PASS canonicalize('http://0.0.0.000000000000000000z/') is 'http://0.0.0.000000000000000000z/'
+PASS canonicalize('http://0.0.0.100000000000000000z/') is 'http://0.0.0.100000000000000000z/'
+FAIL canonicalize('http://0.00.0x.0x0/') should be http://0.0.0.0/. Was http://0.00.0x.0x0/.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+This tests setting the WebkitUserSelect property on a CSSStyleDeclaration.
+This text should not be selectable.
+This test passed if you see no failure messages.

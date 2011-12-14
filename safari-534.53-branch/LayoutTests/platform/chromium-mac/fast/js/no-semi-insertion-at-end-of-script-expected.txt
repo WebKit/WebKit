@@ -1,0 +1,11 @@
+Test to make sure we don't automatically insert semicolons at the end of a script.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS if (0) threw exception SyntaxError: Unexpected end of input.
+PASS eval('if (0)') threw exception SyntaxError: Unexpected end of input.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

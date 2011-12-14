@@ -1,0 +1,29 @@
+h1
+
+h2
+
+h3
+
+h4
+
+h5
+
+h6
+
+This test verifies that, on Windows, heading elements return their tag name for their 'role' property and a positional description of "L#", where # is the heading level, for their description. 
+
+Bug 30937 - MSAA: Accessibility of headings is not correct
+
+PASS e.role is "H1"
+PASS e.description is "L1"
+PASS e.role is "H2"
+PASS e.description is "L2"
+PASS e.role is "H3"
+PASS e.description is "L3"
+PASS e.role is "H4"
+PASS e.description is "L4"
+PASS e.role is "H5"
+PASS e.description is "L5"
+PASS e.role is "H6"
+PASS e.description is "L6"
+

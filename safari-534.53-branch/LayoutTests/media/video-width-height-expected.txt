@@ -1,0 +1,14 @@
+EXPECTED (video.width == '100') OK
+EXPECTED (video.height == '50') OK
+EXPECTED (video.offsetWidth == '100') OK
+EXPECTED (video.offsetHeight == '50') OK
+EXPECTED (video.width == '200') OK
+EXPECTED (video.height == '100') OK
+EXPECTED (video.offsetWidth == '200') OK
+EXPECTED (video.offsetHeight == '100') OK
+EXPECTED (video.getAttribute('width') == '400') OK
+EXPECTED (video.getAttribute('height') == '200') OK
+EXPECTED (video.offsetWidth == '400') OK
+EXPECTED (video.offsetHeight == '200') OK
+END OF TEST
+

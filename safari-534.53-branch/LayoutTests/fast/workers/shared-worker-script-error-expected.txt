@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 12: ReferenceError: Can't find variable: generateError
+Test SharedWorker script error handling functionality. Should print a series of PASS messages, followed with DONE.
+
+SUCCESS: unhandled error generated
+SUCCESS: error handled via onerror: ReferenceError: Can't find variable: generateError
+DONE
+

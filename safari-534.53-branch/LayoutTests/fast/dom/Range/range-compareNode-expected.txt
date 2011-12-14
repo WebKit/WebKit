@@ -1,0 +1,20 @@
+test 1 passed: start before range, end before range
+test 2 passed: start before range, end on range start
+test 3 passed: start before range, end in range
+test 4 passed: start on range start, end in range
+test 5 passed: start in range, end in range
+test 6 passed: start in range, end on range end
+test 7 passed: start in range, end after range end
+test 8 passed: start on range end, end after range
+test 9 passed: start on range start, end on range end
+test 10 passed: start after range, end after range
+test 11 passed: start before range, end after range
+test 12 passed: start before range, end at range end
+test 13 passed: start at range start, end after range
+test 14 passed: detached range, attached node
+test 15 passed: attached range, detached node
+test 16 passed: the node has no parent
+test 17 passed: the range has no parent
+test 18 passed: wrong documents
+test 19 passed: deleted node
+

@@ -1,0 +1,48 @@
+<body>
+<p>Test that JS code cannot be planted into an unsuspecting subframe via MessagePort and navigation.</p>
+<pre id=log></pre>
+<script>
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var closure;
+var failed;
+
+function test()
+{
+    failed = false;
+    closure = window.frames[0].createClosure();
+    document.getElementsByTagName("iframe")[0].onload = test2;
+    window.frames[0].location = "resources/banking-site.html";
+}
+
+function test2()
+{
+   try {
+      var channel = closure();
+    } catch (ex) {
+      log("PASS: got exception while creating port from closed frame's constructor: " + ex);
+      done();
+      return;
+    }
+    log("FAIL: Creating MessageChannel from closed frame does not throw exception");
+    done();
+}
+
+function done()
+{
+    log("DONE");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<iframe src="resources/attacker-frame.html" onload="test()"></iframe>
+</body>

@@ -1,0 +1,47 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+function editingTest() {
+    var t = document.getElementById("test");
+    setSelectionCommand(t, 0, t, t.childNodes.length);
+    copyCommand();
+    
+    var e = document.getElementById("target");
+    setSelectionCommand(e, 0, e, 1);
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body id="root" contenteditable>
+<p>This tests pasting a table to replace some text.  <b>It demonstrates two bugs: 1) selecting a table without also selecting the line break after programmatically is impossible when its followed by a div because of the way DOM positions are mapped to visible positions, 2) pasting content that ends in a table places the caret in the last table cell instead of after the table, so the interchange newline is placed in the last table cell and not after the table.</b></p>
+<table id="test">
+<tbody><tr><td>one</td><td>two</td></tr></tbody></table>
+<div id="target">replaceme</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

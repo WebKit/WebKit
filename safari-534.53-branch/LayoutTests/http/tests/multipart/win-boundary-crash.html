@@ -1,0 +1,14 @@
+<html>
+<head>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<p>Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=14516">http://bugs.webkit.org/show_bug.cgi?id=14516</a>
+crash loading multipart/x-mixed-replace data on windows safari</i></p>
+<p>If WebKit does not crash when loading this img, then it passed.</p>
+<img src="resources/multipart-nodashes.php" />
+</body>
+</html>

@@ -1,0 +1,7 @@
+S15.5.4.15_A7
+
+TypeError: 'function substring() { [native code] }' is not a constructor (evaluating 'new __FACTORY')
+PASS 
+
+TEST COMPLETE
+

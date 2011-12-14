@@ -1,0 +1,11 @@
+<head>
+<script>
+function runTest() {
+    document.body.focus();
+    document.execCommand("FormatBlock", false, "h1");
+    document.execCommand("InsertText", false, "This tests for a bug when performing a FormatBlock inside a body with no visible content.  This text should be inside an h1 element.");
+}
+</script>
+</head>
+<body onload="runTest();" contenteditable="true">
+</body>

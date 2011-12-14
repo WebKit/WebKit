@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion boolean conversion
+
+PASS dt.setBoolean( true ); dt.PUB_BOOLEAN is true
+PASS dt.setBoolean( true ); dt.getBoolean() is true
+PASS typeof dt.getBoolean() is "boolean"
+PASS dt.setBoolean( false ); dt.PUB_BOOLEAN is false
+PASS dt.setBoolean( false ); dt.getBoolean() is false
+PASS typeof dt.getBoolean() is "boolean"
+FAIL dt.setBooleanObject( true ); dt.PUB_BOOLEAN_OBJECT +'' should be true. Was null.
+FAIL dt.setBooleanObject( true ); dt.getBooleanObject() +'' should be true. Was undefined.
+FAIL java.lang.Class.forName( "java.lang.Boolean"): ReferenceError: Can't find variable: java
+FAIL dt.setBooleanObject( false ); dt.PUB_BOOLEAN_OBJECT +'' should be false. Was null.
+FAIL dt.setBooleanObject( false ); dt.getBooleanObject() +'' should be false. Was undefined.
+FAIL java.lang.Class.forName( "java.lang.Boolean"): ReferenceError: Can't find variable: java
+PASS dt.setObject( true ); dt.PUB_OBJECT +'' is "true"
+PASS dt.setObject( true ); dt.getObject() +'' is "true"
+FAIL java.lang.Class.forName( "java.lang.Boolean"): ReferenceError: Can't find variable: java
+PASS dt.setObject( false ); dt.PUB_OBJECT +'' is "false"
+PASS dt.setObject( false ); dt.getObject() +'' is "false"
+FAIL java.lang.Class.forName( "java.lang.Boolean"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( true ); dt.PUB_STRING +'' is "true"
+PASS dt.setStringObject( true ); dt.getStringObject() +'' is "true"
+FAIL java.lang.Class.forName( "java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( false ); dt.PUB_STRING +'' is "false"
+PASS dt.setStringObject( false ); dt.getStringObject() +'' is "false"
+FAIL java.lang.Class.forName( "java.lang.String"): ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

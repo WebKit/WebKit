@@ -1,0 +1,6 @@
+S15.4.4.6_A4_T1
+
+FAIL SputnikError: #1: Array.prototype[1] = 1; x = [0]; x.length = 2; x.pop() === 1. Actual: undefined
+
+TEST COMPLETE
+

@@ -1,0 +1,164 @@
+<!-- <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook V4.1//EN"> -->
+<section id="conventions">
+  <title>Document Conventions</title>
+
+  <indexterm zone="conventions">
+    <primary>conventions</primary>
+  </indexterm>
+
+  <para>This document uses the following conventions:</para>
+
+  <informaltable frame="none">
+    <tgroup cols="2">
+      <thead>
+        <row>
+          <entry>Descriptions</entry>
+
+          <entry>Appearance</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Caution</entry>
+
+          <entry>
+            <caution>
+              <para>Don't run with scissors!</para>
+            </caution>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Hint or Tip</entry>
+
+          <entry>
+            <tip>
+              <para>For best results... </para>
+            </tip>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Note</entry>
+
+          <entry>
+            <note>
+              <para>Dear John...</para>
+            </note>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Warning</entry>
+
+          <entry>
+            <warning>
+              <para>Read this or the cat gets it.</para>
+            </warning>
+          </entry>
+        </row>
+
+        <row>
+          <entry>File or directory name</entry>
+
+          <entry>
+            <filename>filename</filename>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Command to be typed</entry>
+
+          <entry>
+            <command>command</command>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Application name</entry>
+
+          <entry>
+            <application>application</application>
+          </entry>
+        </row>
+
+        <row>
+          <entry>
+          Normal user's prompt under bash shell</entry>
+
+          <entry>bash$</entry>
+        </row>
+
+        <row>
+          <entry>
+          Root user's prompt under bash shell</entry>
+
+          <entry>bash#</entry>
+        </row>
+
+        <row>
+          <entry>
+          Normal user's prompt under tcsh shell</entry>
+
+          <entry>tcsh$</entry>
+        </row>
+
+        <row>
+          <entry>Environment variables</entry>
+
+          <entry>
+            <envar>VARIABLE</envar>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Term found in the glossary</entry>
+
+          <entry>
+            <glossterm linkend="gloss-bugzilla">Bugzilla</glossterm>
+          </entry>
+        </row>
+
+        <row>
+          <entry>Code example</entry>
+
+          <entry>
+            <programlisting><sgmltag class="starttag">para</sgmltag>
+Beginning and end of paragraph
+<sgmltag class="endtag">para</sgmltag></programlisting>
+          </entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <para>  
+	  This documentation is maintained in DocBook 4.1.2 XML format.
+    Changes are best submitted as plain text or XML diffs, attached
+    to a bug filed in the &bzg-bugs; component.
+  </para>
+  
+</section>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.xml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->
+

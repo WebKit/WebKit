@@ -1,0 +1,55 @@
+Test calling getPropertyValue on computed styles for background-position properties.
+
+background-position: 0;
+  background-position
+    getPropertyValue:    0px 50%
+    getPropertyCSSValue: [object CSSValueList]
+  background-position-x
+    getPropertyValue:    0px
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+  background-position-y
+    getPropertyValue:    50%
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+background-position: 0 0;
+  background-position
+    getPropertyValue:    0px 0px
+    getPropertyCSSValue: [object CSSValueList]
+  background-position-x
+    getPropertyValue:    0px
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+  background-position-y
+    getPropertyValue:    0px
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+
+background-position: 15px;
+  background-position
+    getPropertyValue:    15px 50%
+    getPropertyCSSValue: [object CSSValueList]
+  background-position-x
+    getPropertyValue:    15px
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+  background-position-y
+    getPropertyValue:    50%
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+background-position: 10px 20px;
+  background-position
+    getPropertyValue:    10px 20px
+    getPropertyCSSValue: [object CSSValueList]
+  background-position-x
+    getPropertyValue:    10px
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+  background-position-y
+    getPropertyValue:    20px
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+
+No background-position set
+  background-position
+    getPropertyValue:    0% 0%
+    getPropertyCSSValue: [object CSSValueList]
+  background-position-x
+    getPropertyValue:    0%
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+  background-position-y
+    getPropertyValue:    0%
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+

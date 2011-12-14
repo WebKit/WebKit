@@ -1,0 +1,21 @@
+<body>
+<p>Test that loading a javascript URL works correctly.</p>
+<embed type="application/x-webkit-test-netscape" id="testPlugin" onURLNotify="done()">
+<div id="result">Testing...</div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function done()
+{
+    document.getElementById("result").innerHTML = "PASS, no assertion failure.";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+var testPlugin = document.getElementById('testPlugin');
+testPlugin.getURLNotify("javascript:12345", null, "callback");
+</script>
+</body>

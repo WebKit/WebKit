@@ -1,0 +1,15 @@
+<body onload="redirect()">
+<!-- Needs to take two seconds, because a faster refresh would result in not creating a b/f item for the navigation -->
+<iframe src='data:text/html,<meta http-equiv="Refresh" content="2; URL=about:blank"><script>if (window.layoutTestController) { window.onpagehide=function(e){alert(&apos;pagehide &apos; + e.persisted)}; }</script>'></iframe>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+function redirect()
+{
+    location='data:text/html,<p>PASSED if didn&apos;t crash in two seconds.</p><script>if (window.layoutTestController) setTimeout("layoutTestController.notifyDone()", 2500); </scr' + 'ipt>';
+}
+</script>

@@ -1,0 +1,27 @@
+<?php
+    $title = "Printing";
+    include("../../header.inc");
+?>
+
+<h2>Printing</h2>
+
+<h3>Overview</h3>
+
+<p>Welcome to the printing project page.  Printing in WebKit is closely tied to the <a href="../layout/index.html">layout and rendering code</a>.  When you print
+in WebKit, the existing render tree is converted into a new render tree with print styles applied.  That new render tree then gets a layout.  The big flaw in
+WebKit's printing architecture right now is that page breaks are determined at a simulated "paint" time rather than during layout itself.  This means that at best
+all you can hope to do is try to find an optimal position for a break without altering the layout of the Web document at all.
+</p>
+
+<h3>Get Involved</h3>
+
+<dl>
+<dt>Rework Printing</dt>
+<dd>Printing needs to be reworked so that render objects know how to split themselves across breaks.  This allows two separate formatting contexts (like two adjacent table
+cells) to still have their contents both break cleanly across a page.  This work is also important for future technology like CSS3 multi-column support.  The code
+that splits render objects across pages could obviously be leveraged to also split render objects across column breaks as well.
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

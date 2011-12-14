@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to byte
+
+FAIL dt.setByte( NaN ); dt.PUB_BYTE should throw an exception. Was 0.
+FAIL dt.setByte( NaN ); dt.getByte() should throw an exception. Was 0.
+FAIL typeof dt.getByte() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

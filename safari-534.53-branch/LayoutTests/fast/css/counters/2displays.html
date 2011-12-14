@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+ <head>
+  <title>2 renderers 1 counter reset failure.</title>
+  <meta name="assert" content="When a Counter node is destroyed all its
+display renderers must be reset.">
+  <style type="text/css">
+   #testView:before {
+    content: "First Counter:" counters(test, ".") " Second Counter:" counters(test, ".");
+   }
+   .counter1 {
+    counter-reset: test 1;
+   }
+   .counter1000 {
+    counter-reset: test 1000;
+   }
+  </style>
+  <script src="../../js/resources/js-test-pre.js"></script>
+  <script type="text/javascript">
+
+  if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+  }
+
+  function run()
+  {
+      document.getElementById("testView").setAttribute("class", "counter1000");
+      if (!window.layoutTestController)
+          return;
+      shouldBe("layoutTestController.counterValueForElementById('testView')", "'1000 1000'");
+
+      debug('');
+      debug('TEST COMPLETE');
+      if (window.layoutTestController)
+          layoutTestController.notifyDone();
+  }
+  </script>
+ </head>
+
+ <body onload="setTimeout('run()', 0);">
+ <p>This test passes if both the first and the second counter are 1000.</p>
+ <div id="testView" class="counter1">
+ </div>
+ <div id="console"></div>
+ </body>
+</html>

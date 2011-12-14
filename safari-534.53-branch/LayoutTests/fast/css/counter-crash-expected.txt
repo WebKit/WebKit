@@ -1,0 +1,2 @@
+
+PASS: rendered counter nodes without crashing.

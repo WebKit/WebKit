@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 784x176
+  RenderBlock {DIV} at (0,0) size 784x176 [border: (2px solid #800000)]
+    RenderBlock {DIV} at (2,2) size 382x110
+    RenderBlock {DIV} at (2,174) size 379x156 [bgcolor=#00FF00] [border: (2px solid #000000)]
+      RenderBlock {DIV} at (12,2) size 355x152 [bgcolor=#008000] [border: (2px solid #0000FF)]
+        RenderInline {SPAN} at (0,0) size 192x148
+          RenderText {#text} at (2,2) size 192x148
+            text run at (2,2) width 165: "In 2nd"
+            text run at (2,76) width 192: "column"
+        RenderText {#text} at (0,0) size 0x0

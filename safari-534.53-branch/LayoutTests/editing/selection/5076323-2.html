@@ -1,0 +1,7 @@
+<p>This tests caret painting before a table, you should see a caret before the table containing 'foo' above.</p>
+<div id="div" contenteditable="true"><table contenteditable="false" style="border: 1px solid #aaa"><tr><td>foo</td></tr></table></div>
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+</script>

@@ -1,0 +1,14 @@
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.setCloseRemainingWindowsWhenComplete();
+    }
+
+    window.open("http://127.0.0.1:22").document.write('');
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+</script>
+If this does crash, the test has passed.

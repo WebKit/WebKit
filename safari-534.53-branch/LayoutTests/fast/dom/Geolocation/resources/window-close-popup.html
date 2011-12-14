@@ -1,0 +1,17 @@
+<script>
+var mockLatitude = 51.478;
+var mockLongitude = -0.166;
+var mockAccuracy = 100.0;
+
+function loadNext() {
+    var geolocation = navigator.geolocation;
+
+    if (window.layoutTestController) {
+       layoutTestController.setGeolocationPermission(true);
+       layoutTestController.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
+    }
+
+    navigator.geolocation.watchPosition(window.opener.gotPosition);
+}
+</script>
+<body onload="loadNext()"></body>

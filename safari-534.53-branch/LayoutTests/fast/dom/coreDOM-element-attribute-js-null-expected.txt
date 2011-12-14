@@ -1,0 +1,9 @@
+This test setting various attributes of a elements to JavaScript null.
+
+TEST SUCCEEDED: The value was null. [tested Attr.value]
+
+TEST SUCCEEDED: The value was null. [tested ProcessingInstruction.data]
+
+TEST SUCCEEDED: The value was the empty string. [tested CharacterData.data]
+
+

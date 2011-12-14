@@ -1,0 +1,6 @@
+<Files "test-shift-jis.css">
+ForceType "text/css;charset=shift-jis"
+</Files>
+<Files "test-utf-8.css">
+ForceType "text/css;charset=utf-8"
+</Files>

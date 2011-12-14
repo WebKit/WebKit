@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function draw(x, y) {
+    var maskrect = document.getElementById("maskRect");
+    maskrect.setAttribute("transform", "translate(" + x + "," + y + ")");
+
+    var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute("x", x);
+    rect.setAttribute("y", y);
+    rect.setAttribute("width", 453);
+    rect.setAttribute("height", 299);
+    rect.setAttribute("fill", "green");
+    rect.setAttribute("mask", "url(#mask)");
+
+    var root = document.getElementById("root");
+    while (root.firstChild) {
+        root.removeChild(root.firstChild);
+    }
+    root.appendChild(rect);
+}
+
+function moveObject() {
+    window.setTimeout('draw(150, 50)', 100);
+}
+
+function restore() {
+    window.setTimeout('draw(50, 50)', 100);
+}
+
+function finish() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<defs>
+<mask id="mask" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse">
+    <rect id="maskRect" x="50" y="50" width="460" height="316" fill="white" />
+</mask>
+</defs>
+<g id="root">
+    <rect x="50" y="50" width="453" height="299" fill="green" mask="url(#mask)"/>
+</g>
+<text x="14" y="20" font-size="16" onclick="draw(150, 50)">Move Object</text>
+<text x="208" y="20" font-size="16" onclick="draw(50, 50)">Restore Object</text>
+<script>
+    window.setTimeout('moveObject()', 100);
+    window.setTimeout('restore()', 100);
+    window.setTimeout('moveObject()', 100);
+    window.setTimeout('restore()', 100);
+    window.setTimeout('finish()', 0);
+</script>
+</svg>

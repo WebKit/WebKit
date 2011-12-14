@@ -1,0 +1,4 @@
+Test that window.onerror is called on window object. Bug 8519.
+
+Main frame window.onerror: Error: An exception at window-onerror.js:2
+

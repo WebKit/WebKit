@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+PASS dt.setByte(new Boolean(true)); dt.PUB_BYTE is 1
+PASS dt.setByte(new Boolean(true)); dt.getByte() is 1
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new Boolean(false)); dt.PUB_BYTE is 0
+PASS dt.setByte(new Boolean(false)); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new Number(0)); dt.PUB_BYTE is 0
+PASS dt.setByte(new Number(0)); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new String('127')); dt.PUB_BYTE is 127
+PASS dt.setByte(new String('127')); dt.getByte() is 127
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new String('-128')); dt.PUB_BYTE is -128
+PASS dt.setByte(new String('-128')); dt.getByte() is -128
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new MyObject('5.5')); dt.PUB_BYTE is 5
+PASS dt.setByte(new MyObject('5.5')); dt.getByte() is 5
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new MyOtherObject('-9.5')); dt.PUB_BYTE is -9
+PASS dt.setByte(new MyOtherObject('-9.5')); dt.getByte() is -9
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(new AnotherObject('111')); dt.PUB_BYTE is 111
+PASS dt.setByte(new AnotherObject('111')); dt.getByte() is 111
+PASS typeof dt.getByte() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,937 @@
+<style>p code { font-size: 14px; }</style>
+<h2><code>load</code></h2>
+<p><b>Format: </b><code>
+load dst(r) src(k)
+</code></p>
+<p>
+
+            Copies constant src to register dst.
+ 
+</p>
+<h2><code>new_object</code></h2>
+<p><b>Format: </b><code>
+new_object dst(r)
+</code></p>
+<p>
+
+            Constructs a new empty Object instance using the original
+            constructor, and puts the result in register dst.
+ 
+</p>
+<h2><code>new_array</code></h2>
+<p><b>Format: </b><code>
+new_array dst(r) firstArg(r) argCount(n)
+</code></p>
+<p>
+
+            Constructs a new Array instance using the original
+            constructor, and puts the result in register dst.
+            The array will contain argCount elements with values
+            taken from registers starting at register firstArg.
+ 
+</p>
+<h2><code>new_regexp</code></h2>
+<p><b>Format: </b><code>
+new_regexp dst(r) regExp(re)
+</code></p>
+<p>
+
+            Constructs a new RegExp instance using the original
+            constructor from regexp regExp, and puts the result in
+            register dst.
+ 
+</p>
+<h2><code>mov</code></h2>
+<p><b>Format: </b><code>
+mov dst(r) src(r)
+</code></p>
+<p>
+
+            Copies register src to register dst.
+ 
+</p>
+<h2><code>eq</code></h2>
+<p><b>Format: </b><code>
+eq dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Checks whether register src1 and register src2 are equal,
+            as with the ECMAScript '==' operator, and puts the result
+            as a boolean in register dst.
+ 
+</p>
+<h2><code>neq</code></h2>
+<p><b>Format: </b><code>
+neq dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Checks whether register src1 and register src2 are not
+            equal, as with the ECMAScript '!=' operator, and puts the
+            result as a boolean in register dst.
+ 
+</p>
+<h2><code>stricteq</code></h2>
+<p><b>Format: </b><code>
+stricteq dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Checks whether register src1 and register src2 are strictly
+            equal, as with the ECMAScript '===' operator, and puts the
+            result as a boolean in register dst.
+ 
+</p>
+<h2><code>nstricteq</code></h2>
+<p><b>Format: </b><code>
+nstricteq dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Checks whether register src1 and register src2 are not
+            strictly equal, as with the ECMAScript '!==' operator, and
+            puts the result as a boolean in register dst.
+ 
+</p>
+<h2><code>less</code></h2>
+<p><b>Format: </b><code>
+less dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and puts the result as
+            a boolean in register dst.
+ 
+</p>
+<h2><code>lesseq</code></h2>
+<p><b>Format: </b><code>
+lesseq dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than or equal to
+            register src2, as with the ECMAScript '<=' operator, and
+            puts the result as a boolean in register dst.
+ 
+</p>
+<h2><code>pre_inc</code></h2>
+<p><b>Format: </b><code>
+pre_inc srcDst(r)
+</code></p>
+<p>
+
+            Converts register srcDst to number, adds one, and puts the result
+            back in register srcDst.
+ 
+</p>
+<h2><code>pre_dec</code></h2>
+<p><b>Format: </b><code>
+pre_dec srcDst(r)
+</code></p>
+<p>
+
+            Converts register srcDst to number, subtracts one, and puts the result
+            back in register srcDst.
+ 
+</p>
+<h2><code>post_inc</code></h2>
+<p><b>Format: </b><code>
+post_inc dst(r) srcDst(r)
+</code></p>
+<p>
+
+            Converts register srcDst to number. The number itself is
+            written to register dst, and the number plus one is written
+            back to register srcDst.
+ 
+</p>
+<h2><code>post_dec</code></h2>
+<p><b>Format: </b><code>
+post_dec dst(r) srcDst(r)
+</code></p>
+<p>
+
+            Converts register srcDst to number. The number itself is
+            written to register dst, and the number minus one is written
+            back to register srcDst.
+ 
+</p>
+<h2><code>to_jsnumber</code></h2>
+<p><b>Format: </b><code>
+to_jsnumber dst(r) src(r)
+</code></p>
+<p>
+
+            Converts register src to number, and puts the result
+            in register dst.
+ 
+</p>
+<h2><code>negate</code></h2>
+<p><b>Format: </b><code>
+negate dst(r) src(r)
+</code></p>
+<p>
+
+            Converts register src to number, negates it, and puts the
+            result in register dst.
+ 
+</p>
+<h2><code>add</code></h2>
+<p><b>Format: </b><code>
+add dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Adds register src1 and register src2, and puts the result
+            in register dst. (JS add may be string concatenation or
+            numeric add, depending on the types of the operands.)
+ 
+</p>
+<h2><code>mul</code></h2>
+<p><b>Format: </b><code>
+mul dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Multiplies register src1 and register src2 (converted to
+            numbers), and puts the product in register dst.
+ 
+</p>
+<h2><code>div</code></h2>
+<p><b>Format: </b><code>
+div dst(r) dividend(r) divisor(r)
+</code></p>
+<p>
+
+            Divides register dividend (converted to number) by the
+            register divisor (converted to number), and puts the
+            quotient in register dst.
+ 
+</p>
+<h2><code>mod</code></h2>
+<p><b>Format: </b><code>
+mod dst(r) dividend(r) divisor(r)
+</code></p>
+<p>
+
+            Divides register dividend (converted to number) by
+            register divisor (converted to number), and puts the
+            remainder in register dst.
+ 
+</p>
+<h2><code>sub</code></h2>
+<p><b>Format: </b><code>
+sub dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Subtracts register src2 (converted to number) from register
+            src1 (converted to number), and puts the difference in
+            register dst.
+ 
+</p>
+<h2><code>lshift</code></h2>
+<p><b>Format: </b><code>
+lshift dst(r) val(r) shift(r)
+</code></p>
+<p>
+
+            Performs left shift of register val (converted to int32) by
+            register shift (converted to uint32), and puts the result
+            in register dst.
+ 
+</p>
+<h2><code>rshift</code></h2>
+<p><b>Format: </b><code>
+rshift dst(r) val(r) shift(r)
+</code></p>
+<p>
+
+            Performs arithmetic right shift of register val (converted
+            to int32) by register shift (converted to
+            uint32), and puts the result in register dst.
+ 
+</p>
+<h2><code>urshift</code></h2>
+<p><b>Format: </b><code>
+rshift dst(r) val(r) shift(r)
+</code></p>
+<p>
+
+            Performs logical right shift of register val (converted
+            to uint32) by register shift (converted to
+            uint32), and puts the result in register dst.
+ 
+</p>
+<h2><code>bitand</code></h2>
+<p><b>Format: </b><code>
+bitand dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Computes bitwise AND of register src1 (converted to int32)
+            and register src2 (converted to int32), and puts the result
+            in register dst.
+ 
+</p>
+<h2><code>bitxor</code></h2>
+<p><b>Format: </b><code>
+bitxor dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Computes bitwise XOR of register src1 (converted to int32)
+            and register src2 (converted to int32), and puts the result
+            in register dst.
+ 
+</p>
+<h2><code>bitor</code></h2>
+<p><b>Format: </b><code>
+bitor dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Computes bitwise OR of register src1 (converted to int32)
+            and register src2 (converted to int32), and puts the
+            result in register dst.
+ 
+</p>
+<h2><code>bitnot</code></h2>
+<p><b>Format: </b><code>
+bitnot dst(r) src(r)
+</code></p>
+<p>
+
+            Computes bitwise NOT of register src1 (converted to int32),
+            and puts the result in register dst.
+ 
+</p>
+<h2><code>not</code></h2>
+<p><b>Format: </b><code>
+not dst(r) src1(r) src2(r)
+</code></p>
+<p>
+
+            Computes logical NOT of register src1 (converted to
+            boolean), and puts the result in register dst.
+ 
+</p>
+<h2><code>instanceof</code></h2>
+<p><b>Format: </b><code>
+instanceof dst(r) value(r) constructor(r)
+</code></p>
+<p>
+
+            Tests whether register value is an instance of register
+            constructor, and puts the boolean result in register dst.
+ 
+            Raises an exception if register constructor is not an
+            object.
+ 
+</p>
+<h2><code>typeof</code></h2>
+<p><b>Format: </b><code>
+typeof dst(r) src(r)
+</code></p>
+<p>
+
+            Determines the type string for src according to ECMAScript
+            rules, and puts the result in register dst.
+ 
+</p>
+<h2><code>in</code></h2>
+<p><b>Format: </b><code>
+in dst(r) property(r) base(r)
+</code></p>
+<p>
+
+            Tests whether register base has a property named register
+            property, and puts the boolean result in register dst.
+ 
+            Raises an exception if register constructor is not an
+            object.
+ 
+</p>
+<h2><code>resolve</code></h2>
+<p><b>Format: </b><code>
+resolve dst(r) property(id)
+</code></p>
+<p>
+
+            Looks up the property named by identifier property in the
+            scope chain, and writes the resulting value to register
+            dst. If the property is not found, raises an exception.
+ 
+</p>
+<h2><code>resolve_skip</code></h2>
+<p><b>Format: </b><code>
+resolve_skip dst(r) property(id) skip(n)
+</code></p>
+<p>
+
+          Looks up the property named by identifier property in the
+          scope chain skipping the top 'skip' levels, and writes the resulting
+          value to register dst. If the property is not found, raises an exception.
+ 
+</p>
+<h2><code>get_scoped_var</code></h2>
+<p><b>Format: </b><code>
+get_scoped_var dst(r) index(n) skip(n)
+</code></p>
+<p>
+
+          Loads the contents of the index-th local from the scope skip nodes from
+          the top of the scope chain, and places it in register dst
+ 
+</p>
+<h2><code>put_scoped_var</code></h2>
+<p><b>Format: </b><code>
+put_scoped_var index(n) skip(n) value(r)
+</code></p>
+<p>
+
+ 
+</p>
+<h2><code>resolve_base</code></h2>
+<p><b>Format: </b><code>
+resolve_base dst(r) property(id)
+</code></p>
+<p>
+
+            Searches the scope chain for an object containing
+            identifier property, and if one is found, writes it to
+            register dst. If none is found, the outermost scope (which
+            will be the global object) is stored in register dst.
+ 
+</p>
+<h2><code>resolve_with_base</code></h2>
+<p><b>Format: </b><code>
+resolve_with_base baseDst(r) propDst(r) property(id)
+</code></p>
+<p>
+
+            Searches the scope chain for an object containing
+            identifier property, and if one is found, writes it to
+            register srcDst, and the retrieved property value to register
+            propDst. If the property is not found, raises an exception.
+ 
+            This is more efficient than doing resolve_base followed by
+            resolve, or resolve_base followed by get_by_id, as it
+            avoids duplicate hash lookups.
+ 
+</p>
+<h2><code>resolve_func</code></h2>
+<p><b>Format: </b><code>
+resolve_func baseDst(r) funcDst(r) property(id)
+</code></p>
+<p>
+
+            Searches the scope chain for an object containing
+            identifier property, and if one is found, writes the
+            appropriate object to use as "this" when calling its
+            properties to register baseDst; and the retrieved property
+            value to register propDst. If the property is not found,
+            raises an exception.
+ 
+            This differs from resolve_with_base, because the
+            global this value will be substituted for activations or
+            the global object, which is the right behavior for function
+            calls but not for other property lookup.
+ 
+</p>
+<h2><code>get_by_id</code></h2>
+<p><b>Format: </b><code>
+get_by_id dst(r) base(r) property(id)
+</code></p>
+<p>
+
+            Converts register base to Object, gets the property
+            named by identifier property from the object, and puts the
+            result in register dst.
+ 
+</p>
+<h2><code>put_by_id</code></h2>
+<p><b>Format: </b><code>
+put_by_id base(r) property(id) value(r)
+</code></p>
+<p>
+
+            Sets register value on register base as the property named
+            by identifier property. Base is converted to object first.
+ 
+            Unlike many opcodes, this one does not write any output to
+            the register file.
+ 
+</p>
+<h2><code>del_by_id</code></h2>
+<p><b>Format: </b><code>
+del_by_id dst(r) base(r) property(id)
+</code></p>
+<p>
+
+            Converts register base to Object, deletes the property
+            named by identifier property from the object, and writes a
+            boolean indicating success (if true) or failure (if false)
+            to register dst.
+ 
+</p>
+<h2><code>get_by_val</code></h2>
+<p><b>Format: </b><code>
+get_by_val dst(r) base(r) property(r)
+</code></p>
+<p>
+
+            Converts register base to Object, gets the property named
+            by register property from the object, and puts the result
+            in register dst. property is nominally converted to string
+            but numbers are treated more efficiently.
+ 
+</p>
+<h2><code>put_by_val</code></h2>
+<p><b>Format: </b><code>
+put_by_val base(r) property(r) value(r)
+</code></p>
+<p>
+
+            Sets register value on register base as the property named
+            by register property. Base is converted to object
+            first. register property is nominally converted to string
+            but numbers are treated more efficiently.
+ 
+            Unlike many opcodes, this one does not write any output to
+            the register file.
+ 
+</p>
+<h2><code>del_by_val</code></h2>
+<p><b>Format: </b><code>
+del_by_val dst(r) base(r) property(r)
+</code></p>
+<p>
+
+            Converts register base to Object, deletes the property
+            named by register property from the object, and writes a
+            boolean indicating success (if true) or failure (if false)
+            to register dst.
+ 
+</p>
+<h2><code>put_by_index</code></h2>
+<p><b>Format: </b><code>
+put_by_index base(r) property(n) value(r)
+</code></p>
+<p>
+
+            Sets register value on register base as the property named
+            by the immediate number property. Base is converted to
+            object first.
+ 
+            Unlike many opcodes, this one does not write any output to
+            the register file.
+ 
+            This opcode is mainly used to initialize array literals.
+ 
+</p>
+<h2><code>loop</code></h2>
+<p><b>Format: </b><code>
+loop target(offset)
+</code></p>
+<p>
+         
+            Jumps unconditionally to offset target from the current
+            instruction.
+ 
+            Additionally this loop instruction may terminate JS execution is
+            the JS timeout is reached.
+ 
+</p>
+<h2><code>jmp</code></h2>
+<p><b>Format: </b><code>
+jmp target(offset)
+</code></p>
+<p>
+
+            Jumps unconditionally to offset target from the current
+            instruction.
+ 
+</p>
+<h2><code>loop_if_true</code></h2>
+<p><b>Format: </b><code>
+loop_if_true cond(r) target(offset)
+</code></p>
+<p>
+         
+            Jumps to offset target from the current instruction, if and
+            only if register cond converts to boolean as true.
+ 
+            Additionally this loop instruction may terminate JS execution is
+            the JS timeout is reached.
+ 
+</p>
+<h2><code>jtrue</code></h2>
+<p><b>Format: </b><code>
+jtrue cond(r) target(offset)
+</code></p>
+<p>
+
+            Jumps to offset target from the current instruction, if and
+            only if register cond converts to boolean as true.
+ 
+</p>
+<h2><code>jfalse</code></h2>
+<p><b>Format: </b><code>
+jfalse cond(r) target(offset)
+</code></p>
+<p>
+
+            Jumps to offset target from the current instruction, if and
+            only if register cond converts to boolean as false.
+ 
+</p>
+<h2><code>loop_if_less</code></h2>
+<p><b>Format: </b><code>
+loop_if_less src1(r) src2(r) target(offset)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and then jumps to offset
+            target from the current instruction, if and only if the 
+            result of the comparison is true.
+ 
+            Additionally this loop instruction may terminate JS execution is
+            the JS timeout is reached.
+ 
+</p>
+<h2><code>jless</code></h2>
+<p><b>Format: </b><code>
+jless src1(r) src2(r) target(offset)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and then jumps to offset
+            target from the current instruction, if and only if the 
+            result of the comparison is true.
+ 
+</p>
+<h2><code>jnless</code></h2>
+<p><b>Format: </b><code>
+jnless src1(r) src2(r) target(offset)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and then jumps to offset
+            target from the current instruction, if and only if the 
+            result of the comparison is false.
+ 
+</p>
+<h2><code>switch_imm</code></h2>
+<p><b>Format: </b><code>
+switch_imm tableIndex(n) defaultOffset(offset) scrutinee(r)
+</code></p>
+<p>
+
+            Performs a range checked switch on the scrutinee value, using
+            the tableIndex-th immediate switch jump table.  If the scrutinee value
+            is an immediate number in the range covered by the referenced jump
+            table, and the value at jumpTable[scrutinee value] is non-zero, then
+            that value is used as the jump offset, otherwise defaultOffset is used.
+ 
+</p>
+<h2><code>switch_char</code></h2>
+<p><b>Format: </b><code>
+switch_char tableIndex(n) defaultOffset(offset) scrutinee(r)
+</code></p>
+<p>
+
+            Performs a range checked switch on the scrutinee value, using
+            the tableIndex-th character switch jump table.  If the scrutinee value
+            is a single character string in the range covered by the referenced jump
+            table, and the value at jumpTable[scrutinee value] is non-zero, then
+            that value is used as the jump offset, otherwise defaultOffset is used.
+ 
+</p>
+<h2><code>switch_string</code></h2>
+<p><b>Format: </b><code>
+switch_string tableIndex(n) defaultOffset(offset) scrutinee(r)
+</code></p>
+<p>
+
+            Performs a sparse hashmap based switch on the value in the scrutinee
+            register, using the tableIndex-th string switch jump table.  If the 
+            scrutinee value is a string that exists as a key in the referenced 
+            jump table, then the value associated with the string is used as the 
+            jump offset, otherwise defaultOffset is used.
+ 
+</p>
+<h2><code>new_func</code></h2>
+<p><b>Format: </b><code>
+new_func dst(r) func(f)
+</code></p>
+<p>
+
+            Constructs a new Function instance from function func and
+            the current scope chain using the original Function
+            constructor, using the rules for function declarations, and
+            puts the result in register dst.
+ 
+</p>
+<h2><code>new_func_exp</code></h2>
+<p><b>Format: </b><code>
+new_func_exp dst(r) func(f)
+</code></p>
+<p>
+
+            Constructs a new Function instance from function func and
+            the current scope chain using the original Function
+            constructor, using the rules for function expressions, and
+            puts the result in register dst.
+ 
+</p>
+<h2><code>call_eval</code></h2>
+<p><b>Format: </b><code>
+call_eval dst(r) func(r) thisVal(r) firstArg(r) argCount(n)
+</code></p>
+<p>
+
+            Call a function named "eval" with no explicit "this" value
+            (which may therefore be the eval operator). If register
+            thisVal is the global object, and register func contains
+            that global object's original global eval function, then
+            perform the eval operator in local scope (interpreting
+            the argument registers as for the "call"
+            opcode). Otherwise, act exactly as the "call" opcode would.
+ 
+</p>
+<h2><code>call</code></h2>
+<p><b>Format: </b><code>
+call dst(r) func(r) thisVal(r) firstArg(r) argCount(n)
+</code></p>
+<p>
+
+            Perform a function call. Specifically, call register func
+            with a "this" value of register thisVal, and put the result
+            in register dst.
+ 
+            The arguments start at register firstArg and go up to
+            argCount, but the "this" value is considered an implicit
+            first argument, so the argCount should be one greater than
+            the number of explicit arguments passed, and the register
+            after firstArg should contain the actual first
+            argument. This opcode will copy from the thisVal register
+            to the firstArg register, unless the register index of
+            thisVal is the special missing this object marker, which is
+            2^31-1; in that case, the global object will be used as the
+            "this" value.
+ 
+            If func is a native code function, then this opcode calls
+            it and returns the value immediately. 
+ 
+            But if it is a JS function, then the current scope chain
+            and code block is set to the function's, and we slide the
+            register window so that the arguments would form the first
+            few local registers of the called function's register
+            window. In addition, a call frame header is written
+            immediately before the arguments; see the call frame
+            documentation for an explanation of how many registers a
+            call frame takes and what they contain. That many registers
+            before the firstArg register will be overwritten by the
+            call. In addition, any registers higher than firstArg +
+            argCount may be overwritten. Once this setup is complete,
+            execution continues from the called function's first
+            argument, and does not return until a "ret" opcode is
+            encountered.
+ 
+</p>
+<h2><code>ret</code></h2>
+<p><b>Format: </b><code>
+ret result(r)
+</code></p>
+<p>
+           
+            Return register result as the return value of the current
+            function call, writing it into the caller's expected return
+            value register. In addition, unwind one call frame and
+            restore the scope chain, code block instruction pointer and
+            register base to those of the calling function.
+ 
+</p>
+<h2><code>construct</code></h2>
+<p><b>Format: </b><code>
+construct dst(r) constr(r) firstArg(r) argCount(n)
+</code></p>
+<p>
+
+            Invoke register "constr" as a constructor. For JS
+            functions, the calling convention is exactly as for the
+            "call" opcode, except that the "this" value is a newly
+            created Object. For native constructors, a null "this"
+            value is passed. In either case, the firstArg and argCount
+            registers are interpreted as for the "call" opcode.
+ 
+</p>
+<h2><code>push_scope</code></h2>
+<p><b>Format: </b><code>
+push_scope scope(r)
+</code></p>
+<p>
+
+            Converts register scope to object, and pushes it onto the top
+            of the current scope chain.
+ 
+</p>
+<h2><code>pop_scope</code></h2>
+<p><b>Format: </b><code>
+pop_scope
+</code></p>
+<p>
+
+            Removes the top item from the current scope chain.
+ 
+</p>
+<h2><code>get_pnames</code></h2>
+<p><b>Format: </b><code>
+get_pnames dst(r) base(r)
+</code></p>
+<p>
+
+            Creates a property name list for register base and puts it
+            in register dst. This is not a true JavaScript value, just
+            a synthetic value used to keep the iteration state in a
+            register.
+ 
+</p>
+<h2><code>next_pname</code></h2>
+<p><b>Format: </b><code>
+next_pname dst(r) iter(r) target(offset)
+</code></p>
+<p>
+
+            Tries to copies the next name from property name list in
+            register iter. If there are names left, then copies one to
+            register dst, and jumps to offset target. If there are none
+            left, invalidates the iterator and continues to the next
+            instruction.
+ 
+</p>
+<h2><code>jmp_scopes</code></h2>
+<p><b>Format: </b><code>
+jmp_scopes count(n) target(offset)
+</code></p>
+<p>
+
+            Removes the a number of items from the current scope chain
+            specified by immediate number count, then jumps to offset
+            target.
+ 
+</p>
+<h2><code>catch</code></h2>
+<p><b>Format: </b><code>
+catch ex(r)
+</code></p>
+<p>
+
+            Retrieves the VMs current exception and puts it in register
+            ex. This is only valid after an exception has been raised,
+            and usually forms the beginning of an exception handler.
+ 
+</p>
+<h2><code>throw</code></h2>
+<p><b>Format: </b><code>
+throw ex(r)
+</code></p>
+<p>
+
+            Throws register ex as an exception. This involves three
+            steps: first, it is set as the current exception in the
+            VM's internal state, then the stack is unwound until an
+            exception handler or a native code boundary is found, and
+            then control resumes at the exception handler if any or
+            else the script returns control to the nearest native caller.
+ 
+</p>
+<h2><code>new_error</code></h2>
+<p><b>Format: </b><code>
+new_error dst(r) type(n) message(k)
+</code></p>
+<p>
+
+            Constructs a new Error instance using the original
+            constructor, using immediate number n as the type and
+            constant message as the message string. The result is
+            written to register dst.
+ 
+</p>
+<h2><code>end</code></h2>
+<p><b>Format: </b><code>
+end result(r)
+</code></p>
+<p>
+           
+            Return register result as the value of a global or eval
+            program. Return control to the calling native code.
+ 
+</p>
+<h2><code>put_getter</code></h2>
+<p><b>Format: </b><code>
+put_getter base(r) property(id) function(r)
+</code></p>
+<p>
+
+            Sets register function on register base as the getter named
+            by identifier property. Base and function are assumed to be
+            objects as this op should only be used for getters defined
+            in object literal form.
+ 
+            Unlike many opcodes, this one does not write any output to
+            the register file.
+ 
+</p>
+<h2><code>put_setter</code></h2>
+<p><b>Format: </b><code>
+put_setter base(r) property(id) function(r)
+</code></p>
+<p>
+
+            Sets register function on register base as the setter named
+            by identifier property. Base and function are assumed to be
+            objects as this op should only be used for setters defined
+            in object literal form.
+ 
+            Unlike many opcodes, this one does not write any output to
+            the register file.
+ 
+</p>
+<h2><code>jsr</code></h2>
+<p><b>Format: </b><code>
+jsr retAddrDst(r) target(offset)
+</code></p>
+<p>
+
+            Places the address of the next instruction into the retAddrDst
+            register and jumps to offset target from the current instruction.
+ 
+</p>
+<h2><code>sret</code></h2>
+<p><b>Format: </b><code>
+sret retAddrSrc(r)
+</code></p>
+<p>
+
+          Jumps to the address stored in the retAddrSrc register. This
+          differs from op_jmp because the target address is stored in a
+          register, not as an immediate.
+ 
+</p>
+<h2><code>debug</code></h2>
+<p><b>Format: </b><code>
+debug debugHookID(n) firstLine(n) lastLine(n)
+</code></p>
+<p>
+
+          Notifies the debugger of the current state of execution. This opcode
+          is only generated while the debugger is attached.
+ 
+</p>

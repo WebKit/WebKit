@@ -1,0 +1,5 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=16097 Safari crashes during load of LexisNexis search results.
+
+Testing that destroying the image element in a standalone image document does not lead to a crash.
+
+

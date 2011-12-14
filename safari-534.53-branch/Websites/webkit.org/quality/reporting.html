@@ -1,0 +1,224 @@
+<?php
+    $title = "Reporting Bugs";
+    include("../header.inc");
+?>
+<h2>Reporting Bugs</h2>
+
+<h3>You have found a bug? Here are 5 steps to getting it fixed!</h3>
+<ol>
+<li>
+<strong>Check your WebKit version</strong><br>
+<script type="text/javascript">
+    /* 
+    Copyright (C) 2006 Joost de Valk, http://www.joostdevalk.nl/.  All rights reserved.
+    Copyright (C) 2006 Mark Rowe, http://bdash.net.nz/.  All rights reserved.
+    Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    
+    THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+    PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+    
+    Script used for recognizing Safari / Shiira / WebKit. 
+    A matrix of WebKit versions and OS X versions can be found at:
+    http://developer.apple.com/internet/safari/uamatrix.html .
+    */
+    function parse_version(version)
+    {
+        var bits = version.split(".");
+        var is_nightly = (version[version.length - 1] == "+");
+        return {major: parseInt(bits[0]), minor: parseInt(bits[1]), is_nightly: is_nightly};
+    }
+    
+    function display(id, display_style)
+    {
+        document.getElementById(id).style.display = display_style;
+    }
+    
+    function get_version()
+    {
+        // Check for Safari
+        var regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Safari/(.*)");
+        var matches = regex.exec(navigator.userAgent);
+
+        var is_safari = false;
+        var is_shiira = false;
+        
+        if (matches) {
+            is_safari = true;
+            display('safari_bug', 'block');
+        } else {
+            // Check for Shiira
+            var regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Shiira/(.*) Safari/(.*)");
+            var matches = regex.exec(navigator.userAgent);
+            if (matches) {
+                is_shiira = true;
+                display('shiira_bug', 'block');
+            } else {
+                return;
+            }
+        }
+
+        // We have detected a valid WebKit version, hide the unknown version text
+        display('unknown_version', 'none');
+
+        var webkit_version = parse_version(matches[1]);
+
+        if (webkit_version.major < 100) {
+            // Mac OS X 10.2
+            display('using_10point2', 'block');
+        } else if (webkit_version.major >= 100 && webkit_version.major < 400) {
+            // Mac OS X 10.3
+            display('using_10point3', 'block');
+
+            if (webkit_version.major < 312)
+                // Mac OS X 10.3.8 or lower
+                display('updateto10_3_9', 'block');
+
+            else if (webkit_version.minor < 9)
+                // Mac OS X 10.3.9 but not the latest Safari update
+                display('update10_3_9_safari', 'block');
+
+            else if (is_safari)
+                // Mac OS X 10.3.9 with the latest Safari update
+                display('best10_3_9_safari', 'block');
+
+            else if (is_shiira)
+                // Mac OS X 10.3.9 with Shiira
+                display('best10_3_9_shiira', 'block');
+
+        } else {
+            // Mac OS X 10.4
+            display('using_10point4', 'block');
+
+            if (webkit_version.major == 412 && webkit_version.is_nightly)
+                // Using an old nightly
+                display('neednewnightly', 'block');
+
+            else if (webkit_version.major == 420 && webkit_version.is_nightly)
+                // Using a recent nightly, not sure which
+                display('mightneednewnightly', 'block');
+
+            else if (webkit_version.major < 418)
+                // 10.4.6 or lower
+                display('updateto10_4_7', 'block');
+
+            else if (is_safari)
+                // 10.4.7
+                display('using_10_4_7_safari', 'block');
+
+            else if (is_shiira)
+                // 10.4.7
+                display('using_10_4_7_shiira', 'block');
+
+        } 
+    }
+</script>
+<div id="unknown_version">
+    To make sure you're not wasting your (and our) time, you should be using the latest version of WebKit before you file your bug.
+    First of all, you should <a href="http://nightly.webkit.org">download the latest nightly</a> build to be sure you
+    have the latest version. If you've done this and you still experience the bug, go ahead to the next step.
+</div>
+<div id="using_10point2" style="display: none;">
+    We're sorry, we no longer accept bug reports about Safari under Mac OS X 10.2. To many bugs have been fixed since then. We advise
+    you to upgrade to Mac OS X 10.4.
+</div>
+<div id="using_10point3" style="display: none;">
+    <div id="updateto10_3_9" style="display: none;">
+        You are using Mac OS X 10.3.8 or lower, please before filing any bugs, upgrade to Mac OS X 10.3.9.
+    </div>
+    <div id="update10_3_9_safari" style="display: none;">
+        You are using Mac OS X 10.3.9, but your WebKit isn't the latest version. Please, before filing any bugs, download the 
+        latest Webkit update.
+    </div>
+    <div id="best10_3_9_safari">
+        You are using Mac OS X 10.3.9, and the latest version of Safari, go ahead and file your bug!
+    </div>
+    <div id="best10_3_9_shiira">
+        You are using Shiira on Mac OS X 10.3.9, go ahead and file your bug!
+    </div>
+</div>
+<div id="using_10point4" style="display: none;">
+    <div id="neednewnightly" style="display: none;">
+        You are already using a nightly build, which is very good! A large number of bugs has been fixed since you downloaded
+        this nightly build though, so please <a href="http://nightly.webkit.org/">get the latest nightly</a>.
+    </div>
+    <div id="mightneednewnightly" style="display: none;">
+        You are already using a nightly build, which is very good! Unfortunately, we can't detect when you downloaded it, but
+        if that was more then a few days ago, please <a href="http://nightly.webkit.org/">get the latest nightly</a>.
+    </div>
+    <div id="updateto10_4_7" style="display: none;">
+        You are using Mac OS X 10.4.6 or lower, please before filing any bugs, do either of the following:
+        <ul>
+            <li>Upgrade to Mac OS X 10.4.7, or:</li>
+            <li><a href="http://nightly.webkit.org">Download the latest nightly</a>.</li>
+        </ul>
+    </div>
+    <div id="using_10_4_7_safari" style="display: none;">
+        You are using Safari on Mac OS X 10.4.7, go ahead and file your bug, or if you want to <a href="http://nightly.webkit.org">
+        download the latest nightly</a> and see if your bug is already fixed.
+    </div>
+    <div id="using_10_4_7_shiira" style="display: none;">
+        You are using Shiira on Mac OS X 10.4.7, go ahead and file your bug.
+    </div>
+</div>
+</li>
+<li>
+    <strong>Search Bugzilla</strong><br>
+    Now that you have the latest WebKit version and still think you've found a WebKit bug, 
+    <a href="https://bugs.webkit.org/query.cgi?format=specific&amp;product=WebKit">search through Bugzilla</a> first
+    to see if anyone else has already filed it. This step is very important! If you find that someone has filed your bug
+    already, please go to the next step anyway, but instead of filing a new bug, comment on the one you've found. If you can't
+    find your bug in Bugzilla, go to the next step.
+</li>
+<li>
+    <strong>Create a Bugzilla account</strong><br>
+    You will need to <a href="bugzilla.html">create a Bugzilla account</a> to be able
+    to report bugs (and to comment on them). If you have registered, proceed to the next step.
+</li>
+<li>
+    <strong>File the bug!</strong><br>
+    Now you are ready to <a href="http://webkit.org/new-bug">file a bug on the WebKit product</a>. The <a href="bugwriting.html">
+    Writing a Good Bug Report</a> document (also linked in the sidebar) gives some tips about the most useful information to include
+    in bug reports. The better your bug report, the higher the chance that your bug will be addressed (and possibly fixed) 
+    quickly!
+</li>
+<li>
+    <strong>What happens next?</strong><br>
+    Once your bug is filed, you will receive email when it is updated at each stage in the <a href="lifecycle.html">bug life cycle</a>.
+    After the bug is considered fixed, you may be asked to download the <a href="http://nightly.webkit.org">latest nightly</a> 
+    and confirm that the fix works for you.
+</li>
+</ol>
+<div id="safari_bug" style="display: none;">
+    <strong>Note:</strong> <br>
+    To report bugs in Safari, or WebKit bugs that may contain confidential information, please use
+    <a href="http://bugreporter.apple.com">http://bugreporter.apple.com/</a>.
+    Non ADC members can also use <a href="http://developer.apple.com/bugreporter/bugrptform.html">http://developer.apple.com/bugreporter/bugrptform.html</a> to report bugs.
+</div>
+<div id="shiira_bug" style="display: none;">
+    <strong>Note:</strong> <br>
+    To report bugs in Shiira, please go to <a href="http://hmdt-web.net/forum/">http://hmdt-web.net/forum/</a>.
+    For WebKit bugs that contain confidential information, please use 
+    <a href="http://bugreporter.apple.com">http://bugreporter.apple.com/</a>.
+</div>
+
+<script type="text/javascript">get_version();</script>
+
+<?php include("../footer.inc"); ?>

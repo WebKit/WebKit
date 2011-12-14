@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></p>
+<div id="result"></div>
+<div id="div" contentEditable="true">
+  <div>
+    <div>
+      <p id="p"></p>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+description('When contentEditable is missing, it maps to "inherit" state and the element is editable if its nearest ancestor is.')
+
+shouldBe('document.getElementById("p").hasAttribute("contentEditable")','false');
+shouldBe('document.getElementById("p").contentEditable', '"inherit"');
+shouldBe('document.getElementById("p").isContentEditable', 'true');
+shouldBe('window.getComputedStyle(p, "").getPropertyValue("-webkit-user-modify")', '"read-write"');
+
+document.getElementById("div").style.display= 'none';
+
+window.successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

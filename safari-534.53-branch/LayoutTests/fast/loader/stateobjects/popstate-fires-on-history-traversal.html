@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css" type="text/css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<div id="description"></div>
+<pre id="console"></pre>
+<script>
+description('Tests that popstate events fire for all history traversals (including navigation to fragments), not just when going back to a state object created via pushState.');
+
+onload = function()
+{
+    setTimeout(step, 0);
+}
+
+var currentStep = 0;
+var popstateFireCount = 0;
+
+function step()
+{
+    switch (currentStep) {
+    case 0:
+        debug('setting hash to #state1');
+        location.hash = '#state1';
+        break;
+    case 1:
+        debug('setting hash to #state2');
+        location.hash = '#state2';
+        break;
+    case 2:
+        debug('going back');
+        history.back();
+        break;
+    case 3:
+        debug('going back');
+        history.back();
+        break;
+    case 4:
+        // The 5 expected popstate events are when:
+        // 1. The page loads
+        // 2. Navigating to #state1
+        // 3. Navigating to #state2
+        // 4. Going back to #state1
+        // 5. Going back to the initial page state
+        shouldBe('popstateFireCount', '5');
+        finishJSTest();
+        return;
+    default:
+        testFailed('unexpected state: ' + currentStep);
+        break;
+    }
+    
+    currentStep++;
+    
+    setTimeout(step, 0);
+}
+
+onpopstate = function(event)
+{
+    debug('popstate fired with state ' + event.state);
+    popstateFireCount++;
+}
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>

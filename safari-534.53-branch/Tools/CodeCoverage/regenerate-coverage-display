@@ -1,0 +1,382 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2004, 2005, 2006 Nathaniel Smith
+# Copyright (C) 2007 Holger Hans Peter Freyther
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#
+# HTML output inspired by the output of lcov as found on the GStreamer
+# site. I assume this is not copyrightable.
+#
+
+
+#
+# Read all CSV files and
+#  Create an overview file
+#
+#
+
+
+import sys
+import csv
+import glob
+import time
+import os
+import os.path
+import datetime
+import shutil
+
+os.environ["TTFPATH"] = ":".join(["/usr/share/fonts/truetype/" + d
+                                  for d in "ttf-bitstream-vera",
+                                           "freefont",
+                                           "msttcorefonts"])
+
+level_LOW    = 10
+level_MEDIUM = 70
+
+def copy_files(dest_dir):
+    """
+    Copy the CSS and the png's to the destination directory
+    """
+    images = ["amber.png", "emerald.png", "glass.png", "ruby.png", "snow.png"]
+    css    = "gcov.css"
+    (base_path, name) = os.path.split(__file__)
+    base_path = os.path.abspath(base_path)
+
+    shutil.copyfile(os.path.join(base_path,css), os.path.join(dest_dir,css))
+    map(lambda x: shutil.copyfile(os.path.join(base_path,x), os.path.join(dest_dir,x)), images)
+
+def sumcov(cov):
+        return "%.2f%% (%s/%s)" % (cov[1] * 100.0 / (cov[0] or 1), cov[1], cov[0])
+
+def create_page(dest_dir, name):
+    index = open(os.path.join(dest_dir, name), "w")
+    index.write("""<HTML>
+    <HEAD>
+        <TITLE>WebKit test coverage information</TITLE>
+        <link rel="stylesheet" type="text/css" href="gcov.css">
+    </HEAD>
+    <BODY>
+    """)
+    return index
+
+def generate_header(file, last_time, total_lines, total_executed, path, image):
+    product = "WebKit"
+    date = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(last_time))
+    covered_lines = sumcov((total_lines, total_executed))
+
+    file.write("""<table width="100%%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">GCOV code coverage report</td></tr>
+    <tr><td class="ruler"><img src="glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%%">
+        <table cellpadding=1 border=0 width="100%%">
+        <tr>
+          <td class="headerItem" width="20%%">Current&nbsp;view:</td>
+          <td class="headerValue" width="80%%" colspan=4>%(path)s</td>
+        </tr>
+        <tr>
+          <td class="headerItem" width="20%%">Test:</td>
+          <td class="headerValue" width="80%%" colspan=4>%(product)s</td>
+        </tr>
+        <tr>
+          <td class="headerItem" width="20%%">Date:</td>
+          <td class="headerValue" width="20%%">%(date)s</td>
+          <td width="20%%"></td>
+          <td class="headerItem" width="20%%">Instrumented&nbsp;lines:</td>
+          <td class="headerValue" width="20%%">%(total_lines)s</td>
+        </tr>
+        <tr>
+          <td class="headerItem" width="20%%">Code&nbsp;covered:</td>
+          <td class="headerValue" width="20%%">%(covered_lines)s</td>
+          <td width="20%%"></td>
+          <td class="headerItem" width="20%%">Executed&nbsp;lines:</td>
+          <td class="headerValue" width="20%%">%(total_executed)s</td>
+        </tr>
+        </table>
+      </td>
+    </tr>
+    <tr><td class="ruler"><img src="glass.png" width=3 height=3 alt=""></td></tr>
+  </table>""" % vars())
+    # disabled for now <tr><td><img src="%(image)s"></td></tr>
+
+def generate_table_item(file, name, total_lines, covered_lines):
+    covered_precise = (covered_lines*100.0)/(total_lines or 1.0)
+    covered = int(round(covered_precise))
+    remainder = 100-covered
+    (image,perClass,numClass) = coverage_icon(covered_precise)
+    site = "%s.html" % name.replace(os.path.sep,'__')
+    file.write("""
+        <tr>
+      <td class="coverFile"><a href="%(site)s">%(name)s</a></td>
+      <td class="coverBar" align="center">
+        <table border=0 cellspacing=0 cellpadding=1><tr><td class="coverBarOutline"><img src="%(image)s" width=%(covered)s height=10 alt="%(covered_precise).2f"><img src="snow.png" width=%(remainder)s height=10 alt="%(covered_precise).2f"></td></tr></table>
+      </td>
+      <td class="%(perClass)s">%(covered_precise).2f&nbsp;%%</td>
+      <td class="%(numClass)s">%(covered_lines)s&nbsp;/&nbsp;%(total_lines)s&nbsp;lines</td>
+    </tr>
+    """ % vars())
+
+def generate_table_header_start(file):
+  file.write("""<center>
+  <table width="80%%" cellpadding=2 cellspacing=1 border=0>
+
+    <tr>
+      <td width="50%%"><br></td>
+      <td width="15%%"></td>
+      <td width="15%%"></td>
+      <td width="20%%"></td>
+    </tr>
+
+    <tr>
+      <td class="tableHead">Directory&nbsp;name</td>
+      <td class="tableHead" colspan=3>Coverage</td>
+    </tr>
+    """)
+
+def coverage_icon(percent):
+    if percent < level_LOW:
+        return ("ruby.png", "coverPerLo", "coverNumLo")
+    elif percent < level_MEDIUM:
+        return ("amber.png", "coverPerMed", "coverNumMed")
+    else:
+        return ("emerald.png", "coverPerHi", "coverNumHi")
+
+def replace(text, *pairs):
+    """
+    From pydoc... almost identical at least
+    """
+    from string import split, join
+    while pairs:
+        (a,b) = pairs[0]
+        text = join(split(text, a), b)
+        pairs = pairs[1:]
+    return text
+
+def escape(text):
+    """
+    Escape string to be conform HTML
+    """
+    return replace(text,
+                        ('&', '&amp;'),
+                        ('<', '&lt;' ),
+                        ('>', '&gt;' ) )
+
+def generate_table_header_end(file):
+    file.write("""</table>
+    </center>""")
+
+def write_title_page(dest_dir, last_time, last_tot_lines, last_tot_covered, dir_series):
+    """
+    Write the index.html with a overview of each directory
+    """
+    index= create_page(dest_dir, "index.html")
+    generate_header(index, last_time, last_tot_lines, last_tot_covered, "directory", "images/Total.png")
+    # Create the directory overview
+    generate_table_header_start(index)
+    dirs = dir_series.keys()
+    dirs.sort()
+    for dir in dirs:
+        (dir_files, total_lines, covered_lines,_) = dir_series[dir][-1]
+        generate_table_item(index, dir, total_lines, covered_lines)
+    generate_table_header_end(index)
+
+    index.write("""</BODY></HTML>""")
+    index.close()
+
+def write_directory_site(dest_dir, dir_name, last_time, dir_series, file_series):
+    escaped_dir = dir_name.replace(os.path.sep,'__')
+    site = create_page(dest_dir, "%s.html" % escaped_dir)
+    (_,tot_lines,tot_covered,files) = dir_series[dir_name][-1]
+    generate_header(site, last_time, tot_lines, tot_covered, "directory - %s" % dir_name, "images/%s.png" % escaped_dir)
+
+    files.sort()
+
+    generate_table_header_start(site)
+    for file in files:
+        (lines,covered) = file_series[file][-1]
+        generate_table_item(site, file, lines, covered)
+
+    generate_table_header_end(site)
+    site.write("""</BODY></HTML>""")
+    site.close()
+
+def write_file_site(dest_dir, file_name, last_time, data_dir, last_id, file_series):
+    escaped_name = file_name.replace(os.path.sep,'__')
+    site = create_page(dest_dir, "%s.html" % escaped_name)
+    (tot_lines,tot_covered) = file_series[file_name][-1]
+    generate_header(site, last_time, tot_lines, tot_covered, "file - %s" % file_name, "images/%s.png" % escaped_name)
+
+    path = "%s/%s.annotated%s" % (data_dir,last_id,file_name)
+
+    # In contrast to the lcov we want to show files that have been compiled
+    # but have not been tested at all. This means we have sourcefiles with 0
+    # lines covered in the path but they are not lcov files.
+    # To identify them we check the first line now. If we see that we can
+    # continue
+    #         -:    0:Source:
+    try:
+        file = open(path, "r")
+    except:
+        return
+    all_lines = file.read().split("\n")
+
+    # Convert the gcov file to HTML if we have a chanche to do so
+    # Scan each line and see if it was covered or not and escape the
+    # text
+    if len(all_lines) == 0 or not "-:    0:Source:" in all_lines[0]:
+        site.write("<p>The file was not excercised</p>")
+    else:
+        site.write("""</br><table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td><pre class="source">
+    """)
+        for line in all_lines:
+            split_line = line.split(':',2)
+            # e.g. at the EOF
+            if len(split_line) == 1:
+                continue
+            line_number = split_line[1].strip()
+            if line_number == "0":
+                continue
+            covered = 15*" "
+            end = ""
+            if "#####" in split_line[0]:
+                covered = '<span class="lineNoCov">%15s' % "0"
+                end = "</span>"
+            elif split_line[0].strip() != "-":
+                covered = '<span class="lineCov">%15s' % split_line[0].strip()
+                end = "</span>"
+
+            escaped_line = escape(split_line[2])
+            str = '<span class="lineNum">%(line_number)10s </span>%(covered)s: %(escaped_line)s%(end)s\n' % vars()
+            site.write(str)
+        site.write("</pre></td></tr></table>")
+    site.write("</BODY></HTML>")
+    site.close()
+
+def main(progname, args):
+    if len(args) != 2:
+        sys.exit("Usage: %s DATADIR OUTDIR" % progname)
+
+    branch = "WebKit from trunk"
+    datadir, outdir = args
+
+    # First, load in all data from the data directory.
+    data = []
+    for datapath in glob.glob(os.path.join(datadir, "*.csv")):
+        data.append(read_csv(datapath))
+    # Sort by time
+    data.sort()
+
+    # Calculate time series for each file.
+    times = [sample[0] for sample in data]
+    times = [datetime.datetime.utcfromtimestamp(t) for t in times]
+
+    all_files = {}
+    all_dirs  = {}
+    for sample in data:
+        t, i, tot_line, tot_cover, per_file, per_dir = sample
+        all_files.update(per_file)
+        all_dirs.update(per_dir)
+    total_series = []
+    file_serieses = dict([[k, [(0, 0)] * len(times)] for k in all_files.keys()])
+    dir_serieses  = dict([[k, [(0, 0, 0, [])] * len(times)] for k in all_dirs.keys()])
+    data_idx = 0
+    for sample in data:
+        t, i, tot_line, tot_cover, per_file, per_dir = sample
+        total_series.append([tot_line, tot_cover])
+        for f, covinfo in per_file.items():
+            file_serieses[f][data_idx] = covinfo
+        for f, covinfo in per_dir.items():
+            dir_serieses[f][data_idx] = covinfo
+        data_idx += 1
+
+
+    # Okay, ready to start outputting.  First make sure our directories
+    # exist.
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    rel_imgdir = "images"
+    imgdir = os.path.join(outdir, rel_imgdir)
+    if not os.path.exists(imgdir):
+        os.makedirs(imgdir)
+
+
+    # And look up the latest revision id, and coverage information
+    last_time, last_id, last_tot_lines, last_tot_covered = data[-1][:4]
+
+    # Now start generating our html file
+    copy_files(outdir)
+    write_title_page(outdir, last_time, last_tot_lines, last_tot_covered, dir_serieses)
+
+    dir_keys = dir_serieses.keys()
+    dir_keys.sort()
+    for dir_name in dir_keys:
+        write_directory_site(outdir, dir_name, last_time, dir_serieses, file_serieses)
+
+    file_keys = file_serieses.keys()
+    for file_name in file_keys:
+        write_file_site(outdir, file_name, last_time, datadir, last_id, file_serieses)
+
+def read_csv(path):
+    r = csv.reader(open(path, "r"))
+    # First line is id, time
+    for row in r:
+        id, time_str = row
+        break
+    time = int(float(time_str))
+    # Rest of lines are path, total_lines, covered_lines
+    per_file = {}
+    per_dir  = {}
+    grand_total_lines, grand_covered_lines = 0, 0
+    for row in r:
+        path, total_lines_str, covered_lines_str = row
+        total_lines = int(total_lines_str)
+        covered_lines = int(covered_lines_str)
+        grand_total_lines += total_lines
+        grand_covered_lines += covered_lines
+        per_file[path] = [total_lines, covered_lines]
+
+        # Update dir statistics
+        dirname = os.path.dirname(path)
+        if not dirname in per_dir:
+            per_dir[dirname] = (0,0,0,[])
+        (dir_files,dir_total_lines,dir_covered_lines, files) = per_dir[dirname]
+        dir_files += 1
+        dir_total_lines += total_lines
+        dir_covered_lines += covered_lines
+        files.append(path)
+        per_dir[dirname] = (dir_files,dir_total_lines,dir_covered_lines,files)
+    return [time, id, grand_total_lines, grand_covered_lines, per_file, per_dir]
+
+if __name__ == "__main__":
+    import sys
+    main(sys.argv[0], sys.argv[1:])

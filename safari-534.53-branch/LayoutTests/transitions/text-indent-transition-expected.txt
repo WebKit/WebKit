@@ -1,0 +1,3 @@
+Text is affected by transition of text-indent.
+PASS - "text-indent" property for "box1" element at 0.5s saw something close to: 50
+

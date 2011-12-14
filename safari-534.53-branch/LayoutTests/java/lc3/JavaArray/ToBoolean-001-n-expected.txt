@@ -1,0 +1,33 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaArray to boolean
+
+FAIL dt.setBoolean( emptyByteArray ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( emptyByteArray ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetByteArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetByteArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetByteArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetByteArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetCharArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetCharArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetShortArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetShortArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetLongArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetLongArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetIntArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetIntArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetFloatArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetFloatArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+FAIL dt.setBoolean( DT.staticGetObjectArray() ); dt.PUB_BOOLEAN  should be true. Was false.
+FAIL dt.setBoolean( DT.staticGetObjectArray() ); undefined should be true (of type boolean). Was undefined (of type undefined).
+PASS typeof dt.getBoolean()  is "boolean"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

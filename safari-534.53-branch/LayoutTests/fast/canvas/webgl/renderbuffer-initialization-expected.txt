@@ -1,0 +1,17 @@
+Verify renderbuffers are initialized to 0 before being read in WebGL
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Test whether the WebGL internal buffers have been initialized to 0.
+PASS Buffers have been initialized to 0.
+Test whether user created buffers have been initialized to 0.
+PASS Buffers have been initialized to 0.
+Test whether the WebGL internal buffers have been initialized to 0.
+PASS Buffers have been initialized to 0.
+Test whether user created buffers have been initialized to 0.
+PASS Buffers have been initialized to 0.
+PASS clearColor is [1, 0, 0, 1]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

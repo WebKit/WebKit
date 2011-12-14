@@ -1,0 +1,2 @@
+This tests that we don't crash if we clear a transitions duration during the transition end callback.
+test

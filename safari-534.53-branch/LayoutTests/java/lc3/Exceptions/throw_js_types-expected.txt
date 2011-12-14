@@ -1,0 +1,15 @@
+Throw JS types as exceptions through Java
+
+FAIL evalObject.eval(this, "throw 'foo';") should throw foo. Was undefined.
+FAIL evalObject.eval(this, "throw 42;") should throw 42. Was undefined.
+FAIL evalObject.eval(this, "throw 4.2;") should throw 4.2. Was undefined.
+FAIL evalObject.eval(this, "throw false;") should throw false. Was undefined.
+FAIL evalObject.eval(this, "throw {a:5};") should throw [object Object]. Was undefined.
+FAIL evalObject.eval(this, "throw new Date();") did not throw an exception
+FAIL evalObject.eval(this, "throw new String();") should throw . Was undefined.
+FAIL evalObject.eval(this, "throw undefined") should throw undefined. Was undefined.
+FAIL evalObject.eval(this, "throw null") should throw null. Was undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

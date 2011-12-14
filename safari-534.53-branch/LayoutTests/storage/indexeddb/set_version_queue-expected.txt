@@ -1,0 +1,73 @@
+4 open connections try to setVersion at the same time. 3 connections eventually close, allowing 1 setVersion call to proceed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS IndexedDB == null is false
+IndexedDB.open('set-version-queue')
+IndexedDB.open('set-version-queue')
+IndexedDB.open('set-version-queue')
+IndexedDB.open('set-version-queue')
+connections[0].setVersion('version 0')
+connections[1].setVersion('version 1')
+connections[2].setVersion('version 2')
+connections[3].setVersion('version 3')
+
+PASS event.version.length > 0 is true
+connection[1] received versionChangeEvent: version 0
+PASS event.version.length > 0 is true
+connection[2] received versionChangeEvent: version 0
+PASS event.version.length > 0 is true
+connection[3] received versionChangeEvent: version 0
+
+PASS connection[0] got blocked event
+PASS event.version is "version 0"
+Close the connection that received the block event:
+connections[0].close()
+Close another connection as well, to test 4.7.4-note:
+connections[3].close()
+blocked0fired = true
+
+PASS event.version.length > 0 is true
+connection[2] received versionChangeEvent: version 1
+
+PASS connection[1] got blocked event
+Ensure that this blocked event is in order:
+PASS blocked0fired is true
+PASS blocked2fired is false
+
+PASS event.version.length > 0 is true
+connection[1] received versionChangeEvent: version 2
+
+PASS connection[2] got blocked event
+PASS event.version is "version 2"
+connections[2].close()
+blocked2fired = true
+
+PASS event.version.length > 0 is true
+connection[1] received versionChangeEvent: version 3
+
+PASS connection[3] got blocked event
+Note: This means that a connection can receive a blocked event after its close() method has been called.  Spec is silent on the issue and this is easiest to implement.
+PASS event.version is "version 3"
+
+PASS connection[0] got error event
+PASS event.target.errorCode is 13
+PASS event.target.webkitErrorMessage.length > 0 is true
+Connection was closed before set version transaction was created
+
+PASS connection[2] got error event
+PASS event.target.errorCode is 13
+PASS event.target.webkitErrorMessage.length > 0 is true
+Connection was closed before set version transaction was created
+
+PASS connection[3] got error event
+PASS event.target.errorCode is 13
+PASS event.target.webkitErrorMessage.length > 0 is true
+Connection was closed before set version transaction was created
+
+PASS connection[1] got into SetVersion
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

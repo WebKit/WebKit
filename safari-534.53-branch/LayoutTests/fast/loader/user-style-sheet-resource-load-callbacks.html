@@ -1,0 +1,15 @@
+<html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceLoadCallbacks();
+    layoutTestController.setUserStyleSheetLocation("file:///tmp/LayoutTests/fast/loader/resources/user-style-sheet.css");
+    layoutTestController.setUserStyleSheetEnabled(true);
+} else {
+    document.write ('This test must be run through DumpRenderTree.')
+}
+</script>
+<body onload = "if (window.layoutTestController) layoutTestController.setUserStyleSheetEnabled(false);">
+    This tests that no delegate methods are sent for the user style sheet. No stylesheet load messages should be dumped.
+</div>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<script>
+var window2, iframe;
+
+function log(message)
+{
+    document.getElementById("log").innerText += message + "\n";
+}
+
+function reallyFinish()
+{
+    log("PASS: iframe reloaded.");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function window2Unloaded()
+{
+    log("Window 2 closed.");
+
+    // Reload the iframe to demonstrate that it no longer
+    // depends on its original window.
+    iframe.onload = reallyFinish;
+    iframe.contentDocument.location.reload(true);
+}
+
+function finish()
+{
+    log("Closing window 2.");
+    window2.onunload = window2Unloaded;
+    window2.close();
+}
+
+function window2Loaded()
+{
+    log("Loaded window 2.");
+    iframe = window2.document.getElementById("iframe");
+    window.document.adoptNode(iframe);
+    window.document.body.appendChild(iframe);
+    log("Adopted iframe to first page.");
+
+    // Start the iframe's timer to call finish() to end the test.
+    iframe.contentWindow.startFinishTimer();
+}
+
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+        layoutTestController.setCanOpenWindows();
+    }
+
+    window2 = window.open("resources/iframe-reparenting-adopt-node-new-page.html");
+    window2.addEventListener("load", window2Loaded, false);
+}
+</script>
+<body onload="test()">
+<p>This test adopts an iframe from a different page into this one,
+closes the page that originally contained the iframe, then reloads
+the iframe to verify that there are no remaining dependencies
+on the closed page.</p>
+<pre id=log></pre>
+</body>
+</html>

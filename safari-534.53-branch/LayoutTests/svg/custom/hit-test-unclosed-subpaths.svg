@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<script>
+function clickHandler(evt)
+{
+    evt.target.style.fill = "green";
+}
+
+if (window.layoutTestController)
+  layoutTestController.waitUntilDone();
+
+function doClick() {
+  if (window.eventSender) {
+      eventSender.mouseMoveTo(50, 50);
+      eventSender.mouseDown();
+      eventSender.mouseUp();
+      layoutTestController.notifyDone();
+  }
+}
+
+setTimeout("doClick()", 0);
+</script>
+<path onclick="clickHandler(evt)" fill="red" stroke="black" stroke-width="3" d="M 10 10 l 0 100 l 100 0 l 0 -100 M 120 10 l 0 100 l 100 0 l 0 -100"/>
+
+<text x="10" y="150">There should be 2 green squares above this (when run under DumpRenderTree)</text>
+
+</svg>

@@ -1,0 +1,44 @@
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+function runTest() 
+{
+    if (!window.layoutTestController) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+    
+    plugin1 = document.createElement("embed");
+    plugin1.type = "application/x-webkit-test-netscape";
+    document.body.appendChild(plugin1);
+    
+    shouldBe("plugin1.privateBrowsingEnabled", "false");
+    shouldBe("plugin1.cachedPrivateBrowsingEnabled", "false");
+
+    // Now enable private browsing
+    layoutTestController.setPrivateBrowsingEnabled(true);
+
+    shouldBe("plugin1.privateBrowsingEnabled", "true");
+    shouldBe("plugin1.cachedPrivateBrowsingEnabled", "true");
+    
+    plugin2 = document.createElement("embed");
+    plugin2.type = "application/x-webkit-test-netscape";
+    document.body.appendChild(plugin2);
+    
+    shouldBe("plugin2.privateBrowsingEnabled", "true");
+    shouldBe("plugin2.cachedPrivateBrowsingEnabled", "true");
+    
+}
+</script>
+
+<script>
+description("Tests that the private browsing API implementation works as expected");
+
+
+successfullyParsed = true;
+</script>

@@ -1,0 +1,64 @@
+<html>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+ 
+    <div role="group" tabindex="0" id="parent">
+    <div role="button" id="button1" tabindex="0">Button 1</div>
+    <div role="button" id="button2" tabindex="0">Button 2</div>
+    <div role="button" id="button3" tabindex="0">Button 3</div>
+
+    </div>
+
+
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test makes sure that when aria-hidden changes, the AX hierarchy is updated.");
+
+            // Get the parent element.
+            document.getElementById("parent").focus();
+            var parent = accessibilityController.focusedElement;
+            
+            // Get all three children.
+            document.getElementById("button1").focus();
+            var button1 = accessibilityController.focusedElement;
+            document.getElementById("button2").focus();
+            var button2 = accessibilityController.focusedElement;
+            document.getElementById("button3").focus();
+            var button3 = accessibilityController.focusedElement;
+      
+            // Verify that the 3 children are present.
+            shouldBeTrue("parent.childAtIndex(0).isEqual(button1)");
+            shouldBeTrue("parent.childAtIndex(1).isEqual(button2)");
+            shouldBeTrue("parent.childAtIndex(2).isEqual(button3)");
+
+            // Make the 2nd button hidden. Only 1 and 3 should be present.
+            document.getElementById("button2").setAttribute("aria-hidden", "true");
+            shouldBeTrue("parent.childAtIndex(0).isEqual(button1)");
+            shouldBeTrue("parent.childAtIndex(1).isEqual(button3)");
+           
+            // Make the 1st button hidden. Only 3 should be present.
+            document.getElementById("button1").setAttribute("aria-hidden", "true");
+            shouldBeTrue("parent.childAtIndex(0).isEqual(button3)");
+
+            // Make the 2nd button not hidden. 2 and 3 should be present.
+            document.getElementById("button2").setAttribute("aria-hidden", "false");
+            shouldBeTrue("parent.childAtIndex(0).isEqual(button2)");
+            shouldBeTrue("parent.childAtIndex(1).isEqual(button3)");
+
+        }
+        successfullyParsed = true;
+    </script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+This file documents why the various tests have been rebaselined.
+
+prototype-chain-expected.txt
+--------------------------
+It is implementation specific. Harmless.
+
+wrapper-classes
+--------------------------
+The printing of prototype objects and constructors is implementation dependent.
+We print these differently from KJS which is harmless.  Also, we print the 
+global object differently from KJS. 
+
+global-constructor.txt
+--------------------------
+Node function is implementation specific. In V8 it is a function, and 
+Node.prototype cannot be deleted. In KJS, Node is an object, and Node.prototype
+can be deleted.
+
+undetectable-document-all 
+-------------------------- 
+document.all is undectable which means that it behaves like undefined
+except when accessing properties on the object.  In KJS document.all
+prints as '[object HTMLCollection]'.  In V8 document.all behaves like
+undefined also when printed so it prints as 'undefined'.
+
+xmlhttprequest-get
+------------------
+The only difference is that V8 prints functions slightly differently.

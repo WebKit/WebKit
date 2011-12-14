@@ -1,0 +1,28 @@
+<p>This test that setting HTMLSelectElement.length is capped to 10,000, but that you can add additional Option elements by calling add.</p>
+<pre id="console"></pre>
+<select id="theSelect"></select>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function log(msg)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    var sel = document.getElementById('theSelect');
+    log("Select length is " + sel.length);
+
+    log("Trying: - sel.length = 20000;");
+    sel.length = 20000;
+    log("Select length is " + sel.length);
+
+    log("Trying: - sel.add(new Option, 0);");
+    sel.add(new Option, 0);
+    log("Select length is " + sel.length);
+
+    log("Trying: - sel.length = 0;");
+    sel.length = 0;
+    log("Select length is " + sel.length);
+</script>

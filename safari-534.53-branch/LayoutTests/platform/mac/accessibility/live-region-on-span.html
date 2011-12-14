@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="div" tabindex="0">
+   <span aria-live="polite" aria-relevant="all">text</span>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if aria-live is on a <span>, that that <span> is not ignored, and that is has the appropriate aria live information.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("div").focus();
+          var divElement = accessibilityController.focusedElement;
+          shouldBe("divElement.childAtIndex(0).role", "'AXRole: AXGroup'");
+          shouldBe("divElement.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXStaticText'");
+
+          shouldBe("divElement.childAtIndex(0).isAttributeSupported('AXARIALive')", "true");
+          shouldBe("divElement.childAtIndex(0).isAttributeSupported('AXARIARelevant')", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

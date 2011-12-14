@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="resources/clearSessionStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function startTest()
+{
+    if (!window.sessionStorage) {
+        log("window.sessionStorage DOES NOT exist");
+        return;
+    }
+
+    Storage.prototype.prototypeTestKey = "prototypeTestValue";
+    sessionStorage.foo = "bar";
+    sessionStorage.fu = "baz";
+    sessionStorage.batman = "bin suparman";
+    sessionStorage.bar = "foo";
+    sessionStorage.alpha = "beta";
+    sessionStorage.zeta = "gamma";
+    
+    // Enumerate sessionStorage, appending each key onto an array
+    var enumeratedArray = new Array();
+    for (var n in sessionStorage)
+        enumeratedArray.push(n);
+
+    // Sort the array, since the storage order isn't guaranteed
+    enumeratedArray.sort();
+    
+    for (var n in enumeratedArray)
+        log(enumeratedArray[n]);
+}
+
+</script>
+</head>
+<body onload="startTest();">
+This test checks to see that you can enumber a Storage object and get only the keys as a result.  The built-in properties of the Storage object should be ignored.  The test operates on the SessionStorage object.<br>
+<div id="logger"></div>
+</body>
+</html>

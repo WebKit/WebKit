@@ -1,0 +1,45 @@
+Tests if the spellchecker behavior change after the spellcheck attribute changed by the script.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS target.spellcheck is true
+PASS layoutTestController.hasSpellingMarker(6, 2) is true
+PASS target.spellcheck is false
+PASS layoutTestController.hasSpellingMarker(6, 2) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

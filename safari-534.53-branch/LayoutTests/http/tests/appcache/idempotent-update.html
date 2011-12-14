@@ -1,0 +1,56 @@
+<html manifest="resources/idempotent-update.manifest">
+<body>
+<p>Test what applicationCache.update() does if update is already in progess.</p>
+<p>Should say DONE, with no failures:</p>
+<div id=result></div>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function test()
+{
+    // During update, additional update() should be no-op (the spec says that fake checking and
+    // downloading events need to be dispatched, but that's only when the update algorithm is invoked
+    // with a browsing context).
+    if (applicationCache.status != applicationCache.IDLE)
+        log("FAIL: Unexpected cache status while preparing to test: " + applicationCache.status);
+    
+    var checkingCount = 0;
+    applicationCache.onchecking = function() { if (++checkingCount != 1) log("FAIL: Too many checking events received.") }
+    
+    applicationCache.update();
+    applicationCache.update();
+    applicationCache.update();
+    applicationCache.update();
+    applicationCache.update();
+
+    applicationCache.onnoupdate = done;
+    applicationCache.oncached = function() { log("FAIL: received unexpected cached event") }
+}
+
+function done()
+{
+    setTimeout(function() {
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 10);
+}
+
+applicationCache.oncached = test;
+applicationCache.onnoupdate = test;
+
+applicationCache.onupdateready = function() { log("FAIL: received unexpected updateready event") }
+applicationCache.onerror = function() { log("FAIL: received unexpected error event") }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+}
+
+function unloadHandler() {
+    document.getElementById('result').innerHTML = "PASS: unload fired.";
+}
+
+function loadHandler() {
+    document.getElementById('result').innerHTML += "<br>PASS: load fired.";
+}
+
+function test()
+{
+    var w = window.open('http://127.0.0.1:8000/security/resources/has-window-events.html');
+    w.addEventListener('unload', unloadHandler, false);
+    w.addEventListener('load', loadHandler, false);
+}
+
+</script>
+<body onload='test()'>
+Test that window event handlers set for initial document are kept if security check passes. There will be 2 'PASS' messages below if the test passes:<br>
+<div id='result'>FAIL</div>

@@ -1,0 +1,7 @@
+This tests wrapper round-tripping between JavaScript and Objective-C.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS.
+

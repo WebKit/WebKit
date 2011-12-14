@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    if (window.layoutTestController)
+        layoutTestController.display();
+}
+
+function test()
+{
+    InspectorTest.startTimeline(step1);
+    function step1()
+    {
+        InspectorTest.evaluateInPage("performActions()", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.stopTimeline(step3);
+    }
+
+    function step3(records)
+    {
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
+            if (record.type === WebInspector.TimelineAgent.RecordType.Paint) {
+                InspectorTest.printTimelineRecordProperties(record);
+                break;
+            }
+        }
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a paint event
+</p>
+
+</body>
+</html>

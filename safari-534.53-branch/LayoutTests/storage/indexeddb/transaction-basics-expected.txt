@@ -1,0 +1,76 @@
+Test IndexedDB transaction basics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('transaction-basics')
+openSuccess():
+db = event.target.result
+request = db.setVersion('version 1')
+Deleted all object stores.
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
+request = startSetVersion('version fail')
+addRemoveIDBObjects():
+trans = event.target.result
+PASS trans !== null is true
+store = db.createObjectStore('storeFail', null)
+index = store.createIndex('indexFail', 'x', false)
+db.deleteObjectStore('storeFail')
+store.deleteIndex('indexFail')
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
+request = startSetVersion('version fail')
+addRemoveAddIDBObjects():
+trans = event.target.result
+PASS trans !== null is true
+store = db.createObjectStore('storeFail', null)
+index = store.createIndex('indexFail', 'x', false)
+db.deleteObjectStore('storeFail')
+store.deleteIndex('indexFail')
+store = db.createObjectStore('storeFail', null)
+index = store.createIndex('indexFail', 'x', false)
+PASS event.cancelable is false
+PASS window.db.objectStoreNames is []
+PASS window.db.objectStoreNames.length is 0
+PASS window.db.objectStoreNames.contains('storeFail') is false
+request = startSetVersion('version fail')
+addIDBObjects():
+trans = event.target.result
+PASS trans !== null is true
+store = db.createObjectStore('storeFail', null)
+index = store.createIndex('indexFail', 'x', false)
+PASS db.objectStoreNames is ['storeFail']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('storeFail') is true
+request = startSetVersion('version fail')
+removeIDBObjects():
+trans = event.target.result
+PASS trans !== null is true
+store = trans.objectStore('storeFail')
+store.deleteIndex('indexFail')
+db.deleteObjectStore('storeFail')
+PASS db.objectStoreNames is ['storeFail']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('storeFail') is true
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+db.createObjectStore('storeName', null)
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+store = transaction.objectStore('storeName')
+PASS store.name is "storeName"
+PASS complete event fired
+PASS event.cancelable is false
+PASS complete event fired
+PASS oncomplete event had fired
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

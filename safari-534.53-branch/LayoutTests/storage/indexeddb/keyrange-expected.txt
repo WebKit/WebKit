@@ -1,0 +1,225 @@
+Test IndexedDB's KeyRange.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'lower' in webkitIDBKeyRange is false
+PASS 'upper' in webkitIDBKeyRange is false
+PASS 'lowerOpen' in webkitIDBKeyRange is false
+PASS 'upperOpen' in webkitIDBKeyRange is false
+PASS 'only' in webkitIDBKeyRange is true
+PASS 'lowerBound' in webkitIDBKeyRange is true
+PASS 'upperBound' in webkitIDBKeyRange is true
+PASS 'bound' in webkitIDBKeyRange is true
+
+instance = webkitIDBKeyRange.only(1)
+PASS 'lower' in instance is true
+PASS 'upper' in instance is true
+PASS 'lowerOpen' in instance is true
+PASS 'upperOpen' in instance is true
+PASS 'only' in instance is false
+PASS 'lowerBound' in instance is false
+PASS 'upperBound' in instance is false
+PASS 'bound' in instance is false
+
+webkitIDBKeyRange.only(1)
+PASS keyRange.lower is 1
+PASS keyRange.upper is 1
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.only(3.14)
+PASS keyRange.lower is 3.14
+PASS keyRange.upper is 3.14
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.only('a')
+PASS keyRange.lower is 'a'
+PASS keyRange.upper is 'a'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound(10,true)
+PASS keyRange.lower is 10
+PASS keyRange.lowerOpen is true
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound(11,false)
+PASS keyRange.lower is 11
+PASS keyRange.lowerOpen is false
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound(12,undefined)
+PASS keyRange.lower is 12
+PASS keyRange.lowerOpen is false
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound(10.1,true)
+PASS keyRange.lower is 10.1
+PASS keyRange.lowerOpen is true
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound(11.2,false)
+PASS keyRange.lower is 11.2
+PASS keyRange.lowerOpen is false
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound(12.3,undefined)
+PASS keyRange.lower is 12.3
+PASS keyRange.lowerOpen is false
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound('aa',true)
+PASS keyRange.lower is 'aa'
+PASS keyRange.lowerOpen is true
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound('ab',false)
+PASS keyRange.lower is 'ab'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.lowerBound('ac',undefined)
+PASS keyRange.lower is 'ac'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upper is null
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.upperBound(20,true)
+PASS keyRange.upper is 20
+PASS keyRange.upperOpen is true
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound(21,false)
+PASS keyRange.upper is 21
+PASS keyRange.upperOpen is false
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound(22,undefined)
+PASS keyRange.upper is 22
+PASS keyRange.upperOpen is false
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound(20.2,true)
+PASS keyRange.upper is 20.2
+PASS keyRange.upperOpen is true
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound(21.3,false)
+PASS keyRange.upper is 21.3
+PASS keyRange.upperOpen is false
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound(22.4,undefined)
+PASS keyRange.upper is 22.4
+PASS keyRange.upperOpen is false
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound('ba',true)
+PASS keyRange.upper is 'ba'
+PASS keyRange.upperOpen is true
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound('bb',false)
+PASS keyRange.upper is 'bb'
+PASS keyRange.upperOpen is false
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.upperBound('bc',undefined)
+PASS keyRange.upper is 'bc'
+PASS keyRange.upperOpen is false
+PASS keyRange.lower is null
+PASS keyRange.lowerOpen is false
+webkitIDBKeyRange.bound(30,40, undefined, undefined)
+PASS keyRange.lower is 30
+PASS keyRange.upper is 40
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound(31,41, false, false)
+PASS keyRange.lower is 31
+PASS keyRange.upper is 41
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound(32,42, false, true)
+PASS keyRange.lower is 32
+PASS keyRange.upper is 42
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is true
+webkitIDBKeyRange.bound(33,43, true, false)
+PASS keyRange.lower is 33
+PASS keyRange.upper is 43
+PASS keyRange.lowerOpen is true
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound(34,44, true, true)
+PASS keyRange.lower is 34
+PASS keyRange.upper is 44
+PASS keyRange.lowerOpen is true
+PASS keyRange.upperOpen is true
+webkitIDBKeyRange.bound(30.1,40.2, undefined, undefined)
+PASS keyRange.lower is 30.1
+PASS keyRange.upper is 40.2
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound(31.3,41.4, false, false)
+PASS keyRange.lower is 31.3
+PASS keyRange.upper is 41.4
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound(32.5,42.6, false, true)
+PASS keyRange.lower is 32.5
+PASS keyRange.upper is 42.6
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is true
+webkitIDBKeyRange.bound(33.7,43.8, true, false)
+PASS keyRange.lower is 33.7
+PASS keyRange.upper is 43.8
+PASS keyRange.lowerOpen is true
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound(34.9,44, true, true)
+PASS keyRange.lower is 34.9
+PASS keyRange.upper is 44
+PASS keyRange.lowerOpen is true
+PASS keyRange.upperOpen is true
+webkitIDBKeyRange.bound('aaa','aba', false, false)
+PASS keyRange.lower is 'aaa'
+PASS keyRange.upper is 'aba'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound('aab','abb', undefined, undefined)
+PASS keyRange.lower is 'aab'
+PASS keyRange.upper is 'abb'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound('aac','abc', false, false)
+PASS keyRange.lower is 'aac'
+PASS keyRange.upper is 'abc'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound('aad','abd', false, true)
+PASS keyRange.lower is 'aad'
+PASS keyRange.upper is 'abd'
+PASS keyRange.lowerOpen is false
+PASS keyRange.upperOpen is true
+webkitIDBKeyRange.bound('aae','abe', true, false)
+PASS keyRange.lower is 'aae'
+PASS keyRange.upper is 'abe'
+PASS keyRange.lowerOpen is true
+PASS keyRange.upperOpen is false
+webkitIDBKeyRange.bound('aaf','abf', true, true)
+PASS keyRange.lower is 'aaf'
+PASS keyRange.upper is 'abf'
+PASS keyRange.lowerOpen is true
+PASS keyRange.upperOpen is true
+Passing an invalid key into only([])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into upperBound([])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into lowerBound([])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into bound(null, [])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into bound([],null)
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into bound([], [])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

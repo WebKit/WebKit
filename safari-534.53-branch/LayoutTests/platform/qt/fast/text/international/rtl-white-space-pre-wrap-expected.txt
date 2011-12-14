@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 105x19
+          text run at (0,0) width 105: "This is a test for "
+        RenderInline {I} at (0,0) size 732x39
+          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
+            RenderText {#text} at (105,0) size 337x19
+              text run at (105,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9670"
+          RenderText {#text} at (442,0) size 732x39
+            text run at (442,0) width 4: " "
+            text run at (446,0) width 286: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+            text run at (0,20) width 51: "id=9670"
+        RenderText {#text} at (51,20) size 4x19
+          text run at (51,20) width 4: "."
+      RenderBlock {P} at (0,54) size 784x19
+        RenderText {#text} at (0,0) size 535x19
+          text run at (0,0) width 535: "All text should be aligned with the right edge of its container and should not overflow."
+      RenderBlock {HR} at (0,87) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,96) size 191x96 [bgcolor=#FFFF00]
+        RenderText {#text} at (88,0) size 191x95
+          text run at (88,0) width 103 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} "
+          text run at (0,32) width 3 RTL: " "
+          text run at (3,32) width 188 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+          text run at (112,64) width 79 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+      RenderBlock (anonymous) at (0,192) size 784x94
+        RenderBR {BR} at (0,0) size 0x19
+        RenderTextControl {TEXTAREA} at (0,21) size 199x66 [border: (1px solid #000000)]
+        RenderText {#text} at (199,75) size 4x19
+          text run at (199,75) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,286) size 191x96 [bgcolor=#FFFF00]
+        RenderText {#text} at (88,0) size 191x95
+          text run at (88,0) width 103 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} "
+          text run at (0,32) width 3 RTL: " "
+          text run at (3,32) width 188 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+          text run at (112,64) width 79 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+layer at (9,222) size 197x64 clip at (9,222) size 181x64 scrollHeight 95
+  RenderBlock {DIV} at (1,1) size 197x64
+    RenderText {#text} at (75,0) size 158x95
+      text run at (75,0) width 103 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} "
+      text run at (62,32) width 116 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}? "
+      text run at (20,64) width 158 RTL: "\x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"

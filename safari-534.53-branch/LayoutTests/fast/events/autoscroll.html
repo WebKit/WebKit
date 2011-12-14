@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                if (window.layoutTestController) {
+                    layoutTestController.waitUntilDone();
+                    setTimeout(autoscrollTestPart1, 0);
+                }
+            }
+            function autoscrollTestPart1()
+            {
+                var ta = document.getElementById('ta');
+                if (window.eventSender) {
+                    ta.scrollIntoView();
+                    var h = ta.offsetTop - document.body.scrollTop + 10;
+                    eventSender.dragMode = false;
+                    eventSender.mouseMoveTo(20, h);
+                    eventSender.mouseDown();
+                    eventSender.mouseMoveTo(20, h);
+                    eventSender.mouseMoveTo(100, h);
+                }
+                setTimeout(autoscrollTestPart2, 100);
+            }
+            function autoscrollTestPart2()
+            {
+                if (window.eventSender)
+                    eventSender.mouseUp();
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+            function log(msg)
+            {
+                var res = document.getElementById('res');
+                res.innerHTML = res.innerHTML + msg + "<br>";
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=12331">bug 12331</a>.</p>
+        <p>To test manually, scroll down until you find the input element. Select some text. If the bug occurs, the page will scroll back up to the top.</p>
+        <div style="height:3000px"></div>
+        <input id="ta" value="select some of this text"></input>
+        <p>If the bug does not occur, you'll be left down here at the bottom.</p>
+    </body>
+</html>

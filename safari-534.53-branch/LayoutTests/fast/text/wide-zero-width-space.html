@@ -1,0 +1,26 @@
+<html>
+<head>
+    <title></title>
+    <style>
+        div { font-family: Helvetica; font-size: 36px; letter-spacing: 4px; }
+    </style>
+</head>
+<body>
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=13178">http://bugs.webkit.org/show_bug.cgi?id=13178</a>
+        Helvetica zero-width space has non-zero width</i>.
+    </p>
+    <p>
+        The following lines should all be identical.
+    </p>
+    <div>
+        Lor&eacute;m&#x200b;ipsum&#x200e;dolor&#x001f;sit
+    </div>
+    <div>
+        Lore&#x0301;m&#x200b;ipsum&#x200e;dolor&#x001f;sit
+    </div>
+    <div>
+        Lor&eacute;mipsumdolorsit
+    </div>
+</body>
+</html>

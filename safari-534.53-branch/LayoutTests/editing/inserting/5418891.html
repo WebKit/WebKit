@@ -1,0 +1,22 @@
+<style>
+blockquote {
+    color: blue;
+    border-left: 2px solid blue;
+    padding-left: 5px;
+    margin: 0px;
+}
+</style>
+<p>This tests for a crash when attempting to break a blockquote at the end of its content.  The caret should be in the first of two empty paragraphs between two pieces of quoted content.</p>
+<div contenteditable="true">
+<blockquote type="cite"><div id="dv">foo</div></blockquote>
+<br>
+<blockquote type="cite"><div>bar</div></blockquote>
+</div>
+
+<script>
+dv = document.getElementById("dv");
+text = dv.firstChild;
+s = window.getSelection();
+s.setPosition(text, 3);
+document.execCommand("InsertNewlineInQuotedContent");
+</script>

@@ -1,0 +1,15 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to float
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = java.lang.Double.MAX_VALUE;dt.setFloat( dt ); dt.PUB_FLOAT should be Infinity. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.PUB_DOUBLE_REPRESENTATION = java.lang.Double.MAX_VALUE;dt.setFloat( dt ); dt.getFloat() should be Infinity. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -java.lang.Double.MAX_VALUE;dt.setFloat( dt ); dt.PUB_FLOAT should be -Infinity. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -java.lang.Double.MAX_VALUE;dt.setFloat( dt ); dt.getFloat() should be -Infinity. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+FAIL dt.PUB_DOUBLE_REPRESENTATION = java.lang.Float.MAX_VALUE * 2;dt.setFloat( dt ); dt.PUB_FLOAT should be Infinity. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.PUB_DOUBLE_REPRESENTATION = java.lang.Float.MAX_VALUE * 2;dt.setFloat( dt ); dt.getFloat() should be Infinity. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

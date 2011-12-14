@@ -1,0 +1,11 @@
+This test ensures that the correct "this" object is used when calling named function expressions or exceptions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS namedFunctionExpression() is globalObject
+PASS throwingFunctionAsException() is globalObject
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

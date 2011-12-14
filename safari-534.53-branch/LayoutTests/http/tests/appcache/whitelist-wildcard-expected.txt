@@ -1,0 +1,3 @@
+Test that online whitelist wildcard flag is implemented.
+
+SUCCESS

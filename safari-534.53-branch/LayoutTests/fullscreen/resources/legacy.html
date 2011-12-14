@@ -1,0 +1,7 @@
+<video controls width="320" height="240"></video>
+<script src=../../media/media-file.js></script>
+<script>
+    video = mediaElement = document.getElementsByTagName('video')[0];
+    var mediaFile = findMediaFile("video", "../../media/content/test");
+    video.src = mediaFile;
+</script>

@@ -1,0 +1,18 @@
+Tests that the window.DeviceMotionEvent and window.ondevicemotion properties are present.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL typeof window.DeviceMotionEvent == 'object' should be true. Was false.
+FAIL typeof window.DeviceMotionEvent == 'function' should be false. Was true.
+PASS hasDeviceMotionEventProperty() is true
+PASS 'DeviceMotionEvent' in window is true
+PASS window.hasOwnProperty('DeviceMotionEvent') is true
+PASS typeof window.ondevicemotion == 'object' is true
+PASS hasOnDeviceMotionProperty() is true
+PASS 'ondevicemotion' in window is true
+FAIL window.hasOwnProperty('ondevicemotion') should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

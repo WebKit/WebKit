@@ -1,0 +1,7 @@
+S15.2.4_A4
+
+TypeError: '[object Object]' is not a constructor (evaluating 'new Object.prototype')
+PASS 
+
+TEST COMPLETE
+

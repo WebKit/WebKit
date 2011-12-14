@@ -1,0 +1,1096 @@
+# Hebrew translation for webkit.
+# Copyright (C) 2010 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+# Gil Osher <gilosher@gmail.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2010-02-25 15:53-0300\n"
+"PO-Revision-Date: 2010-02-16 18:03+0200\n"
+"Last-Translator: Gil Osher <gilosher@gmail.com>\n"
+"Language-Team: Hebrew <he@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:535
+msgid "Upload File"
+msgstr "טען קובץ"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:143
+msgid "Input _Methods"
+msgstr "שיטות _קלט"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
+msgid "LRM _Left-to-right mark"
+msgstr "סימן LRM מ_שמאל לימין"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
+msgid "RLM _Right-to-left mark"
+msgstr "סימן RLM מ_ימין לשמאל"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE _שיבוץ משמאל לימין"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE ש_יבוץ מימין לשמאל"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRO Left-to-right _override"
+msgstr "LRO _עקיפה משמאל לימין"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO ע_קיפה מימין לשמאל"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
+msgid "PDF _Pop directional formatting"
+msgstr "PDF ה_חזרת כיווניות"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "ZWS _Zero width space"
+msgstr "ZWS _רווח ברוחב אפס"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ _מחבר ברוחב אפס"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ מ_בטל חיבור ברוחב אפס"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:138
+msgid "_Insert Unicode Control Character"
+msgstr "ה_כנס תו בקרה של יוניקוד"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:266
+msgid "Network Request"
+msgstr "בקשת רשת"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:267
+msgid "The network request for the URI that should be downloaded"
+msgstr "בקשת הרשת עבור הכתובת שיש להוריד"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:281
+#, fuzzy
+msgid "Network Response"
+msgstr "בקשת רשת"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:282
+#, fuzzy
+msgid "The network response for the URI that should be downloaded"
+msgstr "בקשת הרשת עבור הכתובת שיש להוריד"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:296
+msgid "Destination URI"
+msgstr "כתובת יעד"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:297
+msgid "The destination URI where to save the file"
+msgstr "כתובת היעד אליה שומרים את הקובץ"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:311
+msgid "Suggested Filename"
+msgstr "שם קובץ מומלץ"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:312
+msgid "The filename suggested as default when saving"
+msgstr "שם הקובץ המומלץ כברירת מחדל כאשר שומרים"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:329
+msgid "Progress"
+msgstr "התקדמות"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:330
+msgid "Determines the current progress of the download"
+msgstr "מציין את ההתקדמות הנוכחית של ההורדה"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:343
+msgid "Status"
+msgstr "מצב"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:344
+msgid "Determines the current status of the download"
+msgstr "מציין את המצב הנוכחי של ההורדה"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:359
+msgid "Current Size"
+msgstr "גודל נוכחי"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:360
+msgid "The length of the data already downloaded"
+msgstr "אורך המידע שכבר הורד"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:374
+msgid "Total Size"
+msgstr "גודל כללי"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:375
+msgid "The total size of the file"
+msgstr "הגודל הכללי של הקובץ"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:526
+msgid "User cancelled the download"
+msgstr "משתמש ביטל את ההורדה"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:248
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "שם משתמש וסיסמה נדרשים על-ידי האתר %s"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:278
+msgid "Server message:"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:291
+msgid "Username:"
+msgstr "שם משתמש:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:293
+msgid "Password:"
+msgstr "סיסמה:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:302
+#, fuzzy
+msgid "_Remember password"
+msgstr "זכור את הסיסמה"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:298
+msgid "Name"
+msgstr "שם"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:299
+msgid "The name of the frame"
+msgstr "שם המסגרת"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:305
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:146
+#: WebKit/gtk/webkit/webkitwebview.cpp:2318
+msgid "Title"
+msgstr "כותרת"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:306
+msgid "The document title of the frame"
+msgstr "כותרת המסמך של המסגרת"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:312
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:178
+#: WebKit/gtk/webkit/webkitwebview.cpp:2332
+msgid "URI"
+msgstr "כתובת"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:313
+msgid "The current URI of the contents displayed by the frame"
+msgstr "הכתובת הנוכחית של התוכן המוצג במסגרת"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:344
+msgid "Horizontal Scrollbar Policy"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:345
+#, fuzzy
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "מציין את ההתקדמות הנוכחית של ההורדה"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:362
+msgid "Vertical Scrollbar Policy"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:363
+#, fuzzy
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "מציין את ההתקדמות הנוכחית של ההורדה"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
+msgid "The title of the history item"
+msgstr "כותרת פריט ההסטוריה"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:162
+msgid "Alternate Title"
+msgstr "כותרת חלופית"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:163
+msgid "The alternate title of the history item"
+msgstr "כותרת חלופית לפריט ההסטוריה"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:179
+msgid "The URI of the history item"
+msgstr "כתובת פריט ההסטוריה"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:194
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:173
+msgid "Original URI"
+msgstr "כתובת מקורית"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:195
+msgid "The original URI of the history item"
+msgstr "הכתובת המקורית של פריט ההסטוריה"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:210
+msgid "Last visited Time"
+msgstr "זמן ביקור אחרון"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:211
+msgid "The time at which the history item was last visited"
+msgstr "הזמן בו בוקר לאחרונה פריט ההסטוריה"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:268
+msgid "Web View"
+msgstr "תצוגת Web"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:269
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "תצוגת ה Web שמחולל בוחן ה Web בעצמו"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:282
+msgid "Inspected URI"
+msgstr "כתובת נבחנת"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:283
+msgid "The URI that is currently being inspected"
+msgstr "הכתובת שנבנחנת כרגע"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:299
+msgid "Enable JavaScript profiling"
+msgstr "אפשר אפיון JavaScript"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:300
+msgid "Profile the executed JavaScript."
+msgstr "מאפיין את ה JavaScript המורץ"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:315
+#, fuzzy
+msgid "Enable Timeline profiling"
+msgstr "אפשר אפיון JavaScript"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:316
+msgid "Profile the WebCore instrumentation."
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:158
+msgid "Reason"
+msgstr "סיבה"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:159
+msgid "The reason why this navigation is occurring"
+msgstr "הסיבה מדוע ניווט זה מתרחש"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:174
+msgid "The URI that was requested as the target for the navigation"
+msgstr "הכתובת שנדרשה כמטרת הניווט"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:188
+msgid "Button"
+msgstr "כפתור"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:189
+msgid "The button used to click"
+msgstr "הכפתור ששימש ללחיצה"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:204
+msgid "Modifier state"
+msgstr "מצב מקשי הבקרה"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:205
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "מסכת סיביות המייצגת את המצב של מקשי הבקרה"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
+#, fuzzy
+msgid "Target frame"
+msgstr "שם המסגרת"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
+#, fuzzy
+msgid "The target frame for the navigation"
+msgstr "הכתובת שנדרשה כמטרת הניווט"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:237
+msgid "Default Encoding"
+msgstr "קידוד ברירת מחדל"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:238
+msgid "The default encoding used to display text."
+msgstr "קידוד ברירת המחדל להצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:246
+msgid "Cursive Font Family"
+msgstr "משפחת הגופנים מסוג Cursive"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:247
+msgid "The default Cursive font family used to display text."
+msgstr "משפחת הגופנים מסוג Cursive ברירת מחדל המשמשים להצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:255
+msgid "Default Font Family"
+msgstr "משפחת גופנים ברירת מחדל"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:256
+msgid "The default font family used to display text."
+msgstr "משפחת הגופנים לשימוש בהצגת טקסט כברירת מחדל."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:264
+msgid "Fantasy Font Family"
+msgstr "משפחת הגופנים מסוג Fantasy"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:265
+msgid "The default Fantasy font family used to display text."
+msgstr "משפחת הגופנים מסוג Fantasy ברירת מחדל המשמשים להצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:273
+msgid "Monospace Font Family"
+msgstr "משפחת הגופנים מסוג Monospace"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:274
+msgid "The default font family used to display monospace text."
+msgstr "משפחת הגופנים מסוג Monospace ברירת מחדל המשמשים להצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:282
+msgid "Sans Serif Font Family"
+msgstr "משפחת הגופנים מסוג Sans Serif"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:283
+msgid "The default Sans Serif font family used to display text."
+msgstr "משפחת הגופנים מסוג Sans Serif ברירת מחדל המשמשים להצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:291
+msgid "Serif Font Family"
+msgstr "משפחת הגופנים מסוג Serif"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:292
+msgid "The default Serif font family used to display text."
+msgstr "משפחת הגופנים מסוג Serif ברירת מחדל המשמשים להצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:300
+msgid "Default Font Size"
+msgstr "גודל גופן ברירת מחדל"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:301
+msgid "The default font size used to display text."
+msgstr "גודל הגופן לשימוש בהצגת טקסט כברירת מחדל."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:309
+msgid "Default Monospace Font Size"
+msgstr "גודל גופן Monospace ברירת מחדל"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:310
+msgid "The default font size used to display monospace text."
+msgstr "גודל גופן ברירת מחדל לשימוש בהצגת טקסט בגופן Monospace."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:318
+msgid "Minimum Font Size"
+msgstr "גודל גופן מינימאלי"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:319
+msgid "The minimum font size used to display text."
+msgstr "גודל הגופן המינימאלי לשימוש בהצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:327
+msgid "Minimum Logical Font Size"
+msgstr "גודל גופן לוגי מינימאלי"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:328
+msgid "The minimum logical font size used to display text."
+msgstr "גודל הגופן הלוגי המינימאלי לשימוש בהצגת טקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:347
+msgid "Enforce 96 DPI"
+msgstr "הכרח 96 נקודות לאינץ'"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:348
+msgid "Enforce a resolution of 96 DPI"
+msgstr "הכרח רזולוציה של 96 נקודות לאינץ'"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:356
+msgid "Auto Load Images"
+msgstr "טען תמונות אוטומטית"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:357
+msgid "Load images automatically."
+msgstr "טוען תמונות אוטומטית."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:365
+msgid "Auto Shrink Images"
+msgstr "כווץ תמונות אוטומטית"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:366
+msgid "Automatically shrink standalone images to fit."
+msgstr "אוטומטית מכווץ תמונות בודדות על-מנת שיתאימו."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:374
+msgid "Print Backgrounds"
+msgstr "הדפס רקעים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:375
+msgid "Whether background images should be printed."
+msgstr "האם תמונות הרקע צריכות להיות מודפסות."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:383
+msgid "Enable Scripts"
+msgstr "אפשר תסריטים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:384
+msgid "Enable embedded scripting languages."
+msgstr "אפשר שפות תסריטים מוטבעות"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:392
+msgid "Enable Plugins"
+msgstr "אפשר תוספים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:393
+msgid "Enable embedded plugin objects."
+msgstr "אפשר אובייקטי תוסף מוטבעים."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:401
+msgid "Resizable Text Areas"
+msgstr "אזורי טקסט שניתן לשנות את גודלם"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:402
+msgid "Whether text areas are resizable."
+msgstr "האם לאפשר את שינוי הגודל של אזורי הטקסט."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:409
+msgid "User Stylesheet URI"
+msgstr "כתבות גיליון הסגנון של המשתמש"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:410
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "כתובת גיליון הסגנון שמוחל על כל עמוד."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:425
+msgid "Zoom Stepping Value"
+msgstr "ערך צעדי הקירוב"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:426
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "הערך בו רמת הקירוב משתנה כאשר מתקרבים או מתרחקים."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:444
+msgid "Enable Developer Extras"
+msgstr "אפשר תוספות למפתחים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:445
+msgid "Enables special extensions that help developers"
+msgstr "מאפשר תוספות מיוחדות שיעזרו למפתחים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:465
+msgid "Enable Private Browsing"
+msgstr "אפשר גלישה פרטית"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:466
+msgid "Enables private browsing mode"
+msgstr "מאפשר את מצב הגלישה הפרטית"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:481
+msgid "Enable Spell Checking"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:482
+#, fuzzy
+msgid "Enables spell checking while typing"
+msgstr "בדוק איות בזמן ה_קלדב"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:505
+msgid "Languages to use for spell checking"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:506
+msgid "Comma separated list of languages to use for spell checking"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:520
+#, fuzzy
+msgid "Enable Caret Browsing"
+msgstr "אפשר גלישה פרטית"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:521
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:536
+msgid "Enable HTML5 Database"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:537
+msgid "Whether to enable HTML5 database support"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:552
+msgid "Enable HTML5 Local Storage"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:553
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:567
+#, fuzzy
+msgid "Enable XSS Auditor"
+msgstr "אפשר תסריטים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:568
+msgid "Whether to enable teh XSS auditor"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:586
+msgid "User Agent"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:587
+msgid "The User-Agent string used by WebKitGtk"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:602
+msgid "JavaScript can open windows automatically"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:603
+msgid "Whether JavaScript can open windows automatically"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:618
+msgid "Enable offline web application cache"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:619
+msgid "Whether to enable offline web application cache"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:646
+msgid "Editing behavior"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:647
+msgid "The behavior mode to use in editing mode"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:663
+msgid "Enable universal access from file URIs"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:664
+msgid "Whether to allow universal access from file URIs"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:679
+#, fuzzy
+msgid "Enable DOM paste"
+msgstr "אפשר תסריטים"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:680
+msgid "Whether to enable DOM paste"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:698
+msgid "Tab key cycles through elements"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:699
+msgid "Whether the tab key cycles through elements on the page."
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:719
+msgid "Enable Default Context Menu"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:720
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:740
+msgid "Enable Site Specific Quirks"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:741
+msgid "Enables the site-specific compatibility workarounds"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:763
+msgid "Enable page cache"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:764
+#, fuzzy
+msgid "Whether the page cache should be used"
+msgstr "האם תמונות הרקע צריכות להיות מודפסות."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:784
+msgid "Auto Resize Window"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:785
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:817
+#, fuzzy
+msgid "Enable Java Applet"
+msgstr "אפשר אפיון JavaScript"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:818
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2319
+msgid "Returns the @web_view's document title"
+msgstr "מחזיר את כותרת המסמך של @web_view"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2333
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "מחזיר את הכתובת הנוכחית של התוכן המוצג על-ידי @web_view"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2346
+msgid "Copy target list"
+msgstr "העתק רשימת יעדים"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2347
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr "רשימת היעדים בהם תצוגת ה-Web תומכת להעתקה ללוח"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2360
+msgid "Paste target list"
+msgstr "הדבק רשימת יעדים"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2361
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr "רשימת היעדים בהם תצוגת ה-Web תומכת להדבקה מהלוח"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2367
+msgid "Settings"
+msgstr "הגדרות"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2368
+msgid "An associated WebKitWebSettings instance"
+msgstr "מופע WebKitWebSettings משויך"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2381
+msgid "Web Inspector"
+msgstr "בוחן Web"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2382
+msgid "The associated WebKitWebInspector instance"
+msgstr "מופע ה-WebKitWebInspector המשויך"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2402
+msgid "Editable"
+msgstr "ניתן לעריכה"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2403
+msgid "Whether content can be modified by the user"
+msgstr "האם התוכן יכול להשתנות על-ידי המשתמש"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2409
+msgid "Transparent"
+msgstr "שקוף"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2410
+msgid "Whether content has a transparent background"
+msgstr "האם לתוכן יש רקע שקוף"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2423
+msgid "Zoom level"
+msgstr "רמת קירוב"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2424
+msgid "The level of zoom of the content"
+msgstr "רמת הקירוב של התוכן"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2439
+msgid "Full content zoom"
+msgstr "קירוב תוכן מלא"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2440
+msgid "Whether the full content is scaled when zooming"
+msgstr "האם התוכן המלא מתרחב כאשר מתקרבים"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2453
+msgid "Encoding"
+msgstr "קידוד"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2454
+msgid "The default encoding of the web view"
+msgstr "הקידוד ברירת המחדל של תצוגת ה-Web"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2467
+msgid "Custom Encoding"
+msgstr "קידוד מותאם אישית"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2468
+msgid "The custom encoding of the web view"
+msgstr "הקידוד המותאם אישית של תצוגת ה-Web"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2520
+msgid "Icon URI"
+msgstr ""
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2521
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "שלח"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "נקה"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
+msgid "This is a searchable index. Enter search keywords: "
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
+msgid "Choose File"
+msgstr "בחר קובץ"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:80
+msgid "(None)"
+msgstr "(ללא)"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:85
+msgid "Open Link in New _Window"
+msgstr "פתח קישור בח_לון חדש"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:90
+msgid "_Download Linked File"
+msgstr "_הורד קובץ קשור"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:95
+msgid "Copy Link Loc_ation"
+msgstr "העתק את _מיקום הקישור"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:100
+msgid "Open _Image in New Window"
+msgstr "פתח _תמונה בחלון חדש"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:105
+msgid "Sa_ve Image As"
+msgstr "_שמור תמונה בשם"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:110
+msgid "Cop_y Image"
+msgstr "ה_עתק תמונה"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:115
+msgid "Open _Frame in New Window"
+msgstr "פתח מ_סגרת בחלון חדש"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
+msgid "_Reload"
+msgstr "_טען מחדש"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:183
+msgid "No Guesses Found"
+msgstr "לא נמצאו ניחושים"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:188
+msgid "_Ignore Spelling"
+msgstr "ה_תעלם מאיות"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:193
+msgid "_Learn Spelling"
+msgstr "_למד איות"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:198
+msgid "_Search the Web"
+msgstr "_חפש ב-Web"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:203
+msgid "_Look Up in Dictionary"
+msgstr "חפ_ש במילון"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:208
+msgid "_Open Link"
+msgstr "_פתח קישור"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:213
+msgid "Ignore _Grammar"
+msgstr "התעלם מ_דקדוק"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:218
+msgid "Spelling and _Grammar"
+msgstr "איות ו_דקדוק"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+msgid "_Show Spelling and Grammar"
+msgstr "ה_צג איות ודקדוק"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+msgid "_Hide Spelling and Grammar"
+msgstr "ה_סתר איות ודקדוק"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:228
+msgid "_Check Document Now"
+msgstr "_בדוק מסמך כעת"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:233
+msgid "Check Spelling While _Typing"
+msgstr "בדוק איות בזמן ה_קלדב"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:238
+msgid "Check _Grammar With Spelling"
+msgstr "בדוק _דקדוק בזמן הקלדה"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:243
+msgid "_Font"
+msgstr "_גופן"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:266
+msgid "_Outline"
+msgstr "ה_דגשה"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:271
+msgid "Inspect _Element"
+msgstr "בחן _אלמנט"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:276
+msgid "No recent searches"
+msgstr "אין חיפושים אחרונים"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:281
+msgid "Recent searches"
+msgstr "חיפושים אחרונים"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:286
+msgid "_Clear recent searches"
+msgstr "_נקה חיפושים אחרונים"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:291
+msgid "term"
+msgstr "מושג"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:296
+msgid "definition"
+msgstr "הגדרה"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:301
+msgid "press"
+msgstr "לחץ"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:306
+msgid "select"
+msgstr "בחר"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:311
+msgid "activate"
+msgstr "הפעל"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:316
+msgid "uncheck"
+msgstr "בטל סימון"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:321
+msgid "check"
+msgstr "סמן"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:326
+msgid "jump"
+msgstr "קפוץ"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:342
+msgid " files"
+msgstr " קבצים"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
+msgid "Unknown"
+msgstr "לא ידוע"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:364
+msgid "Loading..."
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:369
+msgid "Live Broadcast"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
+msgid "audio element controller"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
+msgid "video element controller"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:379
+msgid "mute"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:381
+msgid "unmute"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:383
+msgid "play"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:385
+msgid "pause"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:387
+msgid "movie time"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:389
+msgid "timeline slider thumb"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:391
+msgid "back 30 seconds"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:393
+msgid "return to realtime"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:395
+msgid "elapsed time"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:397
+msgid "remaining time"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:399
+#, fuzzy
+msgid "status"
+msgstr "מצב"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:401
+msgid "fullscreen"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:403
+msgid "fast forward"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:405
+msgid "fast reverse"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
+msgid "show closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
+msgid "hide closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
+msgid "audio element playback controls and status display"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
+msgid "video element playback controls and status display"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:422
+msgid "mute audio tracks"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:424
+msgid "unmute audio tracks"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
+msgid "begin playback"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:428
+msgid "pause playback"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
+msgid "movie time scrubber"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:432
+msgid "movie time scrubber thumb"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:434
+msgid "seek movie back 30 seconds"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:436
+msgid "return streaming movie to real time"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:438
+msgid "current movie time in seconds"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:440
+msgid "number of seconds of movie remaining"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
+msgid "current movie status"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:444
+msgid "seek quickly back"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:446
+msgid "seek quickly forward"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:448
+msgid "Play movie in fullscreen mode"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:450
+msgid "start displaying closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
+msgid "stop displaying closed captions"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
+#, fuzzy
+msgid "indefinite time"
+msgstr "הגדרה"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:491
+msgid "value missing"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:497
+msgid "type mismatch"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
+msgid "pattern mismatch"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:507
+msgid "too long"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
+msgid "range underflow"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:517
+msgid "range overflow"
+msgstr ""
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:522
+msgid "step mismatch"
+msgstr ""
+
+#~ msgid "_Searchable Index"
+#~ msgstr "אינקדס ניתן ל_חיפוש"

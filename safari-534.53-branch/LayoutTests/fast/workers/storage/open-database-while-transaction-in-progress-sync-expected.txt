@@ -1,0 +1,3 @@
+Test that a second handle to the same database can be opened inside a transaction running on the first handle.
+PASS: second handle opened successfully.
+

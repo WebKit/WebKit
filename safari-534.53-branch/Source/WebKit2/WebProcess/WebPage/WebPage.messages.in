@@ -1,0 +1,224 @@
+# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebPage {
+    SetActive(bool active)
+    SetFocused(bool focused)
+    SetInitialFocus(bool forward)
+    SetIsInWindow(bool isInWindow)
+
+    SetDrawsBackground(bool drawsBackground)
+    SetDrawsTransparentBackground(bool drawsTransparentBackground)
+
+    ViewWillStartLiveResize()
+    ViewWillEndLiveResize()
+
+    KeyEvent(WebKit::WebKeyboardEvent event)
+    MouseEvent(WebKit::WebMouseEvent event)
+    WheelEvent(WebKit::WebWheelEvent event)
+#if ENABLE(GESTURE_EVENTS)
+    GestureEvent(WebKit::WebGestureEvent event)
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    TouchEvent(WebKit::WebTouchEvent event)
+#endif
+
+    ContextMenuHidden()
+
+    ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
+
+    GoBack(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    GoForward(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    GoToBackForwardItem(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    TryRestoreScrollPosition()
+    LoadHTMLString(WTF::String htmlString, WTF::String baseURL)
+    LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL); 
+    LoadPlainTextString(WTF::String string)
+    LoadURL(WTF::String url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    LinkClicked(WTF::String url, WebKit::WebMouseEvent event)
+    Reload(bool reloadFromOrigin)
+    StopLoading()
+
+    StopLoadingFrame(uint64_t frameID)
+    
+    RestoreSession(WebKit::SessionState state)
+    RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+
+    DidRemoveBackForwardItem(uint64_t backForwardItemID)
+
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
+
+    ClearSelection()
+
+    # Callbacks.
+    GetContentsAsString(uint64_t callbackID)
+    GetMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
+    GetResourceDataFromFrame(uint64_t frameID, WTF::String resourceURL, uint64_t callbackID)
+    GetRenderTreeExternalRepresentation(uint64_t callbackID)
+    GetSelectionOrContentsAsString(uint64_t callbackID)
+    GetSourceForFrame(uint64_t frameID, uint64_t callbackID)
+    GetWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
+    RunJavaScriptInMainFrame(WTF::String script, uint64_t callbackID)
+    ForceRepaint(uint64_t callbackID)
+
+#if PLATFORM(MAC)
+    # Dictionary support.
+    PerformDictionaryLookupAtLocation(WebCore::FloatPoint point)
+#endif
+
+    PreferencesDidChange(WebKit::WebPreferencesStore store)
+
+    SetUserAgent(WTF::String userAgent)
+    SetCustomTextEncodingName(WTF::String encodingName)
+
+#if ENABLE(TILED_BACKING_STORE)
+    SetActualVisibleContentRect(WebCore::IntRect rect)
+    SetResizesToContentsUsingLayoutSize(WebCore::IntSize size)
+#endif
+
+    Close()
+    TryClose()
+
+    ValidateCommand(WTF::String name, uint64_t callbackID)
+    ExecuteEditCommand(WTF::String name)
+
+    DidRemoveEditCommand(uint64_t commandID)
+    ReapplyEditCommand(uint64_t commandID)
+    UnapplyEditCommand(uint64_t commandID)
+
+    SetPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor)
+    SetPageZoomFactor(double zoomFactor)
+    SetTextZoomFactor(double zoomFactor)
+
+    ScalePage(double scale, WebCore::IntPoint origin)
+
+    SetUseFixedLayout(bool fixed)
+    SetFixedLayoutSize(WebCore::IntSize size)
+
+    # Find.
+    FindString(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
+    HideFindUI()
+    CountStringMatches(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
+
+    # Drag and drop.
+#if PLATFORM(WIN)
+    PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, HashMap<UINT,Vector<String>> dataMap, uint32_t flags)
+#endif
+#if !PLATFORM(WIN)
+    PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+#endif
+    DragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
+
+    # Popup menu.
+    DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
+    SetTextForActivePopupMenu(int32_t index);
+    
+    # Context menu.
+    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItemData menuItem);
+
+    # Open panel.
+    DidChooseFilesForOpenPanel(Vector<WTF::String> fileURLs)
+    DidCancelForOpenPanel()
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    ExtendSandboxForFileFromOpenPanel(WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+#endif
+
+    # Spelling and grammar.
+    AdvanceToNextMisspelling(bool startBeforeSelection)
+    ChangeSpellingToWord(WTF::String word)
+#if PLATFORM(MAC)
+    UppercaseWord();
+    LowercaseWord();
+    CapitalizeWord();
+
+    SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled);
+#endif
+
+    # Geolocation
+    DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+
+    SetWindowResizerSize(WebCore::IntSize intersectsView)
+
+    # Printing.
+    BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo)
+    EndPrinting();
+    ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo, uint64_t callbackID)
+#if PLATFORM(MAC) || PLATFORM(WIN)
+    DrawRectToPDF(uint64_t frameID, WebCore::IntRect rect, uint64_t callbackID)
+    DrawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID)
+#endif
+
+    SetMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
+
+    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
+    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
+    Dummy() -> (bool dummyReturn)
+
+    SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
+    SetCanRunModal(bool canRunModal)
+
+#if PLATFORM(MAC)
+    # Complex text input support for plug-ins.
+    SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
+
+    SetWindowIsVisible(bool windowIsVisible)
+    WindowAndViewFramesChanged(WebCore::IntRect windowFrameInScreenCoordinates, WebCore::IntRect viewFrameInWindowCoordinates, WebCore::IntPoint accessibilityViewCoordinates)
+    RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
+    WriteSelectionToPasteboard(WTF::String pasteboardName, WTF::Vector<WTF::String> pasteboardTypes) -> (bool result)
+    ReadSelectionFromPasteboard(WTF::String pasteboardName) -> (bool result)
+
+    # Text input.
+    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (WebKit::EditorState newState)
+    ConfirmComposition() -> (WebKit::EditorState newState)
+    ConfirmCompositionWithoutDisturbingSelection() -> (WebKit::EditorState newState)
+    InsertText(WTF::String text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd) -> (bool handled, WebKit::EditorState newState)
+    GetMarkedRange() -> (uint64_t location, uint64_t length)
+    GetSelectedRange() -> (uint64_t location, uint64_t length)
+    GetAttributedSubstringFromRange(uint64_t location, uint64_t length) -> (WebKit::AttributedString result)
+    CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
+    FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
+    ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::EditorState newState)
+    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
+    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
+#endif
+#if PLATFORM(WIN)
+    // FIXME: Unify with Mac counterparts.
+    ConfirmComposition(WTF::String compositionString)
+    SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
+    FirstRectForCharacterInSelectedRange(uint64_t characterPosition) -> (WebCore::IntRect resultRect)
+    GetSelectedText() -> (WTF::String text)
+
+    GestureWillBegin(WebCore::IntPoint point) -> (bool canBeginPanning)
+    GestureDidScroll(WebCore::IntSize size)
+    GestureDidEnd()
+#endif
+#if PLATFORM(QT)
+    FindZoomableAreaForPoint(WebCore::IntPoint point)
+#endif
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    HandleCorrectionPanelResult(String result)
+#endif
+
+    CreateSnapshotOfVisibleContent() -> (WebKit::ShareableBitmap::Handle snapshotHandle)
+}

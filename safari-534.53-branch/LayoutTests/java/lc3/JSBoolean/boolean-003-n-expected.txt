@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion boolean conversion
+
+FAIL dt.setFloat( true ); dt.PUB_FLOAT should throw an exception. Was 0.
+FAIL dt.setFloat( true ); dt.getFloat() should throw an exception. Was 1.
+FAIL typeof dt.getFloat() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

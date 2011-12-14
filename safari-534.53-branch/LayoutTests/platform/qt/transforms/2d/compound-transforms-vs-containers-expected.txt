@@ -1,0 +1,43 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x564
+  RenderBlock {HTML} at (0,0) size 800x564
+    RenderBody {BODY} at (8,16) size 784x528
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 779x44
+          text run at (0,0) width 779: "Test ensures that nested transformed elements produce the same result as a single compound transform.You should"
+          text run at (0,22) width 250: "not see any red in the two tests below"
+layer at (78,80) size 402x222
+  RenderBlock (relative positioned) {DIV} at (20,64) size 402x222 [border: (1px solid #000000)]
+    RenderBlock {P} at (1,17) size 400x22
+      RenderText {#text} at (0,0) size 96x22
+        text run at (0,0) width 96: "Translate first"
+layer at (79,135) size 80x80
+  RenderBlock (positioned) {DIV} at (1,55) size 80x80
+layer at (79,135) size 80x80
+  RenderBlock (positioned) {DIV} at (0,0) size 80x80
+layer at (79,135) size 80x80
+  RenderBlock (positioned) {DIV} at (0,0) size 80x80
+layer at (79,135) size 80x80
+  RenderBlock (positioned) {DIV} at (0,0) size 80x80 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 70x22
+      text run at (0,0) width 70: "Individual"
+layer at (79,135) size 80x80
+  RenderBlock (positioned) {DIV} at (1,55) size 80x80 [bgcolor=#008000]
+layer at (78,322) size 402x222
+  RenderBlock (relative positioned) {DIV} at (20,306) size 402x222 [border: (1px solid #000000)]
+    RenderBlock {P} at (1,17) size 400x22
+      RenderText {#text} at (0,0) size 115x22
+        text run at (0,0) width 115: "Translate second"
+layer at (79,377) size 80x80
+  RenderBlock (positioned) {DIV} at (1,55) size 80x80
+layer at (79,377) size 80x80
+  RenderBlock (positioned) {DIV} at (0,0) size 80x80
+layer at (79,377) size 80x80
+  RenderBlock (positioned) {DIV} at (0,0) size 80x80
+layer at (79,377) size 80x80
+  RenderBlock (positioned) {DIV} at (0,0) size 80x80 [bgcolor=#FF0000]
+    RenderText {#text} at (0,0) size 70x22
+      text run at (0,0) width 70: "Individual"
+layer at (79,377) size 80x80
+  RenderBlock (positioned) {DIV} at (1,55) size 80x80 [bgcolor=#008000]

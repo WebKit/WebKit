@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.setIconDatabaseEnabled(true);
+        layoutTestController.dumpDOMAsWebArchive();
+        layoutTestController.queueReload();
+    }
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="runTest()"&gt;
+&lt;div id="console"&gt;&lt;div style="font-family: monospace; color: green; "&gt;PASS&lt;/div&gt;&lt;/div&gt;
+&lt;script&gt;
+function print(message, color) 
+{
+    var paragraph = document.createElement("div");
+    paragraph.appendChild(document.createTextNode(message));
+    paragraph.style.fontFamily = "monospace";
+    if (color)
+        paragraph.style.color = color;
+    document.getElementById("console").appendChild(paragraph);
+}
+&lt;/script&gt;
+&lt;p&gt;This test should have a green 'PASS' just above this line.  If it doesn't, you failed.
+&lt;link rel="icon" onbeforeload="print('PASS','green');return false" href="resources/favicon.ico" type="image/x-icon"&gt;
+
+
+&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-link-rel-icon-beforeload.html</string>
+	</dict>
+</dict>
+</plist>

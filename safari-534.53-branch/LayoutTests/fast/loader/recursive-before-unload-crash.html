@@ -1,0 +1,47 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+var haveAddedIFrame = false;
+
+window.onbeforeunload = function() {
+    if (!haveAddedIFrame)
+        alert("onbeforeunload called, and iframe hasn't been added yet.");
+    var a = document.createEvent("MouseEvents");
+    a.initEvent("click", true, true);
+    var d = document.createElement("a");
+    d.href = "http://localhost:1234/";
+    d.dispatchEvent(a);
+}
+
+function clicked() {
+    window.location.href="http://127.0.0.1:1234/";
+}
+
+function addiframe() {
+    alert("Adding iframe");
+    var frame = document.createElement("iframe");
+    frame.src = "http://localhost:1234/"
+    document.body.appendChild(frame);
+    haveAddedIFrame = true;
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest() {
+   clicked();
+   setTimeout("addiframe();", 0);
+}
+
+</script>
+<body onload="runTest();">
+This test demonstrates a problem with our handling of the beforeunload event.<br>
+If a script manages to try and navigate the frame from beforeunload - when a navigation is already pending - we end up blowing out the stack by recursively consulting the policy delegate then running onbeforeunload repeatedly.<br>
+After this happens, the FrameLoader is in a bogus state where it thinks it is in the middle of a provisional load, but it doesn't have a provisional document loader.<br>
+In this state, the frame is very difficult to navigate anywhere else, and attempts to load new things within the frame can result in a crash.<br>
+This was reproducibly identified on sears.com following a bizarre Safari specific code path.<br>
+<a href="javascript:void(clicked())">Click here to run the beforeunload test and blow out the stack</a><br>
+<a href="javascript:void(addiframe())">Click here to append an iframe and crash</a><br>
+</body>

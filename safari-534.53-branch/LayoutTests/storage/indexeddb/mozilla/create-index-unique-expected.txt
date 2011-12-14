@@ -1,0 +1,29 @@
+Test IndexedDB's creating unique index and updating indexNames
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+PASS IDBTransaction == null is false
+indexedDB.open(name, description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore('a', { keyPath: 'id', autoIncrement: true });
+index = objectStore.createIndex(indexName, indexKeyPath, { unique: true });
+PASS index.name is indexName
+PASS index.keyPath is indexKeyPath
+PASS index.unique is true
+PASS objectStore.indexNames.length is 1
+PASS foundNewlyCreatedIndex is true
+PASS event.target.transaction.db is db
+PASS event.target.transaction.readyState is IDBTransaction.LOADING
+PASS event.target.transaction.mode is IDBTransaction.VERSION_CHANGE
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

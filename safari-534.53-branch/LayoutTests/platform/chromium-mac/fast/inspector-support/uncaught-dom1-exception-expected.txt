@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 13: Uncaught Error: INDEX_SIZE_ERR: DOM Exception 1
+This tests that we are getting the correct message for DOM Exception 1: INDEX_SIZE_ERR.

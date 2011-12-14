@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="listbox">
+<div role="option">option 1</div>
+<div role="option" title="label 2">option 2</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria 'option' role works as expected. That is, it becomes a static text element with no children.");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+
+          var listBox = accessibilityController.focusedElement.childAtIndex(0);
+          var firstChild = listBox.childAtIndex(0);
+          var secondChild = listBox.childAtIndex(1);
+          shouldBe("firstChild.role", "'AXRole: AXStaticText'");
+          shouldBe("firstChild.title", "'AXTitle: option 1'");
+
+          shouldBe("secondChild.role", "'AXRole: AXStaticText'");
+          shouldBe("secondChild.title", "'AXTitle: label 2'");
+
+          shouldBe("firstChild.childrenCount", "0");
+          shouldBe("secondChild.childrenCount", "0");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+EXPECTED (video.error == 'null') OK
+EVENT(loadstart)
+EVENT(error)
+failed trying to load text file served as text OK
+END OF TEST
+

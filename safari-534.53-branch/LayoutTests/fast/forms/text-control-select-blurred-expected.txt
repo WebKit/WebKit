@@ -1,0 +1,9 @@
+Tests that setting selectionEnd on a blurred text control does not clobber selectionStart.
+ 
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+

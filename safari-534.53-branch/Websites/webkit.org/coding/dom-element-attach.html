@@ -1,0 +1,14 @@
+<?php
+    $title="How a DOM Element is Attached";
+    include("../header.inc");
+?>
+<h2>
+  How a DOM Element is Attached
+</h2>
+<br>
+<p>The implementation of <kbd>Node::attach()</kbd> is just a recursive depth-first traversal. However, <kbd>Element::attach()</kbd> does a bit more, also creating a renderer (if necessary) and resolving style for the element.
+<p>This diagram illustrates how it happens, showing relationships between the objects involved. 
+<p><a href="images/dom-element-attach-large.png"><img src="images/dom-element-attach-small.png"></a>
+<?php
+    include("../footer.inc");
+?>

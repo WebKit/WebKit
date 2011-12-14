@@ -1,0 +1,12 @@
+Ensure that double clicking does not expand selection across new line boundaries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS String(window.getSelection()) is "more  "
+PASS String(window.getSelection()) is "more  "
+PASS String(window.getSelection()) is "more  "
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

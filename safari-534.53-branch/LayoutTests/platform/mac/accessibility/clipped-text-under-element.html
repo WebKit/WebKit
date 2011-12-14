@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<style>
+.hidden {
+  height: 0;
+  overflow: hidden;
+}
+</style>
+
+<div class="hidden">
+  <h1><a id="hidden-link" tabindex=0 href="http://domain.com/path/i-am-the-URL?id=1234">I am the hidden link text.</a></h1>
+</div>
+
+<hr>
+
+<div>
+  <h1><a id="visible-link" tabindex=0 href="http://domain.com/path/i-am-the-URL?id=1234">I am the visible link text.</a></h1>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that even if an element is not visible, textUnderElement() will still give the text.");
+
+    if (window.accessibilityController) {
+        document.getElementById("hidden-link").focus();
+        var hiddenLink = accessibilityController.focusedElement;
+        shouldBe("hiddenLink.title", "'AXTitle: I am the hidden link text.'");
+
+        document.getElementById("visible-link").focus();
+        var visibleLink = accessibilityController.focusedElement;
+        shouldBe("visibleLink.title", "'AXTitle: I am the visible link text.'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

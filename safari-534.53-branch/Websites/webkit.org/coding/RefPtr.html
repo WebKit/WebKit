@@ -1,0 +1,407 @@
+<?php 
+    $title="RefPtr and PassRefPtr Basics";
+    include("../header.inc"); 
+?>
+
+<style type="text/css">
+    .code {
+        background-color: #eee;
+        padding: 1em;
+        margin-left: 2em;
+        margin-right: 2em;
+        overflow-x: auto;
+    }
+    .comment .function, .class, .variable {
+        font-style: italic;
+    }
+</style>
+
+<h1><span class="class">RefPtr</span> and <span class="class">PassRefPtr</span> Basics</h1>
+<div>Darin Adler</div>
+<div>Version 4, 2010-08-27</div>
+
+<h2>History</h2>
+
+<p>Many objects in WebKit are reference counted. The pattern used is that classes have
+member functions <span class="function">ref</span> and <span class="function">deref</span>
+that increment and decrement the reference count. Each call to <span class="function">ref</span>
+has to be matched by a call to <span class="function">deref</span>. When the function is called
+on an object with a reference count of 1, the object is deleted. Many classes in WebKit implement
+this pattern by deriving from the <span class="class">RefCounted</span> class template.</p>
+
+<p>Back in 2005, we discovered that there were many memory leaks, especially in HTML
+editing code, caused by misuse of <span class="function">ref</span> and
+<span class="function">deref</span> calls.</p>
+
+<p>We wanted
+to use smart pointers to mitigate the problem. However, some early experiments showed that
+smart pointers led to additional manipulation of reference counts that hurt performance.
+For example, for a function that took a smart pointer as a parameter and returned that same smart
+pointer as a return value, just passing the parameter and returning the value would increment
+and then decrement the reference count two to four times
+as the object moved from one smart pointer to another. So we looked for an
+idiom that would let us use smart pointers and avoid this reference count churn.</p>
+
+<p>The inspiration for a solution came from the C++ standard class template <span class="class">auto_ptr</span>.
+These objects implement a model where assignment is transfer of ownership. When you assign
+from one <span class="class">auto_ptr</span> to another, the donor becomes 0.</p>
+
+<p>Maciej Stachowiak devised a pair of class templates, <span class="class">RefPtr</span>
+and <span class="class">PassRefPtr</span>, that implement this scheme
+for WebCore’s intrusive reference counting.</p>
+
+<h2>Raw pointers</h2>
+
+<p>When discussing smart pointers such as the <span class="class">RefPtr</span>
+class template we use the term raw pointer to refer to the C++ language’s built in pointer type.
+Here’s the canonical setter function, written with raw pointers:</p>
+
+<pre class="code"><span class="comment">// example, not preferred style</span>
+
+class Document {
+    <span class="comment">...</span>
+    Title* m_title;
+}
+
+Document::Document()
+    : m_title(0)
+{
+}
+
+Document::~Document()
+{
+    if (m_title)
+        m_title-&gt;deref();
+}
+
+void Document::setTitle(Title* title)
+{
+    if (title)
+        title-&gt;ref();
+    if (m_title)
+        m_title-&gt;deref();
+    m_title = title;
+}</pre>
+
+<h2><span class="class">RefPtr</span></h2>
+
+<p><span class="class">RefPtr</span> is a simple smart pointer class that calls <span class="function">ref</span>
+on incoming values and
+<span class="function">deref</span> on outgoing values.
+<span class="class">RefPtr</span> works on any object with both a <span class="function">ref</span> and
+a <span class="function">deref</span> member function.
+Here’s the setter function example, written with <span class="class">RefPtr</span>:</p>
+
+<pre class="code"><span class="comment">// example, not preferred style</span>
+ 
+class Document {
+    <span class="comment">...</span>
+    RefPtr&lt;Title&gt; m_title;
+}
+
+void Document::setTitle(Title* title)
+{
+    m_title = title;
+}</pre>
+
+<p>Use of <span class="class">RefPtr</span> alone can lead to reference count churn.</p>
+
+<pre class="code"><span class="comment">// example, not preferred style; should use RefCounted and adoptRef (see below)</span>
+ 
+RefPtr&lt;Node&gt; createSpecialNode()
+{
+    RefPtr&lt;Node&gt; a = new Node;
+    a-&gt;setSpecial(true);
+    return a;
+}
+
+RefPtr&lt;Node&gt; b = createSpecialNode();</pre>
+
+<p>For purposes of this discussion, lets assume that the node object starts with a
+reference count of 0 (more on this later). When it’s assigned to <span class="variable">a</span>,
+the reference count is incremented to 1. The reference count is incremented to 2 to
+create the return value, then decremented back to 1 when <span class="variable">a</span> is destroyed.
+Then the reference count is incremented to 2 to create <span class="variable">b</span>, and then decremented back
+to 1 when the return value of <span class="function">createSpecialNode</span> is destroyed.</p>
+
+<p>(If the compiler implements the
+<a href="http://en.wikipedia.org/wiki/Return_value_optimization">return value optimization</a>,
+there may be one less increment and decrement of the reference count.)</p>
+
+<p>The overhead of reference count churn is even greater when both function arguments and return
+values are involved. The solution is <span class="class">PassRefPtr</span>.</p>
+
+<h2><span class="class">PassRefPtr</span></h2>
+
+<p><span class="class">PassRefPtr</span> is like <span class="class">RefPtr</span> with a difference.
+When you copy a <span class="class">PassRefPtr</span> or
+assign the value of a <span class="class">PassRefPtr</span> to a <span class="class">RefPtr</span> or
+another <span class="class">PassRefPtr</span>, the original
+pointer value is set to 0; the operation is done without any change to the reference count.
+Let’s take a look at a new version of our example:</p>
+
+<pre class="code"><span class="comment">// example, not preferred style; should use RefCounted and adoptRef (see below)</span>
+
+PassRefPtr&lt;Node&gt; createSpecialNode()
+{
+    PassRefPtr&lt;Node&gt; a = new Node;
+    a-&gt;setSpecial(true);
+    return a;
+}
+
+RefPtr&lt;Node&gt; b = createSpecialNode();</pre>
+
+<p>The node object starts with a reference count of 0. When it’s assigned to <span class="variable">a</span>,
+the reference count is incremented to 1. Then <span class="variable">a</span> gets set to 0 when the return
+value <span class="class">PassRefPtr</span> is created. Then the return value is set to 0 when
+<span class="variable">b</span> is created.</p>
+
+<p>However, as the Safari team learned when we started programming with <span class="class">PassRefPtr</span>,
+the rule that a pointer becomes 0 when it’s assigned to another variable can easily lead to mistakes.</p>
+
+<pre class="code"><span class="comment">// warning, will dereference a null pointer and will not work</span>
+ 
+static RefPtr&lt;Ring&gt; g_oneRingToRuleThemAll;
+
+void finish(PassRefPtr&lt;Ring&gt; ring)
+{
+    g_oneRingToRuleThemAll = ring;
+    <span class="comment">...</span>
+    ring-&gt;wear();
+}</pre>
+
+<p>By the time <span class="function">wear</span> is called, <span class="variable">ring</span>
+is already 0. To avoid this, we recommend <span class="class">PassRefPtr</span> only for
+function argument and result types, copying arguments into <span class="class">RefPtr</span>
+local variables.</p>
+
+<pre class="code">static RefPtr&lt;Ring&gt; g_oneRingToRuleThemAll;
+
+void finish(PassRefPtr&lt;Ring&gt; prpRing)
+{
+    RefPtr&lt;Ring&gt; ring = prpRing;
+    g_oneRingToRuleThemAll = ring;
+    <span class="comment">...</span>
+    ring-&gt;wear();
+}</pre>
+
+<h2>Mixing <span class="class">RefPtr</span> and <span class="class">PassRefPtr</span></h2>
+
+<p>Since we recommend use of <span class="class">RefPtr</span> in all cases except when passing arguments to or
+returning values from a function, there will be times when you have a <span class="class">RefPtr</span>
+and wish to transfer ownership as <span class="class">PassRefPtr</span> does.
+<span class="class">RefPtr</span> has a member function named
+<span class="function">release</span> that does the trick. It sets the value of the original
+<span class="class">RefPtr</span> to 0 and constructs a <span class="class">PassRefPtr</span>, without
+changing reference counts.</p>
+
+<pre class="code"><span class="comment">// example, not preferred style; should use RefCounted and adoptRef (see below)</span>
+ 
+PassRefPtr&lt;Node&gt; createSpecialNode()
+{
+    RefPtr&lt;Node&gt; a = new Node;
+    a-&gt;setCreated(true);
+    return a.release();
+}
+
+RefPtr&lt;Node&gt; b = createSpecialNode();</pre>
+
+<p>This keeps the efficiency of <span class="class">PassRefPtr</span> while reducing the chance
+that its relatively tricky semantics will cause problems.</p>
+
+<h2>Mixing with raw pointers</h2>
+
+<p>When using a <span class="class">RefPtr</span> to call a function that takes a raw pointer,
+use the <span class="function">get</span> function.</p>
+
+<pre class="code">printNode(stderr, a.get());</pre>
+
+<p>However, many operations can be done on a <span class="class">RefPtr</span>
+or <span class="class">PassRefPtr</span> directly, without resorting to an explicit <span class="function">get</span> call.</p>
+
+<pre class="code">RefPtr&lt;Node&gt; a = createSpecialNode();
+Node* b = getOrdinaryNode();
+
+<span class="comment">// the * operator</span>
+*a = value;
+
+<span class="comment">// the -&gt; operator</span>
+a-&gt;clear();
+
+<span class="comment">// null check in an if statement</span>
+if (a)
+    log("not empty");
+
+<span class="comment">// the ! operator</span>
+if (!a)
+    log("empty");
+
+<span class="comment">// the == and != operators, mixing with raw pointers</span>
+if (a == b)
+    log("equal");
+if (a != b)
+    log("not equal");
+
+<span class="comment">// some type casts</span>
+RefPtr&lt;DerivedNode&gt; d = static_pointer_cast&lt;DerivedNode&gt;(a);</pre>
+
+<p>Normally, <span class="class">RefPtr</span> and <span class="class">PassRefPtr</span>
+enforce a simple rule; they always balance <span class="function">ref</span> and
+<span class="function">deref</span> calls, guaranteeing a programmer can’t miss a
+<span class="function">deref</span>. But in the case where we have a raw pointer,
+already have a reference count, and want to transfer ownership the
+<span class="function">adoptRef</span> function should be used.</p>
+
+<pre class="code"><span class="comment">// warning, requires a pointer that already has a ref</span>
+RefPtr&lt;Node&gt; node = adoptRef(rawNodePointer);</pre>
+
+<p>To transfer from a <span class="class">RefPtr</span> to a raw pointer without
+changing the reference count, <span class="class">PassRefPtr</span> provides the
+<span class="function">leakRef</span> function.</p>
+
+<pre class="code"><span class="comment">// warning, results in a pointer that must get an explicit deref</span>
+RefPtr&lt;Node&gt; node = createSpecialNode();
+Node* rawNodePointer = node.release().leakRef();</pre>
+
+<p>Since <span class="function">leakRef</span> is rarely used, it’s provided only in the
+<span class="class">PassRefPtr</span> class, hence the need to call <span class="function">release</span>,
+then <span class="function">leakRef</span>.</p>
+
+<h2>RefPtr and new objects</h2>
+
+<p>In the examples in this discussion, we talked about objects with a reference
+count of 0. However, for efficiency and simplicity, the <span class="class">RefCounted</span> class doesn't
+use a reference count of 0 at all. Objects are created with a reference count
+of 1. The best programming idiom to use is to put such objects right into a
+<span class="class">RefPtr</span> to make it impossible to forget to deref the object when done with
+it. This means that anyone calling new on such an object should immediately
+call adoptRef. In WebCore we use functions named create instead of direct calls
+to new.</p>
+
+<pre class="code"><span class="comment">// preferred style</span>
+ 
+PassRefPtr&lt;Node&gt; Node::create()
+{
+    return adoptRef(new Node);
+}
+
+RefPtr&lt;Node&gt; e = Node::create();</pre>
+
+<p>Because of the way <span class="function">adoptRef</span> and
+<span class="class">PassRefPtr</span> are implemented, this is an efficient idiom.
+The object starts with a reference count of 1 and no manipulation of the reference
+count happens at all.</p>
+
+<pre class="code"><span class="comment">// preferred style</span>
+ 
+PassRefPtr&lt;Node&gt; createSpecialNode()
+{
+    RefPtr&lt;Node&gt; a = Node::create();
+    a-&gt;setCreated(true);
+    return a.release();
+}
+
+RefPtr&lt;Node&gt; b = createSpecialNode();</pre>
+
+<p>The node object is put into a <span class="class">PassRefPtr</span> by a call
+to <span class="function">adoptRef</span> inside <span class="function">Node::create</span>,
+then passes into <span class="variable">a</span> and is released and passes into
+<span class="variable">b</span>, all without touching the reference count.</p>
+
+<p>The <span class="class">RefCounted</span> class implements a runtime check
+so we get an assertion failure if we create an object and call <span class="function">ref</span>
+or <span class="function">deref</span> without first calling <span class="function">adoptRef</span>.</p>
+
+<h2>Guidelines</h2>
+
+<p>We’ve developed these guidelines for use of <span class="class">RefPtr</span>
+and <span class="class">PassRefPtr</span> in WebKit code.</p>
+
+<h3>Local variables</h3>
+<ul>
+<li>If ownership and lifetime are guaranteed, a local variable can be a raw pointer.</li>
+<li>If the code needs to hold ownership or guarantee lifetime, a local variable should
+be a <span class="class">RefPtr</span>.</li>
+<li>Local variables should never be <span class="class">PassRefPtr</span>.</li>
+</ul>
+
+<h3>Data members</h3>
+<ul>
+<li>If ownership and lifetime are guaranteed, a data member can be a raw pointer.</li>
+<li>If the class needs to hold ownership or guarantee lifetime, the data member should
+be a <span class="class">RefPtr</span>.</li>
+<li>Data members should never be <span class="class">PassRefPtr</span>.</li>
+</ul>
+
+<h3>Function arguments</h3>
+<ul>
+<li>If a function does not take ownership of an object, the argument should be a raw pointer.</li>
+<li>If a function does take ownership of an object, the argument should be a <span class="class">PassRefPtr</span>.
+This includes most setter functions.
+Unless the use of the argument is very simple, the argument should be transferred to a
+<span class="class">RefPtr</span> at the start of the function; the argument can be named with
+a “prp” prefix in such cases.</li>
+</ul>
+
+<h3>Function results</h3>
+<ul>
+<li>If a function’s result is an object, but ownership is not being transferred, the result
+should be a raw pointer. This includes most getter functions.</li>
+<li>If a function’s result is a new object or ownership is being transferred for any other
+reason, the result should be a <span class="class">PassRefPtr</span>.
+Since local variables are typically <span class="class">RefPtr</span>, it’s common to call
+<span class="function">release</span> in the return statement to transfer the
+<span class="class">RefPtr</span> to the <span class="class">PassRefPtr</span>.</li>
+</ul>
+
+<h3>New objects</h3>
+<ul>
+<li>New objects should be put into a <span class="class">RefPtr</span> as soon as possible
+after creation to allow the smart pointers to do all reference counting automatically.</li>
+<li>For <span class="class">RefCounted</span> objects, the above should be done with the
+<span class="function">adoptRef</span> function.</li>
+<li>Best idiom is to use a private constructor and a public
+<span class="function">create</span> function that
+returns a <span class="class">PassRefPtr</span>.</li>
+</ul>
+
+<h2>Improving this document</h2>
+
+<p>We should add answers to any frequently asked questions are not covered by this document.
+One or more of the following topics could also be covered by this document.</p>
+
+<ul>
+
+<li>The “protector” idiom, where a local RefPtr variable is used to keep an object alive.</li>
+
+<li>Perils of programming with <span class="class">TreeShared</span>.</li>
+
+<li>Our desire to eliminate <span class="class">TreeShared</span> and instead have
+<span class="variable">m_firstChild</span> and <span class="variable">m_next</span> be
+<span class="class">ListRefPtr</span> or the equivalent.</li>
+
+<li>How we we mix reference counting with garbage collection to implement the DOM
+and the JavaScript and Objective-C DOM bindings.</li>
+
+<li>Comparison of our intrusive reference counting with other schemes such as the
+external reference counting in Boost <span class="class">shared_ptr</class>.</li>
+
+<li>The <span class="class">OwnPtr</span> class template, and how it can be used
+with <span class="class">PassOwnPtr</span> and <span class="function">adoptPtr</span>.</li>
+
+<li>The <span class="class">OwnArrayPtr</span> class template,
+and <span class="class">PassOwnArrayPtr</span>.</li>
+
+<li>The <span class="class">RetainPtr</span> class template,
+and the lack of a <span class="class">PassRetainPtr</span>.</li>
+
+<li>The <span class="class">ListRefPtr</span> class template.</li>
+
+</ul>
+
+<p>If you have any comments on the above or other ideas about improving the clarity,
+scope, or presentation, please send mail to the <a href="/contact.html">WebKit mailing list</a>.</p>
+
+<?php
+    include("../footer.inc");
+?>

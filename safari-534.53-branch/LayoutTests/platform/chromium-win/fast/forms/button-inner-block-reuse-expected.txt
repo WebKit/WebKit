@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 197x19
+          text run at (0,0) width 197: "This tests for regressions against "
+        RenderInline {I} at (0,0) size 779x39
+          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
+            RenderText {#text} at (197,0) size 350x19
+              text run at (197,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8420"
+          RenderText {#text} at (547,0) size 779x39
+            text run at (547,0) width 4: " "
+            text run at (551,0) width 228: "iExploder(#12): Assertion failure in"
+            text run at (0,20) width 237: "RenderContainer::removeChildNode"
+        RenderText {#text} at (237,20) size 4x19
+          text run at (237,20) width 4: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 749x19
+          text run at (0,0) width 530: "In the render tree, the button should have only one child, an anonymous block wrapping "
+          text run at (530,0) width 219: "all of the button's other descendants."
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,102) size 784x10
+        RenderButton {BUTTON} at (2,2) size 16x6 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,3) size 0x0
+            RenderBlock (anonymous) at (0,0) size 0x0
+              RenderInline {SPAN} at (0,0) size 0x0
+            RenderBlock (anonymous) at (0,0) size 0x0
+              RenderBlock {DIV} at (0,0) size 0x0
+            RenderBlock (anonymous) at (0,0) size 0x0
+              RenderInline {SPAN} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

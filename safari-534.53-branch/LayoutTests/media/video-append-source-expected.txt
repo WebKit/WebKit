@@ -1,0 +1,6 @@
+EXPECTED (video.currentSrc == '') OK
+EXPECTED (video.currentSrc == '') OK
+EVENT(canplaythrough)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
+END OF TEST
+

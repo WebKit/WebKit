@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  null
+
+FAIL java.lang.String["valueOf(java.lang.Object)"](null) +'' should be null. Threw exception ReferenceError: Can't find variable: java
+FAIL java.lang.Boolean.valueOf(null) +'' should be false. Threw exception ReferenceError: Can't find variable: java
+FAIL java.lang.Boolean["valueOf(java.lang.String)"](null) should be false. Threw exception ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

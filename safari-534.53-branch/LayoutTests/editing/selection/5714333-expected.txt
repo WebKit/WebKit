@@ -1,0 +1,3 @@
+This tests to make sure that document.getSelection() is supported and returns a Selection object for the document.
+xxx
+Selection: ([object Text], 1) to ([object Text], 2)

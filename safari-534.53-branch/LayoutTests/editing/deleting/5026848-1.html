@@ -1,0 +1,14 @@
+<html>
+<body>
+<p>This tests the deletion of non-editable content that is in both the start and end editable roots.  It should be removed.  You shouldn't see anything in the editable region below.</p>
+<div id="div" contenteditable="true">foo <span style="color: red;" contenteditable="false">bar</span> baz</div>
+
+<script>
+var div = document.getElementById("div");
+div.focus();
+document.execCommand("SelectAll");
+document.execCommand("Delete");
+</script>
+
+</body>
+</html>

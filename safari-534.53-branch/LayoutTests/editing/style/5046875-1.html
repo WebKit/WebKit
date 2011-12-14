@@ -1,0 +1,13 @@
+<p>This tests for a bug where centering two paragraphs would center the third.  Only the selected paragraphs should be selected.</p>
+<div id="div" contenteditable="true">foo<div>bar<br>baz</div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+sel.modify("extend", "forward", "word");
+sel.modify("extend", "forward", "paragraph");
+
+document.execCommand("JustifyCenter");
+</script>

@@ -1,0 +1,3 @@
+This tests for a crash when specifying multiple columns for a block with 0 content height.
+
+

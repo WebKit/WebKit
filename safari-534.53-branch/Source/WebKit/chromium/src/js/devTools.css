@@ -1,0 +1,117 @@
+.data-grid table {
+    line-height: 120%;
+}
+
+body.attached #toolbar {
+    height: 34px;
+    border-top: 1px solid rgb(100, 100, 100);
+    cursor: default; /* overriden */
+    padding-left: 0;
+}
+
+/* Chrome theme overrides */
+
+body.platform-windows #toolbar, body.platform-windows.inactive #toolbar {
+    background-image: none;
+}
+
+body.detached.platform-mac-leopard #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(175, 175, 175)), to(rgb(151, 151, 151))) !important;
+}
+
+body.detached.platform-mac-leopard.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(221, 221, 221)), to(rgb(207, 207, 207))) !important;
+}
+
+body.detached.platform-mac-snowleopard #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(189, 189, 189)), to(rgb(151, 151, 151))) !important;
+}
+
+body.detached.platform-mac-snowleopard.inactive #toolbar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(215, 215, 215)), to(rgb(207, 207, 207))) !important;
+}
+
+body.platform-linux #scripts-files {
+    font-size: 11px;
+    font-weight: normal;
+    line-height: 12px;
+}
+
+.console-group-messages .section > .header {
+    padding: 0 8px 0 0;
+    background-image: none;
+    border: none;
+    min-height: 0;
+}
+
+#resources-filter {
+    background: -webkit-gradient(linear, left top, left bottom, from(rgb(233, 233, 233)), to(rgb(233, 233, 233)));
+}
+
+.crumbs .crumb {
+    -webkit-border-image: url(Images/segmentChromium.png) 0 12 0 2;
+    margin-right: -3px;
+    padding-left: 6px;
+}
+
+.crumbs .crumb.selected {
+    -webkit-border-image: url(Images/segmentSelectedChromium.png) 0 12 0 2;
+    color: white;
+    text-shadow: rgba(255, 255, 255, 0.5) 0 0px 0;
+}
+
+.crumbs .crumb.selected:hover {
+    -webkit-border-image: url(Images/segmentSelectedChromium.png) 0 12 0 2;
+}
+
+.crumbs .crumb.selected.end, .crumbs .crumb.selected.end:hover {
+    -webkit-border-image: url(Images/segmentSelectedEndChromium.png) 0 2 0 2;
+}
+
+.crumbs .crumb:hover {
+    -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
+}
+
+.crumbs .crumb.dimmed:hover {
+    -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
+}
+
+.crumbs .crumb.end:hover {
+    -webkit-border-image: url(Images/segmentHoverEndChromium.png) 0 2 0 2;
+}
+
+body.drawer-visible #main-status-bar {
+    background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackgroundChromium.png);
+}
+
+.status-bar {
+    background-image: url(Images/statusbarBackgroundChromium.png);
+}
+
+button.status-bar-item {
+    background-image: url(Images/statusbarButtonsChromium.png);
+}
+
+select.status-bar-item:active {
+    -webkit-border-image: url(Images/statusbarMenuButtonSelectedChromium.png) 0 17 0 2;
+}
+
+#drawer {
+    background-image: url(Images/statusbarBottomBackgroundChromium.png);
+}
+
+select.status-bar-item {
+    -webkit-border-image: url(Images/statusbarMenuButtonChromium.png) 0 17 0 2;
+}
+
+.scope-bar li.selected {
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+}
+
+.scope-bar li:active {
+    -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.0);
+}
+
+.timeline-category-statusbar-item input {
+    vertical-align: middle;
+}

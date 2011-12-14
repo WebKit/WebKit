@@ -1,0 +1,41 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+
+    <!-- This test makes sure that elements return their accesskeys -->
+ 
+    <a href="http://www.webkit.org" id='link1' accesskey="w">webkit</a><br>
+    <input type='text' id='text1' accesskey='q'>
+
+    <div id="result"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var link = document.getElementById("link1");
+            link.focus();
+            link = accessibilityController.focusedElement;
+
+            var text = document.getElementById("text1");
+            text.focus();
+            text = accessibilityController.focusedElement;
+
+            var linkAccessKey = "AXAccessKey: w";
+            var inputAccessKey = "AXAccessKey: q";
+            if (link.allAttributes().indexOf(linkAccessKey) != -1 && text.allAttributes().indexOf(inputAccessKey) != -1) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+result.innerText += link.allAttributes() + "\n\n" + text.allAttributes();
+            }
+
+
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description(
+"Tests whether delete works properly across multiple global blocks in the presence of redefined variables."
+);
+
+a = 1;
+</script>
+<script>
+var a;
+delete a;
+
+function test()
+{
+    return this.a ? true : false;
+}
+
+shouldBeFalse("test()");
+
+var successfullyParsed = true;
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

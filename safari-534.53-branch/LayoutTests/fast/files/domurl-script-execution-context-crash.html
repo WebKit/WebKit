@@ -1,0 +1,30 @@
+<html>
+<script>
+function crash()
+{
+    try {
+        e.apply(w, ['webkitURL']);
+    } catch (ex) { }
+    document.body.innerHTML = "PASS: null security context for DOMURL did not crash";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function load()
+{
+    w.close();
+    setTimeout(crash, 30);
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+    layoutTestController.waitUntilDone();
+}
+
+e = (w = open()).eval;
+</script>
+<body onload="load()">
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rebaseline Queue</title>
+  <link rel="stylesheet" href="/static/styles.css" type="text/css">
+</head>
+<body>
+
+<h1>Rebaseline Queue</h1>
+
+<ul>
+    <li><a href="/builder/picker">Browse and enqueue failing tests on builders</a></li>
+    <li>
+        Builders with enqueued tests:
+        <ul>
+{% for builder_name in builder_names %}
+          <li>
+            <a href="/builder/{{ builder_name|escape }}/queue">{{ builder_name|escape }}</a>
+          </li>
+{% empty %}
+        None
+{% endfor %}
+        </ul>
+    </li>
+</ul>
+
+</body>
+</html>

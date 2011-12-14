@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test missing keyframes with fill modes</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 100px;
+      top: 10px;
+      height: 30px;
+      width: 200px;
+      -webkit-animation-delay: 0.1s;
+      -webkit-animation-duration: 0.1s;
+      -webkit-animation-timing-function: linear;
+    }
+    @-webkit-keyframes anim1 {
+        from { left: 200px; }
+        50% { left: 250px; }
+        to   { left: 300px; }
+    }
+    @-webkit-keyframes anim2 {
+        50% { left: 250px; }
+        to   { left: 300px; }
+    }
+    @-webkit-keyframes anim3 {
+        from { left: 200px; }
+        50% { left: 250px; }
+    }
+    @-webkit-keyframes anim4 {
+        50% { left: 250px; }
+    }
+
+    #a {
+      background-color: blue;
+      -webkit-animation-fill-mode: none;
+      -webkit-animation-name: anim1;
+    }
+    #b {
+      background-color: red;
+      -webkit-animation-fill-mode: backwards;
+      -webkit-animation-name: anim1;
+    }
+    #c {
+      background-color: green;
+      -webkit-animation-fill-mode: forwards;
+      -webkit-animation-name: anim1;
+    }
+    #d {
+      background-color: yellow;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-name: anim1;
+    }
+    #e {
+      background-color: #999;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-iteration-count: 2;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-name: anim1;
+    }
+
+    #f {
+      background-color: blue;
+      -webkit-animation-fill-mode: none;
+      -webkit-animation-name: anim2;
+    }
+    #g {
+      background-color: red;
+      -webkit-animation-fill-mode: backwards;
+      -webkit-animation-name: anim2;
+    }
+    #h {
+      background-color: green;
+      -webkit-animation-fill-mode: forwards;
+      -webkit-animation-name: anim2;
+    }
+    #i {
+      background-color: yellow;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-name: anim2;
+    }
+    #j {
+      background-color: #999;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-iteration-count: 2;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-name: anim2;
+    }
+
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    const numAnims = 10;
+    var animsFinished = 0;
+    const allowance = 5;
+    const expectedValues = [
+      {id: "a", start: 100, end: 100},
+      {id: "b", start: 200, end: 100},
+      {id: "c", start: 100, end: 300},
+      {id: "d", start: 200, end: 300},
+      {id: "e", start: 200, end: 200}
+    ];
+    var result = "";
+
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function animationEnded(event) {
+        if (++animsFinished == numAnims) {
+            setTimeout(endTest, 0); // this set timeout should be ok in the test environment
+                                    // since we're just giving style a chance to resolve
+        }
+    };
+
+    function endTest() {
+
+        for (var i=0; i < expectedValues.length; i++) {
+            var el = document.getElementById(expectedValues[i].id);
+            var expectedValue = expectedValues[i].end;
+            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            if (Math.abs(expectedValue - realValue) < allowance) {
+              result += "PASS";
+            } else {
+              result += "FAIL";
+            }
+            result += " - end of animation - id: " + expectedValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
+        }
+        document.getElementById('result').innerHTML = result;
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    window.onload = function () {
+        for (var i=0; i < expectedValues.length; i++) {
+            var el = document.getElementById(expectedValues[i].id);
+            var expectedValue = expectedValues[i].start;
+            var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            if (Math.abs(expectedValue - realValue) < allowance) {
+              result += "PASS";
+            } else {
+              result += "FAIL";
+            }
+            result += " - start of animation - id: " + expectedValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
+        }
+        document.addEventListener("webkitAnimationEnd", animationEnded, false);
+    };
+
+  </script>
+</head>
+<body>
+This test performs an animation of the left property with four different
+fill modes. It animates over 0.1 second with a 0.1 second delay.
+It takes snapshots at document load and the end of the animation.
+
+<div id="a" class="box">
+  None - from/to present
+</div>
+<div id="b" class="box">
+  Backwards - from/to present
+</div>
+<div id="c" class="box">
+  Forwards - from/to present
+</div>
+<div id="d" class="box">
+  Both - from/to present
+</div>
+<div id="e" class="box">
+  Both iterating - from/to present
+</div>
+
+<div id="f" class="box">
+  None - from missing
+</div>
+<div id="g" class="box">
+  Backwards - from missing
+</div>
+<div id="h" class="box">
+  Forwards - from missing
+</div>
+<div id="i" class="box">
+  Both - from missing
+</div>
+<div id="j" class="box">
+  Both iterating - from missing
+</div>
+
+<div id="result">
+</div>
+</body>
+</html>

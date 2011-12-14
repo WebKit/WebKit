@@ -1,0 +1,5 @@
+Running test.
+Sending XMLHttpRequest...
+Response received.
+xhr.responseXML.cookie:
+Test complete.

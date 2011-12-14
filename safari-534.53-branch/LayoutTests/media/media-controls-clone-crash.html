@@ -1,0 +1,25 @@
+<html>
+    <body onload="runTest();">
+        Test passes if it does not crash.
+        <script>
+            if (window.layoutTestController)
+            {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            function runTest() {
+                node = document.createElement('audio');
+                node.setAttribute('src', 'foo');
+                node.setAttribute('controls', 'foo');
+                node.style.fontWeight = '100';
+                var clone = node.cloneNode(false);
+                clone.load();
+ 
+                if (window.layoutTestController)
+                    setTimeout("layoutTestController.notifyDone()", 0);
+            }
+        </script>
+    </body>
+</html>
+

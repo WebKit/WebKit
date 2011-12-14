@@ -1,0 +1,3933 @@
+2011-05-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebView loses firstResponder status when entering full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61153
+
+        * WebKit.xcodeproj/project.pbxproj: Export WebNSWindowExtras.h as a
+        private header so that WebKit2 can include it.
+
+2011-05-16  Dan Bernstein  <mitz@apple.com>
+
+        No need to compile .js files, that is what the JIT is for.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-05-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler and Adam Barth.
+
+        Fix for <rdar://problem/9253454> Solar Walk For Mac: Info window is blank (HTML5 parser)
+        https://bugs.webkit.org/show_bug.cgi?id=60685
+
+        * WebKit.xcodeproj/project.pbxproj: Added Misc/SolarWalkQuirksUserScript.js and copy it to Resources during the build phase. 
+
+2011-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Make update-webkit-localizable-strings put WebKit/win strings in WebCore
+        now that all localized strings in WebKit/win use WEB_UI_STRING.
+
+        https://webkit.org/b/58747
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/Localizable.strings: Removed.
+
+2011-04-17  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Move WebNodeHighlighter into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=58746
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebNodeHighlighter.{h,mm}.
+
+2011-04-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMAKE] Separate DerivedSources.
+        https://bugs.webkit.org/show_bug.cgi?id=58427
+
+        * CMakeLists.txt: Change DERIVED_SOURCES_DIR to DERIVED_SOURCES_WEBCORE_DIR
+
+2011-04-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Mac.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-11  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Setup ENABLE(TRACK) feature define + initial HTMLTrackElement
+        https://bugs.webkit.org/show_bug.cgi?id=53556
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A few heap-related renames and file moves.
+        
+        WeakGCPtr<T> => Weak<T>
+        Global<T> => Strong<T>
+        collector/ => heap/
+        collector/* => heap/*
+        runtime/WeakGCPtr.h => heap/Weak.h
+        
+        (Eventually, even more files should move into the heap directory. Like
+        Heap.h and Heap.cpp, for example.)
+
+        * CMakeLists.txt:
+
+2011-04-08  Dan Bernstein  <mitz@apple.com>
+
+        No need to compile .js files, that is what the JIT is for.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-08  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed, rolling out r83335.
+        http://trac.webkit.org/changeset/83335
+        https://bugs.webkit.org/show_bug.cgi?id=53556
+
+        GTK and QT bots are broken
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-07  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Setup ENABLE(TRACK) feature define + initial HTMLTrackElement
+        https://bugs.webkit.org/show_bug.cgi?id=53556
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
+
+        Revert ENABLE_TRACK patch due to compile failures.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-07  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r64712): Microsoft Outlook 2011: original message contents
+        not included when replying to an email.
+        https://bugs.webkit.org/show_bug.cgi?id=57794
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Move attributedStringFromRange down to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=57905
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebNSAttributedStringExtras, which is now in WebCore.
+
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update WebKit Localizable.strings to only contain WebKit/win strings.
+
+        https://webkit.org/b/57354
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings: Updated.
+
+2011-03-23  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Hook up new AppKit autocorrection UI with WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=56055
+        <rdar://problem/8947463>
+
+        Please see WebCore/ChangeLog for detail.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-03-17  Jeff Miller  <jeffm@apple.com>
+
+        Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
+        
+        *.mode*
+        *.pbxuser
+        *.perspective*
+        project.xcworkspace
+        xcuserdata
+
+        * WebKit.xcodeproj: Modified property svn:ignore.
+
+2011-03-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): keygen element doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=56402
+        <rdar://problem/9006545>
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed WebKeyGenerator.m to use Objective C++.
+
+2011-03-11  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed and landed by Brady Eidson.
+
+        Add WebKit1 API to view and delete local storage
+        https://bugs.webkit.org/show_bug.cgi?id=51878
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-03-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix remaining localization issues by piping all localized strings through WebCore's
+        localization bottleneck.
+        <rdar://problem/8728860>
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-03-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2 needs to be made localizable
+        https://bugs.webkit.org/show_bug.cgi?id=55483
+
+        * StringsNotToBeLocalized.txt: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        Copied Localizable.strings to WebCore, it can't be removed entirely
+        yet since Windows is still using it.
+
+2011-02-24  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Drop the "U; " encryption level from the User Agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=54566
+
+        * StringsNotToBeLocalized.txt:
+
+2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop the language tag part from the User Agent string
+        https://bugs.webkit.org/show_bug.cgi?id=54560
+
+        * StringsNotToBeLocalized.txt: Change the User Agent string
+        template.
+
+2011-02-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix after r78634 and r78786.
+
+        * CMakeLists.txt:
+
+2011-02-16  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        HTML5 <details> and <summary>: localized text
+        https://bugs.webkit.org/show_bug.cgi?id=54260
+
+        Default details summary text must be localizable.
+
+        * English.lproj/Localizable.strings:
+
+2011-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Add dependencies for Visual Studio projects
+        https://bugs.webkit.org/show_bug.cgi?id=53773
+
+        Add a WebCore dependecy to WebKit, so CMake can 
+        generate the correct build order for the solution.
+
+        Remove JavaScriptCore dependecy, since WebCore already depends on it.
+
+        * CMakeLists.txt:
+
+2011-01-23  Mark Rowe  <mrowe@apple.com>
+
+        Follow-up to r76477.
+
+        Fix the scripts that detect problematic code such as static initializers
+        and destructors, weak vtables, inappropriate files in the framework wrappers,
+        and public headers including private headers. These had all been broken
+        since the projects were moved in to the Source directory as the paths to the
+        scripts were not updated at that time.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Refactoring of the custom allocation framework
+        https://bugs.webkit.org/show_bug.cgi?id=49897
+
+        Inheriting from FastAllocBase can result in objects getting larger (bug #33896, #46589).
+        The modification replaces Noncopyable and FastAllocBase classes and these inherits with their
+        equivalent macro implementation at the necessary places.
+
+2011-01-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update xcodeproj svn:ignore to include xcuserdata.
+
+        * WebKit.xcodeproj: Modified property svn:ignore.
+
+2011-01-17  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam Roben.
+
+        Fix up the `make` build on Macs
+
+        * Makefile: Point to the correct Makefile.shared
+
+2011-01-16  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52530
+
+        * Makefile:
+        * scripts/generate-webkitversion.pl:
+
+2011-01-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Paste and drag and drop use different code paths to interact with the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=52093
+        The change consists in a refactoring of the code to have only one class that
+        deals with the pasteboard on Mac.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebPasteboardHelper.mm and WebPasteboardHelper.h.
+
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Update SVN ignore property to hide two more external dependencies.
+
+        * chromium: Modified property svn:ignore.
+
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Changed WebKitTools to Tools in script build phases.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-12-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add linker script to export less symbols
+        https://bugs.webkit.org/show_bug.cgi?id=44609
+
+        Filter the exported symbols by using a linker script. Only symbols
+        starting with "ewk_" are exported.
+
+        * CMakeLists.txt: Add link flags to webkit library when there's a
+        version script.
+
+2010-12-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Update Xcode project for newer Xcode.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-11-18  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2010-11-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Remove platform dependent include directories
+        https://bugs.webkit.org/show_bug.cgi?id=49553
+
+        * CMakeLists.txt:
+
+2010-11-12  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Rename GeolocationControllerClient to GeolocationClient.
+        https://bugs.webkit.org/show_bug.cgi?id=49259
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-11-08  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix after r71496.
+
+        * CMakeLists.txt: Add WebCore/loader/cache directory to WebKit's
+        include directories list.
+
+2010-11-04  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Title for images should use localized numerals
+        https://bugs.webkit.org/show_bug.cgi?id=49017
+
+        * English.lproj/Localizable.strings: Updated.
+
+2010-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Stop allowing deprecated methods to be used in NetscapePluginHostProxy.mm now
+        that deprecated methods are no longer used.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebKit.xcodeproj/project.pbxproj: Allow deprecated methods to be used in NetscapePluginHostProxy.mm.
+
+2010-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48186> Remove unneeded WebHTMLRepresentationInternal.h header
+
+        Reviewed by Sam Weinig.
+
+        The only method defined in WebHTMLRepresentationInternal.h is
+        also defined in WebHTMLRepresentation.h, so use that instead.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed references to
+        WebHTMLRepresentationInternal.h.
+
+2010-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48047> Fix warnings found by check-Xcode-source-file-types
+
+        Reviewed by Adam Roben.
+
+        Fixes the following warning:
+
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'WebStringTruncator.h'.
+            1 issues found for WebKit/WebKit.xcodeproj/project.pbxproj.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed explicit file type
+        for WebStringTruncator.h to make it match other header files.
+
+2010-10-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Fix efl build, add missing svg/properties include directory.
+
+        * CMakeLists.txt:
+
+2010-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47864
+        Convert WebNSUserDefaultsExtras.m to .mm
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed WebNSUserDefaultsExtras.m.
+
+2010-10-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (new parser): Leopard/Tiger Mail <head>/<body> quirk is gone
+        https://bugs.webkit.org/show_bug.cgi?id=45693
+
+        * WebKit.xcodeproj/project.pbxproj:
+         - Add the MailQuirksUserScript.js to the project.
+
+2010-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove WebIconFetcher from WebKit and IconFetcher from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=47523
+
+        Remove all traces of the WebKit WebIconFetcher class. It's SPI that nobody uses.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-10-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add Private API for creating a WebKit1 WebSerializedJSValue from the internal
+        representation of a WebKit2 WebSerializedScriptValue.
+        https://bugs.webkit.org/show_bug.cgi?id=47390
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add WebSerializedJSValuePrivate.h.
+
+2010-10-05  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Get the link from a plugin when creating a context menu
+        https://bugs.webkit.org/show_bug.cgi?id=47130
+
+        * chromium/public/WebPlugin.h:
+        (WebKit::WebPlugin::linkAtPosition):
+        * chromium/public/WebView.h:
+        * chromium/src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::mouseDidMoveOverElement):
+        * chromium/src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
+2010-09-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed, EFL build fix.
+
+        * CMakeLists.txt:
+
+2010-09-20  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GTK] enhanced context menu for media elements
+        https://bugs.webkit.org/show_bug.cgi?id=45021
+
+        Updated localizable strings.
+
+        * English.lproj/Localizable.strings:
+
+2010-09-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/45989> Add WebArchiveInternal.h to Xcode project
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKit.xcodeproj/project.pbxproj: Added missing
+        WebArchiveInternal.h header file to the project.  It has been
+        missing since r31281!
+
+2010-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Reverted the previous change because r67628 has been reverted.
+
+        * English.lproj/Localizable.strings:
+
+2010-09-16  Dan Bernstein  <mitz@apple.com>
+
+        Updated localizable strings.
+
+        * English.lproj/Localizable.strings:
+
+2010-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move some Dashboard stuff from WebCore to WebKit along with a bit more FrameMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=45582
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebDashboardRegion.h/mm and
+        also gave the header private visibility so it will get installed in the
+        PrivateHeaders directory.
+
+2010-09-02  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Hook up LayoutTestController.setMockDeviceOrientation() on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=43181
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-08-30  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add 'application/x-snkp' to StringsNotToBeLocalized.txt.
+
+        * StringsNotToBeLocalized.txt:
+
+2010-08-20  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        As opposed to WebCore, JavascriptCore and wtf, webkit is always a
+        shared library. After r65366, libewebkit.so was not being installed
+        anymore when building with SHARED_CORE=0 (which is the default). This
+        partially reverts that revision in order to fix this issue.
+
+        * CMakeLists.txt: always install webkit library.
+
+2010-08-17  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        Preparation: Just add the files to the build system.
+
+        * WebKit.xcodeproj/project.pbxproj: Added new files.
+
+2010-08-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove developmentRegion from the project file as it shouldn't have been checked in.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-08-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix after r65366.
+
+        * CMakeLists.txt: Use if (VAR) instead of if (${VAR}) to check if
+        they're empty.
+
+2010-08-14  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: -[WebInspector attach] and detach should work
+        https://bugs.webkit.org/show_bug.cgi?id=43924
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebInspectorFrontend.{h,mm}.
+
+2010-08-14  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMake] Set target properties only if available
+        https://bugs.webkit.org/show_bug.cgi?id=43978
+
+        * CMakeLists.txt:
+
+2010-08-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+        Switch String::/UString::ascii() to return a CString.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-08-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig
+
+        Bug 43594 - Add string forwards to Forward.h
+        This allows us to remove forward declarations for these classes from
+        WebCore/WebKit (a step in moving these class from WebCore:: to WTF::).
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        Part 5 - Refactor Quota Management in WebSecurityOrigin into Managers
+
+        * WebKit.xcodeproj/project.pbxproj: Add new Quota Managers, remove old SecurityOrigin subclasses.
+
+2010-07-31  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/43307> Make sure all private headers are copied to PrivateHeaders directory
+
+        Reviewed by Dan Bernstein.
+
+        This also fixes compilation of DumpRenderTree after changes for
+        Bug 40627.
+
+        * WebKit.xcodeproj/project.pbxproj: Set the PRIVATE attribute on
+        the following headers:
+        - WebFormDelegatePrivate.h
+        - WebKitStatisticsPrivate.h
+        - WebSecurityOriginPrivate.h
+
+2010-07-30  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Limit ApplicationCache Total and Per-Origin Storage Capacity (Quotas)
+        https://bugs.webkit.org/show_bug.cgi?id=40627
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::reachedApplicationCacheOriginQuota):
+        * efl/WebCoreSupport/ChromeClientEfl.h:
+
+2010-07-30  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add library version and soname to EFL generated libraries and binary.
+        https://bugs.webkit.org/show_bug.cgi?id=43212
+
+        Add version and soname to libewebkit.so.
+
+        * CMakeLists.txt:
+
+2010-07-26  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Move CMakeListsEfl.txt to WebKit/efl/
+        https://bugs.webkit.org/show_bug.cgi?id=43002
+
+        This should reduce the noise in WebKit/ChangeLog that comes from EFL
+        port. Most of the changes on EFL port should be logged in
+        WebKit/efl/ChangeLog.
+
+        * CMakeLists.txt: Just change the path from where to include the file.
+
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Cleanup glib support (make it optional)
+        https://bugs.webkit.org/show_bug.cgi?id=42480
+
+        Just add glib flags and directories if necessary.
+
+        * CMakeListsEfl.txt:
+
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add support for using libcurl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=42286
+
+        Just add soup/curl directories and flags for the specific
+        backend being used.
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+
+2010-07-22  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Implement input method notification
+        https://bugs.webkit.org/show_bug.cgi?id=42640
+
+        Notify browser when keyboard should be shown/hidden. Input method
+        hints are updated before sending the signal. Client should be able to
+        determine the input type by calling ewk_view_imh_get().
+
+        * efl/EWebLauncher/main.c:
+        (on_inputmethod_changed): example implementation that just prints to
+        stdout if keyboard should be shown or hidden and the imh flags.
+        (browserCreate): listen to signal about input method changing its
+        state.
+        * efl/WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::setInputMethodState): call new function
+        responsible for implementing this notification.
+        * efl/ewk/ewk_private.h: ewk_view_input_method_state_set() is called
+        only from inside WebKit.
+        * efl/ewk/ewk_view.cpp: implement setters and getters
+        (ewk_view_imh_get):
+        (ewk_view_input_method_state_set):
+        * efl/ewk/ewk_view.h: introduce Ewk_Imh enum which contains the
+        possible input types.
+        (_Ewk_View_Smart_Class::):
+
+2010-07-20  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix zoom in/out on EFL after r62666. The patch for adding viewport
+        missed the initialization of zoom_range.user_scalable. In case browser
+        doesn't care about the viewport and does not listen to the signal,
+        user_scalable will be always false, thus inhibiting zoom in/out.
+        https://bugs.webkit.org/show_bug.cgi?id=42656
+
+        * efl/EWebLauncher/main.c:
+        (on_viewport_changed): when listening to signal about viewport meta tag,
+        it's not sufficient to receive the parameters. One needs also to enforce
+        these parameters in WebKit.
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): initialize user_scalable parameter to allow
+        browser zooming in and out.
+
+2010-07-16  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r61484): Broke focus behaviour on Qt and probably other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=42253
+
+        Dummy implementation of EditorClient::willSetInputMethodState.
+
+        * efl/WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::willSetInputMethodState):
+        * efl/WebCoreSupport/EditorClientEfl.h:
+
+2010-07-15  Mark Rowe  <mrowe@apple.com>
+
+        Update the sorting in the Xcode project files.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=42232
+        Make changing Cursors work in WebKit2.
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::setCursor):
+        * efl/WebCoreSupport/ChromeClientEfl.h:
+        Change prototype to match new one.
+
+2010-07-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add eina_safety to popup menu deletion.
+        https://bugs.webkit.org/show_bug.cgi?id=41873
+
+        Since this is a public call, it's better to have an eina_safety on
+        public calls. It would crash if browser calls this function to select
+        an item of a nonexistent popup.
+
+        * efl/ewk/ewk_view.cpp: add eina_safety to return if popup menu client does
+        not exist.
+
+2010-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8186963> Expose RenderLayer hierarchy via Obj-C for debugging.
+        
+        Add WebRenderLayer files.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-07-13  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        This commit implements an API for configuring a path to the cookie
+        file in the Mozilla "cookies.txt" format, and functions to deal with it
+        in a more EFL like API.
+
+        [EFL] Add API for dealing with cookies in EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=41770
+
+        * CMakeListsEfl.txt:
+        * efl/ewk/EWebKit.h:
+        * efl/ewk/ewk_cookies.cpp: Added.
+        (ewk_cookies_file_set): Set a path to the file storing cookies.
+        (ewk_cookies_clear): Clear all the cookies from the current cookie jar.
+        (ewk_cookies_get_all): Get all the cookies from the current cookie jar.
+        (ewk_cookies_cookie_del): Delete a specific cookie from the cookie jar.
+        (ewk_cookies_cookie_free): Free memory used by a cookie.
+        (ewk_cookies_policy_set): Set which acceptance policy will be used.
+        (ewk_cookies_policy_get): Get current acceptance policy being used.
+        * efl/ewk/ewk_cookies.h: Added.
+        (_Ewk_Cookie::):
+
+2010-07-12  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix after r60050.
+
+        * CMakeLists.txt: Add WebCore/bindings to the include path.
+
+2010-07-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Fix style errors in ewk_private.h.
+        https://bugs.webkit.org/show_bug.cgi?id=41742
+
+        * efl/ewk/ewk_private.h:
+
+2010-07-09  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2010-07-08  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] fix cmake build for EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=41830
+
+        * CMakeListsEfl.txt: add ${LIBSOUP24_LDFLAGS} for link flags
+
+2010-07-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement several notification hooks in FrameLoaderClient.
+        We just notify browser, making the appropriate type conversions about
+        the events occurring in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=41005
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendRequest): alloc 2 new
+        wrapper structures in stack in order to give client the opportunity to
+        change parameters. Then, call the function it defines.
+        (WebCore::FrameLoaderClientEfl::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientEfl::didPerformFirstNavigation): notify
+        client.
+        (WebCore::FrameLoaderClientEfl::saveViewStateToItem): notify client.
+        (WebCore::FrameLoaderClientEfl::restoreViewState): notify client.
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeLocationWithinPage):
+        notify browser that the url changed.
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveIcon): notify
+        browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidStartProvisionalLoad):
+        notify browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFinishDocumentLoad): notify
+        browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstLayout): norify
+        browser.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstVisuallyNonEmptyLayout):
+        notify browser.
+        (WebCore::FrameLoaderClientEfl::dispatchShow): notify browser.
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_request_will_send): emit signal notifying browser.
+        (ewk_frame_request_assign_identifier): emit signal notifying browser.
+        (ewk_frame_did_perform_first_navigation): emit signal notifying browser.
+        (ewk_frame_view_state_save): emit signal notifying browser.
+        (ewk_frame_load_provisional): emit signal notifying browser.
+        (ewk_frame_load_firstlayout_finished): emit signal notifying browser.
+        (ewk_frame_load_firstlayout_nonempty_finished): emit signal notifying browser.
+        (ewk_frame_load_document_finished): emit signal notifying browser.
+        * efl/ewk/ewk_frame.h: update documentation about signals being sent
+        and implement wrapper struct for ResourceRequest.
+        * efl/ewk/ewk_private.h: export private functions.
+
+2010-07-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Flush backing store when going to new page.
+        Call client method to flush backing store when going to a new page. This
+        is the notification that data related to current page should be dropped,
+        since a new page is being loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=41008
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::transitionToCommittedForNewPage):
+
+2010-07-07  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix after r62676.
+
+        [EFL] Fix build after Page constructor has changed. By now, the
+        introduced BackForwardControllerClient is not used.
+        https://bugs.webkit.org/show_bug.cgi?id=41825
+
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Add missing parameter to WebCore::Page
+        constructor.
+
+2010-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename the WebBaseNetscapePluginStream.cpp and .h files to WebNetscapePluginStream.cpp and .h to match the class name.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-07-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] EFLWebKit doesn't support viewport meta tag.
+        Support viewport meta tag on EFL Port.
+        https://bugs.webkit.org/show_bug.cgi?id=40278
+
+        * efl/EWebLauncher/main.c: Process 'viewport,changed' signal.
+        (viewport_set):
+        (on_viewport_changed): Add a callback function for the 'viewport,changed' signal.
+        (browserCreate): Register the callback function for the 'viewport,changed' signal.
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: Implement method to process viewport tag.
+        (WebCore::ChromeClientEfl::didReceiveViewportArguments):
+        * efl/WebCoreSupport/ChromeClientEfl.h: Define method to process viewport tag.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::FrameLoaderClientEfl): Implement a function to set layout
+        when website doesn't contain viewport tag.
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstLayout):
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h:
+        (WebCore::FrameLoaderClientEfl::setInitLayoutCompleted):
+        (WebCore::FrameLoaderClientEfl::getInitLayoutCompleted):
+        * efl/ewk/ewk_private.h: Added internal APIs to process viewport tag.
+        * efl/ewk/ewk_view.cpp: Added APIs to process and to handle viewport tag.
+        (_ewk_view_priv_new):
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_zoom_set):
+        (ewk_view_zoom_weak_set):
+        (ewk_view_zoom_animated_set):
+        (ewk_view_viewport_set): Reports that viewport has changed.
+        (ewk_view_viewport_get): Reports that viewport has changed.
+        (ewk_view_zoom_range_set): Sets the zoom range.
+        (ewk_view_zoom_range_min_get): Gets minimum value of zoom range.
+        (ewk_view_zoom_range_max_get): Gets maximum value of zoom range.
+        (ewk_view_user_scalable_set): Sets if zoom is enabled.
+        (ewk_view_user_scalable_get): Gets if zoom is enabled.
+        * efl/ewk/ewk_view.h:
+
+2010-07-07  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Fix cmake build and libsoup detection
+        Some changes should be done to cmake build system to fix the detection of libsoup and correct some link paths:
+        - LINK_FLAGS should be set using quotes, otherwise some wrong
+        substitution takes place;
+        - we should use LIBSOUP24_* instead of LIBSOUP_* since this is the
+        version we are using;
+        - need to set HAVE_LIBSOUP_2_29_90 if we find a version equal or newer
+        than that.
+        https://bugs.webkit.org/show_bug.cgi?id=41717
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+
+2010-07-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement downloadURL in ContextMenuClientEfl
+        When user selects a download menu from context menu, send the download 
+        request to application.
+        https://bugs.webkit.org/show_bug.cgi?id=41149
+
+        * efl/WebCoreSupport/ContextMenuClientEfl.cpp:
+        (WebCore::ContextMenuClientEfl::downloadURL): Get url for downloading 
+        file and Send it to application.
+        * efl/WebCoreSupport/ContextMenuClientEfl.h:
+
+2010-06-30  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement windowRect() and setWindowRect() in ChromeClientEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=40876
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: Implements two methods
+        to change window size.
+
+        (WebCore::ChromeClientEfl::windowRect):
+        (WebCore::ChromeClientEfl::setWindowRect):
+
+2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for latest version of Ecore library.
+        Ecore recently changed return type of callbacks from int to Eina_Bool.
+
+        * efl/EWebLauncher/main.c:
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_zoom_animator_cb): Return Eina_Bool instead of int.
+
+2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Simplify zoom setting by narrowing with WebCore API.
+        Instead of creating a zoom_text_only field, use the already defined enum
+        by WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=40993
+
+        * efl/ewk/ewk_frame.cpp: sd->zoom_text_only => sd->zoom_mode
+        (ewk_frame_zoom_set):
+        (ewk_frame_zoom_text_only_get):
+        (ewk_frame_zoom_text_only_set):
+
+2010-06-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement download requests
+        When a download request arrives through FrameLoaderClient, forward it to
+        browser in order to be possible to download files.
+        https://bugs.webkit.org/show_bug.cgi?id=40967
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::download): get file names and
+        forward to ewk_view_download_request()
+        * efl/ewk/ewk_private.h: export private function to WebCoreSupport
+
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Stop frame loaders when deleting view.
+        Frame loaders were still alive after view is deleted, causing
+        segmentation fault when libsoup had something to deliver yet.
+        https://bugs.webkit.org/show_bug.cgi?id=41007
+
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_smart_del): stop loaders.
+
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Fix warnings about printf format
+        When printing uint64_t the macro PRIu64 is needed in order to be
+        portable across 32 and 64 bits. It was previously showing warning
+        messages on 32-bits systems.
+        https://bugs.webkit.org/show_bug.cgi?id=40965
+
+        * efl/ewk/ewk_view.cpp:
+        (ewk_view_exceeded_database_quota):
+
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Do not load error message for download and cancellation.
+        When a download is made or a request is cancelled an error page should
+        not be shown.
+        https://bugs.webkit.org/show_bug.cgi?id=40956
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoading): return if it
+        should not fallback.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoad): return if it
+        should not fallback.
+        (WebCore::FrameLoaderClientEfl::interruptForPolicyChangeError): fix
+        typo in related error message.
+        (WebCore::FrameLoaderClientEfl::shouldFallBack): if user cancelled the
+        request or the policy changed (for example, because the request is a
+        download) then it should not fallback.
+
+2010-06-25  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Implement runOpenPanel method. The interface with browser was
+        already implemented. Now we are actually calling it.
+        https://bugs.webkit.org/show_bug.cgi?id=40923
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::runOpenPanel): implement method.
+        * efl/ewk/ewk_private.h: export to WebCoreSupport the needed method
+
+2010-06-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Full-screened content doesn't keep the display on: Safari not grabbing a power assertion?
+        https://bugs.webkit.org/show_bug.cgi?id=40939
+        rdar://problem/7996172
+        
+        Add IOKit.framework to the list of linked frameworks.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-06-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [EFL] Add Libs.private to ewebkit.pc when building with SHARED_CORE.
+        https://bugs.webkit.org/show_bug.cgi?id=40862
+        
+        * CMakeListsEfl.txt:
+        * efl/ewebkit.pc.in:
+
+2010-06-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add implementaion of new windows for EFL port. Both cases of a link
+        with target="_blank" and a javascript that does window.open() are
+        treated, delegating to browser the role of actually creating the
+        window (or blocking it).
+        https://bugs.webkit.org/show_bug.cgi?id=40930
+
+        * CMakeListsEfl.txt: add new file that wraps the WindowFeatures struct
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow): implement method for
+        creating new window by delegating to browser its creation. Browser
+        might decide to continue on the same window by returning the same
+        view object.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchCreatePage): implement method
+        for creating new window when its creation is done by a javascript
+        script.
+        * efl/ewk/EWebKit.h: new header for WindowFeatures.
+        * efl/ewk/ewk_private.h:
+        * efl/ewk/ewk_view.cpp:
+        (ewk_view_window_create): call the method implemented by browser.
+        * efl/ewk/ewk_view.h:
+        * efl/ewk/ewk_window_features.cpp: Added.
+        (ewk_window_features_unref):
+        (ewk_window_features_ref):
+        (ewk_window_features_bool_property_get):
+        (ewk_window_features_int_property_get):
+        (ewk_window_features_new_from_core): create and wrapped struct
+        containing the core struct.
+        * efl/ewk/ewk_window_features.h: Added.
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename WebPluginPackage.m to make it an Objective-C++ file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make WebCoreSystemInterface.h a C++ only header
+        https://bugs.webkit.org/show_bug.cgi?id=40867
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-06-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add stubbed out WebPlatformStrategies class to WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=40851
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-06-18  Alexis Menard  <alexis.menard@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [qt] Better check for the declarative plugin inclusion.
+
+        * WebKit.pro:
+
+2010-06-17  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        Clean EFL header files in order to diminish the compilation time with
+        EFL from subversion. We remove the EFL includes from header files and use
+        forward declarations, including the headers in correspondent source
+        files when needed. This causes only the needed source files to be
+        recompiled in case a new version of EFL is installed instead of
+        triggering a recompilation of almost all WebCore/WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=40575
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: include needed header.
+        * efl/WebCoreSupport/ChromeClientEfl.h: forward declaration.
+        * efl/WebCoreSupport/EditorClientEfl.h: forward declaration.
+
+2010-06-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed EFL build fix. Simple typo.
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::sendMessageToFrontend):
+
+2010-06-14  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Chromium shouldn't build inside the source directory
+        https://bugs.webkit.org/show_bug.cgi?id=40489
+
+        Ignore directories fetched by chromium and chromium mac output dir.
+
+        * chromium: Added property svn:ignore.
+
+2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: On the way to Remote Debugging we want to transfer dom/timeline/etc
+        data from inspected page to WebInspector as JSON string via http. The native
+        serialization to JSON string is supported by InspectorValue's classes. This patch
+        has the implementation of sendMessageToFrontend function. WebKit version of it still
+        uses ScriptFunctionCall and will be switched to another transport a little bit later.
+        https://bugs.webkit.org/show_bug.cgi?id=40134
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::sendMessageToFrontend):
+        * efl/WebCoreSupport/InspectorClientEfl.h:
+
+2010-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r60889.
+        http://trac.webkit.org/changeset/60889
+        https://bugs.webkit.org/show_bug.cgi?id=40365
+
+        gtk bot has some kind of memory corruption (Requested by
+        loislo on #webkit).
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        * efl/WebCoreSupport/InspectorClientEfl.h:
+
+2010-06-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: On the way to Remote Debugging we want to transfer dom/timeline/etc
+        data from inspected page to WebInspector as JSON string via http. The native
+        serialization to JSON string is supported by InspectorValue's classes. This patch
+        has the implementation of sendMessageToFrontend function. WebKit version of it still
+        uses ScriptFunctionCall and will be switched to another transport a little bit later.
+        https://bugs.webkit.org/show_bug.cgi?id=40134
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::sendMessageToFrontend):
+        * efl/WebCoreSupport/InspectorClientEfl.h:
+
+2010-06-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39434
+        REGRESSION (r59811): Geolocation callbacks cannot be created
+
+        Removing unused WebGeolocationMock.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-05-31  Lyon Chen  <liachen@rim.com>
+
+        Reviewed by Kent Tamura.
+
+        Enum value FORWARD, BACKWARD, RIGHT, LEFT are causing macro conflicts.
+        https://bugs.webkit.org/show_bug.cgi?id=35530
+
+        Change enum EAlteration from { MOVE, EXTEND } to { AlterationMove, AlterationExtend } and enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT} to { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft } to avoid macro conflict, and also better coding style conformance.
+
+        * efl/WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::handleEditingKeyboardEvent):
+
+2010-05-31  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add Context Menu implementation
+        https://bugs.webkit.org/show_bug.cgi?id=39821
+
+        * CMakeListsEfl.txt: add context menu files.
+        * efl/WebCoreSupport/ContextMenuClientEfl.cpp:
+        (WebCore::ContextMenuClientEfl::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientEfl::newPlatformDescription):
+        (WebCore::ContextMenuClientEfl::freePlatformDescription):
+        (WebCore::ContextMenuClientEfl::appendItem):
+        (WebCore::ContextMenuClientEfl::show):
+        * efl/WebCoreSupport/ContextMenuClientEfl.h:
+        * efl/ewk/EWebKit.h:
+        * efl/ewk/ewk_contextmenu.cpp: Added. Implement the API used by
+        browser for manipulating context menus.
+        (ewk_context_menu_ref):
+        (ewk_context_menu_unref):
+        (ewk_context_menu_destroy):
+        (ewk_context_menu_item_list_get):
+        (ewk_context_menu_item_new):
+        (ewk_context_menu_item_select):
+        (ewk_context_menu_item_free):
+        (ewk_context_menu_item_type_get):
+        (ewk_context_menu_item_type_set):
+        (ewk_context_menu_item_action_get):
+        (ewk_context_menu_item_action_set):
+        (ewk_context_menu_item_title_get):
+        (ewk_context_menu_item_title_set):
+        (ewk_context_menu_item_checked_get):
+        (ewk_context_menu_item_checked_set):
+        (ewk_context_menu_item_enabled_get):
+        (ewk_context_menu_item_enabled_set):
+        (ewk_context_menu_new):
+        (ewk_context_menu_free):
+        (ewk_context_menu_item_append):
+        (ewk_context_menu_custom_get):
+        (ewk_context_menu_show):
+        * efl/ewk/ewk_contextmenu.h: Added.
+        * efl/ewk/ewk_private.h:
+        * efl/ewk/ewk_view.cpp:
+        (ewk_view_context_menu_forward_event): inform browser a new context
+        menu was created.
+        (ewk_view_exceeded_database_quota): small fix to previous
+        changed function.
+        * efl/ewk/ewk_view.h:
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EF] Remove compiler warnings and add test for switching page
+        encoding.
+        https://bugs.webkit.org/show_bug.cgi?id=39871
+
+        * efl/EWebLauncher/main.c:
+        (print_history):
+        (on_key_down):
+        (main):
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Allow client to override default database quota. We increase the
+        default database quota to 1MB (it was incorrectly set to 1KB, which is
+        too low) and add methods to allow client to iteratively database quota
+        when it becomes greater than the allowed value.
+        https://bugs.webkit.org/show_bug.cgi?id=39867
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::exceededDatabaseQuota): reimplement method
+        to allow client to increase database quota iteratively.
+        * efl/ewk/ewk_private.h:
+        * efl/ewk/ewk_settings.cpp:
+        * efl/ewk/ewk_view.h:
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add default path to web database and methods to set it.
+        If a default path is not set, it will default to "/", in which a
+        normal user usually does not have write permission.
+
+        * efl/EWebLauncher/main.c: overwrite default directory with another
+        one.
+        (main):
+        * efl/ewk/ewk_main.cpp:
+        (ewk_init): add default path
+        * efl/ewk/ewk_settings.cpp: add methods to set and get database path
+        (ewk_settings_web_database_path_set):
+        (ewk_settings_web_database_path_get):
+        * efl/ewk/ewk_settings.h:
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Fix wrongly set clipper. Now the scrollbars from main
+        frame are shown even on a zoom level lower than 1.0.
+
+        * efl/ewk/ewk_view_single.c:
+        (_ewk_view_single_smart_add):
+        (_ewk_view_single_smart_backing_store_add):
+        (ewk_view_single_smart_set):
+
+2010-05-28  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add support for Popup menus
+        https://bugs.webkit.org/show_bug.cgi?id=39629
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: implement methods to create
+        and destroy popup menu.
+        (WebCore::ChromeClientEfl::createSelectPopup): ditto.
+        (WebCore::ChromeClientEfl::destroySelectPopup): ditto.
+        * efl/WebCoreSupport/ChromeClientEfl.h: ditto.
+        * efl/ewk/ewk_private.h: add function to call browser when a popup is
+        created/deleted
+
+2010-05-25  Joone Hur  <joone.hur@samsung.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [EFL] Build fix.
+        http://webkit.org/b/39648
+
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_get): Add missed namespace 
+        (ewk_frame_zoom_set): Ditto.
+        (ewk_frame_zoom_text_only_set): Ditto.
+        * efl/ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Add a null parameter when creating a Page.
+
+2010-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move view-related functions from Frame to FrameView
+        https://bugs.webkit.org/show_bug.cgi?id=39366
+
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_editable_set): Removed call to empty function,
+        removeEditingStyleFromBodyElement.
+        (ewk_frame_zoom_get): Call function on FrameView.
+        (ewk_frame_zoom_set): Ditto.
+        (ewk_frame_zoom_text_only_set): Ditto.
+
+2010-05-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Treat.
+
+        [EFL] Add build system for the EFL port.
+        http://webkit.org/b/37945
+
+        * CMakeLists.txt: Added.
+        * CMakeListsEfl.txt: Added.
+
+2010-05-14  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by David Levin.
+
+        [EF] Include missing header.
+        http://webkit.org/b/38905
+
+        * efl/ewk/ewk_main.cpp: Include PageGroup.h
+
+2010-05-08  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Laszlo Gombos.
+
+        [EFL] Only compile database stuff if ENABLE_DATABASE is set. 
+        http://webkit.org/b/38777
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+
+2010-05-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7932072> Iframes in composited layers don’t repaint correctly (affects Yahoo! Mail with Flash Player 10.1)
+        https://bugs.webkit.org/show_bug.cgi?id=38427
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed WebClipView.m to WebClipView.mm and changed it to
+        Objective-C++.
+
+2010-05-03  Darin Adler  <darin@apple.com>
+
+        * English.lproj/Localizable.strings: Regenerated.
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2010-05-03  Jens Alfke  <snej@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add "willSendSubmitEvent" hook to WebFrameClient and FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=38397
+
+        No tests (functionality is exposed only through native WebKit API.)
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendSubmitEvent):
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Implement findThemePath to locate the correct theme file instead of
+        relying on a hardcoded location.
+        http://webkit.org/b/37996
+
+        * efl/EWebLauncher/main.c:
+        (findThemePath): Fix to locate the correct theme files.
+        (main): Use findThemePath() instead of a hardcoded one.
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update efl/ewebkit.pc.in to match the variable substitution syntax
+        of CMake.
+        http://webkit.org/b/37999
+
+        * efl/ewebkit.pc.in: Updated.
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update EWebKit (EFL port) to match recent API changes.
+        http://webkit.org/b/37997
+
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_set): Change to use WebCore::ZoomMode.
+        (ewk_frame_zoom_text_only_set): Change to use WebCore::ZoomMode.
+        (_ewk_frame_handle_key_scrolling): s/WebCore::VK_/VK_/g
+        (ewk_frame_plugin_create): Disable temporarily PluginView-related
+        code until a proper plugin implementation is made.
+        * efl/ewk/ewk_view.cpp: Fix typo in _parent_sc declaration.
+        (ewk_view_selection_get): Fix a reference to WebCore::CString to
+        WTF::CString.
+
+2010-04-22  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update EFL port files to match recent API changes.
+        http://webkit.org/b/37876
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        (kit): Added.
+        (WebCore::ChromeClientEfl::ChromeClientEfl): Coding style fix.
+        (WebCore::ChromeClientEfl::runBeforeUnloadConfirmPanel): Coding
+        style fix.
+        (WebCore::ChromeClientEfl::mouseDidMoveOverElement): Coding style fix.
+        (WebCore::ChromeClientEfl::runOpenPanel): Implemented.
+        (WebCore::ChromeClientEfl::cancelGeolocationPermissionRequestForFrame): Stubbed.
+        (WebCore::ChromeClientEfl::cancelGeolocationPermissionForFrame): Stubbed.
+        (WebCore::ChromeClientEfl::invalidateContents): Stubbed.
+        (WebCore::ChromeClientEfl::invalidateWindow): Stubbed.
+        (WebCore::ChromeClientEfl::invalidateContentsAndWindow): Implemented.
+        (WebCore::ChromeClientEfl::invalidateContentsForSlowScroll): Implemented.
+        (WebCore::ChromeClientEfl::scroll): Updated.
+        (WebCore::ChromeClientEfl::iconForFiles): Stubbed.
+        (WebCore::ChromeClientEfl::chooseIconForFiles): Stubbed.
+        * efl/WebCoreSupport/ChromeClientEfl.h: Add new method prototypes.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::committedLoad): Call setEncoding()
+        from FrameLoader::writer.
+        (WebCore::FrameLoaderClientEfl::finishedLoading): Ditto.
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoading): Ditto.
+        (WebCore::FrameLoaderClientEfl::setMainDocumentError): Ditto.
+
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add missing EFL WebKit/efl theme files.
+        http://webkit.org/b/37854
+
+        * efl/DefaultTheme/default.edc: Added.
+        * efl/DefaultTheme/widget/button/button.edc: Added.
+        * efl/DefaultTheme/widget/check/check.edc: Added.
+        * efl/DefaultTheme/widget/combo/combo.edc: Added.
+        * efl/DefaultTheme/widget/entry/entry.edc: Added.
+        * efl/DefaultTheme/widget/file/file.edc: Added.
+        * efl/DefaultTheme/widget/radio/radio.edc: Added.
+        * efl/DefaultTheme/widget/scrollbar/scrollbar.edc: Added.
+        * efl/DefaultTheme/widget/search/cancel/search_cancel.edc: Added.
+        * efl/DefaultTheme/widget/search/decoration/search_decoration.edc: Added.
+        * efl/DefaultTheme/widget/search/field/search_field.edc: Added.
+
+2010-04-21  Gustavo Sverzut Barbieri  <barbieri@profusion.mobi>
+
+        Reviewed by Adam Roben.
+
+        Update EFL port to match recent API changes.
+        http://webkit.org/b/37853
+
+        * efl/WebCoreSupport/EditorClientEfl.cpp:
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didTransferChildFrameToNewDocument):
+        (WebCore::FrameLoaderClientEfl::objectContentType):
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeIcons):
+        (WebCore::FrameLoaderClientEfl::canShowMIMEType):
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-04-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35915
+
+        * efl/WebCoreSupport/FrameLoaderClientEfl.cpp: Added.
+        * efl/WebCoreSupport/FrameLoaderClientEfl.h: Added.
+
+2010-04-15  Adam Roben  <aroben@apple.com>
+
+        Expose UserContentURLPattern as WebKit SPI
+
+        Fixes <http://webkit.org/b/37354>.
+
+        Reviewed by Tim Hatcher.
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebUserContentURLPattern.
+
+2010-04-15  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35918
+
+        * efl/WebCoreSupport/EditorClientEfl.cpp: Added.
+        * efl/WebCoreSupport/EditorClientEfl.h: Added.
+
+2010-04-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7845305> Further adoption of formal protocols for delegates.
+
+        Move EmptyProtocolDefinitions.h down in to WebCore, and add the new protocols. Adopt the protocols in the appropriate places.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-04-07  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add ewk_view (the high level object to acces the WebKit-EFL browser
+        component) to efl/ewk.
+        http://webkit.org/b/35932
+
+        * efl/ewk/ewk_view.cpp: Added.
+        * efl/ewk/ewk_view.h: Added.
+
+2010-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37111
+        <rdar://problem/7790327> Draw replacement text when plug-in host crashes
+
+        https://bugs.webkit.org/show_bug.cgi?id=37111
+        <rdar://problem/7790327> Draw replacement text when plug-in host crashes
+
+        * English.lproj/Localizable.strings: Added a string for plug-in failure.
+
+2010-04-01  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add EFL's pkg-config metadata file file to efl/.
+        http://webkit.org/b/36766
+
+        * efl/ewebkit.pc.in: Added.
+
+2010-03-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36866
+        Move CString to WTF
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp:
+        * efl/ewk/ewk_frame.cpp:
+        (ewk_frame_name_get):
+        (ewk_frame_selection_get):
+        (ewk_frame_uri_changed):
+        * efl/ewk/ewk_history.cpp:
+        * efl/ewk/ewk_settings.cpp:
+
+2010-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix. Include WindowsKeyboardCodes.h instead of KeyboardCodes.h.
+
+        * efl/ewk/ewk_frame.cpp:
+
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        * WebKit.xcodeproj/project.pbxproj: Remove WebNullPluginView and nullplugin.tiff from the project.
+
+2010-03-22  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2010-03-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=36328
+
+        * English.lproj/Localizable.strings: Added "Missing Plug-in" string.
+
+2010-03-18  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35931
+
+        * efl/ewk/ewk_settings.cpp: Added.
+        * efl/ewk/ewk_settings.h: Added.
+
+2010-03-17  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add default theme files to efl/DefaultTheme.
+        http://webkit.org/b/36240
+
+        * efl/DefaultTheme/widget/radio/img_radio_on.png: Added.
+        * efl/DefaultTheme/radio/img_radio_off_hover.png: Added.
+        * efl/DefaultTheme/radio/img_radio_on_hover.png: Added.
+        * efl/DefaultTheme/radio/img_radio_off.png: Added.
+        * efl/DefaultTheme/radio/img_radio_off_focus.png: Added.
+        * efl/DefaultTheme/radio/img_radio_on_focus.png: Added.
+        * efl/DefaultTheme/combo/combo_normal.png: Added.
+        * efl/DefaultTheme/combo/combo_focus_button.png: Added.
+        * efl/DefaultTheme/combo/combo_hover_button.png: Added.
+        * efl/DefaultTheme/combo/combo_hover.png: Added.
+        * efl/DefaultTheme/combo/combo_focus.png: Added.
+        * efl/DefaultTheme/combo/combo_press_button.png: Added.
+        * efl/DefaultTheme/combo/combo_normal_button.png: Added.
+        * efl/DefaultTheme/combo/combo_press.png: Added.
+        * efl/DefaultTheme/combo/icon.png: Added.
+        * efl/DefaultTheme/file/file_normal.png: Added.
+        * efl/DefaultTheme/file/file_press.png: Added.
+        * efl/DefaultTheme/file/file_hover.png: Added.
+        * efl/DefaultTheme/file/file_focus.png: Added.
+        * efl/DefaultTheme/search/cancel/cancel_normal_button.png: Added.
+        * efl/DefaultTheme/search/cancel/cancel_normal_button2.png: Added.
+        * efl/DefaultTheme/search/decoration/decoration_normal_button.png: Added.
+        * efl/DefaultTheme/search/field/field_focused.png: Added.
+        * efl/DefaultTheme/search/field/field_normal.png: Added.
+        * efl/DefaultTheme/search/field/field_hovered.png: Added.
+        * efl/DefaultTheme/entry/img_normal.png: Added.
+        * efl/DefaultTheme/entry/img_hovered.png: Added.
+        * efl/DefaultTheme/entry/img_focused.png: Added.
+        * efl/DefaultTheme/check/img_check_off_hover.png: Added.
+        * efl/DefaultTheme/check/img_check_on.png: Added.
+        * efl/DefaultTheme/check/img_check_off_focus.png: Added.
+        * efl/DefaultTheme/check/img_check_on_focus.png: Added.
+        * efl/DefaultTheme/check/img_check_off.png: Added.
+        * efl/DefaultTheme/check/img_check_on_hover.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_knob_h.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_knob_v.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_hilight.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_v.png: Added.
+        * efl/DefaultTheme/scrollbar/scrollbar_h.png: Added.
+        * efl/DefaultTheme/button/img_button_normal.png: Added.
+        * efl/DefaultTheme/button/img_button_focus.png: Added.
+        * efl/DefaultTheme/button/img_button_hover.png: Added.
+        * efl/DefaultTheme/button/img_button_press.png: Added.
+
+2010-03-17  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL example browser to efl/EWebLauncher.
+        http://webkit.org/b/36176
+
+        * efl/EWebLauncher/main.c: Added.
+
+2010-03-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35916
+
+        * efl/WebCoreSupport/ContextMenuClientEfl.cpp: Added.
+        * efl/WebCoreSupport/ContextMenuClientEfl.h: Added.
+
+2010-03-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorFrontendClient that provides InspectorFrontend with an interface to the embedder. InspectorClient now serves as a delegate for InspectorController and does not contain methods for managing inspector frontend window. That allows to create remote InspectorFrontendHost.
+
+        Introduce InspectorFrontendClient that would provide InspectorFrontend with an interface to the embedder
+        https://bugs.webkit.org/show_bug.cgi?id=35036
+
+        * efl/WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::openInspectorFrontend):
+        * efl/WebCoreSupport/InspectorClientEfl.h:
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35925
+
+        * efl/ewk/ewk_history.cpp: Added.
+        * efl/ewk/ewk_history.h: Added.
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35928
+
+        * efl/ewk/ewk_main.cpp: Added.
+        * efl/ewk/ewk_main.h: Added.
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35924
+
+        * efl/ewk/ewk_frame.cpp: Added.
+        * efl/ewk/ewk_frame.h: Added.
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35936
+
+        * efl/ewk/ewk_view_single.c: Added.
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35929
+
+        * efl/ewk/ewk_util.cpp: Added.
+        * efl/ewk/ewk_util.h: Added.
+
+2010-03-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EFL port files to efl/ewk.
+        http://webkit.org/b/35934
+
+        * efl/ewk/EWebKit.h: Added.
+        * efl/ewk/ewk_eapi.h: Added.
+        * efl/ewk/ewk_logging.h: Added.
+        * efl/ewk/ewk_private.h: Added.
+
+2010-03-11  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35917
+
+        * efl/WebCoreSupport/InspectorClientEfl.h: Added.
+        * efl/WebCoreSupport/InspectorClientEfl.cpp: Added.
+
+2010-03-11  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35914
+
+        * efl/WebCoreSupport/DragClientEfl.h: Added.
+        * efl/WebCoreSupport/DragClientEfl.cpp: Added.
+
+2010-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Sort the project file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-03-10  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Holger Freyther.
+
+        Add EFL port files to efl/WebCoreSupport.
+        http://webkit.org/b/35913
+
+        * efl/WebCoreSupport/ChromeClientEfl.cpp: Added.
+        * efl/WebCoreSupport/ChromeClientEfl.h: Added.
+
+2010-03-09  John Sullivan  <sullivan@apple.com>
+
+        Fixed localized string key collision. update-webkit-localized-strings now
+        runs without errors.
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/Localizable.strings:
+        Regenerated.
+
+2010-03-09  John Sullivan  <sullivan@apple.com>
+
+        * StringsNotToBeLocalized.txt:
+        Brought this file up to date. update-webkit-localizable-strings still lists
+        one key collision, but that's a separate issue.
+
+2010-03-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a script to verify that WebKit framework headers are internally consistent.
+
+        * WebKit.xcodeproj/project.pbxproj: Run the script during the build and fail with
+        an error should the consistency check fail.
+
+2010-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=35394
+        <rdar://problem/7685262> Make passing objects between Java and plug-ins work
+
+        * WebKit.xcodeproj/project.pbxproj: Added new files.
+
+2010-02-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Build fix.  Remove a symbol corresponding to an inline function from the linker export
+        file to prevent a weak external failure.
+
+        * WebKit.xcodeproj/project.pbxproj: Accommodate rename of script.
+
+2010-02-04  John Sullivan  <sullivan@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=34611
+        WebLocalizedString() could use an assertion that it is being called on the main thread
+
+        Reviewed by Tim Hatcher.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Updated for renamed file (WebLocalizableStrings.m -> WebLocalizableStrings.mm)
+
+2010-01-29  Mark Rowe  <mrowe@apple.com>
+
+        Sort Xcode projects.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-01-19  Dan Bernstein  <mitz@apple.com>
+
+        Redo DumpRenderTree build fix without making WebTypesInternal.h a private header
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Build fix, no review.
+
+        Fix build of DumpRenderTree by making the header WebTypesInternal.h Private
+        in WebKit.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2010-01-19  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        MSAA: The child <option> elements of a non-multiple <select> are not
+        exposed
+
+        https://bugs.webkit.org/show_bug.cgi?id=33773
+        <rdar://problem/7550556>
+
+        Reviewed by Alice Liu.
+
+        * English.lproj/Localizable.strings:
+        Add new localized strings.
+
+2010-01-13  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=33610
+        <rdar://problem/7288546> Silverlight full screen performance problem seen on Snow Leopard.
+
+         * WebKit.xcodeproj/project.pbxproj: Link the project against OpenGL.
+
+2009-12-25  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2009-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Updated localizable strings after r52368
+
+        * English.lproj/Localizable.strings:
+
+2009-12-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add Mac WebKit side of the client based geolocation provider.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-12-16  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Disable debug variants of WebKit frameworks.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-12-16  John Sullivan  <sullivan@apple.com>
+
+        Brought this file up to date, sans review.
+
+        * StringsNotToBeLocalized.txt:
+
+2009-11-30  Mark Rowe  <mrowe@apple.com>
+
+        Use the correct path to Info.plist to avoid creating an empty file at the top of the WebKit directory.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-11-24  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add ENABLE_SHARED_SCRIPT feature define and flag for build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=31444
+
+        * chromium/features.gypi:
+
+2009-11-24  Mark Rowe  <mrowe@apple.com>
+
+        Fix production builds where the source tree may be read-only.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-11-20  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Oliver Hunt and Jon Honeycutt.
+
+        Add support for WebSerializedJSValue to WebKit.  This object wraps the SerializedScriptValue functionality in WebCore
+        and exposes the ability to do JS value serialization/deserialization to WebKit clients.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-11-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        WAI-ARIA: add support for 'math' role
+        https://bugs.webkit.org/show_bug.cgi?id=31706
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+
+2009-11-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/7035231>
+        Support closed caption in <video> element
+
+        * English.lproj/Localizable.strings:
+            Add strings for toggle captions button.
+
+2009-11-18  Michelangelo De Simone  <micdesim@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=27959>.
+        Support for validationMessage attribute, as per HTML5 specs.
+
+        * English.lproj/Localizable.strings: new localizable strings
+
+2009-11-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make the Mac Geolocation API async.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove WebGeolocation.
+
+2009-11-13  Adam Roben  <aroben@apple.com>
+
+        Add WebFrameLoadDelegatePrivat.h to WebKit.xcodeproj
+
+        Fixes <http://webkit.org/b/31124> Tell the WebFrameLoadDelegate when
+        window objects in isolated worlds are cleared
+
+        Reviewed by Dave Hyatt.
+
+        * WebKit.xcodeproj/project.pbxproj: Added
+        WebFrameLoadDelegatePrivate.h, which already existed.
+
+2009-11-12  Adam Roben  <aroben@apple.com>
+
+        Replace worldIDs with world objects
+
+        Part of <http://webkit.org/b/31414> Implement new SPI for dealing with
+        user scripts/stylesheets and isolated worlds
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebScriptWorld to the project.
+
+2009-11-12  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ARIA: add alert type roles
+        https://bugs.webkit.org/show_bug.cgi?id=31392
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+
+2009-11-02  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by John Sullivan and Mark Rowe.
+
+        <rdar://problem/7356733> Voiceover does not read correct media controller time values
+        
+        Fix localized strings for media controller time values.
+
+        * English.lproj/Localizable.strings:
+
+2009-11-02  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Support ARIA "tab" roles
+        https://bugs.webkit.org/show_bug.cgi?id=30842
+
+        Add a localizable string for tab panel.
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+
+2009-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Updated license
+
+        * LICENSE:
+
+2009-10-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move some WebView event handling code into its own file, WebViewEventHandling.mm
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-10-19  John Gregg  <johnnyg@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        set ENABLE_NOTIFICATIONS=1 for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=29949
+
+        * chromium/features.gypi:
+
+2009-10-13  Drew Wilson  <atwilson@atwilson-macpro.local>
+
+        Reviewed by David Levin.
+
+        Enable SHARED_WORKERS for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=30289
+
+        * chromium/features.gypi:
+        Turned on ENABLE_SHARED_WORKERS by default. This doesn't actually turn on
+        SharedWorkers yet, as Chromium overrides this flag in its feature_overrides.gypi.
+
+2009-10-12  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Chromium Port - Windows
+        https://bugs.webkit.org/show_bug.cgi?id=29969
+
+        * chromium/DEPS: Added gtest dep required by windows and incremented some of the deps revisions.
+
+2009-10-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        accessibility/media-element.html crashes (and has incorrect result)
+        https://bugs.webkit.org/show_bug.cgi?id=30108
+
+        Fix up the accessibilty label for the newly added fullscreen button,
+        and update the test result accordingly.
+
+        * English.lproj/Localizable.strings:
+
+2009-10-05  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebPluginHalterClient to the project.
+
+2009-10-05  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        One of the dependencies' SVN url was missing a @ before the revision number.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30101
+
+        * chromium/DEPS:
+
+2009-10-05  Pierre d'Herbemont  <pdherbemont@webkit.org>
+
+        Reviewed by Simon Fraser
+        
+        Support fullscreen in MediaPlayer (Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=26742
+
+        Add new files for video fullscreen.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-10-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: add testing harness for Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=30010
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-10-04  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Eric Seidel
+
+        Enable Web Sockets in chromium build.
+        https://bugs.webkit.org/show_bug.cgi?id=29917
+
+        * chromium/features.gypi:
+
+2009-10-02  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added gyp_webkit that does a subset of the things gyp_chromium does
+        plus some specialization for an upstream chromium build.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29986
+
+        * chromium/DEPS: Points to gyp_webkit instead of gyp_chromium.
+        * chromium/gyp_webkit: A new python file.
+
+2009-10-01  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Make it possible to override the list of feature defines when building
+        downstream.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29979
+
+        * chromium/features.gypi:
+
+2009-10-01  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added windows-specific dependencies, updated some revisions and
+        re-organized file to make revision tracking easier. Also removed
+        extensions/v8 dependency that is no longer needed upstream.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29973
+
+        * chromium/DEPS:
+
+2009-09-30  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        1. Keeping up with downstream revisions.
+        2. Turning off v8 snapshot build step.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29928
+
+        * chromium/DEPS
+
+2009-09-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit Mac API should provide a delegate interface for global history.
+        <rdar://problem/7042773> and https://webkit.org/b/29904
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-09-28  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29722
+
+        * chromium/DEPS: Describes the chromium port's dependencies and
+          is used by gclient to fetch them.
+        * chromium/webkit.gyp: Currently only builds webcore but in
+          the future will also build the webkit api.
+
+2009-09-26  David Kilzer  <ddkilzer@apple.com>
+
+        Part 2 of 2: <http://webkit.org/b/29753> DerivedSources.make broken for non-Mac targets
+
+        Reviewed by Darin Adler.
+
+        Fix ENABLE_ORIENTATION_EVENTS for non-Mac platforms.
+
+        * chromium/features.gypi: Added 'ENABLE_ORIENTATION_EVENTS=0' to
+        disable this feature by default.
+
+2009-09-22  Yaar Schnitman  <yaar@chromium.org>
+
+        Reviewed by David Levin.
+
+        Create chromium directory and ported chromium.org's features.gypi for 
+        the webkit chromium port.
+
+        https://bugs.webkit.org/show_bug.cgi?id=29617
+
+        * chromium/features.gypi: Added.
+
+2009-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/4137135> iFrame with PDF not being handled correctly on
+        usps.com
+        https://bugs.webkit.org/show_bug.cgi?id=4151
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebPDFDocumentExtras.{h,mm}
+        and WebJSPDFDoc.{h,mm} and changed WebPDFRepresentation to
+        Objective-C++.
+
+2009-09-07  Steve Block  <steveblock@google.com>
+
+        Reviewed by Adam Barth.
+
+        Adds a mock Geolocation service. This will be used to provide predictable behavior of the
+        Geolocation API for use in LayoutTests. Later changes will integrate the the mock
+        Geolocation service with DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=28264
+
+        * WebKit.xcodeproj/project.pbxproj: Modified. Adds WebGeolocationMock.
+
+2009-09-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben
+
+        * StringsNotToBeLocalized.txt:
+        Brought this file up to date.
+
+2009-08-31  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Remove WebViewEditingContextMenu.nib and WebViewEditingContextMenuOld.nib.
+        We stopped using these back in r18592 when we switched over to context menus
+        driven by WebCore.
+
+        * English.lproj/WebViewEditingContextMenu.nib/classes.nib: Removed.
+        * English.lproj/WebViewEditingContextMenu.nib/info.nib: Removed.
+        * English.lproj/WebViewEditingContextMenu.nib/objects.nib: Removed.
+        * English.lproj/WebViewEditingContextMenuOld.nib/classes.nib: Removed.
+        * English.lproj/WebViewEditingContextMenuOld.nib/info.nib: Removed.
+        * English.lproj/WebViewEditingContextMenuOld.nib/objects.nib: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-08-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by John Sullivan.
+
+        update-webkit-localizable-strings script can no longer complete
+        https://bugs.webkit.org/show_bug.cgi?id=28792
+
+        * English.lproj/Localizable.strings:
+
+2009-08-27  John Sullivan  <sullivan@apple.com>
+
+        * StringsNotToBeLocalized.txt:
+        Brought up to date, other than the problem mentioned in https://bugs.webkit.org/show_bug.cgi?id=28792
+
+2009-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <video> and <audio> controller should be accessible
+        https://bugs.webkit.org/show_bug.cgi?id=28081
+
+        Add localized strings for media controller accessiblility.
+
+        * English.lproj/Localizable.strings:
+
+2009-08-20  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Enable various "grouping" ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=28486
+
+        * English.lproj/Localizable.strings:
+
+2009-08-18  Drew Wilson  <atwilson@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Need to extend DumpRenderTree to expose number of worker threads.
+        https://bugs.webkit.org/show_bug.cgi?id=28292
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Added WebWorkersPrivate APIs to mac WebKit to expose workerThreadCount() for DumpRenderTree.
+
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Add explicit dependencies for our build verification scripts to ensure that they always run after linking has completed.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Bring a little order to our otherwise out of control lives.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        Don't attempt to build a file that Anders just deleted.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-07-29  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/27788> Don't export WebPluginController.h as a private header
+
+        Reviewed by Mark Rowe.
+
+        WebPluginController.h includes WebPluginContainerCheck.h, which
+        is not a private header.  Since WebPluginController.h doesn't
+        appear to be used anywhere, remove its private header status.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove private header
+        attribute from WebPluginController.h.
+
+2009-07-28  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by David Levin.
+
+        Added FrameLoaderClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        * haiku/WebCoreSupport/FrameLoaderClientHaiku.cpp: Added.
+        (WebCore::FrameLoaderClientHaiku::FrameLoaderClientHaiku):
+        (WebCore::FrameLoaderClientHaiku::setFrame):
+        (WebCore::FrameLoaderClientHaiku::setWebView):
+        (WebCore::FrameLoaderClientHaiku::detachFrameLoader):
+        (WebCore::FrameLoaderClientHaiku::hasWebView):
+        (WebCore::FrameLoaderClientHaiku::hasBackForwardList):
+        (WebCore::FrameLoaderClientHaiku::resetBackForwardList):
+        (WebCore::FrameLoaderClientHaiku::provisionalItemIsTarget):
+        (WebCore::FrameLoaderClientHaiku::makeRepresentation):
+        (WebCore::FrameLoaderClientHaiku::forceLayout):
+        (WebCore::FrameLoaderClientHaiku::forceLayoutForNonHTML):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForCommit):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForBackForwardNavigation):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForReload):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForStandardLoad):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryForInternalLoad):
+        (WebCore::FrameLoaderClientHaiku::updateHistoryAfterClientRedirect):
+        (WebCore::FrameLoaderClientHaiku::setCopiesOnScroll):
+        (WebCore::FrameLoaderClientHaiku::tokenForLoadErrorReset):
+        (WebCore::FrameLoaderClientHaiku::resetAfterLoadError):
+        (WebCore::FrameLoaderClientHaiku::doNotResetAfterLoadError):
+        (WebCore::FrameLoaderClientHaiku::willCloseDocument):
+        (WebCore::FrameLoaderClientHaiku::detachedFromParent2):
+        (WebCore::FrameLoaderClientHaiku::detachedFromParent3):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidCancelClientRedirect):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillPerformClientRedirect):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillClose):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFirstLayout):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFirstVisuallyNonEmptyLayout):
+        (WebCore::FrameLoaderClientHaiku::dispatchShow):
+        (WebCore::FrameLoaderClientHaiku::cancelPolicyCheck):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidLoadMainResource):
+        (WebCore::FrameLoaderClientHaiku::revertToProvisionalState):
+        (WebCore::FrameLoaderClientHaiku::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientHaiku::postProgressEstimateChangedNotification):
+        (WebCore::FrameLoaderClientHaiku::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientHaiku::progressStarted):
+        (WebCore::FrameLoaderClientHaiku::progressCompleted):
+        (WebCore::FrameLoaderClientHaiku::setMainFrameDocumentReady):
+        (WebCore::FrameLoaderClientHaiku::willChangeTitle):
+        (WebCore::FrameLoaderClientHaiku::didChangeTitle):
+        (WebCore::FrameLoaderClientHaiku::finishedLoading):
+        (WebCore::FrameLoaderClientHaiku::canShowMIMEType):
+        (WebCore::FrameLoaderClientHaiku::representationExistsForURLScheme):
+        (WebCore::FrameLoaderClientHaiku::generatedMIMETypeForURLScheme):
+        (WebCore::FrameLoaderClientHaiku::frameLoadCompleted):
+        (WebCore::FrameLoaderClientHaiku::saveViewStateToItem):
+        (WebCore::FrameLoaderClientHaiku::restoreViewState):
+        (WebCore::FrameLoaderClientHaiku::restoreScrollPositionAndViewState):
+        (WebCore::FrameLoaderClientHaiku::provisionalLoadStarted):
+        (WebCore::FrameLoaderClientHaiku::shouldTreatURLAsSameAsCurrent):
+        (WebCore::FrameLoaderClientHaiku::addHistoryItemForFragmentScroll):
+        (WebCore::FrameLoaderClientHaiku::didFinishLoad):
+        (WebCore::FrameLoaderClientHaiku::prepareForDataSourceReplacement):
+        (WebCore::FrameLoaderClientHaiku::setTitle):
+        (WebCore::FrameLoaderClientHaiku::userAgent):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientHaiku::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientHaiku::canHandleRequest):
+        (WebCore::FrameLoaderClientHaiku::partClearedInBegin):
+        (WebCore::FrameLoaderClientHaiku::updateGlobalHistory):
+        (WebCore::FrameLoaderClientHaiku::updateGlobalHistoryRedirectLinks):
+        (WebCore::FrameLoaderClientHaiku::shouldGoToHistoryItem):
+        (WebCore::FrameLoaderClientHaiku::saveScrollPositionAndViewStateToItem):
+        (WebCore::FrameLoaderClientHaiku::canCachePage):
+        (WebCore::FrameLoaderClientHaiku::setMainDocumentError):
+        (WebCore::FrameLoaderClientHaiku::committedLoad):
+        (WebCore::FrameLoaderClientHaiku::cancelledError):
+        (WebCore::FrameLoaderClientHaiku::blockedError):
+        (WebCore::FrameLoaderClientHaiku::cannotShowURLError):
+        (WebCore::FrameLoaderClientHaiku::interruptForPolicyChangeError):
+        (WebCore::FrameLoaderClientHaiku::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientHaiku::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientHaiku::shouldFallBack):
+        (WebCore::FrameLoaderClientHaiku::createDocumentLoader):
+        (WebCore::FrameLoaderClientHaiku::download):
+        (WebCore::FrameLoaderClientHaiku::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientHaiku::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientHaiku::shouldUseCredentialStorage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveAuthenticationChallenge):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidCancelAuthenticationChallenge):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidReceiveContentLength):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidLoadResourceFromMemoryCache):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidLoadResourceByXMLHttpRequest):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchDidFailLoad):
+        (WebCore::FrameLoaderClientHaiku::dispatchCreatePage):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForMIMEType):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientHaiku::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientHaiku::dispatchUnableToImplementPolicy):
+        (WebCore::FrameLoaderClientHaiku::startDownload):
+        (WebCore::FrameLoaderClientHaiku::createFrame):
+        (WebCore::FrameLoaderClientHaiku::objectContentType):
+        (WebCore::FrameLoaderClientHaiku::createPlugin):
+        (WebCore::FrameLoaderClientHaiku::redirectDataToPlugin):
+        (WebCore::FrameLoaderClientHaiku::pluginWillHandleLoadError):
+        (WebCore::FrameLoaderClientHaiku::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientHaiku::overrideMediaType):
+        (WebCore::FrameLoaderClientHaiku::windowObjectCleared):
+        (WebCore::FrameLoaderClientHaiku::documentElementAvailable):
+        (WebCore::FrameLoaderClientHaiku::didPerformFirstNavigation):
+        (WebCore::FrameLoaderClientHaiku::registerForIconNotification):
+        (WebCore::FrameLoaderClientHaiku::savePlatformDataToCachedFrame):
+        (WebCore::FrameLoaderClientHaiku::transitionToCommittedFromCachedFrame):
+        (WebCore::FrameLoaderClientHaiku::transitionToCommittedForNewPage):
+        * haiku/WebCoreSupport/FrameLoaderClientHaiku.h: Added.
+        (WebCore::FrameLoaderClientHaiku::~FrameLoaderClientHaiku):
+
+2009-07-28  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by David Levin.
+
+        Added ChromeClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        * haiku/WebCoreSupport/ChromeClientHaiku.cpp: Added.
+        (WebCore::ChromeClientHaiku::ChromeClientHaiku):
+        (WebCore::ChromeClientHaiku::~ChromeClientHaiku):
+        (WebCore::ChromeClientHaiku::chromeDestroyed):
+        (WebCore::ChromeClientHaiku::setWindowRect):
+        (WebCore::ChromeClientHaiku::windowRect):
+        (WebCore::ChromeClientHaiku::pageRect):
+        (WebCore::ChromeClientHaiku::scaleFactor):
+        (WebCore::ChromeClientHaiku::focus):
+        (WebCore::ChromeClientHaiku::unfocus):
+        (WebCore::ChromeClientHaiku::canTakeFocus):
+        (WebCore::ChromeClientHaiku::takeFocus):
+        (WebCore::ChromeClientHaiku::createWindow):
+        (WebCore::ChromeClientHaiku::createModalDialog):
+        (WebCore::ChromeClientHaiku::show):
+        (WebCore::ChromeClientHaiku::canRunModal):
+        (WebCore::ChromeClientHaiku::runModal):
+        (WebCore::ChromeClientHaiku::setToolbarsVisible):
+        (WebCore::ChromeClientHaiku::toolbarsVisible):
+        (WebCore::ChromeClientHaiku::setStatusbarVisible):
+        (WebCore::ChromeClientHaiku::statusbarVisible):
+        (WebCore::ChromeClientHaiku::setScrollbarsVisible):
+        (WebCore::ChromeClientHaiku::scrollbarsVisible):
+        (WebCore::ChromeClientHaiku::setMenubarVisible):
+        (WebCore::ChromeClientHaiku::menubarVisible):
+        (WebCore::ChromeClientHaiku::setResizable):
+        (WebCore::ChromeClientHaiku::addMessageToConsole):
+        (WebCore::ChromeClientHaiku::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientHaiku::runBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientHaiku::closeWindowSoon):
+        (WebCore::ChromeClientHaiku::runJavaScriptAlert):
+        (WebCore::ChromeClientHaiku::runJavaScriptConfirm):
+        (WebCore::ChromeClientHaiku::runJavaScriptPrompt):
+        (WebCore::ChromeClientHaiku::setStatusbarText):
+        (WebCore::ChromeClientHaiku::shouldInterruptJavaScript):
+        (WebCore::ChromeClientHaiku::tabsToLinks):
+        (WebCore::ChromeClientHaiku::windowResizerRect):
+        (WebCore::ChromeClientHaiku::repaint):
+        (WebCore::ChromeClientHaiku::scroll):
+        (WebCore::ChromeClientHaiku::screenToWindow):
+        (WebCore::ChromeClientHaiku::windowToScreen):
+        (WebCore::ChromeClientHaiku::platformWindow):
+        (WebCore::ChromeClientHaiku::contentsSizeChanged):
+        (WebCore::ChromeClientHaiku::scrollRectIntoView):
+        (WebCore::ChromeClientHaiku::addToDirtyRegion):
+        (WebCore::ChromeClientHaiku::scrollBackingStore):
+        (WebCore::ChromeClientHaiku::updateBackingStore):
+        (WebCore::ChromeClientHaiku::mouseDidMoveOverElement):
+        (WebCore::ChromeClientHaiku::setToolTip):
+        (WebCore::ChromeClientHaiku::print):
+        (WebCore::ChromeClientHaiku::exceededDatabaseQuota):
+        (WebCore::ChromeClientWx::reachedMaxAppCacheSize):
+        (WebCore::ChromeClientHaiku::requestGeolocationPermissionForFrame):
+        (WebCore::ChromeClientHaiku::runOpenPanel):
+        (WebCore::ChromeClientHaiku::setCursor):
+        (WebCore::ChromeClientHaiku::formStateDidChange):
+        (WebCore::ChromeClientHaiku::createHTMLParserQuirks):
+        * haiku/WebCoreSupport/ChromeClientHaiku.h: Added.
+
+2009-07-28  Robert Hogan  <robert@roberthogan.net>
+
+        Reviewed by Simon Hausmann.
+
+        Add WebKit version API to Qt.
+
+        Get the current version of WebKit from WebKit/mac/Configurations/Version.xcconfig
+        at compile time and make it available to webkit ports through WebKitVersion.h.
+
+        https://bugs.webkit.org/show_bug.cgi?id=27158
+
+        * scripts/generate-webkitversion.pl: Added
+
+2009-07-24  Andrei Popescu  <andreip@google.com>
+
+        ApplicationCache should have size limit
+        https://bugs.webkit.org/show_bug.cgi?id=22700
+        
+        Updated the project after adding WebApplicationCache.h/mm
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Added InspectorClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding two files, InspectorClientHaiku.h and InspectorClientHaiku.cpp
+
+        * haiku/WebCoreSupport/InspectorClientHaiku.cpp: Added.
+        (WebCore::InspectorClientHaiku::inspectorDestroyed):
+        (WebCore::InspectorClientHaiku::createPage):
+        (WebCore::InspectorClientHaiku::localizedStringsURL):
+        (WebCore::InspectorClientHaiku::hiddenPanels):
+        (WebCore::InspectorClientHaiku::showWindow):
+        (WebCore::InspectorClientHaiku::closeWindow):
+        (WebCore::InspectorClientHaiku::attachWindow):
+        (WebCore::InspectorClientHaiku::detachWindow):
+        (WebCore::InspectorClientHaiku::setAttachedWindowHeight):
+        (WebCore::InspectorClientHaiku::highlight):
+        (WebCore::InspectorClientHaiku::hideHighlight):
+        (WebCore::InspectorClientHaiku::inspectedURLChanged):
+        (WebCore::InspectorClientHaiku::populateSetting):
+        (WebCore::InspectorClientHaiku::storeSetting):
+        (WebCore::InspectorClientHaiku::removeSetting):
+        * haiku/WebCoreSupport/InspectorClientHaiku.h: Added.
+
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added EditorClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding two files, EditorClientHaiku.h and EditorClientHaiku.cpp
+
+        * haiku/WebCoreSupport/EditorClientHaiku.cpp: Added.
+        (WebCore::EditorClientHaiku::EditorClientHaiku):
+        (WebCore::EditorClientHaiku::setPage):
+        (WebCore::EditorClientHaiku::pageDestroyed):
+        (WebCore::EditorClientHaiku::shouldDeleteRange):
+        (WebCore::EditorClientHaiku::shouldShowDeleteInterface):
+        (WebCore::EditorClientHaiku::smartInsertDeleteEnabled):
+        (WebCore::EditorClientHaiku::isSelectTrailingWhitespaceEnabled):
+        (WebCore::EditorClientHaiku::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientHaiku::toggleContinuousSpellChecking):
+        (WebCore::EditorClientHaiku::isGrammarCheckingEnabled):
+        (WebCore::EditorClientHaiku::toggleGrammarChecking):
+        (WebCore::EditorClientHaiku::spellCheckerDocumentTag):
+        (WebCore::EditorClientHaiku::isEditable):
+        (WebCore::EditorClientHaiku::shouldBeginEditing):
+        (WebCore::EditorClientHaiku::shouldEndEditing):
+        (WebCore::EditorClientHaiku::shouldInsertNode):
+        (WebCore::EditorClientHaiku::shouldInsertText):
+        (WebCore::EditorClientHaiku::shouldChangeSelectedRange):
+        (WebCore::EditorClientHaiku::shouldApplyStyle):
+        (WebCore::EditorClientHaiku::shouldMoveRangeAfterDelete):
+        (WebCore::EditorClientHaiku::didBeginEditing):
+        (WebCore::EditorClientHaiku::respondToChangedContents):
+        (WebCore::EditorClientHaiku::respondToChangedSelection):
+        (WebCore::EditorClientHaiku::didEndEditing):
+        (WebCore::EditorClientHaiku::didWriteSelectionToPasteboard):
+        (WebCore::EditorClientHaiku::didSetSelectionTypesForPasteboard):
+        (WebCore::EditorClientHaiku::registerCommandForUndo):
+        (WebCore::EditorClientHaiku::registerCommandForRedo):
+        (WebCore::EditorClientHaiku::clearUndoRedoOperations):
+        (WebCore::EditorClientHaiku::canUndo):
+        (WebCore::EditorClientHaiku::canRedo):
+        (WebCore::EditorClientHaiku::undo):
+        (WebCore::EditorClientHaiku::redo):
+        (WebCore::EditorClientHaiku::handleKeyboardEvent):
+        (WebCore::EditorClientHaiku::handleInputMethodKeydown):
+        (WebCore::EditorClientHaiku::textFieldDidBeginEditing):
+        (WebCore::EditorClientHaiku::textFieldDidEndEditing):
+        (WebCore::EditorClientHaiku::textDidChangeInTextField):
+        (WebCore::EditorClientHaiku::doTextFieldCommandFromEvent):
+        (WebCore::EditorClientHaiku::textWillBeDeletedInTextField):
+        (WebCore::EditorClientHaiku::textDidChangeInTextArea):
+        (WebCore::EditorClientHaiku::ignoreWordInSpellDocument):
+        (WebCore::EditorClientHaiku::learnWord):
+        (WebCore::EditorClientHaiku::checkSpellingOfString):
+        (WebCore::EditorClientHaiku::getAutoCorrectSuggestionForMisspelledWord):
+        (WebCore::EditorClientHaiku::checkGrammarOfString):
+        (WebCore::EditorClientHaiku::updateSpellingUIWithGrammarString):
+        (WebCore::EditorClientHaiku::updateSpellingUIWithMisspelledWord):
+        (WebCore::EditorClientHaiku::showSpellingUI):
+        (WebCore::EditorClientHaiku::spellingUIIsShowing):
+        (WebCore::EditorClientHaiku::getGuessesForWord):
+        (WebCore::EditorClientHaiku::setInputMethodState):
+        (WebCore::EditorClientHaiku::isEditing):
+        * haiku/WebCoreSupport/EditorClientHaiku.h: Added.
+
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Added DragClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding two files, DragClientHaiku.h and DragClientHaiku.cpp
+
+        * haiku/WebCoreSupport/DragClientHaiku.cpp: Added.
+        (WebCore::DragClientHaiku::actionMaskForDrag):
+        (WebCore::DragClientHaiku::willPerformDragDestinationAction):
+        (WebCore::DragClientHaiku::dragControllerDestroyed):
+        (WebCore::DragClientHaiku::dragSourceActionMaskForPoint):
+        (WebCore::DragClientHaiku::willPerformDragSourceAction):
+        (WebCore::DragClientHaiku::startDrag):
+        (WebCore::DragClientHaiku::createDragImageForLink):
+        * haiku/WebCoreSupport/DragClientHaiku.h: Added.
+
+2009-07-16  Maxime Simon  <simon.maxime@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added ContextMenuClient for Haiku WebCore support.
+        https://bugs.webkit.org/show_bug.cgi?id=26952
+
+        Adding two files, ContextMenuClientHaiku.h
+        and ContextMenuClientHaiku.cpp
+
+        * haiku/WebCoreSupport/ContextMenuClientHaiku.cpp: Added.
+        (WebCore::ContextMenuClientHaiku::contextMenuDestroyed):
+        (WebCore::ContextMenuClientHaiku::getCustomMenuFromDefaultItems):
+        (WebCore::ContextMenuClientHaiku::contextMenuItemSelected):
+        (WebCore::ContextMenuClientHaiku::downloadURL):
+        (WebCore::ContextMenuClientHaiku::lookUpInDictionary):
+        (WebCore::ContextMenuClientHaiku::speak):
+        (WebCore::ContextMenuClientHaiku::isSpeaking):
+        (WebCore::ContextMenuClientHaiku::stopSpeaking):
+        (WebCore::ContextMenuClientHaiku::searchWithGoogle):
+        * haiku/WebCoreSupport/ContextMenuClientHaiku.h: Added.
+
+2009-07-10  Adam Roben  <aroben@apple.com>
+
+        Sort all our Xcode projects
+
+        Accomplished using sort-Xcode-project-file.
+
+        Requested by Dave Kilzer.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-07-02  Adam Roben  <aroben@apple.com>
+
+        Fix warnings from update-webkit-localizable-strings
+
+        Rubber-stamped by Eric Carlson.
+
+        * English.lproj/Localizable.strings: Updated.
+
+2009-07-02  Adam Roben  <aroben@apple.com>
+
+        Update StringsNotToBeLocalized.txt for (not so) recent changes
+
+        Bug 26926: StringsNotToBeLocalized.txt is out-of-date
+        <https://bugs.webkit.org/show_bug.cgi?id=26926>
+
+        Reviewed by John Sullivan.
+
+        * StringsNotToBeLocalized.txt:
+
+2009-07-02  Pierre d'Herbemont  <pdherbemont@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/6518119>
+
+        Add localized strings for media controller status messages.
+
+        * English.lproj/Localizable.strings: Localized text.
+
+2009-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        - updated the project after giving Objective-C++ the .mm extension
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alice Liu.
+
+        Move WebView internal data into WebViewData.h/mm.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Added WebDelegateImplementationCaching.h/mm
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-06-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add WebViewInternal.mm.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - WebKit project part of eliminating WebCoreTextRenderer
+
+        * WebKit.xcodeproj/project.pbxproj: Changed WebKitNSStringExtras.m to
+            compile as Objective-C++.
+
+2009-06-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 26113: break WebTextCompletionController out into its own source file
+        https://bugs.webkit.org/show_bug.cgi?id=26113
+
+        * WebKit.xcodeproj/project.pbxproj: Add WebTextCompletionController.h/mm.
+
+2009-05-28  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Symlink WebKitPluginHost.app in to place if needed.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-05-24  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes. Got rid of most full-file exceptions.
+
+2009-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig and Dan Bernstein.
+
+        Fix <rdar://problem/6889644>.
+        
+        * English.lproj/Localizable.strings:
+
+2009-05-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6870383> Have to enter credentials twice when downloading from a protected page
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed Misc/WebDownload.m as WebDownload.mm, so that
+        it could use C++ code from AuthenticaitonMac.h.
+
+2009-04-27  Douglas R. Davidson  <ddavidso@apple.com>
+
+        Add localizable strings for 
+        <rdar://problem/6724106> WebViews need to implement text checking
+
+        Reviewed by Justin Garcia.
+
+        * English.lproj/Localizable.strings:
+
+2009-04-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+                
+        <rdar://problem/6352982>
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebNetscapeContainerCheckContextInfo.mm to the project.
+
+2009-04-23  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebNetscapeContainerCheckPrivate.mm and header to the project.
+
+2009-04-21  Adam Roben  <aroben@apple.com>
+
+        Update StringsNotToBeLocalized.txt for recent changes
+
+        Rubber-stamped by John Sullivan.
+
+        * StringsNotToBeLocalized.txt:
+
+2009-04-19  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2009-04-17  David Kilzer  <ddkilzer@apple.com>
+
+        Simplify FEATURE_DEFINES definition
+
+        Reviewed by Darin Adler.
+
+        This moves FEATURE_DEFINES and its related ENABLE_FEATURE_NAME
+        variables to their own FeatureDefines.xcconfig file.  It also
+        extracts a new ENABLE_GEOLOCATION variable so that
+        FEATURE_DEFINES only needs to be defined once.
+
+        * WebKit.xcodeproj/project.pbxproj: Added
+        FeatureDefines.xcconfig file.
+
+2009-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        Remove DOMDocumentPrivate.h now that <rdar://problem/6730996> is fixed.
+
+        Rubber-stamped by Mark Rowe.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-04-09  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Adam Roben.
+
+        * WebKit.xcodeproj/project.pbxproj:
+            Set the Localizable.strings encoding to UTF-16.
+
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Leopard build once more.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Another attempt at fixing the build.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-04-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: 
+        Add WebDOMOperationsInternal.h and make WebDOMOperationsPrivate.h private. 
+
+2009-04-01  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=24990
+        Put SECTORDER_FLAGS into xcconfig files.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-03-27  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2009-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        * English.lproj/Localizable.strings: Updated.
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2009-03-13  Greg Bolsinga  <bolsinga@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Update Geolocation perimission dialogs to be asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=24505
+
+        Add WebGeolocation, a wrapper around WebCore::Geolocation. It mimics the
+        coding style set by WebSecurityOrigin.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-03-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6610666> Revise the Cocoa event model text API
+        
+        Remove nptextinput.h
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        <rdar://problem/6581203> WebCore and WebKit should install the same set of headers during installhdrs phase as build phase
+
+        Reviewed by Mark Rowe.
+
+        The fix is to add INSTALLHDRS_COPY_PHASE = YES and
+        INSTALLHDRS_SCRIPT_PHASE = YES to WebKit.xcconfig, then to
+        make sure various build phase scripts work with the installhdrs
+        build phase.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        - Added shell code to prevent running "Check For Global
+          Initializers", "Check For Exit Time Destructors" and "Check
+          For Weak VTables" scripts during the installhdrs build phase.
+        - Removed UMBRELLA_FRAMEWORKS_DIR from the Debug and Release
+          targets since it's no longer needed after defining
+          WEBCORE_PRIVATE_HEADERS_DIR in WebKit.xcconfig.
+
+2009-03-03  David Kilzer  <ddkilzer@apple.com>
+
+        Remove last vestiges of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR from WebKit
+
+        Reviewed by Adam Roben.
+
+        Use of JAVASCRIPTCORE_PRIVATE_HEADERS_DIR was removed in r37465
+        since NPAPI headers had migrated from JavaScriptCore to WebCore
+        before that.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed
+        JAVASCRIPTCORE_PRIVATE_HEADERS_DIR build setting from from Debug
+        and Release configurations.
+
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
+        WebNetscapePluginPackage.mm is an Objective-C++ file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-03-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Rename WebNetscapePluginPackage.m to WebNetscapePluginPackage.mm
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-02-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add new files.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-02-13  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2009-02-07  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2009-02-04  Timothy Hatcher  <timothy@apple.com>
+
+        Removed the WebDefaultScriptDebugDelegate now that we have CallScriptDebugDelegate.
+
+        <rdar://problem/6508457> Launching widget in Dashcode debugger is
+        super-slow due forwardInvocation: calling debug delegate
+
+        Reviewed by Oliver Hunt.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-02-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        Remove WebKitPluginContainerView.{h|mm}, they aren't used anywhere.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-01-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Clean up after r40240.
+
+        * WebKit.xcodeproj/project.pbxproj: Reinstate WebKitPluginHost.defs.
+
+2009-01-25  Darin Adler  <darin@apple.com>
+
+        Try to fix full build on Mac Leopard.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebKitPluginClient.defs from the WebKit target.
+        Maybe this is temporary, but I had to do it to get the full build to succeed.
+
+2009-01-25  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Improve the consistency of settings in our .xcconfig files.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-01-23  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Darin Adler
+
+        Rename CachedPagePlatformData to CachedFramePlatformData to more accurately reflect its true role.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add ProxyInstance files.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2009-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        Don't install internal headers in WebKit framework
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove roles from internal
+        headers so they're not installed.
+
+2009-01-02  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated.
+
+2008-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=22976
+          crash due to Mail's use of WebArchive and WebResource on non-main thread
+
+        * StringsNotToBeLocalized.txt: Updated.
+
+        * WebKit.xcodeproj/project.pbxproj: Added new file WebNSObjectExtras.mm and
+        existing file WebResourceInternal.h.
+
+2008-12-08  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 22555: Sort "children" sections in Xcode project files
+
+        <https://bugs.webkit.org/show_bug.cgi?id=22555>
+
+        Reviewed by Eric Seidel.
+
+        * WebKit.xcodeproj/project.pbxproj: Sorted.
+
+2008-12-08  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2008-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Mac build fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Mac build fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-12-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add HostedNetscapePluginStream.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-12-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Move WebPluginRequest to its own file.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-12-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Update strings not to be localized.
+
+        Reviewed by Adam Roben.
+
+        * StringsNotToBeLocalized.txt:
+
+2008-11-26  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        Fix up the references to files under WebKit/mac/Plugins/Hosted.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Add plug-in host related files to the Xcode project.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - part of <rdar://problem/6234337> Add a Text Direction menu to the default context menu when appropriate
+
+        * English.lproj/Localizable.strings: Added the Text Direction submenu
+        title.
+
+2008-11-13  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/6361578> Web Kit UI strings: a few edits
+
+        Reviewed by Tim Hatcher
+
+        * English.lproj/Localizable.strings:
+        updated for these changes
+        
+        * StringsNotToBeLocalized.txt:
+        removed unused exception
+
+2008-11-12  John Sullivan  <sullivan@apple.com>
+
+        fixed <rdar://problem/3839110> Authentication dialogs talk about passwords being sent "in the clear"
+
+        Reviewed by Tim Hatcher
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+        updated for this change
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+        
+        Add WebHostedNetscapePluginView to the project.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Add a new WebBaseNetscapePluginView class.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+                
+        Rename WebBaseNetscapePluginView to WebNetscapePluginView.
+
+        * StringsNotToBeLocalized.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Remove WebPlugInStreamLoaderDelegate.h
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=22061
+          create script to check for exit-time destructors
+
+        * WebKit.xcodeproj/project.pbxproj: Added a script
+        phase that runs the check-for-exit-time-destructors script.
+
+2008-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Move WebNetscapePluginEventHandler classes to a subgroup of Netscape Plug-Ins.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-10-29  Matt Lilek  <webkit@mattlilek.com>
+
+        Not reviewed, build fix.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=21880
+        "files" string for multifile uploads needs to be localized
+
+        * English.lproj/Localizable.strings: Updated with new string.
+
+2008-10-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sam Weinig. 
+
+        * English.lproj/Localizable.strings:
+        Updated.
+
+2008-10-27  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2008-10-24  Timothy Hatcher  <timothy@apple.com>
+
+        Implement new InspectorClient methods to work with Settings.
+
+        https://bugs.webkit.org/show_bug.cgi?id=21856
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Add the new InspectorClientCF.cpp file.
+
+2008-10-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        <rdar://problem/5803460> A file named StringsNotToBeLocalized.txt file is installed Webkit.framework/Resources.
+
+        * WebKit.xcodeproj/project.pbxproj: Don't install StringsNotToBeLocalized.txt.
+
+2008-10-14  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Added two files for the 
+        WebTextIterator, and made the WebTextIterator.h private
+
+2008-10-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Add a 'Check For Weak VTables' build phase to catch weak vtables as early as possible.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-09-24  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2008-09-15  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler, Beth Dakin
+
+        Support strings for AXLists
+
+        * English.lproj/Localizable.strings:
+
+2008-09-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Merge WebNetscapePluginStream into WebBaseNetscapePluginStream.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-09-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Build fix.  Remove the now unnecessary check for "4" in the user agent string.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-08-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Updated project files to XCode 3.1.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-08-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        <rdar://problem/6139914> Please include a _debug version of JavaScriptCore framework
+
+        * WebKit.xcodeproj/project.pbxproj: Enable the debug variant.
+
+2008-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove MainThreadObjectDeallocator.{h|mm}.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Declare empty protocols when using versions of AppKit that do not use formal protocols for delegates and data sources.
+        Part one of fix for <rdar://problem/5853147>.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-07-31  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fix layout test results for webarchive/test-xml-stylesheet.xml
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebHTMLRepresentationInternal.h.
+        Changed WebHTMLRepresentationInternal.h and WebHTMLRepresentationPrivate.h
+        to private so they're copied into PrivateHeaders.
+
+2008-07-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Move WebPreferences.m to objc++ so it can include the new WTF leak counting class.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix references to WebRenderNode.h and WebRenderNode.mm in Xcode project
+        so that they don't have an unnecessary ".." in the path.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-07-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Remove WebSearchableTextView as it has been unused for some time now.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add MainThreadObjectDeallocator to sources.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-06-24  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Sam Weinig
+
+        * StringsNotToBeLocalized.txt:
+        brought this file up to date
+
+2008-06-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5775802> WebKit should not force use of GCC 4.0.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-22  Timothy Hatcher  <timothy@apple.com>
+
+        <rdar://problem/5956403> Update the Develop menu to match the new Inspector items
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/Localizable.strings: Added new strings.
+
+2008-05-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        Add WebIconFetcher files.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-16  Timothy Hatcher  <timothy@apple.com>
+
+        Removes WebScriptDebugServer files and related calls. This removes
+        the hooks that Drosera uses for debugging. Now that the Web Inspector
+        has a better debugger, we don't need these anymore.
+
+        Reviewed by Sam Weinig.
+
+        * StringsNotToBeLocalized.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/4780592> WebKit application has its window announced as HTML content
+
+        * English.lproj/Localizable.strings:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver.
+
+        <rdar://problem/5774495> Make Unicode text input possible in Netscape-style plug-ins
+        
+        Add nptextinput.h as a public header.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-06  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Andersca.
+
+        prepare for plugin fast teardown work - make WebPluginDatabase a objective C++ file.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Tim.
+
+        Remove npfunctions.h
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-05-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Turn off deprecated warnings for WebNetscapePluginEventHandlerCarbon.mm.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add Cocoa event handler.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-04-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add new event handlers.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-04-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim
+        
+        - made the JavaScript text input panel not block Quit (part of 4133196)
+
+        * English.lproj/WebJavaScriptTextInputPanel.nib/classes.nib:
+        * English.lproj/WebJavaScriptTextInputPanel.nib/info.nib:
+        * English.lproj/WebJavaScriptTextInputPanel.nib/keyedobjects.nib:
+        Made the panel be a NonBlockingPanel
+
+2008-04-04  Ada Chan  <adachan@apple.com>
+
+        Updated the format string for window title for a standalone image to take integers.
+
+        Reviewed by Dan.
+
+        * English.lproj/Localizable.strings:
+
+2008-03-28  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Darin Adler
+
+        Remove WebArchiver.h/mm
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/4516169> - Support WebArchives on Windows
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin's rubberstamp
+
+        Rename a .m to .mm
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-20  John Sullivan  <sullivan@apple.com>
+
+        * StringsNotToBeLocalized.txt:
+        Brought this file up to date
+
+2008-03-20  Adam Roben  <aroben@apple.com>
+
+        Mark WebNodeHighlight.m and WebNodeHighlightView.m Obj-C++
+
+        Reviewed by Tim Hatcher.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugs.webkit.org/show_bug.cgi?id=17640
+          eliminate WebCoreFrameBridge
+
+        * StringsNotToBeLocalized.txt: Updated for recent changes.
+        * WebKit.xcodeproj/project.pbxproj: Removed WebFrameBridge.h and WebFrameBridge.mm.
+
+2008-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        * WebKit.xcodeproj/project.pbxproj: Change WebDynamicScrollBarsView.m to be Obj-C++.
+        We can rename the file later.
+
+2008-03-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix WebKit build with GCC 4.2.
+
+        * WebKit.xcodeproj/project.pbxproj:  Mark WebTypesInternal.h as a private header so that DumpRenderTree can use it.
+
+2008-03-06  Darin Adler  <darin@apple.com>
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebHistoryInternal.h.
+
+2008-03-06  David D. Kilzer  <ddkilzer@apple.com>
+
+        Name the WebKit build phase script that generates WebKit.LP64.exp.
+
+        * WebKit.xcodeproj/project.pbxproj: Name the build phase script
+        that generates the 64-bit export file to match the corresponding
+        build phase script in WebCore.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Remove WebCoreScriptDebugger.{h,mm}
+
+        Reviewed by Kevin M.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Rename WebCoreScriptDebuggerImp.{h,mm} to WebScriptDebugger.{h,mm}
+
+        Reviewed by Kevin M.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Remove WebScriptDebugger
+
+        Reviewed by Kevin M.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove
+        WebScriptDebugDelegatePrivate.h from the project.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Move WebCoreScriptDebuggerImp to its own source files
+
+        Reviewed by Kevin M.
+
+        * WebKit.xcodeproj/project.pbxproj: Added new files to the project.
+
+2008-03-05  Adam Roben  <aroben@apple.com>
+
+        Move WebCoreScriptDebugger to WebKit
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Added WebCoreScriptDebugger.{h,mm}
+        to the project.
+
+2008-01-26  Greg Bolsinga  <bolsinga@apple.com>
+
+        <rdar://problem/5708388> WebDashboardRegion.h duplicated between WebCore / WebKit
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebDashboardRegion.h.
+
+2008-01-23  Steve Falkenburg  <sfalken@apple.com>
+
+        Update localization exceptions.
+        
+        Reviewed by Darin Adler.
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+
+2008-01-20  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove code bracketed by REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM as we are no longer
+        interested in supporting Safari 2 with TOT WebKit.
+
+        * WebKit.xcodeproj/project.pbxproj: Don't define REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM
+        as it is no longer used. 
+
+2008-01-03  Darin Adler  <darin@apple.com>
+
+        - fix Safari build
+
+        * WebKit.xcodeproj/project.pbxproj: Mark header private (fixes Safari build).
+
+2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Removed "BackwardDelete", which is no longer present in source code.
+
+        * StringsNotToBeLocalized.txt:
+
+2007-12-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Refactor Mac plugin stream code to use the shared NetscapePlugInStreamLoader implementation.
+
+        * WebKit.xcodeproj/project.pbxproj: Add new files.
+
+2007-12-14  Darin Adler  <darin@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated.
+
+2007-12-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for <rdar://problem/4886844> and lay groundwork for <rdar://problem/4516170> (Back/Forward Cache on Windows)
+
+        * WebKit.xcodeproj/project.pbxproj: Added a new file
+
+2007-12-12  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        Remove abuse of projectDirPath from WebKit.xcodeproj to fix Production builds.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2007-11-19  Brady Eidson <beidson@apple.com>
+
+        Reviewed by Maciej
+
+        * WebKit.xcodeproj/project.pbxproj: Sorted!
+
+2007-11-17  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 13470: i18n: The Web Inspector is not localizable
+        http://bugs.webkit.org/show_bug.cgi?id=13470
+
+        Update the localized strings and the file encoding of WebInspectorClient.mm.
+
+        * English.lproj/Localizable.strings:
+        * StringsNotToBeLocalized.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2007-11-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Build WebCore as a sub-framework of WebKit in all configurations.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
+        * WebKit.xcodeproj/project.pbxproj: WebDatabaseManagerPrivate.h, also!
+
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
+        * WebKit.xcodeproj/project.pbxproj: Mark WebSecurityOriginPrivate.h private so
+          it is exported
+
+2007-11-16  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Database management API tweaks
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2007-11-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John
+
+        Stubbing out everything required for a WebKit API for databases
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2007-11-12  Adam Roben  <aroben@apple.com>
+
+        * StringsNotToBeLocalized.txt: Updated.
+
+2007-11-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Adding the wx WebKit implementation.
+
+        Reviewed by Mark Rowe.
+
+        * wx: Added.
+
+2007-11-07  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        Fix 64-bit Mac build.
+
+        * WebKit.xcodeproj/project.pbxproj: Change paths specified relative to SRCROOT
+        to be relative to PROJECT_DIR.  PROJECT_DIR takes into account the projectDirPath
+        setting of the project, which in this instance includes the necessary "mac"
+        subdirectory.
+

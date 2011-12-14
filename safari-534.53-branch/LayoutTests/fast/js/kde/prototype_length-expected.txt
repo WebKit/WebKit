@@ -1,0 +1,27 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.prototype.length is undefined
+PASS Function.prototype.length is 0
+PASS Array.prototype.length is 0
+PASS String.prototype.length is 0
+PASS Boolean.prototype.length is undefined
+PASS Number.prototype.length is undefined
+PASS Date.prototype.length is undefined
+PASS RegExp.prototype.length is undefined
+PASS Error.prototype.length is undefined
+PASS Array.prototype.length is 6
+PASS Function.prototype.length is 0
+PASS String.prototype.length is 0
+PASS delete Array.prototype.length is false
+PASS delete Function.prototype.length is false
+PASS delete String.prototype.length is false
+PASS foundArrayPrototypeLength is false
+PASS foundFunctionPrototypeLength is false
+PASS foundStringPrototypeLength is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

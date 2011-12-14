@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+This test tests that the transaction callback is called in the right world.
+<div id="console"></div>
+<script>
+var transactionCallbacksInvoked = 0;
+function done()
+{
+    if ((++transactionCallbacksInvoked == 2) && (window.layoutTestController))
+        layoutTestController.notifyDone();
+}
+
+function transactionCallback1(tx)
+{
+    alert("FAIL: Visible in isolated world.");
+    done();
+}
+
+function transactionCallback2(tx)
+{
+    alert(document.body.bar);
+    done();
+}
+
+document.body.foo = "FAIL: document.body.foo visible in isolated world.";
+document.body.bar = "PASS: document.body.bar visible in a callback created in this world.";
+
+if (window.layoutTestController) {
+    layoutTestController.clearAllDatabases();
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.evaluateScriptInIsolatedWorld(
+        0,
+        "function transactionCallback1(tx)\n" +
+        "{\n" +
+        "    alert(document.body.foo);\n" +
+        "    window.location='javascript:done()';\n" +
+        "}\n" +
+        "var db1 = openDatabase('TransactionCallbackIsolatedWorld1', '1.0', '', 1);\n" +
+        "db1.transaction(transactionCallback1);");
+
+    var db2 = openDatabase('TransactionCallbackIsolatedWorld2', '1.0', '', 1);
+    db2.transaction(transactionCallback2);
+}
+</script>
+</body>
+</html>

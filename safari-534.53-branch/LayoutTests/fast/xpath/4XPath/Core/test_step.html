@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="test.js"></script>
+<script src="../../xpath-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<script>
+    result = DOM.evaluate("ancestor::*", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("ancestor::*", result, [ROOT]);
+
+    result = DOM.evaluate("ancestor-or-self::*", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("ancestor-or-self::*", result, [ROOT, CHILD1]);
+
+    result = DOM.evaluate("descendant-or-self::GCHILD", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("descendant-or-self::*", result, GCHILDREN1);
+
+    result = DOM.evaluate("child::GCHILD[position()=1]", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("child::GCHILD[position()=1]", result, [GCHILD11]);
+
+    result = DOM.evaluate("child::GCHILD[1]", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("child::GCHILD[1]", result, [GCHILD11]);
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>

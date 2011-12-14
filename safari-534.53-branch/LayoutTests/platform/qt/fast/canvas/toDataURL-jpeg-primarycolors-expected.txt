@@ -1,0 +1,3 @@
+To verify color compressing loss (when the quality is 1.0) is in a tolerable range
+
+Test result: passed

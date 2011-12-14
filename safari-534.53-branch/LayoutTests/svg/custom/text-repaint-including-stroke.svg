@@ -1,0 +1,73 @@
+<svg width="800" height="600" onload="startAnimation(evt)" xmlns="http://www.w3.org/2000/svg">
+    <script type="text/ecmascript"><![CDATA[
+    if (window.layoutTestController)
+        window.layoutTestController.waitUntilDone();
+
+    var step = 1, opacityStep = (1/50);
+    var x = 30, y = 30, opacity = 0;
+
+    var danced = 0;
+    var danceTime = 1;    
+    
+    var xdir = 0; // 0 = Add, 1 = Sub
+    var ydir = 0; // 0 = Add, 1 = Sub
+    var odir = 0; // 0 = Add, 1 = Sub
+
+    var bounce;
+    function startAnimation(evt) {
+        bounce = evt.target.ownerDocument.getElementById("bounce");
+        danceAround();
+    }
+    
+    function danceAround() {
+        if(xdir == 0) {
+            x = x + step;
+        } else {
+            x = x - step;
+        }
+
+        if(ydir == 0) {    
+            y = y + step;
+        } else {
+            y = y - step;
+        }
+
+        if(x > (800 - 65)) {
+            xdir = 1;
+        } else if(x < 10) {
+            xdir = 0;
+        }
+
+        if(y > (600 - 65)) {
+            ydir = 1;
+        } else if(y < 10) {
+            ydir = 0;
+        }
+        
+        if(odir == 0) {
+            opacity = opacity + opacityStep;
+        } else {
+            opacity = opacity - opacityStep;
+        }
+        
+        if(opacity > 1) {
+            odir = 1;
+        } else if(opacity < 0) {
+            odir = 0;
+        }
+    
+        bounce.setAttribute("transform", "translate(" + x + "," + y + ")");    
+        bounce.setAttribute("font-size", opacity * 80 + 30);
+
+        if (danced < 50) {
+            setTimeout("danceAround()", danceTime);
+            danced++;
+        } else {
+            if (window.layoutTestController)
+                window.layoutTestController.notifyDone();
+        } 
+    }
+    ]]></script>
+    
+    <text id="bounce" x="35" y="35" font-size="80" style="fill:red;stroke:navy;stroke-width:5px;">Repaint me!</text>
+</svg>

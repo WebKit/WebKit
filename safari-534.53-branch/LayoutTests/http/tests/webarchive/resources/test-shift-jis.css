@@ -1,0 +1,9 @@
+div.styled {
+    border: 1px solid black;
+    display: inline-block;
+    height: 64px;
+}
+div.background-shift-jis {
+    width: 52px;
+    background-image: url(apple.gif?css-url-shift-jis-ˆŸ);
+}

@@ -1,0 +1,42 @@
+<body onload="test()">
+<p>Test how sandbox flags get inherited to initial document in subframe.</p>
+<div id="result">Running...</div>
+<iframe src="resources/iframe-no-src.html" sandbox="allow-same-origin"></iframe>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+var timeoutId;
+
+function scriptWorked()
+{
+    document.getElementById("result").innerHTML = "FAIL";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    clearTimeout(timeoutId);
+}
+
+function timedOut()
+{
+    document.getElementById("result").innerHTML = "PASS";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function test()
+{
+    if (frames[0]) {
+        var doc = frames[0].frames[0].document;
+        var scr = doc.createElement("script");
+        scr.appendChild(doc.createTextNode("top.scriptWorked()"));
+        timeoutId = setTimeout(timedOut, 10);
+        doc.body.appendChild(scr);
+    } else {
+        document.getElementById("result").innerHTML = "FAIL: no inner frame";
+        layoutTestController.notifyDone();
+    }
+}
+</script>
+</body>

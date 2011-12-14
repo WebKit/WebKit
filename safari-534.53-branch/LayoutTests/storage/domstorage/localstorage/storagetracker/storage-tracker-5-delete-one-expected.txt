@@ -1,0 +1,10 @@
+Test API to view origins that have local storage and to delete local storage by origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS layoutTestController.originsWithLocalStorage().toString() is "file__0"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

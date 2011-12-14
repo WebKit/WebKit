@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (5,5) size 790x137
+  RenderBlock {doc} at (5,5) size 790x137
+    RenderTable at (0,0) size 55x57
+      RenderBlock {captionelement} at (0,0) size 55x57 [color=#FF0000]
+        RenderText {#text} at (1,0) size 55x57
+          text run at (1,0) width 53: "This is a"
+          text run at (4,19) width 46: "caption"
+          text run at (0,38) width 55: "element."
+    RenderBlock {p} at (0,71) size 790x19
+      RenderText {#text} at (0,0) size 740x19
+        text run at (0,0) width 740: "The following text is in a caption element whose style is set to display:table-caption. The element is not inside a table."
+    RenderBlock {p} at (0,104) size 790x19
+      RenderText {#text} at (0,0) size 555x19
+        text run at (0,0) width 555: "If there's no red text between this text and the previous text the caption is not displayed."

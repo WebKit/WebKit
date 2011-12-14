@@ -1,0 +1,5 @@
+This tests non-integer line height is rounded to the nearest integer.
+
+Test failed:
+FAIL: font size: 10px; line height percent: 1.05; expected line height: 11px; actual line height: 10px
+

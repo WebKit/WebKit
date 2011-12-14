@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (2,2) size 671x321
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGPath {circle} at (2,2) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=75.00] [cy=75.00] [r=70.00]
+    RenderSVGPath {circle} at (177,2) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=250.00] [cy=75.00] [r=70.00]
+    RenderSVGPath {circle} at (352,2) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=425.00] [cy=75.00] [r=70.00]
+    RenderSVGPath {circle} at (527,2) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=600.00] [cy=75.00] [r=70.00]
+    RenderSVGPath {circle} at (2,177) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=75.00] [cy=250.00] [r=70.00]
+    RenderSVGPath {circle} at (177,177) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=250.00] [cy=250.00] [r=70.00]
+    RenderSVGPath {circle} at (352,177) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=425.00] [cy=250.00] [r=70.00]
+    RenderSVGPath {circle} at (527,177) size 146x146 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=600.00] [cy=250.00] [r=70.00]

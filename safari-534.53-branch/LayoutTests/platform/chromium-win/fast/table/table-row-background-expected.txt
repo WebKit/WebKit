@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 735x19
+          text run at (0,0) width 735: "This tests that the background-image of a table row \"covers exactly the full area of all cells that originate in the row\" as per "
+        RenderInline {A} at (0,0) size 777x39 [color=#0000EE]
+          RenderText {#text} at (735,0) size 777x39
+            text run at (735,0) width 42: "section"
+            text run at (0,20) width 167: "17.5.1 of the CSS 2.1 spec"
+        RenderText {#text} at (167,20) size 324x19
+          text run at (167,20) width 324: ". This test PASSED if you do not see the word FAIL."
+      RenderTable {TABLE} at (0,56) size 100x50
+        RenderTableSection {TBODY} at (0,0) size 100x50
+          RenderTableRow {TR} at (0,0) size 100x50
+            RenderTableCell {TD} at (0,14) size 50x22 [color=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+            RenderTableCell {TD} at (50,14) size 50x22 [color=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"

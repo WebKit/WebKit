@@ -1,0 +1,36 @@
+<html>
+  <!--
+    This test ensures the correctness the following Spatial Navigation
+    algorithm features.
+
+    1) When scrollbars are disabled via WebKit API, spatial navigation is still
+       to scroll the page towards the closest element.
+
+    * Pre-conditions:
+    1) DRT support for SNav enable/disable.
+    2) Scrollbar creations are disable by an WebKit-like API.
+
+    * Navigation steps:
+    1) Loads this page, focus goes to "start" automatically.
+    2) Attempt to move focus down to "end". As it is far enough to be outside
+       the viewport, a scroll action has to be performed towards "end" direction
+       (i.e. scroll down).
+   -->
+  <head>
+    <script type="application/javascript">
+      if (window.layoutTestController) {
+        layoutTestController.setScrollbarPolicy('vertical', 'off');
+        layoutTestController.setScrollbarPolicy('horizontal', 'off');
+      }
+
+      function queueit()
+      {
+        layoutTestController.queueLoad("./resources/ensure-scrolls-with-scrollbars-disabled-by-webkit.html");
+      }
+
+      window.onload = queueit;
+    </script>
+  </head>
+  <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
+  </body>
+</html>

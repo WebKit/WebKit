@@ -1,0 +1,7 @@
+Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface.
+
+Invalid listeners. Two callbacks are expected.
+
+[1] - query (-webkit-view-mode: windowed) changed to false
+[2] - query (-webkit-view-mode: windowed) changed to false
+

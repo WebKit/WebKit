@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="img-src 'none'; script-src 'unsafe-inline'">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+This test passes if it doesn't alert fail.
+<img src="../resources/abe.png" onload="alert('FAIL')">
+</body>
+</html>

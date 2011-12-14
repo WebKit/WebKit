@@ -1,0 +1,6 @@
+transform-value-types
+---------------------
+Differences between V8 and KJS. V8 returns
+typeof(CSSValueListPrototype) as Object and the constructor as a
+function, where as KJS has special objects. Same thing for
+WebKitCSSTransformValue.

@@ -1,0 +1,11 @@
+
+This tests the keygen element.
+
+PASS keygen.options is undefined
+PASS shadow.firstChild.tagName is "SELECT"
+PASS layoutTestController.shadowRoot(shadow) is null
+PASS layoutTestController.shadowRoot(shadow.firstChild) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

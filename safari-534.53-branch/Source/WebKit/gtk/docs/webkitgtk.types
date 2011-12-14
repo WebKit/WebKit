@@ -1,0 +1,13 @@
+#include <webkit/webkit.h>
+
+webkit_download_get_type
+webkit_navigation_response_get_type
+webkit_network_request_get_type
+webkit_web_back_forward_list_get_type
+webkit_web_history_item_get_type
+webkit_web_inspector_get_type
+webkit_web_settings_get_type
+webkit_web_view_get_type
+webkit_web_view_target_info_get_type
+webkit_web_window_features_get_type
+

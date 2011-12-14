@@ -1,0 +1,36 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<form name="my_form">
+<select name="set_sel">
+    <option id='opt'>========</option>
+</select>
+
+<select name="get_sel">
+    <option id="one">option 1</option>
+    <option id="two">option 2</option>
+</select>
+</form>
+
+<script>
+description('Tests the indexed setter and getter for HTMLOptionsCollection.');
+
+document.my_form.set_sel.options[1] = new Option("A");
+document.my_form.set_sel.options[2] = new Option("B");
+shouldBe("my_form.set_sel.options.length", "3");
+
+var options = document.my_form.get_sel.options;
+shouldBe("options(0)", "document.getElementById('one')");
+shouldBe("options(1)", "document.getElementById('two')");
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

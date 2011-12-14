@@ -1,0 +1,281 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>WebKit MathML Demo</title>
+<style>
+h2 {
+    color:purple;
+    text-align:center;
+}
+
+p {
+    text-align:center;
+}
+
+p.float {
+
+}
+</style>
+</head>
+<body>
+
+<div>
+<h2>Riemann's Zeta Function</h2>
+<p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+    <mi>ζ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mrow>
+    <munderover>
+        <mo mathsize='big'>&#x2211;</mo>
+        <mrow><mi>k</mi><mo>=</mo><mi>1</mi></mrow>
+        <mrow><mi>∞</mi></mrow>
+    </munderover>
+    </mrow>
+    <mrow>
+    <mfrac>
+        <mn>1</mn>
+        <msup><mi>k</mi><mi>n</mi></msup>
+    </mfrac>
+    </mrow>
+</math>
+</p>
+</div>
+
+<div>
+<h2>Fundamental Theorem of Calculus for Ordinary Integrals</h2>
+<p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+      <mrow>
+        <msubsup>
+          <mo maxsize="1">&#x222B;</mo>
+          <mrow>
+            <mi>x</mi>
+            <mo>=</mo>
+            <mi>a</mi>
+          </mrow>
+          <mi>y</mi>
+        </msubsup>
+        <mrow>
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>f</mi>
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+      </mrow>
+      <mo>=</mo>
+      <mi>f</mi>
+      <mo stretchy="false">(</mo>
+      <mi>y</mi>
+      <mo stretchy="false">)</mo>
+      <mo>&#x2212;</mo>
+      <mi>f</mi>
+      <mo stretchy="false">(</mo>
+      <mi>a</mi>
+      <mo stretchy="false">)</mo>
+</math>
+<br/><br/>
+<a href="http://math.mit.edu/classes/18.013A/MathML/chapter21/section01.xhtml">source</a>
+</p>
+</div>
+
+<div>
+<h2>The Area Under a Curve</h2>
+<p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+    <mrow>
+      <mrow>
+        <msubsup>
+          <mo maxsize="1">&#x222B;</mo>
+          <mrow>
+            <mi>x</mi>
+            <mo>=</mo>
+            <mi>a</mi>
+          </mrow>
+          <mrow>
+            <mi>x</mi>
+            <mo>=</mo>
+            <mi>b</mi>
+          </mrow>
+        </msubsup>
+        <mrow>
+          <mi>f</mi>
+          <mo stretchy="false">(</mo>
+          <mi>x</mi>
+          <mo stretchy="false">)</mo>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+      </mrow>
+    </mrow>
+</math>
+<br/><br/>
+<a href="http://math.mit.edu/classes/18.013A/MathML/chapter20/section01.xhtml">source</a>
+</p>
+</div>
+
+<div>
+<h2>De Moivre's Theorem</h2>
+<p>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mrow>
+      <msup>
+        <mi>e</mi>
+        <mrow>
+            <mi>i</mi>
+            <mi>&#x03B8; </mi>
+        </mrow>
+      </msup>
+      <mo>=</mo>
+      <mi> cos</mi>
+      <mo>&#x2061;</mo>
+      <mi>&#x03B8; </mi>
+      <mo>+</mo>
+      <mi> i </mi>
+      <mi>sin</mi>
+      <mo>&#x2061;</mo>
+      <mi>&#x03B8;</mi>
+    </mrow>
+</math>
+<br/><br/>
+<a href="http://en.wikipedia.org/wiki/De_Moivre's_formula">source</a>
+</p>
+</div>
+
+<div>
+<h2>Math in Normal Flow</h2>
+<p class="float">
+I am a paragraph of text <math xmlns='http://www.w3.org/1998/Math/MathML'><mi>x</mi><mo>+</mo><mn>1</mn></math> with math inline.
+</p>
+</div>
+<div>
+<h2>Fractions</h2>
+<p class="float"> 
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac></math>
+</p>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mi>x</mi><mo>+</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac></math>
+</p>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac>
+<mi>B</mi>
+<mi>C</mi>
+</mfrac><mo> + </mo>
+<mfrac>
+<mrow><mi>B</mi><mo> + </mo>
+<mfrac>
+<mi>D</mi>
+<mi>E</mi>
+</mfrac></mrow>
+<mi>C</mi>
+</mfrac><mo> + </mo>
+<mfrac>
+<mrow><mi>B</mi><mo> + </mo>
+<mfrac>
+<mrow><mi>D</mi><mo> + </mo>
+<mfrac>
+<mi>F</mi>
+<mi>G</mi>
+</mfrac></mrow>
+<mi>E</mi>
+</mfrac></mrow>
+<mi>C</mi>
+</mfrac><mo> + </mo>
+<mfrac>
+<mi>B</mi>
+<mrow><mi>C</mi><mo> + </mo>
+<mfrac>
+<mi>D</mi>
+<mrow><mi>E</mi><mo> + </mo>
+<mfrac>
+<mi>F</mi>
+<mi>G</mi>
+</mfrac></mrow>
+</mfrac></mrow>
+</mfrac>
+</math>
+</p>
+</div>
+<div>
+<h2>Operator Stretching</h2>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'><mo>(</mo><mi>x</mi><mo>+</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><mo>)</mo></math>
+</p>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mi>y</mi>
+<mo>(</mo>
+<munder>
+<mi>&#x220f;</mi>
+<mi>x</mi>
+</munder>
+<mfrac>
+<mrow><mi>x</mi><mo>+</mo>
+      <mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac>
+</mrow>
+<mrow><mi>x</mi><mo>+</mo>
+      <mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac>
+</mrow>
+</mfrac>
+<mo>)</mo>
+</math>
+</p>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mo>[</mo>
+<mtable>
+<mtr>
+<mtd><msub><mi>a</mi><mn>11</mn></msub></mtd>
+<mtd><msub><mi>a</mi><mn>12</mn></msub></mtd>
+<mtd><msub><mi>a</mi><mn>13</mn></msub></mtd>
+</mtr>
+<mtr>
+<mtd><msub><mi>b</mi><mn>21</mn></msub></mtd>
+<mtd><msub><mi>b</mi><mn>22</mn></msub></mtd>
+<mtd><msub><mi>b</mi><mn>23</mn></msub></mtd>
+</mtr>
+<mtr>
+<mtd><msub><mi>c</mi><mn>31</mn></msub></mtd>
+<mtd><msub><mi>c</mi><mn>32</mn></msub></mtd>
+<mtd><msub><mi>c</mi><mn>33</mn></msub></mtd>
+</mtr>
+</mtable>
+<mo>]</mo>
+</math>
+</p>
+</div>
+<div>
+<h2>Square Roots</h2>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<msqrt><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow></msqrt>
+</math>
+</p>
+<p class="float">
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<msqrt>
+<mfrac>
+<mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow>
+<mrow><mi>x</mi><mo>+</mo><mn>2</mn></mrow>
+</mfrac>
+</msqrt>
+</math>
+</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div role="menuitem">An ARIA menu item</div>
+<div role="option">An ARIA option</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that having elements with ARIA role 'option' or 'menuitem' as children of something of Group role does not crash.");
+
+if (window.layoutController) {
+    layoutTestController.dumpAsText();
+}
+
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    webArea = accessibilityController.focusedElement;
+
+    // Just trying to get the accessible objects for the elements with
+    // role 'option' and 'menuitem' shouldn't make this crash.
+    element = webArea.childAtIndex(0);
+    element = webArea.childAtIndex(1);
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

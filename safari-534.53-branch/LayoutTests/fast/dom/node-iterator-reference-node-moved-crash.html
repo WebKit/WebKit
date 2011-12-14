@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+            
+            function gc()
+            {
+                if (window.GCController)
+                    return GCController.collect();
+
+                for (var i = 0; i < 10000; i++) { // force garbage collection (FF requires about 9K allocations before a collect).
+                    var s = new String("abc");
+                }
+            }
+            
+            function runTest()
+            {
+                iteratorRoot = document.createElement();
+                element = iteratorRoot.appendChild(document.createElement());
+                element.appendChild(document.createElement());
+  
+                iterator = document.createNodeIterator(iteratorRoot, -1);
+                iterator.nextNode(); iterator.nextNode(); iterator.nextNode();
+                iterator.previousNode();
+  
+                iteratorRoot.removeChild(element);
+  
+                otherDocument = document.implementation.createHTMLDocument();
+                otherDocument.body.appendChild(iteratorRoot);
+
+                delete iterator;
+                gc();
+                div = document.body.appendChild(document.createElement('div'));
+                document.body.removeChild(div);
+                gc();
+                
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        Test passes if it does not crash.
+    </body>
+</html>
+

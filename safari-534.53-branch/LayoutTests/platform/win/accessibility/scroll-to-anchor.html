@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script>
+            function test()
+            {
+                if (!window.layoutTestController || !window.accessibilityController)
+                    return;
+
+                document.getElementById("notDRT").style.visibility = "hidden";
+
+                accessibilityController.logScrollingStartEvents();
+                layoutTestController.waitUntilDone();
+                layoutTestController.dumpAsText();
+                setTimeout(scrollToAnchor, 0);
+            }
+
+            function scrollToAnchor()
+            {
+                if (window.eventSender) {
+                    var input = document.getElementById('ANCHORLINK');
+                    var x = input.offsetLeft;
+                    var y = input.offsetTop;
+                    eventSender.mouseMoveTo(x, y);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+
+                layoutTestController.notifyDone();
+            }
+        </script>
+    </head>
+
+    <body onload="test()">
+        <div id="ANCHORLINK">
+            <a href="#bottom">Link to Bottom of the page</a>
+        </div>
+
+        <p>This test verifies that jumping to an anchor fires an MSAA event.</p>
+
+        <p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+        <div style="height: 1000px;"></div>
+
+        <a name="bottom"><h3>Bottom of the page</h3></a>
+    </body>
+</html>

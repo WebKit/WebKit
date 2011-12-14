@@ -1,0 +1,41 @@
+<script>
+function runTest(num)
+{
+    sel = window.getSelection();
+    start = document.getElementById("test" + num + "start");
+    end = document.getElementById("test" + num + "end");
+    sel.setBaseAndExtent(start, 0, end, end.childNodes.length);
+    document.execCommand("Delete");
+}
+</script>
+
+<p>This empties the last row, it should be removed. 'world!' should also be brought into the second cell of the second row.</p>
+<div contenteditable="true">
+<table border="1">
+<tr><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>4</td><td id="test1start">5</td><td>6</td></tr>
+<tr><td>7</td><td>8</td><td>9</td></tr>
+</table>
+<div><span id="test1end">Hello </span>world!</div>
+</div>
+
+<script>runTest(1);</script>
+
+
+
+<p>This empties a the last row of the first table and the first of the second, they should both be removed.</p>
+<div contenteditable="true">
+<table border="1">
+<tr><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>4</td><td id="test2start">5</td><td>6</td></tr>
+<tr><td>7</td><td>8</td><td>9</td></tr>
+</table>
+<div>Hello world!</div>
+<table border="1">
+<tr><td>1</td><td>2</td><td>3</td></tr>
+<tr><td>4</td><td id="test2end">5</td><td>6</td></tr>
+<tr><td>7</td><td>8</td><td>9</td></tr>
+</table>
+</div>
+
+<script>runTest(2);</script>

@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 768x39
+          text run at (0,0) width 768: "This tests for a bug where autoscroll code would prevent text from being selected. To run manually create a selection by clicking"
+          text run at (0,20) width 485: "somewhere in the first sentence of the paragraph below and dragging downward."
+layer at (0,60) size 800x540
+  RenderBlock (positioned) {DIV} at (0,60) size 800x540
+layer at (0,60) size 800x100
+  RenderBlock (positioned) {DIV} at (0,0) size 800x100
+    RenderBlock {DIV} at (11,0) size 778x100
+      RenderText {#text} at (0,0) size 44x19
+        text run at (0,0) width 44: "Lorem "
+      RenderInline {SPAN} at (0,0) size 35x19
+        RenderText {#text} at (44,0) size 35x19
+          text run at (44,0) width 35: "ipsum"
+      RenderText {#text} at (79,0) size 773x99
+        text run at (79,0) width 689: " dolor sit amet, consectetuer adipiscing elit. Integer vehicula accumsan massa. Quisque elementum. Cras id neque a"
+        text run at (0,20) width 773: "mi rutrum scelerisque. Nulla sed dui a massa sodales posuere. Nulla libero. Nulla posuere, felis id tincidunt tincidunt, ipsum metus"
+        text run at (0,40) width 758: "tristique risus, et convallis turpis elit eget massa. Nunc consectetuer dolor vel nunc. Cum sociis natoque penatibus et magnis dis"
+        text run at (0,60) width 767: "parturient montes, nascetur ridiculus mus. Quisque dapibus ante et nulla. Cras nec velit. Vestibulum ante ipsum primis in faucibus"
+        text run at (0,80) width 364: "orci luctus et ultrices posuere cubilia Curae; Integer ut tortor."
+selection start: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
+selection end:   position 260 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

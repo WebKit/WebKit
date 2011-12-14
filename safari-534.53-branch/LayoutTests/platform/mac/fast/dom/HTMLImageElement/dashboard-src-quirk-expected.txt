@@ -1,0 +1,3 @@
+Test a Dashboard quirk that allows the src attribute of an HTML img element to be specified using a form of CSS URL value notation.
+
+PASS

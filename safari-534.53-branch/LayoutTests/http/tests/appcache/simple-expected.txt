@@ -1,0 +1,2 @@
+This tests that the application cache works by first loading a file that does not exist in the cache (to verify that a cache has been associated) and then loads a file that is in the cache
+SUCCESS

@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion null
+
+PASS dt.setBooleanObject( null ); dt.PUB_BOOLEAN_OBJECT is null
+FAIL typeof dt.getBooleanObject() should be object. Was undefined.
+PASS dt.setDoubleObject( null ); dt.PUB_BOOLEAN_OBJECT is null
+FAIL typeof dt.getDoubleObject() should be object. Was undefined.
+PASS dt.setStringObject( null ); dt.PUB_STRING is null
+FAIL typeof dt.getStringObject() should be object. Was undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

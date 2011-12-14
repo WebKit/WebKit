@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+PASS dt.setChar(new Boolean(true)); dt.PUB_CHAR is 1
+PASS dt.setChar(new Boolean(true)); dt.getChar() is 1
+PASS typeof dt.getChar() is "number"
+PASS dt.setChar(new Boolean(false)); dt.PUB_CHAR is 0
+PASS dt.setChar(new Boolean(false)); dt.getChar() is 0
+PASS typeof dt.getChar() is "number"
+PASS dt.setChar(new Number(0)); dt.PUB_CHAR is 0
+PASS dt.setChar(new Number(0)); dt.getChar() is 0
+PASS typeof dt.getChar() is "number"
+FAIL dt.setChar(new String('65535')); dt.PUB_CHAR should be 111. Was 65535.
+FAIL dt.setChar(new String('65535')); dt.getChar() should be 111. Was 65535.
+PASS typeof dt.getChar() is "number"
+PASS dt.setChar(new String('1')); dt.PUB_CHAR is 1
+PASS dt.setChar(new String('1')); dt.getChar() is 1
+PASS typeof dt.getChar() is "number"
+PASS dt.setChar(new MyObject('5.5')); dt.PUB_CHAR is 5
+PASS dt.setChar(new MyObject('5.5')); dt.getChar() is 5
+PASS typeof dt.getChar() is "number"
+PASS dt.setChar(new MyOtherObject('107.5')); dt.PUB_CHAR is 107
+PASS dt.setChar(new MyOtherObject('107.5')); dt.getChar() is 107
+PASS typeof dt.getChar() is "number"
+PASS dt.setChar(new AnotherObject('6666')); dt.PUB_CHAR is 6666
+PASS dt.setChar(new AnotherObject('6666')); dt.getChar() is 6666
+PASS typeof dt.getChar() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

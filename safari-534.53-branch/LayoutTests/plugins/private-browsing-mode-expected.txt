@@ -1,0 +1,12 @@
+Tests that the private browsing API implementation works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS plugin1.privateBrowsingEnabled is false
+PASS plugin1.cachedPrivateBrowsingEnabled is false
+PASS plugin1.privateBrowsingEnabled is true
+PASS plugin1.cachedPrivateBrowsingEnabled is true
+PASS plugin2.privateBrowsingEnabled is true
+PASS plugin2.cachedPrivateBrowsingEnabled is true
+

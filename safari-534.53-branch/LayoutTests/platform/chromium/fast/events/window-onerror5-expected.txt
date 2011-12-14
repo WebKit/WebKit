@@ -1,0 +1,4 @@
+Test that window.onerror is invoked for syntax error in eval. You should see a log record if window.onerror is working properly for this test.Bug 8519.
+
+Error caught successfully: Uncaught SyntaxError: Unexpected end of input File: window-onerror5.html Line: 1
+

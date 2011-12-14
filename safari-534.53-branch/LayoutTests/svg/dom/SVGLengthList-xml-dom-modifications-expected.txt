@@ -1,0 +1,47 @@
+ABC
+ABC
+This is a test how SVGLengthList reacts to XML DOM modifications.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text1.x.baseVal.numberOfItems is 3
+PASS text1XBaseValGetItem0.value is 500
+PASS text1XBaseValGetItem1.value is 1000
+PASS text1XBaseValGetItem2.value is 1500
+
+Setting x = x - 250 on all three items
+PASS text1XBaseValGetItem0.value is 250
+PASS text1XBaseValGetItem1.value is 750
+PASS text1XBaseValGetItem2.value is 1250
+
+Now using text.setAttribute('x', '50 100')
+
+Assure that the wrappers still point to the OLD values
+PASS text1XBaseValGetItem0.value is 250
+PASS text1XBaseValGetItem1.value is 750
+PASS text1XBaseValGetItem2.value is 1250
+
+Assure that obtaining new wrappers will give the right NEW values
+PASS text1.x.baseVal.numberOfItems is 2
+PASS text1.x.baseVal.getItem(0).value is 50
+PASS text1.x.baseVal.getItem(1).value is 100
+
+Setting x = x + 100 on all old wrapper items
+
+Assure that the old wrappers can still be modified, but don't influence the new wrappers
+PASS text1XBaseValGetItem0.value is 350
+PASS text1XBaseValGetItem1.value is 850
+PASS text1XBaseValGetItem2.value is 1350
+
+Assure that the new wrappers stayed the same
+PASS text1.x.baseVal.numberOfItems is 2
+PASS text1.x.baseVal.getItem(0).value is 50
+PASS text1.x.baseVal.getItem(1).value is 100
+
+The test passes if you only see 'PASS' messages, and both elements on top look the same
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

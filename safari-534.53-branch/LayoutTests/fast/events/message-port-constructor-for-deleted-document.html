@@ -1,0 +1,55 @@
+<body>
+<p>Test that destroying a document doesn't cause a crash when executing MessageChannel constructor saved from its Window object.</p>
+<pre id=log></pre>
+<script>
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var constructor;
+
+function test()
+{
+    constructor = window.frames[0].MessageChannel;
+
+    var frameElement = document.getElementsByTagName("iframe")[0];
+    frameElement.parentNode.removeChild(frameElement);
+    frameElement = null;
+
+    gc();
+    setTimeout(test2, 10);
+}
+
+function test2()
+{
+    gc();
+    try {
+        new constructor;
+    } catch (ex) {
+    }
+
+    log("Didn't crash: SUCCESS");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<iframe src="resources/message-port-iframe.html" onload="test()"></iframe>
+</body>

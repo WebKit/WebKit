@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+            function timeoutFired()
+            {
+                document.getElementById('console').innerHTML = "Not scrolled by WheelEvent: SUCCESS";
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+            function scrollEventFired()
+            {
+                document.getElementById('console').innerHTML = "Scrolled by WheelEvent: FAILED (Should not be scrolled).";
+                if (window.layoutTestController)
+                    window.layoutTestController.notifyDone();
+            }
+            function runTest()
+            {
+                window.frames[0].onscroll = scrollEventFired;
+                if (window.frames[0].eventSender) {
+                    window.frames[0].eventSender.mouseScrollBy(0, -1);
+                }
+                setTimeout("timeoutFired()", 1000);
+            }
+        </script>
+    </head>
+    <body>
+        <div id="console"></div>
+        <iframe onload="runTest();" scrolling="no" style="width:200px;height:200px;" src="resources/scrollable-iframe.html"> 
+    </body>
+</html>
+

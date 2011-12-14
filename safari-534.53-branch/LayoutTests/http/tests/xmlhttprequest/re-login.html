@@ -1,0 +1,33 @@
+<body>
+<p>Test that default credentials aren't used when ones are provided to XHR explicitly.</p>
+<span>Login: </span><span id="login">FAIL - Test not run</span><br>
+<span>Default: </span><span id="default">FAIL - Test not run</span><br>
+<span>Re-login: </span><span id="relogin">FAIL - Test not run</span><br>
+<span>New default: </span><span id="newdefault">FAIL - Test not run</span>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var xhr = new XMLHttpRequest;
+// "?login1" is only here for ease of debugging; it doesn't affect behavior.
+xhr.open("GET", "resources/re-login/resource.php?login1", false, "user1", "pass");
+xhr.send("");
+document.getElementById("login").innerHTML = xhr.responseText == "User: user1, password: pass." ? "PASS" : "FAIL";
+
+// "?default" is only here for ease of debugging; it doesn't affect behavior.
+xhr.open("GET", "resources/re-login/resource.php?default", false);
+xhr.send("");
+document.getElementById("default").innerHTML = xhr.responseText == "User: user1, password: pass." ? "PASS" : "FAIL";
+
+// "?login2" is only here for ease of debugging; it doesn't affect behavior.
+xhr.open("GET", "resources/re-login/resource.php?login2", false, "user2", "pass");
+xhr.send("");
+document.getElementById("relogin").innerHTML = xhr.responseText == "User: user2, password: pass." ? "PASS" : "FAIL";
+
+// "?newdefault" is only here for ease of debugging; it doesn't affect behavior.
+xhr.open("GET", "resources/re-login/resource.php?default", false);
+xhr.send("");
+document.getElementById("newdefault").innerHTML = xhr.responseText == "User: user2, password: pass." ? "PASS" : "FAIL";
+
+</script>
+</body>

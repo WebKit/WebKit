@@ -1,0 +1,17 @@
+Tests the properties of the XPathException object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.toString() is "Error: TYPE_ERR: DOM XPath Exception 52"
+PASS Object.prototype.toString.call(e) is "[object XPathException]"
+PASS Object.prototype.toString.call(e.__proto__) is "[object XPathExceptionPrototype]"
+PASS e.constructor.toString() is "[object XPathExceptionConstructor]"
+PASS e.constructor is window.XPathException
+PASS e.TYPE_ERR is e.constructor.TYPE_ERR
+PASS e.INVALID_EXPRESSION_ERR is 51
+PASS e.TYPE_ERR is 52
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

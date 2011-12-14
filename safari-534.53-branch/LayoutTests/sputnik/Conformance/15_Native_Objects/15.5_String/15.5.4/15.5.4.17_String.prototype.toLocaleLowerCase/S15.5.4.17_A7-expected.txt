@@ -1,0 +1,7 @@
+S15.5.4.17_A7
+
+TypeError: 'function toLocaleLowerCase() { [native code] }' is not a constructor (evaluating 'new __FACTORY')
+PASS 
+
+TEST COMPLETE
+

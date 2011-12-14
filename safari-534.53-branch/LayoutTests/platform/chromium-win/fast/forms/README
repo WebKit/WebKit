@@ -1,0 +1,11 @@
+This file documents why the various tests have been rebaselined.
+
+select-namedItem.html
+---------------------
+The test throws an exception on accessing the 'innerHTML' property of a null
+pointer. The spec says e.message is implementation-dependent in that case.
+V8 has the same implementation as Firefox.  See bug 868016.
+
+selected-index-assert.html
+---------------------
+Only the error message differ.

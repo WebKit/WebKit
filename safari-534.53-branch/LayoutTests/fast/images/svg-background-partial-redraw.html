@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SVG img and bg test</title>
+  <style type="text/css" media="screen">
+    div {
+      -webkit-box-sizing: border-box;
+    }
+
+    #test
+    {
+      position: relative;
+      height: 200px;
+      width: 200px;
+      background: url('resources/circle.svg') 0 0 no-repeat;
+      border: 1px solid black;
+    }
+
+    #revealer {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      height: 100px;
+      width: 200px;
+      background-color: red;
+    }
+    
+    #test.revealed > #revealer {
+      display: none;
+    }
+
+    #test:hover > #revealer {
+      display: block;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    
+    function doTest()
+    {
+        document.body.offsetTop;
+        if (window.layoutTestController)
+          layoutTestController.display();
+        document.getElementById('test').className = 'revealed';
+    }
+    window.addEventListener('load', doTest, false)
+  </script>
+</head>
+<body>
+
+<p>You should continue see a full blue circle when part of the element is redrawn (hover to test interactively).</p>
+<div id="test">
+  <div id="revealer"></div>
+</div>
+
+</body>
+</html>

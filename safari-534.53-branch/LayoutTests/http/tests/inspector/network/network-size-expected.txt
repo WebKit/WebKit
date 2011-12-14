@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 22: Done.
+Tests network resource size reporting.
+
+
+http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&size=500
+resourceSize: 500
+transferSize: 500
+http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&size=500&gzip=true
+resourceSize: 500
+transferSize: 202
+

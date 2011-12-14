@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var nativeJSON = this.JSON;
+this.JSON = null;
+</script>
+<script src="resources/json2-es5-compat.js"></script>
+<script src="resources/JSON-stringify.js"></script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

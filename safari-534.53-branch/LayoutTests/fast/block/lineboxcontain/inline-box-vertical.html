@@ -1,0 +1,16 @@
+<!doctype html>
+<html style="-webkit-writing-mode:vertical-lr">
+<head>
+<title>line-box-contain: inline-box vertical test</title>
+<style>
+.test { -webkit-line-box-contain: inline-box; line-box-contain: inline-box; font: 64px/1em Ahem; background-color:red; height:6em; width:3em }
+.goodline { color: green }
+</style>
+</head>
+<body>
+You should see a green rectangle below.  If you see any red, the test has failed.
+
+<div class="test">
+<span style="background-color:green; font-size:64px;padding-top:5em; padding-bottom:1em;margin-left:0.5em;padding-right:0.5em"></span><br>
+<div style="display:inline-block; height:6em;width:2em;vertical-align:bottom;background-color:green"></div></div>
+

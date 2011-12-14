@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<defs>
+<marker id="arrow1" viewBox="0 0 10 10" orient="90" refX="5" refY="5" markerWidth="2" markerHeight="2" markerUnits="userSpaceOnUse" overflow="visible">
+	<path d="M 5 0 L 10 10 L 0 10 Z" fill="blue" stroke="none"/>
+</marker>
+
+<marker id="arrow2" viewBox="0 0 10 10" orient="90" refX="5" refY="5" markerWidth="2" markerHeight="2" markerUnits="strokeWidth" overflow="visible">
+	<path d="M 5 0 L 10 10 L 0 10 Z" fill="blue" stroke="none"/>
+</marker>
+</defs>
+
+<line x1="10" x2="80" y1="40" y2="40" stroke="green" stroke-width="2px" marker-end="url(#arrow1)" vector-effect="non-scaling-stroke"/>   
+<line x1="10" x2="80" y1="80" y2="80" stroke="green" stroke-width="2px" marker-end="url(#arrow2)" vector-effect="non-scaling-stroke"/>   
+</svg>

@@ -1,0 +1,40 @@
+<html manifest="resources/wrong-signature.manifest">
+<body>
+<p>Test that a manifest served with a wrong signature isn't treated as such.</p>
+<p>Should say SUCCESS:</p>
+<div id=result></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function cacheCallback()
+{
+    log("FAIL: An event was dispatched on window.applicationCache, even though it was not associated wuth any cache yet.");
+}
+
+function test()
+{
+    // Wait for cache update to finish.
+    if (window.applicationCache.status != window.applicationCache.UNCACHED)
+        log("FAILURE: Unexpected cache status: " + window.applicationCache.status);
+    else
+        log("SUCCESS");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.addEventListener('cached', function() { log("cached"); cacheCallback() }, false);
+applicationCache.addEventListener('noupdate', function() { log("noupdate"); cacheCallback() }, false);
+applicationCache.addEventListener('error', test, false);
+
+</script>
+</body>
+</html>

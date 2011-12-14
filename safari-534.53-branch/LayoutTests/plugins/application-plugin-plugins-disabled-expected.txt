@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x34
+        RenderText {#text} at (0,16) size 69x18
+          text run at (0,16) width 69: "Qt Plugin: "
+        RenderEmbeddedObject {OBJECT} at (69,0) size 300x30
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,34) size 784x34
+        RenderText {#text} at (0,16) size 118x18
+          text run at (0,16) width 118: "Qt Styled Widget: "
+        RenderEmbeddedObject {OBJECT} at (118,0) size 300x30
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,68) size 784x104
+        RenderText {#text} at (0,86) size 124x18
+          text run at (0,86) width 124: "Third-party plugin: "
+        RenderEmbeddedObject {EMBED} at (124,0) size 100x100
+        RenderText {#text} at (0,0) size 0x0

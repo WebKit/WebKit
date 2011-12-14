@@ -1,0 +1,17 @@
+ 
+  
+   
+EXPECTED (videos[0].getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(videos[0].poster) == 'content/abe.png') OK
+EXPECTED (videos[1].getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(videos[1].poster) == 'content/abe.png') OK
+EXPECTED (videos[2].getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(videos[2].poster) == 'content/abe.png') OK
+EXPECTED (videos[3].getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(videos[3].poster) == 'content/abe.png') OK
+EXPECTED (videos[4].getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(videos[4].poster) == 'content/abe.png') OK
+EXPECTED (videos[5].getAttribute('poster') == 'content/abe.png') OK
+EXPECTED (relativeURL(videos[5].poster) == 'content/abe.png') OK
+END OF TEST
+

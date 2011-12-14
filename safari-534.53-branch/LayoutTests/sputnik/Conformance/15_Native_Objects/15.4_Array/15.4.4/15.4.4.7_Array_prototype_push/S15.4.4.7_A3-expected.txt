@@ -1,0 +1,6 @@
+S15.4.4.7_A3
+
+FAIL SputnikError: #2.2: x = []; x.length = 4294967295; x.push("x") throw RangeError. Actual: SputnikError: #2.1: x = []; x.length = 4294967295; x.push("x") throw RangeError. Actual: 4294967295
+
+TEST COMPLETE
+

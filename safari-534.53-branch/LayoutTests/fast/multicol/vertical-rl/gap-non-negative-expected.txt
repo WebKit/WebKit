@@ -1,0 +1,7 @@
+Test for rdar://problem/5962118 Crash in RenderBlock::calcColumnWidth().
+
+This tests that the column-gap property does not allow negative values.
+
+PASS
+
+

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<iframe id="iframe" width=100 height=100></iframe>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This protects against a crash when a text marker still holds a reference to a node that's been deallocated.");
+
+    // Add an element that a text marker can be retrieved from.
+    var contentDoc = document.getElementById("iframe").contentDocument; 
+    contentDoc.body.innerHTML = "<h1 tabindex='0'>content</h1>";
+
+    // Tab to the element. 
+    // Note: If the element has an "id" it won't get de-allocated in time, so .focus() can't be used.
+    eventSender.keyDown("\t");
+
+    // get a marker that will become invalid when the node disappears.
+    var axDiv = accessibilityController.focusedElement;
+    var textMarkerRange = axDiv.textMarkerRangeForElement(axDiv);
+    var invalidMarker = axDiv.startTextMarkerForTextMarkerRange(textMarkerRange);
+
+</script>
+
+<script>
+     // Write new content to cause all content to disappear.
+     contentDoc.body.innerHTML = "<h2>new content</h2>";
+</script>
+
+<script>
+    // Access the invalid marker (it should not crash).
+    document.getElementById("body").focus();
+    var body = accessibilityController.focusedElement;
+
+    body.accessibilityElementForTextMarker(invalidMarker);
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

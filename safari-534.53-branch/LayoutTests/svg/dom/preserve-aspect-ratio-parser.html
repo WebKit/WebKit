@@ -1,0 +1,136 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the parser for preserve aspect ratio attribute values.");
+
+var imageElement = document.createElementNS("http://www.w3.org/2000/svg", "image");
+
+function parsePreserveAspectRatio(string, alignValue, meetOrSliceValue)
+{
+    imageElement.setAttributeNS(null, "preserveAspectRatio", string);
+    debug("Test string: '" + string + "'");
+    shouldBe("imageElement.preserveAspectRatio.baseVal.align", "" + alignValue);
+    shouldBe("imageElement.preserveAspectRatio.baseVal.meetOrSlice", "" + meetOrSliceValue);
+    debug("");
+}
+
+parsePreserveAspectRatio("none", 1, 1);
+
+parsePreserveAspectRatio("xMinYMin", 2, 1);
+parsePreserveAspectRatio("xMidYMin", 3, 1);
+parsePreserveAspectRatio("xMaxYMin", 4, 1);
+parsePreserveAspectRatio("xMinYMid", 5, 1);
+parsePreserveAspectRatio("xMidYMid", 6, 1);
+parsePreserveAspectRatio("xMaxYMid", 7, 1);
+parsePreserveAspectRatio("xMinYMax", 8, 1);
+parsePreserveAspectRatio("xMidYMax", 9, 1);
+parsePreserveAspectRatio("xMaxYMax", 10, 1);
+
+parsePreserveAspectRatio("xMinYMin meet", 2, 1);
+parsePreserveAspectRatio("xMidYMin meet", 3, 1);
+parsePreserveAspectRatio("xMaxYMin meet", 4, 1);
+parsePreserveAspectRatio("xMinYMid meet", 5, 1);
+parsePreserveAspectRatio("xMidYMid meet", 6, 1);
+parsePreserveAspectRatio("xMaxYMid meet", 7, 1);
+parsePreserveAspectRatio("xMinYMax meet", 8, 1);
+parsePreserveAspectRatio("xMidYMax meet", 9, 1);
+parsePreserveAspectRatio("xMaxYMax meet", 10, 1);
+
+parsePreserveAspectRatio("xMinYMin slice", 2, 2);
+parsePreserveAspectRatio("xMidYMin slice", 3, 2);
+parsePreserveAspectRatio("xMaxYMin slice", 4, 2);
+parsePreserveAspectRatio("xMinYMid slice", 5, 2);
+parsePreserveAspectRatio("xMidYMid slice", 6, 2);
+parsePreserveAspectRatio("xMaxYMid slice", 7, 2);
+parsePreserveAspectRatio("xMinYMax slice", 8, 2);
+parsePreserveAspectRatio("xMidYMax slice", 9, 2);
+parsePreserveAspectRatio("xMaxYMax slice", 10, 2);
+
+parsePreserveAspectRatio("defer xMinYMin", 2, 1);
+parsePreserveAspectRatio("defer xMidYMin", 3, 1);
+parsePreserveAspectRatio("defer xMaxYMin", 4, 1);
+parsePreserveAspectRatio("defer xMinYMid", 5, 1);
+parsePreserveAspectRatio("defer xMidYMid", 6, 1);
+parsePreserveAspectRatio("defer xMaxYMid", 7, 1);
+parsePreserveAspectRatio("defer xMinYMax", 8, 1);
+parsePreserveAspectRatio("defer xMidYMax", 9, 1);
+parsePreserveAspectRatio("defer xMaxYMax", 10, 1);
+
+parsePreserveAspectRatio("defer xMinYMin meet", 2, 1);
+parsePreserveAspectRatio("defer xMidYMin meet", 3, 1);
+parsePreserveAspectRatio("defer xMaxYMin meet", 4, 1);
+parsePreserveAspectRatio("defer xMinYMid meet", 5, 1);
+parsePreserveAspectRatio("defer xMidYMid meet", 6, 1);
+parsePreserveAspectRatio("defer xMaxYMid meet", 7, 1);
+parsePreserveAspectRatio("defer xMinYMax meet", 8, 1);
+parsePreserveAspectRatio("defer xMidYMax meet", 9, 1);
+parsePreserveAspectRatio("defer xMaxYMax meet", 10, 1);
+
+parsePreserveAspectRatio("defer xMinYMin slice", 2, 2);
+parsePreserveAspectRatio("defer xMidYMin slice", 3, 2);
+parsePreserveAspectRatio("defer xMaxYMin slice", 4, 2);
+parsePreserveAspectRatio("defer xMinYMid slice", 5, 2);
+parsePreserveAspectRatio("defer xMidYMid slice", 6, 2);
+parsePreserveAspectRatio("defer xMaxYMid slice", 7, 2);
+parsePreserveAspectRatio("defer xMinYMax slice", 8, 2);
+parsePreserveAspectRatio("defer xMidYMax slice", 9, 2);
+parsePreserveAspectRatio("defer xMaxYMax slice", 10, 2);
+
+debug('Tests for some whitespace cases.');
+debug('');
+
+parsePreserveAspectRatio(" xMinYMin", 2, 1);
+parsePreserveAspectRatio("xMinYMin ", 2, 1);
+parsePreserveAspectRatio(" xMinYMin ", 2, 1);
+parsePreserveAspectRatio("         xMinYMin        ", 2, 1);
+parsePreserveAspectRatio("xMinYMin" + String.fromCharCode(9), 2, 1);
+parsePreserveAspectRatio("xMinYMin" + String.fromCharCode(10), 2, 1);
+parsePreserveAspectRatio("xMinYMin" + String.fromCharCode(13), 2, 1);
+
+parsePreserveAspectRatio("xMinYMinslice", 2, 2);
+parsePreserveAspectRatio("xMinYMin slice", 2, 2);
+parsePreserveAspectRatio("xMinYMinslice ", 2, 2);
+parsePreserveAspectRatio("xMinYMin        slice        ", 2, 2);
+parsePreserveAspectRatio(" xMinYMinslice", 2, 2);
+parsePreserveAspectRatio(" xMinYMin slice", 2, 2);
+parsePreserveAspectRatio(" xMinYMinslice ", 2, 2);
+parsePreserveAspectRatio("        xMinYMin        slice        ", 2, 2);
+
+debug('Tests for bug where "slice" parsing was based on the old value rather than the parsed value.');
+debug('');
+
+parsePreserveAspectRatio("none", 1, 1);
+parsePreserveAspectRatio("xMinYMin slice", 2, 2);
+
+parsePreserveAspectRatio("xMinYMin", 2, 1);
+parsePreserveAspectRatio("none slice", 1, 1);
+
+parsePreserveAspectRatio("xMinYMin", 2, 1);
+parsePreserveAspectRatio("slice", 1, 1);
+
+debug('Strings that fail to parse, and hence parse as "none".');
+debug('');
+
+parsePreserveAspectRatio("", 1, 1);
+parsePreserveAspectRatio("defer", 1, 1);
+parsePreserveAspectRatio("meet", 1, 1);
+parsePreserveAspectRatio("slice", 1, 1);
+parsePreserveAspectRatio("xminymin", 1, 1);
+parsePreserveAspectRatio("refer xMinYMin slice", 1, 1);
+parsePreserveAspectRatio("xMinYMin defer", 1, 1);
+parsePreserveAspectRatio("slice xMinYMin", 1, 1);
+parsePreserveAspectRatio("xMinYMin" + String.fromCharCode(0xa0), 1, 1);
+
+successfullyParsed = true;
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

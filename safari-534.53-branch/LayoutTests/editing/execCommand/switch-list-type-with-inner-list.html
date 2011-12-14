@@ -1,0 +1,21 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<body>
+<div id="test" contenteditable>
+<ul>
+    <li>hello</li>
+    <ol>
+    <li>world</li>
+    </ol>
+    <li>webkit</li>
+</ul>
+</div>
+<script>
+Markup.description('This tests switching an unordered list with a nested list to an ordered list.');
+
+var test = document.getElementById('test');
+window.getSelection().selectAllChildren(test);
+document.execCommand('InsertOrderedList', false, null);
+
+Markup.dump('test');
+</script>
+</body>

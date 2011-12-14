@@ -1,0 +1,13 @@
+This tests decoding characters in various character sets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS decode('x-nextstep', '%E1') is 'U+00C6'
+
+The x-nextstep test is meant to ensure that we still support legacy encodings that are not part of ICU - it is expected that it fails in other browsers, which do not support this particular encoding. See http://bugs.webkit.org/show_bug.cgi?id=4195 for more details.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

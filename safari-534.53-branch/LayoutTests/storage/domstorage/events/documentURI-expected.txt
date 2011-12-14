@@ -1,0 +1,40 @@
+Test that changing documentURI has no effects on the url passed into storage events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing sessionStorage
+storage.clear()
+PASS storage.length is 0
+Reset storage event list
+storageEventList = new Array()
+storage.foo = '123'
+PASS storageEventList.length is 1
+Saving url
+document.documentURI = 'abc'
+PASS document.documentURI is "abc"
+storage.foo = 'xyz'
+PASS storageEventList.length is 2
+PASS true is true
+
+
+Testing localStorage
+storage.clear()
+PASS storage.length is 0
+Reset storage event list
+storageEventList = new Array()
+storage.foo = '123'
+PASS storageEventList.length is 1
+Saving url
+document.documentURI = 'abc'
+PASS document.documentURI is "abc"
+storage.foo = 'xyz'
+PASS storageEventList.length is 2
+PASS true is true
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

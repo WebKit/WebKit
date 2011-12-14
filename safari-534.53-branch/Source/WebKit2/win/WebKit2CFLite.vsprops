@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebKit2CFLite"
+	>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="CFLite$(LibraryConfigSuffix).lib"
+		ModuleDefinitionFile="WebKit2CFLite.def"
+		AdditionalLibraryDirectories=""
+	/>
+</VisualStudioPropertySheet>

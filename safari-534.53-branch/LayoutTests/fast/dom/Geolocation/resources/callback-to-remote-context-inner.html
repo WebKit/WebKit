@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <script>
+      function init() {
+          if (window.layoutTestController) {
+              layoutTestController.setGeolocationPermission(true);
+              layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+          }
+          window.parent.onIframeReady()
+      }
+    </script>
+  </head>
+  <body onload="init()">
+  </body>
+</html>

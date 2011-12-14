@@ -1,0 +1,39 @@
+<html>
+<body>
+<div contenteditable="true">
+This tests outdenting ordered lists that contains an unordered-list.  You should see 1 through 3 before numbers "two" through "four".
+<ol id="e">
+<ol><li>one</li>
+<li id="start">two</li></ol>
+<ul><li>three</li></ul>
+<ol><li id="end">four</li></ol>
+</ol>
+</div>
+
+<ul>
+<li>Before:<span id="c1"></span></li>
+<li>After:<span id="c2"></span></li>
+</ul>
+
+<script type="text/javascript">
+
+if (window.layoutTestController) {
+    layoutTestController.dumpEditingCallbacks();
+    layoutTestController.dumpAsText();
+}
+
+var e = document.getElementById('e');
+
+document.getElementById('c1').appendChild(document.createTextNode(e.innerHTML));
+
+var s = window.getSelection();
+var r = document.createRange();
+r.setStart(document.getElementById('start'),0);
+r.setEnd(document.getElementById('end'),1);
+s.removeAllRanges();
+s.addRange(r);
+document.execCommand("Outdent", false, "");
+
+document.getElementById('c2').appendChild(document.createTextNode(e.innerHTML));
+
+</script>

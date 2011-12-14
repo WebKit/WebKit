@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  null
+
+PASS Packages.com.netscape.javascript.qa.lc3.jsnull.Null_001["staticAmbiguous(java.lang.Class)"](null) threw exception ReferenceError: Can't find variable: Packages.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

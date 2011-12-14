@@ -1,0 +1,6 @@
+Test that window properties set for initial document are kept if security check passes 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS

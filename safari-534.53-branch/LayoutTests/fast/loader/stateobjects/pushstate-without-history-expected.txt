@@ -1,0 +1,3 @@
+This test checks if history.length is correct after a few history.pushState calls.
+
+history.length is: 4

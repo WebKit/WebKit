@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="EUC-JP">
+<script>
+
+function test()
+{
+    // [ fontName, expectation, isSystemFont ]
+    var FONT_AND_EXPECTATIONS = [
+        [ null, "yen sign" ],
+        [ "MS PGothic", "yen sign" ],
+        [ "MS Gothic", "yen sign" ],
+        [ "MS PMincho", "yen sign" ],
+        [ "MS Mincho", "yen sign" ],
+        [ "Meiryo", "yen sign" ],
+        [ "ＭＳ Ｐゴシック", "yen sign" ],
+        [ "ＭＳ ゴシック", "yen sign" ],
+        [ "ＭＳ Ｐ明朝", "yen sign" ],
+        [ "ＭＳ 明朝", "yen sign" ],
+        [ "メイリオ", "yen sign" ],
+        [ "Times", "backslash" ],
+        [ "foobar", "backslash" ],
+        [ "*INVALID FONT NAME*", "yen sign" ],
+        [ "serif", "yen sign" ],
+        [ "sans-serif", "yen sign" ],
+        [ "cursive", "yen sign" ],
+        [ "fantasy", "yen sign" ],
+        [ "monospace", "yen sign" ],
+        [ "-webkit-body", "backslash" ],
+        [ "caption", "yen sign", true ],
+        [ "icon", "yen sign", true ],
+        [ "menu", "yen sign", true ],
+        [ "message-box", "yen sign", true ],
+        [ "small-caption", "yen sign", true ],
+        [ "status-bar", "yen sign", true ],
+        [ "-webkit-mini-control", "yen sign", true ],
+        [ "-webkit-small-control", "yen sign", true ],
+        [ "-webkit-control", "yen sign", true ],
+        [ "MS Gothic, Times", "yen sign" ],
+        [ "Times, MS Gothic", "backslash" ],
+        [ "MS Gothic, foobar", "yen sign" ],
+        [ "foobar, MS Gothic", "backslash" ],
+        [ "serif, Times", "yen sign" ],
+        [ "Times, serif", "backslash" ],
+        [ "serif, serif", "yen sign" ],
+        [ "foobar, Times", "backslash" ],
+        [ "Times, foobar", "backslash" ]
+    ];
+
+    for (var i = 0; FONT_AND_EXPECTATIONS[i]; i++) {
+        var fontName = FONT_AND_EXPECTATIONS[i][0];
+        var expectation = FONT_AND_EXPECTATIONS[i][1];
+        var isSystemFont = FONT_AND_EXPECTATIONS[i][2];
+        var parentElement = document.createElement("div");
+
+        var element = document.createElement("span");
+        if (isSystemFont)
+            element.style.font = fontName;
+        else if (fontName)
+            element.style.font = "1em " + fontName;
+
+        if (fontName)
+            text = 'Using font "' + fontName + '". ';
+        else
+            text = 'No font is specified. ';
+        text += 'expected: ' + expectation + ', actual: ' + '\\';
+        element.innerHTML = text;
+
+        // Check inheritance with font property.
+        childElement = document.createElement("span");
+        childElement.style.font = "inherit";
+        childElement.innerText = '\\';
+        element.appendChild(childElement);
+
+        // Check inheritance with font-family property.
+        var childElement = document.createElement("span");
+        childElement.style.fontFamily = "inherit";
+        childElement.innerText = '\\';
+        element.appendChild(childElement);
+
+        parentElement.appendChild(element);
+
+        if (fontName && !isSystemFont) {
+            element = document.createElement("span");
+            element.innerText = '\\';
+            element.style.fontFamily = fontName;
+            parentElement.appendChild(element);
+        }
+
+        document.body.appendChild(parentElement);
+    }
+}
+
+</script>
+</head>
+
+<body onload="test();">
+</body>
+
+</html>

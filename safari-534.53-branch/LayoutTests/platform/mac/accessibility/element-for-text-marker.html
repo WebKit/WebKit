@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+text here
+<div id="text1" tabindex="0">text block</div>
+text here
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests the text marker system will return the correct element when given a text marker.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("text1").focus();
+          var text = accessibilityController.focusedElement;
+
+          // Get the actual text node.
+          text = text.childAtIndex(0);
+
+          // Check that we can get the start marker for this range.
+          var textMarkerRange1 = text.textMarkerRangeForElement(text);
+          shouldBe("text.textMarkerRangeLength(textMarkerRange1)", "10");
+          var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange1);
+
+          // Check that the start marker will give us the same element that we started with.
+          shouldBeTrue("text.accessibilityElementForTextMarker(startMarker).isEqual(text)");
+
+          // Get the end marker and check that it gives us the same element.
+          var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange1);
+          shouldBeTrue("text.accessibilityElementForTextMarker(endMarker).isEqual(text)");
+
+          // Make a marker range out of the start and end markers and check the length
+          var newMarkerRange = text.textMarkerRangeForMarkers(startMarker, endMarker);
+          shouldBe("text.textMarkerRangeLength(newMarkerRange)", "10");
+
+          // And make sure it equals the same marker range we started with
+          shouldBeTrue("newMarkerRange.isEqual(textMarkerRange1)");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

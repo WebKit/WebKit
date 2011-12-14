@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<!--
+/*
+ * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+ -->
+<html>
+  <head>
+    <title>Earth and Mars</title>
+    <script src="resources/J3DI.js"> </script>
+    <script src="resources/J3DIMath.js" type="text/javascript"> </script>
+    
+    <script id="vshader" type="x-shader/x-vertex">
+        uniform mat4 u_modelViewProjMatrix;
+        uniform mat4 u_normalMatrix;
+        uniform vec3 lightDir;
+
+        attribute vec3 vNormal;
+        attribute vec4 vTexCoord;
+        attribute vec4 vPosition;
+        
+        varying float v_Dot;
+        varying vec2 v_texCoord;
+        
+        void main()
+        {
+            gl_Position = u_modelViewProjMatrix * vPosition;
+            v_texCoord = vTexCoord.st;
+            vec4 transNormal = u_normalMatrix * vec4(vNormal,1);
+            v_Dot = max(dot(transNormal.xyz, lightDir), 0.0);
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+    precision mediump float;
+#endif
+    
+        uniform sampler2D sampler2d;
+
+        varying float v_Dot;
+        varying vec2 v_texCoord;
+        
+        void main()
+        {
+            vec4 color = texture2D(sampler2d,v_texCoord);
+            color += vec4(0.1,0.1,0.1,1);
+            gl_FragColor = vec4(color.xyz * v_Dot, color.a);
+        }
+    </script>
+
+    <script>
+        function init()
+        {
+            var gl = initWebGL("example", "vshader", "fshader", 
+                                [ "vNormal", "vTexCoord", "vPosition"],
+                                [ 0, 0, 0, 1 ], 10000);
+
+            gl.uniform3f(gl.getUniformLocation(gl.program, "lightDir"), 0, 0, 1);
+            gl.uniform1i(gl.getUniformLocation(gl.program, "sampler2d"), 0);
+
+            gl.enable(gl.TEXTURE_2D);
+
+            gl.sphere = makeSphere(gl, 1, 30, 30);
+            
+            // get the images
+            earthTexture = loadImageTexture(gl, "resources/earthmap1k.jpg");
+            marsTexture = loadImageTexture(gl, "resources/mars500x250.png");
+
+            return gl;
+        }
+        
+        width = -1;
+        height = -1;
+        
+        function reshape(ctx)
+        {
+            var canvas = document.getElementById('example');
+            if (canvas.width == width && canvas.width == height)
+                return;
+
+            width = canvas.width;
+            height = canvas.height;
+            
+            ctx.viewport(0, 0, width, height);
+
+            ctx.perspectiveMatrix = new J3DIMatrix4();
+            ctx.perspectiveMatrix.perspective(30, width/height, 1, 10000);
+            ctx.perspectiveMatrix.lookat(0,0,6, 0, 0, 0, 0, 1, 0);
+        }
+        
+        function drawOne(ctx, angle, x, y, z, scale, texture)
+        {
+            // setup VBOs
+            ctx.enableVertexAttribArray(0);
+            ctx.enableVertexAttribArray(1);
+            ctx.enableVertexAttribArray(2);
+
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, ctx.sphere.vertexObject);
+            ctx.vertexAttribPointer(2, 3, ctx.FLOAT, false, 0, 0);
+            
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, ctx.sphere.normalObject);
+            ctx.vertexAttribPointer(0, 3, ctx.FLOAT, false, 0, 0);
+            
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, ctx.sphere.texCoordObject);
+            ctx.vertexAttribPointer(1, 2, ctx.FLOAT, false, 0, 0);
+
+            ctx.bindBuffer(ctx.ELEMENT_ARRAY_BUFFER, ctx.sphere.indexObject);
+
+            // generate the model-view matrix
+            var mvMatrix = new J3DIMatrix4();
+            mvMatrix.translate(x,y,z);
+            mvMatrix.rotate(30, 1,0,0);
+            mvMatrix.rotate(angle, 0,1,0);
+            mvMatrix.scale(scale, scale, scale);
+
+            // construct the normal matrix from the model-view matrix
+            var normalMatrix = new J3DIMatrix4(mvMatrix);
+            normalMatrix.invert();
+            normalMatrix.transpose();
+            normalMatrix.setUniform(ctx, ctx.getUniformLocation(ctx.program, "u_normalMatrix"), false);
+            
+            // construct the model-view * projection matrix
+            var mvpMatrix = new J3DIMatrix4(ctx.perspectiveMatrix);
+            mvpMatrix.multiply(mvMatrix);
+            mvpMatrix.setUniform(ctx, ctx.getUniformLocation(ctx.program, "u_modelViewProjMatrix"), false);
+
+            ctx.bindTexture(ctx.TEXTURE_2D, texture);
+            ctx.drawElements(ctx.TRIANGLES, ctx.sphere.numIndices, ctx.UNSIGNED_SHORT, 0);
+        }
+        
+        function drawPicture(ctx)
+        {
+            reshape(ctx);
+            ctx.clear(ctx.COLOR_BUFFER_BIT | ctx.DEPTH_BUFFER_BIT);
+            
+            drawOne(ctx, currentAngle, -1, 0, 0, 1, earthTexture);
+            drawOne(ctx, -currentAngle, 1, 0, 0, 0.6, marsTexture);
+            ctx.flush();
+            
+            framerate.snapshot();
+            
+            currentAngle += incAngle;
+            if (currentAngle > 360)
+                currentAngle -= 360;
+        }
+        
+        function start()
+        {
+            var c = document.getElementById("example");
+            var w = Math.floor(window.innerWidth * 0.9);
+            var h = Math.floor(window.innerHeight * 0.9);
+
+            c.width = w;
+            c.height = h;
+
+            var ctx = init();
+            currentAngle = 0;
+            incAngle = 0.2;
+            var f = function() { drawPicture(ctx) };
+            setInterval(f, 10);
+            framerate = new Framerate("framerate");
+        }
+    </script>
+    <style type="text/css">
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+  </head>
+  <body onload="start()">
+    <canvas id="example">
+    There is supposed to be an example drawing here, but it's not important.
+    </canvas>
+    <div id="framerate"></div>
+    <div id="console"></div>
+  </body>
+</html>

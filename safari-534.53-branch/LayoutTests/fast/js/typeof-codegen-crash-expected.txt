@@ -1,0 +1,16 @@
+This test for a crash when optimizing expressions of the form 'typeof o == constant' where 'constant' is not a string.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof o == undefined is false
+PASS typeof o == null is false
+PASS typeof o == true is false
+PASS typeof o == false is false
+PASS typeof o == 1 is false
+PASS typeof o == 1.0 is false
+PASS typeof o == { } is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

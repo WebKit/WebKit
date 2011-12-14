@@ -1,0 +1,18 @@
+LiveConnect 3.0 java array object inheritance JavaScript Array methods
+
+PASS b0 = wkTestStringToJavaByteArray("hello"); b0.join() +'' is "104,101,108,108,111"
+PASS b0.join == Array.prototype.join is true
+FAIL b0.getClass().getName() +'' should be [B. Threw exception TypeError: 'undefined' is not a function (evaluating 'b0.getClass()')
+PASS b1 = wkTestStringToJavaByteArray("JavaScript"); b1.reverse().join() +'' is getCharValues("tpircSavaJ")
+PASS b1.reverse == Array.prototype.reverse is true
+FAIL b1.getClass().getName() +'' should be [B. Threw exception TypeError: 'undefined' is not a function (evaluating 'b1.getClass()')
+PASS b2 = wkTestStringToJavaByteArray("JavaScript"); b2.sort().join() +'' is "105,112,114,116,118,74,83,97,97,99"
+PASS b2.sort == Array.prototype.sort is true
+FAIL b2.getClass().getName() +'' should be [B. Threw exception TypeError: 'undefined' is not a function (evaluating 'b2.getClass()')
+PASS b3 = wkTestStringToJavaByteArray("JavaScript"); b3.sort().join() +'' is "105,112,114,116,118,74,83,97,97,99"
+PASS b3.sort == Array.prototype.sort is true
+FAIL b3.getClass().getName() +'' should be [B. Threw exception TypeError: 'undefined' is not a function (evaluating 'b3.getClass()')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

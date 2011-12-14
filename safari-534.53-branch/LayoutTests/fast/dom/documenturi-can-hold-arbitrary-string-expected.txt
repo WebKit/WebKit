@@ -1,0 +1,5 @@
+normalizeURL(document.documentURI) = LayoutTests/fast/dom/documenturi-can-hold-arbitrary-string.html
+Assigning to documentURI
+document.documentURI = PASS: documentURI can hold an arbitrary string.
+
+

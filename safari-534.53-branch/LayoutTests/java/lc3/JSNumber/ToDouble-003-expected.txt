@@ -1,0 +1,60 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to float
+
+PASS dt.setFloat( 0 ); dt.PUB_FLOAT is 0
+PASS dt.setFloat( 0 ); dt.getFloat() is 0
+PASS typeof dt.getFloat() is 'number'
+FAIL dt.setFloat( -0 ); Infinity / dt.PUB_FLOAT should be -Infinity. Was Infinity.
+PASS dt.setFloat( -0 ); Infinity / dt.getFloat() is -Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( Infinity ); dt.PUB_FLOAT  should be Infinity. Was 0.
+PASS dt.setFloat( Infinity ); dt.getFloat()  is Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( -Infinity ); dt.PUB_FLOAT should be -Infinity. Was 0.
+PASS dt.setFloat( -Infinity ); dt.getFloat()  is -Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( NaN ); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat( NaN ); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL java.lang.Float.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Float.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+FAIL java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+FAIL -java.lang.Float.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL -java.lang.Float.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+FAIL -java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL -java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(1.7976931348623157E+308); dt.PUB_FLOAT should be Infinity. Was 0.
+PASS dt.setFloat(1.7976931348623157E+308); dt.getFloat() is Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(1.7976931348623158e+308); dt.PUB_FLOAT should be Infinity. Was 0.
+PASS dt.setFloat(1.7976931348623158e+308); dt.getFloat() is Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(1.7976931348623159e+308); dt.PUB_FLOAT should be Infinity. Was 0.
+PASS dt.setFloat(1.7976931348623159e+308); dt.getFloat() is Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(-1.7976931348623157E+308); dt.PUB_FLOAT should be -Infinity. Was 0.
+PASS dt.setFloat(-1.7976931348623157E+308); dt.getFloat() is -Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(-1.7976931348623158e+308); dt.PUB_FLOAT should be -Infinity. Was 0.
+PASS dt.setFloat(-1.7976931348623158e+308); dt.getFloat() is -Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(-1.7976931348623159e+308); dt.PUB_FLOAT should be -Infinity. Was 0.
+PASS dt.setFloat(-1.7976931348623159e+308); dt.getFloat() is -Infinity
+PASS typeof dt.getFloat() is "number"
+PASS dt.setFloat(1e-2000); dt.PUB_FLOAT is 0
+PASS dt.setFloat(1e-2000); dt.getFloat() is 0
+PASS typeof dt.getFloat() is 'number'
+FAIL dt.setFloat(1e2000); dt.PUB_FLOAT should be Infinity. Was 0.
+PASS dt.setFloat(1e2000); dt.getFloat() is Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(-1e2000); dt.PUB_FLOAT should be -Infinity. Was 0.
+PASS dt.setFloat(-1e2000); dt.getFloat() is -Infinity
+PASS typeof dt.getFloat() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

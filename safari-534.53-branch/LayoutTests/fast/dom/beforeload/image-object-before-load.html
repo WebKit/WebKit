@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script src="resources/print.js"></script>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        document.addEventListener("beforeload", function(event) {
+            event.preventDefault();
+        }, true);
+
+        function checkObject()
+        {
+            var style = getComputedStyle(document.getElementsByTagName("object")[0], null);
+            if (style.width != "0px" || style.height != "0px")
+                print("FAIL", "red");
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    </script>
+</head>
+<body onload="checkObject();">
+    <object data="../../images/resources/test-load.jpg">
+        <span style="font-family:monospace; color:green">PASS</span>
+    </object>
+    <div id="console"></div>
+</body>
+</html>

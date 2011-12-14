@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests for the onspeechchange event with &lt;input type="text" speech>.');
+
+function onSpeechChange() {
+    shouldBeEqualToString('document.getElementById("speechInput").value', 'Green eggs and ham');
+    shouldEvaluateTo('window.event.results.length', 3);
+    shouldBeEqualToString('window.event.results[0].utterance', 'Green eggs and ham');
+    shouldEvaluateTo('window.event.results[0].confidence', 0.8);
+    shouldBeEqualToString('window.event.results[1].utterance', 'Green x and ham');
+    shouldEvaluateTo('window.event.results[1].confidence', 0.5);
+    shouldBeEqualToString('window.event.results[2].utterance', '3 x and am');
+    shouldEvaluateTo('window.event.results[2].confidence', 0.2);
+    finishJSTest();
+}
+
+function run() {
+    if (window.layoutTestController && window.eventSender) {
+        layoutTestController.addMockSpeechInputResult('Green eggs and ham', 0.8, '');
+        layoutTestController.addMockSpeechInputResult('Green x and ham', 0.5, '');
+        layoutTestController.addMockSpeechInputResult('3 x and am', 0.2, '');
+
+        // Clicking the speech button should fill in mock speech-recognized text.
+        var input = document.getElementById('speechInput');
+        var x = input.offsetLeft + input.offsetWidth - 4;
+        var y = input.offsetTop + input.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput' x-webkit-speech onwebkitspeechchange="onSpeechChange()">
+</body>
+</html>

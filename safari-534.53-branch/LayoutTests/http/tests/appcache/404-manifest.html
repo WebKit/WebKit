@@ -1,0 +1,59 @@
+<html manifest="does-not-exist.manifest">
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function unexpectedEvent(name)
+{
+    log("FAILURE: Unexpected " + name + " event.");
+}
+
+applicationCache.addEventListener('noupdate', function() { unexpectedEvent("noupdate") }, false);
+applicationCache.addEventListener('downloading', function() { unexpectedEvent("downloading") }, false);
+applicationCache.addEventListener('progress', function() { unexpectedEvent("progress") }, false);
+applicationCache.addEventListener('updateready', function() { unexpectedEvent("updateready") }, false);
+applicationCache.addEventListener('cached', function() { unexpectedEvent("cached") }, false);
+applicationCache.addEventListener('obsolete', function() { unexpectedEvent("obsolete") }, false);
+
+function test()
+{
+    if (!gotCheckingEvent)
+        log("FAILURE: Did not get a checking event");
+    if (window.applicationCache.status)
+        log("FAILURE: Cache status is not UNCACHED, " + window.applicationCache.status);
+
+    // The manifest failed to load, so there should be no cache, and subresources should be loaded normally.
+    try {
+        var req = new XMLHttpRequest();
+        req.open("GET", "resources/simple.txt", false);
+        req.send();
+
+        if (req.responseText == 'Hello, World!')
+            log("SUCCESS");
+        else
+            log("FAILURE: Did not get expected response data.");
+    } catch (e) {
+        log("FAILURE: Could not load data.");
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+var gotCheckingEvent = false;
+applicationCache.addEventListener('checking', function() { gotCheckingEvent = true; }, false);
+
+applicationCache.addEventListener('error', function() { test() }, false);
+
+</script>
+<p>Test that subresources can be loaded if manifest is not available. Should say SUCCESS.</p>
+
+<div id=result></div>
+</html>

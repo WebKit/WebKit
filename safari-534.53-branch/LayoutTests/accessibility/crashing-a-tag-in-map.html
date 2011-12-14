@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div class="body">
+
+<img src="resources/cake.png" height="500" width="613" border="0" usemap="#img">
+<map id="img" name="img">
+<area shape="rect" coords="97,45,5,5" href="test.html" alt="">
+<area shape="rect" coords="447,45,5,5" href="test.html">
+<a href="test.html"></a>
+<area shape="default" nohref="nohref" alt="">
+</map></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a hit test on a image map that has areas and anchors does not crash");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+
+          // test fails if it crashes here
+          var control = accessibilityController.focusedElement.elementAtPoint(100, 100);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+
+use File::Temp qw/tempfile/;
+use FindBin;
+
+use lib $FindBin::Bin;
+use webkitdirs;
+
+my ($fh, $path) = tempfile(UNLINK => 0, SUFFIX => '.cmd') or die;
+
+chomp(my $vcBin = `cygpath -w "$FindBin::Bin/../vcbin"`);
+chomp(my $scriptsPath = `cygpath -w "$FindBin::Bin"`);
+
+my $vsToolsVar;
+if ($ENV{'VS80COMNTOOLS'}) {
+    $vsToolsVar = "VS80COMNTOOLS";
+} elsif ($ENV{'VS90COMNTOOLS'}) {
+    $vsToolsVar = "VS90COMNTOOLS";
+} else {
+    print "*************************************************************\n";
+    print "Cannot find Visual Studio tools dir.\n";
+    print "Please ensure that \$VS80COMNTOOLS or \$VS90COMNTOOLS\n";
+    print "is set to a valid location.\n";
+    print "*************************************************************\n";
+    die;
+}
+
+print $fh "\@echo off\n\n";
+print $fh "call \"\%" . $vsToolsVar . "\%\\vsvars32.bat\"\n\n";
+print $fh "set PATH=$vcBin;$scriptsPath;\%PATH\%\n\n";
+
+print $fh "IF EXIST \"\%VSINSTALLDIR\%\\Common7\\IDE\\devenv.com\" (devenv.com /useenv " . join(" ", @ARGV) . ") ELSE ";
+print $fh "VCExpress.exe /useenv " . join(" ", @ARGV) . "\n";
+
+
+close $fh;
+
+chmod 0755, $path;
+
+chomp($path = `cygpath -w -s '$path'`);
+
+exec("cmd /c \"call $path\"");

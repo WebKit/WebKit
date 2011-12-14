@@ -1,0 +1,46 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 6 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 21 of #text > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 21 of #text > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > DIV > BODY > HTML > #document toDOMRange:range from 21 of #text > LI > OL > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+| "
+"
+| <span>
+|   id="test"
+|   "Empty list item"
+| "
+"
+| <p>
+|   "
+"
+| <ol>
+|   "
+    "
+|   <li>
+|     "I should be number 1."
+|   "
+    "
+|   <li>
+|   "
+    "
+|   <li>
+|     "I should be number 3."
+|     <ol>
+|       <li>
+|         "I should be number 1."
+|       <li>
+|       <li>
+|         "I should be number 3.<#selection-caret>"
+|   "
+"
+| "
+"

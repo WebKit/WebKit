@@ -1,0 +1,71 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's create and removeObjectStore");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('create-and-remove-object-store')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    window.db = evalAndLog("db = event.target.result");
+    testCreateAndRemove();
+    request = evalAndLog("result = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
+    testCreateAndRemove();
+}
+
+function testCreateAndRemove()
+{
+    debug("Trying create");
+    evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    debug("Trying remove");
+    evalAndExpectException('db.createObjectStore("some os")', "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+}
+
+function cleanDatabase()
+{
+    deleteAllObjectStores(db);
+
+    os = evalAndLog("db.createObjectStore('tmp')");
+    evalAndExpectException("db.createObjectStore('tmp')", "webkitIDBDatabaseException.CONSTRAINT_ERR");
+
+    trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    request = evalAndLog("trans.objectStore('tmp').get(0)");
+    request.onsuccess = tryOnceMore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function tryOnceMore()
+{
+    shouldBeUndefined("event.target.result");
+
+    testCreateAndRemove();
+
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

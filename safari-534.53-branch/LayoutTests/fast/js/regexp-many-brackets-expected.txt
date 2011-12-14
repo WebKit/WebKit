@@ -1,0 +1,11 @@
+Test regular expression processing with many capturing brackets (200).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'hello'.match(manyBracketsRegExp) is manyHellosArray
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

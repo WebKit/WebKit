@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#68A8E8]
+      RenderBlock {DIV} at (0,0) size 784x27 [bgcolor=#D0D0D0]
+        RenderText {#text} at (322,0) size 140x26
+          text run at (322,0) width 140: "Font Size:6mm"
+      RenderTable {TABLE} at (0,27) size 784x131 [bgcolor=#008000]
+        RenderTableSection {TBODY} at (0,0) size 784x131
+          RenderTableRow {TR} at (0,2) size 784x127
+            RenderTableCell {TD} at (2,2) size 389x127 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 387x27 [bgcolor=#D0D0D0]
+                RenderText {#text} at (93,0) size 201x26
+                  text run at (93,0) width 201: "Table height at 24mm"
+              RenderTable {TABLE} at (1,28) size 387x98
+                RenderTableSection {THEAD} at (0,0) size 387x32 [bgcolor=#FF0000]
+                  RenderTableRow {TR} at (0,2) size 387x28
+                    RenderTableCell {TD} at (2,2) size 383x28 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (151,1) size 81x25
+                        text run at (151,1) width 81: "THEAD"
+                RenderTableSection {TFOOT} at (0,65) size 387x33 [bgcolor=#0000FF]
+                  RenderTableRow {TR} at (0,2) size 387x29
+                    RenderTableCell {TD} at (2,2) size 383x29 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (154,1) size 75x26
+                        text run at (154,1) width 75: "TFOOT"
+                RenderTableSection {TBODY} at (0,32) size 387x33 [bgcolor=#FFFF00]
+                  RenderTableRow {TR} at (0,2) size 387x29
+                    RenderTableCell {TD} at (2,2) size 383x29 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (154,1) size 75x26
+                        text run at (154,1) width 75: "TBODY"
+            RenderTableCell {TD} at (393,2) size 389x127 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 387x27 [bgcolor=#D0D0D0]
+                RenderText {#text} at (93,0) size 201x26
+                  text run at (93,0) width 201: "Table height at 25mm"
+              RenderTable {TABLE} at (1,28) size 387x98
+                RenderTableSection {THEAD} at (0,0) size 387x32 [bgcolor=#FF0000]
+                  RenderTableRow {TR} at (0,2) size 387x28
+                    RenderTableCell {TD} at (2,2) size 383x28 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (151,1) size 81x25
+                        text run at (151,1) width 81: "THEAD"
+                RenderTableSection {TFOOT} at (0,65) size 387x33 [bgcolor=#0000FF]
+                  RenderTableRow {TR} at (0,2) size 387x29
+                    RenderTableCell {TD} at (2,2) size 383x29 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (154,1) size 75x26
+                        text run at (154,1) width 75: "TFOOT"
+                RenderTableSection {TBODY} at (0,32) size 387x33 [bgcolor=#FFFF00]
+                  RenderTableRow {TR} at (0,2) size 387x29
+                    RenderTableCell {TD} at (2,2) size 383x29 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (154,1) size 75x26
+                        text run at (154,1) width 75: "TBODY"

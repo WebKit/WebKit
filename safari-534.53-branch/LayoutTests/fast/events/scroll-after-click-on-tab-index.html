@@ -1,0 +1,50 @@
+<html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+function getCenterFor(element)
+{
+  var rect = element.getBoundingClientRect();
+  return { x : parseInt((rect.left + rect.right) / 2) , y : parseInt((rect.top + rect.bottom) / 2)};
+}
+
+function runTest()
+{
+  if (!window.layoutTestController)
+    return;
+  if (!window.eventSender)
+    return;
+
+  layoutTestController.waitUntilDone();
+  layoutTestController.dumpAsText();
+
+  alert("Scroll position " + document.body.scrollTop);
+  center = getCenterFor(document.getElementById("sp"));
+  eventSender.mouseMoveTo(center.x, center.y);
+  eventSender.mouseDown();
+  eventSender.mouseUp();
+  eventSender.keyDown("downArrow");
+  setTimeout(verifyScrolling, 15);
+}
+
+function verifyScrolling()
+{
+  debug("Scroll position is more than 0");
+  shouldBe("document.body.scrollTop > 0", "true");
+  layoutTestController.notifyDone();
+}
+
+var successfullyParsed = true;
+
+</script>
+<style>
+</style>
+<body onload="runTest();">
+<input type="radio" id="myradio">Click the text below and then try to scroll.<br>
+<div id="console"></div>
+<script src="../js/resources/js-test-post.js"></script>
+<br><br><br><br><br><br><br><br><br><br>
+<span tabindex=1 id="sp">My span</span>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</body>
+</html>
+

@@ -1,0 +1,49 @@
+All boxes below should be 100px * 100px and green.
+
+control => PASS
+50px + 50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+150px - 50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px + 50px (2 spaces around operator) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+150px - 50px (2 spaces around operator) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px*2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px *2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px* 2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+200px/2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+200px /2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+200px/ 2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px*(2) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px *(2) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px* (2) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px*(1 + 1) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px*(12 - 10) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px*(10 / 5) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+10px* (5 * 2) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px* (12 mod 10) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px + 10px * 5 (operation order) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+1100px mod 1000 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+100%/2 (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+100% + -100px (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+80% - 60px (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+300px - 100% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+-100px + 100% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+20% + 30% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+80% - 30% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+10% * 5 (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+5 * 10% (where 100% is 200px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+(100px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+(50px + 50px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+(50px) + 50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px + (50px) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px + 50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px + 25px * 2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+(25px + 25px) * 2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+2 * 50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+2 * 100px / 2 => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+12 mod 10 * 50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+(1em - 1em) + 100px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+50px + +50px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+-50px + 150px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+-50px - -150px => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+(((((((100px))))))) => FAIL: @zoom=1 expected width of 100, but was 256; @zoom=1.2 expected width of 100, but was 256; @zoom=2 expected width of 100, but was 256
+100px => FAIL: @zoom=1 expected height of 100, but was 50; @zoom=1.2 expected height of 100, but was 50; @zoom=2 expected height of 100, but was 50
+100% * 2 => FAIL: @zoom=1 expected height of 100, but was 50; @zoom=1.2 expected height of 100, but was 50; @zoom=2 expected height of 100, but was 50

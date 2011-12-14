@@ -1,0 +1,18 @@
+<script>
+if (window.layoutTestController) {
+     layoutTestController.dumpEditingCallbacks();
+     window.layoutTestController.waitUntilDone();
+}
+    
+function runTest() {
+    var frame = frames[0];
+    var doc = frame.document;
+    var body = doc.body;
+    var sel = frame.getSelection();
+    sel.setPosition(body, 0);
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+</script>
+<p>This tests for a caret painting bug.  You should not see a caret in the editable subframe below.</p>
+<iframe src="../resources/contenteditable-iframe-src.html" onload="runTest();"></iframe>

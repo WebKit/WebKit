@@ -1,0 +1,32 @@
+<html>
+<body>
+    New window with beforeUnload handler.<br>
+    You should see an alert with "beforeUnload" if you try to close the window.<br>
+    <iframe src="resources/onbeforeunload-focused-iframe-frame.html" id="focusedFrame"></iframe>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        window.onbeforeunload = beforeUnload;
+        function beforeUnload()
+        {
+            alert("beforeUnload");
+            window.onbeforeunload = null;
+        }
+
+
+        function simulateCloseWindow()
+        {
+            if (window.layoutTestController) {
+                // Simulate an attempt to close the window
+                if (!layoutTestController.callShouldCloseOnWebView())
+                    alert("Should have run the beforeUnload handler.");
+                layoutTestController.notifyDone();
+            }
+        }
+    </script>
+</body>
+</html>

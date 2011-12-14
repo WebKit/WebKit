@@ -1,0 +1,36 @@
+<style>
+    div.box { -webkit-box-sizing: border; border: solid blue; }
+    div.shorter { width: 54px; }
+    div.taller { width: 72px; }
+</style>
+<body style="-webkit-writing-mode:vertical-lr">
+<div style="width: 100px; height: 630px; -webkit-column-gap: 5px; -webkit-columns: 6;">
+    <div class="taller box"></div>
+    <div class="taller box"></div>
+    <div id="break-before" class="shorter box" style="-webkit-column-break-before: always;"></div>
+    <div class="shorter box" style="-webkit-column-break-after: always;"></div>
+    <div id="after-break" class="shorter box"></div>
+    <div id="no-break" class="shorter box" style="-webkit-column-break-inside: avoid;"></div>
+</div>
+<pre id="console"></pre>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function testBoxPosition(id, expectedLeft, expectedTop)
+    {
+        var rect = document.getElementById(id).getBoundingClientRect();
+        if (rect.left === expectedLeft && rect.top === expectedTop)
+            log("PASS: '" + id + "' is at (" + expectedLeft + ", " + expectedTop + ")");
+        else
+            log("FAIL: '" + id + "' is at (" + rect.left + ", " + rect.top + ") instead of (" + expectedLeft + " ," + expectedTop + ")");
+    }
+
+    testBoxPosition("break-before", 8, 218);
+    testBoxPosition("after-break", 8, 428);
+</script>

@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+# Copyright (C) 2010 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+"""deduplicate-tests -- print test results duplicated between platforms.
+
+If platform/mac-leopard is missing an expected test output, we fall back on
+platform/mac.  This means it's possible to grow redundant test outputs,
+where we have the same expected data in both a platform directory and another
+platform it falls back on.
+
+This command dumps out all such files.  You can use it like this:
+  deduplicate-tests --verbose  # print out the duplicated files
+  deduplicate-tests | xargs git rm   # delete them
+"""
+
+
+import optparse
+import webkitpy.common.system.logutils as logutils
+import webkitpy.layout_tests.deduplicate_tests as deduplicate_tests
+
+
+def parse_args():
+    """Provides a default set of command line args.
+
+    Returns a tuple of options, args from optparse"""
+
+    configuration_options = [
+        optparse.make_option("-v", "--verbose", dest="verbose",
+                             action="store_true", default=False,
+                             help="Verbose output."),
+        optparse.make_option("-g", "--glob", dest="glob_pattern",
+                             default="*-expected*",
+                             help="Specify the glob to filter the files, defaults to *-expected*."),
+    ]
+
+    option_list = (configuration_options)
+    option_parser = optparse.OptionParser(option_list=option_list)
+
+    options, _ = option_parser.parse_args()
+
+    return options
+
+
+def run(options):
+    logutils.configure_logging()
+    if options.verbose:
+        format = ("* %(test)s\n"
+                  "\tredundantly on %(platform)s and %(fallback)s\n"
+                  "\tconsider deleting %(path)s")
+    else:
+        format = "%(path)s"
+
+    for dupe in deduplicate_tests.deduplicate(options.glob_pattern):
+        print(format % dupe)
+
+
+def main():
+    options = parse_args()
+    run(options)
+
+
+if __name__ == '__main__':
+    main()

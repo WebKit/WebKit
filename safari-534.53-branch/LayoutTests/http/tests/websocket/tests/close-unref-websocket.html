@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
+<script src="../../../js-test-resources/js-test-pre.js"></script>
+<script src="../../../js-test-resources/js-test-post-function.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test if Web Socket is closed while handshaking and unreferenced, it should fire close event at most once.");
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+var countCloseEvent = 0;
+
+function endTest()
+{
+    shouldBeGreaterThanOrEqual("1", "countCloseEvent");
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+};
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hanging-handshake");
+ws.onclose = function() {
+    countCloseEvent += 1;
+};
+ws.close();
+ws = null;
+gc();
+setTimeout("endTest()", 100);
+var successfullyParsed = true;
+</script>
+
+</body>
+</html>

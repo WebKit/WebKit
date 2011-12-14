@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/core/hc_entitiessetnameditemns1
+Status	failure
+Message	entitiesNotNull: assertNotNull failed

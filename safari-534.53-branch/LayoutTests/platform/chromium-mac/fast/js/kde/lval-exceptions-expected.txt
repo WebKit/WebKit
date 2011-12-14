@@ -1,0 +1,18 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS function () { a = x; } threw exception ReferenceError: x is not defined.
+PASS function () { x += "foo"; } threw exception ReferenceError: x is not defined.
+PASS function () { b = a.x; } did not throw an exception
+PASS function () { b = a['x']; } did not throw an exception
+PASS function () { a['x'] += 'baz'; } did not throw an exception
+PASS a['x'] is "undefinedbaz"
+PASS function () { b = a.y; } did not throw an exception
+PASS function () { a.y += 'glarch'; } did not throw an exception
+PASS a['y'] is "undefinedglarch"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

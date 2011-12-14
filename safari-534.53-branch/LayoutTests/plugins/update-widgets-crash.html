@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+        embed {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    // This gets called automatically from the test plugin.
+    var doingTest = false;
+    function setWindowCalled()
+    {
+        if (!doingTest)
+            return;
+
+        var victim = document.getElementById('victim');
+        victim.parentNode.removeChild(victim);
+        document.body.offsetTop;
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        doingTest = false;
+    }
+    
+    function doTest()
+    {
+        doingTest = true;
+        document.getElementById('plugin').style.top = "120px";
+        document.body.offsetTop;
+        doingTest = false;
+    }
+    
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <p>This test should not crash.</p>
+    <embed type="application/x-webkit-test-netscape"
+        onSetWindow="setWindowCalled()"
+        id="plugin">
+    <embed name="victim" type="application/x-webkit-test-netscape" id="victim">
+  
+</body>
+</html>

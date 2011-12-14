@@ -1,0 +1,49 @@
+Test the basics of IndexedDB's IDBDatabase.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('database-basics')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+Testing setVersion.
+db.setVersion("version a")
+db.setVersion("version b")
+PASS db.version is "version b"
+PASS db.name is "database-basics"
+PASS db.objectStoreNames is []
+PASS db.objectStoreNames.length is 0
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames[0] is null
+PASS db.objectStoreNames.item(0) is null
+db.createObjectStore("test123")
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
+db.setVersion("version c")
+PASS db.version is "version c"
+PASS db.name is "database-basics"
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
+db.createObjectStore("test456")
+setVersionTrans = event.target.result
+PASS setVersionTrans !== null is true
+PASS db.version is "version b"
+PASS db.objectStoreNames is ['test123']
+PASS db.objectStoreNames.length is 1
+PASS db.objectStoreNames.contains('') is false
+PASS db.objectStoreNames.contains('test456') is false
+PASS db.objectStoreNames.contains('test123') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

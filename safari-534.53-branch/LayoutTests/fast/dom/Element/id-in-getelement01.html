@@ -1,0 +1,35 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<div name='name1' id='id1'/>
+<div name='name2' id='id2'/>
+<div name='name3' id='id2'/>
+
+<script>
+description("Test getElementById");
+
+var elem;
+
+// element found with exact match
+elem = document.getElementById('id1');
+shouldBe('elem.getAttribute("name")', '"name1"');
+
+// multiple elements having same id return the first one
+elem = document.getElementById('id2');
+shouldBe('elem.getAttribute("name")', '"name2"');
+
+// element with id not found
+elem = document.getElementById('id3');
+shouldBeNull('elem');
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

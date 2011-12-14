@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+        </script>
+    </head>
+    <style>
+    div { 
+        border: 5px solid maroon; 
+        -webkit-column-count: 2;
+        margin: 1em 0;
+    }
+    summary { 
+        -webkit-column-span: all;
+        background-color: #eeeeee;
+        color: black;
+    }
+    </style>
+    <body onload="document.open(); document.write('PASS, does not crash'); document.close();">
+        <div>
+            <label>AAA
+            <summary>BBB
+        </div>
+    </body>
+</html>
+

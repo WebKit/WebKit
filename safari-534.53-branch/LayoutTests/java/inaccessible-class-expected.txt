@@ -1,0 +1,4 @@
+Test accessing a field of a non-public class. This may or may not need to work, but it definitely shouldn't crash.
+
+FAIL: Exception raised
+

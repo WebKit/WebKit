@@ -1,0 +1,61 @@
+This test checks that const declarations in JavaScript work and are readonly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL const redef='a'; const redef='a'; should throw an exception. Was undefined.
+PASS x is "RIGHT"
+PASS y is "RIGHT"
+PASS a is 1
+PASS one is 1
+PASS a is 1
+PASS one is 1
+PASS a is 2
+PASS one is 1
+PASS a is 0
+PASS one is 1
+PASS a is 3
+PASS one is 1
+PASS a is 2
+PASS one is 1
+PASS function f() { const one = 1; one++; return one; } f(); is 1
+PASS function f() { const oneString = '1'; return oneString++; } f(); is 1
+PASS function f() { const one = 1; return one++; } f(); is 1
+PASS function f() { const one = 1; one--; return one; } f(); is 1
+PASS function f() { const oneString = '1'; return oneString--; } f(); is 1
+PASS function f() { const one = 1; return one--; } f(); is 1
+PASS function f() { const one = 1; ++one; return one; } f(); is 1
+PASS function f() { const one = 1; return ++one; } f(); is 2
+PASS function f() { const one = 1; --one; return one; } f(); is 1
+PASS function f() { const one = 1; return --one; } f(); is 0
+PASS function f() { const one = 1; one += 2; return one; } f(); is 1
+PASS function f() { const one = 1; return one += 2; } f(); is 3
+PASS function f() { const one = 1; one = 2; return one; } f(); is 1
+PASS function f() { const one = 1; return one = 2; } f(); is 2
+PASS one++ is 1
+PASS one is 1
+PASS one-- is 1
+PASS one is 1
+PASS ++one is 2
+PASS one is 1
+PASS --one is 0
+PASS one is 1
+PASS one += 1 is 2
+PASS one is 1
+PASS one = 2 is 2
+PASS one is 1
+PASS object.inWith1 is 'RIGHT'
+PASS inWith2 is 'RIGHT'
+PASS (function(){ one = 2; return one; })() is 1
+PASS f() is f
+PASS const a; is undefined
+PASS bodyId is document.getElementById('bodyId')
+PASS ranConstInitialiser is true
+PASS tryCatch1Result is 5
+PASS tryCatch2Result is 5
+PASS with1Result is 5
+PASS with2Result is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+Test for rdar://problem/6081309, a crash when moving or extending the selection with line granularity.
+
+foo
+baz

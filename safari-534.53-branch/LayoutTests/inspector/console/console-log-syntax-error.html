@@ -1,0 +1,19 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script src="resources/syntax-error.js"></script>
+<script>
+function test()
+{
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that syntax errors are logged into console and doesn't cause browser crash.
+</p>
+</body>
+</html>

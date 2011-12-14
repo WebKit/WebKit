@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="resources/cross-frame-access.js"></script>
+</head>
+<body>
+<iframe src="http://localhost:8000/" style=""></iframe>
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+log("Tests that making other frame window a prototype doesn't expose that window properties");
+
+targetWindow = frames[0];
+
+window.onload = function() {
+  originalInnerHeight = innerHeight;
+
+  __proto__ = targetWindow;
+
+  shouldBeTrue('innerHeight === originalInnerHeight');
+  shouldBeTrue('this.innerHeight === originalInnerHeight');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+EXPECTED (video.autoplay == 'true') OK
+EXPECTED (video.getAttribute('autoplay') != 'null') OK
+EVENT(play)
+EXPECTED (video.paused == 'false') OK
+END OF TEST
+

@@ -1,0 +1,41 @@
+<html>
+<head>
+<script>
+function foo() {
+    if (event.type == "DOMNodeInserted" && event.target.nodeType == 3)
+        document.body.innerHTML = "PASSED";
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+      return;
+
+    window.layoutTestController.dumpAsText();
+
+    document.addEventListener("DOMNodeInserted", function() { foo() }, true);
+
+    // Select the element 'dragSource'.
+    var selection = window.getSelection();
+    var range =  document.createRange();
+    range.selectNode(document.getElementById("dragSource"));
+    selection.addRange(range);
+
+    // Drag the source text to the target text.
+    var source = document.getElementById('dragSource');
+    var target = document.getElementById('dragTarget');
+    eventSender.mouseMoveTo(source.offsetLeft + 2, source.offsetTop + 2);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(target.offsetLeft + target.offsetWidth / 2,
+                            target.offsetTop + target.offsetHeight / 2);
+    eventSender.mouseUp();
+}
+</script>
+</head>
+<body contenteditable="true" onload="runTest()">
+<p>This test tests for a crash when a DOM mutation event listener
+   modifies the text during a drop. If the test doesn't crash, all is good.
+<p id="dragSource">drag source text
+<p id="dragTarget">drag dest text
+</body>
+</html>

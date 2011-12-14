@@ -1,0 +1,39 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+    <clipPath id="myclip" clipPathUnits="userSpaceOnUse">
+        <path transform="scale(1.0)" d="M 0 0 l 200 0 l 0 200 l -200 0 Z"/>
+    </clipPath>
+</defs>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+window.setTimeout("clickNow()", 0);
+
+function clickNow() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(150, 50);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+function mouseHandler(evt)
+{
+    var clip = document.getElementById("myclip");
+    var path = clip.firstChild.nextSibling;
+    path.setAttribute("transform", "scale(0.5)");
+}
+</script>
+
+<g onclick="mouseHandler()" clip-path="url(#myclip)">
+<rect x="0" y="0" width="200" height="200" fill="red"/>
+<rect x="0" y="0" width="100" height="100" fill="green"/>
+</g>
+
+</svg>

@@ -1,0 +1,147 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceResponseMIMETypes();
+    layoutTestController.waitUntilDone();
+}
+
+var testImage;
+var currentIndex = 0;
+var testURL = new Array("resources/mimeTypeExamples/example-s.s", 
+                        "resources/mimeTypeExamples/example-scpt.scpt", 
+                        "resources/mimeTypeExamples/example-sd2.sd2", 
+                        "resources/mimeTypeExamples/example-sf2.sf2", 
+                        "resources/mimeTypeExamples/example-sgi.sgi", 
+                        "resources/mimeTypeExamples/example-sgm.sgm", 
+                        "resources/mimeTypeExamples/example-sgml.sgml", 
+                        "resources/mimeTypeExamples/example-sh.sh", 
+                        "resources/mimeTypeExamples/example-shar.shar", 
+                        "resources/mimeTypeExamples/example-shtm.shtm", 
+                        "resources/mimeTypeExamples/example-shtml.shtml", 
+                        "resources/mimeTypeExamples/example-silo.silo", 
+                        "resources/mimeTypeExamples/example-sit.sit", 
+                        "resources/mimeTypeExamples/example-sitx.sitx", 
+                        "resources/mimeTypeExamples/example-skd.skd", 
+                        "resources/mimeTypeExamples/example-skm.skm", 
+                        "resources/mimeTypeExamples/example-skp.skp", 
+                        "resources/mimeTypeExamples/example-skt.skt", 
+                        "resources/mimeTypeExamples/example-smf.smf", 
+                        "resources/mimeTypeExamples/example-smi.smi", 
+                        "resources/mimeTypeExamples/example-smil.smil", 
+                        "resources/mimeTypeExamples/example-snd.snd", 
+                        "resources/mimeTypeExamples/example-so.so", 
+                        "resources/mimeTypeExamples/example-spl.spl", 
+                        "resources/mimeTypeExamples/example-src.src", 
+                        "resources/mimeTypeExamples/example-srf.srf", 
+                        "resources/mimeTypeExamples/example-suit.suit", 
+                        "resources/mimeTypeExamples/example-sv4cpio.sv4cpio", 
+                        "resources/mimeTypeExamples/example-sv4crc.sv4crc", 
+                        "resources/mimeTypeExamples/example-svg.svg", 
+                        "resources/mimeTypeExamples/example-svgz.svgz", 
+                        "resources/mimeTypeExamples/example-swf.swf", 
+                        "resources/mimeTypeExamples/example-t.t", 
+                        "resources/mimeTypeExamples/example-tar.tar", 
+                        "resources/mimeTypeExamples/example-targa.targa", 
+                        "resources/mimeTypeExamples/example-tbz.tbz", 
+                        "resources/mimeTypeExamples/example-tbz2.tbz2", 
+                        "resources/mimeTypeExamples/example-tcl.tcl", 
+                        "resources/mimeTypeExamples/example-tex.tex", 
+                        "resources/mimeTypeExamples/example-texi.texi", 
+                        "resources/mimeTypeExamples/example-texinfo.texinfo", 
+                        "resources/mimeTypeExamples/example-text.text", 
+                        "resources/mimeTypeExamples/example-tga.tga", 
+                        "resources/mimeTypeExamples/example-tgz.tgz", 
+                        "resources/mimeTypeExamples/example-tif.tif", 
+                        "resources/mimeTypeExamples/example-tiff.tiff", 
+                        "resources/mimeTypeExamples/example-torrent.torrent", 
+                        "resources/mimeTypeExamples/example-tr.tr", 
+                        "resources/mimeTypeExamples/example-tsv.tsv", 
+                        "resources/mimeTypeExamples/example-ttc.ttc", 
+                        "resources/mimeTypeExamples/example-ttf.ttf", 
+                        "resources/mimeTypeExamples/example-txt.txt", 
+                        "resources/mimeTypeExamples/example-ul.ul", 
+                        "resources/mimeTypeExamples/example-ulaw.ulaw", 
+                        "resources/mimeTypeExamples/example-ulw.ulw", 
+                        "resources/mimeTypeExamples/example-ustar.ustar", 
+                        "resources/mimeTypeExamples/example-vcard.vcard", 
+                        "resources/mimeTypeExamples/example-vcd.vcd", 
+                        "resources/mimeTypeExamples/example-vcf.vcf", 
+                        "resources/mimeTypeExamples/example-vfw.vfw", 
+                        "resources/mimeTypeExamples/example-vrml.vrml", 
+                        "resources/mimeTypeExamples/example-war.war", 
+                        "resources/mimeTypeExamples/example-wav.wav", 
+                        "resources/mimeTypeExamples/example-wave.wave", 
+                        "resources/mimeTypeExamples/example-wax.wax", 
+                        "resources/mimeTypeExamples/example-wbmp.wbmp", 
+                        "resources/mimeTypeExamples/example-wbxml.wbxml", 
+                        "resources/mimeTypeExamples/example-webarchive.webarchive", 
+                        "resources/mimeTypeExamples/example-wm.wm", 
+                        "resources/mimeTypeExamples/example-wma.wma", 
+                        "resources/mimeTypeExamples/example-wmd.wmd", 
+                        "resources/mimeTypeExamples/example-wml.wml", 
+                        "resources/mimeTypeExamples/example-wmlc.wmlc", 
+                        "resources/mimeTypeExamples/example-wmls.wmls", 
+                        "resources/mimeTypeExamples/example-wmlsc.wmlsc", 
+                        "resources/mimeTypeExamples/example-wmp.wmp", 
+                        "resources/mimeTypeExamples/example-wmv.wmv", 
+                        "resources/mimeTypeExamples/example-wmx.wmx", 
+                        "resources/mimeTypeExamples/example-wrl.wrl", 
+                        "resources/mimeTypeExamples/example-wvx.wvx", 
+                        "resources/mimeTypeExamples/example-xbm.xbm", 
+                        "resources/mimeTypeExamples/example-xdp.xdp", 
+                        "resources/mimeTypeExamples/example-xfd.xfd", 
+                        "resources/mimeTypeExamples/example-xfdf.xfdf", 
+                        "resources/mimeTypeExamples/example-xht.xht", 
+                        "resources/mimeTypeExamples/example-xhtm.xhtm", 
+                        "resources/mimeTypeExamples/example-xhtml.xhtml", 
+                        "resources/mimeTypeExamples/example-xls.xls", 
+                        "resources/mimeTypeExamples/example-xlsb.xlsb", 
+                        "resources/mimeTypeExamples/example-xlsm.xlsm", 
+                        "resources/mimeTypeExamples/example-xlsx.xlsx", 
+                        "resources/mimeTypeExamples/example-xltm.xltm", 
+                        "resources/mimeTypeExamples/example-xltx.xltx", 
+                        "resources/mimeTypeExamples/example-xml.xml", 
+                        "resources/mimeTypeExamples/example-xpm.xpm", 
+                        "resources/mimeTypeExamples/example-xsl.xsl", 
+                        "resources/mimeTypeExamples/example-xwd.xwd", 
+                        "resources/mimeTypeExamples/example-xyz.xyz", 
+                        "resources/mimeTypeExamples/example-y.y", 
+                        "resources/mimeTypeExamples/example-ym.ym", 
+                        "resources/mimeTypeExamples/example-ymm.ymm", 
+                        "resources/mimeTypeExamples/example-ypp.ypp", 
+                        "resources/mimeTypeExamples/example-yxx.yxx", 
+                        "resources/mimeTypeExamples/example-zip.zip");
+
+
+function startTest()
+{
+    testImage = document.getElementById("testImage");
+    testImage.src = testURL[0];
+}
+
+function imageLoaded()
+{
+    if (++currentIndex == testURL.length) {
+        finish();
+        return;
+    }
+    
+    testImage.src = testURL[currentIndex];
+}
+
+function finish()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</head>
+<body onload="startTest();">
+Using an image element to load resources, this test makes sure that every MIME type the loader should know about based solely on file extension in file:// urls is correct.<br>
+<img id="testImage" onload="imageLoaded();" onerror="imageLoaded();">
+</body>
+</html>

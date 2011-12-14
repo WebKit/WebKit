@@ -1,0 +1,44 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 2; i++)
+        moveSelectionForwardByLineCommand();
+    for (i = 0; i < 5; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 5; i++)
+    	deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<ul id="test">
+<li>one</li>
+<li>two</li>
+<li>three</li>
+<li>four</li>
+<li>five</li>
+</ul>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

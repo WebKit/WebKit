@@ -1,0 +1,10 @@
+<html>
+<script>
+  window.setTimeout(
+    function() {
+        document.body.innerHTML = 'SUCCESS: Navigated';
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+</script>
+</html>

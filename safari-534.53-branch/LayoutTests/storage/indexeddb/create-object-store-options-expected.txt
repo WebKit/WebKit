@@ -1,0 +1,26 @@
+Test IndexedDB's createObjectStore's various options
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('create-object-store-options', 'description')
+db = event.target.result
+request = db.setVersion('version 1')
+Deleted all object stores.
+db.createObjectStore('a', {keyPath: 'a'})
+db.createObjectStore('b')
+db.createObjectStore('c', {autoIncrement: true});
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+PASS trans.mode is webkitIDBTransaction.READ_WRITE
+trans.objectStore('a').put({'a': 0})
+trans.objectStore('b').put({'a': 0}, 0)
+trans.objectStore('a').get(0)
+PASS event.target.result.a is {a: 0}
+trans.objectStore('b').get(0)
+PASS event.target.result.a is {a: 0}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

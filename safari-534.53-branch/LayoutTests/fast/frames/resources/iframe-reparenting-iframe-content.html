@@ -1,0 +1,20 @@
+<script>
+token = "loading";
+
+function init()
+{
+    token = "loaded";
+}
+
+startFinishTimer = function()
+{
+    setTimeout(parent.parent.finish, 0);
+}
+
+startDoomedTimer = function()
+{
+    setTimeout(parent.parent.notReached, 0);
+}
+
+</script>
+<body onload=init()>

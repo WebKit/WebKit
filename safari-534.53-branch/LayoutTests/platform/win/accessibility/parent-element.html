@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+    <script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<p>This tests that elements return their correct parent element.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<select id="selectElement" multiple>
+    <option>Option 1</option>
+</select>
+
+<p id="console"></p>
+
+<script>
+    if (window.layoutTestController && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        layoutTestController.dumpAsText();
+
+        document.getElementById("selectElement").focus();
+
+        var optionElement = accessibilityController.focusedElement.childAtIndex(0);
+
+        shouldBe('optionElement.parentElement().role', '"list"');
+    }
+</script>
+</body>
+</html>

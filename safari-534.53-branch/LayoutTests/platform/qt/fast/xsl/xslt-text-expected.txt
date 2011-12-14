@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x66
+  RenderBlock {html} at (0,0) size 800x66
+    RenderBody {body} at (8,14) size 784x38
+      RenderBlock {pre} at (0,0) size 784x38
+        RenderText {#text} at (0,1) size 256x36
+          text run at (0,1) width 256: "CHARACTERS IN XSLT: <<<&\x{442}\x{435}\x{441}\x{442}&>>>"
+          text run at (256,1) width 0: " "
+          text run at (0,20) width 192: "SOURCE XML: <<<&\x{442}\x{435}\x{441}\x{442}&>>>"
+          text run at (192,20) width 0: " "

@@ -1,0 +1,2 @@
+This tests that parsing stops when a script is encountered in an XML document. Parsing resumes when the script has finished executing.
+SUCCESS

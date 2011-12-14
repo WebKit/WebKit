@@ -1,0 +1,69 @@
+<html>
+<head>
+    <style type="text/css" media="screen">
+    #container
+    {
+        position: relative;
+        width: 500px;
+        height: 100px;
+        opacity: 0.85;
+        border: 1px solid black;
+    }
+
+    #box
+    {
+        position: absolute;
+        height: 100px;
+        width: 250px;
+        left: 250px;
+        background-color: blue;
+        -webkit-transition: left 0.2s, top 0.2s;
+    }
+
+    #container.right #box
+    {
+        left: 0px;
+        top: 100px;
+    }
+
+    #fader
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: black;
+        width: 50px;
+        height: 50px;
+        opacity: 0.5;
+        -webkit-transition: opacity 0.2s;
+    }
+    
+    #container.right #fader {
+      opacity: 1;
+    }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+      function runTest()
+      {
+        document.getElementById("container").className = "right";
+        window.setTimeout(function() {
+          document.getElementById("container").className = "";
+          if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        }, 250);
+      }
+
+      window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+    <p><a href="<rdar://problem/6983207>">rdar://problem/6983207</a>Should not leave blue box behind after moving to the top right.</p>
+    <div id="container">
+        <div id="box"></div>
+        <div id="fader"></div>
+    </div>
+
+</body></html>

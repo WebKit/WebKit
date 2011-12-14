@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+function test() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    var tf = document.getElementById('tf');
+    tf.select();
+    if (tf.selectionStart == 0 && tf.selectionEnd == 0) { // ;
+        document.getElementById("result").innerHTML = "PASS";
+    } else {
+        document.getElementById("result").innerHTML = "FAIL: selection start is "
+            + tf.selectionStart + " and end is " + tf.selectionEnd + ".";
+    }
+}
+</script>
+</head>
+<body onload="test()">
+<p>
+Tests behavior of select() in case &quot;-webkit-user-select: none&quot;
+attribute is specified to the input element. The field should not be selected.
+</p>
+<p><input type="text" id="tf" value="input text" style="-webkit-user-select: none"></input></p>
+<p id="result">TEST NOT RUN YET</p>
+</body>
+</html>

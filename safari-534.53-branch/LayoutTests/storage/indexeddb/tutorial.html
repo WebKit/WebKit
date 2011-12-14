@@ -1,0 +1,449 @@
+<html><title>IndexedDB Tutorial</title>
+<script>
+
+// This is a tutorial that highlights many of the features of IndexedDB along witha number of
+// caveats that currently exist in Chromium/WebKit but which will hopefully be improved upon
+// over time.
+//
+// The latest version of the spec can be found here:
+// http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html but note that there are quite a
+// few bugs currently opened against it and some major unresolved issues (like whether dynamic
+// transactions should be in for v1). Many of the bugs are filed here:
+// http://www.w3.org/Bugs/Public/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&component=Indexed+Database+API&longdesc_type=allwordssubstr&longdesc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&status_whiteboard_type=allwordssubstr&status_whiteboard=&keywords_type=allwords&keywords=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailtype1=substring&email1=&emailtype2=substring&email2=&bug_id_type=anyexact&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&known_name=IndexedDB&query_based_on=IndexedDB&field0-0-0=noop&type0-0-0=noop&value0-0-0=
+// Discussion happens on public-webapps@w3.org
+//
+// Although not user friendly, additional capabilities and example code can be found in the
+// tests for IndexedDB which are here:
+// http://trac.webkit.org/browser/trunk/LayoutTests/storage/indexeddb
+//
+// This document is currently maintained by Jeremy Orlow <jorlow@chromium.org>
+
+
+// This is not an ideal layout test since it doesn't verify things as thoroughly as it could,
+// but adding such content would make it much more cluttered and thus wouldn't serve its primary
+// goal of teaching people IndexedDB. That said, it does have a good amount of coverage and
+// serves as a living document describing what's expected to work and how within WebKit so it
+// seems well worth having checked in.
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+
+function setup()
+{
+    // As this API is still experimental, it's being shipped behind vendor specific prefixes.
+    if ('webkitIndexedDB' in window) {
+        indexedDB = webkitIndexedDB;
+        IDBCursor = webkitIDBCursor;
+        IDBKeyRange = webkitIDBKeyRange;
+        IDBTransaction = webkitIDBTransaction;
+    }
+
+    // This tutorial assumes that Mozilla and WebKit match each other which isn't true at the
+    // moment, but we can hope it'll become true over time.
+    if ('moz_indexedDB' in window) {
+        indexedDB = moz_indexedDB;
+        // Not implemented by them yet. I'm just guessing what they'll be.
+        IDBCursor = moz_IDBCursor;
+        IDBKeyRange = moz_IDBKeyRange;
+        IDBTransaction = moz_IDBTransaction;
+    }
+}
+
+function log(txt)
+{
+    document.getElementById("logger").innerHTML += txt + "<br>";
+}
+
+function logError(txt)
+{
+    log("<font color=red>" + txt + "</font>");
+}
+
+function start()
+{
+    setup();
+
+    // This is an example of one of the many asynchronous commands in IndexedDB's async interface.
+    // Each returns an IDBRequest object which has "success" and "error" event handlers. You can use
+    // "addEventListener" if you'd like, but I'm using the simpler = syntax. Only one or the other
+    // will fire. You're guaranteed that they won't fire until control is returned from JavaScript
+    // execution.
+    var request = indexedDB.open("tutorialDB");
+    request.onsuccess = onOpen;
+    request.onerror = unexpectedError;
+}
+
+function unexpectedError()
+{
+    // If an asynchronous call results in an error, an "error" event will fire on the IDBRequest
+    // object that was returned and the event's code and message attributes will be populated with
+    // the correct values.
+    logError("Error " + event.code + ": " + event.message);
+
+    // Unfortunately, Chromium/WebKit do not implicitly abort a transaction when an error occurs
+    // within one of its async operations. In the future, when an error occurs and the event is
+    // not canceled, the transaction will be aborted.
+    if (currentTransaction)
+        currentTransaction.abort();
+}
+
+function onOpen()
+{
+    // If an asynchronous call results in success, a "success" event will fire on the IDBRequest
+    // object that was returned (i.e. it'll be the event target), which means that you can simply
+    // look at event.target.result to get the result of the call. In some cases, the expected
+    // result will be null.
+    window.db = event.target.result;
+
+    // The IDBDatabase object has a "version" attribute. This can only be set by calling
+    // "setVersion" on the database and supplying a new version. This also starts a new
+    // transaction which is very special. There are many details and gotchas surrounding
+    // setVersion which we'll get into later.
+    if (db.version == "1.0") {
+        // We could skip setting up the object stores and indexes if this were a real application
+        // that wasn't going to change things without changing the version number. But since this
+        // is both a tutorial and a living document, we'll go on and set things up every time we run.
+    }
+    var request = db.setVersion("1.0");
+    request.onsuccess = onSetVersion;
+    request.onerror = unexpectedError;
+}
+
+function onSetVersion()
+{
+    // We are now in a setVersion transaction. Such a transaction is the only place where one
+    // can add or delete indexes and objectStores. The result (property of the request) is an
+    // IDBTransaction object that has "complete" and "abort" event handlers which tell
+    // us when the transaction has committed, aborted, or timed out.
+    window.currentTransaction = event.target.result;
+    currentTransaction.oncomplete = onSetVersionComplete;
+    currentTransaction.onabort = unexpectedAbort;
+
+    // Delete existing object stores.
+    while (db.objectStoreNames.length)
+        db.deleteObjectStore(db.objectStoreNames[0]);
+
+    // Now that we have a blank slate, let's create an objectStore. An objectStore is simply an
+    // ordered mapping of keys to values. We can iterate through ranges of keys or do individual
+    // lookups. ObjectStores don't have any schema.
+    //
+    // Keys can be integers, strings, or null. (The spec also defines dates and there's talk of
+    // handling arrays, but these are not implemented yet in Chromium/WebKit.) Values can be
+    // anything supported by the structured clone algorithm
+    // (http://dev.w3.org/html5/spec/Overview.html#internal-structured-cloning-algorithm) which
+    // is a superset of what can be expressed in JSON. (Note that Chromium/WebKit does not fully
+    // implement the structured clone algorithm yet, but it definitely handles anything JSON
+    // serializable.)
+    //
+    // There are two types of objectStores: ones where the path is supplied manually every time a
+    // value is inserted and those with a "key path". A keyPath is essentially a JavaScript
+    // expression that is evaluated on every value to extract a key. For example, if you pass in
+    // the value of "{fname: 'john', lname: 'doe', address: {street: 'Buckingham Palace", number:
+    // 76}, siblings: ["Nancy", "Marcus"], id: 22}" and an objectStore has a keyPath of "id" then
+    // 22 will be the key for this value. In objectStores, each key must be unique.
+    //
+    // Note that the exact syntax allowed for keyPaths is not yet well specified, but
+    // Chromium/WebKit currently allows paths that are multiple levels deep within an object and
+    // allows that to be intermixed with array dereferences. So, for example, a key path of
+    // "address.number" or "siblings[0]" would be legal (provided every entry had an address with
+    // a number attribute and at least one sibling). You can even go wild and say
+    // "foo[0][2].bar[0].baz.test[1][2][3]". It's possible this will change in the future though.
+    //
+    // If you set autoIncrement (another optional parameter), IndexedDB will generate a key
+    // for your entry automatically. And if you have a keyPath set, it'll set the value at
+    // the location of the keyPath _in the database_ (i.e. it will not modify the value you pass
+    // in to put/add). Unfortunately autoIncrement is not yet implemented in Chromium/WebKit.
+    //
+    // Another optional parameter, "evictable" is not yet implemented. When it is, it'll hint
+    // which data should be deleted first if the browser decides this origin is using too much
+    // storage. (The alternative is that it'll suggest the user delete everything from the
+    // origin, so it's in your favor to set it approperately!) This is great for when you have
+    // some absolutely critical data (like unset emails) and a bunch of less critical, (but
+    // maybe still important!) data.
+    //
+    // All of these options can be passed into createObjectStore via its (optional) second
+    // parameter. So, if you wanted to define all, You'd do {keyPath: "something",
+    // evictable: true, autoIncrement: true}. You can also pass in subsets of all three or
+    // omit the object (since it's optional).
+    //
+    // Let's now create an objectStore for people. We'll supply a key path in this case.
+    var objectStore = db.createObjectStore("people", {keyPath: "id"});
+
+    // Notice that it returned synchronously. The rule of thumb is that any call that touches (in
+    // any way) keys or values is asynchronous and any other call (besides setVersion and open) are
+    // asynchronous.
+    //
+    // Now let's create some indexes. Indexes allow you to create other keys via key paths which
+    // will also point to a particular value in an objectStore. In this example, we'll create
+    // indexes for a persons first and last name. Indexes can optionally be specified to not be
+    // unique, which is good in the case of names. The first parameter is the name of the index.
+    // Second is the key path. The third specifies uniqueness.
+    var fname = objectStore.createIndex("fname", "fname", false);
+    var lname = objectStore.createIndex("lname", "lname", false);
+
+    // Note that if you wanted to delete these indexes, you can either call objectStore.deleteIndex
+    // or simply delete the objectStores that own the indexes.
+    //
+    // If we wanted to, we could populate the objectStore with some data here or do anything else
+    // allowed in a normal (i.e. non-setVersion) transaction. This is useful so that data migrations
+    // can be atomic with changes to the objectStores/indexes.
+    //    
+    // Because we haven't actually made any new asynchronous requests, this transaction will
+    // start committing as soon as we leave this function. This will cause oncomplete event handler
+    // for the transaction will fire shortly after. IndexedDB transactions commit whenever control is
+    // returned from JavaScript with no further work being queued up against the transaction. This
+    // means one cannot call setTimeout, do an XHR, or anything like that and expect my transaction
+    // to still be around when that completes.
+    
+}
+
+function unexpectedAbort()
+{
+    logError("A transaction aborted unexpectedly!");
+}
+
+function onSetVersionComplete()
+{
+    // Lets create a new transaction and then not schedule any work on it to watch it abort itself.
+    // Transactions (besides those created with setVersion) are created synchronously. Like
+    // createObjectStore, transaction optionally takes in various optional parameters.
+    //
+    // First of all is the parameter "objectStoreNames". If you pass in a string, we lock just that
+    // objectStore.  If you pass in an array, we lock those. Otherwise (for example, if you omit it
+    // or pass in null/undefined) we lock the whole database. By specifying locks over fewer
+    // objectStores you make it possible for browsers to run transactions concurrently. That said,
+    // Chromium/WebKit does not support this yet.
+    //
+    // Next is "mode" which specifies the locking mode. The default is READ_ONLY (i.e. a shared lock).
+    // That's fine for this case, but later we'll ask for IDBTransaction.READ_WRITE. At the moment,
+    // Chromium/WebKit pretends every transaction is READ_WRITE, which is kind of bad.
+    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE);
+    currentTransaction.oncomplete = unexpectedComplete;
+    currentTransaction.onabort = onTransactionAborted;
+
+    // Verify that "people" is the only object store in existance. The objectStoreNames attribute is
+    // a DOMStringList which is somewhat like an array.
+    var objectStoreList = db.objectStoreNames;
+    if (objectStoreList.length != 1
+        || !objectStoreList.contains("people")
+        || objectStoreList.item(0) != "people"
+        || objectStoreList[0] != "people") {
+        logError("Something went wrong.");
+    }
+
+    // Let's grab a handle to the objectStore. This handle is tied to the transaction that creates
+    // it and thus becomes invalid once this transaction completes.
+    var objectStore = currentTransaction.objectStore("people");
+    if (!objectStore)
+        logError("Something went wrong.");
+
+    // If we try to grab an objectStore that doesn't exist, IndexedDB throws an exception.
+    try {
+        currentTransaction.objectStore("x");
+        logError("Something went wrong.");
+    } catch (e) {
+        // Note that the error messages in exceptions are mostly lies at the moment. The reason is
+        // that the spec re-uses exception codes for existing exceptions and there's no way we can
+        // disambiguate between the two. The best work-around at the moment is to look at
+        // http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#the-idbdatabaseexception-interface
+        // to figure out what the number corresponds to. We will try to resolve this soon in spec-land.
+    }
+
+    // Verify that fname and lname are the only indexes in existance.
+    if (objectStore.indexNames.length != 2)
+        logError("Something went wrong.");
+
+    // Note that no async actions were ever queued up agianst our transaction, so it'll abort once
+    // we leave this context.
+}
+
+function unexpectedComplete()
+{
+    logError("A transaction committed unexpectedly!");
+}
+
+function onTransactionAborted()
+{
+    // Now let's make a real transaction and a person to our objectStore. Just to show it's possible,
+    // we'll omit the objectStoreNames parameter which means we'll lock everything even though we only
+    // ever access "people".
+    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE);
+    currentTransaction.onabort = unexpectedAbort;
+
+    var people = currentTransaction.objectStore("people");
+    var request = people.put({fname: 'John', lname: 'Doe', id: 1}); // If our objectStore didn't have a key path, the second parameter would have been the key.
+    request.onsuccess = onPutSuccess;
+    request.onerror = unexpectedError;
+
+    // While we're at it, why not add a few more? Multiple queued up async commands will be executed
+    // sequentially (though there is talk of prioritizing cursor.continue--see discussion below). Since
+    // we don't care about the individual commands' successes, we'll only bother with on error handlers.
+    //
+    // Remember that our implementation of unexpectedError should abort the "currentTransaction" in the
+    // case of an error. (Though no error should occur in this case.)
+    people.put({fname: 'Jane', lname: 'Doe', id: 2}).onerror = unexpectedError;
+    people.put({fname: 'Philip', lname: 'Fry', id: 3}).onerror = unexpectedError;
+
+    // Not shown here are the .delete method and .add (which is
+    // like .put except that it fires an onerror if the element already exists).
+}
+
+function onPutSuccess()
+{
+    // Result is the key used for the put.
+    if (event.target.result !== 1)
+        logError("Something went wrong.");
+
+    // We should be able to request the transaction via event.transaction from within any event handler
+    // (like this one) but this is not yet implemented in Chromium/WebKit. As a work-around, we use the
+    // global "currentTransaction" variable we set above.
+    currentTransaction.oncomplete = onPutTransactionComplete;
+}
+
+function onPutTransactionComplete()
+{
+    // OK, now let's query the people objectStore in a couple different ways. First up, let's try get.
+    // It simply takes in a key and returns a request whose result will be the value. Note that here
+    // we're passing in an array for objectStoreNames rather than a simple string.
+    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE, 0);
+    currentTransaction.onabort = unexpectedAbort;
+
+    var people = currentTransaction.objectStore("people");
+    var request = people.get(1);
+    request.onsuccess = onGetSuccess;
+    request.onerror = unexpectedError;
+
+    // Note that multiple objectStore (or index) method calls will return different objects (that still
+    // refer to the same objectStore/index on disk).
+    people.someProperty = true;
+    if (currentTransaction.objectStore("people").someProperty)
+        logError("Something went wrong.");
+}
+
+function onGetSuccess()
+{
+    if (event.target.result.fname !== "John")
+        logError("Something went wrong.");
+
+    // Requests (which are our event target) also have a source attribute that's the object that
+    // returned the request. In this case, it's our "people" objectStore object.
+    var people = event.target.source;
+
+    // Now let's try opening a cursor from id 1 (exclusive/open) to id 3 (inclusive/closed). This means
+    // we'll get the objects for ids 2 and 3. You can also create cursors that are only right or only
+    // left bounded or ommit the bound in order to grab all objects. You can also specify a direction
+    // which can be IDBCursor.NEXT (default) for the cursor to move forward, NEXT_NO_DUPLICATE to only
+    // return unique entires (only applies to indexes with unique set to false), PREV to move backwards,
+    // and PREV_NO_DUPLICATE.
+    var keyRange = IDBKeyRange.bound(1, 3, true, false);
+    var request = people.openCursor(keyRange, IDBCursor.NEXT);
+    request.onsuccess = onObjectStoreCursor;
+    request.onerror = unexpectedError;
+}
+
+function onObjectStoreCursor()
+{
+    // The result of openCursor is an IDBCursor object or null if there are no (more--see below)
+    // records left.
+    var cursor = event.target.result;
+    if (cursor === null) {
+        cursorComplete(event.target.source); // The soruce is still an objectStore.
+        return;
+    }
+
+    // We could use these values if we wanted to.
+    var key = cursor.key;
+    var value = cursor.value;
+
+    // cursor.count is probably going to be removed.
+    // cursor.update and .remove are not yet implemented in Chromium/WebKit.
+
+    // cursor.continue will reuse the same request object as what openCursor returned. In the future,
+    // we MAY prioritize .continue() calls ahead of all other async operations queued up. This will
+    // introduce a level of non-determinism but should speed things up. Mozilla has already implemented
+    // this non-standard behavior, from what I've head.
+    event.target.result.continue();
+}
+
+function cursorComplete(objectStore)
+{
+    // While still in the same transaction, let's now do a lookup on the lname index.
+    var lname = objectStore.index("lname");
+
+    // Note that the spec has not been updated yet, but instead of get and getObject, we now
+    // have getKey and get. The former returns the objectStore's key that corresponds to the key
+    // in the index. get returns the objectStore's value that corresponds to the key in the
+    // index.
+    var request = lname.getKey("Doe");
+    request.onsuccess = onIndexGetSuccess;
+    request.onerror = unexpectedError;
+}
+
+function onIndexGetSuccess()
+{
+    // Because we did "getKey" the result is the objectStore's key.
+    if (event.target.result !== 1)
+        logError("Something went wrong.");
+
+    // Similarly, indexes have openCursor and openKeyCursor. We'll try a few of them with various
+    // different IDBKeyRanges just to demonstrate how to use them, but we won't bother to handle
+    // the onsuccess conditions.
+    var lname = event.target.source;
+    lname.openCursor(IDBKeyRange.lowerBound("Doe", false), IDBCursor.NEXT_NO_DUPLICATE);
+    lname.openCursor(null, IDBCursor.PREV_NO_DUPLICATE);
+    lname.openCursor(IDBKeyRange.upperBound("ZZZZ"));
+    lname.openCursor(IDBKeyRange.only("Doe"), IDBCursor.PREV);
+    lname.openCursor();
+    lname.openKeyCursor();
+
+    // We should be able to request the transaction via event.transaction from within any event handler
+    // (like this one) but this is not yet implemented in Chromium/WebKit. As a work-around, we use the
+    // global "currentTransaction" variable we set above.
+    currentTransaction.oncomplete = onAllDone;
+}
+
+function onAllDone()
+{
+    log("Everything worked!");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+// The way setVersion is supposed to work:
+//   To keep things simple to begin with, objectStores and indexes can only be created in a setVersion
+// transaction and one can only run if no other connections are open to the database. This is designed
+// to save app developers from having an older verison of a web page that expects a certain set of
+// objectStores and indexes from breaking in odd ways when things get changed out from underneith it.
+// In the future, we'll probably add a more advanced mechanism, but this is it for now.
+//   Because a setVersion transaction could stall out nearly forever until the user closes windows,
+// we've added a "blocked" event to the request object returned by setVersion. This will fire if the
+// setVersion transaction can't begin because other windows have an open connection. The app can then
+// either pop something up telling the user to close windows or it can tell the other windows to call
+// .close() on their database handle. .close() halts any new transactions from starting and waits for
+// the existing ones to finish. It then closes the connection and any indexedDB calls afterwards are
+// invalid (they'll probably throw, but this isn't specified yet). We may specify .close() to return
+// an IDBRequest object so that we can fire the onsuccess when the close completes.
+//   Once inside a setVersion transaction, you can do anything you'd like. The one connection which
+// was allowed to stay open to complete the setVersion transaction will stay alive. Multiple
+// setVersion transactions can be queued up at once and will fire in the order queued (though
+// this obviously only works if they're queued in the same page).
+//
+// The current status of setVersion in Chromium/WebKit:
+//   In Chromium/WebKit we currently don't enforce the "all connections must be closed before a
+// setVersion transaction starts" rule. We also don't implement database.close() or have a blocked
+// event on the request .setVersion() returns.
+//
+// The current status of workers:
+//   Chromium/WebKit do not yet support workers using IndexedDB. Support for the async interface
+// will likely come before the sync interface. For now, a work-around is using postMessage to tell
+// the page what to do on the worker's behalf in an ad-hoc manner. Anything that can be serialized
+// to disk can be serialized for postMessage.
+
+</script>
+<body onload="start()">
+Please view source for more information on what this is doing and why...<br><br>
+<div id="logger"></div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Tests for the onspeechchange event with <input type="text" speech>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("speechInput").value is "Green eggs and ham"
+PASS window.event.results.length is 3
+PASS window.event.results[0].utterance is "Green eggs and ham"
+PASS window.event.results[0].confidence is 0.8
+PASS window.event.results[1].utterance is "Green x and ham"
+PASS window.event.results[1].confidence is 0.5
+PASS window.event.results[2].utterance is "3 x and am"
+PASS window.event.results[2].confidence is 0.2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

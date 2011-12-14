@@ -1,0 +1,28 @@
+<style>
+blockquote {
+    border-left: 2px solid blue;
+    margin: 0;
+    padding-left: 10px;
+    color: blue;
+}
+</style>
+<p>This tests copying/pasting less than a paragraph of quoted content.  It should not appear quoted.</p>
+<div id="div" contenteditable="true">
+<br>
+<br>
+<blockquote type="cite">On Tuesday, Dave wrote:</blockquote>
+<blockquote type="cite"><br></blockquote>
+<blockquote type="cite">Hello World.</blockquote>
+</div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "paragraph");
+sel.modify("move", "forward", "paragraph");
+sel.modify("extend", "forward", "word");
+document.execCommand("Copy");
+sel.setPosition(div, 0);
+document.execCommand("PasteAndMatchStyle");
+</script>

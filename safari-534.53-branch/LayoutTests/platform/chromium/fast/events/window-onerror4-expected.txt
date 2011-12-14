@@ -1,0 +1,4 @@
+You should see a log record if window.onerror is working properly for this test.Bug 8519.
+
+Error caught successfully: Uncaught ReferenceError: Invalid left-hand side in assignment File: window-onerror4.html Line: 1
+

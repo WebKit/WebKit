@@ -1,0 +1,4 @@
+main frame - has 1 onunload handler(s)
+ALERT: before unload
+ALERT: unload
+If you didn't hit an assert you PASS.

@@ -1,0 +1,12 @@
+Tests the indexed setter and getter for HTMLOptionsCollection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS my_form.set_sel.options.length is 3
+PASS options(0) is document.getElementById('one')
+PASS options(1) is document.getElementById('two')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

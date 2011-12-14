@@ -1,0 +1,11 @@
+Test WorkerContext.close functionality. Should print a series of PASS messages, followed with DONE.
+
+PASS: typeof close: function
+PASS: received message before close
+PASS: Received message posted right after close() was invoked: Should be delivered
+PASS: no messages arrive to worker after JS fragment with close() exits
+PASS: Error arrived after close: Uncaught ReferenceError: nonExistentFunction is not defined
+PASS: close() did not dispatch pending events
+PASS: Received message after worker closed: Should be delivered
+DONE
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="TestWebKitAPIGeneratedCommon"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
+	>
+	<Tool
+		Name="VCNMakeTool"
+		BuildCommandLine="set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;copy-resources.cmd"
+		ReBuildCommandLine="set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;copy-resources.cmd rebuild"
+		CleanCommandLine="set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;copy-resources.cmd clean"
+	/>
+</VisualStudioPropertySheet>

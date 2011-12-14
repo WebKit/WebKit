@@ -1,0 +1,17 @@
+layer at (0,0) size 784x20082
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x20082
+  RenderBlock {html} at (0,0) size 784x20082
+    RenderBody {body} at (8,16) size 768x20058
+      RenderBlock {p} at (0,0) size 768x38
+        RenderText {#text} at (0,0) size 764x38
+          text run at (0,0) width 406: "The circle below is a link. When you activate the circle, nothing "
+          text run at (406,0) width 358: "should happen. If the document scrolls or the image pans"
+          text run at (0,19) width 67: "when you "
+          text run at (67,19) width 219: "activate the link, the test has failed."
+      RenderBlock (anonymous) at (0,54) size 768x20004
+        RenderSVGRoot {svg} at (8,70) size 100x20000
+          RenderSVGContainer {a} at (8,70) size 100x100
+            RenderSVGPath {circle} at (8,70) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=50.00] [cy=50.00] [r=50.00]
+          RenderSVGPath {circle} at (8,19970) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=50.00] [cy=19950.00] [r=50.00]
+        RenderText {#text} at (0,0) size 0x0

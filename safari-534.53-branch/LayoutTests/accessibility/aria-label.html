@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<input aria-label="aria label" type="text" size=20>
+<a href="#" aria-label="aria link">test</a>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria-label attribute works. The input and the A tag should return the appropriate description.");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+          var obj = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+          var succeeded = obj.description == "AXDescription: aria label";
+          shouldBe("succeeded", "true");
+
+          obj = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          succeeded = obj.description == "AXDescription: aria link";
+          shouldBe("succeeded", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

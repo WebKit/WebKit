@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <button id="test" onclick="clickHandler()">Click Here</button>
+        <div id="console"></div>
+        <script>
+            var stolenEvent;
+            var win;
+            function clickHandler1()
+            {
+                stolenEvent = window.event;
+                win = window.open("about:blank", "blank");
+                shouldBeNonNull("win");
+                win.close();
+            }
+
+            function clickHandler2()
+            {
+                window.event = stolenEvent;
+                win = window.open("about:blank", "blank");
+                shouldBeUndefined("win");
+            }
+
+            clickHandler = clickHandler1;
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.setCanOpenWindows();
+                layoutTestController.setPopupBlockingEnabled(true);
+                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+                layoutTestController.waitUntilDone();
+
+                var button = document.getElementById("test");
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(button.offsetLeft + button.offsetWidth / 2, button.offsetTop + button.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+
+                clickHandler = clickHandler2;
+                window.event = stolenEvent;
+                button.click();
+
+                layoutTestController.notifyDone();
+            }
+        </script>
+    </body>
+</html>

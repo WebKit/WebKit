@@ -1,0 +1,20 @@
+<body>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<html>
+<p>This test passes if it doesn't crash.</p>
+<div id="frag"></div>
+<script>
+// Fun with innerHTML.
+document.getElementById('frag').innerHTML = '<link href="prefetch.link" rel="prefetch">';
+
+// Fun with detached documents.
+var doc = document.implementation.createDocument('application/html+xml');
+var lnk = doc.createElement('link');
+lnk.setAttribute('rel', 'prefetch');
+lnk.setAttribute('href', 'prefetch.link');
+doc.documentElement.appendChild(lnk);
+</script>
+</html>

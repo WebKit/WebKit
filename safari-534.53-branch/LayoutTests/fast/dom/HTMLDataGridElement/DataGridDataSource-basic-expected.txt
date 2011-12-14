@@ -1,0 +1,6 @@
+PASS: Initial value of datagrid.dataSource is null.
+PASS: Allowed setting datagrid.dataSource to a number.
+PASS: Allowed setting datagrid.dataSource to a string.
+PASS: Allowed setting datagrid.dataSource to an object.
+PASS: Allowed setting datagrid.dataSource to null.
+

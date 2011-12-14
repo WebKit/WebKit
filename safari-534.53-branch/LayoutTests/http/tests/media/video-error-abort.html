@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>'abort' event test</title>
+        <script src=../../media-resources/media-file.js></script>
+        <script src=../../media-resources/video-test.js></script>
+        <script>
+            var didLoad = false;
+
+            function loadstart()
+            {
+                consoleWrite("<br><b><em>'loadstart'</em> event</b>");
+                testExpected("video.error", null);
+
+                if (didLoad)
+                    return; 
+                didLoad = true; 
+
+                // Force the element to reload, while the current movie is still loading,
+                // this should generate an 'abort' event
+                run("video.load()");
+            }
+
+            function abort()
+            {
+                consoleWrite("<br><b><em>'abort'</em> event</b>");
+                testExpected("video.error", null);
+
+                // Progress events have a 'lengthComputable' field, check to make sure this event
+                // doesn't have one.
+                testExpected("event.lengthComputable", undefined);
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br><b><em>'canplaythrough'</em> event</b>");
+                testExpected("video.error", null);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("error");
+
+                consoleWrite("<br><b>Test before movie is open</b>");
+                testExpected("video.error", null);
+
+                var movie = findMediaFile("video", "../resources/test");
+                video.src = "http://127.0.0.1:8000/media/video-throttled-load.cgi?name=" + movie + "&throttle=256";
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video controls
+            onloadstart="loadstart()"
+            onabort="abort()"
+            oncanplaythrough="canplaythrough()"
+            ></video>
+    </body>
+</html>

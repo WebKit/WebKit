@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {A} at (0,0) size 66x19 [color=#0000EE]
+          RenderText {#text} at (51,0) size 66x19
+            text run at (51,0) width 66: "bug 25464"
+        RenderText {#text} at (117,0) size 369x19
+          text run at (117,0) width 369: ": Test for rendering of Danda (U+0964) followed by a space."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 299x19
+          text run at (0,0) width 299: "\x{A39}\x{A41}\x{A70}\x{A26}\x{A40} \x{A39}\x{A48}\x{964} \x{A07}\x{A38} \x{A32}\x{A3F}\x{A2A}\x{A40} \x{A26}\x{A47} \x{A35}\x{A3F}\x{A1A} \x{A69}\x{A6B} (35) \x{A05}\x{A71}\x{A16}\x{A30} \x{A39}\x{A41}\x{A70}\x{A26}\x{A47} \x{A39}\x{A28}\x{964}"

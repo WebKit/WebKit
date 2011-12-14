@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <script>
+            if (window.layoutTestController)
+            {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+        
+            function runTest()
+            {
+                var button = document.getElementById("test");
+                button.insertBefore(document.createElement("tbody"));
+                document.body.offsetTop;
+                document.body.removeChild(button);
+                
+                var result = document.createElement("div");
+                result.innerHTML = "PASS";
+                document.body.appendChild(result);
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <button id="test"/>
+    </body>
+</html>
+

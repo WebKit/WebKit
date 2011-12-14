@@ -1,0 +1,43 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<style id="style" media="screen">
+.non-existent-class {
+    color: black;
+    clip: rect(0, 0, 1, 1);
+    content: counter(dummy, square);
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+function runTest()
+{
+    description("This tests wrapper round-tripping between JavaScript and Objective-C.");
+    if (!window.layoutTestController) {
+        debug("This test only works in DumpRenderTree.\n");
+        return;
+    }
+    
+    layoutTestController.dumpAsText();
+
+    var message = "FAIL: Test did not run properly.";
+    try {
+        var object = { returnThis: function() { return this; } };
+        success = objCController.testWrapperRoundTripping(object);
+        message = success
+            ? "PASS."
+            : "FAIL: wrapper round tripping failed.";
+    } catch (e) {
+        message = "FAIL: caught exception: " + e;
+    }
+    debug(message);
+}
+
+window.onload = runTest;
+</script>
+</body>
+</html>

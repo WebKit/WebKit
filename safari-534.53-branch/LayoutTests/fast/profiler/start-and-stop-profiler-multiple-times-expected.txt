@@ -1,0 +1,73 @@
+This page's JavaScript calls console.profile() and console.profileEnd() three times. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profiler there should be three profiles.
+
+Profile title: Start the profiler the first time.
+Thread_1 (no file) (line 0)
+   startTest start-and-stop-profiler-multiple-times.html (line 11)
+      (anonymous function) profiler-test-JS-resources.js (line 29)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+
+Profile title: Start the profiler the first time.
+Thread_1 (no file) (line 0)
+   startTest start-and-stop-profiler-multiple-times.html (line 11)
+      (anonymous function) profiler-test-JS-resources.js (line 29)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+Profile title: Start the profiler the second time.
+Thread_1 (no file) (line 0)
+   startTest start-and-stop-profiler-multiple-times.html (line 11)
+      (anonymous function) profiler-test-JS-resources.js (line 29)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+
+Profile title: Start the profiler the first time.
+Thread_1 (no file) (line 0)
+   startTest start-and-stop-profiler-multiple-times.html (line 11)
+      (anonymous function) profiler-test-JS-resources.js (line 29)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+Profile title: Start the profiler the second time.
+Thread_1 (no file) (line 0)
+   startTest start-and-stop-profiler-multiple-times.html (line 11)
+      (anonymous function) profiler-test-JS-resources.js (line 29)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+Profile title: Start the profiler the third time.
+Thread_1 (no file) (line 0)
+   startTest start-and-stop-profiler-multiple-times.html (line 11)
+      (anonymous function) profiler-test-JS-resources.js (line 29)
+         insertNewText profiler-test-JS-resources.js (line 17)
+            createElement (no file) (line 0)
+            createTextNode (no file) (line 0)
+            appendChild (no file) (line 0)
+            getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+

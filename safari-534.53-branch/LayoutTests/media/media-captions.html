@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>closed caption API test</title>
+
+        <script src=video-test.js></script>
+        <script src=media-fullscreen.js></script>
+
+        <script>
+            var movieInfo = 
+            {
+                current : -1,
+                movies : 
+                [ 
+                    {
+                        url : "content/test.wav", 
+                        description : "Audio-only file without captions", 
+                        hasCaptions : false,
+                    },
+                    {
+                        url : "content/counting-captioned.mov", 
+                        description : "QuickTime movie with captions.", 
+                        hasCaptions : true,
+                    },
+                ]
+            };
+
+
+            function canplaythrough()
+            {
+                var movie = movieInfo.movies[movieInfo.current];
+            
+                testExpected("mediaElement.webkitHasClosedCaptions", movie.hasCaptions);
+                testExpected("mediaElement.webkitClosedCaptionsVisible", false);
+                
+                // Try to enable captions, they should only be enabled after if the movie has captions.
+                consoleWrite("*** enabling captions");
+                mediaElement.webkitClosedCaptionsVisible = true;
+                testExpected("mediaElement.webkitClosedCaptionsVisible", movie.hasCaptions);
+
+                openNextMovie();
+            }
+            
+            function openNextMovie()
+            {
+                consoleWrite("");
+
+                movieInfo.current++;
+                if (movieInfo.current >= movieInfo.movies.length)
+                {
+                    endTest();
+                    return;
+                }
+
+                var url = movieInfo.movies[movieInfo.current].url;
+                video.src = url;
+                var desc = "<b>Loading</b> <em>\""+ url + "\"</em>" + 
+                            ". " + movieInfo.movies[movieInfo.current].description + ".</em>";
+                consoleWrite(desc);
+                if (movieInfo.current > 0)
+                    video.load();
+            }
+            
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("error");
+                waitForEvent("loadstart");
+                waitForEvent("waiting");
+                waitForEvent("ratechange");
+                waitForEvent("durationchange");
+                waitForEvent("pause");
+                waitForEvent("play");
+                waitForEvent("playing");
+
+                waitForEvent('loadedmetadata', canplaythrough);
+
+                consoleWrite("<b>Test before movie is open:</b>");
+                testExpected("mediaElement.webkitHasClosedCaptions", false);
+                testExpected("mediaElement.webkitClosedCaptionsVisible", false);
+            
+                openNextMovie();
+            }
+
+        </script>
+
+    </head>
+
+    <body onload="start()">
+
+        <video controls></video>
+
+        <p>Test media element close caption API.</p>
+
+    </body>
+</html>

@@ -1,0 +1,4 @@
+Test that syntax error will be reported to the window.onerror handler. Bug 8519.
+
+Main frame window.onerror: Uncaught SyntaxError: Unexpected token ) at window-onerror6.html:22
+

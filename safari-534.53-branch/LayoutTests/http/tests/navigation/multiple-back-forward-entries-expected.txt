@@ -1,0 +1,6 @@
+This test creates an iFrame via document.write(), then immediately changes the source of that iframe while the main document is still being parsed. The src change should not result in a new back/forward list entry.
+
+
+============== Back Forward List ==============
+curr->  http://127.0.0.1:8000/navigation/multiple-back-forward-entries.html  **nav target**
+===============================================

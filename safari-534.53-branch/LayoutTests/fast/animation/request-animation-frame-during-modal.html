@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description('Tests that requestAnimationFrame callbacks are not invoked while modal dialogs are displayed.');
+
+onload = function()
+{
+    debug('Setting callback');
+    window.webkitRequestAnimationFrame(function() { debug('Callback fired'); }, document.body);
+    debug('Showing modal dialog');
+    var src = 'if (window.layoutTestController) {' +
+              '    layoutTestController.display();' +
+              '    window.close();' +
+              '} else {'+
+              '    window.setTimeout(window.close, 10);'+
+              '}';
+    showModalDialog('data:text/html,<script>' + src + '</' + 'script>');
+    debug('Returned from modal dialog');
+    if (window.layoutTestController) {;
+        layoutTestController.display();
+    }
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

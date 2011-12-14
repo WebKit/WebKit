@@ -1,0 +1,11 @@
+Test that "error" event listener added with window.addEventListener is invoked for uncaucht exceptions. Bug 8519.
+
+event passed to the listener is the same as window.event: true
+Event details:
+type: error
+phase: 2
+currentTarget is the global object: true
+message: Uncaught Error: My fault.
+filename: window-onerror10.html
+lineno: 29
+

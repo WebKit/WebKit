@@ -1,0 +1,17 @@
+<html>
+<body>
+
+    <video loop controls></video>
+    
+    <p>Test that seeking video with no 'src' attribute throws an INVALID_STATE_ERR exception.</p>
+
+    <script src=video-test.js></script>
+    <script>
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+        testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
+        testException("video.currentTime = 1.1", "DOMException.INVALID_STATE_ERR");
+        setTimeout(endTest, 200) 
+    </script>
+    
+</body>
+</html>

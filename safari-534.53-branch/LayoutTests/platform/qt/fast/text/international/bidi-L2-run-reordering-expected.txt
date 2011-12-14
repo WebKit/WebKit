@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x99
+  RenderBlock {HTML} at (0,0) size 800x99
+    RenderBody {BODY} at (8,14) size 784x71
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 742x38
+          text run at (0,0) width 742: "The three boxes should be the same. The order in each box should be: Roman letters, Hebrew letters, digits, Hebrew"
+          text run at (0,19) width 140: "letters, Roman letters."
+      RenderBlock {P} at (0,52) size 784x19
+        RenderInline {SPAN} at (0,0) size 169x21 [border: (1px solid #008000)]
+          RenderText {#text} at (1,0) size 167x19
+            text run at (1,0) width 27: "abc "
+            text run at (28,0) width 46 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (74,0) width 24: "123"
+            text run at (98,0) width 46 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (144,0) width 24: " def"
+        RenderText {#text} at (169,0) size 4x19
+          text run at (169,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 169x21 [border: (1px solid #008000)]
+          RenderText {#text} at (174,0) size 167x19
+            text run at (174,0) width 27: "abc "
+            text run at (201,0) width 46 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (247,0) width 24: "123"
+            text run at (271,0) width 46 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (317,0) width 24: " def"
+        RenderText {#text} at (342,0) size 4x19
+          text run at (342,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 169x21 [border: (1px solid #008000)]
+          RenderText {#text} at (347,0) size 167x19
+            text run at (347,0) width 27: "abc "
+            text run at (374,0) width 46 RTL: " \x{5D3}\x{5D4}\x{5D5}"
+            text run at (420,0) width 24: "123"
+            text run at (444,0) width 46 RTL: "\x{5D0}\x{5D1}\x{5D2} "
+            text run at (490,0) width 24: " def"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

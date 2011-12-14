@@ -1,0 +1,9 @@
+ALERT: beforeUnload
+New window with beforeUnload handler.
+You should see an alert with "beforeUnload" if you try to close the window.
+
+
+--------
+Frame: 'focusedFrame'
+--------
+This frame should get the focus. 

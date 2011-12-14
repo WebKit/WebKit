@@ -1,0 +1,15 @@
+PASS: datagrid JS binding is [object HTMLDataGridElement]
+PASS: Initial value of datagrid.columns is defined.
+PASS: datagrid.columns JS binding is [object DataGridColumnList]
+PASS: Initial length of datagrid.columns is 2.
+PASS: newCol JS binding is [object HTMLDataGridColElement]
+PASS: We have three columns in the list.
+PASS: The column's ID is from as expected.
+PASS: The column's label is From as expected.
+PASS: The column's type is text as expected.
+PASS: The column's primary property is true as expected.
+PASS: The column's sortable property is 2 as expected.
+PASS: The first column is the primary column.
+PASS: After removing a column, the length of datagrid.columns is 2.
+PASS: No column is the primary column.
+

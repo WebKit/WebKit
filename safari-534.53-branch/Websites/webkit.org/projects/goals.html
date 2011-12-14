@@ -1,0 +1,66 @@
+<?php
+    $title = "WebKit Project Goals";
+    include("../header.inc");
+?>
+
+<h2>WebKit Project Goals</h2>
+
+<p>WebKit is an open source Web content engine for browsers and other applications. We value real-world web compatibility, standards compliance, stability, performance, security, portability, usability, and relative ease of understanding and modifying the code (hackability).
+
+<h3>Goals</h3>
+
+<dl>
+<dt>Web Content Engine</dt>
+<dd>The project's primary focus is content deployed on the World Wide Web, using standards-based technologies such as HTML, CSS, JavaScript and the DOM. However, we also want to make it possible to embed WebKit in other applications, and to use it as a general-purpose display and interaction engine.</dd>
+
+<dt>Open Source</dt>
+<dd>WebKit should remain freely usable for both open source and proprietary applications. To that end, we use BSD-style and LGPL licenses. Specifically, we aim for licensing compatible with LGPL 2.1+. We do not currently plan to move to LGPL 3. In addition, we strive to create a courteous, welcoming environment that feels approachable to newcomers. WebKit maintains a public IRC chat room and a public mailing list where the ideas of contributors both new and old are heard and discussed with equal weight.
+</dd>
+
+<dt>Compatibility</dt>
+<dd>For users browsing the web, compatibility with their existing sites is essential. We strive to maintain and improve compatibility with existing web content, sometimes even at the expense of standards. We use regression testing to maintain our compatibility gains.</dd>
+
+<dt>Standards Compliance</dt>
+<dd>WebKit aims for compliance with relevant web standards, and support for new standards
+In addition to improving compliance, we participate in the web standards community to bring new technologies into standards, and to make sure new standards are practical to implement in our engine. We use regression testing to maintain our standards compliance gains.</dd>
+
+<dt>Stability</dt>
+<dd>The main WebKit code base should always maintain a high degree of stability. This means that crashes, hangs and regressions should be dealt with promptly, rather than letting them pile up.</dd>
+
+<dt>Performance</dt>
+<dd> Maintaining and improving speed and memory use is an important goal. We never consider performance "good enough", but strive to constantly improve. As web content becomes richer and more complex, and as web browsers run on more limited devices, performance gains continue to have value even if normal browsing seems fast enough.</dd>
+
+<dt>Security</dt>
+<dd>Protecting users from security violations is critical. We fix security issues promptly to protect users and maintain their trust.</dd>
+
+<dt>Portability</dt>
+<dd>The WebKit project seeks to address a variety of needs. We want to make it reasonable to port WebKit to a variety of desktop, mobile, embedded and other platforms. We will provide the infrastructure to do this with tight platform integration, reusing native platform services where appropriate and providing friendly embedding APIs.</dd>
+
+<dt>Usability</dt>
+<dd>To the extent that WebKit features affect the user experience, we want them to work in accordance with good human interface design principles, and to mesh well with platform-native HI conventions. Furthermore, we strive to integrate with platform accessibility features to allow access for all users, including those with disabilities.</dd>
+
+<dt>Hackability</dt>
+<dd>To make rapid progress possible, we try to keep the code relatively easy to understand, even though web technologies are often complex. We try to use straightforward algorithms and data structures when possible, we try to write clear, maintainable code, and we continue to improve names and code structure to aid understanding. When tricky "rocket science" code is truly needed to solve some problem, we try to keep it bottled up behind clean interfaces. In addition, we make heavy use of automated regression tests as a safety net, to allow aggressive changes with less risk of regressions.</dd>
+</dl>
+
+<h3>Non-Goals</h3>
+
+<p>The above goals are a lot to bite off, and there are a few points that arise occasionally which we consider out of scope for the project.
+
+<dl>
+<dt>WebKit is an engine, not a browser.</dt>
+<dd>We do not plan to develop or host a full-featured web browser
+based on WebKit. Others are welcome to do so, of course.</dd>
+
+<dt>WebKit is an engineering project not a science project.</dt>
+<dd>For new features to be adopted into WebKit, we strongly prefer for the technology or at least the use case for it to be proven.</dd>
+
+<dt>WebKit is not a bundle of maximally general and reusable code.</dt>
+<dd>We build some general-purpose parts, but only to the degree needed to be a good web content engine.</dd>
+
+<dt>WebKit is not the solution to every problem.</dt>
+<dd>We focus on web content, not complete solutions to every imaginable technology need.</dd>
+
+</dl>
+
+<?php include("../footer.inc"); ?>

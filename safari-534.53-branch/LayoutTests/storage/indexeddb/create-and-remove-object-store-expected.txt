@@ -1,0 +1,45 @@
+Test IndexedDB's create and removeObjectStore
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('create-and-remove-object-store')
+openSuccess():
+db = event.target.result
+Trying create
+Expecting exception from db.createObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Trying remove
+Expecting exception from db.createObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+result = db.setVersion('version 1')
+Trying create
+Expecting exception from db.createObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Trying remove
+Expecting exception from db.createObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Deleted all object stores.
+db.createObjectStore('tmp')
+Expecting exception from db.createObjectStore('tmp')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.CONSTRAINT_ERR
+trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+trans.objectStore('tmp').get(0)
+PASS event.target.result is undefined.
+Trying create
+Expecting exception from db.createObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Trying remove
+Expecting exception from db.createObjectStore("some os")
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

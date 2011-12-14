@@ -1,0 +1,52 @@
+<body onload="test()">
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=33813">bug 33813</a>: Crash when using DOMApplicationCache from a destroyed frame.</p>
+<p>PASS if didn't crash.</p>
+<iframe src="about:blank"></iframe>
+
+<script>
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("");
+    }
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var ifrCache;
+
+function test()
+{
+    ifrCache = frames[0].applicationCache;
+    document.body.removeChild(document.getElementsByTagName("iframe")[0]);
+    setTimeout(function() {
+        gc();
+        ifrCache.onchecking = function() { }
+        ifrCache.onerror = function() { }
+        ifrCache.onnoupdate = function() { }
+        ifrCache.ondownloading = function() { }
+        ifrCache.onprogress = function() { }
+        ifrCache.onupdateready = function() { }
+        ifrCache.oncached = function() { }
+        ifrCache.onobsolete = function() { }
+        ifrCache.addEventListener("error", function() { }, true);
+
+        var evt = document.createEvent("Event");
+        evt.initEvent("error", true, true);
+        ifrCache.dispatchEvent(evt);
+
+        try { ifrCache.update(); } catch (ex) { }
+        try { ifrCache.swapCache(); } catch (ex) { }
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+}
+</script>

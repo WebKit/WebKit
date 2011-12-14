@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script>
+            function test() {
+                if (window.layoutTestController)
+                    layoutTestController.dumpAsText();
+
+                var result = document.getElementById("result");
+                window.getSelection().setBaseAndExtent(result, 0, result, 7);
+                document.execCommand("Cut");
+                if (window.textInputController)
+                    textInputController.doCommand("pasteAsPlainText:");
+            }
+            function onpastehandler(event) {
+                var e = document.getElementById("result");
+                e.innerText = "SUCCESS";
+            }
+        </script>
+    </head>
+    <body onload="test()" onpaste="onpastehandler(event)" contenteditable>
+        This tests that sending the pasteAsPlainText selector, which is what happens when you paste and match style, fires the onpaste event.
+        <div id="result">FAILURE</div>
+    </body>
+</html>

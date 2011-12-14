@@ -1,0 +1,17 @@
+Test calling getPropertyValue on computed styles for -webkit-border-image property.
+
+-webkit-border-image: none;
+  -webkit-border-image
+    getPropertyValue:    none
+    getPropertyCSSValue: [object CSSPrimitiveValue]
+
+-webkit-border-image: -webkit-gradient(linear, 0 0, 0 0) 25 25 25 25 stretch stretch;
+  -webkit-border-image
+    getPropertyValue:    -webkit-gradient(linear, 0 0, 0 0) 25 fill / 1 / 0px stretch
+    getPropertyCSSValue: [object CSSValue]
+
+-webkit-border-image: -webkit-gradient(linear, 0 0, 0 0) 50 repeat;
+  -webkit-border-image
+    getPropertyValue:    -webkit-gradient(linear, 0 0, 0 0) 50 fill / 1 / 0px repeat
+    getPropertyCSSValue: [object CSSValue]
+

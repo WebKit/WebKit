@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to char
+
+FAIL dt.setChar( NaN ); dt.PUB_CHAR should throw an exception. Was 0.
+FAIL dt.setChar( NaN ); dt.getChar() should throw an exception. Was 0.
+FAIL typeof dt.getChar() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

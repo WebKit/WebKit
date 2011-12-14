@@ -1,0 +1,27 @@
+Tests live edit feature.
+
+Debugger was enabled.
+
+Running: testLiveEdit
+==Source frame contents start==
+function f()
+{
+    return "live-edited string";
+}
+
+==Source frame contents end==
+
+Running: testLiveEditWhenPaused
+Script execution paused.
+Call stack:
+    0) f1 (edit-me-when-paused.js:13)
+    1)  (:1)
+    2) eval ((internal script):146)
+    3) InjectedScript._evaluateOn (:283)
+    4) InjectedScript._evaluateAndWrap (:265)
+    5) InjectedScript.evaluate (:245)
+Script execution resumed.
+
+Running: testBreakpointsUpdated
+Debugger was disabled.
+

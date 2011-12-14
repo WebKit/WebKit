@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src=../../../../editing/editing.js language="javascript" type="text/javascript"></script>
+<script>
+
+function editingTest() {
+    edit = document.getElementById('edit');
+    edit.focus();
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand(' ');
+    var s = window.getSelection();
+    s.setBaseAndExtent(edit.firstChild, 6, edit.firstChild, 6);
+    execMoveSelectionForwardByCharacterCommand();
+}
+
+</script>
+<title>Testing moving cursor to the beginning of autocorrected word</title> 
+</head> 
+<body>
+<p>The test verified that if user moves caret to the beginning of a word that 
+is marked as autocorrected, the autocorrection underline will remain. You should see phrase "it's a 
+message", in which the word 'message' has blue underline.</p>
+<p  style="color:green">Note, this test can fail due to user specific spell checking data. 
+If the user has previously dismissed 'message' as the correct spelling of 'mesage' several times, 
+the spell checker will not provide 'message' as a suggestion anymore. To fix this,
+remove all files in ~/Library/Spelling.</p>
+<div contenteditable="true" id="edit"/>
+<script language="javascript" type="text/javascript">
+runEditingTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+This directory contains results for official builds of Chromium.  Due to some
+compiler flag differences that impact some floating point operations, some
+tests have slightly different results from chromium-linux.
+
+This directory does not need to have a Skipped file since it uses
+new-run-webkit-tests.

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebKit2ReleaseCairoCFLite"
+	InheritedPropertySheets="
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\cURL.vsprops;
+      .\WebKit2Common.vsprops;
+      .\WebKit2CFLite.vsprops"
+	>
+</VisualStudioPropertySheet>

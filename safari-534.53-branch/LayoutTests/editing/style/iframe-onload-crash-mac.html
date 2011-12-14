@@ -1,0 +1,19 @@
+<meta><input><h6><nobr></nobr><datagrid><ins><button><em><iframe onload="
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setEditingBehavior('mac');
+}
+
+if (document.counter)
+    document.counter++;
+else
+    document.counter = 1;
+
+if (document.counter <= 16) {
+    document.designMode='on';
+    document.execCommand('selectall');
+    document.execCommand('italic');
+    document.execCommand('RemoveFormat');
+    document.execCommand('inserthtml', false);
+    document.body.innerHTML='PASS';
+} ">x

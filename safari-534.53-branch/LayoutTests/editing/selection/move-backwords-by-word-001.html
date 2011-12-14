@@ -1,0 +1,40 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 10; i++)
+        moveSelectionForwardByCharacterCommand();
+    moveSelectionBackwardByWordCommand();
+    moveSelectionBackwardByWordCommand();
+}
+
+</script>
+
+<!-- Note that this tests the fix for this bug:
+<rdar://problem/3765519> REGRESSION (Mail): word movement goes too far upstream at start of line
+-->
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">foo<BR>bar baz</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

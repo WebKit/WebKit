@@ -1,0 +1,9 @@
+<script>
+    window.location = "pass.html";
+
+    window.onunload = function()
+    {
+        document.write("document.write");
+        setTimeout("parent.log('You wanted to go to: '+ location.href); parent.fail()", 500);
+    }
+</script>

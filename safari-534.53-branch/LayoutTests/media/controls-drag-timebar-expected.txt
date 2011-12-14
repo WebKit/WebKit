@@ -1,0 +1,11 @@
+Test that dragging the timebar thumb causes seeks.
+
+EVENT(canplaythrough)
+EVENT(seeked)
+EVENT(seeked)
+EVENT(seeked)
+EVENT(seeked)
+EVENT(seeked)
+EVENT(seeked)
+END OF TEST
+

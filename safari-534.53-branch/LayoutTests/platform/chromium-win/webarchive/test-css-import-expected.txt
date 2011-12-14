@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 5: Uncaught TypeError: Object [object Object] has no method 'dumpDOMAsWebArchive'
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20 [color=#0000FF]
+        RenderText {#text} at (0,0) size 146x19
+          text run at (0,0) width 146: "This text should be blue."
+      RenderBlock {DIV} at (0,20) size 784x20 [color=#FF0000]
+        RenderText {#text} at (0,0) size 141x19
+          text run at (0,0) width 141: "This text should be red."
+      RenderBlock {DIV} at (0,40) size 784x20 [color=#008000]
+        RenderText {#text} at (0,0) size 154x19
+          text run at (0,0) width 154: "This text should be green."
+      RenderBlock {DIV} at (0,60) size 784x20 [color=#800080]
+        RenderText {#text} at (0,0) size 159x19
+          text run at (0,0) width 159: "This text should be purple."

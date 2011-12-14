@@ -1,0 +1,33 @@
+<html>
+<head>
+    <style>
+    div {
+        -webkit-transform: scale(2.7937); 
+        background-image: url('./resources/pixel-crack-image-background-webkit-transform-scale.png');
+        background-position: 16px 16px;
+        height: 16px;
+        width: 16px;
+        position:absolute;
+    }
+    </style>
+
+    <script type = "text/javascript">
+
+    function runTest()
+    {
+        for (var j=6; j<=35; ++j)
+            for (var i=1; i<=40; ++i) {
+                var div = document.createElement('div');
+                div.style.left = i*12;
+                div.style.top = j*12;
+                document.body.appendChild(div);
+            }        
+    }
+    </script>
+</head>
+<body onload="runTest()">
+<p>
+Test pixel cracks when background sprite is transformed with scale.  Need to run pixel test to verify if it is successful.
+</p>
+</body>
+</html>

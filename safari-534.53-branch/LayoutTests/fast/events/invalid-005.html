@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<form method="get" id="sad_form">
+<input name="victim" type="text" required oninvalid="testPassed('Invalid control')"/>
+<input name="victim" type="text" pattern="Lorem ipsum" value="Loremipsum" oninvalid="testPassed('Invalid control')"/>
+<textarea name="victim" required oninvalid="testPassed('Invalid control')"></textarea>
+</form>
+<div id="console"></div>
+<script>
+description("This test checks if the invalid event is correctly handled only by local handler.");
+
+if (document.getElementById("sad_form").checkValidity())
+    testFailed('checkValidity should have returned false');
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

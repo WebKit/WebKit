@@ -1,0 +1,52 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script src="resources/char-encoding-utils.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<form id="form" method="GET" target="subframe"><input type="text" id="text" name="text"></form>
+<iframe id="subframe" name="subframe"></iframe>
+<script>
+
+
+var charsets = new Array;
+var unicodes = new Array;
+var expectedResults = new Array;
+
+var results = new Object;
+
+var i = 0;
+
+testEncode("UTF-8", "U+00A0", "%C2%A0");
+//Yen symbol in gbk
+testEncode('GBK', 'U+00A5', '%A3%A4');
+testEncode('gb2312', 'U+00A5', '%A3%A4');
+testEncode('GB_2312-80', 'U+00A5', '%A3%A4');
+testEncode('EUC-CN', 'U+00A5', '%A3%A4');
+//Euro symbol in gbk
+testEncode('GBK', 'U+20AC', '%80');
+testEncode('gb2312', 'U+20AC', '%80');
+testEncode('GB_2312-80', 'U+20AC', '%80');
+testEncode('EUC-CN', 'U+20AC', '%80');
+//Misc symbols from TEC specific GBK translation 
+testEncode('GBK', 'U+01F9', '%A8%BF');
+testEncode('GBK', 'U+1E3F', '%A8%BC');
+testEncode('GBK', 'U+22EF', '%A1%AD');
+testEncode('GBK', 'U+301C', '%A1%AB');
+
+// Turning on this test causes a download to occur. FIXME: A bug?
+// testEncode('UTF-8', 'U+221A', '%E2%88%9A');
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+runTest();
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

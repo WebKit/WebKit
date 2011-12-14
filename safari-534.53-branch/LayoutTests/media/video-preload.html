@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            var timer = null;
+            var movieInfo = 
+            {
+                current : -1,
+                movies : 
+                [ 
+                    {
+                        // should not buffer, 'preload' is 'none'
+                        preload : "none",
+                        shouldBuffer : false,
+                        autoPlay : false,
+                        description : "until 'play()' is called", 
+                    },
+                    {
+                        preload : "metadata",
+                        shouldBuffer : true,
+                        autoPlay : false,
+                        description : "", 
+                    },
+                    {
+                        preload : "auto",
+                        shouldBuffer : true,
+                        autoPlay : false,
+                        description : "", 
+                    },
+                    {
+                        // should buffer because 'autoplay' is set
+                        preload : "none",
+                        shouldBuffer : true,
+                        autoPlay : true,
+                        description : " because of 'autoplay'", 
+                    },
+                ]
+            };
+            var timer = null;
+
+            function checkLoad()
+            {
+                var movie = movieInfo.movies[movieInfo.current];
+
+                logResult(true, "did not buffer automatically");
+                
+                // start playback, which should force data to load
+                movie.shouldBuffer = true;
+                run("video.play()");
+            }
+
+            function loadedmetadata()
+            {
+                var movie = movieInfo.movies[movieInfo.current];
+
+                clearTimeout(timer);
+                logResult(movie.shouldBuffer, "buffered automatically");
+                openNextMovie();
+            }
+
+            function setupAttribute(attr, value)
+            {
+                if (value)
+                    run("video.setAttribute('" + attr + "', '" + value + "')");
+                else
+                    run("video.removeAttribute('" + attr + "')");
+            }
+
+            function openNextMovie()
+            {
+                consoleWrite("");
+
+                movieInfo.current++;
+                if (movieInfo.current >= movieInfo.movies.length)
+                {
+                    endTest();
+                    return;
+                }
+
+                var movie = movieInfo.movies[movieInfo.current];
+                var url = findMediaFile("video", "content/test");
+                var desc = "Will load with <em>'preload=" + movie.preload + "'</em>"
+                            + ", <b>should" + (movie.shouldBuffer ? "" : " not") + " </b> buffer automatically "
+                            + movie.description;
+                consoleWrite(desc);
+
+                setupAttribute('preload', movie.preload);
+                setupAttribute('autoplay', movie.autoPlay);
+
+                video.src = url;
+                if (movieInfo.current > 0)
+                    video.load();
+                if (!movie.shouldBuffer)
+                    timer = setTimeout(checkLoad, 200);
+            }
+            
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("error");
+                waitForEvent("loadstart");
+                waitForEvent("play");
+                waitForEvent('loadedmetadata', loadedmetadata);
+            
+                openNextMovie();
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test to see if media loads automatically when 'preload' is specified.</p>
+        <video controls ></video>
+    </body>
+</html>

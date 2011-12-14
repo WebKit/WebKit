@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <script>
+            function test() {
+                if (document.getElementById("rb").checked)
+                    document.getElementById("result").innerHTML = "Test Passed.  Radio button is checked by default";
+            }
+        </script>
+    </head>
+<body onload="test()">
+This tests that radio buttons are checked by default, even when the name attribute is parsed after the checked attribute.
+<br><br>
+<input type="radio" checked name="test_group" id="rb">This radio button should be checked by default
+<br><br>
+<div id="result">Test Failed.  Radio button is not checked by default.</div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<script>
+
+function finishTest()
+{
+    document.getElementById('textarea').setAttribute('placeholder','Placeholder');
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+    setTimeout(finishTest, 0);
+}
+
+</script>
+<body onload="test()">
+<p>If you can see the word "Placeholder" in the text area, then all is well.</p>
+<p><textarea id="textarea"></textarea></p>
+</body>

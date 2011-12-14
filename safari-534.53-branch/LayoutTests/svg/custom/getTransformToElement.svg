@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">
+<svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="svg-root" width="100%" height="100%" onload="runTest()">
+   <script type="text/ecmascript"><![CDATA[
+      function runTest() {
+        var referenceElement = document.getElementById("referenceText");
+        var ctm = referenceElement.getTransformToElement(document.getElementById("group1"));
+        if (ctm.a == 0.5 && ctm.b == 0 && ctm.c == 0 && ctm.d == 0.5 &&
+            ctm.e == -20 && ctm.f == -20) {
+        ctm = referenceElement.getTransformToElement(document.getElementById("group2"));
+        if (ctm.a.toFixed(3) == 0.354 && ctm.b.toFixed(3) == -0.354 &&
+            ctm.c.toFixed(3) == 0.354 && ctm.d.toFixed(3) == 0.354 &&
+            ctm.e.toFixed(3) == -7.071 && ctm.f.toFixed(8) == 0.0) {
+            ctm = referenceElement.getTransformToElement(document.getElementById("redRect"));
+            if (ctm.a.toFixed(3) == 0.354 && ctm.b.toFixed(3) == -0.354 &&
+                ctm.c.toFixed(3) == 0.354 && ctm.d.toFixed(3) == 0.354 &&
+                 ctm.e.toFixed(3) == -107.071 && ctm.f.toFixed(8) == 0.0) {
+               try {
+                 var ctm = referenceElement.getTransformToElement(document.getElementById("group0"));
+               } catch(e) {
+                     document.getElementById("referenceText").textContent = "Passed";
+               }
+             }
+           }
+         }
+      }
+   ]]></script>
+            <g id="group0" transform="scale(0)"/>
+            <g id="group1" transform="translate(15,15)">
+                <text id="referenceText" transform="translate(-20,-20),scale(0.5)" font-size="30" x="50" y="150">Failed</text>
+            </g>
+            <g id="group2" transform="rotate(45)">
+                <rect id="redRect" transform="translate(100,0)" x="50" y="50" width="70" height="30" fill="none"/>
+            </g>
+</svg>

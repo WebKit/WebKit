@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="QTMovieWinCommon"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)..\&quot;;&quot;$(ProjectDir)..\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\Include\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\Include&quot;;&quot;$(ConfigurationBuildDir)\Include\private&quot;;&quot;$(WebKitLibrariesDir)\QTInternalSDK\CIncludes&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\CIncludes&quot;;&quot;$(ProgramFiles)/QuickTime SDK/cincludes&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
+		PreprocessorDefinitions="_USRDLL;QTMOVIEWIN_EXPORTS;TARGET_OS_WIN32"
+		DisableSpecificWarnings="4819"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="QTMLClient.lib CVClient.lib JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib winmm.lib pthreadVC2$(LibraryConfigSuffix).lib Msimg32.lib user32.lib advapi32.lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
+		AdditionalLibraryDirectories="&quot;$(WebKitLibrariesDir)\QTInternalSDK\Libraries&quot;;&quot;$(WebKitLibrariesDir)\QuickTime SDK\Libraries&quot;;&quot;$(ProgramFiles)\QuickTime SDK\Libraries&quot;"
+		IgnoreDefaultLibraryNames="LIBCMT"
+	/>
+</VisualStudioPropertySheet>

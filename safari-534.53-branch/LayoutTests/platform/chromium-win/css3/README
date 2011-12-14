@@ -1,0 +1,9 @@
+transform-value-types
+--------------------------
+The printing of prototype objects and constructors is implementation dependent.
+We print these differently from KJS which is harmless.
+
+keyframes-rule
+--------------------------
+Expects typeof(CSSStyleDeclaration) to be 'object'.  In V8 this is a
+constructor function and typeof(CSSStyleDeclaration) is 'function'.

@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to short
+
+PASS dt.setShort( java.lang.Short.MIN_VALUE -1 ); dt.PUB_SHORT threw exception ReferenceError: Can't find variable: java.
+PASS dt.setShort( java.lang.Short.MIN_VALUE -1 ); dt.getShort() threw exception ReferenceError: Can't find variable: java.
+FAIL typeof dt.getShort() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

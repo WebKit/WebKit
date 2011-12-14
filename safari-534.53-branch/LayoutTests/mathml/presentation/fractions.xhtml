@@ -1,0 +1,71 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Fractions</title>
+</head>
+<body>
+<p id='t1'>simple: <math xmlns='http://www.w3.org/1998/Math/MathML'><mfrac><mn>1</mn>bad<mn>2</mn></mfrac></math></p>
+<p id='t2'>more complex (should be red): 
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac style="color: red;">
+<mrow><mi>x</mi><mo>+</mo>bad<mn>1</mn></mrow>
+<mrow><mi>x</mi><mo>+</mo><mn>2</mn></mrow>
+</mfrac>
+</math>
+</p>
+<p id='t3'>text:
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac>
+<mtext>number of bugs</mtext>
+<mtext>number of changes</mtext>
+</mfrac>
+</math>
+</p>
+<p id='t4'>line thickness by keyword:
+<math xmlns='http://www.w3.org/1998/Math/MathML' mathsize="32 px">
+    <mfrac linethickness='thin'><mn>1</mn><mn>2</mn></mfrac>
+    <mfrac linethickness='medium'><mn>1</mn><mn>2</mn></mfrac>
+    <mfrac linethickness='thick'><mn>1</mn><mn>2</mn></mfrac>
+</math>
+</p>
+<p id='t5'>numerator alignment:
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac numalign="left">
+<mi>x</mi>
+<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>5</mn></mrow>
+</mfrac>
+</math>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac numalign="center">
+<mi>x</mi>
+<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>5</mn></mrow>
+</mfrac>
+</math>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac numalign="right">
+<mi>x</mi>
+<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>5</mn></mrow>
+</mfrac>
+</math>
+</p>
+<p id='t6'>denominator alignment:
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac denomalign="left">
+<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>5</mn></mrow>
+<mi>x</mi>
+</mfrac>
+</math>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac denomalign="center">
+<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>5</mn></mrow>
+<mi>x</mi>
+</mfrac>
+</math>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mfrac denomalign="right">
+<mrow><mn>1</mn><mo>+</mo><mn>2</mn><mo>+</mo><mn>3</mn><mo>+</mo><mn>4</mn><mo>+</mo><mn>5</mn></mrow>
+<mi>x</mi>
+</mfrac>
+</math>
+</p>
+</body>
+</html>

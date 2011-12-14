@@ -1,0 +1,6 @@
+Test that QuickTime file with unsupported track types only generates an error.
+
+EVENT(error)
+EXPECTED (video.error != 'null') OK
+END OF TEST
+

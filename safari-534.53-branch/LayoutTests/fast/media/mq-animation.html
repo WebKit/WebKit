@@ -1,0 +1,23 @@
+<html>
+<head>
+<title>CSS3 media query test: media query testing animation feature.</title>
+<link rel="help" href="http://www.webkit.org/specs/MediaQueriesExtensions.html" />
+<style type="text/css">
+@media (-webkit-animation) {
+#a { color: green }
+}
+@media (-webkit-animation: 1) {
+#b { color: green }
+}
+#c { color: green; }
+@media (-webkit-animation: 0) {
+#c { color: red }
+}
+</style>
+</head>
+<body>
+<p id="a">This text should be green if running in a build of WebKit with animations.</p>
+<p id="b">This text should be green if running in a build of WebKit with animations.</p>
+<p id="c">This text should be green if running in a build of WebKit with animations.</p>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpFrameLoadCallbacks();
+}
+
+function runTest() {
+    window.location.replace('http://127.0.0.1:8000/resources/redirect.php?url=notify-done.html&refresh=0');
+}
+
+</script>
+<body onload="setTimeout('runTest();', 10);">
+This tests basic functionality of the HistoryDelegate, including tracking a few forms of redirects.<br>
+</body>

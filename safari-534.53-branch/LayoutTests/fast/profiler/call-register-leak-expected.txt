@@ -1,0 +1,17 @@
+This page tests that the generation of bytecode allocates registers correctly when profiling is enabled. To run the test manually, enable profiling in the web inspector and reload this page.
+
+PASS: localCallTest(1, 2) should be 2 and is.
+
+PASS: globalCallTest(1, 2) should be 2 and is.
+
+PASS: scopedCallTest(1, 2) should be 2 and is.
+
+PASS: resolveCallTest(1, 2) should be 2 and is.
+
+PASS: bracketCallTest(1, 2) should be 2 and is.
+
+PASS: dotCallTest(1, 2) should be 2 and is.
+
+PASS: newTest(1, 2) should be 2 and is.
+
+

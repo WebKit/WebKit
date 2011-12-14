@@ -1,0 +1,5 @@
+DESKTOP NOTIFICATION PERMISSION REQUESTED: file://
+Requesting notification permission...
+
+PASS: Permission callback invoked.
+

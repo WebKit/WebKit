@@ -1,0 +1,11 @@
+This is the test for layoutTestController.counterValueForElementById
+   
+PASS layoutTestController.counterValueForElementById('before') is '0'
+PASS layoutTestController.counterValueForElementById('after') is '0'
+PASS layoutTestController.counterValueForElementById('before_after') is '0 0'
+PASS layoutTestController.counterValueForElementById('twice') is '0 0'
+PASS layoutTestController.counterValueForElementById('point') is '0.1'
+PASS layoutTestController.counterValueForElementById('two-points') is '0.1.2'
+PASS layoutTestController.counterValueForElementById('greek') is '0.α.β'
+PASS layoutTestController.counterValueForElementById('three-greeks') is '0.α.β 0.α.β 0.α.β'
+

@@ -1,0 +1,7 @@
+This is a test to make sure that when private browsing is on any attempt to change the sessionStorage area fail.
+Initial value of testItem is: null
+Caught exception trying to change item: Error: QUOTA_EXCEEDED_ERR: DOM Exception 22
+After change attempt, testItem is: null
+After remove attempt, testItem is: null
+After clear attempt, testItem is: null
+

@@ -1,0 +1,3 @@
+This page tests the beforeload event on script elements. You should see a PASS message below if everything works.
+
+PASS

@@ -1,0 +1,51 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's constants.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBe("webkitIDBDatabaseException.UNKNOWN_ERR", "1");
+    shouldBe("webkitIDBDatabaseException.NON_TRANSIENT_ERR", "2");
+    shouldBe("webkitIDBDatabaseException.NOT_FOUND_ERR", "3");
+    shouldBe("webkitIDBDatabaseException.CONSTRAINT_ERR", "4");
+    shouldBe("webkitIDBDatabaseException.DATA_ERR", "5");
+    shouldBe("webkitIDBDatabaseException.NOT_ALLOWED_ERR", "6");
+    shouldBe("webkitIDBDatabaseException.SERIAL_ERR", "7");
+    shouldBe("webkitIDBDatabaseException.RECOVERABLE_ERR", "8");
+    shouldBe("webkitIDBDatabaseException.TRANSIENT_ERR", "9");
+    shouldBe("webkitIDBDatabaseException.TIMEOUT_ERR", "10");
+    shouldBe("webkitIDBDatabaseException.DEADLOCK_ERR", "11");
+
+    shouldBe("webkitIDBRequest.LOADING", "1");
+    shouldBe("webkitIDBRequest.DONE", "2");
+
+    shouldBe("webkitIDBCursor.NEXT", "0");
+    shouldBe("webkitIDBCursor.NEXT_NO_DUPLICATE", "1");
+    shouldBe("webkitIDBCursor.PREV", "2");
+    shouldBe("webkitIDBCursor.PREV_NO_DUPLICATE", "3");
+
+    shouldBe("webkitIDBTransaction.READ_WRITE", "0");
+    shouldBe("webkitIDBTransaction.READ_ONLY", "1");
+    shouldBe("webkitIDBTransaction.VERSION_CHANGE", "2");
+}
+
+test();
+
+var successfullyParsed = true;
+done();
+
+</script>
+</body>
+</html>

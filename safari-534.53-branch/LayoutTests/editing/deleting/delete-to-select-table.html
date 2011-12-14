@@ -1,0 +1,34 @@
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+function editingTest() {
+    for (i = 0; i < 30; i++) {
+        moveSelectionForwardByCharacterCommand();    
+    }
+    for (i = 0; i < 1; i++) {
+        deleteCommand();
+    }
+}
+</script>
+<div contenteditable="true" id="test">
+  <table style="border:3px solid #aaa;">
+    <tr>
+      <td>
+        Foo
+      </td>
+      <td>
+        baz
+      </td>
+    </tr>
+    <tr>
+      <td>
+        bar
+      </td>
+      <td>
+        buffalo
+      </td>
+    </tr>
+  </table>
+</div>
+<script>
+runEditingTest();
+</script>

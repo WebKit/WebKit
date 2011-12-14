@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <style type="text/css">
+        div {rgba(255, 255, 255, 0); width:51; height:51;}
+        #sameBackground {background-color:white}
+        #differentBackgroundColor {background-color:black}
+        #differentBackgroundImage {background-image:url("../../../../fast/images/resources/boston.gif")}
+
+        #semiTransparentParent {background-color:rgba(255, 0, 0, .5)}
+        #fullyTransparentParent {background-color:rgba(255, 0, 0, 0)}
+
+        #fullyTransparentChildWithNonTransparentParent {background-color:rgba(255, 255, 255, 0)}
+        #nonTransparentChildWithSemiTransparentParent {background-color:rgba(255, 0, 0, 1)}
+        #fullyTransparentChildWithSemiTransparentParent {background-color:rgba(255, 0, 0, 0)}
+        #nonTransparentChildWithFullyTransparentParent {background-color:rgba(255, 0, 0, 1)}
+        #fullyTransparentChildWithFullyTransparentParent {background-color:rgba(255, 0, 0, 0)}
+    </style>
+    <script src="resources/deletionUI-helpers.js"></script>
+    <script>
+        function test()
+        {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            determineDeletionUIExistence("sameBackground");
+            determineDeletionUIExistence("differentBackgroundColor");
+            determineDeletionUIExistence("differentBackgroundImage");
+
+            determineDeletionUIExistence("fullyTransparentChildWithNonTransparentParent");
+            determineDeletionUIExistence("nonTransparentChildWithSemiTransparentParent");
+            determineDeletionUIExistence("fullyTransparentChildWithSemiTransparentParent");
+            determineDeletionUIExistence("nonTransparentChildWithFullyTransparentParent");
+            determineDeletionUIExistence("fullyTransparentChildWithFullyTransparentParent");
+
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>This tests if the deletion UI will show on elements with different background colors or images. This test can be run by DRT but not in the browser.</p>
+    <div id="console"></div>
+
+
+    <div contenteditable="true" style="padding: 1em;">
+        <div id="sameBackground" class="needsDeletionUI"><br></div>
+        <div id="differentBackgroundColor" class="needsDeletionUI"><br></div>
+        <div id="differentBackgroundImage" class="needsDeletionUI"><br></div>
+
+        <div id="fullyTransparentChildWithNonTransparentParent" class="needsDeletionUI"><br></div>
+        <div id="semiTransparentParent">
+            <div id="nonTransparentChildWithSemiTransparentParent" class="needsDeletionUI"><br></div>
+            <div id="fullyTransparentChildWithSemiTransparentParent" class="needsDeletionUI"><br></div>
+        </div>
+        <div id="fullyTransparentParent">
+            <div id="nonTransparentChildWithFullyTransparentParent" class="needsDeletionUI"><br></div>
+            <div id="fullyTransparentChildWithFullyTransparentParent" class="needsDeletionUI"><br></div>
+        </div>
+    <div>
+
+</body>
+</html>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+window.setTimeout("clickNow()", 0);
+
+function clickNow() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(150, 50);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+function mouseHandler(evt)
+{
+    if(evt.target.parentNode.getAttribute("stroke-width") == "0.2cm")
+        evt.target.parentNode.setAttribute("stroke-width", "1");
+    else
+        evt.target.parentNode.setAttribute("stroke-width", "0.2cm");
+}
+</script>
+
+<g fill="red" stroke="yellow" onclick="mouseHandler(evt)">
+    <rect x="10" y="10" width="150" height="50"/>
+    <rect x="10" y="70" width="150" height="50"/>
+    <rect x="10" y="130" width="150" height="50"/>
+    <rect x="10" y="190" width="150" height="50"/>
+</g>
+
+</svg>

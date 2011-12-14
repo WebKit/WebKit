@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <script>
+        if (window.layoutTestController)
+        {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+        window.onload = function ()
+        {
+            var element = document.getElementById("test");
+            element.onchange = function() { element.size = 30; }
+            element.focus();
+            if (window.layoutTestController)
+            {
+                // This triggers selection of second option in the select and press Enter.
+                eventSender.keyDown("e");
+                eventSender.keyDown("\r", []);
+                // This triggers repaint.
+                document.body.offsetTop;
+                
+                document.getElementById("log").innerHTML = "<span style='color: green;'>PASS:</span> Did not crash";
+                layoutTestController.notifyDone();
+            }
+         }
+    </script>
+  </head>
+  <body>
+    This test is to ensure that we do not crash when onchange handler changes the select from a menu list to a list box.
+    <p id="log"><span style='color: red;'>FAIL:</span> Did not complete test or not running inside DumpRenderTree</p>
+    <select id="test">
+      <option selected>abcd</option>
+      <option>efgh</option>
+    </select>
+  </body>
+</html>
+

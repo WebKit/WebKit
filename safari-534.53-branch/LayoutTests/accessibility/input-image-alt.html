@@ -1,0 +1,32 @@
+<html>
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+    <input type="image" alt="Submit" src="resources/cake.png" width=100 height=100 id="image1">
+    
+    <p id="description"></p>
+    <div id="console"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            description("This test makes sure that an input image returns its alt tag as the description");
+
+            var image1 = document.getElementById("image1").focus();
+            var img = accessibilityController.focusedElement;
+
+            shouldBe("img.description", "'AXDescription: Submit'");
+        }
+        successfullyParsed = true;
+    </script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body> 
+</html>

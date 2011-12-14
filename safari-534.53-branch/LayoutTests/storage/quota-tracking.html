@@ -1,0 +1,113 @@
+<html>
+<head>
+<script>
+var database1 = null;
+var database2 = null;
+var database3 = null;
+
+function log(message)
+{
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function finishTest()
+{
+    log("Test Complete");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function statementErrorFunction(tx, error)
+{
+    log("Unexpected exception - " + error.message);
+    finishTest();
+}
+
+function transactionErrorFunction(db, error)
+{
+    // We only expect an error message for database2
+    if (db == database2) {
+        log("Expected quota exception - " + error.message);
+        checkCompletion(db);
+    } else {
+        log("Unexpected exception - " + error.message);
+        finishTest();
+    }
+}
+
+function checkCompletion(db)
+{
+    log("Done adding data");
+
+    if (database3) {
+        finishTest();
+    } else if (database2) {
+        database3 = openDatabase("QuotaManagementDatabase3", "1.0", "Test for quota management <rdar://5628468>", 1);
+        testDatabase(database3);
+    } else {
+        database2 = openDatabase("QuotaManagementDatabase2", "1.0", "Test for quota management <rdar://5628468>", 1);
+        testDatabase(database2);
+    }
+}
+
+function addData(db)
+{
+    db.transaction(function(tx) {
+        log("Inserting some data");
+        tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(17408))", [],
+                      function(tx, result) { }, statementErrorFunction);
+        if (db == database2) {
+            // Try to run this statement on 'database2' only.
+            // It should not be run, because the previous statement should've
+            // resulted in a failure that made sqlite roll back the entire transaction.
+            tx.executeSql("INSERT INTO DataTest (randomData) VALUES (ZEROBLOB(10))", [],
+                          function(tx, result) {
+                              log("This statement should not have been run.");
+                              finishTest();
+                          }, statementErrorFunction);
+        }
+    }, function(error) {
+        transactionErrorFunction(db, error);
+    }, function() {
+        checkCompletion(db);
+    });
+}
+
+function testDatabase(db)
+{
+    db.transaction(function(tx) {
+        log("Adding a table");
+        tx.executeSql("CREATE TABLE DataTest (randomData)", [],
+                      function(tx, result) { }, statementErrorFunction);
+    }, function(error) {
+        transactionErrorFunction(db, error);
+    }, function() {
+        addData(db);
+    });
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.clearAllDatabases();
+        layoutTestController.dumpDatabaseCallbacks();
+        layoutTestController.setDatabaseQuota(40960);
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    database1 = openDatabase("QuotaManagementDatabase1", "1.0", "Test for quota management <rdar://5628468>", 1);
+    testDatabase(database1);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+This test checks to make sure that quotas are enforced per-origin instead of per-database, as they were prior to http://trac.webkit.org/projects/webkit/changeset/29983.<br>
+The test clears all databases, sets the quota for the origin to 40k, then tries to insert 17k of data into two databases. If things go as planned, the second insert should fail, the UI Delegate should be informed of the exceeded quota and should increase the quota for this origin. Inserting 17k of data the third time should succeed again.
+<pre id="console">
+</pre>
+</body>
+
+</html>

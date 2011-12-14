@@ -1,0 +1,6 @@
+S8.6.2_A7
+
+PASS TypeError: '[object Math]' is not a constructor (evaluating 'new Math')
+
+TEST COMPLETE
+

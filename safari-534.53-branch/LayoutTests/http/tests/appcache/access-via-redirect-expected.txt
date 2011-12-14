@@ -1,0 +1,3 @@
+This tests that the start of redirect chain doesn't get into an application cache if the end of the chain has a manifest.
+
+SUCCESS

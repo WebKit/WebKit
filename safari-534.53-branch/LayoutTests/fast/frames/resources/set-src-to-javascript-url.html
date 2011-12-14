@@ -1,0 +1,15 @@
+<html>
+<body>
+FAIL
+<script>
+    function returnStringValue() {
+        return "test";
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    parent.document.getElementById("parent").setAttribute("src", "javascript: returnStringValue()");
+</script>
+</body>
+</html>

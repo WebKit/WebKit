@@ -1,0 +1,51 @@
+<?php
+    $title = "Web Site Compatibility";
+    include("../../header.inc");
+?>
+<h2>Web Site Compatibility</h2>
+
+<h3>Overview</h3>
+<p>The most important task that we are working on in WebKit is improving web site compatibility.  Web site compatibility is actually
+a generic term that covers bugs that may occur in many different functional areas of the code, from CSS to rendering to plug-ins.
+Any time you encounter a web site that works in another browser but fails in a WebKit browser you have hit a web site compatibility
+bug.
+</p>
+<p>These bugs can range from minor rendering defects to showstoppers that make an entire site inaccessible.  The causes of these bugs
+are also wide-ranging, from bugs in the way the web page is coded to bugs in the engine itself.  For this reason reduction of web site
+compatibility bugs is a top priority.  Only if the bug is reduced to a minimal failing test case is it easy for a developer to determine the
+root cause of the problem.</p>
+
+<p>Web site compatibility bugs fall into several categories:</p>
+<ol>
+<li>The bug is in the Web site itself.  You can test this assumption by checking the site in other browsers like Firefox and
+Internet Explorer for Windows.  If both of these browsers
+also fail on the site, it's a safe bet that the site is to blame.
+<li>The HTML on the site is buggy, but WebKit's error recovery does not match other browsers.  This is a very common scenario for WebKit
+as our error handling is still a bit more strict than other browsers.  In this case the bug is still our responsibility, since whenever
+possible we want to match other browsers' error recovery behavior.
+<li>WebKit has a legitimate compliance bug.  This is the most important class of compatibility bug, since we especially want valid
+HTML to render and behave properly.
+</ol>
+
+<h3>Get Involved!</h3>
+<p>How can you help us improve web site compatibility in Safari?</p>
+
+<dl>
+<dt>Test Test Test!</dt>
+<dd>Build the latest WebKit and use it day to day.  Visit all of your favorite Web sites and scrutinize them all closely.  Make sure
+they all work as expected, and if they don't then report problems to us.
+<dt>File Bugs</dt>
+<dd><a href="../../quality/reporting.html">Report bugs</a> to us for any problems you find.  Get bugs into our database so that we
+can track the issue and screen the bug.</dd>
+<dt>Reduce Bugs</dt>
+<dd>Scan the bugs in the <code>New Bugs</code> component and help attach reductions and minimal failing test cases.  Only when bugs are
+screened properly will a developer be able to determine the root cause of the problem and move it into the appropriate component.
+<i>This is one of the most important ways you can help improve WebKit.</i>
+<dt>Create New Tests</dt>
+<dd>To help avoid regressions you can make new tests, even for features that WebKit already handles correctly.  The more regression tests
+we have covering a specific feature, the less likely it is that the feature will break when we make changes.
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

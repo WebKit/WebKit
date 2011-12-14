@@ -1,0 +1,53 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x578
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 50x19
+          text run at (0,0) width 50: "Bullets: "
+        RenderInline {SPAN} at (0,0) size 15x19
+          RenderText {#text} at (50,0) size 15x19
+            text run at (50,0) width 15: "\x{2022}\x{2022}\x{2022}"
+        RenderText {#text} at (65,0) size 4x19
+          text run at (65,0) width 4: "."
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 61x19
+          text run at (0,0) width 61: "Squares: "
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderText {#text} at (61,0) size 12x19
+            text run at (61,0) width 12: "\x{25A0}\x{25A0}\x{25A0}"
+        RenderText {#text} at (73,0) size 4x19
+          text run at (73,0) width 4: "."
+      RenderBlock {P} at (0,66) size 784x19
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Circles: "
+        RenderInline {SPAN} at (0,0) size 12x19
+          RenderText {#text} at (51,0) size 12x19
+            text run at (51,0) width 12: "\x{25E6}\x{25E6}\x{25E6}"
+        RenderText {#text} at (63,0) size 4x19
+          text run at (63,0) width 4: "."
+      RenderBlock {P} at (0,99) size 784x19
+        RenderText {#text} at (0,0) size 82x19
+          text run at (0,0) width 82: "Plain letters: "
+        RenderInline {SPAN} at (0,0) size 21x19
+          RenderText {#text} at (82,0) size 21x19
+            text run at (82,0) width 21: "xxx"
+        RenderText {#text} at (103,0) size 4x19
+          text run at (103,0) width 4: "."
+      RenderBlock {P} at (0,132) size 784x19
+        RenderText {#text} at (0,0) size 104x19
+          text run at (0,0) width 104: "Bullets (invalid): "
+        RenderInline {SPAN} at (0,0) size 15x19
+          RenderText {#text} at (104,0) size 15x19
+            text run at (104,0) width 15: "\x{2022}\x{2022}\x{2022}"
+        RenderText {#text} at (119,0) size 4x19
+          text run at (119,0) width 4: "."
+      RenderBlock {P} at (0,165) size 784x19
+        RenderText {#text} at (0,0) size 117x19
+          text run at (0,0) width 117: "Bullets (dynamic): "
+        RenderInline {SPAN} at (0,0) size 15x19
+          RenderText {#text} at (117,0) size 15x19
+            text run at (117,0) width 15: "\x{2022}\x{2022}\x{2022}"
+        RenderText {#text} at (132,0) size 4x19
+          text run at (132,0) width 4: "."

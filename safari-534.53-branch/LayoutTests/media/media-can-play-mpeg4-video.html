@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px;}
+        </style>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType('video/x-m4v')", "maybe");
+                testExpected("video.canPlayType('video/mp4')", "maybe");
+
+                endTest();
+            }
+        </script>
+
+    </head>
+    <body onload="start()">
+
+        <video controls ></video>
+
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with
+        multiple video mpeg4 MIME types.</p>
+
+    </body>
+</html>

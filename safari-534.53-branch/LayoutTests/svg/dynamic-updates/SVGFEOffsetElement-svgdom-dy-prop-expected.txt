@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 38: TypeError: 'undefined' is not an object (evaluating 'offsetElement.dy.baseVal = 0')
+FAIL: Timed out waiting for notifyDone to be called
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'dy' property of the SVGFEOffsetElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL offsetElement.dy.baseVal should be 50. Threw exception TypeError: 'undefined' is not an object (evaluating 'offsetElement.dy.baseVal')
+

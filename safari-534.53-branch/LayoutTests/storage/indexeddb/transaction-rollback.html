@@ -1,0 +1,107 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB transaction rollback.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    request = evalAndLog("webkitIndexedDB.open('transaction-rollback')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("request = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cleanDatabase()
+{
+    debug("cleanDatabase():");
+    window.transaction = evalAndLog("transaction = event.target.result");
+    transaction.onabort = unexpectedErrorCallback;
+    transaction.oncomplete = setVersionComplete;
+
+    deleteAllObjectStores(db);
+    evalAndLog("db.createObjectStore('myObjectStore')");
+    shouldBe("db.objectStoreNames.length", "1");
+}
+
+function setVersionComplete()
+{
+    debug("setVersionComplete():");
+
+    window.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], webkitIDBTransaction.READ_WRITE)");
+    transaction.onabort = abortCallback;
+    transaction.oncomplete = unexpectedCompleteCallback;
+
+    window.store = evalAndLog("store = transaction.objectStore('myObjectStore')");
+    request = evalAndLog("store.add('rollbackValue', 'rollbackKey123')");
+    request.onsuccess = addSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function addSuccess()
+{
+    debug("addSuccess():");
+    shouldBe("event.target.result", "'rollbackKey123'");
+
+    request = evalAndLog("store.openCursor()");
+    request.onsuccess = openCursorSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openCursorSuccess()
+{
+    debug("openCursorSuccess():");
+    window.cursor = evalAndLog("cursor = event.target.result");
+
+    transaction.abort();
+}
+
+function abortCallback()
+{
+    debug("abortCallback():");
+    debug('Transaction was aborted.');
+
+    window.transaction = evalAndLog("transaction = db.transaction(['myObjectStore'], webkitIDBTransaction.READ)");
+    window.store = evalAndLog("store = transaction.objectStore('myObjectStore')");
+    request = evalAndLog("store.get('rollbackKey123')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = getSuccess;
+}
+
+function getSuccess()
+{
+    debug("getSuccess():");
+    shouldBe("event.target.result", "undefined");
+
+    shouldBe("cursor.value", "'rollbackValue'");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Test Latin-1 conversion to String
+
+PASS

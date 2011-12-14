@@ -1,0 +1,48 @@
+<html>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-post-function.js"></script>
+<style type="text/css">
+#box {
+    background-color:blue;
+    width:100px;
+    height:100px;
+}
+
+#box:active {
+    visibility:hidden;
+}
+
+</style>
+<body onload="runTest();">
+<div id="box" ontouchstart="testComplete();">FAIL</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description('Test touches set the active state.');
+
+function testComplete(event)
+{
+    isSuccessfullyParsed();
+    layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    if (window.eventSender) {
+        // Touch the center of the div.
+        eventSender.addTouchPoint(50, 50);
+        eventSender.touchStart();
+    } else
+        debug('This test requires DRT.');
+}
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+var successfullyParsed = true;
+</script>
+</body>
+</html>

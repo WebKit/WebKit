@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+function runTest() {
+    var svgDoc = document.getElementById("svgobject").getSVGDocument();
+    document.getElementById("output").innerHTML =
+            svgDoc ? "FAIL got SVGDocument: " + svgDoc : "PASS";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body>
+<object onload="runTest()"
+        id="svgobject" data="http://localhost:8080/security/resources/empty-svg.php"
+        type="image/svg+xml" width="400" height="300"></object> 
+<div id="output"></div>
+</body>
+</html>

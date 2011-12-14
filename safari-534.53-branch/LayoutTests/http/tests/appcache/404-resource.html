@@ -1,0 +1,39 @@
+<html manifest="resources/404-resource.manifest">
+<body>
+<p>Test that a missing explicit resource makes caching fail.</p>
+<p>Should say SUCCESS:</p>
+<div id=result></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+function unexpectedCallback(eventName)
+{
+    log("FAIL: An unexpected " + eventName + " event was dispatched on window.applicationCache.");
+}
+
+function test()
+{
+    if (applicationCache.status == applicationCache.UNCACHED)
+        log("SUCCESS");
+    else
+        log("FAILURE: cache status is not uncached: " + applicationCache.status);
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.addEventListener('cached', function() { unexpectedCallback("cached"); cacheCallback() }, false);
+applicationCache.addEventListener('noupdate', function() { unexpectedCallback("noupdate"); cacheCallback() }, false);
+applicationCache.addEventListener('error', test, false);
+
+</script>
+</body>
+</html>

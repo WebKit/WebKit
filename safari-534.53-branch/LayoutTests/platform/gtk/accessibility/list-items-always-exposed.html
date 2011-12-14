@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<ul>
+<li>plain text</li>
+<li><p>text in a paragraph</p></li>
+</ul>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests a list item is always exposed regardless of having inline children or not.");
+
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+
+  if (window.accessibilityController) {
+
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+
+    var list = webArea.childAtIndex(0);
+    var item1 = list.childAtIndex(0);
+    var item2 = list.childAtIndex(1);
+    var paragraph = item2.childAtIndex(0);
+
+    shouldBe("list.role", "'AXRole: list'");
+    shouldBe("item1.role", "'AXRole: list item'");
+    shouldBe("item2.role", "'AXRole: list item'");
+    shouldBe("paragraph.role", "'AXRole: paragraph'");
+  }
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

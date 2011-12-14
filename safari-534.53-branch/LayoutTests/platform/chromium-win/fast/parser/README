@@ -1,0 +1,5 @@
+This file documents why the various tests have been rebaselined.
+
+script-tag-with-trailing-slash
+----------------------------
+Only differ in error message.

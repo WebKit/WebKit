@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="syntax-highlight.js"></script>
+<script>
+
+function test()
+{
+    function dumpSyntaxHighlightCSS(str)
+    {
+        InspectorTest.dumpSyntaxHighlight(str, "text/css");
+    }
+
+    dumpSyntaxHighlightCSS("a[href='/']");
+    dumpSyntaxHighlightCSS("#content > a:hover");
+    dumpSyntaxHighlightCSS("@import url(style.css);");
+    dumpSyntaxHighlightCSS("@import url(\"style.css\") projection, tv;");
+    dumpSyntaxHighlightCSS("@media screen { body { color: red; } }");
+    dumpSyntaxHighlightCSS("@font-face { font-family: MyHelvetica; }");
+    dumpSyntaxHighlightCSS("p { color: color; red: red; }");
+    dumpSyntaxHighlightCSS("p { margin: -10px !important; }");
+
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that CSSSourceSyntaxHighlighter detects the tokens.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 1: Value undefined (result of expression parent.loadComplete) is not object.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x70
+  RenderBlock {html} at (0,0) size 800x70
+    RenderBody {body} at (8,8) size 784x54
+      RenderPartObject {iframe} at (0,0) size 64x54 [border: (2px inset #000000)]
+        layer at (0,0) size 60x50
+          RenderView at (0,0) size 60x50
+        layer at (0,0) size 60x50
+          RenderBlock {HTML} at (0,0) size 60x50
+            RenderBody {BODY} at (0,0) size 60x50
+              RenderImage {IMG} at (0,0) size 17x11
+      RenderText {#text} at (0,0) size 0x0

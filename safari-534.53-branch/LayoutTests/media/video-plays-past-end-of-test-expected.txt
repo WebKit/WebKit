@@ -1,0 +1,5 @@
+This test intentionally lets the video keep playing past endTest() to ensure that shutdown is clean, since DumpRenderTree used to crash in this case.
+
+EVENT(playing)
+END OF TEST
+

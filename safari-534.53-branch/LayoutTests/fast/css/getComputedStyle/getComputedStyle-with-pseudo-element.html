@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test for WebKit bug 24021: pseudo-element styles not accessible / retrievable via DOM methods</title>
+    <style type="text/css">
+      #testFirsts:first-line {
+          color: brown;
+      }
+
+      #testFirsts:first-letter {
+          color: blue;
+      }
+
+      #testBeforeAfter::before {
+          content: "This should be brown ";
+          color: brown;
+      }
+
+      #testBeforeAfter::after {
+          content: " and this should be blue";
+          color: blue;
+      }
+
+      #testNoPseudoElement {
+          color: brown;
+      }
+
+      #testHardwareAcceleratedCompositing {
+          width: 100px;
+          height: 100px;
+          opacity: 1.0;
+          background-color: green;
+          -webkit-animation: move 300ms linear;
+          -webkit-transform-style: preserve-3d;
+          -webkit-transform: trasnlate3d(10px, 0, 0);
+      }
+
+     #testHardwareAcceleratedCompositing:before {
+         content: "This should have lower opacity.";
+         opacity: 0.5;
+     }
+
+      @-webkit-keyframes move {
+          from { -webkit-transform: translate3d(10px, 0, 0); }
+          to   { -webkit-transform: translate3d(300px, 0, 0); }
+      }
+
+      .pass {
+          color: green;
+      }
+
+      .fail {
+          color: red;
+      }
+
+    </style>
+    <script type="text/javascript">
+      if (window.layoutTestController)
+          layoutTestController.dumpAsText();
+
+      var tests = [
+        { 'elementId' : 'testFirsts', 'pseudoElement' : ':first-line', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testFirsts', 'pseudoElement' : ':first-letter', 'property' : 'color', 'expectedValue' : 'rgb(0, 0, 255)' },
+        { 'elementId' : 'testFirsts', 'pseudoElement' : '::first-letter', 'property' : 'color', 'expectedValue' : 'rgb(0, 0, 255)' },
+        { 'elementId' : 'testFirsts', 'pseudoElement' : 'first-letter', 'property' : 'color', 'expectedValue' : 'rgb(0, 0, 255)' },
+        { 'elementId' : 'testFirsts', 'pseudoElement' : null, 'property' : 'color', 'expectedValue' : 'rgb(0, 0, 0)' },
+        { 'elementId' : 'testBeforeAfter', 'pseudoElement' : ':before', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testBeforeAfter', 'pseudoElement' : ':after', 'property' : 'color', 'expectedValue' : 'rgb(0, 0, 255)' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : null, 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':first-line', 'property' : 'color', 'expectedValue' : '' },
+        { 'elementId' : 'testNoPseudoElement', 'pseudoElement' : ':garbage', 'property' : 'color', 'expectedValue' : 'rgb(165, 42, 42)' },
+        { 'elementId' : 'testHardwareAcceleratedCompositing', 'pseudoElement' : ':before', 'property' : 'opacity', 'expectedValue' : '0.5' }
+      ];
+
+      function setupAndRunTests()
+      {
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+
+        // FIXME: It is currently necessary to run the animation at least once before querying for the style on the pseudo-element will work.
+        document.getElementById("testHardwareAcceleratedCompositing").addEventListener('webkitAnimationEnd', runTests, false);
+      }
+
+      function runTests()
+      {
+        var resultsElement = document.getElementById('results');
+
+        tests.forEach(function(curTest) {
+          var computedStyle = window.getComputedStyle(document.getElementById(curTest.elementId), curTest.pseudoElement);
+          var value = computedStyle[curTest.property];
+          var msg = document.createElement('div');
+          var mainMessage = " Expected '" + curTest.expectedValue + "' for " + curTest.property +
+              " in the computed style for element with id " + curTest.elementId + " and pseudo-element " + curTest.pseudoElement;
+          if (value == curTest.expectedValue)
+              msg.innerHTML = "<span class='pass'>PASS</span>" + mainMessage + " and got '" + value + "'";
+          else
+              msg.innerHTML = "<span class='fail'>FAIL</span>" + mainMessage + " but instead got '" + value + "'";
+          resultsElement.appendChild(msg);
+        });
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+      }
+    </script>
+  </head>
+  <body onload="setupAndRunTests();">
+    <h3>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=24021">WebKit bug 24021</a>: pseudo-element styles not accessible / retrievable via DOM methods</h3>
+    <br />
+    <div id="testFirsts">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+    <br />
+    <div id="testBeforeAfter">Middle</div>
+    <br />
+    <div id="testNoPseudoElement">There are no pseudo elements defined on this div.</div>
+    <br />
+    <div id="testHardwareAcceleratedCompositing">This should be at full opacity.</div>
+    <br />
+    <div id="results"></div>
+  </body>
+</html>

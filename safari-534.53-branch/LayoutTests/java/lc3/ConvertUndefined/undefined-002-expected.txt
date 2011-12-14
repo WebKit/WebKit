@@ -1,0 +1,8 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  undefined
+
+FAIL TEST_CLASS["ambiguous(java.lang.Object)"](void 0) +'' should be OBJECT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.Object)"](void 0)')
+FAIL TEST_CLASS["ambiguous(java.lang.String)"](void 0) +'' should be STRING. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.String)"](void 0)')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

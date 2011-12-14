@@ -1,0 +1,38 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function onLoad()
+{
+    var theDiv = document.getElementById("theDiv");
+    var theAttrs = theDiv.attributes;
+
+    var nameAttr = theAttrs.getNamedItem("name");
+    var nameAttrChildNodes = nameAttr.childNodes;
+    var textNode = document.createTextNode("terday");
+    var unused = nameAttrChildNodes.length;
+    nameAttr.appendChild(textNode);
+
+    var name2Attr = theAttrs.getNamedItem("name2");
+    var name2AttrChildNodes = name2Attr.childNodes;
+    var textNode2 = document.createTextNode("terday");
+    name2Attr.appendChild(textNode2);
+        
+    if (nameAttrChildNodes.length != name2AttrChildNodes.length)
+        document.getElementById("result").innerHTML = "Failed: nameAttrChildNodes.length=" + nameAttrChildNodes.length + ", name2AttrChildNodes.length=" + name2AttrChildNodes.length;
+    else
+        document.getElementById("result").innerHTML = "Passed!!";
+
+    document.body.removeChild(document.getElementById("theDiv"));
+}
+</script>
+</head>
+<body onload="onLoad();">
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=19759">bug 19759</a>:
+ChildNodeList for an attribute node is not properly invalidated after appending a child.</p>
+<div id="theDiv" name="Yes" name2="Yes">Hello</div>
+<div id="result">Testing...</div>
+</body>
+</html>

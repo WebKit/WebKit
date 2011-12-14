@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <script>
+      function makeGeolocationRequest() {
+          if (window.layoutTestController) {
+              layoutTestController.setGeolocationPermission(true);
+              layoutTestController.setMockGeolocationPosition(51.478, -0.166, 100);
+          }
+
+          // Make request from remote frame, this frame will be gone by the time the Geolocation
+          // object attempts to invoke the callback.
+          window.parent.navigator.geolocation.getCurrentPosition(function() {
+              alert('Success callback invoked unexpectedly');
+              if (window.layoutTestController)
+                  layoutTestController.notifyDone();
+          }, function() {
+              alert('Error callback invoked unexpectedly');
+              if (window.layoutTestController)
+                  layoutTestController.notifyDone();
+          });
+      }
+    </script>
+  </head>
+  <body onload="window.parent.onFirstIframeLoaded()", onunload="makeGeolocationRequest()">
+    <p>This frame should be replaced before the test ends</p>
+  </body>
+</html>

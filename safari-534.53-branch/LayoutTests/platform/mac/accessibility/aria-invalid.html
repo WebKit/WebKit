@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<input type="text" id="text1" aria-invalid="true">
+<input type="text" id="text2" aria-invalid="grammar">
+<input type="text" id="text3" aria-invalid="">
+<input type="text" id="text4">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-invalid causes the right attribute to be returned and it ensures a notification is sent when it changes.");
+
+    var notificationElement = 0;
+    function notificationCallback(notification) {
+        if (notification == "AXInvalidStatusChanged") {
+            alert("Notification received successfully.");
+            notificationElement.removeNotificationListener();
+            window.layoutTestController.notifyDone();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("text1").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'true'");
+
+        document.getElementById("text2").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'grammar'");
+
+        document.getElementById("text3").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("text4").focus();
+        shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXInvalid')", "'false'");
+
+        notificationElement = accessibilityController.focusedElement;
+        var addedNotification = notificationElement.addNotificationListener(notificationCallback);
+        shouldBeTrue("addedNotification");
+
+        document.getElementById("text4").setAttribute("aria-invalid", "spelling");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+This test checks for a specific regression that caused function calls to allocate too many temporary registers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: Recursion did not run out of stack space.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

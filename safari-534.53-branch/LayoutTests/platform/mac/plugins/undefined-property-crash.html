@@ -1,0 +1,59 @@
+<html>
+<head>
+<script>
+function print(message) {
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test2()
+{
+    return objCController.doesNotExist;
+}
+
+function test()
+{
+    if (!window.objCController) {
+        print("FAIL: window.objCController does not exist");
+        return;
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var crasher = test2();
+    delete objCController;
+    
+    // create lots of objects to force a garbage collection
+    var i = 0;
+    var s;
+    while (i < 5000) {
+        i = i + 1.11;
+        s = s + " ";
+    }
+    
+    if (crasher) {} // force call to toBoolean
+    if (crasher == null) {} // force call to type() through call to equal
+    
+    if (window.objCController)
+        print("FAIL: unable to delete objCController");
+    else
+        print("PASS: You didn't crash.");
+}
+</script>
+</head>
+<body onload="test()">
+<p>
+This test checks for a regression against: rdar://problem/4176077 CrashTracer: 
+6569 crashes in DashboardClient at com.apple.JavaScriptCore:
+KJS::Bindings::ObjcFallbackObjectImp::type()
+</p>
+<p>
+This test only works in DumpRenderTree, because it depends on having a plugin object 
+that it can 'delete.'
+</p>
+<hr>
+<div id="console"></div>
+</body>
+</html>

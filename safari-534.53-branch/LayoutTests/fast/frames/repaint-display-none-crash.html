@@ -1,0 +1,28 @@
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function test()
+    {
+        var t = document.getElementById('t');
+        document.body.offsetTop;
+        t.style.display='none';
+        t.src='about:blank';
+        t.contentDocument.body.offsetTop;
+        if (window.layoutTestController) {
+            layoutTestController.notifyDone();
+        }
+    }
+</script>
+<body onload="test()">
+    <p>
+        This is a test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=9862">https://bugs.webkit.org/show_bug.cgi?id=9862</a>
+        REGRESSION: GMail: Crash in RenderView::repaintViewRectangle when spoofing as FF</i>.
+    </p>
+    <p>
+        No crash means test PASS.
+    </p>
+    <iframe id="t"></iframe>
+</body>

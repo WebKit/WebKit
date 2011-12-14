@@ -1,0 +1,19 @@
+<html>
+<script>
+function runTest() {
+    var o = { };
+    showModalDialog("data:text/html,<scr" + "ipt>dialogArguments['result'] = 'PASS'; window.close() </scr" + "ipt>", o);
+    
+    if (o.result == 'PASS')
+        document.getElementById('result').innerHTML = 'SUCCESS';
+}
+
+</script>
+<body>
+<div>
+This tests that modal dialog arguments get passed around correctly. Click the button below to test. The text "SUCCESS" will be shown below if the test was successful.
+</div>
+<button onclick="runTest()">Click Me!</button>
+<div id="result">
+</div>
+</html>

@@ -1,0 +1,15 @@
+<html>
+<head>
+<script type="text/javascript">
+function startTest()
+{
+    layoutTestController.dumpAsText();
+    layoutTestController.setCustomPolicyDelegate(true, true);
+    layoutTestController.queueReload();
+}
+</script>
+</head>
+<body onload="startTest()">
+<p>Test to make sure that reloads get reload policy.</p>
+</body>
+</html>

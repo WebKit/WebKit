@@ -1,0 +1,11 @@
+
+Test NPN_Evaluate
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS plugin.testEvaluate('1') is 1
+PASS plugin.testEvaluate('plugin') is plugin
+PASS plugin.testEvaluate('window') is window
+PASS plugin.testEvaluate('1 + 1') is 2
+

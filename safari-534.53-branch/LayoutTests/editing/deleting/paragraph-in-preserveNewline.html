@@ -1,0 +1,18 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug where deleting a paragraph in preserveNewline text would introduce an extra line.  You should see '\nbar' below.</p>
+<div id="test" contenteditable="true"><pre>foo
+bar</pre></div>
+
+<script>
+var sel = window.getSelection();
+var e = document.getElementById("test");
+
+sel.setPosition(e, 0);
+sel.modify("extend", "forward", "character");
+sel.modify("extend", "forward", "character");
+sel.modify("extend", "forward", "character");
+document.execCommand("Delete");
+</script>

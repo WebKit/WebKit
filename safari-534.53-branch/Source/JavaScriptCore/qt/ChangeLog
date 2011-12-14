@@ -1,0 +1,467 @@
+2011-03-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Clean up the project files and move common options to WebKit.pri.
+
+        * api/QtScript.pro: Deduplicate options.
+
+2011-02-24  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] MinGW build fails to link
+        https://bugs.webkit.org/show_bug.cgi?id=55050
+
+        Prepend the libraries of subcomponents instead of appending them
+        to fix the library order according to the dependency of the libraries
+
+        * api/QtScript.pro:
+
+2010-09-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QScriptEngine should have an API for creating Date objects
+        https://bugs.webkit.org/show_bug.cgi?id=41667
+
+        Implement newDate(), isDate() and toDateTime() functions. Use the
+        QDateTime::{to,set}MSecsSinceEpoch() functions to do the
+        calculations.
+
+        * api/qscriptengine.cpp:
+        (QScriptEngine::newDate):
+        * api/qscriptengine.h:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::newDate):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::isDate):
+
+        * api/qscriptoriginalglobalobject_p.h:
+        (QScriptOriginalGlobalObject::QScriptOriginalGlobalObject): need
+        to keep track of Date Constructor and Prototype.
+        (QScriptOriginalGlobalObject::~QScriptOriginalGlobalObject): ditto.
+        (QScriptOriginalGlobalObject::isDate): use the Date Constructor
+        and Prototype to identify Date values.
+
+        * api/qscriptvalue.cpp:
+        (QScriptValue::isDate):
+        (QScriptValue::toDateTime):
+        * api/qscriptvalue.h:
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isDate):
+        (QScriptValuePrivate::toDateTime):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::newDate):
+
+2010-07-27  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update the QScriptValue autotests suite.
+
+        QScriptValue generated files were updated, changes are:
+         - More tested values (for example QSE::newObject() and QSE::newArray())
+         - Tested values are recreated before each test and are not reused.
+         The change implies better code coverage and some expected result changes.
+         - A new test to check copy and assign functions.
+         - Tests are using standard QTestLib interface, without any custom macros.
+
+        [Qt] Improve test coverage for the QScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=42366
+
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::tst_QScriptValue):
+        (tst_QScriptValue::~tst_QScriptValue):
+        (tst_QScriptValue::assignAndCopyConstruct_data):
+        (tst_QScriptValue::assignAndCopyConstruct):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+        * tests/qscriptvalue/tst_qscriptvalue_generated_comparison.cpp:
+        (tst_QScriptValue::equals_data):
+        (tst_QScriptValue::equals):
+        (tst_QScriptValue::strictlyEquals_data):
+        (tst_QScriptValue::strictlyEquals):
+        (tst_QScriptValue::instanceOf_data):
+        (tst_QScriptValue::instanceOf):
+        * tests/qscriptvalue/tst_qscriptvalue_generated_init.cpp:
+        (tst_QScriptValue::initScriptValues):
+        * tests/qscriptvalue/tst_qscriptvalue_generated_istype.cpp:
+        (tst_QScriptValue::isValid_data):
+        (tst_QScriptValue::isValid):
+        (tst_QScriptValue::isBool_data):
+        (tst_QScriptValue::isBool):
+        (tst_QScriptValue::isBoolean_data):
+        (tst_QScriptValue::isBoolean):
+        (tst_QScriptValue::isNumber_data):
+        (tst_QScriptValue::isNumber):
+        (tst_QScriptValue::isFunction_data):
+        (tst_QScriptValue::isFunction):
+        (tst_QScriptValue::isNull_data):
+        (tst_QScriptValue::isNull):
+        (tst_QScriptValue::isString_data):
+        (tst_QScriptValue::isString):
+        (tst_QScriptValue::isUndefined_data):
+        (tst_QScriptValue::isUndefined):
+        (tst_QScriptValue::isObject_data):
+        (tst_QScriptValue::isObject):
+        (tst_QScriptValue::isArray_data):
+        (tst_QScriptValue::isArray):
+        (tst_QScriptValue::isError_data):
+        (tst_QScriptValue::isError):
+        * tests/qscriptvalue/tst_qscriptvalue_generated_totype.cpp:
+        (tst_QScriptValue::toString_data):
+        (tst_QScriptValue::toString):
+        (tst_QScriptValue::toNumber_data):
+        (tst_QScriptValue::toNumber):
+        (tst_QScriptValue::toBool_data):
+        (tst_QScriptValue::toBool):
+        (tst_QScriptValue::toBoolean_data):
+        (tst_QScriptValue::toBoolean):
+        (tst_QScriptValue::toInteger_data):
+        (tst_QScriptValue::toInteger):
+        (tst_QScriptValue::toInt32_data):
+        (tst_QScriptValue::toInt32):
+        (tst_QScriptValue::toUInt32_data):
+        (tst_QScriptValue::toUInt32):
+        (tst_QScriptValue::toUInt16_data):
+        (tst_QScriptValue::toUInt16):
+
+2010-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement QScriptEngine::newFunction() parts that doesn't depend on QScriptContext
+        https://bugs.webkit.org/show_bug.cgi?id=42174
+
+        Since our function can be called in Javascript both as a function
+        and as a constructor, we couldn't use the existing
+        JSObjectMakeFunctionWithCallback() and JSObjectMakeConstructor().
+
+        Instead, a JSClassRef was created, implementing the needed
+        callbacks (the callAsConstructor is not there yet because its
+        behaviour depends on QScriptContext).
+
+        For the moment, QScriptContext is defined as a void type, since we
+        still don't use it.
+
+        The variant of newFunction() that also takes an external argument
+        was also implemented. The details of implementation were added to
+        the qscriptfunction{.c,_p.h} files.
+
+        This commit also adds tests, some of them from Qt's upstream.
+
+        * api/QtScript.pro:
+        * api/qscriptengine.cpp:
+        (QScriptEngine::newFunction):
+        * api/qscriptengine.h:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        (QScriptEnginePrivate::newFunction):
+        * api/qscriptengine_p.h:
+        * api/qscriptfunction.cpp: Added.
+        (qt_NativeFunction_finalize):
+        (qt_NativeFunction_callAsFunction):
+        (qt_NativeFunctionWithArg_finalize):
+        (qt_NativeFunctionWithArg_callAsFunction):
+        * api/qscriptfunction_p.h: Added.
+        (QNativeFunctionData::QNativeFunctionData):
+        (QNativeFunctionWithArgData::QNativeFunctionWithArgData):
+        * api/qscriptoriginalglobalobject_p.h:
+        (QScriptOriginalGlobalObject::QScriptOriginalGlobalObject):
+        (QScriptOriginalGlobalObject::~QScriptOriginalGlobalObject):
+        (QScriptOriginalGlobalObject::functionPrototype):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (myFunction):
+        (myFunctionWithArg):
+        (myFunctionThatReturns):
+        (myFunctionThatReturnsWithoutEngine):
+        (myFunctionThatReturnsWrongEngine):
+        (tst_QScriptEngine::newFunction):
+
+2010-07-23  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QScriptValue::equals benchmark crash fix.
+
+        Patch changes QScriptValue::equals implementation to cover
+        more edge cases.
+
+        Problem exposes an issue in our autotests (all values got
+        bound to an engine too fast - bug 42366).
+
+        [Qt] QScriptValue::equals asserts
+        https://bugs.webkit.org/show_bug.cgi?id=42363
+
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::equals):
+
+2010-07-14  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Introduce QScriptOriginalGlobalObject.
+
+        QtScript exposes more functionality than JSC C API. Sometimes it is
+        necessary to take a shortcut in implementation. Really often we have
+        to use a standard JS function. These function could be changed or
+        even deleted by a script, so a backup of a reference to an object is needed.
+
+        In them same time this is rather a workaround then real fix, so the code
+        should be separated and changed easily in future. It is why we need
+        the new internal class.
+
+        The patch fixes a few crashes.
+
+        [Qt] QScriptEngine should work correctly even after global object changes
+        https://bugs.webkit.org/show_bug.cgi?id=41839
+
+        * api/QtScript.pro:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::isArray):
+        (QScriptEnginePrivate::isError):
+        (QScriptEnginePrivate::objectHasOwnProperty):
+        (QScriptEnginePrivate::objectGetOwnPropertyNames):
+        * api/qscriptoriginalglobalobject_p.h: Added.
+        (QScriptOriginalGlobalObject::QScriptOriginalGlobalObject):
+        (QScriptOriginalGlobalObject::initializeMember):
+        (QScriptOriginalGlobalObject::~QScriptOriginalGlobalObject):
+        (QScriptOriginalGlobalObject::objectHasOwnProperty):
+        (QScriptOriginalGlobalObject::objectGetOwnPropertyNames):
+        (QScriptOriginalGlobalObject::isArray):
+        (QScriptOriginalGlobalObject::isError):
+        (QScriptOriginalGlobalObject::isType):
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isError):
+        (QScriptValuePrivate::hasOwnProperty):
+        * api/qscriptvalueiterator_p.h:
+        (QScriptValueIteratorPrivate::QScriptValueIteratorPrivate):
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::globalObjectChanges):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+
+2010-07-13  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Introduce QScriptValueIterator.
+
+        The QScriptValueIterator class permits to iterate over a QScriptValue's properties.
+
+        [Qt] QtScript should provide an API for enumerating a JS object's properties
+        https://bugs.webkit.org/show_bug.cgi?id=41680
+
+        * api/QtScript.pro:
+        * api/qscriptvalueiterator.cpp: Added.
+        (QScriptValueIterator::QScriptValueIterator):
+        (QScriptValueIterator::~QScriptValueIterator):
+        (QScriptValueIterator::hasNext):
+        (QScriptValueIterator::next):
+        (QScriptValueIterator::hasPrevious):
+        (QScriptValueIterator::previous):
+        (QScriptValueIterator::toFront):
+        (QScriptValueIterator::toBack):
+        (QScriptValueIterator::name):
+        (QScriptValueIterator::scriptName):
+        (QScriptValueIterator::value):
+        (QScriptValueIterator::setValue):
+        (QScriptValueIterator::remove):
+        (QScriptValueIterator::flags):
+        (QScriptValueIterator::operator=):
+        * api/qscriptvalueiterator.h: Added.
+        * api/qscriptvalueiterator_p.h: Added.
+        (QScriptValueIteratorPrivate::QScriptValueIteratorPrivate):
+        (QScriptValueIteratorPrivate::~QScriptValueIteratorPrivate):
+        (QScriptValueIteratorPrivate::hasNext):
+        (QScriptValueIteratorPrivate::next):
+        (QScriptValueIteratorPrivate::hasPrevious):
+        (QScriptValueIteratorPrivate::previous):
+        (QScriptValueIteratorPrivate::name):
+        (QScriptValueIteratorPrivate::scriptName):
+        (QScriptValueIteratorPrivate::value):
+        (QScriptValueIteratorPrivate::setValue):
+        (QScriptValueIteratorPrivate::remove):
+        (QScriptValueIteratorPrivate::toFront):
+        (QScriptValueIteratorPrivate::toBack):
+        (QScriptValueIteratorPrivate::flags):
+        (QScriptValueIteratorPrivate::isValid):
+        (QScriptValueIteratorPrivate::engine):
+        * tests/qscriptvalueiterator/qscriptvalueiterator.pro: Added.
+        * tests/qscriptvalueiterator/tst_qscriptvalueiterator.cpp: Added.
+        (tst_QScriptValueIterator::tst_QScriptValueIterator):
+        (tst_QScriptValueIterator::~tst_QScriptValueIterator):
+        (tst_QScriptValueIterator::iterateForward_data):
+        (tst_QScriptValueIterator::iterateForward):
+        (tst_QScriptValueIterator::iterateBackward_data):
+        (tst_QScriptValueIterator::iterateBackward):
+        (tst_QScriptValueIterator::iterateArray_data):
+        (tst_QScriptValueIterator::iterateArray):
+        (tst_QScriptValueIterator::iterateBackAndForth):
+        (tst_QScriptValueIterator::setValue):
+        (tst_QScriptValueIterator::remove):
+        (tst_QScriptValueIterator::removeMixed):
+        (tst_QScriptValueIterator::removeUndeletable):
+        (tst_QScriptValueIterator::iterateString):
+        (tst_QScriptValueIterator::assignObjectToIterator):
+        * tests/tests.pro:
+
+2010-07-09  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implementation of the QScriptValue::propertyFlags function.
+
+        The function returns the flags of a property with the given name,
+        using a given mode to resolve the property. This is a simple
+        implementation that is sufficient to test the QScriptValueIterator.
+
+        [Qt] QScriptValue API should have a property flag accessor.
+        https://bugs.webkit.org/show_bug.cgi?id=41769
+
+        * api/qscriptvalue.cpp:
+        (QScriptValue::propertyFlags):
+        * api/qscriptvalue.h:
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::propertyFlags):
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::propertyFlag_data):
+        (tst_QScriptValue::propertyFlag):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+
+2010-07-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementation of QScriptValue::isArray()
+        https://bugs.webkit.org/show_bug.cgi?id=41713
+
+        Since we don't have access to the [[Class]] internal property of
+        builtins (including Array), the solution was to keep the original 'Array'
+        (constructor) and 'Array.prototype' objects and use them to identify
+        if a given object is an Array.
+
+        Also uncomment some tests and add some tests of newArray() that
+        depended on isArray(). 
+
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::isArray):
+        * api/qscriptvalue.cpp:
+        (QScriptValue::isArray):
+        * api/qscriptvalue.h:
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::isArray):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::newArray):
+
+2010-07-06  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implementation of QScriptValue properties accessors.
+
+        The patch contains implementation of the QScriptValue::property() and
+        the QScriptValue::setProperty(). It is not full functionality, as these
+        method are too complex for one patch, but it is enough to cover about
+        95% of use cases.
+
+        Missing functionality:
+         - Few of the PropertyFlags are ignored.
+         - Only a public part of the ResolveFlags can be used (ResolveLocal,
+         ResolvePrototype).
+
+        A lot of new test cases were added.
+
+        [Qt] QScriptValue should have API for accessing object properties
+        https://bugs.webkit.org/show_bug.cgi?id=40903
+
+        * api/qscriptconverter_p.h:
+        (QScriptConverter::toPropertyFlags):
+        * api/qscriptstring_p.h:
+        (QScriptStringPrivate::operator JSStringRef):
+        * api/qscriptvalue.cpp:
+        (QScriptValue::property):
+        (QScriptValue::setProperty):
+        * api/qscriptvalue.h:
+        (QScriptValue::):
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::assignEngine):
+        (QScriptValuePrivate::property):
+        (QScriptValuePrivate::hasOwnProperty):
+        (QScriptValuePrivate::setProperty):
+        (QScriptValuePrivate::deleteProperty):
+        * tests/qscriptvalue/tst_qscriptvalue.cpp:
+        (tst_QScriptValue::getPropertySimple_data):
+        (tst_QScriptValue::getPropertySimple):
+        (tst_QScriptValue::setPropertySimple):
+        (tst_QScriptValue::getPropertyResolveFlag):
+        (tst_QScriptValue::getSetProperty):
+        (tst_QScriptValue::setProperty_data):
+        (tst_QScriptValue::setProperty):
+        * tests/qscriptvalue/tst_qscriptvalue.h:
+
+2010-07-02  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Compilation fix.
+
+        QScriptEnginePrivate::newArray can't be const because it can
+        throw an exception.
+
+        [Qt] QScriptEnginePrivate compilation fix
+        https://bugs.webkit.org/show_bug.cgi?id=41520
+
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::newArray):
+        * api/qscriptengine_p.h:
+
+2010-06-28  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Implement exception reporting in the QtScript API.
+
+        The exception should be accessible through the API by the uncaughtException
+        function. Functions; hasUncaughtException, clearExceptions, uncaughtExceptionLineNumber,
+        uncaughtExceptionBacktrace were added to facilitate error checking and debugging.
+
+        [Qt] QtScript API should be exceptions aware.
+        https://bugs.webkit.org/show_bug.cgi?id=41199
+
+        * api/qscriptengine.cpp:
+        (QScriptEngine::hasUncaughtException):
+        (QScriptEngine::uncaughtException):
+        (QScriptEngine::clearExceptions):
+        (QScriptEngine::uncaughtExceptionLineNumber):
+        (QScriptEngine::uncaughtExceptionBacktrace):
+        * api/qscriptengine.h:
+        * api/qscriptengine_p.cpp:
+        (QScriptEnginePrivate::QScriptEnginePrivate):
+        (QScriptEnginePrivate::~QScriptEnginePrivate):
+        (QScriptEnginePrivate::uncaughtException):
+        * api/qscriptengine_p.h:
+        (QScriptEnginePrivate::):
+        (QScriptEnginePrivate::evaluate):
+        (QScriptEnginePrivate::hasUncaughtException):
+        (QScriptEnginePrivate::clearExceptions):
+        (QScriptEnginePrivate::setException):
+        (QScriptEnginePrivate::uncaughtExceptionLineNumber):
+        (QScriptEnginePrivate::uncaughtExceptionBacktrace):
+        * api/qscriptvalue_p.h:
+        (QScriptValuePrivate::toString):
+        (QScriptValuePrivate::toNumber):
+        (QScriptValuePrivate::toObject):
+        (QScriptValuePrivate::equals):
+        (QScriptValuePrivate::instanceOf):
+        (QScriptValuePrivate::call):
+        (QScriptValuePrivate::inherits):
+        * tests/qscriptengine/tst_qscriptengine.cpp:
+        (tst_QScriptEngine::uncaughtException):
+

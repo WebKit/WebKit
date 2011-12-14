@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Transition/Animation Test #2</title>
+  <style type="text/css" media="screen">
+    #box {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        -webkit-animation-duration: 0.3s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-name: "anim";
+        -webkit-transition-property: -webkit-transform;
+        -webkit-transition-duration: 10s;
+        -webkit-transition-timing-function: linear;
+    }
+    @-webkit-keyframes "anim" {
+        from { -webkit-transform: translate(0,100px) }
+        to   { -webkit-transform: translate(400px, 100px) }
+    }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.4, "box", "webkitTransform.5", 0, 0],
+    ];
+    
+    function setup()
+    {
+        document.getElementById("box").style.webkitTransform = "translateX(400px)";
+    }
+    
+    runAnimationTest(expectedValues, setup);
+    
+  </script>
+</head>
+<body>
+This test has a transition and animation on the same property (-webkit-transform). 
+The animation starts and then the transition is triggered. The transition should start
+at the position before the animation started (the unanimated position), which is (0,0). If it
+starts from the start point of the animation (0,100) then there is an error
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

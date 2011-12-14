@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<p>Simple paragraph</p>
+<p role="grid">A paragraph pretending to be a table</p>
+
+<label>A label</label>
+<label role="heading">Who said label? It's a heading!</label>
+
+<form>A form with a button <button name="button" value="Button">Click me!</button></form>
+<form role="button">Just a button <button name="button" value="Button">Click me!</button></form>
+
+<div>Just some text inside a div</form>
+<div role="textbox">This div is contains a textbox (an entry)</div>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that ARIA roles are not ignored for 'p','label', 'form' and 'div' elements");
+
+if (window.layoutController) {
+    layoutTestController.dumpAsText();
+}
+
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+
+    // Paragraphs
+    var element = webArea.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: paragraph'");
+    element = webArea.childAtIndex(1);
+    shouldBe("element.role", "'AXRole: table'");
+
+    // Labels are exposed as inside a panel
+    var labelsPanel = webArea.childAtIndex(2);
+    element = labelsPanel.childAtIndex(0);
+    shouldBe("element.role", "'AXRole: label'");
+    element = labelsPanel.childAtIndex(1);
+    shouldBe("element.role", "'AXRole: heading'");
+
+    // Forms
+    element = webArea.childAtIndex(3);
+    shouldBe("element.role", "'AXRole: form'");
+    element = webArea.childAtIndex(4);
+    shouldBe("element.role", "'AXRole: push button'");
+
+    // Divs
+    element = webArea.childAtIndex(5);
+    shouldBe("element.role", "'AXRole: panel'");
+    element = webArea.childAtIndex(6);
+    shouldBe("element.role", "'AXRole: entry'");
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

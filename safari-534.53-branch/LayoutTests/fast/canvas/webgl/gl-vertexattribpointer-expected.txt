@@ -1,0 +1,197 @@
+This test checks vertexAttribPointer behaviors in WebGL.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Canvas.getContext
+PASS context exists
+
+Checking gl.vertexAttribPointer.
+PASS getError was expected value: INVALID_OPERATION : vertexAttribPointer should fail if no buffer is bound
+PASS getError was expected value: INVALID_ENUM : vertexAttribPointer should not support INT
+PASS getError was expected value: INVALID_ENUM : vertexAttribPointer should not support UNSIGNED_INT
+PASS getError was expected value: INVALID_ENUM : vertexAttribPointer should not support FIXED
+
+
+checking: BYTE with size 1
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.BYTE, false, 1, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 1, gl.BYTE, false, 256, 0) should fail over stride limit
+
+checking: BYTE with size 2
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.BYTE, false, 1, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.BYTE, false, 2, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 2, gl.BYTE, false, 256, 0) should fail over stride limit
+
+checking: BYTE with size 3
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.BYTE, false, 2, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.BYTE, false, 3, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 3, gl.BYTE, false, 256, 0) should fail over stride limit
+
+checking: BYTE with size 4
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.BYTE, false, 3, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.BYTE, false, 4, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 4, gl.BYTE, false, 256, 0) should fail over stride limit
+
+
+checking: UNSIGNED_BYTE with size 1
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_BYTE, false, 1, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_BYTE, false, 256, 0) should fail over stride limit
+
+checking: UNSIGNED_BYTE with size 2
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_BYTE, false, 1, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_BYTE, false, 2, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_BYTE, false, 256, 0) should fail over stride limit
+
+checking: UNSIGNED_BYTE with size 3
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_BYTE, false, 2, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_BYTE, false, 3, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_BYTE, false, 256, 0) should fail over stride limit
+
+checking: UNSIGNED_BYTE with size 4
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_BYTE, false, 0, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_BYTE, false, 3, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_BYTE, false, 4, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_BYTE, false, 255, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_BYTE, false, 256, 0) should fail over stride limit
+
+
+checking: SHORT with size 1
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 1, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 2, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 1, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.SHORT, false, 2, 1) should fail because offset is bad
+
+checking: SHORT with size 2
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 3, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 4, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 3, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.SHORT, false, 4, 1) should fail because offset is bad
+
+checking: SHORT with size 3
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 5, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 6, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 5, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.SHORT, false, 6, 1) should fail because offset is bad
+
+checking: SHORT with size 4
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 7, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 8, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 7, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.SHORT, false, 8, 1) should fail because offset is bad
+
+
+checking: UNSIGNED_SHORT with size 1
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 1, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 2, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 1, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.UNSIGNED_SHORT, false, 2, 1) should fail because offset is bad
+
+checking: UNSIGNED_SHORT with size 2
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 3, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 4, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 3, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.UNSIGNED_SHORT, false, 4, 1) should fail because offset is bad
+
+checking: UNSIGNED_SHORT with size 3
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 5, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 6, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 5, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.UNSIGNED_SHORT, false, 6, 1) should fail because offset is bad
+
+checking: UNSIGNED_SHORT with size 4
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 7, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 8, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 254, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 0, 1) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 7, 1) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.UNSIGNED_SHORT, false, 8, 1) should fail because offset is bad
+
+
+checking: FLOAT with size 1
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 3, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 4, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 252, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 3) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 3, 3) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 4, 3) should fail because offset is bad
+
+checking: FLOAT with size 2
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 7, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 8, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 252, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 3) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 7, 3) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 8, 3) should fail because offset is bad
+
+checking: FLOAT with size 3
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 11, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 12, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 252, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 3) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 11, 3) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 12, 3) should fail because offset is bad
+
+checking: FLOAT with size 4
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 0, 0) should succeed 
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 15, 0) should fail because stride is bad
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 16, 0) should succeed 
+PASS getError was expected value: NO_ERROR : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 252, 0) should succeed at stride limit
+PASS getError was expected value: INVALID_VALUE : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 256, 0) should fail over stride limit
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 0, 3) should fail because offset is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 15, 3) should fail because stride is bad
+PASS getError was expected value: INVALID_OPERATION : gl.vertexAttribPointer(0, 4, gl.FLOAT, false, 16, 3) should fail because offset is bad
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 451x19
+          text run at (0,0) width 451: "This tests that bidirectional text is correctly rendered in list box controls."
+        RenderBR {BR} at (451,14) size 0x0
+        RenderText {#text} at (0,19) size 570x19
+          text run at (0,19) width 570: "The order of the text below each list box should match the order of the select's option text."
+      RenderBlock (anonymous) at (0,52) size 784x104
+        RenderText {#text} at (0,0) size 95x19
+          text run at (0,0) width 95: "1) direction: rtl;"
+        RenderBR {BR} at (95,14) size 0x0
+        RenderListBox {SELECT} at (2,21) size 100x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (104,97) size 0x0
+      RenderBlock {DIV} at (0,156) size 100x38
+        RenderText {#text} at (-7,0) size 107x38
+          text run at (-7,0) width 84 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}"
+          text run at (77,0) width 23: "abc"
+          text run at (86,19) width 14 RTL: "\x{5DF}"
+      RenderBlock (anonymous) at (0,194) size 784x123
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,19) size 95x19
+          text run at (0,19) width 95: "2) direction: ltr;"
+        RenderBR {BR} at (95,33) size 0x0
+        RenderListBox {SELECT} at (2,40) size 100x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (104,116) size 0x0
+      RenderBlock {DIV} at (0,317) size 100x38
+        RenderText {#text} at (0,0) size 107x38
+          text run at (0,0) width 23: "abc"
+          text run at (23,0) width 84 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}"
+          text run at (0,19) width 14 RTL: "\x{5DF}"
+      RenderBlock (anonymous) at (0,355) size 784x123
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,19) size 68x19
+          text run at (0,19) width 68: "3) No style"
+        RenderBR {BR} at (68,33) size 0x0
+        RenderListBox {SELECT} at (2,40) size 100x81 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderBR {BR} at (104,116) size 0x0
+      RenderBlock {DIV} at (0,478) size 100x38
+        RenderText {#text} at (0,0) size 107x38
+          text run at (0,0) width 23: "abc"
+          text run at (23,0) width 84 RTL: "\x{5D0}\x{5E4}\x{5E8}\x{5E1}\x{5DE}\x{5D5}"
+          text run at (0,19) width 14 RTL: "\x{5DF}"
+      RenderBlock (anonymous) at (0,516) size 784x19
+        RenderBR {BR} at (0,0) size 0x19

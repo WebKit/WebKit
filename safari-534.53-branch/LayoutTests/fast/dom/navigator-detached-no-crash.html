@@ -1,0 +1,86 @@
+<html>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+
+function log(strings) {
+  var node = document.getElementById('result');
+  for (var i in strings) {
+    node.innerHTML += strings[i] + '<br>';
+  }
+}
+
+function gc()
+{
+    if (window.GCController) {
+        GCController.collect();
+    } else {
+        for (var i = 0; i < 10000; i++) {
+            var s = new String("abc");
+        }
+    }
+}
+
+var old_nav;
+
+function test() {
+  // remember the old navigator
+  old_nav = window.frames[0].navigator;
+  // detach the old navigator
+  var p = document.getElementById("subframe");
+  p.parentNode.removeChild(p);
+  if (window.GCController)
+    window.GCController.collect();
+
+  // Check once immediately
+  check_navigator();
+
+  gc();
+
+  // Check one more time later, when the frame is likely to be destroyed.
+  setTimeout(check_navigator_and_done, 200);
+}
+
+function check_navigator_and_done() {
+  check_navigator();
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}
+
+function check_navigator() {
+  var strings = [ ];
+  for (p in old_nav) {
+    if (p == 'geolocation' || p == 'webkitGetUserMedia') // Don't include Geolocation or the Media Stream API functions until most platforms have support.
+      continue;
+
+    if (typeof old_nav[p] == 'function') {
+      try {
+        var v = old_nav[p]();
+        // no crash, it is ok
+        strings.push("navigator."+p+"() is OK");
+      } catch(err) {
+        // navigator.registerXXX will throw on invalid input.
+        strings.push("navigator."+p+"() threw err "+err);
+      }
+    } else {
+      var v = old_nav[p];
+      // no crash, it is ok.
+      strings.push("navigator."+p+" is OK");
+    }
+  }
+  strings.sort();
+  log(strings);
+}
+
+</script>
+<body onload="test()">
+This tests that the navigator object of a deleted frame is disconnected
+properly. Accessing fields or methods shouldn't crash the browser.
+<br>
+<iframe id="subframe" src="about:blank"></iframe>
+<button onclick="check_navigator()">Check Navigator</button><br>
+<div id="result"></div>
+</body>
+</html>

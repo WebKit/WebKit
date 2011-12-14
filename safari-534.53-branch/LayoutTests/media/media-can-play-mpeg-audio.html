@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px;}
+        </style>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType('audio/x-mpeg')", "maybe");
+                testExpected("video.canPlayType('audio/x-mp3')", "maybe");
+                testExpected("video.canPlayType('audio/mp3')", "maybe");
+
+                testExpected("video.canPlayType('audio/mp4')", "maybe");
+                testExpected("video.canPlayType('audio/aac')", "maybe");
+
+                endTest();
+            }
+        </script>
+
+    </head>
+    <body onload="start()">
+
+        <video controls ></video>
+
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple mp3 MIME types.</p>
+
+    </body>
+</html>

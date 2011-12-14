@@ -1,0 +1,27 @@
+<html>
+<body>
+<p>This tests that runtime arrays are not treated as JSArrays when used in Function.apply.  The test passes if it does not crash.</p>
+<pre id="console"></pre>
+<script>
+function log(msg)
+{
+    document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+if (!window.objCController)
+    alert("This needs to be run under DRT on the Mac.");
+
+function test()
+{
+    log("PASS: Function called.  No crash!");
+}
+
+var array = window.objCController.testArray();
+test.apply(null, array);
+
+</script>
+</body>
+</html>

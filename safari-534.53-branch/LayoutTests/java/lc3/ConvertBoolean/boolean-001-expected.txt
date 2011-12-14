@@ -1,0 +1,8 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
+
+FAIL TEST_CLASS.ambiguous( true ) should be BOOLEAN. Was BYTE.
+FAIL TEST_CLASS.ambiguous( false ) should be BOOLEAN. Was BYTE.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="resources/print.js"></script>
+</head>
+
+<body>
+<p>This page tests the beforeload event on script elements.  You should see a PASS message below if everything
+works.</p>
+<hr>
+<div id='console'></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+    
+function beforeLoadFunc()
+{
+    print("PASS", "green");
+    event.preventDefault();
+}
+
+document.body.addEventListener("beforeload", beforeLoadFunc, true);
+var elt = document.createElement("script");
+elt.setAttribute("src", "resources/fail.js");
+document.body.appendChild(elt);
+</script>
+
+</body>
+</html>

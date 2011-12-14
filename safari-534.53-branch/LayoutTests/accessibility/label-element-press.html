@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<label tabindex=0 onclick="performEvent();" id="labelElement">label</label>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a label element without a corresponding control will perform a press action on itself instead of nothing.");
+ 
+    function performEvent() {
+       layoutTestController.notifyDone();
+    }
+
+    if (window.accessibilityController) {
+ 
+        layoutTestController.waitUntilDone();
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+        var label = body.childAtIndex(0).childAtIndex(0);
+    
+        // if successful, performEvent() will be called and we'll successfully parse.        
+        label.press();
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

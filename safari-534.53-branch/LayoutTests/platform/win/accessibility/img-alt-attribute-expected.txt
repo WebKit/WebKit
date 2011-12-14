@@ -1,0 +1,7 @@
+  
+
+This test verifies that, on Windows, an img tag's alt text is returned for the element's 'title' property when the element has no ARIA name.
+
+PASS e.title is "ARIA labeled-by name"
+PASS e.title is "alternate text"
+

@@ -1,0 +1,11 @@
+Origin identifier: 'file__0'
+StorageTracker test - write local storage for this origin. Should be called after storage-tracker-3-delete-all.html.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+This test should have no visible output on success.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

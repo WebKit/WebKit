@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+function onLoad() {
+    shouldBe('document.activeElement', 'document.querySelector("keygen")');
+    shouldBe('document.activeElement.autofocus', 'true');
+    finishJSTest();
+}
+
+successfullyParsed = true;
+</script>
+</head>
+<body onload="onLoad();">
+<keygen autofocus>
+<pre id="console">
+This tests whether the keygen element supports the autofocus attribute.
+
+</pre>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

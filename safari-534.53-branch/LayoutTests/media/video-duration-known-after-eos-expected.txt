@@ -1,0 +1,8 @@
+Tests that duration is known after playback ended.
+
+
+RUN(video.play())
+RUN(video.currentTime = video.duration - 0.2)
+EXPECTED (video.duration > '0') OK
+END OF TEST
+

@@ -1,0 +1,48 @@
+<html>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script>
+
+function description(msg)
+{
+    var span = document.createElement("span");
+    span.innerHTML = '<p>' + msg + '</p>';
+    var description = document.getElementById("description");
+    if (description.firstChild)
+        description.replaceChild(span, description.firstChild);
+    else
+        description.appendChild(span);
+}
+
+function handleTimeout()
+{
+    document.getElementById("console").innerHTML = 'Result: <span class="pass">Timeout was successful</span><br>';
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    setTimeout(handleTimeout);
+}
+
+</script>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console">
+Result: <span class="fail">Test Failed.</span> Timeout was not called.
+</div>
+<script>
+description(
+'This tests that calling setTimeout without a delay will still work.<br/> rdar: problem/5480234 JS setTimeout function requires a second argument' +
+'<br/><br/>'+
+'In the case of a successful test you will see the text \"<span class="pass">Timeout was successful</span>\" otherwise you will see \"<span class="fail">Test Failed.</span> Timeout was not called.\"'
+);
+</script>
+</body>
+</html>

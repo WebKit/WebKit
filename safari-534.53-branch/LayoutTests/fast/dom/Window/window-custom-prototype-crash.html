@@ -1,0 +1,10 @@
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var newPrototype = new Object();
+    newPrototype.myNewPrototypeFunction = function() { return "myNewPrototypeFunction"; }
+    window.__proto__ = newPrototype;
+    window.myNewPrototypeFunction();
+</script>
+If this did not crash the test has succeeded.

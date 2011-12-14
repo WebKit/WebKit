@@ -1,0 +1,26 @@
+<video controls></video>
+<p>Test that calling play() and pause() triggers async play, timeupdate and pause events.</p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    video.src = findMediaFile("video", "content/test.mp4");
+
+    waitForEvent("loadstart");
+    waitForEvent("ratechange");
+    waitForEvent("waiting");
+    waitForEvent("ratechange");
+    waitForEvent("durationchange");
+    waitForEvent("loadedmetadata");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEvent("canplaythrough");
+    waitForEvent("play");
+    waitForEvent("timeupdate");
+    waitForEvent('pause', function () { testExpected("video.paused", true); endTest(); } );
+
+
+    run("video.play()");
+    run("video.pause()");
+    
+    consoleWrite("SCRIPT DONE");
+</script>

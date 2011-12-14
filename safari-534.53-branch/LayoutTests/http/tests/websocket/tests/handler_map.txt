@@ -1,0 +1,3 @@
+# websocket handler map file.
+# request to '/' will be handled by echo-location_wsh.py
+/ /websocket/tests/echo-location

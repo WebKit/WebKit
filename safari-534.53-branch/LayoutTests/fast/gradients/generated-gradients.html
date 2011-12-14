@@ -1,0 +1,22 @@
+<head>
+<style>
+div { }
+.radial::before { width:150px; height:150px; border:2px solid black;
+           content: -webkit-gradient(radial, 45 45, 10, 52 50, 30, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62)),
+                       -webkit-gradient(radial, 105 105, 20, 112 120, 50, from(#ff5f98), to(rgba(255,1,136,0)), color-stop(75%, #ff0188)),
+                       -webkit-gradient(radial, 95 15, 15, 102 20, 40, from(#00c9ff), to(rgba(0,201,255,0)), color-stop(80%, #00b5e2)),
+                       -webkit-gradient(radial, 0 150, 50, 0 140, 90, from(#f4f201), to(rgba(228, 199,0,0)), color-stop(80%, #e4c700));
+            display: block;
+        }
+.linear::after { width:130px; height:130px; border:2px solid black; 
+           content: -webkit-gradient(linear, left top, left bottom, from(#00abeb), to(#fff), color-stop(0.5, #fff), color-stop(0.5, #66cc00));
+           display: block;
+        }
+}
+</style>
+</head>
+<body>
+<h1>Radial Gradient Example</h1>
+<div class="radial">There's some generated content above me.</div>
+<h1>Linear Gradient Example</h1>
+<div class="linear">There's some generated content below me.</div>

@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion null
+
+FAIL dt.setDouble( null ); dt.PUB_DOUBLE should throw an exception. Was 0.
+FAIL dt.setDouble( null ); dt.getDouble() should throw an exception. Was 0.
+FAIL typeof dt.getDouble() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

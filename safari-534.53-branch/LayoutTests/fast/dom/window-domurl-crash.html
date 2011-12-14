@@ -1,0 +1,60 @@
+<html>
+<head>
+<script>
+var blob = (new WebKitBlobBuilder).getBlob();
+var url = null;
+var count = 0;
+
+if (!window.gc)
+{
+    window.gc = function()
+    {
+        if (window.GCController)
+            return GCController.collect();
+        for (var i = 0; i < 10000; i++)
+            var s = new String("abc");
+    }
+}
+
+function load()
+{
+    if (window.layoutTestController)
+    {
+        layoutTestController.dumpAsText();
+        layoutTestController.setCanOpenWindows();
+        layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+        layoutTestController.waitUntilDone();
+    }
+    win = window.open();
+    if (win.webkitURL)
+    {
+        url = win.webkitURL;
+        win.location = "nothing";
+        setTimeout(crash, 0);
+        return;
+    }
+    document.body.innerHTML = "PASS";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function crash()
+{
+    gc();
+    url.createObjectURL(blob);
+    if (count++ < 5)
+    {
+        setTimeout(crash, 0);
+        return;
+    }
+    document.body.innerHTML = "PASS";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body onload="load()">
+RUNNING...
+</body>
+</html>
+

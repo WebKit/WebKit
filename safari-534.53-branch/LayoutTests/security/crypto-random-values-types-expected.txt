@@ -1,0 +1,18 @@
+Tests which types are valid for crypto.randomValues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'crypto' in window is true
+PASS 'getRandomValues' in window.crypto is true
+PASS crypto.getRandomValues(new Uint8Array(3)) is undefined.
+PASS crypto.getRandomValues(new Int8Array(3)) is undefined.
+PASS crypto.getRandomValues(new Uint16Array(3)) is undefined.
+PASS crypto.getRandomValues(new Int16Array(3)) is undefined.
+PASS crypto.getRandomValues(new Uint32Array(3)) is undefined.
+PASS crypto.getRandomValues(new Int32Array(3)) is undefined.
+PASS crypto.getRandomValues(new Float32Array(3)) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

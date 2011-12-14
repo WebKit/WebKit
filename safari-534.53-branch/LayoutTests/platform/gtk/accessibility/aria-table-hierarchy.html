@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<div role="grid">
+<div role="row"><div role="gridcell">foo</div><div role="gridcell">bar</div></div>
+</div>
+<div role="grid">
+<div role="row"><div role="columnheader">Odd</div><div role="columnheader">Even</div></div>
+<div role="row"><div role="gridcell">1</div><div role="gridcell">2</div></div>
+<div role="row"><div role="gridcell">3</div><div role="gridcell">4</div></div>
+</div>
+<div role="grid">
+<div role="row"><div role="gridcell">hello</div><div role="gridcell">world</div></div>
+</div>
+<div role="grid">
+<div role="row"><div role="columnheader">Odd</div><div role="columnheader">Even</div></div>
+<div role="row"><div role="gridcell"><p>1</p></div><div role="gridcell"><p>2</p></div></div>
+<div role="row"><div role="gridcell"><p>3</p></div><div role="gridcell"><p>4</p></div></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("This tests the Atk table hierarhy for an ARIA table.");
+    if (window.accessibilityController) {
+        layoutTestController.dumpAsText();
+        document.getElementById("body").focus();
+        var webArea = accessibilityController.focusedElement;
+
+        var table1 = webArea.childAtIndex(0);
+        shouldBe("table1.role", "'AXRole: table'");
+        shouldBe("table1.rowCount", "1");
+        shouldBe("table1.columnCount", "2");
+        var table2 = webArea.childAtIndex(1);
+        shouldBe("table2.role", "'AXRole: table'");
+        shouldBe("table2.rowCount", "3");
+        shouldBe("table2.columnCount", "2");
+        var table3 = webArea.childAtIndex(2);
+        shouldBe("table3.role", "'AXRole: table'");
+        shouldBe("table3.rowCount", "1");
+        shouldBe("table3.columnCount", "2");
+        var table4 = webArea.childAtIndex(3);
+        shouldBe("table4.role", "'AXRole: table'");
+        shouldBe("table4.rowCount", "3");
+        shouldBe("table4.columnCount", "2");
+
+        var children = table1.childrenCount;
+        shouldBe("children", "2");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table1.childAtIndex(i).role", "'AXRole: table cell'");
+        }
+        children = table2.childrenCount;
+        shouldBe("children", "6");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table2.childAtIndex(i).role", "'AXRole: table cell'");
+        }
+        children = table3.childrenCount;
+        shouldBe("children", "2");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table3.childAtIndex(i).role", "'AXRole: table cell'");
+        }
+        children = table4.childrenCount;
+        shouldBe("children", "6");
+        for (i = 0; i < children; ++i) {
+            shouldBe("table4.childAtIndex(i).role", "'AXRole: table cell'");
+        }
+    }
+    successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+window.onload = function() {
+  document.getElementById('theForm').submit();
+  try {
+    parent.attacked();
+  } catch(ex) {
+  }
+  parent.postMessage('Done.', '*');
+};
+</script>
+</head>
+</script>
+<body>
+<form id="theForm" action="about:blank" method="GET"></form>
+</body>
+</html>

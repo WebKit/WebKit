@@ -1,0 +1,852 @@
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93303
+
+    2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        * WebCoreSupport/ChromeClientWinCE.h:
+        Removed deviceScaleFactor.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93040
+
+    2011-08-10  Adam Roben  <aroben@apple.com>
+
+            Clear up scale factor terminology
+
+            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+            software is running, and one that is per-Page and can be controlled via API calls. This
+            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+            code use those names. It should introduce no behavior changes.
+
+            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+            device scale factor
+
+            Reviewed by Simon Fraser.
+
+            * WebCoreSupport/ChromeClientWinCE.cpp:
+            * WebCoreSupport/ChromeClientWinCE.h:
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 91097
+
+    2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+            REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+            https://bugs.webkit.org/show_bug.cgi?id=64615
+
+            Reviewed by Anders Carlsson.
+
+            * WebCoreSupport/ChromeClientWinCE.cpp:
+            (WebKit::ChromeClientWinCE::setCursorHiddenUntilMouseMoves): Added this stub.
+            * WebCoreSupport/ChromeClientWinCE.h:
+
+2011-05-13  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Can't horizontally scroll iframes and overflow because wheel events are always accepted
+        https://bugs.webkit.org/show_bug.cgi?id=60779
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+        (WebKit::ChromeClientWinCE::shouldRubberBandInDirection): Default impl of new ChromeClient method
+        (WebKit::ChromeClientWinCE::numWheelEventHandlersChanged): Default impl of new ChromeClient method
+
+2011-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename SelectionController to FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=60234
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::handleEditingKeyboardEvent):
+
+2011-05-04  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Expose WebView directly through ChromeClient.
+        https://bugs.webkit.org/show_bug.cgi?id=49902
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+        (WebKit::ChromeClientWinCE::webView):
+
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+
+        Respect the interface change in FrameLoaderClient.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDidChangeIcons):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-05-01  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Unreviewed buildfix after r85434.
+
+        * WebView.cpp:
+        (WebView::paint):
+
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WinCE build fix after r84574.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::canCopyCut):
+        (WebKit::EditorClientWinCE::canPaste):
+        * WebCoreSupport/EditorClientWinCE.h:
+
+2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename lengthReceived to encodedDataLength/dataLength
+        https://bugs.webkit.org/show_bug.cgi?id=58883
+
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-04-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [Refactoring] SpellCheckingResult should be replaced with TextCheckingResult
+        https://bugs.webkit.org/show_bug.cgi?id=56085
+
+        * WebCoreSupport/EditorClientWinCE.h:
+        (WebKit::EditorClientWinCE::requestCheckingOfString):
+
+2011-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (WebKit2): Caps-Lock indicator sometimes doesn't appear in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51230
+        <rdar://problem/8780989>
+
+        * WebView.cpp: (WebView::handleKeyDown): Moved Caps Lock handling from WebKits to WebCore,
+        because WebKit shouldn't be smart.
+
+2011-03-31  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r82580.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.h: StringWithDirection is in WebCore
+                                                   and not in WTF namespace.
+
+2011-03-31  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <title> should support dir attribute
+        https://bugs.webkit.org/show_bug.cgi?id=50961
+
+        Update to new FrameLoaderClient interface.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDidReceiveTitle):
+        (WebKit::FrameLoaderClientWinCE::setTitle):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-03-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WINCE] Use a appropriate user agent string
+        https://bugs.webkit.org/show_bug.cgi?id=57175
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::userAgent):
+
+2011-03-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix.
+
+        * CMakeListsWinCE.txt: Added missing include directory.
+
+2011-03-25  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        Update objectContentType() implementation to handle the
+        shouldPreferPlugInsForImages flag.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::objectContentType):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81916 and r81917.
+        http://trac.webkit.org/changeset/81916
+        http://trac.webkit.org/changeset/81917
+        https://bugs.webkit.org/show_bug.cgi?id=57071
+
+        broke a test on platforms that do not have QuickTime installed
+        (Requested by estes on #webkit).
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::objectContentType):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-03-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        Update objectContentType() implementation to handle the
+        shouldPreferPlugInsForImages flag.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::objectContentType):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WebKit2's decidePolicyForMIMEType with decidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=55827
+
+        Renamed FrameLoaderClient::dispatchDecidePolicyForMIMEType to dispatchDecidePolicyForResponse
+        and pass the entire response, instead of just the MIMEType.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDecidePolicyForResponse):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Removing an include of WebCoreKeyboardUIMode.h that Ive just added. It's already included
+        via ChromeClient.h
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): Tab keys no longer observe Full Keyboard Access
+        https://bugs.webkit.org/show_bug.cgi?id=55633
+        <rdar://problem/8963023>
+
+        * WebCoreSupport/ChromeClientWinCE.cpp: (WebKit::ChromeClientWinCE::keyboardUIMode):
+        * WebCoreSupport/ChromeClientWinCE.h:
+        Implement keyboardUIMode() instead of tabsToLinks(). No change in functionality, since
+        this platform doesn't observe or have full keyboard access state.
+
+2011-03-02  Brian Weinstein  <bweinstein@apple.com>
+
+        WinCE build fix.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.h: Add a needed include.
+
+2011-03-02  Brian Weinstein  <bweinstein@apple.com>
+
+        WinCE build fix. Have PlatformStrategiesWinCE inherit from CookiesStrategy,
+        and implement the needed methods.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::createCookiesStrategy):
+        (PlatformStrategiesWinCE::notifyCookiesChanged):
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the support of Frame::isContentEditable and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=54292
+
+        Remove the WebKit side implementation.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        * WebCoreSupport/EditorClientWinCE.h:
+
+2011-02-19  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Ensure loading has stopped in HistoryController::goToItem
+        https://bugs.webkit.org/show_bug.cgi?id=54517
+
+        Add a FrameLoaderClient callback for whether to stop loading before goToItem.
+
+        Test: http/tests/navigation/forward-to-fragment-fires-onload.html
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::shouldStopLoadingForHistoryItem): Added.
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-02-10  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        HTML5 <details> and <summary>: localized text
+        https://bugs.webkit.org/show_bug.cgi?id=54260
+
+        The method defaultDetailsSummaryText was added to LocalizationStrategy class. It is used to
+        provide the default label to be used by a <details> tag that has no <summary> child.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::defaultDetailsSummaryText):
+        * WebCoreSupport/PlatformStrategiesWinCE.h:
+
+2011-01-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring: Extract TextCheckerClient from EditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=53213
+
+        * WebCoreSupport/EditorClientWinCE.h:
+        (WebKit::EditorClientWinCE::textChecker):
+
+2011-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add EditorClient callbacks to override isDOMPasteAllowed and javaScriptCanAccessClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=52417
+
+        Added two callback functions, canCopyCut and canPaste to EditorClient. They are currently
+        not implemented.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::canCopyCut): Added.
+        (WebKit::EditorClientWinCE::canPaste): Added.
+        * WebCoreSupport/EditorClientWinCE.h:
+
+2011-02-10  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update calls to DocumentWriter.
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::finishedLoading):
+
+2011-02-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove orphan code from old parser
+        https://bugs.webkit.org/show_bug.cgi?id=53984
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        * WebCoreSupport/ChromeClientWinCE.h:
+
+2011-02-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed Adam Roben and Darin Adler.
+
+        WebKit2: drag and drop support on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=52775
+
+        Removed createDragImageForLink from DragClient.
+
+        * WebCoreSupport/DragClientWinCE.cpp:
+        * WebCoreSupport/DragClientWinCE.h:
+
+2011-02-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        [WINCE] FrameLoaderClient calls loadURLInChildFrame on the child's frame loader
+        https://bugs.webkit.org/show_bug.cgi?id=53896
+
+        * WebView.cpp:
+        (WebView::createFrame): Use coreFrame instead of childFrame.
+
+2011-02-03  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Plumb mixed script URL to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=52384
+
+        Regressions covered by http/tests/security/mixedContent/*
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::didRunInsecureContent):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2011-02-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r77398.
+
+        * WebView.cpp:
+        (WebView::paint):
+
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <select> can't display right-to-left (rtl) languages
+        https://bugs.webkit.org/show_bug.cgi?id=19785
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::selectItemAlignmentFollowsMenuWritingDirection): Added.
+        * WebCoreSupport/ChromeClientWinCE.h:
+
+2011-01-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Ensure layouted frame when painting
+        https://bugs.webkit.org/show_bug.cgi?id=53108
+
+        * WebView.cpp:
+        (WebView::paint):
+
+2011-01-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::exceededDatabaseQuota): Added missing semicolon.
+        (WebKit::ChromeClientWinCE::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
+2010-12-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for WinCE after r73802.
+
+        * WebCoreSupport/ContextMenuClientWinCE.cpp:
+        (WebKit::ContextMenuClientWinCE::customizeMenu):
+        * WebCoreSupport/ContextMenuClientWinCE.h:
+
+2010-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit2 needs to mirror the frame tree in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=51546
+
+        - Add client functions to notify that a frame has been added or
+          removed from the page cache.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::didSaveToPageCache):
+        (WebKit::FrameLoaderClientWinCE::didRestoreFromPageCache):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Editor.h doesn't need to include SelectionController.h
+        https://bugs.webkit.org/show_bug.cgi?id=51441
+
+        Renamed SelectionController::EDirection to SelectionDirection.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::handleEditingKeyboardEvent):
+
+2010-10-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        Added a stub implememntation.
+
+        * WebCoreSupport/EditorClientWinCE.h:
+        (WebKit::EditorClient::requestCheckingOfString):
+
+2010-12-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r73392.
+        http://trac.webkit.org/changeset/73392
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        This commit caused crashes on the GTK+ bots
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::finishedLoading):
+
+2010-12-06  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Update calls to DocumentWriter.
+        https://bugs.webkit.org/show_bug.cgi?id=50489
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::finishedLoading):
+
+2010-12-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WINCE] Add build system
+        https://bugs.webkit.org/show_bug.cgi?id=50522
+
+        * CMakeListsWinCE.txt: Added.
+
+2010-12-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Support multiple correction candidates panel for misspelled word on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=50137
+        <rdar://problem/8568059>
+
+        Adopted new function signature defined in base class.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::getGuessesForWord):
+        * WebCoreSupport/EditorClientWinCE.h:
+
+2010-11-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Add WebView
+        https://bugs.webkit.org/show_bug.cgi?id=50216
+
+        * WebView.cpp: Added.
+        * WebView.h: Added.
+
+2010-11-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed, build fix after r71541.
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+
+2010-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48685
+        Notify UI process about focused frame
+
+        Added an empty implementation of the new ChromeClient method.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::focusedFrameChanged):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
+2010-11-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed, build fix after r71041.
+
+        * WebCoreSupport/ChromeClientWinCE.h:
+        (WebKit::ChromeClientWinCE::showContextMenu):
+
+2010-10-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed, build fix after r70574.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::transferLoadingResourceFromPage):
+
+2010-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48576
+        Let WebKit2 client know when a frame is a frameset
+
+        Added a blank implementation of the new FrameLoaderClient method.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchDidBecomeFrameset):
+
+2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Resource tracking failure when trying to move a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=44713
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::transferLoadingResourceFromPage):
+        Empty method.
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2010-10-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Replace _countof with WTF_ARRAY_LENGTH
+        https://bugs.webkit.org/show_bug.cgi?id=48229
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::interpretKeyEvent):
+
+2010-10-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to pass the current event modifier flags when requesting a new window
+        https://bugs.webkit.org/show_bug.cgi?id=48140
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::createWindow):
+        * WebCoreSupport/ChromeClientWinCE.h:
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::dispatchCreatePage):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+        Add NavigationAction parameter.
+
+2010-10-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Implement EditorClient::handleKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=48118
+
+        Copy the implementation from the EFL port.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::interpretKeyEvent):
+        (WebKit::EditorClientWinCE::handleEditingKeyboardEvent):
+        (WebKit::EditorClientWinCE::handleKeyboardEvent):
+        * WebCoreSupport/EditorClientWinCE.h:
+
+2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Replace some String::format() usages by StringConcatenate in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=47714
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::imageTitle):
+        (PlatformStrategiesWinCE::multipleFileUploadText):
+
+2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Added oldPage param to FrameLoaderClient::didTransferChildFrameToNewDocument.
+        https://bugs.webkit.org/show_bug.cgi?id=46663
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::didTransferChildFrameToNewDocument):
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add PlatformStrategiesWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=46371
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp: Copied from WebKit/win/WebCoreSupport/WebPlatformStrategies.cpp.
+        * WebCoreSupport/PlatformStrategiesWinCE.h: Copied from WebKit/win/WebCoreSupport/WebPlatformStrategies.h.
+
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add ChromeClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=46294
+
+        * WebCoreSupport/ChromeClientWinCE.cpp: Added.
+        * WebCoreSupport/ChromeClientWinCE.h: Added.
+
+2010-09-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed.
+
+        Build fix for FrameLoaderClientWinCE.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::canShowMIMETypeAsHTML): Add missing method.
+        * WebCoreSupport/FrameLoaderClientWinCE.h:
+
+2010-09-21  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add "WinCE" to classname for all WebCoreSupport classes to match filename.
+        https://bugs.webkit.org/show_bug.cgi?id=46175
+
+        * WebCoreSupport/ContextMenuClientWinCE.cpp: Rename ContextMenuClient to ContextMenuClientWinCE.
+        * WebCoreSupport/ContextMenuClientWinCE.h: Ditto.
+        * WebCoreSupport/DragClientWinCE.cpp: Rename DragClient to DragClientWinCE.
+        * WebCoreSupport/DragClientWinCE.h: Ditto.
+        * WebCoreSupport/EditorClientWinCE.cpp: Rename EditorClient to EditorClientWinCE.
+        * WebCoreSupport/EditorClientWinCE.h: Ditto.
+        * WebCoreSupport/InspectorClientWinCE.cpp: Rename InspectorClient to InspectorClientWinCE.
+        * WebCoreSupport/InspectorClientWinCE.h: Ditto.
+
+2010-09-20  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        Add FrameLoaderClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=45682
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp: Added.
+        * WebCoreSupport/FrameLoaderClientWinCE.h: Added.
+
+2010-09-16  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Add missing FrameNetworkingContextWinCE::blockedError
+        https://bugs.webkit.org/show_bug.cgi?id=45680
+
+        * WebCoreSupport/FrameNetworkingContextWinCE.cpp:
+        (WebKit::FrameNetworkingContextWinCE::blockedError):
+        * WebCoreSupport/FrameNetworkingContextWinCE.h:
+
+2010-09-13  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add FrameNetworkingContextWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=45474
+
+        * WebCoreSupport/FrameNetworkingContextWinCE.cpp: Added.
+        (WebKit::FrameNetworkingContextWinCE::FrameNetworkingContextWinCE):
+        (WebKit::FrameNetworkingContextWinCE::userAgent):
+        (WebKit::FrameNetworkingContextWinCE::referrer):
+        * WebCoreSupport/FrameNetworkingContextWinCE.h: Added.
+        (WebKit::FrameNetworkingContextWinCE::create):
+
+2010-08-31  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add EditorClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44822
+
+        * WebCoreSupport/EditorClientWinCE.cpp: Added.
+        (WebKit::EditorClient::EditorClient):
+        (WebKit::EditorClient::~EditorClient):
+        (WebKit::EditorClient::setInputMethodState):
+        (WebKit::EditorClient::shouldDeleteRange):
+        (WebKit::EditorClient::shouldShowDeleteInterface):
+        (WebKit::EditorClient::isContinuousSpellCheckingEnabled):
+        (WebKit::EditorClient::isGrammarCheckingEnabled):
+        (WebKit::EditorClient::spellCheckerDocumentTag):
+        (WebKit::EditorClient::shouldBeginEditing):
+        (WebKit::EditorClient::shouldEndEditing):
+        (WebKit::EditorClient::shouldInsertText):
+        (WebKit::EditorClient::shouldChangeSelectedRange):
+        (WebKit::EditorClient::shouldApplyStyle):
+        (WebKit::EditorClient::shouldMoveRangeAfterDelete):
+        (WebKit::EditorClient::didBeginEditing):
+        (WebKit::EditorClient::respondToChangedContents):
+        (WebKit::EditorClient::respondToChangedSelection):
+        (WebKit::EditorClient::didEndEditing):
+        (WebKit::EditorClient::didWriteSelectionToPasteboard):
+        (WebKit::EditorClient::didSetSelectionTypesForPasteboard):
+        (WebKit::EditorClient::isEditable):
+        (WebKit::EditorClient::registerCommandForUndo):
+        (WebKit::EditorClient::registerCommandForRedo):
+        (WebKit::EditorClient::clearUndoRedoOperations):
+        (WebKit::EditorClient::canUndo):
+        (WebKit::EditorClient::canRedo):
+        (WebKit::EditorClient::undo):
+        (WebKit::EditorClient::redo):
+        (WebKit::EditorClient::shouldInsertNode):
+        (WebKit::EditorClient::pageDestroyed):
+        (WebKit::EditorClient::smartInsertDeleteEnabled):
+        (WebKit::EditorClient::isSelectTrailingWhitespaceEnabled):
+        (WebKit::EditorClient::toggleContinuousSpellChecking):
+        (WebKit::EditorClient::toggleGrammarChecking):
+        (WebKit::EditorClient::handleKeyboardEvent):
+        (WebKit::EditorClient::handleInputMethodKeydown):
+        (WebKit::EditorClient::textFieldDidBeginEditing):
+        (WebKit::EditorClient::textFieldDidEndEditing):
+        (WebKit::EditorClient::textDidChangeInTextField):
+        (WebKit::EditorClient::doTextFieldCommandFromEvent):
+        (WebKit::EditorClient::textWillBeDeletedInTextField):
+        (WebKit::EditorClient::textDidChangeInTextArea):
+        (WebKit::EditorClient::ignoreWordInSpellDocument):
+        (WebKit::EditorClient::learnWord):
+        (WebKit::EditorClient::checkSpellingOfString):
+        (WebKit::EditorClient::getAutoCorrectSuggestionForMisspelledWord):
+        (WebKit::EditorClient::checkGrammarOfString):
+        (WebKit::EditorClient::updateSpellingUIWithGrammarString):
+        (WebKit::EditorClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::EditorClient::showSpellingUI):
+        (WebKit::EditorClient::spellingUIIsShowing):
+        (WebKit::EditorClient::getGuessesForWord):
+        (WebKit::EditorClient::willSetInputMethodState):
+        * WebCoreSupport/EditorClientWinCE.h: Added.
+
+2010-08-31  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add DragClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44821
+
+        * WebCoreSupport/DragClientWinCE.cpp: Added.
+        (WebKit::DragClient::willPerformDragDestinationAction):
+        (WebKit::DragClient::willPerformDragSourceAction):
+        (WebKit::DragClient::actionMaskForDrag):
+        (WebKit::DragClient::dragSourceActionMaskForPoint):
+        (WebKit::DragClient::startDrag):
+        (WebKit::DragClient::createDragImageForLink):
+        (WebKit::DragClient::dragControllerDestroyed):
+        * WebCoreSupport/DragClientWinCE.h: Added.
+
+2010-08-31  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add ContextMenuClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44820
+
+        * WebCoreSupport/ContextMenuClientWinCE.cpp: Added.
+        (WebKit::ContextMenuClient::ContextMenuClient):
+        (WebKit::ContextMenuClient::contextMenuDestroyed):
+        (WebKit::ContextMenuClient::getCustomMenuFromDefaultItems):
+        (WebKit::ContextMenuClient::contextMenuItemSelected):
+        (WebKit::ContextMenuClient::downloadURL):
+        (WebKit::ContextMenuClient::copyImageToClipboard):
+        (WebKit::ContextMenuClient::searchWithGoogle):
+        (WebKit::ContextMenuClient::lookUpInDictionary):
+        (WebKit::ContextMenuClient::speak):
+        (WebKit::ContextMenuClient::stopSpeaking):
+        (WebKit::ContextMenuClient::isSpeaking):
+        * WebCoreSupport/ContextMenuClientWinCE.h: Added.
+
+2010-08-28  Patrick Gansterer  <paroga@paroga.com>
+
+        Reviewed by Adam Roben.
+
+        Add InspectorClientWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=44819
+
+        * WebCoreSupport/InspectorClientWinCE.cpp: Added.
+        (WebKit::InspectorClient::InspectorClient):
+        (WebKit::InspectorClient::~InspectorClient):
+        (WebKit::InspectorClient::inspectorDestroyed):
+        (WebKit::InspectorClient::openInspectorFrontend):
+        (WebKit::InspectorClient::releaseFrontendPage):
+        (WebKit::InspectorClient::highlight):
+        (WebKit::InspectorClient::hideHighlight):
+        (WebKit::InspectorClient::populateSetting):
+        (WebKit::InspectorClient::storeSetting):
+        (WebKit::InspectorClient::sendMessageToFrontend):
+        * WebCoreSupport/InspectorClientWinCE.h: Added.

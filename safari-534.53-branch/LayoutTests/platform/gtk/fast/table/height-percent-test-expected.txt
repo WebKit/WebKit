@@ -1,0 +1,25 @@
+layer at (0,0) size 784x1374
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1374
+  RenderBlock {HTML} at (0,0) size 784x1374
+    RenderBody {BODY} at (8,16) size 768x1342
+      RenderBlock {DIV} at (16,0) size 736x26 [border: (1px solid #000000)]
+        RenderBlock (floating) {DIV} at (1,1) size 100x24
+          RenderBlock {DIV} at (0,0) size 100x24 [bgcolor=#008000]
+      RenderBlock {DIV} at (16,42) size 736x26 [border: (1px solid #000000)]
+        RenderBlock (floating) {DIV} at (1,1) size 96x24
+          RenderTable {TABLE} at (0,0) size 96x24 [bgcolor=#FF0000]
+            RenderTableSection {TBODY} at (0,0) size 96x24
+              RenderTableRow {TR} at (0,0) size 96x24
+                RenderTableCell {TD} at (0,1) size 96x22 [r=0 c=0 rs=1 cs=1]
+                  RenderImage {IMG} at (0,0) size 96x22 [bgcolor=#008000]
+      RenderBlock {DIV} at (16,84) size 736x578 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (1,1) size 734x576
+          RenderBlock {DIV} at (0,0) size 100x576 [bgcolor=#008000]
+      RenderBlock {DIV} at (16,678) size 736x664 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (1,1) size 734x662
+          RenderTable {TABLE} at (0,0) size 96x662 [bgcolor=#FF0000]
+            RenderTableSection {TBODY} at (0,0) size 96x662
+              RenderTableRow {TR} at (0,0) size 96x662
+                RenderTableCell {TD} at (0,320) size 96x22 [r=0 c=0 rs=1 cs=1]
+                  RenderImage {IMG} at (0,0) size 96x22 [bgcolor=#008000]

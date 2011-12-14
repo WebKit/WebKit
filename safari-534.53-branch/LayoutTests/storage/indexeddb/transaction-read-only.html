@@ -1,0 +1,74 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test read-only transactions in IndexedDB.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    request = evalAndLog("webkitIndexedDB.open('transaction-read-only')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    window.db = evalAndLog("db = event.target.result");
+    request = evalAndLog("result = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cleanDatabase()
+{
+    deleteAllObjectStores(db);
+
+    event.target.result.oncomplete = setVersionDone;
+    event.target.result.onabort = unexpectedAbortCallback;
+    store = evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("store.put('x', 'y')");
+}
+
+function setVersionDone()
+{
+    trans = evalAndLog("trans = db.transaction()");
+    evalAndExpectException("trans.objectStore('store').put('a', 'b')", "webkitIDBDatabaseException.READ_ONLY_ERR");
+
+    trans = evalAndLog("trans = db.transaction()");
+    evalAndExpectException("trans.objectStore('store').delete('x')", "webkitIDBDatabaseException.READ_ONLY_ERR");
+
+    trans = evalAndLog("trans = db.transaction()");
+    cur = evalAndLog("cur = trans.objectStore('store').openCursor()");
+    cur.onsuccess = gotCursor;
+    cur.onerror = unexpectedErrorCallback;
+}
+
+function gotCursor()
+{
+    shouldBeFalse("!event.target.result");
+    evalAndExpectException("event.target.result.delete()", "webkitIDBDatabaseException.READ_ONLY_ERR");
+
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<body>
+<p>Tests various use cases when cloning MessagePorts.</p>
+<p>Should be a series of SUCCESS messages, followed with DONE.</p>
+<pre id=log></pre>
+<script>
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // force garbage collection (FF requires about 9K allocations before a collect).
+        var s = new String("abc");
+    }
+}
+
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var channel = new MessageChannel;
+channel.port1.onmessage = channel.port2.onmessage = function(evt) {
+    fail("FAIL: Should not have received message: " + evt.data);
+}
+try {
+    channel.port1.postMessage("msg", [channel.port1]);
+    log("FAIL: Posting port to itself should throw an exception.");
+} catch (ex) {
+    log("SUCCESS: Posting port to itself: " + ex);
+}
+
+try {
+    channel.port1.postMessage("msg", [channel.port2]);
+    log("FAIL: Posting port to entangled pair should throw an exception.");
+} catch (ex) {
+    log("SUCCESS: Posting entangled port: " + ex);
+}
+
+channel = new MessageChannel;
+var channel2 = new MessageChannel;
+channel.port1.postMessage("msg", [channel2.port1]);
+
+// Should not be able to post a cloned port.
+try {
+    channel.port1.postMessage("msg", [channel2.port1]);
+    log("FAIL: Posting cloned port should throw an exception.");
+} catch (ex) {
+    log("SUCCESS: Posting cloned port.");
+}
+
+// Test posting messages to a port in cloned state.
+
+var channel = new MessageChannel;
+var channel2 = new MessageChannel;
+
+// Post messages before and after clone to make sure ordering is preserved and all messages are received.
+channel2.port2.postMessage("1");
+channel.port1.postMessage("msg", [channel2.port1]);
+channel2.port2.postMessage("2");
+channel2.port2.postMessage("3");
+channel.port2.onmessage = function(evt) {
+    var messageIndex = 1;
+    if (evt.ports.length != 1)
+        log("FAIL: Got message without wrong number of ports: " + evt.ports.length);
+    evt.ports[0].onmessage = function(evt) {
+        if (evt.data != messageIndex)
+            log("FAIL: Got message " + evt.data + ", expected " + messageIndex);
+        messageIndex++;
+        if (messageIndex == 4) {
+            log("SUCCESS: Posted messages to cloned port.");
+            testDoublyClonedPort();
+        }
+    }
+}
+
+function testDoublyClonedPort()
+{
+    var channel = new MessageChannel;
+    var channel2 = new MessageChannel;
+    channel.port1.postMessage("msg", [channel2.port1]);
+    channel.port2.postMessage("msg", [channel2.port2]);
+    gc();
+    channel.port1.onmessage = function(evt) {
+        evt.ports[0].postMessage("testme");
+    }
+    channel.port2.onmessage = function(evt) {
+        evt.ports[0].onmessage = function (evt) {
+            if (evt.data == "testme")
+                log("SUCCESS: Cloned both endpoints of a channel.");
+            else
+                log("FAIL: Invalid message arrived: " + evt.data);
+            testPostClosePort();
+        }
+    }
+
+}
+
+// *Should* be able to post a closed port.
+function testPostClosePort()
+{
+    var channel = new MessageChannel;
+    var channel2 = new MessageChannel;
+    channel2.port2.close();
+    channel.port1.postMessage("closed", [channel2.port2]);
+    channel.port2.onmessage = function(evt) {
+        if (!evt.ports || evt.ports.length != 1)
+            log("FAIL: Closed port not sent.");
+        else if (evt.data != "closed")
+            log("FAIL: Unexpected message: " + evt.data);
+        else
+            log("SUCCESS: Got closed port with event message " + evt.data);
+        done();
+    }
+}
+
+function done()
+{
+    log("DONE");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</body>

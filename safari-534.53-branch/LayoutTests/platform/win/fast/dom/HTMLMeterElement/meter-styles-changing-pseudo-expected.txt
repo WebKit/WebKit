@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 507x37
+          text run at (0,0) width 507: "Dynamically changing pseudo classes"
+      RenderBlock {P} at (0,58) size 784x18
+        RenderText {#text} at (0,0) size 613x18
+          text run at (0,0) width 613: "Following meter gauge should be green - Changing the paseudo class by changing value attribute"
+      RenderBlock (anonymous) at (0,92) size 784x16
+        RenderMeter {METER} at (0,0) size 80x16
+          RenderBlock {DIV} at (0,0) size 80x16 [bgcolor=#808080]
+          RenderBlock {DIV} at (0,0) size 72x16 [bgcolor=#008000]
+          RenderBlock {DIV} at (0,0) size 80x16
+          RenderBlock {DIV} at (0,2) size 80x14
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,124) size 784x18
+        RenderText {#text} at (0,0) size 735x18
+          text run at (0,0) width 735: "Following meter gauge should be blue - Changing the pseudo class by changing direction from horizontal to vertical."
+      RenderBlock (anonymous) at (0,158) size 784x100
+        RenderMeter {METER} at (0,0) size 80x100
+          RenderBlock {DIV} at (0,0) size 80x100
+          RenderBlock {DIV} at (0,0) size 72x100
+          RenderBlock {DIV} at (0,0) size 80x100 [bgcolor=#808080]
+          RenderBlock {DIV} at (0,10) size 80x90 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,274) size 784x36
+        RenderText {#text} at (0,0) size 766x36
+          text run at (0,0) width 766: "Following meter gauge should be native looking green - Changing the pseudo class by changing direction from vertical to"
+          text run at (0,18) width 67: "horizontal."
+      RenderBlock (anonymous) at (0,326) size 784x20
+        RenderMeter {METER} at (0,0) size 80x20
+          RenderBlock {DIV} at (0,0) size 80x20
+          RenderBlock {DIV} at (0,0) size 72x20
+          RenderBlock {DIV} at (0,0) size 80x20 [bgcolor=#808080]
+          RenderBlock {DIV} at (0,2) size 80x18 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 0x0

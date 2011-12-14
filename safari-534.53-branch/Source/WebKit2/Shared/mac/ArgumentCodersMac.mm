@@ -1,0 +1,343 @@
+/*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "ArgumentCodersMac.h"
+
+#import "ArgumentCodersCF.h"
+#import "ArgumentDecoder.h"
+#import "ArgumentEncoder.h"
+#import "WebCoreArgumentCoders.h"
+#import <WebCore/ColorMac.h>
+
+using namespace WebCore;
+using namespace std;
+
+namespace CoreIPC {
+
+enum NSType {
+    NSAttributedStringType,
+    NSColorType,
+    NSDictionaryType,
+    NSFontType,
+    NSNumberType,
+    NSStringType,
+    Unknown,
+};
+
+static NSType typeFromObject(id object)
+{
+    ASSERT(object);
+
+    if ([object isKindOfClass:[NSAttributedString class]])
+        return NSAttributedStringType;
+    if ([object isKindOfClass:[NSColor class]])
+        return NSColorType;
+    if ([object isKindOfClass:[NSDictionary class]])
+        return NSDictionaryType;
+    if ([object isKindOfClass:[NSFont class]])
+        return NSFontType;
+    if ([object isKindOfClass:[NSNumber class]])
+        return NSNumberType;
+    if ([object isKindOfClass:[NSString class]])
+        return NSStringType;
+
+    ASSERT_NOT_REACHED();
+    return Unknown;
+}
+
+static void encode(ArgumentEncoder* encoder, id object)
+{
+    NSType type = typeFromObject(object);
+    encoder->encodeEnum(type);
+
+    switch (type) {
+    case NSAttributedStringType:
+        encode(encoder, static_cast<NSAttributedString *>(object));
+        return;
+    case NSColorType:
+        encode(encoder, static_cast<NSColor *>(object));
+        return;
+    case NSDictionaryType:
+        encode(encoder, static_cast<NSDictionary *>(object));
+        return;
+    case NSFontType:
+        encode(encoder, static_cast<NSFont *>(object));
+        return;
+    case NSNumberType:
+        encode(encoder, static_cast<NSNumber *>(object));
+        return;
+    case NSStringType:
+        encode(encoder, static_cast<NSString *>(object));
+        return;
+    case Unknown:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
+{
+    NSType type;
+    if (!decoder->decodeEnum(type))
+        return false;
+
+    switch (type) {
+    case NSAttributedStringType: {
+        RetainPtr<NSAttributedString> string;
+        if (!decode(decoder, string))
+            return false;
+        result = string;
+        return true;
+    }
+    case NSColorType: {
+        RetainPtr<NSColor> color;
+        if (!decode(decoder, color))
+            return false;
+        result = color;
+        return true;
+    }
+    case NSDictionaryType: {
+        RetainPtr<NSDictionary> dictionary;
+        if (!decode(decoder, dictionary))
+            return false;
+        result = dictionary;
+        return true;
+    }
+    case NSFontType: {
+        RetainPtr<NSFont> font;
+        if (!decode(decoder, font))
+            return false;
+        result = font;
+        return true;
+    }
+    case NSNumberType: {
+        RetainPtr<NSNumber> number;
+        if (!decode(decoder, number))
+            return false;
+        result = number;
+        return true;
+    }
+    case NSStringType: {
+        RetainPtr<NSString> string;
+        if (!decode(decoder, string))
+            return false;
+        result = string;
+        return true;
+    }
+    case Unknown:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return false;
+}
+
+void encode(ArgumentEncoder* encoder, NSAttributedString *string)
+{
+    // Even though NSAttributedString is toll free bridged with CFAttributedStringRef, attributes' values may be not, so we should stay within this file's code.
+
+    NSString *plainString = [string string];
+    NSUInteger length = [plainString length];
+    CoreIPC::encode(encoder, plainString);
+
+    Vector<pair<NSRange, RetainPtr<NSDictionary> > > ranges;
+
+    NSUInteger position = 0;
+    while (position < length) {
+        // Collect ranges in a vector, becasue the total count should be encoded first.
+        NSRange effectiveRange;
+        RetainPtr<NSDictionary> attributesAtIndex = [string attributesAtIndex:position effectiveRange:&effectiveRange];
+        ASSERT(effectiveRange.location == position);
+        ASSERT(effectiveRange.length);
+        ASSERT(NSMaxRange(effectiveRange) <= length);
+
+        ranges.append(make_pair(effectiveRange, attributesAtIndex));
+
+        position = NSMaxRange(effectiveRange);
+    }
+
+    encoder->encodeUInt64(ranges.size());
+
+    for (size_t i = 0; i < ranges.size(); ++i) {
+        encoder->encodeUInt64(ranges[i].first.location);
+        encoder->encodeUInt64(ranges[i].first.length);
+        CoreIPC::encode(encoder, ranges[i].second.get());
+    }
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSAttributedString>& result)
+{
+    RetainPtr<NSString> plainString;
+    if (!CoreIPC::decode(decoder, plainString))
+        return false;
+
+    NSUInteger stringLength = [plainString.get() length];
+
+    RetainPtr<NSMutableAttributedString> resultString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:plainString.get()]);
+
+    uint64_t rangeCount;
+    if (!decoder->decode(rangeCount))
+        return false;
+
+    while (rangeCount--) {
+        uint64_t rangeLocation;
+        uint64_t rangeLength;
+        RetainPtr<NSDictionary> attributes;
+        if (!decoder->decode(rangeLocation))
+            return false;
+        if (!decoder->decode(rangeLength))
+            return false;
+
+        ASSERT(rangeLocation + rangeLength > rangeLocation);
+        ASSERT(rangeLocation + rangeLength <= stringLength);
+        if (rangeLocation + rangeLength <= rangeLocation || rangeLocation + rangeLength > stringLength)
+            return false;
+
+        if (!CoreIPC::decode(decoder, attributes))
+            return false;
+        [resultString.get() addAttributes:attributes.get() range:NSMakeRange(rangeLocation, rangeLength)];
+    }
+
+    result.adoptCF(resultString.leakRef());
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, NSColor *color)
+{
+    encoder->encode(colorFromNSColor(color));
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSColor>& result)
+{
+    Color color;
+    if (!decoder->decode(color))
+        return false;
+
+    result = nsColor(color);
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, NSDictionary *dictionary)
+{
+    // Even though NSDictionary is toll free bridged with CFDictionaryRef, values may be not, so we should stay within this file's code.
+
+    NSUInteger size = [dictionary count];
+    NSArray *keys = [dictionary allKeys];
+    NSArray *values = [dictionary allValues];
+
+    encoder->encodeUInt64(size);
+
+    for (NSUInteger i = 0; i < size; ++i) {
+        id key = [keys objectAtIndex:i];
+        id value = [values objectAtIndex:i];
+        ASSERT(key);
+        ASSERT([key isKindOfClass:[NSString class]]);
+        ASSERT(value);
+
+        // Ignore values we don't recognize.
+        if (typeFromObject(value) == Unknown)
+            continue;
+
+        encode(encoder, (NSString *)key);
+        encode(encoder, value);
+    }
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSDictionary>& result)
+{
+    uint64_t size;
+    if (!decoder->decodeUInt64(size))
+        return false;
+
+    RetainPtr<NSMutableDictionary> dictionary(AdoptNS, [[NSMutableDictionary alloc] initWithCapacity:size]);
+    for (uint64_t i = 0; i < size; ++i) {
+        // Try to decode the key name.
+        RetainPtr<NSString> key;
+        if (!decode(decoder, key))
+            return false;
+
+        RetainPtr<id> value;
+        if (!decode(decoder, value))
+            return false;
+
+        [dictionary.get() setObject:value.get() forKey:key.get()];
+    }
+
+    result.adoptCF(dictionary.leakRef());
+    return true;
+}
+
+
+void encode(ArgumentEncoder* encoder, NSFont *font)
+{
+    // NSFont could use CTFontRef code if we had it in ArgumentCodersCF.
+    encode(encoder, [[font fontDescriptor] fontAttributes]);
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSFont>& result)
+{
+    RetainPtr<NSDictionary> fontAttributes;
+    if (!decode(decoder, fontAttributes))
+        return false;
+
+    NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:fontAttributes.get()];
+    result = [NSFont fontWithDescriptor:fontDescriptor size:0];
+
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, NSNumber *number)
+{
+    encode(encoder, (CFNumberRef)number);
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSNumber>& result)
+{
+    RetainPtr<CFNumberRef> number;
+    if (!decode(decoder, number))
+        return false;
+
+    result.adoptCF((NSNumber *)number.leakRef());
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, NSString *string)
+{
+    encode(encoder, (CFStringRef)string);
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSString>& result)
+{
+    RetainPtr<CFStringRef> string;
+    if (!decode(decoder, string))
+        return false;
+
+    result.adoptCF((NSString *)string.leakRef());
+    return true;
+}
+
+}

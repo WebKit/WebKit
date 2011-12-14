@@ -1,0 +1,7 @@
+S13_A17_T2
+
+TypeError: 'undefined' is not a function (evaluating '__func()')
+PASS 
+
+TEST COMPLETE
+

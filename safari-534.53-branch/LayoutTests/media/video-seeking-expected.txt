@@ -1,0 +1,28 @@
+Test that seeking attribute is true immediately after a seek, goes back to false when seeking completes, and that a 'seeked' event is fired for each seek
+
+EVENT(canplaythrough)
+RUN(video.currentTime = 0.5)
+
+EVENT(seeked)
+
+EXPECTED (video.seeking == 'false') OK
+EXPECTED (video.currentTime == '0.5') OK
+RUN(video.currentTime = 1)
+EXPECTED (video.seeking == 'true') OK
+
+EVENT(seeked)
+
+EXPECTED (video.seeking == 'false') OK
+EXPECTED (video.currentTime == '1') OK
+RUN(video.currentTime = 1.5)
+EXPECTED (video.seeking == 'true') OK
+
+EVENT(seeked)
+
+EXPECTED (video.seeking == 'false') OK
+EXPECTED (video.currentTime == '1.5') OK
+RUN(video.currentTime = 2)
+EXPECTED (video.seeking == 'true') OK
+
+END OF TEST
+

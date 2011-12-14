@@ -1,0 +1,63 @@
+<?php 
+    $title="Major Objects in WebCore";
+    include("../header.inc"); 
+?>
+
+<h1>Major Objects in WebCore</h1>
+<div>Adam Barth</div>
+<div>first draft, 2009-08-12</div>
+
+<p>WebCore uses a number of objects to represent a web page in memory.  This
+document describes the major objects and the relation between them.  In some
+cases, the connection between these objects can be broken, resulting in null
+pointers.  When traversing these pointers, code must be careful to consider
+the "detached" case and gracefully handle null pointers.</p>
+
+<pre class="asciiart">
+ +---------+
+ | Chrome  |
+ +----+----+
+      |
+  +---+---+     +----------+
+  | Page  +---->| Settings |
+  +---+---+     +----------+
+      |
+      +-------------------------- ... other Frame objects
+      |
+  +---+---+   +-------------+                 +-------------------+
+  | Frame +---+ FrameLoader +                 | JSDOMWindowShell  |
+  +---+---+   +-------------+                 +---------+---------+
+     / \                                                |
+    /   \      /\  Re-used after navigation   /\        |
+.../....|...............................................|..........
+  /     |      \/  Replaced after navigation  \/        |
+ /      |                                               |
+/&lt;------|&lt;-- Ptrs to Frame are null after navigation[1] |
+|       |                                               |
+| +-----+-----+         +-------------+                 |
+| | DOMWindow |&lt;--impl--+ JSDOMWindow |&lt;------window----+
+| +-----+-----+         +-------------+
+|       |
+|       |&lt;-- Can be null for Documents created by XMLHttpRequest
+|       |
+| +-----+-----+         +-------------+
++-+ Document  |&lt;--impl--+ JSDocument  |
+  +-----+-----+         +-------------+
+        |
+        |&lt;-- Can be null for DocumentType objects
+        |
+    +---+---+           +--------+
+    | Node  |&lt;---impl---| JSNode |
+    +-------+           +--------+
+</pre>
+
+<p>[1] After navigating to a new page, the old DOMWindow and old Document point
+to a null Frame, and the Frame points to a new DOMWindow and a new Document.</p>
+
+<p>If you have any comments on the above or other ideas about improving the clarity,
+scope, or presentation, please send mail to the <a href="/contact.html">WebKit
+mailing list</a>.</p>
+
+<?php
+    include("../footer.inc");
+?>

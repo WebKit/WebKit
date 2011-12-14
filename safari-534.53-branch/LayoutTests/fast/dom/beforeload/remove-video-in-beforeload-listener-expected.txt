@@ -1,0 +1,3 @@
+This page tests that you can correctly remove a video object in a beforeload listener without causing a crash.
+
+PASS

@@ -1,0 +1,3 @@
+Test the behavior of a sync XMLHttpRequest that encounters an infinite redirection loop.
+
+Exception NETWORK_ERR; code=101; number=undefined (0); message='NETWORK_ERR: XMLHttpRequest Exception 101'

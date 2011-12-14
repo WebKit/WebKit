@@ -1,0 +1,6 @@
+original scroll x for RTL page : Success
+horizontal scroll x for RTL page : Success
+original scroll x for LTR page : Success
+horizontal scroll x for LTR page : Success
+
+

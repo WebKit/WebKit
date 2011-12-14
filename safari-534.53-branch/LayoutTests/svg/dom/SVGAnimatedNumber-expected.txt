@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 13: TypeError: 'undefined' is not an object (evaluating 'feSpecularLightingElement.surfaceScale.baseVal')
+This test checks the SVGAnimatedNumber API - utilizing the surfaceScale property of SVGFESpecularLightingElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial surfaceScale value
+FAIL feSpecularLightingElement.surfaceScale.toString() should be [object SVGAnimatedNumber]. Threw exception TypeError: 'undefined' is not an object (evaluating 'feSpecularLightingElement.surfaceScale.toString')
+FAIL typeof(feSpecularLightingElement.surfaceScale.baseVal) should be number. Threw exception TypeError: 'undefined' is not an object (evaluating 'feSpecularLightingElement.surfaceScale.baseVal')
+FAIL feSpecularLightingElement.surfaceScale.baseVal should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'feSpecularLightingElement.surfaceScale.baseVal')
+
+Check that integers are static, caching value in a local variable and modifying it, should have no effect
+FAIL successfullyParsed should be true. Threw exception ReferenceError: Can't find variable: successfullyParsed
+
+TEST COMPLETE
+

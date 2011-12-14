@@ -1,0 +1,8 @@
+Test changing externalResourcesRequired after inserting the element into the tree.
+Test 1: PASS
+
+Test 2: PASS
+
+Test 3: PASS
+
+Test 4: PASS

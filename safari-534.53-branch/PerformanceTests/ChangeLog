@@ -1,0 +1,201 @@
+2011-03-25  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Dirk Schulze.
+
+        SVG <use> element performance improvement
+        https://bugs.webkit.org/show_bug.cgi?id=57077
+
+        Add a manual test case which is from
+        http://upload.wikimedia.org/wikipedia/commons/4/4e/Sierpinski_carpet_6.svg
+        for svg <use> element performance test.
+
+        * PageLoad/svg/files/Sierpinski_carpet_6.svg: Added.
+        * PageLoad/svg/svg.pltsuite:
+
+2011-02-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add performance tests for URL parsing
+        https://bugs.webkit.org/show_bug.cgi?id=53845
+
+        The final-url-en URL corpus is from:
+        http://corpus.leeds.ac.uk/internet.html
+
+        There are also other language corpuses which we may want to use in the future.
+
+        The usage instructions were as follows:
+        "URL lists and other resources: you can freely use them in your research
+        provided that you supply a link to this website: http://corpus.leeds.ac.uk/."
+        Done.
+
+        * Parser/simple-url.html: Added.
+         On my machine:
+         Firefox: 255ms
+         TOT WebKit: 378ms
+         Chrome: 286ms
+         Opera: 2830ms (no, that is not a typo)
+        * Parser/url-parser.html: Added.
+         Firefox: 381ms
+         TOT WebKit: 216ms
+         Chrome: 131ms
+         Opera: 1383ms (again, not a typo)
+        * Parser/resources/final-url-en: Added.
+
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Add another XSSFilter PerformanceTest
+        https://bugs.webkit.org/show_bug.cgi?id=53750
+
+        This PerformanceTest tests the case that was slow in
+        https://bugs.webkit.org/show_bug.cgi?id=49845
+
+        * XSSFilter/large-post-many-inline-scripts-and-events.html: Added.
+        * XSSFilter/resources: Added.
+        * XSSFilter/resources/target-for-large-post-many-inline-scripts-and-events.html: Added.
+
+2011-02-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add PerformanceTest for XSSFilter
+        https://bugs.webkit.org/show_bug.cgi?id=53741
+
+        This performance tests covers the case of a large POST data and many
+        small event handlers.
+
+        * XSSFilter: Added.
+        * XSSFilter/large-post-many-events.html: Added.
+
+2011-02-02  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Merge PerformanceTests/Parser/ChangeLog and
+        PerformanceTests/PageLoad/ChangeLog into PerformanceTests/ChangeLog.
+
+        It's silly to have ChangeLogs for each of these directories separately.
+        I've left SunSpider with its own ChangeLog because it's more of an
+        independent entity.
+
+        * ChangeLog: Added.
+
+2011-02-02  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just fixing an exception seen in Firefox.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+
+        Make the benchmarks work in Firefox/Opera.
+
+        * resources/runner.js:
+        (log):
+
+2011-01-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+
+        It's unclear exactly what the Peacekeeper benchmark is testing,
+        because I haven't found a way to run it myself.
+
+        However, I constructed a benchmark which shows at least one possible slow point.
+        The HTML5 spec talks about creating a new document for every time we use
+        the fragment parsing algorithm.  Document() it turns out, it a huge bloated
+        mess, and the constructor and destructor do a huge amount of work.
+
+        * benchmarks/parser/tiny-innerHTML.html: Added.
+
+2011-01-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r77050.
+        http://trac.webkit.org/changeset/77050
+        https://bugs.webkit.org/show_bug.cgi?id=53371
+
+        Caused a crash in Chromium's test_shell_tests (Requested by
+        rniwa on #webkit).
+
+        * resources/performance-test.js: Removed.
+        * tiny-innerHTML.html: Removed.
+
+2011-01-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTML5 TreeBuilder regressed a Peacekeeper DOM test by 40%
+        https://bugs.webkit.org/show_bug.cgi?id=48719
+
+        It's unclear exactly what the Peacekeeper benchmark is testing,
+        because I haven't found a way to run it myself.
+
+        However, I constructed a benchmark which shows at least one possible slow point.
+        The HTML5 spec talks about creating a new document for every time we use
+        the fragment parsing algorithm.  Document() it turns out, it a huge bloated
+        mess, and the constructor and destructor do a huge amount of work.
+        To avoid constructing (or destructing) documents for each innerHTML call,
+        this patch adds a shared dummy document used by all innerHTML calls.
+
+        * benchmarks/parser/tiny-innerHTML.html: Added.
+
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move HTML and XML parser benchmarks into PerformanceTests/Parser
+        https://bugs.webkit.org/show_bug.cgi?id=51772
+
+        Add a ChangeLog for tracking changes to the Parser PerformanceTest.
+
+        * ChangeLog: Added.
+
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move PageLoadTests to PerformanceTests/PageLoad
+        https://bugs.webkit.org/show_bug.cgi?id=51771
+
+        Update URLs to point to the new directory name.
+
+        * svg/svg.pltsuite:
+
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by olliej.
+
+        * svg/svg.pltsuite: re-enable word-iso.svg after fixing http://bugs.webkit.org/show_bug.cgi?id=11987
+
+2006-12-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by bradee-oh.
+        
+        Add new PageLoadTests directory (this one)
+        Add LICENSES file to explain where each SVG came from.
+
+        * ChangeLog: Added.
+        * svg/LICENSES: Added.
+        * svg/files/33041-Samurai.svg: Added.
+        * svg/files/42470-flower_from_my_garden_v2.svg: Added.
+        * svg/files/Harvey_Rayner.svg: Added.
+        * svg/files/az-lizard_benji_park_01.svg: Added.
+        * svg/files/bamboo_01.svg: Added.
+        * svg/files/cacuts_01.svg: Added.
+        * svg/files/cowboy.svg: Added.
+        * svg/files/crawfish2_ganson.svg: Added.
+        * svg/files/deb9frac1.svg: Added.
+        * svg/files/food_leif_lodahl_01.svg: Added.
+        * svg/files/france.svg: Added.
+        * svg/files/francobollo_gnome_ezechi_02.svg: Added.
+        * svg/files/gearflowers.svg: Added.
+        * svg/files/hereGear4.svg: Added.
+        * svg/files/mtsthelens.svg: Added.
+        * svg/files/mtsthelens0.jpg: Added.
+        * svg/files/world-iso.svg: Added.
+        * svg/files/worldcup.svg: Added.
+        * svg/svg.pltsuite: Added.
+

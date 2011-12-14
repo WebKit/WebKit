@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x126
+  RenderBlock {html} at (0,0) size 800x126
+    RenderBody {body} at (8,16) size 784x94
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock (anonymous) at (0,0) size 784x94
+        RenderBlock {h3} at (0,0) size 784x23
+          RenderText {#text} at (0,0) size 301x22
+            text run at (0,0) width 301: "This page contains the following errors:"
+        RenderBlock {div} at (0,39) size 784x16
+          RenderText {#text} at (0,0) size 385x15
+            text run at (0,0) width 385: "error on line 1 at column 0: Premature end of document."
+        RenderBlock {h3} at (0,71) size 784x23
+          RenderText {#text} at (0,0) size 393x22
+            text run at (0,0) width 393: "Below is a rendering of the page up to the first error."
+      RenderBlock (anonymous) at (0,110) size 784x0
+        RenderInline {parsererror} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]

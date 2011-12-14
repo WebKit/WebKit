@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+This page contains a subframe that calls "self.close()" as its first course of action.<br>
+That self.close() call should not close this window.<br>
+<iframe src="resources/subframe-self-close.html"></iframe><br>
+</body>
+</html>

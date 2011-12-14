@@ -1,0 +1,19 @@
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=23007">bug 23007</a>:
+Timer-related crash when closing Web Inspector.</p>
+<p>PASS if no crash.</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+var timeoutID;
+function test()
+{
+    clearTimeout(timeoutID);
+    if (window.layoutTestController)
+        setTimeout(function() { layoutTestController.notifyDone() }, 0);
+}
+
+timeoutID = setTimeout(test, 0);
+</script>

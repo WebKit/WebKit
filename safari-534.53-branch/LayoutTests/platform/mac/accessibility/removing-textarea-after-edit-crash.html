@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+    var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div class="hidden" id="div">
+
+<div>
+<textarea placeholder="hello" id="textarea">a</textarea>
+text
+</div>
+
+<input type="text" id="textfield">
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that when an element is removed from the DOM while a notification referencing it is pending, it will not crash.");
+
+    // Triggering this is quite complicated, because the ValueChange notification needs to be the one to trigger the layoutUpdate
+    // Sending the XMLHttpRequest after a timeout and then having a handler set the display: NONE, seems to do it.
+    function processStateChange() {
+        if (req.readyState == 4) {
+            document.getElementById("textarea").value = "";
+            document.getElementById("div").style.display = "NONE";
+
+            // we now have to wait for the value change to be propagated to trigger the crash.
+            setTimeout("window.layoutTestController.notifyDone();", 1);
+        }
+    }
+</script>
+
+<script>
+    var req = 0;
+    if (window.accessibilityController) {  
+        window.layoutTestController.waitUntilDone();
+        document.getElementById("body").focus();
+        body = accessibilityController.focusedElement;
+
+        // Access the text area so that an accessibility element is created (so that it will send out notifications).        
+        body.childAtIndex(0).childAtIndex(0);
+
+        document.getElementById("textarea").focus();
+
+        req = new XMLHttpRequest;
+        req.onreadystatechange = processStateChange;
+        req.open("get", "../../../http/tests/xmlhttprequest/methods.cgi", true);
+        // Sending this after a timeout makes is so that the layout does not happen until the value change is sent.
+        setTimeout("req.send('')", 1);
+
+        successfullyParsed = true;
+    }
+
+</script>
+
+</body>
+</html>

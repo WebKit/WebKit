@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 7: TypeError: 'null' is not an object (evaluating 'document.getElementById("myText1").id = "myText1"')
+PASS
+

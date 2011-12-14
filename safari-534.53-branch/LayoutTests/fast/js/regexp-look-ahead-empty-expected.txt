@@ -1,0 +1,17 @@
+Test for regression against Yarr Interpreter is hanging in some cases of look-ahead regex patterns. It also tests some other related expressions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS /(?:(?=x))+/.exec("x") is [""]
+PASS /(?:a?)*/.exec("a") is ["a"]
+PASS /(a|ab)*/.exec("abab") is ["a","a"]
+PASS /(ab)+/.exec("abab") is ["abab","ab"]
+PASS /(|ab)*/.exec("ab") is ["ab","ab"]
+PASS /(?:(|ab)*)/.exec("ab") is ["ab","ab"]
+PASS /(?:(|ab)+)/.exec("ab") is ["ab","ab"]
+PASS /(|ab)+/.exec("abab") is ["abab","ab"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

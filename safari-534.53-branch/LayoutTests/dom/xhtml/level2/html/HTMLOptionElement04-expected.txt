@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLOptionElement04
+Status	failure
+Message	textLink: assertEquals failed, actual l1, expected EMP10002.

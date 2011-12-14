@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to string
+
+FAIL dt.PUB_STRING_REPRESENTATION = "0.35199887421913445";dt.setStringObject( dt ); dt.PUB_STRING +'': Exception raised
+FAIL dt.PUB_STRING_REPRESENTATION = "0.35199887421913445";dt.setStringObject( dt ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() should be string. Was object.
+FAIL dt.PUB_DOUBLE = java.lang.Double.valueOf("0.35199887421913445"); dt.PUB_DOUBLE should be 0.35199887421913445. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.PUB_DOUBLE = java.lang.Double.valueOf("0.35199887421913445"); dt.getDouble() should be 0.35199887421913445. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getDouble() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,839 @@
+Tests calling WebGL APIs with various types
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Program Compiled
+PASS Shader Compiled
+PASS getUniformLocation succeeded
+
+testing type of number : value = 0
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of number : value = 2
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is null
+PASS context.getActiveUniform(program, argument) is null
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of string that is NaN : value = foo
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of string that is number : value = 2
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is null
+PASS context.getActiveUniform(program, argument) is null
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of null : value = null
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of Empty Array : value = 
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of Object : value = [object Object]
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of Array of Number : value = 2
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is null
+PASS context.getActiveUniform(program, argument) is null
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of Array of String : value = foo
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of Array of String that is number : value = 0
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of Array of String that is number : value = 2
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is null
+PASS context.getActiveUniform(program, argument) is null
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+
+testing type of TypedArray : value = [object Float32Array]
+PASS context.bindAttribLocation(program, argument, 'foo') is undefined.
+PASS context.blendColor(argument, argument, argument, argument) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, argument, context.STATIC_DRAW) is undefined.
+PASS context.bufferData(context.ARRAY_BUFFER, new Float32Array(10), context.STATIC_DRAW) is undefined.
+PASS context.bufferSubData(context.ARRAY_BUFFER, argument, new Float32Array(2)) is undefined.
+PASS context.clear(argument) is undefined.
+PASS context.clearColor(argument, 0, 0, 0) is undefined.
+PASS context.clearColor(0, argument, 0, 0) is undefined.
+PASS context.clearColor(0, 0, argument, 0) is undefined.
+PASS context.clearColor(0, 0, 0, argument) is undefined.
+PASS context.clearDepth(argument) is undefined.
+PASS context.clearStencil(argument) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, argument, context.RGBA, 0, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, argument, 0, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, argument, 1, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, argument, 1, 0) is undefined.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, argument, 0, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, argument, 0, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, argument, 0, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, argument, 0, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, argument, 0, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, argument, 0) is undefined.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 0, argument) is undefined.
+PASS context.depthMask(argument) is undefined.
+PASS context.depthRange(argument, 1) is undefined.
+PASS context.depthRange(0, argument) is undefined.
+PASS context.drawArrays(context.POINTS, argument, 1) is undefined.
+PASS context.drawArrays(context.POINTS, 0, argument) is undefined.
+PASS context.enableVertexAttribArray(argument) is undefined.
+PASS context.disableVertexAttribArray(argument) is undefined.
+PASS context.getActiveAttrib(program, argument) is non-null.
+PASS context.getActiveUniform(program, argument) is non-null.
+PASS context.getParameter(argument) is null
+PASS context.lineWidth(argument) is undefined.
+PASS context.polygonOffset(argument, 0) is undefined.
+PASS context.polygonOffset(0, argument) is undefined.
+PASS context.sampleCoverage(argument, 0) is undefined.
+PASS context.sampleCoverage(0, argument) is undefined.
+PASS context.scissor(argument, 0, 10, 10) is undefined.
+PASS context.scissor(0, argument, 10, 10) is undefined.
+PASS context.scissor(0, 0, argument, 10) is undefined.
+PASS context.scissor(0, 0, 10, argument) is undefined.
+PASS context.shaderSource(shader, argument) is undefined.
+PASS context.stencilFunc(context.NEVER, argument, 255) is undefined.
+PASS context.stencilFunc(context.NEVER, 0, argument) is undefined.
+PASS context.stencilMask(argument) is undefined.
+PASS context.uniform1i(loc, argument) is undefined.
+PASS context.uniform2i(loc, argument, 0) is undefined.
+PASS context.uniform2i(loc, 0, argument) is undefined.
+PASS context.uniform3i(loc, argument, 0, 0) is undefined.
+PASS context.uniform3i(loc, 0, argument, 0) is undefined.
+PASS context.uniform3i(loc, 0, 0, argument) is undefined.
+PASS context.uniform4i(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4i(loc, 0, 0, 0, argument) is undefined.
+PASS context.uniform1f(loc, argument) is undefined.
+PASS context.uniform2f(loc, argument, 0) is undefined.
+PASS context.uniform2f(loc, 0, argument) is undefined.
+PASS context.uniform3f(loc, argument, 0, 0) is undefined.
+PASS context.uniform3f(loc, 0, argument, 0) is undefined.
+PASS context.uniform3f(loc, 0, 0, argument) is undefined.
+PASS context.uniform4f(loc, argument, 0, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, argument, 0, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, argument, 0) is undefined.
+PASS context.uniform4f(loc, 0, 0, 0, argument) is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

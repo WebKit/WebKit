@@ -1,0 +1,10 @@
+This test that setting HTMLSelectElement.length is capped to 10,000, but that you can add additional Option elements by calling add.
+
+Select length is 0
+Trying: - sel.length = 20000;
+Select length is 10000
+Trying: - sel.add(new Option, 0);
+Select length is 10001
+Trying: - sel.length = 0;
+Select length is 0
+

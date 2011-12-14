@@ -1,0 +1,20 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<img id="image" lowsrc="http://hostname/lowsrc.png" style="visibility: hidden;">
+<script>
+description("This test checks that the lowsrc attribute of img tags are accessible via JavaScript.");
+var image = document.getElementById('image');
+shouldBe("image.lowsrc", "'http://hostname/lowsrc.png'");
+image.lowsrc = "http://hostname/newlowsrc.png";
+shouldBe("image.lowsrc", "'http://hostname/newlowsrc.png'");
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

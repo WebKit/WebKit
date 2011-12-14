@@ -1,0 +1,29 @@
+Test RegExp.compile method.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS re.toString() is '/a/i'
+PASS re.multiline is false
+PASS re.ignoreCase is false
+PASS re.global is false
+PASS re.test('A') is false
+PASS re.toString() is '/a/'
+PASS re.toString() is '/b/g'
+PASS re.toString() is '/c/'
+PASS re.ignoreCase is true
+PASS re.test('C') is true
+PASS re.toString() is '/c/i'
+PASS re.compile(new RegExp('c'), 'i'); threw exception TypeError: Cannot supply flags when constructing one RegExp from another.
+PASS re.toString() is '/c/i'
+PASS re.compile(new RegExp('+')); threw exception SyntaxError: Invalid regular expression: /+/: Nothing to repeat.
+PASS re.toString() is '/undefined/'
+PASS re.toString() is '/null/'
+PASS re.toString() is '/(?:)/'
+PASS re.toString() is '/z/'
+PASS re.lastIndex is 0
+PASS re.lastIndex is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

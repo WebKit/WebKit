@@ -1,0 +1,16 @@
+Test IndexedDB transaction does not crash on abort.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('transaction-crash-on-abort')
+openSuccess():
+db = event.target.result
+db.transaction()
+window.gc()
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,3 @@
+main frame - has 1 onunload handler(s)
+ALERT: unload-called
+You should have seen one unload alert appear.

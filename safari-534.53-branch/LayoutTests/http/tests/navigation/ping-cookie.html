@@ -1,0 +1,46 @@
+<html><head>
+<title>Ping</title>
+<script>
+
+var testCalled = false;
+
+function test() {
+    if (!testCalled) {
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+            layoutTestController.waitUntilDone();
+        }
+        testCalled = true;
+        return;
+    }
+    try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "../cookies/resources/setCookies.cgi", false);
+        xhr.setRequestHeader("SET_COOKIE", "hello=world;path=/");
+        xhr.send(null);
+        if (xhr.status != 200) {
+            document.getElementsByTagName("body")[0].appendChild(document.createTextNode("FAILED: cookie not set"));
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    } catch (e) {
+        document.getElementsByTagName("body")[0].appendChild(document.createTextNode("FAILED: cookie not set"));
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    if (window.eventSender) {
+        var a = document.getElementById("a");
+        eventSender.mouseMoveTo(a.offsetLeft + 2, a.offsetTop + 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+</script>
+</head>
+<body onload="test();">
+<img src="resources/delete-ping.php" onload="test();" onerror="test();"></img>
+<a id="a" href="resources/check-ping.php" ping="resources/save-ping.php">Navigate and send ping</a>
+</body></html>

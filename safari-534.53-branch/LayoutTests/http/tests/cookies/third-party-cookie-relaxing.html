@@ -1,0 +1,96 @@
+<html>
+<head>
+<script src="resources/resetCookies.js"></script>
+<script>
+resetCookies();
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+window.onmessage = function(evt)
+{
+    if (evt.data != "done") {
+        alert("Unexpected message: " + evt.data);
+        return;
+    }
+    
+    runNextTestOrFinish();
+}
+
+function allowAllCookies()
+{
+    alert("Allowing all cookies");
+    if (window.layoutTestController)
+        layoutTestController.setAlwaysAcceptCookies(true);
+    runNextTestOrFinish();
+}
+
+function restrictCookies()
+{
+    alert("Restricting to first party only cookies");
+    if (window.layoutTestController)
+        layoutTestController.setAlwaysAcceptCookies(false);
+    runNextTestOrFinish();
+}
+
+function deleteAllCookies()
+{
+    sendXHR("deleteCookies");
+}
+
+function echoCookies()
+{
+    window.frames[0].postMessage("showCookies", "*");
+}
+
+function sendXHR(command)
+{
+    window.frames[0].postMessage("sendXHR " + command, "*");
+}
+
+function setFooCookie()
+{
+    sendXHR("setFooCookie");
+}
+
+function setFooAndBarCookies()
+{
+    sendXHR("setFooAndBarCookie");
+}
+
+function startNewTest()
+{
+    alert("\n");
+    runNextTestOrFinish();
+}
+
+var currentFunction = 0;
+var functions = new Array(
+    startNewTest, allowAllCookies, deleteAllCookies, echoCookies, restrictCookies, setFooCookie, echoCookies,
+    startNewTest, allowAllCookies, deleteAllCookies, echoCookies, restrictCookies, setFooAndBarCookies, echoCookies,
+    startNewTest, allowAllCookies, deleteAllCookies, echoCookies, setFooCookie, echoCookies, restrictCookies, deleteAllCookies, echoCookies,
+    startNewTest, allowAllCookies, deleteAllCookies, echoCookies, setFooCookie, echoCookies, restrictCookies, setFooAndBarCookies, echoCookies
+);
+
+function runNextTestOrFinish()
+{
+    if (currentFunction >= functions.length) {
+        if (window.layoutTestController) {
+            resetCookies();
+            window.frames[0].postMessage("resetCookiesAndNotifyDone", "*");
+        }
+        return;
+    }
+    
+    var functionToRun = currentFunction++;
+    functions[functionToRun]();
+}
+
+</script>
+</head>
+<body onload="runNextTestOrFinish();">
+<iframe id='testFrame' src="http://localhost:8000/cookies/resources/third-party-cookie-relaxing-iframe.html"></iframe>
+</body>
+</html>

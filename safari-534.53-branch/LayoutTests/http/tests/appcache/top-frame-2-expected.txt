@@ -1,0 +1,6 @@
+Test that a subframe without manifest gets picked by a relevant application cache that contains its resource.
+
+Should say SUCCESS:
+
+SUCCESS
+

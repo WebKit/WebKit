@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+    function test() {
+        var tf = document.getElementById('tf');
+
+        var didFireOnChange = false;
+        tf.onchange = function() {
+          didFireOnChange = true;
+        }
+
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+        }
+
+        tf.focus();
+        if (window.layoutTestController) {
+            layoutTestController.setValueForUser(tf, 'Hello!');
+        }
+
+        // Should not fire the event until focus is lost.
+        if (didFireOnChange) {
+            testFailed('onchange fired too early');
+            return;
+        }
+
+        tf.blur();
+        if (didFireOnChange) {
+            testPassed('');
+        } else {
+            testFailed('onchange never fired')
+        }
+    }
+    </script>
+</head>
+<body onload="test()">
+    This tests that onchange correctly fires after calling setValueForUser().  It can only be run using DumpRenderTree.<br>
+    <form name="fm">
+        <input type="text" id="tf" />
+    </form>
+    <div id="console"></div>
+</body>
+</html>

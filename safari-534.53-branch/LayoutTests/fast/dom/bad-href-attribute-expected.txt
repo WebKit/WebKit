@@ -1,0 +1,6 @@
+Test that you can't set a prefix for a node with null namespace.
+
+Should say PASS:
+
+PASS
+

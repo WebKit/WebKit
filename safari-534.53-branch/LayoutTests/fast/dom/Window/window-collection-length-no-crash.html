@@ -1,0 +1,32 @@
+<html>
+<head></head>
+<body>
+<p id="description"></p>
+<br>
+<iframe id="subframe"></iframe>
+<br>
+This tests that window.frames.length does not crash the browser after the
+frame navigates away from the current page. You should see "SUCCESS" below
+once the test completes.
+<br>
+<div id="status">Test in progress...</div>
+
+<script>
+if (window.layoutTestController) {
+    window.layoutTestController.dumpAsText();
+    window.layoutTestController.waitUntilDone();
+}
+
+var myFrames = subframe.frames;
+
+function done() {
+    var foo = myFrames.length;
+    document.getElementById("status").innerText = "SUCCESS";
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+
+subframe.document.location = "resources/notify-parent-done.html";
+</script>
+</body>
+</html>

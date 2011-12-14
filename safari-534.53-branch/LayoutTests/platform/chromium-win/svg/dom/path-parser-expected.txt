@@ -1,0 +1,75 @@
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M100,200 a3,4,5,2,1,6,7"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M100,200 a3,4,5,1,2,6,7"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="xM1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2x"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M1,2 L40,0#90"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d=""
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="x"
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="L1,2"
+This tests the SVG path parser by parsing and then re-serializing various paths.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parsePath('M1,2') is 'M1,2'
+PASS parsePath('m1,2') is 'm1,2'
+PASS parsePath('M100,200 m3,4') is 'M100,200 m3,4'
+PASS parsePath('M100,200 L3,4') is 'M100,200 L3,4'
+PASS parsePath('M100,200 l3,4') is 'M100,200 l3,4'
+PASS parsePath('M100,200 H3') is 'M100,200 H3'
+PASS parsePath('M100,200 h3') is 'M100,200 h3'
+PASS parsePath('M100,200 V3') is 'M100,200 V3'
+PASS parsePath('M100,200 v3') is 'M100,200 v3'
+PASS parsePath('M100,200 Z') is 'M100,200 Z'
+PASS parsePath('M100,200 z') is 'M100,200 Z'
+PASS parsePath('M100,200 C3,4,5,6,7,8') is 'M100,200 C3,4,5,6,7,8'
+PASS parsePath('M100,200 c3,4,5,6,7,8') is 'M100,200 c3,4,5,6,7,8'
+PASS parsePath('M100,200 S3,4,5,6') is 'M100,200 S3,4,5,6'
+PASS parsePath('M100,200 s3,4,5,6') is 'M100,200 s3,4,5,6'
+PASS parsePath('M100,200 Q3,4,5,6') is 'M100,200 Q3,4,5,6'
+PASS parsePath('M100,200 q3,4,5,6') is 'M100,200 q3,4,5,6'
+PASS parsePath('M100,200 T3,4') is 'M100,200 T3,4'
+PASS parsePath('M100,200 t3,4') is 'M100,200 t3,4'
+PASS parsePath('M100,200 A3,4,5,0,0,6,7') is 'M100,200 A3,4,5,0,0,6,7'
+PASS parsePath('M100,200 A3,4,5,1,0,6,7') is 'M100,200 A3,4,5,1,0,6,7'
+PASS parsePath('M100,200 A3,4,5,0,1,6,7') is 'M100,200 A3,4,5,0,1,6,7'
+PASS parsePath('M100,200 A3,4,5,1,1,6,7') is 'M100,200 A3,4,5,1,1,6,7'
+PASS parsePath('M100,200 a3,4,5,0,0,6,7') is 'M100,200 a3,4,5,0,0,6,7'
+PASS parsePath('M100,200 a3,4,5,0,1,6,7') is 'M100,200 a3,4,5,0,1,6,7'
+PASS parsePath('M100,200 a3,4,5,1,0,6,7') is 'M100,200 a3,4,5,1,0,6,7'
+PASS parsePath('M100,200 a3,4,5,1,1,6,7') is 'M100,200 a3,4,5,1,1,6,7'
+PASS parsePath('M100,200 a3,4,5,006,7') is 'M100,200 a3,4,5,0,0,6,7'
+PASS parsePath('M100,200 a3,4,5,016,7') is 'M100,200 a3,4,5,0,1,6,7'
+PASS parsePath('M100,200 a3,4,5,106,7') is 'M100,200 a3,4,5,1,0,6,7'
+PASS parsePath('M100,200 a3,4,5,116,7') is 'M100,200 a3,4,5,1,1,6,7'
+PASS parsePath('M100,200 a3,4,5,2,1,6,7') is 'M100,200'
+PASS parsePath('M100,200 a3,4,5,1,2,6,7') is 'M100,200'
+PASS parsePath('M100,200 a0,4,5,0,0,10,0 a4,0,5,0,0,0,10 a0,0,5,0,0,-10,0 z') is 'M100,200 l10,0 l0,10 l-10,0 Z'
+PASS parsePath('M1,2,3,4') is 'M1,2 L3,4'
+PASS parsePath('m100,200,3,4') is 'm100,200 l3,4'
+PASS parsePath('M 100-200') is 'M100,-200'
+PASS parsePath('M 0.6.5') is 'M0.6,0.5'
+PASS parsePath(' M1,2') is 'M1,2'
+PASS parsePath('  M1,2') is 'M1,2'
+PASS parsePath('\tM1,2') is 'M1,2'
+PASS parsePath('\nM1,2') is 'M1,2'
+PASS parsePath('\rM1,2') is 'M1,2'
+PASS parsePath('\vM1,2') is ''
+PASS parsePath('xM1,2') is ''
+PASS parsePath('M1,2 ') is 'M1,2'
+PASS parsePath('M1,2\t') is 'M1,2'
+PASS parsePath('M1,2\n') is 'M1,2'
+PASS parsePath('M1,2\r') is 'M1,2'
+PASS parsePath('M1,2\v') is 'M1,2'
+PASS parsePath('M1,2x') is 'M1,2'
+PASS parsePath('M1,2 L40,0#90') is 'M1,2 L40,0'
+PASS parsePath('') is ''
+PASS parsePath('x') is ''
+PASS parsePath('L1,2') is ''
+PASS parsePath('M.1 .2 L.3 .4 .5 .6') is 'M0.1,0.2 L0.3,0.4 L0.5,0.6'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

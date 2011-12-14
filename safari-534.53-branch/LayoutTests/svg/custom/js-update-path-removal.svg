@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+window.setTimeout("clickNow()", 0);
+
+function clickNow() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(190, 45);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+function mouseHandler(evt)
+{
+    var path = document.getElementById("path");
+    path.pathSegList.removeItem(path.pathSegList.numberOfItems - 1);
+}
+</script>
+
+<path id="path" onclick="mouseHandler(evt)" fill="#FF0000" stroke="#00C000" d="M 250 130 C 185 130 150 80 150 80 S 115 25 50 25 m 0 105 c 65 0 100 -50 100 -50 s 35 -55 100 -55"/>
+
+</svg>

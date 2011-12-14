@@ -1,0 +1,4 @@
+cron:
+- description: collect the garbage
+  url: /gc
+  schedule: every 4 hours

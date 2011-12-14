@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script src="resources/js-test-pre.js"></script>
+  <script>
+    window.name = "o";
+    function f() { 
+      return this ? this.name : "t";
+    }
+    function g() { 
+      "use strict";
+      return this ? this.name : "u";
+    }
+    function h() { 
+      return this ? this.name : "v";
+    }
+  </script>
+
+  <iframe name="i" 
+    src="javascript:
+
+        window.f = parent.f;
+        window.g = parent.g;
+        window.a = { name:'a', f:parent.f, g:parent.g };
+        window.b = { name:'b', f:parent.f, g:parent.g };
+        Object.defineProperty(window, 'h', { get: (function(){ return parent.h; })});
+        Object.defineProperty(a, 'h', { get: (function(){ return parent.h; })});
+        Object.defineProperty(b, 'h', { get: (function(){ return parent.h; })});
+
+        var results = '';
+
+        /* Three of the first four cases pass undefined (promoted inside the callee to the callee's global object). */
+        /* a.f() is the one exception, which passes the base, a, as the this object. */
+        results += (function(){return f();})();
+        results += (function(){return (1,f)();})();
+        results += (function(){return a.f();})();
+        results += (function(){return eval('f()');})();
+        /* Same cases as above, but wrapped in a with. The first & last of these cases pass b, */
+        /* the object scoped by the with, as the this value. */
+        /* a.f() still passes the explicit base, a. (1,f)() is a little tricksier - this passes */
+        /* undefined (promoted to the callee global object) since teh comma operator calles GetValue */
+        /* on the reference (see ES5 11.14.) */
+        results += (function(){with(b){ return (function(){ return f();})(); }})();
+        results += (function(){with(b){ return (function(){ return (1,f)();})(); }})();
+        results += (function(){with(b){ return (function(){ return a.f();})(); }})();
+        results += (function(){with(b){ return (function(){ return eval('f()');})(); }})();
+
+        /* Same tests as above, but with a strict callee. */
+        /* We expect the same results, except undefined this is not replaced with the global object. */
+        results += (function(){return g();})();
+        results += (function(){return (1,g)();})();
+        results += (function(){return a.g();})();
+        results += (function(){return eval('g()');})();
+        results += (function(){with(b){ return g(); }})();
+        results += (function(){with(b){ return (1,g)(); }})();
+        results += (function(){with(b){ return a.g(); }})();
+        results += (function(){with(b){ return (function(){ return eval('g()');})(); }})();
+
+        /* Same as the first set, but h is a getter property. */
+        results += (function(){return h();})();
+        results += (function(){return (1,h)();})();
+        results += (function(){return a.h();})();
+        results += (function(){return eval('h()');})();
+        results += (function(){with(b){ return h(); }})();
+        results += (function(){with(b){ return (1,h)(); }})();
+        results += (function(){with(b){ return a.h(); }})();
+        results += (function(){with(b){ return (function(){ return eval('h()');})(); }})();
+
+        var expected = 'ooaoboabuuaubuabooaoboab';
+
+        if (results == expected)
+            parent.testPassed(results + ' should be ' + expected + ', and is.');
+        else
+            parent.testFailed(results + ' should be ' + expected + ', but was not.');
+        parent.successfullyParsed = true;
+    ">
+  </iframe>
+<script src="resources/js-test-post.js"></script>
+
+</body>
+</html>

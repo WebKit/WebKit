@@ -1,0 +1,30 @@
+This test moves the iframe between two documents - once using this sequence:
+
+    document1.body.removeChild(iframe);
+    document2.body.appendChild(iframe);
+
+and then using 'adoptNode':
+
+    document2.adoptNode(iframe);
+    document2.body.appendChild(iframe);
+
+In the second case, the content of iframe should not be re-loaded and 'load' event should not be fired. Also, the timer started before reparenting should survive transition and fire.
+
+Test also verifies that document.adoptNode() in case of not-rendered document (loaded by XMLHttpRequest) does not preserve the content of iframe.
+
+Test succeeds if there are 'PASS' messages below and no 'FAIL' messages.
+
+ 
+PASS: Iframe loaded, verify token, expected: loaded, actual: loaded
+PASS: Iframe token modified, expected: modified-1, actual: modified-1
+Reparent iframe - the content should re-load.
+PASS: iframe is unloaded.
+PASS: Iframe re-loaded, verify token, expected: loaded, actual: loaded
+PASS: Iframe token modified, expected: modified-2, actual: modified-2
+Reparent iframe using adoptNode - the content should not unload.
+PASS: iframe is NOT unloaded.
+PASS: Iframe token should be the same as before reparenting, expected: modified-2, actual: modified-2
+PASS: XHR-loaded Document is correct.
+PASS: iframe is unloaded.
+Test Finished.
+

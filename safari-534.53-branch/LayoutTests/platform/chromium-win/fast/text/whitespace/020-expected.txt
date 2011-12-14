@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 204x47 [border: (2px solid #FF0000)]
+        RenderInline {FONT} at (0,0) size 174x39 [color=#996699]
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {NOBR} at (0,0) size 148x19
+            RenderText {#text} at (2,2) size 10x19
+              text run at (2,2) width 10: "\x{2022} "
+            RenderInline {A} at (0,0) size 118x19 [color=#0000EE]
+              RenderText {#text} at (12,2) size 118x19
+                text run at (12,2) width 118: "Corporate Services"
+            RenderText {#text} at (130,2) size 20x19
+              text run at (130,2) width 20: "     "
+          RenderText {#text} at (0,0) size 0x0
+          RenderInline {NOBR} at (0,0) size 174x19
+            RenderText {#text} at (2,22) size 10x19
+              text run at (2,22) width 10: "\x{2022} "
+            RenderInline {A} at (0,0) size 144x19 [color=#0000EE]
+              RenderText {#text} at (12,22) size 129x19
+                text run at (12,22) width 129: "1-800-las-flores.com"
+              RenderInline {SUB} at (0,0) size 15x15
+                RenderText {#text} at (141,29) size 15x15
+                  text run at (141,29) width 15: "sm"
+            RenderText {#text} at (156,22) size 20x19
+              text run at (156,22) width 20: "     "
+          RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,47) size 784x0
+        RenderInline {FONT} at (0,0) size 0x0 [color=#996699]
+          RenderText {#text} at (0,0) size 0x0

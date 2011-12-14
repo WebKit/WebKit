@@ -1,0 +1,49 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+function log(msg) {
+    document.getElementById("console").innerHTML += (msg + "\n");
+}
+
+function editingTest() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.getElementById("root").focus();
+    
+    document.execCommand("InsertText", false, "I have a issue.");
+
+    if (window.layoutTestController) {
+        if (layoutTestController.hasGrammarMarker(7, 1))
+            log("PASS");
+        else
+            log("FAIL");
+        document.getElementById("root").style.display = "none";
+    }
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div>You should see the text 'I have a issue'. 'a' should have a grammar suggestion marking.</div>
+<div contenteditable id="root" class="editing">
+</div>
+<pre id="console"></pre>
+<script>
+editingTest();
+</script>
+
+</body>
+</html>

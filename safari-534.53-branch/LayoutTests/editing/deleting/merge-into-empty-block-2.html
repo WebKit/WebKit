@@ -1,0 +1,13 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+<p>When a user puts the caret at the very beginning a list and hits delete into an empty line, the list should just move up.</p>
+<div contenteditable="true"><div><br></div><ul><li><span id="test">foo</span></li></ul></div>
+
+<script>
+var e = document.getElementById("test");
+window.getSelection().setPosition(e, 0);
+
+document.execCommand("Delete");
+</script>

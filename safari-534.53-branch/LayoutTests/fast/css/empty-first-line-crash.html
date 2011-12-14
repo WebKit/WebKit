@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<style>
+*:empty:first-line { background: red; }
+</style>
+<div>
+Tests that the :empty pseudo-class doesn't cause a crash when the empty status changes during parsing.
+<button autofocus></button>
+</div>

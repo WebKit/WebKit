@@ -1,0 +1,113 @@
+/*
+ *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#include "config.h"
+#include "StringConstructor.h"
+
+#include "Executable.h"
+#include "JITCode.h"
+#include "JSFunction.h"
+#include "JSGlobalObject.h"
+#include "StringPrototype.h"
+
+namespace JSC {
+
+static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState*);
+
+}
+
+#include "StringConstructor.lut.h"
+
+namespace JSC {
+
+const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::stringConstructorTable };
+
+/* Source for StringConstructor.lut.h
+@begin stringConstructorTable
+  fromCharCode          stringFromCharCode         DontEnum|Function 1
+@end
+*/
+
+ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
+
+StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, StringPrototype* stringPrototype)
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
+{
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+}
+
+bool StringConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, slot);
+}
+
+bool StringConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, descriptor);
+}
+
+// ------------------------------ Functions --------------------------------
+
+static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
+{
+    unsigned length = exec->argumentCount();
+    UChar* buf;
+    PassRefPtr<StringImpl> impl = StringImpl::createUninitialized(length, buf);
+    for (unsigned i = 0; i < length; ++i)
+        buf[i] = static_cast<UChar>(exec->argument(i).toUInt32(exec));
+    return jsString(exec, impl);
+}
+
+static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
+{
+    if (LIKELY(exec->argumentCount() == 1))
+        return JSValue::encode(jsSingleCharacterString(exec, exec->argument(0).toUInt32(exec)));
+    return JSValue::encode(stringFromCharCodeSlowCase(exec));
+}
+
+static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
+{
+    JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
+    if (!exec->argumentCount())
+        return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure()));
+    return JSValue::encode(StringObject::create(exec, globalObject->stringObjectStructure(), exec->argument(0).toString(exec)));
+}
+
+ConstructType StringConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructWithStringConstructor;
+    return ConstructTypeHost;
+}
+
+static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
+{
+    if (!exec->argumentCount())
+        return JSValue::encode(jsEmptyString(exec));
+    return JSValue::encode(jsString(exec, exec->argument(0).toString(exec)));
+}
+
+CallType StringConstructor::getCallData(CallData& callData)
+{
+    callData.native.function = callStringConstructor;
+    return CallTypeHost;
+}
+
+} // namespace JSC

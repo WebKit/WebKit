@@ -1,0 +1,53 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        window.onload = function()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+
+            if (window.layoutTestController) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("To run the test, click the button below when the opened window finishes loading.");
+                var button = document.createElement("button");
+                button.appendChild(document.createTextNode("Run Test"));
+                button.onclick = runTest;
+                document.body.appendChild(button);
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!layoutTestController.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            layoutTestController.notifyDone();
+        }
+
+        function getCustomProperty(o)
+        {
+            return o.customProperty;
+        }
+
+        runTest = function()
+        {
+            window.targetWindow = frames[0];
+
+            shouldBeUndefined("getCustomProperty(targetWindow)");
+            shouldBeUndefined("getCustomProperty(targetWindow)");
+            shouldBeUndefined("getCustomProperty(targetWindow)");
+        }
+    </script>
+</head>
+<body>
+<p>This test checks that caching of property accesses doesn't allow for illegal cross-frame access of a custom property. It also checks for an assertion failure that once occurred in this situation.</p>
+<iframe src="http://localhost:8000/security/resources/cross-frame-access-get-custom-property-cached-iframe.html" style=""></iframe>
+<pre id="console"></pre>
+</body>
+</html>

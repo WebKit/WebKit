@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (49,0) size 152x251
+    RenderSVGPath {path} at (49,0) size 152x134 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 50 50 C 66.6667 116.667 100 133.333 150 100 C 150 100 175 0 200 50"]
+    RenderSVGPath {path} at (49,100) size 152x151 [stroke={[type=SOLID] [color=#008000]}] [data="M 50 150 C 75 100 75 250 150 200 C 150 200 166.667 216.667 200 250"]

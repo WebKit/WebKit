@@ -1,0 +1,43 @@
+<?php
+    $title = "XSLT";
+    include("../../header.inc");
+?>
+
+<h2>XSLT</h2>
+
+<h3>Overview</h3>
+
+<p>Welcome to the project page for WebKit's XSLT implementation.  <a href="http://www.w3.org/Style/XSL/">XSLT</a> is a W3C standard for defining how to transform source XML
+into a result document that can be examined using the DOM or displayed as a Web document.  Here is a <a href="http://www.mozilla.org/projects/xslt/test.xml">test file</a> that
+demonstrates client-side XSLT in action.</p>
+
+<p>WebKit uses the excellent <a href="http://xmlsoft.org/XSLT/">libxslt</a> library to do XSL
+transformations.  Bugs in WebKit's XSLT support fall into two categories: either they are bugs in libxslt itself, or they are bugs in WebKit's glue
+code that interacts with libxslt.  The following <a href="http://xmlsoft.org/XSLT/bugs.html">page at xmlsoft.org</a> has a list of helpful resources and
+explains the process of bug reporting and getting help for bugs in libxslt.  Even if the bug is in libxslt, file a tracking bug in WebKit's XSLT component and paste in a link
+to the corresponding libxslt bug.  That way we can track the issue and know that an update to the version of libxslt on the system may be necessary.</p>
+
+<p>WebKit's implementation of XSLT can be found in the <tt>WebCore</tt> framework in the <tt>khtml/xsl</tt> subdirectory.  There are two classes of interest, 
+<tt>XSLStyleSheetImpl</tt> and <tt>XSLTProcessorImpl</tt>.  The style sheet class shares a common base with CSS style sheets, and exists as an object-oriented expression
+of the stylesheets that WebKit encounters when it parses the source XML file.  The processor wraps the code that actually performs the transformation.  It takes the stylesheets
+and source XML and produces result text that is then fed back into WebKit for parsing as HTML, XML or plain text.</p>
+
+<h3>Get Involved!</h3>
+
+<p><a href="https://bugs.webkit.org/buglist.cgi?product=WebKit&amp;short_desc_type=allwordssubstr&amp;short_desc=XSL&amp;resolution=---">
+View XSLT bugs in Bugzilla.</a>
+</p>
+
+<p>Below is a sampling of interesting open issues with WebKit's XSLT support.  If you wish to sign up for any of these tasks, send mail
+to <a href="http://lists.webkit.org/mailman/listinfo/webkit-dev">webkit-dev@lists.webkit.org</a> or comment in the appropriate bug.</p>
+
+<dl>
+<dt><a href="https://bugs.webkit.org/show_bug.cgi?id=3273">XSL transformations block the user interface</a>
+<dd>The XSLTProcessor that performs the transformation using libxslt does so on the UI thread.  Therefore a transformation that takes a long time
+to complete will block the UI of a WebKit application.  The code should be restructured so that both synchronous and asynchronous transformations are
+allowed, since until JavaScript can be suspended/resumed a synchronous transformation mode must be possible in order for a JS API for XSL transformations to work.
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

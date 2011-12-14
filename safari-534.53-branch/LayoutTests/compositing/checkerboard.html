@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN"
+  "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <script type="text/javascript">
+            function horiz_scroll() {
+                if (window.layoutTestController)
+                    layoutTestController.waitUntilDone();
+
+                var pos = 0;
+                var inner = function () {
+                    window.scrollTo(pos, 1023);
+                    pos += 15;
+                    if (pos < 2047)
+                        setTimeout(inner, 0);
+                    else if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                };
+                inner();
+            }
+        </script>
+    </head>
+    <body style="overflow: hidden" onload="horiz_scroll()">
+        <div style="-webkit-transform: translateZ(0);"></div>
+        <div style="
+            background-image: url('data:image/gif;base64,R0lGODdhAgACAIABAAAAAP///ywAAAAAAgACAAACA0QCBQA7');
+            width: 2047px;
+            height: 2047px;
+        "></div>
+    </body>
+</html>

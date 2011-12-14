@@ -1,0 +1,16 @@
+
+
+
+.
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+This test tests that a div with css overflow:auto will scroll to reveal its focusable elements

@@ -1,0 +1,13 @@
+<html>
+<script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+</script>
+<script src="resources/iframe-onload-remove-self-no-crash.js"></script>
+<body>
+This tests that setting remove a child frame in onload event handler
+does not crash the renderer.
+<br>
+<iframe src="resources/iframe-onload-remove-self-no-crash-child.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x73
+  RenderBlock {HTML} at (0,0) size 800x73
+    RenderBody {BODY} at (8,8) size 784x57
+      RenderText {#text} at (0,0) size 296x19
+        text run at (0,0) width 296: "CHARACTERS IN XSLT: \x{414}\x{43E}\x{431}\x{430}\x{432}\x{43B}\x{435}\x{43D}\x{43D}\x{44B}\x{439} \x{442}\x{435}\x{43A}\x{441}\x{442} "
+      RenderBR {BR} at (296,14) size 0x0
+      RenderBR {BR} at (0,19) size 0x19
+      RenderText {#text} at (0,38) size 206x19
+        text run at (0,38) width 206: "SOURCE XML: \x{418}\x{441}\x{445}\x{43E}\x{434}\x{43D}\x{44B}\x{439} \x{442}\x{435}\x{43A}\x{441}\x{442}"
+      RenderText {#text} at (0,0) size 0x0

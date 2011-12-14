@@ -1,0 +1,156 @@
+/*
+ * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "V8Document.h"
+
+#include "CanvasRenderingContext.h"
+#include "Document.h"
+#include "ExceptionCode.h"
+#include "Node.h"
+#include "TouchList.h"
+#include "XPathNSResolver.h"
+#include "XPathResult.h"
+
+#include "V8Binding.h"
+#include "V8CanvasRenderingContext2D.h"
+#include "V8CustomXPathNSResolver.h"
+#include "V8DOMImplementation.h"
+#include "V8HTMLDocument.h"
+#include "V8IsolatedContext.h"
+#include "V8Node.h"
+#include "V8Proxy.h"
+#include "V8Touch.h"
+#include "V8TouchList.h"
+#if ENABLE(WEBGL)
+#include "V8WebGLRenderingContext.h"
+#endif
+#include "V8XPathNSResolver.h"
+#include "V8XPathResult.h"
+
+#if ENABLE(SVG)
+#include "V8SVGDocument.h"
+#endif
+
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+
+#if ENABLE(XPATH)
+v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Document.evaluate()");
+
+    RefPtr<Document> document = V8Document::toNative(args.Holder());
+    ExceptionCode ec = 0;
+    String expression = toWebCoreString(args[0]);
+    RefPtr<Node> contextNode;
+    if (V8Node::HasInstance(args[1]))
+        contextNode = V8Node::toNative(v8::Handle<v8::Object>::Cast(args[1]));
+
+    RefPtr<XPathNSResolver> resolver = V8DOMWrapper::getXPathNSResolver(args[2]);
+    if (!resolver && !args[2]->IsNull() && !args[2]->IsUndefined())
+        return throwError(TYPE_MISMATCH_ERR);
+
+    int type = toInt32(args[3]);
+    RefPtr<XPathResult> inResult;
+    if (V8XPathResult::HasInstance(args[4]))
+        inResult = V8XPathResult::toNative(v8::Handle<v8::Object>::Cast(args[4]));
+
+    v8::TryCatch exceptionCatcher;
+    RefPtr<XPathResult> result = document->evaluate(expression, contextNode.get(), resolver.get(), type, inResult.get(), ec);
+    if (exceptionCatcher.HasCaught())
+        return throwError(exceptionCatcher.Exception());
+
+    if (ec)
+        return throwError(ec);
+
+    return toV8(result.release());
+}
+#endif
+
+v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Document.getCSSCanvasContext");
+    v8::Handle<v8::Object> holder = args.Holder();
+    Document* imp = V8Document::toNative(holder);
+    String contextId = toWebCoreString(args[0]);
+    String name = toWebCoreString(args[1]);
+    int width = toInt32(args[2]);
+    int height = toInt32(args[3]);
+    CanvasRenderingContext* result = imp->getCSSCanvasContext(contextId, name, width, height);
+    if (!result)
+        return v8::Undefined();
+    if (result->is2d())
+        return toV8(static_cast<CanvasRenderingContext2D*>(result));
+#if ENABLE(WEBGL)
+    else if (result->is3d())
+        return toV8(static_cast<WebGLRenderingContext*>(result));
+#endif // ENABLE(WEBGL)
+    ASSERT_NOT_REACHED();
+    return v8::Undefined();
+}
+
+v8::Handle<v8::Value> toV8(Document* impl, bool forceNewObject)
+{
+    if (!impl)
+        return v8::Null();
+    if (impl->isHTMLDocument())
+        return toV8(static_cast<HTMLDocument*>(impl), forceNewObject);
+#if ENABLE(SVG)
+    if (impl->isSVGDocument())
+        return toV8(static_cast<SVGDocument*>(impl), forceNewObject);
+#endif
+    v8::Handle<v8::Object> wrapper = V8Document::wrap(impl, forceNewObject);
+    if (wrapper.IsEmpty())
+        return wrapper;
+    if (!V8IsolatedContext::getEntered()) {
+        if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
+            proxy->windowShell()->updateDocumentWrapper(wrapper);
+    }
+    return wrapper;
+}
+
+#if ENABLE(TOUCH_EVENTS)
+v8::Handle<v8::Value> V8Document::createTouchListCallback(const v8::Arguments& args)
+{
+    RefPtr<TouchList> touchList = TouchList::create();
+
+    for (int i = 0; i < args.Length(); i++) {
+        if (!args[i]->IsObject())
+            return v8::Undefined();
+        touchList->append(V8Touch::toNative(args[i]->ToObject()));
+    }
+
+    return toV8(touchList.release());
+}
+#endif
+
+} // namespace WebCore

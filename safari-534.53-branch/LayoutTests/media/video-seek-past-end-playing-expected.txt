@@ -1,0 +1,16 @@
+Test that seeking video with 'loop' past it's end rewinds to the beginning and continues playback.
+
+EVENT(canplaythrough)
+EXPECTED (video.paused == 'true') OK
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+
+EXPECTED (video.paused == 'false') OK
+EXPECTED (mediaElement.currentTime > '0') OK
+RUN(video.currentTime = 500)
+
+EXPECTED (video.paused == 'false') OK
+EXPECTED (mediaElement.currentTime > '0') OK
+
+END OF TEST
+

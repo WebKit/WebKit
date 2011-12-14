@@ -1,0 +1,30 @@
+<html>
+    <head>
+    <script language="javascript" type="text/javascript">
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        function test() {
+            var realWidth = document.getElementById("courier").offsetWidth;
+            var realHeight = document.getElementById("courier").offsetHeight;
+            var unknownWidth = document.getElementById("unknown").offsetWidth;
+            var unknownHeight = document.getElementById("unknown").offsetHeight;
+            document.body.innerHTML = (realWidth == unknownWidth) && (realHeight && unknownHeight) ? 
+              "PASS" : "FAIL. Paragraph dimensions did not match.";
+        }
+    </script>
+    </head>
+    <body onload="test()">
+        <!-- Both paragraphs should be rendered with the same font -->
+        <p id="courier" style="display: inline; font-size: 72px; font-family: Courier;">
+        &nbsp; ! " # $ % &amp; ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; &lt; =
+        &gt; ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _ ` a
+        b c d e f g h i j k l m n o p q r s t u v w x y z { | }
+        </p>
+        <p id="unknown" style="display: inline; font-size: 72px; font-family: UnknownFontFamily, Courier, serif;">
+        &nbsp; ! " # $ % &amp; ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; &lt; =
+        &gt; ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z [ \ ] ^ _ ` a
+        b c d e f g h i j k l m n o p q r s t u v w x y z { | }
+        </p>
+    </body>
+</html>

@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function onload()
+{
+    console.log('log');
+    console.debug('debug');
+    console.info('info');
+    console.warn('warn');
+    console.error('error');
+    for (var i = 0; i < 5; ++i)
+        console.log('repeated');
+    for (var i = 0; i < 2; ++i)
+        console.count('count');
+    console.group('group');
+    console.groupEnd();
+    console.log('1', '2', '3');
+    console.groupCollapsed('groupCollapsed');
+    console.log({ property: "value" });
+    console.log(42);
+    console.log(true);
+    console.log(null);
+    console.log(undefined);
+    console.log(document);
+    console.log(function() { });
+    console.log(function f() { });
+    console.log([1, 2, 3]);
+    console.log(/regexp.*/);
+
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.dumpConsoleMessagesWithClasses();
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that console logging dumps proper messages.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+}
+</script>
+<!-- This test PASSED if we don't crash. -->
+<body onload="document.body.style.display = 'none'"><iframe src="_self"></iframe>This is the text</body>

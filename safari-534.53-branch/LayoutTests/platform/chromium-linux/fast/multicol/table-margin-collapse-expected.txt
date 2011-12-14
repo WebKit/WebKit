@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 760x39
+          text run at (0,0) width 417: "The four rectangles below should both be at the top of their columns. "
+          text run at (417,0) width 320: "If one is lower than the other, than the test has failed. "
+          text run at (737,0) width 23: "The"
+          text run at (0,20) width 356: "pattern in each column should be the same (orange/yellow)."
+layer at (8,48) size 784x304
+  RenderBlock {DIV} at (0,40) size 784x304 [border: (2px solid #000000)]
+    RenderTable {TABLE} at (2,2) size 382x500
+      RenderTableSection {TBODY} at (0,0) size 382x500
+        RenderTableRow {TR} at (0,0) size 382x500
+          RenderTableCell {TD} at (0,0) size 191x500 [r=0 c=0 rs=1 cs=1]
+            RenderBlock {DIV} at (0,0) size 191x200 [bgcolor=#FFA500]
+            RenderBlock {DIV} at (0,300) size 191x200 [bgcolor=#FFA500]
+          RenderTableCell {TD} at (191,0) size 191x500 [r=0 c=1 rs=1 cs=1]
+            RenderBlock {DIV} at (0,0) size 191x200 [bgcolor=#FFFF00]
+            RenderBlock {DIV} at (0,300) size 191x200 [bgcolor=#FFFF00]

@@ -1,0 +1,19 @@
+style1.css has MIME type text/css
+This test requires DumpRenderTree to see the log of what resources are loaded.
+
+<style>
+@charset "ascii";
+/* */
+@import "resources/style1.css";
+em {
+    @import "resources/fail.css";
+}
+@import "resources/fail.css";
+</style>
+<style>
+@media print {
+    @import "resources/fail.css";
+}
+@import "resources/fail.css";
+</style>
+

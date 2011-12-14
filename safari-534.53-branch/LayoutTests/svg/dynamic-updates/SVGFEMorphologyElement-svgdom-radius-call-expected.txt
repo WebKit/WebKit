@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 44: TypeError: 'undefined' is not a function (evaluating 'morphologyElement.setRadius(4, 4)')
+FAIL: Timed out waiting for notifyDone to be called
+SVG 1.1 dynamic update tests
+
+Erode radius = 4
+Tests dynamic updates of the 'radius' property of the SVGFEMorphologyElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL morphologyElement.radiusX.baseVal should be 6. Threw exception TypeError: 'undefined' is not an object (evaluating 'morphologyElement.radiusX.baseVal')
+FAIL morphologyElement.radiusY.baseVal should be 6. Threw exception TypeError: 'undefined' is not an object (evaluating 'morphologyElement.radiusY.baseVal')
+

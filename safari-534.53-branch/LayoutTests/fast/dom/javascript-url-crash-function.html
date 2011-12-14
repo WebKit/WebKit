@@ -1,0 +1,14 @@
+<p>
+This page tests whether loading a javascript: URL into an iframe while the
+iframe is calling a JavaScript function causes a crash.
+</p>
+
+<iframe src="resources/javascript-url-crash-function-iframe.html"></iframe>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+</script>

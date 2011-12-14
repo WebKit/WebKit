@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="JavaScriptCorePGOOptimize"
+	>
+  <Tool
+		Name="VCLinkerTool"
+		ImportLibrary="$(WebKitOutputDir)\Release_PGO\lib\$(TargetName).lib"
+	/>
+  <UserMacro
+    Name="ConfigurationBuildDir"
+    Value="$(WebKitOutputDir)\Release_PGO"
+  />
+</VisualStudioPropertySheet>

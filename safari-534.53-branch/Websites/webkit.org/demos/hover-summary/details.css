@@ -1,0 +1,30 @@
+details {
+    display: block;
+    overflow: hidden;
+    height: 1em;
+    border-left: 10px;
+    padding-left: 15px;
+}
+
+details > summary {
+    position: relative;
+    left: -11px;
+    text-align: left;
+    display: block;
+    font-weight: bold;
+}
+
+details > summary:before {
+    position: relative;
+    left: -1px;
+    content: url(horizontal-triangle.png);
+}
+
+details[open] {
+    text-align: left;
+    height: auto;
+}
+
+details[open] > summary:before {
+    content: url(vertical-triangle.png);
+}

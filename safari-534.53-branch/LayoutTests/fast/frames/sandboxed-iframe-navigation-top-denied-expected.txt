@@ -1,0 +1,3 @@
+This test verifies that a sandboxed IFrame cannot navigate the top-level frame without allow-top-navigation. This test passes if the navigation does not occur.
+
+

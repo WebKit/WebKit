@@ -1,0 +1,13 @@
+Test wholeText and replaceWholeText
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textB.wholeText is 'AB'
+PASS para.textContent is 'ABC'
+PASS textB.wholeText is 'XYZ'
+PASS para.textContent is 'XYZC'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

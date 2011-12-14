@@ -1,0 +1,27 @@
+1. Test that errors fired while evaluating/loading <source> elements are fired at the <source> and not at the <video> element. 
+2. Verifiy that an 'error' event fired while processing/loading a <source> element does not set the media element's 'error' attribute.
+
+EVENT(loadstart)
+EVENT(error) from <source id='missing-src' src=''> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='bogus-type' src='content/test.mp4'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='unsupported-media-query' src='content/test.mp4'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='missing-file' src='content/error2.mpeg'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(error) from <source id='format-error' src='content/unsupported_track.mov'> OK
+EXPECTED (video.error == 'null') OK
+
+EVENT(durationchange)
+EVENT(loadeddata)
+
+EXPECTED (relativeURL(video.currentSrc) == 'content/test.mp4') OK
+EXPECTED (video.error == 'null') OK
+
+END OF TEST
+

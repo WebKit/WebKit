@@ -1,0 +1,15 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug where pasted content starting with an interchange newline would end up outside of the editable region where it was pasted.  You should see 'foo\nbar' below.</p>
+<div id="test" contenteditable="true">foo</div>
+non-editable
+<script>
+var sel = window.getSelection();
+var e = document.getElementById("test");
+
+sel.setPosition(e, 0);
+sel.modify("move", "forward", "word");
+document.execCommand("InsertHTML", false, "<br class='Apple-interchange-newline'>bar");
+</script>

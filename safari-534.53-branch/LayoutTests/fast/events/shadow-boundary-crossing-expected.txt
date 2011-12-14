@@ -1,0 +1,14 @@
+Tests to ensure that shadow DOM boundary is not crossed during event propagation. Can only run within DRT.
+
+See bug 46015 for details.
+
+Mutation events should not propagate out of the shadow DOM: PASS
+The selectstart event should not propagate out of the shadow DOM: PASS
+The mouseover/mouseout event between two elements inside the same shadow subtree should not propagate out of the shadow DOM: PASS
+The mouseover/mouseout event on a shadow subtree host should propagate out of the shadow DOM: PASS
+Label should look beyond shadow boundary to detect if it encloses its associated element: PASS
+Events for default event handler should not be retargeted: PASS
+Event's relatedTarget should be retargeted: PASS
+Other events should be retargeted: PASS
+After event dispatch, the event object should not reveal shadow DOM: PASS
+Focusing same shadow DOM element repeatedly should not trigger multiple focus/blur events: PASS

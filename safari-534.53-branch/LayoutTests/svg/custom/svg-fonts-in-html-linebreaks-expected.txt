@@ -1,0 +1,11 @@
+This test is to ensure that text rendered with a SVG-font has the same behavior for handling control characters like newlines, as text rendered though the normal (fast or complex) path. The two "a b c" strings below should have the same length and not produce any missing-glyph symbols.
+
+a b c <--- This text has line breaks in the source HTML ("\n")
+a b c <--- This text has no line breaks (just "a b c")
+
+As a reference, this is how normal text looks like for the same usecase:
+
+a b c <--- This text has line breaks in the source HTML ("\n")
+a b c <--- This text has no line breaks (just "a b c")
+
+PASS

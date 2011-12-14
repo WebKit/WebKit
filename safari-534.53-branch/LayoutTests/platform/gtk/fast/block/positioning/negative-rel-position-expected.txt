@@ -1,0 +1,7 @@
+layer at (0,0) size 850x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x136
+  RenderBlock {HTML} at (0,0) size 800x136
+    RenderBody {BODY} at (8,8) size 784x120
+layer at (-30,8) size 880x120 backgroundClip at (0,0) size 850x584 clip at (0,0) size 850x584 outlineClip at (0,0) size 850x584
+  RenderBlock (relative positioned) {DIV} at (392,0) size 880x120 [bgcolor=#00FF00]

@@ -1,0 +1,3 @@
+Click on the search box. This test passes if does not crash.
+
+

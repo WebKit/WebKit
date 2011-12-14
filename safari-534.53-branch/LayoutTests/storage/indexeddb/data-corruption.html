@@ -1,0 +1,79 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test that data inserted into IndexedDB does not get corrupted on disk.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('data-corruption')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    window.db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = addData;
+
+    deleteAllObjectStores(db);
+
+    evalAndLog("db.createObjectStore('storeName')");
+}
+
+var testDate = new Date('February 24, 1955 12:00:08');
+
+function addData()
+{
+    debug("addData():");
+    var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    var request = evalAndLog("request = transaction.objectStore('storeName').add({x: testDate}, 'key')");
+    request.onerror = unexpectedErrorCallback;
+    transaction.oncomplete = getData;
+}
+
+function getData()
+{
+    debug("addData():");
+    var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_ONLY)");
+    var request = evalAndLog("request = transaction.objectStore('storeName').get('key')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = doCheck;
+}
+
+function doCheck()
+{
+    shouldBeTrue("event.target.result.x.toString() == testDate.toString()");
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

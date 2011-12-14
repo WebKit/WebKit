@@ -1,0 +1,13 @@
+URL that doesn't have trailing slash should not emit empty Request-URI.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+WebSocket is open
+received:ws://127.0.0.1:8880/
+WebSocket is closed
+PASS handshake_success is true
+PASS ws_location is "ws://127.0.0.1:8880/"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

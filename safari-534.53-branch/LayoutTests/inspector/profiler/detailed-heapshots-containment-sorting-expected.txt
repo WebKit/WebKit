@@ -1,0 +1,4 @@
+Tests sorting in Containment view of detailed heap snapshots.
+
+Heap profiler is disabled
+

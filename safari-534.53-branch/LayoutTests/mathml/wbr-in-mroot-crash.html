@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<body>
+<p>This test shouldn't crash.</p>
+<p><math><mroot><mrow><mroot><mrow><mroot><mrow><mroot><mrow><mroot><mrow><mroot><mrow><mroot><mrow id="insertion-point"></mrow></mroot></mrow></mroot></mrow></mroot></mrow></mroot></mrow></mroot></mrow></mroot></mrow></mroot></math></p></body></html>
+<script>
+var elem = document.getElementById("insertion-point"); 
+var parent = elem.parentNode;
+var wbr = document.createElement("wbr");
+parent.insertBefore(wbr, elem);
+</script>

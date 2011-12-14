@@ -1,0 +1,6 @@
+Test for rdar://problem/6065547 REGRESSION (r34879): "Subject" in unread emails in Yahoo mail is not shown in bold.
+
+Property 'font-weight' has priority 'important'.
+Property 'font-variant' has priority 'important'.
+Property 'font-style' has priority 'important'.
+

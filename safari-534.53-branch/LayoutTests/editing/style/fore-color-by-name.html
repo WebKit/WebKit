@@ -1,0 +1,23 @@
+<html>
+<head>
+<script src="../../resources/dump-as-markup.js"></script>
+</head>
+<body>
+<div id="test" contenteditable>hello world</div>
+<script>
+
+window.getSelection().setPosition(test, 0);
+window.getSelection().modify('move', 'forward', 'word');
+window.getSelection().modify('move', 'forward', 'character');
+window.getSelection().modify('extend', 'forward', 'word');
+document.execCommand('foreColor', false, 'red');
+Markup.dump('test', '"world" should be red');
+
+window.getSelection().selectAllChildren(test);
+document.execCommand('foreColor', false, 'black');
+
+Markup.dump('test', 'there should be no span or font elements');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<svg height="1" width="1">
+  <defs>
+    <use id="B">
+      <linearGradient>
+        <animateTransform attributeName="z"/>
+          <text font-family="x">
+            <textPath>
+              <font>
+                <font-face font-family="x">
+              </font>
+            </textPath>x
+          </text>
+        </animateTransform>
+      </linearGradient>
+    </use>
+  </defs>
+  <use xlink:href="#B"></use>
+  <use xlink:href="#B"></use>
+</svg>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+setTimeout(function() {
+        document.body.innerHTML += "PASS: This file should not crash.";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+</script>

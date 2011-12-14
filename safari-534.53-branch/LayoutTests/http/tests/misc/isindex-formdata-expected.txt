@@ -1,0 +1,4 @@
+This page tests that we correctly put the value of an <isindex> element into the form data.
+
+Could not find isindex element
+

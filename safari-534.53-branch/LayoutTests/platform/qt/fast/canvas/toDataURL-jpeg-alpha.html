@@ -1,0 +1,47 @@
+<html>
+<head>
+    <script src="toDataURL-jpeg.js"></script>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        window.notifyEndTest = function ()
+        {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        };
+
+        function testToDataURL(canvas, ctx)
+        {
+            ctx.fillStyle = 'rgba(128, 255, 128, 0.5)';
+            ctx.fillRect(0, 0, 100, 50);
+            ctx.globalCompositeOperation = 'destination-over'; // should be ignored by toDataURL
+            var data = canvas.toDataURL('image/jpeg');
+            ctx.globalCompositeOperation = 'source-over';
+            if (!data.match(/^data:image\/jpeg[;,]/)) {
+                _assert(true, "true");
+            } else {
+                ctx.fillStyle = '#f00';
+                ctx.fillRect(0, 0, 100, 50);
+                var img = new Image();
+                deferTest();
+                img.onload = wrapFunction(function ()
+                {
+                    ctx.drawImage(img, 0, 0);
+                    
+                    _assertPixelApprox(canvas, 50,25, 63,127,63,255, "50,25", "63,127,63,255", 8);
+                });
+                img.src = data;
+                if (window.layoutTestController)
+                    layoutTestController.waitUntilDone();
+            }
+        }
+        _addTest(testToDataURL);
+    </script>
+</head>
+<body>
+    <p>To verify jpeg data URL should take alpha component into account if canvas color has alpha component</p>
+    <canvas id="c" width="100" height="50"></canvas>
+    <p id="d"></p>
+</body>
+</html>

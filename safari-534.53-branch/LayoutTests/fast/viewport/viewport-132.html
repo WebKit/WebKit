@@ -1,0 +1,13 @@
+<head>
+    <title>Check that no user-scalable value is the default -1.0.</title>
+    <meta name="viewport" content="width=device-width">
+    <script>
+        function test() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.dumpConfigurationForViewport(160, 320, 480, 320, 352);
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

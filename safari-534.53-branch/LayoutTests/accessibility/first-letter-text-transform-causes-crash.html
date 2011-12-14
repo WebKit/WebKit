@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<style>
+       dt:first-letter{text-transform:uppercase;}
+</style>
+<script>
+    var successfullyParsed = false;
+
+    function buildAccessibilityTree(accessibilityObject) {
+        var count = accessibilityObject.childrenCount;
+        for (var i = 0; i < count; ++i)
+            buildAccessibilityTree(accessibilityObject.childAtIndex(i));
+    }
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<dt>dt</dt>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("First letter text transform causes assert and bad type cast. This can cause a crash.");
+
+    // Trigger a layout operation to create the two RenderTextFragment instances.
+    document.body.children[0].offsetWidth;
+
+    if (window.accessibilityController) {
+        // Build up full accessibility tree.
+        document.body.focus();
+        buildAccessibilityTree(accessibilityController.focusedElement);
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

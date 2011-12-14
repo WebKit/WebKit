@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 24: navigating away
+CONSOLE MESSAGE: line 35: navigated back
+This test has an input element that starts out with autocomplete=off.
+It then changes autocomplete to on.
+It then removes the element so it is destroyed.
+It then navigates to a new page, placing the current page in the page cache.
+Finally it returns to the original page.
+

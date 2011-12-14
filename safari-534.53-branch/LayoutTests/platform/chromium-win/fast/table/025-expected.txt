@@ -1,0 +1,94 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x44
+        RenderTableSection {TBODY} at (0,0) size 784x44
+          RenderTableRow {TR} at (0,0) size 784x44
+            RenderTableCell {TD} at (0,8) size 208x28 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 8x19
+                text run at (4,4) width 8: "d"
+            RenderTableCell {TD} at (208,0) size 340x44 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 332x36
+                RenderTableSection {TBODY} at (0,0) size 332x36
+                  RenderTableRow {TR} at (0,2) size 332x32
+                    RenderTableCell {TD} at (2,2) size 328x32 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 250x28
+                        RenderTableSection {TBODY} at (0,0) size 250x28
+                          RenderTableRow {TR} at (0,2) size 250x24
+                            RenderTableCell {TD} at (2,12) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (8,2) size 234x24 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
+                              RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
+                              RenderText {#text} at (23,2) size 4x19
+                                text run at (23,2) width 4: " "
+                              RenderInline {B} at (0,0) size 88x19
+                                RenderText {#text} at (27,2) size 88x19
+                                  text run at (27,2) width 88: "Yellow Pages"
+                              RenderText {#text} at (115,2) size 4x19
+                                text run at (115,2) width 4: " "
+                              RenderImage {IMG} at (119,2) size 21x15 [bgcolor=#800080]
+                              RenderText {#text} at (140,2) size 4x19
+                                text run at (140,2) width 4: " "
+                              RenderInline {B} at (0,0) size 84x19
+                                RenderText {#text} at (144,2) size 84x19
+                                  text run at (144,2) width 84: "White Pages"
+                              RenderText {#text} at (228,2) size 4x19
+                                text run at (228,2) width 4: " "
+                            RenderTableCell {TD} at (244,12) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (548,1) size 236x42 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 228x34
+                RenderTableSection {TBODY} at (0,0) size 228x34
+                  RenderTableRow {TR} at (0,2) size 228x30
+                    RenderTableCell {TD} at (2,2) size 224x30 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 220x26
+                        RenderTableSection {TBODY} at (0,0) size 220x26
+                          RenderTableRow {TR} at (0,2) size 220x22
+                            RenderTableCell {TD} at (2,2) size 216x22 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (2,2) size 212x18 [bgcolor=#800080]
+                              RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,60) size 784x0
+      RenderTable {TABLE} at (0,60) size 784x44
+        RenderTableSection {TBODY} at (0,0) size 784x44
+          RenderTableRow {TR} at (0,0) size 784x44
+            RenderTableCell {TD} at (0,8) size 219x28 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 8x19
+                text run at (4,4) width 8: "d"
+            RenderTableCell {TD} at (219,0) size 329x44 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 321x36
+                RenderTableSection {TBODY} at (0,0) size 321x36
+                  RenderTableRow {TR} at (0,2) size 321x32
+                    RenderTableCell {TD} at (2,2) size 317x32 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 250x28
+                        RenderTableSection {TBODY} at (0,0) size 250x28
+                          RenderTableRow {TR} at (0,2) size 250x24
+                            RenderTableCell {TD} at (2,12) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (8,2) size 234x24 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
+                              RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
+                              RenderText {#text} at (23,2) size 4x19
+                                text run at (23,2) width 4: " "
+                              RenderInline {B} at (0,0) size 88x19
+                                RenderText {#text} at (27,2) size 88x19
+                                  text run at (27,2) width 88: "Yellow Pages"
+                              RenderText {#text} at (115,2) size 4x19
+                                text run at (115,2) width 4: " "
+                              RenderImage {IMG} at (119,2) size 21x15 [bgcolor=#800080]
+                              RenderText {#text} at (140,2) size 4x19
+                                text run at (140,2) width 4: " "
+                              RenderInline {B} at (0,0) size 84x19
+                                RenderText {#text} at (144,2) size 84x19
+                                  text run at (144,2) width 84: "White Pages"
+                              RenderText {#text} at (228,2) size 4x19
+                                text run at (228,2) width 4: " "
+                            RenderTableCell {TD} at (244,12) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (548,1) size 236x42 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderTable {TABLE} at (4,4) size 228x34
+                RenderTableSection {TBODY} at (0,0) size 228x34
+                  RenderTableRow {TR} at (0,2) size 228x30
+                    RenderTableCell {TD} at (2,2) size 224x30 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 220x26
+                        RenderTableSection {TBODY} at (0,0) size 220x26
+                          RenderTableRow {TR} at (0,2) size 220x22
+                            RenderTableCell {TD} at (2,2) size 216x22 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (2,2) size 212x18 [bgcolor=#800080]
+                              RenderText {#text} at (0,0) size 0x0

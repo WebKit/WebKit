@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+        <script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+        <script>
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+        </script>
+    </head>
+    <body id="body">
+        <a id="link1" href="img.html" title="title text"><img src="404.png" alt="alt text" title="title text"></a>
+        <br>
+
+        <a id="link2" href="text.html" title="title text">link text</a>
+        <br>
+
+        <a id="link3" href="input.html" title="title text"><input type="text" value="input value"></a>
+        <br>
+
+        <p>
+            This test verifies that, on Windows, linked text, linked images, and
+            anchor elements return the anchor's href attribute for the 'value'
+            property, and text nodes return their text for their 'title'
+            property.
+            <br><br>
+            <a href="https://bugs.webkit.org/show_bug.cgi?id=30928">Bug 30928
+            - MSAA: Accessibility of links is wrong</a>
+        </p>
+
+        <p id="console"></p>
+
+        <script>
+            if (window.accessibilityController) {
+                document.getElementById("link1").focus();
+                var e = accessibilityController.focusedElement;
+                shouldBe('e.accessibilityValue.substr(-8)', '"img.html"');
+
+                // The child img element.
+                e = e.childAtIndex(0);
+                shouldBe('e.accessibilityValue.substr(-8)', '"img.html"');
+
+                document.getElementById("link2").focus();
+                e = accessibilityController.focusedElement;
+                shouldBe('e.accessibilityValue.substr(-9)', '"text.html"');
+
+                // The child text node.
+                e = e.childAtIndex(0);
+                shouldBe('e.accessibilityValue.substr(-9)', '"text.html"');
+                shouldBe('e.title', '"link text"');
+
+                document.getElementById("link3").focus();
+                e = accessibilityController.focusedElement;
+                shouldBe('e.accessibilityValue.substr(-10)', '"input.html"');
+
+                // The child input element. This should not return the URL as
+                // its value.
+                e = e.childAtIndex(0);
+                shouldBe('e.accessibilityValue', '"input value"');
+            }
+        </script>
+    </body>
+</html>

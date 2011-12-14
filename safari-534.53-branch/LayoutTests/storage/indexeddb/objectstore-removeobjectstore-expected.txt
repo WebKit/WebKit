@@ -1,0 +1,33 @@
+Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('objectstore-removeobjectstore')
+db = event.target.result
+db.setVersion('new version')
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+store = db.createObjectStore('storeName', null)
+store.createIndex('indexName', '')
+PASS store.indexNames.contains('indexName') is true
+store.add('value', 'key')
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+store = transaction.objectStore('storeName')
+store.get('key')
+PASS event.target.result is "value"
+db.setVersion('new version')
+trans = event.target.result
+PASS trans !== null is true
+db.deleteObjectStore('storeName')
+db.createObjectStore('storeName', null)
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+store = transaction.objectStore('storeName')
+store.get('key')
+PASS event.target.result is undefined
+PASS event.target.source.indexNames.contains('indexName') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

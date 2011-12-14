@@ -1,0 +1,2 @@
+ALERT: This is a safe script.
+

@@ -1,0 +1,28 @@
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+}
+h1 {
+  background-color: #EEE;
+  color: #444;
+  font-size: 14pt;
+  font-style: italic;
+  margin: 0px;
+  padding: 5px;
+}
+ul {
+  margin: 0px;
+  padding: 20px;
+  list-style: none;
+}
+li {
+  padding: 5px;
+}
+li:hover {
+  background-color: #EEE;
+}
+.login {
+  font-size: 8pt;
+  text-align: right;
+  width: 100%;
+}
+

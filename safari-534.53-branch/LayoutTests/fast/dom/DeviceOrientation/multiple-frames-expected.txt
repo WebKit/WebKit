@@ -1,0 +1,15 @@
+Tests using DeviceOrientation from multiple frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS deviceOrientationEvent.alpha is mockEvent.alpha
+PASS deviceOrientationEvent.beta is mockEvent.beta
+PASS deviceOrientationEvent.gamma is mockEvent.gamma
+PASS deviceOrientationEvent.alpha is mockEvent.alpha
+PASS deviceOrientationEvent.beta is mockEvent.beta
+PASS deviceOrientationEvent.gamma is mockEvent.gamma
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

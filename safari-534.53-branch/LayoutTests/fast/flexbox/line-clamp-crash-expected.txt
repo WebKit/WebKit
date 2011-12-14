@@ -1,0 +1,18 @@
+Test that an incremental layout of a block with line-clamp truncation does not trigger a crash.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X

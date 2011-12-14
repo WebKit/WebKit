@@ -1,0 +1,8 @@
+DESKTOP NOTIFICATION: icon , title New E-mail, text Meet me tonight at 8!
+DESKTOP NOTIFICATION CLOSED: New E-mail
+Showing notifications.
+
+To exercise manually, grant notification permissions and load this page, then click on the notification. You should see a "PASS" message.
+
+PASS: click event fired.
+

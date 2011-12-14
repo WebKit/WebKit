@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<div>Tests for a crash due to modifying the DOM during mutation events due to an adoptNode call. If this page doesn't crash and DOMSubtreeModified is fire, this test succeeds.</div>
+<div id="result"></div>
+<div id="node-to-adopt"></div>
+<iframe></iframe>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var nodeToAdopt = document.getElementById('node-to-adopt');
+
+var mutationHandler = function() {
+    document.getElementById('result').innerHTML = "DOMSubtreeModified fired";
+    document.body.removeEventListener('DOMSubtreeModified', mutationHandler, true);
+    document.body.appendChild(nodeToAdopt);
+};
+document.body.addEventListener('DOMSubtreeModified', mutationHandler, true);
+
+var iframe = document.querySelector('iframe');
+var iframeDoc = iframe.contentDocument;
+iframeDoc.adoptNode(nodeToAdopt);
+// The crash happens when the iframe's document is getting detached.
+document.body.removeChild(iframe);
+</script>

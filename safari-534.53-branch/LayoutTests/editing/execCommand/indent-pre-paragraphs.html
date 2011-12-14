@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="test0" contenteditable>
+<pre>hello</pre>
+</div>
+
+<div id="test1" contenteditable>
+<pre>
+hello
+
+world
+
+webkit
+</pre>
+</div>
+
+<div id="test2" contenteditable>
+<pre>
+hello
+world
+webkit
+</pre>
+</div>
+
+<div id="test3" contenteditable>
+<pre>
+hello
+
+world
+</pre>
+</div>
+
+<div id="test4" contenteditable>
+<pre>
+hello
+
+world
+</pre>
+</div>
+
+<div id="test5" contenteditable>
+<pre>
+hello
+
+world
+</pre>
+</div>
+<script>
+
+function testIndentation(containerId, selector) {
+    var container = document.getElementById(containerId);
+    selector(container);
+    Markup.dump(container, 'Indenting');
+    document.execCommand('indent', false, null);
+    Markup.dump(container, 'yields');
+}
+
+function selectAll(container) {
+    window.getSelection().selectAllChildren(container);
+}
+
+function selectorForLineN(line) {
+    return function (container) {
+        window.getSelection().setPosition(container, 0);
+        for (var i = 0; i < line - 1; i++)
+            window.getSelection().modify('move', 'forward', 'line');
+        window.getSelection().modify('extend', 'forward', 'line');
+        window.getSelection().modify('extend', 'backward', 'character');
+    }
+}
+
+testIndentation('test0', selectAll);
+testIndentation('test1', selectAll);
+testIndentation('test2', selectAll);
+testIndentation('test3', selectorForLineN(1));
+testIndentation('test4', selectorForLineN(2));
+testIndentation('test5', selectorForLineN(3));
+
+</script>
+</body>
+</html>

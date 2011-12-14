@@ -1,0 +1,37 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 764x44
+          text run at (0,0) width 764: "This tests deletion when the caret is in an empty list item at the beginning of the document. It also makes sure that"
+          text run at (0,22) width 307: "the style inside the empty list item is retained. "
+          text run at (307,22) width 110: "You should see '"
+        RenderInline {B} at (0,0) size 21x22
+          RenderText {#text} at (417,22) size 21x22
+            text run at (417,22) width 21: "foo"
+        RenderText {#text} at (438,22) size 269x22
+          text run at (438,22) width 269: "' followed by a list item containing 'bar'."
+      RenderBlock {DIV} at (0,60) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x22
+          RenderInline {B} at (0,0) size 21x22
+            RenderText {#text} at (0,0) size 21x22
+              text run at (0,0) width 21: "foo"
+        RenderBlock {UL} at (0,38) size 784x22
+          RenderListItem {LI} at (40,0) size 744x22
+            RenderListMarker at (-18,0) size 7x22: bullet
+            RenderText {#text} at (0,0) size 24x22
+              text run at (0,0) width 24: "bar"
+caret: position 3 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of body

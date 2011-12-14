@@ -1,0 +1,5 @@
+Checking permission...
+
+PASS: Permission not granted.
+PASS: Permission granted.
+

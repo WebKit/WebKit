@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_nodevalue03
+Status	error
+Message	Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7

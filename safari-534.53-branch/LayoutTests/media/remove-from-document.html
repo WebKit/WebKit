@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script src=video-test.js></script>
+    <script type="text/javascript" charset="utf-8">
+        function doSetup()
+        {
+            video = document.getElementsByTagName('video')[0];
+            video.src = findMediaFile("video", "content/test");
+        }
+
+        function doTest () 
+        {
+            consoleWrite("EVENT(canplaythrough)");
+            testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY, "!=");
+            testExpected("video.paused", false);
+    
+            run("document.body.removeChild(video)");
+    
+            testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY, "!=");
+            testExpected("video.paused", true);
+    
+            document.body.offsetTop;
+            endTest();
+        }
+
+        window.addEventListener('load', doSetup, false);
+    </script>
+</head>
+<body>
+    <p>Test that removing a media element from the tree pauses playback but does not unload the media.</p>
+    <video controls autoplay oncanplaythrough="doTest()"></video>
+</body>
+</html>

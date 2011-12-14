@@ -1,0 +1,30 @@
+span.element {
+    color: yellow;
+}
+span.implemented {
+    color: lightgreen;
+}
+span.unimplemented {
+    color: lightcoral;
+}
+tr.element {
+    background-color: yellow;
+}
+tr.implemented {
+    background-color: lightgreen;
+}
+tr.unimplemented {
+    background-color: lightcoral;
+}
+table.elements {
+    width: 90%;
+    table-layout:fixed;
+    margin-left: auto;
+    margin-right: auto;
+}
+.modulename {
+    text-align: center;
+}
+col.element {
+    width: 160px ;
+}

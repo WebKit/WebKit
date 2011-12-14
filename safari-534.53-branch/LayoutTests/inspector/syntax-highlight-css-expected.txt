@@ -1,0 +1,11 @@
+Tests that CSSSourceSyntaxHighlighter detects the tokens.
+
+a[href='/']: webkit-css-selector
+#content > a:hover: *,webkit-css-selector,*,webkit-css-selector,*,webkit-css-selector
+@import url(style.css);: webkit-css-at-rule,*,webkit-css-keyword,*
+@import url("style.css") projection, tv;: webkit-css-at-rule,*,webkit-css-keyword,*,webkit-css-string,*,webkit-css-keyword,*,webkit-css-keyword,*
+@media screen { body { color: red; } }: webkit-css-at-rule,*,webkit-css-keyword,*,webkit-css-selector,*,webkit-css-property,*,webkit-css-keyword,*
+@font-face { font-family: MyHelvetica; }: webkit-css-at-rule,*,webkit-css-property,*
+p { color: color; red: red; }: webkit-css-selector,*,webkit-css-property,*,webkit-css-keyword,*
+p { margin: -10px !important; }: webkit-css-selector,*,webkit-css-property,*,webkit-css-number,*,webkit-css-important,*
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebKit2GeneratedCommon"
+	OutputDirectory="$(ConfigurationBuildDir)\lib"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
+	>
+	<Tool
+		Name="VCNMakeTool"
+		BuildCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ConfigurationBuildDir)\buildfailed&quot; grep XX$(ProjectName)XX &quot;$(ConfigurationBuildDir)\buildfailed&quot;&#x0D;&#x0A;if errorlevel 1 exit 1&#x0D;&#x0A;echo XX$(ProjectName)XX &gt; &quot;$(ConfigurationBuildDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;nmake /nologo -f WebKit2Generated.make&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ConfigurationBuildDir)\buildfailed&quot; del &quot;$(ConfigurationBuildDir)\buildfailed&quot;&#x0D;&#x0A;"
+		ReBuildCommandLine="echo XX$(ProjectName)XX &gt; &quot;$(ConfigurationBuildDir)\buildfailed&quot;&#x0D;&#x0A;&#x0D;&#x0A;%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;nmake /nologo -f WebKit2Generated.make clean&#x0D;&#x0A;nmake -f WebKit2Generated.make&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ConfigurationBuildDir)\buildfailed&quot; del &quot;$(ConfigurationBuildDir)\buildfailed&quot;&#x0D;&#x0A;"
+		CleanCommandLine="%SystemDrive%\cygwin\bin\which.exe bash&#x0D;&#x0A;if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;nmake /nologo -f WebKit2Generated.make clean&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(ConfigurationBuildDir)\buildfailed&quot; del &quot;$(ConfigurationBuildDir)\buildfailed&quot;&#x0D;&#x0A;"
+	/>
+</VisualStudioPropertySheet>

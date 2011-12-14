@@ -1,0 +1,26 @@
+<head>
+    <script>
+        function runTest() {
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+            window.setTimeout(afterDelay, 20);
+        }
+        
+        function afterDelay() {
+            forCaret = document.getElementById("forCaret");
+            window.getSelection().setPosition(forCaret, 0);
+            document.execCommand("Delete");            
+            if (window.layoutTestController) {
+                document.body.innerText = document.getElementById("description").innerText + "\n\n" + document.getElementById("edit").innerHTML;
+                layoutTestController.notifyDone();
+            }
+        }
+    </script>
+</head>
+
+<body onLoad="runTest();">
+    <div id="description">This tests to make sure that placing the caret at the beginning of a paragraph of text just after a block image and pressing delete does not move the text.  It cannot be made inline with the image since it's a block image. The editable region below should contain an image followed by a paragraph of text.</div>
+    <div id="edit" contentEditable="true"><img src="../resources/abe.png" style="display:block; padding: 3px;"><div id="forCaret">This text should be in its own paragraph.</div></div>
+</body>

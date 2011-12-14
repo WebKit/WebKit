@@ -1,0 +1,28 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=9284 Quirksmode (CSS1): Removing inline border styles is impossible.
+
+Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed when a shortcut property is removed. The shortcut’s constituents and only them should be removed.
+
+Removing background removes background-image, background-attachment, background-origin, background-clip, background-color, background-position, background-repeat.
+Removing background-position removes background-position.
+Removing border removes border-top-width, border-right-width, border-bottom-width, border-left-width, border-top-style, border-right-style, border-bottom-style, border-left-style, border-top-color, border-right-color, border-bottom-color, border-left-color.
+Removing border-top removes border-top-width, border-top-style, border-top-color.
+Removing border-right removes border-right-width, border-right-style, border-right-color.
+Removing border-bottom removes border-bottom-width, border-bottom-style, border-bottom-color.
+Removing border-left removes border-left-width, border-left-style, border-left-color.
+Removing border-color removes border-top-color, border-right-color, border-bottom-color, border-left-color.
+Removing border-style removes border-top-style, border-right-style, border-bottom-style, border-left-style.
+Removing border-width removes border-top-width, border-right-width, border-bottom-width, border-left-width.
+Removing border-radius removes border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius.
+Removing -webkit-border-radius removes border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius.
+Removing border-spacing removes -webkit-border-horizontal-spacing, -webkit-border-vertical-spacing.
+Removing -webkit-columns removes -webkit-column-width, -webkit-column-count.
+Removing -webkit-column-rule removes -webkit-column-rule-width, -webkit-column-rule-style, -webkit-column-rule-color.
+Removing list-style removes list-style-type, list-style-position, list-style-image.
+Removing margin removes margin-top, margin-right, margin-bottom, margin-left.
+Removing -webkit-margin-collapse removes -webkit-margin-before-collapse, -webkit-margin-after-collapse.
+Removing -webkit-marquee removes -webkit-marquee-direction, -webkit-marquee-increment, -webkit-marquee-repetition, -webkit-marquee-style, -webkit-marquee-speed.
+Removing -webkit-mask removes -webkit-mask-image, -webkit-mask-repeat-x, -webkit-mask-repeat-y, -webkit-mask-attachment, -webkit-mask-position-x, -webkit-mask-position-y, -webkit-mask-origin, -webkit-mask-clip.
+Removing -webkit-mask-position removes -webkit-mask-position-x, -webkit-mask-position-y.
+Removing overflow removes overflow-x, overflow-y.
+Removing padding removes padding-top, padding-right, padding-bottom, padding-left.
+Removing -webkit-text-stroke removes -webkit-text-stroke-color, -webkit-text-stroke-width.

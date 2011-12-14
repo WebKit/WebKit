@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 750x18
+          text run at (0,0) width 478: "Test the vertical metric adjustment for Geeza Pro. Red text should not draw "
+          text run at (478,0) width 272: "above the green line or below the blue line."
+      RenderBlock {DIV} at (0,34) size 784x42 [bgcolor=#D3D3D3]
+        RenderInline {SPAN} at (0,0) size 111x14 [color=#FF0000] [border: (1px solid #008000) none (1px solid #0000FF) none]
+          RenderText {#text} at (665,8) size 111x12
+            text run at (665,8) width 111 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{645}\x{64D} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{644}\x{62C}\x{645}\x{64E}\x{651}\x{644} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+        RenderBR {BR} at (665,17) size 0x0
+        RenderText {#text} at (640,21) size 136x12
+          text run at (640,21) width 136 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{62A}\x{62D}\x{642}\x{64A}\x{642} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{627}\x{644}\x{637}\x{627}\x{626}\x{631}\x{629} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+      RenderBlock {DIV} at (0,84) size 784x50 [bgcolor=#D3D3D3]
+        RenderInline {SPAN} at (0,0) size 140x17 [color=#FF0000] [border: (1px solid #008000) none (1px solid #0000FF) none]
+          RenderText {#text} at (636,9) size 140x15
+            text run at (636,9) width 140 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{645}\x{64D} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{644}\x{62C}\x{645}\x{64E}\x{651}\x{644} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+        RenderBR {BR} at (636,20) size 0x0
+        RenderText {#text} at (605,26) size 171x15
+          text run at (605,26) width 171 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{62A}\x{62D}\x{642}\x{64A}\x{642} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{627}\x{644}\x{637}\x{627}\x{626}\x{631}\x{629} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+      RenderBlock {DIV} at (0,142) size 784x56 [bgcolor=#D3D3D3]
+        RenderInline {SPAN} at (0,0) size 156x20 [color=#FF0000] [border: (1px solid #008000) none (1px solid #0000FF) none]
+          RenderText {#text} at (620,9) size 156x18
+            text run at (620,9) width 156 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{645}\x{64D} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{644}\x{62C}\x{645}\x{64E}\x{651}\x{644} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+        RenderBR {BR} at (620,22) size 0x0
+        RenderText {#text} at (587,29) size 189x18
+          text run at (587,29) width 189 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{62A}\x{62D}\x{642}\x{64A}\x{642} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{627}\x{644}\x{637}\x{627}\x{626}\x{631}\x{629} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+      RenderBlock {DIV} at (0,206) size 784x80 [bgcolor=#D3D3D3]
+        RenderInline {SPAN} at (0,0) size 272x31 [color=#FF0000] [border: (1px solid #008000) none (1px solid #0000FF) none]
+          RenderText {#text} at (504,9) size 272x29
+            text run at (504,9) width 272 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{645}\x{64D} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{644}\x{62C}\x{645}\x{64E}\x{651}\x{644} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+        RenderBR {BR} at (504,30) size 0x0
+        RenderText {#text} at (447,41) size 329x29
+          text run at (447,41) width 329 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{62A}\x{62D}\x{642}\x{64A}\x{642} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{627}\x{644}\x{637}\x{627}\x{626}\x{631}\x{629} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+      RenderBlock {DIV} at (0,294) size 784x114 [bgcolor=#D3D3D3]
+        RenderInline {SPAN} at (0,0) size 410x46 [color=#FF0000] [border: (1px solid #008000) none (1px solid #0000FF) none]
+          RenderText {#text} at (366,10) size 410x44
+            text run at (366,10) width 410 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{645}\x{64D} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{644}\x{62C}\x{645}\x{64E}\x{651}\x{644} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+        RenderBR {BR} at (366,42) size 0x0
+        RenderText {#text} at (276,59) size 500x44
+          text run at (276,59) width 500 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{62A}\x{62D}\x{642}\x{64A}\x{642} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{627}\x{644}\x{637}\x{627}\x{626}\x{631}\x{629} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+      RenderBlock {DIV} at (0,416) size 784x148 [bgcolor=#D3D3D3]
+        RenderInline {SPAN} at (0,0) size 541x61 [color=#FF0000] [border: (1px solid #008000) none (1px solid #0000FF) none]
+          RenderText {#text} at (235,11) size 541x59
+            text run at (235,11) width 541 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{645}\x{64D} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{644}\x{62C}\x{645}\x{64E}\x{651}\x{644} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"
+        RenderBR {BR} at (235,54) size 0x0
+        RenderText {#text} at (120,77) size 656x59
+          text run at (120,77) width 656 RTL: "\x{628}\x{62F}\x{621} \x{627}\x{644}\x{62A}\x{62D}\x{642}\x{64A}\x{642} \x{641}\x{64A} \x{62A}\x{62D}\x{637}\x{645} \x{627}\x{644}\x{637}\x{627}\x{626}\x{631}\x{629} \x{627}\x{644}\x{627}\x{633}\x{628}\x{627}\x{646}\x{64A}\x{629}"

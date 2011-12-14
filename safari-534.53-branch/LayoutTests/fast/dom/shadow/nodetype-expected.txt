@@ -1,0 +1,10 @@
+
+This tests the shadow host's and shadow root's nodeType.
+PASS keygen.nodeType is Node.ELEMENT_NODE
+PASS shadow.nodeType is 14
+PASS shadowChild is non-null.
+PASS shadowChild.nodeType != 14 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

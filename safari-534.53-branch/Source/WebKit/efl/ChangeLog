@@ -1,0 +1,2992 @@
+2011-11-16  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93303
+
+    2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * WebCoreSupport/ChromeClientEfl.h:
+        Removed deviceScaleFactor.
+
+2011-11-15  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 93040
+
+    2011-08-10  Adam Roben  <aroben@apple.com>
+
+            Clear up scale factor terminology
+
+            WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+            software is running, and one that is per-Page and can be controlled via API calls. This
+            patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+            code use those names. It should introduce no behavior changes.
+
+            Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+            device scale factor
+
+            Reviewed by Simon Fraser.
+
+            * WebCoreSupport/ChromeClientEfl.cpp:
+            * WebCoreSupport/ChromeClientEfl.h:
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 91097
+
+    2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+            REGRESSION: Mouse cursor doesn’t hide when full screen video HUD hides
+            https://bugs.webkit.org/show_bug.cgi?id=64615
+
+            Reviewed by Anders Carlsson.
+
+            * WebCoreSupport/ChromeClientEfl.cpp:
+            (WebCore::ChromeClientEfl::setCursorHiddenUntilMouseMoves): Added this stub.
+            * WebCoreSupport/ChromeClientEfl.h:
+
+2011-05-16  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Can't horizontally scroll iframes and overflow because wheel events are always accepted
+        https://bugs.webkit.org/show_bug.cgi?id=60779
+
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::shouldRubberBandInDirection): Default impl of new ChromeClient method
+        (WebCore::ChromeClientEfl::numWheelEventHandlersChanged): Default impl of new ChromeClient method
+
+2011-05-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove EAPI macro from functions definition
+        https://bugs.webkit.org/show_bug.cgi?id=60754
+
+        This macro should be used in header files only.
+        It's not necessary to have it in definitions.
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_cookie_free):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_window_features.cpp:
+        (ewk_window_features_unref):
+        (ewk_window_features_ref):
+        (ewk_window_features_bool_property_get):
+        (ewk_window_features_int_property_get):
+
+2011-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix style error.
+
+        * ewk/ewk_history.cpp:
+
+2011-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Move ewk_view_dpi_get() to ewk_util.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60753
+
+        Move ewk_view_dpi_get() to ewk_util.cpp
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_util.cpp:
+        (ewk_util_dpi_get):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
+2011-05-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove fixed_layout structure in ewk_view
+        https://bugs.webkit.org/show_bug.cgi?id=60615
+
+        Remove unnecessary fixed_layout structure. The ewk_view_fixed_layout_size_set/get()
+        use WebCore's functions directly.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_fixed_layout_size_get):
+
+2011-05-11  Tomasz Morawski  <t.morawski@samsung.com>
+
+        Rubber-stamped by Daniel Bates.
+
+        Added missing DATABASE macro
+        https://bugs.webkit.org/show_bug.cgi?id=60437
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_default_quota_get):
+
+2011-05-08  Kamil Blank  <k.blank@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        Added new commands to be called by ewk_view_editor_command.
+        Due to this change ewk_view_select_* functions have been removed.
+        https://bugs.webkit.org/show_bug.cgi?id=60435
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_execute_editor_command):
+        * ewk/ewk_view.h:
+
+2011-05-07  Tomasz Morawski  <t.morawski@samsung.com>
+
+        Reviewed by Daniel Bates.
+
+        [EFL] Remove ewk_tile_unused_cache_free function from public API
+        https://bugs.webkit.org/show_bug.cgi?id=60151
+
+        The ewk_tile_unused_cache_free function should be only called by
+        ewk_tile_unused_cache_unref function. Calling this function without
+        considering reference counting may lead to fatal results.
+
+        * ewk/ewk_tiled_model.c:
+        (_ewk_tile_unused_cache_free):
+        (ewk_tile_unused_cache_unref):
+        * ewk/ewk_tiled_model.h:
+
+2011-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename SelectionController to FrameSelection
+        https://bugs.webkit.org/show_bug.cgi?id=60234
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::handleEditingKeyboardEvent):
+
+2011-05-04  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Expose WebView directly through ChromeClient.
+        https://bugs.webkit.org/show_bug.cgi?id=49902
+
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::webView):
+
+2011-05-04  Tomasz Morawski  <t.morawski@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Added error check for _ewk_init_body result.
+        https://bugs.webkit.org/show_bug.cgi?id=60149
+
+        The ewk_init function should be failed when _ewk_init_body function
+        return false.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
+2011-05-04  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by David Kilzer.
+
+        Populate touch-icon url to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=59143
+
+        Respect the interface change in FrameLoaderClient
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidChangeIcons):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-05-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Initialize viewport argument in ewk_view.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=60147
+
+        viewport computation logic can't be worked correctly because viewport argument
+        isn't initialized. So, we need to initialize viewport argument.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
+2011-05-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix for NETWORK_BACKEND=curl.
+
+        Force linking with zlib so that uncompress() exists.
+
+        * CMakeListsEfl.txt: Append zlib libraries.
+
+2011-05-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Style error fix.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+
+2011-04-28  Kamil Blank  <k.blank@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        New API for executing Editor Commands: InsertText, InsertImage.
+        https://bugs.webkit.org/show_bug.cgi?id=54439
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_editor_command): Added value parameter.
+        (ewk_view_execute_editor_command): Added.
+        * ewk/ewk_view.h: New API added.
+
+2011-04-26  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Update signals description
+        https://bugs.webkit.org/show_bug.cgi?id=56904
+
+        Add, fix signals description that are emitted by evas_object_smart_callcabck_call in
+        ewk_view, ewk_frame, ewk_contextmenu.
+
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_frame.h:
+        * ewk/ewk_view.h:
+
+2011-04-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove ewk_eapi.h
+        https://bugs.webkit.org/show_bug.cgi?id=59091
+
+        * ewk/EWebKit.h:
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_cookies.h:
+        * ewk/ewk_eapi.h: Removed.
+        * ewk/ewk_frame.h:
+        * ewk/ewk_history.h:
+        * ewk/ewk_main.h:
+        * ewk/ewk_settings.h:
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.h:
+        * ewk/ewk_window_features.h:
+
+2011-04-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Add Frame* to the argument lists of canCopyCut and canPaste
+        https://bugs.webkit.org/show_bug.cgi?id=59153
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::canCopyCut):
+        (WebCore::EditorClientEfl::canPaste):
+        * WebCoreSupport/EditorClientEfl.h:
+
+2011-04-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename lengthReceived to encodedDataLength/dataLength
+        https://bugs.webkit.org/show_bug.cgi?id=58883
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveContentLength):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-04-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r84155.
+        http://trac.webkit.org/changeset/84155
+        https://bugs.webkit.org/show_bug.cgi?id=58802
+
+        "paintEntireContents flag is used for painting outside of the
+        screen. It's not the right way to fix EFL tiled backing
+        store." (Requested by demarchi on #webkit).
+
+        * ewk/ewk_view_tiled.c:
+        (_ewk_view_tiled_smart_add):
+
+2011-04-18  Eunsol Park  <eunsol47.park@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Scroll doesn't work on tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=55021
+
+        Scroll doesn't work on tiled backing store, but it works on single.
+        If ewk_frame_paint_full_set() set True, view size return content size and scroll can't be made. 
+        so, ewk_frame_paint_full_set() is removed from ewk_tiled_smart_add().
+
+        * ewk/ewk_view_tiled.c:
+        (_ewk_view_tiled_smart_add):
+
+2011-04-14  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        Memory cache API
+        https://bugs.webkit.org/show_bug.cgi?id=58016
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_cache_enable_get):
+        (ewk_settings_cache_enable_set):
+        (ewk_settings_cache_capacity_set):
+        * ewk/ewk_settings.h:
+
+2011-04-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Doxygen documentation for ewk_main, ewk_history and tools
+        https://bugs.webkit.org/show_bug.cgi?id=58428
+
+        * ewk/EWebKit.h:
+        * ewk/ewk_eapi.h:
+        * ewk/ewk_history.h:
+        * ewk/ewk_logging.h:
+        * ewk/ewk_main.cpp:
+        * ewk/ewk_main.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_util.cpp:
+        * ewk/ewk_util.h:
+
+2011-04-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Adjust dpi value to viewport computation.
+        https://bugs.webkit.org/show_bug.cgi?id=58130
+
+        In viewport computation, EFL port have used 160 value for DPI since now.
+        But, we have to use device's dpi value for viewport meta tag computation.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
+2011-04-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Carlson.
+
+        [EFL] Add seek forward / backward buttons to MediaControl UI.
+        https://bugs.webkit.org/show_bug.cgi?id=56810
+
+        Add seek forward / backward buttons to media control.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc: Added.
+        * DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackwardbutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforward_button.edc: Added.
+        * DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforwardbutton.png: Added.
+
+2011-04-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [Refactoring] SpellCheckingResult should be replaced with TextCheckingResult
+        https://bugs.webkit.org/show_bug.cgi?id=56085
+        
+        * WebCoreSupport/EditorClientEfl.h:
+        (WebCore::EditorClientEfl::requestCheckingOfString):
+
+2011-04-01  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Synchronization between WebCore's ContextMenuItem.h and ewk_contextmenu.h
+        https://bugs.webkit.org/show_bug.cgi?id=57000
+
+        * ewk/ewk_contextmenu.h:
+
+2011-03-31  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <title> should support dir attribute
+        https://bugs.webkit.org/show_bug.cgi?id=50961
+
+        Update to new FrameLoaderClient interface.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveTitle):
+        (WebCore::FrameLoaderClientEfl::setTitle):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-03-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove unnecessary ewk_view_viewport_attributes_set() invocation
+        https://bugs.webkit.org/show_bug.cgi?id=57222
+
+        WebCore sends viewport signal whenever viewport is changed by Page::updateViewportArguments().
+        Thus, we don't need to call ewk_view_viewport_attributes_set() with dummy viewport data
+        anymore.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+
+2011-03-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix agentOS() in FrameLoaderClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=57177
+
+        Replace old PLATFORM macro with OS and CPU.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::agentOS):
+
+2011-03-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [EFL] Use an appropriate user agent string
+        https://bugs.webkit.org/show_bug.cgi?id=57176
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::composeUserAgent):
+
+2011-03-25  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        Update objectContentType() implementation to handle the
+        shouldPreferPlugInsForImages flag.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::objectContentType):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-03-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add sound / mute button to MediaControl UI
+        https://bugs.webkit.org/show_bug.cgi?id=56726
+
+        Add sound / mute button to MediaControl UI.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/mutebutton/mute_button.edc: Added.
+        * DefaultTheme/widget/mediacontrol/mutebutton/mutebutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/mutebutton/unmutebutton.png: Added.
+
+2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81916 and r81917.
+        http://trac.webkit.org/changeset/81916
+        http://trac.webkit.org/changeset/81917
+        https://bugs.webkit.org/show_bug.cgi?id=57071
+
+        broke a test on platforms that do not have QuickTime installed
+        (Requested by estes on #webkit).
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::objectContentType):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-03-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        Update objectContentType() implementation to handle the
+        shouldPreferPlugInsForImages flag.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::objectContentType):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-03-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change IconDatabase opening to allow for arbitrary filenames
+        https://bugs.webkit.org/show_bug.cgi?id=56977
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_set):
+
+2011-03-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add play / pause button to media control
+        https://bugs.webkit.org/show_bug.cgi?id=55463
+
+        Add play|pause button to media control.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/playpausebutton/pausebutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/playpausebutton/playbutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/playpausebutton/playpause_button.edc: Added.
+
+2011-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Change return values with better one in ewk_setting's functions
+        https://bugs.webkit.org/show_bug.cgi?id=56819
+
+        In ewk_settings_cache_directory_path_set_xxx, they return false value
+        when soup is disabled. It is better to use EINA_SAFETY_ON_TRUE_RETURN_XXX.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_get):
+        (ewk_settings_cache_directory_path_set):
+        (ewk_settings_cache_directory_path_get):
+
+2011-03-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        Add void to function without parameters
+        https://bugs.webkit.org/show_bug.cgi?id=56821
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_clear):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_cookies.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_default_quota_get):
+        (ewk_settings_web_database_path_get):
+        (ewk_settings_proxy_uri_get):
+        (ewk_settings_default_user_agent_get):
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_dpi_get):
+
+2011-03-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56425
+        More groundwork for WebKit2 IconDatabase
+
+        Update already-used function names:
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_icon_surface_get):
+        (ewk_history_item_icon_object_add):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_icon_surface_get):
+        (ewk_settings_icon_database_icon_object_add):
+
+2011-03-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport no longer allows an auto value for "user-scalable"
+        https://bugs.webkit.org/show_bug.cgi?id=55416
+
+        Make the default value for userScalable be true.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_viewport_attributes_get):
+
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Try to fix the EFL build-bustage that their EWS bot did not see, but their core-builder did.  (sigh)
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_icon_surface_get):
+        (ewk_history_item_icon_object_add):
+
+2011-03-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56320
+        Remove HistoryItem::icon() and the WebCore dependency on "IconDatabaseBase::defaultIcon()"
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_icon_surface_get): Use IconDatabase directly.
+
+2011-03-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Move cache_directory api
+        https://bugs.webkit.org/show_bug.cgi?id=52139
+
+        Move cache directory related apis from ewk_view to ewk_settings because
+        those are not related to ewk_view.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_cache_directory_path_set):
+        (ewk_settings_cache_directory_path_get):
+        * ewk/ewk_settings.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        * ewk/ewk_view.h:
+
+2011-03-12  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Fix build break because of several reason.
+        https://bugs.webkit.org/show_bug.cgi?id=56244
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_set):
+
+2011-03-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Limit touch events when only page required touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=54857
+
+        Block touch events when ChromeClient::needTouchEvents got false.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::needTouchEvents):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_need_touch_events_set):
+        (ewk_view_need_touch_events_get):
+
+2011-03-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Doxygen documentation for ewk_window_features and ewk_context_menu
+        https://bugs.webkit.org/show_bug.cgi?id=55026
+
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_item_select): returns EINA_FALSE when CONTEXT_MENU is disabled
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_window_features.cpp:
+        * ewk/ewk_window_features.h:
+
+2011-03-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Replace WebKit2's decidePolicyForMIMEType with decidePolicyForResponse
+        https://bugs.webkit.org/show_bug.cgi?id=55827
+
+        Renamed FrameLoaderClient::dispatchDecidePolicyForMIMEType to dispatchDecidePolicyForResponse
+        and pass the entire response, instead of just the MIMEType.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForResponse):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-03-04  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Doxygen documentation for ewk_settings
+        https://bugs.webkit.org/show_bug.cgi?id=55667
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_user_agent_get): only style is fixed
+        * ewk/ewk_settings.h:
+
+2011-03-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55721
+        Global IconDatabase should be returned by reference, not as a pointer
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_set):
+        (ewk_settings_icon_database_path_get):
+        (ewk_settings_icon_database_clear):
+        (ewk_settings_icon_database_icon_surface_get):
+        (ewk_settings_icon_database_icon_object_add):
+
+2011-03-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Removing an include of WebCoreKeyboardUIMode.h that Ive just added. It's already included
+        via ChromeClient.h
+
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2011-03-02  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (WebKit2): Tab keys no longer observe Full Keyboard Access
+        https://bugs.webkit.org/show_bug.cgi?id=55633
+        <rdar://problem/8963023>
+
+        * WebCoreSupport/ChromeClientEfl.cpp: (WebCore::ChromeClientEfl::keyboardUIMode):
+        * WebCoreSupport/ChromeClientEfl.h:
+        Implement keyboardUIMode() instead of tabsToLinks(). No change in functionality, since
+        this platform doesn't observe or have full keyboard access state.
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed. Roll out r80068 and r80073 due to breaking WebKit2 Qt port.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
+2011-03-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport Warning/Error Messages Are Now Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=53707
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute): pass a Document into computeViewportAttributes for warnings to be reported to.
+
+2011-02-28  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the support of Frame::isContentEditable and its dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=54292
+
+        Remove the WebKit side implementation.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        * WebCoreSupport/EditorClientEfl.h:
+
+2011-02-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Restore parameters of efl header files.
+        https://bugs.webkit.org/show_bug.cgi?id=55292
+
+        Restore parameters in efl header files.
+
+        * ewk/ewk_frame.h:
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_pre_render_relative_radius):
+        * ewk/ewk_view.h:
+        * ewk/ewk_window_features.h:
+
+2011-02-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Replace WTF_USE_SOUP macro with USE(SOUP)
+        https://bugs.webkit.org/show_bug.cgi?id=55296
+
+        ewk_cookies.cpp and ewk_main.cpp are using WTF_USE_SOUP macro. 
+        So, according to policy decision macro usage, the macro needs to 
+        be changed with USE(SOUP).
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_cookie_free):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
+2011-02-24  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Drop the "U; " encryption level from the User Agent string.
+        https://bugs.webkit.org/show_bug.cgi?id=54566
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::composeUserAgent):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_user_agent_get):
+
+2011-02-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use AtomicString::fromUTF8 instead of String::fromUTF8 for AtomicStrings
+        https://bugs.webkit.org/show_bug.cgi?id=54992
+
+        Also remove the WTF namespace from AtomicString and String.
+
+        * ewk/ewk_view.cpp:
+
+2011-02-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop the language tag part from the User Agent string
+        https://bugs.webkit.org/show_bug.cgi?id=54560
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::composeUserAgent):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_default_user_agent_get):
+
+2011-02-21  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fixed missing spatial navigation setting initialization. Doxygen comments added.
+        https://bugs.webkit.org/show_bug.cgi?id=54806
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): spatial navigation setting initialization added
+
+2011-02-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Fix coding style errors in tiled BS and ewk_window_feature.h
+        https://bugs.webkit.org/show_bug.cgi?id=54842
+
+        Fix style errors in ewk files.
+
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.h:
+        * ewk/ewk_window_features.h:
+
+2011-02-19  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Andreas Kling.
+
+        [EFL] Eliminated error when .webkit directory doesn't exist.
+        https://bugs.webkit.org/show_bug.cgi?id=54813
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
+2011-02-19  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Unreviewed build fix.
+
+        SoupSession build break fix
+        https://bugs.webkit.org/show_bug.cgi?id=54796
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_set):
+
+2011-02-19  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Andreas Kling.
+
+        [EFL] Use standard WebCore::homeDirectoryPath method instead of reimplementing it
+        https://webkit.org/b/54781
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
+2011-02-19  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Ensure loading has stopped in HistoryController::goToItem
+        https://bugs.webkit.org/show_bug.cgi?id=54517
+
+        Add a FrameLoaderClient callback for whether to stop loading before goToItem.
+
+        Test: http/tests/navigation/forward-to-fragment-fires-onload.html
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::shouldStopLoadingForHistoryItem): Added.
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Fix coding style errors in ewk_frame.h
+        https://bugs.webkit.org/show_bug.cgi?id=54718
+
+        Fix style errors in ewk_frame.h.
+
+        * ewk/ewk_frame.h:
+
+2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove proxy feature of soup when proxy is null
+        https://bugs.webkit.org/show_bug.cgi?id=54621
+
+        When proxy value is NULL, remove proxy feature in soup.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_set):
+
+2011-02-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Fix coding style errors in ewk_view.h
+        https://bugs.webkit.org/show_bug.cgi?id=54624
+
+        Fix style errors in ewk_view.h.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_pre_render_relative_radius):
+        * ewk/ewk_view.h:
+
+2011-02-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix after r78634 and r78786.
+
+        * CMakeListsEfl.txt:
+
+2011-02-17  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Possible crash of ewk_frame_contents_set
+        https://bugs.webkit.org/show_bug.cgi?id=54091
+
+        Use length of contents if contents_size parameter is bigger than length
+        of contents.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_contents_set_internal):
+
+2011-02-17  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        Doxygen documentation for ewk cookies
+        https://bugs.webkit.org/show_bug.cgi?id=54553
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_cookies.h:
+
+2011-02-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Build break on r78634
+        https://bugs.webkit.org/show_bug.cgi?id=54602
+
+        Build error because of r78634.
+
+        * CMakeListsEfl.txt:
+
+2011-01-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring: Extract TextCheckerClient from EditorClient
+        https://bugs.webkit.org/show_bug.cgi?id=53213
+
+        * WebCoreSupport/EditorClientEfl.h:
+        (WebCore::EditorClientEfl::textChecker):
+
+2011-02-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add EditorClient callbacks to override isDOMPasteAllowed and javaScriptCanAccessClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=52417
+
+        Added two callback functions, canCopyCut and canPaste to EditorClient. They are currently
+        not implemented.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::canCopyCut): Added.
+        (WebCore::EditorClientEfl::canPaste): Added.
+        * WebCoreSupport/EditorClientEfl.h:
+
+2011-02-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove orphan code from old parser
+        https://bugs.webkit.org/show_bug.cgi?id=53984
+
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2011-02-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Fix when building with curl backend.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_get):
+
+2011-02-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed Adam Roben and Darin Adler.
+
+        WebKit2: drag and drop support on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=52775
+
+        Removed createDragImageForLink from DragClient.
+
+        * WebCoreSupport/DragClientEfl.cpp:
+        * WebCoreSupport/DragClientEfl.h:
+
+2011-02-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [EFL] FrameLoaderClient calls loadURLInChildFrame on the child's frame loader
+        https://bugs.webkit.org/show_bug.cgi?id=53892
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_child_add): Use the loader of the core frame instead.
+
+2011-02-03  Adam Langley  <agl@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Plumb mixed script URL to FrameLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=52384
+
+        Regressions covered by http/tests/security/mixedContent/*
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didRunInsecureContent):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2011-02-01  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add an API to get proxy address.
+        https://bugs.webkit.org/show_bug.cgi?id=52990
+
+        Gets the proxy URI from network backend. This API returns a proxy URI
+        which is set up by ewk_settings_proxy_uri_set(). But, it only implements
+        this API for libsoup backend.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_get):
+        * ewk/ewk_settings.h:
+
+2011-01-29  Dan Winship  <danw@gnome.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove HAVE_LIBSOUP_2_29_90 conditionals; we depend on
+        libsoup 2.33.1 now.
+        https://bugs.webkit.org/show_bug.cgi?id=50675
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+
+2011-01-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <select> can't display right-to-left (rtl) languages
+        https://bugs.webkit.org/show_bug.cgi?id=19785
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::selectItemAlignmentFollowsMenuWritingDirection): Added.
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2011-01-27  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Use Document::url() instead of FrameLoader::url().
+        https://bugs.webkit.org/show_bug.cgi?id=41165
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_uri_changed):
+
+2011-01-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Try to fix EFL build.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_scroll_add): Added WebCore namespace to IntSize.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute): Ditto.
+
+2011-01-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed build fix.
+
+        Fix Qt build after r75837
+        https://bugs.webkit.org/show_bug.cgi?id=52494
+
+        * ewk/ewk_view.cpp:
+
+2011-01-09  Xianzhu Wang <phnixwxz@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41441
+        createWindow method should only do window-creating without URL navigation
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow):
+
+2010-12-27  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Set the frame smart object base clipper to non-static.
+        https://bugs.webkit.org/show_bug.cgi?id=51552
+
+        The base clipper of the clipped smart object, which is the parent
+        class of the ewk_frame class is a static clipper. It's normally only
+        used for showing/hiding the object, but in the case of the ewk_frame,
+        it needs to clip the object to its dimension, in order to clip
+        scrollbars of inner frames.
+
+        Setting it to non-static makes the clipper to be automatically moved
+        by the parent class, thus staying on the correct position when the
+        frame is moved.
+
+        This change needed to be done after the adoption of the static clipper
+        on the clipped smart base class.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_smart_add):
+
+2010-12-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add option to enable Touch Events.
+        https://bugs.webkit.org/show_bug.cgi?id=49125
+
+        Implement ewk_frame_feed_touch_event to feed touch events. Because EFL
+        doesn't have touch events, Application should generate and pass it.
+
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::needTouchEvents):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+        * ewk/ewk_frame.h:
+
+2010-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit2 needs to mirror the frame tree in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=51546
+
+        - Add client functions to notify that a frame has been added or
+          removed from the page cache.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didSaveToPageCache):
+        (WebCore::FrameLoaderClientEfl::didRestoreFromPageCache):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Editor.h doesn't need to include SelectionController.h
+        https://bugs.webkit.org/show_bug.cgi?id=51441
+
+        Renamed SelectionController::EDirection to SelectionDirection.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::handleEditingKeyboardEvent):
+
+2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Fix ContextMenu removal
+        https://bugs.webkit.org/show_bug.cgi?id=51530
+
+        Fix ContextMenu removal
+
+        In r74207 the support for ContextMenu was removed from EFL while the
+        code is being ported to the new CROSS_PLATFORM_MENUS due to build
+        breakage.  However there were some missing removals in the shutdown
+        logic that introduced a bug, leading to a segmentation fault when
+        ContexController was destroyed.
+
+        The best way to effectively disable the ContextMenu is to conditionally
+        compile the meaningful stuff by surrounding with "#if
+        ENABLE(CONTEXT_MENUS)" and then disabling it in CMake.
+
+        * ewk/ewk_contextmenu.cpp: surround need parts with #if
+        ENABLE(CONTEXT_MENUS).
+        (ewk_context_menu_destroy): ditto.
+        (ewk_context_menu_item_select): ditto.
+        * ewk/ewk_private.h: ditto.
+        * ewk/ewk_view.cpp: ditto.
+
+2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Clean warnings in Tiled Backing Store
+        https://bugs.webkit.org/show_bug.cgi?id=51529
+
+        Tiled backing store in EFL was giving the following warnings that are
+        gone now:
+
+        - Static function defined but not used;
+        - Comparison between signed and unsigned integer expressions;
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_smart_calculate):
+        * ewk/ewk_tiled_matrix.c:
+        (_ewk_tile_matrix_slicer_setup):
+
+2010-12-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build warning fix.
+
+        [EFL] Remove warning messages during the webkit efl compiling
+        https://bugs.webkit.org/show_bug.cgi?id=51520
+
+        Remove build warning messages.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_show):
+        (_ewk_view_smart_hide):
+        * ewk/ewk_view.h:
+
+2010-12-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Sets default user agent
+        https://bugs.webkit.org/show_bug.cgi?id=47903
+
+        If applcation(e.g EWebLauncher) doesn't set user agent, WebKit EFL doesn't
+        set user agent. However, we need to set user agent by default. Because, some
+        web sites send different pages according to user agent.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_settings.cpp:
+        (_ewk_settings_webkit_platform):
+        (_ewk_settings_webkit_os_version):
+        (ewk_settings_default_user_agent_get):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
+2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix.
+
+        Disable ContextMenu support for now while support for
+        CROSS_PLATFORM_MENUS is written.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/ContextMenuClientEfl.cpp: Removed.
+        * WebCoreSupport/ContextMenuClientEfl.h: Removed.
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_item_append):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
+2010-12-13  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
+        Remove adjacent tiles rendering queue.
+        https://bugs.webkit.org/show_bug.cgi?id=50023
+
+        In the current implementation of the tiled backing store, one extra row
+        and column of tiles are needed to render the entire viewport. These
+        extra row/col proved to be expensive when being rendered, and were
+        postponed to a queue that would render them after rendering the other
+        tiles of the viewport first. This approach complicated unnecessarily
+        the logics with no gain for keeping the extra row and column. This
+        change removes this rendering queue, for later removing the extra row
+        and column of tiles.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (_ewk_tiled_backing_store_pre_render_request_flush):
+        (_ewk_tiled_backing_store_pre_render_request_clear):
+        (_ewk_tiled_backing_store_pre_render_request_process_single):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_del):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        (ewk_tiled_backing_store_pre_render_cancel):
+
+2010-12-13  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
+        Remove one row/column of renderers.
+        https://bugs.webkit.org/show_bug.cgi?id=50456
+
+        This changes the algorithm in a way that it will require one less column
+        and row of renderers to fill the viewport. The direct result of this is
+        that now less tiles need to be rendered at once when displaying the
+        viewport.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_view_wrap_up):
+        (_ewk_tiled_backing_store_view_wrap_down):
+        (_ewk_tiled_backing_store_view_wrap_left):
+        (_ewk_tiled_backing_store_view_wrap_right):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_fix_offsets):
+        (ewk_tiled_backing_store_flush):
+
+2010-10-28  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        spellcheck does not check pasted text
+        https://bugs.webkit.org/show_bug.cgi?id=40092
+
+        Added a stub implememntation.
+        
+        * WebCoreSupport/EditorClientEfl.h:
+        (WebCore::EditorClientEfl::requestCheckingOfString):
+
+2010-12-09  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add missing function in WebKit-EFL API
+
+        Add ewk_tiled_backing_store_zoom_weak_smooth_scale_set function in
+        WebKit-EFL API. This function was already implemented but missing in
+        header file.
+
+        * ewk/ewk_tiled_backing_store.h:
+
+2010-12-09  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fix scroll operation in WebKit-EFL
+        https://bugs.webkit.org/show_bug.cgi?id=50752
+
+        Add the _ewk_view_scroll_add call in WebKit-EFL scroll function. This
+        call was wrongly removed in previous commit and performs the scroll
+        operation on the page.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_scroll):
+
+2010-12-03  Alex Bredariol Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Andreas Kling.
+
+        Update usage of Eina_Iterator due to EFL changes.
+        https://bugs.webkit.org/show_bug.cgi?id=50457
+
+        * ewk/ewk_tiled_model.c:
+        (ewk_tile_updates_process):
+
+2010-12-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Support multiple correction candidates panel for misspelled word on Mac OS X.
+        https://bugs.webkit.org/show_bug.cgi?id=50137
+        <rdar://problem/8568059>
+
+        Adopted new function signature defined in base class.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::getGuessesForWord):
+        * WebCoreSupport/EditorClientEfl.h:
+
+2010-11-22  Alex Grilo  <abgrilo@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Tiled Backing Store for Webkit-Efl
+        https://bugs.webkit.org/show_bug.cgi?id=45397
+
+        This tile based backing store is a grid of tiles where each tile is
+        an Evas_Object showing a piece of the page content. The
+        new ewk_view_tiled.c is an implementation of some of the functions of
+        the original ewk_view, that makes calls to the Tiled Backing Store
+        specific functions.
+
+        The rendering occurs in the pixels stored in each tile (Evas_Object),
+        in the same way as the previous single backing store. Tiles not being
+        shown in the viewport are stored in a cache, and can be reused later
+        to avoid having to be rendered again.
+
+        Scrolling occurs as just moving the tiles, using Evas move operations,
+        and when more than one tile size is scrolled, a shift of rows or
+        columns needs to be done.
+
+        * CMakeListsEfl.txt:
+        * ewk/ewk_tiled_backing_store.c: Added.
+        (_ewk_tiled_backing_store_updates_process):
+        (_ewk_tiled_backing_store_flush):
+        (_ewk_tiled_backing_store_tile_new):
+        (_ewk_tiled_backing_store_item_move):
+        (_ewk_tiled_backing_store_item_resize):
+        (_ewk_tiled_backing_store_tile_associate):
+        (_ewk_tiled_backing_store_tile_dissociate):
+        (_ewk_tiled_backing_store_tile_dissociate_all):
+        (_ewk_tiled_backing_store_pre_render_request_add):
+        (_ewk_tiled_backing_store_pre_render_request_del):
+        (_ewk_tiled_backing_store_pre_render_request_first):
+        (_ewk_tiled_backing_store_pre_render_request_flush):
+        (_ewk_tiled_backing_store_pre_render_request_remove_unassociated):
+        (_ewk_tiled_backing_store_pre_render_request_remove_associated):
+        (_ewk_tiled_backing_store_pre_render_request_process_single):
+        (_ewk_tiled_backing_store_item_process_idler_cb):
+        (_ewk_tiled_backing_store_item_process_idler_stop):
+        (_ewk_tiled_backing_store_item_process_idler_start):
+        (_ewk_tiled_backing_store_item_request_del):
+        (_ewk_tiled_backing_store_item_request_add):
+        (_ewk_tiled_backing_store_disable_render):
+        (_ewk_tiled_backing_store_enable_render):
+        (_ewk_tiled_backing_store_visible_tiles_rect):
+        (_ewk_tiled_backing_store_tile_is_inside_viewport):
+        (_ewk_tiled_backing_store_tile_is_adjacent_to_viewport):
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+        (_ewk_tiled_backing_store_item_del):
+        (_ewk_tiled_backing_store_item_smooth_scale_set):
+        (_ewk_tiled_backing_store_changed):
+        (_ewk_tiled_backing_store_view_cols_end_del):
+        (_ewk_tiled_backing_store_view_cols_end_add):
+        (_ewk_tiled_backing_store_view_row_del):
+        (_ewk_tiled_backing_store_view_rows_range_del):
+        (_ewk_tiled_backing_store_view_rows_all_del):
+        (_ewk_tiled_backing_store_render):
+        (_ewk_tiled_backing_store_model_matrix_create):
+        (_ewk_tiled_backing_store_smart_member_del):
+        (_ewk_tiled_backing_store_smart_member_add):
+        (_ewk_tiled_backing_store_mem_dbg):
+        (_ewk_tiled_backing_store_sig_usr):
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_smart_del):
+        (_ewk_tiled_backing_store_smart_move):
+        (_ewk_tiled_backing_store_smart_resize):
+        (_ewk_tiled_backing_store_recalc_renderers):
+        (_ewk_tiled_backing_store_smart_calculate_size):
+        (_ewk_tiled_backing_store_view_dbg):
+        (_ewk_tiled_backing_store_view_wrap_up):
+        (_ewk_tiled_backing_store_view_wrap_down):
+        (_ewk_tiled_backing_store_view_wrap_left):
+        (_ewk_tiled_backing_store_view_wrap_right):
+        (_ewk_tiled_backing_store_view_refill):
+        (_ewk_tiled_backing_store_view_pos_apply):
+        (_ewk_tiled_backing_store_smart_calculate_offset_force):
+        (_ewk_tiled_backing_store_smart_calculate_offset):
+        (_ewk_tiled_backing_store_smart_calculate_pos):
+        (_ewk_tiled_backing_store_fill_renderers):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (ewk_tiled_backing_store_add):
+        (ewk_tiled_backing_store_render_cb_set):
+        (ewk_tiled_backing_store_tile_unused_cache_get):
+        (ewk_tiled_backing_store_tile_unused_cache_set):
+        (_ewk_tiled_backing_store_scroll_full_offset_set_internal):
+        (ewk_tiled_backing_store_scroll_full_offset_set):
+        (ewk_tiled_backing_store_scroll_full_offset_add):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_set):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_fix_offsets):
+        (ewk_tiled_backing_store_zoom_weak_smooth_scale_set):
+        (ewk_tiled_backing_store_update):
+        (ewk_tiled_backing_store_updates_process_pre_set):
+        (ewk_tiled_backing_store_updates_process_post_set):
+        (ewk_tiled_backing_store_updates_process):
+        (ewk_tiled_backing_store_updates_clear):
+        (ewk_tiled_backing_store_contents_resize):
+        (ewk_tiled_backing_store_disabled_update_set):
+        (ewk_tiled_backing_store_flush):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        (ewk_tiled_backing_store_pre_render_cancel):
+        (ewk_tiled_backing_store_disable_render):
+        (ewk_tiled_backing_store_enable_render):
+        (ewk_tiled_backing_store_process_entire_queue_set):
+        * ewk/ewk_tiled_backing_store.h: Added.
+        * ewk/ewk_tiled_matrix.c: Added.
+        (_ewk_tile_matrix_cell_free):
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_free):
+        (ewk_tile_matrix_resize):
+        (ewk_tile_matrix_unused_cache_get):
+        (ewk_tile_matrix_tile_exact_get):
+        (ewk_tile_matrix_tile_exact_exists):
+        (ewk_tile_matrix_tile_nearest_get):
+        (ewk_tile_matrix_tile_new):
+        (ewk_tile_matrix_tile_put):
+        (ewk_tile_matrix_tile_update):
+        (ewk_tile_matrix_tile_update_full):
+        (ewk_tile_matrix_tile_updates_clear):
+        (_ewk_tile_matrix_slicer_setup):
+        (ewk_tile_matrix_update):
+        (ewk_tile_matrix_updates_process):
+        (ewk_tile_matrix_updates_clear):
+        (ewk_tile_matrix_dbg):
+        (ewk_tile_matrix_freeze):
+        (ewk_tile_matrix_thaw):
+        * ewk/ewk_tiled_matrix.h: Added.
+        * ewk/ewk_tiled_model.c: Added.
+        (_ewk_tile_account_get):
+        (_ewk_tile_account_allocated):
+        (_ewk_tile_account_freed):
+        (ewk_tile_accounting_dbg):
+        (_ewk_tile_paint_rgb888):
+        (_ewk_tile_paint_rgb565):
+        (_ewk_tile_paint):
+        (ewk_tile_new):
+        (ewk_tile_free):
+        (ewk_tile_show):
+        (ewk_tile_hide):
+        (ewk_tile_visible_get):
+        (ewk_tile_update_full):
+        (ewk_tile_update_area):
+        (ewk_tile_updates_process):
+        (ewk_tile_updates_clear):
+        (ewk_tile_unused_cache_new):
+        (ewk_tile_unused_cache_lock_area):
+        (ewk_tile_unused_cache_unlock_area):
+        (ewk_tile_unused_cache_free):
+        (ewk_tile_unused_cache_clear):
+        (ewk_tile_unused_cache_ref):
+        (ewk_tile_unused_cache_unref):
+        (ewk_tile_unused_cache_max_set):
+        (ewk_tile_unused_cache_max_get):
+        (ewk_tile_unused_cache_used_get):
+        (ewk_tile_unused_cache_flush):
+        (ewk_tile_unused_cache_auto_flush):
+        (ewk_tile_unused_cache_dirty):
+        (ewk_tile_unused_cache_freeze):
+        (ewk_tile_unused_cache_thaw):
+        (ewk_tile_unused_cache_tile_get):
+        (ewk_tile_unused_cache_tile_put):
+        (ewk_tile_unused_cache_dbg):
+        * ewk/ewk_tiled_model.h: Added.
+        * ewk/ewk_tiled_private.h: Added.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_calculate):
+        (_ewk_view_smart_show):
+        (_ewk_view_smart_hide):
+        (_ewk_view_smart_pre_render_relative_radius):
+        (_ewk_view_zoom_animator_cb):
+        (_ewk_view_smart_disable_render):
+        (_ewk_view_smart_enable_render):
+        (ewk_view_base_smart_set):
+        (ewk_view_pre_render_region):
+        (ewk_view_pre_render_relative_radius):
+        (ewk_view_enable_render):
+        (ewk_view_disable_render):
+        (ewk_view_scroll):
+        (ewk_view_did_first_visually_nonempty_layout):
+        (ewk_view_dispatch_did_finish_loading):
+        (ewk_view_transition_to_commited_for_newpage):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_tiled.c: Added.
+        (_ewk_view_tiled_render_cb):
+        (_ewk_view_tiled_updates_process_pre):
+        (_ewk_view_tiled_smart_backing_store_add):
+        (_ewk_view_tiled_contents_size_changed_cb):
+        (_ewk_view_tiled_smart_add):
+        (_ewk_view_tiled_smart_scrolls_process):
+        (_ewk_view_tiled_smart_repaints_process):
+        (_ewk_view_tiled_smart_contents_resize):
+        (_ewk_view_tiled_smart_zoom_set):
+        (_ewk_view_tiled_smart_zoom_weak_set):
+        (_ewk_view_tiled_smart_zoom_weak_smooth_scale_set):
+        (_ewk_view_tiled_smart_flush):
+        (_ewk_view_tiled_smart_pre_render_region):
+        (_ewk_view_tiled_smart_pre_render_relative_radius):
+        (_ewk_view_tiled_smart_pre_render_cancel):
+        (_ewk_view_tiled_smart_disable_render):
+        (_ewk_view_tiled_smart_enable_render):
+        (ewk_view_tiled_smart_set):
+        (_ewk_view_tiled_smart_class_new):
+        (ewk_view_tiled_add):
+        (ewk_view_tiled_unused_cache_get):
+        (ewk_view_tiled_unused_cache_set):
+        (ewk_view_tiled_process_entire_queue_set):
+
+2010-11-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix.
+
+        * WebCoreSupport/FrameLoaderClientEfl.h: Also include
+        ResourceError.h.
+
+2010-11-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Add platform dependent include directories
+        https://bugs.webkit.org/show_bug.cgi?id=49553
+
+        * CMakeListsEfl.txt:
+
+2010-11-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] add pango support
+        https://bugs.webkit.org/show_bug.cgi?id=46029
+
+        Add pango in include and libs.
+
+        * CMakeListsEfl.txt:
+
+2010-11-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] Move font related files.
+        https://bugs.webkit.org/show_bug.cgi?id=48116
+
+        Add freetype/ to include path.
+
+        * CMakeListsEfl.txt:
+
+2010-11-08  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Change the usage of eina_iterator_next due to latest EFL changes.
+        https://bugs.webkit.org/show_bug.cgi?id=49082
+
+        A change on how the iterator for a tiler is used in EFL needs to be
+        reflected in WebKit-EFL. The iterator now receives a pointer to an
+        Eina_Rectangle and makes it point to its internal structure. The old
+        usage was to receive a reference to a pre-allocated Eina_Rectangle.
+
+        * ewk/ewk_view_single.c:
+        (_ewk_view_single_smart_repaints_process):
+
+2010-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48685
+        Notify UI process about focused frame
+
+        Added an empty implementation of the new ChromeClient method.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::focusedFrameChanged):
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2010-11-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Replace ARRAYSIZE with WTF_ARRAY_LENGTH
+        https://bugs.webkit.org/show_bug.cgi?id=48903
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::interpretKeyEvent):
+
+2010-11-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Reflect latest EFL changes related to stride.
+        https://bugs.webkit.org/show_bug.cgi?id=48971
+
+        Remove adjustment code to compare stride of cairo_image_surfece and evas_object_image, as following changes of latest EFL.
+
+        * ewk/ewk_util.cpp:
+        (ewk_util_image_from_cairo_surface_add):
+
+2010-11-03  Daniel Bates  <dbates@rim.com>
+
+        For unnamed frames, window.name returns a generated name
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Part 1 of 2.
+
+        Substitute FrameTree::uniqueName() for FrameTree::name() in the EFL port.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_name_get):
+
+2010-11-02  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Set frame name before appending it to the frame tree in the Apple Windows,
+        GTK, and EFL ports
+        https://bugs.webkit.org/show_bug.cgi?id=48806
+
+        Make the frame creation process in the EFL-port consistent with the
+        Mac, Qt, and Haiku ports. In particular, set the name of the new
+        frame before it's appended to the frame tree.
+
+        At this time we cannot test this change since it is being masked by
+        HTMLFrameElementBase::setName() <http://trac.webkit.org/browser/trunk/WebCore/html/HTMLFrameElementBase.cpp?rev=70976#L160>.
+        We'll be able to test this once we fix bug #6751.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_child_add):
+
+2010-11-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7660547> and https://bugs.webkit.org/show_bug.cgi?id=48699
+        Context menu support for WebKit 2.
+
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::showContextMenu):
+
+2010-10-29  Daniel Bates  <dbates@rim.com>
+
+        No review, rolling out 70971.
+        http://trac.webkit.org/changeset/70971
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Rolling out changeset 70971 <http://trac.webkit.org/changeset/70971> since
+        it caused layout test failures on all bots. In particular, the
+        child count in a generated frame name differs after this patch. We need
+        to look into this further.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_name_get):
+
+2010-10-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        For unnamed frames, window.name returns a generated name
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Modified EFL-port to use FrameTree::uniqueName().
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_name_get):
+
+2010-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change BackForwardList clients to use BackForwardListImpl to prepare for further refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=48574
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_new):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_history_enable_get):
+        (ewk_view_history_enable_set):
+        (ewk_view_history_get):
+        Use BackForwardListImpl.
+
+2010-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48576
+        Let WebKit2 client know when a frame is a frameset
+
+        Added a blank implementation of the new FrameLoaderClient method.
+
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidBecomeFrameset):
+
+2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Resource tracking failure when trying to move a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=44713
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::transferLoadingResourceFromPage):
+        Empty method.
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-10-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to pass the current event modifier flags when requesting a new window
+        https://bugs.webkit.org/show_bug.cgi?id=48140
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchCreatePage):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        Add NavigationAction parameter.
+
+2010-10-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add setting api for disabling auto resize window
+        https://bugs.webkit.org/show_bug.cgi?id=47787
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::setWindowRect): Return when
+        auto_resize_window was disabled.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_auto_resize_window_get): Added.
+        (ewk_view_setting_enable_auto_resize_window_set): Added.
+        * ewk/ewk_view.h:
+
+2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Replace some String::format() usages by StringConcatenate in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=47714
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::agentOS):
+
+2010-10-14  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Use data_set after data_get to keep refcount correct.
+        https://bugs.webkit.org/show_bug.cgi?id=47110
+
+        The call to evas_object_image_data_set was missed in this function,
+        which caused the refcount of the data being always increased on every
+        scroll.
+
+        * ewk/ewk_view_single.c:
+        (_ewk_view_single_smart_scrolls_process):
+
+2010-10-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add setting api for enabling encoding detector
+        https://bugs.webkit.org/show_bug.cgi?id=45427
+
+        Add settings api for enabling encoding detector.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_encoding_detector_set):
+        (ewk_view_setting_encoding_detector_get):
+        * ewk/ewk_view.h:
+
+2010-10-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix.
+
+        * WebCoreSupport/FrameLoaderClientEfl.h: Use String instead of
+        WebCore::String.
+
+2010-10-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43987
+        Switch XMLHttpRequest, FileReader, and FileReaderSync to use a Stringbuilder
+        to construct their internal result string.  Remove ScriptString (this is now
+        redundant).
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidLoadResourceByXMLHttpRequest):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-10-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Support viewport configuration and add new arguments for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=47084
+
+        Opera spec regarding to viewport meta tag was adjusted to WebCore. So, EFL port 
+        needs to be modified according to the changes.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::dispatchViewportDataDidChange):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_viewport_attributes_compute):
+        (ewk_view_viewport_attributes_set):
+        (ewk_view_viewport_attributes_get):
+        (ewk_view_device_pixel_ratio_get):
+        * ewk/ewk_view.h:
+
+2010-10-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add a method to get target's dpi value
+        https://bugs.webkit.org/show_bug.cgi?id=47537
+
+        Add a method to get target dpi value using Ecore_X.
+        When we set layout size, we need to use the dpi value.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_page_rect_get):
+        (ewk_view_dpi_get):
+
+2010-10-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Implement pageRect() function
+        https://bugs.webkit.org/show_bug.cgi?id=47395
+
+        Implement pageRect() in ChromeClientEfl using frameRect().
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::pageRect):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_page_rect_get): Added.
+
+2010-10-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Support Progress Tag
+        https://bugs.webkit.org/show_bug.cgi?id=45951
+
+        Implement progressbar.edc to support progress tag
+
+        * CMakeListsEfl.txt:
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/progressbar: Added.
+        * DefaultTheme/widget/progressbar/bt_base.png: Added.
+        * DefaultTheme/widget/progressbar/progressbar.edc: Added.
+        * DefaultTheme/widget/progressbar/shelf_inset.png: Added.
+
+2010-10-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove strdup in ewk_setting.cpp using eina_stringshare
+        https://bugs.webkit.org/show_bug.cgi?id=46613
+
+        Add variables shared by eina_stringshare and remove strdup.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_path_set):
+        (ewk_settings_web_database_path_get):
+        (ewk_settings_icon_database_path_set):
+        (ewk_settings_icon_database_path_get):
+        * ewk/ewk_settings.h:
+
+2010-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Viewport data change notification by Bug 46755
+        https://bugs.webkit.org/show_bug.cgi?id=46772
+
+        Bug 46755 changes virtual function regarding to viewport metatag. Thus, EFL port 
+        should change the function as well in order to get viewport arguments.
+
+        And, setInitLayoutCompleted / getInitLayoutCompleted() are removed because these functions
+        aren't needed anymore.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::dispatchViewportDataDidChange):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::FrameLoaderClientEfl):
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstLayout):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Remove check for InitLayoutCompleted on fixed_layout_size_set.
+        https://bugs.webkit.org/show_bug.cgi?id=47006
+
+        This check isn't needed and isn't done on the other ports. The fixed
+        layout property can be set before we have the first layout.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_fixed_layout_size_set):
+
+2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Call contents_resize when the main frame gets resized.
+        https://bugs.webkit.org/show_bug.cgi?id=47004
+
+        The previous implementation was just calling contents_resize when the
+        viewport size had changed. That's not enough, and contents_resize
+        shouldn't be called if the contents size didn't change.
+
+        Now the contents_size_changed function is called directly from the
+        ChromeClientEfl.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::contentsSizeChanged):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_contents_size_changed):
+
+2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] General small fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=46813
+
+        This commit spots a comparison between signed and unsigned integer
+        expressions, a missing return and a never-called function.
+
+        * WebCoreSupport/FullscreenVideoControllerEfl.cpp:
+        (FullscreenVideoController::canPlay):
+
+2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Added oldPage param to FrameLoaderClient::didTransferChildFrameToNewDocument.
+        https://bugs.webkit.org/show_bug.cgi?id=46663
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::didTransferChildFrameToNewDocument):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-09-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add setting API to set a local storage database path.
+        https://bugs.webkit.org/show_bug.cgi?id=45446
+
+        Add a setting API to set local storage database path.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        (ewk_view_setting_local_storage_database_path_get): Added.
+        (ewk_view_setting_local_storage_database_path_set): Added.
+        * ewk/ewk_view.h:
+
+2010-09-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [EFL] Fix warnings during build
+        https://bugs.webkit.org/show_bug.cgi?id=46354
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_nth_pos_get): Change argument type because
+        it's meant to be always positive.
+        * ewk/ewk_frame.h: Ditto.
+        * ewk/ewk_view.cpp:
+        (ewk_view_exceeded_database_quota): Add missing "%" causing warning about number of
+        arguments to printf-like function.
+        * ewk/ewk_view.h: Add missing initialization.
+
+2010-09-21  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Get fresh theme when running EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=46210
+
+        If user tried to run EWebLauncher outside of the build tree, it would
+        not find the theme and fallback to the installed one. However, since
+        EWebLauncher is not installed, we always want to take the theme from
+        the just compiled source code. If user had never installed WebKit's
+        EFL port it could even receive a segv since no theme would be found.
+
+        Now EWebLauncher does not fallback to the installed theme and CMake
+        gives as DATA_DIR the directory of the theme it has just built.
+
+
+        * CMakeListsEfl.txt: export DATA_DIR to parent CMakeLists.txt in order
+        to be used by EWebLauncher.
+
+2010-09-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r60104): Zoom level is unexpectedly reset on page reload
+        https://bugs.webkit.org/show_bug.cgi?id=42863
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_get):
+        (ewk_frame_zoom_set):
+        (ewk_frame_zoom_text_only_set):
+        Call functions on Frame instead of FrameView.
+
+2010-09-16  Darin Adler  <darin@apple.com>
+
+        Fix build.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_input_method_state_set): Updated for change
+        in name of isUrlField to isURLField.
+
+2010-09-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] ewk_frame_view_create_for_view set null as theme.
+        https://bugs.webkit.org/show_bug.cgi?id=45741
+
+        Add theme in ewk_view to use instead of frame's theme which is null in
+        ewk_frame_view_create_for_view.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_create_for_view):
+        * ewk/ewk_view.cpp:
+        (ewk_view_theme_set):
+        (ewk_view_theme_get):
+
+2010-09-14  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed build fix: remove "virtual" keyword from
+        implementation file.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::canShowMIMETypeAsHTML):
+
+2010-09-13  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Fix build break when enabling HTML5 video support
+        https://bugs.webkit.org/show_bug.cgi?id=45674
+
+        The correct include variable for LibXml2 in cmake is
+        LIBXML2_INCLUDE_DIR instead of LIBXML2_INCLUDE_DIRS.
+
+        * CMakeListsEfl.txt:
+
+2010-09-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add setting API for enabling page cache
+        https://bugs.webkit.org/show_bug.cgi?id=44931
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_page_cache_get): Added.
+        (ewk_view_setting_page_cache_set): Added.
+        * ewk/ewk_view.h:
+
+2010-09-13  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Paste should be implemented in WebCore like Copy and Cut for Mac also.
+        https://bugs.webkit.org/show_bug.cgi?id=45494
+        <rdar://problem/7660537>
+
+        On the Mac platform, the implementation of the paste operation is all done
+        at the WebKit level. In order to support it on WebKit2 it is necessary to
+        refactor the code and move this functionality at the level of WebCore like
+        we already have on Windows.
+        The original code relies on some in AppKit functions that call back into
+        WebKit causing problems in WebKit2. All this functionality has been moved
+        at the level of the editor client where it can be dealt with appropriately.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::canShowMIMETypeAsHTML): Added stub.
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-09-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Fix EFL build after r67274
+        https://bugs.webkit.org/show_bug.cgi?id=45584
+
+        Remove include of ZoomMode.h and change setZoomFactor and zoomFactor
+        to proper apis chaged by r67264.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_zoom_get):
+        (ewk_frame_zoom_set):
+        (ewk_frame_zoom_text_only_get):
+        (ewk_frame_zoom_text_only_set):
+
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        Move code from WebKit-layer to DocumentLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45569
+
+        This code didn't know that setEncoding could be called multiple times
+        safely.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::FrameLoaderClientEfl):
+        (WebCore::FrameLoaderClientEfl::committedLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientEfl::finishedLoading):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientEfl::setMainDocumentError):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-09-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Main resource bytes shouldn't bounce through FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=45496
+
+        Now return the bytes to the DocumentLoader.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::committedLoad):
+
+2010-09-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Move functions from Frame to Editor as planned
+        https://bugs.webkit.org/show_bug.cgi?id=45218
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_editable_set):
+        (ewk_frame_selection_get):
+        (ewk_frame_text_search):
+        (ewk_frame_text_matches_mark):
+        (ewk_frame_text_matches_highlight_set):
+        (ewk_frame_text_matches_highlight_get):
+        * ewk/ewk_view.cpp:
+        (ewk_view_selection_get):
+        Changed call sites to use editor().
+
+2010-09-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Fix duplicate gstreamer macro in CMakeListEfl.txt
+        https://bugs.webkit.org/show_bug.cgi?id=45433
+
+        In WebKit/efl/CMakeListEfl.txt, duplicated ENABLE_VIDEO macros were added.
+        So, unnecessary ENABLE_VIDEO macro is deleted.
+
+        * CMakeListsEfl.txt:
+
+2010-09-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Need to add custom dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=45247
+
+        Add WebKit_Theme into WebKit_SOURCES to make it while building.
+
+        * CMakeListsEfl.txt:
+
+2010-09-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Export data directory through pkg-config
+        https://bugs.webkit.org/show_bug.cgi?id=45385
+
+        Using pkg-config it's possible for a browser to know the location of
+        installed themes. When compiling the browser, a variable might be
+        defined with the datadir, like below:
+
+        gcc -o browser browser.c $(pkg-config --libs --cflags ewebkit) \
+           -DEWEBKIT_DATA_DIR=$(pkg-config --variable=datadir)
+
+        * ewebkit.pc.in: Export datadir variable.
+
+2010-09-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] REGRESSION(66794) Need to fix build break.
+        https://bugs.webkit.org/show_bug.cgi?id=45241
+
+        Add dummy class(FrameNetworkingContextEfl) like GTK+ port and implement
+        as EFL style.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::createNetworkingContext):
+        * WebCoreSupport/FrameNetworkingContextEfl.h: Added.
+        (WebCore::FrameNetworkingContextEfl::create):
+        (WebCore::FrameNetworkingContextEfl::coreFrame):
+        (WebCore::FrameNetworkingContextEfl::FrameNetworkingContextEfl):
+
+2010-09-04  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Move test browser to WebKitTools directory
+        https://bugs.webkit.org/show_bug.cgi?id=45212
+
+        Follow other ports like QT and GTK which moved the test browser to
+        WebKitTools directory.
+
+        * CMakeListsEfl.txt: Remove build for test browser.
+        * EWebLauncher/main.c: Removed.
+
+2010-09-03  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Add NetworkingContext to avoid layer violations
+        https://bugs.webkit.org/show_bug.cgi?id=42292
+
+        Add createNetworkingContext to EFL's FrameLoaderClient.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::createNetworkingContext):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
+2010-09-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Martin Robinson.
+
+        [EFL] Regression (66531) Build break with Glib Support
+        https://bugs.webkit.org/show_bug.cgi?id=45011
+
+        Move GtkTypedefs.h to GTypedefs.h and let it inside gobject directory
+        since when glib is enabled, EFL port needs it, too.
+
+        * CMakeListsEfl.txt: Include gobject directory to find new header
+        file.
+
+2010-09-03  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Install default theme
+        https://bugs.webkit.org/show_bug.cgi?id=45154
+
+        Since a theme is needed in order to create a new browser, install the
+        default one to serve as example and fall-back.
+
+        * CMakeListsEfl.txt:
+
+2010-09-02  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Name install directories according to library name
+        https://bugs.webkit.org/show_bug.cgi?id=45126
+
+        * CMakeListsEfl.txt: include diretory follows library name.
+        * ewebkit.pc.in: Ditto.
+
+2010-08-31  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44863, disentangle style recalc from layout, so that
+        the former can occur in more places without having to do the latter.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_layout_if_needed_recursive):
+
+2010-08-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add ability to count text matches without marking
+        https://bugs.webkit.org/show_bug.cgi?id=43996
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_mark): Switched to call
+        countMatchesForText() instead of markAllMatchesForText().
+
+2010-08-31  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL] Build break for r66456
+        https://bugs.webkit.org/post_bug.cgi
+
+        Replace firstRectsForMarkers with renderedRectsForMarkers.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_nth_pos_get):
+
+2010-08-30  Kamil Blank  <k.blank@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Added API which returns position of n-th text matches mark
+        https://bugs.webkit.org/show_bug.cgi?id=44258
+
+        * ewk/ewk_frame.cpp: 
+        (_ewk_frame_rect_cmp_less_than): Private.
+        (_ewk_frame_rect_is_negative_value): Private.
+        (ewk_frame_text_matches_nth_pos_get): Added. Function returns position of
+        n-th text match in frame.
+        * ewk/ewk_frame.h:
+
+2010-08-30  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL]Url of HistoryItem was broken for special character like korean
+        https://bugs.webkit.org/show_bug.cgi?id=44495
+
+        Remove unnecessary code. This makes a bug with complicated URL.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_view_state_save):
+
+2010-08-30  Mikołaj Małecki  <m.malecki@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen
+
+        [EFL] Added initial setting to turn on offline pages.
+        https://bugs.webkit.org/show_bug.cgi?id=44239
+
+        * ewk/ewk_main.cpp: Torn off non-EFL init to _ewk_init_body
+        (ewk_init): Changed non-EFL init to call _ewk_init_body
+        (_ewk_init_body): Moved internal init here and added cache directory path setting.
+        * ewk/ewk_view.cpp: Added new config items: offline_app_cache and cache_directory
+        (_ewk_view_priv_new): creating cache_directory string
+        (_ewk_view_priv_del): deleting cache_directory string
+        (ewk_view_setting_offline_app_cache_get):
+        (ewk_view_setting_offline_app_cache_set):
+        (ewk_view_setting_cache_directory_get):
+        (ewk_view_setting_cache_directory_set):
+        * ewk/ewk_view.h: added offline_app_cache and cache_directory props to ewk API
+
+2010-08-26  Miroslaw Szymanski  <miroslaw.s@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Added new callback when view's size is changed to fix issue with changing layout size
+        https://bugs.webkit.org/show_bug.cgi?id=44337
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
+2010-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add dummy FullScreenVideoControllerEfl to WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44590
+
+        Add FullScreenVideoControllerEfl to WebCoreSupport. However,
+        this is not implemented yet.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/FullscreenVideoControllerEfl.cpp: Added.
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::~FullscreenVideoController):
+        (FullscreenVideoController::setMediaElement):
+        (FullscreenVideoController::showHud):
+        (FullscreenVideoController::hideHud):
+        (FullscreenVideoController::enterFullscreen):
+        (FullscreenVideoController::updateHudPosition):
+        (FullscreenVideoController::exitOnUserRequest):
+        (FullscreenVideoController::exitFullscreen):
+        (FullscreenVideoController::canPlay):
+        (FullscreenVideoController::play):
+        (FullscreenVideoController::pause):
+        (FullscreenVideoController::playStateChanged):
+        (FullscreenVideoController::togglePlay):
+        (FullscreenVideoController::volume):
+        (FullscreenVideoController::muted):
+        (FullscreenVideoController::setVolume):
+        (FullscreenVideoController::volumeChanged):
+        (FullscreenVideoController::muteChanged):
+        (FullscreenVideoController::currentTime):
+        (FullscreenVideoController::setCurrentTime):
+        (FullscreenVideoController::duration):
+        (FullscreenVideoController::percentLoaded):
+        (FullscreenVideoController::beginSeek):
+        (FullscreenVideoController::doSeek):
+        (FullscreenVideoController::endSeek):
+        (timeToString):
+        (FullscreenVideoController::updateHudProgressBar):
+        (FullscreenVideoController::createHud):
+        * WebCoreSupport/FullscreenVideoControllerEfl.h: Added.
+        (FullscreenVideoController::mediaElement):
+
+2010-08-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add setting API for enabling local storage.
+        https://bugs.webkit.org/show_bug.cgi?id=44319
+
+        Add API for enabling/disabling local storage.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_local_storage_get): Added
+        (ewk_view_setting_local_storage_set): Added
+        * ewk/ewk_view.h:
+
+2010-08-25  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] enable libsoup's content decode feature
+        https://bugs.webkit.org/show_bug.cgi?id=44147
+
+        libsoup's content decode feature is enabled during initializaton.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
+2010-08-25  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for revision 65332
+        https://bugs.webkit.org/show_bug.cgi?id=44543
+
+        Use Gthread_LIBRARIES instead of GTHREAD_LIBRARIES. This fix
+        the build when using ENABLE_GLIB_SUPPORT=ON and NETWORK_BACKEND=curl.
+
+        * CMakeListsEfl.txt:
+
+2010-08-24  Lukasz Slachciak  <l.slachciak@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Extended EFL WebView API to allow enable/disable Frame Flattening
+        https://bugs.webkit.org/show_bug.cgi?id=44253
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_enable_frame_flattening_get):
+        (ewk_view_setting_enable_frame_flattening_set):
+        * ewk/ewk_view.h:
+
+2010-08-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix for platforms that do not require linking with "dl".
+        CMake includes the variable CMAKE_DL_LIBS that evaluates to the
+        platform-specific libraries.
+
+        * CMakeListsEfl.txt: Use ${CMAKE_DL_LIBS} instead of dl.
+
+2010-08-22  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove duplicated include entry from default theme.
+        https://bugs.webkit.org/show_bug.cgi?id=44345
+
+        This used to create the group webkit/widget/entry twice in
+        the theme. It's leading to a bug with the newer versions of
+        EFL.
+
+        * DefaultTheme/default.edc:
+
+2010-08-22  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Encapsulate document marker management into DocumentMarkerController
+        https://bugs.webkit.org/show_bug.cgi?id=44383
+
+        Modify call sites in the EFL port to use DocumentMarkerController.
+
+        No functionality was changed, so no new tests.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_text_matches_unmark_all):
+
+2010-08-20  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Fix build when using GNU gold.
+        When linking with GNU gold, some symbols are not found: explicitly
+        link with the required libraries.
+
+        * CMakeListsEfl.txt: Depend on Fontconfig, PNG, JPEG and dl
+        libraries.
+
+2010-08-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Enable localStorage of HTML5 for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=44020
+
+        * ewk/ewk_view.cpp: 
+        (_ewk_view_priv_new):
+
+2010-08-11  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Adding new theme for widgets.
+        https://bugs.webkit.org/show_bug.cgi?id=43860
+
+        Original theme was there for a long time. This is a new
+        fresh one.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/button/button.edc:
+        * DefaultTheme/widget/button/img_button_focus.png:
+        * DefaultTheme/widget/button/img_button_hover.png:
+        * DefaultTheme/widget/button/img_button_normal.png:
+        * DefaultTheme/widget/button/img_button_press.png:
+        * DefaultTheme/widget/check/check.edc:
+        * DefaultTheme/widget/check/img_check_off.png:
+        * DefaultTheme/widget/check/img_check_off_focus.png:
+        * DefaultTheme/widget/check/img_check_off_hover.png:
+        * DefaultTheme/widget/check/img_check_on.png:
+        * DefaultTheme/widget/check/img_check_on_focus.png:
+        * DefaultTheme/widget/check/img_check_on_hover.png:
+        * DefaultTheme/widget/combo/combo.edc:
+        * DefaultTheme/widget/combo/combo_focus.png:
+        * DefaultTheme/widget/combo/combo_focus_button.png:
+        * DefaultTheme/widget/combo/combo_hover.png:
+        * DefaultTheme/widget/combo/combo_hover_button.png:
+        * DefaultTheme/widget/combo/combo_normal.png:
+        * DefaultTheme/widget/combo/combo_normal_button.png:
+        * DefaultTheme/widget/combo/combo_press.png:
+        * DefaultTheme/widget/combo/combo_press_button.png:
+        * DefaultTheme/widget/combo/icon.png:
+        * DefaultTheme/widget/entry/img_focused.png:
+        * DefaultTheme/widget/entry/img_hovered.png:
+        * DefaultTheme/widget/entry/img_normal.png:
+        * DefaultTheme/widget/file/file_focus.png:
+        * DefaultTheme/widget/file/file_hover.png:
+        * DefaultTheme/widget/file/file_normal.png:
+        * DefaultTheme/widget/file/file_press.png:
+        * DefaultTheme/widget/radio/img_radio_off.png:
+        * DefaultTheme/widget/radio/img_radio_off_focus.png:
+        * DefaultTheme/widget/radio/img_radio_off_hover.png:
+        * DefaultTheme/widget/radio/img_radio_on.png:
+        * DefaultTheme/widget/radio/img_radio_on_focus.png:
+        * DefaultTheme/widget/radio/img_radio_on_hover.png:
+        * DefaultTheme/widget/radio/radio.edc:
+        * DefaultTheme/widget/scrollbar/scrollbar.edc:
+        * DefaultTheme/widget/scrollbar/scrollbar_h.png:
+        * DefaultTheme/widget/scrollbar/scrollbar_hilight.png: Removed.
+        * DefaultTheme/widget/scrollbar/scrollbar_knob_h.png:
+        * DefaultTheme/widget/scrollbar/scrollbar_knob_v.png:
+        * DefaultTheme/widget/scrollbar/scrollbar_v.png:
+        * DefaultTheme/widget/search/cancel/cancel_normal_button2.png:
+        * DefaultTheme/widget/search/decoration/decoration_normal_button.png:
+        * DefaultTheme/widget/search/field/field_focused.png:
+        * DefaultTheme/widget/search/field/field_hovered.png:
+        * DefaultTheme/widget/search/field/field_normal.png:
+        * DefaultTheme/widget/slider/slider.edc:
+        * DefaultTheme/widget/slider/slider_fill_h.png: Added.
+        * DefaultTheme/widget/slider/slider_fill_v.png: Added.
+        * DefaultTheme/widget/slider/slider_h.png:
+        * DefaultTheme/widget/slider/slider_hilight.png: Removed.
+        * DefaultTheme/widget/slider/slider_knob_h.png:
+        * DefaultTheme/widget/slider/slider_knob_press_h.png: Added.
+        * DefaultTheme/widget/slider/slider_knob_press_v.png: Added.
+        * DefaultTheme/widget/slider/slider_knob_v.png:
+        * DefaultTheme/widget/slider/slider_v.png:
+
+2010-08-12  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Making CMake keep track of theme dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=43862
+
+        Adding theme source files and images as dependencies of the theme.
+
+        * CMakeListsEfl.txt:
+
+2010-08-11  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add setting for enabling spatial navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=43569
+
+        Adding api for enabling/disabling spatial navigation.
+
+        * ewk/ewk_view.cpp: Both functions below added.
+        (ewk_view_setting_spatial_navigation_get):
+        (ewk_view_setting_spatial_navigation_set):
+        * ewk/ewk_view.h: same as ewk_view.cpp.
+
+2010-08-11  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        Implementation dispatchDecidePolicyForNavigationAction
+        https://bugs.webkit.org/show_bug.cgi?id=43544
+
+        Add ewk_view_navigation_policy_decision to decide whether url which
+        user clicked will be loaded or not.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_navigation_policy_decision):
+        * ewk/ewk_view.h:
+
+2010-08-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [EFL]REGRESSION(65021) need to fix build break
+        https://bugs.webkit.org/show_bug.cgi?id=43767
+
+        Remove AtomicStringWTF and change namespace TextCaseInsensitive.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_plugin_create):
+        * ewk/ewk_view.cpp:
+        (ewk_view_text_search):
+        (ewk_view_text_matches_mark):
+        (ewk_view_setting_font_cursive_set):
+
+2010-08-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig
+
+        Bug 43594 - Add string forwards to Forward.h
+        This allows us to remove forward declarations for these classes from
+        WebCore/WebKit (a step in moving these class from WebCore:: to WTF::).
+
+        * WebCoreSupport/InspectorClientEfl.h:
+
+2010-08-06  Jessie Berlin  <jberlin@apple.com>
+
+        Roll out http://trac.webkit.org/changeset/64801, which broke the Safari Windows Build.
+        Unreviewed.
+
+        * WebCoreSupport/InspectorClientEfl.h:
+
+2010-08-03  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement HTML5 slider theme (using the scrollbar theme as base).
+        https://bugs.webkit.org/show_bug.cgi?id=43430
+
+        * DefaultTheme/default.edc: Include slider.edc.
+        * DefaultTheme/widget/slider/slider.edc: Added.
+        * DefaultTheme/widget/slider/slider_h.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_h.png.
+        * DefaultTheme/widget/slider/slider_hilight.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_hilight.png.
+        * DefaultTheme/widget/slider/slider_knob_h.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_h.png.
+        * DefaultTheme/widget/slider/slider_knob_v.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_knob_v.png.
+        * DefaultTheme/widget/slider/slider_v.png: Copied from WebKit/efl/DefaultTheme/widget/scrollbar/scrollbar_v.png.
+
+2010-08-03  ryuan choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Darin Adler.
+
+        [EFL] REGRESSION(64425) need to fix build break
+        https://bugs.webkit.org/show_bug.cgi?id=43322
+
+        just add include path missed after r64425
+
+        * CMakeListsEfl.txt:
+
+2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Fisher.
+
+        PopupMenu refactoring in preparation to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42592
+
+        As ChromeClient was made responsible for providing PopupMenu and SearchPopupMenu
+        instances, concrete classes that inherit from ChromeClient needed to be changed to
+        implement the new methods.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::selectItemWritingDirectionIsNatural):
+        (WebCore::ChromeClientEfl::createPopupMenu):
+        (WebCore::ChromeClientEfl::createSearchPopupMenu):
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2010-08-02  Jeremy Orlow  <jorlow@chromium.org>
+
+        Speculative revert of 64425 due to Chromium instability
+        https://bugs.webkit.org/show_bug.cgi?id=43347
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Fisher.
+
+        PopupMenu refactoring in preparation to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42592
+
+        As ChromeClient was made responsible for providing PopupMenu and SearchPopupMenu
+        instances, concrete classes that inherit from ChromeClient needed to be changed to
+        implement the new methods.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::selectItemWritingDirectionIsNatural):
+        (WebCore::ChromeClientEfl::createPopupMenu):
+        (WebCore::ChromeClientEfl::createSearchPopupMenu):
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2010-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r64422.
+        http://trac.webkit.org/changeset/64422
+        https://bugs.webkit.org/show_bug.cgi?id=43304
+
+        Build fixes are needed for Snow Leopard and Windows.
+        (Requested by lca on #webkit).
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2010-07-27  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Darin Fisher.
+
+        PopupMenu refactoring in preparation to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=42592
+
+        As ChromeClient was made responsible for providing PopupMenu and SearchPopupMenu
+        instances, concrete classes that inherit from ChromeClient needed to be changed to
+        implement the new methods.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::selectItemWritingDirectionIsNatural):
+        (WebCore::ChromeClientEfl::createPopupMenu):
+        (WebCore::ChromeClientEfl::createSearchPopupMenu):
+        * WebCoreSupport/ChromeClientEfl.h:
+
+2010-07-26  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Page clients should be passed to Page constructor via structure of pointers
+        https://bugs.webkit.org/show_bug.cgi?id=42834
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
+2010-07-26  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Move CMakeListsEfl.txt to WebKit/efl/
+        https://bugs.webkit.org/show_bug.cgi?id=43002
+
+        This should reduce the noise in WebKit/ChangeLog that comes from EFL
+        port. Most of the changes on EFL port should be logged in
+        WebKit/efl/ChangeLog.
+
+        * CMakeListsEfl.txt: Renamed from WebKit/CMakeListsEfl.txt.
+
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Cleanup glib support (make it optional)
+        https://bugs.webkit.org/show_bug.cgi?id=42480
+
+        Put some ifdefs on glib calls.
+
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
+2010-07-23  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add support for using libcurl network backend.
+        https://bugs.webkit.org/show_bug.cgi?id=42286
+
+        Put some ifdefs around soup calls.
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_cookie_free):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+
+2010-07-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Notify browser when window shall be closed.
+
+        This is used for window.close() events Javascript, though it would be
+        triggered for any event on WebCore that might ask for the window to be
+        closed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=42890
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::closeWindowSoon): call new function and moves its
+        previous functionality there.
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_window_close): stop all loaders as was being done previously and
+        notify browser afterwards.
+        * ewk/ewk_view.h: declare new virtual method.
+
+2010-07-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Set proxy address for Soup
+        https://bugs.webkit.org/show_bug.cgi?id=42721
+
+        Sets the given proxy URI for libsoup network backend. This method will
+        support libcurl network backend later.
+
+        * EWebLauncher/main.c:
+        (main): Invoke proxy set method
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_set): Sets proxy URI.
+        * ewk/ewk_settings.h:
+
+2010-07-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Gustavo Noronha Silva.
+        
+        Creating ChangeLog for the EFL port.

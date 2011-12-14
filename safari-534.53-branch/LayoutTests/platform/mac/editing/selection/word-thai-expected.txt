@@ -1,0 +1,4 @@
+Double-clicking anywhere on this word: เพชรบุรี should select it in its entirety.
+
+PASS
+

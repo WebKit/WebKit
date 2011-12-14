@@ -1,0 +1,43 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 4; i++)
+        extendSelectionForwardByCharacterCommand();
+    copyCommand();
+    moveSelectionForwardByCharacterCommand();
+    typeCharacterCommand();
+    moveSelectionBackwardByCharacterCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root">
+
+See this bug: <a href="rdar://problem/3918712">&lt;rdar://problem/3918712&gt;</a> "Paste as Quotation" in Mail just pastes (&lt;blockquote&gt; tag seems to be lost).
+Should see two boxes with blockquoted "foo" text, followed by a box with an unquoted "x".
+<div style="height: 24px"></div>
+
+<div id="test" class="editing"><div><blockquote>foo</blockquote></div></div>
+<div class="editing"></div>
+ 
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

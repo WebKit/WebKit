@@ -1,0 +1,25 @@
+This test checks that deletion of properties works properly with getters and setters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS b1.property threw exception TypeError: 'undefined' is not an object (evaluating 'b1.property').
+PASS a2.property threw exception TypeError: 'undefined' is not an object (evaluating 'a2.property').
+PASS b3.property threw exception TypeError: 'undefined' is not an object (evaluating 'b3.property').
+PASS a4.property threw exception TypeError: 'undefined' is not an object (evaluating 'a4.property').
+PASS b5.property threw exception TypeError: 'undefined' is not an object (evaluating 'b5.property').
+PASS a6.property threw exception TypeError: 'undefined' is not an object (evaluating 'a6.property').
+PASS b7.property threw exception TypeError: 'undefined' is not an object (evaluating 'b7.property').
+PASS a8.property threw exception TypeError: 'undefined' is not an object (evaluating 'a8.property').
+PASS o1.b.property threw exception TypeError: 'undefined' is not an object (evaluating 'o1.b.property').
+PASS o1.a.property threw exception TypeError: 'undefined' is not an object (evaluating 'o1.a.property').
+PASS o3.b.property threw exception TypeError: 'undefined' is not an object (evaluating 'o3.b.property').
+PASS o4.a.property threw exception TypeError: 'undefined' is not an object (evaluating 'o4.a.property').
+PASS o5.b.property threw exception TypeError: 'undefined' is not an object (evaluating 'o5.b.property').
+PASS o6.a.property threw exception TypeError: 'undefined' is not an object (evaluating 'o6.a.property').
+PASS o7.b.property threw exception TypeError: 'undefined' is not an object (evaluating 'o7.b.property').
+PASS o8.a.property threw exception TypeError: 'undefined' is not an object (evaluating 'o8.a.property').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

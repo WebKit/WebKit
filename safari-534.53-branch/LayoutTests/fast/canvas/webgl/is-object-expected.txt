@@ -1,0 +1,38 @@
+Tests 'is' calls against non-bound and deleted objects
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS buffer = gl.createBuffer() was expected value: NO_ERROR.
+PASS gl.isBuffer(buffer) is false
+PASS gl.bindBuffer(gl.ARRAY_BUFFER, buffer) was expected value: NO_ERROR.
+PASS gl.isBuffer(buffer) is true
+
+PASS framebuffer = gl.createFramebuffer() was expected value: NO_ERROR.
+PASS gl.isFramebuffer(framebuffer) is false
+PASS gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer) was expected value: NO_ERROR.
+PASS gl.isFramebuffer(framebuffer) is true
+
+PASS renderbuffer = gl.createRenderbuffer() was expected value: NO_ERROR.
+PASS gl.isRenderbuffer(renderbuffer) is false
+PASS gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer) was expected value: NO_ERROR.
+PASS gl.isRenderbuffer(renderbuffer) is true
+
+PASS texture = gl.createTexture() was expected value: NO_ERROR.
+PASS gl.isTexture(texture) is false
+PASS gl.bindTexture(gl.TEXTURE_2D, texture) was expected value: NO_ERROR.
+PASS gl.isTexture(texture) is true
+
+PASS program = gl.createProgram() was expected value: NO_ERROR.
+PASS gl.isProgram(program) is true
+PASS gl.deleteProgram(program) was expected value: NO_ERROR.
+PASS gl.isProgram(program) is false
+
+PASS shader = gl.createShader(gl.VERTEX_SHADER) was expected value: NO_ERROR.
+PASS gl.isShader(shader) is true
+PASS gl.deleteShader(shader) was expected value: NO_ERROR.
+PASS gl.isShader(shader) is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

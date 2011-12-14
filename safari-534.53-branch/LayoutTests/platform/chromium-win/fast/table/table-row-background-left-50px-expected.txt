@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 765x39
+          text run at (0,0) width 765: "This tests that the background image of the table row can be shifted to the left by 50px. This test PASSED if you do not see the"
+          text run at (0,20) width 74: "word FAIL."
+      RenderTable {TABLE} at (0,56) size 100x50
+        RenderTableSection {TBODY} at (0,0) size 100x50
+          RenderTableRow {TR} at (0,0) size 100x50
+            RenderTableCell {TD} at (0,14) size 50x22 [color=#FFFF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"
+            RenderTableCell {TD} at (50,14) size 50x22 [color=#0000FF] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (8,1) size 34x19
+                text run at (8,1) width 34: "FAIL"

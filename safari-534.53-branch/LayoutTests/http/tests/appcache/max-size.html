@@ -1,0 +1,28 @@
+<html manifest="resources/maxsize.manifest">
+<body>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.setAppCacheMaximumSize(10 * 1024);
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function log(message)
+    {
+        document.getElementById("result").innerHTML += message + "<br>";
+        if (window.layoutTestController) {
+            layoutTestController.setAppCacheMaximumSize(100 * 1024 * 1024);
+            layoutTestController.notifyDone();
+        }
+    }
+
+    applicationCache.onerror = function() { log("SUCCESS"); }
+    applicationCache.oncached = function() { log("FAIL: received unexpected cached event"); }
+    applicationCache.onnoupdate = function() { log("FAIL: received unexpected onnoupdate event"); }
+    applicationCache.onupdateready = function() { log("FAIL: received unexpected onupdateready event"); }
+</script>
+
+<p>Cache a manifest that contains a resource that is too large to fit. The layout test controller sets a maximum size of 10KB for the application cache database file.</p>
+<div id=result></div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            layoutTestController.setCanOpenWindows();
+        }
+
+        var openedWindow;
+
+        function loaded() {
+            var url = "data:text/html,<html>"
+                + "<head>"
+                +     "<scr" + "ipt>"
+                +         "function fireSentinel() {"
+                +             "if (window.layoutTestController)"
+                +                 "layoutTestController.globalFlag = true;"
+                +         "}"
+                +     "</scr" + "ipt>"
+                + "</head>"
+                + "<body onload=\"fireSentinel();\">"
+                +     "<p>Opened Frame</p>"
+                +     "<p id='accessMe'>PASS: Cross frame access from an opener frame was denied</p>"
+                + "</body>"
+                + "</html>";
+    
+            openedWindow = window.open(url);
+
+            if (window.layoutTestController) {
+                setTimeout(waitForFlag, 1);
+                function waitForFlag() {
+                    if (!layoutTestController.globalFlag) {
+                        setTimeout(waitForFlag, 1);
+                        return;
+                    }
+                    performTest();
+                }
+            } else {
+                log("Click the button when all the subframes have finished loading.");
+            }
+        }
+    
+        function performTest() {
+            try {
+                openedWindow.document.getElementById('accessMe').innerHTML = 'FAIL: Access to a window opened with a data: URL was allowed.';
+            } catch (e) {
+            }
+
+            if (window.layoutTestController)
+                closeWindowAndNotifyDone(openedWindow);
+        }    
+    </script>
+</head>
+<body onload="loaded();">
+    <p>Opener Frame</p>
+    <button onclick="performTest()">Test</button>
+    <pre id="console"></pre>
+</body>
+</html>

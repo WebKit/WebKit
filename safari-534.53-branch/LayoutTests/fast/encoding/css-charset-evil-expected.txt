@@ -1,0 +1,5 @@
+Test for bug 10155: CSS2: @charset is not supported
+
+CSS 2.1 says that @charset " must be written literally, but Firefox and IE allow extra spaces and single quotes.
+
+SUССЕSS

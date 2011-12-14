@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src=../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script>
+
+function test()
+{ 
+    var res = "";
+    
+    document.getElementById('dv').focus();
+    copyCommand();
+    document.getElementById('tf').focus();
+    pasteCommand();
+    undoCommand();
+}
+
+</script>
+</head>
+<body onload="test()">
+This test checks that undoing a paste into an empty text field doesn't cause it to collapse vertically. When running manually, you have to paste and undo by hand.
+<br><br>
+<input type="text" id="tf"></input>
+<div contenteditable id="dv">Text to paste</div>
+<div id="result">
+</div>
+</body>
+</html>

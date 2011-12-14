@@ -1,0 +1,43 @@
+@font-face {
+    font-family: '-webkit-serif';
+    src: local('Times');
+}
+
+/* leftwards white arrow, rightwards white arrow, downwards white arrow,
+   black medium small square, yin yang,
+   heavy south east arrow, heavy rightwards arrow,
+   heavy north east arrow */
+
+@font-face {
+    font-family: '-webkit-serif';
+    src: local('WebKit Layout Tests');
+    unicode-range: U+25FE, U+262F, U+2798-279A;
+}
+
+@font-face {
+    font-family: '-webkit-serif';
+    src: local('WebKit Layout Tests 2');
+    unicode-range: U+21E6-21E9;
+}
+
+@font-face {
+    font-family: 'times';
+    src: local('WebKit Layout Tests');
+    unicode-range: U+25FE, U+262F, U+2798-279A;
+}
+
+@font-face {
+    font-family: 'times';
+    src: local('WebKit Layout Tests 2');
+    unicode-range: U+21E6-21E9;
+}
+
+/* Hebrew, hyphen, non-breaking hyphen, upwards white arrow,
+   black square, white bullet, replacement character */
+
+@font-face {
+    font-family: 'times';
+    src: local('Lucida Grande');
+    unicode-range: U+0590-05FF, U+2010-2011, U+21E7, U+25A0, U+25E6, U+FFFD;
+}
+

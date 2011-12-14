@@ -1,0 +1,46 @@
+<?php
+    $title="WebKit Scripts";
+    include("../header.inc");
+?>
+<h2>WebKit Scripts</h2>
+
+<p>The WebKit project maintains several scripts to assist with things
+like building and testing code, checking style, and preparing patches.<p>
+
+<p>The <tt>Tools/Scripts</tt>
+<a href="http://trac.webkit.org/browser/trunk/Tools/Scripts">folder</a>
+of the WebKit source tree contains these scripts.
+In fact, unless otherwise mentioned, all of the scripts mentioned
+on this site are located in this folder.</p>
+
+<h3>Running a script</h3>
+
+<p>To run the <tt>build-webkit</tt> script, for example, type the
+following from the command line:</p>
+
+<p class="code">WebKit/Tools/Scripts/build-webkit</p>
+
+<p>Similarly, to run the <tt>build-webkit</tt> script with the
+<tt>--help</tt> option, type the following:<p>
+
+<p class="code">WebKit/Tools/Scripts/build-webkit --help</p>
+
+<h3>Adding to your path</h3>
+
+<p>It is convenient to add <tt>WebKit/Tools/Scripts</tt> to your
+shell path so you can run WebKit scripts without typing the full path.<p>
+
+<p>For example, this will allow you to type the following for the two
+examples above:</p>
+
+<p class="code">build-webkit</p>
+<p class="code">build-webkit --help</p>
+
+<p>The instructions throughout this site assume you have added
+<tt>WebKit/Tools/Scripts</tt> to your shell path.
+If you do not add this directory to your shell path, simply always include
+the full path as in the first examples above.</p>
+
+<?php
+    include("../footer.inc");
+?>

@@ -1,0 +1,13 @@
+PASS document.createExpression("foobar()", null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.evaluate("foobar()", document, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.createExpression("position(//div)", null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.evaluate("position(//div)", document, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.createExpression("ceiling(1,2)", null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.evaluate("ceiling(1,2)", document, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.createExpression("ceiling(1,2)", null).evaluate(document, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.createExpression("boolean()", null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS document.evaluate("boolean()", document, null, XPathResult.ANY_TYPE, null) threw exception Error: INVALID_EXPRESSION_ERR: DOM XPath Exception 51.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+setTimeout(function(){
+        document.body.innerHTML = "<b>PASS:</b> body and iframe cleared without crashing.";
+        layoutTestController.notifyDone();
+    }, 0);
+</script>
+<body onload='document.getElementById("x").innerHTML = 1'>
+  <div id="x">
+    <iframe src="does-not-exist">
+  </div>
+</body>

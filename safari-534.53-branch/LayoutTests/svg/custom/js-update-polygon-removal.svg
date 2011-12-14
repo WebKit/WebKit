@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="450" height="450" xmlns="http://www.w3.org/2000/svg">
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+window.setTimeout("clickNow()", 0);
+
+function clickNow() {
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(270, 265);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+}
+
+function mouseHandler(evt)
+{
+    var poly = document.getElementById("polygon");
+    poly.points.removeItem(poly.points.numberOfItems - 1);
+}
+</script>
+
+<polygon id="polygon" onclick="mouseHandler(evt)" fill="none" stroke="#00FF00" stroke-width="8" points="270,265 300,285 320,265 340,285 280,320 390,320 420,280 280,225"/>
+
+</svg>

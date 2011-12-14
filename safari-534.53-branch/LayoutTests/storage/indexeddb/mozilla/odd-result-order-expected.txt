@@ -1,0 +1,50 @@
+Test IndexedDB: request result persists in setTimeout callback
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+IDBDatabase = window.IDBDatabase || window.webkitIDBDatabase;
+PASS IDBDatabase == null is false
+IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction;
+PASS IDBTransaction == null is false
+indexedDB.open(name, description)
+openSuccess():
+db = null;
+db = request.result;
+checkDatabaseType():
+PASS db instanceof IDBDatabase is true
+request = db.setVersion('1')
+setupObjectStore():
+Deleted all object stores.
+objectStore = db.createObjectStore('foo', { keyPath: 'key', autoIncrement: true });
+index = objectStore.createIndex('foo', 'index');
+event.target.transaction.oncomplete = addRecord;
+addRecord():
+objectStore = db.transaction('foo', IDBTransaction.READ_WRITE).objectStore('foo');
+data = { key: 5, index: 10 };
+request = objectStore.add(data);
+addSuccess():
+key = null;
+key = request.result;
+checkAddedKey():
+PASS key is data.key
+objectStore = db.transaction('foo').objectStore('foo');
+request = objectStore.get(data.key);
+getSuccess():
+record = null;
+record = request.result;
+checkRetrievedKey():
+PASS record.key is data.key
+PASS record.index is data.index
+deleteRecord():
+objectStore = db.transaction('foo', IDBTransaction.READ_WRITE).objectStore('foo');
+request = objectStore.delete(data.key);
+deleteSuccess():
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

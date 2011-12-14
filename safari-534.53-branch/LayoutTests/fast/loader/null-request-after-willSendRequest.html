@@ -1,0 +1,12 @@
+<p>
+    Test for <i><a href="rdar://problem/6525618">rdar://problem/6525618</a> REGRESSION (r39566): NewsFire crashes in string hashing code when opening a Digg RSS article</i>.
+</p>
+<p>
+    This test cannot be run in the browser. In DumpRenderTree it should report
+    that access to http://10.0.0.1/ was blocked and not crash.
+</p>
+<img src="http://10.0.0.1/">
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>

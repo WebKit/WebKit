@@ -1,0 +1,19 @@
+
+Functional label:
+This tests the exposure of alt and title information.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS image.title is 'AXTitle: Image alt attr'
+PASS image.description is 'AXDescription: Image title attr'
+PASS link.title is 'AXTitle: '
+PASS link.description is 'AXDescription: Link title attr'
+PASS entry.title is 'AXTitle: '
+PASS entry.description is 'AXDescription: Entry title attr'
+PASS button.title is 'AXTitle: Submit'
+PASS button.description is 'AXDescription: Submit button title attr'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

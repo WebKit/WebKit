@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<title>Canvas test: test large width/height values</title>
+<script src="../js/resources/js-test-pre.js"></script>
+<body>
+<p>Tests that using reasonably large values for canvas.height and canvas.height don't cause a crash"</p>
+<pre id="console"></pre>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+<script>
+var canvas = document.getElementById("c");
+var x, y, w=1, h=1;
+
+testHeight(canvas, 1000);
+testHeight(canvas, 10000);
+testHeight(canvas, 32000);
+
+testWidth(canvas, 1000);
+testWidth(canvas, 10000);
+testWidth(canvas, 32000);
+
+function testHeight(canvas, height) {
+    canvas.width = 50;
+    canvas.height = height;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(255, 255, 255, 1)";
+    var msg = "height == "+height;
+    if (canvas.height == height)
+        testPassed(msg);
+    else
+        testFailed(msg);
+    x = canvas.width-2;
+    y = canvas.height-2;
+    ctx.fillRect(x,y,w,h);
+    var data = ctx.getImageData(x,y,w,h);
+    for (var x = 0; x < 4; x++) {
+        var msg = "Actual: " + data.data[x] + " Expected: 255";
+        if (data.data[x] == 255)
+            testPassed(msg);
+        else
+            testFailed(msg);
+    }
+}
+
+function testWidth(canvas, width) {
+    canvas.height = 50;
+    canvas.width = width;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "rgba(255, 255, 255, 1)";
+    var msg = "width == "+width;
+    if (canvas.width == width)
+        testPassed(msg);
+    else
+        testFailed(msg);
+    x = canvas.width-2;
+    y = canvas.height-2;
+    ctx.fillRect(x,y,w,h);
+    var data = ctx.getImageData(x,y,w,h);
+    for (var x = 0; x < 4; x++) {
+        var msg = "Actual: " + data.data[x] + " Expected: 255";
+        if (data.data[x] == 255)
+            testPassed(msg);
+        else
+            testFailed(msg);
+    }
+}
+</script>
+

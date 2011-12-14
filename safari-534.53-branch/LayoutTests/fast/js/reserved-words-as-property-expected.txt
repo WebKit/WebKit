@@ -1,0 +1,335 @@
+Tests to ensure that we can use ES reserved words as property names.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS var true threw exception SyntaxError: Parse error.
+PASS (function(){var true}) threw exception SyntaxError: Parse error.
+PASS function g(true){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(true){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(true){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(true){}}) threw exception SyntaxError: Parse error.
+PASS function true(){} threw exception SyntaxError: Parse error.
+PASS (function(){function true(){}}) threw exception SyntaxError: Parse error.
+PASS var false threw exception SyntaxError: Parse error.
+PASS (function(){var false}) threw exception SyntaxError: Parse error.
+PASS function g(false){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(false){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(false){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(false){}}) threw exception SyntaxError: Parse error.
+PASS function false(){} threw exception SyntaxError: Parse error.
+PASS (function(){function false(){}}) threw exception SyntaxError: Parse error.
+PASS var null threw exception SyntaxError: Parse error.
+PASS (function(){var null}) threw exception SyntaxError: Parse error.
+PASS function g(null){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(null){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(null){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(null){}}) threw exception SyntaxError: Parse error.
+PASS function null(){} threw exception SyntaxError: Parse error.
+PASS (function(){function null(){}}) threw exception SyntaxError: Parse error.
+PASS var break threw exception SyntaxError: Parse error.
+PASS (function(){var break}) threw exception SyntaxError: Parse error.
+PASS function g(break){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(break){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(break){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(break){}}) threw exception SyntaxError: Parse error.
+PASS function break(){} threw exception SyntaxError: Parse error.
+PASS (function(){function break(){}}) threw exception SyntaxError: Parse error.
+PASS var case threw exception SyntaxError: Parse error.
+PASS (function(){var case}) threw exception SyntaxError: Parse error.
+PASS function g(case){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(case){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(case){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(case){}}) threw exception SyntaxError: Parse error.
+PASS function case(){} threw exception SyntaxError: Parse error.
+PASS (function(){function case(){}}) threw exception SyntaxError: Parse error.
+PASS var catch threw exception SyntaxError: Parse error.
+PASS (function(){var catch}) threw exception SyntaxError: Parse error.
+PASS function g(catch){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(catch){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(catch){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(catch){}}) threw exception SyntaxError: Parse error.
+PASS function catch(){} threw exception SyntaxError: Parse error.
+PASS (function(){function catch(){}}) threw exception SyntaxError: Parse error.
+PASS var continue threw exception SyntaxError: Parse error.
+PASS (function(){var continue}) threw exception SyntaxError: Parse error.
+PASS function g(continue){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(continue){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(continue){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(continue){}}) threw exception SyntaxError: Parse error.
+PASS function continue(){} threw exception SyntaxError: Parse error.
+PASS (function(){function continue(){}}) threw exception SyntaxError: Parse error.
+PASS var debugger threw exception SyntaxError: Parse error.
+PASS (function(){var debugger}) threw exception SyntaxError: Parse error.
+PASS function g(debugger){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(debugger){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(debugger){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(debugger){}}) threw exception SyntaxError: Parse error.
+PASS function debugger(){} threw exception SyntaxError: Parse error.
+PASS (function(){function debugger(){}}) threw exception SyntaxError: Parse error.
+PASS var default threw exception SyntaxError: Parse error.
+PASS (function(){var default}) threw exception SyntaxError: Parse error.
+PASS function g(default){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(default){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(default){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(default){}}) threw exception SyntaxError: Parse error.
+PASS function default(){} threw exception SyntaxError: Parse error.
+PASS (function(){function default(){}}) threw exception SyntaxError: Parse error.
+PASS var delete threw exception SyntaxError: Parse error.
+PASS (function(){var delete}) threw exception SyntaxError: Parse error.
+PASS function g(delete){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(delete){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(delete){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(delete){}}) threw exception SyntaxError: Parse error.
+PASS function delete(){} threw exception SyntaxError: Parse error.
+PASS (function(){function delete(){}}) threw exception SyntaxError: Parse error.
+PASS var do threw exception SyntaxError: Parse error.
+PASS (function(){var do}) threw exception SyntaxError: Parse error.
+PASS function g(do){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(do){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(do){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(do){}}) threw exception SyntaxError: Parse error.
+PASS function do(){} threw exception SyntaxError: Parse error.
+PASS (function(){function do(){}}) threw exception SyntaxError: Parse error.
+PASS var else threw exception SyntaxError: Parse error.
+PASS (function(){var else}) threw exception SyntaxError: Parse error.
+PASS function g(else){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(else){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(else){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(else){}}) threw exception SyntaxError: Parse error.
+PASS function else(){} threw exception SyntaxError: Parse error.
+PASS (function(){function else(){}}) threw exception SyntaxError: Parse error.
+PASS var finally threw exception SyntaxError: Parse error.
+PASS (function(){var finally}) threw exception SyntaxError: Parse error.
+PASS function g(finally){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(finally){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(finally){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(finally){}}) threw exception SyntaxError: Parse error.
+PASS function finally(){} threw exception SyntaxError: Parse error.
+PASS (function(){function finally(){}}) threw exception SyntaxError: Parse error.
+PASS var for threw exception SyntaxError: Parse error.
+PASS (function(){var for}) threw exception SyntaxError: Parse error.
+PASS function g(for){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(for){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(for){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(for){}}) threw exception SyntaxError: Parse error.
+PASS function for(){} threw exception SyntaxError: Parse error.
+PASS (function(){function for(){}}) threw exception SyntaxError: Parse error.
+PASS var function threw exception SyntaxError: Parse error.
+PASS (function(){var function}) threw exception SyntaxError: Parse error.
+PASS function g(function){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(function){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(function){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(function){}}) threw exception SyntaxError: Parse error.
+PASS function function(){} threw exception SyntaxError: Parse error.
+PASS (function(){function function(){}}) threw exception SyntaxError: Parse error.
+PASS var if threw exception SyntaxError: Parse error.
+PASS (function(){var if}) threw exception SyntaxError: Parse error.
+PASS function g(if){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(if){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(if){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(if){}}) threw exception SyntaxError: Parse error.
+PASS function if(){} threw exception SyntaxError: Parse error.
+PASS (function(){function if(){}}) threw exception SyntaxError: Parse error.
+PASS var in threw exception SyntaxError: Parse error.
+PASS (function(){var in}) threw exception SyntaxError: Parse error.
+PASS function g(in){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(in){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(in){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(in){}}) threw exception SyntaxError: Parse error.
+PASS function in(){} threw exception SyntaxError: Parse error.
+PASS (function(){function in(){}}) threw exception SyntaxError: Parse error.
+PASS var instanceof threw exception SyntaxError: Parse error.
+PASS (function(){var instanceof}) threw exception SyntaxError: Parse error.
+PASS function g(instanceof){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(instanceof){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(instanceof){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(instanceof){}}) threw exception SyntaxError: Parse error.
+PASS function instanceof(){} threw exception SyntaxError: Parse error.
+PASS (function(){function instanceof(){}}) threw exception SyntaxError: Parse error.
+PASS var new threw exception SyntaxError: Parse error.
+PASS (function(){var new}) threw exception SyntaxError: Parse error.
+PASS function g(new){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(new){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(new){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(new){}}) threw exception SyntaxError: Parse error.
+PASS function new(){} threw exception SyntaxError: Parse error.
+PASS (function(){function new(){}}) threw exception SyntaxError: Parse error.
+PASS var return threw exception SyntaxError: Parse error.
+PASS (function(){var return}) threw exception SyntaxError: Parse error.
+PASS function g(return){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(return){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(return){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(return){}}) threw exception SyntaxError: Parse error.
+PASS function return(){} threw exception SyntaxError: Parse error.
+PASS (function(){function return(){}}) threw exception SyntaxError: Parse error.
+PASS var switch threw exception SyntaxError: Parse error.
+PASS (function(){var switch}) threw exception SyntaxError: Parse error.
+PASS function g(switch){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(switch){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(switch){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(switch){}}) threw exception SyntaxError: Parse error.
+PASS function switch(){} threw exception SyntaxError: Parse error.
+PASS (function(){function switch(){}}) threw exception SyntaxError: Parse error.
+PASS var this threw exception SyntaxError: Parse error.
+PASS (function(){var this}) threw exception SyntaxError: Parse error.
+PASS function g(this){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(this){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(this){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(this){}}) threw exception SyntaxError: Parse error.
+PASS function this(){} threw exception SyntaxError: Parse error.
+PASS (function(){function this(){}}) threw exception SyntaxError: Parse error.
+PASS var throw threw exception SyntaxError: Parse error.
+PASS (function(){var throw}) threw exception SyntaxError: Parse error.
+PASS function g(throw){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(throw){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(throw){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(throw){}}) threw exception SyntaxError: Parse error.
+PASS function throw(){} threw exception SyntaxError: Parse error.
+PASS (function(){function throw(){}}) threw exception SyntaxError: Parse error.
+PASS var try threw exception SyntaxError: Parse error.
+PASS (function(){var try}) threw exception SyntaxError: Parse error.
+PASS function g(try){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(try){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(try){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(try){}}) threw exception SyntaxError: Parse error.
+PASS function try(){} threw exception SyntaxError: Parse error.
+PASS (function(){function try(){}}) threw exception SyntaxError: Parse error.
+PASS var typeof threw exception SyntaxError: Parse error.
+PASS (function(){var typeof}) threw exception SyntaxError: Parse error.
+PASS function g(typeof){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(typeof){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(typeof){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(typeof){}}) threw exception SyntaxError: Parse error.
+PASS function typeof(){} threw exception SyntaxError: Parse error.
+PASS (function(){function typeof(){}}) threw exception SyntaxError: Parse error.
+PASS var var threw exception SyntaxError: Parse error.
+PASS (function(){var var}) threw exception SyntaxError: Parse error.
+PASS function g(var){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(var){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(var){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(var){}}) threw exception SyntaxError: Parse error.
+PASS function var(){} threw exception SyntaxError: Parse error.
+PASS (function(){function var(){}}) threw exception SyntaxError: Parse error.
+PASS var void threw exception SyntaxError: Parse error.
+PASS (function(){var void}) threw exception SyntaxError: Parse error.
+PASS function g(void){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(void){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(void){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(void){}}) threw exception SyntaxError: Parse error.
+PASS function void(){} threw exception SyntaxError: Parse error.
+PASS (function(){function void(){}}) threw exception SyntaxError: Parse error.
+PASS var while threw exception SyntaxError: Parse error.
+PASS (function(){var while}) threw exception SyntaxError: Parse error.
+PASS function g(while){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(while){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(while){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(while){}}) threw exception SyntaxError: Parse error.
+PASS function while(){} threw exception SyntaxError: Parse error.
+PASS (function(){function while(){}}) threw exception SyntaxError: Parse error.
+PASS var with threw exception SyntaxError: Parse error.
+PASS (function(){var with}) threw exception SyntaxError: Parse error.
+PASS function g(with){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(with){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(with){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(with){}}) threw exception SyntaxError: Parse error.
+PASS function with(){} threw exception SyntaxError: Parse error.
+PASS (function(){function with(){}}) threw exception SyntaxError: Parse error.
+PASS var class threw exception SyntaxError: Parse error.
+PASS (function(){var class}) threw exception SyntaxError: Parse error.
+PASS function g(class){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(class){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(class){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(class){}}) threw exception SyntaxError: Parse error.
+PASS function class(){} threw exception SyntaxError: Parse error.
+PASS (function(){function class(){}}) threw exception SyntaxError: Parse error.
+PASS var const threw exception SyntaxError: Parse error.
+PASS (function(){var const}) threw exception SyntaxError: Parse error.
+PASS function g(const){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(const){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(const){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(const){}}) threw exception SyntaxError: Parse error.
+PASS function const(){} threw exception SyntaxError: Parse error.
+PASS (function(){function const(){}}) threw exception SyntaxError: Parse error.
+PASS var enum threw exception SyntaxError: Parse error.
+PASS (function(){var enum}) threw exception SyntaxError: Parse error.
+PASS function g(enum){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(enum){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(enum){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(enum){}}) threw exception SyntaxError: Parse error.
+PASS function enum(){} threw exception SyntaxError: Parse error.
+PASS (function(){function enum(){}}) threw exception SyntaxError: Parse error.
+PASS var export threw exception SyntaxError: Parse error.
+PASS (function(){var export}) threw exception SyntaxError: Parse error.
+PASS function g(export){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(export){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(export){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(export){}}) threw exception SyntaxError: Parse error.
+PASS function export(){} threw exception SyntaxError: Parse error.
+PASS (function(){function export(){}}) threw exception SyntaxError: Parse error.
+PASS var extends threw exception SyntaxError: Parse error.
+PASS (function(){var extends}) threw exception SyntaxError: Parse error.
+PASS function g(extends){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(extends){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(extends){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(extends){}}) threw exception SyntaxError: Parse error.
+PASS function extends(){} threw exception SyntaxError: Parse error.
+PASS (function(){function extends(){}}) threw exception SyntaxError: Parse error.
+PASS var import threw exception SyntaxError: Parse error.
+PASS (function(){var import}) threw exception SyntaxError: Parse error.
+PASS function g(import){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(import){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(import){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(import){}}) threw exception SyntaxError: Parse error.
+PASS function import(){} threw exception SyntaxError: Parse error.
+PASS (function(){function import(){}}) threw exception SyntaxError: Parse error.
+PASS var super threw exception SyntaxError: Parse error.
+PASS (function(){var super}) threw exception SyntaxError: Parse error.
+PASS function g(super){} threw exception SyntaxError: Parse error.
+PASS (function(){function g(super){}}) threw exception SyntaxError: Parse error.
+PASS try{}catch(super){} threw exception SyntaxError: Parse error.
+PASS (function(){try{}catch(super){}}) threw exception SyntaxError: Parse error.
+PASS function super(){} threw exception SyntaxError: Parse error.
+PASS (function(){function super(){}}) threw exception SyntaxError: Parse error.
+PASS (obj=({true: true,false: true,null: true,break: true,case: true,catch: true,continue: true,debugger: true,default: true,delete: true,do: true,else: true,finally: true,for: true,function: true,if: true,in: true,instanceof: true,new: true,return: true,switch: true,this: true,throw: true,try: true,typeof: true,var: true,void: true,while: true,with: true,class: true,const: true,enum: true,export: true,extends: true,import: true,super: true, parsed: true })).parsed is true
+PASS ({ true: true}).true is true
+PASS ({ false: true}).false is true
+PASS ({ null: true}).null is true
+PASS ({ break: true}).break is true
+PASS ({ case: true}).case is true
+PASS ({ catch: true}).catch is true
+PASS ({ continue: true}).continue is true
+PASS ({ debugger: true}).debugger is true
+PASS ({ default: true}).default is true
+PASS ({ delete: true}).delete is true
+PASS ({ do: true}).do is true
+PASS ({ else: true}).else is true
+PASS ({ finally: true}).finally is true
+PASS ({ for: true}).for is true
+PASS ({ function: true}).function is true
+PASS ({ if: true}).if is true
+PASS ({ in: true}).in is true
+PASS ({ instanceof: true}).instanceof is true
+PASS ({ new: true}).new is true
+PASS ({ return: true}).return is true
+PASS ({ switch: true}).switch is true
+PASS ({ this: true}).this is true
+PASS ({ throw: true}).throw is true
+PASS ({ try: true}).try is true
+PASS ({ typeof: true}).typeof is true
+PASS ({ var: true}).var is true
+PASS ({ void: true}).void is true
+PASS ({ while: true}).while is true
+PASS ({ with: true}).with is true
+PASS ({ class: true}).class is true
+PASS ({ const: true}).const is true
+PASS ({ enum: true}).enum is true
+PASS ({ export: true}).export is true
+PASS ({ extends: true}).extends is true
+PASS ({ import: true}).import is true
+PASS ({ super: true}).super is true
+PASS ({get true(){},set true(){},get false(){},set false(){},get null(){},set null(){},get break(){},set break(){},get case(){},set case(){},get catch(){},set catch(){},get continue(){},set continue(){},get debugger(){},set debugger(){},get default(){},set default(){},get delete(){},set delete(){},get do(){},set do(){},get else(){},set else(){},get finally(){},set finally(){},get for(){},set for(){},get function(){},set function(){},get if(){},set if(){},get in(){},set in(){},get instanceof(){},set instanceof(){},get new(){},set new(){},get return(){},set return(){},get switch(){},set switch(){},get this(){},set this(){},get throw(){},set throw(){},get try(){},set try(){},get typeof(){},set typeof(){},get var(){},set var(){},get void(){},set void(){},get while(){},set while(){},get with(){},set with(){},get class(){},set class(){},get const(){},set const(){},get enum(){},set enum(){},get export(){},set export(){},get extends(){},set extends(){},get import(){},set import(){},get super(){},set super(){}, parsed: true }).parsed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

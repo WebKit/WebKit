@@ -1,0 +1,37 @@
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.keepWebHistory();
+    layoutTestController.dumpAsText();
+}
+
+function loaded()
+{
+    window.history.replaceState(null, "Title", "replacedURL.html");
+    window.history.pushState(null, "Title", "pushedURL.html");
+
+    if (window.layoutTestController) {
+        var style1 = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('link1'));
+        var style2 = window.layoutTestController.computedStyleIncludingVisitedInfo(document.getElementById('link2'));
+        var result = document.createElement("p");
+        if (style1.color != "rgb(255, 165, 0)" || style2.color != "rgb(255, 165, 0)")
+            result.innerText = "FAIL";
+        else
+            result.innerText = "PASS";
+        document.body.appendChild(result);
+    }
+}
+
+</script>
+
+<style>
+:link { color: rgb(0, 255, 0); background-color: white }
+:visited { color: rgb(255, 165, 0); background-color: black }
+</style>
+
+<body onload="loaded();">
+<a id="link1" href="replacedURL.html">This link should get colored visited as a result of replaceState() setting it as the current URL</a><br>
+<a id="link2" href="pushedURL.html">This link should get colored visited as a result of pushState() adding it to the forward list</a><br>
+If you're running in a browser, the link should be orange-on-black and you should see "replacedURL.html" in your global history.<br>
+If you're running in DRT, the test will also append "PASS" or "FAIL".<br>
+</body>

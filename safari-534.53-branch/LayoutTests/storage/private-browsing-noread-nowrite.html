@@ -1,0 +1,102 @@
+<html>
+<head>
+<script>
+
+function writeMessageToLog(message)
+{
+    document.getElementById("console").innerText += message + "\n";
+}
+
+var setupStatements = [
+    "CREATE TABLE IF NOT EXISTS PrivateTest1 (randomData)",
+    "INSERT INTO PrivateTest1 VALUES ('somedata')"
+];
+
+var privateBrowsingStatements = [
+    "CREATE TABLE IF NOT EXISTS PrivateTest2 (randomData)",
+    "DELETE FROM PrivateTest1",
+    "DROP TABLE PrivateTest1",
+    "INSERT INTO PrivateTest1 VALUES ('somedata')",
+    "SELECT * FROM PrivateTest1"
+];
+
+var completed = 0;
+var theTransaction;
+
+function setupSuccessFunction(tx, result)
+{
+    ++completed;
+    writeMessageToLog("Setup statement " + completed + " completed successfully");
+    checkSetupComplete();
+}
+
+function setupErrorFunction(tx, error)
+{
+    ++completed;
+    writeMessageToLog("Setup statement " + completed + " completed with an error\n" + error.message);
+    checkSetupComplete();
+}
+
+function privateBrowsingSuccessFunction(tx, result)
+{
+    ++completed;
+    writeMessageToLog("Private browsing statement " + completed + " completed successfully");
+}
+
+function privateBrowsingErrorFunction(tx, error)
+{
+    ++completed;
+    writeMessageToLog("Private browsing statement " + completed + " completed with an error\n" + error.message);
+    return false;
+}
+
+function runSetup(transaction)
+{
+    theTransaction = transaction;
+    for (i in setupStatements)
+        theTransaction.executeSql(setupStatements[i], [], setupSuccessFunction, setupErrorFunction);
+}
+
+function checkSetupComplete()
+{
+    if (completed == setupStatements.length)
+        runPrivateBrowsingTests();
+}
+
+function runPrivateBrowsingTests()
+{
+    completed = 0;
+
+    if (window.layoutTestController)
+        layoutTestController.setPrivateBrowsingEnabled(true);
+    
+    for (i in privateBrowsingStatements)
+        theTransaction.executeSql(privateBrowsingStatements[i], [], privateBrowsingSuccessFunction, privateBrowsingErrorFunction);
+}
+
+function endTest()
+{
+    writeMessageToLog("Test ended");
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var database = openDatabase("PrivateBrowsingNoReadNoWriteTest", "1.0", "Test private browsing no read/write safety", 1);
+    database.transaction(runSetup, endTest, endTest);
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test makes sure that attempts to change the database during private browsing fail.<br>
+<div id="console"></div>
+</body>
+</html>

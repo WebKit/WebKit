@@ -1,0 +1,24 @@
+<html manifest="resources/manifest-containing-itself.manifest">
+
+<div>This tests that a manifest can contain itself as a resource.</div>
+<div id="result">FAILURE</div>
+
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText()
+    layoutTestController.waitUntilDone();
+}
+
+function cached()
+{
+    document.getElementById('result').innerHTML = 'SUCCESS';
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+applicationCache.addEventListener('cached', cached, false);
+applicationCache.addEventListener('noupdate', cached, false);
+
+</script>
+</html>

@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+# Copyright (C) 2009 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#   * Redistributions of source code must retain the above copyright notice,
+#     this list of conditions and the following disclaimer.
+#   * Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#   * Neither the name of Google Inc. nor the names of its contributors
+#     may be used to endorse or promote products derived from this software
+#     without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+# This file is used by gclient execute gyp with the proper command
+# line arguments.
+
+import glob
+import os
+import shlex
+import sys
+
+script_dir = os.path.dirname(__file__)
+
+sys.path.append(os.path.join(script_dir, 'tools', 'gyp', 'pylib'))
+import gyp
+
+def additional_include_files(args=[]):
+  """
+  Returns a list of additional (.gypi) files to include, without
+  duplicating ones that are already specified on the command line.
+  """
+  # Determine the include files specified on the command line.
+  # This doesn't cover all the different option formats you can use,
+  # but it's mainly intended to avoid duplicating flags on the automatic
+  # makefile regeneration which only uses this format.
+  specified_includes = set()
+  for arg in args:
+    if arg.startswith('-I') and len(arg) > 2:
+      specified_includes.add(os.path.realpath(arg[2:]))
+
+  result = []
+  def AddInclude(path):
+    if os.path.realpath(path) not in specified_includes:
+      result.append(path)
+
+  # Always include common.gypi
+  AddInclude(os.path.join(script_dir, 'build', 'common.gypi'))
+
+  # Optionally add supplemental .gypi files if present.
+  supplements = glob.glob(os.path.join(script_dir, '*', 'supplement.gypi'))
+  for supplement in supplements:
+    AddInclude(supplement)
+
+  return result
+
+if __name__ == '__main__':
+
+  args = sys.argv[1:]
+
+  # Add includes.
+  args.extend(['-I' + i for i in additional_include_files(args)])
+
+  # There shouldn't be a circular dependency relationship between .gyp files,
+  # but in Chromium's .gyp files, on non-Mac platforms, circular relationships
+  # currently exist.  The check for circular dependencies is currently
+  # bypassed on other platforms, but is left enabled on the Mac, where a
+  # violation of the rule causes Xcode to misbehave badly.
+  # http://crbug.com/35878.
+  if sys.platform not in ('darwin',):
+    args.append('--no-circular-check')
+
+  # On linux, we want gyp to output a makefile (default is scons).
+  if sys.platform == 'linux2':
+    args.extend(['-fmake',
+                 '--suffix=.chromium',
+                 '--toplevel-dir=../../..',
+                 # auto_regeneration doesn't work with toplevel-dir
+                 '-Gauto_regeneration=0'])
+
+  # Other command args:
+  args.extend([
+               # gyp variable defines.
+               '-Dinside_chromium_build=0',
+               '-Dv8_use_snapshot=false',
+               '-Dmsvs_use_common_release=0',
+
+               # gyp hack: otherwise gyp assumes its in chromium's src/ dir.
+               '--depth=./',
+
+               # gyp file to execute.
+               'WebKit.gyp'])
+
+  print 'Updating webkit projects from gyp files...'
+  sys.stdout.flush()
+
+  # Off we go...
+  sys.exit(gyp.main(args))

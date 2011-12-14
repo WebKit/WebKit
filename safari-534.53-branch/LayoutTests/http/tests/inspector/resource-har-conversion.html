@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="resources-test.js"></script>
+
+<script>
+
+function doXHR()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "resources/post-target.cgi", false);
+    xhr.setRequestHeader("Content-Type", "text/xml");
+    xhr.send("<xml></xml>");
+}
+
+var test = function()
+{
+    InspectorTest.reloadPage(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInPage("doXHR()", step2);
+    }
+
+    function step2()
+    {
+        function findResourceByURL(url)
+        {
+            for (var id in WebInspector.networkResources) {
+                if (url.test(WebInspector.networkResources[id].url))
+                    return WebInspector.networkResources[id];
+            }
+        }
+
+        function addCookieHeadersToResource(resource)
+        {
+            resource.requestHeaders = {
+                "Cookie": "a=b; $Path=/path; $Domain=example.com; a1=b1\nc1=d1"
+            };
+            resource.responseHeaders = {
+                "Set-Cookie": "x=y; Path=/path; Domain=example.com; Discard; httpOnly; Secure; Version=1\nx1=y1\nz2=y2"
+            };
+        }
+
+        addCookieHeadersToResource(findResourceByURL(/inspector-test\.js$/));
+        var log = (new WebInspector.HARLog()).build();
+        // Filter out favicon.ico requests that only appear on certain platforms.
+        log.entries = log.entries.filter(function(entry) {
+            return !/favicon\.ico$/.test(entry.request.url);
+        });
+        log.entries.sort(InspectorTest.resourceURLComparer);
+        InspectorTest.addObject(log, InspectorTest.HARNondeterministicPropertiesWithSize);
+        var pageTimings = log.pages[0].pageTimings;
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests conversion of Inspector's resource representation into HAR format.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+FAIL dt.setDouble( bool ); dt.PUB_DOUBLE should be 1. Was 0.
+PASS dt.setDouble( bool ); dt.getDouble() is 1
+PASS typeof dt.getDouble() is "number"
+PASS dt.setDouble(new Boolean(false)); dt.PUB_DOUBLE is 0
+PASS dt.setDouble(new Boolean(false)); dt.getDouble() is 0
+PASS typeof dt.getDouble() is "number"
+PASS dt.setDouble(new Number(0)); dt.PUB_DOUBLE is 0
+PASS dt.setDouble(new Number(0)); dt.getDouble() is 0
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new Number(NaN)); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble(new Number(NaN)); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new Number(Infinity)); dt.PUB_DOUBLE should be Infinity. Was 0.
+PASS dt.setDouble(new Number(Infinity)); dt.getDouble() is Infinity
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new Number(new Number(-Infinity))); dt.PUB_DOUBLE should be -Infinity. Was 0.
+PASS dt.setDouble(new Number(new Number(-Infinity))); dt.getDouble() is -Infinity
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new String('JavaScript String Value')); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble(new String('JavaScript String Value')); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new String('1234567890')); dt.PUB_DOUBLE should be 1234567890. Was -1266679808.
+PASS dt.setDouble(new String('1234567890')); dt.getDouble() is 1234567890
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new String('1234567890.123456789')); dt.PUB_DOUBLE should be 1234567890.1234567. Was -1266161993.
+PASS dt.setDouble(new String('1234567890.123456789')); dt.getDouble() is 1234567890.123456789
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new MyObject('9876543210')); dt.PUB_DOUBLE should be 9876543210. Was -1219493888.
+PASS dt.setDouble(new MyObject('9876543210')); dt.getDouble() is 9876543210
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new MyOtherObject('5551212')); dt.PUB_DOUBLE should be 5551212. Was 0.
+PASS dt.setDouble(new MyOtherObject('5551212')); dt.getDouble() is 5551212
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new AnotherObject('6060842')); dt.PUB_DOUBLE should be 6060842. Was -2147483648.
+PASS dt.setDouble(new AnotherObject('6060842')); dt.getDouble() is 6060842
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(new Object()); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble(new Object()); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( MyObject ); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble( MyObject ); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( this ); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble( this ); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( Math ); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble( Math ); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( Function ); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble( Function ); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

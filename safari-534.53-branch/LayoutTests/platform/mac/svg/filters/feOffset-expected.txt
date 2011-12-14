@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (35,35) size 650x50
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (35,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+      RenderSVGPath {rect} at (35,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (135,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,10.00)}]
+      RenderSVGPath {rect} at (135,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (235,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(210.00,10.00)}]
+      RenderSVGPath {rect} at (235,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (335,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,10.00)}]
+      RenderSVGPath {rect} at (335,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (435,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,10.00)}]
+      RenderSVGPath {rect} at (435,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (535,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(510.00,10.00)}]
+      RenderSVGPath {rect} at (535,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+    RenderSVGContainer {g} at (635,35) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(610.00,10.00)}]
+      RenderSVGPath {rect} at (635,35) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]

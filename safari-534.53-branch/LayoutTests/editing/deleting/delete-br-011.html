@@ -1,0 +1,32 @@
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../editing.js"></script>
+<script>
+
+Markup.waitUntilDone();
+
+function editingTest() {
+
+    Markup.description('rdar://problem/4065343 Mail: Deleting a line sometimes makes the insertion point jump to the top of the message.');
+    Markup.dump('root', 'before deletion');
+
+    for (i = 0; i < 5; i++)
+        moveSelectionForwardByLineCommand();
+    deleteCommand();
+
+    Markup.dump('root', 'after deletion');
+    Markup.notifyDone();
+}
+
+</script>
+<title>Editing Test</title> 
+</head> 
+<body onload="runEditingTest();" contenteditable id="root">hello<div class="editing" id="test"><br></div><br></body></html>

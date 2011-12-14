@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to char
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 65535.6;dt.setChar( dt ); dt.PUB_CHAR is 65535
+PASS dt.PUB_DOUBLE_REPRESENTATION = 65535.6;dt.setChar( dt ); dt.getChar() is 65535
+PASS typeof dt.getChar() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

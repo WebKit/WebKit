@@ -1,0 +1,34 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+ 
+    <!-- This test makes sure that a secure text field has the correct title ui element -->
+
+    <label for="accountpassword"><span class="dslabel">Password</span></label><br>
+    <input size="30" maxlength="32" id="accountpassword" type="password" name="theAccountPW">
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var pass = document.getElementById("accountpassword");
+            pass.focus();
+            var titleUIElement = accessibilityController.focusedElement.titleUIElement();
+            var titleText = titleUIElement.childAtIndex(0);
+            var pattern = "AXValue: Password";
+            if (titleText.allAttributes().indexOf(pattern) != -1) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

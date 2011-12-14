@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to int
+
+PASS dt.setShort(java.lang.Short.MAX_VALUE +1); dt.PUB_SHORT threw exception ReferenceError: Can't find variable: java.
+PASS dt.setShort(java.lang.Short.MAX_VALUE +1); dt.getShort() threw exception ReferenceError: Can't find variable: java.
+PASS typeof dt.getShort() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

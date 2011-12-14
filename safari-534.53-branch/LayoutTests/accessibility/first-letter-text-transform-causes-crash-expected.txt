@@ -1,0 +1,10 @@
+Dt
+First letter text transform causes assert and bad type cast. This can cause a crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

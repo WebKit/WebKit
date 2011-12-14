@@ -1,0 +1,3 @@
+Tests that the async attribute is not supported for SVG scripts.
+
+PASS

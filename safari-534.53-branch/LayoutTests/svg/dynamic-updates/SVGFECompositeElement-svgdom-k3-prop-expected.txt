@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 118: TypeError: 'undefined' is not an object (evaluating 'overComposite1.k3.baseVal = .1')
+FAIL: Timed out waiting for notifyDone to be called
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'k3' property of the SVGFECompositeElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL Math.round(overComposite1.k3.baseVal * 1000) should be 2900. Threw exception TypeError: 'undefined' is not an object (evaluating 'overComposite1.k3.baseVal')
+

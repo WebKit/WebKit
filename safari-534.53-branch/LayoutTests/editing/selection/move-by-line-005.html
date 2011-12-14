@@ -1,0 +1,21 @@
+<p>
+    Test for <i><a href="rdar://problem/6967596">rdar://problem/6967596</a>
+    Safari hung using 100% CPU when I tried to look up a word in
+    Dictionary using command-control-d</i>.
+</p>
+<p id="result">FAIL: Test did not run</p>
+<div id="target" style="font: 20px Ahem; width: 320px; -webkit-user-modify: read-write;">Text and text<!-- --> more <!-- -->text</div>
+<script>
+    if ("layoutTestController" in window)
+        layoutTestController.dumpAsText();
+
+    var target = document.getElementById("target");
+    var selection = getSelection();
+
+    selection.setPosition(target.firstChild, 13);
+    selection.modify("move", "backward", "line");
+
+    var pass = (selection.anchorNode === target.firstChild && selection.anchorOffset === 0);
+
+    document.getElementById("result").innerText = pass ? "PASS" : "FAIL"; 
+</script>

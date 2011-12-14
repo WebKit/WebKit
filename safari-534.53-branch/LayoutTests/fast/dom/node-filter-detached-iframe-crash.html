@@ -1,0 +1,39 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
+    }
+
+    var dummyFilterCalled = false;
+    var foundNode;
+
+    function dummyFilter() {
+        dummyFilterCalled = true;
+        return NodeFilter.FILTER_ACCEPT;
+    }
+
+    function test() {
+        var iframe = document.createElement("iframe");
+        document.body.appendChild(iframe);
+        var doc = iframe.contentWindow.document;
+        document.body.removeChild(iframe);
+        var iterator = doc.createNodeIterator(doc, NodeFilter.SHOW_ELEMENT, dummyFilter, false);
+        foundNode = iterator.nextNode();
+        testPassed("Did not crash.");
+        shouldBeTrue("dummyFilterCalled");
+        shouldBe("foundNode.toString()", "\"[object HTMLHtmlElement]\"");
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+</head>
+<body onload="test()">
+<p>Ensure that using node filter with a detached iframe doesn't crash.</p>
+<div id="console"></div>
+</body>
+</html>

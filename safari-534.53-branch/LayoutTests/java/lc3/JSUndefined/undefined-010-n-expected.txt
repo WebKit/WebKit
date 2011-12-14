@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion undefined conversion
+
+FAIL dt.setBoolean( undefined ); dt.PUB_BOOLEAN should throw an exception. Was false.
+FAIL dt.setBoolean( undefined ); dt.getBoolean() should throw an exception. Was false.
+FAIL typeof dt.getBoolean() should throw an exception. Was boolean.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

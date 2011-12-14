@@ -1,0 +1,167 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2008 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#
+# This script attempts to find instances of a problem where the signatures
+# of virtual methods fail to match because one is defined 'const', and another
+# is not. For example:
+#       virtual void Base::doStuff() const;
+#       virtual void Derived::doStuff();
+#
+# The lack of 'const' on the derived class gives it a different signature, and
+# it will therefore not be called when doStuff() is called on a derived object
+# via a base class pointer.
+#
+# Limitations of this script:
+# * It only works on things in the WebCore namespace
+# * Not all templatized methods may be found correctly
+# * It doesn't know anything about inheritance, or if methods are actually virtual
+# * It has lots of false positives (should add a whitelist for known-good signatures,
+#    and specific methods)
+# * It's rather slow
+#
+# Added by Simon Fraser <simon.fraser@apple.com>
+#
+# Run the script like this:
+#  WebKitTools/Scripts/detect-mismatched-virtual-const WebKitBuild/Debug/WebCore.framework/WebCore
+#
+# Output consists of a series of warnings like this:
+#
+# Both const and non-const versions of bgColor():
+#     HTMLDocument::bgColor()
+#     HTMLBodyElement::bgColor() const
+#     HTMLTableElement::bgColor() const
+#     HTMLTableRowElement::bgColor() const
+#     HTMLTableCellElement::bgColor() const
+#
+
+use strict;
+no warnings qw /syntax/;
+
+
+my $file = $ARGV[0];
+
+print "Looking for unmatched const methods in $file\n";
+
+if (!open NM, "(nm '$file' | c++filt | sed 's/^/STDOUT:/') 2>&1 |") {
+    die "Could not open $file\n";
+}
+
+my $nestedParens;
+   $nestedParens = qr /
+                      [(]
+                      [^()]*
+                        (?:
+                          (??{ $nestedParens })
+                          [^()]*
+                        )*
+                      [)]/x;
+
+my $nestedAngleBrackets;
+   $nestedAngleBrackets = qr /
+                      [<]
+                      [^<>]*
+                        (?:
+                          (??{ $nestedAngleBrackets })
+                          [^<>]*
+                        )*
+                      [>]/x;
+
+my $bal;
+   $bal = qr /([^:]+
+              (??{ $nestedAngleBrackets })?
+              (??{ $nestedParens }))
+              ([^()]*)$/x;
+
+my %signature_map = ();
+
+while (<NM>) {
+  my $line = $_;
+  chomp($line);
+  if ($line =~ m/ [tT] WebCore::(.+)$/) {
+    my $method = $1;
+    
+    if ($method =~ /$bal/) {
+      my $signature = $1;
+      my $const = $2 eq " const";
+      
+      my $class = substr($method, 0, length($method) - length($signature) - ($const ? 6 : 0));
+
+#      print "line: $line\nclass: $class\nmethod: $method\nsignature: $signature\nconst: $const\n\n";
+
+      my %method_info = (
+          'class' => $class,
+          'const' => $const,
+          'method' => $method,
+      );
+      
+      push @{$signature_map{$signature}}, \%method_info;
+    } else {
+      print "unmatched line $method\n\n"
+    }
+  }
+}
+close NM;
+
+my $sig;
+for $sig (keys %signature_map) {
+  #print "\n$sig\n";
+
+  my @entries = @{$signature_map{$sig}};
+#  print "$#entries\n";
+  
+  my $num_const = 0;
+  my $num_not_const = 0;
+  my $i;
+  for $i (0 .. $#entries) {
+    my $entry = @entries[$i];
+
+    my $class = $entry->{'class'};
+    my $const = $entry->{'const'};
+    
+    if ($const) {
+      $num_const++;
+    } else {
+      $num_not_const++;
+    }
+  }
+
+  if ($#entries > 1 && $num_const > 0 && $num_not_const > 0) {
+    print "Both const and non-const versions of $sig:\n";
+
+    for $i (0 .. $#entries) {
+      my $entry = @entries[$i];
+      my $method = $entry->{'method'};
+      print "\t$method\n";
+    }
+
+  }
+}
+
+
+

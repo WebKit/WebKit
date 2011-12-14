@@ -1,0 +1,28 @@
+<html>
+<head>
+<style>
+div {
+  background: red;
+  background-repeat: no-repeat;
+  background-image: url(resources/map.svg);
+  height: 600px;
+  width: 800px;
+}
+</style>
+<script type="text/javascript" charset="utf-8">
+  if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+    // Test image does not load immediately, so have to delay.
+    window.addEventListener('load', function() {
+      window.setTimeout(function() {
+        if (window.layoutTestController)
+          layoutTestController.notifyDone();
+      }, 250);
+    }, false);
+</script>
+</head>
+<body style='margin: 0px'>
+<div>&nbsp;</div>
+</body>
+</html>

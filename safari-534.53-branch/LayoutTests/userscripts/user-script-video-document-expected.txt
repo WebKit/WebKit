@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: End Script: user-script-video-document.html
+CONSOLE MESSAGE: line 1: Start Script: silence-loop.mov
+CONSOLE MESSAGE: line 1: End Script: silence-loop.mov
+

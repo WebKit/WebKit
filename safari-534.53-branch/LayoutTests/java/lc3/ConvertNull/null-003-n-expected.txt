@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  null
+
+FAIL TEST_CLASS.ambiguous(null) should throw an exception. Was CHAR.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

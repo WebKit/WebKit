@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+  original test: http://mxr.mozilla.org/mozilla2.0/source/dom/indexedDB/test/test_remove_objectStore.html?force=1
+  license of original test:
+    " Any copyright is dedicated to the Public Domain.
+      http://creativecommons.org/publicdomain/zero/1.0/ "
+-->
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../fast/js/resources/js-test-post-function.js"></script>
+<script src="../resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB deleting an object store");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+    shouldBe("db.objectStoreNames.length", "0");
+
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = createAndPopulateObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createAndPopulateObjectStore()
+{
+    deleteAllObjectStores(db);
+
+    objectStoreName = evalAndLog("objectStoreName = 'Objects';");
+    objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });");
+
+    addedCount = evalAndLog("addedCount = 0;");
+    for (i = 0; i < 100; i++) {
+        request = evalAndLog("request = objectStore.add({foo: i});");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function(event) {
+            if (++addedCount == 100) {
+                checkObjectStore();
+            }
+        }
+    }
+}
+
+function checkObjectStore()
+{
+    shouldBe("db.objectStoreNames.length", "1");
+    shouldBe("db.objectStoreNames.item(0)", "objectStoreName");
+
+    request = db.setVersion('2');
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = postSetVersion2;
+}
+
+function postSetVersion2()
+{
+    evalAndLog("db.deleteObjectStore(objectStore.name);");
+    shouldBe("db.objectStoreNames.length", "0");
+
+    objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });");
+    shouldBe("db.objectStoreNames.length", "1");
+    shouldBe("db.objectStoreNames.item(0)", "objectStoreName");
+
+    request = evalAndLog("request = objectStore.openCursor();");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function(event) {
+        shouldBe("event.target.result", "null");
+        deleteSecondObjectStore();
+    }
+}
+
+function deleteSecondObjectStore()
+{
+    evalAndLog("db.deleteObjectStore(objectStore.name);");
+    shouldBe("db.objectStoreNames.length", "0");
+    setVersion3();
+}
+
+function setVersion3()
+{
+    request = evalAndLog("request = db.setVersion('3');");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = postSetVersion3;
+}
+
+function postSetVersion3()
+{
+    objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });");
+    request = evalAndLog("request = objectStore.add({foo:'bar'});");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = deleteThirdObjectStore;
+}
+
+function deleteThirdObjectStore()
+{
+    evalAndLog("db.deleteObjectStore(objectStoreName);");
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
+

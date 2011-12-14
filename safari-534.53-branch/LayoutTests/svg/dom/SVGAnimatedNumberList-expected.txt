@@ -1,0 +1,27 @@
+This test checks the SVGAnimatedNumberList API - utilizing the rotate property of SVGTextElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial rotate value
+PASS textElement.rotate.toString() is "[object SVGAnimatedNumberList]"
+PASS textElement.rotate.baseVal.toString() is "[object SVGNumberList]"
+PASS textElement.rotate.baseVal.getItem(0).value is 50
+
+Check that number lists are dynamic, caching value in a local variable and modifying it, should take effect
+PASS numRef.getItem(0).value is 100
+PASS textElement.rotate.baseVal.getItem(0).value is 100
+
+Check that assigning to baseVal has no effect, as no setter is defined
+PASS textElement.rotate.baseVal = -1 is -1
+PASS textElement.rotate.baseVal = 'aString' is "aString"
+PASS textElement.rotate.baseVal = textElement is textElement
+
+Check that the rotate value remained 100, and the baseVal type has not been changed
+PASS textElement.rotate.baseVal.toString() is "[object SVGNumberList]"
+PASS textElement.rotate.baseVal.getItem(0).value is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

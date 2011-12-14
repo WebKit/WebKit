@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+test1 = "FAIL";
+var test2 = "FAIL"
+function test3() {
+     return "FAIL";
+}
+</script> 
+<script>
+function test1() { 
+    return "SUCCESS";
+}
+
+function test2() { 
+    return "SUCCESS";
+}
+
+function test3() { 
+    return "SUCCESS";
+}
+
+shouldBeTrue("typeof test1 == 'function'");
+shouldBeTrue("typeof test2 == 'function'");
+shouldBeTrue("typeof test3 == 'function'");
+shouldBe("test3()", '"SUCCESS"');
+var successfullyParsed = true; 
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

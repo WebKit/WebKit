@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x580
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 379x18
+          text run at (0,0) width 379: "Tests that wrapping does not trim the last character if it is not whitespace."
+      RenderBlock {P} at (0,30) size 551x42 [border: (3px solid #FF0000)]
+        RenderText {#text} at (3,3) size 400x36
+          text run at (3,3) width 400: "\x{8D}\x{C5}\x{2018}\x{E5}2GHz\x{201A}\x{CC}Intel Core Duo\x{192}v\x{192}\x{8D}\x{192}Z\x{192}b\x{192}T\x{201A}\x{CC}\x{192}p\x{192}\x{8F}\x{81}[\x{81}AiSight\x{192}J\x{192}\x{81}\x{192}\x{2030}\x{81}AFront Row\x{81}AiLife "
+          text run at (3,21) width 303: "\x{81}f06\x{81}A13\x{192}C\x{192}\x{201C}\x{192}`\x{201A}\x{CC}\x{192}N\x{192}\x{160}\x{192}A\x{192}\x{8F}\x{192}C\x{192}h\x{192}X\x{192}N\x{192}\x{160}\x{81}[\x{192}\x{201C}\x{192}f\x{192}B\x{192}X\x{192}v\x{192}\x{152}\x{192}C"
+        RenderText {#text} at (0,0) size 0x0

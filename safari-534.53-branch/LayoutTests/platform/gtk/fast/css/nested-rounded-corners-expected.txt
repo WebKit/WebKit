@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+layer at (8,8) size 784x496 clip at (8,8) size 768x480
+  RenderBlock {DIV} at (0,0) size 784x496
+layer at (8,8) size 768x480 clip at (28,28) size 728x440
+  RenderBlock {DIV} at (0,0) size 768x480 [border: (20px solid #008000)]
+layer at (28,28) size 728x440 clip at (48,48) size 688x400
+  RenderBlock {DIV} at (20,20) size 728x440 [border: (20px solid #0000FF)]
+layer at (48,48) size 688x400 clip at (68,68) size 648x360
+  RenderBlock {DIV} at (20,20) size 688x400 [border: (20px solid #008000)]
+layer at (68,68) size 648x360 clip at (88,88) size 608x320
+  RenderBlock {DIV} at (20,20) size 648x360 [border: (20px solid #0000FF)]
+layer at (88,88) size 608x320 clip at (108,108) size 568x280
+  RenderBlock {DIV} at (20,20) size 608x320 [border: (20px solid #008000)]
+layer at (108,108) size 568x280 clip at (128,128) size 528x240
+  RenderBlock {DIV} at (20,20) size 568x280 [border: (20px solid #0000FF)]
+layer at (128,128) size 528x240 clip at (148,148) size 488x200
+  RenderBlock {DIV} at (20,20) size 528x240 [border: (20px solid #008000)]
+layer at (148,148) size 488x200 clip at (168,168) size 448x160
+  RenderBlock {DIV} at (20,20) size 488x200 [border: (20px solid #0000FF)]
+layer at (168,168) size 448x160 clip at (188,188) size 408x120
+  RenderBlock {DIV} at (20,20) size 448x160 [border: (20px solid #008000)]
+layer at (188,188) size 408x120 clip at (208,208) size 368x80
+  RenderBlock {DIV} at (20,20) size 408x120 [border: (20px solid #0000FF)]
+layer at (208,208) size 368x80 clip at (228,228) size 328x40
+  RenderBlock {DIV} at (20,20) size 368x80 [border: (20px solid #008000)]
+layer at (228,228) size 328x40 clip at (0,0) size 0x0
+  RenderBlock {DIV} at (20,20) size 328x40 [border: (20px solid #0000FF)]
+    RenderBlock {DIV} at (20,20) size 288x0

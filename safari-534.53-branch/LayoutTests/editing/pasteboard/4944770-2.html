@@ -1,0 +1,17 @@
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<p>This tests smart paste of a fragment that ends in a select element.  There should be spaces added before and after the inserted content.</p>
+<div contenteditable="true" id="copy"><select><option>1</option><option>2</option><option>3</option></select></div>
+<div contenteditable="true" id="paste">xx</div>
+
+<script>
+var copy = document.getElementById("copy");
+doubleClick(copy.offsetLeft, copy.offsetTop);
+document.execCommand("Copy");
+
+var paste = document.getElementById("paste");
+var sel = window.getSelection();
+sel.setPosition(paste, 0);
+sel.modify("move", "forward", "character");
+document.execCommand("Paste");
+</script>

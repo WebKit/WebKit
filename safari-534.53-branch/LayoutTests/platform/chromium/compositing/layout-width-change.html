@@ -1,0 +1,61 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>Layout width change</title>
+
+  <style type="text/css" media="screen">
+  .container {
+    position: absolute;
+    width: 400px;
+    height: 1500px;
+  }
+
+  .panel {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1000px;
+    height: 200px;
+    background-color: #bbb;
+  }
+
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText(true);
+    }
+    function doTest()
+    {
+      var container = document.getElementById("container");
+      var panel = document.getElementById("panel");
+
+      // Delay is needed after switching between compositing and non-compositing
+      // mode to allow for another render to happen.
+      window.setTimeout(function() {
+         panel.className += " composited"
+         container.style.height = "300";
+         if (window.layoutTestController) {
+            window.setTimeout(function() {
+                layoutTestController.notifyDone();
+            }, 20);
+         }
+      }, 20);
+    }
+
+    window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+  <p>There should be no white gap at the right hand side of the box.</p>
+  <div id="container" class="container">
+    <div id="panel" class="panel">
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to boolean
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setByte( dt ); dt.PUB_BYTE is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setByte( dt ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setByte( dt ); dt.PUB_BYTE is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setByte( dt ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setByte( dt ); dt.PUB_BYTE is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setByte( dt ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setByte( dt ); dt.PUB_BYTE is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setByte( dt ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setByte( dt ); dt.PUB_BYTE is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setByte( dt ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setByte( dt ); dt.PUB_BYTE is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setByte( dt ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setByte( dt ); dt.PUB_BYTE is 3
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setByte( dt ); dt.getByte() is 3
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setByte( dt ); dt.PUB_BYTE is -3
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setByte( dt ); dt.getByte() is -3
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = 127;dt.setByte( dt ); dt.PUB_BYTE is 127
+PASS dt.PUB_DOUBLE_REPRESENTATION = 127;dt.setByte( dt ); dt.getByte() is 127
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = -128;dt.setByte( dt ); dt.PUB_BYTE is -128
+PASS dt.PUB_DOUBLE_REPRESENTATION = -128;dt.setByte( dt ); dt.getByte() is -128
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = -128.5;dt.setByte( dt ); dt.PUB_BYTE is -128
+PASS dt.PUB_DOUBLE_REPRESENTATION = -128.5;dt.setByte( dt ); dt.getByte() is -128
+PASS typeof dt.getByte() is "number"
+PASS dt.PUB_DOUBLE_REPRESENTATION = 127.5;dt.setByte( dt ); dt.PUB_BYTE is 127
+PASS dt.PUB_DOUBLE_REPRESENTATION = 127.5;dt.setByte( dt ); dt.getByte() is 127
+PASS typeof dt.getByte() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

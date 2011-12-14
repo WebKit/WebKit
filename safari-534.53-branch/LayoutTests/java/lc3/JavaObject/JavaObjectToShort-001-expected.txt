@@ -1,0 +1,42 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to short
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setShort( dt ); dt.PUB_SHORT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setShort( dt ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setShort( dt ); dt.PUB_SHORT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setShort( dt ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setShort( dt ); dt.PUB_SHORT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setShort( dt ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setShort( dt ); dt.PUB_SHORT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setShort( dt ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setShort( dt ); dt.PUB_SHORT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setShort( dt ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setShort( dt ); dt.PUB_SHORT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setShort( dt ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setShort( dt ); dt.PUB_SHORT is 3
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setShort( dt ); dt.getShort() is 3
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setShort( dt ); dt.PUB_SHORT is -3
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setShort( dt ); dt.getShort() is -3
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 32767;dt.setShort( dt ); dt.PUB_SHORT is 32767
+PASS dt.PUB_DOUBLE_REPRESENTATION = 32767;dt.setShort( dt ); dt.getShort() is 32767
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -32768;dt.setShort( dt ); dt.PUB_SHORT is -32768
+PASS dt.PUB_DOUBLE_REPRESENTATION = -32768;dt.setShort( dt ); dt.getShort() is -32768
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -32768.5;dt.setShort( dt ); dt.PUB_SHORT is -32768
+PASS dt.PUB_DOUBLE_REPRESENTATION = -32768.5;dt.setShort( dt ); dt.getShort() is -32768
+PASS typeof dt.getShort() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 32767.5;dt.setShort( dt ); dt.PUB_SHORT is 32767
+PASS dt.PUB_DOUBLE_REPRESENTATION = 32767.5;dt.setShort( dt ); dt.getShort() is 32767
+PASS typeof dt.getShort() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

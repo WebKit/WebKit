@@ -1,0 +1,18 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    // DumpRenderTree requires waitUntilDone for this test even though it's not needed.
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+    layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+}
+var w = window.open("data:text/html,foo");
+w.print();
+w.close();
+
+window.onload = function() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+This test passes if it doesn't crash.

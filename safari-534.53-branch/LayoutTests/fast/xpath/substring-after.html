@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=15437">bug 15437</a>:
+XPath substring-after function is broken.</p>
+<div id="console"></div>
+
+<script>
+    shouldBe("document.evaluate(\"substring-after('abcde', 'd')\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'e'");
+    shouldBe("document.evaluate(\"substring-after('abcde', 'f')\", document, null, XPathResult.STRING_TYPE, null).stringValue", "''");
+    shouldBe("document.evaluate(\"substring-after('abcde', '')\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'abcde'");
+    shouldBe("document.evaluate(\"substring-after('1999/04/01', '/')\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'04/01'");
+    shouldBe("document.evaluate(\"substring-after('1999/04/01', '19')\", document, null, XPathResult.STRING_TYPE, null).stringValue", "'99/04/01'");
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

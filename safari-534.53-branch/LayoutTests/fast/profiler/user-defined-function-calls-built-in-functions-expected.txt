@@ -1,0 +1,16 @@
+This page has JavaScript that calls built-in functions. 
+
+To run this test manually, load it in the browser then load the WebInspector and look at the profile. In the profile there should be calls to createElement() createTextNode() appendChild() and testEnd(), among others.
+This is inserted Text
+
+
+Profile title: User defined function calles built-in functions
+Thread_1 (no file) (line 0)
+   startTest user-defined-function-calls-built-in-functions.html (line 11)
+      createElement (no file) (line 0)
+      createTextNode (no file) (line 0)
+      appendChild (no file) (line 0)
+      getElementById (no file) (line 0)
+      endTest profiler-test-JS-resources.js (line 1)
+
+

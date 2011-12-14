@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 20: Uncaught Error: Original error
+CONSOLE MESSAGE: line 17: Uncaught Error: Nested error
+Test that exception in window.onerror won't lead to recursive window.onerror call. Bug 8519.
+
+Main frame window.onerror: Uncaught Error: Original error at window-onerror7.html:20
+

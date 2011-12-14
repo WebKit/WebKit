@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL data:text/html,%3Chtml%3E%3Chead%3E%3Cscript%3Efunction%20fireSentinel()%20{if%20(window.layoutTestController)layoutTestController.globalFlag%20=%20true;}%3C/script%3E%3C/head%3E%3Cbody%20onload=%22fireSentinel();%22%3E%3Cp%20id=%22accessMe%22%3EPASS:%20Cross%20frame%20access%20from%20a%20data:%20URL%20was%20denied.%3C/p%3E%3Cp%3EInner-inner%20iframe.%3C/p%3E%3C/body%3E%3C/html%3E from frame with URL data:text/html,%3Chtml%3E%3Chead%3E%3Cscript%3Efunction%20loaded()%20{var%20iframe%20=%20document.getElementById('inner');iframe.src%20=%20'data:text/html,%3Chtml%3E%3Chead%3E%3Cscr'%20+%20'ipt%3Efunction%20fireSentinel()%20{if%20(window.layoutTestController)layoutTestController.globalFlag%20=%20true;}%3C/scr'%20+%20'ipt%3E%3C/head%3E%3Cbody%20onload=%22fireSentinel();%22%3E%3Cp%20id=%22accessMe%22%3EPASS:%20Cross%20frame%20access%20from%20a%20data:%20URL%20was%20denied.%3C/p%3E%3Cp%3EInner-inner%20iframe.%3C/p%3E%3C/body%3E%3C/html%3E';if%20(window.layoutTestController)%20{setTimeout(waitForFlag,%201);function%20waitForFlag()%20{if%20(!layoutTestController.globalFlag)%20{setTimeout(waitForFlag,%201);return;}performTest();}}%20else%20{document.getElementById('console').innerHTML%20=%20'Click%20the%20button%20when%20all%20the%20subframes%20have%20finished%20loading.';}}function%20performTest()%20{try%20{frames[0].document.getElementById('accessMe').innerHTML%20=%20'FAIL:%20Cross%20frame%20access%20from%20a%20data:%20URL%20was%20allowed.';}%20catch%20(e)%20{}if%20(window.layoutTestController)layoutTestController.notifyDone();}%3C/script%3E%3C/head%3E%3Cbody%20onload='loaded();'%3E%3Ciframe%20id='inner'%3E%3C/iframe%3E%3Cp%3EInner%20iframe.%3C/p%3E%3Cbutton%20onclick='performTest();'%3ETest%3C/button%3E%3Cpre%20id='console'%3E%3C/pre%3E%3C/body%3E%3C/html%3E. Domains, protocols and ports must match.
+
+This tests that a data: URL subframe can't access a child data: URL subframe of itself.
+
+
+
+--------
+Frame: 'aFrame'
+--------
+
+Inner iframe.
+
+Test
+
+
+--------
+Frame: 'inner'
+--------
+PASS: Cross frame access from a data: URL was denied.
+
+Inner-inner iframe.

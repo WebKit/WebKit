@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 9: [object DocumentConstructor]
+CONSOLE MESSAGE: line 10: function createElement() {
+    [native code]
+}
+Tests that console logging dumps proper messages.
+
+console-log-native-funcs.html:9DocumentConstructor console-message console-js-source console-log-level
+console-log-native-funcs.html:10function createElement() {
+    [native code]
+} console-message console-js-source console-log-level
+

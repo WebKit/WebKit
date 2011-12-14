@@ -1,0 +1,35 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../fast/js/resources/js-test-post-function.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test API that reports local storage disk usage by origin. NOTE: this test DEPENDS on storage-tracker-6-create.html to create local storage for the 'file://' origin. If this test runs in a separate DRT instance from storage-tracker-6-create.html, it may FAIL if there is no local storage!");
+
+function test()
+{
+    if (!window.localStorage) {
+        testFailed("localStorage DOES NOT exist");
+        return;
+    }
+
+    if (layoutTestController.originsWithLocalStorage().length > 0) {
+        shouldBeEqualToString("layoutTestController.originsWithLocalStorage().toString()", "file__0");
+        shouldBeTrue("layoutTestController.localStorageDiskUsageForOrigin('file://') > 6100");
+    } else {
+        testFailed("Ran with no origins with local storage.");
+    }
+
+}
+
+test();	
+
+window.successfullyParsed = true;
+isSuccessfullyParsed();
+</script>
+</body>
+</html>

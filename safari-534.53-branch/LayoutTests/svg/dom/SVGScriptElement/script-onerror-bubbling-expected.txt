@@ -1,0 +1,5 @@
+Test that "error" event is dispatched to SVGScriptElement onerror handler and doesn't bubble.
+PASS: script onerror ivoked for script id = 0
+PASS: script onerror ivoked for script id = 1
+PASS: onerror invoked on a dynamic script
+DONE.

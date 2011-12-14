@@ -1,0 +1,85 @@
+<html>
+<head>
+<script src=../../../../editing/editing.js language="javascript" type="text/javascript"></script>
+<title>Editing multiple words with markers test</title>
+</head>
+<body>
+<p>The test verified that when multiple words are modified by one editing command, their Spelling and 
+Autocorrection markers are removed. When manully testing, type "it's a meagesga meagesga", then 
+select and delete "esga meag", you should see the remaing text without any underline.</p>
+<textarea id="test" cols="80" rows="10"></textarea>
+<div id="console"></div>
+<script language="javascript" type="text/javascript">
+function resetText() {
+    document.getElementById('test').focus();
+    execSelectAllCommand();
+    execDeleteCommand();
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('g');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('g');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+
+textarea = document.getElementById('test');
+
+resetText();
+textarea.setSelectionRange(11, 20);
+execDeleteCommand();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,4) == 0 && window.layoutTestController.hasSpellingMarker(11,4) == 0) {
+        document.getElementById('console').innerHTML = 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = "FAILURE. The word 'meagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(11, 16);
+execDeleteCommand();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,4) == 0 && window.layoutTestController.hasSpellingMarker(11,8) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagmeagesga' has underline.<br>";
+    }
+}
+
+resetText();
+textarea.setSelectionRange(15, 20);
+execDeleteCommand();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 0 && window.layoutTestController.hasSpellingMarker(15,4) == 0) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesgaesga' has underline.<br>";
+    }
+}
+
+</script>
+</body>
+</html>

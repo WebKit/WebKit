@@ -1,0 +1,22 @@
+1. Test that an invalid src attribute fires an error when the file fails to load.
+2. Test that changing src attribute triggers load after a load fails.
+3. Test that changing src triggers load once a file is known to be valid.
+
+
+EVENT(error)
+EXPECTED (relativeURL(video.currentSrc) == 'bogus') OK
+EXPECTED (video.networkState == '3') OK
+EXPECTED (video.error.code == '4') OK
+
+
+EVENT(loadedmetadata)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
+EXPECTED (isNaN(video.duration) == 'false') OK
+
+
+EVENT(loadedmetadata)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/counting') OK
+EXPECTED (isNaN(video.duration) == 'false') OK
+
+END OF TEST
+

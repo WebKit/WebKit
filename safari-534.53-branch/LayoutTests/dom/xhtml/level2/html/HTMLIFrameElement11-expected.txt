@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLIFrameElement11
+Status	failure
+Message	titleLink: assertEquals failed, actual , expected NIST DOM HTML Test - FRAME.

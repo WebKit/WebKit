@@ -1,0 +1,8 @@
+This tests whether right clicking on a paragraph break in editable content selects it. The break should be selected on OS X, but not on Windows or Unix. To run it manually, right click on the paragraph break after the first paragraph below.
+
+The following paragraph break should be selected on OS X.
+Mac: Caret
+
+Win: Caret
+
+Unix: Caret

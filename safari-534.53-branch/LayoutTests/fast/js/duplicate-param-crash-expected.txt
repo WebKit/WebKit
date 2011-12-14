@@ -1,0 +1,11 @@
+Tests to ensure that activations are built correctly in the face of duplicate parameter names and do not cause crashes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test1("success")() is "success"
+PASS test2("success", "success", "success", "success", "success", "success", "success")() is "success"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

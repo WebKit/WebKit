@@ -1,0 +1,7 @@
+S15.2.4.7_A7
+
+TypeError: 'function propertyIsEnumerable() { [native code] }' is not a constructor (evaluating 'new FACTORY')
+PASS 
+
+TEST COMPLETE
+

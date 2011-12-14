@@ -1,0 +1,35 @@
+<div id="div1" contentEditable="true">foofoo</div>
+<div id="div2" contentEditable="true">foofoo</div>
+
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+    
+output = "";
+
+// Test 1: Verify that a header at the beginning of inserted content is preserved.
+div = document.getElementById("div1");
+text = div.firstChild;
+window.getSelection().setPosition(text, 3);
+document.execCommand("InsertHTML", false, "<h1>bar</h1><div>baz</div>");
+expected = "foo<h1>bar</h1>bazfoo";
+actual = div.innerHTML;
+if (actual == expected)
+    output += "Success\n";
+else
+    output += "Failure. Result was: " + actual + ", should have been: " + expected + "\n";
+    
+// Test 2: Verify that a header at the end of inserted content is preserved.
+div = document.getElementById("div2");
+text = div.firstChild;
+window.getSelection().setPosition(text, 3);
+document.execCommand("InsertHTML", false, "<div>bar</div><h1>baz</h1>");
+expected = "foobar<h1>baz</h1>foo";
+actual = div.innerHTML;
+if (actual == expected)
+    output += "Success\n";
+else
+    output += "Failure. Result was: " + actual + ", should have been: " + expected + "\n";
+
+document.body.innerText = output;
+</script>

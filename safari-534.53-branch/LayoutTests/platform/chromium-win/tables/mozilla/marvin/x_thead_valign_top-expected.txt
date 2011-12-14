@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x331
+  RenderBlock {html} at (0,0) size 800x331
+    RenderBody {body} at (8,16) size 784x307
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 153x19
+          text run at (0,0) width 153: "THEAD VALIGN=TOP"
+      RenderTable {table} at (0,36) size 633x271 [border: (1px outset #808080)]
+        RenderTableSection {thead} at (1,1) size 631x213
+          RenderTableRow {tr} at (0,2) size 631x209
+            RenderTableCell {td} at (2,2) size 204x209 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {img} at (2,2) size 200x200
+            RenderTableCell {td} at (208,2) size 421x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 417x19
+                text run at (2,2) width 360: "The top of this text should be vertically aligned to the top of "
+                text run at (362,2) width 57: "the image"
+        RenderTableSection {tfoot} at (1,242) size 631x28
+          RenderTableRow {tr} at (0,2) size 631x24
+            RenderTableCell {td} at (2,2) size 204x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 51x19
+                text run at (2,2) width 51: "TFOOT"
+            RenderTableCell {td} at (208,2) size 421x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 51x19
+                text run at (2,2) width 51: "TFOOT"
+        RenderTableSection {tbody} at (1,214) size 631x28
+          RenderTableRow {tr} at (0,2) size 631x24
+            RenderTableCell {td} at (2,2) size 204x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x19
+                text run at (2,2) width 53: "TBODY"
+            RenderTableCell {td} at (208,2) size 421x24 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 53x19
+                text run at (2,2) width 53: "TBODY"

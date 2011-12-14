@@ -1,0 +1,4 @@
+Now that document.documentURI is junk, document.baseURI should be null
+document.baseURI = null
+
+

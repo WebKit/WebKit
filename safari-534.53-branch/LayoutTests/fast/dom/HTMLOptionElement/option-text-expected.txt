@@ -1,0 +1,9 @@
+Test for the text attribute of HTMLOptionElement. To match other browsers, the attribute value is the text as displayed in the list box or popup, rather than strictly “the text contained within the option element” as specified.
+
+
+PASS: got "foo" as expected.
+PASS: got "foo" as expected.
+PASS: got "¥" as expected.
+PASS: got "foo bar" as expected.
+PASS: got "label" as expected.
+

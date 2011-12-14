@@ -1,0 +1,3 @@
+PASSED
+This tests the behaviour of SVGLocatable::getScreenCTM() in mixed content 
+

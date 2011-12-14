@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="resources/clearSessionStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.sessionStorage) {
+        log("window.sessionStorage DOES NOT exist");
+        return;
+    }
+    if (!window.layoutTestController) {
+        log("Test only designed to be run under DumpRenderTree");
+        return;
+    }
+    
+    sessionStorage.setItem("testItem", "InitialValue");    
+    layoutTestController.setPrivateBrowsingEnabled(true);
+    log("Initial value of testItem is: " + sessionStorage.getItem("testItem"));
+
+    try {
+        sessionStorage.setItem("testItem", "ChangedValue");
+    } catch(e) {
+        log("Caught exception trying to change item: " + e);
+    }
+
+    log("After change attempt, testItem is: " + sessionStorage.getItem("testItem"));
+    
+    sessionStorage.removeItem("testItem");
+    log("After remove attempt, testItem is: " + sessionStorage.getItem("testItem"));
+
+    sessionStorage.clear();
+    log("After clear attempt, testItem is: " + sessionStorage.getItem("testItem"));
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This is a test to make sure that when private browsing is on any attempt to change the sessionStorage area fail.
+<div id="logger"></div>
+</body>
+</html>

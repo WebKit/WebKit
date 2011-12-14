@@ -1,0 +1,27 @@
+<html>
+<div>DIV</div>
+<iframe src="http://localhost:8000/security/resources/cross-origin-getMatchedCSSRules-frame.html"></iframe>
+<script>
+    if (window.layoutTestController)
+    {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.onload = function()
+    {
+        var cssRules = window.getMatchedCSSRules(document.getElementsByTagName("div")[0], "", false);
+        if (cssRules)
+        {
+            cssRules[0].parentStyleSheet.foo = "FAIL";
+            window.frames[0].postMessage("done", "*");
+        } 
+        else 
+        {
+            alert("PASS");
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+   }
+</script>
+</html>

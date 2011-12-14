@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to int
+
+PASS dt.setInteger(new Boolean(true)); dt.PUB_INT is 1
+PASS dt.setInteger(new Boolean(true)); dt.getInteger() is 1
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new Boolean(false)); dt.PUB_INT is 0
+PASS dt.setInteger(new Boolean(false)); dt.getInteger() is 0
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new Number(0)); dt.PUB_INT is 0
+PASS dt.setInteger(new Number(0)); dt.getInteger() is 0
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new String('2147483647')); dt.PUB_INT is 2147483647
+PASS dt.setInteger(new String('2147483647')); dt.getInteger() is 2147483647
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new String('-2147483648')); dt.PUB_INT is -2147483648
+PASS dt.setInteger(new String('-2147483648')); dt.getInteger() is -2147483648
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new MyObject('5.5')); dt.PUB_INT is 5
+PASS dt.setInteger(new MyObject('5.5')); dt.getInteger() is 5
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new MyOtherObject('-107.5')); dt.PUB_INT is -107
+PASS dt.setInteger(new MyOtherObject('-107.5')); dt.getInteger() is -107
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(new AnotherObject('6666')); dt.PUB_INT is 6666
+PASS dt.setInteger(new AnotherObject('6666')); dt.getInteger() is 6666
+PASS typeof dt.getInteger() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

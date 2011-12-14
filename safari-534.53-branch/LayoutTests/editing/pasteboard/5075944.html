@@ -1,0 +1,14 @@
+<p>This test for a bug copy/pasting underlined text.</p>
+<div id="copy" contenteditable="true">This should be underlined.</div>
+<div id="paste" contenteditable="true"><br></div>
+
+<script>
+var copy = document.getElementById("copy");
+copy.focus();
+document.execCommand("SelectAll");
+document.execCommand("Underline");
+document.execCommand("Copy");
+var paste = document.getElementById("paste");
+paste.focus();
+document.execCommand("Paste");
+</script>

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 36: INVALID_STATE_ERR: DOM Exception 11: An attempt was made to use an object that is not, or is no longer, usable.
+PASS

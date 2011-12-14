@@ -1,0 +1,7 @@
+
+Test 1
+File in URL: external-script-URL-location.html
+
+Test 2
+File in URL: external-script-URL-location.html
+

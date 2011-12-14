@@ -1,0 +1,9 @@
+Testing webkitTransitionDuration: PASS
+Testing webkitTransitionProperty: PASS
+Testing webkitTransitionDelay: PASS
+Testing webkitTransitionTimingFunction: PASS
+Testing webkitAnimationName: PASS
+Testing webkitAnimationDuration: PASS
+Testing webkitAnimationDelay: PASS
+Testing webkitAnimationFillMode: PASS
+

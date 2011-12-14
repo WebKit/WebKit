@@ -1,0 +1,24 @@
+Test that when image map areas have their shape or coordinate dynamically altered, the clickable region changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS setArea('default', ''); checkForArea(50, 50) is true
+PASS setArea('rect', '0, 0, 100, 100'); checkForArea(50, 50) is true
+PASS setArea('rect', '0, 0, 100, 100'); checkForArea(150, 150) is false
+PASS setArea('rect', '200, 200, 300, 300'); checkForArea(50, 50) is false
+PASS setArea('rect', '200, 200, 300, 300'); checkForArea(250, 250) is true
+PASS setArea('circle', '100, 100, 50'); checkForArea(100, 100) is true
+PASS setArea('circle', '100, 100, 50'); checkForArea(120, 100) is true
+PASS setArea('circle', '100, 100, 50'); checkForArea(200, 100) is false
+PASS setArea('circle', '300, 300, 50'); checkForArea(100, 100) is false
+PASS setArea('circle', '300, 300, 50'); checkForArea(300, 300) is true
+PASS setArea('circle', '300, 300, 50'); checkForArea(320, 300) is true
+PASS setArea('poly', '100, 100, 200, 100, 200, 200'); checkForArea(150, 150) is true
+PASS setArea('poly', '100, 100, 200, 100, 200, 200'); checkForArea(100, 150) is false
+PASS setArea('poly', '100, 100, 200, 100, 200, 200'); checkForArea(300, 300) is false
+PASS setArea('default', ''); checkForArea(300, 300) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

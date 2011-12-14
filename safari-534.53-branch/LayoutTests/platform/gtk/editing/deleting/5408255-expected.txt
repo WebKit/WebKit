@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 16: TypeError: 'null' is not an object (evaluating 'deleteButton.offsetParent')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 771x38
+          text run at (0,0) width 771: "This tests for a bug where the delete button wouldn't work because it had -webkit-user-select:none instead of -webkit-user-"
+          text run at (0,19) width 87: "select:ignore. "
+          text run at (87,19) width 450: "The list should be removed, the editable region below should be empty."
+      RenderBlock {DIV} at (0,54) size 784x102
+        RenderBlock {UL} at (16,32) size 752x38
+          RenderListItem {LI} at (40,0) size 712x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+          RenderListItem {LI} at (40,19) size 712x19
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 8x19
+              text run at (0,0) width 8: "2"
+caret: position 0 of child 0 {#text} of child 1 {LI} of child 1 {UL} of child 3 {DIV} of body

@@ -1,0 +1,19 @@
+Test that Java applets can be embedded using the object element. Applet resources should be able to be specified using the classid or code attribute. Fallback content should be rendered if the object uses an IE-specific classid.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS document.objectWithJavaClassId is non-null.
+PASS document.objectWithJavaClassId.getSelf() is non-null.
+PASS document.objectWithJavaType is non-null.
+PASS document.objectWithJavaType.getSelf() is non-null.
+PASS document.objectWithClassIdBeforeType is non-null.
+PASS document.objectWithClassIdBeforeType.getSelf() is non-null.
+PASS document.objectWithCodeBeforeType is non-null.
+PASS document.objectWithCodeBeforeType.getSelf() is non-null.
+PASS document.objectWithActiveXClassId is undefined.
+PASS document.fallbackObjectWithJavaClassId is non-null.
+PASS document.fallbackObjectWithJavaClassId.getSelf() is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+      

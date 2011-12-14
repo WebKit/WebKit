@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<input type="text" aria-readonly="true" size=20>
+<input type="text" aria-readonly="false" size=20>
+<input type="text" readonly="readonly" size=20>
+<input type="text" size=20>
+<textarea rows="2" cols="20" readonly="readonly"></textarea>
+<textarea rows="2" cols="20"></textarea>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria-readonly attribute works. The first and third text fields should not be writable.");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+          var textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+          var succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "false");
+
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "true");
+          
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(2);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "false");
+            
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(3);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "true");
+          
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(4);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "false");
+
+          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(5);
+          succeeded = textField.isAttributeSettable("AXValue");
+          shouldBe("succeeded", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

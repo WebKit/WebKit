@@ -1,0 +1,3 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=12353 REGRESSION: Crash on load (mutation event dispatch under the image element constructor deletes the element).
+
+No crash means test PASS.

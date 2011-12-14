@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+   if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+   }
+
+   function printResults()
+   {
+      alert(document.getElementById("plugin").testCallback);
+
+      if (window.layoutTestController)
+          layoutTestController.notifyDone();
+   }
+
+   function setPlugin()
+   {
+      var pluginDiv = document.getElementById("pluginDiv");
+      pluginDiv.style.display = 'inline';
+      pluginDiv.innerHTML = '<object id="plugin" width="300" height="300" type="application/x-webkit-test-netscape"/>';
+      setTimeout("printResults()", 1);
+   }
+</script>
+</head>
+<body onload="setPlugin();">
+   <div id="pluginDiv" style="display: none;"></div>
+</body>
+</html>

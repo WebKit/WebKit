@@ -1,0 +1,66 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Dave Miller <justdave@syndicomm.com>
+  #                 Joel Peshkin <bugreport@peshkin.net>
+  #                 Jacob Steenhagen <jake@bugzilla.org>
+  #                 Vlad Dascalu <jocuri@softhome.net>
+  #                 Max Kanat-Alexander <mkanat@bugzilla.org>
+  #%]
+
+[%# INTERFACE:
+  # group: The Bugzilla::Group being changed.
+  # regexp: the regexp according to which the update is performed.
+  #%]
+
+[% IF regexp %]
+  [% title = "Confirm: Remove Explicit Members in the Regular Expression?" %]
+[% ELSE %]
+  [% title = "Confirm: Remove All Explicit Members?" %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  doc_section = "groups.html"
+%]
+
+[% IF regexp %]
+  <p>This option will remove all users from '[% group.name FILTER html %]'
+    whose login names match the regular expression:
+    '[% regexp FILTER html %]'</p>
+[% ELSE %]
+  <p>This option will remove all explicitly defined users
+    from '[% group.name FILTER html %].'</p>
+[% END %]
+  
+<p>Generally, you will only need to do this when upgrading groups
+  created with [% terms.Bugzilla %] versions 2.16 and earlier. Use
+  this option with <b>extreme care</b> and consult the documentation
+  for further information.
+</p>
+    
+<form method="post" action="editgroups.cgi">
+  <input type="hidden" name="group_id" value="[% group.id FILTER html %]">
+  <input type="hidden" name="regexp" value="[% regexp FILTER html %]">
+  <input type="hidden" name="action" value="remove_regexp">
+  
+  <input name="token" type="hidden" value="[% token FILTER html %]">
+  <input name="confirm" type="submit" value="Confirm">
+  <p>Or <a href="editgroups.cgi">return to the Edit Groups page</a>.</p>
+</form>
+    
+[% PROCESS global/footer.html.tmpl %] 

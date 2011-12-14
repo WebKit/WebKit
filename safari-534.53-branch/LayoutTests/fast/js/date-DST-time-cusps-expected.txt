@@ -1,0 +1,10 @@
+For times that happen twice the behavior of all major browsers seems to be to pick the second occurance, i.e. Standard Time not Daylight Time
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Passed all tests (or skipped all tests if your timezone isn't PST/PDT)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+S15.5.4.12_A7
+
+TypeError: 'function search() { [native code] }' is not a constructor (evaluating 'new __FACTORY')
+PASS 
+
+TEST COMPLETE
+

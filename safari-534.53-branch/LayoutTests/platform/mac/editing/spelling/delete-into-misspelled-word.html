@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src=../../../../editing/editing.js language="javascript" type="text/javascript"></script>
+<title>Editing Test</title> 
+</head> 
+<body>
+<p>The test verified that if user use delete to move caret to the end, or use forward delete to move
+caret to the beginning of, a word that is marked as misspelled, the misspell underline will remain. 
+You should see phrase "it's a meagesga", in which the word 'meagesga' has red underline.</p>
+<textarea id="test" cols="80" rows="10"></textarea>
+<div id="console"></div>
+<script language="javascript" type="text/javascript">
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+
+document.getElementById('test').focus();
+typeCharacterCommand('i');
+typeCharacterCommand('t');
+typeCharacterCommand('\'');
+typeCharacterCommand('s');
+typeCharacterCommand(' ');
+typeCharacterCommand('a');
+typeCharacterCommand(' ');
+typeCharacterCommand('m');
+typeCharacterCommand('e');
+typeCharacterCommand('a');
+typeCharacterCommand('g');
+typeCharacterCommand('e');
+typeCharacterCommand('s');
+typeCharacterCommand('g');
+typeCharacterCommand('a');
+typeCharacterCommand(' ');
+execDeleteCommand();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+        document.getElementById('console').innerHTML = 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = "FAILURE. The word 'meagesga' does not have underline.<br>";
+    }
+}
+
+textarea = document.getElementById('test');
+textarea.setSelectionRange(6, 6);
+textarea.focus();
+typeCharacterCommand(' ');
+execForwardDeleteCommand();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' does not have underline.<br>";
+    }
+}
+</script>
+</body>
+</html>

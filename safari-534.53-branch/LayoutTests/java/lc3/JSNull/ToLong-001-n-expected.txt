@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion null
+
+FAIL dt.setLong( null ); dt.PUB_LONG should throw an exception. Was 0.
+FAIL dt.setLong( null ); dt.getLong() should throw an exception. Was 0.
+FAIL typeof dt.getLong() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

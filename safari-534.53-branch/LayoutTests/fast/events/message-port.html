@@ -1,0 +1,109 @@
+<body>
+<p>Test cross-frame MessagePort communication.</p>
+<p>Should be a series of SUCCESS messages, followed with DONE.</p>
+<pre id=log></pre>
+<script>
+function log(message)
+{
+    document.getElementById("log").innerHTML += message + "<br>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var mainPort;
+
+function test()
+{
+    var channel = new MessageChannel;
+    window.frames[0].postMessage("msg", [channel.port2], "*");
+    mainPort = channel.port1;
+    mainPort.postMessage("ping");
+    mainPort.onmessage = function(evt) {
+        if (evt.data == "pong" && evt.origin == "")
+            log("Simple exchange: SUCCESS");
+        else
+            log("Simple exchange: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+        test2();
+    };
+}
+
+function test2()
+{
+    var channel = new MessageChannel;
+    mainPort.postMessage("newPort", [channel.port2]);
+    channel.port1.onmessage = function(evt) {
+        if (evt.data == "yo" && evt.origin == "")
+            log("Posted port: SUCCESS");
+        else
+            log("Posted port: FAIL. Got message '" + evt.data + "' from '" + evt.origin + "'.");
+        test3();
+    };
+}
+
+function test3()
+{
+    var channel = new MessageChannel;
+    channel.port1.postMessage("1");
+    var started = false;
+    channel.port2.addEventListener("message", function(evt) {
+        if (started) {
+            log("Event Listener: SUCCESS");
+            test4();
+        } else
+            log("Event Listener: FAIL. Event listener called before start()");
+   });
+   setTimeout(function() {
+      channel.port2.start();
+      started = true;
+   }, 100);
+
+}
+
+function test4()
+{
+    var channel = new MessageChannel;
+    channel.port1.postMessage("1");
+    channel.port1.close();
+    channel.port1.postMessage("2");
+    channel.port2.onmessage = function(evt) {
+        if (evt.data == "1") {
+            log("Closed port: SUCCESS");
+            test5();
+        } else
+            log("Closed port: FAIL. Got message: " + evt.data + " after close");
+   }
+}
+
+function test5()
+{
+    // Create a channel and put some messages in it which will go undelivered and should not leak
+    var channel = new MessageChannel;
+    channel.port1.postMessage("abcde");
+    test6();
+}
+
+function test6()
+{
+    var channel = new MessageChannel;
+    channel.port1.postMessage("howdy");
+    channel.port2.onmessage = function(event) {
+        log("MessageEvent.cancelable defaults to " + event.cancelable + ": " + (event.cancelable ? "FAIL" : "PASS"));
+        done();
+    }
+}
+
+function done() {
+    // Wait a short period of time to ensure no messages come in from previous tests.
+    setTimeout(function() {
+        log("DONE");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 100);
+}
+
+</script>
+<iframe src="resources/message-port-iframe.html" onload="test()"></iframe>
+</body>

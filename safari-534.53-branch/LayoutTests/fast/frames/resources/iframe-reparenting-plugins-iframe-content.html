@@ -1,0 +1,27 @@
+<script>
+// We can only guarantee that the Test PlugIn is installed.
+var plugin = navigator.plugins.namedItem("WebKit Test PlugIn");
+var mimetype = navigator.mimeTypes[0];
+
+// Called by test page after adopting this iframe and closing the
+// page that originally held this iframe.
+checkPlugins = function()
+{
+  if (!plugin) {
+      return "FAIL: Failed to find test plugin\n";
+  }
+
+  var message = "";
+  if (plugin.item(0).enabledPlugin)
+      message += "PASS: plugin OK.\n";
+  else
+      message += "FAIL: plugin references PluginData with no page.\n";
+
+  if (mimetype.enabledPlugin)
+      message += "PASS: mimetype OK.\n";
+  else
+      message += "FAIL: mimetype references PluginData with no page.\n";
+
+  return message;
+}
+</script>

@@ -1,0 +1,11 @@
+<input type="text" value="word another">
+<p>Tests double-clicking on a word. If the test succeeds, the word "word" should be selected.</p>
+<script>
+if (window.eventSender) {
+    eventSender.mouseMoveTo(15, 15);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+</script>

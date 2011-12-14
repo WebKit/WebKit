@@ -1,0 +1,19 @@
+<script>
+function runTest() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var testObject = document.getElementById('plugin').testObject;
+
+    // Remove the plug-in. The plug-in asserts that shutdown isn't called before
+    // any calls to NP_Deallocate, so this test will time out if that happens.
+    document.getElementById('container').innerHTML = '';
+    document.getElementById('result').innerHTML = 'SUCCESS';
+}
+</script>
+<body onload="runTest()">
+<div id="container">
+<embed id="plugin" type="application/x-webkit-test-netscape" test="np-deallocate-called-before-np-shutdown" width=100 height=100></embed>
+</div>
+<div>This tests that the NP_Deallocate function of an NPObject isn't called before the NP_Shutdown function.</div>
+<div id="result">FAILURE</div>

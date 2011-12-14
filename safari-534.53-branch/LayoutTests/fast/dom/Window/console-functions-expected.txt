@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 10: console.log() called.
+CONSOLE MESSAGE: line 11: console.info() called.
+CONSOLE MESSAGE: line 12: console.warn() called.
+CONSOLE MESSAGE: line 13: console.error() called.
+Tests window.console functions. To make sure this test passed you must check the console for the following 4 messages:
+
+console.log() called.
+console.info() called.
+console.warn() called.
+console.error() called.

@@ -1,0 +1,31 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="resources/char-decoding-utils.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests decoding characters in various character sets.");
+
+// Legacy Mac encodings.
+testDecode('mac', '%C3', 'U+221A');
+testDecode('macintosh', '%C3', 'U+221A');
+testDecode('MacRoman', '%C3', 'U+221A');
+testDecode('x-mac-greek', '%B0', 'U+0391');
+testDecode('x-mac-ukrainian', '%80', 'U+0410');
+testDecode('x-mac-cyrillic', '%80', 'U+0410');
+testDecode('mac-cyrillic', '%80', 'U+0410');
+testDecode('x-mac-centraleurroman', '%81', 'U+0100');
+testDecode('x-mac-ce', '%81', 'U+0100');
+testDecode('x-mac-turkish', '%81', 'U+00C5');
+
+successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

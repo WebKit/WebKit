@@ -1,0 +1,6 @@
+
+# This test requires ogg codecs
+media/media-can-play-ogg.html
+
+# requires video.buffered to be able to return multiple timeranges
+http/tests/media/video-buffered.html

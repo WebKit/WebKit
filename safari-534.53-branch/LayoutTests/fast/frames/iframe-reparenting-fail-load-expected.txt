@@ -1,0 +1,1 @@
+This test adopts an iframe into a second page, then closes that page, cancelling that iframe load. The cancelled load is treated as a failed load. This test will crash if resource tracking has not been updated after the iframe has been adopted to a different page because the failed load will be reported to the wrong place.

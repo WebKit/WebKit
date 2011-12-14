@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="WebKit2DirectX"
+	>
+  <Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(DXSDK_DIR)\Include&quot;"
+	/>
+  <Tool
+		Name="VCLinkerTool"
+		AdditionalLibraryDirectories="$(DXSDK_DIR)\Lib\x86"
+	/>
+</VisualStudioPropertySheet>

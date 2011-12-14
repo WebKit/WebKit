@@ -1,0 +1,20 @@
+<head>
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+<style>
+table, td {
+    border: 1px solid #aaa;
+}
+</style></head>
+<body>
+<div contenteditable="true"><table style="border: 1px solid #aaa" id="base"><tr><td id="extent" contenteditable="false">This tests for a Mail crasher that happened when a selection was created with one endpoint in non-editable content and the other in editable content.</td></tr></table></div>
+
+<script>
+var s = window.getSelection();
+var b = document.getElementById("base");
+var e = document.getElementById("extent");
+s.setBaseAndExtent(b, 0, e, 0);
+</script>
+</body>

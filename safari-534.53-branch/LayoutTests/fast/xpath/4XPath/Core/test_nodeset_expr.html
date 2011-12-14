@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="test.js"></script>
+<script src="../../xpath-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<script>
+    result = DOM.evaluate("(/ROOT | /ROOT/CHILD1)[true()]", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("(/ROOT | /ROOT/CHILD1)[true()]", result, [ROOT, CHILD1]);
+
+    result = DOM.evaluate("(/ROOT | /ROOT/CHILD1)[.=/ROOT]", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("(/ROOT | /ROOT/CHILD1)[.=/ROOT]", result, [ROOT]);
+
+    result = DOM.evaluate("(/ROOT | /ROOT/CHILD1) | (/ROOT)", CHILD1, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    checkSnapshot("(/ROOT | /ROOT/CHILD1) | (/ROOT)", result, [ROOT, CHILD1]);
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../../../js/resources/js-test-post.js"></script>
+</body>
+</html>

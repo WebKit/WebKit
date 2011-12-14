@@ -1,0 +1,21 @@
+This tests switching an unordered list with a nested list to an ordered list.
+| "
+"
+| <ol>
+|   <li>
+|     "<#selection-anchor>hello"
+|   "
+    "
+|   <ol>
+|     "
+    "
+|     <li>
+|       "world"
+|     "
+    "
+|   "
+    "
+|   <li>
+|     "webkit<#selection-focus>"
+| "
+"

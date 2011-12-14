@@ -1,0 +1,11 @@
+11.1.5_4-4-b-1 (TestCases/chapter11/11.1/11.1.5/11.1.5_4-4-b-1.js) Object literal - SyntaxError if a data property definition is followed by get accessor definition with the same name
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

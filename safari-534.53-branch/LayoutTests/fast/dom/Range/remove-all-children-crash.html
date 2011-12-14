@@ -1,0 +1,39 @@
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=28697">bug 28697</a>.</p>
+<div id="div"><p id="one"></p><p id="two">FAIL, the test did not start.</p></div>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function gc() {
+    if (typeof GCController !== "undefined")
+        GCController.collect();
+    else {
+        function gcRec(n) {
+            if (n < 1)
+                return {};
+            var temp = {i: "ab" + i + (i / 100000)};
+            temp += "foo";
+            gcRec(n-1);
+        }
+        for (var i = 0; i < 1000; i++)
+            gcRec(10)
+    }
+}
+
+var div = document.getElementById("div");
+var two = document.getElementById("two");
+var range = document.createRange();
+range.setStart(two, 0);
+range.setEnd(two, 0);
+
+div.innerHTML = "FAIL, the test did not complete.";
+
+gc();
+
+range.startOffset;
+div.innerHTML = "PASS, the test did not crash.";
+if (window.layoutTestController) {
+    layoutTestController.notifyDone();
+}
+</script>

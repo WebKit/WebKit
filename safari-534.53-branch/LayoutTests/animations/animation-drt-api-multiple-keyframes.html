@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #target {
+      position: relative;
+      left: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+    }
+
+    @-webkit-keyframes anim {
+      from { left: 10px; }
+      40% { left: 30px; }
+      60% { left: 15px; }
+      to { left: 20px; }
+    }
+   </style>
+
+   <script src="resources/animation-test-helpers.js"></script>
+   <script>
+     if (window.layoutTestController) {
+       layoutTestController.waitUntilDone();
+       layoutTestController.dumpAsText();
+     }
+   
+    function animationStarted()
+    {
+      if (window.layoutTestController) {
+        var paused = layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 3, "target");
+        var result = "";
+        if (paused)
+          result = "PASS: correctly paused animation";
+        else
+          result = "PASS: correctly paused animation";
+
+        document.getElementById('results').innerText = result;
+        layoutTestController.notifyDone();
+      } else
+        document.getElementById('results').innerText = "This test requires DRT";
+    }
+
+    function startTest()
+    {
+      var target = document.getElementById('target');
+      target.style.webkitAnimationName = "anim";
+      waitForAnimationToStart(target, animationStarted);
+    }
+   </script>
+</head>
+<body onload="startTest()">
+  <!-- Test for DRT pauseAnimationAtTimeOnElementWithId() API on animations with multiple keyframes -->
+  <div id="target"></div>
+  <div id="results"></div>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+EXPECTED (video.readyState == '0') OK
+EVENT(loadstart)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+EXPECTED (video.readyState == '4') OK
+END OF TEST
+

@@ -1,0 +1,13 @@
+<p>This tests to make sure that a selection inside a textarea is cleared when the textarea is removed from the document.  Not clearing it led to crashes.</p>
+<textarea id="textarea"></textarea>
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+textarea = document.getElementById("textarea");
+textarea.setSelectionRange(0, 0);
+textarea.parentNode.removeChild(textarea);
+if (window.getSelection().type != "None")
+    alert("FAILURE: There shouldn't be a selection.")
+else
+    alert("SUCCESS: The selection was cleared.")
+</script>

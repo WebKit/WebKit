@@ -1,0 +1,3 @@
+Test for bug 12619: Non-abbreviated XPaths don't work.
+
+SUCCESS

@@ -1,0 +1,11 @@
+Test that iterators are invalidated even if the original context is detached.
+
+PASS result.invalidIteratorState is false
+PASS result.iterateNext().tagName is 'span'
+Modifying the document...
+PASS result.invalidIteratorState is true
+PASS result.iterateNext() threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

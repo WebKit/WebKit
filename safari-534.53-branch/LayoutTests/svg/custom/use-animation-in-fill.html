@@ -1,0 +1,23 @@
+<svg>
+  <defs>
+    <g id="g">
+      <svg>
+        <linearGradient>
+          <animateTransform attributeName="a">
+        </linearGradient>
+      </svg>
+    </g>
+  </defs>
+  <use xlink:href="#g"></use>
+</svg>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+setTimeout(function () {
+        document.body.innerHTML = "PASS: Referenced animation does not trigger crash.";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 0);
+</script>

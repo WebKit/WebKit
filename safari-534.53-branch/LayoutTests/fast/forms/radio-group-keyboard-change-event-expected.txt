@@ -1,0 +1,21 @@
+Test for https://bugs.webkit.org/show_bug.cgi?id=32013.
+
+For manual testing, focus a radio button in the first group and use the arrow keys. Changing the checked radio button should fire change events.
+
+a b c
+
+For manual testing, focus a radio button in the second group and use the arrow keys. Change events should still be dispatched but the checked radio should not change.
+
+d e f
+
+b dispatched change event
+c dispatched change event
+e dispatched change event
+f dispatched change event
+PASS: a is not checked
+PASS: b is not checked
+PASS: c is checked
+PASS: d is checked
+PASS: e is not checked
+PASS: f is not checked
+

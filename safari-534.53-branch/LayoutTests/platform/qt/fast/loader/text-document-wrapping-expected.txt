@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrame {FRAME} at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderView at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderBlock {HTML} at (0,0) size 800x600
+            RenderBody {BODY} at (8,8) size 784x578
+              RenderBlock {PRE} at (0,0) size 784x95
+                RenderText {#text} at (0,1) size 784x93
+                  text run at (0,1) width 416: "This line should wrap with no horizontal scroll bar:"
+                  text run at (416,1) width 0: " "
+                  text run at (0,20) width 0: " "
+                  text run at (0,39) width 784: "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrst"
+                  text run at (0,58) width 784: "uvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmn"
+                  text run at (0,77) width 512: "opqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+                  text run at (512,77) width 0: " "

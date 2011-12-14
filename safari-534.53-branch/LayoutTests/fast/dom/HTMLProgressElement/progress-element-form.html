@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+
+<body>
+<table><form id=form1>
+<progress id=progress1></progress>
+</form></table>
+<div>This test passes if the progress element can find its form.</div>
+<div id=console>FAIL</div>
+
+<script>
+if (document.getElementById('progress1').form.id == "form1")
+    document.getElementById('console').innerHTML = "PASS";
+</script>
+</body>
+</html>

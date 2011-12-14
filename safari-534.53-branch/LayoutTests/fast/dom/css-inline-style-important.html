@@ -1,0 +1,27 @@
+<html>
+<head>
+<style type="text/css">
+#e { color:red; }
+</style>
+<script>
+function log(message)
+{
+    var item = document.createElement("li");
+    item.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(item);
+}
+function test()
+{
+    var e = document.getElementById('e');
+    e.style.color = "green !important";
+}
+</script>
+</head>
+<body onload="test();">
+<p>This test checks to see whether setting a css value including !important on an inline style property works. The text should be green if successful.
+<hr>
+<p id="e">This is the test element.</p>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

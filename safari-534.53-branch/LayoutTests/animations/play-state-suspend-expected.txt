@@ -1,0 +1,11 @@
+This test makes sure a play-state change in an animation during suspend does not resume the animation.
+
+PASS - "webkitTransform" property for "box1" element at 0.55s saw something close to: 1,0,0,1,100,0
+PASS - "left" property for "box2" element at 0.55s saw something close to: 100
+PASS - "webkitTransform" property for "box1" element at 0.65s saw something close to: 1,0,0,1,100,0
+PASS - "left" property for "box2" element at 0.65s saw something close to: 100
+PASS - "webkitTransform" property for "box1" element at 0.75s saw something close to: 1,0,0,1,100,0
+PASS - "left" property for "box2" element at 0.75s saw something close to: 100
+PASS - "webkitTransform" property for "box1" element at 1s saw something close to: 1,0,0,1,140,0
+PASS - "left" property for "box2" element at 1s saw something close to: 140
+

@@ -1,0 +1,19 @@
+<!doctype html>
+<head>
+<script>
+function selectStuff()
+{
+    document.body.offsetLeft;
+    if (eventSender) {
+        eventSender.mouseMoveTo(25, 590);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(25, 590);
+        eventSender.mouseMoveTo(25, 470);
+        eventSender.mouseUp();
+    }
+}
+</script>
+</head>
+
+<body onload="selectStuff()" style="font-size:36px; -webkit-writing-mode:horizontal-bt">This is the first line of text.<br>
+<img style="-webkit-logical-width:20px;-webkit-logical-height:50px;background-color:green"> This is the second line of <img style="-webkit-logical-width:20px;-webkit-logical-height:100px;background-color:purple"> text.

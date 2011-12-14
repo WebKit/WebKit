@@ -1,0 +1,19 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../../js/resources/js-test-post-function.js"></script>
+<script>
+
+window.onload = function() {
+    shouldThrow("window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1)", "'Error: SECURITY_ERR: DOM Exception 18'");
+    shouldThrow("window.localStorage", "'Error: SECURITY_ERR: DOM Exception 18'");
+    shouldThrow("window.sessionStorage", "'Error: SECURITY_ERR: DOM Exception 18'");
+}
+
+</script>
+</head>
+<body>
+    <div id="console"></div>
+</body>
+</html>

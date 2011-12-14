@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<!--
+Language tags should follow specification RFC5646:
+http://tools.ietf.org/html/rfc5646
+2.1.1.  Formatting of Language Tags
+
+   At all times, language tags and their subtags, including private use
+   and extensions, are to be treated as case insensitive: there exist
+   conventions for the capitalization of some of the subtags, but these
+   MUST NOT be taken to carry meaning.
+-->
+<script>
+description(
+"<pre>Test for bug 29653: [Qt] Qt-based browser fails to show the right language translation."
+);
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setPOSIXLocale("en_US.iso88591");
+}
+
+shouldBe("navigator.language.toLowerCase()", "'en-us'");
+
+var successfullyParsed = true;
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

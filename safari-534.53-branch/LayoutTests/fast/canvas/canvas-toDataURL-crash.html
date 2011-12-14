@@ -1,0 +1,11 @@
+<p id="console"></p>
+<p>Calling toDataURL() on a huge canvas shouldn't crash.  If the text above is "PASS", the test passed.</p>
+<canvas id="foo" width="65536" height="65536"></canvas>
+<script>
+var canvas = document.getElementById('foo');
+var url = canvas.toDataURL();
+var p = document.getElementById('console');
+p.innerHTML = "PASS";
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+</script>

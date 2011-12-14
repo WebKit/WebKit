@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script>        
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.setWillSendRequestReturnsNull(true);
+        }
+    </script>
+</head>
+<body>
+    This tests https://bugs.webkit.org/show_bug.cgi?id=46773 by having willSendRequest on the
+    plugin document return null. If there is no crash, the test passed.
+    <iframe src="resources/simple_blank.swf"></iframe>
+</body>
+</html>

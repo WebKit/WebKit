@@ -1,0 +1,16 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
+
+FAIL TEST_CLASS.ambiguous( new String() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Boolean() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Number() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Date() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Function() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Array() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( this ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new RegExp() ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( Math ) +'' should be STRING. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new Object() ) +'' should be STRING. Was BYTE.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

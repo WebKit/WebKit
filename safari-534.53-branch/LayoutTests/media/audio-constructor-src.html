@@ -1,0 +1,15 @@
+<body>
+<p>Test that Audio("url") constructor loads the specified resource.</p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    var audioFile = findMediaFile("audio", "content/test");
+    var audio = new Audio(audioFile);
+    mediaElement = audio;
+
+    testExpected("audio instanceof HTMLAudioElement", true);
+
+    waitForEvent("loadstart", function () { testExpected("relativeURL(audio.currentSrc)", audioFile); });
+
+    waitForEventAndEnd("canplaythrough");
+</script>

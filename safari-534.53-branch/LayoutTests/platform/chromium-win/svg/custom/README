@@ -1,0 +1,8 @@
+SVGException
+-------------------------------
+toString of exception constructors and exception prototypes 
+differ with v8 and KJS.
+
+createelement
+-------------------------------
+Only differ in error message. V8's error message is more informative.

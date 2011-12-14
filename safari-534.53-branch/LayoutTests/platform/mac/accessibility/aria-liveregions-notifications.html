@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+<h3 id="innerlive">text</h3>
+<img src="test.gif" width=100 height=100 alt="alt text" tabindex=0 id="image">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA live regions are sending out the correct notifications. We perform four operations (add, remove, change text, change alt tag), each one should trigger a live region notification");
+
+    var liveRegion = 0;
+    var liveRegionChangeCount = 0;
+    function ariaCallback(notification) {
+        if (notification == "AXLiveRegionChanged") {
+            liveRegionChangeCount++;
+
+            // We should get a total of 4 live region changes.
+            if (liveRegionChangeCount == 4) {
+               liveRegion.removeNotificationListener();
+               window.layoutTestController.notifyDone();
+            }
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.layoutTestController.waitUntilDone();
+
+        document.getElementById("liveregion").focus();
+        liveRegion = window.accessibilityController.focusedElement;
+
+        var addedNotification = liveRegion.addNotificationListener(ariaCallback);
+        shouldBe("addedNotification", "true");
+
+        // this should trigger our live region callback for a text change.
+        document.getElementById("innerlive").innerText = "changed text";
+
+        // this should trigger our live region callback for a new element.
+        document.getElementById("liveregion").innerHTML += "new text element";
+
+        // this should also trigger our live region change because its a text alternative change. 
+        document.getElementById("image").setAttribute('alt', "new image text");
+
+        // Access the accessibility tree here because AX won't post the live region change
+        // notification twice when the children have already been marked as dirty.
+        liveRegion.childAtIndex(0);
+
+        // this should trigger our live region callback for a removed element.
+        document.getElementById("liveregion").removeChild(document.getElementById("innerlive")); 
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

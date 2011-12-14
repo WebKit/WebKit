@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script>
+    var i = 0;
+    function test() {
+        if (window.layoutTestController) {
+            layoutTestController.setCanOpenWindows();
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+            eventSender.mouseMoveTo(17, 30);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+    }
+    function openWindow() {
+        var newWindow = window.open('resources/history_reload_window.html');
+    }
+
+    </script>
+</head>
+<body onload="test()">
+    This tests that history.go(0) will force a page reload.<br>
+    <input type="button" onclick="openWindow()" value="click"></input>
+    <div id="console"></div>
+</body>
+</html>

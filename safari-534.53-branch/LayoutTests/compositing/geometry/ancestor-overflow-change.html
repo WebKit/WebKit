@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    #container {
+      position: relative;
+      height: 50px;
+      width: 100px;
+      outline: 2px solid black;
+      overflow: hidden;
+    }
+    
+    #container.changed {
+      overflow: visible;
+      height: 100px;
+    }
+    
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: green;
+      -webkit-transform: translateZ(0);
+    }
+
+    #indicator {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+
+    #layers {
+      opacity: 0; /* Hide from pixel results */
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText(true);
+      layoutTestController.waitUntilDone();
+    }
+
+    function changeOverflow()
+    {
+      document.getElementById('container').className = 'changed';
+
+      if (window.layoutTestController)
+        document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
+      
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+    
+    window.addEventListener('load', function() {
+      window.setTimeout(changeOverflow, 0);
+    }, false);
+  </script>
+</head>
+<body>
+
+  <div id="indicator"></div>
+  <div id="container">
+    <div class="box"></div>
+  </div>
+  
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>
+</html>

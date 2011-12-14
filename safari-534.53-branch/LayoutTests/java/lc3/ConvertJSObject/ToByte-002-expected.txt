@@ -1,0 +1,11 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  JavaScript Object to int
+
+PASS TEST_CLASS.ambiguous( MyFunction ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( MyOtherFunction ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new MyObject(123) ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new MyOtherObject("123") ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new AnotherObject("123") ) +'' is 'BYTE'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,57 @@
+This tests that a frame with a the same name as function on the window object, has precedence in the lookup.
+
+PASS: typeof window.getSelection should be object and is.
+PASS: typeof window.focus should be object and is.
+PASS: typeof window.blur should be object and is.
+PASS: typeof window.close should be object and is.
+PASS: typeof window.print should be object and is.
+PASS: typeof window.stop should be object and is.
+PASS: typeof window.alert should be object and is.
+PASS: typeof window.confirm should be object and is.
+PASS: typeof window.prompt should be object and is.
+PASS: typeof window.find should be object and is.
+PASS: typeof window.scrollBy should be object and is.
+PASS: typeof window.scrollTo should be object and is.
+PASS: typeof window.scroll should be object and is.
+PASS: typeof window.moveBy should be object and is.
+PASS: typeof window.moveTo should be object and is.
+PASS: typeof window.resizeBy should be object and is.
+PASS: typeof window.resizeTo should be object and is.
+PASS: typeof window.getComputedStyle should be object and is.
+PASS: typeof window.getMatchedCSSRules should be object and is.
+PASS: typeof window.openDatabase should be object and is.
+PASS: typeof window.postMessage should be object and is.
+PASS: typeof window.atob should be object and is.
+PASS: typeof window.btoa should be object and is.
+PASS: typeof window.open should be object and is.
+PASS: typeof window.setTimeout should be object and is.
+PASS: typeof window.clearTimeout should be object and is.
+PASS: typeof window.setInterval should be object and is.
+PASS: typeof window.clearInterval should be object and is.
+PASS: typeof window.addEventListener should be object and is.
+PASS: typeof window.removeEventListener should be object and is.
+PASS: typeof window.captureEvents should be object and is.
+PASS: typeof window.releaseEvents should be object and is.
+FAIL: typeof window.eval should be object but instead is function
+FAIL: typeof window.parseInt should be object but instead is function
+FAIL: typeof window.parseFloat should be object but instead is function
+FAIL: typeof window.isNaN should be object but instead is function
+FAIL: typeof window.isFinite should be object but instead is function
+FAIL: typeof window.escape should be object but instead is function
+FAIL: typeof window.unescape should be object but instead is function
+FAIL: typeof window.decodeURI should be object but instead is function
+FAIL: typeof window.decodeURIComponent should be object but instead is function
+FAIL: typeof window.encodeURI should be object but instead is function
+FAIL: typeof window.encodeURIComponent should be object but instead is function
+PASS: typeof window.toString should be object and is.
+PASS: typeof window.toLocaleString should be object and is.
+PASS: typeof window.valueOf should be object and is.
+PASS: typeof window.hasOwnProperty should be object and is.
+PASS: typeof window.propertyIsEnumerable should be object and is.
+PASS: typeof window.isPrototypeOf should be object and is.
+PASS: typeof window.__defineGetter__ should be object and is.
+PASS: typeof window.__defineSetter__ should be object and is.
+PASS: typeof window.__lookupGetter__ should be object and is.
+PASS: typeof window.__lookupSetter__ should be object and is.
+FAIL: typeof window.myFunction should be object but instead is function
+PASS: typeof window.myPrototypeFunction should be object and is.

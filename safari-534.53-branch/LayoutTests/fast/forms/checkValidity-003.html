@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<form method="get" id="happy_form">
+<fieldset name="victim"></fieldset>
+<input name="victim" type="text" value="lorem ipsum"/>
+<button name="victim">lorem ipsum</button>
+<select name="victim"></select>
+<textarea name="victim"></textarea>
+</form>
+<div id="console"></div>
+<script>
+description("This test checks if checkValidity() returns correctly a true (meaning no error) result on form element.");
+
+f = document.getElementById("happy_form");
+shouldBe("f.checkValidity()", "true");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

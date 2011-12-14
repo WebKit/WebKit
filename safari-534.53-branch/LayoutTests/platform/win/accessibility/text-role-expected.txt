@@ -1,0 +1,6 @@
+This test verifies that, on Windows, text nodes return "editable text" for their role value. 
+
+Bug 32631 - MSAA: Accessibility role of text nodes is wrong
+
+PASS e.role is "editable text"
+

@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to short
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -Infinity;dt.setShort( dt ); dt.PUB_SHORT should throw an exception. Was 0.
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -Infinity;dt.setShort( dt ); dt.getShort() should throw an exception. Was 0.
+PASS typeof dt.getShort() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

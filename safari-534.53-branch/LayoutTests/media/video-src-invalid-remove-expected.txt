@@ -1,0 +1,9 @@
+Test that removing 'src' attribute does NOT trigger load of <source> elements
+
+
+EVENT(error)
+EXPECTED (video.error.code == '4') OK
+RUN(video.removeAttribute('src'))
+
+END OF TEST
+

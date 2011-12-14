@@ -1,0 +1,6 @@
+Test that uncaught exceptions will be reported to the window.onerror handler. Bug 8519.
+
+Main frame window.onerror: Uncaught Error: Inline script exception at window-onerror2.html:34
+Main frame window.onerror: Uncaught Exception in onload at window-onerror2.html:2
+Main frame window.onerror: Uncaught Error: Exception in setTimeout at window-onerror2.html:29
+

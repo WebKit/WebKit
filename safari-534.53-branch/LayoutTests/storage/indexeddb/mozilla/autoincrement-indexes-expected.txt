@@ -1,0 +1,35 @@
+Test IndexedDB indexes against autoincrementing keys
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+PASS indexedDB == null is false
+IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;
+PASS IDBDatabaseException == null is false
+indexedDB.open(name, description)
+db = event.target.result
+request = db.setVersion('1')
+Deleted all object stores.
+objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true });
+objectStore.createIndex('first', 'first');
+objectStore.createIndex('second', 'second');
+objectStore.createIndex('third', 'third');
+data = { first: 'foo', second: 'foo', third: 'foo' };
+request = objectStore.add(data);
+key = event.target.result;
+PASS key == null is false
+objectStore = db.transaction('foo').objectStore('foo');
+first = objectStore.index('first');
+request = first.get('foo');
+PASS event.target.result.id is key
+second = objectStore.index('second');
+request = second.get('foo');
+PASS event.target.result.id is key
+third = objectStore.index('third');
+request = third.get('foo');
+PASS event.target.result.id is key
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

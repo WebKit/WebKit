@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 8: Uncaught TypeError: Object [object Object] has no method 'dumpSourceAsWebArchive'
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x56
+  RenderBlock {HTML} at (0,0) size 800x56
+    RenderBody {BODY} at (8,8) size 784x40
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderInline {A} at (0,0) size 685x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 685x19
+            text run at (0,0) width 685: "Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,20) size 784x20
+        RenderText {#text} at (0,0) size 460x19
+          text run at (0,0) width 460: "This test checks that only one <!DOCTYPE> tag is written to a webarchive."

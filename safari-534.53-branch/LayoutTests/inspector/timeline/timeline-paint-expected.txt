@@ -1,0 +1,18 @@
+Tests the Timeline API instrumentation of a paint event
+
+Paint Properties:
+{
+    startTime : <number>
+    data : {
+        x : 0
+        y : 0
+        width : <number>
+        height : <number>
+    }
+    children : <object>
+    endTime : <number>
+    type : "Paint"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+}
+

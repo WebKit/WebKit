@@ -1,0 +1,20 @@
+An open connection blocks a separate connection's setVersion call
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS IndexedDB == null is false
+IndexedDB.open('set-version-blocked')
+IndexedDB.open('set-version-blocked')
+connections[0].setVersion('version 1')
+seen_blocked_event = true
+PASS blocked_event.version is "version 1"
+PASS blocked_event.target.readyState is 1
+connections[1].close()
+in setVersion.onsuccess
+PASS seen_blocked_event is true
+Deleted all object stores.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

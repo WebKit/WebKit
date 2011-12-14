@@ -1,0 +1,90 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's createObjectStore's various options");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    shouldBeTrue("'webkitIndexedDB' in window");
+    shouldBeFalse("webkitIndexedDB == null");
+
+    request = evalAndLog("webkitIndexedDB.open('create-object-store-options', 'description')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('version 1')");
+    request.onsuccess = cleanDatabase;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cleanDatabase()
+{
+    deleteAllObjectStores(db);
+
+    evalAndLog("db.createObjectStore('a', {keyPath: 'a'})");
+    evalAndLog("db.createObjectStore('b')");
+
+    debug("db.createObjectStore('c', {autoIncrement: true});");
+    db.createObjectStore('c', {autoIncrement: true});
+
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    shouldBe("trans.mode", "webkitIDBTransaction.READ_WRITE");
+
+    req = evalAndLog("trans.objectStore('a').put({'a': 0})");
+    req.onsuccess = putB;
+    req.onerror = unexpectedErrorCallback;
+}
+
+function putB()
+{
+    req = evalAndLog("trans.objectStore('b').put({'a': 0}, 0)");  // OOPS
+    req.onsuccess = getA;
+    req.onerror = unexpectedErrorCallback;
+}
+
+function getA()
+{
+    req = evalAndLog("trans.objectStore('a').get(0)");
+    req.onsuccess = getB;
+    req.onerror = unexpectedErrorCallback;
+}
+
+function getB()
+{
+    shouldBe("event.target.result.a", "{a: 0}");
+
+    req = evalAndLog("trans.objectStore('b').get(0)");
+    req.onsuccess = checkB;
+    req.onerror = unexpectedErrorCallback;
+}
+
+function checkB()
+{
+    shouldBe("event.target.result.a", "{a: 0}");
+
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

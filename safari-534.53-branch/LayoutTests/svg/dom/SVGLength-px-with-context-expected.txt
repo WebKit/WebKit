@@ -1,0 +1,92 @@
+This test checks SVGLength - converting from px to all other unit types
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Set value to be 2px
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
+PASS length.value is 2
+PASS length.valueInSpecifiedUnits is 2
+PASS length.valueAsString is "2px"
+
+Convert from px to unitless
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_NUMBER) is undefined.
+PASS length.valueAsString is "2"
+PASS length.value is 2
+PASS length.valueInSpecifiedUnits is 2
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
+
+Reset to 2px
+
+Convert from px to percentage
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PERCENTAGE) is undefined.
+PASS length.valueAsString is "1.33333%"
+PASS length.valueInSpecifiedUnits.toFixed(5) is "1.33333"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+
+Reset to 2px
+
+Convert from px to ems
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EMS) is undefined.
+PASS length.valueAsString is "0.166667em"
+PASS length.valueInSpecifiedUnits.toFixed(6) is "0.166667"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_EMS
+
+Reset to 2px
+
+Convert from px to exs
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_EXS) is undefined.
+PASS length.valueInSpecifiedUnits.toFixed(1) is "0.2"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_EXS
+
+Reset to 2px
+
+Convert from px to cm
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_CM) is undefined.
+PASS length.valueAsString is "0.0529167cm"
+PASS length.valueInSpecifiedUnits.toFixed(7) is "0.0529167"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_CM
+
+Reset to 2px
+
+Convert from px to mm
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_MM) is undefined.
+PASS length.valueAsString is "0.529167mm"
+PASS length.valueInSpecifiedUnits.toFixed(6) is "0.529167"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_MM
+
+Reset to 2px
+
+Convert from px to in
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_IN) is undefined.
+PASS length.valueAsString is "0.0208333in"
+PASS length.valueInSpecifiedUnits.toFixed(7) is "0.0208333"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_IN
+
+Reset to 2px
+
+Convert from px to pt
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PT) is undefined.
+PASS length.valueAsString is "1.5pt"
+PASS length.valueInSpecifiedUnits is 1.5
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PT
+
+Reset to 2px
+
+Convert from px to pc
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PC) is undefined.
+PASS length.valueInSpecifiedUnits.toFixed(3) is "0.125"
+PASS length.value.toFixed(1) is "2.0"
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PC
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+<script>
+addEventListener("unload", function() {
+  window.location = "javascript:alert('FAIL')";
+}, false);
+</script>
+<script>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+window.location = "resources/pass-and-notify-done.html";
+</script>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<body>
+<pre id="log"></pre>
+<script src="resources/runner.js"></script>
+<script>
+var anchor = document.createElement("a");
+start(20, function() {
+    for (var x = 0; x < 200000; x++) {
+        anchor.href = "http://www.apple.com/"
+    }
+});
+</script>
+</body>

@@ -1,0 +1,7 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This tests that Selection::getRangeAt(int) returns a valid Range object.
+
+hello
+hello
+[object Text]
+[object Text]

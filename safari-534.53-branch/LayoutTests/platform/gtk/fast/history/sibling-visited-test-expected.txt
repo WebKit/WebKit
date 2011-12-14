@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 14: TypeError: Result of expression 'firstStyle' [undefined] is not an object.
+These two links should be different colors (green and orange):
+
+One Two
+
+PASS

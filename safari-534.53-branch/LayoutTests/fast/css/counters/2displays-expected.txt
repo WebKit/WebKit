@@ -1,0 +1,6 @@
+This test passes if both the first and the second counter are 1000.
+
+PASS layoutTestController.counterValueForElementById('testView') is '1000 1000'
+
+TEST COMPLETE
+

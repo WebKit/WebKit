@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe.html from frame with URL http://127.0.0.1:8000/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value.html. Domains, protocols and ports must match.
+
+This test passes as long as the word 'FAIL' and an accompanying message do not appear in the subframe.
+
+
+
+--------
+Frame: 'aFrame'
+--------
+Inner iframe.

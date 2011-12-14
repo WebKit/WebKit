@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<textarea tabindex="0" id="text" cols=10 rows=50>A lot of text repeated many times. A lot of text repeated many times. A lot of text repeated many times. A lot of text repeated many times.
+A lot of text repeated many times. A lot of text repeated many times. A lot of text repeated many times. A lot of text repeated many times. A lot of text repeated many times.
+</textarea>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a popup button will return the text under the element for its title.");
+
+    if (window.accessibilityController) {
+        var textElement = document.getElementById("text");
+        textElement.focus();
+        var axElement = accessibilityController.focusedElement;
+
+        shouldBe("axElement.rangeForLine(0)", "'{0, 14}'");
+        shouldBe("axElement.rangeForLine(1)", "'{14, 14}'");
+        shouldBe("axElement.rangeForLine(2)", "'{28, 16}'");
+        shouldBe("axElement.rangeForLine(3)", "'{44, 14}'");
+        shouldBe("axElement.rangeForLine(4)", "'{58, 14}'");
+        shouldBe("axElement.rangeForLine(6)", "'{84, 14}'");
+        shouldBe("axElement.rangeForLine(7)", "'{98, 16}'");
+        shouldBe("axElement.rangeForLine(8)", "'{114, 14}'");
+        shouldBe("axElement.rangeForLine(9)", "'{128, 12}'");
+        shouldBe("axElement.rangeForLine(10)", "'{140, 14}'");
+
+        shouldBe("axElement.rangeForLine(100)", "'{0, 0}'");
+        shouldBe("axElement.rangeForLine(-1)", "'{0, 0}'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

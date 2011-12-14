@@ -1,0 +1,137 @@
+Test IndexedDB's cursor skips deleted entries.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('cursor-skip-deleted')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+objectStore = db.createObjectStore('store', {keyPath: 'id'})
+objectStore.createIndex('nameIndex', 'name')
+
+resetObjectStore():
+
+basicCursorTest()
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+
+testCursor():
+trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0))
+0: Alpha
+1: Bravo
+request = trans.objectStore('store').delete(0)
+2: Charlie
+request = trans.objectStore('store').delete(25)
+3: Delta
+request = trans.objectStore('store').delete(5)
+request = trans.objectStore('store').delete(6)
+request = trans.objectStore('store').delete(7)
+4: Echo
+8: India
+9: Juliet
+10: Kilo
+request = trans.objectStore('store').delete(10)
+11: Lima
+12: Mike
+request = trans.objectStore('store').delete(13)
+14: Oscar
+15: Papa
+request = trans.objectStore('store').delete(14)
+16: Quebec
+17: Romeo
+18: Sierra
+19: Tango
+20: Uniform
+request = trans.objectStore('store').delete(17)
+request = trans.objectStore('store').delete(18)
+21: Victor
+22: Whiskey
+23: X-ray
+24: Yankee
+
+
+resetObjectStore():
+
+reverseCursorTest():
+
+testCursor():
+trans.objectStore('store').openCursor(webkitIDBKeyRange.lowerBound(0), webkitIDBCursor.PREV)
+25: Zulu
+24: Yankee
+request = trans.objectStore('store').delete(25)
+23: X-ray
+request = trans.objectStore('store').delete(0)
+22: Whiskey
+request = trans.objectStore('store').delete(20)
+request = trans.objectStore('store').delete(19)
+request = trans.objectStore('store').delete(18)
+21: Victor
+17: Romeo
+16: Quebec
+15: Papa
+request = trans.objectStore('store').delete(15)
+14: Oscar
+13: November
+request = trans.objectStore('store').delete(12)
+11: Lima
+10: Kilo
+request = trans.objectStore('store').delete(11)
+9: Juliet
+8: India
+7: Hotel
+6: Golf
+5: Foxtrot
+request = trans.objectStore('store').delete(7)
+request = trans.objectStore('store').delete(8)
+4: Echo
+3: Delta
+2: Charlie
+1: Bravo
+
+
+resetObjectStore():
+
+indexCursorTest():
+
+testCursor():
+trans.objectStore('store').index('nameIndex').openCursor(webkitIDBKeyRange.lowerBound('Alpha'))
+0: Alpha
+1: Bravo
+request = trans.objectStore('store').delete(0)
+2: Charlie
+request = trans.objectStore('store').delete(25)
+3: Delta
+request = trans.objectStore('store').delete(5)
+request = trans.objectStore('store').delete(6)
+request = trans.objectStore('store').delete(7)
+4: Echo
+8: India
+9: Juliet
+10: Kilo
+request = trans.objectStore('store').delete(10)
+11: Lima
+12: Mike
+request = trans.objectStore('store').delete(13)
+14: Oscar
+15: Papa
+request = trans.objectStore('store').delete(14)
+16: Quebec
+17: Romeo
+18: Sierra
+19: Tango
+20: Uniform
+request = trans.objectStore('store').delete(17)
+request = trans.objectStore('store').delete(18)
+21: Victor
+22: Whiskey
+23: X-ray
+24: Yankee
+
+transactionComplete():
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

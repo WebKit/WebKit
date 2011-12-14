@@ -1,0 +1,13 @@
+<body>
+    This window should not have scroll bars. If it has scroll bars, try to use them.
+    <script>
+        var width = innerWidth;
+        var height = innerHeight;
+
+        document.documentElement.style.height = height - 32 + "px";
+        document.documentElement.style.width = width - 32 + "px";
+        document.body.offsetTop;
+
+        resizeTo(outerWidth - 24, outerHeight - 24);
+    </script>
+</body>

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 12: EvalError: Function constructor is disabled
+

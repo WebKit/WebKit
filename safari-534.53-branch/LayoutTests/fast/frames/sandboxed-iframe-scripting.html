@@ -1,0 +1,46 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+
+var disallowedExecuted = 0;
+var allowedExecuted = 0;
+
+window.onload = function()
+{
+    shouldBe("disallowedExecuted", "0");
+    shouldBe("allowedExecuted", "2");
+
+    isSuccessfullyParsed();
+}
+</script>
+</head>
+
+<body>
+    <p id="description"></p>
+ 
+    <div id="console"></div>
+ 
+    <iframe sandbox="allow-same-origin allow-scripts"
+            src="javascript: ++window.top.allowedExecuted;">
+    </iframe>
+    <iframe sandbox="allow-same-origin"
+            src="javascript: ++window.top.disallowedExecuted;">
+    </iframe>
+    
+    <iframe id="frame" src="resources/sandboxed-iframe-script-dynamic.html">
+    </iframe>
+
+    <script>
+    description("Verify that sandboxed frames with sandbox=&quot;allow-scripts&quot; can execute scripts, "
+                 + "but other sandboxed frames cannot. Also verify that removing the "
+                 + "sandbox=&quot;allow-scripts&quot; attribute at runtime prevents new scripts from launching, "
+                 + "but existing ones keep running.");
+    var successfullyParsed = true;
+    </script>
+</body>
+</html>

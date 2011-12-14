@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+Test for:
+
+bug 40996: Progress event should not be fired during synchronous XMLHttpRequest;
+bug 17502: Assertion failure when trying to restart a sync XMLHttpRequest as an async one from onreadystatechange.
+ Step 1: Same origin request
+readystatechange 4
+load
+
+Step 2: Cross origin request, disallowed
+readystatechange 4
+error
+Error: NETWORK_ERR: XMLHttpRequest Exception 101
+
+Step 3: Cross origin request, allowed
+readystatechange 4
+load
+
+Step 4: Cross origin request, check that preflight isn't attempted
+readystatechange 4
+load
+

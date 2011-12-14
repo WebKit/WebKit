@@ -1,0 +1,13 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function done() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<iframe src="resources/set-parent-to-javascript-url.html"></iframe>

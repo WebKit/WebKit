@@ -1,0 +1,57 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+FAIL dt.setFloat(new Boolean(true)); dt.PUB_FLOAT should be 1. Was 0.
+PASS dt.setFloat(new Boolean(true)); dt.getFloat() is 1
+PASS typeof dt.getFloat() is "number"
+PASS dt.setFloat(new Boolean(false)); dt.PUB_FLOAT is 0
+PASS dt.setFloat(new Boolean(false)); dt.getFloat() is 0
+PASS typeof dt.getFloat() is "number"
+PASS dt.setFloat(new Number(0)); dt.PUB_FLOAT is 0
+PASS dt.setFloat(new Number(0)); dt.getFloat() is 0
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new Number(NaN)); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat(new Number(NaN)); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new Number(Infinity)); dt.PUB_FLOAT should be Infinity. Was 0.
+PASS dt.setFloat(new Number(Infinity)); dt.getFloat() is Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( new Number(new Number(-Infinity))); dt.PUB_FLOAT should be -Infinity. Was 0.
+PASS dt.setFloat( new Number(new Number(-Infinity))); dt.getFloat() is -Infinity
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new String('JavaScript String Value')); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat(new String('JavaScript String Value')); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new String('1234567')); dt.PUB_FLOAT should be 1234567. Was 0.
+PASS dt.setFloat(new String('1234567')); dt.getFloat() is 1234567
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new String('123456')); dt.PUB_FLOAT should be 123456. Was 0.
+PASS dt.setFloat(new String('123456')); dt.getFloat() is 123456
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new MyObject('5555555')); dt.PUB_FLOAT should be 5555555. Was -1073741824.
+PASS dt.setFloat(new MyObject('5555555')); dt.getFloat() is 5555555
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new MyOtherObject('5551212')); dt.PUB_FLOAT should be 5551212. Was 0.
+PASS dt.setFloat(new MyOtherObject('5551212')); dt.getFloat() is 5551212
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new AnotherObject('6060842')); dt.PUB_FLOAT should be 6060842. Was -2147483648.
+PASS dt.setFloat(new AnotherObject('6060842')); dt.getFloat() is 6060842
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat(new Object()); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat(new Object()); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( MyObject ); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat( MyObject ); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( this ); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat( this ); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( Math ); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat( Math ); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+FAIL dt.setFloat( Function ); dt.PUB_FLOAT should be NaN. Was 0.
+PASS dt.setFloat( Function ); dt.getFloat() is NaN
+PASS typeof dt.getFloat() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

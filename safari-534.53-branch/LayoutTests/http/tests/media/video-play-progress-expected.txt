@@ -1,0 +1,7 @@
+Test that at least one progress event is fired after starting to load the video.
+
+RUN(video.play())
+EVENT(loadstart)
+EVENT(progress)
+END OF TEST
+

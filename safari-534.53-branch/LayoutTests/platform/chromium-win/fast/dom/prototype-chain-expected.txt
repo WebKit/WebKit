@@ -1,0 +1,67 @@
+This page prints out the prototype chains of select DOM objects. Older versions of WebCore didn't properly implement prototype chaining for these objects.
+
+NOTE: This test will start failing if you change the layout of a related prototype chain in WebCore. That does not necessarily mean that you have done something wrong; you may just need to check in new results.
+
+----- [object HTMLDocument] (4 prototypes) -----
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+----- [object HTMLDivElement] (5 prototypes) -----
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+----- [object HTMLFormElement] (5 prototypes) -----
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+----- [object UIEvent] (3 prototypes) -----
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+----- [object MouseEvent] (4 prototypes) -----
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+----- [object KeyboardEvent] (4 prototypes) -----
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+[object Object]
+
+

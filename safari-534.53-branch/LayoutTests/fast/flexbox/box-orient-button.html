@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<style type="text/css">
+.box {
+  display: -webkit-box;
+  display: -moz-box;
+}
+.horizontal {
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+}
+.vertical {
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+}
+.box span {
+  display: -webkit-box;
+  display: -moz-box;
+}
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="main">
+<p>
+reference of horizontal button:<br>
+<button id="reference_horizontal">
+  <span>hello</span>
+  <span>world</span>
+</button>
+<p>
+reference of vertical button:<br>
+<button id="reference_vertical">
+  <span>hello</span><br>
+  <span>world</span>
+</button>
+<p>
+default:<br>
+<button id="default" class="box">
+  <span>hello</span>
+  <span>world</span>
+</button>
+<p>
+horizontal:<br>
+<button id="horizontal" clsas="box horizontal">
+  <span>hello</span>
+  <span>world</span>
+</button>
+<p>
+vertical:<br>
+<button id="vertical" class="box vertical">
+  <span>hello</span>
+  <span>world</span>
+</button>
+<p>
+default => vertical:<br>
+<button id="toVertical" class="box">
+  <span>hello</span>
+  <span>world</span>
+</button>
+<p>
+vertical => horizontal:<br>
+<button id="toHorizontal" class="box vertical">
+  <span>hello</span>
+  <span>world</span>
+</button>
+</div>
+<div id="console"></div>
+<script src="resources/box-orient-button.js"></script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

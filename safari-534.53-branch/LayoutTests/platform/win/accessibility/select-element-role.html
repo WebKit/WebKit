@@ -1,0 +1,32 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+    <script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<p>This tests that select elements have the correct role.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<select id="selectElement" title="selectElement">
+    <option SELECTED>Option 1</option>
+</select>
+
+<p id="console"></p>
+
+<script>
+    if (window.layoutTestController && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        layoutTestController.dumpAsText();
+
+        document.getElementById("selectElement").focus();
+
+        shouldBe('accessibilityController.focusedElement.role', '"combo box"');
+    }
+</script>
+</body>
+</html>

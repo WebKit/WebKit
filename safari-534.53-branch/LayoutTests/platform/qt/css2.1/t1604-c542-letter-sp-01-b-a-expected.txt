@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x199
+  RenderBlock {HTML} at (0,0) size 800x199
+    RenderBody {BODY} at (8,14) size 784x177
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 713x19
+          text run at (0,0) width 713: "There should be a stripy pattern of yellow and aqua below (each vertical stripe should be straight and unbroken)."
+      RenderBlock {DIV} at (48,33) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 312x26
+          text run at (0,-1) width 312: "x  x    xx xx"
+      RenderBlock {DIV} at (48,57) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 312x26
+          text run at (0,-1) width 312: "x  x    xx xx"
+      RenderBlock {DIV} at (48,81) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 312x26
+          text run at (0,-1) width 312: "x  x    xx xx"
+      RenderBlock {DIV} at (48,105) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 72x26
+          text run at (0,-1) width 72: "xx "
+        RenderInline {SPAN} at (0,0) size 120x26
+          RenderText {#text} at (72,-1) size 120x26
+            text run at (72,-1) width 120: "xx xx"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (48,129) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 312x26
+          text run at (0,-1) width 312: "x  x    xx xx"
+      RenderBlock {DIV} at (48,153) size 360x24 [color=#00FFFF] [bgcolor=#FFFF00]
+        RenderText {#text} at (0,-1) size 300x26
+          text run at (0,-1) width 300: "x     x         x x   x x"

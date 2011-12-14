@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 40: ReferenceError: Can't find variable: textInputController
+This tests that calling input-method functions sends Composition Events and Text Events introduced in DOM Level 3.
+
+To test manually, enable an IME, input CJK characters, and see this page doesn't show 'FAILED' lines.
+
+
+

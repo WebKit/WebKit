@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 12: TypeError: 'undefined' is not a function (evaluating 'strict.bind(true)')
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

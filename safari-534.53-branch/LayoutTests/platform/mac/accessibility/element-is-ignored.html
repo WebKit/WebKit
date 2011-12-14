@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+test
+
+<div id="element1" role="group" tabindex="0">text</div>
+
+test
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if you access an element that has been removed, it return the correct value for isIgnored (true, that is, it is ignored).");
+
+    if (window.accessibilityController) {
+        document.getElementById("element1").focus();
+        var element1 = accessibilityController.focusedElement;
+
+        // The element should not be ignored (it should be a group)
+        shouldBeFalse("element1.isIgnored");
+
+        // Remove the element, it should become ignored
+        document.getElementById("body").removeChild(document.getElementById("element1"));
+        shouldBeTrue("element1.isIgnored");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

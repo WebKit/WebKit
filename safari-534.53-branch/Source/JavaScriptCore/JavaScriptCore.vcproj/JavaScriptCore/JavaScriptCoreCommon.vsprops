@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="JavaScriptCoreCommon"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;../../heap/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+		PreprocessorDefinitions="__STD_C"
+		ForcedIncludeFiles="ICUVersion.h"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib libicuin$(LibraryConfigSuffix).lib libicuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
+		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
+		AdditionalLibraryDirectories="&quot;$(IntDir)\lib&quot;"
+		ModuleDefinitionFile="JavaScriptCore.def"
+	/>
+</VisualStudioPropertySheet>

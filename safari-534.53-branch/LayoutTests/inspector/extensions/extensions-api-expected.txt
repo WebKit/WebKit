@@ -1,0 +1,51 @@
+Tests public interface of WebInspector Extensions API
+
+Started extension.
+Running tests...
+RUNNING TEST: extension_testAPI
+{
+    audits : {
+        addCategory : <function>
+    }
+    inspectedWindow : {
+        reload : <function>
+        eval : <function>
+    }
+    panels : {
+        elements : {
+            onShown : {
+                addListener : <function>
+                removeListener : <function>
+            }
+            onHidden : {
+                addListener : <function>
+                removeListener : <function>
+            }
+            createSidebarPane : <function>
+            onSelectionChanged : {
+                addListener : <function>
+                removeListener : <function>
+            }
+        }
+        create : <function>
+    }
+    resources : {
+        onFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onNavigated : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        getHAR : <function>
+        addRequestHeaders : <function>
+    }
+    onReset : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    log : <function>
+}
+All tests done.
+

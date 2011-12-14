@@ -1,0 +1,36 @@
+Test to see if media loads automatically when 'preload' is specified.
+
+
+Will load with 'preload=none', should not buffer automatically until 'play()' is called
+RUN(video.setAttribute('preload', 'none'))
+RUN(video.removeAttribute('autoplay'))
+EVENT(loadstart)
+did not buffer automatically OK
+RUN(video.play())
+EVENT(play)
+EVENT(loadedmetadata)
+buffered automatically OK
+
+Will load with 'preload=metadata', should buffer automatically 
+RUN(video.setAttribute('preload', 'metadata'))
+RUN(video.removeAttribute('autoplay'))
+EVENT(loadstart)
+EVENT(loadedmetadata)
+buffered automatically OK
+
+Will load with 'preload=auto', should buffer automatically 
+RUN(video.setAttribute('preload', 'auto'))
+RUN(video.removeAttribute('autoplay'))
+EVENT(loadstart)
+EVENT(loadedmetadata)
+buffered automatically OK
+
+Will load with 'preload=none', should buffer automatically because of 'autoplay'
+RUN(video.setAttribute('preload', 'none'))
+RUN(video.setAttribute('autoplay', 'true'))
+EVENT(loadstart)
+EVENT(loadedmetadata)
+buffered automatically OK
+
+END OF TEST
+

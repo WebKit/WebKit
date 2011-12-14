@@ -1,0 +1,86 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Dave Miller <justdave@bugzilla.org>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
+  #%]
+[%
+   title = "Attachments"
+   desc = "Set up attachment options"
+%]
+
+[% param_descs = {
+  allow_attachment_display =>
+    "If this option is on, users will be able to view attachments from"
+    _ " their browser, if their browser supports the attachment's MIME type."
+    _ " If this option is off, users are forced to download attachments,"
+    _ " even if the browser is able to display them."
+    _ "<p>This is a security restriction for installations where untrusted"
+    _ " users may upload attachments that could be potentially damaging if"
+    _ " viewed directly in the browser.</p>"
+    _ "<p>It is highly recommended that you set the <tt>attachment_base</tt>"
+    _ " parameter if you turn this parameter on.",
+
+  attachment_base => 
+    "When the <tt>allow_attachment_display</tt> parameter is on, it is "
+    _ " possible for a malicious attachment to steal your cookies or"
+    _ " perform an attack on $terms.Bugzilla using your credentials."
+    _ "<p>If you would like additional security on attachments to avoid"
+    _ " this, set this parameter to an alternate URL for your $terms.Bugzilla"
+    _ " that is not the same as <tt>urlbase</tt> or <tt>sslbase</tt>."
+    _ " That is, a different domain name that resolves to this exact"
+    _ " same $terms.Bugzilla installation.</p>"
+    _ "<p>Note that if you have set the"
+    _ " <a href=\"editparams.cgi?section=core#cookiedomain\"><tt>cookiedomain</tt>"
+    _" parameter</a>, you should set <tt>attachment_base</tt> to use a"
+    _ " domain that would <em>not</em> be matched by"
+    _ " <tt>cookiedomain</tt>.</p>"
+    _ "<p>For added security, you can insert <tt>%bugid%</tt> into the URL,"
+    _ " which will be replaced with the ID of the current $terms.bug that"
+    _ " the attachment is on, when you access an attachment. This will limit"
+    _ " attachments to accessing only other attachments on the same"
+    _ " ${terms.bug}. Remember, though, that all those possible domain names "
+    _ " (such as <tt>1234.your.domain.com</tt>) must point to this same"
+    _ " $terms.Bugzilla instance.",
+
+  allow_attachment_deletion => "If this option is on, administrators will be able to delete " _
+                               "the content of attachments.",
+
+  allow_attach_url => "If this option is on, it will be possible to " _
+                      "specify a URL when creating an attachment and " _
+                      "treat the URL itself as if it were an attachment.",
+
+  maxpatchsize => "The maximum size (in kilobytes) of patches. $terms.Bugzilla will not " _
+                  "accept patches greater than this number of kilobytes in size. " _
+                  "To accept patches of any size (subject to the limitations of " _
+                  "your server software), set this value to zero.",
+
+  maxattachmentsize => "The maximum size (in kilobytes) of non-patch attachments. " _
+                       "$terms.Bugzilla will not accept attachments greater than this number " _
+                       "of kilobytes in size. To accept attachments of any size " _
+                       "(subject to the limitations of your server software), set this " _
+                       "value to zero.",
+
+  maxlocalattachment => "The maximum size (in megabytes) of attachments identified by " _
+                        "the user as 'Big Files' to be stored locally on the webserver. " _
+                        "If set to zero, attachments will never be kept on the local " _
+                        "filesystem.",
+
+  convert_uncompressed_images => "If this option is on, attachments with content type image/bmp " _
+                                 "will be converted to image/png and compressed before uploading to " _
+                                 "the database to conserve disk space." }
+%]

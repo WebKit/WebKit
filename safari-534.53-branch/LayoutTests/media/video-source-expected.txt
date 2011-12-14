@@ -1,0 +1,6 @@
+EVENT(loadstart)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
+EXPECTED (stripExtension(source.getAttribute('src')) == 'content/test') OK
+EXPECTED (stripExtension(relativeURL(source.src)) == 'content/test') OK
+END OF TEST
+

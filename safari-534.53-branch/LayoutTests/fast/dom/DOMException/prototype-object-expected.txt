@@ -1,0 +1,16 @@
+DOMException needs a real prototype: http://bugs.webkit.org/show_bug.cgi?id=16637
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.toString() is "Error: HIERARCHY_REQUEST_ERR: DOM Exception 3"
+PASS Object.prototype.toString.call(e) is "[object DOMException]"
+PASS Object.prototype.toString.call(e.__proto__) is "[object DOMExceptionPrototype]"
+PASS e.constructor.toString() is "[object DOMExceptionConstructor]"
+PASS e.constructor is window.DOMException
+PASS e.HIERARCHY_REQUEST_ERR is e.constructor.HIERARCHY_REQUEST_ERR
+PASS e.HIERARCHY_REQUEST_ERR is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+Test EventSource in a worker.
+
+PASS
+

@@ -1,0 +1,6 @@
+The test verified that if user use delete to move caret to the end, or use forward delete to move caret to the beginning of, a word that is marked as misspelled, the misspell underline will remain. You should see phrase "it's a meagesga", in which the word 'meagesga' has red underline.
+
+
+SUCCESS
+SUCCESS
+

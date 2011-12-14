@@ -1,0 +1,24 @@
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.seekable.length", 0);
+    testException("video.seekable.start(-1)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.seekable.end(-1)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.seekable.start(0)", "DOMException.INDEX_SIZE_ERR");
+    testException("video.seekable.end(0)", "DOMException.INDEX_SIZE_ERR");
+    waitForEvent('canplaythrough',
+        function () 
+        {
+            testExpected("video.seekable.length", 1);
+            testExpected("video.seekable.start(0)", 0);
+            testExpected("video.seekable.end(0)",  0, ">");
+            testException("video.seekable.start(-1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.seekable.end(-1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.seekable.start(1)", "DOMException.INDEX_SIZE_ERR");
+            testException("video.seekable.end(1)", "DOMException.INDEX_SIZE_ERR");
+            endTest();
+        }
+    );
+    video.src = findMediaFile("video", "content/test");
+</script>

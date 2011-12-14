@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+
+<script>
+    shouldThrow('document.createExpression("foobar()", null)');
+    shouldThrow('document.evaluate("foobar()", document, null, XPathResult.ANY_TYPE, null)');
+
+    shouldThrow('document.createExpression("position(//div)", null)');
+    shouldThrow('document.evaluate("position(//div)", document, null, XPathResult.ANY_TYPE, null)');
+
+    shouldThrow('document.createExpression("ceiling(1,2)", null)');
+    shouldThrow('document.evaluate("ceiling(1,2)", document, null, XPathResult.ANY_TYPE, null)');
+    shouldThrow('document.createExpression("ceiling(1,2)", null).evaluate(document, XPathResult.ANY_TYPE, null)');
+
+    shouldThrow('document.createExpression("boolean()", null)');
+    shouldThrow('document.evaluate("boolean()", document, null, XPathResult.ANY_TYPE, null)');
+
+    var successfullyParsed = true;
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

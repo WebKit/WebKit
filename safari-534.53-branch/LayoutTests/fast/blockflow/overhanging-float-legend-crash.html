@@ -1,0 +1,31 @@
+<html>
+    <script>
+    if (window.layoutTestController)
+    {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.setTimeout('crash();', 0);
+
+    function crash()
+    {
+        block1.style.position = 'absolute';
+        float1.style.display = 'none';
+        document.body.offsetTop;
+ 
+        document.getElementById("result").innerHTML = "PASS";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+    </script>
+    <div id="result"></div>
+    <div id="block1">
+        <span id="float1" style="float:left; margin-bottom:10000px;"></span>
+    </div>
+    <legend>
+        <fieldset></fieldset>
+        <junk>
+    </legend>
+</html>
+

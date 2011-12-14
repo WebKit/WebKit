@@ -1,0 +1,14 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 9 of OL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > LI > OL > OL > DIV > BODY > HTML > #document to 5 of #text > LI > OL > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests indenting "three". You should see a bullet then 1 and 2 before numbers "two", "three", and "four" respectively.
+one
+two
+three
+four
+Before: <li>one</li> <ul><li>two</li></ul> <li id="test">three</li> <ol><li>four</li></ol>
+After: <li>one</li> <ul><li>two</li></ul> <ol><li id="test">three</li><li>four</li></ol>

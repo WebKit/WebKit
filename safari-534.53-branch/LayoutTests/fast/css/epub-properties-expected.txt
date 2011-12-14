@@ -1,0 +1,10 @@
+PASS: -epub-caption-side is an alias for caption-side
+PASS: -epub-hyphens is an alias for -webkit-hyphens
+PASS: -epub-text-combine is an alias for -webkit-text-combine
+PASS: -epub-text-emphasis-style is an alias for -webkit-text-emphasis-style
+PASS: -epub-text-emphasis-color is an alias for -webkit-text-emphasis-color
+PASS: -epub-text-orientation is an alias for -webkit-text-orientation
+PASS: -epub-text-transform is an alias for text-transform
+PASS: -epub-word-break is an alias for word-break
+PASS: -epub-writing-mode is an alias for -webkit-writing-mode
+

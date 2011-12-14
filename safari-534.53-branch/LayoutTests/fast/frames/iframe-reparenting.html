@@ -1,0 +1,103 @@
+<html>
+<script>
+function log(message)
+{
+    document.getElementById("log").innerText += message + "\n";
+}
+
+function verifyToken(message, expectedToken)
+{
+    var actualToken = iframe.contentWindow.token;
+    log((expectedToken == actualToken ? "PASS" : "FAIL") + ": " + message + ", expected: " + expectedToken + ", actual: " + actualToken);
+}
+
+function test()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    frame1 = document.getElementById("frame1");
+    frame2 = document.getElementById("frame2");
+    iframe = frame1.contentDocument.getElementsByTagName("iframe")[0];
+
+    verifyToken("Iframe loaded, verify token", "loaded");
+    iframe.contentWindow.token = "modified-1";
+    verifyToken("Iframe token modified", "modified-1");
+
+    // Start timeout in iframe - it should not survive reparenting.
+    iframe.contentWindow.startDoomedTimer();
+    log("Reparent iframe - the content should re-load.")
+    frame1.contentDocument.body.removeChild(iframe);
+    // contentWindow should not be available, the iframe is unloaded.
+    log(iframe.contentWindow ? "FAIL: iframe is not unloaded." : "PASS: iframe is unloaded.");
+    frame2.contentDocument.body.appendChild(iframe);
+    iframe.onload = test2;
+}
+
+function test2()
+{
+    verifyToken("Iframe re-loaded, verify token", "loaded");
+    iframe.contentWindow.token = "modified-2";
+    verifyToken("Iframe token modified", "modified-2");
+
+    // Start timeout in iframe - it should survive reparenting and call finish() to end the test.
+    iframe.contentWindow.startFinishTimer();
+    log("Reparent iframe using adoptNode - the content should not unload.")
+    frame1.contentDocument.adoptNode(iframe);
+    frame1.contentDocument.body.appendChild(iframe);
+    // contentWindow should be available, the iframe is not unloaded.
+    log(iframe.contentWindow ? "PASS: iframe is NOT unloaded." : "FAIL: iframe is unloaded.");
+    iframe.onload = notReached;
+}
+
+notReached = function()
+{
+    log("FAIL: iframe should not fire 'load' event when reparented using 'adoptNode'");
+}
+
+finish = function()
+{
+    verifyToken("Iframe token should be the same as before reparenting", "modified-2");
+
+    // Last test - verify that non-attached document does not keep iframe alive even if adoptNode() is used.
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET","data:text/html,<html xmlns='http://www.w3.org/1999/xhtml'><body id='body'>Hello</body></html>", false);
+    xhr.send(null);
+    var doc = xhr.responseXML;
+    log(doc.getElementById("body").innerText == "Hello" ? "PASS: XHR-loaded Document is correct." : "FAIL: XHR-loaded document is not correct.");
+
+    doc.adoptNode(iframe);
+    // contentWindow should not be available, the iframe is unloaded.
+    log(iframe.contentWindow ? "FAIL: iframe is not unloaded." : "PASS: iframe is unloaded.");
+
+    log("Test Finished.");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+
+}
+
+</script>
+<body onload=test()>
+<p>This test moves the iframe between two documents - once using this sequence:</p>
+<pre>
+    document1.body.removeChild(iframe);
+    document2.body.appendChild(iframe);
+
+</pre>
+<p>and then using 'adoptNode':</p>
+<pre>
+    document2.adoptNode(iframe);
+    document2.body.appendChild(iframe);
+
+</pre>
+<p>In the second case, the content of iframe should not be re-loaded and 'load' event should not be fired. Also, the timer started before reparenting should survive transition and fire.</p>
+<p>Test also verifies that document.adoptNode() in case of not-rendered document (loaded by XMLHttpRequest) does not preserve the content of iframe.</p>
+<p>Test succeeds if there are 'PASS' messages below and no 'FAIL' messages.</p>
+<iframe id=frame1 src=resources/iframe-reparenting-frame1.html></iframe>
+<iframe id=frame2 src=resources/iframe-reparenting-frame2.html></iframe>
+<pre id=log></pre>
+</body>
+</html>

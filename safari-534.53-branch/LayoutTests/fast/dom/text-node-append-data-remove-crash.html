@@ -1,0 +1,50 @@
+<html>
+<body onload="runTest()">
+<script>
+var count = 0;
+if (window.layoutTestController)
+{
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{   
+    try {
+       divBlock.addEventListener("DOMCharacterDataModified", eventListener, false);
+       pBlock.outerText = "text";
+       divBlock.innerHTML = "PASS, didn't crash.";
+    }
+    catch (exception) {
+       divBlock.innerHTML = "Threw an exception - " + exception;
+    }
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function eventListener()
+{
+    try {
+      var range = document.createRange();
+      range.setStart(divBlock, 0);
+      range.setEnd(divBlock, divBlock.childNodes.length - 1);
+      range.deleteContents();
+      gc();
+  } catch(e) { }
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("");
+    }
+}
+</script>
+<div id="divBlock">
+<br/>textnode1<p id="pBlock"></p>textnode2<br/>
+</div>
+</body>
+</html>

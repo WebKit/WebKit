@@ -1,0 +1,75 @@
+<head>
+<script>
+var runPixelTests = true;
+var init = function() {
+    // Bail out early if the full screen API is not enabled or is missing:
+    if (Element.prototype.webkitRequestFullScreen == undefined) {
+        logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+        endTest();
+    } else {
+        var callback;
+        var fullscreenChanged = function(event)
+        {
+            if (callback)
+                callback(event)
+        };
+        waitForEvent(document, 'webkitfullscreenchange', fullscreenChanged);
+
+        var one = document.getElementById('one');
+        var two = document.getElementById('two');
+        var three = document.getElementById('three');
+
+        var threeEnteredFullScreen = function(event) {
+            callback = threeExitedFullScreen;
+            testExpected("document.webkitCurrentFullScreenElement", three);
+            one.removeChild(two);
+        };
+
+        var threeExitedFullScreen = function(event) {
+            callback = null;
+            testExpected("document.webkitCurrentFullScreenElement", null);
+            endTest();
+        };
+
+        callback = threeEnteredFullScreen;
+        runWithKeyDown(function(){three.webkitRequestFullScreen()});        
+    }
+};
+var startTest = function() { document.getElementById('three').webkitRequestFullScreen(); };
+</script>
+<script src="full-screen-test.js"></script>
+<style>
+#one {
+    border: 4px solid darkgreen;
+    background-color: green;
+    width: 600px;
+    height: 400px;
+    padding: 4px;
+}
+
+#two {
+    border: 4px solid darkred;
+    background-color: red;
+    padding: 4px;
+    height: 384px;
+}
+
+#three {
+    border: 4px solid darkblue;
+    background-color: blue;
+    padding: 4px;
+    height: 368px;
+}
+</style>
+</head>
+<body onload="init()">
+    
+This tests that, if the ancestor of the current full-screen element is removed, full screen mode will exit, and the document will render normally.  At the completion of the test, a green box should be visible. Click <button onclick="startTest()">go full screen</button> to run the test.
+
+<div id="one">
+    <div id="two">
+        <div id="three"></div>
+    </div>
+</div>
+
+</script>

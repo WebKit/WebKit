@@ -1,0 +1,10 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" dir="ltr">
+<body>
+    <p>Test that external scripts in XHTML documents inherit document charset.</p>
+    <p id="result1">Javascript 1 (original document charset): </p>
+    <p id="result2">Javascript 2 (after document.charset was set): </p>
+    <script type="text/javascript" src="external-script-charset.js"></script>
+    <script>document.charset = "koi8-r";</script>
+    <script type="text/javascript" src="external-script-charset-koi-8.js"></script>
+</body>
+</html>

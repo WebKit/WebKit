@@ -1,0 +1,91 @@
+<html>
+  <!--
+    This test ensures the correctness of a basic aspect of spatial navigation traversal
+    routines: focusable elements in scrollable containers (e.g. <div>) should be
+    accessible, including offscreen content.
+
+    * Pre-conditions:
+    1) DRT support for spatial navivation enable/disable.
+
+    * Navigation steps:
+    1) Loads this page, focus goes to "start" automatically.
+    2) Move focus down to the visible focusable element in
+       scrollable div.
+    3) Traverse the page through other focusable elements down the page.
+       and then back up.
+
+    * Expected results: All focusable element in scrollable content, including
+    offscreen ones, should be accessible via spatial navigation. -->
+  <head>
+    <style>
+    :focus {outline: 1px solid black;}
+    </style>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap = [
+      ["Down", "1"],
+      ["Down", "2"],
+      ["Down", "3"],
+      ["Down", "4"],
+      ["Down", "5"],
+      ["Up", "4"],
+      ["Up", "3"],
+      ["Up", "2"],
+      ["Up", "1"],
+      ["Up", "start"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.setSpatialNavigationEnabled(true);
+      layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      layoutTestController.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      initTest(resultMap, testCompleted);
+    }
+
+    function testCompleted()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    window.onload = runTest;
+
+    </script>
+    <script src="js/resources/js-test-post.js"></script>
+  </head>
+  <body>
+    <a href="#" id="start">This is an element</a><br>
+
+    <div>
+      <a href="#" id="1">
+        <img src="resources/green.png" height="42" width="76"  border="0"/>
+      </a>
+    </div>
+
+    <div>
+      <a href="#" id="2">This is an element</a><br>
+    </div>
+
+    <a href="#" id="3">This is an element</a><br>
+
+    <a href="#" id="4">
+      <img src="resources/green.png" height="42" width="76" alt="llinker1" border="0"/>
+    </a><br>
+
+    <a href="#" id="5">This is an element</a><br>
+    <div id="console"></div>
+    <div>This test tests that a anchor element with in image in it and a space after the image, can still give the correct size in ContainerNode::getRect().</div>
+  </body>
+</html>
+

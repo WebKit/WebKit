@@ -1,0 +1,14 @@
+Make sure WebSocket correctly skip lengthed frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+WebSocket is open
+received:hello
+received:world
+WebSocket is closed
+2
+PASS areArraysEqual(received_messages, expected_messages) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,48 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("This tests that customized properties on window.location and window.navigator won't get lost after garbage collection. Results may be different when run manually, since forcing GC may not be exposed in all applications. Browsers disagree about what happens to properties on window.screen, window.history, and others through 'toolbar' in the list below, but the behavior of window.location and window.navigator is consistent.");
+
+function CollectGarbage() {
+  if (window.GCController) {
+    window.GCController.collect();
+  } else {
+    // Allocate objects to trigger GC. This may not work in all applications.
+    for (var i = 0; i < 50000; i++)
+      new Object();
+  }
+}
+
+function check(name, shouldSurvive) {
+  window[name].myProp = 10;
+  CollectGarbage();
+  if (shouldSurvive)
+    shouldBe("window." + name + ".myProp", "10");
+  else
+    shouldBeUndefined("window." + name + ".myProp");
+}
+
+check("screen", true);
+check("history", true);
+check("locationbar", true);
+check("menubar", true);
+check("personalbar", true);
+check("scrollbars", true);
+check("statusbar", true);
+check("toolbar", true);
+
+check("location", true);
+check("navigator", true);
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

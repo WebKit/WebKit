@@ -1,0 +1,7 @@
+S15.2.4.6_A7
+
+TypeError: 'function isPrototypeOf() { [native code] }' is not a constructor (evaluating 'new FACTORY')
+PASS 
+
+TEST COMPLETE
+

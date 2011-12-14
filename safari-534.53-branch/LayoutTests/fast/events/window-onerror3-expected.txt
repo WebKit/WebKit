@@ -1,0 +1,4 @@
+You should see a message if window.onerror is working properly for this test.Bug 8519.
+
+Error caught successfully: ReferenceError: Can't find variable: unknownObject File: window-onerror3.html Line: 16
+

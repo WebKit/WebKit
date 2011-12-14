@@ -1,0 +1,36 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 774x19
+          text run at (0,0) width 774: "You should see 'a' on the first line below, and 'zz a' on the second line. 'zz' (and only 'zz') should be marked as misspelled."
+      RenderBlock {DIV} at (0,19) size 784x92 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x32
+          RenderInline {SPAN} at (0,0) size 13x31
+            RenderText {#text} at (0,0) size 13x31
+              text run at (0,0) width 13: "a"
+        RenderBlock {DIV} at (14,46) size 756x32
+          RenderInline {SPAN} at (0,0) size 44x31
+            RenderText {#text} at (0,0) size 44x31
+              text run at (0,0) width 44: "zz a"
+          RenderText {#text} at (0,0) size 0x0
+caret: position 3 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of child 3 {DIV} of body

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 127: ReferenceError: Can't find variable: FileReader
+FAIL: Timed out waiting for notifyDone to be called
+
+Test reading a non-existent file as array buffer
+

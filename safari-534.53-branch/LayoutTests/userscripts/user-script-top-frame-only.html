@@ -1,0 +1,18 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    window.layoutTestController.dumpAsText();
+    window.layoutTestController.dumpChildFramesAsText();
+    layoutTestController.waitUntilDone();
+    window.layoutTestController.addUserScript("document.getElementById('thinger').style.display = 'none';",
+                                              false, false);
+}
+</script>
+</head>
+<body>
+Two thingers should appear on this page. Otherwise the test has failed.
+<Div id="thinger">thinger</div>
+<iframe src="resources/frame1.html"></iframe>
+</body>
+</html>

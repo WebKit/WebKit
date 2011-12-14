@@ -1,0 +1,27 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to int
+
+PASS dt.setShort( 0 ); dt.PUB_SHORT is 0
+PASS dt.setShort( 0 ); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.setShort( -0 ); Infinity / dt.PUB_SHORT is Infinity
+PASS dt.setShort( -0 ); Infinity / dt.getShort() is Infinity
+PASS typeof dt.getShort() is "number"
+FAIL java.lang.Short.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Short.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getShort() is "number"
+FAIL java.lang.Short.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Short.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getShort() is "number"
+FAIL -java.lang.Short.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL -java.lang.Short.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getShort() is "number"
+PASS dt.setShort(1e-2000); dt.PUB_SHORT is 0
+PASS dt.setShort(1e-2000); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS dt.setShort(-1e-2000); dt.PUB_SHORT is 0
+PASS dt.setShort(-1e-2000); dt.getShort() is 0
+PASS typeof dt.getShort() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

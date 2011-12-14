@@ -1,0 +1,17 @@
+<html>
+<style>
+div {
+  color: red;
+}
+
+div::selection {
+  background-color: lime;
+}
+</style>
+
+<div id="foo">Hello world</div>
+
+<script>
+document.write('<p>The number of matched rules is: ' + 
+document.defaultView.getMatchedCSSRules(document.getElementById('foo'), '').length);
+</script>

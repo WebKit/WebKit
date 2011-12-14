@@ -1,0 +1,8 @@
+Events generated are displayed. There should be one start event one iteration event and one end event. There should not be a start event generated when the animation is resumed.
+
+Log
+
+start animation move
+iteration animation move
+end animation move
+

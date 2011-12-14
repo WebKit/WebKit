@@ -1,0 +1,58 @@
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+    </script>
+    <style>
+        .to_be_shown {
+          display:none;
+          color:green;
+        }
+        .to_be_hidden {
+          display:block;
+          color:red;
+        }
+
+        /* Expression containing an invalid block should be skipped */
+        #test1 {
+            behavior:expression((function(){})());
+            display:none;
+        }
+        #test2 {
+            behavior:expression(function(){}());
+            display:none;
+        }
+
+        /* Value containing an invalid block should be skipped */
+        .malformed1 {
+          height:{}
+        }
+        #test3 {
+            display:none;
+        }
+
+        /* Malformed declaration list should be skipped */
+        .malformed2 {
+            a:link { color: blue;}
+            a:active { color: red;}
+        }
+        #test4 {
+            display:none;
+        }
+
+        /* Successfully parsed */
+        #last {
+            display:block;
+        }
+    </style>
+</head>
+<body>
+  <div class="to_be_hidden" id="test1">FAIL: Test 1</div>
+  <div class="to_be_hidden" id="test2">FAIL: Test 2</div>
+  <div class="to_be_hidden" id="test3">FAIL: Test 3</div>
+  <div class="to_be_hidden" id="test4">FAIL: Test 4</div>
+  <div class="to_be_shown" id="last">PASS</div>
+</body>
+</html>
+

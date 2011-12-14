@@ -1,0 +1,18 @@
+Tests that popstate events fire for all history traversals (including navigation to fragments), not just when going back to a state object created via pushState.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+popstate fired with state null
+setting hash to #state1
+popstate fired with state null
+setting hash to #state2
+popstate fired with state null
+going back
+popstate fired with state null
+going back
+popstate fired with state null
+PASS popstateFireCount is 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

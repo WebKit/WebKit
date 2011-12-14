@@ -1,0 +1,27 @@
+<style>
+    .box {
+      position: relative; 
+      -webkit-animation-delay: 5ms;
+      -webkit-animation-name: anim;
+    }
+    @-webkit-keyframes anim {
+      from { -webkit-transform: translateX(10px); }
+    }
+</style>
+<script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    function waitForAnimation()
+    {
+        window.setTimeout(function() {
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 50);
+    }
+    window.addEventListener('load', waitForAnimation, false);
+</script>
+<p>Test passes if it does not crash.</p>
+<span class="box">Hello world</span>

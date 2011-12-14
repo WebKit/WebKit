@@ -1,0 +1,42 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script src="resources/char-encoding-utils.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<form id="form" method="GET" target="subframe"><input type="text" id="text" name="text"></form>
+<iframe id="subframe" name="subframe"></iframe>
+<script>
+
+
+var charsets = new Array;
+var unicodes = new Array;
+var expectedResults = new Array;
+
+var results = new Object;
+
+var i = 0;
+
+// Legacy Mac encodings.
+testEncode('mac', 'U+221A', '%C3');
+testEncode('macintosh', 'U+221A', '%C3');
+testEncode('MacRoman', 'U+221A', '%C3');
+testEncode('x-mac-greek', 'U+0391', '%B0');
+testEncode('x-mac-cyrillic', 'U+0410', '%80');
+testEncode('mac-cyrillic', 'U+0410', '%80');
+testEncode('x-mac-centraleurroman', 'U+0100', '%81');
+testEncode('x-mac-turkish', 'U+00C5', '%81');
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+runTest();
+
+successfullyParsed = true;
+
+</script>
+</body>
+</html>

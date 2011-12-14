@@ -1,0 +1,30 @@
+<body>
+<p>Test that a leak is not created by assigning a MessagePort to a property of its own listener.</p>
+<p>Only works with run-webkit-tests --leaks.</p>
+<pre id=log></pre>
+<script>
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var channel = new MessageChannel;
+
+channel.port1.onclose = function() {}
+
+channel.port1.onclose.foo = channel;
+channel.port1.onclose.bar = channel.port1;
+channel.port1.onclose.baz = channel.port2;
+
+channel = null;
+gc();
+</script>
+</body>

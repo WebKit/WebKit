@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0">
+    <text x="0" y="30">PASS without crash.</text>
+    <use xlink:href="#undefined">
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
+        }
+
+        function runTest()
+        {
+            try {
+                var errorElement = document.getElementsByTagName("parsererror")[0];
+                errorElement.parentNode.removeChild(errorElement);
+                var useElement = document.getElementsByTagName("use")[0];
+                useElement.parentNode.removeChild(useElement);
+            } catch(e) {
+            }
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+
+        window.setTimeout("runTest()", 0);
+    </script>
+</svg>

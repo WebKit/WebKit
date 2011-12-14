@@ -1,0 +1,4 @@
+<Files "compass-no-cache.jpg">
+Header set Cache-Control "no-cache, must-revalidate"
+Header set Pragma no-cache
+</Files>

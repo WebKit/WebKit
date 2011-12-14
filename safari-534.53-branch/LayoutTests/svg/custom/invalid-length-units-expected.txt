@@ -1,0 +1,29 @@
+Tests handling of invalid SVG length units.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.setAttribute('x', ''); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', ' '); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', 'foo'); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10foo'); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', 'px'); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10px '); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10% '); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10 % '); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10 %'); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10 px '); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10 px'); rect.x.baseVal.valueAsString is '0'
+PASS rect.setAttribute('x', '10'); rect.x.baseVal.valueAsString is '10'
+PASS rect.setAttribute('x', '10%'); rect.x.baseVal.valueAsString is '10%'
+PASS rect.setAttribute('x', '10em'); rect.x.baseVal.valueAsString is '10em'
+PASS rect.setAttribute('x', '10ex'); rect.x.baseVal.valueAsString is '10ex'
+PASS rect.setAttribute('x', '10px'); rect.x.baseVal.valueAsString is '10px'
+PASS rect.setAttribute('x', '10cm'); rect.x.baseVal.valueAsString is '10cm'
+PASS rect.setAttribute('x', '10mm'); rect.x.baseVal.valueAsString is '10mm'
+PASS rect.setAttribute('x', '10pt'); rect.x.baseVal.valueAsString is '10pt'
+PASS rect.setAttribute('x', '10pc'); rect.x.baseVal.valueAsString is '10pc'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

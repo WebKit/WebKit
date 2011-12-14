@@ -1,0 +1,12 @@
+<video controls></video>
+<p>Test that QuickTime file with broken content generates an error.<p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+
+<script>
+    video.src = findMediaFile("video", "content/garbage");
+    waitForEvent("error", function () {
+        testExpected("video.error", "[object MediaError]");
+        endTest();
+    });
+</script>

@@ -1,0 +1,10 @@
+Test that a <source> inserted when networkState is NETWORK_NO_SOURCE triggers resource selection, immediately changing networkState to NETWORK_NO_SOURCE.
+
+<source> inserted by the parser.
+EXPECTED (video.networkState == '3') OK
+
+<video> created with script.
+EXPECTED (video.networkState == '0') OK
+<source> inserted by script.
+EXPECTED (video.networkState == '3') OK
+

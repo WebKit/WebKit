@@ -1,0 +1,303 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css"/>
+<script src="../../fast/js/resources/js-test-pre.js"/>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100px" height="100px">
+  <defs>
+      <rect id="target" fill="red" width="100" height="100" onclick="eventHandler(evt)"/>
+  </defs>
+  <use id="test" xlink:href="#target"/>
+</svg>
+
+<p id="description"/>
+<div id="console"/>
+
+<script>
+// Setting up the testcase
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+var useElement = document.getElementById("test");
+var rectElement = document.getElementById("target");
+
+// Start test immediately, to see wheter instanceRoot is already available, as expected.
+description("Test SVG use element specific event handling using SVGElementInstance: ");
+debug("'useElement' is the original use element");
+debug("'rectElement' is the original element which gets cloned by the use element");
+eventTestOne();
+
+// Helper functions
+function eventHandler(evt)
+{
+    if (evt.type != nextEventType) {
+        debug("RECEIVED UNEXPECTED EVENT! shouldBe='" + nextEventType + "' was='" + evt.type + "'");
+        return;
+    }
+
+    currentEvent = evt;
+    nextEventType = "not yet set";
+    eval(eventNotification);
+}
+
+function fireMouseOverEvent(newEventNotification)
+{
+    currentEvent = undefined;
+    nextEventType = "mouseover";
+    eventNotification = newEventNotification;
+
+    if (window.eventSender) {
+        setTimeout(function() {
+            eventSender.mouseMoveTo(200, 200);
+            eventSender.mouseMoveTo(50, 50);
+        }, 0);
+    }
+}
+
+function fireMouseClickEvent(newEventNotification)
+{
+    currentEvent = undefined;
+    nextEventType = "click";
+    eventNotification = newEventNotification;
+
+    if (window.eventSender) {
+        setTimeout(function() {
+            eventSender.mouseMoveTo(50, 50);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }, 0);
+    }
+}
+
+function fireSimulatedMouseOverEvent(newEventNotification, eventTarget)
+{
+    currentEvent = undefined;
+    nextEventType = "mouseover";
+    eventNotification = newEventNotification;
+
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent(nextEventType, true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+    eventTarget.dispatchEvent(event);
+}
+
+function fireSimulatedMouseClickEvent(newEventNotification, eventTarget)
+{
+    currentEvent = undefined;
+    nextEventType = "click";
+    eventNotification = newEventNotification;
+
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent(nextEventType, true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+    eventTarget.dispatchEvent(event);
+}
+
+function verifyEvent(evtString, targetString, currentTargetString)
+{
+    shouldBeEqualToString("currentEvent.toString()", "[object MouseEvent]");
+    shouldBeEqualToString("currentEvent.type.toString()", evtString);
+    shouldBeEqualToString("currentEvent.target.toString()", targetString);
+    shouldBeEqualToString("currentEvent.currentTarget.toString()", currentTargetString);
+}
+
+function verifyMouseOverEvent()
+{
+    verifyEvent("mouseover", "[object SVGElementInstance]", "[object SVGElementInstance]");
+
+    shouldBeTrue("currentEvent.target.correspondingElement == rectElement");
+    shouldBeTrue("currentEvent.target.correspondingUseElement == useElement");
+    shouldBeTrue("currentEvent.currentTarget.correspondingElement == rectElement");
+    shouldBeTrue("currentEvent.currentTarget.correspondingUseElement == useElement");
+    shouldBeTrue("currentEvent.target == currentEvent.currentTarget");
+    shouldBeTrue("currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement");
+    shouldBeTrue("currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement");
+}
+
+function verifyClickEvent()
+{
+    verifyEvent("click", "[object SVGElementInstance]", "[object SVGElementInstance]");
+
+    shouldBeTrue("currentEvent.target.correspondingElement == rectElement");
+    shouldBeTrue("currentEvent.target.correspondingUseElement == useElement");
+    shouldBeTrue("currentEvent.currentTarget.correspondingElement == rectElement");
+    shouldBeTrue("currentEvent.currentTarget.correspondingUseElement == useElement");
+    shouldBeTrue("currentEvent.target == currentEvent.currentTarget");
+    shouldBeTrue("currentEvent.target.correspondingElement == currentEvent.currentTarget.correspondingElement");
+    shouldBeTrue("currentEvent.target.correspondingUseElement == currentEvent.currentTarget.correspondingUseElement");
+}
+
+function verifyClickEventOnReferenced()
+{
+    verifyEvent("click", "[object SVGRectElement]", "[object SVGRectElement]");
+
+    shouldBeTrue("currentEvent.target == rectElement");
+    shouldBeTrue("currentEvent.currentTarget == rectElement");
+    shouldBeTrue("currentEvent.target == currentEvent.currentTarget");
+}
+
+function checkEventListenerNotReachable()
+{
+    debug("");
+    debug("YOU SHOULD NOT SEE THIS TEXT. OTHERWHISE REMOVING EVENT LISTENERS FAILED!");
+    debug("");
+}
+
+// Event test sections
+function eventTestOne()
+{
+    debug("");
+    debug("Test #1: Verify that the use element and the contained SVGElementInstance objects are valid");
+    debug("");
+
+    shouldBeEqualToString("useElement.toString()", "[object SVGUseElement]");
+    shouldBeEqualToString("useElement.instanceRoot.toString()", "[object SVGElementInstance]");
+
+    shouldBeEqualToString("useElement.instanceRoot.correspondingElement.toString()", "[object SVGRectElement]");
+    shouldBeTrue("useElement.instanceRoot.correspondingElement == rectElement");
+
+    shouldBeEqualToString("useElement.instanceRoot.correspondingUseElement.toString()", "[object SVGUseElement]");
+    shouldBeTrue("useElement.instanceRoot.correspondingUseElement == useElement");
+
+    shouldBeEqualToString("typeof useElement.addEventListener", "function");
+    shouldBeEqualToString("typeof useElement.removeEventListener", "function");
+    shouldBeEqualToString("typeof useElement.dispatchEvent", "function");
+
+    // Spec: An element and all its corresponding SVGElementInstance objects share an event
+    // listener list. The currentTarget attribute of the event can be used to determine through
+    // which object an event listener was invoked.
+    useElement.instanceRoot.addEventListener("mouseover", eventHandler, false);
+    fireMouseOverEvent("eventTestTwo()");
+}
+
+function eventTestTwo()
+{
+    debug("");
+    debug("Test #2: Verify that events dispatched to the SVGElementInstance objects have correct target property values");
+    debug("");
+
+    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included as
+    // a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects.
+    // The event's target and currentTarget attributes are set to the SVGElementInstance that corresponds to the target
+    // and current target elements in the referenced subtree. An event propagates through the exposed and non-exposed
+    // portions of the tree in the same manner as it would in the regular document tree: first going from the root element
+    // to the 'use' element and then through non-exposed tree elements in the capture phase, followed by the target phase
+    // at the target of the event, then bubbling back through non-exposed tree to the use element and then back through
+    // regular tree to the root element in bubbling phase.
+    verifyMouseOverEvent();
+
+    useElement.instanceRoot.removeEventListener("mouseover", eventHandler, false);
+    fireSimulatedMouseOverEvent("checkEventListenerNotReachable()", useElement.instanceRoot);
+    fireSimulatedMouseOverEvent("checkEventListenerNotReachable()", rectElement);
+    rectElement.addEventListener("mouseover", eventHandler, false);
+
+    fireMouseOverEvent("eventTestThree()");
+}
+
+function eventTestThree()
+{
+    debug("");
+    debug("Test #3: Verify that events dispatched by the user end up on the SVGElementInstance objects");
+    debug("");
+
+    verifyMouseOverEvent();
+
+    useElement.instanceRoot.removeEventListener("mouseover", eventHandler, false);
+    fireSimulatedMouseOverEvent("checkEventListenerNotReachable()", useElement.instanceRoot);
+    fireSimulatedMouseOverEvent("checkEventListenerNotReachable()", rectElement);
+    fireSimulatedMouseClickEvent("eventTestFour()", rectElement);
+}
+
+function eventTestFour()
+{
+    debug("");
+    debug("Test #4: Verify that a click event got dispatched to the original tree as defined in the markup, when sent to the 'rectElement'"); 
+    debug("");
+
+    verifyClickEventOnReferenced();
+
+    fireSimulatedMouseClickEvent("eventTestFive()", useElement.instanceRoot);
+}
+
+function eventTestFive()
+{
+    debug("");
+    debug("Test #5: Verify that a click event got dispatched to the instance tree when sent to the 'useElement.instanceRoot' with an event listener attached to 'rectElement'"); 
+    debug("");
+
+    verifyClickEvent();
+
+    // This tests a webkit specific quirk: removeAttribute() on the target element, causes us to reclone the shadow tree.
+    // All event listener mutations are synchronized with the shadow tree and do not cause reclones. So if we add the
+    // click event listener to the current instanceRoot, remove the existing click listener from markup and then fire
+    // a click event, we're sure that the shadow tree is recloned before the eventTestSix() function is executed.
+    // If eventTestSix() is reached, we've properly preserved the dynamically created click event listener after recloning.
+    useElement.instanceRoot.addEventListener("click", eventHandler, false);
+    rectElement.removeAttribute("onclick");
+
+    fireMouseClickEvent("eventTestSix()");
+}
+
+function eventTestSix()
+{
+    debug("");
+    debug("Test #6: Verify that the original click event listener got removed and a new one attached is attached to the use root SVGElementInstance");
+    debug("");
+
+    verifyClickEvent();
+
+    useElement.instanceRoot.removeEventListener("click", eventHandler, false);
+    fireSimulatedMouseClickEvent("checkEventListenerNotReachable()", useElement.instanceRoot);
+    fireSimulatedMouseClickEvent("checkEventListenerNotReachable()", rectElement);
+    rectElement.addEventListener("click", eventHandler, false);
+
+    fireMouseClickEvent("eventTestSeven()");
+}
+
+function eventTestSeven()
+{
+    debug("");
+    debug("Test #7: Verify that the recreating the original click event listener dynamically worked and the event is still dispatched to the instance tree");
+    debug("");
+
+    verifyClickEvent();
+
+    // Prepare for next tests
+    fireSimulatedMouseClickEvent("eventTestEight()", useElement.instanceRoot);
+}
+
+function eventTestEight()
+{
+    debug("");
+    debug("Test #8: Verify that the simulated click event got dispatched to the right target");
+    debug("");
+
+    verifyClickEvent();
+
+    // Cleanup
+    useElement.instanceRoot.removeEventListener("click", eventHandler, false);
+    fireSimulatedMouseClickEvent("checkEventListenerNotReachable()", useElement.instanceRoot);
+    fireSimulatedMouseClickEvent("checkEventListenerNotReachable()", rectElement);
+
+    // Indicate finish
+    rectElement.setAttribute("fill", "green");
+
+    // Load test finishing script
+    var script = document.createElement('script');
+    script.onload = completeTest;
+    script.src = "../../fast/js/resources/js-test-post.js";
+    successfullyParsed = true;
+    document.body.appendChild(script);
+}
+
+function completeTest()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+
+</body>
+</html>

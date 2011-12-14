@@ -1,0 +1,27 @@
+This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see six forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' only in the line 1.1, 1.2, and 2.2 are marked as misspelled.
+
+PASS:test1_1
+PASS:test1_2
+PASS:test1_3
+PASS:test1_4
+PASS:test1_5
+PASS:test1_6
+PASS:test2_1
+PASS:test2_2
+PASS:test2_3
+PASS:test2_4
+PASS:test2_5
+PASS:test2_6
+PASS:test3_1
+PASS:test3_2
+PASS:test3_3
+PASS:test3_4
+PASS:test3_5
+PASS:test3_6
+PASS:test4_1
+PASS:test4_2
+PASS:test4_3
+PASS:test4_4
+PASS:test4_5
+PASS:test4_6
+

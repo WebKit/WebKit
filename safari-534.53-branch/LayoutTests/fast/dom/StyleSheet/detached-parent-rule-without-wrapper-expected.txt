@@ -1,0 +1,13 @@
+Test that CSS stylesheets lacking wrappers are pruned from detached CSSOM subtrees. This is surprising behavior, but it's a very rare situation, and the behavior actually matches what both WebKit and Gecko do for DOM nodes in detached subtrees.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getMatchedCSSRules(document.getElementById("test")).length is 1
+Removing <style>...
+PASS rule.parentRule is null
+PASS getMatchedCSSRules(document.getElementById("test")) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 6: Uncaught Exception in toString().
+CONSOLE MESSAGE: line 6: Uncaught Exception in toString().
+Test that browser won't crash if inspector is opened for a page that fails to convert alert() argument to string. The test passes if it doesn't crash. Bug 60541
+
+Page reloaded.
+alert-toString-exception.html:6Uncaught Exception in toString().
+

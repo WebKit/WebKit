@@ -1,0 +1,31 @@
+<html>
+<head>
+<script type="text/javascript">
+
+function selectAndJustify()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var elem = document.getElementById("test");
+    var selection = window.getSelection();
+    selection.setBaseAndExtent(elem, 2, elem, 6);
+    document.execCommand('JustifyCenter', false, null);
+}
+
+</script>
+</head>
+
+<body>
+    <span id="test" contenteditable="true" >
+        Line 1.
+        <br>
+        <b>Select all text in this line and use justify command.</b>
+        <br>
+        Line 3.
+    </span>
+</body>
+<script>
+selectAndJustify();
+</script>
+</html>

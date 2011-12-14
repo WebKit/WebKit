@@ -1,0 +1,9 @@
+
+This tests whether the keygen element supports the autofocus attribute.
+
+PASS document.activeElement is document.querySelector("keygen")
+PASS document.activeElement.autofocus is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

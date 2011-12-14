@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x265
+  RenderBlock {HTML} at (0,0) size 800x265
+    RenderBody {BODY} at (8,14) size 784x243
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 105x19
+          text run at (0,0) width 105: "This is a test for "
+        RenderInline {I} at (0,0) size 672x19
+          RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
+            RenderText {#text} at (105,0) size 337x19
+              text run at (105,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9669"
+          RenderText {#text} at (442,0) size 335x19
+            text run at (442,0) width 4: " "
+            text run at (446,0) width 331: "Incomplete repaint when changing an inline's border"
+        RenderText {#text} at (777,0) size 4x19
+          text run at (777,0) width 4: "."
+      RenderBlock {HR} at (0,34) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,43) size 200x200
+        RenderText {#text} at (0,0) size 199x57
+          text run at (0,0) width 199: "Cras faucibus. Nunc adipiscing,"
+          text run at (0,19) width 184: "enim in scelerisque convallis,"
+          text run at (0,38) width 44: "augue "
+        RenderInline {SPAN} at (0,0) size 36x49 [border: (30px solid #0000FF) none]
+          RenderText {#text} at (44,38) size 36x19
+            text run at (44,38) width 36: "purus"
+        RenderText {#text} at (80,38) size 191x76
+          text run at (80,38) width 111: " eleifend lacus, at"
+          text run at (0,57) width 186: "sagittis eros leo pulvinar velit."
+          text run at (0,76) width 188: "Integer sollicitudin nisi ut urna"
+          text run at (0,95) width 104: "blandit convallis."

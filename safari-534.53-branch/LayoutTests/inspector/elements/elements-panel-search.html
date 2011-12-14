@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    WebInspector.showPanel("elements");
+
+    var searchResults = [];
+    function addSearchResult(error, markupValue)
+    {
+        if (error)
+            return;
+
+        if (markupValue.indexOf("ter" + "mi" + "nator") !== -1) {
+            InspectorTest.addResult("====================================");
+            InspectorTest.addResult("Results:");
+            InspectorTest.addResults(searchResults);
+            InspectorTest.completeTest();
+            return;
+         }
+        searchResults.push(markupValue);
+    }
+
+    function addNodesToSearchResult(nodeIds)
+    {
+        for (var i = 0; i < nodeIds.length; ++i) {
+            var node = WebInspector.domAgent.nodeForId(nodeIds[i]);
+            if (node.nodeType() === Node.TEXT_NODE)
+                searchResults.push(node.nodeValue());
+            else
+                node.getOuterHTML(addSearchResult);
+        }
+    }
+
+    WebInspector.domAgent.requestDocument(step1);
+
+    function step1()
+    {
+        // Plain text.
+        WebInspector.domAgent.performSearch("Foo" + "Bar", addNodesToSearchResult, true);
+        // Partial text.
+        WebInspector.domAgent.performSearch("oo" + "Ba", addNodesToSearchResult, true);
+        // Start tag.
+        WebInspector.domAgent.performSearch("<inpu" + "t", addNodesToSearchResult, true);
+        // Partial tag.
+        WebInspector.domAgent.performSearch("npu" + "t", addNodesToSearchResult, true);
+        // Exact attribute name.
+        WebInspector.domAgent.performSearch("valu" + "e", addNodesToSearchResult, true);
+        // Exact attribute val<>ue.
+        WebInspector.domAgent.performSearch("In" + "putVa" + "l", addNodesToSearchResult, true);
+        // Partial attribute val<>ue.
+        WebInspector.domAgent.performSearch("n" + "putVa" + "l", addNodesToSearchResult, true);
+        // XPath attribute.
+        WebInspector.domAgent.performSearch("//html" + "//@attr", addNodesToSearchResult, true);
+        // Terminator.
+        WebInspector.domAgent.performSearch("ter" + "mi" + "nator", addNodesToSearchResult, true);
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that elements panel search is returning proper results.
+</p>
+
+<div>FooBar</div>
+<input value="InputVal">
+<div attr="foo"></div>
+<div id="terminator"></div>
+
+</body>
+</html>

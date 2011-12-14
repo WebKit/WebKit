@@ -1,0 +1,20 @@
+<body>
+<div id="console"></div>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+function prefetch_onload() {
+    testPassed('onload called!');
+    layoutTestController.notifyDone();
+}
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceResponseMIMETypes();
+}
+</script>
+<html>
+<p>This test will only print "PASS" or "FAIL" if link prefetches are
+enabled, otherwise it will show nothing below.</p>
+<link href="prefetch.link" rel="prefetch" onload="prefetch_onload()" onerror="testFailed('onerror')" />
+</html>
+

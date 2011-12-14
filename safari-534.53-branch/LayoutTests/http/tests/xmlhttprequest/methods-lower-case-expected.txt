@@ -1,0 +1,8 @@
+Tests for bug 8099 - XMLHttpRequest lowercase post requests broken.
+
+get(""): GET(null bytes), Content-Type: null
+post(""): POST(0 bytes), Content-Type: application/xml
+DoIt(""): DoIt(0 bytes), Content-Type: application/xml
+get(""): GET(null bytes), Content-Type: null
+post(""): POST(0 bytes), Content-Type: application/xml
+DoIt(""): DoIt(0 bytes), Content-Type: application/xml

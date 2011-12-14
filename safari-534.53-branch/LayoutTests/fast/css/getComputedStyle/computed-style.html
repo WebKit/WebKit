@@ -1,0 +1,38 @@
+<script>
+function test() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    var style = document.defaultView.getComputedStyle(document.body, "");
+    var text = "";
+    for (var i = 0; i != style.length; ++i) {
+        var name = style.item(i);
+        var value = style.getPropertyValue(name);
+        if (name != "-webkit-dashboard-region")
+            text += name + ": " + value + ";\n";
+    }
+    document.getElementById("exposed").textContent = text;
+    var others = [
+        "background-position-x",
+        "background-position-y",
+        "border-spacing",
+        "overflow",
+        "-webkit-mask-position-x",
+        "-webkit-mask-position-y",
+        "-webkit-match-nearest-mail-blockquote-color",
+        "-webkit-text-size-adjust",
+    ];
+    text = "";
+    for (var i = 0; i != others.length; ++i) {
+        var name = others[i];
+        var value = style.getPropertyValue(name);
+        text += name + ": " + value + ";\n";
+    }
+    document.getElementById("hidden").textContent = text;
+}
+</script>
+<body onload="test()">
+<p>Attributes that are exposed in the CSS computed style object:</p>
+<p id="exposed" style="white-space: pre"></p>
+<p>Other attributes that the computed style class supports:</p>
+<p id="hidden" style="white-space: pre"></p>
+</body>

@@ -1,0 +1,6 @@
+ 
+
+
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "start"
+This test tests that areas of an imagemap without an image using it, are not focusable, thus can not be reached with spatial navigation.

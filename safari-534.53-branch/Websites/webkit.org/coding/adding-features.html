@@ -1,0 +1,48 @@
+<?php
+    $title="Adding a new feature to WebKit";
+    include("../header.inc");
+?>
+<h2>Adding a feature to WebKit</h2>
+
+<p>WebKit is a large project, with many consumers.  We have a large set of optional features, subsets of which are used by many different ports.</p>
+
+<p>For the purposes of this discussion a feature is defined as follows:</p>
+
+<ol>
+<li>Ports of WebKit (new architecture, toolkit, etc.)
+<li>Build systems for WebKit.
+<li>Optional #define (ENABLE_, etc.)
+<li>Web-content-facing interface (elements, CSS properties, CSS values, DOM APIs, etc)
+<li>Dependencies on external libraries.
+</ol>
+
+<p>Additions/modifications to the native (embedding) API for WebKit layer for a single port do NOT count as features for our discussion.</p>
+
+<p>Adding a new feature to the project is a welcome addition!  However, the following guidelines are expected to be followed:</p>
+
+<ol>
+<li>All bugs which add features, are expected to be announced on webkit-dev.  Features impose a small cost on every contributor, and thus we attempt to notify every contributor of the addition of new features to the project.  An example announcement:
+
+<pre>
+To: webkit-dev@lists.webkit.org
+Subject: Adding ENABLE_SVG to WebCore
+
+Hi webkit-dev!  I wanted to let you know that I plan to add SVG support to WebKit.
+This support will be behind the ENABLE_SVG feature define. See:
+https://bugs.webkit.org/show_bug.cgi?id=3250
+
+We'll be setting up a buildbot to track then ENABLE_SVG build shortly. We expect
+this feature to be eventually enabled by all ports.  Looking forward to your comments.
+</pre>
+
+<li>All features/ports are expected to covered by a <a href="http://trac.webkit.org/wiki/BuildBot">buildbot</a> at <a href="build.webkit.org">build.webkit.org</a> within six months of their addition.  We want to encourage experimentation, but it's important to make sure we can maintain our experiments, buildbots allow us to do this.
+http://trac.webkit.org/wiki/BuildBot
+</ol>
+
+<p>Reviewers are expected to remind contributors when making feature additions to follow these guidelines.</p>
+
+<p>These guidelines were created in response to the "Can WebKit Say No?" session at the 2011 contributors meeting.  These guidelines should be regarded as "experimental" as we plan to review their effectiveness (and possibly amend/remove them) at the 2012 contributors meeting.</p>
+
+<?php
+    include("../footer.inc");
+?>

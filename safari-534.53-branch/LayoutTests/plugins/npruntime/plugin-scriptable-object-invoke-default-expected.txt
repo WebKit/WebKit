@@ -1,0 +1,11 @@
+ 
+This page tests invoking as functions JavaScript objects that are provided by plugins.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof(pluginWithInvokeDefault) is 'function'
+PASS pluginWithInvokeDefault() is 1
+PASS typeof(pluginWithoutInvokeDefault) is 'object'
+PASS pluginWithoutInvokeDefault() threw exception TypeError: '[object HTMLEmbedElement]' is not a function (evaluating 'pluginWithoutInvokeDefault()').
+

@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to int
+
+PASS dt.setInteger( MyFunction ); dt.PUB_INT is 999
+PASS dt.setInteger( MyFunction ); dt.getInteger() is 999
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger( MyOtherFunction ); dt.PUB_INT is 999
+PASS dt.setInteger( MyOtherFunction ); dt.getInteger() is 999
+PASS typeof dt.getInteger() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

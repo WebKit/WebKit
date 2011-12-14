@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to short
+
+FAIL dt.setShort( NaN ); dt.PUB_SHORT should throw an exception. Was 0.
+FAIL dt.setShort( NaN ); dt.getShort() should throw an exception. Was 0.
+FAIL typeof dt.getShort() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

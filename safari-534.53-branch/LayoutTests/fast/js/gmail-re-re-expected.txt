@@ -1,0 +1,12 @@
+Bug 7445, bug 7253: Handle Unicode escapes in regexps.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cy("Re: Hello") is "Hello"
+PASS cy("Ответ: Hello") is "Hello"
+PASS regex.exec("24#Midnight").toString() is "24#Midnight,24,#,Midnight"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+
+            function test()
+            {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+                var mediaFile = findMediaFile("video", "content/test");
+            
+                waitForEvent("loadstart", function () {
+                    testExpected("stripExtension(relativeURL(video.currentSrc))", stripExtension(mediaFile));
+                    testExpected("stripExtension(relativeURL(video.src))", stripExtension(mediaFile));
+                    testExpected("stripExtension(video.getAttribute('src'))", stripExtension(mediaFile));
+                    endTest();
+                });
+            
+                video.src = mediaFile;
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+        <video controls></video>
+    </body>
+</html>
+

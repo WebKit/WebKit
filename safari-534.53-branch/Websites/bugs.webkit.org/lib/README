@@ -1,0 +1,4 @@
+This directory contains the Perl modules that Bugzilla requires to run.
+
+If you would rather have Bugzilla use the Perl modules installed on your
+system, you can delete everything in this directory.

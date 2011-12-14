@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setJavaScriptProfilingEnabled(true);
+}
+
+function startTest()
+{
+    console.profile();
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page creates a profile without a title.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  If there is a profile that is sufficient for this test.
+<div id="output"></div>
+<script>
+</script>
+</body>
+</html>

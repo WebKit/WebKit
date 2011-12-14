@@ -1,0 +1,5 @@
+This page tests exceptions thrown from 'new' expressions. If the test passes, you'll see a series of PASS messages below.
+
+PASS: e1 should be 'TypeError: 'undefined' is not a constructor (evaluating 'new f')' and is.
+PASS: e2 should be 'TypeError: 'undefined' is not a function (evaluating 'g()')' and is.
+

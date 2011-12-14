@@ -1,0 +1,81 @@
+Test the basics of IndexedDB's webkitIDBIndex.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('index-basics')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+db.createObjectStore('storeName', null)
+store.createIndex('indexName', 'x')
+store.createIndex('indexName2', 'y', false)
+store.createIndex('zIndex', 'z', true)
+PASS 'name' in indexObject is true
+PASS indexObject.name is "indexName"
+PASS 'objectStore' in indexObject is true
+PASS indexObject.objectStore.name is "storeName"
+PASS 'keyPath' in indexObject is true
+PASS indexObject.keyPath is "x"
+PASS 'unique' in indexObject is true
+PASS indexObject.unique is false
+PASS 'openKeyCursor' in indexObject is true
+PASS 'openCursor' in indexObject is true
+PASS 'getKey' in indexObject is true
+PASS 'get' in indexObject is true
+store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
+event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
+store.createIndex('indexWhileAddIsInFlight', 'x')
+store.createIndex('indexWithWeirdKeyPath', 'foobar')
+indexObject.getKey('value')
+PASS event.target.result is "key"
+indexObject2.getKey('zzz')
+PASS event.target.result is "key"
+indexObject3.get(2.71)
+PASS event.target.result.x is "value2"
+indexObject.get('value')
+PASS event.target.result.x is "value"
+PASS event.target.result.y is "zzz"
+indexObject.getKey('does not exist')
+PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
+event.preventDefault()
+indexObject.get('does not exist')
+PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
+event.preventDefault()
+indexObject4.getKey('value2')
+PASS event.target.result is "key2"
+indexObject.openKeyCursor()
+PASS event.target.source is indexObject
+PASS event.target.result === null is false
+PASS event.target.result.key is "value"
+PASS event.target.result.primaryKey is "key"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value2"
+PASS event.target.result.primaryKey is "key2"
+event.target.result.continue()
+PASS event.target.result === null is true
+indexObject.openCursor()
+PASS event.target.source is indexObject
+PASS event.target.result === null is false
+PASS event.target.result.key is "value"
+PASS event.target.result.value.x is "value"
+PASS event.target.result.value.y is "zzz"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value2"
+PASS event.target.result.value.x is "value2"
+PASS event.target.result.value.y is "zzz2"
+event.target.result.continue()
+PASS event.target.result === null is true
+Passing an invalid key into indexObject.get().
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into indexObject.getKey().
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

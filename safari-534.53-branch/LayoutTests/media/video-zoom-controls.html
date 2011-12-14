@@ -1,0 +1,21 @@
+<html>
+<head>
+    <style>
+      body { zoom: 150%; }
+      video {
+        margin: 30px;
+        display: block;
+      }
+      .rotated {
+        -webkit-transform: rotate(10deg);
+      }
+    </style>
+    <script src="media-file.js"></script>
+    <script src="video-paint-test.js"></script>
+</head>
+<body onload="setSrcByTagName('video', findMediaFile('video', 'content/test')); init()">
+    <p>Zoomed video with controls.</p>
+    <video width="160" height="120" controls></video>
+    <video class="rotated" width="160" height="120" controls></video>
+</body>
+</html>

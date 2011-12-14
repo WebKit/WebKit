@@ -1,0 +1,6 @@
+Test HTMLMediaElement canPlayType() method with multiple .wav MIME types.
+
+EXPECTED (audio.canPlayType('audio/wav') == 'maybe') OK
+EXPECTED (audio.canPlayType('audio/x-wav') == 'maybe') OK
+END OF TEST
+

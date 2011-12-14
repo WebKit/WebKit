@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect x="10" y="10" width="50" height="50" color="green" fill="red">
+    <animateColor attributeName="fill" from="green" to="currentColor" begin="0s" dur="1s" fill="freeze"/>
+</rect>
+<rect x="60" y="10" width="50" height="50" color="green" fill="red">
+    <animateColor attributeName="fill" from="currentColor" to="currentColor" begin="0s" dur="1s" fill="freeze"/>
+</rect>
+<rect x="10" y="60" width="50" height="50" color="green" fill="red">
+    <animateColor attributeName="fill" from="currentColor" by="black" begin="0s" dur="1s" fill="freeze"/>
+</rect>
+<rect x="60" y="60" width="50" height="50" color="black" fill="red">
+    <animateColor attributeName="fill" from="green" by="currentColor" begin="0s" dur="1s" fill="freeze"/>
+</rect>
+</svg>

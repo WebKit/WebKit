@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 51: TypeError: 'undefined' is not an object (evaluating 'mergeNode1.in1.baseVal = "off"')
+FAIL: Timed out waiting for notifyDone to be called
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'in' property of the SVGFEMergeNodeElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL mergeNode1.in1.baseVal should be SourceGraphic. Threw exception TypeError: 'undefined' is not an object (evaluating 'mergeNode1.in1.baseVal')
+

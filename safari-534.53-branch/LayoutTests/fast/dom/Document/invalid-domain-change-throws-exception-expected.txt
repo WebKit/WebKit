@@ -1,0 +1,10 @@
+This test checks that a SECURITY_ERR exception is raised if an attempt is made to change document.domain to an invalid value.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.domain = "apple.com" threw exception Error: SECURITY_ERR: DOM Exception 18.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

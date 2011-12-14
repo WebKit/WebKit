@@ -1,0 +1,57 @@
+This directory contains the Chromium WebKit API.
+
+
+OVERVIEW
+
+  The Chromium WebKit API provides a stable interface to WebCore without
+  revealing any of the WebCore or WTF types to the consumer.
+
+  The 'public' directory contains the API headers, and the 'src' directory
+  contains the API implementation.  The API is intended to be used either as a
+  shared or static library.
+
+
+COMPATIBILITY
+
+  No attempt is made to support runtime compatibility in a shared library
+  build.  Instead, the API is intended to support backwards compatibility at
+  build time.  C++ symbols are allowed in other words.
+
+
+DEFINES
+
+  WEBKIT_IMPLEMENTATION is defined when building the 'src' directory.
+  Consumers should not define this macro.
+
+  WEBKIT_DLL is defined when building as a shared library.  This should be
+  defined when building the 'src' directory, and it should also be defined by
+  the consumer to ensure proper linkage to the shared library.
+
+  WEBKIT_API is defined for platforms (e.g., Windows) that require additional
+  annotations on functions and methods, which should be exported from WebKit
+  when it is built as a DLL.  In general, this includes all public methods
+  unless the methods are defined inline, marked pure virtual, or contained
+  within a WEBKIT_IMPLEMENTATION section.  Also, any private method called by a
+  public inline-defined method should be annotated with WEBKIT_API.  WEBKIT_API
+  is not used to export whole classes.
+
+  WEBKIT_USING_SKIA is defined when using Skia as the graphics library.
+
+  WEBKIT_USING_CG is defined when using CG as the graphics library.
+
+  WEBKIT_USING_V8 is defined when using V8 as the JavaScript library.
+
+  WEBKIT_USING_JSC is defined when using JSC as the JavaScript library.
+
+
+BASIC TYPES
+
+  Use of STL is prohibited except in cases where it would be allowed in
+  WebCore.  This includes non-allocating uses: algorithms, numeric limits, etc.
+  WTF container classes should be used in the implementation of this API.
+
+  The API includes some usage of WebCore types when WEBKIT_IMPLEMENTATION is
+  defined.  This is only done for the convenience to the implementation, and
+  should not be considered part of the Chromium WebKit API.  Similarly, STL
+  types are assumed when WEBKIT_IMPLEMENTATION is not defined, which is done
+  for the convenience of the consumer.

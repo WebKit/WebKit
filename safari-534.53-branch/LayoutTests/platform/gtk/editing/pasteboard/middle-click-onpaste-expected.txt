@@ -1,0 +1,10 @@
+Test that middle click triggers the onpaste event
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pasteCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

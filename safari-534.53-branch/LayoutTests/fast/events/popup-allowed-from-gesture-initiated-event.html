@@ -1,0 +1,51 @@
+<html> 
+    <head>
+        <link rel="stylesheet" href="../js/resources/js-test-style.css">
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <button id="button1" onclick="testButton1()">Click Here</button>
+        <button id="button2" onclick="testButton2()">Click Here Too</button>
+        <button id="test" onclick="popup()" style="display:none"></button>
+        <div id="console"></div>
+        <script> 
+            var win;
+            function popup() {
+                win = window.open("about:blank", "blank");
+                shouldBeNonNull("win");
+            }
+
+            function testButton1() {
+                document.getElementById("test").click();
+            }
+
+            function testButton2() {
+                var clickEvent = document.createEvent("MouseEvents");
+                clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                document.getElementById("test").dispatchEvent(clickEvent);
+            }
+
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.setCanOpenWindows();
+                layoutTestController.setPopupBlockingEnabled(true);
+                layoutTestController.setCloseRemainingWindowsWhenComplete(true);
+                layoutTestController.waitUntilDone();
+
+                var button1 = document.getElementById("button1");
+                var button2 = document.getElementById("button2");
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(button1.offsetLeft + button1.offsetWidth / 2, button1.offsetTop + button1.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                    eventSender.mouseMoveTo(button2.offsetLeft + button2.offsetWidth / 2, button2.offsetTop + button2.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                }
+
+                layoutTestController.notifyDone();
+            }
+        </script> 
+    </body> 
+</html>

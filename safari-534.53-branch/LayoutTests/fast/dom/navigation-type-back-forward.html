@@ -1,0 +1,8 @@
+<script>
+    var BACK_FORWARD = 2;
+
+    layoutTestController.dumpAsText();
+    layoutTestController.queueLoad("resources/navigation-type-matches-querystring.html?" + BACK_FORWARD);
+    layoutTestController.queueLoad("about:blank");
+    layoutTestController.queueBackNavigation(1);
+</script>

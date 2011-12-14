@@ -1,0 +1,4 @@
+This tests deleting a selection that starts at the beginning of an editable pocket inside a non-editable table. The caret should not disappear during the delete and should be placed inside the editable span. When text is then inserted, it should be placed inside that span.
+
+<div contenteditable="false"><span>&nbsp;</span><span contenteditable="true" id="start">Text</span></div>
+

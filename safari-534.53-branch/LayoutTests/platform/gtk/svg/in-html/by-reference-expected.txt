@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x400
+  RenderBlock {HTML} at (0,0) size 800x400
+    RenderBody {BODY} at (0,0) size 800x400
+      RenderBlock {DIV} at (0,0) size 400x400 [bgcolor=#00FF00]
+        RenderEmbeddedObject {OBJECT} at (0,50) size 50x50
+          layer at (0,0) size 50x50
+            RenderView at (0,0) size 50x50
+          layer at (0,0) size 50x50
+            RenderSVGRoot {svg} at (0,0) size 0x0
+        RenderText {#text} at (50,85) size 4x19
+          text run at (50,85) width 4: " "
+        RenderEmbeddedObject {EMBED} at (54,50) size 50x50
+          layer at (0,0) size 50x50
+            RenderView at (0,0) size 50x50
+          layer at (0,0) size 50x50
+            RenderSVGRoot {svg} at (0,0) size 0x0
+        RenderText {#text} at (104,85) size 4x19
+          text run at (104,85) width 4: " "
+        RenderPartObject {IFRAME} at (108,0) size 100x100
+          layer at (0,0) size 100x100
+            RenderView at (0,0) size 100x100
+          layer at (0,0) size 50x50
+            RenderSVGRoot {svg} at (0,0) size 0x0
+        RenderText {#text} at (208,85) size 4x19
+          text run at (208,85) width 4: " "
+        RenderEmbeddedObject {OBJECT} at (212,50) size 50x50
+          layer at (0,0) size 50x50
+            RenderView at (0,0) size 50x50
+          layer at (0,0) size 50x50
+            RenderSVGRoot {svg} at (0,0) size 0x0
+        RenderText {#text} at (262,85) size 4x19
+          text run at (262,85) width 4: " "
+        RenderEmbeddedObject {OBJECT} at (266,50) size 50x50
+          layer at (0,0) size 50x50
+            RenderView at (0,0) size 50x50
+          layer at (0,0) size 50x50
+            RenderSVGRoot {svg} at (0,0) size 0x0

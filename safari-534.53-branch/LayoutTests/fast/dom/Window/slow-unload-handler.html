@@ -1,0 +1,34 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script>
+
+if (layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function done()
+{
+    if (document.getElementById("results").innerHTML == "")
+        document.getElementById("results").appendChild(document.createTextNode("PASS"));
+    if (layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function loaded() {
+    setTimeout("done()", 0);
+    document.getElementById("theiframe").outerHTML='';
+}
+
+</script>
+</head>
+<body onload="setTimeout('loaded();', 0)">
+<p>
+    This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=29193">bug 29193</a>:
+    <i>Need to prevent Javascript sleeps in unload handlers.</i> If successful, PASS should be printed below.
+</p>
+<p id="results" class="pass"></p>
+<iframe id="theiframe" style="border: 0" src="resources/slow_unload_handler1.html">
+</body>
+</html>

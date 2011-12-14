@@ -1,0 +1,37 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > A > DIV > BODY > HTML > #document to 1 of #text > A > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 29 of #text > A > DIV > BODY > HTML > #document to 29 of #text > A > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 537x19
+          text run at (0,0) width 140: "This tests link deletion. "
+          text run at (140,0) width 397: "After deleting a link, subsequent text should be inserted into a link."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 36x19
+          text run at (0,0) width 36: "Hello "
+        RenderInline {A} at (0,0) size 158x19 [color=#0000EE]
+          RenderText {#text} at (36,0) size 158x19
+            text run at (36,0) width 158: "this text should be in a link"
+        RenderText {#text} at (194,0) size 43x19
+          text run at (194,0) width 43: " World"
+      RenderBlock {OL} at (0,72) size 784x20
+        RenderListItem {LI} at (40,0) size 744x20
+          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderText {#text} at (0,0) size 43x19
+            text run at (0,0) width 43: "Passed"
+caret: position 29 of child 0 {#text} of child 1 {A} of child 2 {DIV} of body

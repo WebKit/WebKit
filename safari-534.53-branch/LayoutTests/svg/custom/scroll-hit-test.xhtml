@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body style="margin: 0">
+  <div id="div" style="width:100px; height:100px; overflow:hidden">
+    <svg id="svg" width="200px" height="200px" xmlns="http://www.w3.org/2000/svg">
+      <rect fill="orange" width="100px" height="100px" />
+      <rect id="rect" onclick="clicked()" fill="red" y="100px" x="100px" width="100px" height="100px" />
+    </svg>
+  </div>
+  <script>
+    <![CDATA[
+      var div = document.getElementById("div");
+      div.scrollTop = 100;
+      div.scrollLeft = 100;
+      
+      function clicked() {
+        document.getElementById("rect").style.fill = "green";
+      }
+      
+      function click() {
+        if (window.eventSender) {
+          eventSender.mouseMoveTo(50, 50);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        }
+      }
+      
+      if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+      
+      window.setTimeout("click()", 0);
+    ]]>
+  </script>
+</body>
+</html>

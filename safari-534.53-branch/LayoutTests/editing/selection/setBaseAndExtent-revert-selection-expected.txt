@@ -1,0 +1,6 @@
+Test for bug 20117: setBaseAndExtent fails to reverse the current selection.
+
+Div X
+Div Y
+Div Z
+PASS

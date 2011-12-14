@@ -1,0 +1,36 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    typeCharacterCommand();
+    moveSelectionBackwardByCharacterCommand();
+    insertParagraphCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" class="editing">
+<div id="test"><br class="webkit-block-placeholder"></div>
+
+<!-- Test fix for <rdar://problem/3918351> REGRESSION (Mail, 173-175+): Return 
+     before first char of line leaves insertion point in wrong place -->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

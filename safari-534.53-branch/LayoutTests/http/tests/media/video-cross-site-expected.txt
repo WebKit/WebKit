@@ -1,0 +1,9 @@
+Video with cross-site reference should not load.
+
+EXPECTED (video.error == 'null') OK
+EVENT(loadstart)
+EVENT(error)
+SUCCESS: denied cross-site video load. OK
+
+END OF TEST
+

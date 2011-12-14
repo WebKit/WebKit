@@ -1,0 +1,35 @@
+<script>
+// Pre-conditions
+// - Error page handling is supported on DRT.
+
+// Navigation steps:
+// 1- loads unreachable URL.
+// 2- loads check-scroll-position.html.
+// 3- executes back and forward navigations.
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    layoutTestController.handleErrorPages();
+}
+
+function onPageShow(evt)
+{
+    if (window.layoutTestController) {
+        if (!evt.persisted) {
+            // This is the first time the page has been loaded, then setup the
+            // to-be-tested scenario.
+            layoutTestController.queueLoad("./non-existent.html");
+            layoutTestController.queueLoad("resources/check-scroll-position.html");
+            layoutTestController.queueBackNavigation(1);
+            layoutTestController.queueForwardNavigation(1);
+        } else {
+            // The page is loaded again? So either the DRT doesn't support error page
+            // or it doesn't save a history item for the error page.
+        }
+    }
+}
+
+window.onpageshow = onPageShow;
+</script>
+<body></body>

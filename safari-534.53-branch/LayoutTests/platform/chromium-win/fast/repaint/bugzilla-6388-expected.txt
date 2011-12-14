@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x264
+  RenderBlock {HTML} at (0,0) size 800x264
+    RenderBody {BODY} at (8,16) size 784x240
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {B} at (0,0) size 61x19
+          RenderText {#text} at (0,0) size 61x19
+            text run at (0,0) width 61: "BUG ID:"
+        RenderText {#text} at (61,0) size 4x19
+          text run at (61,0) width 4: " "
+        RenderInline {A} at (0,0) size 108x19 [color=#0000EE]
+          RenderText {#text} at (65,0) size 108x19
+            text run at (65,0) width 108: "Bugzilla bug 6388"
+        RenderText {#text} at (173,0) size 465x19
+          text run at (173,0) width 465: " REGRESSION: Incomplete repaint when dragging the map on Google maps"
+      RenderBlock {P} at (0,36) size 784x26 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 86x19
+          RenderText {#text} at (3,3) size 86x19
+            text run at (3,3) width 86: "TEST PASS:"
+        RenderText {#text} at (89,3) size 227x19
+          text run at (89,3) width 4: " "
+          text run at (93,3) width 223: "The blue square will change to green."
+      RenderBlock {P} at (0,78) size 784x26 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 84x19
+          RenderText {#text} at (3,3) size 84x19
+            text run at (3,3) width 84: "TEST FAIL:"
+        RenderText {#text} at (87,3) size 264x19
+          text run at (87,3) width 4: " "
+          text run at (91,3) width 260: "The blue square will NOT change to green."
+      RenderBlock (anonymous) at (0,220) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+layer at (8,136) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,120) size 100x100
+layer at (-92,136) size 200x100 backgroundClip at (8,136) size 100x100 clip at (8,136) size 100x100 outlineClip at (8,136) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 200x100 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#0000FF]

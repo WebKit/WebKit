@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="button" tabindex=0 role="button" aria-label="title" aria-help="click here">
+button
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-help attribute works as expected.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("button").focus();
+        var button = accessibilityController.focusedElement;
+        shouldBe("button.helpText", "'AXHelp: click here'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

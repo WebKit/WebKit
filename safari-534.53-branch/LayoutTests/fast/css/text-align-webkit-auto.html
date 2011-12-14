@@ -1,0 +1,17 @@
+<head>
+<script>
+function runTest() {
+    if (window.layoutTestController)
+        window.layoutTestController.dumpAsText();
+        
+    var textAlign = window.getComputedStyle(document.getElementById("div")).textAlign;
+    if (textAlign == "-webkit-auto")
+        document.body.innerText = "SUCCESS";
+    else
+        document.body.innerText = "FAILURE.  text-align was " + textAlign + ", it should have been -webkit-auto";   
+}
+</script>
+</head>
+<body onLoad="runTest();">
+<div id="div" style="direction:rtl;">test</div>
+</body>

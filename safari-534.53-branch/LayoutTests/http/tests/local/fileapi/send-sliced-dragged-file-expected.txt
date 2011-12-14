@@ -1,0 +1,29 @@
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 92: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+CONSOLE MESSAGE: line 111: TypeError: 'undefined' is not a function (evaluating 'file.webkitSlice(start, start + length, contentType)')
+Test for slicing a dragged file and sending it via XMLHttpRequest.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test slicing and sending an empty file.
+PASS event.dataTransfer contains a File object on drop.
+Test slicing and sending a small file.
+PASS event.dataTransfer contains a File object on drop.
+PASS event.dataTransfer contains a File object on drop.
+PASS event.dataTransfer contains a File object on drop.
+Test slicing and sending a big file.
+PASS event.dataTransfer contains a File object on drop.
+PASS event.dataTransfer contains a File object on drop.
+PASS event.dataTransfer contains a File object on drop.
+Test slicing and sending a file that has been changed right before sending.
+PASS event.dataTransfer contains a File object on drop.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

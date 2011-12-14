@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>Original Title</title>
+<link rel="shortcut icon" type="image/x-icon" href="http://test.com/oldfavicon.ico"/>
+<script>
+function debugOutput(str) {
+    text = document.createTextNode(str);
+    debugDiv = document.getElementById('debugDiv');
+    div = document.createElement ('div');
+    div.appendChild(text);
+    debugDiv.appendChild(div);
+}
+
+function setFavIcon(iconURL) {
+    var docHead = document.getElementsByTagName("head")[0];
+    var links = docHead.getElementsByTagName("link");
+    for (var i = 0; i < links.length; ++i) {
+      var link = links[i];
+      if (link.type=="image/x-icon" && link.rel=="shortcut icon") {
+        docHead.removeChild(link);
+        break; // Assuming only one match at most.
+      }
+    }
+    var link = document.createElement("link");
+    link.type = "image/x-icon";
+    link.rel = "shortcut icon";
+    link.href = iconURL;
+    docHead.appendChild(link);
+}
+
+function runTests() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpIconChanges();
+    }
+    iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
+    debugOutput ('Original iconURL is: ' + iconURL);
+    newURL = 'http://test.com/newfavion.ico';
+    debugOutput ('Setting new icon URL to: ' + newURL);
+    setFavIcon(newURL);
+    iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
+
+    debugOutput ('New iconURL is: ' + iconURL);
+}
+
+</script>
+</head>
+<body onload='runTests();'>
+<div id='debugDiv'>
+</div>
+</body>
+</html>

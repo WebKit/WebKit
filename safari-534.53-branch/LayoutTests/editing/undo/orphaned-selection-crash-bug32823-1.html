@@ -1,0 +1,11 @@
+<body onload="
+if (window.layoutTestController) {layoutTestController.dumpAsText();}
+document.designMode='on';
+document.execCommand('selectall');
+document.execCommand('italic');
+document.execCommand('RemoveFormat');
+document.designMode= 'off';
+document.execCommand('Undo');
+document.designMode ='on';
+document.execCommand('inserthtml', false);
+document.body.innerHTML='PASS';">x

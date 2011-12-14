@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function myImpl() {
+  return "my value";
+}
+
+// Provide some custom methods.
+Object.type = myImpl;
+Object.hasProperties = myImpl;
+Object.describe = myImpl;
+Object.className = myImpl;
+String.prototype.escapeCharacters = myImpl;
+JSON.stringify = myImpl;
+
+function output(text)
+{
+    var output = document.getElementById("output");
+    output.appendChild(document.createTextNode(text));
+    output.appendChild(document.createElement("br"));
+}
+
+function dumpValues()
+{
+    // Check that the methods haven't changed.
+    output("myImpl() => " + myImpl());
+    output("Object.type === myImpl => " + (Object.type === myImpl));
+    output("Object.hasProperties === myImpl => " + (Object.hasProperties === myImpl));
+    output("Object.describe === myImpl => " + (Object.describe === myImpl));
+    output("Object.className === myImpl => " + (Object.className === myImpl));
+    output("String.prototype.escapeCharacters === myImpl => " + (String.prototype.escapeCharacters === myImpl));
+    output("JSON.stringify === myImpl => " + (JSON.stringify === myImpl));
+}
+
+function test()
+{
+    function callback()
+    {
+        InspectorTest.completeTest();
+    }
+    InspectorTest.evaluateInPage("dumpValues()", callback);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that opening inspector front-end doesn't change methods defined by the inspected application.
+</p>
+
+<div id="output"></div>
+
+</body>
+</html>

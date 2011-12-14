@@ -1,0 +1,91 @@
+Test IndexedDB's transaction and objectStore calls
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+webkitIndexedDB.open('transaction-and-objectstore-calls', 'description')
+db = event.target.result
+result = db.setVersion('version 1')
+trans = event.target.result
+Deleted all object stores.
+db.createObjectStore('a')
+db.createObjectStore('b')
+trans.addEventListener('complete', created, true)
+
+trans = db.transaction(['a'])
+trans.objectStore('a')
+Expecting exception from trans.objectStore('b')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+trans = db.transaction(['a'])
+trans.objectStore('a')
+Expecting exception from trans.objectStore('b')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+trans = db.transaction(['b'])
+trans.objectStore('b')
+Expecting exception from trans.objectStore('a')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+trans = db.transaction(['a', 'b'])
+trans.objectStore('a')
+trans.objectStore('b')
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+trans = db.transaction(['b', 'a'])
+trans.objectStore('a')
+trans.objectStore('b')
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+trans = db.transaction([])
+trans.objectStore('a')
+trans.objectStore('b')
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+trans = db.transaction()
+trans.objectStore('a')
+trans.objectStore('b')
+Expecting exception from trans.objectStore('x')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+Expecting exception from db.transaction(['x'])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from db.transaction(['x'])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from db.transaction(['a', 'x'])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from db.transaction(['x', 'x'])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+Expecting exception from db.transaction(['a', 'x', 'b'])
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

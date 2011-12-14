@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<body>
+<pre id="log"></pre>
+<script src="resources/runner.js"></script>
+<script>
+var spec = loadFile("resources/html5.html");
+
+start(20, function() {
+    var iframe = document.createElement("iframe");
+    iframe.src = "about:blank";
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(spec);
+    iframe.contentDocument.close();
+    document.body.removeChild(iframe);
+});
+</script>
+</body>

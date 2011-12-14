@@ -1,0 +1,23 @@
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpFrameLoadCallbacks();
+    if (sessionStorage.api_goto_current_bf_item) {
+        delete sessionStorage.api_goto_current_bf_item;
+        layoutTestController.notifyDone();
+    }
+}
+
+function loaded()
+{
+    if (window.layoutTestController) {
+        sessionStorage.api_goto_current_bf_item = true;
+        layoutTestController.apiTestGoToCurrentBackForwardItem();
+    }
+}
+
+</script>
+<body onload="setTimeout('loaded();', 0);">
+<pre>This is an API test that will only work under DumpRenderTree. It tests using the WebKit api [WebView goToBackForwardItem:] to go to the current item. This needs to actually perform a "real" load, and not be treated as a same-document navigation.</pre>
+</body>

@@ -1,0 +1,81 @@
+CONSOLE MESSAGE: line 22: iframe navigated
+Tests resource tree model on iframe navigation, compares resource tree against golden. Every line is important.
+
+Before navigation
+====================================
+Resources:
+script http://127.0.0.1:8000/inspector/inspector-test.js
+document http://127.0.0.1:8000/inspector/resource-tree/resource-tree-frame-navigate.html
+script http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js
+document http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-before.html
+script http://127.0.0.1:8000/inspector/resource-tree/resources/script-initial.js
+stylesheet http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial-2.css
+stylesheet http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+script http://127.0.0.1:8000/inspector/resources-test.js
+
+Resources URL Map:
+http://127.0.0.1:8000/inspector/inspector-test.js == http://127.0.0.1:8000/inspector/inspector-test.js
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-frame-navigate.html == http://127.0.0.1:8000/inspector/resource-tree/resource-tree-frame-navigate.html
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js == http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js
+http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-before.html == http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-before.html
+http://127.0.0.1:8000/inspector/resource-tree/resources/script-initial.js == http://127.0.0.1:8000/inspector/resource-tree/resources/script-initial.js
+http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial-2.css == http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial-2.css
+http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css == http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+http://127.0.0.1:8000/inspector/resources-test.js == http://127.0.0.1:8000/inspector/resources-test.js
+
+Resources Tree:
+Frames
+    (resource-tree-frame-navigate.html)
+        iframe(resource-tree-frame-navigate-iframe-before.html)
+            Scripts
+                script-initial.js
+            Stylesheets
+                styles-initial-2.css
+            resource-tree-frame-navigate-iframe-before.html
+        Scripts
+            inspector-test.js
+            resource-tree-test.js
+            resources-test.js
+        Stylesheets
+            styles-initial.css
+        resource-tree-frame-navigate.html
+
+After navigation
+====================================
+Resources:
+script http://127.0.0.1:8000/inspector/inspector-test.js
+document http://127.0.0.1:8000/inspector/resource-tree/resource-tree-frame-navigate.html
+script http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js
+document http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-after.html
+script http://127.0.0.1:8000/inspector/resource-tree/resources/script-navigated.js
+stylesheet http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+stylesheet http://127.0.0.1:8000/inspector/resource-tree/resources/styles-navigated.css
+script http://127.0.0.1:8000/inspector/resources-test.js
+
+Resources URL Map:
+http://127.0.0.1:8000/inspector/inspector-test.js == http://127.0.0.1:8000/inspector/inspector-test.js
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-frame-navigate.html == http://127.0.0.1:8000/inspector/resource-tree/resource-tree-frame-navigate.html
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js == http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js
+http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-after.html == http://127.0.0.1:8000/inspector/resource-tree/resources/resource-tree-frame-navigate-iframe-after.html
+http://127.0.0.1:8000/inspector/resource-tree/resources/script-navigated.js == http://127.0.0.1:8000/inspector/resource-tree/resources/script-navigated.js
+http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css == http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+http://127.0.0.1:8000/inspector/resource-tree/resources/styles-navigated.css == http://127.0.0.1:8000/inspector/resource-tree/resources/styles-navigated.css
+http://127.0.0.1:8000/inspector/resources-test.js == http://127.0.0.1:8000/inspector/resources-test.js
+
+Resources Tree:
+Frames
+    (resource-tree-frame-navigate.html)
+        iframe(resource-tree-frame-navigate-iframe-after.html)
+            Scripts
+                script-navigated.js
+            Stylesheets
+                styles-navigated.css
+            resource-tree-frame-navigate-iframe-after.html
+        Scripts
+            inspector-test.js
+            resource-tree-test.js
+            resources-test.js
+        Stylesheets
+            styles-initial.css
+        resource-tree-frame-navigate.html
+

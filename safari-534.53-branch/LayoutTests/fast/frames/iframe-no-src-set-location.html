@@ -1,0 +1,44 @@
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../js/resources/js-test-post-function.js"></script>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+var iframeHasLoadedFirstPage = false;
+
+function runTest()
+{
+    if (!iframeHasLoadedFirstPage) {
+        iframeHasLoadedFirstPage = true;
+
+        shouldBe("document.getElementById('theFrame').contentDocument.baseURI", "'about:blank'");
+        var iframe = document.getElementById('theFrame');
+        iframe.src = "javascript:document.location.replace('./resources/iframe-no-src-set-location-pass.html')";
+    } else {
+        shouldBe("document.getElementById('theFrame').contentDocument.body.innerHTML", "'PASS\\n'");
+
+        isSuccessfullyParsed();
+
+        if (window.layoutTestController) {
+            layoutTestController.notifyDone();
+        }
+    }
+}
+
+</script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that an iframe with no src attribute uses the parent document's URL as a base when resolving non-fully-qualified URLs set by JavaScript.");
+var successfullyParsed = true;
+</script>
+<iframe id="theFrame" onload="runTest()"></iframe>
+</body>
+</html>

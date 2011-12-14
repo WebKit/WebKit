@@ -1,0 +1,43 @@
+<html>
+<head>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+var test = function()
+{
+    InspectorTest.nodeWithId("image", step1);
+
+    function step1(node)
+    {
+        var treeElement = WebInspector.panels.elements.treeOutline.findTreeElement(node);
+        treeElement._createTooltipForNode();
+        InspectorTest.runAfterPendingDispatches(step2.bind(this, treeElement));
+    }
+
+    function step2(treeElement)
+    {
+        const EXPECTED_TOOLTIP_TEXT = "215 \xd7 174 pixels";
+
+        var tooltipText = treeElement.tooltip;
+        if (tooltipText === EXPECTED_TOOLTIP_TEXT)
+            InspectorTest.addResult("PASSED, tooltip text is \"" + EXPECTED_TOOLTIP_TEXT + "\".");
+        else
+            InspectorTest.addResult("FAILED, tooltip text should have been \"" + EXPECTED_TOOLTIP_TEXT + "\". Was \"" + tooltipText + "\".");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the tooltip for the image on hover.
+</p>
+
+<img id="image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANcAAACuCAIAAAAqMg/rAAAAAXNSR0IArs4c6QAAAU9JREFUeNrt0jERAAAIxDDAv+dHAxNLIqHXTlLwaiTAheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSF4EJcCC7EheBCXAguxIXgQlwILsSFEuBCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLgQX4kJwIS4EF+JCcCEuBBfiQnAhLoSDBZXqBFnkRyeqAAAAAElFTkSuQmCC"/>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+This tests that going back in history with page cache enabled is not going to crash/ASSERT when the previous page has data:// URLs.
+
+open page with data urls
+page with data urls, about to navigate to page-2.
+page-2, about to go back to page-1
+Back on page with data urls, timer is still firing.
+PASS.
+

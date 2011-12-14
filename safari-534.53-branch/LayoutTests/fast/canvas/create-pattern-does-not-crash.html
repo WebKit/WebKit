@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<canvas id="c"></canvas><br/>
+This test case ensures we don't crash when using canvas.createPattern
+<script>
+window.onload = function ()
+{
+    if (window.layoutTestController)
+        window.layoutTestController.dumpAsText();
+    var canvas = document.getElementById('c');
+    var ctx = canvas.getContext('2d');
+    var p = ctx.createPattern(canvas, 'no-repeat');
+}
+</script>

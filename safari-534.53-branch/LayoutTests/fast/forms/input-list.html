@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<!-- No list attribute -->
+<input type="text" id="i1">
+<!-- Empty list -->
+<input type="text" id="i2" list="">
+<!-- Non-existent ID -->
+<input type="text" id="i3" list="nonexist">
+<!-- Normal case -->
+<input type="text" id="i4" list="dl1">
+<!-- Unsupported type -->
+<input type="password" id="i5" list="dl1">
+<!-- ID confilict -->
+<Input type="text" id="i6" list="dl2">
+
+<datalist id="dl1">
+ <option>value1</option>
+</datalist>
+
+<datalist id="dl2" class="former">
+ <option>value1</option>
+</datalist>
+<datalist id="dl2" class="latter">
+ <option>value1</option>
+</datalist>
+
+<script>
+description('Test for the list attribute.');
+
+var input = document.getElementById('i1');
+shouldBeNull('input.list');
+
+input = document.getElementById('i2');
+shouldBeNull('input.list');
+
+input = document.getElementById('i3');
+shouldBeNull('input.list');
+
+input = document.getElementById('i4');
+shouldBe('input.list', 'document.getElementById("dl1")');
+
+input = document.getElementById('i5');
+shouldBeNull('input.list');
+
+var datalist = document.getElementById('i6').list;
+shouldBe('datalist.className', '"former"');
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

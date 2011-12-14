@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script type="text/javascript">
+        function test()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.waitUntilDone();
+                layoutTestController.setFrameFlatteningEnabled(true);
+            }
+
+            setTimeout(function() {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }, 0);
+        }
+    </script>
+</head>
+<frameset border=0 cols="*,200" onload="test()">
+    <frame src="data:text/html,
+        <style>body { background-color: green; }</style>
+        <p>
+            Test for frameset flattening. The flattening only works inside the DRT.
+        </p>
+        <p>
+            This frame should be 800px wide and not be scrollable (have scrollbars).
+        </p>
+        <div style='position: absolute; width: 800px; height: 1px; left: 0; top: 100px;'></div>
+    ">
+    <frame>
+</frameset>
+</html>

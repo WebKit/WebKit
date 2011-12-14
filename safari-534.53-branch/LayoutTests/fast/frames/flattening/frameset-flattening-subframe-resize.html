@@ -1,0 +1,36 @@
+<html>
+<head>
+    <script type="text/javascript">
+
+        function test()
+        {
+            if (window.layoutTestController) {
+                layoutTestController.waitUntilDone();
+                layoutTestController.setFrameFlatteningEnabled(true);
+            }
+        }
+
+        function test2()
+        {
+            setTimeout(contentResize, 50);
+        }
+
+        function contentResize()
+        {
+            var div = frames[0].document.getElementById('box');
+                div.style.height='300';
+                div.style.width='300';
+                div.style.backgroundColor='blue';
+
+            if (window.layoutTestController) {
+                frames[0].document.body.offsetTop;
+                layoutTestController.notifyDone();
+            }
+        }
+    </script>
+</head>
+<frameset border=0 cols="*,700" onload="test();">
+    <frame src="resources/frameset-flattening-subframe-resize.html" onload="test2();">
+    <frame>
+</frameset>
+</html>

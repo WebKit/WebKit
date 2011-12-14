@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,16) size 784x18
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 305x18
+          text run at (0,0) width 305: "The video controller should not be visible below"
+layer at (20,50) size 70x70 clip at (30,60) size 50x50 scrollWidth 352 scrollHeight 292
+  RenderBlock (positioned) {DIV} at (20,50) size 70x70 [border: (10px solid #008000)]
+    RenderText {#text} at (0,0) size 0x0
+layer at (30,60) size 352x288 backgroundClip at (30,60) size 50x50 clip at (30,60) size 50x50 outlineClip at (30,60) size 50x50
+  RenderVideo {VIDEO} at (10,10) size 352x288
+layer at (30,60) size 352x288 backgroundClip at (30,60) size 50x50 clip at (30,60) size 50x50 outlineClip at (30,60) size 50x50
+  RenderBlock (relative positioned) {DIV} at (0,0) size 352x288

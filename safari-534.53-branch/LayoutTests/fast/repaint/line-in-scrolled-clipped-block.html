@@ -1,0 +1,12 @@
+<script src="resources/repaint.js"></script>
+<body onload="runRepaintTest()">
+<div id="target" style="width: 100px; height: 100px; white-space:pre; overflow: hidden;">                         FAIL     .</div>
+<script>
+    var target = document.getElementById("target");
+    target.scrollLeft = 100;
+
+    function repaintTest()
+    {
+        target.innerText = "                         PASS     .";
+    }
+</script>

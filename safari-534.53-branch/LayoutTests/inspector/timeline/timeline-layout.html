@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var element = document.createElement("div");
+    element.innerHTML = "Test data";
+    document.body.appendChild(element);
+    // Force layout.
+    var foo = element.offsetHeight;
+}
+
+function test()
+{
+    InspectorTest.performActionsAndPrint("performActions()", "Layout");
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a Layout event
+</p>
+
+</body>
+</html>

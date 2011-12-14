@@ -1,0 +1,6 @@
+This file documents why tests in this directory have been rebaselined.
+
+transform-xhr-doc-expected.txt
+--------------------------
+Only differ in error message.
+

@@ -1,0 +1,90 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion
+
+FAIL dt.setDoubleObject( 0 ); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 0. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject( 0 ); dt.getDoubleObject().doubleValue() should be 0. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject( -0 ); Infinity / dt.PUB_DOUBLE_OBJECT should be -Infinity. Was Infinity.
+FAIL dt.setDoubleObject( -0 ); Infinity / dt.getDoubleObject().doubleValue() should be -Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject( Infinity ); dt.PUB_DOUBLE_OBJECT.doubleValue()  should be Infinity. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject( Infinity ); dt.getDoubleObject().doubleValue() should be Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject( -Infinity ); dt.PUB_DOUBLE_OBJECT.doubleValue() should be -Infinity. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject( -Infinity ); dt.getDoubleObject().doubleValue() should be -Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject( NaN ); dt.PUB_DOUBLE_OBJECT.doubleValue() should be NaN. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject( NaN ); dt.getDoubleObject().doubleValue() should be NaN. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(077777777777777777); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 2251799813685247. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(077777777777777777); dt.getDoubleObject().doubleValue() should be 2251799813685247. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(077777777777777776); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 2251799813685246. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(077777777777777776); dt.getDoubleObject().doubleValue() should be 2251799813685246. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x1fffffffffffff); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 9007199254740991. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x1fffffffffffff); dt.getDoubleObject().doubleValue() should be 9007199254740991. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x20000000000000); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 9007199254740992. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x20000000000000); dt.getDoubleObject().doubleValue() should be 9007199254740992. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x20123456789abc); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 9027215253084860. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x20123456789abc); dt.getDoubleObject().doubleValue() should be 9027215253084860. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x20123456789abd); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 9027215253084860. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x20123456789abd); dt.getDoubleObject().doubleValue() should be 9027215253084860. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x20123456789abe); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 9027215253084862. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x20123456789abe); dt.getDoubleObject().doubleValue() should be 9027215253084862. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x20123456789abf); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 9027215253084864. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x20123456789abf); dt.getDoubleObject().doubleValue() should be 9027215253084864. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x1000000000000080); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1152921504606847000. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x1000000000000080); dt.getDoubleObject().doubleValue() should be 1152921504606847000. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x1000000000000081); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1152921504606847200. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x1000000000000081); dt.getDoubleObject().doubleValue() should be 1152921504606847200. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x1000000000000100); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1152921504606847200. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x1000000000000100); dt.getDoubleObject().doubleValue() should be 1152921504606847200. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x100000000000017f); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1152921504606847200. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x100000000000017f); dt.getDoubleObject().doubleValue() should be 1152921504606847200. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x1000000000000180); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1152921504606847500. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x1000000000000180); dt.getDoubleObject().doubleValue() should be 1152921504606847500. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(0x1000000000000181); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1152921504606847500. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(0x1000000000000181); dt.getDoubleObject().doubleValue() should be 1152921504606847500. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(1.7976931348623157E+308); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1.7976931348623157e+308. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(1.7976931348623157E+308); dt.getDoubleObject().doubleValue() should be 1.7976931348623157e+308. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(1.7976931348623158e+308); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 1.7976931348623157e+308. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(1.7976931348623158e+308); dt.getDoubleObject().doubleValue() should be 1.7976931348623157e+308. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(1.7976931348623159e+308); dt.PUB_DOUBLE_OBJECT.doubleValue() should be Infinity. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(1.7976931348623159e+308); dt.getDoubleObject().doubleValue() should be Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(-1.7976931348623157E+308); dt.PUB_DOUBLE_OBJECT.doubleValue() should be -1.7976931348623157e+308. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(-1.7976931348623157E+308); dt.getDoubleObject().doubleValue() should be -1.7976931348623157e+308. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(-1.7976931348623158e+308); dt.PUB_DOUBLE_OBJECT.doubleValue() should be -1.7976931348623157e+308. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(-1.7976931348623158e+308); dt.getDoubleObject().doubleValue() should be -1.7976931348623157e+308. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(-1.7976931348623159e+308); dt.PUB_DOUBLE_OBJECT.doubleValue() should be -Infinity. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(-1.7976931348623159e+308); dt.getDoubleObject().doubleValue() should be -Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(1e-2000); dt.PUB_DOUBLE_OBJECT.doubleValue() should be 0. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(1e-2000); dt.getDoubleObject().doubleValue() should be 0. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(1e2000); dt.PUB_DOUBLE_OBJECT.doubleValue() should be Infinity. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(1e2000); dt.getDoubleObject().doubleValue() should be Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+FAIL dt.setDoubleObject(-1e2000); dt.PUB_DOUBLE_OBJECT.doubleValue() should be -Infinity. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_DOUBLE_OBJECT.doubleValue')
+FAIL dt.setDoubleObject(-1e2000); dt.getDoubleObject().doubleValue() should be -Infinity. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getDoubleObject().doubleValue')
+FAIL java.lang.Class.forName("java.lang.Double"): ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

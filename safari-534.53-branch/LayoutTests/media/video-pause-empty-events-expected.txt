@@ -1,0 +1,13 @@
+Test that pause() from EMPTY network state triggers load()
+
+EXPECTED (video.networkState == '3') OK
+RUN(video.pause())
+SCRIPT DONE
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplay)
+EVENT(canplaythrough)
+END OF TEST
+

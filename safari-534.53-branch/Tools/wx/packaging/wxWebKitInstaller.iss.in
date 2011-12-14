@@ -1,0 +1,79 @@
+; Installer script for wxWebKit for wxPython
+
+[Setup]
+AppName=wxWebKit
+AppId=wxWebKit
+AppVersion=<<VERSION>>
+AppVerName=wxWebKit <<VERSION>>
+AppCopyright=LGPL
+DefaultDirName={code:GetInstallDir|c:\DoNotInstallHere}
+AppPublisher=wxWebKit Project
+AppPublisherURL=http://wxwebkit.wxcommunity.com/pmwiki/
+AppSupportURL=http://wxwebkit.wxcommunity.com/pmwiki/
+AppUpdatesURL=http://wxwebkit.wxcommunity.com/pmwiki/
+UninstallDisplayName=wxWebKit <<VERSION>>
+UninstallFilesDir={app}\Uninstall
+
+Compression=bzip/9
+SourceDir=<<ROOTDIR>>
+OutputDir=win-installer
+OutputBaseFilename=wxWebKit-wx<<WXVERSION>>-Py<<PYTHONVER>>-<<VERSION>>
+DisableStartupPrompt=yes
+AllowNoIcons=yes
+DisableProgramGroupPage=yes
+DisableReadyPage=yes
+
+[Files]
+<<FILES>>
+
+[Messages]
+WelcomeLabel1=Welcome to the wxWebKit for wxPython Setup Wizard
+
+[Code]
+
+program Setup;
+var
+    PythonDir  : String;
+    InstallDir : String;
+
+
+function InitializeSetup(): Boolean;
+begin
+
+    (* -------------------------------------------------------------- *)
+    (* Figure out what to use as a default installation dir           *)
+
+    if not RegQueryStringValue(HKEY_LOCAL_MACHINE,
+                               'Software\Python\PythonCore\<<PYTHONVER>>\InstallPath',
+                               '', PythonDir) then begin
+
+        if not RegQueryStringValue(HKEY_CURRENT_USER,
+                                   'Software\Python\PythonCore\<<PYTHONVER>>\InstallPath',
+                                   '', PythonDir) then begin
+
+            MsgBox('No installation of Python <<PYTHONVER>> found in registry.' + #13 +
+                   'Be sure to enter a pathname that places wxPython on the PYTHONPATH',
+                   mbConfirmation, MB_OK);
+            PythonDir := 'C:\Put a directory on PYTHONPATH here\';
+        end;
+    end;
+    InstallDir := PythonDir + '\Lib\site-packages\wx-<<WXVERSION>>-msw-unicode\wx\';
+    Result := True;
+end;
+
+
+
+function GetPythonDir(Default: String): String;
+begin
+    Result := PythonDir;
+end;
+
+
+
+function GetInstallDir(Default: String): String;
+begin
+    Result := InstallDir;
+end;
+
+begin
+end.

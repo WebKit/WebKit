@@ -1,0 +1,18 @@
+<html>
+<script>
+window.counter = 0;
+
+function tick()
+{
+    if (window.finish)
+        finish();
+}
+
+function start()
+{
+    window.setInterval(tick, 50);
+}
+</script>
+<body onload="start()">
+</body>
+</html>

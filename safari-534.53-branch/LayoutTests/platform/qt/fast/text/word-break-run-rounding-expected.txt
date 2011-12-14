@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 60x19
+          text run at (0,0) width 60: "Tests for "
+        RenderInline {I} at (0,0) size 689x19
+          RenderInline {A} at (0,0) size 294x19 [color=#0000EE]
+            RenderText {#text} at (60,0) size 294x19
+              text run at (60,0) width 294: "http://bugs.webkit.org/show_bug.cgi?id=13438"
+          RenderText {#text} at (354,0) size 395x19
+            text run at (354,0) width 4: " "
+            text run at (358,0) width 391: "Run rounding makes word-break:break-all/word not functional"
+        RenderText {#text} at (749,0) size 4x19
+          text run at (749,0) width 4: "."
+      RenderBlock {P} at (0,34) size 784x19
+        RenderText {#text} at (0,0) size 306x19
+          text run at (0,0) width 306: "Test that the preferred (maximum) width is right:"
+      RenderBlock (floating) {DIV} at (0,67) size 584x25 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 578x19
+          text run at (3,3) width 578: "The black border should fit tightly around this one line of text with no space after the period."
+      RenderBlock (anonymous) at (0,67) size 784x25
+        RenderBR {BR} at (584,0) size 0x19
+      RenderBlock {P} at (0,106) size 784x19
+        RenderText {#text} at (0,0) size 386x19
+          text run at (0,0) width 386: "Test that text does not wrap too early due to rounding errors:"
+      RenderBlock {DIV} at (0,139) size 431x25 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 334x19
+          text run at (3,3) width 334: "This text fits nicely on a single line of the given width."
+      RenderBlock {P} at (0,178) size 784x19
+        RenderText {#text} at (0,0) size 232x19
+          text run at (0,0) width 232: "Test that text does not wrap too late:"
+      RenderBlock {DIV} at (0,211) size 597x44 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 586x38
+          text run at (3,3) width 391: "J u s t a b u n c h o f l e t t e r s h e r e , n o t h i n g t o s e e . "
+          text run at (394,3) width 195: "Thisisonebigwordwhichisverylo"
+          text run at (3,22) width 20: "ng."

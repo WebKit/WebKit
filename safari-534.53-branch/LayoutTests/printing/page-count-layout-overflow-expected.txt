@@ -1,0 +1,1 @@
+When printing, layout overflow must be cleared after current document size is queried: PASS

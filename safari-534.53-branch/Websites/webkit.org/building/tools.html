@@ -1,0 +1,112 @@
+<?php
+$title = "Installing Developer Tools";
+include("../header.inc");
+?>
+<h2>Installing the Developer Tools</h2>
+<div class="mac-instructions">
+<h4>Mac OS X</h4>
+<ol>
+<li><p>Install the Xcode Tools package</p>
+<p>Install the Xcode Tools package from <a target="installtools" href="http://connect.apple.com/">http://connect.apple.com</a>.  Xcode 2.3 or later is required to build.</p>
+<li><p>Install a Subversion Client (Tiger only)</p>
+<p>Subversion (svn) is the source code management tool used by the WebKit Open Source Project. A <a target="installtools" href="http://www.collab.net/downloads/community/">Subversion client for Mac OS X 10.4 and later</a> is available.  Leopard (10.5) and later already include a subversion client.</p>
+<li><p>Install Python 2.5 or later (Tiger only)</p>
+<p>Python is a scripting language used by the WebKit Open Source Project. WebKit scripts require <a target="installtools" href="http://www.python.org/download/">Python 2.5 or later</a> to run.  Tiger includes Python 2.3 which is too old to support  <a target="installtools" href="http://trac.webkit.org/wiki/PythonGuidelines">WebKit's Python scripts</a>.</p>
+<li><p>Install Java for Mac OS X Developer Package</p>
+<p>Download and install the latest OS-appropriate "Java for Mac OS X Developer Package" from <a href="http://connect.apple.com/">http://connect.apple.com/</a> (located under Downloads > Java).</p>
+</ol>
+</div>
+
+<div class="windows-instructions">
+<h4>Windows</h4>
+<ol>
+<li><p>If you own Visual Studio 2005 (newer versions of Visual Studio are currently unsupported):</p>
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=BB4A75AB-E2D4-4C96-B39D-37BAF6B5B1DC&amp;displaylang=en">Microsoft Visual Studio 2005 Team Suite Service Pack 1</a>.</p>
+<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&amp;displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&amp;displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
+<p>Install the following hotfixes to improve Visual Studio's performance and responsiveness:</p>
+<ol style="list-style-type: lower-alpha">
+<li><a target="installtools" href="http://code.msdn.microsoft.com/KB918559">KB918559</a></li>
+<li><a target="installtools" href="http://code.msdn.microsoft.com/KB935225">KB935225</a></li>
+<li><a target="installtools" href="http://code.msdn.microsoft.com/KB943969">KB943969</a></li>
+<li><a target="installtools" href="http://code.msdn.microsoft.com/KB947315">KB947315</a></li>
+</ol>
+<p>Use the default options for these installations.</p>
+<li><p>If not, you can use Visual C++ Express 2005 (newer versions of Visual C++ Express Edition are currently unsupported):</p>
+<p>Install <a target="installtools" href="http://go.microsoft.com/fwlink/?LinkId=51410">Visual C++ 2005 Express</a>.</p>
+<p>Install <a target="installtools" href="http://download.microsoft.com/download/7/7/3/7737290f-98e8-45bf-9075-85cc6ae34bf1/VS80sp1-KB926748-X86-INTL.exe">Microsoft Visual C++ Express 2005 Service Pack 1</a>.</p>
+<p>If you are building from Vista, install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=90e2942d-3ad1-4873-a2ee-4acc0aace5b6&amp;displaylang=en">Service Pack 1 Update for Windows Vista</a>.</p>
+<p>Install <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?FamilyID=7c8729dc-06a2-4538-a90d-ff9464dc0197&amp;displaylang=en">Visual Studio 2005 Service Pack 1 ATL Security Update</a>.</p>
+<p>Install the <a target="installtools" href="http://www.microsoft.com/downloads/details.aspx?familyid=0baf2b35-c656-4969-ace8-e4c0c0716adb&amp;displaylang=en">Windows Server 2003 R2 Platform SDK</a>, then follow steps 2 and 3 of &ldquo;<a target="installtools" href="http://msdn.microsoft.com/en-us/library/ms235626(VS.80).aspx">How to: Use Visual C++ Express Edition with the Microsoft Platform SDK</a>.&rdquo;</p>
+<p>Use the default options for all installations.</p>
+<p>In addition to the paths specified in step 3 of the Platform SDK installation instructions, you must also add the following include path. Update the Visual C++ directories in the Projects and Solutions section in the Options dialog box:</p>
+<p style="font-size:10px">C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include\mfc</p>
+
+<li><p>Install Cygwin</p>
+<p>Cygwin is a collection of utilities for Windows that includes not only a Subversion
+client, but also additional tools that are required to build the WebKit source.  We
+have made a downloader available that automatically collects all of the required
+packages.
+<p>Download <a
+href="http://svn.webkit.org/repository/webkit/trunk/Tools/CygwinDownloader/cygwin-downloader.zip">cygwin-downloader.zip</a>.</p>
+<p>Extract the content of the archive to some folder and start <code>cygwin-downloader.exe</code> from that folder.
+This will download all the Cygwin packages you need.</p>
+<p>When all the packages have finished downloading, the Cygwin installer will launch. Choose <b>Install from Local Directory</b>, then click <b>Next</b> until the
+install is complete. If you are running Vista, the installer won't be able to launch automatically, so you will have to manually launch Cygwin's Setup.exe.</p>
+<p><b>Note:</b> If you are behind a proxy you need to set the <code>http_proxy</code> environment variable to the URL of the proxy. This would
+likely match this pattern: <code>http[s]://[username[:password]@]somehost.com[:port]</code>. Where the square brackets ([]) are not part of the url but enclose url elements that are optional indicating that those elements might be missing in your case together with their enclosed delimiter such as @ and :.</p>
+<p><b>Note:</b> Vista may warn you that Cygwin did not install correctly. Ignore this warning and tell Vista that the install was successful.</p>
+<p><b>Warning:</b> If you are running Vista or Windows 7, Cygwin may have trouble with implementing <code>fork</code>
+(the POSIX function frequently used to start child processes, needed by many of the WebKit build tools).
+In order to enable <code>cygwin1.dll</code> to implement fork successfully it is better if no DLL loaded in the parent process is relocated at runtime.
+One way to achive this is to rebase all cygwin dlls except <code>cyglsa64.dll</code> and <code>cygwin1.dll</code> to base addresses that cause them to not overlap in memory.
+<p>In order to rebase all cygwin dlls a <code>rebaseall</code> script is provided in the cygwin installation's <code>bin</code> directory
+(usually <code>C:\cygwin\bin</code>).
+This script must be run from <code>ash.exe</code> (found in the same directory) while no other cygwin application is running.<br>
+<code>ash.exe</code> has very limited command line editing features so cutting and pasting to the commandline is recommended.<br>
+The <code>PATH</code> environment variable may not contain the <code>/bin</code> directory by default
+thus the script should be launched as <code>/bin/rebaseall</code>.<br>
+If <code>rebaseall</code> is complaining about failure to write to a Windows Temp directory (i.e. <code>/cygdrive/c/Users/you/AppData/Local/Temp</code>),
+fix the permissions on that folder (i.e. <code>/bin/chown you /cygdrive/c/Users/you/AppData/Local/Temp</code>) or
+change the TMP environment variable to point to a directory with the appropriate permission flags (i.e.: <code>export TMP=/tmp</code>).
+<p><b>Note:</b> The rebase process may need to be repeated to include any new libraries added later to cygwin by listing these libraries by full cygwin path in a file 
+and passing the file to <code>rebaseall</code> via the <code>-T fileName</code> commandline argument.
+The dlls under <code>LayoutTests/http/conf</code> are a relevant use case.</p>
+<p>Remove the following lines from <code>/home/[username]/.bashrc</code> (if present):
+<p class=code>
+<div>unset TMP</div>
+<div>unset TEMP</div>
+</p>
+Those lines would prevent picking up the Windows TMP and TEMP environment variables.</p>
+<p>If you are behind a proxy you need to do the following to allow cygwin svn to get through the proxy (similar steps are available for your Windows svn):
+<ul><li>In bash (Cygwin) run: <code>svn help</code>. This will create in your cygwin home directory the file .subversion/servers.</li>
+<li>Edit the file mentioned above and follow the instructions in the file to set up your proxy settings.</li></ul></p>
+<li><p>Install QuickTime SDK</p>
+<p>Download QuickTime SDK for Windows from <a href="http://developer.apple.com/quicktime/download/">http://developer.apple.com/quicktime/download/</a> and install it to the default location (\Program Files\QuickTime SDK). This is needed for media support.
+
+<li><p>Install DirectX SDK</p>
+<p>Download the <a href="http://www.microsoft.com/downloads/en/details.aspx?displaylang=en&FamilyID=2c7da5fb-ffbb-4af6-8c66-651cbd28ca15">February 2010 DirectX SDK</a> (newer versions do not support Visual Studio 2005).  This is needed for accelerated compositing.</p>
+</p>
+
+<li><p>Optional: Install the 32-bit version of Debugging Tools for Windows</p>
+<p>Debugging Tools for Windows includes many useful debugging tools such as WinDbg and NTSD. Some of WebKit&rsquo;s tests and scripts use these tools. Follow the <a target="installtools" href="http://www.microsoft.com/whdc/devtools/debugging/installx86.mspx#b">instructions for installing the 32-bit version of Debugging Tools for Windows</a>.</p>
+<li><p>Optional: Hotfix for 64-bit Windows to disable the user-mode callback filter for exceptions</p>
+<p>Without the <a href="http://support.microsoft.com/kb/976038">976038 hotfix</a>, exceptions may be thrown in callback routines that do not cause a crash but leave the application in an inconsistent state that might cause a crash later. You will need to click on "View and request hotfix downloads" and fill out the form. A link to download the hotfix and a password will be emailed to you.</p>
+</ol>
+</div>
+
+<div class="gtk-instructions">
+<h4>GTK</h4>
+Follow the instructions on the <a href="http://trac.webkit.org/wiki/BuildingGtk">BuildingGTK</a> wiki page.
+</div>
+
+<div class="qt-instructions">
+<h4>QT</h4>
+Follow the instructions on the <a href="http://trac.webkit.org/wiki/QtWebKit">QtWebKit</a> wiki page.
+</div>
+
+<p>Once you have installed your developer tools, the next step is
+<a href="checkout.html">getting the code</a>.</p>
+<?php
+include("../footer.inc");
+?>

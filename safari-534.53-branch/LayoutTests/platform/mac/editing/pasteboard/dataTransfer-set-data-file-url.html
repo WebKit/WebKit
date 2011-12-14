@@ -1,0 +1,55 @@
+<html> 
+<head>
+<script>
+function onImgDragStart() {
+    if (window.objCPlugin) {
+        try {
+            window.event.dataTransfer.setData('URL', 'file:///etc/passwd');
+            objCPlugin.removeBridgeRestrictions_(window);
+            var pasteboard = objc('NSPasteboard').pasteboardWithName_('Apple CFPasteboard drag');
+            var data = pasteboard.dataForType_('NSFilenamesPboardType');
+            var isPageLocal = (window.location.protocol == 'file:');
+            if (isPageLocal && !data) {
+                alert('NSFilenamesPboardType was incorrectly missing.');
+            } else if (!isPageLocal && data) {
+                alert('NSFilenamesPboardType was incorrectly present.');
+            }
+        } catch (ex) {
+            alert(ex.message);
+        }
+    } else {
+        // If there is no objCPlugin, then we are not on OS-X WebKit, and hence
+        // we don't worry about checking for NSFilenamesPboardType type data.
+    }
+    layoutTestController.notifyDone();
+}
+
+function runTest() {
+    if (!window.layoutTestController) {
+        return;
+    }
+
+    layoutTestController.waitUntilDone();
+
+    // Find abe
+    var dragme = document.getElementById("dragme");
+    x1 = dragme.offsetLeft + 20;
+    y1 = dragme.offsetTop + 20;
+    
+    // Drag abe
+    eventSender.mouseMoveTo(x1, y1);
+    eventSender.mouseDown();
+    eventSender.leapForward(500);
+    eventSender.mouseMoveTo(x1 + 20, y1);
+    eventSender.mouseUp();
+}
+
+</script>
+<title>Only let local pages add NSFilenamesPboardType data via dataTransfer.setData('URL', aFileUrl).</title> 
+</head>
+<body onload="runTest();">
+    <p>This tests that calling dataTransfer.setData('URL', aFileURL) sets NSFilenamesPboardType type data on the pasteboard if and only if this page is a local page.</p>
+    <p>This test cannot be run manually, as it is not possible to tell whether or not NSFilenamesPboardType type data is on the pasteboard, without Objective-C bindings.</p>
+    <img id="dragme" src="../../../../editing/resources/abe.png"/ ondragstart="onImgDragStart()">
+</body>
+</html>

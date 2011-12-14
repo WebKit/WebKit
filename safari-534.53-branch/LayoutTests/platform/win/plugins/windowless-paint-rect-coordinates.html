@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+    </script>
+    <style>
+        embed {
+            position: absolute;
+            /* Keep these values in sync with WindowlessPaintRectCoordinates::NPP_HandleEvent. */
+            top: 100px;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <embed type="application/x-webkit-test-netscape" test="windowless-paint-rect-coordinates"></embed>
+    <p>This tests that the paint rect passed in WM_PAINT has the expected coordinates.</p>
+</body>
+</html>
+

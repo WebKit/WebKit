@@ -1,0 +1,22 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="resources/test-no-charset.css">
+<link rel="stylesheet" type="text/css" href="resources/test-shift-jis.css">
+<link rel="stylesheet" type="text/css" href="resources/test-utf-8.css">
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpDOMAsWebArchive();
+</script>
+</head>
+<body>
+<div>
+Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=11850">Bug 11850:
+Webarchive fails to save images referenced in CSS</a>
+</div>
+<div><p>This test makes sure that the URL in the shift-jis encoded CSS file is encoded properly in the webarchive.</p></div>
+<div>Expected <tt>?img-src-no-charset-%88%9F</tt> query string for &lt;img&gt; tag with no document charset: <div class="styled"><img src="resources/apple.gif?img-src-no-charset-ˆŸ"></div></div>
+<div>Expected <tt>?css-url-no-charset-%88%9F</tt> query string for CSS url() with no CSS charset: <div class="styled background-no-charset"></div></div>
+<div>Expected <tt>?css-url-shift-jis-%88%9F</tt> query string for CSS url() with shift-jis CSS charset: <div class="styled background-shift-jis"></div></div>
+<div>Expected <tt>?css-url-utf-8-%E4%BA%9C</tt> query string for CSS url() with utf-8 CSS charset: <div class="styled background-utf-8"></div></div>
+</body>
+</html>

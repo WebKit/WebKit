@@ -1,0 +1,3 @@
+To verify jpeg data URL should take alpha component into account if canvas color has alpha component
+
+Test result: passed

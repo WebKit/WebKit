@@ -1,0 +1,10 @@
+Tests that evaluation in console works fine when script is paused. It also checks that stack and global variables are accessible from the console.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Evaluated script on the top frame: 4021
+Evaluated script on the calling frame: 301
+Script execution resumed.
+Debugger was disabled.
+

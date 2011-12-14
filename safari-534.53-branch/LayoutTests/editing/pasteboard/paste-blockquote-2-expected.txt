@@ -1,0 +1,3 @@
+This tests pasting a blockquote at the start of a paragraph.
+| "This should not be blockquoted.<#selection-caret>"
+| " This should not be blockquoted."

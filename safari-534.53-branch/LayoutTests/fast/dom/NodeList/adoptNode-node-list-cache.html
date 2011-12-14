@@ -1,0 +1,56 @@
+<head>
+<script>
+
+var pageHasLoaded = false;
+var frameHasLoaded = false;
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++)
+        var s = new String("");
+}
+
+function pageLoaded()
+{
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    pageHasLoaded = true;
+    if (pageHasLoaded && frameHasLoaded)
+        runTest();
+}
+
+function frameLoaded()
+{
+    frameHasLoaded = true;
+    if (pageHasLoaded && frameHasLoaded)
+        runTest();
+}
+
+function runTest()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var frame = document.getElementById("frame");
+    frame.setAttribute("onload", "frameLoadedAgain()");
+    frame.setAttribute("src", "about:blank");
+}
+
+function frameLoadedAgain()
+{
+    gc();
+    document.getElementById("result").firstChild.data = "TEST PASSED - Unless an assertion or crash happens soon.";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</head>
+<body onload="pageLoaded()">
+<iframe id="frame" src="resources/adoptNode-node-list-cache-subframe.html" onload="frameLoaded()"></iframe>
+<div id="result">TEST DID NOT RUN YET</div>
+</body>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests for enabling and disabling speech input via script.');
+
+var speechInputCreatedByScript = false;
+
+function onWebkitSpeechChange() {
+    shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
+
+    // Disable speech input now, just to verify this doesn't result in any crashes.
+    var input = document.getElementById('speechInput');
+    input.removeAttribute('x-webkit-speech');
+
+    // If the test has only been done with a type='text' field, repeat the same with a
+    // type='search' field since that takes a slightly different code path.
+    if (input.type != 'search') {
+        input.type = 'search';
+        testSetAttributeAndClick();
+        return;
+    }
+
+    // If the test has only been done with a statically declared element, now repeat the same
+    // with a dynamically created/inserted element.
+    if (!speechInputCreatedByScript) {
+        document.body.removeChild(input);
+        input = document.createElement('input');
+        input.id = 'speechInput';
+        document.body.appendChild(input);
+        speechInputCreatedByScript = true;
+        testSetAttributeAndClick();
+        return;
+    }
+
+    finishJSTest();
+}
+
+function testSetAttributeAndClick() {
+    // Enable speech input and test that clicking the speech button fills in mock speech-recognized text.
+    var input = document.getElementById('speechInput');
+    input.setAttribute('x-webkit-speech', '');
+    input.addEventListener('webkitspeechchange', onWebkitSpeechChange);
+
+    var x = input.offsetLeft + input.offsetWidth - 8;
+    var y = input.offsetTop + input.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function run() {
+    if (!window.layoutTestController || !window.eventSender)
+        return;
+
+    layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
+
+    // Try disabling speech with an input tag which has the attribute set in HTML and
+    // verify that doesn't result in any crashes.
+    document.getElementById('inputWithAttribute').removeAttribute('x-webkit-speech');
+
+    testSetAttributeAndClick();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput'>
+<input id='inputWithAttribute' x-webkit-speech>
+</body>
+</html>

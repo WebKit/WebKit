@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 591x19
+          text run at (0,0) width 591: "Test video sizing. You should see one bigger image (paused video) and 7 small ones of 1/4 its size."
+      RenderBlock (anonymous) at (0,36) size 784x480
+        RenderBR {BR} at (320,240) size 0x0
+        RenderBlock {DIV} at (160,240) size 320x120
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,360) size 320x120
+          RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,284) size 160x120
+  RenderVideo {VIDEO} at (0,240) size 160x120
+layer at (168,284) size 160x120
+  RenderVideo {VIDEO} at (0,0) size 160x120
+layer at (328,284) size 160x120
+  RenderVideo {VIDEO} at (160,0) size 160x120
+layer at (8,404) size 160x120
+  RenderVideo {VIDEO} at (0,0) size 160x120
+layer at (168,404) size 160x120
+  RenderVideo {VIDEO} at (160,0) size 160x120
+layer at (328,404) size 320x120
+  RenderBlock (relative positioned) {DIV} at (320,360) size 320x120
+layer at (328,404) size 160x120
+  RenderVideo {VIDEO} at (0,0) size 160x120
+layer at (488,404) size 160x120
+  RenderVideo {VIDEO} at (160,0) size 160x120

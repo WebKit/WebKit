@@ -1,0 +1,137 @@
+#!/usr/bin/python
+# Copyright (C) 2010 Google Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+# This script generates h and cpp file for TestObj.idl using the V8 code
+# generator. Please execute the script whenever changes are made to
+# CodeGeneratorV8.pm, and submit the changes in V8TestObj.h/cpp in the same
+# patch. This makes it easier to track and review changes in generated code.
+# To execute, invoke: 'python run_tests.py'
+
+import os
+import os.path
+import subprocess
+import sys
+import tempfile
+from webkitpy.common.checkout import scm
+
+
+def generate_from_idl(generator, idl_file, output_directory):
+    cmd = ['perl', '-w',
+           '-ISource/WebCore/bindings/scripts',
+           'Source/WebCore/bindings/scripts/generate-bindings.pl',
+           # idl include directories (path relative to generate-bindings.pl)
+           '--include', '.',
+           '--defines', 'TESTING_%s' % generator,
+           '--generator', generator,
+           '--outputDir', output_directory,
+           idl_file]
+    return subprocess.call(cmd) == 0
+
+
+def detect_changes(work_directory, reference_directory):
+    changes_found = False
+    for output_file in os.listdir(work_directory):
+        print 'Detecting changes in %s...' % output_file
+        cmd = ['diff',
+               '-u',
+               os.path.join(reference_directory, output_file),
+               os.path.join(work_directory, output_file)]
+        if subprocess.call(cmd) != 0:
+            print 'Detected changes in %s (see above)' % output_file
+            changes_found = True
+        else:
+            print 'No changes found.'
+
+    return changes_found
+
+
+def run_tests(generator, input_directory, reference_directory, reset_results):
+    work_directory = reference_directory
+
+    passed = True
+    for input_file in os.listdir(input_directory):
+        (name, extension) = os.path.splitext(input_file)
+        if extension != '.idl':
+            continue
+        print 'Testing the %s generator on %s' % (generator, input_file)
+        # Generate output into the work directory (either the given one or a 
+        # temp one if not reset_results is performed)
+        if not reset_results:
+            work_directory = tempfile.mkdtemp()
+        if not generate_from_idl(generator, os.path.join(input_directory,
+                                                         input_file),
+                                 work_directory):
+            passed = False
+        if reset_results:
+            print "Overwrote reference files"
+            continue
+        # Detect changes
+        if detect_changes(work_directory, reference_directory):
+            passed = False
+
+    if not passed:
+        print '%s generator failed.' % generator
+    return passed
+
+
+def main(argv):
+    """Runs WebCore bindings code generators on test IDL files and compares 
+    the results with reference files.
+
+    Options:
+       --reset-results: Overwrites the reference files with the generated results.
+
+    """
+    reset_results = "--reset-results" in argv
+
+    current_scm = scm.detect_scm_system(os.curdir)
+    os.chdir(current_scm.checkout_root)
+
+    all_tests_passed = True
+
+    generators = [
+        'JS',
+        'V8',
+        'ObjC',
+        'GObject',
+        'CPP'
+    ]
+
+    for generator in generators:
+        input_directory = os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test')
+        reference_directory = os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test', generator)
+        if not run_tests(generator, input_directory, reference_directory, reset_results):
+            all_tests_passed = False
+
+    if all_tests_passed:
+        print 'All tests passed!'
+        return 0
+    else:
+        print '(To update the reference files, execute "run-bindings-tests --reset-results")'
+        return -1
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))

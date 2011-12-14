@@ -1,0 +1,18 @@
+<script>
+if (window.layoutTestController)
+     layoutTestController.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug in endOfLine.</p>
+
+<div id="test" contenteditable="true" style="white-space:pre;">You should not see this paragraph after the test.
+There should be three paragraphs in this editable region.
+The first one should be empty.</div>
+
+<script>
+var e = document.getElementById("test");
+var s = window.getSelection();
+
+s.setPosition(e, 0);
+s.modify("extend", "forward", "lineBoundary");
+document.execCommand("Delete");
+</script>

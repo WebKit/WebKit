@@ -1,0 +1,49 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+    <script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body id="body">
+
+<input id="avnElement">
+<input id="avnElement2">
+
+<p>This tests that posting a notification for a deleted element does
+not cause a crash.</p>
+
+<p id="notDRT">This test should only be run inside of DumpRenderTree.</p>
+
+<p id="console"></p>
+
+<script>
+    function notificationReceived(event)
+    {
+        if (event != "value change event")
+            return;
+
+        debug("PASS: Didn't crash.");
+        layoutTestController.notifyDone();
+    }
+    if (window.layoutTestController && window.accessibilityController) {
+        document.getElementById("notDRT").style.visibility = "hidden";
+
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+
+        var element = document.getElementById("avnElement");
+        element.focus();
+
+        element.setAttribute("aria-valuenow", 2);
+        document.getElementById("body").removeChild(element);
+
+        var element2 = document.getElementById("avnElement2");
+        element2.focus();
+
+        accessibilityController.focusedElement.addNotificationListener(notificationReceived);
+
+        element2.setAttribute("aria-valuenow", 2);
+    }
+</script>
+</body>
+</html>

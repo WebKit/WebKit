@@ -1,0 +1,9 @@
+Test for bug 35202: Calling Java method which accepts Object always passes a null argument.
+
+PASS document.javaTest.objectToString("PАSS") == "PАSS" is true
+PASS document.javaTest.objectToString(undefined) == "undefined" is true
+PASS document.javaTest.objectToString(5) == "5.0" is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

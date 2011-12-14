@@ -1,0 +1,7 @@
+S15.2.4.5_A7
+
+TypeError: 'function hasOwnProperty() { [native code] }' is not a constructor (evaluating 'new FACTORY')
+PASS 
+
+TEST COMPLETE
+

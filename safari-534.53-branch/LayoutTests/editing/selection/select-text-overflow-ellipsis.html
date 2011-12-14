@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Test for WebKit bug 29968: Selecting text with text-overflow ellipsis should not show cut off text</title></head>
+  <style type="text/css">
+    .cutoff {
+      width: 95px;
+      white-space: pre;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+  <body>
+    <h3>Test for <a href='https://bugs.webkit.org/show_bug.cgi?id=29968'>WebKit bug 29968</a>: Selecting text with text-overflow ellipsis should not show cut off text</h3>
+    <div id="selection_with_ellipsis" class="cutoff">Lorem ipsum dolor</div>
+    <script type="text/javascript">
+      getSelection().setBaseAndExtent(selection_with_ellipsis.firstChild, 0, selection_with_ellipsis.firstChild, 11);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 400 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+    <g id="g">
+        <rect id="rect" stroke-width="5px" fill="red" stroke="navy" width="60" height="10"/>
+        <circle id="circle" opacity="0.5" fill="green" cx="30" cy="5" r="10"/>
+    </g>
+</defs>
+
+<use x="25" y="25" xlink:href="#g"/>
+<use x="125" y="25" xlink:href="#g"/>
+
+<text id="text" x="70" y="70">Test failed.</text>
+
+<script>
+function runInstanceRootTest() {
+    var useElement = document.getElementsByTagName("use")[1];
+    if (useElement != useElement.instanceRoot.correspondingUseElement)
+        return;
+
+    var element = useElement.instanceRoot.correspondingElement;
+    if (element != document.getElementById("g"))
+        return;
+
+    // element.firstChild is a #text node! the next sibling gives the rect
+    var rect = element.firstChild.nextSibling;
+    if (rect != document.getElementById("rect"))
+        return;
+
+    // rect.nextSibling is a #text node! the next sibling gives the circle
+    var circle = rect.nextSibling.nextSibling;
+    if (circle != document.getElementById("circle"))
+        return;
+
+    rect.setAttribute("fill", "green");
+    circle.setAttribute("opacity", "0.8");
+
+    document.getElementById("text").firstChild.nodeValue = "Test passed.";
+}
+runInstanceRootTest();
+</script>
+</svg>

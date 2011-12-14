@@ -1,0 +1,60 @@
+Tests that scripts panel displays resource content correctly after the open - close - open sequence. Bug 56747
+
+Debugger was enabled.
+
+Running: testSourceFrameContent
+==Source frame contents start==
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function reopenFrontend() {
+    // Do this asynchronously to allow InspectorBackendDispatcher to send response
+    // back to the frontend before it's destroyed.
+    setTimeout(function() {
+        window._frontendReopened = true;
+        layoutTestController.closeWebInspector();
+        layoutTestController.showWebInspector();
+        runTest();
+    }, 0);
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("window._frontendReopened", function(result) {
+        if (result._description === "undefined")
+            InspectorTest.evaluateInPage("reopenFrontend()")
+        else {
+            InspectorTest.runDebuggerTestSuite([
+                function testSourceFrameContent(next)
+                {
+                    InspectorTest.showScriptSource("open-close-open.html", didShowScriptSource);
+
+                    function didShowScriptSource(sourceFrame)
+                    {
+                        InspectorTest.dumpSourceFrameContents(sourceFrame);
+                        next();
+                    }
+                }
+            ]);
+        }
+    });
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that scripts panel displays resource content correctly after the open - close - open sequence.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=56747">Bug 56747</a>
+</p>
+</body>
+</html>
+
+==Source frame contents end==
+Debugger was disabled.
+

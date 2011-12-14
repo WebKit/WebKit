@@ -1,0 +1,8 @@
+FAIL 'use strict'; var f = fn(); delete f.prototype should throw an instance of TypeError
+FAIL var f = fn(); delete f.prototype should be false. Was true.
+PASS true === true
+ PASSED! 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

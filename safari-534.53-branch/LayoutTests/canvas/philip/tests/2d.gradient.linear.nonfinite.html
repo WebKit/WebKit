@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.gradient.linear.nonfinite</title>
+<script src="../tests.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<body>
+<p id="passtext">Pass</p>
+<p id="failtext">Fail</p>
+<p class="output">These images should be identical:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+_addTest(function(canvas, ctx) {
+
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, 0, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, 0, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(-Infinity, 0, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(-Infinity, 0, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(NaN, 0, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(NaN, 0, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, Infinity, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, Infinity, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, -Infinity, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, -Infinity, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, NaN, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, NaN, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, Infinity, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, Infinity, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, -Infinity, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, -Infinity, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, NaN, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, NaN, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, 1, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, 1, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, 1, -Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, 1, -Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, 1, NaN);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, 1, NaN)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, Infinity, 1, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, Infinity, 1, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, Infinity, Infinity, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, Infinity, Infinity, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, Infinity, Infinity, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, Infinity, Infinity, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, Infinity, 1, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, Infinity, 1, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, 0, Infinity, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, 0, Infinity, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, 0, Infinity, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, 0, Infinity, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(Infinity, 0, 1, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(Infinity, 0, 1, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, Infinity, Infinity, 0);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, Infinity, Infinity, 0)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, Infinity, Infinity, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, Infinity, Infinity, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, Infinity, 1, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, Infinity, 1, Infinity)"); }
+try { var _thrown = false;
+  ctx.createLinearGradient(0, 0, Infinity, Infinity);
+} catch (e) { if (e.code != DOMException.NOT_SUPPORTED_ERR) _fail("Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type NOT_SUPPORTED_ERR: ctx.createLinearGradient(0, 0, Infinity, Infinity)"); }
+
+
+});
+</script>
+

@@ -1,0 +1,26 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.setCustomPolicyDelegate(true, true);
+
+function runTest()
+{
+    var link = document.getElementById('testlink');
+    var clickEvent = document.createEvent('MouseEvents');
+    clickEvent.initEvent('click', false, true);
+    link.dispatchEvent(clickEvent);
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+
+<body onload="runTest();">
+This is a page with a link in it.  When the link it clicked it will navigate to another page.  That page redirects to an externally handled URL.<br>
+The policy delegate should be asked about the initial navigation and the redirect.<br>
+<a id="testlink" href="redirect-to-external-url.php">The kids love this one</a>
+</body>
+</html>

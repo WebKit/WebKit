@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/protocol-test.js"></script>
+<script>
+
+function TestObject()
+{
+    this.removedBySetPropertyValue = "doesn't work";
+}
+
+testObject = new TestObject();
+testProperty = true;
+
+function test()
+{
+    function callback(error, result)
+    {
+        var invalidObjectId = {id: -1, injectedScriptId: result.objectId.injectedScriptId};
+        var testSuite = [
+            ["RuntimeAgent", "evaluate", 'testObject', 'test', false],
+            ["RuntimeAgent", "evaluate", 'testObject', 'test'],
+            ["RuntimeAgent", "evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
+            ["RuntimeAgent", "setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
+            ["RuntimeAgent", "setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
+            ["RuntimeAgent", "getProperties", result.objectId, false],
+            ["RuntimeAgent", "releaseObject", result.objectId],
+            ["RuntimeAgent", "releaseObjectGroup", 'test']];
+
+        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'objectId']);
+    }
+
+    RuntimeAgent.evaluate('window.testObject', 'test', false, callback);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Protocol stability test. It is dumping request/response pairs of RuntimeAgent functions.
+</p>
+
+</body>
+</html>

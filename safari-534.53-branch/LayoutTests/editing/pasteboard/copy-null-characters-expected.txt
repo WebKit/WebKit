@@ -1,0 +1,50 @@
+If there are NULL characters in text nodes, they should not be copied to the clipboard.  This test requires DumpRenderTree.
+| "
+"
+| <div>
+|   id="outerSource"
+|   <p>
+|     <b>
+|       "bold"
+|   "
+  "
+|   "
+  "
+|   <p>
+|     style="color: green"
+|     "green"
+|   "
+"
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="destination-rich-text"
+|   <p>
+|     <b>
+|       "bold"
+|   <div>
+|     contenteditable="true"
+|     id="source"
+|     "Copy paste me"
+|   <span>
+|     class="Apple-style-span"
+|     style="color: rgb(0, 128, 0); "
+|     "green"
+|   "Copy paste me"
+| "
+"
+| <textarea>
+|   id="destination-plain-text"
+|   this.value="Copy paste mebold
+
+Copy paste me
+green"
+| "
+"
+| <div>
+|   id="results"
+|   "PASSED"
+| "
+
+"

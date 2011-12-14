@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to short
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 32767.6;dt.setShort( dt ); dt.PUB_SHORT is 32767
+PASS dt.PUB_DOUBLE_REPRESENTATION = 32767.6;dt.setShort( dt ); dt.getShort() is 32767
+PASS typeof dt.getShort() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

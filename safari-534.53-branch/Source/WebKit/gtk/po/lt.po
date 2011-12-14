@@ -1,0 +1,1082 @@
+# Lithuanian translation for WebKit GTK.
+# This file is put in the public domain.
+# Rimas Kudelis <rq@akl.lt>, 2009, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit 1.1.4\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2010-02-16 15:01-0200\n"
+"PO-Revision-Date: 2010-02-26 20:07+0300\n"
+"Last-Translator: Rimas Kudelis <rq@akl.lt>\n"
+"Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%"
+"100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Virtaal 0.5.2\n"
+
+#: WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp:535
+msgid "Upload File"
+msgstr "Failo išsiuntimas"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:61
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:143
+msgid "Input _Methods"
+msgstr "Įvesties _metodai"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:78
+msgid "LRM _Left-to-right mark"
+msgstr "Krypties iš _kairės į dešinę ženklas (LRM)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:79
+msgid "RLM _Right-to-left mark"
+msgstr "Krypties iš _dešinės į kairę ženklas (RLM)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:80
+msgid "LRE Left-to-right _embedding"
+msgstr "Į_terpimo iš kairės į dešinę ženklas (LRE)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:81
+msgid "RLE Right-to-left e_mbedding"
+msgstr "Įt_erpimo iš dešinės į kairę ženklas (RLE)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:82
+msgid "LRO Left-to-right _override"
+msgstr "_Perdengiantis iš kairės į dešinę ženklas (LRO)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:83
+msgid "RLO Right-to-left o_verride"
+msgstr "Pe_rdengiantis iš dešinės į kairę ženklas (RLO)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:84
+msgid "PDF _Pop directional formatting"
+msgstr "_Ankstesnio lygmens krypties ženklas (PDF)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:85
+msgid "ZWS _Zero width space"
+msgstr "_Nulinio pločio tarpas (ZWS)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:86
+msgid "ZWJ Zero width _joiner"
+msgstr "Nulinio pločio _jungimo ženklas (ZWJ)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:87
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "Nulinio pločio _skėlimo ženklas (ZWNJ)"
+
+#: WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp:109
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:138
+msgid "_Insert Unicode Control Character"
+msgstr "Įterpti unikodo valdymo ženklą"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:262
+msgid "Network Request"
+msgstr "Tinklo užklausa"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:263
+msgid "The network request for the URI that should be downloaded"
+msgstr ""
+"Tinklo užklausa parsiųstino failo universaliajam ištekliaus identifikatoriui "
+"(URI)"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:277
+msgid "Network Response"
+msgstr "Tinklo atsakas"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:278
+msgid "The network response for the URI that should be downloaded"
+msgstr ""
+"Tinklo atsakas į užklausą parsiųstino failo universaliajam ištekliaus "
+"identifikatoriui (URI)"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:292
+msgid "Destination URI"
+msgstr "Paskirties URI"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:293
+msgid "The destination URI where to save the file"
+msgstr "Paskirties failo universalusis ištekliaus identifikatorius (URI)"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:307
+msgid "Suggested Filename"
+msgstr "Siūlomas failo vardas"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:308
+msgid "The filename suggested as default when saving"
+msgstr "Numatytasis siūlomas įrašomo failo vardas"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:325
+msgid "Progress"
+msgstr "Progresas"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:326
+msgid "Determines the current progress of the download"
+msgstr "Nurodo esamą atsiuntimo progresą"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:339
+msgid "Status"
+msgstr "Būsena"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:340
+msgid "Determines the current status of the download"
+msgstr "Nurodo esamą atsiuntimo būseną"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:355
+msgid "Current Size"
+msgstr "Esamasis dydis"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:356
+msgid "The length of the data already downloaded"
+msgstr "Jau parsiųstų duomenų kiekis"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:370
+msgid "Total Size"
+msgstr "Visas dydis"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:371
+msgid "The total size of the file"
+msgstr "Visas failo dydis"
+
+#: WebKit/gtk/webkit/webkitdownload.cpp:522
+msgid "User cancelled the download"
+msgstr "Naudotojas atsisakė siuntimo"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:244
+#, c-format
+msgid "A username and password are being requested by the site %s"
+msgstr "Svetainei %s reikalingas naudotojo vardas ir slaptažodis"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:269
+msgid "Username:"
+msgstr "Naudotojo vardas:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:271
+msgid "Password:"
+msgstr "Slaptažodis:"
+
+#: WebKit/gtk/webkit/webkitsoupauthdialog.c:280
+msgid "_Remember password"
+msgstr "Įsi_minti slaptažodį"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:298
+msgid "Name"
+msgstr "Pavadinimas"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:299
+msgid "The name of the frame"
+msgstr "Kadro pavadinimas"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:305
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:146
+#: WebKit/gtk/webkit/webkitwebview.cpp:2315
+msgid "Title"
+msgstr "Antraštė"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:306
+msgid "The document title of the frame"
+msgstr "Kadre atverto tinklalapio pavadinimas"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:312
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:178
+#: WebKit/gtk/webkit/webkitwebview.cpp:2329
+msgid "URI"
+msgstr "URI"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:313
+msgid "The current URI of the contents displayed by the frame"
+msgstr ""
+"Kadre atverto tinklalapio universalusis ištekliaus identifikatorius (URI)"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:344
+msgid "Horizontal Scrollbar Policy"
+msgstr "Horizontalios slinkties juostos taisyklės"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:345
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "Taisyklės, taikomos kadro horizontaliai slinkties juostai."
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:362
+msgid "Vertical Scrollbar Policy"
+msgstr "Vertikalios slinkties juostos taisyklės"
+
+#: WebKit/gtk/webkit/webkitwebframe.cpp:363
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "Taisyklės, taikomos kadro vertikaliai slinkties juostai."
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:147
+msgid "The title of the history item"
+msgstr "Žurnalo įrašo pavadinimas"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:162
+msgid "Alternate Title"
+msgstr "Alternatyvus pavadinimas"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:163
+msgid "The alternate title of the history item"
+msgstr "Alternatyvus žurnalo įrašo pavadinimas"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:179
+msgid "The URI of the history item"
+msgstr "Žurnalo įrašo universalusis ištekliaus identifikatorius (URI)"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:194
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:173
+msgid "Original URI"
+msgstr "Pirminis URI"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:195
+msgid "The original URI of the history item"
+msgstr "Pirminis žurnalo įrašo universalusis ištekliaus identifikatorius (URI)"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:210
+msgid "Last visited Time"
+msgstr "Paskutinis apsilankymas"
+
+#: WebKit/gtk/webkit/webkitwebhistoryitem.cpp:211
+msgid "The time at which the history item was last visited"
+msgstr "Paskutinio apsilankymo data ir laikas"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:268
+msgid "Web View"
+msgstr "Žiniatinklio rodinys"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:269
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Žiniatinklio rodinys, rodantis žiniatinklio analizatorių"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:282
+msgid "Inspected URI"
+msgstr "Analizuojamas URI"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:283
+msgid "The URI that is currently being inspected"
+msgstr ""
+"Šiuo metu analizuojamo failo universalusi ištekliaus identifikatorius (URI)"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:299
+msgid "Enable JavaScript profiling"
+msgstr "Įjungti „JavaScript“ profiliavimą"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:300
+msgid "Profile the executed JavaScript."
+msgstr "Profiliuoti vykdomą „JavaScript“ kodą."
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:315
+msgid "Enable Timeline profiling"
+msgstr "Įjungti chronologinį profiliavimą"
+
+#: WebKit/gtk/webkit/webkitwebinspector.cpp:316
+msgid "Profile the WebCore instrumentation."
+msgstr "Profiliuoti „WebCore“ instrumentuotę."
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:158
+msgid "Reason"
+msgstr "Priežastis"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:159
+msgid "The reason why this navigation is occurring"
+msgstr "Tinklalapio atvėrimo priežastis"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:174
+msgid "The URI that was requested as the target for the navigation"
+msgstr ""
+"Mėginamo atverti tinklalapio universalusis ištekliaus identifikatorius (URI)"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:188
+msgid "Button"
+msgstr "Mygtukas"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:189
+msgid "The button used to click"
+msgstr "Mygtukas, kurį galima paspausti"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:204
+msgid "Modifier state"
+msgstr "Modifikatorių būsena"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:205
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "Bitų kaukė, atspindinti modifikavimo klavišų būseną"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:220
+msgid "Target frame"
+msgstr "Paskirties kadras"
+
+#: WebKit/gtk/webkit/webkitwebnavigationaction.cpp:221
+msgid "The target frame for the navigation"
+msgstr "Kadras, kuriame tinklalapis turi būti atvertas."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:233
+msgid "Default Encoding"
+msgstr "Numatytoji koduotė"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:234
+msgid "The default encoding used to display text."
+msgstr "Numatytoji teksto koduotė."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:242
+msgid "Cursive Font Family"
+msgstr "Rankraštinių šriftų šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:243
+msgid "The default Cursive font family used to display text."
+msgstr "Numatytoji tekstui atvaizduoti naudojama rankraštinių šriftų šeima."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:251
+msgid "Default Font Family"
+msgstr "Numatytoji šriftų šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:252
+msgid "The default font family used to display text."
+msgstr "Numatytoji tekstui atvaizduoti naudojama šriftų šeima."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:260
+msgid "Fantasy Font Family"
+msgstr "Dekoratyvių šriftų šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:261
+msgid "The default Fantasy font family used to display text."
+msgstr "Numatytoji tekstui atvaizduoti naudojama dekoratyvių šriftų šeima."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:269
+msgid "Monospace Font Family"
+msgstr "Lygiapločių šriftų šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:270
+msgid "The default font family used to display monospace text."
+msgstr "Numatytoji tekstui atvaizduoti naudojama lygiapločių šriftų šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:278
+msgid "Sans Serif Font Family"
+msgstr "Šriftų be užraitų šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:279
+msgid "The default Sans Serif font family used to display text."
+msgstr "Numatytoji tekstui atvaizduoti naudojama šriftų be užraitų šeima."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:287
+msgid "Serif Font Family"
+msgstr "Šriftų su užraitais šeima"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:288
+msgid "The default Serif font family used to display text."
+msgstr "Numatytoji tekstui atvaizduoti naudojama šriftų su užraitais šeima."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:296
+msgid "Default Font Size"
+msgstr "Numatytasis šrifto dydis"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:297
+msgid "The default font size used to display text."
+msgstr "Numatytasis tekstui atvaizduoti naudojamo šrifto dydis."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:305
+msgid "Default Monospace Font Size"
+msgstr "Numatytasis lygiapločio šrifto dydis"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:306
+msgid "The default font size used to display monospace text."
+msgstr "Numatytasis tekstui atvaizduoti naudojamo lygiapločio šrifto dydis"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:314
+msgid "Minimum Font Size"
+msgstr "Minimalus šrifto dydis"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:315
+msgid "The minimum font size used to display text."
+msgstr "Mažiausias leistinas tekstui atvaizduoti naudojamo šrifto dydis."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:323
+msgid "Minimum Logical Font Size"
+msgstr "Minimalus loginis šrifto dydis"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:324
+msgid "The minimum logical font size used to display text."
+msgstr ""
+"Mažiausias leistinas tekstui atvaizduoti naudojamo šrifto loginis dydis."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:343
+msgid "Enforce 96 DPI"
+msgstr "Naudoti 96 tašk./colyje"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:344
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Priverstinai naudoti 96 tašk./colyje skiriamąją gebą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:352
+msgid "Auto Load Images"
+msgstr "Įkelti paveikslus"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:353
+msgid "Load images automatically."
+msgstr "Automatiškai įkelti paveikslus."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:361
+msgid "Auto Shrink Images"
+msgstr "Mažinti paveikslus"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:362
+msgid "Automatically shrink standalone images to fit."
+msgstr "Automatiškai mažinti pavienius paveikslus, kad sutilptų į langą."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:370
+msgid "Print Backgrounds"
+msgstr "Spausdinti foną"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:371
+msgid "Whether background images should be printed."
+msgstr "Ar spausdinti fono piešinius."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:379
+msgid "Enable Scripts"
+msgstr "Įjungti scenarijus"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:380
+msgid "Enable embedded scripting languages."
+msgstr "Įjungti įtaisytuosius scenarijus."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:388
+msgid "Enable Plugins"
+msgstr "Įjungti papildinius"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:389
+msgid "Enable embedded plugin objects."
+msgstr "Įjungti įtaisytuosius papildinius."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:397
+msgid "Resizable Text Areas"
+msgstr "Keičiamo dydžio teksto laukai"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:398
+msgid "Whether text areas are resizable."
+msgstr "Ar leisti keisti teksto laukų dydį."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:405
+msgid "User Stylesheet URI"
+msgstr "Naudotojo stiliaus aprašo URI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:406
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr ""
+"Visiems tinklalapiams taikytino naudotojo stiliaus aprašo failo "
+"universalusis ištekliaus identifikatorius (URI)."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:421
+msgid "Zoom Stepping Value"
+msgstr "Mastelio keitimo žingsnis"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:422
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "Žingsnis, kuriuo keičiamas mastelis, jį didinant ar mažinant."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:440
+msgid "Enable Developer Extras"
+msgstr "Įjungti programuotojų įrankius"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:441
+msgid "Enables special extensions that help developers"
+msgstr "Įjungti specialius tinklalapių programuotojams skirtus įrankius"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:461
+msgid "Enable Private Browsing"
+msgstr "Įjungti privatųjį naršymą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:462
+msgid "Enables private browsing mode"
+msgstr "Įjungti privačiojo naršymo veikseną"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:477
+msgid "Enable Spell Checking"
+msgstr "Tikrinti rašybą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:478
+msgid "Enables spell checking while typing"
+msgstr "Įjungti rašybos tikrinimą renkant tekstą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:501
+msgid "Languages to use for spell checking"
+msgstr "Rašybos tikrinimo kalbos"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:502
+msgid "Comma separated list of languages to use for spell checking"
+msgstr "Kableliais atskirtas kalbų, kurių rašybą reikia tikrinti, sąrašas"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:516
+msgid "Enable Caret Browsing"
+msgstr "Visuomet įjungti teksto žymeklį"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:517
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr "Ar įjungti teksto fragmentų žymėjimą klaviatūra"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:532
+msgid "Enable HTML5 Database"
+msgstr "Įjungti HTML5 duomenų bazę"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:533
+msgid "Whether to enable HTML5 database support"
+msgstr "Ar įjungti HTML5 duomenų bazės palaikymą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:548
+msgid "Enable HTML5 Local Storage"
+msgstr "Įjungti HTML5 vietinę saugyklą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:549
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "Ar įjungti HTML5 vietinės saugyklos palaikymą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:563
+msgid "Enable XSS Auditor"
+msgstr "Įjungti XSS auditavimą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:564
+msgid "Whether to enable teh XSS auditor"
+msgstr "Ar įjungti XSS auditavimą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:582
+msgid "User Agent"
+msgstr "Naudotojo agentas"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:583
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "„User-Agent“ eilutė, kurią „WebKitGtk“ turėtų naudoti"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:598
+msgid "JavaScript can open windows automatically"
+msgstr "Leisti „JavaScript“ atverti langus automatiškai"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:599
+msgid "Whether JavaScript can open windows automatically"
+msgstr "Ar „JavaScript“ leidžiama atverti langus automatiškai"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:614
+msgid "Enable offline web application cache"
+msgstr "Įjungti žiniatinklio programų podėlį darbui neprisijungus"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:615
+msgid "Whether to enable offline web application cache"
+msgstr "Ar įjungti žiniatinklio programų podėlį darbui neprisijungus"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:642
+msgid "Editing behavior"
+msgstr "Redagavimo elgsena"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:643
+msgid "The behavior mode to use in editing mode"
+msgstr "Elgsena naudotina redagavimo veiksenoje"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:659
+msgid "Enable universal access from file URIs"
+msgstr "Įjungti universalią prieigą iš „file“ URI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:660
+msgid "Whether to allow universal access from file URIs"
+msgstr "Ar leisti universalią prieigą iš „file“ URI"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:675
+msgid "Enable DOM paste"
+msgstr "Įjungti DOM įdėjimą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:676
+msgid "Whether to enable DOM paste"
+msgstr "Ar įjungti DOM įdėjimą"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:694
+msgid "Tab key cycles through elements"
+msgstr "Tab klavišu šokti tarp elementų"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:695
+msgid "Whether the tab key cycles through elements on the page."
+msgstr "Ar Tab klavišu galima šokti iš vieno elemento tinklalapyje į kitą."
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:715
+msgid "Enable Default Context Menu"
+msgstr "Įjungti numatytąjį kontekstinį meniu"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:716
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr ""
+"Ar apdoroti dešiniojo pelės mygtuko spustelėjimus, suformuojant numatytąjį "
+"kontekstinį meniu"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:736
+msgid "Enable Site Specific Quirks"
+msgstr "Įjungti specifines svetainių pataisas"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:737
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Įjungti kai kuriose svetainėse reikalingas specifines pataisas"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:759
+msgid "Enable page cache"
+msgstr "Įjungti tinklalapių podėlį"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:760
+msgid "Whether the page cache should be used"
+msgstr "Ar naudoti tinklalapių podėlį"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:780
+msgid "Auto Resize Window"
+msgstr "Automatiškai keisti lango dydį"
+
+#: WebKit/gtk/webkit/webkitwebsettings.cpp:781
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr "Tinklalapiui pareikalavus, automatiškai keisti pagrindinio lango dydį"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2316
+msgid "Returns the @web_view's document title"
+msgstr "Grąžina @web_view objekte atverto tinklalapio pavadinimą"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2330
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr ""
+"Grąžina @web_view objekte atverto tinklalapio universalųjį ištekliaus "
+"identifikatorių (URI)"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2343
+msgid "Copy target list"
+msgstr "Kopijuotinų taikinių sąrašas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2344
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+"Šio žiniatinklio rodinio palaikomų taikinių kopijavimui į iškarpinę sąrašas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2357
+msgid "Paste target list"
+msgstr "Įdėtinų taikinių sąrašas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2358
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+"Šio žiniatinklio rodinio palaikomų taikinių įdėjimui iš iškarpinės sąrašas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2364
+msgid "Settings"
+msgstr "Nuostatos"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2365
+msgid "An associated WebKitWebSettings instance"
+msgstr "Susietasis „WebKitWebSettings“ tipo objektas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2378
+msgid "Web Inspector"
+msgstr "Žiniatinklio analizatorius"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2379
+msgid "The associated WebKitWebInspector instance"
+msgstr "Susietasis „WebKitWebInspector“ tipo objektas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2399
+msgid "Editable"
+msgstr "Keičiamas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2400
+msgid "Whether content can be modified by the user"
+msgstr "Ar turinys gali būti keičiamas naudotojo"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2406
+msgid "Transparent"
+msgstr "Permatomas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2407
+msgid "Whether content has a transparent background"
+msgstr "Ar turinio fonas permatomas"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2420
+msgid "Zoom level"
+msgstr "Mastelis"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2421
+msgid "The level of zoom of the content"
+msgstr "Turinio rodymo mastelio dydis"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2436
+msgid "Full content zoom"
+msgstr "Taikyti mastelį visam turiniui"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2437
+msgid "Whether the full content is scaled when zooming"
+msgstr "Ar mastelis keičiamas visam tinklalapio turiniui"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2450
+msgid "Encoding"
+msgstr "Koduotė"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2451
+msgid "The default encoding of the web view"
+msgstr "Numatytoji žiniatinklio rodinio koduotė"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2464
+msgid "Custom Encoding"
+msgstr "Pasirinktinė koduotė"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2465
+msgid "The custom encoding of the web view"
+msgstr "Pasirinktinė žiniatinklio rodinio koduotė"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2517
+msgid "Icon URI"
+msgstr "Piktogramos URI"
+
+#: WebKit/gtk/webkit/webkitwebview.cpp:2518
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "#WebKitWebView naudotinos „favicon“ piktogramos URI"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:55
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:60
+msgid "Submit"
+msgstr "Pateikti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:65
+msgid "Reset"
+msgstr "Atkurti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:70
+msgid "_Searchable Index"
+msgstr "_Rodyklė paieškai"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:75
+msgid "Choose File"
+msgstr "Parinkite failą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:80
+msgid "(None)"
+msgstr "(Joks)"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:85
+msgid "Open Link in New _Window"
+msgstr "Atverti saistomą objektą naujame _lange"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:90
+msgid "_Download Linked File"
+msgstr "At_siųsti saistomą objektą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:95
+msgid "Copy Link Loc_ation"
+msgstr "Kopijuoti saito _adresą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:100
+msgid "Open _Image in New Window"
+msgstr "Atverti _paveikslą naujame lange"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:105
+msgid "Sa_ve Image As"
+msgstr "Į_rašyti paveikslą kaip"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:110
+msgid "Cop_y Image"
+msgstr "_Kopijuoti paveikslą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:115
+msgid "Open _Frame in New Window"
+msgstr "_Atverti kadrą naujame lange"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
+msgid "_Reload"
+msgstr "At_siųsti iš naujo"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:183
+msgid "No Guesses Found"
+msgstr "Pasiūlymų nėra"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:188
+msgid "_Ignore Spelling"
+msgstr "_Nepaisyti rašybos"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:193
+msgid "_Learn Spelling"
+msgstr "Įsi_minti rašybą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:198
+msgid "_Search the Web"
+msgstr "_Ieškoti žiniatinklyje"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:203
+msgid "_Look Up in Dictionary"
+msgstr "Ieškoti _žodyne"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:208
+msgid "_Open Link"
+msgstr "_Atverti saistomą objektą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:213
+msgid "Ignore _Grammar"
+msgstr "Nepaisyti _gramatikos"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:218
+msgid "Spelling and _Grammar"
+msgstr "Rašyba ir _gramatika"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+msgid "_Show Spelling and Grammar"
+msgstr "_Rodyti rašybą ir gramatiką"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:223
+msgid "_Hide Spelling and Grammar"
+msgstr "_Nerodyti rašybos ir gramatikos"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:228
+msgid "_Check Document Now"
+msgstr "Pa_tikrinti dokumentą dabar"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:233
+msgid "Check Spelling While _Typing"
+msgstr "Tikrinti _rašybą rašant tekstą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:238
+msgid "Check _Grammar With Spelling"
+msgstr "Tikrinti _gramatiką kartu su rašyba"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:243
+msgid "_Font"
+msgstr "Šri_ftas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:266
+msgid "_Outline"
+msgstr "_Kontūras"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:271
+msgid "Inspect _Element"
+msgstr "Analizuoti _elementą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:276
+msgid "No recent searches"
+msgstr "Paskiausių paieškų nėra"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:281
+msgid "Recent searches"
+msgstr "Paskiausios paieškos"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:286
+msgid "_Clear recent searches"
+msgstr "_Valyti paskiausias paieškas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:291
+msgid "term"
+msgstr "terminas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:296
+msgid "definition"
+msgstr "apibrėžtis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:301
+msgid "press"
+msgstr "spustelėti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:306
+msgid "select"
+msgstr "pasirinkti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:311
+msgid "activate"
+msgstr "aktyvinti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:316
+msgid "uncheck"
+msgstr "nuimti žymėjimą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:321
+msgid "check"
+msgstr "pažymėti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:326
+msgid "jump"
+msgstr "šokti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:342
+msgid " files"
+msgstr " failai"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
+msgid "Unknown"
+msgstr "Nežinoma"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:364
+msgid "Loading..."
+msgstr "Įkeliama…"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:369
+msgid "Live Broadcast"
+msgstr "Tiesioginė transliacija"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:375
+msgid "audio element controller"
+msgstr "audio elemento skydelis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
+msgid "video element controller"
+msgstr "video elemento skydelis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:379
+msgid "mute"
+msgstr "išjungti garsą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:381
+msgid "unmute"
+msgstr "įjungti garsą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:383
+msgid "play"
+msgstr "groti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:385
+msgid "pause"
+msgstr "pristabdyti"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:387
+msgid "movie time"
+msgstr "laiko juosta"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:389
+msgid "timeline slider thumb"
+msgstr "laiko juostos slankiklis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:391
+msgid "back 30 seconds"
+msgstr "30 sek. atgal"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:393
+msgid "return to realtime"
+msgstr "grįžti į realų laiką"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:395
+msgid "elapsed time"
+msgstr "praėjęs laikas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:397
+msgid "remaining time"
+msgstr "likęs laikas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:399
+msgid "status"
+msgstr "būsena"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:401
+msgid "fullscreen"
+msgstr "visame ekrane"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:403
+msgid "fast forward"
+msgstr "prasukti pirmyn"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:405
+msgid "fast reverse"
+msgstr "prasukti atgal"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
+msgid "show closed captions"
+msgstr "rodyti titrus"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:409
+msgid "hide closed captions"
+msgstr "nerodyti titrų"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:418
+msgid "audio element playback controls and status display"
+msgstr "audio elemento valdikliai ir būsenos indikatorius"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:420
+msgid "video element playback controls and status display"
+msgstr "video elemento valdikliai ir būsenos indikatorius"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:422
+msgid "mute audio tracks"
+msgstr "išjungti garso takelio garsą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:424
+msgid "unmute audio tracks"
+msgstr "įjungti garso takelio garsą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:426
+msgid "begin playback"
+msgstr "pradėti grojimą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:428
+msgid "pause playback"
+msgstr "pristabdyti grojimą"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:430
+msgid "movie time scrubber"
+msgstr "įrašo laiko juosta"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:432
+msgid "movie time scrubber thumb"
+msgstr "įrašo laiko juostos slankiklis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:434
+msgid "seek movie back 30 seconds"
+msgstr "uždelsti įrašo atkūrimą 30 sek."
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:436
+msgid "return streaming movie to real time"
+msgstr "grąžinti įrašo atkūrimą į realų laiką"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:438
+msgid "current movie time in seconds"
+msgstr "praėjęs atkuriamo įrašo laikas sekundėmis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:440
+msgid "number of seconds of movie remaining"
+msgstr "likęs atkuriamo įrašo laikas sekundėmis"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
+msgid "current movie status"
+msgstr "atkuriamo įrašo būsena"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:444
+msgid "seek quickly back"
+msgstr "prasukti įrašą į priekį"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:446
+msgid "seek quickly forward"
+msgstr "prasukti įrašą atgal"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:448
+msgid "Play movie in fullscreen mode"
+msgstr "Rodyti įrašą visame ekrane"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:450
+msgid "start displaying closed captions"
+msgstr "pradėti ekrane rodyti titrus"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
+msgid "stop displaying closed captions"
+msgstr "nutraukti titrų rodymą ekrane"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:461
+msgid "indefinite time"
+msgstr "laikas neapibrėžtas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:491
+msgid "value missing"
+msgstr "trūksta reikšmės"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:497
+msgid "type mismatch"
+msgstr "tipo nesutampimas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
+msgid "pattern mismatch"
+msgstr "šablono nesutampimas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:507
+msgid "too long"
+msgstr "per ilgas"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
+msgid "range underflow"
+msgstr "reikšmė per maža"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:517
+msgid "range overflow"
+msgstr "reikšmė per didelė"
+
+#: WebCore/platform/gtk/LocalizedStringsGtk.cpp:522
+msgid "step mismatch"
+msgstr "žingsnio nesutapimas"

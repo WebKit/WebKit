@@ -1,0 +1,118 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test the basics of IndexedDB's IDBDatabase.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('database-basics')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    window.db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = setVersionSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db);
+
+    debug("Testing setVersion.");
+    request = evalAndLog('db.setVersion("version a")');
+    request.onsuccess = setVersionAgain;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersionAgain()
+{
+    request = evalAndLog('db.setVersion("version b")');
+    request.onsuccess = createObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createObjectStore()
+{
+    shouldBeEqualToString("db.version", "version b");
+    shouldBeEqualToString("db.name", "database-basics");
+    shouldBe("db.objectStoreNames", "[]");
+    shouldBe("db.objectStoreNames.length", "0");
+    shouldBe("db.objectStoreNames.contains('')", "false");
+    shouldBeNull("db.objectStoreNames[0]");
+    shouldBeNull("db.objectStoreNames.item(0)");
+
+    objectStore = evalAndLog('db.createObjectStore("test123")');
+    checkObjectStore();
+    commitAndContinue();
+}
+
+function checkObjectStore()
+{
+    shouldBe("db.objectStoreNames", "['test123']");
+    shouldBe("db.objectStoreNames.length", "1");
+    shouldBe("db.objectStoreNames.contains('')", "false");
+    shouldBe("db.objectStoreNames.contains('test456')", "false");
+    shouldBe("db.objectStoreNames.contains('test123')", "true");
+}
+
+function commitAndContinue()
+{
+    window.setTimeout(testSetVersionAbort, 0);
+}
+
+function testSetVersionAbort()
+{
+    request = evalAndLog('db.setVersion("version c")');
+    request.onsuccess = createAnotherObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createAnotherObjectStore()
+{
+    shouldBeEqualToString("db.version", "version c");
+    shouldBeEqualToString("db.name", "database-basics");
+    checkObjectStore();
+
+    objectStore = evalAndLog('db.createObjectStore("test456")');
+    var setVersionTrans = evalAndLog("setVersionTrans = event.target.result");
+    shouldBeTrue("setVersionTrans !== null");
+    setVersionTrans.oncomplete = unexpectedCompleteCallback;
+    setVersionTrans.onabort = checkMetadata;
+    setVersionTrans.abort();
+}
+
+function checkMetadata()
+{
+    shouldBeEqualToString("db.version", "version b");
+    checkObjectStore();
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

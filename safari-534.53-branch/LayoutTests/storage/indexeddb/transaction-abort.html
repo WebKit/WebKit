@@ -1,0 +1,103 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test transaction aborts send the proper onabort messages..");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('name')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersion()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function deleteExisting()
+{
+    debug("setVersionSuccess():");
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    evalAndLog("trans.oncomplete = startTest");
+
+    deleteAllObjectStores(db);
+
+    store = evalAndLog("store = db.createObjectStore('storeName', null)");
+    request = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
+    request.onerror = unexpectedErrorCallback;
+}
+
+function startTest()
+{
+    trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans.onabort = transactionAborted");
+    evalAndLog("trans.oncomplete = unexpectedCompleteCallback");
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    request = evalAndLog("store.add({x: 'value2', y: 'zzz2'}, 'key2')");
+    request.onerror = firstAdd;
+    request.onsuccess = unexpectedSuccessCallback;
+    request = evalAndLog("store.add({x: 'value3', y: 'zzz3'}, 'key3')");
+    request.onerror = secondAdd;
+    trans.abort();
+
+    firstError = false;
+    secondError = false;
+    abortFired = false;
+}
+
+function firstAdd()
+{
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.ABORT_ERR");
+    shouldBeFalse("firstError");
+    shouldBeFalse("secondError");
+    shouldBeFalse("abortFired");
+    firstError = true;
+
+    evalAndExpectException("store.add({x: 'value4', y: 'zzz4'}, 'key4')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+}
+
+function secondAdd()
+{
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.ABORT_ERR");
+    shouldBeTrue("firstError");
+    shouldBeFalse("secondError");
+    shouldBeFalse("abortFired");
+    secondError = true;
+}
+
+function transactionAborted()
+{
+    shouldBeTrue("firstError");
+    shouldBeTrue("secondError");
+    shouldBeFalse("abortFired");
+    abortFired = true;
+
+    evalAndExpectException("store.add({x: 'value5', y: 'zzz5'}, 'key5')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

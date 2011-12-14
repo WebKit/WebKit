@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src=../../../../editing/editing.js language="javascript" type="text/javascript"></script>
+<title>Editing word with marker test 2</title>
+</head>
+<body>
+<p>The test verified that when appending a whitespace before or after a word, its Spelling and 
+Autocorrection markers are remain.
+When manully testing, type "it's a meagesga", then add whitespace before or after "meagesga". 
+You should see the underline on "meagesga".</p>
+<textarea id="test" cols="80" rows="10"></textarea>
+<div id="console"></div>
+<script language="javascript" type="text/javascript">
+function resetText() {
+    document.getElementById('test').focus();
+    execSelectAllCommand();
+    execDeleteCommand();
+    typeCharacterCommand('i');
+    typeCharacterCommand('t');
+    typeCharacterCommand('\'');
+    typeCharacterCommand('s');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('m');
+    typeCharacterCommand('e');
+    typeCharacterCommand('a');
+    typeCharacterCommand('g');
+    typeCharacterCommand('e');
+    typeCharacterCommand('s');
+    typeCharacterCommand('g');
+    typeCharacterCommand('a');
+    typeCharacterCommand(' ');
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+
+resetText();
+textarea = document.getElementById('test');
+textarea.setSelectionRange(7,7);
+typeCharacterCommand(' ');
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(8,8) == 1) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' doesn't have underline.<br>";
+    }
+}
+
+resetText();
+textarea = document.getElementById('test');
+textarea.setSelectionRange(15,15);
+typeCharacterCommand(' ');
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' doesn't have underline.<br>";
+    }
+}
+</script>
+</body>
+</html>

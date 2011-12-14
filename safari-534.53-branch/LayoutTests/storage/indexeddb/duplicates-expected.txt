@@ -1,0 +1,97 @@
+Verify that you can put the same data in 2 different databases without uniqueness constraints firing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('duplicates-1')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+db.createObjectStore('storeName', null)
+store.createIndex('indexName', 'x')
+store.add({x: 'value', y: 'zzz'}, 'key')
+event.target.source.add({x: 'value2', y: 'zzz2'}, 'key2')
+indexObject.getKey('value')
+PASS event.target.result is "key"
+indexObject.get('value')
+PASS event.target.result.x is "value"
+PASS event.target.result.y is "zzz"
+indexObject.getKey('does not exist')
+PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
+event.preventDefault()
+indexObject.get('does not exist')
+PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
+event.preventDefault()
+indexObject.openKeyCursor()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value"
+PASS event.target.result.primaryKey is "key"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value2"
+PASS event.target.result.primaryKey is "key2"
+event.target.result.continue()
+PASS event.target.result === null is true
+indexObject.openCursor()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value"
+PASS event.target.result.value.x is "value"
+PASS event.target.result.value.y is "zzz"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value2"
+PASS event.target.result.value.x is "value2"
+PASS event.target.result.value.y is "zzz2"
+event.target.result.continue()
+PASS event.target.result === null is true
+webkitIndexedDB.open('duplicates-2')
+db = event.target.result
+db.setVersion('new version')
+setVersionSuccess():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+db.createObjectStore('storeName', null)
+store.createIndex('indexName', 'x')
+store.add({x: 'value', y: 'zzz'}, 'key')
+event.target.source.add({x: 'value2', y: 'zzz2'}, 'key2')
+indexObject.getKey('value')
+PASS event.target.result is "key"
+indexObject.get('value')
+PASS event.target.result.x is "value"
+PASS event.target.result.y is "zzz"
+indexObject.getKey('does not exist')
+PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
+event.preventDefault()
+indexObject.get('does not exist')
+PASS event.target.errorCode is webkitIDBDatabaseException.NOT_FOUND_ERR
+event.preventDefault()
+indexObject.openKeyCursor()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value"
+PASS event.target.result.primaryKey is "key"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value2"
+PASS event.target.result.primaryKey is "key2"
+event.target.result.continue()
+PASS event.target.result === null is true
+indexObject.openCursor()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value"
+PASS event.target.result.value.x is "value"
+PASS event.target.result.value.y is "zzz"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value2"
+PASS event.target.result.value.x is "value2"
+PASS event.target.result.value.y is "zzz2"
+event.target.result.continue()
+PASS event.target.result === null is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

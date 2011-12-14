@@ -1,0 +1,12 @@
+Test exception handling with various arithmetic and logic operators, it checks the following things:<br/>
+<ul>
+    <li>In assignment expressions the lefthand side is not modified if the right hand side throws</li>
+    <li>If the left hand side of a binary operator throws then the right hand should not be executed</li>
+    <li>If valueOf/toString throws in the left hand expression of a binop it does not prevent evaluation of the right hand expression, but does prevent evaluation of toString/valueOf on the rhs.</li>
+</ul>
+<div id="log"></div>
+
+<script >
+   var binaryOps = ['<', '<=', '>=', '>', '==', '!=', '<<', '>>'];
+</script>
+<script src="exception-sequencing-binops.js" type="text/javascript" charset="utf-8"></script>

@@ -1,0 +1,11 @@
+LiveConnect 3.0
+
+FAIL java.awt.Rectangle: ReferenceError: Can't find variable: java
+FAIL getFields( a[0].javaClass ): ReferenceError: Can't find variable: java
+FAIL getMethods( a[0].javaClass ): ReferenceError: Can't find variable: java
+FAIL getFields( a[1].javaClass ): ReferenceError: Can't find variable: java
+FAIL getMethods( a[1].javaClass ): ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

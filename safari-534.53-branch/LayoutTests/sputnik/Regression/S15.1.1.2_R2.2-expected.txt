@@ -1,0 +1,6 @@
+S15.1.1.2_R2.2
+
+FAIL SputnikError: #1: Infinity = 0; isFinite(Infinity) === true
+
+TEST COMPLETE
+

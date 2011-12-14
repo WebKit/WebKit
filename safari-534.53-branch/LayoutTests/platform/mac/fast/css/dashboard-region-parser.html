@@ -1,0 +1,134 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the parser and serializer for dashboard region values.");
+
+var style = document.getElementById('description').style;
+
+function parseDashboardRegion(string)
+{
+    try {
+        style.removeProperty("-apple-dashboard-region");
+        style.setProperty("-apple-dashboard-region", string, "");
+        var result = style.getPropertyValue("-apple-dashboard-region");
+        style.removeProperty("-apple-dashboard-region");
+        return result;
+    } catch (e) {
+        return "" + e;
+    }
+}
+
+function testCanonicalDashboardRegion(string)
+{
+    shouldBe("parseDashboardRegion('" + string + "')", "'" + string + "'");
+}
+
+testCanonicalDashboardRegion('none');
+
+debug('');
+
+testCanonicalDashboardRegion('dashboard-region(label circle)');
+testCanonicalDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px)');
+testCanonicalDashboardRegion('dashboard-region(label circle 0px 0px 0px 0px)');
+testCanonicalDashboardRegion('dashboard-region(label circle auto auto auto auto)');
+testCanonicalDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px)');
+
+debug('');
+
+testCanonicalDashboardRegion('dashboard-region(label rectangle)');
+testCanonicalDashboardRegion('dashboard-region(label rectangle 1px 2px 3px 4px)');
+
+debug('');
+
+testCanonicalDashboardRegion('dashboard-region(label circle) dashboard-region(label circle)');
+testCanonicalDashboardRegion('dashboard-region(label circle) dashboard-region(label rectangle)');
+testCanonicalDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)');
+testCanonicalDashboardRegion('dashboard-region(label rectangle 1px 2px 3px 4px) dashboard-region(label circle 5px 6px 7px 8px)');
+
+debug('');
+debug('Tests to demonstrate that commas are allowed.');
+debug('');
+
+shouldBe("parseDashboardRegion('dashboard-region(label, circle)')", "'dashboard-region(label circle)'");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle, 1px, 2px, 3px, 4px)')", "'dashboard-region(label circle 1px 2px 3px 4px)'");
+
+debug('');
+debug('Tests for variations in whitespace that are allowed.');
+debug('');
+
+shouldBe("parseDashboardRegion('  dashboard-region(  label  circle  )  ')", "'dashboard-region(label circle)'");
+shouldBe("parseDashboardRegion('  dashboard-region(  label   circle  1px  2px  3px  4px  )  dashboard-region(label  rectangle  5px  6px  7px  8px  )  ')", "'dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)'");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px)dashboard-region(label rectangle 5px 6px 7px 8px)')", "'dashboard-region(label circle 1px 2px 3px 4px) dashboard-region(label rectangle 5px 6px 7px 8px)'");
+
+debug('');
+debug('Tests for case insensitivity.');
+debug('');
+
+shouldBe("parseDashboardRegion('Dashboard-region(label Circle)')", "'dashboard-region(label circle)'");
+shouldBe("parseDashboardRegion('DASHBOARD-REGION(LABEL CIRCLE)')", "'dashboard-region(LABEL circle)'");
+shouldBe("parseDashboardRegion('DaShBoArD-ReGiOn(LaBeL CiRcLe)')", "'dashboard-region(LaBeL circle)'");
+shouldBe("parseDashboardRegion('dAsHbOaRd-rEgIoN(lAbEl cIrClE)')", "'dashboard-region(lAbEl circle)'");
+shouldBe("parseDashboardRegion('Dashboard-region(label Rectangle)')", "'dashboard-region(label rectangle)'");
+shouldBe("parseDashboardRegion('DASHBOARD-REGION(LABEL RECTANGLE)')", "'dashboard-region(LABEL rectangle)'");
+shouldBe("parseDashboardRegion('DaShBoArD-ReGiOn(LaBeL ReCtAnGlE)')", "'dashboard-region(LaBeL rectangle)'");
+shouldBe("parseDashboardRegion('dAsHbOaRd-rEgIoN(lAbEl rEcTaNgLe)')", "'dashboard-region(lAbEl rectangle)'");
+
+debug('');
+debug('Some expected failures.');
+debug('');
+
+shouldBe("parseDashboardRegion('')", "null");
+shouldBe("parseDashboardRegion(' ')", "null");
+shouldBe("parseDashboardRegion('x')", "null");
+shouldBe("parseDashboardRegion('dashboard-')", "null");
+shouldBe("parseDashboardRegion('dashboard-region')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label ')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label c')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region (label circle)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label,, circle)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px2px 3px 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label,, circle, 1px, 2px, 3px, 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle 1px 2px 3px 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle, 1px 2px 3px 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle, 1px, 2px 3px 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle, 1px, 2px, 3px 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle, 1px, 2px, 3px, 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px, 2px, 3px, 4px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle x x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle x x x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle x x x x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px x x x x x)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label circle 1px 2px 3px 4px circle 5px 6px 7px 8px)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle, 1px, 2px, 3px, 4px, circle, 5px, 6px, 7px, 8px)')", "null");
+shouldBe("parseDashboardRegion('none x')", "null");
+shouldBe("parseDashboardRegion('none x x')", "null");
+shouldBe("parseDashboardRegion('none x x x')", "null");
+shouldBe("parseDashboardRegion('none x x x x')", "null");
+shouldBe("parseDashboardRegion('none dashboard-region(label, circle)')", "null");
+shouldBe("parseDashboardRegion('dashboard-region(label, circle) none')", "null");
+
+debug('');
+
+successfullyParsed = true;
+
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

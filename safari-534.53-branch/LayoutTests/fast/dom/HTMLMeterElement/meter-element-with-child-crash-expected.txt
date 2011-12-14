@@ -1,0 +1,4 @@
+Test for Bug 48019. It is OK not to crash.
+
+This is a searchable index. Enter search keywords: 
+

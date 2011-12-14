@@ -1,0 +1,151 @@
+Checks that ReadPixels works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+checking: in range
+PASS color pixel at 0, 0 should be about 127.5
+PASS color pixel at 0, 0 should be about 178.5
+PASS color pixel at 0, 0 should be about 255
+PASS color pixel at 0, 0 should be about 255
+PASS color pixel at 1, 0 should be about 127.5
+PASS color pixel at 1, 0 should be about 178.5
+PASS color pixel at 1, 0 should be about 255
+PASS color pixel at 1, 0 should be about 255
+PASS color pixel at 0, 1 should be about 127.5
+PASS color pixel at 0, 1 should be about 178.5
+PASS color pixel at 0, 1 should be about 255
+PASS color pixel at 0, 1 should be about 255
+PASS color pixel at 1, 1 should be about 127.5
+PASS color pixel at 1, 1 should be about 178.5
+PASS color pixel at 1, 1 should be about 255
+PASS color pixel at 1, 1 should be about 255
+
+checking: off top left
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 1, 1 should be about 127.5
+PASS color pixel at 1, 1 should be about 178.5
+PASS color pixel at 1, 1 should be about 255
+PASS color pixel at 1, 1 should be about 255
+
+checking: off bottom right
+PASS color pixel at 0, 0 should be about 127.5
+PASS color pixel at 0, 0 should be about 178.5
+PASS color pixel at 0, 0 should be about 255
+PASS color pixel at 0, 0 should be about 255
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+
+checking: completely off top 
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+
+checking: completely off bottom
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+
+checking: completely off left
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+
+checking: completeley off right
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 0, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 1, 0 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 0, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS color pixel at 1, 1 should be about 0
+PASS getError was expected value: NO_ERROR : there should be no GL errors
+
+check disallowed formats
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGB / UNSIGNED_BYTE
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGB / UNSIGNED_SHORT_5_6_5
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGBA / UNSIGNED_SHORT_5_5_5_1
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGBA / UNSIGNED_SHORT_4_4_4_4
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as ALPHA / UNSIGNED_BYTE
+PASS getError was expected value: INVALID_ENUM : Should not be able to read as LUMINANCE / UNSIGNED_BYTE
+PASS getError was expected value: INVALID_ENUM : Should not be able to read as LUMINANCE_ALPHA / UNSIGNED_BYTE
+
+check reading with lots of drawing
+PASS actual is expected
+PASS actual is expected
+PASS actual is expected
+PASS getError was expected value: NO_ERROR : there should be no GL errors
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

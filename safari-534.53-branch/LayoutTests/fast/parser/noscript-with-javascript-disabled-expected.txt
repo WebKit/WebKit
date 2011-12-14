@@ -1,0 +1,2 @@
+This test case verifies that contents inside <noscript> are rendered when Javascript is disabled.
+Succeeded!

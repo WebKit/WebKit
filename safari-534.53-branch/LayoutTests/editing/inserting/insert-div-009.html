@@ -1,0 +1,31 @@
+<html> 
+<head>
+
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();
+    moveSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+    typeCharacterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root">
+<div id="test">test</div>
+
+<!-- This test is very similar to other insert-div tests, except that it does not place a height (using CSS) on
+     blocks that are added. Bugs involving "block placeholders" (br elements added to give a block height)
+     will be exposed in this test but not others. -->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

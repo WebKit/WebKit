@@ -1,0 +1,4 @@
+PASS layoutTestController.counterValueForElementById('div1') is '0'
+
+TEST COMPLETE
+

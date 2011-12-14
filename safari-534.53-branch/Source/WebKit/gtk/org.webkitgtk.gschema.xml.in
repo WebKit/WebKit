@@ -1,0 +1,32 @@
+<schemalist>
+  <schema id="org.webkitgtk-@WEBKITGTK_API_VERSION@" path="/system/webkitgtk/">
+    <child schema="org.webkitgtk-@WEBKITGTK_API_VERSION@.inspector" name="inspector"/>
+  </schema>
+  <schema id="org.webkitgtk-@WEBKITGTK_API_VERSION@.inspector" path="/system/webkitgtk/inspector/">
+    <key name="resource-tracking-enabled" type="b">
+      <default>false</default>
+      <summary>Resource Tracking Enabled</summary>
+      <description>Whether the Resource Tracking panel is always enabled.</description>
+    </key>
+    <key name="xhr-monitor-enabled" type="b">
+      <default>false</default>
+      <summary>XHR Monitor Enabled</summary>
+      <description>Whether the XHR monitor is always enabled.</description>
+    </key>
+    <key name="debugger-enabled" type="b">
+      <default>false</default>
+      <summary>Debugger Enabled</summary>
+      <description>Whether the debugger is always enabled.</description>
+    </key>
+    <key name="profiler-enabled" type="b">
+      <default>false</default>
+      <summary>Profiler Enabled</summary>
+      <description>Whether the profiler is always enabled.</description>
+    </key>
+    <key name="frontend-settings" type="s">
+      <default>''</default>
+      <summary>Misc Inspector Frontend Settings</summary>
+      <description>Miscelaneous Settings managed by the Inspector Frontend</description>
+    </key>
+  </schema>
+</schemalist>

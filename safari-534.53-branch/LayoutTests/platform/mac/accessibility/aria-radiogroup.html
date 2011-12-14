@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="radiogroup" aria-label="radio 2">
+<div role="radio" aria-label="radio 1" aria-checked=false>radio 1</div>
+<div role="radio" aria-label="radio 2" aria-checked="true">radio 2</div>
+</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the aria radiogroup role is correctly mapped to a WebCore accessibility role.");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+          var obj = accessibilityController.focusedElement.childAtIndex(0);
+          var succeeded = obj.role == "AXRole: AXRadioGroup";
+          shouldBe("succeeded", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

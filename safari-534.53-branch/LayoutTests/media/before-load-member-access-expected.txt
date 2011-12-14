@@ -1,0 +1,9 @@
+Test that accessing member of a non loaded video works.
+
+RUN(video.played)
+RUN(video.buffered)
+RUN(video.seekable)
+RUN(video.volume)
+SUCCESS
+END OF TEST
+

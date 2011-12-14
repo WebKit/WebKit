@@ -1,0 +1,90 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion
+
+PASS dt.setDouble( 0 ); dt.PUB_DOUBLE is 0
+PASS dt.setDouble( 0 ); dt.getDouble() is 0
+PASS typeof dt.getDouble() is 'number'
+FAIL dt.setDouble( -0 ); Infinity / dt.PUB_DOUBLE should be -Infinity. Was Infinity.
+PASS dt.setDouble( -0 ); Infinity / dt.getDouble() is -Infinity
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( Infinity ); dt.PUB_DOUBLE  should be Infinity. Was 0.
+PASS dt.setDouble( Infinity ); dt.getDouble()  is Infinity
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( -Infinity ); dt.PUB_DOUBLE should be -Infinity. Was 0.
+PASS dt.setDouble( -Infinity ); dt.getDouble()  is -Infinity
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble( NaN ); dt.PUB_DOUBLE should be NaN. Was 0.
+PASS dt.setDouble( NaN ); dt.getDouble() is NaN
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(077777777777777777); dt.PUB_DOUBLE should be 2251799813685247. Was -4.
+PASS dt.setDouble(077777777777777777); dt.getDouble() is 2251799813685247
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(077777777777777776); dt.PUB_DOUBLE should be 2251799813685246. Was -8.
+PASS dt.setDouble(077777777777777776); dt.getDouble() is 2251799813685246
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x1fffffffffffff); dt.PUB_DOUBLE should be 9007199254740991. Was -1.
+PASS dt.setDouble(0x1fffffffffffff); dt.getDouble() is 9007199254740991
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x20000000000000); dt.PUB_DOUBLE should be 9007199254740992. Was 0.
+PASS dt.setDouble(0x20000000000000); dt.getDouble() is 9007199254740992
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x20123456789abc); dt.PUB_DOUBLE should be 9027215253084860. Was 725372254.
+PASS dt.setDouble(0x20123456789abc); dt.getDouble() is 9027215253084860
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x20123456789abd); dt.PUB_DOUBLE should be 9027215253084860. Was 725372254.
+PASS dt.setDouble(0x20123456789abd); dt.getDouble() is 9027215253084860
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x20123456789abe); dt.PUB_DOUBLE should be 9027215253084862. Was 725372255.
+PASS dt.setDouble(0x20123456789abe); dt.getDouble() is 9027215253084862
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x20123456789abf); dt.PUB_DOUBLE should be 9027215253084864. Was 725372256.
+PASS dt.setDouble(0x20123456789abf); dt.getDouble() is 9027215253084864
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x1000000000000080); dt.PUB_DOUBLE should be 1152921504606847000. Was 0.
+PASS dt.setDouble(0x1000000000000080); dt.getDouble() is 1152921504606847000
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x1000000000000081); dt.PUB_DOUBLE should be 1152921504606847200. Was 1.
+PASS dt.setDouble(0x1000000000000081); dt.getDouble() is 1152921504606847200
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x1000000000000100); dt.PUB_DOUBLE should be 1152921504606847200. Was 1.
+PASS dt.setDouble(0x1000000000000100); dt.getDouble() is 1152921504606847200
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x100000000000017f); dt.PUB_DOUBLE should be 1152921504606847200. Was 1.
+PASS dt.setDouble(0x100000000000017f); dt.getDouble() is 1152921504606847200
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x1000000000000180); dt.PUB_DOUBLE should be 1152921504606847500. Was 2.
+PASS dt.setDouble(0x1000000000000180); dt.getDouble() is 1152921504606847500
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(0x1000000000000181); dt.PUB_DOUBLE should be 1152921504606847500. Was 2.
+PASS dt.setDouble(0x1000000000000181); dt.getDouble() is 1152921504606847500
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(1.7976931348623157E+308); dt.PUB_DOUBLE should be 1.7976931348623157e+308. Was -1.
+PASS dt.setDouble(1.7976931348623157E+308); dt.getDouble() is 1.7976931348623157e+308
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(1.7976931348623158e+308); dt.PUB_DOUBLE should be 1.7976931348623157e+308. Was -1.
+PASS dt.setDouble(1.7976931348623158e+308); dt.getDouble() is 1.7976931348623157e+308
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(1.7976931348623159e+308); dt.PUB_DOUBLE should be Infinity. Was 0.
+PASS dt.setDouble(1.7976931348623159e+308); dt.getDouble() is Infinity
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(-1.7976931348623157E+308); dt.PUB_DOUBLE should be -1.7976931348623157e+308. Was -1.
+PASS dt.setDouble(-1.7976931348623157E+308); dt.getDouble() is -1.7976931348623157e+308
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(-1.7976931348623158e+308); dt.PUB_DOUBLE should be -1.7976931348623157e+308. Was -1.
+PASS dt.setDouble(-1.7976931348623158e+308); dt.getDouble() is -1.7976931348623157e+308
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(-1.7976931348623159e+308); dt.PUB_DOUBLE should be -Infinity. Was 0.
+PASS dt.setDouble(-1.7976931348623159e+308); dt.getDouble() is -Infinity
+PASS typeof dt.getDouble() is "number"
+PASS dt.setDouble(1e-2000); dt.PUB_DOUBLE is 0
+PASS dt.setDouble(1e-2000); dt.getDouble() is 0
+PASS typeof dt.getDouble() is 'number'
+FAIL dt.setDouble(1e2000); dt.PUB_DOUBLE should be Infinity. Was 0.
+PASS dt.setDouble(1e2000); dt.getDouble() is 1e2000
+PASS typeof dt.getDouble() is "number"
+FAIL dt.setDouble(-1e2000); dt.PUB_DOUBLE should be -Infinity. Was 0.
+PASS dt.setDouble(-1e2000); dt.getDouble() is -1e2000
+PASS typeof dt.getDouble() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

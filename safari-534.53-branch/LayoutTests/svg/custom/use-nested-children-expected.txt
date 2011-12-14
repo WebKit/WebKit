@@ -1,0 +1,2 @@
+PASS: Should not trigger an ASSERT (bug 47561).
+

@@ -1,0 +1,93 @@
+#! /usr/bin/env python
+
+# Copyright (C) 2009 Kevin Ollivier  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+#
+# wxWebKit Python bindings build script for the waf build system
+
+from settings import *
+import Logs
+import Options
+
+include_paths = [
+            os.path.join(wk_root, 'Source', 'JavaScriptCore'),
+            os.path.join(wk_root, 'Source', 'WebCore', 'bindings', 'cpp'),
+            os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
+            os.path.join(wk_root, 'Source', 'WebKit', 'wx'),
+            os.path.join(wx_root, 'wxPython', 'include'),
+            os.path.join(wx_root, '..', 'wxPython', 'include'),
+            ]
+
+def wxpy_swig_include():
+    dirs = [
+                'include/wx-2.9/wx/wxPython/i_files',
+                'include/wx-2.8/wx/wxPython/i_files',
+                'include/wx/wxPython/i_files',
+                'wxPython/src',
+                '../wxPython/src',
+           ]
+
+    for adir in dirs:
+        fullpath = os.path.join(wx_root, adir)
+        if os.path.exists(fullpath):
+            return fullpath
+            
+    return ''
+    
+def build(bld):
+    if Options.options.wxpython:
+        defines = ['SWIG_TYPE_TABLE=_wxPython_table', 'WXP_USE_THREAD=1', 'SWIG_PYTHON_OUTPUT_TUPLE']
+        wx_swig_args = []
+        for define in defines:
+            wx_swig_args.append('-D%s' % define)
+
+        try:
+            import wx.build.config
+            wx_swig_args += wx.build.config.swig_args
+        except:
+            Logs.warn("Cannot find wxPython, wxPython extension will not be built.")
+            return
+    
+        wxpy_include = wxpy_swig_include()
+        if os.path.exists(wxpy_include):
+            include_paths.append(wxpy_include)
+        else:
+            Logs.warn("Cannot find location of wxPython .i files, wxPython extension will not be built.")
+            return
+    
+        for inc_path in include_paths:
+            wx_swig_args.append('-I' + inc_path)
+
+        obj = bld.new_task_gen(
+            features = 'cxx cshlib pyext',
+            includes = ' '.join(include_paths),
+            source = 'webview.i',
+            swig_flags = ' '.join(wx_swig_args),
+            defines = defines,
+            target = '_webview',
+            uselib = 'WX CURL ICU XSLT XML SQLITE3 ' + get_config(),
+            
+            libpath = [output_dir],
+            uselib_local = 'wxwebkit',
+            install_path = output_dir
+            )

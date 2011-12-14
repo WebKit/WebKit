@@ -1,0 +1,11 @@
+<p>This tests rdar://problem/6545095 ASSERTION FAILED: RenderBlock.h:519: !o || o->isRenderBlock()</p>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+
+<div style="float: left; height: 1000px; width: 20px;"></div>
+<span>
+    <img style="display: block; width: auto;" />
+</span>

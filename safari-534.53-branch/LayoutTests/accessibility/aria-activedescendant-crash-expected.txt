@@ -1,0 +1,2 @@
+This tests that there is no crash if you set an aria-activedescendant attribute to an id of an element that has no renderer.
+

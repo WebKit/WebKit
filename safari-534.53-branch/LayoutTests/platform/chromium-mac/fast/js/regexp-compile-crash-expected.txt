@@ -1,0 +1,16 @@
+Test regexp compiling to make sure it doens't crash like bug 16127
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !!/\)[;s]+/ is true
+PASS /[/ threw exception SyntaxError: Invalid regular expression: missing /.
+PASS /[a/ threw exception SyntaxError: Invalid regular expression: missing /.
+PASS /[-/ threw exception SyntaxError: Invalid regular expression: missing /.
+PASS !!/(a)/ is true
+PASS !!/(a){1,3}/ is true
+PASS No crashes, yay!
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

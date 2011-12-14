@@ -1,0 +1,315 @@
+CSS3 Fallback to Decimal List Style
+
+Algorithmic
+
+armenian
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is Ա.
+PASS list marker is Ք̂Ջ̂Ղ̂Թ̂ՔՋՂԹ.
+PASS list marker is 100000000.
+cjk-ideographic
+
+PASS list marker is -1.
+PASS list marker is 零.
+PASS list marker is 一.
+ethiopic-numeric
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+georgian
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ა.
+PASS list marker is ჵჰშჟთ.
+PASS list marker is 20000.
+PASS list marker is 20001.
+hebrew
+
+PASS list marker is -1.
+PASS list marker is אפס.
+PASS list marker is א.
+PASS list marker is תתקצט'תתקצט.
+PASS list marker is 1000000.
+PASS list marker is 1000001.
+japanese-formal
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+japanese-informal
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+lower-armenian
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ա.
+lower-roman
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is i.
+simp-chinese-formal
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+simp-chinese-informal
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+syriac
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+tamil
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+trad-chinese-formal
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+trad-chinese-informal
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 1.
+upper-armenian
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is Ա.
+upper-roman
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is I.
+Alphabetic
+
+afar
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-aa-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-aa-er
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+amharic
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-am-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+amharic-abegede
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+ethiopic-abegede-am-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+cjk-earthly-branch
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 子.
+cjk-heavenly-stem
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 甲.
+ethiopic
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-gez
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-abegede
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+ethiopic-abegede-gez
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+hangul-consonant
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ㄱ.
+hangul
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is 가.
+hiragana-iroha
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is い.
+hiragana
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is あ.
+katakana-iroha
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is イ.
+katakana
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ア.
+lower-alpha
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is a.
+lower-latin
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is a.
+lower-greek
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is α.
+lower-norwegian
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is a.
+oromo
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-om-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+sidama
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-sid-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+somali
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-so-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+tigre
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-tig
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+tigrinya-er
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-ti-er
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+tigrinya-er-abegede
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+ethiopic-abegede-ti-er
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+tigrinya-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+ethiopic-halehame-ti-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is ሀ.
+tigrinya-et-abegede
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+ethiopic-abegede-ti-et
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is አ.
+upper-alpha
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is A.
+upper-latin
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is A.
+upper-greek
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is Α.
+upper-norwegian
+
+PASS list marker is -1.
+PASS list marker is 0.
+PASS list marker is A.
+

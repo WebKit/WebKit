@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to char
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = NaN;dt.setChar( dt ); dt.PUB_CHAR should throw an exception. Was 0.
+FAIL dt.PUB_DOUBLE_REPRESENTATION = NaN;dt.setChar( dt ); dt.getChar() should throw an exception. Was 0.
+PASS typeof dt.getChar() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

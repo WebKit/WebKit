@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to int
+
+FAIL dt.setInteger( NaN ); dt.PUB_INT should throw an exception. Was -2147483648.
+FAIL dt.setInteger( NaN ); dt.getInteger() should throw an exception. Was -2147483648.
+FAIL typeof dt.getInteger() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

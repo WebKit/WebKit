@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script&gt;
+if (window.layoutTestController)
+    layoutTestController.dumpDOMAsWebArchive();
+&lt;/script&gt;
+&lt;link rel="stylesheet" href="http://localhost:8000/webarchive/resources/localhost-stylesheet.css" type="text/css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+This HTML links to an external stylesheet from a different security origin.&lt;br&gt;
+Making a webarchive of this page should not crash.
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>http://127.0.0.1:8000/webarchive/cross-origin-stylesheet-crash.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/css</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/css</string>
+				<key>URL</key>
+				<string>http://localhost:8000/webarchive/resources/localhost-stylesheet.css</string>
+				<key>allHeaderFields</key>
+				<dict>
+					<key>Accept-Ranges</key>
+					<string>bytes</string>
+					<key>Content-Length</key>
+					<string>1</string>
+					<key>Content-Type</key>
+					<string>text/css</string>
+					<key>Date</key>
+					<string>Sun, 16 Nov 2008 17:00:00 GMT</string>
+					<key>Etag</key>
+					<string>"301925-21-45c7d72d3e780"</string>
+					<key>Last-Modified</key>
+					<string>Sun, 16 Nov 2008 16:55:00 GMT</string>
+					<key>Server</key>
+					<string>Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6</string>
+				</dict>
+				<key>expectedContentLength</key>
+				<integer>1</integer>
+				<key>statusCode</key>
+				<integer>200</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>http://localhost:8000/webarchive/resources/localhost-stylesheet.css</string>
+		</dict>
+	</array>
+</dict>
+</plist>

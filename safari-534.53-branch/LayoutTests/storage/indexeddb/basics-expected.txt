@@ -1,0 +1,54 @@
+Test IndexedDB's basics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitIndexedDB' in window is true
+PASS webkitIndexedDB == null is false
+PASS 'webkitIDBCursor' in window is true
+PASS webkitIDBCursor == null is false
+webkitIndexedDB.open('basics')
+PASS 'result' in request is true
+Expecting exception from request.result
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS 'errorCode' in request is true
+Expecting exception from request.errorCode
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS 'webkitErrorMessage' in request is true
+Expecting exception from request.webkitErrorMessage
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+PASS 'source' in request is true
+PASS request.source is webkitIndexedDB
+PASS 'transaction' in request is true
+PASS request.transaction is null
+PASS 'readyState' in request is true
+PASS request.readyState is webkitIDBRequest.LOADING
+PASS 'onsuccess' in request is true
+PASS request.onsuccess is null
+PASS 'onerror' in request is true
+PASS request.onerror is null
+PASS request.LOADING is 1
+PASS request.DONE is 2
+PASS 'result' in event.target is true
+PASS !!event.target.result is true
+PASS 'errorCode' in event.target is true
+PASS event.target.errorCode is 0
+PASS 'webkitErrorMessage' in event.target is true
+PASS event.target.webkitErrorMessage is undefined.
+PASS 'source' in event.target is true
+PASS request.source is webkitIndexedDB
+PASS 'transaction' in event.target is true
+PASS event.target.transaction is null
+PASS 'readyState' in request is true
+PASS event.target.readyState is webkitIDBRequest.DONE
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS event.target.LOADING is 1
+PASS event.target.DONE is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

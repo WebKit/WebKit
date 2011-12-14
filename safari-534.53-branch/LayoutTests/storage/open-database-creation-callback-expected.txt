@@ -1,0 +1,2 @@
+This test tests openDatabase()'s creation callback.
+

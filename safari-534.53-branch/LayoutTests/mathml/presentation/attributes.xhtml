@@ -1,0 +1,52 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Attributes</title>
+<style type='text/css'>
+</style>
+</head>
+<body>
+<p id='t1'>following elements should appear in blue on an orange background: 
+<math xmlns='http://www.w3.org/1998/Math/MathML' mathbackground="orange">
+<mo mathcolor="#00F">&#x2211;</mo>
+<mfrac mathcolor="blue"><mi>x</mi><mi>y</mi></mfrac>
+<mn mathcolor="#00F">1</mn>
+<msqrt mathcolor="#0000FF"><mn>2</mn></msqrt>
+</math>
+<math xmlns='http://www.w3.org/1998/Math/MathML' background="orange">
+<mfrac color="blue"><mi>x</mi><mi>y</mi></mfrac>
+</math>
+</p>
+<p id='t2'>following elements should appear with increasing size: 
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mi mathsize="small">x</mi>
+<mi mathsize="normal">x</mi>
+<mi mathsize="big">x</mi>
+<mi mathsize="2em">x</mi>
+</math>
+</p>
+<p id='t3'>font variants: 
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mi mathvariant="normal">A</mi>
+<mi mathvariant="bold">A</mi>
+<mi mathvariant="italic">A</mi>
+<mi mathvariant="bold-italic">A</mi>
+</math>
+</p>
+<p id='t4'>test font style attributes: 
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+<mtext fontsize="2em">A</mtext>
+<mtext fontfamily="sans-serif">A</mtext>
+<mtext fontstyle="italic">A</mtext>
+<mtext fontweight="bold">A</mtext>
+</math>
+</p>
+<p id='t5'>following element should be inline: 
+<math xmlns='http://www.w3.org/1998/Math/MathML' display="inline">
+<mi>x</mi>
+</math>, and this one centered on a new line:
+<math xmlns='http://www.w3.org/1998/Math/MathML' display="block">
+<mi>x</mi>
+</math>
+</p>
+</body>
+</html>

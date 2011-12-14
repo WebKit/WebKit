@@ -1,0 +1,100 @@
+<html>
+  <!--
+    This test ensures the correctness the following Spatial Navigation
+    (SNav) algorithm features.
+
+    1) There is no unit overflow in the Spatial Navigation algorithm while
+       calculating the best node candidate to move focus to. To test that this
+       page positions some elements 10000000 pixels far from each other (distance
+       that can considered large enough for most of the Web Pages on the
+       Internet).
+
+    2) Make sure that a best focusable candidate only gets focused
+       if it is visible in the current Viewport. Scroll-in-direction
+       is performed otherwise.
+
+    * Pre-conditions:
+    1) DRT support for SNav enable/disable.
+
+    * Navigation steps:
+    1) Loads this page, focus goes to "start" automatically.
+    2) Attempt to move focus down to "end. As it is too far and out of
+       viewport, focus change will not happen and page will be scrolled
+       a step down.
+    3) By sending an "End" keypress, page gets scrolled down to a place
+       where the "end" node gets visible in the viewport.
+    4) Step _1_ is ran again, and "end" gets focused. -->
+  <head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap1 = [
+      ["Down", "start"],
+      ["DONE", "DONE"]
+    ];
+
+    var resultMap2 = [
+      ["Down", "end"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.setSpatialNavigationEnabled(true);
+      layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      layoutTestController.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      setTimeout(step1 , 0);
+    }
+
+    function step1()
+    {
+      // Actions in 'resultMap1' should keep the focus in the currently
+      // focused element ('start') once the best candidate ('end') is not
+      // visible in current viewport.
+      initTest(resultMap1, step1Completed);
+    }
+
+    function step2()
+    {
+      shouldBeTrue(String(document.body.scrollTop != 0));
+
+      // Then it scrolls down to the end of the page ...
+      if (window.eventSender)
+        eventSender.keyDown("end");
+
+      // And 'resultMap2' re-tries to move focus down.
+      initTest(resultMap2, step2Completed);
+    }
+
+    function step1Completed()
+    {
+      setTimeout(step2 , 0);
+    }
+
+    function step2Completed()
+    {
+      if (window.layoutTestController)
+        layoutTestController.notifyDone();
+    }
+
+    window.onload = runTest;
+
+    </script>
+    <script src="js/resources/js-test-post.js"></script>
+  </head>
+  <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
+    <a id="start" href="a">Start</a>
+    <div style='margin-top:100000000px'>
+        <a id="end" href="a">End</a>
+    </div>
+    <div id="console"></div>
+  </body>
+</html>

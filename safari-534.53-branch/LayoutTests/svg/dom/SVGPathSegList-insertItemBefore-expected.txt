@@ -1,0 +1,42 @@
+This is a test of the SVGPathSegList::insertItemBefore() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'pathSegList' value of path1
+PASS path1.pathSegList.numberOfItems is 4
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 0
+PASS path1.pathSegList.getItem(0).y is 0
+PASS path1.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(1).x is 100
+PASS path1.pathSegList.getItem(1).y is 0
+PASS path1.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(2).x is 0
+PASS path1.pathSegList.getItem(2).y is 100
+PASS path1.pathSegList.getItem(3).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(3).x is 100
+PASS path1.pathSegList.getItem(3).y is 100
+
+Insert fourth item at position three using insertItemBefore()
+PASS path1.pathSegList.insertItemBefore(path1.pathSegList.getItem(3), 2).toString() is "[object SVGPathSegLinetoAbs]"
+
+Check final 'pathSegList' value of path1
+PASS path1.pathSegList.numberOfItems is 4
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 0
+PASS path1.pathSegList.getItem(0).y is 0
+PASS path1.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(1).x is 100
+PASS path1.pathSegList.getItem(1).y is 0
+PASS path1.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(2).x is 100
+PASS path1.pathSegList.getItem(2).y is 100
+PASS path1.pathSegList.getItem(3).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(3).x is 0
+PASS path1.pathSegList.getItem(3).y is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

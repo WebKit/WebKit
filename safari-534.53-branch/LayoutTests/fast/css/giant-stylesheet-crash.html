@@ -1,0 +1,25 @@
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+
+<script>
+var styleElement = document.createElement('style');
+styleElement.setAttribute('type', 'text/css');
+
+var str="z";
+for (var i = 0; i < 16; i++) {
+    str += str;
+}
+for (var i = 0; i < 1+(1<<16); i++){
+    var txt = document.createTextNode(str);
+    styleElement.appendChild(txt);
+}
+
+document.getElementsByTagName('head')[0].appendChild(styleElement); 
+</script>
+</head>
+<body>
+This test verifies that creating a huge inline stylesheet doesn't crash.
+</body>

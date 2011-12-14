@@ -1,0 +1,21 @@
+Accessibility object emitted "focus-event = 1" / Name: "(No name)" / Role: 50
+Accessibility object emitted "state-change:focused = 1" / Name: "(No name)" / Role: 50
+Accessibility object emitted "load-complete" / Name: "(No name)" / Role: 80
+Accessibility object emitted "state-change:busy = 0" / Name: "(No name)" / Role: 80
+Accessibility object emitted "property-change:accessible-value" / Name: "(No name)" / Role: 50
+Accessibility object emitted "property-change:accessible-value" / Name: "(No name)" / Role: 50
+This tests the exposure of attributes for an ARIA slider.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS axSlider.role is 'AXRole: slider'
+PASS axSlider.intValue is 50
+PASS axSlider.minValue is 0
+PASS axSlider.maxValue is 100
+PASS axSlider.intValue is 75
+PASS axSlider.intValue is 35
+

@@ -1,0 +1,71 @@
+This test checks properties and methods of Locale object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS en-US is en-US
+PASS en is en
+PASS undefined is undefined
+PASS US is US
+PASS sr is sr
+PASS sr is sr
+PASS undefined is undefined
+PASS undefined is undefined
+PASS zh-Hans is zh-Hans
+PASS zh is zh
+PASS Hans is Hans
+PASS undefined is undefined
+PASS zh-Hans-CN is zh-Hans-CN
+PASS zh is zh
+PASS Hans is Hans
+PASS CN is CN
+PASS de-DE@collation=phone is de-DE@collation=phone
+PASS de is de
+PASS undefined is undefined
+PASS DE is DE
+PASS de-DE-u-co-phonebook is de-DE-u-co-phonebook
+PASS de is de
+PASS undefined is undefined
+PASS DE is DE
+PASS true is true
+PASS true is true
+PASS sr-Cyrl-RS is sr-Cyrl-RS
+PASS sr is sr
+PASS Cyrl is Cyrl
+PASS RS is RS
+PASS de-Latn-DE@collation=phone is de-Latn-DE@collation=phone
+PASS de is de
+PASS Latn is Latn
+PASS DE is DE
+PASS sr is sr
+PASS sr is sr
+PASS undefined is undefined
+PASS undefined is undefined
+PASS de-@collation=phone is de-@collation=phone
+PASS de is de
+PASS undefined is undefined
+PASS undefined is undefined
+PASS English is English
+PASS undefined is undefined
+PASS undefined is undefined
+PASS English is English
+PASS English is English
+PASS Latin is Latin
+PASS United States is United States
+PASS English (Latin, United States) is English (Latin, United States)
+PASS Serbian is Serbian
+PASS Cyrillic is Cyrillic
+PASS Serbia is Serbia
+PASS Serbian (Cyrillic, Serbia) is Serbian (Cyrillic, Serbia)
+PASS Српски is Српски
+PASS Ћирилица is Ћирилица
+PASS Србија is Србија
+PASS Српски (Ћирилица, Србија) is Српски (Ћирилица, Србија)
+PASS עברית is עברית
+PASS עברי is עברי
+PASS ישראל is ישראל
+PASS עברית (עברי, ישראל) is עברית (עברי, ישראל)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

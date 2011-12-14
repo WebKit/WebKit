@@ -1,0 +1,3 @@
+Test for bug 12099: XMLHttpRequest shouldn't honor a charset specified via setRequestHeader.
+
+SUCCESS

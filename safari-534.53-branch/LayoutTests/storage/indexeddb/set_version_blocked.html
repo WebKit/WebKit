@@ -1,0 +1,74 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("An open connection blocks a separate connection's setVersion call");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+connections = []
+function test()
+{
+    if ('webkitIndexedDB' in window)
+        IndexedDB = webkitIndexedDB;
+    else if ('mozIndexedDB' in window)
+        IndexedDB = mozIndexedDB;
+    shouldBeFalse("IndexedDB == null");
+    openDBConnection();
+}
+
+function openDBConnection()
+{
+    request = evalAndLog("IndexedDB.open('set-version-blocked')");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    connection = event.target.result;
+    connections.push(connection);
+    original_version = connection.version;
+    if (connections.length < 2)
+        openDBConnection();
+    else {
+        var versionChangeRequest = evalAndLog("connections[0].setVersion('version 1')");
+        versionChangeRequest.onerror = unexpectedErrorCallback;
+        versionChangeRequest.onsuccess = inSetVersion;
+        versionChangeRequest.onblocked = blocked;
+    }
+}
+
+seen_blocked_event = false;
+function blocked()
+{
+    evalAndLog("seen_blocked_event = true");
+    blocked_event = event;
+    shouldBeEqualToString("blocked_event.version", "version 1");
+    shouldEvaluateTo("blocked_event.target.readyState", 1);
+    evalAndLog("connections[1].close()");
+}
+
+function inSetVersion()
+{
+    debug("in setVersion.onsuccess");
+    shouldBeTrue("seen_blocked_event");
+    deleteAllObjectStores(connections[0]);
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>

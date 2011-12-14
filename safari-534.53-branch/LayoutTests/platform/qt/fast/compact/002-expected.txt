@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x110
+  RenderBlock {HTML} at (0,0) size 800x110
+    RenderBody {BODY} at (8,8) size 784x94
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderInline {DIV} at (0,0) size 462x16 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,2) size 462x16
+            text run at (0,2) width 462: "Ahem_font_required_for_this_test."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,33) size 784x19
+        RenderText {#text} at (0,0) size 354x19
+          text run at (0,0) width 354: "There should be a single green rectangle square below."
+      RenderBlock {DIV} at (0,66) size 56x28 [color=#008000] [bgcolor=#FF0000]
+        RenderBlock {DIV} at (28,0) size 28x28
+          RenderBlock (compact) {DIV} at (-28,0) size 0x0
+            RenderText {#text} at (0,-1) size 28x30
+              text run at (0,-1) width 28: "X"
+          RenderText {#text} at (0,-1) size 28x30
+            text run at (0,-1) width 28: "X"

@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 184x22
+          text run at (0,0) width 184: "This is a regression test for "
+        RenderInline {I} at (0,0) size 706x44
+          RenderInline {A} at (0,0) size 352x22 [color=#0000EE]
+            RenderText {#text} at (184,0) size 352x22
+              text run at (184,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9432"
+          RenderText {#text} at (536,0) size 706x44
+            text run at (536,0) width 4: " "
+            text run at (540,0) width 166: "REGRESSION: crash in"
+            text run at (0,22) width 368: "capitalization code due to empty-string generated content"
+        RenderText {#text} at (368,22) size 4x22
+          text run at (368,22) width 4: "."
+      RenderBlock {HR} at (0,60) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,78) size 784x22
+        RenderInline {SPAN} at (0,0) size 93x22
+          RenderText {#text} at (0,0) size 50x22
+            text run at (0,0) width 50: "Lorem "
+          RenderInline {SPAN} at (0,0) size 43x22
+            RenderInline (generated) at (0,0) size 0x0
+              RenderText at (0,0) size 0x0
+            RenderText {#text} at (50,0) size 43x22
+              text run at (50,0) width 43: "Ipsum"
+        RenderText {#text} at (93,0) size 4x22
+          text run at (93,0) width 4: " "
+        RenderInline {I} at (0,0) size 63x22
+          RenderText {#text} at (97,0) size 63x22
+            text run at (97,0) width 63: "should be"
+        RenderText {#text} at (160,0) size 97x22
+          text run at (160,0) width 97: " Lorem Ipsum"
+      RenderBlock {P} at (0,116) size 784x22
+        RenderInline {SPAN} at (0,0) size 93x22
+          RenderText {#text} at (0,0) size 26x22
+            text run at (0,0) width 26: "Lor"
+          RenderInline {SPAN} at (0,0) size 67x22
+            RenderInline (generated) at (0,0) size 0x0
+              RenderText at (0,0) size 0x0
+            RenderText {#text} at (26,0) size 67x22
+              text run at (26,0) width 67: "em Ipsum"
+        RenderText {#text} at (93,0) size 4x22
+          text run at (93,0) width 4: " "
+        RenderInline {I} at (0,0) size 63x22
+          RenderText {#text} at (97,0) size 63x22
+            text run at (97,0) width 63: "should be"
+        RenderText {#text} at (160,0) size 97x22
+          text run at (160,0) width 97: " Lorem Ipsum"

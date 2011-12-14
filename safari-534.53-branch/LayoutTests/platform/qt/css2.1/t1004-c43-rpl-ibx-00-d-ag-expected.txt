@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x156
+  RenderBlock {HTML} at (0,0) size 800x156
+    RenderBody {BODY} at (8,14) size 784x128
+      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 219x19
+          text run at (0,0) width 219: "There should be no red anywhere."
+      RenderBlock {P} at (0,33) size 784x20 [color=#000080]
+        RenderText {#text} at (0,1) size 385x19
+          text run at (0,1) width 385: "There should be two identical squares at the end of this line: "
+        RenderImage {IMG} at (385,0) size 15x15
+        RenderText {#text} at (400,1) size 4x19
+          text run at (400,1) width 4: " "
+        RenderInline {SPAN} at (0,0) size 15x16 [color=#0000FF] [bgcolor=#FF0000]
+          RenderText {#text} at (404,0) size 15x16
+            text run at (404,0) width 15: "X"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,67) size 784x61 [color=#000080]
+        RenderText {#text} at (0,42) size 385x19
+          text run at (0,42) width 385: "There should be two identical squares at the end of this line: "
+        RenderImage {IMG} at (385,0) size 56x56
+        RenderText {#text} at (441,42) size 4x19
+          text run at (441,42) width 4: " "
+        RenderInline {SPAN} at (0,0) size 56x58 [color=#0000FF] [bgcolor=#FF0000]
+          RenderText {#text} at (445,0) size 56x58
+            text run at (445,0) width 56: "X"
+        RenderText {#text} at (0,0) size 0x0

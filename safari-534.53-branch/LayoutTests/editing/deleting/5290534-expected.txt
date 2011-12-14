@@ -1,0 +1,4 @@
+This tests for a crash when adding/removing content from a search field that is inside an editable region.
+
+
+Success! Test successfully removed text from the search field.

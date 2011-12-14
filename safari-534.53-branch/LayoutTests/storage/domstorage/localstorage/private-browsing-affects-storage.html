@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+    if (!window.layoutTestController) {
+        log("Test only designed to be run under DumpRenderTree");
+        return;
+    }
+    
+    localStorage.setItem("testItem", "InitialValue");    
+    layoutTestController.setPrivateBrowsingEnabled(true);
+    log("Initial value of testItem is: " + localStorage.getItem("testItem"));
+
+    try {
+        localStorage.setItem("testItem", "ChangedValue");
+    } catch(e) {
+        log("Caught exception trying to change item: " + e);
+    }
+
+    log("After change attempt, testItem is: " + localStorage.getItem("testItem"));
+    
+    localStorage.removeItem("testItem");
+    log("After remove attempt, testItem is: " + localStorage.getItem("testItem"));
+
+    localStorage.clear();
+    log("After clear attempt, testItem is: " + localStorage.getItem("testItem"));
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This is a test to make sure that when private browsing is on any attempt to change the localStorage area fail.
+<div id="logger"></div>
+</body>
+</html>
