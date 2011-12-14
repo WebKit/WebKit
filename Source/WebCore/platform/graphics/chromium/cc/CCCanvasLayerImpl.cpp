@@ -56,6 +56,9 @@ void CCCanvasLayerImpl::draw(LayerRendererChromium* layerRenderer)
     GraphicsContext3D* context = layerRenderer->context();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+
     if (!m_hasAlpha) {
         // Even though the WebGL layer's texture was likely allocated
         // as GL_RGB, disable blending anyway for better robustness.
