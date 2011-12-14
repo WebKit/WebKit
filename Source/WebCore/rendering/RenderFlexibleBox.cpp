@@ -203,7 +203,7 @@ bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const
 
 bool RenderFlexibleBox::isColumnFlow() const
 {
-    return style()->isColumnFlexFlow();
+    return style()->isColumnFlexDirection();
 }
 
 bool RenderFlexibleBox::isHorizontalFlow() const
@@ -217,7 +217,7 @@ bool RenderFlexibleBox::isLeftToRightFlow() const
 {
     if (isColumnFlow())
         return style()->writingMode() == TopToBottomWritingMode || style()->writingMode() == LeftToRightWritingMode;
-    return style()->isLeftToRightDirection() ^ (style()->flexFlow() == FlowRowReverse);
+    return style()->isLeftToRightDirection() ^ (style()->flexDirection() == FlowRowReverse);
 }
 
 Length RenderFlexibleBox::mainAxisLengthForChild(RenderBox* child) const
@@ -636,7 +636,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(FlexOrderIterator& iterator, cons
             setLogicalHeight(mainAxisOffset);
     }
 
-    if (style()->flexFlow() == FlowColumnReverse) {
+    if (style()->flexDirection() == FlowColumnReverse) {
         // We have to do an extra pass for column-reverse to reposition the flex items since the start depends
         // on the height of the flexbox, which we only know after we've positioned all the flex items.
         computeLogicalHeight();
@@ -687,7 +687,7 @@ void RenderFlexibleBox::alignChildren(FlexOrderIterator& iterator, LayoutUnit ma
     LayoutUnit crossExtent = crossAxisExtent();
 
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
-        // direction:rtl + flex-flow:column means the cross-axis direction is flipped.
+        // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
         if (!style()->isLeftToRightDirection() && isColumnFlow()) {
             LayoutPoint location = flowAwareLocationForChild(child);
             location.setY(crossExtent - crossAxisExtentForChild(child) - location.y());

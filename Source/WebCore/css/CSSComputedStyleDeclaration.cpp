@@ -218,7 +218,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitFlexOrder,
     CSSPropertyWebkitFlexPack,
     CSSPropertyWebkitFlexAlign,
+    CSSPropertyWebkitFlexDirection,
     CSSPropertyWebkitFlexFlow,
+    CSSPropertyWebkitFlexWrap,
     CSSPropertyWebkitFontSmoothing,
 #if ENABLE(CSS_GRID_LAYOUT)
     CSSPropertyWebkitGridColumns,
@@ -1484,9 +1486,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->flexPack());
         case CSSPropertyWebkitFlexAlign:
             return cssValuePool->createValue(style->flexAlign());
+        case CSSPropertyWebkitFlexDirection:
+            return cssValuePool->createValue(style->flexDirection());
+        case CSSPropertyWebkitFlexWrap:
+            return cssValuePool->createValue(style->flexWrap());
         case CSSPropertyWebkitFlexFlow: {
             RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(cssValuePool->createValue(style->flexFlow()));
+            list->append(cssValuePool->createValue(style->flexDirection()));
             list->append(cssValuePool->createValue(style->flexWrap()));
             return list.release();
         }

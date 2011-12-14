@@ -51,7 +51,7 @@ public:
 
     unsigned m_flexPack : 2; // EFlexPack
     unsigned m_flexAlign : 3; // EFlexAlign
-    unsigned m_flexFlow : 2; // EFlexFlow
+    unsigned m_flexDirection : 2; // EFlexDirection
     unsigned m_flexWrap : 2; // EFlexWrap
 
 private:

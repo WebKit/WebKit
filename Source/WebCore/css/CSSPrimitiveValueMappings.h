@@ -1200,7 +1200,7 @@ template<> inline CSSPrimitiveValue::operator EFlexPack() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexFlow e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexDirection e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
@@ -1220,7 +1220,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexFlow e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EFlexFlow() const
+template<> inline CSSPrimitiveValue::operator EFlexDirection() const
 {
     switch (m_value.ident) {
     case CSSValueRow:

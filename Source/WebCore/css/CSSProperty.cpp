@@ -559,7 +559,9 @@ bool CSSProperty::isInheritedProperty(unsigned propertyID)
     case CSSPropertyWebkitFlexOrder:
     case CSSPropertyWebkitFlexPack:
     case CSSPropertyWebkitFlexAlign:
+    case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
+    case CSSPropertyWebkitFlexWrap:
     case CSSPropertyWebkitFontSizeDelta:
 #if ENABLE(CSS_GRID_LAYOUT)
     case CSSPropertyWebkitGridColumns:

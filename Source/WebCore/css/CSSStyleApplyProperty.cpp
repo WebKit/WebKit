@@ -1336,38 +1336,6 @@ public:
     }
 };
 
-class ApplyPropertyFlexFlow {
-public:
-    static void applyInheritValue(CSSStyleSelector*) { }
-
-    static void applyInitialValue(CSSStyleSelector* selector)
-    {
-        selector->style()->setFlexFlow(RenderStyle::initialFlexFlow());
-        selector->style()->setFlexWrap(RenderStyle::initialFlexWrap());
-    }
-
-    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
-    {
-        if (value->isPrimitiveValue()) {
-            selector->style()->setFlexFlow(*static_cast<CSSPrimitiveValue*>(value));
-            return;
-        }
-        if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
-            if (list->length() != 2)
-                return;
-
-            selector->style()->setFlexFlow(*static_cast<CSSPrimitiveValue*>(list->itemWithoutBoundsCheck(0)));
-            selector->style()->setFlexWrap(*static_cast<CSSPrimitiveValue*>(list->itemWithoutBoundsCheck(1)));
-        }
-    }
-
-    static PropertyHandler createHandler()
-    {
-        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
-    }
-};
-
 class ApplyPropertyDisplay {
 private:
     static inline bool isValidDisplayValue(CSSStyleSelector* selector, EDisplay displayPropertyValue)
@@ -1553,7 +1521,9 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitFlexOrder, ApplyPropertyDefault<int, &RenderStyle::flexOrder, int, &RenderStyle::setFlexOrder, int, &RenderStyle::initialFlexOrder>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexPack, ApplyPropertyDefault<EFlexPack, &RenderStyle::flexPack, EFlexPack, &RenderStyle::setFlexPack, EFlexPack, &RenderStyle::initialFlexPack>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexAlign, ApplyPropertyDefault<EFlexAlign, &RenderStyle::flexAlign, EFlexAlign, &RenderStyle::setFlexAlign, EFlexAlign, &RenderStyle::initialFlexAlign>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitFlexFlow, ApplyPropertyFlexFlow::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFlexDirection, ApplyPropertyDefault<EFlexDirection, &RenderStyle::flexDirection, EFlexDirection, &RenderStyle::setFlexDirection, EFlexDirection, &RenderStyle::initialFlexDirection>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFlexWrap, ApplyPropertyDefault<EFlexWrap, &RenderStyle::flexWrap, EFlexWrap, &RenderStyle::setFlexWrap, EFlexWrap, &RenderStyle::initialFlexWrap>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitFlexFlow, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap>::createHandler());
 
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());

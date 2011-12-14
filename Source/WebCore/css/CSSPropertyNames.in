@@ -254,9 +254,11 @@ z-index
 -webkit-filter
 #endif
 -webkit-flex-align
+-webkit-flex-direction
 -webkit-flex-flow
 -webkit-flex-order
 -webkit-flex-pack
+-webkit-flex-wrap
 -webkit-font-size-delta
 -webkit-highlight
 -webkit-hyphenate-character

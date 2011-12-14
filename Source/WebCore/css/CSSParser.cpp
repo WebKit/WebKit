@@ -1620,24 +1620,11 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitFlexAlign:
         validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueBaseline || id == CSSValueStretch;
         break;
-    case CSSPropertyWebkitFlexFlow:
-        // FIXME: Use parseShorthand once we add flex-direction and flex-wrap.
-        // [ row | row-reverse | column | column-reverse ] || [ nowrap | wrap | wrap-reverse ]?
+    case CSSPropertyWebkitFlexDirection:
         validPrimitive = id == CSSValueRow || id == CSSValueRowReverse || id == CSSValueColumn || id == CSSValueColumnReverse;
-        if (!validPrimitive)
-            validPrimitive = id == CSSValueNowrap || id == CSSValueWrap || id == CSSValueWrapReverse;
-        else if (validPrimitive && num == 2) {
-            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(cssValuePool()->createIdentifierValue(id));
-
-            value = m_valueList->next();
-            if (value->id != CSSValueNowrap && value->id != CSSValueWrap && value->id != CSSValueWrapReverse)
-                return false;
-
-            list->append(cssValuePool()->createIdentifierValue(value->id));
-            addProperty(propId, list, important);
-            return true;
-        }
+        break;
+    case CSSPropertyWebkitFlexWrap:
+        validPrimitive = id == CSSValueNowrap || id == CSSValueWrap || id == CSSValueWrapReverse;
         break;
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,
@@ -2132,6 +2119,11 @@ bool CSSParser::parseValue(int propId, bool important)
         const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
                                     CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
         return parse4Values(propId, properties, important);
+    }
+    case CSSPropertyWebkitFlexFlow:
+    {
+        const int properties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
+        return parseShorthand(propId, properties, 2, important);
     }
     case CSSPropertyFont:
         // [ [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]?

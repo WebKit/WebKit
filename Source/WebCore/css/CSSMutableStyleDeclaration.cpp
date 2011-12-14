@@ -286,6 +286,10 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
                                         CSSPropertyBorderBottomStyle, CSSPropertyBorderLeftStyle };
             return get4Values(properties);
         }
+        case CSSPropertyWebkitFlexFlow: {
+            const int properties[] = { CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap };
+            return getShorthandValue(properties);
+        }
         case CSSPropertyFont:
             return fontValue();
         case CSSPropertyMargin: {

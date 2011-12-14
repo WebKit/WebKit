@@ -1,3 +1,51 @@
+2011-12-14  Ojan Vafai  <ojan@chromium.org>
+
+        Implement flexDirection and flexWrap and make flexFlow a proper shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=74542
+
+        Reviewed by Tony Chang.
+
+        In a followup patch, I'll cleanup all the *Flow methods in RenderFlexibleBox.
+
+        Existing tests cover all the rendering behaviors, so only need to test
+        the css property parsing.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFlexDirection):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyLonghand.cpp:
+        (WebCore::initShorthandMap):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesToIntrinsicLogicalWidth):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::isColumnFlow):
+        (WebCore::RenderFlexibleBox::isLeftToRightFlow):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::flexDirection):
+        (WebCore::InheritedFlags::isColumnFlexDirection):
+        (WebCore::InheritedFlags::setFlexDirection):
+        (WebCore::InheritedFlags::initialFlexDirection):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h:
+
 2011-12-13  Jon Lee  <jonlee@apple.com>
 
         Enable notifications on Mac.
