@@ -1,3 +1,16 @@
+2011-12-14  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Mobile theme could use a little refresh
+        https://bugs.webkit.org/show_bug.cgi?id=74293
+
+        Have MiniBrowser use the mobile theme when not
+        passed --desktop.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+
 2011-12-14  João Paulo Rechi Vita  <jprvita@openbossa.org>
 
         [Qt] [Gardening] Remove qt-4.7 layout tests dir

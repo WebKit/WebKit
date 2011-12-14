@@ -55,23 +55,31 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-// Constants extracted from QCommonStyle and QWindowsStyle
-static const int arrowBoxWidth = 16;
+// Constants used by the mobile theme
+static const int arrowBoxWidth = 26;
 static const int frameWidth = 2;
-static const int checkBoxWidth = 13;
-static const int radioWidth = 12;
+static const int checkBoxWidth = 21;
+static const int radioWidth = 21;
 static const int buttonIconSize = 16;
-static const int sliderWidth = 11;
-static const int sliderHeight = 0;
+static const int sliderSize = 18;
 
-// Other constants used by the mobile theme
-static float buttonPaddingLeft = 18;
-static float buttonPaddingRight = 18;
-static float buttonPaddingTop = 2;
-static float buttonPaddingBottom = 3;
-static float menuListPadding = 9;
-static float textFieldPadding = 5;
-
+static const float buttonPaddingLeft = 18;
+static const float buttonPaddingRight = 18;
+static const float buttonPaddingTop = 2;
+static const float buttonPaddingBottom = 3;
+static const float menuListPadding = 9;
+static const float textFieldPadding = 5;
+static const float radiusFactor = 0.36;
+#if ENABLE(PROGRESS_TAG)
+static const float progressBarChunkPercentage = 0.2;
+static const int progressAnimationGranularity = 2;
+#endif
+static const float sliderGrooveBorderRatio = 0.2;
+static const QColor darkColor(40, 40, 40);
+static const QColor highlightColor(16, 128, 221);
+static const QColor buttonGradientBottom(245, 245, 245);
+static const QColor shadowColor(80, 80, 80, 160);
+static const QPen borderPen(darkColor, 0.3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
 static inline void drawRectangularControlBackground(QPainter* painter, const QPen& pen, const QRect& rect, const QBrush& brush)
 {
@@ -81,11 +89,17 @@ static inline void drawRectangularControlBackground(QPainter* painter, const QPe
     painter->setPen(pen);
     painter->setBrush(brush);
 
-    int line = 1;
-    painter->drawRoundedRect(rect.adjusted(line, line, -line, -line),
-            /* xRadius */ 5.0, /* yRadious */ 5.0);
+    const int line = 1;
+    const double radius = radiusFactor * rect.height();
+    painter->drawRoundedRect(rect.adjusted(line, line, -line, -line), radius, radius);
     painter->setPen(oldPen);
     painter->setBrush(oldBrush);
+}
+
+static inline QRect shrinkRectToSquare(const QRect& rect)
+{
+    const int side = qMin(rect.height(), rect.width());
+    return QRect(rect.topLeft(), QSize(side, side));
 }
 
 QSharedPointer<StylePainter> RenderThemeQtMobile::getStylePainter(const PaintInfo& pi)
@@ -96,291 +110,298 @@ QSharedPointer<StylePainter> RenderThemeQtMobile::getStylePainter(const PaintInf
 StylePainterMobile::StylePainterMobile(RenderThemeQtMobile* theme, const PaintInfo& paintInfo)
     : StylePainter(theme, paintInfo)
 {
+    m_previousSmoothPixmapTransform = painter->testRenderHint(QPainter::SmoothPixmapTransform);
+    if (!m_previousSmoothPixmapTransform)
+        painter->setRenderHint(QPainter::SmoothPixmapTransform);
 }
 
-void StylePainterMobile::drawChecker(QPainter* painter, int size, QColor color) const
+StylePainterMobile::~StylePainterMobile()
 {
-    int border = qMin(qMax(1, int(0.2 * size)), 6);
-    int checkerSize = qMax(size - 2 * border, 3);
-    int width = checkerSize / 3;
-    int middle = qMax(3 * checkerSize / 7, 3);
-    int x = ((size - checkerSize) >> 1);
-    int y = ((size - checkerSize) >> 1) + (checkerSize - width - middle);
-    QVector<QLineF> lines(checkerSize + 1);
-    painter->setPen(color);
-    for (int i = 0; i < middle; ++i) {
-        lines[i] = QLineF(x, y, x, y + width);
-        ++x;
-        ++y;
-    }
-    for (int i = middle; i <= checkerSize; ++i) {
-        lines[i] = QLineF(x, y, x, y + width);
-        ++x;
-        --y;
-    }
-    painter->drawLines(lines.constData(), lines.size());
+    painter->setRenderHints(QPainter::SmoothPixmapTransform, m_previousSmoothPixmapTransform);
 }
 
-QPixmap StylePainterMobile::findChecker(const QRect& rect, bool disabled) const
+void StylePainterMobile::drawCheckableBackground(QPainter* painter, const QRect& rect, bool checked, bool enabled) const
 {
-    int size = qMin(rect.width(), rect.height());
-    QPixmap result;
-    static const QString prefix = QLatin1String("$qt-maemo5-mobile-theme-checker-");
-    QString key = prefix + QString::number(size) + QLatin1String("-") + (disabled ? QLatin1String("disabled") : QLatin1String("enabled"));
-    if (!QPixmapCache::find(key, result)) {
-        result = QPixmap(size, size);
-        result.fill(Qt::transparent);
-        QPainter painter(&result);
-        drawChecker(&painter, size, disabled ? Qt::lightGray : Qt::darkGray);
-        QPixmapCache::insert(key, result);
-    }
-    return result;
+    QBrush brush;
+    if (checked && enabled) {
+        QLinearGradient gradient;
+        gradient.setStart(rect.bottomLeft());
+        gradient.setFinalStop(rect.topLeft());
+        gradient.setColorAt(0.0, highlightColor);
+        gradient.setColorAt(1.0, highlightColor.lighter());
+        brush = gradient;
+    } else
+        brush = Qt::lightGray;
+    drawRectangularControlBackground(painter, borderPen, rect, brush);
 }
 
-void StylePainterMobile::drawRadio(QPainter* painter, const QSize& size, bool checked, QColor color) const
+QSize StylePainterMobile::sizeForPainterScale(const QRect& rect) const
+{
+    const QRect mappedRect = painter->transform().mapRect(rect);
+    return mappedRect.size();
+}
+
+void StylePainterMobile::drawChecker(QPainter* painter, const QRect& rect, const QColor& color) const
 {
     painter->setRenderHint(QPainter::Antialiasing, true);
-
-    // get minor size to do not paint a wide elipse
-    qreal squareSize = qMin(size.width(), size.height());
-    // deflate one pixel
-    QRect rect = QRect(QPoint(1, 1), QSize(squareSize - 2, squareSize - 2));
-    const QPoint centerGradient(rect.bottomRight() * 0.7);
-
-    QRadialGradient radialGradient(centerGradient, centerGradient.x() - 1);
-    radialGradient.setColorAt(0.0, Qt::white);
-    radialGradient.setColorAt(0.6, Qt::white);
-    radialGradient.setColorAt(1.0, color);
-
-    painter->setPen(color);
+    QPen pen(Qt::darkGray);
+    pen.setCosmetic(true);
+    painter->setPen(pen);
+    painter->scale(rect.width(), rect.height());
+    QPainterPath path;
+    path.moveTo(0.18, 0.47);
+    path.lineTo(0.25, 0.4);
+    path.lineTo(0.4, 0.55);
+    path.quadTo(0.64, 0.29, 0.78, 0.2);
+    path.lineTo(0.8, 0.25);
+    path.quadTo(0.53, 0.55, 0.45, 0.75);
+    path.closeSubpath();
     painter->setBrush(color);
-    painter->drawEllipse(rect);
-    painter->setBrush(radialGradient);
-    painter->drawEllipse(rect);
-
-    int border = 0.1 * (rect.width() + rect.height());
-    border = qMin(qMax(2, border), 10);
-    rect.adjust(border, border, -border, -border);
-    if (checked) {
-        painter->setPen(Qt::NoPen);
-        painter->setBrush(color);
-        painter->drawEllipse(rect);
-    }
+    painter->drawPath(path);
 }
 
-QPixmap StylePainterMobile::findRadio(const QSize& size, bool checked, bool disabled) const
+QPixmap StylePainterMobile::findCheckBox(const QSize& size, bool checked, bool enabled) const
 {
+    ASSERT(size.width() == size.height());
     QPixmap result;
-    static const QString prefix = QLatin1String("$qt-maemo5-mobile-theme-radio-");
-    QString key = prefix + QString::number(size.width()) + QLatin1String("-") + QString::number(size.height()) + QLatin1String("-")
-        + (disabled ? QLatin1String("disabled") : QLatin1String("enabled")) + (checked ? QLatin1String("-checked") : QLatin1String(""));
+    static const QString prefix = QLatin1String("$qt-webkit-mobile-theme-checkbox-");
+    QString key = prefix + QString::number(size.width()) + QLatin1String("-") + (enabled ? QLatin1String("on") : QLatin1String("off"))
+                  + (checked ? QLatin1String("-checked") : QString());
     if (!QPixmapCache::find(key, result)) {
         result = QPixmap(size);
         result.fill(Qt::transparent);
         QPainter painter(&result);
-        drawRadio(&painter, size, checked, disabled ? Qt::lightGray : Qt::darkGray);
+        QRect rect(QPoint(0, 0), size);
+        drawCheckableBackground(&painter, rect, checked, enabled);
+        if (checked || !enabled)
+            drawChecker(&painter, rect, enabled ? Qt::white : Qt::gray);
         QPixmapCache::insert(key, result);
     }
     return result;
 }
 
-void StylePainterMobile::drawMultipleComboButton(QPainter* painter, const QSize& size, QColor color) const
+void StylePainterMobile::drawRadio(QPainter* painter, const QSize& size, bool checked, bool enabled) const
 {
-    int rectWidth = size.width() - 1;
-    int width = qMax(2, rectWidth >> 3);
-    int distance = (rectWidth - 3 * width) >> 1;
-    int top = (size.height() - width) >> 1;
+    ASSERT(size.width() == size.height());
+    QRect rect(QPoint(0, 0), size);
+
+    drawCheckableBackground(painter, rect, checked, enabled);
+    const int border = size.width() / 4;
+    rect.adjust(border, border, -border, -border);
+    drawRectangularControlBackground(painter, borderPen, rect, enabled ? Qt::white : Qt::gray);
+}
+
+QPixmap StylePainterMobile::findRadio(const QSize& size, bool checked, bool enabled) const
+{
+    QPixmap result;
+    static const QString prefix = QLatin1String("$qt-webkit-mobile-theme-radio-");
+    QString key = prefix + QString::number(size.width()) + QLatin1String("-") + (enabled ? QLatin1String("on") : QLatin1String("off"))
+                  + (checked ? QLatin1String("-checked") : QString());
+    if (!QPixmapCache::find(key, result)) {
+        result = QPixmap(size);
+        result.fill(Qt::transparent);
+        QPainter painter(&result);
+        drawRadio(&painter, size, checked, enabled);
+        QPixmapCache::insert(key, result);
+    }
+    return result;
+}
+
+void StylePainterMobile::drawMultipleComboButton(QPainter* painter, const QSize& size, const QColor& color) const
+{
+    const int dotSize = size.height() - 1;
 
     painter->setPen(color);
     painter->setBrush(color);
 
-    painter->drawRect(0, top, width, width);
-    painter->drawRect(width + distance, top, width, width);
-    painter->drawRect(2 * (width + distance), top, width, width);
+    painter->drawEllipse(0, 0, dotSize, dotSize);
+    painter->drawEllipse(dotSize * 2, 0, dotSize, dotSize);
+    painter->drawEllipse(4 * dotSize, 0, dotSize, dotSize);
 }
 
-void StylePainterMobile::drawSimpleComboButton(QPainter* painter, const QSize& size, QColor color) const
+void StylePainterMobile::drawSimpleComboButton(QPainter* painter, const QSize& size, const QColor& color) const
 {
-    int width = size.width();
-    int midle = width >> 1;
-    QVector<QLine> lines(width + 1);
+    const int width = size.width();
+    const int height = size.height();
+    const int horizontalCenter = width / 2;
+    const int verticalCenter = height / 2;
+    const int spacing = 1 + height / 15;
 
-    for (int x = 0, y = 0;  x < midle; x++, y++) {
-        lines[x] = QLine(x, y, x, y + 2);
-        lines[x + midle] = QLine(width - x - 1, y, width - x - 1, y + 2);
+    QVector<QLine> lines(2 * width);
+    int length = 0;
+    for (int x = 0; x < horizontalCenter ; x++) {
+        length++;
+        lines[x] = QLine(x, verticalCenter + spacing, x, verticalCenter + spacing + length);
+        lines[2 * width - x - 1] = QLine(x, verticalCenter - spacing, x, verticalCenter - spacing - length);
     }
-    // Just to ensure the lines' intersection.
-    lines[width] = QLine(midle, midle, midle, midle + 2);
+    for (int x = horizontalCenter; x < width; x++) {
+        lines[x] = QLine(x, verticalCenter + spacing, x, verticalCenter + spacing + length);
+        lines[2 * width - x - 1] = QLine(x, verticalCenter - spacing, x, verticalCenter - spacing - length);
+        length--;
+    }
 
     painter->setPen(color);
     painter->setBrush(color);
     painter->drawLines(lines);
 }
 
-QSize StylePainterMobile::getButtonImageSize(const QSize& buttonSize) const
+QSize StylePainterMobile::getButtonImageSize(const QSize& buttonSize, bool multiple) const
 {
-    const int border = qMax(3, buttonSize.width() >> 3) << 1;
+    if (multiple)
+        return QSize(buttonSize.width(), buttonSize.width() / 5);
 
-    int width = buttonSize.width() - border;
-    int height = buttonSize.height() - border;
-
-    if (width < 0 || height < 0)
-        return QSize();
-
-    if (height >= (width >> 1))
-        width = width >> 1 << 1;
-    else
-        width = height << 1;
-
-    return QSize(width + 1, width);
+    const int height = buttonSize.height() / 2 + frameWidth;
+    const int width = height - (2 * (1 + height / 15)) - 1;
+    return QSize(width , height);
 }
 
-QPixmap StylePainterMobile::findComboButton(const QSize& size, bool multiple, bool disabled) const
+QPixmap StylePainterMobile::findComboButton(const QSize& size, bool multiple, bool enabled) const
 {
-    QPixmap result;
-    QSize imageSize = getButtonImageSize(size);
-
-    if (imageSize.isNull())
+    if (size.isNull())
         return QPixmap();
-    static const QString prefix = QLatin1String("$qt-maemo5-mobile-theme-combo-");
+    static const QString prefix = QLatin1String("$qt-webkit-mobile-theme-combo-");
+    QPixmap result;
     QString key = prefix + (multiple ? QLatin1String("multiple-") : QLatin1String("simple-"))
-        + QString::number(imageSize.width()) + QLatin1String("-") + QString::number(imageSize.height())
-        + QLatin1String("-") + (disabled ? QLatin1String("disabled") : QLatin1String("enabled"));
+        + QString::number(size.width()) + QLatin1String("-") + QString::number(size.height())
+        + QLatin1String("-") + (enabled ? QLatin1String("on") : QLatin1String("off"));
+
     if (!QPixmapCache::find(key, result)) {
-        result = QPixmap(imageSize);
+        result = QPixmap(size);
         result.fill(Qt::transparent);
         QPainter painter(&result);
         if (multiple)
-            drawMultipleComboButton(&painter, imageSize, disabled ? Qt::lightGray : Qt::darkGray);
+            drawMultipleComboButton(&painter, size, enabled ? darkColor : Qt::lightGray);
         else
-            drawSimpleComboButton(&painter, imageSize, disabled ? Qt::lightGray : Qt::darkGray);
+            drawSimpleComboButton(&painter, size, enabled ? darkColor : Qt::lightGray);
         QPixmapCache::insert(key, result);
     }
     return result;
 }
 
-void StylePainterMobile::drawLineEdit(const QRect& rect, bool sunken, bool enabled)
+void StylePainterMobile::drawLineEdit(const QRect& rect, bool focused, bool enabled)
 {
-    QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter->setPen(pen);
+    drawRectangularControlBackground(painter, borderPen, rect, Qt::white);
 
-    if (sunken) {
-        drawRectangularControlBackground(painter, pen, rect, QBrush(Qt::darkGray));
-        return;
+    if (focused) {
+        QPen focusPen(highlightColor, float(rect.height() / 26.0), Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        drawRectangularControlBackground(painter, focusPen, rect, Qt::NoBrush);
     }
-
-    QLinearGradient linearGradient;
-    if (!enabled) {
-        linearGradient.setStart(rect.topLeft());
-        linearGradient.setFinalStop(rect.bottomLeft());
-        linearGradient.setColorAt(0.0, Qt::lightGray);
-        linearGradient.setColorAt(1.0, Qt::white);
-    } else {
-        linearGradient.setStart(rect.topLeft());
-        linearGradient.setFinalStop(QPoint(rect.topLeft().x(),
-                    rect.topLeft().y() + /* offset limit for gradient */ 20));
-        linearGradient.setColorAt(0.0, Qt::darkGray);
-        linearGradient.setColorAt(0.35, Qt::white);
-    }
-
-    drawRectangularControlBackground(painter, pen, rect, linearGradient);
 }
 
 void StylePainterMobile::drawCheckBox(const QRect& rect, bool checked, bool enabled)
 {
-    QLinearGradient linearGradient(rect.topLeft(), rect.bottomLeft());
-    if (!enabled) {
-        linearGradient.setColorAt(0.0, Qt::lightGray);
-        linearGradient.setColorAt(0.5, Qt::white);
-    } else {
-        linearGradient.setColorAt(0.0, Qt::darkGray);
-        linearGradient.setColorAt(0.5, Qt::white);
-    }
-
-    painter->setPen(QPen(enabled ? Qt::darkGray : Qt::lightGray));
-    painter->setBrush(linearGradient);
-    painter->drawRect(rect);
-    const QRect r = rect.adjusted(1, 1, -1, -1);
-
-    if (!checked)
+    const QRect square = shrinkRectToSquare(rect);
+    QPixmap checkBox = findCheckBox(sizeForPainterScale(square), checked, enabled);
+    if (checkBox.isNull())
         return;
-
-    QPixmap checker = findChecker(r, !enabled);
-    if (checker.isNull())
-        return;
-
-    int x = (r.width() - checker.width()) >> 1;
-    int y = (r.height() - checker.height()) >> 1;
-    painter->drawPixmap(r.x() + x, r.y() + y, checker);
+    painter->drawPixmap(square, checkBox);
 }
 
 void StylePainterMobile::drawRadioButton(const QRect& rect, bool checked, bool enabled)
 {
-    QPixmap radio = findRadio(rect.size(), checked, !enabled);
+    const QRect square = shrinkRectToSquare(rect);
+    QPixmap radio = findRadio(sizeForPainterScale(square), checked, enabled);
     if (radio.isNull())
         return;
-    painter->drawPixmap(rect.x(), rect.y(), radio);
+    painter->drawPixmap(square, radio);
 }
 
 void StylePainterMobile::drawPushButton(const QRect& rect, bool sunken, bool enabled)
 {
-    QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    painter->setPen(pen);
+    drawRectangularControlBackground(painter, Qt::NoPen, rect.adjusted(0, 1, 0, 1), shadowColor);
 
-    if (sunken) {
-        drawRectangularControlBackground(painter, pen, rect, QBrush(Qt::darkGray));
-        return;
-    }
-
-    QLinearGradient linearGradient;
-    if (!enabled) {
+    QBrush brush;
+    if (enabled && !sunken) {
+        QLinearGradient linearGradient;
         linearGradient.setStart(rect.bottomLeft());
         linearGradient.setFinalStop(rect.topLeft());
-        linearGradient.setColorAt(0.0, Qt::gray);
+        linearGradient.setColorAt(0.0, buttonGradientBottom);
         linearGradient.setColorAt(1.0, Qt::white);
-    } else {
+        brush = linearGradient;
+    } else if (!enabled)
+        brush = QColor(241, 242, 243);
+    else { // sunken
+        QLinearGradient linearGradient;
         linearGradient.setStart(rect.bottomLeft());
-        linearGradient.setFinalStop(QPoint(rect.bottomLeft().x(),
-                    rect.bottomLeft().y() - /* offset limit for gradient */ 20));
-        linearGradient.setColorAt(0.0, Qt::gray);
-        linearGradient.setColorAt(0.4, Qt::white);
+        linearGradient.setFinalStop(rect.topLeft());
+        linearGradient.setColorAt(0.0, highlightColor);
+        linearGradient.setColorAt(1.0, highlightColor.lighter());
+        brush = linearGradient;
     }
 
-    drawRectangularControlBackground(painter, pen, rect, linearGradient);
+    drawRectangularControlBackground(painter, borderPen, rect, brush);
 }
 
 void StylePainterMobile::drawComboBox(const QRect& rect, bool multiple, bool enabled)
 {
-    QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    drawRectangularControlBackground(painter, Qt::NoPen, rect.adjusted(0, 1, 0, 2), shadowColor);
+
     QLinearGradient linearGradient;
-    if (!enabled) {
-        linearGradient.setStart(rect.bottomLeft());
-        linearGradient.setFinalStop(rect.topLeft());
-        linearGradient.setColorAt(0.0, Qt::gray);
-        linearGradient.setColorAt(1.0, Qt::white);
-    } else {
-        linearGradient.setStart(rect.bottomLeft());
-        linearGradient.setFinalStop(QPoint(rect.bottomLeft().x(),
-                    rect.bottomLeft().y() - /* offset limit for gradient */ 20));
-        linearGradient.setColorAt(0.0, Qt::gray);
-        linearGradient.setColorAt(0.4, Qt::white);
-    }
+    linearGradient.setStart(rect.bottomLeft());
+    linearGradient.setFinalStop(rect.topLeft());
+    linearGradient.setColorAt(0.0, buttonGradientBottom);
+    linearGradient.setColorAt(1.0, Qt::white);
 
-    drawRectangularControlBackground(painter, pen, rect, linearGradient);
 
-    const QRect r(rect.x() + rect.width() - frameWidth - arrowBoxWidth, rect.y() + frameWidth
-                   , arrowBoxWidth, rect.height() - 2 * frameWidth);
-    QPixmap pic = findComboButton(r.size(), multiple, !enabled);
+    drawRectangularControlBackground(painter, borderPen, rect, linearGradient);
 
+    const QRect buttonRect(rect.x() + rect.width() - frameWidth - arrowBoxWidth, rect.y() + frameWidth
+                   , rect.height(), rect.height() - 2 * frameWidth);
+    QRect targetRect(QPoint(0, 0), getButtonImageSize(buttonRect.size(), multiple));
+    targetRect.moveCenter(buttonRect.center());
+    QPixmap pic = findComboButton(sizeForPainterScale(targetRect), multiple, enabled);
     if (pic.isNull())
         return;
 
-    int x = (r.width() - pic.width()) >> 1;
-    int y = (r.height() - pic.height()) >> 1;
-    painter->drawPixmap(r.x() + x, r.y() + y, pic);
+    painter->drawPixmap(targetRect, pic);
+}
 
-    painter->setPen(enabled ? Qt::darkGray : Qt::gray);
-    painter->drawLine(r.left() - 2, r.top() + 2, r.left() - 2, r.bottom() - 2);
+void StylePainterMobile::drawProgress(const QRect& rect, double progress, bool leftToRight, bool animated) const
+{
+    static const QString prefix = QLatin1String("$qt-webkit-mobile-theme-progress-");
+    const int border = rect.height() / 4;
+    const QRect targetRect = rect.adjusted(0, border, 0, -border);
+
+    QPixmap result;
+    const QSize imageSize = sizeForPainterScale(targetRect);
+    QString key = prefix + QString::number(imageSize.width()) + QLatin1String("-") + QString::number(imageSize.height())
+            + QLatin1String("-") + QString::number(progress, 'f', 3) + (animated? QLatin1String("-anim") : QString())
+                         + ((!animated && !leftToRight) ? QLatin1String("-rtl") : QString());
+    if (!QPixmapCache::find(key, result)) {
+        if (imageSize.isNull())
+            return;
+        result = QPixmap(imageSize);
+        result.fill(Qt::transparent);
+        QPainter painter(&result);
+        QRect progressRect(QPoint(0, 0), imageSize);
+        drawRectangularControlBackground(&painter, borderPen, progressRect, Qt::white);
+        progressRect.adjust(1, 1, -1, -1);
+        if (animated) {
+            const int right = progressRect.right();
+            const int startPos = right * (1 - progressBarChunkPercentage) * 2 * fabs(progress - 0.5);
+            progressRect.setWidth(progressBarChunkPercentage * right);
+            progressRect.moveLeft(startPos);
+        } else {
+            progressRect.setWidth(progress * progressRect.width());
+            if (!leftToRight)
+                progressRect.moveRight(imageSize.width() - 2);
+        }
+        if (progressRect.width() > 0) {
+            QLinearGradient gradient;
+            gradient.setStart(progressRect.bottomLeft());
+            gradient.setFinalStop(progressRect.topLeft());
+            gradient.setColorAt(0.0, highlightColor);
+            gradient.setColorAt(1.0, highlightColor.lighter());
+            drawRectangularControlBackground(&painter, Qt::NoPen, progressRect, gradient);
+        }
+        QPixmapCache::insert(key, result);
+    }
+    painter->drawPixmap(targetRect, result);
+}
+
+void StylePainterMobile::drawSliderThumb(const QRect & rect, bool pressed) const
+{
+    drawRectangularControlBackground(painter, borderPen, rect, pressed? Qt::lightGray : buttonGradientBottom);
 }
 
 
@@ -511,11 +532,11 @@ bool RenderThemeQtMobile::paintButton(RenderObject* o, const PaintInfo& i, const
 
     ControlPart appearance = o->style()->appearance();
     if (appearance == PushButtonPart || appearance == ButtonPart) {
-        p.drawPushButton(r, isPressed(o));
+        p.drawPushButton(r, isPressed(o), isEnabled(o));
     } else if (appearance == RadioPart)
-       p.drawRadioButton(r, isChecked(o));
+       p.drawRadioButton(r, isChecked(o), isEnabled(o));
     else if (appearance == CheckboxPart)
-       p.drawCheckBox(r, isChecked(o));
+       p.drawCheckBox(r, isChecked(o), isEnabled(o));
 
     return false;
 }
@@ -549,7 +570,7 @@ bool RenderThemeQtMobile::paintTextField(RenderObject* o, const PaintInfo& i, co
         return true;
 
     // Now paint the text field.
-    p.drawLineEdit(r, /*sunken = */isPressed(o));
+    p.drawLineEdit(r, isFocused(o), isEnabled(o));
     return false;
 }
 
@@ -565,7 +586,7 @@ void RenderThemeQtMobile::setPopupPadding(RenderStyle* style) const
     const int paddingRight = style->width().isFixed() || style->width().isPercent() ? 5 : 8;
 
     style->setPaddingLeft(Length(paddingLeft, Fixed));
-    style->setPaddingRight(Length(paddingRight + buttonIconSize, Fixed));
+    style->setPaddingRight(Length(paddingRight + arrowBoxWidth, Fixed));
 
     style->setPaddingTop(Length(2, Fixed));
     style->setPaddingBottom(Length(2, Fixed));
@@ -582,7 +603,7 @@ bool RenderThemeQtMobile::paintMenuList(RenderObject* o, const PaintInfo& i, con
     p.painter->translate(topLeft);
     const QRect rect(QPoint(0, 0), r.size());
 
-    p.drawComboBox(rect, checkMultiple(o));
+    p.drawComboBox(rect, checkMultiple(o), isEnabled(o));
     p.painter->translate(-topLeft);
     return false;
 }
@@ -594,7 +615,7 @@ bool RenderThemeQtMobile::paintMenuListButton(RenderObject* o, const PaintInfo& 
     if (!p.isValid())
         return true;
 
-    p.drawComboBox(r, checkMultiple(o));
+    p.drawComboBox(r, checkMultiple(o), isEnabled(o));
 
     return false;
 }
@@ -602,30 +623,65 @@ bool RenderThemeQtMobile::paintMenuListButton(RenderObject* o, const PaintInfo& 
 #if ENABLE(PROGRESS_TAG)
 double RenderThemeQtMobile::animationDurationForProgressBar(RenderProgress* renderProgress) const
 {
-    notImplemented();
-    return 0.;
+    if (renderProgress->isDeterminate())
+        return 0;
+    // Our animation goes back and forth so we need to make it last twice as long
+    // and we need the numerator to be an odd number to ensure we get a progress value of 0.5.
+    return (2 * progressAnimationGranularity +1) / progressBarChunkPercentage * animationRepeatIntervalForProgressBar(renderProgress);
 }
 
 bool RenderThemeQtMobile::paintProgressBar(RenderObject* o, const PaintInfo& pi, const IntRect& r)
 {
-    notImplemented();
-    return true;
+    if (!o->isProgress())
+        return true;
+
+    StylePainterMobile p(this, pi);
+    if (!p.isValid())
+        return true;
+
+    RenderProgress* renderProgress = toRenderProgress(o);
+    const bool isRTL = (renderProgress->style()->direction() == RTL);
+
+    if (renderProgress->isDeterminate())
+        p.drawProgress(r, renderProgress->position(), !isRTL);
+    else
+        p.drawProgress(r, renderProgress->animationProgress(), !isRTL, true);
+
+    return false;
 }
 #endif
 
 bool RenderThemeQtMobile::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
                                      const IntRect& r)
 {
-    notImplemented();
-    return true;
+    StylePainterMobile p(this, pi);
+    if (!p.isValid())
+        return true;
+
+    HTMLInputElement* slider = static_cast<HTMLInputElement*>(o->node());
+
+    const double min = slider->minimum();
+    const double max = slider->maximum();
+    const double progress = (max - min > 0) ? (slider->valueAsNumber() - min) / (max - min) : 0;
+
+    // Render the spin buttons for LTR or RTL accordingly.
+    const int groovePadding = r.height() * sliderGrooveBorderRatio;
+    const QRect rect(r);
+    p.drawProgress(rect.adjusted(0, groovePadding, 0, -groovePadding), progress, o->style()->isLeftToRightDirection());
+
+    return false;
 }
 
 bool RenderThemeQtMobile::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
                                      const IntRect& r)
 {
-    // We've already painted it in paintSliderTrack(), no need to do anything here.
-    notImplemented();
-    return true;
+    StylePainterMobile p(this, pi);
+    if (!p.isValid())
+        return true;
+
+    p.drawSliderThumb(r, isPressed(o));
+
+    return false;
 }
 
 bool RenderThemeQtMobile::checkMultiple(RenderObject* o) const
@@ -645,8 +701,9 @@ void RenderThemeQtMobile::adjustSliderThumbSize(RenderStyle* style) const
 {
     const ControlPart part = style->appearance();
     if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
-        style->setWidth(Length(sliderWidth, Fixed));
-        style->setHeight(Length(sliderHeight, Fixed));
+        const int size = sliderSize * style->effectiveZoom();
+        style->setWidth(Length(size, Fixed));
+        style->setHeight(Length(size, Fixed));
     } else
         RenderThemeQt::adjustSliderThumbSize(style);
 }

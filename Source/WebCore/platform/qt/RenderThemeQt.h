@@ -185,8 +185,8 @@ protected:
     void init(GraphicsContext*);
 
 private:
-    QBrush oldBrush;
-    bool oldAntialiasing;
+    QBrush m_previousBrush;
+    bool m_previousAntialiasing;
 
 };
 

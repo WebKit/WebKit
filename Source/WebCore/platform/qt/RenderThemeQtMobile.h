@@ -84,29 +84,39 @@ private:
 };
 
 class StylePainterMobile : public StylePainter {
+
 public:
     explicit StylePainterMobile(RenderThemeQtMobile*, const PaintInfo&);
+    ~StylePainterMobile();
 
-    void drawLineEdit(const QRect&, bool sunken, bool enabled = true);
+    void drawLineEdit(const QRect&, bool focused, bool enabled = true);
     void drawCheckBox(const QRect&, bool checked, bool enabled = true);
     void drawRadioButton(const QRect&, bool checked, bool enabled = true);
     void drawPushButton(const QRect&, bool sunken, bool enabled = true);
     void drawComboBox(const QRect&, bool multiple, bool enabled = true);
+    void drawProgress(const QRect&, double progress, bool leftToRight = true, bool animated = false) const;
+    void drawSliderThumb(const QRect&, bool pressed) const;
 
 private:
-    void drawChecker(QPainter*, int size, QColor) const;
-    QPixmap findChecker(const QRect&, bool disabled) const;
+    void drawCheckableBackground(QPainter*, const QRect&, bool checked, bool enabled) const;
+    void drawChecker(QPainter*, const QRect&, const QColor&) const;
+    QPixmap findCheckBox(const QSize&, bool checked, bool enabled) const;
 
-    void drawRadio(QPainter*, const QSize&, bool checked, QColor) const;
-    QPixmap findRadio(const QSize&, bool checked, bool disabled) const;
+    void drawRadio(QPainter*, const QSize&, bool checked, bool enabled) const;
+    QPixmap findRadio(const QSize&, bool checked, bool enabled) const;
 
-    QSize getButtonImageSize(const QSize&) const;
-    void drawSimpleComboButton(QPainter*, const QSize&, QColor) const;
-    void drawMultipleComboButton(QPainter*, const QSize&, QColor) const;
-    QPixmap findComboButton(const QSize&, bool multiple, bool disabled) const;
+    QSize getButtonImageSize(const QSize&, bool multiple) const;
+    void drawSimpleComboButton(QPainter*, const QSize&, const QColor&) const;
+    void drawMultipleComboButton(QPainter*, const QSize&, const QColor&) const;
+    QPixmap findComboButton(const QSize&, bool multiple, bool enabled) const;
+
+    QSize sizeForPainterScale(const QRect&) const;
+
+    bool m_previousSmoothPixmapTransform;
 
     Q_DISABLE_COPY(StylePainterMobile);
 };
+
 }
 
 #endif // RenderThemeQtMobile_h

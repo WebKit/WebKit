@@ -1,3 +1,63 @@
+2011-12-14  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Mobile theme could use a little refresh
+        https://bugs.webkit.org/show_bug.cgi?id=74293
+
+        The look and feel of the "mobile theme" we're
+        using in QtWebKit dates back to the maemo 5 days.
+        This is an attempt at making it look less out of
+        place, and also support progress and range.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests, this is still not the default theme
+        for tests.
+
+        * DerivedSources.pri:
+        * css/mobileThemeQt.css: Added.
+        (input[type="submit"], select):
+        (input[type="submit"]:disabled, input[type="submit"]:disabled:active, select:disabled, input[type="text"]:disabled):
+        (input[type="submit"]:active):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::extraDefaultStyleSheet):
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::init):
+        (WebCore::StylePainter::~StylePainter):
+        * platform/qt/RenderThemeQt.h:
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::drawRectangularControlBackground):
+        (WebCore::shrinkRectToSquare):
+        (WebCore::StylePainterMobile::StylePainterMobile):
+        (WebCore::StylePainterMobile::~StylePainterMobile):
+        (WebCore::StylePainterMobile::drawCheckableBackground):
+        (WebCore::StylePainterMobile::sizeForPainterScale):
+        (WebCore::StylePainterMobile::drawChecker):
+        (WebCore::StylePainterMobile::findCheckBox):
+        (WebCore::StylePainterMobile::drawRadio):
+        (WebCore::StylePainterMobile::findRadio):
+        (WebCore::StylePainterMobile::drawMultipleComboButton):
+        (WebCore::StylePainterMobile::drawSimpleComboButton):
+        (WebCore::StylePainterMobile::getButtonImageSize):
+        (WebCore::StylePainterMobile::findComboButton):
+        (WebCore::StylePainterMobile::drawLineEdit):
+        (WebCore::StylePainterMobile::drawCheckBox):
+        (WebCore::StylePainterMobile::drawRadioButton):
+        (WebCore::StylePainterMobile::drawPushButton):
+        (WebCore::StylePainterMobile::drawComboBox):
+        (WebCore::StylePainterMobile::drawProgress):
+        (WebCore::StylePainterMobile::drawSliderThumb):
+        (WebCore::RenderThemeQtMobile::paintButton):
+        (WebCore::RenderThemeQtMobile::paintTextField):
+        (WebCore::RenderThemeQtMobile::setPopupPadding):
+        (WebCore::RenderThemeQtMobile::paintMenuList):
+        (WebCore::RenderThemeQtMobile::paintMenuListButton):
+        (WebCore::RenderThemeQtMobile::animationDurationForProgressBar):
+        (WebCore::RenderThemeQtMobile::paintProgressBar):
+        (WebCore::RenderThemeQtMobile::paintSliderTrack):
+        (WebCore::RenderThemeQtMobile::paintSliderThumb):
+        (WebCore::RenderThemeQtMobile::adjustSliderThumbSize):
+        * platform/qt/RenderThemeQtMobile.h:
+
 2011-12-14  Rakesh KN  <rakesh.kn@motorola.com>
 
         [Non-Mac] Change event should be fired when changing option by using keyboard.

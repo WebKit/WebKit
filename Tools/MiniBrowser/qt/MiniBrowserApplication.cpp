@@ -199,7 +199,10 @@ void MiniBrowserApplication::handleUserOptions()
         appQuit(0);
     }
 
-    m_windowOptions.setUseTraditionalDesktopBehavior(takeOptionFlag(&args, "--desktop"));
+    const bool useDesktopBehavior = takeOptionFlag(&args, "--desktop");
+    if (!useDesktopBehavior)
+        qputenv("QT_WEBKIT_USE_MOBILE_THEME", QByteArray("1"));
+    m_windowOptions.setUseTraditionalDesktopBehavior(useDesktopBehavior);
     m_windowOptions.setPrintLoadedUrls(takeOptionFlag(&args, "-v"));
     m_windowOptions.setStartMaximized(takeOptionFlag(&args, "--maximize"));
     m_windowOptions.setStartFullScreen(takeOptionFlag(&args, "-f"));
