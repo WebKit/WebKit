@@ -1,3 +1,17 @@
+2011-12-13  Dirk Pranke  <dpranke@chromium.org>
+
+        chromium port - remove nacl hack in DEPS/gyp_webkit
+        https://bugs.webkit.org/show_bug.cgi?id=74150
+
+        Reviewed by Tony Chang.
+
+        This change reverts the change added in r101011; it is
+        no longer necessary to pull in anything from Native Client for
+        the chromium port to build.
+
+        * DEPS:
+        * gyp_webkit:
+
 2011-12-13  Dave Michael  <dmichael@chromium.org>
 
         Export WebArrayBuffer::byteLength
