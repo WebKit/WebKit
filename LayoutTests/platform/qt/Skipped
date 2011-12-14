@@ -2529,3 +2529,11 @@ tables/mozilla/bugs/bug2947.html
 # Layout Test fast/forms/input-step-as-double.html fails after running touch event tests
 # https://bugs.webkit.org/show_bug.cgi?id=71181
 fast/forms/input-step-as-double.html
+
+# [Qt] plugins/netscape-plugin-page-cache-works.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=74482
+plugins/netscape-plugin-page-cache-works.html
+
+# [Qt][GTK] The html5lib/runner.html test is start to fail after r102626
+# https://bugs.webkit.org/show_bug.cgi?id=74411
+html5lib/runner.html
