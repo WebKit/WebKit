@@ -37,16 +37,27 @@
 #include <mlang.h>
 
 #include "PlatformSupport.h"
+#include "SkTypeface_win.h"
 #include "SkiaFontWin.h"
 #include "StdLibExtras.h"
 
 namespace WebCore {
+
+static SkTypeface* createTypefaceFromHFont(HFONT hfont, uint8_t* lfQuality)
+{
+    LOGFONT info;
+    GetObject(hfont, sizeof(info), &info);
+    *lfQuality = info.lfQuality;
+    return SkCreateTypefaceFromLOGFONT(info);
+}
 
 FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
     : m_font(hashTableDeletedFontValue())
     , m_size(-1)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
+    , m_typeface(0)
+    , m_lfQuality(DEFAULT_QUALITY)
 {
 }
 
@@ -55,6 +66,8 @@ FontPlatformData::FontPlatformData()
     , m_size(0)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
+    , m_typeface(0)
+    , m_lfQuality(DEFAULT_QUALITY)
 {
 }
 
@@ -63,6 +76,7 @@ FontPlatformData::FontPlatformData(HFONT font, float size)
     , m_size(size)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
+    , m_typeface(createTypefaceFromHFont(font, &m_lfQuality))
 {
 }
 
@@ -72,6 +86,8 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
     , m_size(size)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
+    , m_typeface(0)
+    , m_lfQuality(DEFAULT_QUALITY)
 {
 }
 
@@ -80,7 +96,10 @@ FontPlatformData::FontPlatformData(const FontPlatformData& data)
     , m_size(data.m_size)
     , m_scriptCache(0)
     , m_scriptFontProperties(0)
+    , m_typeface(data.m_typeface)
+    , m_lfQuality(data.m_lfQuality)
 {
+    SkSafeRef(m_typeface);
 }
 
 FontPlatformData& FontPlatformData::operator=(const FontPlatformData& data)
@@ -88,6 +107,8 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& data)
     if (this != &data) {
         m_font = data.m_font;
         m_size = data.m_size;
+        SkRefCnt_SafeAssign(m_typeface, data.m_typeface);
+        m_lfQuality = data.m_lfQuality;
 
         // The following fields will get re-computed if necessary.
         ScriptFreeCache(&m_scriptCache);
@@ -101,6 +122,8 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& data)
 
 FontPlatformData::~FontPlatformData()
 {
+    SkSafeUnref(m_typeface);
+
     ScriptFreeCache(&m_scriptCache);
     m_scriptCache = 0;
 

@@ -38,6 +38,7 @@ struct SkPoint;
 
 namespace WebCore {
 
+class FontPlatformData;
 class GraphicsContext;
 class PlatformContextSkia;
 
@@ -71,6 +72,15 @@ bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext*);
 
 // Note that the offsets parameter is optional.  If not NULL it represents a
 // per glyph offset (such as returned by ScriptPlace Windows API function).
+void paintSkiaText(GraphicsContext*,
+                   const FontPlatformData&,
+                   int numGlyphs,
+                   const WORD* glyphs,
+                   const int* advances,
+                   const GOFFSET* offsets,
+                   const SkPoint* origin);
+
+// Convenience call for clients that don't cache the typeface or size
 void paintSkiaText(GraphicsContext*,
                    HFONT,
                    int numGlyphs,

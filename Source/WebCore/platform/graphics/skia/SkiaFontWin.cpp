@@ -32,16 +32,16 @@
 #include "SkiaFontWin.h"
 
 #include "AffineTransform.h"
-#include "PlatformContextSkia.h"
-#include "PlatformSupport.h"
 #include "Gradient.h"
 #include "Pattern.h"
+#include "PlatformContextSkia.h"
+#include "PlatformSupport.h"
+#include "SimpleFontData.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
 #include "SkPaint.h"
 #include "SkShader.h"
 #include "SkTemplates.h"
-#include "SkTypeface_win.h"
 
 namespace WebCore {
 
@@ -179,27 +179,14 @@ static uint32_t getDefaultGDITextFlags()
     return gFlags;
 }
 
-static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* pcs)
+static void setupPaintForFont(SkPaint* paint, const FontPlatformData& font, PlatformContextSkia* pcs)
 {
-    //  FIXME:
-    //  Much of this logic could also happen in
-    //  FontCustomPlatformData::fontPlatformData and be cached,
-    //  allowing us to avoid talking to GDI at this point.
-    //
-    LOGFONT info;
-    GetObject(hfont, sizeof(info), &info);
-    int size = info.lfHeight;
-    if (size < 0)
-        size = -size; // We don't let GDI dpi-scale us (see SkFontHost_win.cpp).
-    paint->setTextSize(SkIntToScalar(size));
-
-    SkTypeface* face = SkCreateTypefaceFromLOGFONT(info);
-    paint->setTypeface(face);
-    SkSafeUnref(face);
+    paint->setTextSize(SkFloatToScalar(font.size()));
+    paint->setTypeface(font.typeface());
 
     // turn lfQuality into text flags
     uint32_t textFlags;
-    switch (info.lfQuality) {
+    switch (font.lfQuality()) {
     case NONANTIALIASED_QUALITY:
         textFlags = 0;
         break;
@@ -228,7 +215,7 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* 
 }
 
 void paintSkiaText(GraphicsContext* context,
-                   HFONT hfont,
+                   const FontPlatformData& font,
                    int numGlyphs,
                    const WORD* glyphs,
                    const int* advances,
@@ -240,13 +227,13 @@ void paintSkiaText(GraphicsContext* context,
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
     // Ensure font load for printing, because PDF device needs it.
     if (canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability)
-        PlatformSupport::ensureFontLoaded(hfont);
+        PlatformSupport::ensureFontLoaded(font.hfont());
 
     // Filling (if necessary). This is the common case.
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);
     paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    setupPaintForFont(hfont, &paint, platformContext);
+    setupPaintForFont(&paint, font, platformContext);
 
     bool didFill = false;
 
@@ -263,7 +250,7 @@ void paintSkiaText(GraphicsContext* context,
         paint.reset();
         platformContext->setupPaintForStroking(&paint, 0, 0);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        setupPaintForFont(hfont, &paint, platformContext);
+        setupPaintForFont(&paint, font, platformContext);
 
         if (didFill) {
             // If there is a shadow and we filled above, there will already be
@@ -280,6 +267,24 @@ void paintSkiaText(GraphicsContext* context,
 
         skiaDrawText(canvas, *origin, &paint, &glyphs[0], &advances[0], &offsets[0], numGlyphs);
     }
+}
+
+void paintSkiaText(GraphicsContext* context,
+                   HFONT hfont,
+                   int numGlyphs,
+                   const WORD* glyphs,
+                   const int* advances,
+                   const GOFFSET* offsets,
+                   const SkPoint* origin)
+{
+    LOGFONT info;
+    GetObject(hfont, sizeof(info), &info);
+    float size = info.lfHeight;
+    if (size < 0)
+        size = -size;
+
+    FontPlatformData font(hfont, size);
+    paintSkiaText(context, font, numGlyphs, glyphs, advances, offsets, origin);
 }
 
 }  // namespace WebCore
