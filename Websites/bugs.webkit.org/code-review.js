@@ -63,6 +63,9 @@ var CODE_REVIEW_UNITTEST;
   if (!attachment_id)
     console.log('No attachment ID');
 
+  var minLeftSideRatio = 10;
+  var maxLeftSideRatio = 90;
+  var file_diff_being_resized = null;
   var next_line_id = 0;
   var files = {};
   var original_file_contents = {};
@@ -1139,6 +1142,7 @@ var CODE_REVIEW_UNITTEST;
 
     updateToolbarAnchorState();
     loadDiffState();
+    generateFileDiffResizeStyleElement();
   };
 
   function handleReviewFormLoad() {
@@ -1222,6 +1226,9 @@ var CODE_REVIEW_UNITTEST;
   function convertFileDiff(diff_type, file_diff) {
     if (diffState(file_diff) == diff_type)
       return;
+
+    if (!$('.resizeHandle', file_diff).length)
+      $(file_diff).append('<div class="resizeHandle"></div>');
 
     $(file_diff).removeClass('sidebyside unified');
     $(file_diff).addClass(diff_type);
@@ -1713,7 +1720,51 @@ var CODE_REVIEW_UNITTEST;
     return lineOffsetFrom(line, 1);
   }
 
-  $(document.body).bind('mouseup', processSelectedLines);
+  $('.resizeHandle').live('mousedown', function(event) {
+    file_diff_being_resized = $(this).parent('.FileDiff');
+  });
+
+  function generateFileDiffResizeStyleElement() {
+    // FIXME: Once we support calc, we can replace this with something that uses the attribute value.
+    var styleText = '';
+    for (var i = minLeftSideRatio; i <= maxLeftSideRatio; i++) {
+      // FIXME: Once we support calc, put the resize handle at calc(i% - 5) so it doesn't cover up
+      // the right-side line numbers.
+      styleText += '.FileDiff[leftsidewidth="' + i + '"] .resizeHandle {' +
+        'left: ' + i + '%' +
+      '}' +
+      '.FileDiff[leftsidewidth="' + i + '"] .LineSide:first-child,' +
+      '.FileDiff[leftsidewidth="' + i + '"].sidebyside .DiffBlockPart.remove {' +
+        'width:' + i + '%;' +
+      '}' +
+      '.FileDiff[leftsidewidth="' + i + '"] .LineSide:last-child,' +
+      '.FileDiff[leftsidewidth="' + i + '"].sidebyside .DiffBlockPart.add {' +
+        'width:' + (100 - i) + '%;' +
+      '}';
+    }
+    var styleElement = document.createElement('style');
+    styleElement.innerText = styleText;
+    document.head.appendChild(styleElement);
+  }
+
+  $(document).bind('mousemove', function(event) {
+    if (!file_diff_being_resized)
+      return;
+
+    var ratio = event.pageX / window.innerWidth;
+    var percentage = Math.floor(ratio * 100);
+    if (percentage < minLeftSideRatio)
+      percentage = minLeftSideRatio;
+    if (percentage > maxLeftSideRatio)
+      percentage = maxLeftSideRatio;
+    file_diff_being_resized.attr('leftsidewidth', percentage);
+    event.preventDefault();
+  });
+
+  $(document).bind('mouseup', function(event) {
+    file_diff_being_resized = null;
+    processSelectedLines();
+  });
 
   $('.lineNumber').live('click', function(e) {
     var line = lineFromLineDescendant($(this));

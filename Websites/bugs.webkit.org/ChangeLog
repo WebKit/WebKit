@@ -1,5 +1,20 @@
 2011-12-13  Ojan Vafai  <ojan@chromium.org>
 
+        Give a resize handle for sidebyside diffs.
+        https://bugs.webkit.org/show_bug.cgi?id=74465
+
+        Reviewed by Ryosuke Niwa.
+
+        This gives a drag handle so you can make the side-by-side
+        diff not be 50/50 on a per-file-diff basis. This is useful
+        for cases like new files where there's no value on the
+        left side.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-12-13  Ojan Vafai  <ojan@chromium.org>
+
         Expanding context is broken for prepare-ChangeLog in the code review tool.
         https://bugs.webkit.org/show_bug.cgi?id=74458
 
