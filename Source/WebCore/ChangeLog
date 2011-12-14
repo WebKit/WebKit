@@ -1,3 +1,15 @@
+2011-12-14  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Switch to libjpeg for decoding
+        https://bugs.webkit.org/show_bug.cgi?id=74475
+
+        Reviewed by Daniel Bates.
+
+        Switch to cross platform JPEG image decoder for decoding as this keeps
+        us inline with other ports and less to maintain.
+
+        * PlatformBlackBerry.cmake:
+
 2011-12-03  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Bad text rendering since r101343

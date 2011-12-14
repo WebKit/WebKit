@@ -115,9 +115,9 @@ LIST(APPEND WebKit_LIBRARIES
     ${ICUData_LIBRARY}
     ${ICUI18N_LIBRARY}
     ${ICUUC_LIBRARY}
-    ${IMG_LIBRARY}
     ${INTL_LIBRARY}
     ${Iconv_LIBRARY}
+    ${JPEG_LIBRARY}
     ${JavaScriptCore_LIBRARY_NAME}
     ${MD_LIBRARY}
     ${MMR_LIBRARY}

@@ -67,12 +67,12 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/WOFFFileFormat.cpp
     platform/graphics/opentype/OpenTypeSanitizer.cpp
     platform/image-decoders/ImageDecoder.cpp
-    platform/image-decoders/blackberry/JPEGImageDecoder.cpp
     platform/image-decoders/bmp/BMPImageDecoder.cpp
     platform/image-decoders/bmp/BMPImageReader.cpp
     platform/image-decoders/gif/GIFImageDecoder.cpp
     platform/image-decoders/gif/GIFImageReader.cpp
     platform/image-decoders/ico/ICOImageDecoder.cpp
+    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
     platform/image-decoders/png/PNGImageDecoder.cpp
     platform/image-decoders/webp/WEBPImageDecoder.cpp
     platform/posix/FileSystemPOSIX.cpp
@@ -171,7 +171,6 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/blackberry/MMrenderer.cpp
     platform/graphics/blackberry/MediaPlayerPrivateMMrenderer.cpp
     platform/graphics/blackberry/ResourceBlackBerry.cpp
-    platform/image-decoders/blackberry/JPEGImageDecoder.cpp
     platform/image-decoders/bmp/BMPImageDecoder.cpp
     platform/image-decoders/gif/GIFImageDecoder.cpp
     platform/image-decoders/ico/ICOImageDecoder.cpp

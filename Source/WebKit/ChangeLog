@@ -1,5 +1,16 @@
 2011-12-14  Jacky Jiang  <zhajiang@rim.com>
 
+        [BlackBerry] Switch to libjpeg for decoding
+        https://bugs.webkit.org/show_bug.cgi?id=74475
+
+        Reviewed by Daniel Bates.
+
+        Append libjpeg instead of libimg.
+
+        * blackberry/CMakeListsBlackBerry.txt:
+
+2011-12-14  Jacky Jiang  <zhajiang@rim.com>
+
         Upstream text codec and web string files of BlackBerry API
         https://bugs.webkit.org/show_bug.cgi?id=73586
 
