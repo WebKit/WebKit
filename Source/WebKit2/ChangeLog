@@ -1,3 +1,11 @@
+2011-12-13  Jon Lee  <jonlee@apple.com>
+
+        Enable notifications on Mac.
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-12-14  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/10573872> NPN_GetValueForURL returns wrong value for NPNURLVProxy

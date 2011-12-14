@@ -1,3 +1,11 @@
+2011-12-13  Jon Lee  <jonlee@apple.com>
+
+        Enable notifications on Mac.
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-12-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebKit code shouldn't be calling applyCommand directly
