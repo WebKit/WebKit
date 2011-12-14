@@ -118,7 +118,7 @@ private:
         Vector<unsigned, 4> identifierHashes;
     };
     Vector<ParentStackFrame> m_parentStack;
-
+    
     // With 100 unique strings in the filter, 2^12 slot table has false positive rate of ~0.2%.
     static const unsigned bloomFilterKeyBits = 12;
     OwnPtr<BloomFilter<bloomFilterKeyBits> > m_ancestorIdentifierFilter;

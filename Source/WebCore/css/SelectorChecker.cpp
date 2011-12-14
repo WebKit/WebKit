@@ -78,17 +78,20 @@ SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
 {
 }
 
+// Salt to separate otherwise identical string hashes so a class-selector like .article won't match <article> elements.
+enum { TagNameSalt = 13, IdAttributeSalt = 17, ClassAttributeSalt = 19 };
+
 static inline void collectElementIdentifierHashes(const Element* element, Vector<unsigned, 4>& identifierHashes)
 {
-    identifierHashes.append(element->localName().impl()->existingHash());
+    identifierHashes.append(element->localName().impl()->existingHash() * TagNameSalt);
     if (element->hasID())
-        identifierHashes.append(element->idForStyleResolution().impl()->existingHash());
+        identifierHashes.append(element->idForStyleResolution().impl()->existingHash() * IdAttributeSalt);
     const StyledElement* styledElement = element->isStyledElement() ? static_cast<const StyledElement*>(element) : 0;
     if (styledElement && styledElement->hasClass()) {
         const SpaceSplitString& classNames = styledElement->classNames();
         size_t count = classNames.size();
         for (size_t i = 0; i < count; ++i)
-            identifierHashes.append(classNames[i].impl()->existingHash());
+            identifierHashes.append(classNames[i].impl()->existingHash() * ClassAttributeSalt);
     }
 }
 
@@ -162,13 +165,23 @@ void SelectorChecker::popParent(Element* parent)
 
 static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* selector, unsigned*& hash, const unsigned* end)
 {
-    if ((selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class) && !selector->value().isEmpty())
-        (*hash++) = selector->value().impl()->existingHash();
+    switch (selector->m_match) {
+    case CSSSelector::Id:
+        if (!selector->value().isEmpty())
+            (*hash++) = selector->value().impl()->existingHash() * IdAttributeSalt;
+        break;
+    case CSSSelector::Class:
+        if (!selector->value().isEmpty())
+            (*hash++) = selector->value().impl()->existingHash() * ClassAttributeSalt;
+        break;
+    default:
+        break;
+    }
     if (hash == end)
         return;
     const AtomicString& localName = selector->tag().localName();
     if (localName != starAtom)
-        (*hash++) = localName.impl()->existingHash();
+        (*hash++) = localName.impl()->existingHash() * TagNameSalt;
 }
 
 void SelectorChecker::collectIdentifierHashes(const CSSSelector* selector, unsigned* identifierHashes, unsigned maximumIdentifierCount)

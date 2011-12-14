@@ -1,3 +1,17 @@
+2011-12-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Add different salt to different types of selectors. So the CSS fast
+        path can tell the different between tags and class attributes with
+        otherwise identical values.
+        https://bugs.webkit.org/show_bug.cgi?id=74284
+
+        Reviewed by Antti Koivisto.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::collectElementIdentifierHashes):
+        (WebCore::collectDescendantSelectorIdentifierHashes):
+        * css/SelectorChecker.h:
+
 2011-12-14  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Mobile theme could use a little refresh
