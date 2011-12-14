@@ -21,18 +21,14 @@
 #include "config.h"
 #include "QtWebPageProxy.h"
 
-#include <qdeclarativeengine.h>
 #include <QtQuick/qquickcanvas.h>
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
-#include "qwebdownloaditem_p.h"
-#include "qwebdownloaditem_p_p.h"
 #include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
 
-#include "DownloadProxy.h"
-#include "QtDownloadManager.h"
 #include "QtPageClient.h"
+#include "QtWebContext.h"
 #include "WebBackForwardList.h"
 #include "WKStringQt.h"
 #include <WebKit2/WKFrame.h>
@@ -42,9 +38,9 @@
 using namespace WebKit;
 using namespace WebCore;
 
-QtWebPageProxy::QtWebPageProxy(QQuickWebView* qmlWebView, QtPageClient *pageClient, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(QQuickWebView* qmlWebView, QtPageClient *pageClient, PassRefPtr<QtWebContext> context, WKPageGroupRef pageGroupRef)
     : m_qmlWebView(qmlWebView)
-    , m_context(contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext())
+    , m_context(context)
     , m_navigatorQtObjectEnabled(false)
 {
     m_webPageProxy = m_context->createWebPage(pageClient, toImpl(pageGroupRef));
@@ -151,29 +147,6 @@ void QtWebPageProxy::setPageZoomFactor(qreal zoomFactor)
 void QtWebPageProxy::setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor)
 {
     WKPageSetPageAndTextZoomFactors(pageRef(), pageZoomFactor, textZoomFactor);
-}
-
-void QtWebPageProxy::handleDownloadRequest(DownloadProxy* download)
-{
-    // This function is responsible for hooking up a DownloadProxy to our API layer
-    // by creating a QWebDownloadItem. It will then wait for the QWebDownloadItem to be
-    // ready (filled with the ResourceResponse information) so we can pass it through to
-    // our WebViews.
-    QWebDownloadItem* downloadItem = new QWebDownloadItem();
-    downloadItem->d->downloadProxy = download;
-
-    connect(downloadItem->d, SIGNAL(receivedResponse(QWebDownloadItem*)), this, SLOT(didReceiveDownloadResponse(QWebDownloadItem*)));
-    m_context->downloadManager()->addDownload(download, downloadItem);
-}
-
-void QtWebPageProxy::didReceiveDownloadResponse(QWebDownloadItem* downloadItem)
-{
-    // Now that our downloadItem has everything we need we can emit downloadRequested.
-    if (!downloadItem)
-        return;
-
-    QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
-    emit m_qmlWebView->experimental()->downloadRequested(downloadItem);
 }
 
 #include "moc_QtWebPageProxy.cpp"

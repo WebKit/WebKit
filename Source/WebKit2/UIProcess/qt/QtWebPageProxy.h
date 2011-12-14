@@ -21,16 +21,14 @@
 #ifndef QtWebPageProxy_h
 #define QtWebPageProxy_h
 
-#include "QtWebContext.h"
 #include "WebPageProxy.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <QMenu>
 #include <QSharedPointer>
 
 class QtPageClient;
-class QQuickWebPage;
 class QQuickWebView;
-class QWebDownloadItem;
 class QWebPreferences;
 
 namespace WebKit {
@@ -44,7 +42,7 @@ class QtWebPageProxy : public QObject {
     Q_OBJECT
 
 public:
-    QtWebPageProxy(QQuickWebView*, QtPageClient*, WKContextRef = 0, WKPageGroupRef = 0);
+    QtWebPageProxy(QQuickWebView*, QtPageClient*, PassRefPtr<QtWebContext>, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     WKPageRef pageRef() const;
@@ -70,14 +68,10 @@ public:
         m_webPageProxy->contextMenuItemSelected(data);
     }
 
-    void handleDownloadRequest(DownloadProxy*);
     void init();
 
     void showContextMenu(QSharedPointer<QMenu>);
     void hideContextMenu();
-
-public Q_SLOTS:
-    void didReceiveDownloadResponse(QWebDownloadItem* downloadItem);
 
 public:
     Q_SIGNAL void zoomableAreaFound(const QRect&);

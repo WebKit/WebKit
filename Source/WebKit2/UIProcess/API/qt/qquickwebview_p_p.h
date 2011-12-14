@@ -36,8 +36,11 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
+class DownloadProxy;
+class QtWebContext;
 class WebPageProxy;
 }
 class QtWebPageProxy;
@@ -84,6 +87,7 @@ public:
     void _q_onOpenPanelFilesSelected();
     void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
+    void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
 
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType);
     void runJavaScriptAlert(const QString&);
@@ -103,6 +107,7 @@ public:
     void processDidCrash();
     void didRelaunchProcess();
     PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    void handleDownloadRequest(DownloadProxy*);
 
 private:
     // This class is responsible for collecting and applying all properties
@@ -133,6 +138,8 @@ private:
         QSize contentsSize;
         QPoint position;
     };
+
+    RefPtr<QtWebContext> context;
 
     QtPageClient pageClient;
     QtWebUndoController undoController;

@@ -92,7 +92,7 @@ void QtPageClient::startDrag(const WebCore::DragData& dragData, PassRefPtr<Share
 
 void QtPageClient::handleDownloadRequest(DownloadProxy* download)
 {
-    m_qtWebPageProxy->handleDownloadRequest(download);
+    QQuickWebViewPrivate::get(m_webView)->handleDownloadRequest(download);
 }
 
 void QtPageClient::setCursor(const WebCore::Cursor& cursor)

@@ -50,6 +50,7 @@ public:
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    virtual void handleDownloadRequest(DownloadProxy*);
 
     virtual void displayView();
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
@@ -89,7 +90,6 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void focusEditableArea(const WebCore::IntRect&, const WebCore::IntRect&);
-    virtual void handleDownloadRequest(DownloadProxy*);
 
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);

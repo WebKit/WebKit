@@ -80,7 +80,7 @@ private:
     QWebDownloadItemPrivate* d;
 
     friend class WebKit::QtDownloadManager;
-    friend class QtWebPageProxy;
+    friend class QQuickWebViewPrivate;
 };
 
 #endif // qwebdownloaditem_p_h

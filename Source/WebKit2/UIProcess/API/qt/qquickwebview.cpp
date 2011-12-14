@@ -21,8 +21,11 @@
 #include "config.h"
 #include "qquickwebview_p.h"
 
+#include "DownloadProxy.h"
 #include "DrawingAreaProxyImpl.h"
 #include "QtDialogRunner.h"
+#include "QtDownloadManager.h"
+#include "QtWebContext.h"
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageProxy.h"
 #include "UtilsQt.h"
@@ -32,11 +35,13 @@
 
 #include "qquickwebpage_p_p.h"
 #include "qquickwebview_p_p.h"
+#include "qwebdownloaditem_p_p.h"
 #include "qwebnavigationhistory_p.h"
 #include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
+#include <QDeclarativeEngine>
 #include <QFileDialog>
 #include <QtQuick/QQuickCanvas>
 #include <WKOpenPanelResultListener.h>
@@ -65,8 +70,9 @@ QQuickWebViewPrivate::~QQuickWebViewPrivate()
 // Note: we delay this initialization to make sure that QQuickWebView has its d-ptr in-place.
 void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
+    context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(q_ptr, &pageClient, contextRef, pageGroupRef));
+    setPageProxy(new QtWebPageProxy(q_ptr, &pageClient, context, pageGroupRef));
     pageViewPrivate->initialize(webPageProxy());
 
     pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
@@ -233,6 +239,20 @@ PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
     return DrawingAreaProxyImpl::create(webPageProxy());
 }
 
+void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
+{
+    Q_Q(QQuickWebView);
+    // This function is responsible for hooking up a DownloadProxy to our API layer
+    // by creating a QWebDownloadItem. It will then wait for the QWebDownloadItem to be
+    // ready (filled with the ResourceResponse information) so we can pass it through to
+    // our WebViews.
+    QWebDownloadItem* downloadItem = new QWebDownloadItem();
+    downloadItem->d->downloadProxy = download;
+
+    q->connect(downloadItem->d, SIGNAL(receivedResponse(QWebDownloadItem*)), q, SLOT(_q_onReceivedResponseFromDownload(QWebDownloadItem*)));
+    context->downloadManager()->addDownload(download, downloadItem);
+}
+
 void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
 {
     DrawingAreaProxy* drawingArea = webPageProxy()->drawingArea();
@@ -261,6 +281,17 @@ void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& tra
 void QQuickWebViewPrivate::_q_onVisibleChanged()
 {
     webPageProxy()->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
+void QQuickWebViewPrivate::_q_onReceivedResponseFromDownload(QWebDownloadItem* downloadItem)
+{
+    // Now that our downloadItem has everything we need we can emit downloadRequested.
+    if (!downloadItem)
+        return;
+
+    Q_Q(QQuickWebView);
+    QDeclarativeEngine::setObjectOwnership(downloadItem, QDeclarativeEngine::JavaScriptOwnership);
+    emit q->experimental()->downloadRequested(downloadItem);
 }
 
 void QQuickWebViewPrivate::updateViewportSize()
