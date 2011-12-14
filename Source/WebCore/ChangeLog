@@ -1,3 +1,14 @@
+2011-12-14  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Remove some duplicate entries in Source/WebCore/PlatformBlackBerry.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=74484
+
+        Reviewed by Daniel Bates.
+
+        Trivial fix, so no new tests.
+
+        * PlatformBlackBerry.cmake:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add back the callOnMainThread overload that takes a WTF::Function

@@ -75,6 +75,7 @@ LIST(APPEND WebCore_SOURCES
     platform/image-decoders/jpeg/JPEGImageDecoder.cpp
     platform/image-decoders/png/PNGImageDecoder.cpp
     platform/image-decoders/webp/WEBPImageDecoder.cpp
+    platform/image-encoders/JPEGImageEncoder.cpp
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
     platform/text/TextBreakIteratorICU.cpp
@@ -171,11 +172,6 @@ LIST(APPEND WebCore_SOURCES
     platform/graphics/blackberry/MMrenderer.cpp
     platform/graphics/blackberry/MediaPlayerPrivateMMrenderer.cpp
     platform/graphics/blackberry/ResourceBlackBerry.cpp
-    platform/image-decoders/bmp/BMPImageDecoder.cpp
-    platform/image-decoders/gif/GIFImageDecoder.cpp
-    platform/image-decoders/ico/ICOImageDecoder.cpp
-    platform/image-decoders/png/PNGImageDecoder.cpp
-    platform/image-encoders/JPEGImageEncoder.cpp
     platform/text/blackberry/StringBlackBerry.cpp
 )
 
