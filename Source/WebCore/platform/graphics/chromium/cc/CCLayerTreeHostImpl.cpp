@@ -30,8 +30,11 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "TraceEvent.h"
+#include "cc/CCDamageTracker.h"
+#include "cc/CCLayerTreeHostCommon.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCPageScaleAnimation.h"
+#include "cc/CCRenderSurfaceDrawQuad.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
@@ -126,14 +129,126 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
     m_client->setNeedsRedrawOnImplThread();
 }
 
+void CCLayerTreeHostImpl::trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList)
+{
+    // For now, we use damage tracking to compute a global scissor. To do this, we must
+    // compute all damage tracking before drawing anything, so that we know the root
+    // damage rect. The root damage rect is then used to scissor each surface.
+
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+        renderSurface->damageTracker()->updateDamageRectForNextFrame(renderSurface->layerList(), renderSurfaceLayer->id(), renderSurfaceLayer->maskLayer());
+    }
+}
+
+static TransformationMatrix computeScreenSpaceTransformForSurface(CCLayerImpl* renderSurfaceLayer)
+{
+    // The layer's screen space transform can be written as:
+    //   layerScreenSpaceTransform = surfaceScreenSpaceTransform * layerOriginTransform
+    // So, to compute the surface screen space, we can do:
+    //   surfaceScreenSpaceTransform = layerScreenSpaceTransform * inverse(layerOriginTransform)
+
+    TransformationMatrix layerOriginTransform = renderSurfaceLayer->drawTransform();
+    layerOriginTransform.translate(-0.5 * renderSurfaceLayer->bounds().width(), -0.5 * renderSurfaceLayer->bounds().height());
+    TransformationMatrix surfaceScreenSpaceTransform = renderSurfaceLayer->screenSpaceTransform();
+    surfaceScreenSpaceTransform.multiply(layerOriginTransform.inverse());
+
+    return surfaceScreenSpaceTransform;
+}
+
+static FloatRect damageInSurfaceSpace(CCLayerImpl* renderSurfaceLayer, const FloatRect& rootDamageRect)
+{
+    FloatRect surfaceDamageRect;
+    // For now, we conservatively use the root damage as the damage for
+    // all surfaces, except perspective transforms.
+    TransformationMatrix screenSpaceTransform = computeScreenSpaceTransformForSurface(renderSurfaceLayer);
+    if (screenSpaceTransform.hasPerspective()) {
+        // Perspective projections do not play nice with mapRect of
+        // inverse transforms. In this uncommon case, its simpler to
+        // just redraw the entire surface.
+        // FIXME: use calculateVisibleRect to handle projections.
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
+        surfaceDamageRect = renderSurface->contentRect();
+    } else {
+        TransformationMatrix inverseScreenSpaceTransform = screenSpaceTransform.inverse();
+        surfaceDamageRect = inverseScreenSpaceTransform.mapRect(rootDamageRect);
+    }
+    return surfaceDamageRect;
+}
+
+void CCLayerTreeHostImpl::calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >& passes)
+{
+    CCLayerList renderSurfaceLayerList;
+    renderSurfaceLayerList.append(rootLayer());
+
+    if (!rootLayer()->renderSurface())
+        rootLayer()->createRenderSurface();
+    rootLayer()->renderSurface()->clearLayerList();
+    rootLayer()->renderSurface()->setContentRect(IntRect(IntPoint(), viewportSize()));
+
+    rootLayer()->setClipRect(IntRect(IntPoint(), viewportSize()));
+
+    {
+        TransformationMatrix identityMatrix;
+        TRACE_EVENT("CCLayerTreeHostImpl::calcDrawEtc", this, 0);
+        CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer(), rootLayer(), identityMatrix, identityMatrix, renderSurfaceLayerList, rootLayer()->renderSurface()->layerList(), &m_layerSorter, layerRendererCapabilities().maxTextureSize);
+    }
+
+    if (layerRendererCapabilities().usingPartialSwap)
+        trackDamageForAllSurfaces(rootLayer(), renderSurfaceLayerList);
+    FloatRect rootDamageRect = rootLayer()->renderSurface()->damageTracker()->currentDamageRect();
+
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
+
+        OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface);
+
+        FloatRect surfaceDamageRect;
+        if (layerRendererCapabilities().usingPartialSwap)
+            surfaceDamageRect = damageInSurfaceSpace(renderSurfaceLayer, rootDamageRect);
+        pass->setSurfaceDamageRect(surfaceDamageRect);
+
+        const CCLayerList& layerList = renderSurface->layerList();
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            CCLayerImpl* layer = layerList[layerIndex].get();
+            if (layer->visibleLayerRect().isEmpty())
+                continue;
+
+            if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget(layer, renderSurfaceLayer->id())) {
+                pass->appendQuadsForRenderSurfaceLayer(layer);
+                continue;
+            }
+
+            pass->appendQuadsForLayer(layer);
+        }
+
+        passes.append(pass.release());
+    }
+}
+
 void CCLayerTreeHostImpl::drawLayers()
 {
     TRACE_EVENT("CCLayerTreeHostImpl::drawLayers", this, 0);
     ASSERT(m_layerRenderer);
-    if (m_layerRenderer->rootLayer())
-        m_layerRenderer->drawLayers();
+
+    if (!rootLayer())
+        return;
+
+    Vector<OwnPtr<CCRenderPass> > passes;
+    calculateRenderPasses(passes);
+
+    m_layerRenderer->beginDrawingFrame();
+    for (size_t i = 0; i < passes.size(); ++i)
+        m_layerRenderer->drawRenderPass(passes[i].get());
+    m_layerRenderer->finishDrawingFrame();
 
     ++m_frameNumber;
+
+    // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
+    rootLayer()->resetAllChangeTrackingForSubtree();
 }
 
 void CCLayerTreeHostImpl::finishAllRendering()

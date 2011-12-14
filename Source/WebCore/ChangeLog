@@ -1,3 +1,150 @@
+2011-12-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Refactor tile drawing to be more data-driven
+        https://bugs.webkit.org/show_bug.cgi?id=73059
+
+        Reviewed by James Robinson.
+
+        Partially tested by compositor layout tests. Debug borders and
+        checkerboarding tested manually.
+
+        This is the first part of a move towards rendering quads on screen
+        from a bag of data rather than in virtual CCLayerImpl::draw functions.
+
+        CCDrawQuad-derived classes store material-specific pieces of data to
+        use when rendering. CCLayerImpl classes now create these CCDrawQuad
+        objects rather than issuing direct GL commands. Where this data is
+        shared between quads that come from the same layer, that data is
+        stored in a CCSharedQuadState object rather than duplicated.
+
+        CCRenderPass is the class that holds the list of quads and the target
+        surface that they draw into. Drawing a frame consists of drawing a
+        series of render passes onto their respective surfaces.
+
+        CCLayerTreeHostImpl constructs these render passes from the output of
+        calculateDrawTransformsAndVisibility by asking each layer to insert
+        quads into a list and hands them off to LayerRendererChromium for
+        rendering.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::clearSurfaceForDebug):
+        (WebCore::LayerRendererChromium::beginDrawingFrame):
+        (WebCore::LayerRendererChromium::drawRenderPass):
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawDebugBorderQuad):
+        (WebCore::LayerRendererChromium::drawRenderSurfaceQuad):
+        (WebCore::LayerRendererChromium::drawSolidColorQuad):
+        (WebCore::tileUniformLocation):
+        (WebCore::findTileProgramUniforms):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::drawCustomLayerQuad):
+        (WebCore::LayerRendererChromium::finishDrawingFrame):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::FragmentTexAlphaBinding::edgeLocation):
+        (WebCore::FragmentTexAlphaBinding::fragmentTexTransformLocation):
+        (WebCore::FragmentTexOpaqueBinding::edgeLocation):
+        (WebCore::FragmentTexOpaqueBinding::fragmentTexTransformLocation):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/cc/CCCustomLayerDrawQuad.cpp: Added.
+        (WebCore::CCCustomLayerDrawQuad::create):
+        (WebCore::CCCustomLayerDrawQuad::CCCustomLayerDrawQuad):
+        * platform/graphics/chromium/cc/CCCustomLayerDrawQuad.h: Added.
+        (WebCore::CCCustomLayerDrawQuad::layer):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.cpp: Added.
+        (WebCore::CCDebugBorderDrawQuad::create):
+        (WebCore::CCDebugBorderDrawQuad::CCDebugBorderDrawQuad):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.h: Added.
+        (WebCore::CCDebugBorderDrawQuad::color):
+        (WebCore::CCDebugBorderDrawQuad::width):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp: Added.
+        (WebCore::CCDrawQuad::CCDrawQuad):
+        (WebCore::CCDrawQuad::toDebugBorderDrawQuad):
+        (WebCore::CCDrawQuad::toRenderSurfaceDrawQuad):
+        (WebCore::CCDrawQuad::toSolidColorDrawQuad):
+        (WebCore::CCDrawQuad::toTileDrawQuad):
+        (WebCore::CCDrawQuad::toCustomLayerDrawQuad):
+        * platform/graphics/chromium/cc/CCDrawQuad.h: Added.
+        (WebCore::CCDrawQuad::quadRect):
+        (WebCore::CCDrawQuad::quadTransform):
+        (WebCore::CCDrawQuad::layerTransform):
+        (WebCore::CCDrawQuad::layerRect):
+        (WebCore::CCDrawQuad::clipRect):
+        (WebCore::CCDrawQuad::opacity):
+        (WebCore::CCDrawQuad::drawsOpaque):
+        (WebCore::CCDrawQuad::needsBlending):
+        (WebCore::CCDrawQuad::isLayerAxisAlignedIntRect):
+        (WebCore::CCDrawQuad::material):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createSharedQuadState):
+        (WebCore::CCLayerImpl::appendQuads):
+        (WebCore::CCLayerImpl::appendDebugBorderQuad):
+        (WebCore::CCLayerImpl::quadTransform):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::trackDamageForAllSurfaces):
+        (WebCore::computeScreenSpaceTransformForSurface):
+        (WebCore::damageInSurfaceSpace):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCRenderPass.cpp: Added.
+        (WebCore::CCRenderPass::create):
+        (WebCore::CCRenderPass::CCRenderPass):
+        (WebCore::CCRenderPass::appendQuadsForLayer):
+        (WebCore::CCRenderPass::appendQuadsForRenderSurfaceLayer):
+        * platform/graphics/chromium/cc/CCRenderPass.h: Added.
+        (WebCore::CCRenderPass::quadList):
+        (WebCore::CCRenderPass::targetSurface):
+        (WebCore::CCRenderPass::setSurfaceDamageRect):
+        (WebCore::CCRenderPass::surfaceDamageRect):
+        * platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.cpp: Added.
+        (WebCore::CCRenderSurfaceDrawQuad::create):
+        (WebCore::CCRenderSurfaceDrawQuad::CCRenderSurfaceDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurfaceDrawQuad.h: Added.
+        (WebCore::CCRenderSurfaceDrawQuad::layer):
+        (WebCore::CCRenderSurfaceDrawQuad::surfaceDamageRect):
+        * platform/graphics/chromium/cc/CCSharedQuadState.cpp: Added.
+        (WebCore::CCSharedQuadState::create):
+        (WebCore::CCSharedQuadState::CCSharedQuadState):
+        (WebCore::CCSharedQuadState::isLayerAxisAlignedIntRect):
+        * platform/graphics/chromium/cc/CCSharedQuadState.h: Added.
+        (WebCore::CCSharedQuadState::quadTransform):
+        (WebCore::CCSharedQuadState::layerTransform):
+        (WebCore::CCSharedQuadState::layerRect):
+        (WebCore::CCSharedQuadState::clipRect):
+        (WebCore::CCSharedQuadState::opacity):
+        (WebCore::CCSharedQuadState::isOpaque):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.cpp: Added.
+        (WebCore::CCSolidColorDrawQuad::create):
+        (WebCore::CCSolidColorDrawQuad::CCSolidColorDrawQuad):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.h: Added.
+        (WebCore::CCSolidColorDrawQuad::color):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.cpp: Added.
+        (WebCore::CCTileDrawQuad::create):
+        (WebCore::CCTileDrawQuad::CCTileDrawQuad):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.h: Added.
+        (WebCore::CCTileDrawQuad::textureId):
+        (WebCore::CCTileDrawQuad::textureOffset):
+        (WebCore::CCTileDrawQuad::textureSize):
+        (WebCore::CCTileDrawQuad::textureFilter):
+        (WebCore::CCTileDrawQuad::swizzleContents):
+        (WebCore::CCTileDrawQuad::leftEdgeAA):
+        (WebCore::CCTileDrawQuad::topEdgeAA):
+        (WebCore::CCTileDrawQuad::rightEdgeAA):
+        (WebCore::CCTileDrawQuad::bottomEdgeAA):
+        (WebCore::CCTileDrawQuad::isAntialiased):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::CCTiledLayerImpl):
+        (WebCore::CCTiledLayerImpl::quadTransform):
+        (WebCore::CCTiledLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (WebCore::CCTiledLayerImpl::setContentsSwizzled):
+        (WebCore::CCTiledLayerImpl::contentsSwizzled):
+
 2011-12-14  Ojan Vafai  <ojan@chromium.org>
 
         Implement flexDirection and flexWrap and make flexFlow a proper shorthand.

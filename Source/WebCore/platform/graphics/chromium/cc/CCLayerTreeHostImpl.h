@@ -26,8 +26,10 @@
 #define CCLayerTreeHostImpl_h
 
 #include "cc/CCInputHandler.h"
+#include "cc/CCLayerSorter.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostCommon.h"
+#include "cc/CCRenderPass.h"
 #include <wtf/RefPtr.h>
 
 #if USE(SKIA)
@@ -124,10 +126,14 @@ protected:
     int m_frameNumber;
 
 private:
+    typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
+
     void setPageScaleDelta(float);
     void applyPageScaleDeltaToScrollLayer();
     void adjustScrollsForPageScaleChange(float);
     void updateMaxScrollPosition();
+    void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
+    void calculateRenderPasses(Vector<OwnPtr<CCRenderPass> >&);
 
     OwnPtr<LayerRendererChromium> m_layerRenderer;
     RefPtr<CCLayerImpl> m_rootLayerImpl;
@@ -145,6 +151,8 @@ private:
     bool m_pinchGestureActive;
 
     OwnPtr<CCPageScaleAnimation> m_pageScaleAnimation;
+
+    CCLayerSorter m_layerSorter;
 };
 
 };

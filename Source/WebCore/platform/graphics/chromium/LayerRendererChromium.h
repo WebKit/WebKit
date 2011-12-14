@@ -42,7 +42,6 @@
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
-#include "cc/CCLayerSorter.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCPluginLayerImpl.h"
 #include "cc/CCVideoLayerImpl.h"
@@ -66,6 +65,7 @@ namespace WebCore {
 class CCHeadsUpDisplay;
 class CCLayerImpl;
 class CCLayerTreeHostImpl;
+class CCRenderPass;
 class GeometryBinding;
 class GraphicsContext3D;
 class TrackingTextureAllocator;
@@ -97,7 +97,9 @@ public:
 
     void viewportChanged();
 
-    void drawLayers();
+    void beginDrawingFrame();
+    void drawRenderPass(const CCRenderPass*);
+    void finishDrawingFrame();
 
     // waits for rendering to finish
     void finish();
@@ -151,8 +153,6 @@ public:
 
     GC3Denum bestTextureFormat();
 
-    typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
-
     static void toGLMatrix(float*, const TransformationMatrix&);
     void drawTexturedQuad(const TransformationMatrix& layerMatrix,
                           float width, float height, float opacity, const FloatQuad&,
@@ -162,21 +162,22 @@ private:
     LayerRendererChromium(CCLayerTreeHostImpl*, PassRefPtr<GraphicsContext3D>);
     bool initialize();
 
-    void drawLayersInternal();
-    void drawLayersOntoRenderSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
-    void drawLayer(CCLayerImpl*, CCRenderSurface*, const FloatRect&);
-
-    void trackDamageForAllSurfaces(CCLayerImpl* rootDrawLayer, const CCLayerList& renderSurfaceLayerList);
+    void drawQuad(const CCDrawQuad*, const FloatRect& surfaceDamageRect);
+    void drawDebugBorderQuad(const CCDebugBorderDrawQuad*);
+    void drawRenderSurfaceQuad(const CCRenderSurfaceDrawQuad*);
+    void drawSolidColorQuad(const CCSolidColorDrawQuad*);
+    void drawTileQuad(const CCTileDrawQuad*);
+    void drawCustomLayerQuad(const CCCustomLayerDrawQuad*);
 
     ManagedTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
 
     void setDrawViewportRect(const IntRect&, bool flipY);
 
-    void releaseRenderSurfaceTextures();
-
     bool useRenderSurface(CCRenderSurface*);
-    void clearSurfaceForDebug(CCLayerImpl* renderSurfaceLayer, CCLayerImpl* rootDrawLayer, const FloatRect& surfaceDamageRect);
+    void clearSurfaceForDebug(CCRenderSurface*, CCRenderSurface* rootRenderSurface, const FloatRect& surfaceDamageRect);
+
+    void releaseRenderSurfaceTextures();
 
     bool makeContextCurrent();
 
@@ -237,8 +238,6 @@ private:
     RefPtr<GraphicsContext3D> m_context;
 
     CCRenderSurface* m_defaultRenderSurface;
-
-    CCLayerSorter m_layerSorter;
 
     FloatQuad m_sharedGeometryQuad;
 

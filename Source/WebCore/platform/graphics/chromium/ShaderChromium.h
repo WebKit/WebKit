@@ -151,6 +151,8 @@ public:
 
     void init(GraphicsContext3D*, unsigned program);
     int alphaLocation() const { return m_alphaLocation; }
+    int edgeLocation() const { return -1; }
+    int fragmentTexTransformLocation() const { return -1; }
     int samplerLocation() const { return m_samplerLocation; }
 
 private:
@@ -164,6 +166,8 @@ public:
 
     void init(GraphicsContext3D*, unsigned program);
     int alphaLocation() const { return -1; }
+    int edgeLocation() const { return -1; }
+    int fragmentTexTransformLocation() const { return -1; }
     int samplerLocation() const { return m_samplerLocation; }
 
 private:

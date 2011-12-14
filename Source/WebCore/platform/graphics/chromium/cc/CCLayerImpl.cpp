@@ -32,6 +32,8 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCCustomLayerDrawQuad.h"
+#include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerSorter.h"
 #include <wtf/text/WTFString.h>
 
@@ -117,6 +119,31 @@ void CCLayerImpl::draw(LayerRendererChromium*)
     ASSERT_NOT_REACHED();
 }
 
+PassOwnPtr<CCSharedQuadState> CCLayerImpl::createSharedQuadState() const
+{
+    IntRect layerClipRect;
+    if (usesLayerClipping())
+        layerClipRect = clipRect();
+    return CCSharedQuadState::create(quadTransform(), drawTransform(), visibleLayerRect(), layerClipRect, drawOpacity(), opaque());
+}
+
+void CCLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
+{
+    IntRect layerRect(IntPoint(), bounds());
+    quadList.append(CCCustomLayerDrawQuad::create(sharedQuadState, layerRect, this));
+}
+
+void CCLayerImpl::appendDebugBorderQuad(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState) const
+{
+    if (!debugBorderColor().alpha())
+        return;
+    if (debugBorderWidth() <= 0)
+        return;
+
+    IntRect layerRect(IntPoint(), bounds());
+    quadList.append(CCDebugBorderDrawQuad::create(sharedQuadState, layerRect, debugBorderColor(), debugBorderWidth()));
+}
+
 void CCLayerImpl::bindContentsTexture(LayerRendererChromium*)
 {
     ASSERT_NOT_REACHED();
@@ -147,28 +174,9 @@ const IntRect CCLayerImpl::getDrawRect() const
     return mappedRect;
 }
 
-void CCLayerImpl::drawDebugBorder(LayerRendererChromium* layerRenderer)
+TransformationMatrix CCLayerImpl::quadTransform() const
 {
-    static float glMatrix[16];
-    if (!debugBorderColor().alpha())
-        return;
-
-    GraphicsContext3D* context = layerRenderer->context();
-    const LayerChromium::BorderProgram* program = layerRenderer->borderProgram();
-    ASSERT(program && program->initialized());
-    GLC(context, context->useProgram(program->program()));
-
-    TransformationMatrix renderMatrix = drawTransform();
-    renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
-    LayerRendererChromium::toGLMatrix(&glMatrix[0], layerRenderer->projectionMatrix() * renderMatrix);
-    GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
-
-    GLC(context, context->uniform4f(program->fragmentShader().colorLocation(), debugBorderColor().red() / 255.0, debugBorderColor().green() / 255.0, debugBorderColor().blue() / 255.0, 1));
-
-    GLC(context, context->lineWidth(debugBorderWidth()));
-
-    // The indices for the line are stored in the same array as the triangle indices.
-    GLC(context, context->drawElements(GraphicsContext3D::LINE_LOOP, 4, GraphicsContext3D::UNSIGNED_SHORT, 6 * sizeof(unsigned short)));
+    return drawTransform();
 }
 
 void CCLayerImpl::writeIndent(TextStream& ts, int indent)

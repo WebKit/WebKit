@@ -30,7 +30,8 @@
 #include "cc/CCTiledLayerImpl.h"
 
 #include "LayerRendererChromium.h"
-#include "cc/CCLayerQuad.h"
+#include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCTileDrawQuad.h"
 #include <wtf/text/WTFString.h>
 
 using namespace std;
@@ -53,6 +54,7 @@ private:
 CCTiledLayerImpl::CCTiledLayerImpl(int id)
     : CCLayerImpl(id)
     , m_skipsDraw(true)
+    , m_contentsSwizzled(false)
 {
 }
 
@@ -97,7 +99,7 @@ DrawableTile* CCTiledLayerImpl::createTile(int i, int j)
     return tile.get();
 }
 
-TransformationMatrix CCTiledLayerImpl::tilingTransform() const
+TransformationMatrix CCTiledLayerImpl::quadTransform() const
 {
     TransformationMatrix transform = drawTransform();
 
@@ -112,63 +114,50 @@ TransformationMatrix CCTiledLayerImpl::tilingTransform() const
     return transform;
 }
 
-void CCTiledLayerImpl::draw(LayerRendererChromium* layerRenderer)
+void CCTiledLayerImpl::appendQuads(CCQuadList& quadList, const CCSharedQuadState* sharedQuadState)
 {
-    const IntRect& layerRect = visibleLayerRect();
+    const IntRect& contentRect = visibleLayerRect();
 
-    if (m_skipsDraw || !m_tiler || m_tiler->isEmpty() || layerRect.isEmpty() || !layerRenderer)
+    if (m_skipsDraw || !m_tiler || m_tiler->isEmpty() || contentRect.isEmpty())
         return;
 
-    TransformationMatrix layerTransform = tilingTransform();
-    TransformationMatrix deviceMatrix = TransformationMatrix(layerRenderer->windowMatrix() * layerRenderer->projectionMatrix() * layerTransform).to2dTransform();
+    int left, top, right, bottom;
+    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+    IntRect layerRect = m_tiler->contentRectToLayerRect(contentRect);
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            DrawableTile* tile = tileAt(i, j);
+            IntRect tileRect = m_tiler->tileBounds(i, j);
+            IntRect displayRect = tileRect;
+            tileRect.intersect(layerRect);
 
-    // Don't draw any tiles when device matrix is not invertible.
-    if (!deviceMatrix.isInvertible())
-        return;
+            // Skip empty tiles.
+            if (tileRect.isEmpty())
+                continue;
 
-    FloatQuad quad = deviceMatrix.mapQuad(FloatQuad(layerRect));
-    CCLayerQuad deviceRect = CCLayerQuad(FloatQuad(quad.boundingBox()));
-    CCLayerQuad layerQuad = CCLayerQuad(quad);
-
-    // Use anti-aliasing programs only when necessary.
-    bool useAA = (m_tiler->hasBorderTexels() && (!quad.isRectilinear() || !quad.boundingBox().isExpressibleAsIntRect()));
-
-    if (useAA) {
-        deviceRect.inflateAntiAliasingDistance();
-        layerQuad.inflateAntiAliasingDistance();
-    }
-
-    switch (m_sampledTexelFormat) {
-    case LayerTextureUpdater::SampledTexelFormatRGBA:
-        if (useAA) {
-            const ProgramAA* program = layerRenderer->tilerProgramAA();
-            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
-        } else {
-            if (isNonCompositedContent()) {
-                const ProgramOpaque* program = layerRenderer->tilerProgramOpaque();
-                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
-            } else {
-                const Program* program = layerRenderer->tilerProgram();
-                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
+            if (!tile || !tile->textureId()) {
+                quadList.append(CCSolidColorDrawQuad::create(sharedQuadState, tileRect, backgroundColor()));
+                continue;
             }
+
+            // Keep track of how the top left has moved, so the texture can be
+            // offset the same amount.
+            IntSize displayOffset = tileRect.minXMinYCorner() - displayRect.minXMinYCorner();
+            IntPoint textureOffset = m_tiler->textureOffset(i, j) + displayOffset;
+            float tileWidth = static_cast<float>(m_tiler->tileSize().width());
+            float tileHeight = static_cast<float>(m_tiler->tileSize().height());
+            IntSize textureSize(tileWidth, tileHeight);
+
+            bool useAA = m_tiler->hasBorderTexels() && !sharedQuadState->isLayerAxisAlignedIntRect();
+
+            bool leftEdgeAA = !i && useAA;
+            bool topEdgeAA = !j && useAA;
+            bool rightEdgeAA = i == m_tiler->numTilesX() - 1 && useAA;
+            bool bottomEdgeAA = j == m_tiler->numTilesY() - 1 && useAA;
+
+            const GC3Dint textureFilter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
+            quadList.append(CCTileDrawQuad::create(sharedQuadState, tileRect, tile->textureId(), textureOffset, textureSize, textureFilter, contentsSwizzled(), leftEdgeAA, topEdgeAA, rightEdgeAA, bottomEdgeAA));
         }
-        break;
-    case LayerTextureUpdater::SampledTexelFormatBGRA:
-        if (useAA) {
-            const ProgramSwizzleAA* program = layerRenderer->tilerProgramSwizzleAA();
-            drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, program->fragmentShader().fragmentTexTransformLocation(), program->fragmentShader().edgeLocation());
-        } else {
-            if (isNonCompositedContent()) {
-                const ProgramSwizzleOpaque* program = layerRenderer->tilerProgramSwizzleOpaque();
-                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
-            } else {
-                const ProgramSwizzle* program = layerRenderer->tilerProgramSwizzle();
-                drawTiles(layerRenderer, layerRect, layerTransform, deviceMatrix, deviceRect, layerQuad, drawOpacity(), program, -1, -1);
-            }
-        }
-        break;
-    default:
-        ASSERT_NOT_REACHED();
     }
 }
 
@@ -187,183 +176,6 @@ void CCTiledLayerImpl::syncTextureId(int i, int j, Platform3DObject textureId)
     if (!tile)
         tile = createTile(i, j);
     tile->setTextureId(textureId);
-}
-
-template <class T>
-void CCTiledLayerImpl::drawTiles(LayerRendererChromium* layerRenderer, const IntRect& contentRect, const TransformationMatrix& globalTransform, const TransformationMatrix& deviceTransform, const CCLayerQuad& deviceRect, const CCLayerQuad& contentQuad, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation)
-{
-    GraphicsContext3D* context = layerRenderer->context();
-    GLC(context, context->useProgram(program->program()));
-    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-
-    TransformationMatrix quadTransform = deviceTransform.inverse();
-
-    if (edgeLocation != -1) {
-        float edge[24];
-        contentQuad.toFloatArray(edge);
-        deviceRect.toFloatArray(&edge[12]);
-        GLC(context, context->uniform3fv(edgeLocation, edge, 8));
-    }
-
-    CCLayerQuad::Edge prevEdgeY = contentQuad.top();
-
-    int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
-    IntRect layerRect = m_tiler->contentRectToLayerRect(contentRect);
-    float sign = FloatQuad(contentRect).isCounterclockwise() ? -1 : 1;
-    const GC3Dint filter = m_tiler->hasBorderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
-    for (int j = top; j <= bottom; ++j) {
-        CCLayerQuad::Edge prevEdgeX = contentQuad.left();
-
-        CCLayerQuad::Edge edgeY = contentQuad.bottom();
-        if (j < (m_tiler->numTilesY() - 1)) {
-            IntRect tileRect = unionRect(m_tiler->tileBounds(0, j), m_tiler->tileBounds(m_tiler->numTilesX() - 1, j));
-            tileRect.intersect(layerRect);
-
-            // Skip empty rows.
-            if (tileRect.isEmpty())
-                continue;
-
-            tileRect = m_tiler->layerRectToContentRect(tileRect);
-
-            FloatPoint p1(tileRect.maxX(), tileRect.maxY());
-            FloatPoint p2(tileRect.x(), tileRect.maxY());
-
-            // Map points to device space.
-            p1 = deviceTransform.mapPoint(p1);
-            p2 = deviceTransform.mapPoint(p2);
-
-            // Compute horizontal edge.
-            edgeY = CCLayerQuad::Edge(p1, p2);
-            edgeY.scale(sign);
-        }
-
-        for (int i = left; i <= right; ++i) {
-            DrawableTile* tile = tileAt(i, j);
-
-            // Don't use tileContentRect here, as that contains the full
-            // rect with border texels which shouldn't be drawn.
-            IntRect tileRect = m_tiler->tileBounds(i, j);
-            IntRect displayRect = tileRect;
-            tileRect.intersect(layerRect);
-
-            // Keep track of how the top left has moved, so the texture can be
-            // offset the same amount.
-            IntSize displayOffset = tileRect.minXMinYCorner() - displayRect.minXMinYCorner();
-
-            // Skip empty tiles.
-            if (tileRect.isEmpty())
-                continue;
-
-            tileRect = m_tiler->layerRectToContentRect(tileRect);
-
-            FloatRect clampRect(tileRect);
-            // Clamp texture coordinates to avoid sampling outside the layer
-            // by deflating the tile region half a texel or half a texel
-            // minus epsilon for one pixel layers. The resulting clamp region
-            // is mapped to the unit square by the vertex shader and mapped
-            // back to normalized texture coordinates by the fragment shader
-            // after being clamped to 0-1 range.
-            const float epsilon = 1 / 1024.0f;
-            float clampX = min(0.5, clampRect.width() / 2.0 - epsilon);
-            float clampY = min(0.5, clampRect.height() / 2.0 - epsilon);
-            clampRect.inflateX(-clampX);
-            clampRect.inflateY(-clampY);
-            FloatSize clampOffset = clampRect.minXMinYCorner() - FloatRect(tileRect).minXMinYCorner();
-
-            FloatPoint texOffset = m_tiler->textureOffset(i, j) + clampOffset + FloatSize(displayOffset);
-            float tileWidth = static_cast<float>(m_tiler->tileSize().width());
-            float tileHeight = static_cast<float>(m_tiler->tileSize().height());
-
-            // Map clamping rectangle to unit square.
-            float vertexTexTranslateX = -clampRect.x() / clampRect.width();
-            float vertexTexTranslateY = -clampRect.y() / clampRect.height();
-            float vertexTexScaleX = tileRect.width() / clampRect.width();
-            float vertexTexScaleY = tileRect.height() / clampRect.height();
-
-            // Map to normalized texture coordinates.
-            float fragmentTexTranslateX = texOffset.x() / tileWidth;
-            float fragmentTexTranslateY = texOffset.y() / tileHeight;
-            float fragmentTexScaleX = clampRect.width() / tileWidth;
-            float fragmentTexScaleY = clampRect.height() / tileHeight;
-
-            CCLayerQuad::Edge edgeX = contentQuad.right();
-            if (i < (m_tiler->numTilesX() - 1)) {
-                FloatPoint p1(tileRect.maxX(), tileRect.y());
-                FloatPoint p2(tileRect.maxX(), tileRect.maxY());
-
-                // Map points to device space.
-                p1 = deviceTransform.mapPoint(p1);
-                p2 = deviceTransform.mapPoint(p2);
-
-                // Compute vertical edge.
-                edgeX = CCLayerQuad::Edge(p1, p2);
-                edgeX.scale(sign);
-            }
-
-            // Create device space quad.
-            CCLayerQuad deviceQuad(prevEdgeX, prevEdgeY, edgeX, edgeY);
-
-            // Map quad to layer space.
-            FloatQuad quad = quadTransform.mapQuad(deviceQuad.floatQuad());
-
-            // Normalize to tileRect.
-            quad.scale(1.0f / tileRect.width(), 1.0f / tileRect.height());
-
-            if (fragmentTexTransformLocation == -1) {
-                // Move fragment shader transform to vertex shader. We can do
-                // this while still producing correct results as
-                // fragmentTexTransformLocation should always be non-negative
-                // when tiles are transformed in a way that could result in
-                // sampling outside the layer.
-                vertexTexScaleX *= fragmentTexScaleX;
-                vertexTexScaleY *= fragmentTexScaleY;
-                vertexTexTranslateX *= fragmentTexScaleX;
-                vertexTexTranslateY *= fragmentTexScaleY;
-                vertexTexTranslateX += fragmentTexTranslateX;
-                vertexTexTranslateY += fragmentTexTranslateY;
-            } else
-                GLC(context, context->uniform4f(fragmentTexTransformLocation, fragmentTexTranslateX, fragmentTexTranslateY, fragmentTexScaleX, fragmentTexScaleY));
-
-            GLC(context, context->uniform4f(program->vertexShader().vertexTexTransformLocation(), vertexTexTranslateX, vertexTexTranslateY, vertexTexScaleX, vertexTexScaleY));
-
-            if (tile && tile->textureId()) {
-                context->bindTexture(GraphicsContext3D::TEXTURE_2D, tile->textureId());
-                GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
-                GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
-
-                layerRenderer->drawTexturedQuad(globalTransform,
-                                                tileRect.width(), tileRect.height(), opacity, quad,
-                                                program->vertexShader().matrixLocation(),
-                                                program->fragmentShader().alphaLocation(),
-                                                program->vertexShader().pointLocation());
-            } else {
-                TransformationMatrix tileTransform = globalTransform;
-                tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
-
-                const LayerChromium::BorderProgram* solidColorProgram = layerRenderer->borderProgram();
-                GLC(context, context->useProgram(solidColorProgram->program()));
-
-                GLC(context, context->uniform4f(solidColorProgram->fragmentShader().colorLocation(), backgroundColor().red(), backgroundColor().green(), backgroundColor().blue(), backgroundColor().alpha()));
-
-                layerRenderer->drawTexturedQuad(tileTransform,
-                                                tileRect.width(), tileRect.height(), opacity, quad,
-                                                solidColorProgram->vertexShader().matrixLocation(),
-                                                -1, -1);
-
-                GLC(context, context->useProgram(program->program()));
-            }
-
-            prevEdgeX = edgeX;
-            // Reverse direction.
-            prevEdgeX.scale(-1);
-        }
-
-        prevEdgeY = edgeY;
-        // Reverse direction.
-        prevEdgeY.scale(-1);
-    }
 }
 
 }

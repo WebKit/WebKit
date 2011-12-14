@@ -248,7 +248,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     }
 
     tiledLayer->setSkipsDraw(m_skipsDraw);
-    tiledLayer->setSampledTexelFormat(m_sampledTexelFormat);
+    tiledLayer->setContentsSwizzled(m_sampledTexelFormat != LayerTextureUpdater::SampledTexelFormatRGBA);
     tiledLayer->setTilingData(*m_tiler);
 
     for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {

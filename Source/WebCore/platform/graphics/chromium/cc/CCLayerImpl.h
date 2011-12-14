@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
+#include "cc/CCRenderPass.h"
 #include "cc/CCRenderSurface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -69,6 +70,10 @@ public:
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }
 #endif
+
+    PassOwnPtr<CCSharedQuadState> createSharedQuadState() const;
+    virtual void appendQuads(CCQuadList&, const CCSharedQuadState*);
+    void appendDebugBorderQuad(CCQuadList&, const CCSharedQuadState*) const;
 
     virtual void draw(LayerRendererChromium*);
     void unreserveContentsTexture();
@@ -130,8 +135,6 @@ public:
     Color debugBorderColor() const { return m_debugBorderColor; }
     void setDebugBorderWidth(float);
     float debugBorderWidth() const { return m_debugBorderWidth; }
-
-    void drawDebugBorder(LayerRendererChromium*);
 
     CCRenderSurface* renderSurface() const { return m_renderSurface.get(); }
     void createRenderSurface();
@@ -199,6 +202,9 @@ protected:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
     static void writeIndent(TextStream&, int indent);
+
+    // Transformation used to transform quads provided in appendQuads.
+    virtual TransformationMatrix quadTransform() const;
 
 private:
     void setParent(CCLayerImpl* parent) { m_parent = parent; }
