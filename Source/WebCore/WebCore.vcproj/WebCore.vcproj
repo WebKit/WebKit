@@ -42481,6 +42481,7 @@
 				<File
 					RelativePath="..\rendering\style\FilterOperations.h"
 					>
+				</File>
 				<File
 					RelativePath="..\rendering\style\CustomFilterOperation.h"
 					>
