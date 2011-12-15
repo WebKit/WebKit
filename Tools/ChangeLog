@@ -1,3 +1,15 @@
+2011-12-15  Alexander Færøy  <ahf@0x90.dk>
+
+        [Qt] QtWebKit fails to build on Mac OS X after r102776
+        https://bugs.webkit.org/show_bug.cgi?id=74593
+
+        Reviewed by Simon Hausmann.
+
+        CONFIG =+ link_pkgconfig is needed such that the correct parameters
+        are passed to the compiler.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2011-12-14  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove redundant third_party entries from chromium DEPS

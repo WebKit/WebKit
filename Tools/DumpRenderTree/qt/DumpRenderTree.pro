@@ -28,6 +28,7 @@ haveQt(5): QT += widgets printsupport
 
 contains(config_test_fontconfig, yes) {
     PKGCONFIG += fontconfig
+    CONFIG += link_pkgconfig
 }
 
 HEADERS += \
