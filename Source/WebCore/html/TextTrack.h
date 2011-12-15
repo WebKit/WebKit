@@ -80,8 +80,11 @@ public:
     void setLanguage(const String& language) { m_language = language; }
 
     enum Mode { DISABLED = 0, HIDDEN = 1, SHOWING = 2 };
-    Mode mode() const { return m_mode; }
+    Mode mode() const;
     void setMode(unsigned short, ExceptionCode&);
+
+    bool showingByDefault() const { return m_showingByDefault; }
+    void setShowingByDefault(bool showing) { m_showingByDefault = showing; }
 
     enum ReadinessState { NotLoaded = 0, Loading = 1, Loaded = 2, FailedToLoad = 3 };
     ReadinessState readinessState() const { return m_readinessState; }
@@ -116,6 +119,7 @@ private:
     TextTrackClient* m_client;
     TextTrackType m_trackType;
     ReadinessState m_readinessState;
+    bool m_showingByDefault;
 };
 
 } // namespace WebCore

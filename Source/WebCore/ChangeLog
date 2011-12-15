@@ -1,3 +1,76 @@
+2011-12-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Text tracks should be treated differently according to their kind
+        https://bugs.webkit.org/show_bug.cgi?id=72547
+
+        Reviewed by Sam Weinig.
+
+        Tests: media/track/track-default-attribute.html
+               media/track/track-mode-not-changed-by-new-track.html
+               media/track/track-mode-triggers-loading.html
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::HTMLAudioElement): Add "createdByParser" parameter.
+        (WebCore::HTMLAudioElement::create): Ditto.
+        (WebCore::HTMLAudioElement::createForJSConstructor): Deal with constructor change.
+        * html/HTMLAudioElement.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Add "createdByParser" parameter. Initialize m_parsingInProgress.
+        (WebCore::HTMLMediaElement::finishParsingChildren): Clear m_parsingInProgress. Schedule track
+            loading if necessary.
+        (WebCore::HTMLMediaElement::loadTimerFired): Call configureTextTracks not call scheduleLoad, 
+            it just schedules the load timer again.
+        (WebCore::HTMLMediaElement::prepareForLoad): Add all non-disabled track elements to a vector
+            so we can prevent the media element's readyState from reaching HAVE_METADATA until the
+            tracks are ready.
+        (WebCore::HTMLMediaElement::textTracksAreReady): New. Return false unless all tracks that were
+            not disabled when loading started have loaded or failed.
+        (WebCore::HTMLMediaElement::textTrackReadyStateChanged): Call setReadyState when a track is
+            stops loading.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): Trigger <track> loading when the mode
+            changes to hidden or showing for the first time.
+        (WebCore::HTMLMediaElement::setReadyState): Do not advance to HAVE_METADATA or higher while
+            track elements are loading.
+        (WebCore::HTMLMediaElement::addTrack): Removed.
+        (WebCore::HTMLMediaElement::showingTrackWithSameKind): New.
+        (WebCore::HTMLMediaElement::trackWasAdded):
+        (WebCore::HTMLMediaElement::trackWillBeRemoved): Flag a track as unconfigured so it will be
+            reconfigured if it is added to another element.
+        (WebCore::HTMLMediaElement::userIsInterestedInThisLanguage): New.
+        (WebCore::HTMLMediaElement::userIsInterestedInThisTrack): New. Consider user preferences.
+        (WebCore::HTMLMediaElement::configureTextTrack): New. Configure a track as per the user's preferences.
+        (WebCore::HTMLMediaElement::configureTextTracks): New. Configure all track elements.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.h:
+
+        * html/HTMLTagNames.in: Add constructorNeedsCreatedByParser to audio and video.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::HTMLTrackElement): Initialize m_hasBeenConfigured.
+        * html/HTMLTrackElement.h:
+        (WebCore::HTMLTrackElement::hasBeenConfigured):
+        (WebCore::HTMLTrackElement::setHasBeenConfigured):
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::HTMLVideoElement): Add "createdByParser" parameter.
+        (WebCore::HTMLVideoElement::create): Ditto.
+        * html/HTMLVideoElement.h:
+
+        * html/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack): Initialize m_mode to DISABLED, not HIDDEN. Initialize m_showingByDefault.
+        (WebCore::TextTrack::setMode): Clear the "showing by default" flag when a track's mode is
+            explicitly set to SHOWING.
+        (WebCore::TextTrack::mode): Return SHOWING whenever the "showing by default" flag is set.
+        * html/TextTrack.h:
+        (WebCore::TextTrack::showingByDefault):
+        (WebCore::TextTrack::setShowingByDefault):
+
+        * html/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::isActive): Return false if a cue has no track, or if its track is disabled.
+        (WebCore::TextTrackCue::setIsActive): Don't enable a cue if it has no track, or if its track
+            is disabled.
+
 2011-12-15  Brady Eidson  <beidson@apple.com>
 
         Unreviewed, rolling out r102829.

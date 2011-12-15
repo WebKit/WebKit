@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var timer = null;
+
+            function trackLoaded()
+            {
+                consoleWrite("EVENT(load)");
+                testExpected("event.target.readyState", HTMLTrackElement.LOADED);
+                testExpected("event.target.id", "default");
+                consoleWrite("");
+
+                // End the test after a brief pause so we allow other tracks to load if they will.
+                if (timer)
+                    clearTimeout(timer);
+                timer = setTimeout(function() { endTest() }, 200);
+            }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests that a track with the 'default' attribute loads automatically.</p>
+        <video>
+            <track kind="captions" src="captions-webvtt/tc005-default-styles.vtt" onload="trackLoaded()">
+            <track kind="captions" src="captions-webvtt/tc005-metadata-area.vtt" onload="trackLoaded()">
+            <track default kind="captions" src="captions-webvtt/tc004-webvtt-file.vtt" onload="trackLoaded()" id="default" >
+        </video>
+    </body>
+</html>

@@ -77,10 +77,11 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_mediaElement(0)
     , m_label(label)
     , m_language(language)
-    , m_mode(TextTrack::HIDDEN)
+    , m_mode(TextTrack::DISABLED)
     , m_client(client)
     , m_trackType(type)
     , m_readinessState(NotLoaded)
+    , m_showingByDefault(false)
 {
     setKind(kind);
 }
@@ -125,12 +126,31 @@ void TextTrack::setMode(unsigned short mode, ExceptionCode& ec)
 {
     // 4.8.10.12.5 On setting the mode, if the new value is not either 0, 1, or 2,
     // the user agent must throw an INVALID_ACCESS_ERR exception.
-    if (mode == TextTrack::DISABLED || mode == TextTrack::HIDDEN || mode == TextTrack::SHOWING) {
-        m_mode = static_cast<Mode>(mode);
-        if (m_client)
-            m_client->textTrackModeChanged(this);
-    } else
+    if (mode > TextTrack::SHOWING) {
         ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (m_mode == static_cast<Mode>(mode))
+        return;
+
+    // If the new value is 2
+    //  ... Note: If the mode had been showing by default, this will change it to showing, 
+    // even though the value of mode would appear not to change.
+    m_mode = static_cast<Mode>(mode);
+    if (m_mode == TextTrack::SHOWING)
+        setShowingByDefault(false);
+
+    if (m_client)
+        m_client->textTrackModeChanged(this);
+}
+
+TextTrack::Mode TextTrack::mode() const
+{
+    // The text track "showing" and "showing by default" modes return SHOWING (numeric value 2)
+    if (m_showingByDefault)
+        return SHOWING;
+    return m_mode;
 }
 
 TextTrackCueList* TextTrack::cues()

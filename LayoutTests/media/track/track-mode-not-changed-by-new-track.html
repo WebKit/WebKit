@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            function captionsTrackLoaded()
+            {
+                consoleWrite("EVENT(load) -- &lt;track kind='captions' &gt;");
+                consoleWrite("<i>**check that metadata track state has not changed<" + "/i>");
+                testExpected("track1.readyState", HTMLTrackElement.LOADED);
+                testExpected("track1.track.mode", TextTrack.HIDDEN);
+                consoleWrite("<i>**and that the captions track state is correct<" + "/i>");
+                testExpected("track2.readyState", HTMLTrackElement.LOADED);
+                testExpected("track2.track.mode", TextTrack.SHOWING);
+                consoleWrite("");
+                endTest();
+            }
+
+            function metadataTrackLoaded()
+            {
+                consoleWrite("EVENT(load) -- &lt;track kind='metadata' &gt;");
+                consoleWrite("<i>**check metadata track state<" + "/i>");
+                testExpected("track1.readyState", HTMLTrackElement.LOADED);
+                testExpected("track1.track.mode", TextTrack.HIDDEN);
+                testExpected("track1.track.cues.length", 12);
+                testExpected("track1.track.cues[11].startTime", 22);
+
+                consoleWrite("<i>**add a caption track, configured to load automatically<" + "/i>");
+                run("track2 = document.createElement('track')");
+                run("track2.setAttribute('kind', 'captions')");
+                run("track2.setAttribute('default', 'default')");
+                run("track2.setAttribute('onload', 'captionsTrackLoaded()')");
+                run("track2.setAttribute('src', 'captions-webvtt/tc004-webvtt-file.vtt')");
+                run("video.appendChild(track2)");
+
+                consoleWrite("");
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("EVENT(canplaythrough) -- &lt;video&gt;");
+                consoleWrite("<i>**check initial metadata track state<" + "/i>");
+                testExpected("track1.readyState", HTMLTrackElement.NONE);
+                testExpected("track1.track.mode", TextTrack.DISABLED);
+                testExpected("track1.track.cues", null);
+                run("track1.track.mode = TextTrack.HIDDEN");
+                consoleWrite("");
+            }
+
+            function start()
+            {
+                consoleWrite("<br>EVENT(load) -- &lt;body&gt;");
+                findMediaElement();
+
+                track1 = document.querySelectorAll('track')[0]; 
+                testExpected("track1.readyState", HTMLTrackElement.NONE);
+                testExpected("track1.track.mode", TextTrack.DISABLED);
+
+                video.src = findMediaFile("video", "../content/test");
+                consoleWrite("");
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Tests that a track appended after the initial track configuration does not change other tracks.</p>
+        <video oncanplaythrough="canplaythrough()" > 
+            <track kind="metadata" src="captions-webvtt/metadata.vtt" onload="metadataTrackLoaded()">
+        </video>
+    </body>
+</html>

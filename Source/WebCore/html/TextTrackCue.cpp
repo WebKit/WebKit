@@ -139,12 +139,16 @@ void TextTrackCue::setCueHTML(PassRefPtr<DocumentFragment> fragment)
 
 bool TextTrackCue::isActive()
 {
-    return m_isActive;
+    return m_isActive && track() && track()->mode() != TextTrack::DISABLED;
 }
 
 void TextTrackCue::setIsActive(bool active)
 {
     m_isActive = active;
+
+    // When a TextTrack's mode is disabled: No cues are active, no events are fired ...
+    if (!track() || track()->mode() == TextTrack::DISABLED)
+        return;
 
     ExceptionCode ec = 0;
     if (active)

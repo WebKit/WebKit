@@ -1,0 +1,24 @@
+Tests that a 'metadata' track does not load automatically, but does load when the mode is changed.
+
+
+EVENT(load) -- <body>
+**check initial metadata track state
+EXPECTED (track.readyState == '0') OK
+EXPECTED (video.textTracks[0].mode == '0') OK
+
+EVENT(canplaythrough) -- <video>
+**change metadata track mode so it loads
+EXPECTED (track.readyState == '0') OK
+EXPECTED (video.textTracks[0].mode == '0') OK
+EXPECTED (video.textTracks[0].cues == 'null') OK
+RUN(video.textTracks[0].mode = TextTrack.HIDDEN)
+
+EVENT(load) -- <track>
+**check metadata track state
+EXPECTED (track.readyState == '2') OK
+EXPECTED (track.track.mode == '1') OK
+EXPECTED (video.textTracks[0].cues.length == '12') OK
+EXPECTED (video.textTracks[0].cues[11].startTime == '22') OK
+
+END OF TEST
+

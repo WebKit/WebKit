@@ -37,7 +37,7 @@ class Document;
 
 class HTMLAudioElement : public HTMLMediaElement {
 public:
-    static PassRefPtr<HTMLAudioElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLAudioElement> create(const QualifiedName&, Document*, bool);
     static PassRefPtr<HTMLAudioElement> createForJSConstructor(Document*, const String& src);
 
     virtual bool hasPendingActivity() const { return isPlaying() || HTMLMediaElement::hasPendingActivity(); }
@@ -45,7 +45,7 @@ public:
     virtual bool isActiveNode() const { return true; }
 
 private:
-    HTMLAudioElement(const QualifiedName&, Document*);
+    HTMLAudioElement(const QualifiedName&, Document*, bool);
 
     virtual bool isVideo() const { return false; }
 };

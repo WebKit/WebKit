@@ -169,7 +169,7 @@ static void removeElementFromDocumentMap(HTMLMediaElement* element, Document* do
         map.add(document, set);
 }
 
-HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document)
+HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document, this)
     , m_loadTimer(this, &HTMLMediaElement::loadTimerFired)
@@ -228,11 +228,13 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
     , m_havePreparedToPlay(false)
+    , m_parsingInProgress(createdByParser)
+#if ENABLE(VIDEO_TRACK)
+    , m_tracksAreReady(true)
+    , m_textTracks(0)
+#endif
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
-#endif
-#if ENABLE(VIDEO_TRACK)
-    , m_textTracks(0)
 #endif
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
@@ -398,6 +400,29 @@ void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
+void HTMLMediaElement::finishParsingChildren()
+{
+    HTMLElement::finishParsingChildren();
+    m_parsingInProgress = false;
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    document()->updateStyleIfNeeded();
+    createMediaPlayerProxy();
+#endif
+    
+#if ENABLE(VIDEO_TRACK)
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+    
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (node->hasTagName(trackTag)) {
+            scheduleLoad(TextTrackResource);
+            break;
+        }
+    }
+#endif
+}
+
 bool HTMLMediaElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
@@ -543,7 +568,7 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
 
 #if ENABLE(VIDEO_TRACK)
     if (m_pendingLoadFlags & TextTrackResource)
-        scheduleLoad(TextTrackResource);
+        configureTextTracks();
 #endif
 
     m_pendingLoadFlags = 0;
@@ -681,6 +706,19 @@ void HTMLMediaElement::prepareForLoad()
     // algorithm, but do it now because we won't start that until after the timer fires and the 
     // event may have already fired by then.
     setShouldDelayLoadEvent(true);
+
+#if ENABLE(VIDEO_TRACK)
+    // HTMLMediaElement::textTracksAreReady will need "... the text tracks whose mode was not in the
+    // disabled state when the element's resource selection algorithm last started".
+    m_textTracksWhenResourceSelectionBegan.clear();
+    if (m_textTracks) {
+        for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+            TextTrack* track = m_textTracks->item(i);
+            if (track->mode() != TextTrack::DISABLED)
+                m_textTracksWhenResourceSelectionBegan.append(track);
+        }
+    }
+#endif
 
     configureMediaControls();
 }
@@ -925,14 +963,52 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     // during a monotonic time increase.
 }
 
-void HTMLMediaElement::textTrackReadyStateChanged(TextTrack*)
+bool HTMLMediaElement::textTracksAreReady() const
 {
-    // FIXME(62885): Implement.
+    // The text tracks of a media element are ready if all the text tracks whose mode was not 
+    // in the disabled state when the element's resource selection algorithm last started now
+    // have a text track readiness state of loaded or failed to load.
+    for (unsigned i = 0; i < m_textTracksWhenResourceSelectionBegan.size(); ++i) {
+        if (m_textTracksWhenResourceSelectionBegan[i]->readinessState() == TextTrack::Loading)
+            return false;
+    }
+
+    return true;
 }
 
-void HTMLMediaElement::textTrackModeChanged(TextTrack*)
+void HTMLMediaElement::textTrackReadyStateChanged(TextTrack* track)
 {
-    // FIXME(62885): Implement.
+    if (m_player && m_textTracksWhenResourceSelectionBegan.contains(track)) {
+        if (track->readinessState() != TextTrack::Loading)
+            setReadyState(m_player->readyState());
+    }
+}
+
+void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
+{
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    // ... when a text track corresponding to a track element is created with text track
+    // mode set to disabled and subsequently changes its text track mode to hidden, showing,
+    // or showing by default for the first time, the user agent must immediately and synchronously
+    // run the following algorithm ...
+    
+    if (track->trackType() != TextTrack::TrackElement)
+        return;
+    
+    HTMLTrackElement* trackElement;
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (!node->hasTagName(trackTag))
+            continue;
+        trackElement = static_cast<HTMLTrackElement*>(node);
+        if (trackElement->track() != track)
+            continue;
+
+        // Mark this track as "configured" so configureTextTrack won't change the mode again.
+        trackElement->setHasBeenConfigured(true);
+        if (track->mode() != TextTrack::DISABLED && trackElement->readyState() == HTMLTrackElement::NONE)
+            trackElement->scheduleLoad();
+        break;
+    }
 }
 
 void HTMLMediaElement::textTrackKindChanged(TextTrack*)
@@ -1217,8 +1293,18 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     ReadyState oldState = m_readyState;
     m_readyState = static_cast<ReadyState>(state);
 
+#if ENABLE(VIDEO_TRACK)
+    bool tracksAreReady = textTracksAreReady();
+
+    if (m_readyState == oldState && m_tracksAreReady == tracksAreReady)
+        return;
+
+    m_tracksAreReady = tracksAreReady;
+#else
     if (m_readyState == oldState)
         return;
+    bool tracksAreReady = true;
+#endif
     
     if (oldState > m_readyStateMaximum)
         m_readyStateMaximum = oldState;
@@ -1242,7 +1328,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         }
     }
 
-    if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
+    if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA && tracksAreReady) {
         scheduleEvent(eventNames().durationchangeEvent);
         scheduleEvent(eventNames().loadedmetadataEvent);
         if (hasMediaControls())
@@ -1253,7 +1339,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
     bool shouldUpdateDisplayState = false;
 
-    if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA && !m_haveFiredLoadedData) {
+    if (m_readyState >= HAVE_CURRENT_DATA && oldState < HAVE_CURRENT_DATA && !m_haveFiredLoadedData && tracksAreReady) {
         m_haveFiredLoadedData = true;
         shouldUpdateDisplayState = true;
         scheduleEvent(eventNames().loadeddataEvent);
@@ -1261,14 +1347,14 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     }
 
     bool isPotentiallyPlaying = potentiallyPlaying();
-    if (m_readyState == HAVE_FUTURE_DATA && oldState <= HAVE_CURRENT_DATA) {
+    if (m_readyState == HAVE_FUTURE_DATA && oldState <= HAVE_CURRENT_DATA && tracksAreReady) {
         scheduleEvent(eventNames().canplayEvent);
         if (isPotentiallyPlaying)
             scheduleEvent(eventNames().playingEvent);
         shouldUpdateDisplayState = true;
     }
 
-    if (m_readyState == HAVE_ENOUGH_DATA && oldState < HAVE_ENOUGH_DATA) {
+    if (m_readyState == HAVE_ENOUGH_DATA && oldState < HAVE_ENOUGH_DATA && tracksAreReady) {
         if (oldState <= HAVE_CURRENT_DATA)
             scheduleEvent(eventNames().canplayEvent);
 
@@ -2102,56 +2188,9 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTrack(const String& kind, const Strin
     // loaded state, its text track mode to the text track hidden mode, and its text track list of cues to an empty list.
     
     // 6. Add the new text track to the media element's list of text tracks.
-    addTextTrack(textTrack);
+    textTracks()->append(textTrack);
 
     return textTrack.release();
-}
-
-void HTMLMediaElement::addTextTrack(PassRefPtr<TextTrack> track)
-{
-    textTracks()->append(track);
-    configureTextTracks();
-}
-
-void HTMLMediaElement::configureTextTracks()
-{
-    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
-        return;
-
-    // 4.8.10.12.3 Sourcing out-of-band text tracks
-    
-    // When a text track corresponding to a track element is added to a media element's list of text tracks,
-    // the user agent must set the text track mode appropriately, as determined by the following conditions:
-    
-    // * If the text track kind is subtitles or captions and the user has indicated an interest in having a
-    // track with this text track kind, text track language, and text track label enabled, and there is no
-    // other text track in the media element's list of text tracks with a text track kind of either subtitles
-    // or captions whose text track mode is showing
-    // * If the text track kind is descriptions and the user has indicated an interest in having text 
-    // descriptions with this text track language and text track label enabled, and there is no other text 
-    // track in the media element's list of text tracks with a text track kind of descriptions whose text 
-    // track mode is showing
-    //    Let the text track mode be showing.
-    //    If there is a text track in the media element's list of text tracks whose text track mode is showing 
-    //    by default, the user agent must furthermore change that text track's text track mode to hidden.
-    
-    // * If the text track kind is chapters and the text track language is one that the user agent has reason
-    // to believe is appropriate for the user, and there is no other text track in the media element's list of
-    // text tracks with a text track kind of chapters whose text track mode is showing
-    //    Let the text track mode be showing.
-    
-    // * If the track element has a default attribute specified, and there is no other text track in the media
-    // element's list of text tracks whose text track mode is showing or showing by default
-    //    Let the text track mode be showing by default.
-    
-    // Otherwise
-    //    Let the text track mode be disabled.
-    
-    // FIXME(71123): Until the above logic has been implemented, just tell all text tracks to load.
-    for (Node* node = firstChild(); node; node = node->nextSibling()) {
-        if (node->hasTagName(trackTag))
-            static_cast<HTMLTrackElement*>(node)->scheduleLoad();
-    }
 }
 
 TextTrackList* HTMLMediaElement::textTracks() 
@@ -2165,17 +2204,30 @@ TextTrackList* HTMLMediaElement::textTracks()
     return m_textTracks.get();
 }
 
+HTMLTrackElement* HTMLMediaElement::showingTrackWithSameKind(HTMLTrackElement* trackElement) const
+{
+    HTMLTrackElement* showingTrack = 0;
+    
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (trackElement == node)
+            continue;
+        if (!node->hasTagName(trackTag))
+            continue;
+
+        showingTrack = static_cast<HTMLTrackElement*>(node);
+        if (showingTrack->kind() == trackElement->kind() && showingTrack->track()->mode() == TextTrack::SHOWING)
+            return showingTrack;
+    }
+    
+    return 0;
+}
+
 void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
 {
+    ASSERT(trackElement->hasTagName(trackTag));
+
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
-
-#if !LOG_DISABLED
-    if (trackElement->hasTagName(trackTag)) {
-        KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::trackWasAdded - 'src' is %s", urlForLogging(url).utf8().data());
-    }
-#endif
 
     // 4.8.10.12.3 Sourcing out-of-band text tracks
     // When a track element's parent element changes and the new parent is a media element, 
@@ -2184,12 +2236,19 @@ void HTMLMediaElement::trackWasAdded(HTMLTrackElement* trackElement)
     RefPtr<TextTrack> textTrack = trackElement->track();
     if (!textTrack)
         return;
-    addTextTrack(textTrack);    
-    scheduleLoad(TextTrackResource);
+    
+    textTracks()->append(textTrack);
+    
+    // Do not schedule the track loading until parsing finishes so we don't start before all tracks
+    // in the markup have been added.
+    if (!m_parsingInProgress)
+        scheduleLoad(TextTrackResource);
 }
- 
+
 void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
 {
+    ASSERT(trackElement->hasTagName(trackTag));
+
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         return;
 
@@ -2200,6 +2259,8 @@ void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
     }
 #endif
 
+    trackElement->setHasBeenConfigured(false);
+
     RefPtr<TextTrack> textTrack = trackElement->track();
     if (!textTrack)
         return;
@@ -2209,7 +2270,142 @@ void HTMLMediaElement::trackWillBeRemoved(HTMLTrackElement* trackElement)
     // then the user agent must remove the track element's corresponding text track from the 
     // media element's list of text tracks.
     m_textTracks->remove(textTrack.get());
+    size_t index = m_textTracksWhenResourceSelectionBegan.find(textTrack.get());
+    if (index != notFound)
+        m_textTracksWhenResourceSelectionBegan.remove(index);
 }
+
+bool HTMLMediaElement::userIsInterestedInThisLanguage(const String&) const
+{
+    // FIXME: check the user's language preference - bugs.webkit.org/show_bug.cgi?id=74121
+    return true;
+}
+
+bool HTMLMediaElement::userIsInterestedInThisTrack(HTMLTrackElement* trackElement) const
+{
+    RefPtr<TextTrack> textTrack = trackElement->track();
+    if (!textTrack)
+        return false;
+
+    String kind = textTrack->kind();
+    if (!TextTrack::isValidKindKeyword(kind))
+        return false;
+
+    // If ... the user has indicated an interest in having a track with this text track kind, text track language, ... 
+    Settings* settings = document()->settings();
+
+    if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword()) {
+        if (!settings)
+            return false;
+        if (kind == TextTrack::subtitlesKeyword() && !settings->shouldDisplaySubtitles())
+            return false;
+        if (kind == TextTrack::captionsKeyword() && !settings->shouldDisplayCaptions())
+            return false;
+        return userIsInterestedInThisLanguage(trackElement->srclang());
+    }
+
+    if (kind == TextTrack::descriptionsKeyword()) {
+        if (!settings || !settings->shouldDisplayTextDescriptions())
+            return false;
+        return userIsInterestedInThisLanguage(trackElement->srclang());
+    }
+    
+    return false;
+}
+
+void HTMLMediaElement::configureTextTrack(HTMLTrackElement* trackElement)
+{
+#if !LOG_DISABLED
+    if (trackElement->hasTagName(trackTag)) {
+        KURL url = trackElement->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::configureTextTrack - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+
+    // 4.8.10.12.3 Sourcing out-of-band text tracks
+    
+    // When a text track corresponding to a track element is added to a media element's list of text tracks,
+    // the user agent must set the text track mode appropriately, as determined by the following conditions:
+    RefPtr<TextTrack> textTrack = trackElement->track();
+    if (!textTrack)
+        return;
+    
+    TextTrack::Mode mode = TextTrack::HIDDEN;
+    HTMLTrackElement* trackElementCurrentlyShowing = showingTrackWithSameKind(trackElement);
+    String kind = textTrack->kind();
+    bool hideDefaultTrack = false;
+
+    if (userIsInterestedInThisTrack(trackElement)) {
+        if (kind == TextTrack::subtitlesKeyword() || kind == TextTrack::captionsKeyword()) {
+            // * If the text track kind is subtitles or captions and the user has indicated an interest in having a
+            // track with this text track kind, text track language, and text track label enabled, and there is no
+            // other text track in the media element's list of text tracks with a text track kind of either subtitles
+            // or captions whose text track mode is showing
+            hideDefaultTrack = trackElementCurrentlyShowing && trackElementCurrentlyShowing->track()->showingByDefault();
+            if (!trackElementCurrentlyShowing || hideDefaultTrack) {
+                //    Let the text track mode be showing.
+                //    If there is a text track in the media element's list of text tracks whose text track mode is showing 
+                //    by default, the user agent must furthermore change that text track's text track mode to hidden.
+                mode = TextTrack::SHOWING;
+            }
+        } else if (kind == TextTrack::descriptionsKeyword()) {
+            // * If the text track kind is descriptions and the user has indicated an interest in having text 
+            // descriptions with this text track language and text track label enabled, and there is no other text 
+            // track in the media element's list of text tracks with a text track kind of descriptions whose text 
+            // track mode is showing
+            hideDefaultTrack = trackElementCurrentlyShowing && trackElementCurrentlyShowing->track()->showingByDefault();
+            if (!trackElementCurrentlyShowing || hideDefaultTrack) {
+                //    Let the text track mode be showing.
+                //    If there is a text track in the media element's list of text tracks whose text track mode is showing 
+                //    by default, the user agent must furthermore change that text track's text track mode to hidden.
+                mode = TextTrack::SHOWING;
+            }
+        } else if (kind == TextTrack::chaptersKeyword()) {
+            // * If the text track kind is chapters and the text track language is one that the user agent has reason
+            // to believe is appropriate for the user, and there is no other text track in the media element's list of
+            // text tracks with a text track kind of chapters whose text track mode is showing
+            //    Let the text track mode be showing.
+            if (!trackElementCurrentlyShowing)
+                mode = TextTrack::SHOWING;
+        }
+    } else if (!trackElementCurrentlyShowing && trackElement->isDefault()) {
+        // * If the track element has a default attribute specified, and there is no other text track in the media
+        // element's list of text tracks whose text track mode is showing or showing by default
+        //    Let the text track mode be showing by default.
+        mode = TextTrack::SHOWING;
+        textTrack->setShowingByDefault(false);
+    } else {
+        // Otherwise
+        //    Let the text track mode be disabled.
+        mode = TextTrack::DISABLED;
+    }
+
+    ExceptionCode unusedException;
+    if (hideDefaultTrack) {
+        trackElementCurrentlyShowing->track()->setMode(TextTrack::HIDDEN, unusedException);
+        trackElementCurrentlyShowing->track()->setShowingByDefault(false);
+    }
+
+    textTrack->setMode(mode, unusedException);
+}
+ 
+void HTMLMediaElement::configureTextTracks()
+{
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (!node->hasTagName(trackTag))
+            continue;
+        HTMLTrackElement* trackElement = static_cast<HTMLTrackElement*>(node);
+        
+        // Only call configureTextTrack once per track so that adding another track after
+        // the initial configuration doesn't reconfigure every track, only those that should
+        // be changed by the new addition. For example all metadata tracks are disabled by 
+        // default, and we don't want a track that has been enabled by script to be disabled
+        // automatically when a new track element is added later.
+        if (!trackElement->hasBeenConfigured())
+            configureTextTrack(trackElement);
+    }
+}
+
 #endif
 
 bool HTMLMediaElement::havePotentialSourceChild()
@@ -3000,13 +3196,6 @@ void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Ve
         names.append("_media_element_src_");
         values.append(m_currentSrc.string());
     }
-}
-
-void HTMLMediaElement::finishParsingChildren()
-{
-    HTMLElement::finishParsingChildren();
-    document()->updateStyleIfNeeded();
-    createMediaPlayerProxy();
 }
 
 void HTMLMediaElement::createMediaPlayerProxy()

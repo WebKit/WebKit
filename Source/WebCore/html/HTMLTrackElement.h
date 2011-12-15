@@ -68,6 +68,9 @@ public:
 
     const AtomicString& mediaElementCrossOriginAttribute() const;
 
+    bool hasBeenConfigured() const { return m_hasBeenConfigured; }
+    void setHasBeenConfigured(bool flag) { m_hasBeenConfigured = flag; }
+
 private:
     HTMLTrackElement(const QualifiedName&, Document*);
     virtual ~HTMLTrackElement();
@@ -98,6 +101,7 @@ private:
     virtual bool canLoadUrl(const KURL&);
 
     RefPtr<LoadableTextTrack> m_track;
+    bool m_hasBeenConfigured;
 };
 
 }

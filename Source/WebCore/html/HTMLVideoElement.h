@@ -36,7 +36,7 @@ class HTMLImageLoader;
 
 class HTMLVideoElement : public HTMLMediaElement {
 public:
-    static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document*);
+    static PassRefPtr<HTMLVideoElement> create(const QualifiedName&, Document*, bool);
 
     unsigned width() const;
     unsigned height() const;
@@ -67,7 +67,7 @@ public:
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
 private:
-    HTMLVideoElement(const QualifiedName&, Document*);
+    HTMLVideoElement(const QualifiedName&, Document*, bool);
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)

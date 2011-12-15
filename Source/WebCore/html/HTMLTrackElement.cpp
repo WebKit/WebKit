@@ -55,6 +55,7 @@ static String urlForLogging(const KURL& url)
     
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
+    , m_hasBeenConfigured(false)
 {
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
     ASSERT(hasTagName(trackTag));
