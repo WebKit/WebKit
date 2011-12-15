@@ -74,7 +74,6 @@ sub resolveConflictedChangeLogs($);
 sub generateNewChangeLogs($$$$$);
 sub printDiff($);
 sub openChangeLogs($);
-sub firstDirectoryOrCwd(\%);
 sub diffFromToString();
 sub diffCommand(@);
 sub statusCommand(@);
@@ -166,11 +165,10 @@ die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit
 
 
 ### Main routine.
-my %paths = processPaths(@ARGV);
 
-my $isGit = isGitDirectory(firstDirectoryOrCwd(%paths));
-my $isSVN = isSVNDirectory(firstDirectoryOrCwd(%paths));
-$isSVN || $isGit || die "Couldn't determine your version control system.";
+isSVN() || isGit() || die "Couldn't determine your version control system.";
+
+my %paths = processPaths(@ARGV);
 
 # Find the list of modified files
 my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths);
@@ -211,7 +209,7 @@ my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists);
 # Get the latest ChangeLog files from svn.
 my $changeLogs = getLatestChangeLogs($prefixes);
 
-if (@$changeLogs && $updateChangeLogs && $isSVN) {
+if (@$changeLogs && $updateChangeLogs && isSVN()) {
     resolveConflictedChangeLogs($changeLogs);
 }
 
@@ -1436,12 +1434,12 @@ sub processPaths(\@)
 
 sub diffFromToString()
 {
-    return "" if $isSVN;
+    return "" if isSVN();
     return $gitCommit if $gitCommit =~ m/.+\.\..+/;
     return "\"$gitCommit^\" \"$gitCommit\"" if $gitCommit;
     return "--cached" if $gitIndex;
     return $mergeBase if $mergeBase;
-    return "HEAD" if $isGit;
+    return "HEAD" if isGit();
 }
 
 sub diffCommand(@)
@@ -1451,9 +1449,9 @@ sub diffCommand(@)
     my $pathsString = "'" . join("' '", @paths) . "'"; 
 
     my $command;
-    if ($isSVN) {
+    if (isSVN()) {
         $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         $command = "$GIT diff --no-ext-diff -U0 " . diffFromToString();
         $command .= " -- $pathsString" unless $gitCommit or $mergeBase;
     }
@@ -1467,9 +1465,9 @@ sub statusCommand(@)
 
     my $filesString = "\"" . join ("\" \"", @files) . "\"";
     my $command;
-    if ($isSVN) {
+    if (isSVN()) {
         $command = "$SVN stat $filesString";
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         $command = "$GIT diff -r --name-status -M -C " . diffFromToString();
         $command .= " -- $filesString" unless $gitCommit;
     }
@@ -1482,9 +1480,9 @@ sub createPatchCommand($)
     my ($changedFilesString) = @_;
 
     my $command;
-    if ($isSVN) {
+    if (isSVN()) {
         $command = "'$FindBin::Bin/svn-create-patch' $changedFilesString";
-    } elsif ($isGit) {
+    } elsif (isGit()) {
         $command = "$GIT diff -M -C " . diffFromToString();
         $command .= " -- $changedFilesString" unless $gitCommit;
     }
@@ -1494,8 +1492,8 @@ sub createPatchCommand($)
 
 sub diffHeaderFormat()
 {
-    return qr/^Index: (\S+)[\r\n]*$/ if $isSVN;
-    return qr/^diff --git a\/.+ b\/(.+)$/ if $isGit;
+    return qr/^Index: (\S+)[\r\n]*$/ if isSVN();
+    return qr/^diff --git a\/.+ b\/(.+)$/ if isGit();
 }
 
 sub findOriginalFileFromSvn($)
@@ -1607,7 +1605,7 @@ sub generateFileList(\%)
         my $original;
         my $file;
 
-        if ($isSVN) {
+        if (isSVN()) {
             my $matches;
             if (isSVNVersion16OrNewer()) {
                 $matches = /^([ ACDMR])([ CM]).{5} (.+?)[\r\n]*$/;
@@ -1628,7 +1626,7 @@ sub generateFileList(\%)
             } else {
                 print;  # error output from svn stat
             }
-        } elsif ($isGit) {
+        } elsif (isGit()) {
             if (/^([ADM])\t(.+)$/) {
                 $status = $1;
                 $propertyStatus = " ";  # git doesn't have properties
@@ -1698,7 +1696,7 @@ sub isAddedStatus($)
 
     my %statusCodes = (
         "A" => 1,
-        "C" => $isGit,
+        "C" => isGit(),
         "R" => 1,
     );
 
@@ -1718,8 +1716,8 @@ sub isConflictStatus($)
     );
 
     return 0 if ($gitCommit || $gitIndex); # an existing commit or staged change cannot have conflicts
-    return $svn{$status} if $isSVN;
-    return $git{$status} if $isGit;
+    return $svn{$status} if isSVN();
+    return $git{$status} if isGit();
 }
 
 sub statusDescription($$$$)
@@ -1742,8 +1740,8 @@ sub statusDescription($$$$)
     $git{"R"} = " Renamed from \%s.";
 
     my $description;
-    $description = sprintf($svn{$status}, $original) if $isSVN && exists $svn{$status};
-    $description = sprintf($git{$status}, $original) if $isGit && exists $git{$status};
+    $description = sprintf($svn{$status}, $original) if isSVN() && exists $svn{$status};
+    $description = sprintf($git{$status}, $original) if isGit() && exists $git{$status};
     return unless defined $description;
 
     $description .= $propertyDescription unless isAddedStatus($status);
@@ -1776,27 +1774,15 @@ sub extractLineRange($)
 
     my ($start, $end) = (-1, -1);
 
-    if ($isSVN && $string =~ /^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
+    if (isSVN() && $string =~ /^\d+(,\d+)?[acd](\d+)(,(\d+))?/) {
         $start = $2;
         $end = $4 || $2;
-    } elsif ($isGit && $string =~ /^@@ -\d+(,\d+)? \+(\d+)(,(\d+))? @@/) {
+    } elsif (isGit() && $string =~ /^@@ -\d+(,\d+)? \+(\d+)(,(\d+))? @@/) {
         $start = $2;
         $end = defined($4) ? $4 + $2 - 1 : $2;
     }
 
     return ($start, $end);
-}
-
-sub firstDirectoryOrCwd(\%)
-{
-    my ($paths) = @_;
-
-    my $dir = ".";
-    my @dirs = keys(%$paths);
-
-    $dir = -d $dirs[0] ? $dirs[0] : dirname($dirs[0]) if @dirs;
-
-    return $dir;
 }
 
 sub testListForChangeLog(@)

@@ -1,3 +1,30 @@
+2011-12-14  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] In prepare-ChangeLog, replace $isGit and $isSVN with
+        VCSUtils::isGit() and VCSUtils::isSVN().
+        https://bugs.webkit.org/show_bug.cgi?id=74485
+
+        Reviewed by David Kilzer.
+
+        We are planning to write unit-tests for prepare-ChangeLog in a run-leaks_unittest
+        manner. This bug is one of the incremental refactorings to remove all top-level
+        code and global variables from prepare-ChangeLog. This patch replaces $isGit and $isSVN
+        with VCSUtils::isGit() and VCSUtils::isSVN(). This patch also removes firstDirectoryOrCwd(),
+        assuming that no user will mix Git/SVN checkouts and thus we can judge SVN or Git
+        just by looking at the current working directory.
+
+        * Scripts/prepare-ChangeLog: Removed firstDirectoryOrCwd().
+        (diffFromToString):
+        (diffCommand):
+        (statusCommand):
+        (createPatchCommand):
+        (diffHeaderFormat):
+        (generateFileList):
+        (isAddedStatus):
+        (isConflictStatus):
+        (statusDescription):
+        (extractLineRange):
+
 2011-12-14  Sam Weinig  <weinig@apple.com>
 
         Remove whitespace from InheritedPropertySheets attributes in
