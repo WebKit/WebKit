@@ -1,3 +1,16 @@
+2011-12-14  Lucas Forschler  <lforschler@apple.com>
+    
+        https://bugs.webkit.org/show_bug.cgi?id=74543
+        Add CSS*.cpp to a new CSSAllInOne.cpp file with two exceptions:
+            CSSProperty.cpp
+            CSSPrimitiveValue.cpp
+        Adding these two broke things with a templates problem that was not easily fixable.
+
+        Reviewed by Steve Falkenburg.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * css/CSSAllInOne.cpp: Added.
+
 2011-12-14  Tim Horton  <timothy_horton@apple.com>
 
         Generated images should respect the accelerated state of the context they're going to be drawn into
