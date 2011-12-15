@@ -150,6 +150,7 @@ PassRefPtr<GraphicsContext3D> createGraphicsContext(GraphicsContext3D::Attribute
     webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
     webAttributes.noExtensions = attrs.noExtensions;
     webAttributes.shareResources = attrs.shareResources;
+    webAttributes.forUseOnAnotherThread = threadUsage == GraphicsContext3DPrivate::ForUseOnAnotherThread;
     OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitPlatformSupport()->createGraphicsContext3D());
     if (!webContext)
         return 0;

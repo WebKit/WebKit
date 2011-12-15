@@ -97,6 +97,7 @@ public:
             , canRecoverFromContextLoss(true)
             , noExtensions(false)
             , shareResources(true)
+            , forUseOnAnotherThread(false)
         {
         }
 
@@ -108,6 +109,7 @@ public:
         bool canRecoverFromContextLoss;
         bool noExtensions;
         bool shareResources;
+        bool forUseOnAnotherThread;
     };
 
     class WebGraphicsContextLostCallback {

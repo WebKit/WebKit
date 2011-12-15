@@ -1,3 +1,14 @@
+2011-12-15  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add forUseOnAnotherThread to WebGraphicsContext3D::Attributes
+        https://bugs.webkit.org/show_bug.cgi?id=74557
+
+        Reviewed by Kenneth Russell.
+
+        * public/platform/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        * src/GraphicsContext3DChromium.cpp:
+
 2011-12-15  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Fixing #include statements and removing forwarding header file
