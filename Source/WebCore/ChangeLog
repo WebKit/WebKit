@@ -1,3 +1,28 @@
+2011-12-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Filter amounts should accept percentages
+        https://bugs.webkit.org/show_bug.cgi?id=74531
+
+        Reviewed by Chris Marrin.
+        
+        Support percentage arguments for some filter functions, using the FPercent flag
+        to validUnit(). Fix CSSStyleSelector::createFilterOperations() to do the divide by 100
+        for percentages.
+        
+        Replaced isValidFilterArgument(), which just tested arguments one by one for validity, with
+        parseBuiltinFilterArguments() which tests and creates the CSSValues at the same time, which
+        is a little more efficient. It also allows filter-specific behavior to be more localized in this
+        method.
+
+        Covered by existing tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBuiltinFilterArguments):
+        (WebCore::CSSParser::parseFilter):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createFilterOperations):
+
 2011-12-14  Enrica Casucci  <enrica@apple.com>
 
         Build fix.

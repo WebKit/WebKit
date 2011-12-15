@@ -332,7 +332,7 @@ testComputedFilterRule("Two values no color",
                        ["drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)"]);
 
 testComputedFilterRule("Multiple operations",
-                       "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)", 9,
+                       "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em)", 8,
                        [
                            "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",
                            "WebKitCSSFilterValue.CSS_FILTER_SEPIA",
@@ -342,7 +342,6 @@ testComputedFilterRule("Multiple operations",
                            "WebKitCSSFilterValue.CSS_FILTER_OPACITY",
                            "WebKitCSSFilterValue.CSS_FILTER_GAMMA",
                            "WebKitCSSFilterValue.CSS_FILTER_BLUR",
-                           "WebKitCSSFilterValue.CSS_FILTER_SHARPEN"
                ],
                        [
                            "grayscale(0.5)",
@@ -352,8 +351,24 @@ testComputedFilterRule("Multiple operations",
                            "invert(0.2)",
                            "opacity(0.9)",
                            "gamma(2 1.1 1)",
-                           "blur(5px 32px)",
-                           "sharpen(0.5 3px 2)"
+                           "blur(5px 32px)"
                ]);
+
+testComputedFilterRule("Percentage values",
+                      "grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%)", 5,
+                      [
+                          "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",
+                          "WebKitCSSFilterValue.CSS_FILTER_SEPIA",
+                          "WebKitCSSFilterValue.CSS_FILTER_SATURATE",
+                          "WebKitCSSFilterValue.CSS_FILTER_INVERT",
+                          "WebKitCSSFilterValue.CSS_FILTER_OPACITY"
+              ],
+                      [
+                          "grayscale(0.5)",
+                          "sepia(0.25)",
+                          "saturate(0.75)",
+                          "invert(0.2)",
+                          "opacity(0.9)",
+              ]);
 
 successfullyParsed = true;

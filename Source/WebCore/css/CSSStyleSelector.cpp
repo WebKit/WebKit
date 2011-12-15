@@ -5324,8 +5324,11 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
         case WebKitCSSFilterValue::SepiaFilterOperation:
         case WebKitCSSFilterValue::SaturateFilterOperation: {
             double amount = 1;
-            if (filterValue->length() == 1)
+            if (filterValue->length() == 1) {
                 amount = firstValue->getDoubleValue();
+                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                    amount /= 100;
+            }
 
             operations.operations().append(BasicColorMatrixFilterOperation::create(amount, operationType));
             break;
@@ -5348,8 +5351,11 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
         case WebKitCSSFilterValue::InvertFilterOperation:
         case WebKitCSSFilterValue::OpacityFilterOperation: {
             double amount = 1;
-            if (filterValue->length() == 1)
+            if (filterValue->length() == 1) {
                 amount = firstValue->getDoubleValue();
+                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                    amount /= 100;
+            }
 
             operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
             break;

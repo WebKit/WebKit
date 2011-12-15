@@ -338,8 +338,8 @@ PASS filterStyle.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)'
 
-Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em) sharpen(0.5 3px 2)
-PASS filterStyle.length is 9
+Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em)
+PASS filterStyle.length is 8
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.5)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
@@ -356,8 +356,19 @@ PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GAMMA
 PASS subRule.cssText is 'gamma(2 1.1 1)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(5px 32px)'
-PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SHARPEN
-PASS subRule.cssText is 'sharpen(0.5 3px 2)'
+
+Percentage values : grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%)
+PASS filterStyle.length is 5
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
+PASS subRule.cssText is 'grayscale(0.5)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
+PASS subRule.cssText is 'sepia(0.25)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
+PASS subRule.cssText is 'saturate(0.75)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
+PASS subRule.cssText is 'invert(0.2)'
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
+PASS subRule.cssText is 'opacity(0.9)'
 PASS successfullyParsed is true
 
 TEST COMPLETE

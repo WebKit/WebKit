@@ -6766,52 +6766,124 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
 }
 #endif
 
-bool CSSParser::isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterValue::FilterOperationType& filterType, unsigned argumentCount)
+PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserValueList* args, WebKitCSSFilterValue::FilterOperationType filterType)
 {
-    // Check parameter types.
-    if (filterType == WebKitCSSFilterValue::HueRotateFilterOperation && !argumentCount) {
-        // 1st parameter of hue-rotate() is an angle.
-        if (!validUnit(argument, FAngle, true))
-            return false;
-    } else if (filterType == WebKitCSSFilterValue::BlurFilterOperation) {
-        // parameters of blur() are lengths.
-        if (!validUnit(argument, FLength | FPercent, true))
-            return false;
-    } else if (filterType == WebKitCSSFilterValue::SharpenFilterOperation && argumentCount == 1) {
-        // 2nd parameter of sharpen() is a length.
-        if (!validUnit(argument, FLength | FPercent, true))
-            return false;
-    } else if (!validUnit(argument, FNumber, true))
-        return false;
+    RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(filterType);
+    ASSERT(args);
 
-    // Check parameter values.
-    if (filterType == WebKitCSSFilterValue::GrayscaleFilterOperation
-        || filterType == WebKitCSSFilterValue::SepiaFilterOperation
-        || filterType == WebKitCSSFilterValue::InvertFilterOperation
-        || filterType == WebKitCSSFilterValue::OpacityFilterOperation) {
-        // Arguments must be within [0,1].
-        double amount = argument->fValue;
-        if (amount < 0 || amount > 1)
-            return false;
-    } else if (filterType == WebKitCSSFilterValue::SaturateFilterOperation
-               || filterType == WebKitCSSFilterValue::GammaFilterOperation
-               || filterType == WebKitCSSFilterValue::BlurFilterOperation) {
-        // Arguments must be positive
-        double amount = argument->fValue;
-        if (amount < 0)
-            return false;
-    } else if (filterType == WebKitCSSFilterValue::SharpenFilterOperation) {
-        // Arguments must be positive
-        double amount = argument->fValue;
-        if (!argumentCount) {
-            if (amount < 0 || amount > 1)
-                return false;
-        } else {
-            if (amount < 0)
-                return false;
+    switch (filterType) {    
+    case WebKitCSSFilterValue::GrayscaleFilterOperation:
+    case WebKitCSSFilterValue::SepiaFilterOperation:
+    case WebKitCSSFilterValue::SaturateFilterOperation:
+    case WebKitCSSFilterValue::InvertFilterOperation:
+    case WebKitCSSFilterValue::OpacityFilterOperation: {
+        // One optional argument, 0-1 or 0%-100%, if missing use 100%.
+        if (args->size() > 1)
+            return 0;
+
+        if (args->size()) {
+            CSSParserValue* value = args->current();
+            if (!validUnit(value, FNumber | FPercent | FNonNeg, true))
+                return 0;
+                
+            double amount = value->fValue;
+            
+            // Saturate allows values over 100%.
+            if (filterType != WebKitCSSFilterValue::SaturateFilterOperation) {
+                double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
+                if (amount > maxAllowed)
+                    return 0;
+            }
+
+            filterValue->append(cssValuePool()->createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
         }
+        break;
     }
-    return true;
+    case WebKitCSSFilterValue::HueRotateFilterOperation: {
+        // hue-rotate() takes one optional angle.
+        if (args->size() > 1)
+            return 0;
+        
+        if (args->size()) {
+            CSSParserValue* argument = args->current();
+            if (!validUnit(argument, FAngle, true))
+                return 0;
+        
+            filterValue->append(createPrimitiveNumericValue(argument));
+        }
+        break;
+    }
+    case WebKitCSSFilterValue::GammaFilterOperation:
+        // Three optional arguments, values unlimited.
+        if (args->size() > 3)
+            return 0;
+
+        for (CSSParserValue* value = args->current(); value; value = args->next()) {
+            if (!validUnit(value, FNumber | FNonNeg, true))
+                return 0;
+                
+            filterValue->append(createPrimitiveNumericValue(value));
+        }
+        break;
+    case WebKitCSSFilterValue::BlurFilterOperation: {
+        // Blur takes one or two lengths. Zero parameters are allowed.
+        if (args->size() > 2)
+            return 0;
+
+        for (CSSParserValue* value = args->current(); value; value = args->next()) {
+            if (!validUnit(value, FLength | FPercent | FNonNeg, true))
+                return 0;
+
+            filterValue->append(createPrimitiveNumericValue(value));
+        }
+        break;
+    }
+    // FIXME: sharpen will be removed.
+    case WebKitCSSFilterValue::SharpenFilterOperation: {
+        // Sharpen has up to 3 arguments: 0-1 (or percentage) defaulting to 0, radius (a length, default 0), and optional threshold (0-1, defaults to 1).
+        if (args->size() > 3)
+            return 0;
+
+        CSSParserValue* value = args->current();
+        if (args->size() > 0) {
+            if (!validUnit(value, FNumber | FPercent, true))
+                return 0;
+
+            double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
+            double amount = max<double>(min<double>(value->fValue, maxAllowed), 0);
+            filterValue->append(cssValuePool()->createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
+        }
+        
+        if (args->size() > 1) {
+            value = args->next();
+            if (!validUnit(value, FLength | FNonNeg, true))
+                return 0;
+
+            filterValue->append(createPrimitiveNumericValue(value));
+        }
+
+        if (args->size() > 2) {
+            value = args->next();
+            if (!validUnit(value, FNumber, true))
+                return 0;
+
+            filterValue->append(createPrimitiveNumericValue(value));
+        }
+        break;
+    }
+    case WebKitCSSFilterValue::DropShadowFilterOperation: {
+        // drop-shadow() takes a single shadow.
+        RefPtr<CSSValueList> shadowValueList = parseShadow(args, CSSPropertyWebkitFilter);
+        if (!shadowValueList || shadowValueList->length() != 1)
+            return 0;
+        
+        filterValue->append((shadowValueList.release())->itemWithoutBoundsCheck(0));
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return filterValue.release();
 }
 
 PassRefPtr<CSSValueList> CSSParser::parseFilter()
@@ -6850,39 +6922,15 @@ PassRefPtr<CSSValueList> CSSParser::parseFilter()
                 continue;
             }
 #endif
-
             CSSParserValueList* args = value->function->args.get();
-            if (!args || args->size() > maximumArgumentCount)
+            if (!args)
+                return 0;
+
+            RefPtr<WebKitCSSFilterValue> filterValue = parseBuiltinFilterArguments(args, filterType);
+            if (!filterValue)
                 return 0;
             
-            // Create the new WebKitCSSFilterValue for this operation and add it to our list.
-            RefPtr<WebKitCSSFilterValue> filterValue = WebKitCSSFilterValue::create(filterType);
             list->append(filterValue);
-            
-            if (filterType == WebKitCSSFilterValue::DropShadowFilterOperation) {
-                RefPtr<CSSValueList> shadowValueList = parseShadow(args, CSSPropertyWebkitFilter);
-                if (shadowValueList && shadowValueList->length() == 1)
-                    filterValue->append((shadowValueList.release())->itemWithoutBoundsCheck(0));
-                else
-                    return 0;
-            } else {
-
-                CSSParserValue* argument = args->current();
-                unsigned argumentCount = 0;
-
-                while (argument) {
-                    if (!isValidFilterArgument(argument, filterType, argumentCount))
-                        return 0;
-
-                    filterValue->append(createPrimitiveNumericValue(argument));
-
-                    argument = args->next();
-                    if (!argument)
-                        break;
-
-                    ++argumentCount;
-                }
-            }
         }
     }
 

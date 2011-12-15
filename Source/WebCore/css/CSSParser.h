@@ -192,8 +192,8 @@ public:
     bool parseCrossfade(CSSParserValueList*, RefPtr<CSSValue>&);
 
 #if ENABLE(CSS_FILTERS)
-    bool isValidFilterArgument(CSSParserValue* argument, WebKitCSSFilterValue::FilterOperationType&, unsigned argumentCount);
     PassRefPtr<CSSValueList> parseFilter();
+    PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);
 #if ENABLE(CSS_SHADERS)
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilter(CSSParserValue*);
 #endif

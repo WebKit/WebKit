@@ -39,11 +39,6 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Length instead of number : sepia(1%)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
 Too many parameters : sepia(0.5 0.5 3.0)
 PASS cssRule.type is 1
 PASS declaration.length is 0

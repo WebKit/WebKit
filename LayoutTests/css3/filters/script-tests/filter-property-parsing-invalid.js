@@ -28,7 +28,6 @@ testInvalidFilterRule("Trailing comma", "grayscale(0.5,)");
 testInvalidFilterRule("Negative parameter", "grayscale(-0.5)");
 testInvalidFilterRule("Parameter out of bounds", "grayscale(1.5)");
 
-testInvalidFilterRule("Length instead of number", "sepia(1%)");
 testInvalidFilterRule("Too many parameters", "sepia(0.5 0.5 3.0)");
 testInvalidFilterRule("Too many parameters and commas", "sepia(0.1, 0.1)");
 testInvalidFilterRule("Trailing comma", "sepia(0.5,)");
