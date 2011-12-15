@@ -1,3 +1,15 @@
+2011-12-15  Andy Wingo  <wingo@igalia.com>
+
+        Use more macrology in JSC::Options
+        https://bugs.webkit.org/show_bug.cgi?id=72938
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/Options.cpp:
+        (JSC::Options::initializeOptions):
+        * runtime/Options.h: Use macros to ensure that all heuristics are
+        declared and have initializers.
+
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollingCoordinator class and ENABLE_THREADED_SCROLLING define
