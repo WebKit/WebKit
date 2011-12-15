@@ -1,3 +1,19 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        binding a member function should ref/deref the object pointer if needed
+        https://bugs.webkit.org/show_bug.cgi?id=74552
+
+        Reviewed by Sam Weinig.
+
+        Add a HasRefAndDeref helper class template which checks if a given class type has ref and deref
+        member functions which the right type. Use this to determine if we should ref/deref the first parameter.
+
+        * wtf/Functional.h:
+        (WTF::R):
+        (WTF::C::):
+        (WTF::RefAndDeref::ref):
+        (WTF::RefAndDeref::deref):
+
 2011-12-14  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

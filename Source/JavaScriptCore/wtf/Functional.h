@@ -38,6 +38,26 @@ namespace WTF {
 // The implementation is currently very simple, but the goal is to replace WorkItem in WebKit2 and make it easier to
 // package up and invoke function calls inside WebCore.
 
+// Helper class template to determine whether a given type has ref and deref member functions
+// with the right type signature.
+template<typename T> class HasRefAndDeref {
+    typedef char YesType;
+    struct NoType {
+        char padding[8];
+    };
+
+    template<typename U, U, U> struct TypeChecker { };
+
+    template<typename U>
+    static YesType refAndDerefCheck(TypeChecker<void (U::*)(), &U::ref, &U::deref>*);
+
+    template<typename U>
+    static NoType refAndDerefCheck(...);
+
+public:
+    static const bool value = sizeof(refAndDerefCheck<T>(0)) == sizeof(YesType);
+};
+
 // A FunctionWrapper is a class template that can wrap a function pointer or a member function pointer and
 // provide a unified interface for calling that function.
 template<typename> class FunctionWrapper;
@@ -45,6 +65,7 @@ template<typename> class FunctionWrapper;
 template<typename R> class FunctionWrapper<R (*)()> {
 public:
     typedef R ResultType;
+    static const bool shouldRefFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)())
         : m_function(function)
@@ -63,6 +84,7 @@ private:
 template<typename R, typename P0> class FunctionWrapper<R (*)(P0)> {
 public:
     typedef R ResultType;
+    static const bool shouldRefFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)(P0))
         : m_function(function)
@@ -81,6 +103,7 @@ private:
 template<typename R, typename P0, typename P1> class FunctionWrapper<R (*)(P0, P1)> {
 public:
     typedef R ResultType;
+    static const bool shouldRefFirstParameter = false;
 
     explicit FunctionWrapper(R (*function)(P0, P1))
         : m_function(function)
@@ -99,6 +122,7 @@ private:
 template<typename R, typename C> class FunctionWrapper<R (C::*)()> {
 public:
     typedef R ResultType;
+    static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
 
     explicit FunctionWrapper(R (C::*function)())
         : m_function(function)
@@ -117,6 +141,7 @@ private:
 template<typename R, typename C, typename P0> class FunctionWrapper<R (C::*)(P0)> {
 public:
     typedef R ResultType;
+    static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
 
     explicit FunctionWrapper(R (C::*function)(P0))
         : m_function(function)
@@ -130,6 +155,16 @@ public:
 
 private:
     R (C::*m_function)(P0);
+};
+
+template<typename T, bool shouldRefAndDeref> struct RefAndDeref {
+    static void ref(T) { }
+    static void deref(T) { }
+};
+
+template<typename T> struct RefAndDeref<T*, true> {
+    static void ref(T* t) { t->ref(); }
+    static void deref(T* t) { t->deref(); }
 };
 
 class FunctionImplBase : public ThreadSafeRefCounted<FunctionImplBase> {
@@ -172,6 +207,12 @@ public:
         : m_functionWrapper(functionWrapper)
         , m_p0(p0)
     {
+        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
+    }
+
+    ~BoundFunctionImpl()
+    {
+        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::deref(m_p0);
     }
 
     virtual R operator()()
@@ -191,6 +232,12 @@ public:
         , m_p0(p0)
         , m_p1(p1)
     {
+        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
+    }
+    
+    ~BoundFunctionImpl()
+    {
+        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::deref(m_p0);
     }
 
     virtual typename FunctionWrapper::ResultType operator()()

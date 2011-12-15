@@ -1,3 +1,21 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        binding a member function should ref/deref the object pointer if needed
+        https://bugs.webkit.org/show_bug.cgi?id=74552
+
+        Reviewed by Sam Weinig.
+
+        Add new tests.
+
+        * TestWebKitAPI/Tests/WTF/Functional.cpp:
+        (TestWebKitAPI::B::B):
+        (TestWebKitAPI::B::~B):
+        (TestWebKitAPI::B::ref):
+        (TestWebKitAPI::B::deref):
+        (TestWebKitAPI::B::f):
+        (TestWebKitAPI::B::g):
+        (TestWebKitAPI::TEST):
+
 2011-12-14  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

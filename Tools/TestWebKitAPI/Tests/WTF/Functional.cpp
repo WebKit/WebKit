@@ -105,4 +105,47 @@ TEST(FunctionalTest, MemberFunctionBind)
     ASSERT_EQ(25, function2());
 }
 
+class B {
+public:
+    B()
+        : m_numRefCalls(0)
+        , m_numDerefCalls(0)
+    {
+    }
+
+    ~B()
+    {
+        ASSERT_TRUE(m_numRefCalls == m_numDerefCalls);
+        ASSERT_GT(m_numRefCalls, 0);
+    }
+
+    void ref()
+    {
+        m_numRefCalls++;
+    }
+
+    void deref()
+    {
+        m_numDerefCalls++;
+    }
+
+    void f() { ASSERT_GT(m_numRefCalls, 0); }
+    void g(int) { ASSERT_GT(m_numRefCalls, 0); }
+
+private:
+    int m_numRefCalls;
+    int m_numDerefCalls;
+};
+
+TEST(FunctionalTest, MemberFunctionBindRefDeref)
+{
+    B b;
+
+    Function<void ()> function1 = bind(&B::f, &b);
+    function1();
+
+    Function<void ()> function2 = bind(&B::g, &b, 10);
+    function2();
+}
+
 } // namespace TestWebKitAPI
