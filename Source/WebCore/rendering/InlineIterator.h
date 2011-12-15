@@ -422,10 +422,10 @@ static inline unsigned numberOfIsolateAncestors(const InlineIterator& iter)
 
 // FIXME: This belongs on InlineBidiResolver, except it's a template specialization
 // of BidiResolver which knows nothing about RenderObjects.
-static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject* isolatedInline)
+static inline void addPlaceholderRunForIsolatedInline(InlineBidiResolver& resolver, RenderObject* obj, unsigned pos)
 {
-    ASSERT(isolatedInline);
-    BidiRun* isolatedRun = new (isolatedInline->renderArena()) BidiRun(0, 0, isolatedInline, resolver.context(), resolver.dir());
+    ASSERT(obj);
+    BidiRun* isolatedRun = new (obj->renderArena()) BidiRun(pos, 0, obj, resolver.context(), resolver.dir());
     resolver.runs().addRun(isolatedRun);
     // FIXME: isolatedRuns() could be a hash of object->run and then we could cheaply
     // ASSERT here that we didn't create multiple objects for the same inline.
@@ -453,23 +453,17 @@ public:
     // We don't care if we encounter bidi directional overrides.
     void embed(WTF::Unicode::Direction, BidiEmbeddingSource) { }
 
-    void addFakeRunIfNecessary(RenderObject* obj, InlineBidiResolver& resolver)
+    void addFakeRunIfNecessary(RenderObject* obj, unsigned pos, InlineBidiResolver& resolver)
     {
-        // We only need to lookup the root isolated span and add a fake run
-        // for it once, but we'll be called for every span inside the isolated span
-        // so we just ignore the call.
+        // We only need to add a fake run for a given isolated span once during each call to createBidiRunsForLine.
+        // We'll be called for every span inside the isolated span so we just ignore subsequent calls.
         if (m_haveAddedFakeRunForRootIsolate)
             return;
         m_haveAddedFakeRunForRootIsolate = true;
-
-        // FIXME: position() could be outside the run and may be the wrong call here.
-        // If we were passed an InlineIterator instead that would have the right root().
-        RenderObject* isolatedInline = containingIsolate(obj, resolver.position().root());
-        // FIXME: Because enterIsolate is not passed a RenderObject, we have to crawl up the
-        // tree to see which parent inline is the isolate. We could change enterIsolate
-        // to take a RenderObject and do this logic there, but that would be a layering
-        // violation for BidiResolver (which knows nothing about RenderObject).
-        addPlaceholderRunForIsolatedInline(resolver, isolatedInline);
+        // obj and pos together denote a single position in the inline, from which the parsing of the isolate will start.
+        // We don't need to mark the end of the run because this is implicit: it is either endOfLine or the end of the
+        // isolate, when we call createBidiRunsForLine it will stop at whichever comes first.
+        addPlaceholderRunForIsolatedInline(resolver, obj, pos);
     }
 
 private:
@@ -489,7 +483,7 @@ inline void InlineBidiResolver::appendRun()
         RenderObject* obj = m_sor.m_obj;
         while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(obj, *this);
+                isolateTracker.addFakeRunIfNecessary(obj, start, *this);
             else
                 RenderBlock::appendRunsForObject(m_runs, start, obj->length(), obj, *this);
             // FIXME: start/obj should be an InlineIterator instead of two separate variables.
@@ -505,7 +499,7 @@ inline void InlineBidiResolver::appendRun()
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
             int end = obj->length() ? pos + 1 : 0;
             if (isolateTracker.inIsolate())
-                isolateTracker.addFakeRunIfNecessary(obj, *this);
+                isolateTracker.addFakeRunIfNecessary(obj, start, *this);
             else
                 RenderBlock::appendRunsForObject(m_runs, start, end, obj, *this);
         }

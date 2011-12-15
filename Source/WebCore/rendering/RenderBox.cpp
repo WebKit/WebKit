@@ -1477,7 +1477,10 @@ void RenderBox::positionLineBox(InlineBox* box)
         box->destroy(renderArena());
     } else if (isReplaced()) {
         setLocation(roundedLayoutPoint(box->topLeft()));
+        // m_inlineBoxWrapper should already be 0. Deleting it is a safeguard against security issues.
         ASSERT(!m_inlineBoxWrapper);
+        if (m_inlineBoxWrapper)
+            deleteLineBoxWrapper();
         m_inlineBoxWrapper = box;
     }
 }

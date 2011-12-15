@@ -1,3 +1,39 @@
+2011-12-14  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to incorrect parsing of isolates
+        https://bugs.webkit.org/show_bug.cgi?id=74311
+        When <bdi> content is wrapped, all hell breaks loose
+        https://bugs.webkit.org/show_bug.cgi?id=74396
+
+        Reviewed by Eric Seidel.
+
+        When an isolate was encountered during run layout, the entire isolate
+        would be parsed, even if the run started in the middle of the isolate.
+        This would sometimes cause parts of the isolate to be added multiple
+        times as runs. This patch marks the starting position within the
+        isolate so nothing is parsed twice.
+
+        This patch changes appendRun() so that when a run is added that is
+        inside an isolate, it saves the start position of the run rather than
+        the root. This allows constructBidiRuns() to resume parsing the
+        isolate from the correct position.
+
+        The change to RenderBox partially reverts a previous change I had
+        done. It makes sense to screen for the condition, as was previously
+        the case.
+
+        This patch does not add the test case from 74396 because a separate
+        bug is preventing it from rendering correctly.
+
+        * rendering/InlineIterator.h:
+        (WebCore::addPlaceholderRunForIsolatedInline)
+        (WebCore::IsolateTracker::addFakeRunIfNecessary)
+        (WebCore::InlineBidiResolver::appendRun)
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockLineLayout::constructBidiRuns)
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::positionLineBox)
+
 2011-12-14  Jing Zhao  <jingzhao@chromium.org>
 
         Opening two popup menus by dispatchEvent() makes problems.

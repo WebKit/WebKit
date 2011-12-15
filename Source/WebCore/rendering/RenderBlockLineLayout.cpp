@@ -949,6 +949,7 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
     // FIXME: We should pass a BidiRunList into createBidiRunsForLine instead
     // of the resolver owning the runs.
     ASSERT(&topResolver.runs() == &bidiRuns);
+    RenderObject* currentRoot = topResolver.position().root();
     topResolver.createBidiRunsForLine(endOfLine, override, previousLineBrokeCleanly);
 
     while (!topResolver.isolatedRuns().isEmpty()) {
@@ -956,23 +957,31 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
         BidiRun* isolatedRun = topResolver.isolatedRuns().last();
         topResolver.isolatedRuns().removeLast();
 
+        RenderObject* startObj = isolatedRun->object();
+
         // Only inlines make sense with unicode-bidi: isolate (blocks are already isolated).
-        RenderInline* isolatedSpan = toRenderInline(isolatedRun->object());
+        // FIXME: Because enterIsolate is not passed a RenderObject, we have to crawl up the
+        // tree to see which parent inline is the isolate. We could change enterIsolate
+        // to take a RenderObject and do this logic there, but that would be a layering
+        // violation for BidiResolver (which knows nothing about RenderObject).
+        RenderInline* isolatedSpan = toRenderInline(containingIsolate(startObj, currentRoot));
         InlineBidiResolver isolatedResolver;
         isolatedResolver.setStatus(statusWithDirection(isolatedSpan->style()->direction()));
 
         // FIXME: The fact that we have to construct an Iterator here
         // currently prevents this code from moving into BidiResolver.
-        RenderObject* startObj = bidiFirstSkippingEmptyInlines(isolatedSpan, &isolatedResolver);
-        if (!startObj)
+        if (!bidiFirstSkippingEmptyInlines(isolatedSpan, &isolatedResolver))
             continue;
-        isolatedResolver.setPositionIgnoringNestedIsolates(InlineIterator(isolatedSpan, startObj, 0));
+        // The starting position is the beginning of the first run within the isolate that was identified
+        // during the earlier call to createBidiRunsForLine. This can be but is not necessarily the
+        // first run within the isolate.
+        InlineIterator iter = InlineIterator(isolatedSpan, startObj, isolatedRun->m_start);
+        isolatedResolver.setPositionIgnoringNestedIsolates(iter);
 
-        // FIXME: isolatedEnd should probably equal end or the last char in isolatedSpan.
-        InlineIterator isolatedEnd = endOfLine;
+        // We stop at the next end of line; we may re-enter this isolate in the next call to constructBidiRuns().
         // FIXME: What should end and previousLineBrokeCleanly be?
         // rniwa says previousLineBrokeCleanly is just a WinIE hack and could always be false here?
-        isolatedResolver.createBidiRunsForLine(isolatedEnd, NoVisualOverride, previousLineBrokeCleanly);
+        isolatedResolver.createBidiRunsForLine(endOfLine, NoVisualOverride, previousLineBrokeCleanly);
         // Note that we do not delete the runs from the resolver.
         bidiRuns.replaceRunWithRuns(isolatedRun, isolatedResolver.runs());
 
