@@ -1,3 +1,33 @@
+2011-12-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: make ProfilesPanel scale as the number of ProfileTypes grows
+        https://bugs.webkit.org/show_bug.cgi?id=74391
+
+        Reviewed by Pavel Feldman.
+
+        Whenever a profile is started, this change disables all profile recording buttons, except the one
+        that correponds to the running profile. Once the profiling is finished, all buttons get enabled back again.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.profileCallback):
+        (WebInspector.CPUProfileType.prototype.get buttonTooltip):
+        (WebInspector.CPUProfileType.prototype.get buttonStyle):
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems.clickHandler):
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.updateProfileTypeButtons):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        (WebInspector.ProfilerDispatcher.prototype.setRecordingProfile):
+        * inspector/front-end/inspector.css:
+        (.record-cpu-profile-status-bar-item .glyph):
+        (.record-cpu-profile-status-bar-item.toggled-on .glyph):
+
 2011-12-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Update selected DOM element styles whenever applicable media queries change

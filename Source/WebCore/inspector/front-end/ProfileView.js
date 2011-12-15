@@ -85,6 +85,11 @@ WebInspector.CPUProfileView = function(profile)
     {
         if (error)
             return;
+
+        if (!profile.head) {
+            // Profiling was tentatively terminated with the "Clear all profiles." button.
+            return;
+        }
         this.profile.head = profile.head;
         this._assignParentsInProfile();
         this._changeView();
@@ -574,24 +579,22 @@ WebInspector.CPUProfileType.TypeId = "CPU";
 WebInspector.CPUProfileType.prototype = {
     get buttonTooltip()
     {
-        return this._recording ? WebInspector.UIString("Stop profiling.") : WebInspector.UIString("Start profiling.");
+        return this._recording ? WebInspector.UIString("Stop CPU profiling.") : WebInspector.UIString("Start CPU profiling.");
     },
 
     get buttonStyle()
     {
-        return this._recording ? "record-profile-status-bar-item status-bar-item toggled-on" : "record-profile-status-bar-item status-bar-item";
+        return this._recording ? "record-cpu-profile-status-bar-item status-bar-item toggled-on" : "record-cpu-profile-status-bar-item status-bar-item";
     },
 
     buttonClicked: function()
     {
-        this._recording = !this._recording;
-
         if (this._recording) {
-            WebInspector.networkManager.disableResourceTracking();
-            ProfilerAgent.start();
-        } else {
-            ProfilerAgent.stop();
+            this.stopRecordingProfile();
             WebInspector.networkManager.enableResourceTracking();
+        } else
+            WebInspector.networkManager.disableResourceTracking();
+            this.startRecordingProfile();
         }
     },
 

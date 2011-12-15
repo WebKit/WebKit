@@ -2507,11 +2507,11 @@ body.platform-mac #drawer-status-bar .search-status-bar-progress {
     white-space: pre;
 }
 
-.record-profile-status-bar-item .glyph {
+.record-cpu-profile-status-bar-item .glyph {
     -webkit-mask-position: -288px 0;
 }
 
-.record-profile-status-bar-item.toggled-on .glyph {
+.record-cpu-profile-status-bar-item.toggled-on .glyph {
     -webkit-mask-position: -288px -24px;
     background-color: rgb(216, 0, 0) !important;
 }
