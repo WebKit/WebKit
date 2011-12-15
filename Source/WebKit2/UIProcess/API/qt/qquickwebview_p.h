@@ -141,7 +141,6 @@ private:
 
     friend class QtWebPageLoadClient;
     friend class QtWebPagePolicyClient;
-    friend class QtWebPageProxy;
     friend class QtWebPageUIClient;
     friend class WTR::PlatformWebView;
     friend class QQuickWebViewExperimental;
@@ -215,7 +214,6 @@ private:
     QQuickWebViewPrivate* d_ptr;
     QWebViewportInfo* m_viewportInfo;
 
-    friend class QtWebPageProxy;
     friend class QtWebPageUIClient;
 
     Q_DECLARE_PRIVATE(QQuickWebView)

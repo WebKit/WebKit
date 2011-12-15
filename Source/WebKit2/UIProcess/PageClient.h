@@ -44,10 +44,6 @@ namespace WebCore {
     struct ViewportArguments;
 }
 
-#if PLATFORM(QT)
-class QtWebPageProxy;
-#endif
-
 namespace WebKit {
 
 class DrawingAreaProxy;

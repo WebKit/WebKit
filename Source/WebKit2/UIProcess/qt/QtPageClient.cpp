@@ -22,7 +22,6 @@
 #include "QtPageClient.h"
 
 #include "QtWebPageEventHandler.h"
-#include "QtWebPageProxy.h"
 #include "QtWebUndoController.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEditCommandProxy.h"
@@ -40,7 +39,6 @@ using namespace WebCore;
 
 QtPageClient::QtPageClient()
     : m_webView(0)
-    , m_qtWebPageProxy(0)
     , m_eventHandler(0)
     , m_undoController(0)
 {
@@ -48,6 +46,13 @@ QtPageClient::QtPageClient()
 
 QtPageClient::~QtPageClient()
 {
+}
+
+void QtPageClient::initialize(QQuickWebView* webView, QtWebPageEventHandler* eventHandler, QtWebUndoController* undoController)
+{
+    m_webView = webView;
+    m_eventHandler = eventHandler;
+    m_undoController = undoController;
 }
 
 PassOwnPtr<DrawingAreaProxy> QtPageClient::createDrawingAreaProxy()
@@ -153,12 +158,12 @@ IntRect QtPageClient::windowToScreen(const IntRect& rect)
 
 PassRefPtr<WebPopupMenuProxy> QtPageClient::createPopupMenuProxy(WebPageProxy* webPageProxy)
 {
-    return WebPopupMenuProxyQt::create(toImpl(m_qtWebPageProxy->pageRef()), m_webView);
+    return WebPopupMenuProxyQt::create(webPageProxy, m_webView);
 }
 
-PassRefPtr<WebContextMenuProxy> QtPageClient::createContextMenuProxy(WebPageProxy*)
+PassRefPtr<WebContextMenuProxy> QtPageClient::createContextMenuProxy(WebPageProxy* webPageProxy)
 {
-    return WebContextMenuProxyQt::create(m_qtWebPageProxy);
+    return WebContextMenuProxyQt::create(webPageProxy);
 }
 
 void QtPageClient::flashBackingStoreUpdates(const Vector<IntRect>&)

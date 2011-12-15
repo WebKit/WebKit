@@ -40,7 +40,6 @@ class WebBackForwardList;
 
 class QWebNavigationHistory;
 class QWebNavigationListModel;
-class QtWebPageProxy;
 
 class QWebNavigationListModelPrivate {
 public:

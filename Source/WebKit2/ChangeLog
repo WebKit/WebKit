@@ -1,3 +1,71 @@
+2011-12-15  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Remove QtWebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=74540
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move WebPageProxy* to QQuickWebViewPrivate. The remaining functions in
+        QtWebPageProxy were simple wrappers to WebKit functionality (text zoom, page zoom
+        and user agent setting). Since those wrappers are unused, they were removed. The
+        signal in the class was also unused.
+
+        This patch also remove the code from WebContextMenuProxyQt, it was remains of a
+        previous QMenu-based implementation. We want to rewrite this code for QML anyway,
+        so I reverted to an empty state.
+
+        Farewell, QtWebPageProxy!
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::~QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewPrivate::createDrawingAreaProxy):
+        (QQuickWebViewPrivate::updateVisibleContentRectAndScale):
+        (QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged):
+        (QQuickWebViewPrivate::_q_onVisibleChanged):
+        (QQuickWebViewPrivate::updateViewportSize):
+        (QQuickWebViewPrivate::computeViewportConstraints):
+        (QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour):
+        (QQuickWebViewPrivate::setNavigatorQtObjectEnabled):
+        (QQuickWebViewExperimental::postMessage):
+        (QQuickWebView::load):
+        (QQuickWebView::goBack):
+        (QQuickWebView::goForward):
+        (QQuickWebView::stop):
+        (QQuickWebView::reload):
+        (QQuickWebView::url):
+        (QQuickWebView::canGoBack):
+        (QQuickWebView::canGoForward):
+        (QQuickWebView::loading):
+        (QQuickWebView::canReload):
+        (QQuickWebView::title):
+        (QQuickWebView::pageRef):
+        (QQuickWebView::loadHtml):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/qwebnavigationhistory_p_p.h:
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::preferencesRef):
+        * UIProcess/PageClient.h:
+        * UIProcess/qt/QtPageClient.cpp:
+        (QtPageClient::QtPageClient):
+        (QtPageClient::initialize):
+        (QtPageClient::createPopupMenuProxy):
+        (QtPageClient::createContextMenuProxy):
+        * UIProcess/qt/QtPageClient.h:
+        * UIProcess/qt/QtWebPageProxy.cpp: Removed.
+        * UIProcess/qt/QtWebPageProxy.h: Removed.
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::WebContextMenuProxyQt::WebContextMenuProxyQt):
+        (WebKit::WebContextMenuProxyQt::create):
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+        (WebKit::WebContextMenuProxyQt::hideContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+
 2011-12-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [WK2] Eliminate unnecessary GTK/QT ifdefs for shared memory implementation

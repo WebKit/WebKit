@@ -394,7 +394,7 @@ void QWebPreferences::setDefaultFixedFontSize(unsigned size)
 
 WKPreferencesRef QWebPreferencesPrivate::preferencesRef() const
 {
-    WKPageGroupRef pageGroupRef = toAPI(webViewPrivate->webPageProxy()->pageGroup());
+    WKPageGroupRef pageGroupRef = toAPI(webViewPrivate->webPageProxy->pageGroup());
     return WKPageGroupGetPreferences(pageGroupRef);
 }
 

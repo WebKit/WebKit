@@ -32,7 +32,6 @@ class QWebPreferences;
 namespace WebKit {
 class QtSGUpdateQueue;
 }
-class QtWebPageProxy;
 
 class QWEBKIT_EXPORT QQuickWebPage : public QQuickItem {
     Q_OBJECT
@@ -70,7 +69,6 @@ private:
     QQuickWebPagePrivate* d;
     friend class QQuickWebView;
     friend class QQuickWebViewPrivate;
-    friend class QtWebPageProxy;
 };
 
 QML_DECLARE_TYPE(QQuickWebPage)

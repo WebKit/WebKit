@@ -27,7 +27,6 @@
 #include "QtDownloadManager.h"
 #include "QtWebContext.h"
 #include "QtWebPageEventHandler.h"
-#include "QtWebPageProxy.h"
 #include "UtilsQt.h"
 #include "WebBackForwardList.h"
 #include "WebPageGroup.h"
@@ -68,29 +67,29 @@ QQuickWebViewPrivate::~QQuickWebViewPrivate()
 {
     if (interactionEngine)
         interactionEngine->disconnect();
+    webPageProxy->close();
 }
 
 // Note: we delay this initialization to make sure that QQuickWebView has its d-ptr in-place.
 void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
+    webPageProxy = context->createWebPage(&pageClient, toImpl(pageGroupRef));
+
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
-    setPageProxy(new QtWebPageProxy(q_ptr, &pageClient, context, pageGroupRef));
-    pageViewPrivate->initialize(webPageProxy());
+    pageViewPrivate->initialize(webPageProxy.get());
 
-    pageLoadClient.reset(new QtWebPageLoadClient(pageProxy->pageRef(), q_ptr));
-    pagePolicyClient.reset(new QtWebPagePolicyClient(pageProxy->pageRef(), q_ptr));
-    pageUIClient.reset(new QtWebPageUIClient(pageProxy->pageRef(), q_ptr));
-    navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(pageProxy->pageRef()));
+    pageLoadClient.reset(new QtWebPageLoadClient(toAPI(webPageProxy.get()), q_ptr));
+    pagePolicyClient.reset(new QtWebPagePolicyClient(toAPI(webPageProxy.get()), q_ptr));
+    pageUIClient.reset(new QtWebPageUIClient(toAPI(webPageProxy.get()), q_ptr));
+    navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(toAPI(webPageProxy.get())));
 
-    // Any page setting should preferrable be set before creating the page, so set them here:
+    // Any page setting should preferrable be set before creating the page.
     setUseTraditionalDesktopBehaviour(false);
-    webPageProxy()->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
+    webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
 
-    pageClient.initialize(q_ptr, pageProxy.data(), pageViewPrivate->eventHandler.data(), &undoController);
-
-    // Creates a page with the page creation parameters.
-    pageProxy->init();
+    pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
+    webPageProxy->initializeWebPage();
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
@@ -229,7 +228,7 @@ void QQuickWebViewPrivate::processDidCrash()
 {
     emit q_ptr->navigationStateChanged();
     pageView->d->eventHandler->resetGestureRecognizers();
-    WebCore::KURL url(WebCore::ParsedURLString, webPageProxy()->urlAtProcessExit());
+    WebCore::KURL url(WebCore::ParsedURLString, webPageProxy->urlAtProcessExit());
     qWarning("WARNING: The web process experienced a crash on '%s'.", qPrintable(QUrl(url).toString(QUrl::RemoveUserInfo)));
 }
 
@@ -242,7 +241,7 @@ void QQuickWebViewPrivate::didRelaunchProcess()
 
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
 {
-    return DrawingAreaProxyImpl::create(webPageProxy());
+    return DrawingAreaProxyImpl::create(webPageProxy.get());
 }
 
 void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
@@ -261,7 +260,7 @@ void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
 
 void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
 {
-    DrawingAreaProxy* drawingArea = webPageProxy()->drawingArea();
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
         return;
 
@@ -273,13 +272,13 @@ void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
     drawingArea->setVisibleContentsRectAndScale(alignedVisibleContentRect, scale);
 
     // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
-    webPageProxy()->setFixedVisibleContentRect(alignedVisibleContentRect);
+    webPageProxy->setFixedVisibleContentRect(alignedVisibleContentRect);
     q->m_experimental->viewportInfo()->didUpdateCurrentScale();
 }
 
 void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
 {
-    DrawingAreaProxy* drawingArea = webPageProxy()->drawingArea();
+    DrawingAreaProxy* drawingArea = webPageProxy->drawingArea();
     if (!drawingArea)
         return;
     drawingArea->setVisibleContentRectTrajectoryVector(trajectoryVector);
@@ -287,7 +286,7 @@ void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& tra
 
 void QQuickWebViewPrivate::_q_onVisibleChanged()
 {
-    webPageProxy()->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    webPageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 void QQuickWebViewPrivate::_q_onReceivedResponseFromDownload(QWebDownloadItem* downloadItem)
@@ -311,7 +310,7 @@ void QQuickWebViewPrivate::updateViewportSize()
 
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
-    webPageProxy()->setViewportSize(viewportSize);
+    webPageProxy->setViewportSize(viewportSize);
 
     interactionEngine->applyConstraints(computeViewportConstraints());
     updateVisibleContentRectAndScale();
@@ -344,7 +343,7 @@ QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportCo
     if (availableSize.isEmpty())
         return newConstraints;
 
-    WebPreferences* wkPrefs = webPageProxy()->pageGroup()->preferences();
+    WebPreferences* wkPrefs = webPageProxy->pageGroup()->preferences();
 
     // FIXME: Remove later; Hardcode some values for now to make sure the DPI adjustment is being tested.
     wkPrefs->setDeviceDPI(240);
@@ -480,7 +479,7 @@ void QQuickWebViewPrivate::setUseTraditionalDesktopBehaviour(bool enable)
 
     // Do not guard, testing for the same value, as we call this from the constructor.
 
-    webPageProxy()->setUseFixedLayout(!enable);
+    webPageProxy->setUseFixedLayout(!enable);
 
     useTraditionalDesktopBehaviour = enable;
     if (useTraditionalDesktopBehaviour)
@@ -506,13 +505,7 @@ void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
     ASSERT(enabled != m_navigatorQtObjectEnabled);
     // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
     m_navigatorQtObjectEnabled = enabled;
-    context->setNavigatorQtObjectEnabled(webPageProxy(), enabled);
-}
-
-// FIXME: Remove this once QtWebPageProxy is removed.
-WebKit::WebPageProxy* QQuickWebViewPrivate::webPageProxy() const
-{
-    return toImpl(pageProxy->pageRef());
+    context->setNavigatorQtObjectEnabled(webPageProxy.get(), enabled);
 }
 
 WebCore::IntSize QQuickWebViewPrivate::viewSize() const
@@ -539,11 +532,6 @@ void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& 
 
     The request object cannot be used after the signal handler function ends.
 */
-
-void QQuickWebViewPrivate::setPageProxy(QtWebPageProxy* pageProxy)
-{
-    this->pageProxy.reset(pageProxy);
-}
 
 QQuickWebViewAttached::QQuickWebViewAttached(QObject* object)
     : QObject(object)
@@ -585,7 +573,7 @@ void QQuickWebViewExperimental::setUseTraditionalDesktopBehaviour(bool enable)
 void QQuickWebViewExperimental::postMessage(const QString& message)
 {
     Q_D(QQuickWebView);
-    d->context->postMessageToNavigatorQtObject(d->webPageProxy(), message);
+    d->context->postMessageToNavigatorQtObject(d->webPageProxy.get(), message);
 }
 
 QDeclarativeComponent* QQuickWebViewExperimental::alertDialog() const
@@ -706,38 +694,38 @@ QQuickWebPage* QQuickWebView::page()
 void QQuickWebView::load(const QUrl& url)
 {
     Q_D(QQuickWebView);
-    d->webPageProxy()->loadURL(url.toString());
+    d->webPageProxy->loadURL(url.toString());
 }
 
 void QQuickWebView::goBack()
 {
     Q_D(QQuickWebView);
-    d->webPageProxy()->goBack();
+    d->webPageProxy->goBack();
 }
 
 void QQuickWebView::goForward()
 {
     Q_D(QQuickWebView);
-    d->webPageProxy()->goForward();
+    d->webPageProxy->goForward();
 }
 
 void QQuickWebView::stop()
 {
     Q_D(QQuickWebView);
-    d->webPageProxy()->stopLoading();
+    d->webPageProxy->stopLoading();
 }
 
 void QQuickWebView::reload()
 {
     Q_D(QQuickWebView);
     const bool reloadFromOrigin = true;
-    d->webPageProxy()->reload(reloadFromOrigin);
+    d->webPageProxy->reload(reloadFromOrigin);
 }
 
 QUrl QQuickWebView::url() const
 {
     Q_D(const QQuickWebView);
-    RefPtr<WebFrameProxy> mainFrame = d->webPageProxy()->mainFrame();
+    RefPtr<WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
     if (!mainFrame)
         return QUrl();
     return QUrl(QString(mainFrame->url()));
@@ -752,35 +740,35 @@ int QQuickWebView::loadProgress() const
 bool QQuickWebView::canGoBack() const
 {
     Q_D(const QQuickWebView);
-    return d->webPageProxy()->canGoBack();
+    return d->webPageProxy->canGoBack();
 }
 
 bool QQuickWebView::canGoForward() const
 {
     Q_D(const QQuickWebView);
-    return d->webPageProxy()->canGoForward();
+    return d->webPageProxy->canGoForward();
 }
 
 bool QQuickWebView::loading() const
 {
     Q_D(const QQuickWebView);
-    RefPtr<WebKit::WebFrameProxy> mainFrame = d->webPageProxy()->mainFrame();
+    RefPtr<WebKit::WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
     return mainFrame && !(WebFrameProxy::LoadStateFinished == mainFrame->loadState());
 }
 
 bool QQuickWebView::canReload() const
 {
     Q_D(const QQuickWebView);
-    RefPtr<WebKit::WebFrameProxy> mainFrame = d->webPageProxy()->mainFrame();
+    RefPtr<WebKit::WebFrameProxy> mainFrame = d->webPageProxy->mainFrame();
     if (mainFrame)
         return (WebFrameProxy::LoadStateFinished == mainFrame->loadState());
-    return d->webPageProxy()->backForwardList()->currentItem();
+    return d->webPageProxy->backForwardList()->currentItem();
 }
 
 QString QQuickWebView::title() const
 {
     Q_D(const QQuickWebView);
-    return d->webPageProxy()->pageTitle();
+    return d->webPageProxy->pageTitle();
 }
 
 QWebPreferences* QQuickWebView::preferences() const
@@ -835,7 +823,7 @@ void QQuickWebView::focusOutEvent(QFocusEvent* event)
 WKPageRef QQuickWebView::pageRef() const
 {
     Q_D(const QQuickWebView);
-    return d->pageProxy->pageRef();
+    return toAPI(d->webPageProxy.get());
 }
 
 /*!
@@ -849,7 +837,7 @@ WKPageRef QQuickWebView::pageRef() const
 void QQuickWebView::loadHtml(const QString& html, const QUrl& baseUrl)
 {
     Q_D(QQuickWebView);
-    d->webPageProxy()->loadHTMLString(html, baseUrl.toString());
+    d->webPageProxy->loadHTMLString(html, baseUrl.toString());
 }
 
 #include "moc_qquickwebview_p.cpp"

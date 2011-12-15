@@ -267,7 +267,6 @@ HEADERS += \
     UIProcess/qt/QtPageClient.h \
     UIProcess/qt/QtWebPageLoadClient.h \
     UIProcess/qt/QtWebPagePolicyClient.h \
-    UIProcess/qt/QtWebPageProxy.h \
     UIProcess/qt/QtWebPageUIClient.h \
     UIProcess/qt/QtSGUpdateQueue.h \
     UIProcess/qt/QtSGTileNode.h \
@@ -590,7 +589,6 @@ SOURCES += \
     UIProcess/qt/QtPageClient.cpp \
     UIProcess/qt/QtWebPageLoadClient.cpp \
     UIProcess/qt/QtWebPagePolicyClient.cpp \
-    UIProcess/qt/QtWebPageProxy.cpp \
     UIProcess/qt/QtWebPageUIClient.cpp \
     UIProcess/qt/QtSGUpdateQueue.cpp \
     UIProcess/qt/QtSGTileNode.cpp \

@@ -38,6 +38,8 @@ public:
     QtPageClient();
     ~QtPageClient();
 
+    void initialize(QQuickWebView*, QtWebPageEventHandler*, QtWebUndoController*);
+
     // QQuickWebView.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual WebCore::IntSize viewSize();
@@ -95,17 +97,8 @@ public:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
 
-    void initialize(QQuickWebView* webView, QtWebPageProxy* pageProxy, QtWebPageEventHandler* eventHandler, QtWebUndoController* undoController)
-    {
-        m_webView = webView;
-        m_eventHandler = eventHandler;
-        m_qtWebPageProxy = pageProxy;
-        m_undoController = undoController;
-    }
-
 private:
     QQuickWebView* m_webView;
-    QtWebPageProxy* m_qtWebPageProxy;
     QtWebPageEventHandler* m_eventHandler;
     QtWebUndoController* m_undoController;
 };

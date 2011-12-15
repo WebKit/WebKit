@@ -26,9 +26,9 @@
 #include "QtViewportInteractionEngine.h"
 #include "QtWebPageLoadClient.h"
 #include "QtWebPagePolicyClient.h"
-#include "QtWebPageProxy.h"
 #include "QtWebPageUIClient.h"
 #include "QtWebUndoController.h"
+#include "WebPageProxy.h"
 
 #include "qquickwebview_p.h"
 #include "qquickwebpage_p.h"
@@ -43,7 +43,6 @@ class DownloadProxy;
 class QtWebContext;
 class WebPageProxy;
 }
-class QtWebPageProxy;
 class QWebNavigationHistory;
 class QWebViewportInfo;
 
@@ -56,6 +55,7 @@ class QQuickWebViewPrivate {
     Q_DECLARE_PUBLIC(QQuickWebView)
     friend class QQuickWebViewExperimental;
     friend class QQuickWebPage;
+    friend class QWebPreferencesPrivate;
     friend class QWebViewportInfo;
 
 public:
@@ -65,7 +65,6 @@ public:
     virtual ~QQuickWebViewPrivate();
 
     void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
-    void setPageProxy(QtWebPageProxy*);
 
     void initializeTouch(QQuickWebView* viewport);
     void initializeDesktop(QQuickWebView* viewport);
@@ -102,8 +101,6 @@ public:
     bool navigatorQtObjectEnabled() const;
     void setNavigatorQtObjectEnabled(bool);
 
-    WebKit::WebPageProxy* webPageProxy() const;
-
     // PageClient.
     WebCore::IntSize viewSize() const;
     void didReceiveMessageFromNavigatorQtObject(const String& message);
@@ -132,6 +129,7 @@ private:
     };
 
     RefPtr<QtWebContext> context;
+    RefPtr<WebKit::WebPageProxy> webPageProxy;
 
     QtPageClient pageClient;
     QtWebUndoController undoController;
@@ -146,7 +144,6 @@ private:
     QScopedPointer<QtViewportInteractionEngine> interactionEngine;
 
     QQuickWebView* q_ptr;
-    QScopedPointer<QtWebPageProxy> pageProxy;
 
     QDeclarativeComponent* alertDialog;
     QDeclarativeComponent* confirmDialog;

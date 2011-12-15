@@ -23,7 +23,6 @@
 
 #include "LayerTreeHostProxy.h"
 #include "QtWebPageEventHandler.h"
-#include "QtWebPageProxy.h"
 #include "TransformationMatrix.h"
 #include "qquickwebpage_p_p.h"
 #include <QtQuick/QQuickCanvas>

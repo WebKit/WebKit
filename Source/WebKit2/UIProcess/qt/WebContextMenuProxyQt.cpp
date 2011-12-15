@@ -27,59 +27,25 @@
 #include "config.h"
 #include "WebContextMenuProxyQt.h"
 
-#include <IntPoint.h>
-#include <OwnPtr.h>
-#include <WebContextMenuItemData.h>
-#include <qmenu.h>
-#include <QtWebPageProxy.h>
-
 using namespace WebCore;
-
-Q_DECLARE_METATYPE(WebKit::WebContextMenuItemData);
 
 namespace WebKit {
 
-WebContextMenuProxyQt::WebContextMenuProxyQt(QtWebPageProxy* pageProxy)
-    : m_webPageProxy(pageProxy)
+WebContextMenuProxyQt::WebContextMenuProxyQt(WebPageProxy*)
 {
 }
 
-PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QtWebPageProxy *pageProxy)
+PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(WebPageProxy* webPageProxy)
 {
-    return adoptRef(new WebContextMenuProxyQt(pageProxy));
-}
-
-void WebContextMenuProxyQt::actionTriggered(bool)
-{
-    QAction* qtAction = qobject_cast<QAction*>(sender());
-    if (!qtAction) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    QVariant data = qtAction->data();
-    if (!data.canConvert<WebContextMenuItemData>()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_webPageProxy->contextMenuItemSelected(qtAction->data().value<WebContextMenuItemData>());
+    return adoptRef(new WebContextMenuProxyQt(webPageProxy));
 }
 
 void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vector<WebContextMenuItemData>& items)
 {
-    // FIXME: Make this a QML compatible context menu.
 }
 
 void WebContextMenuProxyQt::hideContextMenu()
 {
-    m_webPageProxy->hideContextMenu();
-}
-
-PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items) const
-{
-    // FIXME: Make this a QML compatible context menu.
-    return nullptr;
 }
 
 #include "moc_WebContextMenuProxyQt.cpp"
