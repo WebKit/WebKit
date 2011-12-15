@@ -1,3 +1,35 @@
+2011-12-15  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Extend WebNotification to include its origin
+        https://bugs.webkit.org/show_bug.cgi?id=74615
+        <rdar://problem/10587164>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/WKSecurityOrigin.h: Expose API that converts the security origin to database
+        identifier.
+        * Shared/API/c/WKSecurityOrigin.cpp:
+        (WKSecurityOriginCopyDatabaseIdentifier):
+
+        * UIProcess/Notifications/WebNotification.h: Extend WebNotification to include the origin.
+        (WebKit::WebNotification::create):
+        (WebKit::WebNotification::origin):
+        * UIProcess/Notifications/WebNotification.cpp: Remove unneeded encode() and decode() functions.
+        (WebKit::WebNotification::WebNotification):
+
+        * UIProcess/API/C/WKNotification.h: Expose WebNotification's origin().
+        * UIProcess/API/C/WKNotification.cpp:
+        (WKNotificationGetSecurityOrigin):
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in: Update show() to include the
+        origin of the notification.
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::show):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Pass the notification's exec context's origin as
+        identifier.
+
 2011-12-15  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Add test for download policy on navigation request

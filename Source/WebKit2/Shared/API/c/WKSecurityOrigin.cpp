@@ -48,6 +48,11 @@ WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef hos
     return toAPI(securityOrigin.release().leakRef());
 }
 
+WKStringRef WKSecurityOriginCopyDatabaseIdentifier(WKSecurityOriginRef securityOrigin)
+{
+    return toCopiedAPI(toImpl(securityOrigin)->databaseIdentifier());
+}
+
 WKStringRef WKSecurityOriginCopyProtocol(WKSecurityOriginRef securityOrigin)
 {
     return toCopiedAPI(toImpl(securityOrigin)->protocol());

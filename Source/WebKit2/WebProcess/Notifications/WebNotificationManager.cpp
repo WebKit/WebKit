@@ -33,6 +33,8 @@
 #include "WebNotification.h"
 #include "WebNotificationManagerProxyMessages.h"
 #include <WebCore/Notification.h>
+#include <WebCore/ScriptExecutionContext.h>
+#include <WebCore/SecurityOrigin.h>
 #endif
 
 using namespace WebCore;
@@ -71,7 +73,7 @@ bool WebNotificationManager::show(Notification* notification, WebPage* page)
     m_notificationMap.set(notification, notificationID);
     m_notificationIDMap.set(notificationID, notification);
     
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::Show(notification->contents().title, notification->contents().body, notificationID), page->pageID());
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::Show(notification->contents().title, notification->contents().body, notification->scriptExecutionContext()->securityOrigin()->databaseIdentifier(), notificationID), page->pageID());
 #endif
     return true;
 }

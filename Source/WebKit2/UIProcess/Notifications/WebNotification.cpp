@@ -33,21 +33,12 @@
 
 namespace WebKit {
 
-WebNotification::WebNotification(const String& title, const String& body, uint64_t notificationID)
+WebNotification::WebNotification(const String& title, const String& body, const String& originIdentifier, uint64_t notificationID)
     : m_title(title)
     , m_body(body)
+    , m_origin(WebSecurityOrigin::create(originIdentifier))
     , m_notificationID(notificationID)
 {
-}
-
-void WebNotification::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(CoreIPC::In(m_title, m_body, m_notificationID));
-}
-
-bool WebNotification::decode(CoreIPC::ArgumentDecoder* decoder, WebNotification& notification)
-{
-    return decoder->decode(CoreIPC::Out(notification.m_title, notification.m_body, notification.m_notificationID));
 }
 
 } // namespace WebKit

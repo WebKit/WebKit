@@ -27,7 +27,9 @@
 #define WebNotification_h
 
 #include "APIObject.h"
+#include "WebSecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -38,32 +40,30 @@ class ArgumentEncoder;
 } // namespace CoreIPC
 
 namespace WebKit {
-    
+
 class WebNotification : public APIObject {
 public:
     static const Type APIType = TypeNotification;
     
-    static PassRefPtr<WebNotification> create(const String& title, const String& body, uint64_t notificationID)
+    static PassRefPtr<WebNotification> create(const String& title, const String& body, const String& originIdentifier, uint64_t notificationID)
     {
-        return adoptRef(new WebNotification(title, body, notificationID));
+        return adoptRef(new WebNotification(title, body, originIdentifier, notificationID));
     }
     
     const String& title() const { return m_title; }
-    
     const String& body() const { return m_body; }
+    WebSecurityOrigin* origin() const { return m_origin.get(); }
     
     uint64_t notificationID() const { return m_notificationID; }
 
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebNotification&);
-
 private:
-    WebNotification(const String& title, const String& body, uint64_t notificationID);
+    WebNotification(const String& title, const String& body, const String& originIdentifier, uint64_t notificationID);
 
     virtual Type type() const { return APIType; }
     
     String m_title;
     String m_body;
+    RefPtr<WebSecurityOrigin> m_origin;
     uint64_t m_notificationID;
 };
 

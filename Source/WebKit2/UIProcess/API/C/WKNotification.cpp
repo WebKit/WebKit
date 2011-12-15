@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebNotification.h"
+#include "WebSecurityOrigin.h"
 
 using namespace WebKit;
 
@@ -44,6 +45,11 @@ WKStringRef WKNotificationCopyTitle(WKNotificationRef notification)
 WKStringRef WKNotificationCopyBody(WKNotificationRef notification)
 {
     return toCopiedAPI(toImpl(notification)->body());
+}
+
+WKSecurityOriginRef WKNotificationGetSecurityOrigin(WKNotificationRef notification)
+{
+    return toAPI(toImpl(notification)->origin());
 }
 
 uint64_t WKNotificationGetID(WKNotificationRef notification)

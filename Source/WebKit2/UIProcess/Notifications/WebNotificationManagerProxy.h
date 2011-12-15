@@ -71,7 +71,7 @@ private:
     void didReceiveSyncWebNotificationManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
     
     // Message handlers
-    void show(const WTF::String& title, const WTF::String& body, uint64_t notificationID);
+    void show(const WTF::String& title, const WTF::String& body, const WTF::String& originIdentifier, uint64_t notificationID);
     void cancel(uint64_t notificationID);
     void didDestroyNotification(uint64_t notificationID);
     void notificationPermissionLevel(const WTF::String& originIdentifier, uint64_t& permissionLevel);
