@@ -36,7 +36,6 @@ WebInspector.DatabaseQueryView = function(database)
     this.element.addStyleClass("storage-view");
     this.element.addStyleClass("query");
     this.element.addStyleClass("monospace");
-    this.element.tabIndex = 0;
     this.element.addEventListener("selectstart", this._selectStart.bind(this), false);
 
     this._promptElement = document.createElement("div");
@@ -47,6 +46,8 @@ WebInspector.DatabaseQueryView = function(database)
 
     this.prompt = new WebInspector.TextPromptWithHistory(this.completions.bind(this), " ");
     this.prompt.attach(this._promptElement);
+    
+    this.element.addEventListener("click", this._messagesClicked.bind(this), true);
 }
 
 WebInspector.DatabaseQueryView.Events = {
@@ -54,22 +55,12 @@ WebInspector.DatabaseQueryView.Events = {
 }
 
 WebInspector.DatabaseQueryView.prototype = {
-    wasShown: function()
+    _messagesClicked: function()
     {
-        function moveBackIfOutside()
-        {
-            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
-                this.prompt.moveCaretToEndOfPrompt();
-        }
-
-        setTimeout(moveBackIfOutside.bind(this), 0);
+        if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
+            this.prompt.moveCaretToEndOfPrompt();
     },
-
-    afterShow: function()
-    {
-        WebInspector.setCurrentFocusElement(this._promptElement);
-    },
-
+    
     completions: function(wordRange, force, completionsReadyCallback)
     {
         var prefix = wordRange.toString().toLowerCase();

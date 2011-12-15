@@ -1436,14 +1436,12 @@ WebInspector.DatabaseTreeElement.prototype = {
         this._storagePanel.showDatabase(this._database);
     },
 
-    oncollapse: function()
+    onexpand: function()
     {
-        // Request a refresh after every collapse so the next
-        // expand will have an updated table list.
-        this.shouldRefreshChildren = true;
+        this._updateChildren();
     },
 
-    onpopulate: function()
+    _updateChildren: function()
     {
         this.removeChildren();
 
