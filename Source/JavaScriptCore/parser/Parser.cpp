@@ -623,7 +623,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         ident = m_token.m_data.ident;
         next();
         AutoPopScopeRef catchScope(this, pushScope());
-        failIfFalseIfStrictWithNameAndMessage(catchScope->declareVariable(ident), "Cannot declare a variable named", ident->impl(), "in strict mode");
+        failIfFalseIfStrictWithNameAndMessage(declareVariable(ident), "Cannot declare a variable named", ident->impl(), "in strict mode");
         catchScope->preventNewDecls();
         consumeOrFail(CLOSEPAREN);
         matchOrFail(OPENBRACE);
