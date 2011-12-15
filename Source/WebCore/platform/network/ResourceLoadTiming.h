@@ -32,8 +32,6 @@
 
 namespace WebCore {
 
-class DocumentLoadTiming;
-
 class ResourceLoadTiming : public RefCounted<ResourceLoadTiming> {
 public:
     static PassRefPtr<ResourceLoadTiming> create()
@@ -80,15 +78,8 @@ public:
         return !(*this == other);
     }
 
-    // We want to present a unified timeline to Javascript. Using walltime is problematic, because the clock may skew while resources
-    // load. To prevent that skew, we record a single reference walltime when root document navigation begins. All other times are
-    // recorded using monotonicallyIncreasingTime(). When a time needs to be presented to Javascript, we build a pseudo-walltime
-    // using the following equation:
-    //   pseudo time = document wall reference + (resource request time - document monotonic reference) + deltaMilliseconds / 1000.0.
-    double convertResourceLoadTimeToDocumentTime(const DocumentLoadTiming* documentTiming, int deltaMilliseconds) const;
-
-    double requestTime; // monotonicallyIncreasingTime() when the port started handling this request.
-    int proxyStart; // The rest of these are millisecond deltas, using monotonicallyIncreasingTime(), from requestTime.
+    double requestTime;
+    int proxyStart;
     int proxyEnd;
     int dnsStart;
     int dnsEnd;

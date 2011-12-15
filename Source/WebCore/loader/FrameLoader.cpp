@@ -376,12 +376,10 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                         // time into freed memory.
                         RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
                         m_pageDismissalEventBeingDispatched = UnloadDismissal;
-                        if (documentLoader && !documentLoader->timing()->unloadEventStart() && !documentLoader->timing()->unloadEventEnd()) {
+                        if (documentLoader && !documentLoader->timing()->unloadEventStart && !documentLoader->timing()->unloadEventEnd) {
                             DocumentLoadTiming* timing = documentLoader->timing();
-                            ASSERT(timing->navigationStart());
-                            timing->markUnloadEventStart();
-                            m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
-                            timing->markUnloadEventEnd();
+                            ASSERT(timing->navigationStart);
+                            m_frame->domWindow()->dispatchTimedEvent(unloadEvent, m_frame->domWindow()->document(), &timing->unloadEventStart, &timing->unloadEventEnd);
                         } else
                             m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
                     }
@@ -1773,7 +1771,7 @@ void FrameLoader::commitProvisionalLoad()
     if (pdl) {
         // Check if the destination page is allowed to access the previous page's timing information.
         RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(pdl->request().url());
-        m_documentLoader->timing()->setHasSameOriginAsPreviousDocument(securityOrigin->canRequest(m_previousUrl));
+        m_documentLoader->timing()->hasSameOriginAsPreviousDocument = securityOrigin->canRequest(m_previousUrl);
     }
 
     // Call clientRedirectCancelledOrFinished() here so that the frame load delegate is notified that the redirect's
@@ -2329,7 +2327,8 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
         notifier()->assignIdentifierToInitialRequest(identifier, m_provisionalDocumentLoader.get(), m_provisionalDocumentLoader->originalRequest());
     }
 
-    m_provisionalDocumentLoader->timing()->markNavigationStart(frame());
+    ASSERT(!m_provisionalDocumentLoader->timing()->navigationStart);
+    m_provisionalDocumentLoader->timing()->navigationStart = currentTime();
 
     if (!m_provisionalDocumentLoader->startLoadingMainResource(identifier))
         m_provisionalDocumentLoader->updateLoading();
@@ -3029,11 +3028,11 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     provisionalLoader->prepareForLoadStart();
 
     m_loadingFromCachedPage = true;
-
+    
     // Should have timing data from previous time(s) the page was shown.
-    ASSERT(provisionalLoader->timing()->navigationStart());
+    ASSERT(provisionalLoader->timing()->navigationStart);
     provisionalLoader->resetTiming();
-    provisionalLoader->timing()->markNavigationStart(frame());
+    provisionalLoader->timing()->navigationStart = currentTime();    
 
     provisionalLoader->setCommitted(true);
     commitProvisionalLoad();

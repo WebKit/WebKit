@@ -25746,19 +25746,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\DocumentLoadTiming.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\DocumentLoadTiming.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\DocumentLoader.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\loader\DocumentLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\DocumentLoadTiming.h"
 				>
 			</File>
 			<File
@@ -30206,10 +30202,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\ResourceLoadPriority.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\ResourceLoadTiming.cpp"
 					>
 				</File>
 				<File

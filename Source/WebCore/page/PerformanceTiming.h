@@ -81,7 +81,6 @@ private:
     DocumentLoadTiming* documentLoadTiming() const;
     ResourceLoadTiming* resourceLoadTiming() const;
     unsigned long long resourceLoadTimeRelativeToAbsolute(int) const;
-    unsigned long long monotonicTimeToIntegerMilliseconds(double) const;
 
     Frame* m_frame;
 };

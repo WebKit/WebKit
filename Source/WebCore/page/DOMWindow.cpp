@@ -1635,14 +1635,12 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
 void DOMWindow::dispatchLoadEvent()
 {
     RefPtr<Event> loadEvent(Event::create(eventNames().loadEvent, false, false));
-    if (m_frame && m_frame->loader()->documentLoader() && !m_frame->loader()->documentLoader()->timing()->loadEventStart()) {
+    if (m_frame && m_frame->loader()->documentLoader() && !m_frame->loader()->documentLoader()->timing()->loadEventStart) {
         // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed while dispatching
         // the event, so protect it to prevent writing the end time into freed memory.
         RefPtr<DocumentLoader> documentLoader = m_frame->loader()->documentLoader();
         DocumentLoadTiming* timing = documentLoader->timing();
-        timing->markLoadEventStart();
-        dispatchEvent(loadEvent, document());
-        timing->markLoadEventEnd();
+        dispatchTimedEvent(loadEvent, document(), &timing->loadEventStart, &timing->loadEventEnd);
     } else
         dispatchEvent(loadEvent, document());
 
@@ -1672,6 +1670,15 @@ bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget
     InspectorInstrumentation::didDispatchEventOnWindow(cookie);
 
     return result;
+}
+
+void DOMWindow::dispatchTimedEvent(PassRefPtr<Event> event, Document* target, double* startTime, double* endTime)
+{
+    ASSERT(startTime);
+    ASSERT(endTime);
+    *startTime = currentTime();
+    dispatchEvent(event, target);
+    *endTime = currentTime();
 }
 
 void DOMWindow::removeAllEventListeners()

@@ -6,7 +6,7 @@ var timing = performance.timing || {};
 
 // Get the order of magnitude correct without a chance for flakiness.
 var oneHourMilliseconds = 60 * 60 * 1000;
-var currentUTC = 0;  // FIXME: Use performance.now() when available.
+var currentUTC = (new Date()).getTime();
 var oneHourAgoUTC = currentUTC - oneHourMilliseconds;
 
 function sleepFiftyMilliseconds() {

@@ -50,6 +50,30 @@ static unsigned long long toIntegerMilliseconds(double seconds)
     return static_cast<unsigned long long>(seconds * 1000.0);
 }
 
+static double getPossiblySkewedTimeInKnownRange(double skewedTime, double lowerBound, double upperBound)
+{
+#if PLATFORM(CHROMIUM)
+    // The chromium port's currentTime() implementation only syncs with the
+    // system clock every 60 seconds. So it is possible for timing marks
+    // collected in different threads or processes to have a small skew.
+    // FIXME: It may be possible to add a currentTimeFromSystemTime() method
+    // that eliminates the skew.
+    if (skewedTime <= lowerBound)
+        return lowerBound;
+
+    if (upperBound <= 0.0)
+        upperBound = currentTime();
+
+    if (skewedTime >= upperBound)
+        return upperBound;
+#else
+    ASSERT_UNUSED(lowerBound, skewedTime >= lowerBound);
+    ASSERT_UNUSED(upperBound, skewedTime <= upperBound);
+#endif
+
+    return skewedTime;
+}
+
 PerformanceTiming::PerformanceTiming(Frame* frame)
     : m_frame(frame)
 {
@@ -71,7 +95,7 @@ unsigned long long PerformanceTiming::navigationStart() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->navigationStart());
+    return toIntegerMilliseconds(timing->navigationStart);
 }
 
 unsigned long long PerformanceTiming::unloadEventStart() const
@@ -80,10 +104,10 @@ unsigned long long PerformanceTiming::unloadEventStart() const
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect() || !timing->hasSameOriginAsPreviousDocument())
+    if (timing->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument)
         return 0;
 
-    return toIntegerMilliseconds(timing->unloadEventStart());
+    return toIntegerMilliseconds(timing->unloadEventStart);
 }
 
 unsigned long long PerformanceTiming::unloadEventEnd() const
@@ -92,10 +116,10 @@ unsigned long long PerformanceTiming::unloadEventEnd() const
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect() || !timing->hasSameOriginAsPreviousDocument())
+    if (timing->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument)
         return 0;
 
-    return toIntegerMilliseconds(timing->unloadEventEnd());
+    return toIntegerMilliseconds(timing->unloadEventEnd);
 }
 
 unsigned long long PerformanceTiming::redirectStart() const
@@ -104,10 +128,10 @@ unsigned long long PerformanceTiming::redirectStart() const
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect())
+    if (timing->hasCrossOriginRedirect)
         return 0;
 
-    return toIntegerMilliseconds(timing->redirectStart());
+    return toIntegerMilliseconds(timing->redirectStart);
 }
 
 unsigned long long PerformanceTiming::redirectEnd() const
@@ -116,10 +140,10 @@ unsigned long long PerformanceTiming::redirectEnd() const
     if (!timing)
         return 0;
 
-    if (timing->hasCrossOriginRedirect())
+    if (timing->hasCrossOriginRedirect)
         return 0;
 
-    return toIntegerMilliseconds(timing->redirectEnd());
+    return toIntegerMilliseconds(timing->redirectEnd);
 }
 
 unsigned long long PerformanceTiming::fetchStart() const
@@ -128,7 +152,7 @@ unsigned long long PerformanceTiming::fetchStart() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->fetchStart());
+    return toIntegerMilliseconds(timing->fetchStart);
 }
 
 unsigned long long PerformanceTiming::domainLookupStart() const
@@ -253,7 +277,7 @@ unsigned long long PerformanceTiming::responseEnd() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->responseEnd());
+    return toIntegerMilliseconds(timing->responseEnd);
 }
 
 unsigned long long PerformanceTiming::domLoading() const
@@ -262,7 +286,7 @@ unsigned long long PerformanceTiming::domLoading() const
     if (!timing)
         return fetchStart();
 
-    return monotonicTimeToIntegerMilliseconds(timing->domLoading);
+    return toIntegerMilliseconds(timing->domLoading);
 }
 
 unsigned long long PerformanceTiming::domInteractive() const
@@ -271,7 +295,7 @@ unsigned long long PerformanceTiming::domInteractive() const
     if (!timing)
         return 0;
 
-    return monotonicTimeToIntegerMilliseconds(timing->domInteractive);
+    return toIntegerMilliseconds(timing->domInteractive);
 }
 
 unsigned long long PerformanceTiming::domContentLoadedEventStart() const
@@ -280,7 +304,7 @@ unsigned long long PerformanceTiming::domContentLoadedEventStart() const
     if (!timing)
         return 0;
 
-    return monotonicTimeToIntegerMilliseconds(timing->domContentLoadedEventStart);
+    return toIntegerMilliseconds(timing->domContentLoadedEventStart);
 }
 
 unsigned long long PerformanceTiming::domContentLoadedEventEnd() const
@@ -289,7 +313,7 @@ unsigned long long PerformanceTiming::domContentLoadedEventEnd() const
     if (!timing)
         return 0;
 
-    return monotonicTimeToIntegerMilliseconds(timing->domContentLoadedEventEnd);
+    return toIntegerMilliseconds(timing->domContentLoadedEventEnd);
 }
 
 unsigned long long PerformanceTiming::domComplete() const
@@ -298,7 +322,7 @@ unsigned long long PerformanceTiming::domComplete() const
     if (!timing)
         return 0;
 
-    return monotonicTimeToIntegerMilliseconds(timing->domComplete);
+    return toIntegerMilliseconds(timing->domComplete);
 }
 
 unsigned long long PerformanceTiming::loadEventStart() const
@@ -307,7 +331,7 @@ unsigned long long PerformanceTiming::loadEventStart() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->loadEventStart());
+    return toIntegerMilliseconds(timing->loadEventStart);
 }
 
 unsigned long long PerformanceTiming::loadEventEnd() const
@@ -316,7 +340,7 @@ unsigned long long PerformanceTiming::loadEventEnd() const
     if (!timing)
         return 0;
 
-    return toIntegerMilliseconds(timing->loadEventEnd());
+    return toIntegerMilliseconds(timing->loadEventEnd);
 }
 
 DocumentLoader* PerformanceTiming::documentLoader() const
@@ -357,20 +381,22 @@ ResourceLoadTiming* PerformanceTiming::resourceLoadTiming() const
     return loader->response().resourceLoadTiming();
 }
 
-unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int relativeMilliseconds) const
+unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int relativeSeconds) const
 {
-    ASSERT(relativeMilliseconds >= 0);
+    ASSERT(relativeSeconds >= 0);
     ResourceLoadTiming* resourceTiming = resourceLoadTiming();
     ASSERT(resourceTiming);
-    return toIntegerMilliseconds(resourceTiming->convertResourceLoadTimeToDocumentTime(documentLoadTiming(), relativeMilliseconds));
-}
+    DocumentLoadTiming* documentTiming = documentLoadTiming();
+    ASSERT(documentTiming);
 
-unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(double monotonicSeconds) const
-{
-    ASSERT(monotonicSeconds >= 0);
-    const DocumentLoadTiming* timing = documentLoadTiming();
-    ASSERT(timing);
-    return toIntegerMilliseconds(timing->convertMonotonicTimeToDocumentTime(monotonicSeconds));
+    // The ResourceLoadTiming API's requestTime is the base time to which all
+    // other marks are relative. So to get an absolute time, we must add it to
+    // the relative marks.
+    //
+    // Since ResourceLoadTimings came from the network platform layer, we must
+    // check them for skew because they may be from another thread/process.
+    double baseTime = getPossiblySkewedTimeInKnownRange(resourceTiming->requestTime, documentTiming->fetchStart, documentTiming->responseEnd);
+    return toIntegerMilliseconds(baseTime) + relativeSeconds;
 }
 
 } // namespace WebCore

@@ -2187,10 +2187,9 @@ webcore_sources += \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.h \
 	Source/WebCore/loader/TextTrackLoader.cpp \
 	Source/WebCore/loader/TextTrackLoader.h \
-	Source/WebCore/loader/DocumentLoadTiming.cpp \
-	Source/WebCore/loader/DocumentLoadTiming.h \
 	Source/WebCore/loader/DocumentLoader.cpp \
 	Source/WebCore/loader/DocumentLoader.h \
+	Source/WebCore/loader/DocumentLoadTiming.h \
 	Source/WebCore/loader/DocumentThreadableLoader.cpp \
 	Source/WebCore/loader/DocumentThreadableLoader.h \
 	Source/WebCore/loader/DocumentThreadableLoaderClient.h \
@@ -2842,7 +2841,6 @@ webcore_sources += \
 	Source/WebCore/platform/network/ResourceHandleInternal.h \
 	Source/WebCore/platform/network/ResourceLoadInfo.h \
 	Source/WebCore/platform/network/ResourceLoadPriority.h \
-	Source/WebCore/platform/network/ResourceLoadTiming.cpp \
 	Source/WebCore/platform/network/ResourceLoadTiming.h \
 	Source/WebCore/platform/network/ResourceRequestBase.cpp \
 	Source/WebCore/platform/network/ResourceRequestBase.h \

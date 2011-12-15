@@ -1,3 +1,67 @@
+2011-12-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed revert of r102696 ([Navigation Timing] Use monotonicallyIncreasingTime() instead of currentTime()).
+        Breaks inspector's network panel timeline on chromium.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForTiming):
+        (WebCore::buildObjectForResourceResponse):
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        * loader/DocumentLoadTiming.cpp: Removed.
+        * loader/DocumentLoadTiming.h:
+        (WebCore::DocumentLoadTiming::DocumentLoadTiming):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::willSendRequest):
+        (WebCore::MainResourceLoader::didReceiveData):
+        (WebCore::MainResourceLoader::didFinishLoading):
+        (WebCore::MainResourceLoader::load):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        (WebCore::DOMWindow::dispatchTimedEvent):
+        * page/DOMWindow.h:
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::redirectCount):
+        * page/PerformanceTiming.cpp:
+        (WebCore::getPossiblySkewedTimeInKnownRange):
+        (WebCore::PerformanceTiming::navigationStart):
+        (WebCore::PerformanceTiming::unloadEventStart):
+        (WebCore::PerformanceTiming::unloadEventEnd):
+        (WebCore::PerformanceTiming::redirectStart):
+        (WebCore::PerformanceTiming::redirectEnd):
+        (WebCore::PerformanceTiming::fetchStart):
+        (WebCore::PerformanceTiming::responseEnd):
+        (WebCore::PerformanceTiming::domLoading):
+        (WebCore::PerformanceTiming::domInteractive):
+        (WebCore::PerformanceTiming::domContentLoadedEventStart):
+        (WebCore::PerformanceTiming::domContentLoadedEventEnd):
+        (WebCore::PerformanceTiming::domComplete):
+        (WebCore::PerformanceTiming::loadEventStart):
+        (WebCore::PerformanceTiming::loadEventEnd):
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToAbsolute):
+        * page/PerformanceTiming.h:
+        * platform/network/ResourceLoadTiming.cpp: Removed.
+        * platform/network/ResourceLoadTiming.h:
+
 2011-12-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, fix Closure compiler warnings after r102905.

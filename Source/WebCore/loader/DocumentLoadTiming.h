@@ -26,62 +26,39 @@
 #ifndef DocumentLoadTiming_h
 #define DocumentLoadTiming_h
 
-#include <wtf/CurrentTime.h>
-
 namespace WebCore {
 
-class Frame;
-class KURL;
+struct DocumentLoadTiming {
+    DocumentLoadTiming()
+        : navigationStart(0.0)
+        , unloadEventStart(0.0)
+        , unloadEventEnd(0.0)
+        , redirectStart(0.0)
+        , redirectEnd(0.0)
+        , redirectCount(0)
+        , fetchStart(0.0)
+        , responseEnd(0.0)
+        , loadEventStart(0.0)
+        , loadEventEnd(0.0)
+        , hasCrossOriginRedirect(false)
+        , hasSameOriginAsPreviousDocument(false)
+    {
+    }
 
-class DocumentLoadTiming {
-public:
-    DocumentLoadTiming();
-
-    void markNavigationStart(Frame*);
-    void addRedirect(const KURL& redirectingUrl, const KURL& redirectedUrl);
-    double convertMonotonicTimeToDocumentTime(double monotonicTime) const;
-
-    void markUnloadEventStart() { m_unloadEventStart = monotonicallyIncreasingTime(); }
-    void markUnloadEventEnd() { m_unloadEventEnd = monotonicallyIncreasingTime(); }
-    void markRedirectStart() { m_redirectStart = monotonicallyIncreasingTime(); }
-    void markRedirectEnd() { m_redirectEnd = monotonicallyIncreasingTime(); }
-    void markFetchStart() { m_fetchStart = monotonicallyIncreasingTime(); }
-    void setResponseEnd(double monotonicTime) { m_responseEnd = monotonicTime; }
-    void markLoadEventStart() { m_loadEventStart = monotonicallyIncreasingTime(); }
-    void markLoadEventEnd() { m_loadEventEnd = monotonicallyIncreasingTime(); }
-
-    void setHasSameOriginAsPreviousDocument(bool value) { m_hasSameOriginAsPreviousDocument = value; }
-
-    double navigationStart() const { return convertMonotonicTimeToDocumentTime(m_navigationStart); }
-    double unloadEventStart() const { return convertMonotonicTimeToDocumentTime(m_unloadEventStart); }
-    double unloadEventEnd() const { return convertMonotonicTimeToDocumentTime(m_unloadEventEnd); }
-    double redirectStart() const { return convertMonotonicTimeToDocumentTime(m_redirectStart); }
-    double redirectEnd() const { return convertMonotonicTimeToDocumentTime(m_redirectEnd); }
-    short redirectCount() const { return m_redirectCount; }
-    double fetchStart() const { return convertMonotonicTimeToDocumentTime(m_fetchStart); }
-    double responseEnd() const { return convertMonotonicTimeToDocumentTime(m_responseEnd); }
-    double loadEventStart() const { return convertMonotonicTimeToDocumentTime(m_loadEventStart); }
-    double loadEventEnd() const { return convertMonotonicTimeToDocumentTime(m_loadEventEnd); }
-    bool hasCrossOriginRedirect() const { return m_hasCrossOriginRedirect; }
-    bool hasSameOriginAsPreviousDocument() const { return m_hasSameOriginAsPreviousDocument; }
-
-private:
-    double m_referenceMonotonicTime;
-    double m_referenceWallTime;
-    double m_navigationStart;
-    double m_unloadEventStart;
-    double m_unloadEventEnd;
-    double m_redirectStart;
-    double m_redirectEnd;
-    short m_redirectCount;
-    double m_fetchStart;
-    double m_responseEnd;
-    double m_loadEventStart;
-    double m_loadEventEnd;
-    bool m_hasCrossOriginRedirect;
-    bool m_hasSameOriginAsPreviousDocument;
+    double navigationStart;
+    double unloadEventStart;
+    double unloadEventEnd;
+    double redirectStart;
+    double redirectEnd;
+    short redirectCount;
+    double fetchStart;
+    double responseEnd;
+    double loadEventStart;
+    double loadEventEnd;
+    bool hasCrossOriginRedirect;
+    bool hasSameOriginAsPreviousDocument;
 };
 
-} // namespace WebCore
+}
 
 #endif

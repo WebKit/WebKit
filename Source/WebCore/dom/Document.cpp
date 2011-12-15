@@ -1047,15 +1047,15 @@ void Document::setReadyState(ReadyState readyState)
     switch (readyState) {
     case Loading:
         if (!m_documentTiming.domLoading)
-            m_documentTiming.domLoading = monotonicallyIncreasingTime();
+            m_documentTiming.domLoading = currentTime();
         break;
     case Interactive:
         if (!m_documentTiming.domInteractive)
-            m_documentTiming.domInteractive = monotonicallyIncreasingTime();
+            m_documentTiming.domInteractive = currentTime();
         break;
     case Complete:
         if (!m_documentTiming.domComplete)
-            m_documentTiming.domComplete = monotonicallyIncreasingTime();
+            m_documentTiming.domComplete = currentTime();
         break;
     }
 
@@ -4270,10 +4270,10 @@ void Document::finishedParsing()
     ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
     setParsing(false);
     if (!m_documentTiming.domContentLoadedEventStart)
-        m_documentTiming.domContentLoadedEventStart = monotonicallyIncreasingTime();
+        m_documentTiming.domContentLoadedEventStart = currentTime();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
     if (!m_documentTiming.domContentLoadedEventEnd)
-        m_documentTiming.domContentLoadedEventEnd = monotonicallyIncreasingTime();
+        m_documentTiming.domContentLoadedEventEnd = currentTime();
 
     if (RefPtr<Frame> f = frame()) {
         // FrameLoader::finishedParsing() might end up calling Document::implicitClose() if all
