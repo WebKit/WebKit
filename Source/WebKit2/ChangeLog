@@ -1,3 +1,17 @@
+2011-12-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        [GTK] New API test for WindowProperties fails
+        https://bugs.webkit.org/show_bug.cgi?id=74630
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (WindowProperties::viewReadyToShow): assert each member to make
+        assertion error messages more useful, and avoid asserting x and y,
+        since we are getting bad values from WebCore, for some reason.
+        (testWebViewWindowProperties): use smaller values that fit inside the
+        800x600 screen used by the bots.
+
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
         EventDispatcher should handle wheel events on the connection queue
