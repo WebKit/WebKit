@@ -1,3 +1,9 @@
+2011-12-14  Sam Weinig  <sam@webkit.org>
+
+        Revert unintentional change to JavaScriptCore.def
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-12-14  Sam Weinig  <weinig@apple.com>
 
         Remove whitespace from InheritedPropertySheets attributes in
