@@ -61,11 +61,7 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
 
 void ScriptProfiler::collectGarbage()
 {
-    // Repeatedly call the V8 idle notification until it returns true ("nothing
-    // more to free"). Note that it makes more sense to do this than to implement
-    // a new "delete everything" pass because object references make it difficult
-    // to free everything possible in just one pass.
-    while (!v8::V8::IdleNotification()) { }
+    v8::V8::LowMemoryNotification();
 }
 
 PassRefPtr<InspectorValue> ScriptProfiler::objectByHeapObjectId(unsigned id, InjectedScriptManager* injectedScriptManager)
