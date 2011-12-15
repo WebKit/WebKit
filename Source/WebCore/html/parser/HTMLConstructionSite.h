@@ -86,6 +86,7 @@ public:
     void generateImpliedEndTags();
     void generateImpliedEndTagsWithExclusion(const AtomicString& tagName);
 
+    bool isEmpty() const { return !m_openElements.stackDepth(); }
     Element* currentElement() const { return m_openElements.top(); }
     ContainerNode* currentNode() const { return m_openElements.topNode(); }
     Element* oneBelowTop() const { return m_openElements.oneBelowTop(); }

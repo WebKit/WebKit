@@ -84,7 +84,7 @@ public:
         ASSERT(m_top->element());
         return m_top->element();
     }
-    
+
     ContainerNode* topNode() const
     {
         ASSERT(m_top->node());
@@ -118,6 +118,9 @@ public:
     void popHTMLHeadElement();
     void popHTMLBodyElement();
     void popAll();
+
+    static bool isMathMLTextIntegrationPoint(ContainerNode*);
+    static bool isHTMLIntegrationPoint(ContainerNode*);
 
     void remove(Element*);
     void removeHTMLHeadElement(Element*);

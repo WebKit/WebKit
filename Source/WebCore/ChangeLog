@@ -1,3 +1,27 @@
+2011-12-15  Adam Barth  <abarth@webkit.org>
+
+        <table><tr><td><svg><desc><td> parses incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=68106
+
+        Reviewed by Eric Seidel.
+
+        This patch updates our implementation of the HTML5 parser to account
+        for recent changes in the spec.  The main change in this patch is to
+        remove the "in foreign content" state from the tree builder.  Rather
+        than maintaining this as a separate state, the parser now introspects
+        on the stack of open elements to determine whether the parser is in
+        foriegn content.  In the process, I've deleted some now-unused
+        machinery in the tree builder.
+
+        Tested by the html5lib LayoutTests.  These tests show the progression
+        in our spec compliance.
+
+        * html/parser/HTMLElementStack.cpp:
+        * html/parser/HTMLElementStack.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        * html/parser/HTMLTreeBuilder.h:
+        * mathml/mathattrs.in:
+
 2011-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         m_hasCounterNodeMap and m_everHadLayout should be private to RenderObject

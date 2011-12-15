@@ -107,14 +107,8 @@ inline bool isTableRowScopeMarker(ContainerNode* node)
 
 inline bool isForeignContentScopeMarker(ContainerNode* node)
 {
-    return node->hasTagName(MathMLNames::miTag)
-        || node->hasTagName(MathMLNames::moTag)
-        || node->hasTagName(MathMLNames::mnTag)
-        || node->hasTagName(MathMLNames::msTag)
-        || node->hasTagName(MathMLNames::mtextTag)
-        || node->hasTagName(SVGNames::foreignObjectTag)
-        || node->hasTagName(SVGNames::descTag)
-        || node->hasTagName(SVGNames::titleTag)
+    return HTMLElementStack::isMathMLTextIntegrationPoint(node)
+        || HTMLElementStack::isHTMLIntegrationPoint(node)
         || isInHTMLNamespace(node);
 }
 
@@ -274,6 +268,38 @@ void HTMLElementStack::popUntilTableRowScopeMarker()
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#clear-the-stack-back-to-a-table-row-context
     while (!isTableRowScopeMarker(topNode()))
         pop();
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#mathml-text-integration-point
+bool HTMLElementStack::isMathMLTextIntegrationPoint(ContainerNode* node)
+{
+    if (!node->isElementNode())
+        return false;
+    Element* element = static_cast<Element*>(node);
+    return element->hasTagName(MathMLNames::miTag)
+        || element->hasTagName(MathMLNames::moTag)
+        || element->hasTagName(MathMLNames::mnTag)
+        || element->hasTagName(MathMLNames::msTag)
+        || element->hasTagName(MathMLNames::mtextTag);
+}
+
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#html-integration-point
+bool HTMLElementStack::isHTMLIntegrationPoint(ContainerNode* node)
+{
+    if (!node->isElementNode())
+        return false;
+    Element* element = static_cast<Element*>(node);
+    if (element->hasTagName(MathMLNames::annotation_xmlTag)) {
+        // FIXME: Technically we shouldn't read back from the DOM here.
+        // Instead, we're supposed to track this information in the element
+        // stack, which lets the parser run on its own thread.
+        String encoding = element->fastGetAttribute(MathMLNames::encodingAttr);
+        return equalIgnoringCase(encoding, "text/html")
+            || equalIgnoringCase(encoding, "application/xhtml+xml");
+    }
+    return element->hasTagName(SVGNames::foreignObjectTag)
+        || element->hasTagName(SVGNames::descTag)
+        || element->hasTagName(SVGNames::titleTag);
 }
 
 void HTMLElementStack::popUntilForeignContentScopeMarker()

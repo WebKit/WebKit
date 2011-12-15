@@ -109,7 +109,6 @@ private:
         InCellMode,
         InSelectMode,
         InSelectInTableMode,
-        InForeignContentMode,
         AfterBodyMode,
         InFramesetMode,
         AfterFramesetMode,
@@ -149,6 +148,7 @@ private:
     void processAnyOtherEndTagForInBody(AtomicHTMLToken&);
 
     void processCharacterBuffer(ExternalCharacterTokenBuffer&);
+    inline void processCharacterBufferForInBody(ExternalCharacterTokenBuffer&);
 
     void processFakeStartTag(const QualifiedName&, PassRefPtr<NamedNodeMap> attributes = 0);
     void processFakeEndTag(const QualifiedName&);
@@ -168,10 +168,8 @@ private:
     void defaultForAfterHead();
     void defaultForInTableText();
 
-    void prepareToReprocessToken();
-
-    void reprocessStartTag(AtomicHTMLToken&);
-    void reprocessEndTag(AtomicHTMLToken&);
+    inline bool shouldProcessTokenInForeignContent(AtomicHTMLToken&);
+    void processTokenInForeignContent(AtomicHTMLToken&);
 
     PassRefPtr<NamedNodeMap> attributesForIsindexInput(AtomicHTMLToken&);
 
@@ -202,9 +200,6 @@ private:
     }
 
     void resetInsertionModeAppropriately();
-
-    void processForeignContentUsingInBodyModeAndResetMode(AtomicHTMLToken& token);
-    void resetForeignInsertionMode();
 
     class FragmentParsingContext {
         WTF_MAKE_NONCOPYABLE(FragmentParsingContext);
@@ -257,8 +252,6 @@ private:
     TextPosition m_lastScriptElementStartPosition;
 
     bool m_usePreHTML5ParserQuirks;
-
-    bool m_hasPendingForeignInsertionModeSteps;
 };
 
 }

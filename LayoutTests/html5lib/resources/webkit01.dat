@@ -560,7 +560,8 @@ console.log("FOO<span>BAR</span>BAZ");
 |           <td>
 |             <svg svg>
 |               <svg desc>
-|               <svg circle>
+|           <td>
+|             <circle>
 
 #data
 <svg><tfoot></mi><td>
