@@ -1,5 +1,15 @@
 2011-12-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 97524
+
+    2011-10-14  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix the bad expected result that I added earlier.
+
+            * fast/css/getComputedStyle/computed-style-border-image-expected.txt:
+
+2011-12-14  Lucas Forschler  <lforschler@apple.com>
+
     Merge 97502
 
     2011-10-14  Simon Fraser  <simon.fraser@apple.com>

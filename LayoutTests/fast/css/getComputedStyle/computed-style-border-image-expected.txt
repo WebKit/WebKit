@@ -1,4 +1,3 @@
-Blocked access to external URL http://www.example.com/test.png
 Test computed style for the border-image property and sub-properties
 
 PASS computedBorderImageStyle('12 11 12 11', 'border-image-slice') is '12 11'
@@ -8,7 +7,7 @@ PASS computedBorderImageStyle('url(test.png) 12 repeat stretch', 'border-image-s
 PASS computedBorderImageStyle('url(test.png) 10 10 5 5 repeat stretch', 'border-image-slice') is '10 10 5 5'
 PASS computedBorderImageStyle('url(test.png) 10 a b c repeat stretch', 'border-image-slice') is '100%'
 PASS computedBorderImageStyle('url(test.png) 10 20 fill', 'border-image-slice') is '10 20 fill'
-FAIL computedBorderImageStyle('url(http://www.example.com/test.png) 10 10 10 10 repeat stretch', 'border-image-source') should be url(http://www.example.com/test.png). Was none.
+PASS computedBorderImageStyle('url(dummy://test.png) 10 10 10 10 repeat stretch', 'border-image-source') is 'url(dummy://test.png)'
 PASS computedBorderImageStyle('url(test.png) 10', 'border-image-repeat') is 'stretch'
 PASS computedBorderImageStyle('url(test.png) 10 stretch', 'border-image-repeat') is 'stretch'
 PASS computedBorderImageStyle('url(test.png) 10 kittens', 'border-image-repeat') is 'stretch'
