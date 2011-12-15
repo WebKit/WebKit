@@ -1,3 +1,23 @@
+2011-12-15  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py convert script conditions to precompiler #ifs
+        https://bugs.webkit.org/show_bug.cgi?id=74534
+
+        Reviewed by Pavel Feldman.
+
+        Generator is rewritten to add #if's to output.
+
+        * inspector/CodeGeneratorInspector.py:
+        (DomainNameFixes.get_fixed_data.Res.get_guard.Guard.generate_open):
+        (DomainNameFixes.get_fixed_data.Res.get_guard.Guard):
+        (DomainNameFixes.get_fixed_data.Res.get_guard.Guard.generate_close):
+        (DomainNameFixes.get_fixed_data.Res):
+        (DomainNameFixes.get_fixed_data.Res.get_guard):
+        (Generator.go):
+        (Generator.process_event):
+        (Generator.process_command):
+        (Generator.process_types):
+
 2011-12-15  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] Setting Download as action for navigation request crashes WebProcess

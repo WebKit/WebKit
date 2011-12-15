@@ -39,12 +39,12 @@ except ImportError:
 
 
 DOMAIN_DEFINE_NAME_MAP = {
-    "Database": "ENABLE_SQL_DATABASE",
-    "Debugger": "ENABLE_JAVASCRIPT_DEBUGGER",
-    "DOMDebugger": "ENABLE_JAVASCRIPT_DEBUGGER",
-    "FileSystem": "ENABLE_FILE_SYSTEM",
-    "Profiler": "ENABLE_JAVASCRIPT_DEBUGGER",
-    "Worker": "ENABLE_WORKERS",
+    "Database": "SQL_DATABASE",
+    "Debugger": "JAVASCRIPT_DEBUGGER",
+    "DOMDebugger": "JAVASCRIPT_DEBUGGER",
+    "FileSystem": "FILE_SYSTEM",
+    "Profiler": "JAVASCRIPT_DEBUGGER",
+    "Worker": "WORKERS",
 }
 
 
@@ -55,6 +55,7 @@ TYPE_NAME_FIX_MAP = {
 
 
 cmdline_parser = optparse.OptionParser()
+# FIXME: get rid of this option once the system is stable.
 cmdline_parser.add_option("--defines")
 cmdline_parser.add_option("--output_h_dir")
 cmdline_parser.add_option("--output_cpp_dir")
@@ -188,19 +189,20 @@ class DomainNameFixes:
             agent_field_name = field_name_res
 
             @staticmethod
-            def is_disabled(defines):
-                if not domain_name in DOMAIN_DEFINE_NAME_MAP:
-                    # Has not corresponding preprocessor symbol.
-                    return False
+            def get_guard():
+                if domain_name in DOMAIN_DEFINE_NAME_MAP:
+                    define_name = DOMAIN_DEFINE_NAME_MAP[domain_name]
 
-                define_name = DOMAIN_DEFINE_NAME_MAP[domain_name]
+                    class Guard:
+                        @staticmethod
+                        def generate_open(output):
+                            output.append("#if ENABLE(%s)\n" % define_name)
 
-                if not define_name in defines:
-                    # Disabled when not mentioned
-                    return True
+                        @staticmethod
+                        def generate_close(output):
+                            output.append("#endif // ENABLE(%s)\n" % define_name)
 
-                define_value = defines[define_name]
-                return not bool(define_value)
+                    return Guard
 
         return Res
 
@@ -1292,9 +1294,7 @@ $methods
     backend_js = string.Template(file_header_ +
 """
 
-$delegates
-$eventArgs
-$domainDispatchers
+$domainInitializers
 """)
 
     param_container_access_code = """
@@ -1316,9 +1316,7 @@ class Generator:
     backend_method_name_declaration_list = []
     method_handler_list = []
     frontend_method_list = []
-    backend_js_initializer_list = []
-    backend_js_event_list = []
-    backend_js_domain_dispatcher_list = []
+    backend_js_domain_initializer_list = []
 
     backend_setters_list = []
     backend_constructor_init_list = []
@@ -1332,18 +1330,37 @@ class Generator:
     def go():
         Generator.process_types(type_map)
 
+        first_cycle_guardable_list_list = [
+            Generator.backend_method_declaration_list,
+            Generator.backend_method_implementation_list,
+            Generator.backend_method_name_declaration_list,
+            Generator.frontend_class_field_lines,
+            Generator.frontend_constructor_init_list,
+            Generator.frontend_domain_class_lines,
+            Generator.frontend_method_list,
+            Generator.method_handler_list,
+            Generator.method_name_enum_list]
+
         for json_domain in json_api["domains"]:
             domain_name = json_domain["domain"]
             domain_name_lower = domain_name.lower()
 
-            domain_data = DomainNameFixes.get_fixed_data(domain_name)
+            domain_fixes = DomainNameFixes.get_fixed_data(domain_name)
 
-            if domain_data.is_disabled(defines_map):
-                continue
+            domain_guard = domain_fixes.get_guard()
 
-            agent_field_name = domain_data.agent_field_name
+            if domain_guard:
+                for l in first_cycle_guardable_list_list:
+                    domain_guard.generate_open(l)
+
+            agent_field_name = domain_fixes.agent_field_name
 
             frontend_method_declaration_lines = []
+
+            Generator.backend_js_domain_initializer_list.append("// %s.\n" % domain_name)
+
+            if not domain_fixes.skip_js_bind:
+                Generator.backend_js_domain_initializer_list.append("InspectorBackend.register%sDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, \"%s\");\n" % (domain_name, domain_name))
 
             if "events" in json_domain:
                 for json_event in json_domain["events"]:
@@ -1360,26 +1377,42 @@ class Generator:
                 for json_command in json_domain["commands"]:
                     Generator.process_command(json_command, domain_name, agent_field_name)
 
-            if not domain_data.skip_js_bind:
-                Generator.backend_js_domain_dispatcher_list.append("InspectorBackend.register%sDispatcher = InspectorBackend.registerDomainDispatcher.bind(InspectorBackend, \"%s\");\n" % (domain_name, domain_name))
+            if domain_guard:
+                for l in reversed(first_cycle_guardable_list_list):
+                    domain_guard.generate_close(l)
+            Generator.backend_js_domain_initializer_list.append("\n")
 
         sorted_json_domains = list(json_api["domains"])
         sorted_json_domains.sort(key=lambda o: o["domain"])
 
+        sorted_cycle_guardable_list_list = [
+            Generator.backend_constructor_init_list,
+            Generator.backend_setters_list,
+            Generator.backend_field_list,
+            Generator.backend_forward_list,
+            Generator.backend_include_list]
+
         for json_domain in sorted_json_domains:
             domain_name = json_domain["domain"]
 
-            domain_data = DomainNameFixes.get_fixed_data(domain_name)
-            if domain_data.is_disabled(defines_map):
-                continue
+            domain_fixes = DomainNameFixes.get_fixed_data(domain_name)
+            domain_guard = domain_fixes.get_guard()
 
-            agent_type_name = domain_data.agent_type_name
-            agent_field_name = domain_data.agent_field_name
+            if domain_guard:
+                for l in sorted_cycle_guardable_list_list:
+                    domain_guard.generate_open(l)
+
+            agent_type_name = domain_fixes.agent_type_name
+            agent_field_name = domain_fixes.agent_field_name
             Generator.backend_constructor_init_list.append("        , m_%s(0)" % agent_field_name)
             Generator.backend_setters_list.append("    void registerAgent(%s* %s) { ASSERT(!m_%s); m_%s = %s; }" % (agent_type_name, agent_field_name, agent_field_name, agent_field_name, agent_field_name))
             Generator.backend_field_list.append("    %s* m_%s;" % (agent_type_name, agent_field_name))
             Generator.backend_forward_list.append("class %s;" % agent_type_name)
             Generator.backend_include_list.append("#include \"%s.h\"" % agent_type_name)
+
+            if domain_guard:
+                for l in reversed(sorted_cycle_guardable_list_list):
+                    domain_guard.generate_close(l)
 
     @staticmethod
     def process_event(json_event, domain_name, frontend_method_declaration_lines):
@@ -1422,7 +1455,7 @@ class Generator:
             parameters=join(parameter_list, ", "),
             code=join(method_line_list, "")))
 
-        Generator.backend_js_event_list.append("InspectorBackend.registerEvent(\"%s.%s\", [%s]);\n" % (
+        Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerEvent(\"%s.%s\", [%s]);\n" % (
             domain_name, event_name, join(backend_js_event_param_list, ", ")))
 
     @staticmethod
@@ -1513,7 +1546,7 @@ class Generator:
             responseCook=response_cook_text))
         Generator.backend_method_name_declaration_list.append("    \"%s.%s\"," % (domain_name, json_command_name))
 
-        Generator.backend_js_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
+        Generator.backend_js_domain_initializer_list.append("InspectorBackend.registerCommand(\"%s.%s\", [%s], %s);\n" % (domain_name, json_command_name, js_parameters_text, js_reply_list))
 
     @staticmethod
     def process_types(type_map):
@@ -1523,6 +1556,13 @@ class Generator:
             pass
 
         for domain_data in type_map.domains():
+
+            domain_fixes = DomainNameFixes.get_fixed_data(domain_data.name())
+            domain_guard = domain_fixes.get_guard()
+
+            if domain_guard:
+                domain_guard.generate_open(output)
+
             output.append("namespace ")
             output.append(domain_data.name())
             output.append(" {\n")
@@ -1532,6 +1572,9 @@ class Generator:
             output.append("} // ")
             output.append(domain_data.name())
             output.append("\n\n")
+
+            if domain_guard:
+                domain_guard.generate_close(output)
 
 Generator.go()
 
@@ -1568,9 +1611,7 @@ backend_cpp_file.write(Templates.backend_cpp.substitute(None,
     messageHandlers=join(Generator.method_handler_list, "\n")))
 
 backend_js_file.write(Templates.backend_js.substitute(None,
-    delegates=join(Generator.backend_js_initializer_list, ""),
-    eventArgs=join(Generator.backend_js_event_list, ""),
-    domainDispatchers=join(Generator.backend_js_domain_dispatcher_list, "")))
+    domainInitializers=join(Generator.backend_js_domain_initializer_list, "")))
 
 backend_h_file.close()
 backend_cpp_file.close()
