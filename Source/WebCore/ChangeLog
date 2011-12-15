@@ -1,3 +1,9 @@
+2011-12-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, fix Closure compiler warnings after r102905.
+
+        * inspector/front-end/CSSStyleModel.js: Add JSDoc annotations
+
 2011-12-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: make ProfilesPanel scale as the number of ProfileTypes grows

@@ -859,6 +859,8 @@ WebInspector.CSSStyleModelResourceBinding.prototype.__proto__ = WebInspector.Res
 
 /**
  * @constructor
+ * @implements {CSSAgent.Dispatcher}
+ * @param {WebInspector.CSSStyleModel} cssModel
  */
 WebInspector.CSSDispatcher = function(cssModel)
 {
