@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2009 Google Inc. All rights reserved.
+ * Copyright (C) 2007-2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -66,17 +66,17 @@ static bool hasCSSPropertyNamePrefix(const String& propertyName, const char* pre
 #ifndef NDEBUG
     ASSERT(*prefix);
     for (const char* p = prefix; *p; ++p)
-        ASSERT(WTF::isASCIILower(*p));
+        ASSERT(isASCIILower(*p));
     ASSERT(propertyName.length());
 #endif
 
-    if (WTF::toASCIILower(propertyName[0]) != prefix[0])
+    if (toASCIILower(propertyName[0]) != prefix[0])
         return false;
 
     unsigned length = propertyName.length();
     for (unsigned i = 1; i < length; ++i) {
         if (!prefix[i])
-            return WTF::isASCIIUpper(propertyName[i]);
+            return isASCIIUpper(propertyName[i]);
         if (propertyName[i] != prefix[i])
             return false;
     }
@@ -87,7 +87,6 @@ class CSSPropertyInfo {
 public:
     int propID;
     bool hadPixelOrPosPrefix;
-    bool wasFilter;
 };
 
 // When getting properties on CSSStyleDeclarations, the name used from
@@ -130,14 +129,14 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
                 || hasCSSPropertyNamePrefix(propertyName, "khtml")
                 || hasCSSPropertyNamePrefix(propertyName, "apple"))
             builder.append('-');
-        else if (WTF::isASCIIUpper(propertyName[0]))
+        else if (isASCIIUpper(propertyName[0]))
             return 0;
 
-        builder.append(WTF::toASCIILower(propertyName[i++]));
+        builder.append(toASCIILower(propertyName[i++]));
 
         for (; i < length; ++i) {
             UChar c = propertyName[i];
-            if (!WTF::isASCIIUpper(c))
+            if (!isASCIIUpper(c))
                 builder.append(c);
             else
                 builder.append(makeString('-', toASCIILower(c)));
@@ -148,7 +147,6 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
         if (propertyID) {
             propInfo = new CSSPropertyInfo();
             propInfo->hadPixelOrPosPrefix = hadPixelOrPosPrefix;
-            propInfo->wasFilter = (propName == "filter");
             propInfo->propID = propertyID;
             map.add(propertyName, propInfo);
         }
@@ -160,18 +158,11 @@ v8::Handle<v8::Array> V8CSSStyleDeclaration::namedPropertyEnumerator(const v8::A
 {
     typedef Vector<String, numCSSProperties - 1> PreAllocatedPropertyVector;
     DEFINE_STATIC_LOCAL(PreAllocatedPropertyVector, propertyNames, ());
-    DEFINE_STATIC_LOCAL(String, filterString, ("filter"));
     static unsigned propertyNamesLength = 0;
 
     if (propertyNames.isEmpty()) {
-        for (int id = firstCSSProperty; id < firstCSSProperty + numCSSProperties; ++id) {
-            String jsPropertyName = getJSPropertyName(static_cast<CSSPropertyID>(id));
-            // The "filter" property is present in the list but should not be provided in the enumeration.
-            // See a comment in the V8CSSStyleDeclaration::namedPropertyGetter() implementation.
-            // FIXME: this should be removed (see bug 73426).
-            if (jsPropertyName != filterString)
-                propertyNames.append(jsPropertyName);
-        }
+        for (int id = firstCSSProperty; id < firstCSSProperty + numCSSProperties; ++id)
+            propertyNames.append(getJSPropertyName(static_cast<CSSPropertyID>(id)));
         sort(propertyNames.begin(), propertyNames.end(), codePointCompareLessThan);
         propertyNamesLength = propertyNames.size();
     }
@@ -220,11 +211,6 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::S
     String result = imp->getPropertyValue(propInfo->propID);
     if (result.isNull())
         result = "";  // convert null to empty string.
-
-    // The 'filter' attribute is made undetectable in KJS/WebKit
-    // to avoid confusion with IE's filter extension.
-    if (propInfo->wasFilter)
-        return v8UndetectableString(result);
 
     return v8String(result);
 }
