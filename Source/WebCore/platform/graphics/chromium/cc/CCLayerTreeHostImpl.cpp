@@ -81,6 +81,15 @@ void CCLayerTreeHostImpl::commitComplete()
     updateMaxScrollPosition();
 }
 
+bool CCLayerTreeHostImpl::canDraw()
+{
+    if (!rootLayer())
+        return false;
+    if (viewportSize().isEmpty())
+        return false;
+    return true;
+}
+
 GraphicsContext3D* CCLayerTreeHostImpl::context()
 {
     return m_layerRenderer ? m_layerRenderer->context() : 0;

@@ -239,12 +239,15 @@ void CCThreadProxy::setVisible(bool visible)
 void CCThreadProxy::setVisibleOnImplThread(CCCompletionEvent* completion, bool visible)
 {
     ASSERT(isImplThread());
-    if (!visible)
-        m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
-    else
-        m_schedulerOnImplThread->setNeedsRedraw();
     m_schedulerOnImplThread->setVisible(visible);
     m_layerTreeHostImpl->setVisible(visible);
+    if (!visible) {
+        m_layerTreeHost->didBecomeInvisibleOnImplThread(m_layerTreeHostImpl.get());
+        // as partial or all the textures may be evicted in didBecomeInvisibleOnImplThread,
+        // schedule a commit which will be executed when it goes to visible again.
+        m_schedulerOnImplThread->setNeedsCommit();
+    } else
+        m_schedulerOnImplThread->setNeedsRedraw();
     completion->signal();
 }
 
@@ -423,6 +426,14 @@ bool CCThreadProxy::hasMoreResourceUpdates() const
     if (!m_currentTextureUpdaterOnImplThread)
         return false;
     return m_currentTextureUpdaterOnImplThread->hasMoreUpdates();
+}
+
+bool CCThreadProxy::canDraw()
+{
+    ASSERT(isImplThread());
+    if (!m_layerTreeHostImpl)
+        return false;
+    return m_layerTreeHostImpl->canDraw();
 }
 
 void CCThreadProxy::scheduledActionUpdateMoreResources()

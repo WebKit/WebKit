@@ -105,17 +105,23 @@ void CCScheduler::beginFrame()
     m_stateMachine.didLeaveVSync();
 }
 
+CCSchedulerStateMachine::Action CCScheduler::nextAction()
+{
+    m_stateMachine.setCanDraw(m_client->canDraw());
+    return m_stateMachine.nextAction();
+}
+
 void CCScheduler::processScheduledActions()
 {
     // Early out so we don't spam TRACE_EVENTS with useless processScheduledActions.
-    if (m_stateMachine.nextAction() == CCSchedulerStateMachine::ACTION_NONE)
+    if (nextAction() == CCSchedulerStateMachine::ACTION_NONE)
         return;
 
     // This function can re-enter itself. For example, draw may call
     // setNeedsCommit. Proceeed with caution.
     CCSchedulerStateMachine::Action action;
     do {
-        action = m_stateMachine.nextAction();
+        action = nextAction();
         m_stateMachine.updateState(action);
 
         switch (action) {

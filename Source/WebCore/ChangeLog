@@ -1,3 +1,27 @@
+2011-12-14  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add inhibitDraw to CCScheduler and drop root impl to prevent background flash on tab restore
+        https://bugs.webkit.org/show_bug.cgi?id=74351
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::setNeedsCommit):
+        (WebCore::CCLayerTreeHost::didBecomeInvisibleOnImplThread):
+        * platform/graphics/chromium/cc/CCScheduler.cpp:
+        (WebCore::CCScheduler::getNextAction):
+        (WebCore::CCScheduler::processScheduledActions):
+        * platform/graphics/chromium/cc/CCScheduler.h:
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.cpp:
+        (WebCore::CCSchedulerStateMachine::CCSchedulerStateMachine):
+        (WebCore::CCSchedulerStateMachine::nextAction):
+        * platform/graphics/chromium/cc/CCSchedulerStateMachine.h:
+        (WebCore::CCSchedulerStateMachine::setInhibitDraw):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::setVisibleOnImplThread):
+        (WebCore::CCThreadProxy::inhibitDraw):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2011-12-14  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to incorrect parsing of isolates

@@ -219,10 +219,9 @@ void CCLayerTreeHost::setNeedsAnimate()
 
 void CCLayerTreeHost::setNeedsCommit()
 {
-    if (CCThreadProxy::implThread()) {
-        TRACE_EVENT("CCLayerTreeHost::setNeedsCommit", this, 0);
+    if (CCThreadProxy::implThread())
         m_proxy->setNeedsCommit();
-    } else
+    else
         m_client->scheduleComposite();
 }
 
@@ -287,6 +286,18 @@ void CCLayerTreeHost::didBecomeInvisibleOnImplThread(CCLayerTreeHostImpl* hostIm
         contentsTextureManager()->reduceMemoryToLimit(TextureManager::reclaimLimitBytes(viewportSize()));
         contentsTextureManager()->deleteEvictedTextures(hostImpl->contentsTextureAllocator());
     }
+
+    // Ensure that the dropped tiles are propagated to the impl tree.
+    // If the frontbuffer is cached, then clobber the impl tree. Otherwise,
+    // push over the tree changes.
+    if (m_proxy->layerRendererCapabilities().contextHasCachedFrontBuffer) {
+        hostImpl->setRootLayer(0);
+        return;
+    }
+    if (rootLayer())
+        hostImpl->setRootLayer(TreeSynchronizer::synchronizeTrees(rootLayer(), hostImpl->rootLayer()));
+    else
+        hostImpl->setRootLayer(0);
 }
 
 void CCLayerTreeHost::setHaveWheelEventHandlers(bool haveWheelEventHandlers)

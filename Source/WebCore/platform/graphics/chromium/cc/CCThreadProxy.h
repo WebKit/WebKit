@@ -69,6 +69,7 @@ public:
     virtual void setNeedsCommitOnImplThread();
 
     // CCSchedulerClient implementation
+    virtual bool canDraw();
     virtual bool hasMoreResourceUpdates() const;
     virtual void scheduledActionBeginFrame();
     virtual void scheduledActionDrawAndSwap();

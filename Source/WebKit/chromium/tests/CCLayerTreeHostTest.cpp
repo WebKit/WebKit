@@ -103,7 +103,12 @@ class MockLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     {
-        return adoptRef(new MockLayerTreeHost(testHooks, client, rootLayer, settings));
+        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, rootLayer, settings));
+
+        // LayerTreeHostImpl won't draw if it has 1x1 viewport.
+        layerTreeHost->setViewport(IntSize(1, 1));
+
+        return layerTreeHost;
     }
 
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)

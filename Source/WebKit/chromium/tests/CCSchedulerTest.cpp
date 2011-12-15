@@ -44,13 +44,16 @@ public:
     {
         m_actions.clear();
         m_hasMoreResourceUpdates = false;
+        m_canDraw = true;
     }
 
     void setHasMoreResourceUpdates(bool b) { m_hasMoreResourceUpdates = b; }
+    void setCanDraw(bool b) { m_canDraw = b; }
 
     int numActions() const { return static_cast<int>(m_actions.size()); }
     const char* action(int i) const { return m_actions[i]; }
 
+    virtual bool canDraw() { return m_canDraw; }
     virtual bool hasMoreResourceUpdates() const { return m_hasMoreResourceUpdates; }
     virtual void scheduledActionBeginFrame() { m_actions.push_back("scheduledActionBeginFrame"); }
     virtual void scheduledActionDrawAndSwap() { m_actions.push_back("scheduledActionDrawAndSwap"); }
@@ -59,6 +62,7 @@ public:
 
 protected:
     bool m_hasMoreResourceUpdates;
+    bool m_canDraw;
     std::vector<const char*> m_actions;
 };
 
@@ -139,6 +143,7 @@ public:
     int numDraws() const { return m_numDraws; }
 
     virtual bool hasMoreResourceUpdates() const { return false; }
+    virtual bool canDraw() { return true; }
     virtual void scheduledActionBeginFrame() { }
     virtual void scheduledActionDrawAndSwap()
     {
@@ -192,6 +197,7 @@ public:
     int numDraws() const { return m_numDraws; }
 
     virtual bool hasMoreResourceUpdates() const { return false; }
+    virtual bool canDraw() { return true; }
     virtual void scheduledActionBeginFrame() { }
     virtual void scheduledActionDrawAndSwap()
     {

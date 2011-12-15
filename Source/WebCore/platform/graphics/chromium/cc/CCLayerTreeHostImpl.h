@@ -78,6 +78,7 @@ public:
     virtual void animate(double frameDisplayTimeMs);
     virtual void drawLayers();
 
+    bool canDraw();
     GraphicsContext3D* context();
 
     void finishAllRendering();

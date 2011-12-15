@@ -98,6 +98,11 @@ public:
     // from nextState. Indicates that the specific update request completed.
     void beginUpdateMoreResourcesComplete(bool morePending);
 
+    // Indicates whether drawing would, at this time, make sense.
+    // canDraw can be used to supress flashes or checkerboarding
+    // when such behavior would be undesirable.
+    void setCanDraw(bool can) { m_canDraw = can; }
+
 protected:
     CommitState m_commitState;
 
@@ -109,6 +114,7 @@ protected:
     bool m_updateMoreResourcesPending;
     bool m_insideVSync;
     bool m_visible;
+    bool m_canDraw;
 };
 
 }

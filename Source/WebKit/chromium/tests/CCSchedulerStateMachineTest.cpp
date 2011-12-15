@@ -58,6 +58,7 @@ public:
     void setNeedsForcedRedraw(bool b) { m_needsForcedRedraw = b; }
     bool needsForcedRedraw() const { return m_needsForcedRedraw; }
 
+    bool canDraw() const { return m_canDraw; }
     bool insideVSync() const { return m_insideVSync; }
     bool visible() const { return m_visible; }
 
@@ -242,6 +243,38 @@ TEST(CCSchedulerStateMachineTest, TestNoCommitStatesRedrawWhenInvisible)
             EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
         }
     }
+}
+
+TEST(CCSchedulerStateMachineTest, TestCanRedraw_StopsDraw)
+{
+    size_t numCommitStates = sizeof(allCommitStates) / sizeof(CCSchedulerStateMachine::CommitState);
+    for (size_t i = 0; i < numCommitStates; ++i) {
+        // There shouldn't be any drawing regardless of vsync.
+        for (unsigned j = 0; j < 2; ++j) {
+            StateMachine state;
+            state.setCommitState(allCommitStates[i]);
+            state.setVisible(false);
+            state.setNeedsRedraw(true);
+            state.setNeedsForcedRedraw(false);
+            if (j == 1)
+                state.didEnterVSync();
+
+            state.setCanDraw(false);
+            EXPECT_NE(CCSchedulerStateMachine::ACTION_DRAW, state.nextAction());
+        }
+    }
+}
+
+TEST(CCSchedulerStateMachineTest, TestCanRedrawWithWaitingForFirstDrawMakesProgress)
+{
+    StateMachine state;
+    state.setCommitState(CCSchedulerStateMachine::COMMIT_STATE_WAITING_FOR_FIRST_DRAW);
+    state.setNeedsCommit(true);
+    state.setNeedsRedraw(true);
+    state.setUpdateMoreResourcesPending(false);
+    state.setVisible(true);
+    state.setCanDraw(false);
+    EXPECT_EQ(CCSchedulerStateMachine::ACTION_BEGIN_FRAME, state.nextAction());
 }
 
 TEST(CCSchedulerStateMachineTest, TestUpdates_NoRedraw_OneRoundOfUpdates)

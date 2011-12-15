@@ -37,12 +37,13 @@ CCSchedulerStateMachine::CCSchedulerStateMachine()
     , m_needsCommit(false)
     , m_updateMoreResourcesPending(false)
     , m_insideVSync(false)
-    , m_visible(false) { }
+    , m_visible(false)
+    , m_canDraw(true) { }
 
 CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
 {
     bool canDraw = m_currentFrameNumber != m_lastFrameNumberWhereDrawWasCalled;
-    bool shouldDraw = (m_needsRedraw && m_insideVSync && m_visible && canDraw) || m_needsForcedRedraw;
+    bool shouldDraw = (m_needsRedraw && m_insideVSync && m_visible && canDraw && m_canDraw) || m_needsForcedRedraw;
     switch (m_commitState) {
     case COMMIT_STATE_IDLE:
         if (shouldDraw)
@@ -69,6 +70,10 @@ CCSchedulerStateMachine::Action CCSchedulerStateMachine::nextAction() const
     case COMMIT_STATE_WAITING_FOR_FIRST_DRAW:
         if (shouldDraw)
             return ACTION_DRAW;
+        // COMMIT_STATE_WAITING_FOR_FIRST_DRAW wants to enforce a draw. If m_canDraw is false,
+        // proceed to the next step (similar as in COMMIT_STATE_IDLE).
+        if (!m_canDraw && m_needsCommit && m_visible)
+            return ACTION_BEGIN_FRAME;
         return ACTION_NONE;
     }
     ASSERT_NOT_REACHED();
