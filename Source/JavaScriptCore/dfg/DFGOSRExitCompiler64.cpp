@@ -544,12 +544,12 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), GPRInfo::regT0);
     
     AssemblyHelpers::Jump fewFails = m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::Imm32(m_jit.codeBlock()->largeFailCountThreshold()));
-    m_jit.mul32(AssemblyHelpers::Imm32(Heuristics::desiredSpeculativeSuccessFailRatio), GPRInfo::regT2, GPRInfo::regT2);
+    m_jit.mul32(AssemblyHelpers::Imm32(Options::desiredSpeculativeSuccessFailRatio), GPRInfo::regT2, GPRInfo::regT2);
     
     AssemblyHelpers::Jump lowFailRate = m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1);
     
     // Reoptimize as soon as possible.
-    m_jit.store32(AssemblyHelpers::Imm32(Heuristics::executionCounterValueForOptimizeNextInvocation), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::Imm32(Options::executionCounterValueForOptimizeNextInvocation), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
     AssemblyHelpers::Jump doneAdjusting = m_jit.jump();
     
     fewFails.link(&m_jit);

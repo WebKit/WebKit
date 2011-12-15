@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Heuristics_h
-#define Heuristics_h
+#ifndef Options_h
+#define Options_h
 
 #include <stdint.h>
 
-namespace JSC { namespace Heuristics {
+namespace JSC { namespace Options {
 
 extern unsigned maximumOptimizationCandidateInstructionCount;
 
@@ -76,9 +76,9 @@ extern unsigned sharedStackWakeupThreshold;
 extern unsigned numberOfGCMarkers;
 extern unsigned opaqueRootMergeThreshold;
 
-void initializeHeuristics();
+void initializeOptions();
 
-} } // namespace JSC::Heuristics
+} } // namespace JSC::Options
 
-#endif // Heuristics_h
+#endif // Options_h
 

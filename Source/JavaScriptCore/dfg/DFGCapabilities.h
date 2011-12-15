@@ -29,7 +29,7 @@
 #include "Intrinsic.h"
 #include "DFGNode.h"
 #include "Executable.h"
-#include "Heuristics.h"
+#include "Options.h"
 #include "Interpreter.h"
 #include <wtf/Platform.h>
 
@@ -40,28 +40,28 @@ namespace JSC { namespace DFG {
 // check opcodes.
 inline bool mightCompileEval(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
 }
 inline bool mightCompileProgram(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
 }
 inline bool mightCompileFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
 }
 inline bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumOptimizationCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount;
 }
 
 inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForCallInlineCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount;
 }
 inline bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
 {
-    return codeBlock->instructionCount() <= Heuristics::maximumFunctionForConstructInlineCandidateInstructionCount;
+    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount;
 }
 
 // Opcode checking.

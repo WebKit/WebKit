@@ -97,7 +97,7 @@ public:
     bool shouldUseDoubleFormatAccordingToVote()
     {
         // FIXME: make this work for arguments.
-        return !operandIsArgument(operand()) && ((isNumberPrediction(prediction()) && doubleVoteRatio() >= Heuristics::doubleVoteRatioForDoubleFormat) || isDoublePrediction(prediction()));
+        return !operandIsArgument(operand()) && ((isNumberPrediction(prediction()) && doubleVoteRatio() >= Options::doubleVoteRatioForDoubleFormat) || isDoublePrediction(prediction()));
     }
     
     bool shouldUseDoubleFormat()

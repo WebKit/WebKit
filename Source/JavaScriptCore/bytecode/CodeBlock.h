@@ -37,7 +37,7 @@
 #include "DFGOSREntry.h"
 #include "DFGOSRExit.h"
 #include "EvalCodeCache.h"
-#include "Heuristics.h"
+#include "Options.h"
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITWriteBarrier.h"
@@ -683,13 +683,13 @@ namespace JSC {
         bool likelyToTakeSlowCase(int bytecodeOffset)
         {
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return value >= Heuristics::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Heuristics::likelyToTakeSlowCaseThreshold;
+            return value >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
         }
         
         bool couldTakeSlowCase(int bytecodeOffset)
         {
             unsigned value = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return value >= Heuristics::couldTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Heuristics::couldTakeSlowCaseThreshold;
+            return value >= Options::couldTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::couldTakeSlowCaseThreshold;
         }
         
         RareCaseProfile* addSpecialFastCaseProfile(int bytecodeOffset)
@@ -707,7 +707,7 @@ namespace JSC {
         bool likelyToTakeSpecialFastCase(int bytecodeOffset)
         {
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
-            return specialFastCaseCount >= Heuristics::likelyToTakeSlowCaseMinimumCount && static_cast<double>(specialFastCaseCount) / m_executionEntryCount >= Heuristics::likelyToTakeSlowCaseThreshold;
+            return specialFastCaseCount >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(specialFastCaseCount) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
         }
         
         bool likelyToTakeDeepestSlowCase(int bytecodeOffset)
@@ -715,7 +715,7 @@ namespace JSC {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned value = slowCaseCount - specialFastCaseCount;
-            return value >= Heuristics::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Heuristics::likelyToTakeSlowCaseThreshold;
+            return value >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
         }
         
         bool likelyToTakeAnySlowCase(int bytecodeOffset)
@@ -723,7 +723,7 @@ namespace JSC {
             unsigned slowCaseCount = rareCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned specialFastCaseCount = specialFastCaseProfileForBytecodeOffset(bytecodeOffset)->m_counter;
             unsigned value = slowCaseCount + specialFastCaseCount;
-            return value >= Heuristics::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Heuristics::likelyToTakeSlowCaseThreshold;
+            return value >= Options::likelyToTakeSlowCaseMinimumCount && static_cast<double>(value) / m_executionEntryCount >= Options::likelyToTakeSlowCaseThreshold;
         }
         
         unsigned executionEntryCount() const { return m_executionEntryCount; }
@@ -933,25 +933,25 @@ namespace JSC {
         // to avoid thrashing.
         unsigned reoptimizationRetryCounter() const
         {
-            ASSERT(m_reoptimizationRetryCounter <= Heuristics::reoptimizationRetryCounterMax);
+            ASSERT(m_reoptimizationRetryCounter <= Options::reoptimizationRetryCounterMax);
             return m_reoptimizationRetryCounter;
         }
         
         void countReoptimization()
         {
             m_reoptimizationRetryCounter++;
-            if (m_reoptimizationRetryCounter > Heuristics::reoptimizationRetryCounterMax)
-                m_reoptimizationRetryCounter = Heuristics::reoptimizationRetryCounterMax;
+            if (m_reoptimizationRetryCounter > Options::reoptimizationRetryCounterMax)
+                m_reoptimizationRetryCounter = Options::reoptimizationRetryCounterMax;
         }
         
         int32_t counterValueForOptimizeAfterWarmUp()
         {
-            return Heuristics::executionCounterValueForOptimizeAfterWarmUp << reoptimizationRetryCounter();
+            return Options::executionCounterValueForOptimizeAfterWarmUp << reoptimizationRetryCounter();
         }
         
         int32_t counterValueForOptimizeAfterLongWarmUp()
         {
-            return Heuristics::executionCounterValueForOptimizeAfterLongWarmUp << reoptimizationRetryCounter();
+            return Options::executionCounterValueForOptimizeAfterLongWarmUp << reoptimizationRetryCounter();
         }
         
         int32_t* addressOfExecuteCounter()
@@ -970,7 +970,7 @@ namespace JSC {
         // expensive than executing baseline code.
         void optimizeNextInvocation()
         {
-            m_executeCounter = Heuristics::executionCounterValueForOptimizeNextInvocation;
+            m_executeCounter = Options::executionCounterValueForOptimizeNextInvocation;
         }
         
         // Call this to prevent optimization from happening again. Note that
@@ -980,7 +980,7 @@ namespace JSC {
         // the future as well.
         void dontOptimizeAnytimeSoon()
         {
-            m_executeCounter = Heuristics::executionCounterValueForDontOptimizeAnytimeSoon;
+            m_executeCounter = Options::executionCounterValueForDontOptimizeAnytimeSoon;
         }
         
         // Call this to reinitialize the counter to its starting state,
@@ -1021,7 +1021,7 @@ namespace JSC {
         // in the baseline code.
         void optimizeSoon()
         {
-            m_executeCounter = Heuristics::executionCounterValueForOptimizeSoon << reoptimizationRetryCounter();
+            m_executeCounter = Options::executionCounterValueForOptimizeSoon << reoptimizationRetryCounter();
         }
         
         // The speculative JIT tracks its success rate, so that we can
@@ -1055,17 +1055,17 @@ namespace JSC {
 
 #if ENABLE(JIT)
         // The number of failures that triggers the use of the ratio.
-        unsigned largeFailCountThreshold() { return Heuristics::largeFailCountThresholdBase << baselineVersion()->reoptimizationRetryCounter(); }
-        unsigned largeFailCountThresholdForLoop() { return Heuristics::largeFailCountThresholdBaseForLoop << baselineVersion()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThreshold() { return Options::largeFailCountThresholdBase << baselineVersion()->reoptimizationRetryCounter(); }
+        unsigned largeFailCountThresholdForLoop() { return Options::largeFailCountThresholdBaseForLoop << baselineVersion()->reoptimizationRetryCounter(); }
 
         bool shouldReoptimizeNow()
         {
-            return Heuristics::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
+            return Options::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThreshold();
         }
 
         bool shouldReoptimizeFromLoopNow()
         {
-            return Heuristics::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
+            return Options::desiredSpeculativeSuccessFailRatio * speculativeFailCounter() >= speculativeSuccessCounter() && speculativeFailCounter() >= largeFailCountThresholdForLoop();
         }
 #endif
 

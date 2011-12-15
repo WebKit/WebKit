@@ -734,14 +734,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Heuristics.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\Heuristics.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>
@@ -1035,6 +1027,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\Operations.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Options.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Options.h"
 				>
 			</File>
 			<File

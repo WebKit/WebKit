@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "Heuristics.h"
-#include <wtf/PageBlock.h>
+#include "Options.h"
 
 #include <limits>
+#include <wtf/PageBlock.h>
 
 #if OS(DARWIN) && ENABLE(PARALLEL_GC)
 #include <sys/sysctl.h>
@@ -42,7 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #endif
 
-namespace JSC { namespace Heuristics {
+namespace JSC { namespace Options {
 
 unsigned maximumOptimizationCandidateInstructionCount;
 
@@ -127,7 +127,7 @@ void setHeuristic(T& variable, const char* name, U value)
 #define SET(variable, value) variable = value
 #endif
 
-void initializeHeuristics()
+void initializeOptions()
 {
     SET(maximumOptimizationCandidateInstructionCount, 1000);
     
@@ -209,6 +209,6 @@ void initializeHeuristics()
     ASSERT((static_cast<int64_t>(executionCounterValueForOptimizeAfterLongWarmUp) << reoptimizationRetryCounterMax) >= static_cast<int64_t>(std::numeric_limits<int32_t>::min()));
 }
 
-} } // namespace JSC::Heuristics
+} } // namespace JSC::Options
 
 

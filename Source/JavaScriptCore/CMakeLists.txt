@@ -135,7 +135,6 @@ SET(JavaScriptCore_SOURCES
     runtime/FunctionPrototype.cpp
     runtime/GCActivityCallback.cpp
     runtime/GetterSetter.cpp
-    runtime/Heuristics.cpp
     runtime/Identifier.cpp
     runtime/InitializeThreading.cpp
     runtime/InternalFunction.cpp
@@ -172,6 +171,7 @@ SET(JavaScriptCore_SOURCES
     runtime/ObjectConstructor.cpp
     runtime/ObjectPrototype.cpp
     runtime/Operations.cpp
+    runtime/Options.cpp
     runtime/PropertyDescriptor.cpp
     runtime/PropertyNameArray.cpp
     runtime/PropertySlot.cpp

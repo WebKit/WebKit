@@ -1,3 +1,81 @@
+2011-12-15  Andy Wingo  <wingo@igalia.com>
+
+        Rename JSC::Heuristics to JSC::Options
+        https://bugs.webkit.org/show_bug.cgi?id=72889
+
+        Reviewed by Filip Pizlo.
+
+        * runtime/Options.cpp: Renamed from Source/JavaScriptCore/runtime/Heuristics.cpp.
+        * runtime/Options.h: Renamed from Source/JavaScriptCore/runtime/Heuristics.h.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::likelyToTakeSlowCase):
+        (JSC::CodeBlock::couldTakeSlowCase):
+        (JSC::CodeBlock::likelyToTakeSpecialFastCase):
+        (JSC::CodeBlock::likelyToTakeDeepestSlowCase):
+        (JSC::CodeBlock::likelyToTakeAnySlowCase):
+        (JSC::CodeBlock::reoptimizationRetryCounter):
+        (JSC::CodeBlock::countReoptimization):
+        (JSC::CodeBlock::counterValueForOptimizeAfterWarmUp):
+        (JSC::CodeBlock::counterValueForOptimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeNextInvocation):
+        (JSC::CodeBlock::dontOptimizeAnytimeSoon):
+        (JSC::CodeBlock::optimizeSoon):
+        (JSC::CodeBlock::largeFailCountThreshold):
+        (JSC::CodeBlock::largeFailCountThresholdForLoop):
+        (JSC::CodeBlock::shouldReoptimizeNow):
+        (JSC::CodeBlock::shouldReoptimizeFromLoopNow):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        * heap/MarkStack.cpp:
+        (JSC::MarkStackSegmentAllocator::allocate):
+        (JSC::MarkStackSegmentAllocator::shrinkReserve):
+        (JSC::MarkStackArray::MarkStackArray):
+        (JSC::MarkStackArray::donateSomeCellsTo):
+        (JSC::MarkStackArray::stealSomeCellsFrom):
+        (JSC::MarkStackThreadSharedData::MarkStackThreadSharedData):
+        (JSC::SlotVisitor::donateSlow):
+        (JSC::SlotVisitor::drain):
+        (JSC::SlotVisitor::drainFromShared):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::mergeOpaqueRootsIfProfitable):
+        (JSC::MarkStack::addOpaqueRoot):
+        (JSC::MarkStackArray::canDonateSomeCells):
+        * heap/SlotVisitor.h:
+        (JSC::SlotVisitor::donate):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitOptimizationCheck):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce): Adapt callers and build systems.
+
+        * testRegExp.cpp:
+        (CommandLine::CommandLine):
+        * jsc.cpp:
+        (CommandLine::CommandLine):
+        Rename from Options, to avoid name conflict.
+
 2011-12-14  Sam Weinig  <sam@webkit.org>
 
         Revert unintentional change to JavaScriptCore.def

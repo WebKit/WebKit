@@ -27,7 +27,7 @@
 #define MarkStack_h
 
 #include "HandleTypes.h"
-#include "Heuristics.h"
+#include "Options.h"
 #include "JSValue.h"
 #include "Register.h"
 #include "UnconditionalFinalizer.h"
@@ -261,7 +261,7 @@ namespace JSC {
         
         void mergeOpaqueRootsIfProfitable()
         {
-            if (static_cast<unsigned>(m_opaqueRoots.size()) < Heuristics::opaqueRootMergeThreshold)
+            if (static_cast<unsigned>(m_opaqueRoots.size()) < Options::opaqueRootMergeThreshold)
                 return;
             mergeOpaqueRoots();
         }
@@ -309,7 +309,7 @@ namespace JSC {
     inline void MarkStack::addOpaqueRoot(void* root)
     {
 #if ENABLE(PARALLEL_GC)
-        if (Heuristics::numberOfGCMarkers == 1) {
+        if (Options::numberOfGCMarkers == 1) {
             // Put directly into the shared HashSet.
             m_shared.m_opaqueRoots.add(root);
             return;
@@ -375,7 +375,7 @@ namespace JSC {
 
     inline bool MarkStackArray::canDonateSomeCells()
     {
-        size_t numberOfCellsToKeep = Heuristics::minimumNumberOfCellsToKeep;
+        size_t numberOfCellsToKeep = Options::minimumNumberOfCellsToKeep;
         // Another check: see if we have enough cells to warrant donation.
         if (m_top <= numberOfCellsToKeep) {
             // This indicates that we might not want to donate anything; check if we have

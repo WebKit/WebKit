@@ -28,7 +28,7 @@
 
 #include "ConservativeRoots.h"
 #include "Heap.h"
-#include "Heuristics.h"
+#include "Options.h"
 #include "JSArray.h"
 #include "JSCell.h"
 #include "JSObject.h"
@@ -60,7 +60,7 @@ MarkStackSegment* MarkStackSegmentAllocator::allocate()
         }
     }
 
-    return static_cast<MarkStackSegment*>(OSAllocator::reserveAndCommit(Heuristics::gcMarkStackSegmentSize));
+    return static_cast<MarkStackSegment*>(OSAllocator::reserveAndCommit(Options::gcMarkStackSegmentSize));
 }
 
 void MarkStackSegmentAllocator::release(MarkStackSegment* segment)
@@ -81,13 +81,13 @@ void MarkStackSegmentAllocator::shrinkReserve()
     while (segments) {
         MarkStackSegment* toFree = segments;
         segments = segments->m_previous;
-        OSAllocator::decommitAndRelease(toFree, Heuristics::gcMarkStackSegmentSize);
+        OSAllocator::decommitAndRelease(toFree, Options::gcMarkStackSegmentSize);
     }
 }
 
 MarkStackArray::MarkStackArray(MarkStackSegmentAllocator& allocator)
     : m_allocator(allocator)
-    , m_segmentCapacity(MarkStackSegment::capacityFromSize(Heuristics::gcMarkStackSegmentSize))
+    , m_segmentCapacity(MarkStackSegment::capacityFromSize(Options::gcMarkStackSegmentSize))
     , m_top(0)
     , m_numberOfPreviousSegments(0)
 {
@@ -145,10 +145,10 @@ bool MarkStackArray::donateSomeCellsTo(MarkStackArray& other)
     other.validatePrevious();
         
     // Fast check: see if the other mark stack already has enough segments.
-    if (other.m_numberOfPreviousSegments + 1 >= Heuristics::maximumNumberOfSharedSegments)
+    if (other.m_numberOfPreviousSegments + 1 >= Options::maximumNumberOfSharedSegments)
         return false;
         
-    size_t numberOfCellsToKeep = Heuristics::minimumNumberOfCellsToKeep;
+    size_t numberOfCellsToKeep = Options::minimumNumberOfCellsToKeep;
     ASSERT(m_top > numberOfCellsToKeep || m_topSegment->m_previous);
         
     // Looks like we should donate! Give the other mark stack all of our
@@ -209,8 +209,8 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other)
     }
         
     // Otherwise drain 1/Nth of the shared array where N is the number of
-    // workers, or Heuristics::minimumNumberOfCellsToKeep, whichever is bigger.
-    size_t numberOfCellsToSteal = std::max((size_t)Heuristics::minimumNumberOfCellsToKeep, other.size() / Heuristics::numberOfGCMarkers);
+    // workers, or Options::minimumNumberOfCellsToKeep, whichever is bigger.
+    size_t numberOfCellsToSteal = std::max((size_t)Options::minimumNumberOfCellsToKeep, other.size() / Options::numberOfGCMarkers);
     while (numberOfCellsToSteal-- > 0 && other.canRemoveLast())
         append(other.removeLast());
 }
@@ -238,7 +238,7 @@ MarkStackThreadSharedData::MarkStackThreadSharedData(JSGlobalData* globalData)
     , m_parallelMarkersShouldExit(false)
 {
 #if ENABLE(PARALLEL_GC)
-    for (unsigned i = 1; i < Heuristics::numberOfGCMarkers; ++i) {
+    for (unsigned i = 1; i < Options::numberOfGCMarkers; ++i) {
         m_markingThreads.append(createThread(markingThreadStartFunc, this, "JavaScriptCore::Marking"));
         ASSERT(m_markingThreads.last());
     }
@@ -329,7 +329,7 @@ void SlotVisitor::donateSlow()
     if (m_stack.donateSomeCellsTo(m_shared.m_sharedMarkStack)) {
         // Only wake up threads if the shared stack is big enough; otherwise assume that
         // it's more profitable for us to just scan this ourselves later.
-        if (m_shared.m_sharedMarkStack.size() >= Heuristics::sharedStackWakeupThreshold)
+        if (m_shared.m_sharedMarkStack.size() >= Options::sharedStackWakeupThreshold)
             m_shared.m_markingCondition.broadcast();
     }
 }
@@ -343,10 +343,10 @@ void SlotVisitor::drain()
     void* jsStringVPtr = m_jsStringVPtr;
 
 #if ENABLE(PARALLEL_GC)
-    if (Heuristics::numberOfGCMarkers > 1) {
+    if (Options::numberOfGCMarkers > 1) {
         while (!m_stack.isEmpty()) {
             m_stack.refill();
-            for (unsigned countdown = Heuristics::minimumNumberOfScansBetweenRebalance; m_stack.canRemoveLast() && countdown--;)
+            for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance; m_stack.canRemoveLast() && countdown--;)
                 visitChildren(*this, m_stack.removeLast(), jsFinalObjectVPtr, jsArrayVPtr, jsStringVPtr);
             donateKnownParallel();
         }
@@ -367,14 +367,14 @@ void SlotVisitor::drainFromShared(SharedDrainMode sharedDrainMode)
 {
     ASSERT(m_isInParallelMode);
     
-    ASSERT(Heuristics::numberOfGCMarkers);
+    ASSERT(Options::numberOfGCMarkers);
     
     bool shouldBeParallel;
 
 #if ENABLE(PARALLEL_GC)
-    shouldBeParallel = Heuristics::numberOfGCMarkers > 1;
+    shouldBeParallel = Options::numberOfGCMarkers > 1;
 #else
-    ASSERT(Heuristics::numberOfGCMarkers == 1);
+    ASSERT(Options::numberOfGCMarkers == 1);
     shouldBeParallel = false;
 #endif
     

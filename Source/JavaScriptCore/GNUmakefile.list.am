@@ -358,8 +358,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/GCActivityCallback.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
-	Source/JavaScriptCore/runtime/Heuristics.cpp \
-	Source/JavaScriptCore/runtime/Heuristics.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
 	Source/JavaScriptCore/runtime/Identifier.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
@@ -439,6 +437,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ObjectPrototype.h \
 	Source/JavaScriptCore/runtime/Operations.cpp \
 	Source/JavaScriptCore/runtime/Operations.h \
+	Source/JavaScriptCore/runtime/Options.cpp \
+	Source/JavaScriptCore/runtime/Options.h \
 	Source/JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	Source/JavaScriptCore/runtime/PropertyDescriptor.h \
 	Source/JavaScriptCore/runtime/PropertyMapHashTable.h \

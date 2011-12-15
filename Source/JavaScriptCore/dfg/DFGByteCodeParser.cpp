@@ -979,7 +979,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     unsigned depth = 0;
     for (InlineStackEntry* entry = m_inlineStackTop; entry; entry = entry->m_caller) {
         ++depth;
-        if (depth >= Heuristics::maximumInliningDepth)
+        if (depth >= Options::maximumInliningDepth)
             return false; // Depth exceeded.
         
         if (entry->executable() == executable)

@@ -56,8 +56,8 @@ using namespace WTF;
 
 static void cleanupGlobalData(JSGlobalData*);
 
-struct Options {
-    Options()
+struct CommandLine {
+    CommandLine()
         : interactive(false)
         , verbose(false)
     {
@@ -490,7 +490,7 @@ static NO_RETURN void printUsageStatement(JSGlobalData* globalData, bool help = 
     exit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
-static void parseArguments(int argc, char** argv, Options& options, JSGlobalData* globalData)
+static void parseArguments(int argc, char** argv, CommandLine& options, JSGlobalData* globalData)
 {
     int i = 1;
     for (; i < argc; ++i) {
@@ -511,7 +511,7 @@ int realMain(int argc, char** argv, JSGlobalData* globalData)
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    Options options;
+    CommandLine options;
     parseArguments(argc, argv, options, globalData);
 
     GlobalObject* globalObject = GlobalObject::create(*globalData, GlobalObject::createStructure(*globalData, jsNull()), options.arguments);

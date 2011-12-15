@@ -66,7 +66,7 @@ void OSRExit::dump(FILE* out) const
 
 bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)
 {
-    if (static_cast<double>(m_count) / dfgCodeBlock->speculativeFailCounter() <= Heuristics::osrExitProminenceForFrequentExitSite)
+    if (static_cast<double>(m_count) / dfgCodeBlock->speculativeFailCounter() <= Options::osrExitProminenceForFrequentExitSite)
         return false;
     
     return AssemblyHelpers::baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOrigin, profiledCodeBlock)->addFrequentExitSite(FrequentExitSite(m_codeOrigin.bytecodeIndex, m_kind));
