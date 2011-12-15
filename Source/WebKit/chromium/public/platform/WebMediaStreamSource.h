@@ -31,9 +31,9 @@
 #ifndef WebMediaStreamSource_h
 #define WebMediaStreamSource_h
 
-#include "platform/WebCommon.h"
-#include "platform/WebNonCopyable.h"
-#include "platform/WebPrivatePtr.h"
+#include "WebCommon.h"
+#include "WebNonCopyable.h"
+#include "WebPrivatePtr.h"
 
 namespace WebCore {
 class MediaStreamSource;

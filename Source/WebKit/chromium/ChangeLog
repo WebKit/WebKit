@@ -1,3 +1,16 @@
+2011-12-15  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Fixing #include statements and removing forwarding header file
+        https://bugs.webkit.org/show_bug.cgi?id=74598
+
+        Reviewed by Darin Fisher.
+
+        WebMediaStreamSource.h had some issues when accessed from chromium. Also cleaned up the forwarding header.
+
+        * WebKit.gyp:
+        * public/WebMediaStreamSource.h: Removed.
+        * public/platform/WebMediaStreamSource.h:
+
 2011-12-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r102956.

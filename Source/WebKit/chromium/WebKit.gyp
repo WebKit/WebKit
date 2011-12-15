@@ -193,7 +193,6 @@
                 'public/WebMediaPlayerAction.h',
                 'public/WebMediaPlayerClient.h',
                 'public/WebMediaStreamRegistry.h',
-                'public/WebMediaStreamSource.h',
                 'public/WebMenuItemInfo.h',
                 'public/WebMessagePortChannel.h',
                 'public/WebMessagePortChannelClient.h',
