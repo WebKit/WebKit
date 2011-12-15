@@ -88,7 +88,7 @@ ConstructType JSFloat64ArrayConstructor::getConstructData(JSCell*, ConstructData
 
 static const HashTableValue JSFloat64ArrayPrototypeTableValues[] =
 {
-    { "foo", DontDelete | Function, (intptr_t)static_cast<NativeFunction>(jsFloat64ArrayPrototypeFunctionFoo), (intptr_t)1, NoIntrinsic },
+    { "foo", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsFloat64ArrayPrototypeFunctionFoo), (intptr_t)1, NoIntrinsic },
     { 0, 0, 0, 0, NoIntrinsic }
 };
 

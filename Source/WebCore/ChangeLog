@@ -1,3 +1,11 @@
+2011-12-15  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+
 2011-12-15  Luke Macpherson   <macpherson@chromium.org>
 
         Separate box alignment and box pack values into separate enums.
