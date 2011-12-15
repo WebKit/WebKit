@@ -164,7 +164,7 @@ BUGWK74459 SKIP : fast/workers/worker-messageport-gc.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-messageport.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-multi-port.html = CRASH
 
-BUGWK74449 SKIP : fast/workers/storage = CRASH TIMEOUT
+BUGWK74554 SKIP : fast/workers/storage = CRASH TIMEOUT
 
 BUGWK74449 SKIP : fast/workers/dedicated-worker-lifecycle.html = TIMEOUT
 BUGWK74449 SKIP : fast/workers/worker-close-more.html = TIMEOUT
