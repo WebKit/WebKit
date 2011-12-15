@@ -1,3 +1,11 @@
+2011-12-14  Enrica Casucci  <enrica@apple.com>
+
+        One more attempt to fix the release build (hopefully the last)
+
+        Unreviewed.
+
+        * editing/ReplaceSelectionCommand.cpp: Added NodeRenderStyle.h
+
 2011-12-14  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r102816.
