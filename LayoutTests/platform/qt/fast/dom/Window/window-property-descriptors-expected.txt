@@ -490,6 +490,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeTrueQuiet') is 'obj
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldBeUndefined') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldEvaluateTo') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldHaveHadError') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldNotBe') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'shouldThrow') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'status') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'statusbar') is 'object'
