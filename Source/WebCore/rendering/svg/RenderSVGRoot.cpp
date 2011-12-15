@@ -251,7 +251,7 @@ void RenderSVGRoot::layout()
 
     if (view() && view()->frameView() && view()->frameView()->embeddedContentBox()) {
         if (!m_needsSizeNegotiationWithHostDocument)
-            m_needsSizeNegotiationWithHostDocument = !m_everHadLayout || oldSize != size();
+            m_needsSizeNegotiationWithHostDocument = !everHadLayout() || oldSize != size();
     } else
         ASSERT(!m_needsSizeNegotiationWithHostDocument);
 

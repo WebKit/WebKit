@@ -1,3 +1,39 @@
+2011-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        m_hasCounterNodeMap and m_everHadLayout should be private to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=74645
+
+        Reviewed by Eric Seidel.
+
+        Made them private and added getters and setters as needed.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        (WebCore::updateCounters):
+        (WebCore::RenderCounter::rendererStyleChanged):
+        (showCounterRendererTree):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasCounterNodeMap):
+        (WebCore::RenderObject::setHasCounterNodeMap):
+        (WebCore::RenderObject::everHadLayout):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::layout):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::layout):
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::layout):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2011-12-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Not able to navigate the Resource tab options properly with arrow keys after adding the sticky-notes.

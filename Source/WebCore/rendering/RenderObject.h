@@ -369,6 +369,9 @@ public:
          return container;
     }
 
+    bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
+    void setHasCounterNodeMap(bool hasCounterNodeMap) { m_hasCounterNodeMap = hasCounterNodeMap; }
+
     bool childrenInline() const { return m_childrenInline; }
     void setChildrenInline(bool b) { m_childrenInline = b; }
     bool hasColumns() const { return m_hasColumns; }
@@ -844,6 +847,8 @@ public:
     }
 
 protected:
+    bool everHadLayout() const { return m_everHadLayout; }
+
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start
@@ -912,12 +917,10 @@ private:
     bool m_hasOverflowClip           : 1; // Set in the case of overflow:auto/scroll/hidden
     bool m_hasTransform              : 1;
     bool m_hasReflection             : 1;
-    
-public:
+
     bool m_hasCounterNodeMap         : 1;
     bool m_everHadLayout             : 1;
 
-private:
     // These bitfields are moved here from subclasses to pack them together
     // from RenderBlock
     bool m_childrenInline : 1;

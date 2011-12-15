@@ -53,7 +53,7 @@ RenderSVGResourceContainer::~RenderSVGResourceContainer()
 void RenderSVGResourceContainer::layout()
 {
     // Invalidate all resources if our layout changed.
-    if (m_everHadLayout && selfNeedsLayout())
+    if (everHadLayout() && selfNeedsLayout())
         removeAllClientsFromCache();
 
     RenderSVGHiddenContainer::layout();

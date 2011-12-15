@@ -148,7 +148,7 @@ void RenderSVGForeignObject::layout()
     // FIXME: Investigate in location rounding issues - only affects RenderSVGForeignObject & RenderSVGText
     setLocation(roundedIntPoint(viewportLocation));
 
-    bool layoutChanged = m_everHadLayout && selfNeedsLayout();
+    bool layoutChanged = everHadLayout() && selfNeedsLayout();
     RenderBlock::layout();
     ASSERT(!needsLayout());
 

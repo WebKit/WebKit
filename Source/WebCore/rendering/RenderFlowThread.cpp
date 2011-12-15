@@ -310,7 +310,7 @@ private:
 
 void RenderFlowThread::layout()
 {
-    bool regionsChanged = m_regionsInvalidated && m_everHadLayout;
+    bool regionsChanged = m_regionsInvalidated && everHadLayout();
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         m_hasValidRegions = false;

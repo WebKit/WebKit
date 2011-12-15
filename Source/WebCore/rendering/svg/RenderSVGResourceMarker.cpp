@@ -48,7 +48,7 @@ RenderSVGResourceMarker::~RenderSVGResourceMarker()
 void RenderSVGResourceMarker::layout()
 {
     // Invalidate all resources if our layout changed.
-    if (m_everHadLayout && selfNeedsLayout())
+    if (everHadLayout() && selfNeedsLayout())
         removeAllClientsFromCache();
 
     // RenderSVGHiddenContainer overwrites layout(). We need the

@@ -173,7 +173,7 @@ void RenderSVGText::layout()
         updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();
 
     // Invalidate all resources of this client if our layout changed.
-    if (m_everHadLayout && selfNeedsLayout())
+    if (everHadLayout() && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(this);
 
     // If our bounds changed, notify the parents.
