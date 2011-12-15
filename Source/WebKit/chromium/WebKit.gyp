@@ -1452,6 +1452,11 @@
                                 '-fvisibility=default',
                             ],
                         }],
+                        ['OS=="android"', {
+                            'ldflags!': [
+                                '-nostdlib',
+                            ],
+                        }],
                         ['OS=="win"', {
                             'defines': [
                                 # This seems like a hack, but this is what Safari Win does.

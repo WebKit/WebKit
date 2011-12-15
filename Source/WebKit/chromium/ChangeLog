@@ -1,3 +1,16 @@
+2011-12-15  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Enable TestNetscapePlugIn to link for Android
+        https://bugs.webkit.org/show_bug.cgi?id=74597
+
+        Reviewed by Tony Gentilcore.
+
+        The -nostdlib linker flag is being passed to all targets being build
+        for Android, which conflicts with the shared library the
+        TestNetscapePlugIn target created. Explicitly exclude the flag.
+
+        * WebKit.gyp:
+
 2011-12-14  David Levin  <levin@chromium.org>
 
         [chromium] DatabaseObserver needs threadsafe fixes and other clean-up.
