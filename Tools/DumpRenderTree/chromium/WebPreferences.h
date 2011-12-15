@@ -94,6 +94,7 @@ struct WebPreferences {
     bool textAreasAreResizable;
     WebKit::WebURL userStyleSheetLocation;
     bool usesPageCache;
+    bool pageCacheSupportsPlugins;
     bool webSecurityEnabled;
     bool allowUniversalAccessFromFileURLs;
     WebKit::WebSettings::EditingBehavior editingBehavior;

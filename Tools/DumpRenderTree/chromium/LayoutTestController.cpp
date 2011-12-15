@@ -1486,6 +1486,8 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->javaEnabled = cppVariantToBool(value);
     else if (key == "WebKitUsesPageCachePreferenceKey")
         prefs->usesPageCache = cppVariantToBool(value);
+    else if (key == "WebKitPageCacheSupportsPluginsPreferenceKey")
+        prefs->pageCacheSupportsPlugins = cppVariantToBool(value);
     else if (key == "WebKitJavaScriptCanAccessClipboard")
         prefs->javaScriptCanAccessClipboard = cppVariantToBool(value);
     else if (key == "WebKitXSSAuditorEnabled")

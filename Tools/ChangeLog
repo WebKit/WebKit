@@ -1,3 +1,17 @@
+2011-12-15  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Add DRT support for WebKitPageCacheSupportsPluginsPreferenceKey
+        https://bugs.webkit.org/show_bug.cgi?id=74581
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+
 2011-12-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Improve the look of the viewport info overlay

@@ -72,6 +72,7 @@ public:
     virtual void setUserStyleSheetLocation(const WebURL&);
     virtual void setAuthorAndUserStylesEnabled(bool);
     virtual void setUsesPageCache(bool);
+    virtual void setPageCacheSupportsPlugins(bool);
     virtual void setDownloadableBinaryFontsEnabled(bool);
     virtual void setJavaScriptCanAccessClipboard(bool);
     virtual void setXSSAuditorEnabled(bool);

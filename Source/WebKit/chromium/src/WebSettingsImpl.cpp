@@ -199,6 +199,11 @@ void WebSettingsImpl::setUsesPageCache(bool usesPageCache)
     m_settings->setUsesPageCache(usesPageCache);
 }
 
+void WebSettingsImpl::setPageCacheSupportsPlugins(bool pageCacheSupportsPlugins)
+{
+    m_settings->setPageCacheSupportsPlugins(pageCacheSupportsPlugins);
+}
+
 void WebSettingsImpl::setDownloadableBinaryFontsEnabled(bool enabled)
 {
     m_settings->setDownloadableBinaryFontsEnabled(enabled);
