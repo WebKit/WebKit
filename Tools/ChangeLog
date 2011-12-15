@@ -1,3 +1,11 @@
+2011-12-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Improve the look of the viewport info overlay
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/qml/ViewportInfoItem.qml:
+
 2011-12-15  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [Qt] Support requestAnimationFrame API
