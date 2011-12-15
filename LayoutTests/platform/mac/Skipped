@@ -93,9 +93,6 @@ fast/events/mouseover-button.html
 # Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
 platform/mac/accessibility/change-notification-on-scroll.html
 
-# Skipped until https://bugs.webkit.org/show_bug.cgi?id=72624 is resolved.
-accessibility/loading-iframe-sends-notification.html
-
 # Fails on Mac for some reason; being investigates.
 # See https://bugs.webkit.org/show_bug.cgi?id=34287
 http/tests/media/video-cookie.html

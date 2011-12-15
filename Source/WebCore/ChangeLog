@@ -1,3 +1,21 @@
+2011-12-14  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Seeing crash in DRT after loading-iframe-sends-notification.html land
+        https://bugs.webkit.org/show_bug.cgi?id=72624
+
+        When an iframe finishes loading, send an accessibility notification
+        on the renderer, rather than on a parent node. The only reason it was
+        being posted on a parent before was because there was no way to detect
+        that in a test. This is simpler and now covered by the test.
+
+        Reviewed by Chris Fleizach.
+
+        Updates existing test:
+        accessibility/loading-iframe-sends-notification.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+
 2011-12-14  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add inhibitDraw to CCScheduler and drop root impl to prevent background flash on tab restore

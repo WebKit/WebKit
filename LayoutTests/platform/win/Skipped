@@ -609,6 +609,9 @@ accessibility/th-as-title-ui.html
 accessibility/transformed-element.html
 accessibility/visible-elements.html
 
+# Need to implement global addNotificationListener in Windows DRT
+accessibility/loading-iframe-sends-notification.html
+
 # No support for print-to-pdf in Windows DRT
 printing/compositing-layer-printing.html
 printing/media-queries-print.html

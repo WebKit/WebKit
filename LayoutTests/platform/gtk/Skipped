@@ -422,6 +422,7 @@ accessibility/label-for-control-hittest.html
 accessibility/language-attribute.html
 accessibility/legend.html
 accessibility/lists.html
+accessibility/loading-iframe-sends-notification.html
 accessibility/loading-iframe-updates-axtree.html
 accessibility/notification-listeners.html
 accessibility/onclick-handlers.html

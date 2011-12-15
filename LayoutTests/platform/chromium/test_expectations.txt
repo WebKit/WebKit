@@ -3927,7 +3927,6 @@ BUGWK73133 LINUX : inspector/elements/remove-node.html = PASS CRASH
 BUGWK72728 LEOPARD CPU-CG : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
 BUGWK72728 LEOPARD CPU-CG : fast/canvas/canvas-alphaImageData-behavior.html = TEXT
 
-BUGWK72747 WIN : accessibility/loading-iframe-sends-notification.html = PASS TIMEOUT
 BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 

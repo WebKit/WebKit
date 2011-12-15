@@ -1,62 +1,13 @@
 <html>
 <head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
 <script src="../fast/js/resources/js-test-pre.js"></script>
-
-  <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
-
-    function runTest()
-    {
-        description("This tests that when an iframe finishes loading, it sends a layout complete notification.");
-
-        if (window.accessibilityController) {
-            // Initially, the iframe's webarea is empty.
-            window.root = accessibilityController.rootElement;
-            window.body = root.childAtIndex(0);
-            window.iframe = body.childAtIndex(1).childAtIndex(0);
-            window.scrollarea = iframe.childAtIndex(0);
-            window.subwebarea = scrollarea.childAtIndex(0);
-            shouldBeFalse("subwebarea.childrenCount > 0");
-
-            iframe.addNotificationListener(function (notification) {
-                // Make sure that we get a LayoutComplete notification and that
-                // immediately after the notification is received, the iframe's
-                // webarea has content.
-                debug('Got notification on iframe: ' + notification);
-                window.newScrollarea = iframe.childAtIndex(0);
-                window.newSubwebarea = newScrollarea.childAtIndex(0);
-                shouldBeTrue("newSubwebarea.childrenCount > 0");
-            });
-        }
-
-        window.iframeElement = document.getElementById("iframe");
-        iframeElement.addEventListener("load", function() {
-            window.setTimeout(function() {
-                debug('<br /><span class="pass">TEST COMPLETE</span>');
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
-            }, 10);
-        }, false);
-
-        // Load content into the iframe. This will trigger the event
-        // handler above, which will check that the accessibility tree
-        // was updated with new content.
-        window.iframeElement.src = "data:text/html,<body><button>Click me</button></body>";
-
-    }
-
-    window.addEventListener('load', function() {
-        setTimeout(runTest, 10);
-    }, false);
-
-  </script>
 </head>
 <body>
 
 <p>Before</p>
 
-<iframe id="iframe"></iframe>
+<iframe id="iframe" title="InnerFrame"></iframe>
 
 <p>After</p>
 
@@ -65,5 +16,79 @@
 <p id="description"></p>
 <div id="console"></div>
 
+<script>
+    description("This tests that when an iframe finishes loading, it sends a notification.");
+
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+    window.jsTestIsAsync = true;
+
+    // Recursively search the entire accessibility tree starting at the given
+    // AccessibilityUIElement (inclusive) and return the element whose title
+    // contains the given string. This makes it possible to find a node even
+    // when there are platform differences in the tree, i.e. due to different
+    // nodes being ignored.
+    function findByAccessibleTitleSubstring(startElement, titleSubstring)
+    {
+        if (startElement.title.indexOf(titleSubstring) >= 0)
+            return startElement;
+
+        for (var i = 0; i < startElement.childrenCount; i++) {
+            var found = findByAccessibleTitleSubstring(startElement.childAtIndex(i), titleSubstring);
+            if (found)
+                return found;
+        }
+
+        return null;
+    }
+
+    function runTest()
+    {
+        window.gotIframeNotification = false;
+
+        if (window.accessibilityController) {
+            window.root = accessibilityController.rootElement;
+
+            // Initially, the iframe should not be loaded, so we shouldn't be able to find this button.
+            shouldBeFalse("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
+
+            window.accessibilityController.addNotificationListener(function (target, notification) {
+                // Ignore this notification if it's not on the iframe.
+                if (target.description.indexOf("InnerFrame") == -1)
+                    return;
+
+                debug("Got notification on iframe.");
+                gotIframeNotification = true;
+
+                // Check that the button within the iframe is now reachable from the root.
+                shouldBeTrue("findByAccessibleTitleSubstring(root, 'InnerButton') != null");
+            });
+        }
+
+        window.iframeElement = document.getElementById("iframe");
+        iframeElement.addEventListener("load", function() {
+            window.setTimeout(function() {
+                shouldBeTrue("gotIframeNotification");
+                if (window.accessibilityController)
+                    accessibilityController.removeNotificationListener();
+
+                finishJSTest();
+            }, 10);
+        }, false);
+
+        // Load content into the iframe. This will trigger the event
+        // handler above, which will check that the accessibility tree
+        // was updated with new content.
+        window.iframeElement.src = "data:text/html,<body><button>InnerButton</button></body>";
+    }
+
+    window.addEventListener('load', function() {
+        setTimeout(runTest, 10);
+    }, false);
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

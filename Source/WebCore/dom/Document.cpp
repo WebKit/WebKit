@@ -2280,16 +2280,8 @@ void Document::implicitClose()
             axObjectCache()->postNotification(renderObject, AXObjectCache::AXLoadComplete, true);
         else {
             // AXLoadComplete can only be posted on the top document, so if it's a document
-            // in an iframe that just finished loading, post a notification on the iframe
-            // element instead.
-            ScrollView* scrollView = frame()->view();
-            if (scrollView && scrollView->isFrameView()) {
-                HTMLFrameOwnerElement* owner = static_cast<FrameView*>(scrollView)->frame()->ownerElement();
-                if (owner && owner->renderer()) {
-                    AccessibilityObject* axIFrame = axObjectCache()->getOrCreate(owner->renderer());
-                    axObjectCache()->postNotification(axIFrame, axIFrame->document(), AXObjectCache::AXLayoutComplete, true);
-                }
-            }
+            // in an iframe that just finished loading, post AXLayoutComplete instead.
+            axObjectCache()->postNotification(renderObject, AXObjectCache::AXLayoutComplete, true);
         }
     }
 #endif
