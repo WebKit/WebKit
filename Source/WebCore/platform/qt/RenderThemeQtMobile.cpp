@@ -79,7 +79,7 @@ static const QColor darkColor(40, 40, 40);
 static const QColor highlightColor(16, 128, 221);
 static const QColor buttonGradientBottom(245, 245, 245);
 static const QColor shadowColor(80, 80, 80, 160);
-static const QPen borderPen(darkColor, 0.3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+static const QPen borderPen(darkColor, 0.4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
 static inline void drawRectangularControlBackground(QPainter* painter, const QPen& pen, const QRect& rect, const QBrush& brush)
 {
@@ -123,15 +123,17 @@ StylePainterMobile::~StylePainterMobile()
 void StylePainterMobile::drawCheckableBackground(QPainter* painter, const QRect& rect, bool checked, bool enabled) const
 {
     QBrush brush;
-    if (checked && enabled) {
-        QLinearGradient gradient;
-        gradient.setStart(rect.bottomLeft());
-        gradient.setFinalStop(rect.topLeft());
-        gradient.setColorAt(0.0, highlightColor);
-        gradient.setColorAt(1.0, highlightColor.lighter());
-        brush = gradient;
-    } else
-        brush = Qt::lightGray;
+    QColor color = Qt::gray;
+    if (checked && enabled)
+        color = highlightColor;
+
+    QLinearGradient gradient;
+    gradient.setStart(rect.topLeft());
+    gradient.setFinalStop(rect.bottomLeft());
+    gradient.setColorAt(0.0, color);
+    gradient.setColorAt(1.0, color.lighter());
+    brush = gradient;
+
     drawRectangularControlBackground(painter, borderPen, rect, brush);
 }
 
@@ -209,14 +211,18 @@ QPixmap StylePainterMobile::findRadio(const QSize& size, bool checked, bool enab
 
 void StylePainterMobile::drawMultipleComboButton(QPainter* painter, const QSize& size, const QColor& color) const
 {
-    const int dotSize = size.height() - 1;
+    const qreal dotDiameter = size.height();
+    const qreal dotRadii = dotDiameter / 2;
 
+    painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setPen(color);
     painter->setBrush(color);
 
-    painter->drawEllipse(0, 0, dotSize, dotSize);
-    painter->drawEllipse(dotSize * 2, 0, dotSize, dotSize);
-    painter->drawEllipse(4 * dotSize, 0, dotSize, dotSize);
+    const qreal offsetFactor = 1.6;
+    for (int i = 0; i < 3; ++i) {
+        QPointF center(offsetFactor * dotRadii + i * offsetFactor * dotDiameter, dotRadii);
+        painter->drawEllipse(center, dotRadii, dotRadii);
+    }
 }
 
 void StylePainterMobile::drawSimpleComboButton(QPainter* painter, const QSize& size, const QColor& color) const
@@ -252,7 +258,7 @@ QSize StylePainterMobile::getButtonImageSize(const QSize& buttonSize, bool multi
 
     const int height = buttonSize.height() / 2 + frameWidth;
     const int width = height - (2 * (1 + height / 15)) - 1;
-    return QSize(width , height);
+    return QSize(width, height);
 }
 
 QPixmap StylePainterMobile::findComboButton(const QSize& size, bool multiple, bool enabled) const
@@ -341,7 +347,6 @@ void StylePainterMobile::drawComboBox(const QRect& rect, bool multiple, bool ena
     linearGradient.setFinalStop(rect.topLeft());
     linearGradient.setColorAt(0.0, buttonGradientBottom);
     linearGradient.setColorAt(1.0, Qt::white);
-
 
     drawRectangularControlBackground(painter, borderPen, rect, linearGradient);
 
@@ -513,7 +518,6 @@ void RenderThemeQtMobile::adjustButtonStyle(CSSStyleSelector* selector, RenderSt
     setButtonPadding(style);
 }
 
-
 void RenderThemeQtMobile::setButtonPadding(RenderStyle* style) const
 {
     if (!style)
@@ -591,7 +595,6 @@ void RenderThemeQtMobile::setPopupPadding(RenderStyle* style) const
     style->setPaddingTop(Length(2, Fixed));
     style->setPaddingBottom(Length(2, Fixed));
 }
-
 
 bool RenderThemeQtMobile::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {

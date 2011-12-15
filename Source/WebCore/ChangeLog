@@ -1,3 +1,19 @@
+2011-12-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Mobile theme improvements
+
+        Rubberstamped by Simon Hausmann.
+
+        - Invert the gradient on the checkboxes
+        - Make the buttons on the multi select combobox work on floats
+        - Mini cleanups
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::StylePainterMobile::drawCheckableBackground):
+        (WebCore::StylePainterMobile::drawMultipleComboButton):
+        (WebCore::StylePainterMobile::getButtonImageSize):
+        (WebCore::StylePainterMobile::drawComboBox):
+
 2011-12-15  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py convert script conditions to precompiler #ifs
