@@ -17,7 +17,7 @@ function test()
     dumpSyntaxHighlightCSS("@import url(\"style.css\") projection, tv;");
     dumpSyntaxHighlightCSS("@media screen { body { color: red; } }");
     dumpSyntaxHighlightCSS("@font-face { font-family: MyHelvetica; }");
-    dumpSyntaxHighlightCSS("p { color: color; red: red; }");
+    dumpSyntaxHighlightCSS("p { color: color; red: red; color: #000; color: #FFF; color: #123AbC; color: #faebfe; color:papayawhip; }");
     dumpSyntaxHighlightCSS("p { margin: -10px !important; }");
 
     InspectorTest.completeTest();

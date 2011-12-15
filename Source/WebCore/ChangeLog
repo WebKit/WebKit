@@ -1,3 +1,19 @@
+2011-12-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: #hex colors are not highlighted in CSS files
+        https://bugs.webkit.org/show_bug.cgi?id=74570
+
+        Reviewed by Pavel Feldman.
+
+        Drive by: highlight color keywords as colors, not as keywords.
+
+        * inspector/front-end/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.colors):
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer):
+        (WebInspector.SourceCSSTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+
 2011-12-14  Chris Marrin  <cmarrin@apple.com>
 
         Hardware acceleration of W3C Filter Effects

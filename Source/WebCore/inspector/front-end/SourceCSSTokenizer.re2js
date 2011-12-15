@@ -30,7 +30,7 @@
 
 // Generate js file as follows:
 //
-// re2c -isc WebCore/inspector/front-end/SourceCSSTokenizer.re2js \
+// re2c -isc Source/WebCore/inspector/front-end/SourceCSSTokenizer.re2js \
 // | sed 's|^yy\([^:]*\)*\:|case \1:|' \
 // | sed 's|[*]cursor[+][+]|this._charAt(cursor++)|' \
 // | sed 's|[[*][+][+]cursor|this._charAt(++cursor)|' \
@@ -49,12 +49,13 @@ WebInspector.SourceCSSTokenizer = function()
     WebInspector.SourceTokenizer.call(this);
 
     this._propertyKeywords = WebInspector.CSSCompletions.cssNameCompletions.keySet();
+    this._colorKeywords = WebInspector.CSSKeywordCompletions.colors();
 
     this._valueKeywords = [
         "above", "absolute", "activeborder", "activecaption", "afar", "after-white-space", "ahead", "alias", "all", "all-scroll",
-        "alternate", "always","amharic", "amharic-abegede", "antialiased", "appworkspace", "aqua", "arabic-indic", "armenian", "asterisks",
-        "auto", "avoid", "background", "backwards", "baseline", "below", "bidi-override", "binary", "bengali", "black", "blink",
-        "block", "block-axis", "blue", "bold", "bolder", "border", "border-box", "both", "bottom", "break-all", "break-word", "button",
+        "alternate", "always", "amharic", "amharic-abegede", "antialiased", "appworkspace", "arabic-indic", "armenian", "asterisks",
+        "auto", "avoid", "background", "backwards", "baseline", "below", "bidi-override", "binary", "bengali", "blink",
+        "block", "block-axis", "bold", "bolder", "border", "border-box", "both", "bottom", "break-all", "break-word", "button",
         "button-bevel", "buttonface", "buttonhighlight", "buttonshadow", "buttontext", "cambodian", "capitalize", "caps-lock-indicator",
         "caption", "captiontext", "caret", "cell", "center", "checkbox", "circle", "cjk-earthly-branch", "cjk-heavenly-stem", "cjk-ideographic",
         "clear", "clip", "close-quote", "col-resize", "collapse", "compact", "condensed", "contain", "content", "content-box", "context-menu",
@@ -65,31 +66,31 @@ WebInspector.SourceCSSTokenizer = function()
         "ethiopic-abegede-ti-er", "ethiopic-abegede-ti-et", "ethiopic-halehame-aa-er", "ethiopic-halehame-aa-et",
         "ethiopic-halehame-am-et", "ethiopic-halehame-gez", "ethiopic-halehame-om-et", "ethiopic-halehame-sid-et",
         "ethiopic-halehame-so-et", "ethiopic-halehame-ti-er", "ethiopic-halehame-ti-et", "ethiopic-halehame-tig", "ew-resize", "expanded",
-        "extra-condensed", "extra-expanded", "fantasy", "fast", "fill", "fixed", "flat", "footnotes", "forwards", "from", "fuchsia", "geometricPrecision",
-        "georgian", "gray", "graytext", "green", "grey", "groove", "gujarati", "gurmukhi", "hand", "hangul", "hangul-consonant", "hebrew", "help",
+        "extra-condensed", "extra-expanded", "fantasy", "fast", "fill", "fixed", "flat", "footnotes", "forwards", "from", "geometricPrecision",
+        "georgian", "graytext", "groove", "gujarati", "gurmukhi", "hand", "hangul", "hangul-consonant", "hebrew", "help",
         "hidden", "hide", "higher", "highlight", "highlighttext", "hiragana", "hiragana-iroha", "horizontal", "hsl", "hsla", "icon", "ignore",
         "inactiveborder", "inactivecaption", "inactivecaptiontext", "infinite", "infobackground", "infotext", "inherit", "initial", "inline",
         "inline-axis", "inline-block", "inline-table", "inset", "inside", "intrinsic", "invert", "italic", "justify", "kannada", "katakana",
-        "katakana-iroha", "khmer", "landscape", "lao", "large", "larger", "left", "level", "lighter", "lime", "line-through", "linear", "lines",
+        "katakana-iroha", "khmer", "landscape", "lao", "large", "larger", "left", "level", "lighter", "line-through", "linear", "lines",
         "list-button", "list-item", "listbox", "listitem", "local", "logical", "loud", "lower", "lower-alpha", "lower-armenian", "lower-greek",
-        "lower-hexadecimal", "lower-latin", "lower-norwegian", "lower-roman", "lowercase", "ltr", "malayalam", "maroon", "match", "media-controls-background",
+        "lower-hexadecimal", "lower-latin", "lower-norwegian", "lower-roman", "lowercase", "ltr", "malayalam", "match", "media-controls-background",
         "media-current-time-display", "media-fullscreen-button", "media-mute-button", "media-play-button", "media-return-to-realtime-button",
         "media-rewind-button", "media-seek-back-button", "media-seek-forward-button", "media-slider", "media-sliderthumb", "media-time-remaining-display",
         "media-volume-slider", "media-volume-slider-container", "media-volume-sliderthumb", "medium", "menu", "menulist", "menulist-button",
         "menulist-text", "menulist-textfield", "menutext", "message-box", "middle", "min-intrinsic", "mix", "mongolian", "monospace", "move", "multiple",
         "myanmar", "n-resize", "narrower", "navy", "ne-resize", "nesw-resize", "no-close-quote", "no-drop", "no-open-quote", "no-repeat", "none",
-        "normal", "not-allowed", "nowrap", "ns-resize", "nw-resize", "nwse-resize", "oblique", "octal", "olive", "open-quote", "optimizeLegibility",
-        "optimizeSpeed", "orange", "oriya", "oromo", "outset", "outside", "overlay", "overline", "padding", "padding-box", "painted", "paused",
-        "persian", "plus-darker", "plus-lighter", "pointer", "portrait", "pre", "pre-line", "pre-wrap", "preserve-3d", "progress", "purple",
-        "push-button", "radio", "read-only", "read-write", "read-write-plaintext-only", "red", "relative", "repeat", "repeat-x",
+        "normal", "not-allowed", "nowrap", "ns-resize", "nw-resize", "nwse-resize", "oblique", "octal", "open-quote", "optimizeLegibility",
+        "optimizeSpeed", "oriya", "oromo", "outset", "outside", "overlay", "overline", "padding", "padding-box", "painted", "paused",
+        "persian", "plus-darker", "plus-lighter", "pointer", "portrait", "pre", "pre-line", "pre-wrap", "preserve-3d", "progress",
+        "push-button", "radio", "read-only", "read-write", "read-write-plaintext-only", "relative", "repeat", "repeat-x",
         "repeat-y", "reset", "reverse", "rgb", "rgba", "ridge", "right", "round", "row-resize", "rtl", "run-in", "running", "s-resize", "sans-serif",
         "scroll", "scrollbar", "se-resize", "searchfield", "searchfield-cancel-button", "searchfield-decoration", "searchfield-results-button",
-        "searchfield-results-decoration", "semi-condensed", "semi-expanded", "separate", "serif", "show", "sidama", "silver", "single",
+        "searchfield-results-decoration", "semi-condensed", "semi-expanded", "separate", "serif", "show", "sidama", "single",
         "skip-white-space", "slide", "slider-horizontal", "slider-vertical", "sliderthumb-horizontal", "sliderthumb-vertical", "slow",
         "small", "small-caps", "small-caption", "smaller", "solid", "somali", "source-atop", "source-in", "source-out", "source-over",
         "space", "square", "square-button", "start", "static", "status-bar", "stretch", "stroke", "sub", "subpixel-antialiased", "super",
         "sw-resize", "table", "table-caption", "table-cell", "table-column", "table-column-group", "table-footer-group", "table-header-group",
-        "table-row", "table-row-group", "teal", "telugu", "text", "text-bottom", "text-top", "textarea", "textfield", "thai", "thick", "thin",
+        "table-row", "table-row-group", "telugu", "text", "text-bottom", "text-top", "textarea", "textfield", "thai", "thick", "thin",
         "threeddarkshadow", "threedface", "threedhighlight", "threedlightshadow", "threedshadow", "tibetan", "tigre", "tigrinya-er", "tigrinya-er-abegede",
         "tigrinya-et", "tigrinya-et-abegede", "to", "top", "transparent", "ultra-condensed", "ultra-expanded", "underline", "up", "upper-alpha", "upper-armenian",
         "upper-greek", "upper-hexadecimal", "upper-latin", "upper-norwegian", "upper-roman", "uppercase", "urdu", "url", "vertical", "vertical-text", "visible",
@@ -178,9 +179,10 @@ WebInspector.SourceCSSTokenizer.prototype = {
                 Colon = ":";
                 Semicolon = ";";
 
-                NumericLiteral = "-"? ([0-9]+ | [0-9]* "." [0-9]+)  ("em" | "rem" | "__qem" | "ex" | "px" | "cm" | 
+                NumericLiteral = "-"? ([0-9]+ | [0-9]* "." [0-9]+)  ("em" | "rem" | "__qem" | "ex" | "px" | "cm" |
                     "mm" | "in" | "pt" | "pc" | "deg" | "rad" | "grad" | "turn" | "ms" | "s" | "Hz" | "kHz" | "%")?;
 
+                Color = "#" [0-9A-Fa-f]+;
                 Identifier = [@!_\-$0-9a-zA-Z\[\]='"/]+;
 
                 DoubleStringContent = ([^\r\n\"\\] | "\\" ['"\\bfnrtv])*;
@@ -248,6 +250,15 @@ WebInspector.SourceCSSTokenizer.prototype = {
                     return cursor;
                 }
 
+                <INITIAL> Color
+                {
+                    if (this._isPropertyValue())
+                        this.tokenType = "css-color";
+                    else
+                        this.tokenType = null;
+                    return cursor;
+                }
+
                 <INITIAL> Identifier
                 {
                     var token = this._line.substring(cursorOnEnter, cursor);
@@ -264,11 +275,15 @@ WebInspector.SourceCSSTokenizer.prototype = {
                         this.tokenType = "css-keyword";
                     else if (this._condition.parseCondition === this._parseConditions.PROPERTY && token in this._propertyKeywords)
                         this.tokenType = "css-property";
-                    else if (this._isPropertyValue() && token in this._valueKeywords)
-                        this.tokenType = "css-keyword";
-                    else if (token === "!important")
-                        this.tokenType = "css-important";
-                    else
+                    else if (this._isPropertyValue()) {
+                        if (token in this._valueKeywords)
+                            this.tokenType = "css-keyword";
+                        else if (token in this._colorKeywords) {
+                            // FIXME: this does not convert tokens toLowerCase() for the sake of speed.
+                            this.tokenType = "css-color";
+                        } else if (token === "!important")
+                            this.tokenType = "css-important";
+                    } else
                         this.tokenType = null;
                     return cursor;
                 }
