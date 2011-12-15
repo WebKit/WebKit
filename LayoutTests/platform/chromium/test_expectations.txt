@@ -4010,3 +4010,5 @@ BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
 
 // Need rebaseline on Mac.
 BUGWK50999 : fast/text/unicode-variation-selector.html = MISSING FAIL
+
+BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
