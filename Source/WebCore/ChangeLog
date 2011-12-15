@@ -1,3 +1,23 @@
+2011-12-15  Otto Cheung  <ocheung@rim.com>
+
+        Removing BlackBerryCookieCache from the build system
+        https://bugs.webkit.org/show_bug.cgi?id=74318
+
+        Reviewed by Rob Buis.
+
+        Removing any references to BlackBerryCookieCache in files that are upstreamed.
+
+        We are removing the BlackBerryCookieCache because the CookieManager cookie structure has been
+        refactored to have a similar structure to the cache. Since the read speeds in both structures
+        are similar, we no longer need the cache to speed up read performance.
+
+        No new tests, this patch by itself will not work. This patch is only removing
+        the references to BlackBerryCookieCache in files that are upstreamed.
+
+        * PlatformBlackBerry.cmake:
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyHeaderReceived):
+
 2011-12-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Mobile theme improvements

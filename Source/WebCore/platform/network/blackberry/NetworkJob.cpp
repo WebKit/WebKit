@@ -21,7 +21,6 @@
 
 #include "AboutData.h"
 #include "Base64.h"
-#include "BlackBerryCookieCache.h"
 #include "CookieManager.h"
 #include "CredentialStorage.h"
 #include "Frame.h"
@@ -305,7 +304,6 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
         if (m_frame && m_frame->loader() && m_frame->loader()->client()
             && static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->cookiesEnabled())
             handleSetCookieHeader(value);
-        BlackBerryCookieCache::instance().clearAllCookiesForHost(m_pageGroupName, m_response.url());
     }
 
     if (lowerKey == "www-authenticate")
