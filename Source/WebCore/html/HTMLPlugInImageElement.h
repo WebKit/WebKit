@@ -21,8 +21,8 @@
 #ifndef HTMLPlugInImageElement_h
 #define HTMLPlugInImageElement_h
 
-#include "ActiveDOMObject.h"
 #include "HTMLPlugInElement.h"
+
 #include "RenderStyle.h"
 #include <wtf/OwnPtr.h>
 
@@ -42,7 +42,7 @@ enum PreferPlugInsForImagesOption {
 };
 
 // Base class for HTMLObjectElement and HTMLEmbedElement
-class HTMLPlugInImageElement : public HTMLPlugInElement, public ActiveDOMObject {
+class HTMLPlugInImageElement : public HTMLPlugInElement {
 public:
     virtual ~HTMLPlugInImageElement();
 
@@ -53,7 +53,7 @@ public:
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
     bool shouldPreferPlugInsForImages() const { return m_shouldPreferPlugInsForImages; }
-    
+
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
 
@@ -73,9 +73,11 @@ protected:
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
-    virtual bool canSuspend() const OVERRIDE;
-    virtual void suspend(ReasonForSuspension) OVERRIDE;
-    virtual void resume() OVERRIDE;
+    virtual void willMoveToNewOwnerDocument() OVERRIDE;
+    virtual void didMoveToNewOwnerDocument() OVERRIDE;
+    
+    virtual void documentWillBecomeInactive() OVERRIDE;
+    virtual void documentDidBecomeActive() OVERRIDE;
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 

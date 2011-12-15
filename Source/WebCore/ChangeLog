@@ -1,3 +1,19 @@
+2011-12-15  Brady Eidson  <beidson@apple.com>
+
+        Unreviewed, rolling out r102829.
+        http://trac.webkit.org/changeset/102829
+        https://bugs.webkit.org/show_bug.cgi?id=74533
+
+        Caused https://bugs.webkit.org/show_bug.cgi?id=74555
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLPlugInImageElement::didMoveToNewOwnerDocument):
+        (WebCore::HTMLPlugInImageElement::documentWillBecomeInactive):
+        (WebCore::HTMLPlugInImageElement::documentDidBecomeActive):
+        * html/HTMLPlugInImageElement.h:
+
 2011-12-15  James Simonsen  <simonjam@chromium.org>
 
         [Navigation Timing] Use monotonicallyIncreasingTime() instead of currentTime()
