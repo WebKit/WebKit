@@ -1,3 +1,14 @@
+2011-12-14  Tony Chang  <tony@chromium.org>
+
+        Clean up style in CSSStyleSelector.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74548
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+
 2011-12-14  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r102794.
