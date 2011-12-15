@@ -4000,6 +4000,7 @@ BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK74317 LINUX : transitions/cross-fade-border-image.html = PASS CRASH
 
 BUGWK74357 SKIP : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
+BUGWK74357 SKIP : media/crash-closing-page-with-media-as-plugin-fallback.html = TEXT
 
 BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = PASS IMAGE
 
@@ -4007,3 +4008,5 @@ BUGWK74384 MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down
 
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
+
+BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
