@@ -403,10 +403,8 @@ WebInspector.NetworkLogView.prototype = {
                 selectedRequestsNumber++;
                 selectedTransferSize += resourceTransferSize;
             }
-            if (resource.url === WebInspector.inspectedPageURL) {
+            if (resource.url === WebInspector.inspectedPageURL)
                 baseTime = resource.startTime;
-                WebInspector.mainResourceStartTime = resource.startTime;
-            }
             if (resource.endTime > maxTime)
                 maxTime = resource.endTime;
         }

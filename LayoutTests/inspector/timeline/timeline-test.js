@@ -1,19 +1,19 @@
 var initialize_Timeline = function() {
 
 // Scrub values when printing out these properties in the record or data field.
-InspectorTest.timelineNonDeterministicProps = { 
-    children: 1,
-    endTime: 1,
-    height: 1,
-    requestId: 1,
-    startTime: 1,
-    width: 1,
-    stackTrace: 1,
-    url: 1,
-    usedHeapSize: 1,
-    totalHeapSize: 1,
-    mimeType: 1,
-    id: 1
+InspectorTest.timelinePropertyFormatters = {
+    children: "formatAsTypeName",
+    endTime: "formatAsTypeName",
+    height: "formatAsTypeName",
+    requestId: "formatAsTypeName",
+    startTime: "formatAsTypeName",
+    width: "formatAsTypeName",
+    stackTrace: "formatAsTypeName",
+    url: "formatAsTypeName",
+    usedHeapSize: "formatAsTypeName",
+    totalHeapSize: "formatAsTypeName",
+    mimeType: "formatAsTypeName",
+    id: "formatAsTypeName"
 };
 
 InspectorTest.startTimeline = function(callback)
@@ -122,7 +122,7 @@ InspectorTest.printTimelineRecordProperties = function(record)
 {
     InspectorTest.addResult(InspectorTest._timelineAgentTypeToString(record.type) + " Properties:");
     // Use this recursive routine to print the properties
-    InspectorTest.addObject(record, InspectorTest.timelineNonDeterministicProps);
+    InspectorTest.addObject(record, InspectorTest.timelinePropertyFormatters);
 };
 
 InspectorTest._timelineAgentTypeToString = function(numericType)

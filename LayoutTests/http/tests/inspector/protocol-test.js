@@ -24,7 +24,7 @@ InspectorTest._dumpEvent = function()
     var eventName = args.shift();
     InspectorTest._agentCoverage[eventName] = "checked";
     InspectorTest.addResult("event " + InspectorTest._agentName + "." + eventName);
-    InspectorTest.addObject(InspectorTest._lastReceivedMessage, InspectorTest._nondeterministicProps);
+    InspectorTest.addObject(InspectorTest._lastReceivedMessage, InspectorTest._customFormatters);
     InspectorTest.addResult("");
 
     var originalEventHandler = args.shift();
@@ -37,7 +37,7 @@ InspectorTest._dumpCallArguments = function(callArguments)
     var callArgumentsCopy = JSON.parse(JSON.stringify(callArguments));
     var agentName = callArgumentsCopy.shift();
     var functionName = callArgumentsCopy.shift();
-    this.filterProps(callArgumentsCopy, this._nondeterministicProps);
+    this.filterProps(callArgumentsCopy, this._customFormatters);
     var expression = JSON.stringify(callArgumentsCopy);
     expression = expression.slice(1, expression.length - 1).replace(/\"<number>\"/g, "<number>").replace(/\"<string>\"/g, "<string>");
 
@@ -49,7 +49,7 @@ InspectorTest._dumpCallArguments = function(callArguments)
 InspectorTest._callback = function(result)
 {
     InspectorTest.addResult("response:");
-    InspectorTest.addObject(InspectorTest._lastReceivedMessage, InspectorTest._nondeterministicProps);
+    InspectorTest.addObject(InspectorTest._lastReceivedMessage, InspectorTest._customFormatters);
     InspectorTest.addResult("");
     InspectorTest._runNextTest();
 };
@@ -69,7 +69,7 @@ InspectorTest._runNextTest = function()
 
         var lastSentMessage = InspectorTest._lastSentMessage; // This is because the next call will override _lastSentMessage.
         InspectorTest.addResult("request:");
-        InspectorTest.addObject(lastSentMessage, InspectorTest._nondeterministicProps);
+        InspectorTest.addObject(lastSentMessage, InspectorTest._customFormatters);
         InspectorTest.addResult("");
 
         if (agentName === this._agentName)
@@ -89,9 +89,9 @@ InspectorTest.runProtocolTestSuite = function(agentName, testSuite, nondetermini
 {
     this._agentName = agentName;
     this._testSuite = testSuite;
-    this._nondeterministicProps = {};
+    this._customFormatters = {};
     for (var i = 0; i < nondeterministicProps.length; ++i)
-        this._nondeterministicProps[nondeterministicProps[i]] = true;
+        this._customFormatters[nondeterministicProps[i]] = "formatAsTypeName";
     var agent = window[agentName];
 
     this._agentCoverage = {};

@@ -34,6 +34,7 @@
 WebInspector.NetworkLog = function()
 {
     this._resources = [];
+    this._mainResourceStartTime = null;
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, this._mainFrameNavigated, this);
 }
@@ -47,13 +48,27 @@ WebInspector.NetworkLog.prototype = {
         return this._resources;
     },
 
+    /**
+     * @return {?Date}
+     */
+    get mainResourceStartTime()
+    {
+        return this._mainResourceStartTime;
+    },
+
     _mainFrameNavigated: function(event)
     {
+        var mainFrame = event.data;
+        this._mainResourceStartTime = null;
         // Preserve resources from the new session.
         var oldResources = this._resources.splice(0, this._resources.length);
         for (var i = 0; i < oldResources.length; ++i) {
-            if (oldResources[i].loaderId === event.data.loaderId)
-                this._resources.push(oldResources[i]);
+            var resource = oldResources[i];
+            if (resource.loaderId === mainFrame.loaderId) {
+                if (!this._mainResourceStartTime && mainFrame.url === resource.url)
+                    this._mainResourceStartTime = resource.startTime;
+                this._resources.push(resource);
+            }
         }
     },
 

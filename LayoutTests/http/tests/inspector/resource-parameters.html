@@ -19,7 +19,7 @@ function test()
         var resource = event.data;
         if (resource.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2=")
             return;
-        InspectorTest.addObject(new WebInspector.HAREntry(resource).build(), InspectorTest.HARNondeterministicProperties);
+        InspectorTest.addObject(new WebInspector.HAREntry(resource).build(), InspectorTest.HARPropertyFormatters);
         InspectorTest.completeTest();
     }
 }

@@ -68,7 +68,7 @@ function test()
         var value = property.value;
         if (value)
             property.value = { type: value.type, description: value.description.replace("function foo", "function "), objectId: value.objectId };
-        InspectorTest.dump(property, { objectId: true });
+        InspectorTest.dump(property, { objectId: "formatAsTypeName" });
     }
 }
 

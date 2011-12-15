@@ -109,7 +109,22 @@ function onError(event)
 
 window.addEventListener("error", onError);
 
-InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstLinePrefix)
+InspectorTest.formatters = {};
+
+InspectorTest.formatters.formatAsTypeName = function(value)
+{
+    return "<" + typeof value + ">";
+}
+
+InspectorTest.formatters.formatAsRecentTime = function(value)
+{
+    if (typeof value !== "object" || !(value instanceof Date))
+        return InspectorTest.formatAsTypeName(value);
+    var delta = Date.now() - value;
+    return 0 <= delta && delta < 30 * 60 * 1000 ? "<plausible>" : value;
+}
+
+InspectorTest.addObject = function(object, customFormatters, prefix, firstLinePrefix)
 {
     prefix = prefix || "";
     firstLinePrefix = firstLinePrefix || prefix;
@@ -119,25 +134,27 @@ InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstL
             continue;
         var prefixWithName = "    " + prefix + prop + " : ";
         var propValue = object[prop];
-        if (nondeterministicProps && prop in nondeterministicProps)
-            InspectorTest.addResult(prefixWithName + "<" + typeof propValue + ">");
-        else
-            InspectorTest.dump(propValue, nondeterministicProps, "    " + prefix, prefixWithName);
+        if (customFormatters && customFormatters[prop]) {
+            var formatterName = customFormatters[prop];
+            var formatter = InspectorTest.formatters[formatterName];
+            InspectorTest.addResult(prefixWithName + formatter(propValue));
+        } else
+            InspectorTest.dump(propValue, customFormatters, "    " + prefix, prefixWithName);
     }
     InspectorTest.addResult(prefix + "}");
 }
 
-InspectorTest.addArray = function(array, nondeterministicProps, prefix, firstLinePrefix)
+InspectorTest.addArray = function(array, customFormatters, prefix, firstLinePrefix)
 {
     prefix = prefix || "";
     firstLinePrefix = firstLinePrefix || prefix;
     InspectorTest.addResult(firstLinePrefix + "[");
     for (var i = 0; i < array.length; ++i)
-        InspectorTest.dump(array[i], nondeterministicProps, prefix + "    ");
+        InspectorTest.dump(array[i], customFormatters, prefix + "    ");
     InspectorTest.addResult(prefix + "]");
 }
 
-InspectorTest.dump = function(value, nondeterministicProps, prefix, prefixWithName)
+InspectorTest.dump = function(value, customFormatters, prefix, prefixWithName)
 {
     prefixWithName = prefixWithName || prefix;
     if (prefixWithName && prefixWithName.length > 80) {
@@ -147,9 +164,9 @@ InspectorTest.dump = function(value, nondeterministicProps, prefix, prefixWithNa
     if (value === null)
         InspectorTest.addResult(prefixWithName + "null");
     else if (value instanceof Array)
-        InspectorTest.addArray(value, nondeterministicProps, prefix, prefixWithName);
+        InspectorTest.addArray(value, customFormatters, prefix, prefixWithName);
     else if (typeof value === "object")
-        InspectorTest.addObject(value, nondeterministicProps, prefix, prefixWithName);
+        InspectorTest.addObject(value, customFormatters, prefix, prefixWithName);
     else if (typeof value === "string")
         InspectorTest.addResult(prefixWithName + "\"" + value + "\"");
     else

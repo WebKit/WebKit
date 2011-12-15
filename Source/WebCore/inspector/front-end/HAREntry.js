@@ -237,7 +237,7 @@ WebInspector.HARLog.prototype = {
     {
         return [
             {
-                startedDateTime: new Date(WebInspector.mainResourceStartTime * 1000),
+                startedDateTime: new Date(WebInspector.networkLog.mainResourceStartTime * 1000),
                 id: WebInspector.inspectedPageURL,
                 title: "",
                 pageTimings: this.buildMainResourceTimings()

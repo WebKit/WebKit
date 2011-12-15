@@ -52,7 +52,7 @@ var test = function()
             return !/favicon\.ico$/.test(entry.request.url);
         });
         log.entries.sort(InspectorTest.resourceURLComparer);
-        InspectorTest.addObject(log, InspectorTest.HARNondeterministicPropertiesWithSize);
+        InspectorTest.addObject(log, InspectorTest.HARPropertyFormattersWithSize);
         var pageTimings = log.pages[0].pageTimings;
         InspectorTest.completeTest();
     }
