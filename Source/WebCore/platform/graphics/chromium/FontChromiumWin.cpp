@@ -265,7 +265,7 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
     if (!m_useGDI) {
         SkPoint origin = m_point;
         origin.fX += SkFloatToScalar(startAdvance);
-        paintSkiaText(m_graphicsContext, m_font->platformData(),
+        paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
                       numGlyphs, glyphs, advances, 0, &origin);
         return true;
     }
@@ -394,6 +394,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
     if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke && !graphicsContext->hasShadow())
         return;
 
+    HFONT hfont = font->platformData().hfont();
+
     // We draw the glyphs in chunks to avoid having to do a heap allocation for
     // the arrays of characters and advances.
     const int kMaxBufferLength = 256;
@@ -434,7 +436,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
 
         SkPoint origin = point;
         origin.fX += SkFloatToScalar(horizontalOffset - point.x() - currentWidth);
-        paintSkiaText(graphicsContext, font->platformData(), curLen, &glyphs[0], &advances[0], 0, &origin);
+        paintSkiaText(graphicsContext, hfont, curLen, &glyphs[0], &advances[0], 0, &origin);
     }
 }
 #else

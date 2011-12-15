@@ -35,7 +35,6 @@
 #include "config.h"
 
 #include "FontOrientation.h"
-#include "SkTypeface.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -70,14 +69,12 @@ public:
 
     HFONT hfont() const { return m_font ? m_font->hfont() : 0; }
     float size() const { return m_size; }
-    SkTypeface* typeface() const { return m_typeface; }
-    uint8_t lfQuality() const { return m_lfQuality; }
 
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
     void setOrientation(FontOrientation) { } // FIXME: Implement.
 
     unsigned hash() const
-    {
+    { 
         return m_font ? m_font->hash() : NULL;
     }
 
@@ -131,9 +128,6 @@ private:
 
     RefPtr<RefCountedHFONT> m_font;
     float m_size;  // Point size of the font in pixels.
-
-    SkTypeface* m_typeface; // cached from m_font
-    uint8_t m_lfQuality; // cached from m_font
 
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;

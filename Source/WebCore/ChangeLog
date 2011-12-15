@@ -1,3 +1,26 @@
+2011-12-14  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r102816.
+        http://trac.webkit.org/changeset/102816
+        https://bugs.webkit.org/show_bug.cgi?id=74415
+
+        Implicated in font-related crashes on Chromium canaries.
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::setupPaintForFont):
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2011-12-14  Simon Fraser  <simon.fraser@apple.com>
 
         Filter amounts should accept percentages
