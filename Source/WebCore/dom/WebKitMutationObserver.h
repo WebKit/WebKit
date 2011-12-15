@@ -33,8 +33,10 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -98,17 +100,28 @@ private:
 
 class MutationObserverInterestGroup {
 public:
-    static PassOwnPtr<MutationObserverInterestGroup> createForChildListMutation(Node* target);
-    static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node* target);
-    static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const QualifiedName& attributeName);
+    static PassOwnPtr<MutationObserverInterestGroup> createForChildListMutation(Node* target)
+    {
+        MutationRecordDeliveryOptions oldValueFlag = 0;
+        return createIfNeeded(target, WebKitMutationObserver::ChildList, nullAtom, oldValueFlag);
+    }
+    static PassOwnPtr<MutationObserverInterestGroup> createForCharacterDataMutation(Node* target)
+    {
+        return createIfNeeded(target, WebKitMutationObserver::CharacterData, nullAtom, WebKitMutationObserver::CharacterDataOldValue);
+    }
+    static PassOwnPtr<MutationObserverInterestGroup> createForAttributesMutation(Node* target, const QualifiedName& attributeName)
+    {
+        return createIfNeeded(target, WebKitMutationObserver::Attributes, attributeName.localName(), WebKitMutationObserver::AttributeOldValue);
+    }
 
     bool isOldValueRequested();
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
+
 private:
     static PassOwnPtr<MutationObserverInterestGroup> createIfNeeded(Node* target, WebKitMutationObserver::MutationType, const AtomicString& attributeName, MutationRecordDeliveryOptions oldValueFlag);
-    MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers, MutationRecordDeliveryOptions oldValueFlag);
+    MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag);
 
-    inline bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }
+    bool hasOldValue(MutationRecordDeliveryOptions options) { return options & m_oldValueFlag; }
 
     HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> m_observers;
     MutationRecordDeliveryOptions m_oldValueFlag;

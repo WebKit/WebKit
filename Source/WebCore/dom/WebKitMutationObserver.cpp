@@ -162,23 +162,7 @@ PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createI
     return adoptPtr(new MutationObserverInterestGroup(observers, oldValueFlag));
 }
 
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForChildListMutation(Node* target)
-{
-    MutationRecordDeliveryOptions oldValueFlag = 0;
-    return createIfNeeded(target, WebKitMutationObserver::ChildList, nullAtom, oldValueFlag);
-}
-
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForCharacterDataMutation(Node* target)
-{
-    return createIfNeeded(target, WebKitMutationObserver::CharacterData, nullAtom, WebKitMutationObserver::CharacterDataOldValue);
-}
-
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createForAttributesMutation(Node* target, const QualifiedName& attributeName)
-{
-    return createIfNeeded(target, WebKitMutationObserver::Attributes, attributeName.localName(), WebKitMutationObserver::AttributeOldValue);
-}
-
-MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers, MutationRecordDeliveryOptions oldValueFlag)
+MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag)
     : m_oldValueFlag(oldValueFlag)
 {
     ASSERT(!observers.isEmpty());

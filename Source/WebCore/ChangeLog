@@ -1,3 +1,24 @@
+2011-12-14  Adam Klein  <adamk@chromium.org>
+
+        Optimize MutationObserverInterestGroup construction
+        https://bugs.webkit.org/show_bug.cgi?id=74563
+
+        Reviewed by Ojan Vafai.
+
+        Inline MutationObserverInterestGroup's creation methods and fix an
+        accidental pass-by-value in an attempt to further reduce the CPU
+        footprint of MutationObservers.
+
+        No new tests, refactor only.
+
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup): Pass observers HashMap by reference.
+        * dom/WebKitMutationObserver.h:
+        (WebCore::MutationObserverInterestGroup::createForChildListMutation): Inline.
+        (WebCore::MutationObserverInterestGroup::createForCharacterDataMutation): Inline.
+        (WebCore::MutationObserverInterestGroup::createForAttributesMutation): Inline.
+        (WebCore::MutationObserverInterestGroup::hasOldValue): Remove spurious inline keyword.
+
 2011-12-14  Dominic Mazzoni  <dmazzoni@google.com>
 
         Seeing crash in DRT after loading-iframe-sends-notification.html land
