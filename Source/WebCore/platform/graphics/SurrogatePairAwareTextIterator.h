@@ -32,6 +32,7 @@ public:
     SurrogatePairAwareTextIterator(const UChar*, int currentCharacter, int lastCharacter, int endCharacter);
 
     bool consume(UChar32& character, unsigned& clusterLength);
+    bool hasTrailingVariationSelector(UChar32& selector, unsigned& clusterLength);
     void advance(unsigned advanceLength);
 
     int currentCharacter() const { return m_currentCharacter; }

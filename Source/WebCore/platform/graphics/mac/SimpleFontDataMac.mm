@@ -467,4 +467,32 @@ bool SimpleFontData::canRenderCombiningCharacterSequence(const UChar* characters
     return true;
 }
 
+static inline void decomposeToUTF16(UChar* buffer, unsigned& length, const UChar32 character)
+{
+    if (U_IS_BMP(character)) {
+        buffer[length] = character;
+        ++length;
+        return;
+    }
+
+    buffer[length] = U16_LEAD(character);
+    buffer[length + 1] = U16_TRAIL(character);
+    length += 2;
+}
+
+void SimpleFontData::updateGlyphWithVariationSelector(UChar32 character, UChar32 selector, Glyph& glyph) const
+{
+    unsigned length = 0;
+    UChar buffer[4];
+
+    decomposeToUTF16(buffer, length, character);
+    decomposeToUTF16(buffer, length, selector);
+    ASSERT(length <= 4);
+
+    CGGlyph glyphs[4];
+    wkGetGlyphsForCharacters(platformData().cgFont(), buffer, glyphs, length);
+    if (glyphs[0])
+        glyph = glyphs[0];
+}
+
 } // namespace WebCore

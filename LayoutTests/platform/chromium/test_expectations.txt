@@ -4007,3 +4007,6 @@ BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = PASS IMA
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
 BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
+
+// Need rebaseline on Mac.
+BUGWK50999 : fast/text/unicode-variation-selector.html = MISSING FAIL

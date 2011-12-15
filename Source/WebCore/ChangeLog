@@ -1,3 +1,44 @@
+2011-12-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Supports Unicode variation selector
+        https://bugs.webkit.org/show_bug.cgi?id=50999
+
+        Reviewed by Nikolas Zimmermann.
+
+        Adds SimpleFontData::updateGlyphWithVariationSelector() which substitutes the
+        glyph in question based on the selector. WidthIterator::advance() calls it
+        when an unicode variation selector follows the character.
+
+        Test: fast/text/unicode-variation-selector.html
+
+        * platform/graphics/SimpleFontData.h: Added updateGlyphWithVariationSelector().
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp:
+        (WebCore::isUnicodeBMPVariationSelector): Added.
+        (WebCore::isUnicodeSupplementaryVariationSelector): Added.
+        (WebCore::SurrogatePairAwareTextIterator::hasTrailingVariationSelector): Added.
+        * platform/graphics/SurrogatePairAwareTextIterator.h:
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance): Changed to detect variation selectors.
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Added.
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::decomposeToUTF16): Ditto.
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/pango/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::updateGlyphWithVariationSelector): Ditto.
+
 2011-12-15  Alexander Pavlov  <apavlov@chromium.org>
 
         [v8] Expose the "filter" property in V8CSSStyleDeclaration

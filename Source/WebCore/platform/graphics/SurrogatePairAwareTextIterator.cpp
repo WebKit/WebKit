@@ -32,6 +32,21 @@ using namespace Unicode;
 
 namespace WebCore {
 
+inline static bool isUnicodeBMPVariationSelector(UChar character)
+{
+    return (0x180B <= character && character <= 0x180D) || (0xFE00 <= character && character <= 0xFE0F);
+}
+
+inline static bool isUnicodeSupplementaryVariationSelector(UChar lead, UChar trail)
+{
+    // A non-BMP variation selector character is in the range of U+E0100 to U+E01EF.
+    // It can be a surrogate pair in which the high surrogate is 0xDB40 and
+    // the low surrogate is in the range of U16_TRAIL(0xE0100 - 0x10000) to U16_TRAIL(0xE01EF - 0x10000).
+    static const UChar trailStart = U16_TRAIL(0xE0100 - 0x10000);
+    static const UChar trailEnd = U16_TRAIL(0xE01EF - 0x10000);
+    return lead == 0xDB40 && trailStart <= trail && trail <= trailEnd;
+}
+
 SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* characters, int currentCharacter, int lastCharacter, int endCharacter)
     : m_characters(characters)
     , m_currentCharacter(currentCharacter)
@@ -81,6 +96,21 @@ bool SurrogatePairAwareTextIterator::consume(UChar32& character, unsigned& clust
     character = U16_GET_SUPPLEMENTARY(character, low);
     clusterLength = 2;
     return true;
+}
+
+bool SurrogatePairAwareTextIterator::hasTrailingVariationSelector(UChar32& selector, unsigned& clusterLength)
+{
+    if (static_cast<int>(m_currentCharacter + clusterLength) < m_endCharacter && isUnicodeBMPVariationSelector(m_characters[clusterLength])) {
+        selector = m_characters[clusterLength];
+        clusterLength += 1;
+        return true;
+    }
+    if (static_cast<int>(m_currentCharacter + clusterLength + 1) < m_endCharacter && isUnicodeSupplementaryVariationSelector(m_characters[clusterLength], m_characters[clusterLength + 1])) {
+        selector = U16_GET_SUPPLEMENTARY(m_characters[clusterLength], m_characters[clusterLength + 1]);
+        clusterLength += 2;
+        return true;
+    }
+    return false;
 }
 
 void SurrogatePairAwareTextIterator::advance(unsigned advanceLength)

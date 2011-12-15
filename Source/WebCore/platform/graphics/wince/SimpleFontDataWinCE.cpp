@@ -180,4 +180,9 @@ void SimpleFontData::platformCharWidthInit()
     m_maxCharWidth = (tm.tmMaxCharWidth * m_platformData.size() + 36) / 72;
 }
 
+void SimpleFontData::updateGlyphWithVariationSelector(UChar32 character, UChar32 selector, Glyph& glyph) const
+{
+    // FIXME: Implement.
+}
+
 } // namespace WebCore
