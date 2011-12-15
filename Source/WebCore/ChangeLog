@@ -1,3 +1,14 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::Function to wtf/Forward.h
+        https://bugs.webkit.org/show_bug.cgi?id=74576
+
+        Reviewed by Adam Roben.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        Add a JSC:: qualifier to the Function flags to avoid ambiguities.
+
 2011-12-15  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Hardware-backed renderLayer could avoid repainting during a positioned movement layout

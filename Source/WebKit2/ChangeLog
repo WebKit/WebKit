@@ -1,3 +1,14 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::Function to wtf/Forward.h
+        https://bugs.webkit.org/show_bug.cgi?id=74576
+
+        Reviewed by Adam Roben.
+
+        * Platform/RunLoop.h:
+        * Platform/WorkQueue.h:
+        Remove forward declarations and just include wtf/Forward.h.
+
 2011-12-15  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Move WebPreferences into experimental

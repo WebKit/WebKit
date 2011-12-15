@@ -1,3 +1,16 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WTF::Function to wtf/Forward.h
+        https://bugs.webkit.org/show_bug.cgi?id=74576
+
+        Reviewed by Adam Roben.
+
+        * jsc.cpp:
+        Work around a name conflict in the readline library.
+
+        * wtf/Forward.h:
+        Add Function.
+
 2011-12-15  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         [Qt] Support requestAnimationFrame API

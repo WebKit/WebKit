@@ -43,8 +43,12 @@
 #endif
 
 #if HAVE(READLINE)
+// readline/history.h has a Function typedef which conflicts with the WTF::Function template from WTF/Forward.h
+// We #define it to something else to avoid this conflict.
+#define Function ReadlineFunction
 #include <readline/history.h>
 #include <readline/readline.h>
+#undef Function
 #endif
 
 #if HAVE(SYS_TIME_H)

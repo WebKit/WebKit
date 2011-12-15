@@ -28,6 +28,7 @@
 #ifndef RunLoop_h
 #define RunLoop_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSpecific.h>
@@ -46,11 +47,6 @@ class WorkItem;
 namespace CoreIPC {
 class BinarySemaphore;
 }
-
-namespace WTF {
-    template<typename> class Function;
-}
-using WTF::Function;
 
 class RunLoop {
 public:

@@ -24,6 +24,7 @@
 #include <stddef.h>
 
 namespace WTF {
+    template<typename T> class Function;
     template<typename T> class ListRefPtr;
     template<typename T> class OwnArrayPtr;
     template<typename T> class OwnPtr;
@@ -54,6 +55,7 @@ namespace WTF {
     class Uint32Array;
 }
 
+using WTF::Function;
 using WTF::ListRefPtr;
 using WTF::OwnArrayPtr;
 using WTF::OwnPtr;
