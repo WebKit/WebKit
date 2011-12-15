@@ -58,7 +58,6 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool loading READ loading NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
-    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
     Q_ENUMS(NavigationRequestAction)
     Q_ENUMS(ErrorType)
@@ -88,7 +87,6 @@ public:
     bool loading() const;
     bool canReload() const;
 
-    QWebPreferences* preferences() const;
     QQuickWebPage* page();
 
     QQuickWebViewExperimental* experimental() const;
@@ -173,6 +171,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* promptDialog READ promptDialog WRITE setPromptDialog NOTIFY promptDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
+    Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(bool useTraditionalDesktopBehaviour READ useTraditionalDesktopBehaviour WRITE setUseTraditionalDesktopBehaviour)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
 
@@ -191,6 +190,7 @@ public:
     
     QWebViewportInfo* viewportInfo();
 
+    QWebPreferences* preferences() const;
     bool useTraditionalDesktopBehaviour() const;
     QWebNavigationHistory* navigationHistory() const;
 

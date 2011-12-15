@@ -7,7 +7,7 @@ Item {
     DesktopWebView {
         id: webView
         property variant lastMessage
-        preferences.navigatorQtObjectEnabled: true
+        experimental.preferences.navigatorQtObjectEnabled: true
         experimental.onMessageReceived: {
             lastMessage = message
         }
@@ -16,7 +16,7 @@ Item {
     DesktopWebView {
         id: otherWebView
         property variant lastMessage
-        preferences.navigatorQtObjectEnabled: true
+        experimental.preferences.navigatorQtObjectEnabled: true
         experimental.onMessageReceived: {
             lastMessage = message
         }
@@ -25,7 +25,7 @@ Item {
     DesktopWebView {
         id: disabledWebView
         property bool receivedMessage
-        preferences.navigatorQtObjectEnabled: false
+        experimental.preferences.navigatorQtObjectEnabled: false
         experimental.onMessageReceived: {
             receivedMessage = true
         }
@@ -98,7 +98,7 @@ Item {
 
         function test_disabled() {
             disabledWebView.load(testUrl)
-            verify(!disabledWebView.preferences.navigatorQtObjectEnabled)
+            verify(!disabledWebView.experimental.preferences.navigatorQtObjectEnabled)
             disabledWebViewLoadSpy.wait()
             disabledWebView.experimental.postMessage("HI")
             wait(1000)

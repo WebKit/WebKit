@@ -617,6 +617,14 @@ QDeclarativeComponent* QQuickWebViewExperimental::promptDialog() const
     return d->promptDialog;
 }
 
+QWebPreferences* QQuickWebViewExperimental::preferences() const
+{
+    QQuickWebViewPrivate* const d = d_ptr;
+    if (!d->preferences)
+        d->preferences = adoptPtr(QWebPreferencesPrivate::createPreferences(d));
+    return d->preferences.get();
+}
+
 void QQuickWebViewExperimental::setPromptDialog(QDeclarativeComponent* promptDialog)
 {
     Q_D(QQuickWebView);
@@ -769,14 +777,6 @@ QString QQuickWebView::title() const
 {
     Q_D(const QQuickWebView);
     return d->webPageProxy->pageTitle();
-}
-
-QWebPreferences* QQuickWebView::preferences() const
-{
-    QQuickWebViewPrivate* const d = d_ptr.data();
-    if (!d->preferences)
-        d->preferences = adoptPtr(QWebPreferencesPrivate::createPreferences(d));
-    return d->preferences.get();
 }
 
 QQuickWebViewExperimental* QQuickWebView::experimental() const
