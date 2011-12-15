@@ -182,6 +182,12 @@ void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents* ins
         consoleAgent->frameWindowDiscarded(window);
 }
 
+void InspectorInstrumentation::mediaQueryResultChangedImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+        cssAgent->mediaQueryResultChanged();
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

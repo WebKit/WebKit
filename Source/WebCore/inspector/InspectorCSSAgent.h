@@ -26,6 +26,7 @@
 #define InspectorCSSAgent_h
 
 #include "CSSSelector.h"
+#include "Document.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
@@ -65,9 +66,14 @@ public:
     ~InspectorCSSAgent();
 
     bool forcePseudoState(Element*, CSSSelector::PseudoType);
+    virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
     virtual void discardAgent();
+    virtual void restore();
+    void enable(ErrorString*);
+    void disable(ErrorString*);
     void reset();
+    void mediaQueryResultChanged();
 
     void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorArray>* style);
     void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* inlineStyle, RefPtr<InspectorArray>* attributes);
@@ -110,6 +116,7 @@ private:
 
     void clearPseudoState(bool recalcStyles);
 
+    InspectorFrontend::CSS* m_frontend;
     InspectorDOMAgent* m_domAgent;
     RefPtr<Element> m_lastElementWithPseudoState;
     unsigned m_lastPseudoState;

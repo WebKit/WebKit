@@ -34,7 +34,8 @@ WebInspector.MetricsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Metrics"));
 
-    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
+    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetOrMediaQueryResultChanged, this);
+    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.MediaQueryResultChanged, this._styleSheetOrMediaQueryResultChanged, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesUpdated, this);
 }
@@ -82,7 +83,7 @@ WebInspector.MetricsSidebarPane.prototype = {
         WebInspector.cssModel.getInlineStylesAsync(node.id, inlineStyleCallback.bind(this));
     },
 
-    _styleSheetChanged: function()
+    _styleSheetOrMediaQueryResultChanged: function()
     {
         this._innerUpdate();
     },

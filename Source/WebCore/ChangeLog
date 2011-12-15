@@ -1,3 +1,45 @@
+2011-12-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Update selected DOM element styles whenever applicable media queries change
+        https://bugs.webkit.org/show_bug.cgi?id=74292
+
+        The change introduces and handles in the frontend a new event type for the CSS domain,
+        "mediaQueryResultChanged", which gets fired every time a viewport-dependent media feature
+        changes its value. This allows users to see live changes of the (media-dependent) matched
+        rules for inspected elements.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/CodeGeneratorInspector.py:
+        (DomainNameFixes):
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::setFrontend):
+        (WebCore::InspectorCSSAgent::clearFrontend):
+        (WebCore::InspectorCSSAgent::restore):
+        (WebCore::InspectorCSSAgent::enable):
+        (WebCore::InspectorCSSAgent::disable):
+        (WebCore::InspectorCSSAgent::mediaQueryResultChanged):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::mediaQueryResultChangedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::mediaQueryResultChanged):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype.mediaQueryResultChanged):
+        (WebInspector.CSSDispatcher):
+        (WebInspector.CSSDispatcher.prototype.mediaQueryResultChanged):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane):
+        (WebInspector.MetricsSidebarPane.prototype._styleSheetOrMediaQueryResultChanged):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype._styleSheetOrMediaQueryResultChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+
 2011-12-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] Network manager fails to show resource type and MIME type in incorrect MIME type console message.

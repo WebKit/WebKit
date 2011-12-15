@@ -204,7 +204,7 @@ class DomainNameFixes:
 
         return Res
 
-    skip_js_bind_domains = set(["Runtime", "CSS", "DOMDebugger"])
+    skip_js_bind_domains = set(["Runtime", "DOMDebugger"])
     agent_type_map = {"Network": "InspectorResourceAgent", "Inspector": "InspectorAgent", }
 
 

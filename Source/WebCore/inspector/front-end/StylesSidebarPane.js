@@ -89,7 +89,8 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this._sectionsContainer = document.createElement("div");
     this.bodyElement.appendChild(this._sectionsContainer);
 
-    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
+    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetOrMediaQueryResultChanged, this);
+    WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.MediaQueryResultChanged, this._styleSheetOrMediaQueryResultChanged, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesModified, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrRemoved, this._attributesRemoved, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.StyleInvalidated, this._styleInvalidated, this);
@@ -286,7 +287,7 @@ WebInspector.StylesSidebarPane.prototype = {
             this._executeRebuildUpdate(node, userCallback);
     },
 
-    _styleSheetChanged: function()
+    _styleSheetOrMediaQueryResultChanged: function()
     {
         if (this._userOperation || this._isEditingStyle)
             return;

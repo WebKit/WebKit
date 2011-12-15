@@ -35,6 +35,8 @@
 WebInspector.CSSStyleModel = function()
 {
     new WebInspector.CSSStyleModelResourceBinding(this);
+    InspectorBackend.registerCSSDispatcher(new WebInspector.CSSDispatcher(this));
+    CSSAgent.enable();
 }
 
 WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
@@ -46,7 +48,8 @@ WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
 }
 
 WebInspector.CSSStyleModel.Events = {
-    StyleSheetChanged: "StyleSheetChanged"
+    StyleSheetChanged: "StyleSheetChanged",
+    MediaQueryResultChanged: "MediaQueryResultChanged"
 }
 
 WebInspector.CSSStyleModel.prototype = {
@@ -246,6 +249,11 @@ WebInspector.CSSStyleModel.prototype = {
         }
 
         CSSAgent.addRule(nodeId, selector, callback.bind(this, successCallback, failureCallback, selector));
+    },
+
+    mediaQueryResultChanged: function()
+    {
+        this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.MediaQueryResultChanged);
     },
 
     _documentElementId: function(nodeId)
@@ -848,6 +856,21 @@ WebInspector.CSSStyleModelResourceBinding.prototype = {
 }
 
 WebInspector.CSSStyleModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
+
+/**
+ * @constructor
+ */
+WebInspector.CSSDispatcher = function(cssModel)
+{
+    this._cssModel = cssModel;
+}
+
+WebInspector.CSSDispatcher.prototype = {
+    mediaQueryResultChanged: function()
+    {
+        this._cssModel.mediaQueryResultChanged();
+    }
+}
 
 /**
  * @type {WebInspector.CSSStyleModel}

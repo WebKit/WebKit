@@ -40,6 +40,7 @@
 #include "DOMWindow.h"
 #include "HTMLHeadElement.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "Node.h"
@@ -128,6 +129,10 @@
 //    text         : <string> // Optional - whenever the text is available for a text-based stylesheet
 // }
 
+namespace CSSAgentState {
+static const char cssAgentEnabled[] = "cssAgentEnabled";
+}
+
 namespace WebCore {
 
 enum ForcePseudoClassFlags {
@@ -186,6 +191,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 
 InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InspectorDOMAgent* domAgent)
     : InspectorBaseAgent<InspectorCSSAgent>("CSS", instrumentingAgents, state)
+    , m_frontend(0)
     , m_domAgent(domAgent)
     , m_lastPseudoState(0)
     , m_lastStyleSheetId(1)
@@ -193,7 +199,6 @@ InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, I
     , m_lastStyleId(1)
 {
     m_domAgent->setDOMListener(this);
-    m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 InspectorCSSAgent::~InspectorCSSAgent()
@@ -203,9 +208,18 @@ InspectorCSSAgent::~InspectorCSSAgent()
     reset();
 }
 
+void InspectorCSSAgent::setFrontend(InspectorFrontend* frontend)
+{
+    ASSERT(!m_frontend);
+    m_frontend = frontend->css();
+}
+
 void InspectorCSSAgent::clearFrontend()
 {
+    ASSERT(m_frontend);
+    m_frontend = 0;
     clearPseudoState(true);
+    m_instrumentingAgents->setInspectorCSSAgent(0);
 }
 
 void InspectorCSSAgent::discardAgent()
@@ -214,12 +228,37 @@ void InspectorCSSAgent::discardAgent()
     m_domAgent = 0;
 }
 
+void InspectorCSSAgent::restore()
+{
+    if (m_state->getBoolean(CSSAgentState::cssAgentEnabled)) {
+        ErrorString error;
+        enable(&error);
+    }
+}
+
 void InspectorCSSAgent::reset()
 {
     m_idToInspectorStyleSheet.clear();
     m_cssStyleSheetToInspectorStyleSheet.clear();
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
+}
+
+void InspectorCSSAgent::enable(ErrorString*)
+{
+    m_state->setBoolean(CSSAgentState::cssAgentEnabled, true);
+    m_instrumentingAgents->setInspectorCSSAgent(this);
+}
+
+void InspectorCSSAgent::disable(ErrorString*)
+{
+    m_state->setBoolean(CSSAgentState::cssAgentEnabled, false);
+}
+
+void InspectorCSSAgent::mediaQueryResultChanged()
+{
+    if (m_frontend)
+        m_frontend->mediaQueryResultChanged();
 }
 
 bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)

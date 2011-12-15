@@ -1617,6 +1617,14 @@
         ],
         "commands": [
             {
+                "name": "enable",
+                "description": "Enables the CSS agent for the given page. Clients should not assume that the CSS agent has been enabled until the result of this command is received."
+            },
+            {
+                "name": "disable",
+                "description": "Disables the CSS agent for the given page."
+            },
+            {
                 "name": "getMatchedStylesForNode",
                 "parameters": [
                     { "name": "nodeId", "$ref": "DOM.NodeId" },
@@ -1741,6 +1749,12 @@
                     { "name": "cssProperties", "type": "array", "items": { "type": "string" }, "description": "Supported property names." }
                 ],
                 "description": "Returns all supported CSS property names."
+            }
+        ],
+        "events": [
+            {
+                "name": "mediaQueryResultChanged",
+                "description": "Fires whenever a MediaQuery result changes (for example, after a browser window has been resized.) The current implementation considers only viewport-dependent media features."
             }
         ]
     },

@@ -87,6 +87,7 @@ public:
     static void characterDataModified(Document*, CharacterData*);
     static void didInvalidateStyleAttr(Document*, Node*);
     static void frameWindowDiscarded(Frame*, DOMWindow*);
+    static void mediaQueryResultChanged(Document*);
 
     static void mouseDidMoveOverElement(Page*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Page*);
@@ -227,6 +228,7 @@ private:
     static void characterDataModifiedImpl(InstrumentingAgents*, CharacterData*);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents*, Node*);
     static void frameWindowDiscardedImpl(InstrumentingAgents*, DOMWindow*);
+    static void mediaQueryResultChangedImpl(InstrumentingAgents*);
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePressImpl(InstrumentingAgents*);
@@ -432,6 +434,15 @@ inline void InspectorInstrumentation::frameWindowDiscarded(Frame* frame, DOMWind
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameWindowDiscardedImpl(instrumentingAgents, domWindow);
+#endif
+}
+
+inline void InspectorInstrumentation::mediaQueryResultChanged(Document* document)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        mediaQueryResultChangedImpl(instrumentingAgents);
 #endif
 }
 
