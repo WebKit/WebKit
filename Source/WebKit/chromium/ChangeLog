@@ -1,3 +1,13 @@
+2011-12-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r102956.
+        http://trac.webkit.org/changeset/102956
+        https://bugs.webkit.org/show_bug.cgi?id=74334
+
+        Broke Chromium/Win build.
+
+        * features.gypi:
+
 2011-12-15  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Disable flaky tests. Built and tested on Linux.
