@@ -1,0 +1,5 @@
+Tests console message when script is loaded with incorrect text/html mime type.
+
+Bug 69972
+script-as-text-loading.html:10Resource interpreted as Script but transferred with MIME type text/plain: "http://127.0.0.1:8000/inspector/network/resources/script-as-text.php".
+
