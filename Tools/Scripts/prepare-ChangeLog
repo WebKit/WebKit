@@ -67,11 +67,11 @@ use VCSUtils;
 sub changeLogDate($);
 sub changeLogEmailAddressFromArgs($);
 sub changeLogNameFromArgs($);
-sub fetchBugDescriptionFromURL($);
+sub fetchBugDescriptionFromURL($$);
 sub findChangeLogs($);
 sub getLatestChangeLogs($);
 sub resolveConflictedChangeLogs($);
-sub generateNewChangeLogs($$$$$);
+sub generateNewChangeLogs($$$$$$$$$$);
 sub printDiff($);
 sub openChangeLogs($);
 sub diffFromToString();
@@ -100,7 +100,7 @@ sub get_function_line_ranges_for_perl($$);
 sub get_selector_line_ranges_for_css($$);
 sub method_decl_to_selector($);
 sub processPaths(\@);
-sub reviewerAndDescriptionForGitCommit($);
+sub reviewerAndDescriptionForGitCommit($$);
 sub normalizeLineEndings($$);
 sub decodeEntities($);
 
@@ -201,7 +201,7 @@ if ($bugNumber) {
 }
 
 if ($bugNumber && !$bugDescription) {
-    $bugDescription = fetchBugDescriptionFromURL($bugURL);
+    $bugDescription = fetchBugDescriptionFromURL($bugURL, $bugNumber);
 }
 
 my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists);
@@ -213,7 +213,7 @@ if (@$changeLogs && $updateChangeLogs && isSVN()) {
     resolveConflictedChangeLogs($changeLogs);
 }
 
-generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL);
+generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $writeChangeLogs);
 
 if ($writeChangeLogs) {
     print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
@@ -336,9 +336,9 @@ sub changeLogEmailAddressFromArgs($)
     return $emailAddressFromArgs || changeLogEmailAddress();
 }
 
-sub fetchBugDescriptionFromURL($)
+sub fetchBugDescriptionFromURL($$)
 {
-    my ($bugURL) = @_;
+    my ($bugURL, $bugNumber) = @_;
 
     my $bugXMLURL = "$bugURL&ctype=xml";
     # Perl has no built in XML processing, so we'll fetch and parse with curl and grep
@@ -452,9 +452,9 @@ sub resolveConflictedChangeLogs($)
     close RESOLVE;
 }
 
-sub generateNewChangeLogs($$$$$)
+sub generateNewChangeLogs($$$$$$$$$$)
 {
-    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL) = @_;
+    my ($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $writeChangeLogs) = @_;
 
     # Generate new ChangeLog entries and (optionally) write out new ChangeLog files.
     foreach my $prefix (@$prefixes) {
@@ -483,7 +483,7 @@ sub generateNewChangeLogs($$$$$)
         my $date = changeLogDate($changeLogTimeZone);
         print CHANGE_LOG normalizeLineEndings("$date  $name  <$emailAddress>\n\n", $endl);
 
-        my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit) if $gitCommit;
+        my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit, $gitReviewer) if $gitCommit;
         $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
 
         print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
@@ -1804,9 +1804,9 @@ sub testListForChangeLog(@)
     return $list;
 }
 
-sub reviewerAndDescriptionForGitCommit($)
+sub reviewerAndDescriptionForGitCommit($$)
 {
-    my ($commit) = @_;
+    my ($commit, $gitReviewer) = @_;
 
     my $description = '';
     my $reviewer;

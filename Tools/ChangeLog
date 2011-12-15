@@ -1,3 +1,26 @@
+2011-12-15  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] In prepare-ChangeLog, make several global variables be used only through parameter passing
+        https://bugs.webkit.org/show_bug.cgi?id=74497
+
+        Reviewed by Ryosuke Niwa.
+
+        We are planning to write unit-tests for prepare-ChangeLog in a run-leaks_unittest
+        manner. This bug is one of the incremental refactorings to remove all top-level
+        code and global variables from prepare-ChangeLog. In this patch,
+        we make the following global variables be used only through parameter passing.
+            - $bugDescription
+            - $bugNumber
+            - $name
+            - $emailAddress
+            - $gitReviewer
+            - $writeChangeLogs
+
+        * Scripts/prepare-ChangeLog:
+        (fetchBugDescriptionFromURL):
+        (generateNewChangeLogs):
+        (reviewerAndDescriptionForGitCommit):
+
 2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Add a few more web database functions to ewk_settings.
