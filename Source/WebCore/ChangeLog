@@ -1,3 +1,18 @@
+2011-12-14  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r102794.
+        http://trac.webkit.org/changeset/102794
+        https://bugs.webkit.org/show_bug.cgi?id=74220
+
+        Reapplying patch since it is not the cause of the problems
+        described in bug 74220.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+
 2011-12-14  Sam Weinig  <weinig@apple.com>
 
         Remove whitespace from InheritedPropertySheets attributes in
