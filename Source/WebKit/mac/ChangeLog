@@ -1,3 +1,9 @@
+2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after r102874.
+
+        * WebCoreSupport/WebChromeClient.mm:
+
 2011-12-14  Jing Zhao  <jingzhao@chromium.org>
 
         Opening two popup menus by dispatchEvent() makes problems.

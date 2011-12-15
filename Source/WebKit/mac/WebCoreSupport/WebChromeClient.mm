@@ -67,6 +67,7 @@
 #import <WebCore/IntPoint.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/NavigationAction.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
