@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">This test checks that the paste operation trims the pasted fragment to reduce the verbosity of the markup without affecting the style. </p>
+<div id="console"></div>
+<script>
+
+var sel = document.getSelection();
+var root = document.createElement("root");
+document.body.appendChild(root);
+
+
+function createEditable(tagName, markup) {
+    var node = document.createElement(tagName);
+    node.contentEditable = true;
+    node.innerHTML = markup;
+    return node;
+}
+
+function testPaste(tagName, originalMarkup, expected) {
+    var node = createEditable(tagName, originalMarkup);
+    root.appendChild(node);
+
+    node.focus();
+    document.execCommand("SelectAll", false);
+    document.execCommand("Copy", false);
+    document.execCommand("Paste", false);
+
+    confirmedMarkup = node.innerHTML;
+
+    shouldBe("confirmedMarkup", "'" + expected + "'");
+}
+
+testPaste("div", "Hello", "Hello");
+testPaste("div", "<b><i>Hello</i></b>", "<b><i>Hello</i></b>");
+testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>Hello</i></b></span></i></b></div>", "<b><i>Hello</i></b>");
+testPaste("div", "<div><div><div>Hello</div></div></div>", "Hello");
+testPaste("div", "<div><b><div><i>Hello</i></div></b></div>", "<b><i>Hello</i></b>");
+testPaste("div", "<div><div style=\"text-align: center;\"><b>Hello</b></div></div>", "<div style=\"text-align: center;\"><b>Hello</b></div>");
+testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>hello</i></b></span></i></b></div><div><b><i><span style=\"font-weight: normal\"><b><i>world</i></b></span></i></b></div>", 
+          "<div><b><i>hello</i></b></div><div><b><i>world</i></b></div>");
+testPaste("div", "<div><b><i><span style=\"font-weight: normal; \"><b><i>hello1</i></b><b><i> hello2</i></b></span></i></b></div>", "<b><i><span style=\"font-weight: normal; \"><b><i>hello1</i></b><b><i>&nbsp;hello2</i></b></span></i></b>");
+testPaste("div", "<i style=\"margin: 10px;\"><b><i style=\"margin: 10px;\">hello</i></b></i>",
+          "<i style=\"margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; \"><b><i style=\"margin-top: 10px; margin-right: 10px; margin-bottom: 10px; margin-left: 10px; \">hello</i></b></i>");
+testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>Hello <!-- comment -->world</i></b></span></i></b></div>", "<b><i>Hello&nbsp;world</i></b>");
+testPaste("div", "<div><b><i><span style=\"font-weight: normal\">plain text<b><i>bold italic text</i></b></span></i></b></div>", "<b><i><span style=\"font-weight: normal; \">plain text<b><i>bold italic text</i></b></span></i></b>");
+
+root.style.display = "none";
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

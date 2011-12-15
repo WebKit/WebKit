@@ -43,7 +43,8 @@ public:
         SmartReplace = 1 << 1,
         MatchStyle = 1 << 2,
         PreventNesting = 1 << 3,
-        MovingParagraph = 1 << 4
+        MovingParagraph = 1 << 4,
+        SanitizeFragment = 1 << 5
     };
 
     typedef unsigned CommandOptions;
@@ -88,6 +89,7 @@ private:
     void removeUnrenderedTextNodesAtEnds(InsertedNodes&);
     
     void removeRedundantStylesAndKeepStyleSpanInline(InsertedNodes&);
+    void removeRedundantMarkup(InsertedNodes&);
     void handleStyleSpans(InsertedNodes&);
     void handlePasteAsQuotationNode();
     
@@ -110,6 +112,7 @@ private:
     bool m_preventNesting;
     bool m_movingParagraph;
     EditAction m_editAction;
+    bool m_sanitizeFragment;
     bool m_shouldMergeEnd;
 };
 

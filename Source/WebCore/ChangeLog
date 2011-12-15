@@ -1,3 +1,40 @@
+2011-12-14  Enrica Casucci  <enrica@apple.com>
+
+        Need a way to produce leaner markup when pasting a fragment containing verbose markup
+        https://bugs.webkit.org/show_bug.cgi?id=74514
+        <rdar://problem/10208653>
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch is another step in the direction of reducing the verbosity of the markup
+        produced with editing operations.
+        After the copied fragment is inserted in the document, it is analyzed to remove all
+        the elements that don't contribute to the style. The decision is made comparing the
+        render styles. As part of the cleanup, unstyled divs with single child element are
+        removed. The logic to determine the blocks that can be removed is the same used in
+        DeleteSelectionCommand and has been moved in CompositeEditCommand.
+        
+        Test: editing/pasteboard/paste-and-sanitize.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::isRemovableBlock): Implements logic to determine
+        if a block can be removed.
+        * editing/CompositeEditCommand.h: Added isRemovableBlock declaration.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeRedundantBlocks): Implemented using
+        isRemovableBlock from CompositeEditCommand.
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment): Added SanitizeFragment option.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::ReplaceSelectionCommand): Added initialization
+        of m_sanitizeFragment member.
+        (WebCore::ReplaceSelectionCommand::removeRedundantMarkup): New method implementing
+        the cleanup logic.
+        (WebCore::ReplaceSelectionCommand::doApply): Added call to removeRedundantMarkup
+        after the fragment is inserted in the document.
+        * editing/ReplaceSelectionCommand.h: Added new value to the enum CommandOption,
+        a new member variable and the new method declaration.
+
 2011-12-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Refactor tile drawing to be more data-driven

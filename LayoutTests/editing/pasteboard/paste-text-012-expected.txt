@@ -6,4 +6,4 @@ foo
 foo
 
 execCopyCommand: <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div> <div class="editing"></div>
-execPasteCommand: <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div> <div class="editing"><div id="test" class="editing"><div><blockquote>foo</blockquote></div><div><br></div></div></div>
+execPasteCommand: <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div> <div class="editing"><div id="test" class="editing"><blockquote>foo</blockquote><div><br></div></div></div>

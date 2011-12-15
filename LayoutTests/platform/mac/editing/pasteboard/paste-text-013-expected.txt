@@ -40,10 +40,9 @@ layer at (0,0) size 800x600
         RenderText {#text} at (14,14) size 12x28
           text run at (14,14) width 12: "x"
       RenderBlock {DIV} at (0,238) size 784x132 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,38) size 756x28
-          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
-            RenderText {#text} at (0,0) size 32x28
-              text run at (0,0) width 32: "foo"
+        RenderBlock {BLOCKQUOTE} at (54,38) size 676x28
+          RenderText {#text} at (0,0) size 32x28
+            text run at (0,0) width 32: "foo"
         RenderBlock {DIV} at (14,90) size 756x28
           RenderBR {BR} at (0,0) size 0x28
 caret: position 0 of child 0 {BR} of child 1 {DIV} of child 8 {DIV} of body

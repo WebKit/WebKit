@@ -244,6 +244,19 @@ void CompositeEditCommand::insertLineBreak()
     applyCommandToComposite(InsertLineBreakCommand::create(document()));
 }
 
+bool CompositeEditCommand::isRemovableBlock(const Node* node)
+{
+    Node* parentNode = node->parentNode();
+    if ((parentNode && parentNode->firstChild() != parentNode->lastChild()) || !node->hasTagName(divTag))
+        return false;
+
+    const NamedNodeMap* attributeMap = node->attributes();
+    if (!attributeMap || attributeMap->isEmpty())
+        return true;
+    
+    return false;
+}
+
 void CompositeEditCommand::insertNodeBefore(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
 {
     ASSERT(!refChild->hasTagName(bodyTag));

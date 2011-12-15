@@ -31,8 +31,7 @@ After paste:
 |   "foo"
 |   <div>
 |     style="color: rgb(255, 0, 0); "
-|     <div>
-|       "bar<#selection-caret>"
+|     "bar<#selection-caret>"
 |   <div>
 |     style="color: rgb(255, 0, 0);"
 |     "
