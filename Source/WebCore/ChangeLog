@@ -1,3 +1,17 @@
+2011-12-15  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Setting Download as action for navigation request crashes WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=74526
+
+        Reviewed by Simon Hausmann.
+
+        Adding checks for networkcontext and networkAccessManager
+        and return true in case they don't exist, following the same
+        logic as if the CookieJar doesn't exist.
+
+        * platform/qt/ThirdPartyCookiesQt.cpp:
+        (WebCore::thirdPartyCookiePolicyPermits):
+
 2011-12-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Get rid of layering violation in PluginViewQt

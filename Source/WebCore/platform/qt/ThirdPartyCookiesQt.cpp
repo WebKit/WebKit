@@ -62,6 +62,12 @@ static bool urlsShareSameDomain(const QUrl& url, const QUrl& firstPartyUrl)
 bool thirdPartyCookiePolicyPermits(NetworkingContext* context, const QUrl& url, const QUrl& firstPartyUrl)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
+    if (!context)
+        return true;
+
+    if (!context->networkAccessManager())
+        return true;
+
     QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
     if (!jar)
         return true;
