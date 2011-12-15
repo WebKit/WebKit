@@ -1,3 +1,12 @@
+2011-12-15  Stephen White  <senorblanco@chromium.org>
+
+        Enable CSS_FILTERS in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=74334
+
+        Reviewed by Kenneth Russell.
+
+        * features.gypi:
+
 2011-12-15  Martin Kosiba  <mkosiba@google.com>
 
         Fix find on web pages with -webkit-user-select: none for Chromium
