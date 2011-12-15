@@ -101,6 +101,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
         } else if (this.source === WebInspector.ConsoleMessage.MessageSource.Network) {
             if (this._request) {
                 this._stackTrace = this._request.stackTrace;
+                if (this._request.initiator && this._request.initiator.url) {
+                    this.url = this._request.initiator.url;
+                    this.line = this._request.initiator.lineNumber;
+                }
                 messageText = document.createElement("span");
                 if (this.level === WebInspector.ConsoleMessage.MessageLevel.Error) {
                     messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
@@ -126,8 +130,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             messageText = this._format(args);
         }
 
-        // FIXME: we should dump network message origins as well.
-        if (this.source !== WebInspector.ConsoleMessage.MessageSource.Network) {
+        if (this.source !== WebInspector.ConsoleMessage.MessageSource.Network || this._request) {
             if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
                 var urlElement = this._linkifyCallFrame(this._stackTrace[0]);
                 this._formattedMessage.appendChild(urlElement);

@@ -1,3 +1,13 @@
+2011-12-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Console should show network messages origins.
+        https://bugs.webkit.org/show_bug.cgi?id=74521
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+
 2011-12-15  Rakesh KN  <rakesh.kn@motorola.com>
 
         "user-select none" causes selection to incorrectly escape from clicked container
