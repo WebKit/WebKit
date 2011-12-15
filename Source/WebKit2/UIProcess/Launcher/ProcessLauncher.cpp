@@ -44,7 +44,7 @@ ProcessLauncher::ProcessLauncher(Client* client, const LaunchOptions& launchOpti
 {
     // Launch the process.
     m_isLaunching = true;
-    processLauncherWorkQueue().scheduleWork(WorkItem::create(this, &ProcessLauncher::launchProcess));
+    processLauncherWorkQueue().dispatch(bind(&ProcessLauncher::launchProcess, this));
 }
 
 void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier processIdentifier, CoreIPC::Connection::Identifier identifier)

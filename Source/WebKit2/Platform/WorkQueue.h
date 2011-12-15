@@ -52,12 +52,22 @@ typedef struct _GMainLoop GMainLoop;
 typedef gboolean (*GSourceFunc) (gpointer data);
 #endif
 
+namespace WTF {
+    template<typename> class Function;
+}
+using WTF::Function;
+
 class WorkQueue {
     WTF_MAKE_NONCOPYABLE(WorkQueue);
 
 public:
     explicit WorkQueue(const char* name);
     ~WorkQueue();
+
+    // Will dispatch the given function to run as soon as possible.
+    void dispatch(const Function<void()>&);
+
+    // FIXME: Get rid of WorkItem everywhere.
 
     // Will schedule the given work item to run as soon as possible.
     void scheduleWork(PassOwnPtr<WorkItem>);

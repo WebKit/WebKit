@@ -47,6 +47,11 @@ namespace CoreIPC {
 class BinarySemaphore;
 }
 
+namespace WTF {
+    template<typename> class Function;
+}
+using WTF::Function;
+
 class RunLoop {
 public:
     // Must be called from the main thread.
@@ -55,7 +60,10 @@ public:
     static RunLoop* current();
     static RunLoop* main();
 
+    // FIXME: Get rid of this overload and use WTF::Function everywhere.
     void scheduleWork(PassOwnPtr<WorkItem>);
+
+    void dispatch(const Function<void()>&);
 
 #if PLATFORM(WIN)
     // The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the

@@ -26,6 +26,7 @@
 #ifndef WorkItem_h
 #define WorkItem_h
 
+#include <wtf/Functional.h>
 #include <wtf/PassOwnPtr.h>
 
 class WorkItem {
@@ -43,6 +44,8 @@ public:
 
     template<typename C>
     static PassOwnPtr<WorkItem> createDeref(C*);
+
+    static PassOwnPtr<WorkItem> create(const Function<void()>&);
 
     virtual ~WorkItem() { }
     virtual void execute() = 0;
@@ -209,6 +212,29 @@ template<typename C>
 PassOwnPtr<WorkItem> WorkItem::createDeref(C* ptr)
 {
     return adoptPtr(static_cast<WorkItem*>(new DerefWorkItem<C>(ptr)));
+}
+
+// FunctionWorkItem is a temporary class. WorkItem should just be replaced by WTF::Function everywhere.
+class FunctionWorkItem : private WorkItem {
+    // We only allow WorkItem to create this.
+    friend class WorkItem;
+
+    explicit FunctionWorkItem(const Function<void()>& function)
+        : m_function(function)
+    {
+    }
+
+    virtual void execute()
+    {
+        m_function();
+    }
+
+    Function<void()> m_function;
+};
+
+inline PassOwnPtr<WorkItem> WorkItem::create(const Function<void()>& function)
+{
+    return adoptPtr(static_cast<WorkItem*>(new FunctionWorkItem(function)));
 }
 
 #endif // WorkItem_h

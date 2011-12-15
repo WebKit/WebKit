@@ -64,6 +64,11 @@ void RunLoop::performWork()
     }
 }
 
+void RunLoop::dispatch(const Function<void()>& function)
+{
+    scheduleWork(WorkItem::create(function));
+}
+
 void RunLoop::scheduleWork(PassOwnPtr<WorkItem> item)
 {
     MutexLocker locker(m_workItemQueueLock);

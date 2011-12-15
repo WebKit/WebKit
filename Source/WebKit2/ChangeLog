@@ -1,3 +1,45 @@
+2011-12-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WorkQueue::dispatch and RunLoop::dispatch which both take WTF::Function objects
+        https://bugs.webkit.org/show_bug.cgi?id=74574
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::processIncomingMessage):
+        (CoreIPC::Connection::addQueueClient):
+        (CoreIPC::Connection::removeQueueClient):
+        (CoreIPC::Connection::invalidate):
+        (CoreIPC::Connection::sendMessage):
+        (CoreIPC::Connection::postConnectionDidCloseOnConnectionWorkQueue):
+        (CoreIPC::Connection::connectionDidClose):
+        (CoreIPC::Connection::enqueueIncomingMessage):
+        Switch over to dispatch.
+
+        * Platform/RunLoop.cpp:
+        (RunLoop::dispatch):
+        Create a FunctionWorkItem and call scheduleWork.
+
+        * Platform/RunLoop.h:
+        Add dispatch.
+
+        * Platform/WorkItem.h:
+        (FunctionWorkItem::FunctionWorkItem):
+        (FunctionWorkItem::execute):
+        (WorkItem::create):
+        Add a helper work item that wraps a WTF::Function.
+
+        * Platform/WorkQueue.cpp:
+        (WorkQueue::dispatch):
+        Create a FunctionWorkItem and call scheduleWork.
+
+        * Platform/WorkQueue.h:
+        Add dispatch.
+
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        Switch over to dispatch.
+
 2011-12-14  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

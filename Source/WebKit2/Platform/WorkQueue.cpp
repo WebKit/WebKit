@@ -40,6 +40,11 @@ WorkQueue::~WorkQueue()
 #endif
 }
 
+void WorkQueue::dispatch(const Function<void()>& function)
+{
+    scheduleWork(WorkItem::create(function));
+}
+
 void WorkQueue::invalidate()
 {
     {
