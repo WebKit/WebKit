@@ -436,6 +436,12 @@ void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& 
 
 void WebViewHost::requestCheckingOfText(const WebString& text, WebTextCheckingCompletion* completion)
 {
+    if (text.isEmpty()) {
+        if (completion)
+            completion->didFinishCheckingText(Vector<WebTextCheckingResult>());
+        return;
+    }
+
     m_lastRequestedTextCheckingCompletion = completion;
     m_lastRequestedTextCheckString = text;
     postDelayedTask(new HostMethodTask(this, &WebViewHost::finishLastTextCheck), 0);

@@ -1,3 +1,16 @@
+2011-12-15  Shinya Kawanaka  <shinyak@google.com>
+
+        [chromium] WebViewHost::requestCheckingOfText should return immediately if text is empty.
+        https://bugs.webkit.org/show_bug.cgi?id=74586
+
+        Reviewed by Hajime Morita.
+
+        No new tests. Covered by existing tests.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::requestCheckingOfText):
+          Returns immediately if text is empty.
+
 2011-12-15  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] QtWebKit fails to build on Mac OS X after r102776
