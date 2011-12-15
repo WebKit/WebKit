@@ -54,6 +54,10 @@ public:
     const String& url() const { return m_url; }
     bool shouldPreferPlugInsForImages() const { return m_shouldPreferPlugInsForImages; }
 
+    // Public for FrameView::addWidgetToUpdate()
+    bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
+    void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
+
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
 
@@ -66,9 +70,6 @@ protected:
     static void updateWidgetCallback(Node*, unsigned = 0);
     virtual void attach();
     virtual void detach();
-
-    bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
-    void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);

@@ -1,3 +1,28 @@
+2011-12-15  Eric Seidel  <eric@webkit.org>
+
+        WebCore has two (disconnected) ways to keep track of updated widgets, should be unified
+        https://bugs.webkit.org/show_bug.cgi?id=74367
+
+        Reviewed by Adam Barth.
+
+        It seems the FrameView updateWidgets set is needed for now,
+        so just making FrameView::addWidgetToUpdate mark the DOM node
+        as needing a widget update and later when it goes to call
+        updateWidget() checking first if it needs an update.
+
+        No new tests, just adding an assert.
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::HTMLPlugInImageElement::needsWidgetUpdate):
+        (WebCore::HTMLPlugInImageElement::setNeedsWidgetUpdate):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addWidgetToUpdate):
+        (WebCore::FrameView::updateWidget):
+
 2011-12-15  Alexandru Chiculita  <achicu@adobe.com>
 
         Windows project file is broken. It has a missing </File> enclosing tag
