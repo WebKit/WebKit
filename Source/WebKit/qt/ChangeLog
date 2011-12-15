@@ -1,3 +1,17 @@
+2011-12-14  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Get rid of layering violation in PluginViewQt
+
+        PluginViewQt has a layering violation in relying on QWebPagePrivate for
+        the check if running under DRT. We remove this and add a specific flag
+        in the PluginView for this check, enabled from DRTSupport. This isn't
+        pretty, but an improvement over what's currently there.
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled):
+
 2011-12-15  Michael Brüning  <michael.bruning@nokia.com>
 
         [QT][WK2]Add (experimental) viewport info view to Minibrowser/qt.

@@ -260,6 +260,11 @@ namespace WebCore {
 #endif
 #endif
 
+#if PLATFORM(QT) && ENABLE(NETSCAPE_PLUGIN_API) && defined(XP_UNIX)
+        // PluginViewQt (X11) needs a few workarounds when running under DRT
+        static void setIsRunningUnderDRT(bool flag) { s_isRunningUnderDRT = flag; }
+#endif
+
     private:
         PluginView(Frame* parentFrame, const IntSize&, PluginPackage*, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
 
@@ -418,8 +423,10 @@ private:
         void initXEvent(XEvent* event);
 #endif
 
-#if PLATFORM(QT) 
+#if PLATFORM(QT)
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+        static bool s_isRunningUnderDRT;
+        static void setXKeyEventSpecificFields(XEvent*, KeyboardEvent*);
         void paintUsingXPixmap(QPainter* painter, const QRect &exposedRect);
 #endif
 #if USE(ACCELERATED_COMPOSITING_PLUGIN_LAYER)

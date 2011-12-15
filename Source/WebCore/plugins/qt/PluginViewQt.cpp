@@ -66,7 +66,6 @@
 #include "RenderLayer.h"
 #include "Settings.h"
 #include "npruntime_impl.h"
-#include "qwebpage_p.h"
 #if USE(JSC)
 #include "runtime_root.h"
 #endif
@@ -101,6 +100,8 @@ using std::min;
 using namespace WTF;
 
 namespace WebCore {
+
+bool PluginView::s_isRunningUnderDRT = false;
 
 using namespace HTMLNames;
 
@@ -171,7 +172,7 @@ void PluginView::updatePluginWidget()
     // (ii) if we are running layout tests from DRT, paint() won't ever get called
     // so we need to call setNPWindowIfNeeded() if window geometry has changed
     if (!m_windowRect.intersects(frameView->frameRect())
-        || (QWebPagePrivate::drtRun && platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect)))
+        || (s_isRunningUnderDRT && platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect)))
         setNPWindowIfNeeded();
 
     if (!m_platformLayer) {
@@ -350,7 +351,7 @@ void PluginView::initXEvent(XEvent* xEvent)
     setSharedXEventFields(xEvent, ownerWidget);
 }
 
-void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
+void PluginView::setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
 {
     const PlatformKeyboardEvent* keyEvent = event->keyEvent();
 
@@ -365,7 +366,7 @@ void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
     // case fetch the XEvent's keycode from the event's text. The only
     // place this keycode will be used is in webkit_test_plugin_handle_event().
     // FIXME: Create Qt API so that we can set the appropriate keycode in DRT EventSender instead.
-    if (QWebPagePrivate::drtRun && !xEvent->xkey.keycode) {
+    if (s_isRunningUnderDRT && !xEvent->xkey.keycode) {
         QKeyEvent* qKeyEvent = keyEvent->qtEvent();
         ASSERT(qKeyEvent);
         QString keyText = qKeyEvent->text().left(1);

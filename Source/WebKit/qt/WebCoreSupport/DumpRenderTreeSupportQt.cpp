@@ -66,6 +66,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginDatabase.h"
+#include "PluginView.h"
 #include "PositionError.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"
@@ -235,6 +236,10 @@ int DumpRenderTreeSupportQt::workerThreadCount()
 void DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(bool b)
 {
     QWebPagePrivate::drtRun = b;
+#if ENABLE(NETSCAPE_PLUGIN_API) && defined(XP_UNIX)
+    // PluginViewQt (X11) needs a few workarounds when running under DRT
+    PluginView::setIsRunningUnderDRT(b);
+#endif
 }
 
 void DumpRenderTreeSupportQt::setFrameFlatteningEnabled(QWebPage* page, bool enabled)
