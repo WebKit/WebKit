@@ -293,6 +293,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             input->focus();
             input->select();
             if (renderer()) {
+                ASSERT(m_upDownState != Indeterminate);
                 input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
                 if (renderer())
                     startRepeatingTimer();
@@ -313,8 +314,10 @@ void SpinButtonElement::defaultEventHandler(Event* event)
             m_upDownState = local.y() < box->height() / 2 ? Up : Down;
             if (m_upDownState != oldUpDownState)
                 renderer()->repaint();
-        } else
+        } else {
             releaseCapture();
+            m_upDownState = Indeterminate;
+        }
     }
 
     if (!event->defaultHandled())
@@ -366,7 +369,7 @@ void SpinButtonElement::repeatingTimerFired(Timer<SpinButtonElement>*)
 
 void SpinButtonElement::setHovered(bool flag)
 {
-    if (!hovered() && flag)
+    if (!flag)
         m_upDownState = Indeterminate;
     HTMLDivElement::setHovered(flag);
 }

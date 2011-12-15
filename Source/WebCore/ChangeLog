@@ -1,3 +1,28 @@
+2011-11-03  Kent Tamura  <tkent@chromium.org>
+
+        A spin button changes the value incorrectly if it is clicked after touch events.
+        https://bugs.webkit.org/show_bug.cgi?id=71181
+
+        Reviewed by Ryosuke Niwa.
+
+        SpinButtonElement assumed setHovered(true) was always called before a
+        mousemove event in the element. It is not true for touch events.
+
+        We should not reset m_upDownState to Indetermiante in setHovered(true),
+        and should reset it when the mouse pointer moves out.
+
+        This change fixes the flakiness of fast/forms/input-step-as-double.html.
+
+        Test: fast/events/touch/touch-before-pressing-spin-button.html
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        Add an assertion that m_upDownState should not be Indetermiante.
+        Reset m_upDownState to Indeterminate when the mouse pointer moves out
+        from the element.
+        (WebCore::SpinButtonElement::setHovered):
+        Reset m_upDownState to Indeterminate when the element becomes unhovered.
+
 2011-12-14  Lucas Forschler  <lforschler@apple.com>
     
         https://bugs.webkit.org/show_bug.cgi?id=74543

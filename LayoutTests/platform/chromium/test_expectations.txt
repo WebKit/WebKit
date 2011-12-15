@@ -3786,7 +3786,6 @@ BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
 BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
 
-BUGWK71181 : fast/forms/input-step-as-double.html = PASS TEXT
 BUGWK71209 LINUX MAC : compositing/visibility/visibility-image-layers.html = IMAGE
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
