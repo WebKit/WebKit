@@ -1,3 +1,23 @@
+2011-12-14  Sam Weinig  <weinig@apple.com>
+
+        Remove whitespace from InheritedPropertySheets attributes in
+        vsprops files to appease the Visual Studio project migrator.
+
+        Reviewed by Adam Roben.
+
+        * win/WebKit2Debug.vsprops:
+        * win/WebKit2DebugAll.vsprops:
+        * win/WebKit2DebugCairoCFLite.vsprops:
+        * win/WebKit2Production.vsprops:
+        * win/WebKit2Release.vsprops:
+        * win/WebKit2ReleaseCairoCFLite.vsprops:
+        * win/WebKit2WebProcessDebug.vsprops:
+        * win/WebKit2WebProcessDebugAll.vsprops:
+        * win/WebKit2WebProcessDebugCairoCFLite.vsprops:
+        * win/WebKit2WebProcessProduction.vsprops:
+        * win/WebKit2WebProcessRelease.vsprops:
+        * win/WebKit2WebProcessReleaseCairoCFLite.vsprops:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add WorkQueue::dispatch and RunLoop::dispatch which both take WTF::Function objects

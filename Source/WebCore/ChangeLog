@@ -1,3 +1,23 @@
+2011-12-14  Sam Weinig  <weinig@apple.com>
+
+        Remove whitespace from InheritedPropertySheets attributes in
+        vsprops files to appease the Visual Studio project migrator.
+
+        Reviewed by Adam Roben.
+
+        * WebCore.vcproj/QTMovieWinDebug.vsprops:
+        * WebCore.vcproj/QTMovieWinDebugAll.vsprops:
+        * WebCore.vcproj/QTMovieWinDebugCairoCFLite.vsprops:
+        * WebCore.vcproj/QTMovieWinProduction.vsprops:
+        * WebCore.vcproj/QTMovieWinRelease.vsprops:
+        * WebCore.vcproj/QTMovieWinReleaseCairoCFLite.vsprops:
+        * WebCore.vcproj/WebCoreDebug.vsprops:
+        * WebCore.vcproj/WebCoreDebugAll.vsprops:
+        * WebCore.vcproj/WebCoreDebugCairoCFLite.vsprops:
+        * WebCore.vcproj/WebCoreProduction.vsprops:
+        * WebCore.vcproj/WebCoreRelease.vsprops:
+        * WebCore.vcproj/WebCoreReleaseCairoCFLite.vsprops:
+
 2011-12-14  Enrica Casucci  <enrica@apple.com>
 
         One more attempt to fix the release build (hopefully the last)

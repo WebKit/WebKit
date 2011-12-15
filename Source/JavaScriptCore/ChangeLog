@@ -1,3 +1,54 @@
+2011-12-14  Sam Weinig  <weinig@apple.com>
+
+        Remove whitespace from InheritedPropertySheets attributes in
+        vsprops files to appease the Visual Studio project migrator.
+
+        Reviewed by Adam Roben.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreDebug.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreDebugAll.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreDebugCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebug.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebugAll.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebugCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedProduction.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedRelease.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreProduction.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreRelease.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGOOptimize.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFDebug.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFDebugAll.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFDebugCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFProduction.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFRelease.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscDebug.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscDebugAll.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscDebugCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscProduction.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscRelease.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebug.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebugAll.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebugCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpProduction.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpRelease.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiDebug.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiDebugAll.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiDebugCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiProduction.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiRelease.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiReleaseCairoCFLite.vsprops:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         binding a member function should ref/deref the object pointer if needed

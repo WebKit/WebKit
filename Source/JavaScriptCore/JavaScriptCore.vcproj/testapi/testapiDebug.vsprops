@@ -3,10 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="testapiDebug"
-	InheritedPropertySheets="
-      $(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;
-      .\testapiCommon.vsprops;
-      ..\JavaScriptCore\JavaScriptCoreCF.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCF.vsprops"
 	>
 </VisualStudioPropertySheet>

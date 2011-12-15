@@ -1,3 +1,29 @@
+2011-12-14  Sam Weinig  <weinig@apple.com>
+
+        Remove whitespace from InheritedPropertySheets attributes in
+        vsprops files to appease the Visual Studio project migrator.
+
+        Reviewed by Adam Roben.
+
+        * WebKit.vcproj/InterfacesDebug.vsprops:
+        * WebKit.vcproj/InterfacesDebugAll.vsprops:
+        * WebKit.vcproj/InterfacesDebugCairoCFLite.vsprops:
+        * WebKit.vcproj/InterfacesProduction.vsprops:
+        * WebKit.vcproj/InterfacesRelease.vsprops:
+        * WebKit.vcproj/InterfacesReleaseCairoCFLite.vsprops:
+        * WebKit.vcproj/WebKitGUIDDebug.vsprops:
+        * WebKit.vcproj/WebKitGUIDDebugAll.vsprops:
+        * WebKit.vcproj/WebKitGUIDDebugCairoCFLite.vsprops:
+        * WebKit.vcproj/WebKitGUIDProduction.vsprops:
+        * WebKit.vcproj/WebKitGUIDRelease.vsprops:
+        * WebKit.vcproj/WebKitGUIDReleaseCairoCFLite.vsprops:
+        * WebKit.vcproj/WebKitLibDebug.vsprops:
+        * WebKit.vcproj/WebKitLibDebugAll.vsprops:
+        * WebKit.vcproj/WebKitLibDebugCairoCFLite.vsprops:
+        * WebKit.vcproj/WebKitLibProduction.vsprops:
+        * WebKit.vcproj/WebKitLibRelease.vsprops:
+        * WebKit.vcproj/WebKitLibReleaseCairoCFLite.vsprops:
+
 2011-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Change function name InitializeLoggingChannelsIfNecessary to follow coding style guideline
