@@ -59,7 +59,7 @@ static const type& name() \
     return name##Value; \
 }
 
-#if defined(__APPLE__)
+#if PLATFORM(MAC)
 
 #ifdef __OBJC__
 #define OBJC_CLASS @class
