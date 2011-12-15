@@ -1,3 +1,35 @@
+2011-12-14  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Refactor code and add some debug messages in backing store
+        https://bugs.webkit.org/show_bug.cgi?id=74539
+
+        Reviewed by Antonio Gomes.
+
+        Refactor and get rid of the confusing and unnecessary
+        'renderContentOnly' flag from the family of render methods in the
+        backing store.
+        Remove the overload of the render method that takes a list of rects from
+        the backing store since it is just a for loop and only one place calls it.
+        Add a debug message to illustrate when we start showing checkerboard and
+        when we stop.
+        Fix the debug messages in the DEBUG_BACKINGSTORE so that they actually compile
+        and add a new message for debugging WebCore invalidation requests.
+        The original author is Adam Treat <atreat@rim.com>
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::renderDirectToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::renderBackingStore):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTile):
+        (BlackBerry::WebKit::BackingStorePrivate::invalidateWindow):
+        * blackberry/Api/BackingStore_p.h:
+
 2011-12-14  Robin Qiu  <robin.qiu@torchmobile.com.cn>
 
         [BlackBerry] Add notification support for the BlackBerry port

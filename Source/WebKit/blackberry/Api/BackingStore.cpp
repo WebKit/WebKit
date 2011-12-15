@@ -48,6 +48,8 @@
 #define ENABLE_SCROLLBARS 1
 #define ENABLE_REPAINTONSCROLL 1
 #define DEBUG_BACKINGSTORE 0
+#define DEBUG_CHECKERBOARD 0
+#define DEBUG_WEBCORE_REQUESTS 0
 #define DEBUG_VISUALIZE 0
 #define DEBUG_TILEMATRIX 0
 #define DEBUG_COMPOSITING_DIRTY_REGION 0
@@ -264,7 +266,7 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
 
     // Do some rendering if necessary.
     if (op == BackingStore::RenderAndBlit)
-        renderVisibleContents(true /*renderContentOnly*/);
+        renderVisibleContents();
 
     // Make sure the user interface thread gets the message before we proceed
     // because blitContents can be called from the user interface thread and
@@ -306,9 +308,18 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
         if (rect.isEmpty())
             return;
 
-        if (immediate)
-            render(rect, false /*renderContentOnly*/);
-        else
+#if DEBUG_WEBCORE_REQUESTS
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
+                                  "BackingStorePrivate::repaint rect=%d,%d %dx%d contentChanged=%s immediate=%s",
+                                  rect.x(), rect.y(), rect.width(), rect.height(),
+                                  (contentChanged ? "true" : "false"),
+                                  (immediate ? "true" : "false"));
+#endif
+
+        if (immediate) {
+            render(rect);
+            blitVisibleContents();
+        } else
             m_renderQueue->addToQueue(RenderQueue::RegularRender, rect);
     }
 }
@@ -326,9 +337,10 @@ void BackingStorePrivate::slowScroll(const Platform::IntSize& delta, const Platf
     // it needs to be transformed coordinates relative to the transformed contents.
     Platform::IntRect rect = m_webPage->d->mapToTransformed(m_client->mapFromViewportToContents(windowRect));
 
-    if (immediate)
-        render(rect, false /*renderContentOnly*/);
-    else {
+    if (immediate) {
+        render(rect);
+        blitVisibleContents();
+    } else {
         m_renderQueue->addToQueue(RenderQueue::VisibleScroll, rect);
         // We only blit here if the client did not generate the scroll as the client
         // now supports blitting asynchronously during scroll operations.
@@ -903,26 +915,7 @@ void BackingStorePrivate::scrollBackingStore(int deltaX, int deltaY)
     setBackingStoreRect(backingStoreRect);
 }
 
-bool BackingStorePrivate::render(const IntRectList& rectList, bool renderContentOnly)
-{
-    // FIXME: We cycle through one by one and only blit the contents at the end.
-    // This can be improved upon if we had a mapFromTransformedContentsToTiles that
-    // took a set of rects and decomposed them appropriately.
-    bool rendered = false;
-    for (size_t i = 0; i < rectList.size(); ++i)
-        rendered = render(rectList.at(i), true) ? true : rendered;
-
-    if (rendered && !renderContentOnly) {
-        if (!shouldDirectRenderingToWindow())
-            blitVisibleContents();
-        else
-            invalidateWindow();
-    }
-
-    return rendered;
-}
-
-bool BackingStorePrivate::renderDirectToWindow(const Platform::IntRect& rect, bool renderContentOnly)
+bool BackingStorePrivate::renderDirectToWindow(const Platform::IntRect& rect)
 {
     requestLayoutIfNeeded();
 
@@ -950,15 +943,11 @@ bool BackingStorePrivate::renderDirectToWindow(const Platform::IntRect& rect, bo
     }
 #endif
 
-    bool shouldInvalidate = !m_suspendScreenUpdates && !renderContentOnly;
-    if (!shouldInvalidate)
-        return true;
-
     invalidateWindow(screenRect);
     return true;
 }
 
-bool BackingStorePrivate::render(const Platform::IntRect& rect, bool renderContentOnly)
+bool BackingStorePrivate::render(const Platform::IntRect& rect)
 {
     if (!m_webPage->isVisible())
         return false;
@@ -966,7 +955,7 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect, bool renderConte
     requestLayoutIfNeeded();
 
     if (shouldDirectRenderingToWindow())
-        return renderDirectToWindow(rect, renderContentOnly);
+        return renderDirectToWindow(rect);
 
     TileRectList tileRectList = mapFromTransformedContentsToTiles(rect);
     if (tileRectList.isEmpty())
@@ -974,9 +963,8 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect, bool renderConte
 
 #if DEBUG_BACKINGSTORE
     BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
-                           "BackingStorePrivate::render rect=(%d,%d %dx%d), renderContentOnly=%s, m_suspendBackingStoreUpdates = %s",
+                           "BackingStorePrivate::render rect=(%d,%d %dx%d), m_suspendBackingStoreUpdates = %s",
                            rect.x(), rect.y(), rect.width(), rect.height(),
-                           renderContentOnly ? "true" : "false",
                            m_suspendBackingStoreUpdates ? "true" : "false");
 #endif
 
@@ -986,7 +974,6 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect, bool renderConte
     TileMap currentMap = currentState->tileMap();
 
     Platform::IntRect dirtyContentsRect;
-    bool shouldBlit = !m_suspendBackingStoreUpdates && !renderContentOnly;
     const Platform::IntRect contentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
     const Platform::IntRect viewportRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedViewportSize());
 
@@ -1076,15 +1063,6 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect, bool renderConte
         dirtyContentsRect = Platform::unionOfRects(dirtyContentsRect, dirtyRect);
     }
 
-    // Clip to the visible content including overscroll.
-    dirtyContentsRect.intersect(unclippedVisibleContentsRect());
-    if (dirtyContentsRect.isEmpty())
-        return true;
-
-    if (!shouldBlit)
-        return true;
-
-    blitVisibleContents();
     return true;
 }
 
@@ -1093,23 +1071,24 @@ void BackingStorePrivate::requestLayoutIfNeeded() const
     m_webPage->d->requestLayoutIfNeeded();
 }
 
-void BackingStorePrivate::renderVisibleContents(bool renderContentOnly)
+void BackingStorePrivate::renderVisibleContents()
 {
     Platform::IntRect renderRect = shouldDirectRenderingToWindow() ? visibleContentsRect() : visibleTilesRect();
-
-    render(renderRect, renderContentOnly);
+    render(renderRect);
     m_renderQueue->clear(renderRect, true /*clearRegularRenderJobs*/);
 }
 
-void BackingStorePrivate::renderBackingStore(bool renderContentOnly)
+void BackingStorePrivate::renderBackingStore()
 {
-    render(frontState()->backingStoreRect(), renderContentOnly);
+    render(frontState()->backingStoreRect());
 }
 
 void BackingStorePrivate::blitVisibleContents(bool force)
 {
     // Blitting must never happen for direct rendering case.
     ASSERT(!shouldDirectRenderingToWindow());
+    if (shouldDirectRenderingToWindow())
+        return;
 
     if (m_suspendScreenUpdates) {
         // Avoid client going into busy loop while updates suspended.
@@ -1198,6 +1177,8 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
     // Blitting must never happen for direct rendering case.
     // Use invalidateWindow() instead.
     ASSERT(!shouldDirectRenderingToWindow());
+    if (shouldDirectRenderingToWindow())
+        return;
 
     if (!m_webPage->isVisible() || m_suspendScreenUpdates || !isActive()) {
         // Avoid client going into busy loop while blit is impossible.
@@ -1267,6 +1248,10 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
     TileMap currentMap = currentState->tileMap();
 
+#if DEBUG_CHECKERBOARD
+    bool blitCheckered = false;
+#endif
+
     // Don't clip to contents if it is empty so we can still paint default background.
     if (!contentsRect.isEmpty()) {
         contentsClipped.intersect(contentsRect);
@@ -1286,6 +1271,9 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
             Platform::IntRect dstRect = transformation.mapRect(Platform::IntRect(
                 Platform::IntPoint(checkeredRects.at(i).x() - origin.x(), checkeredRects.at(i).y() - origin.y()),
                                    checkeredRects.at(i).size()));
+#if DEBUG_CHECKERBOARD
+            blitCheckered = true;
+#endif
             checkerWindow(dstRect, checkeredRects.at(i).location(), transformation.a());
         }
     }
@@ -1346,6 +1334,9 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
                 dirtyRectT.intersect(Platform::IntRect(Platform::IntPoint(0, 0), m_webPage->client()->window()->surfaceSize()));
             }
             const Platform::IntPoint contentsOrigin(dirtyRect.x() + origin.x(), dirtyRect.y() + origin.y());
+#if DEBUG_CHECKERBOARD
+            blitCheckered = true;
+#endif
             checkerWindow(dirtyRectT, contentsOrigin, transformation.a());
         }
 
@@ -1453,6 +1444,24 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 
     delete bufferPlatformGraphicsContext;
     releaseBufferDrawable(windowBuffer);
+#endif
+
+#if DEBUG_CHECKERBOARD
+    static double lastCheckeredTime = 0;
+
+    if (blitCheckered && !lastCheckeredTime) {
+        lastCheckeredTime = WTF::currentTime();
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
+            "Blitting checkered pattern at %f\n", lastCheckeredTime);
+    } else if (blitCheckered && lastCheckeredTime) {
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
+            "Blitting checkered pattern at %f\n", WTF::currentTime());
+    } else if (!blitCheckered && lastCheckeredTime) {
+        double time = WTF::currentTime();
+        BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
+            "Blitting over checkered pattern at %f took %f\n", time, time - lastCheckeredTime);
+        lastCheckeredTime = 0;
+    }
 #endif
 
     invalidateWindow(dstRect);
@@ -1777,7 +1786,7 @@ void BackingStorePrivate::updateTile(const TileIndex& index, bool immediate)
     Platform::IntRect updateRect = mapFromTilesToTransformedContents(tileRect);
     RenderQueue::JobType jobType = isTileVisible(index) ? RenderQueue::VisibleScroll : RenderQueue::NonVisibleScroll;
     if (immediate)
-        render(updateRect, true /*renderContentOnly*/);
+        render(updateRect);
     else
         m_renderQueue->addToQueue(jobType, updateRect);
 }
@@ -1790,7 +1799,7 @@ void BackingStorePrivate::updateTile(const Platform::IntPoint& origin, bool imme
     Platform::IntRect updateRect = Platform::IntRect(origin, tileSize());
     RenderQueue::JobType jobType = isTileVisible(origin) ? RenderQueue::VisibleScroll : RenderQueue::NonVisibleScroll;
     if (immediate)
-        render(updateRect, true /*renderContentOnly*/);
+        render(updateRect);
     else
         m_renderQueue->addToQueue(jobType, updateRect);
 }
@@ -2293,7 +2302,7 @@ void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
     }
 
 #if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::invalidateWindow dst = %s", dst.toString().utf8().data());
+    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::invalidateWindow dst = %s", dst.toString().c_str());
 #endif
 
     // Since our window may also be double buffered, we need to also copy the
@@ -2313,7 +2322,7 @@ void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
         return;
 
 #if DEBUG_BACKINGSTORE
-    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::invalidateWindow posting = %s", dstRect.toString().utf8().data());
+    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "BackingStorePrivate::invalidateWindow posting = %s", dstRect.toString().c_str());
 #endif
 
     m_currentWindowBackBuffer = (m_currentWindowBackBuffer + 1) % 2;

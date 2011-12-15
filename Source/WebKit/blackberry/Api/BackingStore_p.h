@@ -167,18 +167,21 @@ public:
     // tile matrix geometry.
     void scrollBackingStore(int deltaX, int deltaY);
 
-    // Render the tiles dirty rects and blit to the screen.
-    bool renderDirectToWindow(const Platform::IntRect&, bool renderContentOnly);
-    bool render(const Platform::IntRect&, bool renderContentOnly);
-    bool render(const IntRectList&, bool renderContentOnly);
+    // Render the tiles dirty rect and invalidate the screen.
+    bool renderDirectToWindow(const Platform::IntRect&);
+
+    // Render the tiles dirty rect.
+    // NOTE: This will not update the screen. To do that you should call
+    // blitVisibleContents() after this method.
+    bool render(const Platform::IntRect&);
 
     // Called by the render queue to ensure that the queue is in a
     // constant state before performing a render job.
     void requestLayoutIfNeeded() const;
 
     // Helper render methods.
-    void renderVisibleContents(bool renderContentOnly = false);
-    void renderBackingStore(bool renderContentOnly = false);
+    void renderVisibleContents();
+    void renderBackingStore();
     void blitVisibleContents(bool force = false);
 
     // Assumes the rect to be in window/viewport coordinates.
