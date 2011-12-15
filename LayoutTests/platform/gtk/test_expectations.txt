@@ -96,3 +96,4 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
+BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
