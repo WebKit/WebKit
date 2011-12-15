@@ -592,7 +592,7 @@ WebInspector.CPUProfileType.prototype = {
         if (this._recording) {
             this.stopRecordingProfile();
             WebInspector.networkManager.enableResourceTracking();
-        } else
+        } else {
             WebInspector.networkManager.disableResourceTracking();
             this.startRecordingProfile();
         }
