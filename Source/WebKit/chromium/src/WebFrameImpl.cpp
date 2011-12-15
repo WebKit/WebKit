@@ -1520,94 +1520,70 @@ bool WebFrameImpl::find(int identifier,
 {
     WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
 
-    if (!options.findNext)
+    if (!options.findNext) {
         frame()->page()->unmarkAllTextMatches();
-    else
-        setMarkerActive(m_activeMatch.get(), false); // Active match is changing.
-
-    // Starts the search from the current selection.
-    bool startInSelection = true;
+        m_activeMatch = 0;
+    } else
+        setMarkerActive(m_activeMatch.get(), false);
 
     // If the user has selected something since the last Find operation we want
     // to start from there. Otherwise, we start searching from where the last Find
     // operation left off (either a Find or a FindNext operation).
     VisibleSelection selection(frame()->selection()->selection());
     bool activeSelection = !selection.isNone();
-    if (!activeSelection && m_activeMatch) {
-        selection = VisibleSelection(m_activeMatch.get());
-        frame()->selection()->setSelection(selection);
+    if (activeSelection) {
+        m_activeMatch = selection.firstRange().get();
+        frame()->selection()->clear();
     }
 
     ASSERT(frame() && frame()->view());
-    bool found = frame()->editor()->findString(
-        searchText, options.forward, options.matchCase, wrapWithinFrame,
-        startInSelection);
-    if (found) {
-        // Store which frame was active. This will come in handy later when we
-        // change the active match ordinal below.
-        WebFrameImpl* oldActiveFrame = mainFrameImpl->m_activeMatchFrame;
-        // Set this frame as the active frame (the one with the active highlight).
-        mainFrameImpl->m_activeMatchFrame = this;
+    const FindOptions findOptions = (options.forward ? 0 : Backwards)
+        | (options.matchCase ? 0 : CaseInsensitive)
+        | (wrapWithinFrame ? WrapAround : 0)
+        | (!options.findNext ? StartInSelection : 0);
+    m_activeMatch = frame()->editor()->findStringAndScrollToVisible(searchText, m_activeMatch.get(), findOptions);
 
-        // We found something, so we can now query the selection for its position.
-        VisibleSelection newSelection(frame()->selection()->selection());
-        IntRect currSelectionRect;
-
-        // If we thought we found something, but it couldn't be selected (perhaps
-        // because it was marked -webkit-user-select: none), we can't set it to
-        // be active but we still continue searching. This matches Safari's
-        // behavior, including some oddities when selectable and un-selectable text
-        // are mixed on a page: see https://bugs.webkit.org/show_bug.cgi?id=19127.
-        if (newSelection.isNone() || (newSelection.start() == newSelection.end()))
-            m_activeMatch = 0;
-        else {
-            m_activeMatch = newSelection.toNormalizedRange();
-            currSelectionRect = m_activeMatch->boundingBox();
-            setMarkerActive(m_activeMatch.get(), true); // Active.
-            // WebKit draws the highlighting for all matches.
-            executeCommand(WebString::fromUTF8("Unselect"));
-        }
-
-        // Make sure no node is focused. See http://crbug.com/38700.
-        frame()->document()->setFocusedNode(0);
-
-        if (!options.findNext || activeSelection) {
-            // This is either a Find operation or a Find-next from a new start point
-            // due to a selection, so we set the flag to ask the scoping effort
-            // to find the active rect for us so we can update the ordinal (n of m).
-            m_locatingActiveRect = true;
-        } else {
-            if (oldActiveFrame != this) {
-                // If the active frame has changed it means that we have a multi-frame
-                // page and we just switch to searching in a new frame. Then we just
-                // want to reset the index.
-                if (options.forward)
-                    m_activeMatchIndex = 0;
-                else
-                    m_activeMatchIndex = m_lastMatchCount - 1;
-            } else {
-                // We are still the active frame, so increment (or decrement) the
-                // |m_activeMatchIndex|, wrapping if needed (on single frame pages).
-                options.forward ? ++m_activeMatchIndex : --m_activeMatchIndex;
-                if (m_activeMatchIndex + 1 > m_lastMatchCount)
-                    m_activeMatchIndex = 0;
-                if (m_activeMatchIndex == -1)
-                    m_activeMatchIndex = m_lastMatchCount - 1;
-            }
-            if (selectionRect) {
-                *selectionRect = frameView()->contentsToWindow(currSelectionRect);
-                reportFindInPageSelection(*selectionRect, m_activeMatchIndex + 1, identifier);
-            }
-        }
-    } else {
-        // Nothing was found in this frame.
-        m_activeMatch = 0;
-
-        // Erase all previous tickmarks and highlighting.
+    if (!m_activeMatch) {
         invalidateArea(InvalidateAll);
+        return false;
     }
 
-    return found;
+    setMarkerActive(m_activeMatch.get(), true);
+    WebFrameImpl* oldActiveFrame = mainFrameImpl->m_currentActiveMatchFrame;
+    mainFrameImpl->m_currentActiveMatchFrame = this;
+
+    // Make sure no node is focused. See http://crbug.com/38700.
+    frame()->document()->setFocusedNode(0);
+
+    if (!options.findNext || activeSelection) {
+        // This is either a Find operation or a Find-next from a new start point
+        // due to a selection, so we set the flag to ask the scoping effort
+        // to find the active rect for us and report it back to the UI.
+        m_locatingActiveRect = true;
+    } else {
+        if (oldActiveFrame != this) {
+            if (options.forward)
+                m_activeMatchIndexInCurrentFrame = 0;
+            else
+                m_activeMatchIndexInCurrentFrame = m_lastMatchCount - 1;
+        } else {
+            if (options.forward)
+                ++m_activeMatchIndexInCurrentFrame;
+            else
+                --m_activeMatchIndexInCurrentFrame;
+
+            if (m_activeMatchIndexInCurrentFrame + 1 > m_lastMatchCount)
+                m_activeMatchIndexInCurrentFrame = 0;
+            if (m_activeMatchIndexInCurrentFrame == -1)
+                m_activeMatchIndexInCurrentFrame = m_lastMatchCount - 1;
+        }
+        if (selectionRect) {
+            *selectionRect = frameView()->contentsToWindow(m_activeMatch->boundingBox());
+            reportFindInPageSelection(*selectionRect, m_activeMatchIndexInCurrentFrame + 1, identifier);
+        }
+    }
+
+    return true;
 }
 
 void WebFrameImpl::stopFinding(bool clearSelection)
@@ -1725,17 +1701,17 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             bool foundActiveMatch = false;
             if (m_locatingActiveRect && (activeSelectionRect == resultBounds)) {
                 // We have found the active tickmark frame.
-                mainFrameImpl->m_activeMatchFrame = this;
+                mainFrameImpl->m_currentActiveMatchFrame = this;
                 foundActiveMatch = true;
                 // We also know which tickmark is active now.
-                m_activeMatchIndex = matchCount - 1;
+                m_activeMatchIndexInCurrentFrame = matchCount - 1;
                 // To stop looking for the active tickmark, we set this flag.
                 m_locatingActiveRect = false;
 
                 // Notify browser of new location for the selected rectangle.
                 reportFindInPageSelection(
                     frameView()->contentsToWindow(resultBounds),
-                    m_activeMatchIndex + 1,
+                    m_activeMatchIndexInCurrentFrame + 1,
                     identifier);
             }
 
@@ -1804,7 +1780,7 @@ void WebFrameImpl::cancelPendingScopingEffort()
     deleteAllValues(m_deferredScopingWork);
     m_deferredScopingWork.clear();
 
-    m_activeMatchIndex = -1;
+    m_activeMatchIndexInCurrentFrame = -1;
 }
 
 void WebFrameImpl::increaseMatchCount(int count, int identifier)
@@ -1997,8 +1973,8 @@ PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)
 WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     : m_frameLoaderClient(this)
     , m_client(client)
-    , m_activeMatchFrame(0)
-    , m_activeMatchIndex(-1)
+    , m_currentActiveMatchFrame(0)
+    , m_activeMatchIndexInCurrentFrame(-1)
     , m_locatingActiveRect(false)
     , m_resumeScopingFromRange(0)
     , m_lastMatchCount(-1)

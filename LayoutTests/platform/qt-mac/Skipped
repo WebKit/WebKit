@@ -5268,3 +5268,7 @@ css2.1/20110323/empty-inline-002.htm
 css2.1/20110323/empty-inline-003.htm
 css2.1/20110323/empty-inline-001.htm
 transforms/svg-vs-css.xhtml
+
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html

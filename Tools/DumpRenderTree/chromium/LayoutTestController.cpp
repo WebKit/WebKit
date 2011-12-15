@@ -42,6 +42,7 @@
 #include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
 #include "WebElement.h"
+#include "WebFindOptions.h"
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
 #include "WebIDBFactory.h"
@@ -122,6 +123,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
     bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
+    bindMethod("findString", &LayoutTestController::findString);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
     bindMethod("hasCustomPageSizeStyle", &LayoutTestController::hasCustomPageSizeStyle);
     bindMethod("isPageBoxVisible", &LayoutTestController::isPageBoxVisible);
@@ -1953,6 +1955,34 @@ void LayoutTestController::hasSpellingMarker(const CppArgumentList& arguments, C
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
         return;
     result->set(m_shell->webView()->mainFrame()->selectionStartHasSpellingMarkerFor(arguments[0].toInt32(), arguments[1].toInt32()));
+}
+
+void LayoutTestController::findString(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 1 || !arguments[0].isString())
+        return;
+
+    WebFindOptions findOptions;
+    bool wrapAround = false;
+    if (arguments.size() >= 2) {
+        Vector<std::string> optionsArray = arguments[1].toStringVector();
+        findOptions.matchCase = true;
+
+        for (size_t i = 0; i < optionsArray.size(); ++i) {
+            const std::string& option = optionsArray[i];
+            // FIXME: Support all the options, so we can run findString.html too.
+            if (option == "CaseInsensitive")
+                findOptions.matchCase = false;
+            else if (option == "Backwards")
+                findOptions.forward = false;
+            else if (option == "WrapAround")
+                wrapAround = true;
+        }
+    }
+
+    WebFrame* frame = m_shell->webView()->mainFrame();
+    const bool findResult = frame->find(0, cppVariantToWebString(arguments[0]), findOptions, wrapAround, 0);
+    result->set(findResult);
 }
 
 void LayoutTestController::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)

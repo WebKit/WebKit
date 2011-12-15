@@ -69,6 +69,7 @@
 #include "TextCheckingHelper.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
+#include "RenderLayer.h"
 #include "RenderPart.h"
 #include "RenderTextControl.h"
 #include "RenderedPosition.h"
@@ -2775,6 +2776,18 @@ bool Editor::findString(const String& target, FindOptions options)
     m_frame->selection()->setSelection(VisibleSelection(resultRange.get(), DOWNSTREAM));
     m_frame->selection()->revealSelection();
     return true;
+}
+
+PassRefPtr<Range> Editor::findStringAndScrollToVisible(const String& target, Range* previousMatch, FindOptions options)
+{
+    RefPtr<Range> nextMatch = rangeOfString(target, previousMatch, options);
+    if (!nextMatch)
+        return 0;
+
+    nextMatch->firstNode()->renderer()->enclosingLayer()->scrollRectToVisible(nextMatch->boundingBox(),
+        ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
+
+    return nextMatch.release();
 }
 
 PassRefPtr<Range> Editor::rangeOfString(const String& target, Range* referenceRange, FindOptions options)

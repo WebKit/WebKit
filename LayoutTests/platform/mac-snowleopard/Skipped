@@ -192,3 +192,7 @@ fast/regions/region-style-inline-background-color.html
 
 # HiDPI tests have lower-level platform dependencies on Mac
 fast/hidpi
+
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html

@@ -1880,3 +1880,7 @@ fast/dom/rtl-scroll-to-leftmost-and-resize.html
 # flakey svg tests
 svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
 svg/custom/getscreenctm-in-scrollable-div-area.xhtml
+
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html

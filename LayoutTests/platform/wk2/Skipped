@@ -894,6 +894,10 @@ http/tests/security/referrer-policy-redirect.html
 http/tests/security/referrer-policy-https-never.html
 http/tests/security/referrer-policy-https-default.html
 
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

@@ -1,3 +1,20 @@
+2011-12-15  Martin Kosiba  <mkosiba@google.com>
+
+        Fix find on web pages with -webkit-user-select: none for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=72281
+
+        Reviewed by Ryosuke Niwa.
+
+        This will make it possible to search for text that has
+        selection disabled (via the webkit-user-select attribute).
+
+        WebFrameImpl::find will use findStringAndScrollToVisible, which is
+        similar to findString except that it uses Range directly rather
+        than passing the find result in the active selection.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+
 2011-12-15  Kenneth Russell  <kbr@google.com>
 
         [chromium] Add DRT support for WebKitPageCacheSupportsPluginsPreferenceKey

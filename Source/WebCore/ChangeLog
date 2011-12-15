@@ -1,3 +1,19 @@
+2011-12-15  Martin Kosiba  <mkosiba@google.com>
+
+        Fix find on web pages with -webkit-user-select: none for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=72281
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding findStringAndScrollToVisible to Editor. This new method returns
+        the new match as a range rather than modify the active selection.
+
+        Test: editing/text-iterator/findString-selection-disabled.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::findStringAndScrollToVisible):
+        * editing/Editor.h:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::Function to wtf/Forward.h

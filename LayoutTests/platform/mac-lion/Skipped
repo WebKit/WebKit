@@ -50,6 +50,10 @@ platform/mac/editing/spelling/delete-autocorrected-word-1.html
 platform/mac/editing/spelling/delete-autocorrected-word-2.html
 platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html  
 
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html
+
 # Pasting replaces the three periods with an ellipsis on Lion
 editing/pasteboard/5478250.html
 

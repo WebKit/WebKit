@@ -252,7 +252,7 @@ public:
     // Returns which frame has an active match. This function should only be
     // called on the main frame, as it is the only frame keeping track. Returned
     // value can be 0 if no frame has an active match.
-    const WebFrameImpl* activeMatchFrame() const { return m_activeMatchFrame; }
+    const WebFrameImpl* activeMatchFrame() const { return m_currentActiveMatchFrame; }
 
     // When a Find operation ends, we want to set the selection to what was active
     // and set focus to the first focusable node we find (starting with the first
@@ -346,13 +346,13 @@ private:
 
     // A way for the main frame to keep track of which frame has an active
     // match. Should be 0 for all other frames.
-    WebFrameImpl* m_activeMatchFrame;
+    WebFrameImpl* m_currentActiveMatchFrame;
 
     // The range of the active match for the current frame.
     RefPtr<WebCore::Range> m_activeMatch;
 
-    // The index of the active match.
-    int m_activeMatchIndex;
+    // The index of the active match for the current frame.
+    int m_activeMatchIndexInCurrentFrame;
 
     // This flag is used by the scoping effort to determine if we need to figure
     // out which rectangle is the active match. Once we find the active

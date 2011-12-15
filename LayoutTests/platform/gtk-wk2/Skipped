@@ -371,6 +371,10 @@ http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 
+# Frame::findString does nothing on pages that prevent selection
+# https://bugs.webkit.org/show_bug.cgi?id=40361
+editing/text-iterator/findString-selection-disabled.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################
