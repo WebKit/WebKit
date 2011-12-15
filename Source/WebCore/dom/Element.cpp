@@ -1138,7 +1138,6 @@ void Element::recalcStyle(StyleChange change)
     bool forceCheckOfAnyElementSibling = false;
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode()) {
-            parentPusher.push();
             static_cast<Text*>(n)->recalcTextStyle(change);
             continue;
         } 
