@@ -109,8 +109,6 @@ deps = {
     From('chromium_deps', 'src/third_party/ffmpeg'),
   'third_party/libjingle/source':
     From('chromium_deps', 'src/third_party/libjingle/source'),
-  'third_party/libwebp':
-    Var('chromium_svn')+'/third_party/libwebp@'+Var('chromium_rev'),
   'tools/grit':
     From('chromium_deps', 'src/tools/grit'),
   'tools/gritsettings':
@@ -158,10 +156,6 @@ deps_os = {
       From('chromium_deps', 'src/third_party/yasm/binaries'),
   },
   'mac': {
-    'third_party/apple_apsl':
-      Var('chromium_svn')+'/third_party/apple_apsl@'+Var('chromium_rev'),
-    'third_party/apple_webkit':
-      Var('chromium_svn')+'/third_party/apple_webkit@'+Var('chromium_rev'),
     'third_party/nss':
       From('chromium_deps', 'src/third_party/nss'),
   },

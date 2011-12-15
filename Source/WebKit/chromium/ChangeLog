@@ -1,3 +1,16 @@
+2011-12-14  Tony Chang  <tony@chromium.org>
+
+        [chromium] Remove redundant third_party entries from chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=74472
+
+        Reviewed by Kenneth Russell.
+
+        Removed redundant DEPS entries for third_party subdirectories
+        coming from chromium_svn, which were causing intermittent gclient
+        failures on the bots.
+
+        * DEPS:
+
 2011-12-14  Scott Graham  <scottmg@chromium.org>
 
         Increase maximum number of gamepad buttons in Chromium port interface

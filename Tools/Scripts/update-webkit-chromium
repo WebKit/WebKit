@@ -86,7 +86,9 @@ my @gclientArgs = ($gclientPath, "sync");
 push @gclientArgs, "--force" if $force;
 # --reset could delete modified files if necessary to sync.
 push @gclientArgs, "--reset" if $force;
-push @gclientArgs, "--delete_unversioned_trees" if $force;
+# Temporarily keep unversioned trees so we don't delete third_party/libwebp.
+# See https://bugs.webkit.org/show_bug.cgi?id=74565 .
+#push @gclientArgs, "--delete_unversioned_trees" if $force;
 push @gclientArgs, "--deps=unix,android" if isChromiumAndroid();
 
 my $cmd = join(" ",@gclientArgs);

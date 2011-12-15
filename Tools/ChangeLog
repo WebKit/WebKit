@@ -1,3 +1,12 @@
+2011-12-14  Tony Chang  <tony@chromium.org>
+
+        [chromium] Remove redundant third_party entries from chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=74472
+
+        Reviewed by Kenneth Russell.
+
+        * Scripts/update-webkit-chromium: Temporarily keep unversioned trees.
+
 2011-12-14  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] In prepare-ChangeLog, replace $isGit and $isSVN with
