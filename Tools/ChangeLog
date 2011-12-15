@@ -1,3 +1,11 @@
+2011-12-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Don't add WebCoreSupport and WebKit APIs to include WebCore's include path
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/webcore.prf:
+
 2011-12-15  Michael Brüning  <michael.bruning@nokia.com>
 
         [QT][WK2]Add (experimental) viewport info view to Minibrowser/qt.
