@@ -60,10 +60,10 @@ void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
 
 class WorkQueue::EventSource {
 public:
-    EventSource(MachPortEventType eventType, dispatch_source_t dispatchSource, PassOwnPtr<WorkItem> workItem)
+    EventSource(MachPortEventType eventType, dispatch_source_t dispatchSource, const Function<void()>& function)
         : m_eventType(eventType)
         , m_dispatchSource(dispatchSource)
-        , m_workItem(workItem)
+        , m_function(function)
     {
     }
     
@@ -73,7 +73,7 @@ public:
     {
         EventSource* eventSource = static_cast<EventSource*>(source);
         
-        eventSource->m_workItem->execute();
+        eventSource->m_function();
     }
     
     static void cancelHandler(void* source)
@@ -106,11 +106,11 @@ private:
     
     // This is a weak reference, since m_dispatchSource references the event source.
     dispatch_source_t m_dispatchSource;
-    
-    OwnPtr<WorkItem> m_workItem;
+
+    Function<void()> m_function;
 };
 
-void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEventType eventType, PassOwnPtr<WorkItem> workItem)
+void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEventType eventType, const Function<void()>& function)
 {
     dispatch_source_type_t sourceType = 0;
     switch (eventType) {
@@ -124,7 +124,7 @@ void WorkQueue::registerMachPortEventHandler(mach_port_t machPort, MachPortEvent
     
     dispatch_source_t dispatchSource = dispatch_source_create(sourceType, machPort, 0, m_dispatchQueue);
     
-    EventSource* eventSource = new EventSource(eventType, dispatchSource, workItem);
+    EventSource* eventSource = new EventSource(eventType, dispatchSource, function);
     dispatch_set_context(dispatchSource, eventSource);
     
     dispatch_source_set_event_handler_f(dispatchSource, &EventSource::eventHandler);

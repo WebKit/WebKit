@@ -87,9 +87,9 @@ public:
         MachPortDeadNameNotification
     };
     
-    // Will execute the given work item whenever the given mach port event fires.
+    // Will execute the given function whenever the given mach port event fires.
     // Note that this will adopt the mach port and destroy it when the work queue is invalidated.
-    void registerMachPortEventHandler(mach_port_t, MachPortEventType, PassOwnPtr<WorkItem>);
+    void registerMachPortEventHandler(mach_port_t, MachPortEventType, const Function<void()>&);
     void unregisterMachPortEventHandler(mach_port_t);
 #elif PLATFORM(WIN)
     void registerHandle(HANDLE, PassOwnPtr<WorkItem>);

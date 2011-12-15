@@ -1,3 +1,19 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Move WorkQueue Mach handlers over to WTF::Function
+        https://bugs.webkit.org/show_bug.cgi?id=74620
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::initializeDeadNameSource):
+        * Platform/WorkQueue.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::EventSource::eventHandler):
+        (WorkQueue::registerMachPortEventHandler):
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::Function to wtf/Forward.h

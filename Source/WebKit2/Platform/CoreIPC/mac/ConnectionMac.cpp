@@ -104,11 +104,11 @@ bool Connection::open()
     setMachPortQueueLength(m_receivePort, MACH_PORT_QLIMIT_LARGE);
 
     // Register the data available handler.
-    m_connectionQueue.registerMachPortEventHandler(m_receivePort, WorkQueue::MachPortDataAvailable, WorkItem::create(this, &Connection::receiveSourceEventHandler));
+    m_connectionQueue.registerMachPortEventHandler(m_receivePort, WorkQueue::MachPortDataAvailable, bind(&Connection::receiveSourceEventHandler, this));
 
     // If we have an exception port, register the data available handler and send over the port to the other end.
     if (m_exceptionPort) {
-        m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, WorkItem::create(this, &Connection::exceptionSourceEventHandler));
+        m_connectionQueue.registerMachPortEventHandler(m_exceptionPort, WorkQueue::MachPortDataAvailable, bind(&Connection::exceptionSourceEventHandler, this));
 
         deprecatedSend(CoreIPCMessage::SetExceptionPort, 0, MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
     }
@@ -225,7 +225,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
 void Connection::initializeDeadNameSource()
 {
-    m_connectionQueue.registerMachPortEventHandler(m_sendPort, WorkQueue::MachPortDeadNameNotification, WorkItem::create(this, &Connection::connectionDidClose));
+    m_connectionQueue.registerMachPortEventHandler(m_sendPort, WorkQueue::MachPortDeadNameNotification, bind(&Connection::connectionDidClose, this));
 }
 
 static PassOwnPtr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* header)
