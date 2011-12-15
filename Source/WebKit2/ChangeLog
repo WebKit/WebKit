@@ -1,3 +1,14 @@
+2011-12-15  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Add test for download policy on navigation request
+        https://bugs.webkit.org/show_bug.cgi?id=74541
+
+        Reviewed by Tor Arne Vestbø.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_download.qml: Make it wait for a
+        downloadFinished signal to finish the test.
+
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
         Move WorkQueue Mach handlers over to WTF::Function

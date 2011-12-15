@@ -9,13 +9,20 @@ WebView {
     height: 200
 
     property int expectedLength: 0
-    property bool downloadFinished: false
     property int totalBytes: 0
+
+    signal downloadFinished()
 
     SignalSpy {
         id: spy
         target: experimental
         signalName: "downloadRequested"
+    }
+
+    SignalSpy {
+        id: downloadFinishedSpy
+        target: webView
+        signalName: "downloadFinished"
     }
 
     experimental.onDownloadRequested: {
@@ -29,8 +36,8 @@ WebView {
         id: download
         ignoreUnknownSignals: true
         onSucceeded: {
-            downloadFinished = true
             totalBytes = download.target.totalBytesReceived
+            webView.downloadFinished()
         }
     }
 
@@ -48,8 +55,8 @@ WebView {
 
         function init() {
             spy.clear()
+            downloadFinishedSpy.clear()
             expectedLength = 0
-            downloadFinished = false
         }
 
         function test_downloadRequest() {
@@ -72,7 +79,7 @@ WebView {
             webView.load(Qt.resolvedUrl("../common/download.zip"))
             spy.wait()
             compare(spy.count, 1)
-            verify(downloadFinished)
+            downloadFinishedSpy.wait()
             compare(totalBytes, expectedLength)
         }
     }
