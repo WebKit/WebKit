@@ -1,3 +1,14 @@
+2011-12-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [WK2] WebPage::m_useFixedLayout variable unininitialized
+        https://bugs.webkit.org/show_bug.cgi?id=74596
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Avoid uninitialized use through
+        initialization in the constructor.
+
 2011-12-15  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] r102849 broke the Qt build on Mac OS X.
