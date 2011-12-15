@@ -220,24 +220,19 @@ Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* c
     return ewk_util_image_from_cairo_surface_add(canvas, surface);
 }
 
-Eina_Bool ewk_settings_cache_enable_get(void)
+void ewk_settings_object_cache_capacity_set(unsigned minDeadCapacity, unsigned maxDeadCapacity, unsigned totalCapacity)
 {
-    WebCore::MemoryCache* cache = WebCore::memoryCache();
-    return !cache->disabled();
+    WebCore::memoryCache()->setCapacities(minDeadCapacity, maxDeadCapacity, totalCapacity);
 }
 
-void ewk_settings_cache_enable_set(Eina_Bool set)
+Eina_Bool ewk_settings_object_cache_enable_get()
 {
-    WebCore::MemoryCache* cache = WebCore::memoryCache();
-    set = !set;
-    if (cache->disabled() != set)
-        cache->setDisabled(set);
+    return !WebCore::memoryCache()->disabled();
 }
 
-void ewk_settings_cache_capacity_set(unsigned capacity)
+void ewk_settings_object_cache_enable_set(Eina_Bool enable)
 {
-    WebCore::MemoryCache* cache = WebCore::memoryCache();
-    cache->setCapacities(0, capacity, capacity);
+    WebCore::memoryCache()->setDisabled(!enable);
 }
 
 void ewk_settings_memory_cache_clear()

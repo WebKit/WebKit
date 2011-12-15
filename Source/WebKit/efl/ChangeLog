@@ -1,5 +1,22 @@
 2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Clean up and refactor the memory cache functions in ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=72140
+
+        Reviewed by Antonio Gomes.
+
+        Use a better naming prefix, as "ewk_settings_cache" was too general,
+        and make it possible to pass all parameters to
+        MemoryCache::setCapacities().
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_object_cache_capacity_set):
+        (ewk_settings_object_cache_enable_get):
+        (ewk_settings_object_cache_enable_set):
+        * ewk/ewk_settings.h:
+
+2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Add a few more web database functions to ewk_settings.
         https://bugs.webkit.org/show_bug.cgi?id=72148
 

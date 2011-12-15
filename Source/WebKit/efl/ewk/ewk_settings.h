@@ -203,30 +203,51 @@ EAPI void             ewk_settings_application_cache_max_quota_set(int64_t maxim
 EAPI void             ewk_settings_application_cache_clear(void);
 
 /**
- * Gets status of the memory cache of WebCore.
+ * Returns whether the in-memory object cache is enabled.
+ *
+ * The object cache is responsible for holding resources such as scripts, stylesheets
+ * and images in memory.
+ *
+ * By default, the cache is enabled.
  *
  * @return @c EINA_TRUE if the cache is enabled or @c EINA_FALSE if not
+ *
+ * @sa ewk_settings_object_cache_capacity_set
  */
-EAPI Eina_Bool        ewk_settings_cache_enable_get(void);
+EAPI Eina_Bool        ewk_settings_object_cache_enable_get(void);
 
 /**
- * Enables/disables the memory cache of WebCore, possibly clearing it.
+ * Enables/disables the in-memory object cache of WebCore, possibly clearing it.
+ *
+ * The object cache is responsible for holding resources such as scripts, stylesheets
+ * and images in memory.
+ *
+ * By default, the cache is enabled.
  *
  * Disabling the cache will remove all resources from the cache.
  * They may still live on if they are referenced by some Web page though.
  *
  * @param set @c EINA_TRUE to enable memory cache, @c EINA_FALSE to disable
  */
-EAPI void             ewk_settings_cache_enable_set(Eina_Bool set);
+EAPI void             ewk_settings_object_cache_enable_set(Eina_Bool set);
 
 /**
- * Sets capacity of memory cache of WebCore.
+ * Defines the capacities for the in-memory object cache.
  *
- * WebCore sets default value of memory cache on 8192 * 1024 bytes.
+ * The object cache is responsible for holding resources such as scripts, stylesheets
+ * and images in memory.
+ *
+ * By default, @p min_dead_bytes is 0 and both @p max_dead_bytes and @p total_bytes are 8MB.
+ *
+ * @param min_dead_bytes The maximum number of bytes that dead resources should consume when
+ *                       the cache is under pressure.
+ * @param max_dead_bytes The maximum number of bytes that dead resources should consume when
+ *                       the cache is not under pressure.
+ * @param total_bytes    The maximum number of bytes that the cache should consume overall.
  *
  * @param capacity the maximum number of bytes that the cache should consume overall
  */
-EAPI void             ewk_settings_cache_capacity_set(unsigned capacity);
+EAPI void             ewk_settings_object_cache_capacity_set(unsigned min_dead_bytes, unsigned max_dead_bytes, unsigned total_bytes);
 
 /**
  * Clears all memory caches.
