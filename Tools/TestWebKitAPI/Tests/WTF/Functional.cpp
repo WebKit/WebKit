@@ -115,8 +115,6 @@ public:
 
     ~B()
     {
-        ASSERT_TRUE(m_numRefCalls == m_numDerefCalls);
-        ASSERT_GT(m_numRefCalls, 0);
     }
 
     void ref()
@@ -132,7 +130,6 @@ public:
     void f() { ASSERT_GT(m_numRefCalls, 0); }
     void g(int) { ASSERT_GT(m_numRefCalls, 0); }
 
-private:
     int m_numRefCalls;
     int m_numDerefCalls;
 };
@@ -141,11 +138,17 @@ TEST(FunctionalTest, MemberFunctionBindRefDeref)
 {
     B b;
 
-    Function<void ()> function1 = bind(&B::f, &b);
-    function1();
+    {
+        Function<void ()> function1 = bind(&B::f, &b);
+        function1();
 
-    Function<void ()> function2 = bind(&B::g, &b, 10);
-    function2();
+        Function<void ()> function2 = bind(&B::g, &b, 10);
+        function2();
+    }
+
+    ASSERT_TRUE(b.m_numRefCalls == b.m_numDerefCalls);
+    ASSERT_GT(b.m_numRefCalls, 0);
+
 }
 
 } // namespace TestWebKitAPI
