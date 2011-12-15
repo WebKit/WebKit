@@ -103,8 +103,6 @@ fast/forms/file/input-file-directory-upload.html
 # ENABLE(INDEXED_DATABASE) is disabled.
 storage/indexeddb
 
-# ENABLE(REQUEST_ANIMATION_FRAME) is disabled.
-fast/animation
 inspector/timeline/timeline-animation-frame.html
 
 # ENABLE(ANIMATION_API) is disabled.

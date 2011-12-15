@@ -1,3 +1,14 @@
+2011-12-15  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt] Support requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=74528
+
+        Add build-option for requestAnimationFrame feature.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * qmake/mkspecs/features/features.prf:
+
 2011-12-15  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Don't add WebCoreSupport and WebKit APIs to include WebCore's include path

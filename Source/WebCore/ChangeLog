@@ -1,3 +1,14 @@
+2011-12-15  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt] Support requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=74528
+
+        Add necessary files to Target.pri when enabling requestAnimationFrame option.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri:
+
 2011-12-15  Otto Cheung  <ocheung@rim.com>
 
         Removing BlackBerryCookieCache from the build system

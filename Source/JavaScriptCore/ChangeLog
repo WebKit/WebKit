@@ -1,3 +1,14 @@
+2011-12-15  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        [Qt] Support requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=74528
+
+        Let Qt port use REQUEST_ANIMATION_FRAME_TIMER.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * wtf/Platform.h:
+
 2011-12-15  Andy Wingo  <wingo@igalia.com>
 
         Minor refactor to Parser::parseTryStatement

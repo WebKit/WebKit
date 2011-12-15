@@ -331,6 +331,7 @@ v8 {
         bindings/js/JSPluginElementFunctions.cpp \
         bindings/js/JSPopStateEventCustom.cpp \
         bindings/js/JSProcessingInstructionCustom.cpp \
+        bindings/js/JSRequestAnimationFrameCallbackCustom.cpp \
         bindings/js/JSScriptProfileNodeCustom.cpp \
         bindings/js/JSStorageCustom.cpp \
         bindings/js/JSStyleSheetCustom.cpp \
@@ -551,6 +552,7 @@ SOURCES += \
     dom/RawDataDocumentParser.h \
     dom/RegisteredEventListener.cpp \
     dom/ScopedEventQueue.cpp \
+    dom/ScriptedAnimationController.cpp \
     dom/ScriptableDocumentParser.cpp \
     dom/ScriptElement.cpp \
     dom/ScriptExecutionContext.cpp \
@@ -1642,6 +1644,7 @@ HEADERS += \
     dom/Range.h \
     dom/RegisteredEventListener.h \
     dom/RenderedDocumentMarker.h \
+    dom/ScriptedAnimationController.h \
     dom/ScriptElement.h \
     dom/ScriptExecutionContext.h \
     dom/SelectorQuery.h \
