@@ -152,11 +152,16 @@ WebInspector.NetworkDispatcher.prototype = {
             resource.timing = response.timing;
 
         if (!this._mimeTypeIsConsistentWithType(resource)) {
-            WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Other,
+            WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Network,
                 WebInspector.ConsoleMessage.MessageLevel.Warning,
-                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.", WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
+                WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s: \"%s\".", WebInspector.Resource.Type.toUIString(resource.type), resource.mimeType, resource.url),
                 WebInspector.ConsoleMessage.MessageType.Log,
-                this.url));
+                "",
+                0,
+                1,
+                [],
+                null,
+                resource));
         }
     },
 

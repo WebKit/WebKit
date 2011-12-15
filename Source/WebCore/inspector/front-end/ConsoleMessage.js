@@ -139,7 +139,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         this._formattedMessage.appendChild(messageText);
 
-        var dumpStackTrace = !!this._stackTrace && (this.source === WebInspector.ConsoleMessage.MessageSource.Network || this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
+        var dumpStackTrace = !!this._stackTrace && this._stackTrace.length && (this.source === WebInspector.ConsoleMessage.MessageSource.Network || this.level === WebInspector.ConsoleMessage.MessageLevel.Error || this.type === WebInspector.ConsoleMessage.MessageType.Trace);
         if (dumpStackTrace) {
             var ol = document.createElement("ol");
             ol.className = "outline-disclosure";

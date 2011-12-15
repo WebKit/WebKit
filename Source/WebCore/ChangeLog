@@ -1,3 +1,17 @@
+2011-12-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Network manager fails to show resource type and MIME type in incorrect MIME type console message.
+        https://bugs.webkit.org/show_bug.cgi?id=74516
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/network/script-as-text-loading.html
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+
 2011-11-03  Kent Tamura  <tkent@chromium.org>
 
         A spin button changes the value incorrectly if it is clicked after touch events.
