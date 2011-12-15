@@ -86,6 +86,23 @@ static DivisorList divisors(unsigned n)
     return divisors;
 }
 
+static bool divisorIsPerfectWidth(Divisor divisor, Platform::IntSize size, int tileWidth)
+{
+    return size.width() <= divisor.first * tileWidth && abs(size.width() - divisor.first * tileWidth) < tileWidth;
+}
+
+static bool divisorIsPerfectHeight(Divisor divisor, Platform::IntSize size, int tileHeight)
+{
+    return size.height() <= divisor.second * tileHeight && abs(size.height() - divisor.second * tileHeight) < tileHeight;
+}
+
+static bool divisorIsPreferredDirection(Divisor divisor, BackingStorePrivate::TileMatrixDirection direction)
+{
+    if (direction == BackingStorePrivate::Vertical)
+        return divisor.second > divisor.first;
+    return divisor.first > divisor.second;
+}
+
 // Compute best divisor given the ratio determined by size.
 static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight,
                            int minimumNumberOfTilesWide, int minimumNumberOfTilesHigh,
@@ -110,34 +127,33 @@ static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight
     for (size_t i = 0; i < divisorList.size(); ++i) {
         Divisor divisor = divisorList[i];
 
-        bool divisorWidthIsPerfect = size.width() <= divisor.first * tileWidth && abs(size.width() - divisor.first * tileWidth) < tileWidth;
-        bool divisorHeightIsPerfect = size.height() <= divisor.second * tileHeight && abs(size.height() - divisor.second * tileHeight) < tileHeight;
-        bool divisorWidthIsValid = divisor.first >= minimumNumberOfTilesWide || divisorWidthIsPerfect;
-        bool divisorHeightIsValid = divisor.second >= minimumNumberOfTilesHigh || divisorHeightIsPerfect;
-        if (!divisorWidthIsValid || !divisorHeightIsValid)
+        const bool isPerfectWidth = divisorIsPerfectWidth(divisor, size, tileWidth);
+        const bool isPerfectHeight = divisorIsPerfectHeight(divisor, size, tileHeight);
+        const bool isValidWidth = divisor.first >= minimumNumberOfTilesWide || isPerfectWidth;
+        const bool isValidHeight = divisor.second >= minimumNumberOfTilesHigh || isPerfectHeight;
+        if (!isValidWidth || !isValidHeight)
             continue;
 
-        if (divisor.first > divisor.second && direction == BackingStorePrivate::Vertical && !divisorHeightIsPerfect)
-            continue;
-
-        if (divisor.second > divisor.first && direction == BackingStorePrivate::Horizontal && !divisorWidthIsPerfect)
-            continue;
-
-        if (divisorWidthIsPerfect || divisorHeightIsPerfect) {
+        if (isPerfectWidth || isPerfectHeight) {
             bestDivisor = divisor; // Found a perfect fit!
 #if DEBUG_TILEMATRIX
-            BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "bestDivisor found perfect size widthPerfect=%s heightPerfect=%s",
-                                   divisorWidthIsPerfect ? "true" : "false",
-                                   divisorHeightIsPerfect ? "true" : "false");
+            BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "bestDivisor found perfect size isPerfectWidth=%s isPerfectHeight=%s",
+                                   isPerfectWidth ? "true" : "false",
+                                   isPerfectHeight ? "true" : "false");
 #endif
             break;
         }
 
         // Store basis of comparison.
-        if (!bestDivisor.first && !bestDivisor.second) {
+        if (!bestDivisor.first || !bestDivisor.second) {
             bestDivisor = divisor;
             continue;
         }
+
+        // If the current best divisor agrees with the preferred tile matrix direction,
+        // then continue if the current candidate does not.
+        if (divisorIsPreferredDirection(bestDivisor, direction) && !divisorIsPreferredDirection(divisor, direction))
+            continue;
 
         // Compare ratios.
         float diff1 = fabs((static_cast<float>(divisor.first) / static_cast<float>(divisor.second)) - ratio);

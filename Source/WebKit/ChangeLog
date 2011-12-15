@@ -1,3 +1,23 @@
+2011-12-15  Adam Treat  <atreat@rim.com>
+
+        Reviewed by Rob Buis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=74609
+        PR 122703
+
+        For certain configurations of webpage content and zoom level we were
+        failing to produce a valid backingstore matrix by being to strict on
+        whether a given matrix fits the preferred matrix orientation.
+        This patch fixes this by insisting on storing a candidate divisor
+        whether or not it agrees with the preferred matrix orientation and then
+        comparing all subsequent divisors.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::divisorIsPerfectWidth):
+        (BlackBerry::WebKit::divisorIsPerfectHeight):
+        (BlackBerry::WebKit::divisorIsPreferredDirection):
+        (BlackBerry::WebKit::bestDivisor):
+
 2011-12-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Refactor code and add some debug messages in backing store
