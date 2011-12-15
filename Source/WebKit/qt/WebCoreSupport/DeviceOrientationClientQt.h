@@ -37,10 +37,8 @@ public:
     virtual void stopUpdating();
     virtual DeviceOrientation* lastOrientation() const;
     virtual void deviceOrientationControllerDestroyed();
-    virtual void changeDeviceOrientation(DeviceOrientation*);
 
 private:
-    DeviceOrientationController* m_controller;
     DeviceOrientationProviderQt* m_provider;
 };
 
