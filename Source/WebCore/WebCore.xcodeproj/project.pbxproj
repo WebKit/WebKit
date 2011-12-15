@@ -248,7 +248,6 @@
 		0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6ECD450F252F3700BDE271 /* CSSPropertyLonghand.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */; };
 		0F6ECD460F252F3700BDE271 /* CSSPropertyLonghand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */; };
-		0FB7E6F414970EB300346FAE /* FilterOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FB7E6F314970EB300346FAE /* FilterOperation.cpp */; };
 		0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33230F2B9715004B6795 /* ColorCG.cpp */; };
 		0FCF332C0F2B9A25004B6795 /* WebTiledLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */; };
 		0FCF332D0F2B9A25004B6795 /* WebTiledLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */; };
@@ -1277,6 +1276,16 @@
 		49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E912A70EFAC906009D0CAF /* AnimationList.cpp */; };
 		49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A80EFAC906009D0CAF /* AnimationList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A90EFAC906009D0CAF /* TimingFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49ECEB671499790D00CDD3A4 /* FECompositeArithmeticNEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB5D1499790D00CDD3A4 /* FECompositeArithmeticNEON.cpp */; };
+		49ECEB681499790D00CDD3A4 /* FECompositeArithmeticNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB5E1499790D00CDD3A4 /* FECompositeArithmeticNEON.h */; };
+		49ECEB691499790D00CDD3A4 /* FEGaussianBlurNEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB5F1499790D00CDD3A4 /* FEGaussianBlurNEON.cpp */; };
+		49ECEB6A1499790D00CDD3A4 /* FEGaussianBlurNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB601499790D00CDD3A4 /* FEGaussianBlurNEON.h */; };
+		49ECEB6B1499790D00CDD3A4 /* FELightingNEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB611499790D00CDD3A4 /* FELightingNEON.cpp */; };
+		49ECEB6C1499790D00CDD3A4 /* FELightingNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB621499790D00CDD3A4 /* FELightingNEON.h */; };
+		49ECEB6D1499790D00CDD3A4 /* FilterOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB631499790D00CDD3A4 /* FilterOperation.cpp */; };
+		49ECEB6E1499790D00CDD3A4 /* FilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB641499790D00CDD3A4 /* FilterOperation.h */; };
+		49ECEB6F1499790D00CDD3A4 /* FilterOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */; };
+		49ECEB701499790D00CDD3A4 /* FilterOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB661499790D00CDD3A4 /* FilterOperations.h */; };
 		49EECF00105070C400099FAB /* JSArrayBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF2105070C400099FAB /* JSArrayBuffer.cpp */; };
 		49EECF01105070C400099FAB /* JSArrayBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEF3105070C400099FAB /* JSArrayBuffer.h */; };
 		49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECEF4105070C400099FAB /* JSFloat32Array.cpp */; };
@@ -1379,9 +1388,6 @@
 		5038BE401472AD980095E0D1 /* CachedShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5038BE3E1472AD980095E0D1 /* CachedShader.cpp */; };
 		5038BE411472AD980095E0D1 /* CachedShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BE3F1472AD980095E0D1 /* CachedShader.h */; };
 		5038BF2814750F190095E0D1 /* CustomFilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BF2414750F190095E0D1 /* CustomFilterOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5038BF2914750F190095E0D1 /* FilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BF2514750F190095E0D1 /* FilterOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5038BF2A14750F190095E0D1 /* FilterOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5038BF2614750F190095E0D1 /* FilterOperations.cpp */; };
-		5038BF2B14750F190095E0D1 /* FilterOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BF2714750F190095E0D1 /* FilterOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFlowThread.h */; };
 		508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */; };
 		50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */; };
@@ -7332,7 +7338,6 @@
 		0F5B7A5310F65D7A00376302 /* RenderEmbeddedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderEmbeddedObject.h; sourceTree = "<group>"; };
 		0F6ECD430F252F3700BDE271 /* CSSPropertyLonghand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyLonghand.h; sourceTree = "<group>"; };
 		0F6ECD440F252F3700BDE271 /* CSSPropertyLonghand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertyLonghand.cpp; sourceTree = "<group>"; };
-		0FB7E6F314970EB300346FAE /* FilterOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperation.cpp; path = style/FilterOperation.cpp; sourceTree = "<group>"; };
 		0FCF33230F2B9715004B6795 /* ColorCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorCG.cpp; sourceTree = "<group>"; };
 		0FCF33280F2B9A25004B6795 /* WebTiledLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebTiledLayer.mm; sourceTree = "<group>"; };
 		0FCF33290F2B9A25004B6795 /* WebTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTiledLayer.h; sourceTree = "<group>"; };
@@ -8491,6 +8496,16 @@
 		49E912A70EFAC906009D0CAF /* AnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationList.cpp; path = animation/AnimationList.cpp; sourceTree = "<group>"; };
 		49E912A80EFAC906009D0CAF /* AnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationList.h; path = animation/AnimationList.h; sourceTree = "<group>"; };
 		49E912A90EFAC906009D0CAF /* TimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingFunction.h; path = animation/TimingFunction.h; sourceTree = "<group>"; };
+		49ECEB5D1499790D00CDD3A4 /* FECompositeArithmeticNEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FECompositeArithmeticNEON.cpp; sourceTree = "<group>"; };
+		49ECEB5E1499790D00CDD3A4 /* FECompositeArithmeticNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FECompositeArithmeticNEON.h; sourceTree = "<group>"; };
+		49ECEB5F1499790D00CDD3A4 /* FEGaussianBlurNEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FEGaussianBlurNEON.cpp; sourceTree = "<group>"; };
+		49ECEB601499790D00CDD3A4 /* FEGaussianBlurNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEGaussianBlurNEON.h; sourceTree = "<group>"; };
+		49ECEB611499790D00CDD3A4 /* FELightingNEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FELightingNEON.cpp; sourceTree = "<group>"; };
+		49ECEB621499790D00CDD3A4 /* FELightingNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FELightingNEON.h; sourceTree = "<group>"; };
+		49ECEB631499790D00CDD3A4 /* FilterOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperation.cpp; path = filters/FilterOperation.cpp; sourceTree = "<group>"; };
+		49ECEB641499790D00CDD3A4 /* FilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = filters/FilterOperation.h; sourceTree = "<group>"; };
+		49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperations.cpp; path = filters/FilterOperations.cpp; sourceTree = "<group>"; };
+		49ECEB661499790D00CDD3A4 /* FilterOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperations.h; path = filters/FilterOperations.h; sourceTree = "<group>"; };
 		49EECDC910503C2300099FAB /* ArrayBufferView.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ArrayBufferView.idl; path = canvas/ArrayBufferView.idl; sourceTree = "<group>"; };
 		49EECDCC10503C2300099FAB /* ArrayBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ArrayBuffer.idl; path = canvas/ArrayBuffer.idl; sourceTree = "<group>"; };
 		49EECDCF10503C2300099FAB /* Float32Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Float32Array.idl; path = canvas/Float32Array.idl; sourceTree = "<group>"; };
@@ -8605,9 +8620,6 @@
 		5038BE3E1472AD980095E0D1 /* CachedShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedShader.cpp; sourceTree = "<group>"; };
 		5038BE3F1472AD980095E0D1 /* CachedShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedShader.h; sourceTree = "<group>"; };
 		5038BF2414750F190095E0D1 /* CustomFilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterOperation.h; path = style/CustomFilterOperation.h; sourceTree = "<group>"; };
-		5038BF2514750F190095E0D1 /* FilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = style/FilterOperation.h; sourceTree = "<group>"; };
-		5038BF2614750F190095E0D1 /* FilterOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperations.cpp; path = style/FilterOperations.cpp; sourceTree = "<group>"; };
-		5038BF2714750F190095E0D1 /* FilterOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperations.h; path = style/FilterOperations.h; sourceTree = "<group>"; };
 		508CCA4D13CF106B003151F3 /* RenderFlowThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlowThread.h; sourceTree = "<group>"; };
 		508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlowThread.cpp; sourceTree = "<group>"; };
 		50B42157146976960087E604 /* WebKitCSSShaderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSShaderValue.h; sourceTree = "<group>"; };
@@ -15138,6 +15150,20 @@
 			name = animation;
 			sourceTree = "<group>";
 		};
+		49ECEB5C1499790D00CDD3A4 /* arm */ = {
+			isa = PBXGroup;
+			children = (
+				49ECEB5D1499790D00CDD3A4 /* FECompositeArithmeticNEON.cpp */,
+				49ECEB5E1499790D00CDD3A4 /* FECompositeArithmeticNEON.h */,
+				49ECEB5F1499790D00CDD3A4 /* FEGaussianBlurNEON.cpp */,
+				49ECEB601499790D00CDD3A4 /* FEGaussianBlurNEON.h */,
+				49ECEB611499790D00CDD3A4 /* FELightingNEON.cpp */,
+				49ECEB621499790D00CDD3A4 /* FELightingNEON.h */,
+			);
+			name = arm;
+			path = filters/arm;
+			sourceTree = "<group>";
+		};
 		5126E6B60A2E3AEF005C29FA /* icon */ = {
 			isa = PBXGroup;
 			children = (
@@ -17680,6 +17706,7 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				49ECEB5C1499790D00CDD3A4 /* arm */,
 				19841BFA136836A1006EBBB9 /* arm */,
 				A1E1154313015C3D0054AC8C /* DistantLightSource.cpp */,
 				84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */,
@@ -17720,6 +17747,10 @@
 				845E72F70FD261EE00A87D79 /* Filter.h */,
 				08C925170FCC7C4A00480DEC /* FilterEffect.cpp */,
 				08C925180FCC7C4A00480DEC /* FilterEffect.h */,
+				49ECEB631499790D00CDD3A4 /* FilterOperation.cpp */,
+				49ECEB641499790D00CDD3A4 /* FilterOperation.h */,
+				49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */,
+				49ECEB661499790D00CDD3A4 /* FilterOperations.h */,
 				84730D731248F0B300D3A9C9 /* LightSource.cpp */,
 				84730D741248F0B300D3A9C9 /* LightSource.h */,
 				A1E1154513015C4E0054AC8C /* PointLightSource.cpp */,
@@ -19870,10 +19901,6 @@
 				BC22746E0E83664500E7F975 /* DataRef.h */,
 				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
-				0FB7E6F314970EB300346FAE /* FilterOperation.cpp */,
-				5038BF2514750F190095E0D1 /* FilterOperation.h */,
-				5038BF2614750F190095E0D1 /* FilterOperations.cpp */,
-				5038BF2714750F190095E0D1 /* FilterOperations.h */,
 				BC5EBA0E0E823E4700B25965 /* KeyframeList.cpp */,
 				BC5EBA0F0E823E4700B25965 /* KeyframeList.h */,
 				AB31C91D10AE1B8E000C7B92 /* LineClampValue.h */,
@@ -24817,8 +24844,6 @@
 				3128CA6B147331630074C72A /* NotificationController.h in Headers */,
 				7AA51DD6148506A900AD2752 /* InspectorMemoryAgent.h in Headers */,
 				5038BF2814750F190095E0D1 /* CustomFilterOperation.h in Headers */,
-				5038BF2914750F190095E0D1 /* FilterOperation.h in Headers */,
-				5038BF2B14750F190095E0D1 /* FilterOperations.h in Headers */,
 				6E3FAD3914733F4000E42306 /* JSWebGLCompressedTextures.h in Headers */,
 				6E3FAE8F14733FDB00E42306 /* WebGLCompressedTextures.h in Headers */,
 				265541391489811C000DFC5D /* KeyEventCodesIOS.h in Headers */,
@@ -24828,6 +24853,11 @@
 				26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTileCacheLayer.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
+				49ECEB681499790D00CDD3A4 /* FECompositeArithmeticNEON.h in Headers */,
+				49ECEB6A1499790D00CDD3A4 /* FEGaussianBlurNEON.h in Headers */,
+				49ECEB6C1499790D00CDD3A4 /* FELightingNEON.h in Headers */,
+				49ECEB6E1499790D00CDD3A4 /* FilterOperation.h in Headers */,
+				49ECEB701499790D00CDD3A4 /* FilterOperations.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27700,7 +27730,6 @@
 				A10DC76A14747BAB005E2471 /* StyleGridData.cpp in Sources */,
 				3128CA68147331520074C72A /* NotificationController.cpp in Sources */,
 				7AA51DD5148506A900AD2752 /* InspectorMemoryAgent.cpp in Sources */,
-				5038BF2A14750F190095E0D1 /* FilterOperations.cpp in Sources */,
 				6E3FAD3814733F4000E42306 /* JSWebGLCompressedTextures.cpp in Sources */,
 				07E116B11489C9A100EC5ACE /* JSTextTrackCustom.cpp in Sources */,
 				07E117071489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp in Sources */,
@@ -27714,7 +27743,11 @@
 				8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */,
 				4306E4E614955543007F17AC /* KillRingNone.cpp in Sources */,
 				0F580FA41496939100FB5BD8 /* WebTileCacheLayer.mm in Sources */,
-				0FB7E6F414970EB300346FAE /* FilterOperation.cpp in Sources */,
+				49ECEB671499790D00CDD3A4 /* FECompositeArithmeticNEON.cpp in Sources */,
+				49ECEB691499790D00CDD3A4 /* FEGaussianBlurNEON.cpp in Sources */,
+				49ECEB6B1499790D00CDD3A4 /* FELightingNEON.cpp in Sources */,
+				49ECEB6D1499790D00CDD3A4 /* FilterOperation.cpp in Sources */,
+				49ECEB6F1499790D00CDD3A4 /* FilterOperations.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

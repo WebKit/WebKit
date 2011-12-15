@@ -2575,6 +2575,10 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/Filter.h \
 	Source/WebCore/platform/graphics/filters/FilterEffect.cpp \
 	Source/WebCore/platform/graphics/filters/FilterEffect.h \
+	Source/WebCore/platform/graphics/filters/FilterOperation.h \
+	Source/WebCore/platform/graphics/filters/FilterOperation.cpp \
+	Source/WebCore/platform/graphics/filters/FilterOperations.cpp \
+	Source/WebCore/platform/graphics/filters/FilterOperations.h \
 	Source/WebCore/platform/graphics/filters/LightSource.cpp \
 	Source/WebCore/platform/graphics/filters/LightSource.h \
 	Source/WebCore/platform/graphics/filters/PointLightSource.cpp \
@@ -3254,10 +3258,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/DataRef.h \
 	Source/WebCore/rendering/style/FillLayer.cpp \
 	Source/WebCore/rendering/style/FillLayer.h \
-	Source/WebCore/rendering/style/FilterOperation.h \
-	Source/WebCore/rendering/style/FilterOperation.cpp \
-	Source/WebCore/rendering/style/FilterOperations.cpp \
-	Source/WebCore/rendering/style/FilterOperations.h \
 	Source/WebCore/rendering/style/KeyframeList.cpp \
 	Source/WebCore/rendering/style/KeyframeList.h \
 	Source/WebCore/rendering/style/LineClampValue.h \

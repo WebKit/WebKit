@@ -29792,6 +29792,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\FilterOperation.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FilterOperation.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FilterOperations.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FilterOperations.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\LightSource.cpp"
 						>
 					</File>
@@ -42456,6 +42472,9 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\FilterOperations.h"
+					>
+				<File
+					RelativePath="..\rendering\style\CustomFilterOperation.h"
 					>
 				</File>
 				<File
