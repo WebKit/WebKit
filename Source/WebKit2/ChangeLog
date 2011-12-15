@@ -1,5 +1,20 @@
 2011-12-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [WK2] Eliminate unnecessary GTK/QT ifdefs for shared memory implementation
+        https://bugs.webkit.org/show_bug.cgi?id=74602
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        For shared memory Qt was using shm_open, Gtk was using files in /tmp. There
+        is no reason to obfuscate the code with #ifdefs or let Gtk use an inferior
+        method of opening shared memory. So this patch makes SharedMemoryUnix.cpp
+        truly Qt and Gtk independent.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::create):
+
+2011-12-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Cleanup: Remove unnecessary const_cast
 
         Reviewed by Kenneth Christiansen.
