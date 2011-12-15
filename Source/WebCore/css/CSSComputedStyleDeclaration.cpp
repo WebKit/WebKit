@@ -1401,14 +1401,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return cssValuePool->createValue(style->boxOrdinalGroup(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitBoxOrient:
             return cssValuePool->createValue(style->boxOrient());
-        case CSSPropertyWebkitBoxPack: {
-            EBoxAlignment boxPack = style->boxPack();
-            ASSERT(boxPack != BSTRETCH);
-            ASSERT(boxPack != BBASELINE);
-            if (boxPack == BJUSTIFY || boxPack== BBASELINE)
-                return 0;
-            return cssValuePool->createValue(boxPack);
-        }
+        case CSSPropertyWebkitBoxPack:
+            return cssValuePool->createValue(style->boxPack());
         case CSSPropertyWebkitBoxReflect:
             return valueForReflection(style->boxReflect(), style.get(), cssValuePool);
         case CSSPropertyBoxShadow:
