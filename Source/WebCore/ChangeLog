@@ -1,3 +1,21 @@
+2011-12-14  Tim Horton  <timothy_horton@apple.com>
+
+        Generated images should respect the accelerated state of the context they're going to be drawn into
+        https://bugs.webkit.org/show_bug.cgi?id=74577
+        <rdar://problem/10584392>
+
+        Reviewed by Simon Fraser.
+
+        The tiled code path for GeneratorGeneratedImage and CrossfadeGeneratedImage blindly creates
+        an unaccelerated ImageBuffer. Instead, take into account the accelerated state of the destination context.
+
+        No new tests, as this is a simple performance improvement.
+
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+
 2011-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: cleanup unused variable introduced at r102803

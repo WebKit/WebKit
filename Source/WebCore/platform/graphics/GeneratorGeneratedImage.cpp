@@ -54,7 +54,7 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* context, const FloatR
     m_generator->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 
     // Create a BitmapImage and call drawPattern on it.
-    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(adjustedSize);
+    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(adjustedSize, ColorSpaceDeviceRGB, context->isAcceleratedContext() ? Accelerated : Unaccelerated);
     if (!imageBuffer)
         return;
 
