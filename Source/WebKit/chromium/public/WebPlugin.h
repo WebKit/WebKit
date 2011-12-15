@@ -58,6 +58,11 @@ public:
 
     virtual NPObject* scriptableObject() = 0;
 
+    // Returns true if the form submission value is successfully obtained
+    // from the plugin. The value would be associated with the name attribute
+    // of the corresponding object element.
+    virtual bool getFormValue(WebString&) { return false; }
+
     virtual void paint(WebCanvas*, const WebRect&) = 0;
 
     // Coordinates are relative to the containing window.

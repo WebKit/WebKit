@@ -38,6 +38,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 struct NPObject;
 
@@ -69,6 +70,9 @@ public:
     {
         return adoptRef(new WebPluginContainerImpl(element, webPlugin));
     }
+
+    // PluginViewBase methods
+    virtual bool getFormValue(String&);
 
     // Widget methods
     virtual void setFrameRect(const WebCore::IntRect&);
