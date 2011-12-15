@@ -1,3 +1,32 @@
+2011-12-15  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r102663): generate-bindings.pl runs every time
+        https://bugs.webkit.org/show_bug.cgi?id=74481
+
+        Reviewed by Adam Barth.
+
+        See the comment #1 of bug 74481 for the cause of this bug.
+
+        This patch fixes generate-bindings.pl so that it generates .h and .cpp files
+        even for IDL files that do not need .h and .cpp files. This is just to prevent
+        build scripts from trying to generate .h and .cpp files at every build.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/generate-bindings.pl:
+        (generateEmptyHeaderAndCpp): Generates .h and .cpp files for IDL files
+        that do not need .h and .cpp files.
+        * bindings/scripts/test/CPP/CPPTestSupplemental.cpp: Added.
+        * bindings/scripts/test/CPP/CPPTestSupplemental.h: Added.
+        * bindings/scripts/test/GObject/GObjectTestSupplemental.cpp: Added.
+        * bindings/scripts/test/GObject/GObjectTestSupplemental.h: Added.
+        * bindings/scripts/test/JS/JSTestSupplemental.cpp: Added.
+        * bindings/scripts/test/JS/JSTestSupplemental.h: Added.
+        * bindings/scripts/test/ObjC/ObjCTestSupplemental.cpp: Added.
+        * bindings/scripts/test/ObjC/ObjCTestSupplemental.h: Added.
+        * bindings/scripts/test/V8/V8TestSupplemental.cpp: Added.
+        * bindings/scripts/test/V8/V8TestSupplemental.h: Added.
+
 2011-12-15  Jarred Nicholls  <jarred@sencha.com>
 
         Unreviewed build fix. Mac build broken when CSS Filters enabled.

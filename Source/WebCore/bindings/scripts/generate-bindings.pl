@@ -118,9 +118,8 @@ if ($supplementalDependencyFile) {
     }
 
     if (!$idlFound) {
-        if ($verbose) {
-            print "$targetIdlFile is supplementing another IDL file, and thus .h and .cpp for $targetIdlFile are not generated.\n";
-        }
+        # We generate empty .h and .cpp files just to tell build scripts that .h and .cpp files are created.
+        generateEmptyHeaderAndCpp($generator, $targetInterfaceName, $outputHeadersDirectory, $outputDirectory);
         exit 0;
     }
 }
@@ -238,3 +237,25 @@ foreach my $idlFile (@supplementedIdlFiles) {
 # Generate desired output for the target IDL file.
 my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory, $outputHeadersDirectory, 0, $preprocessor, $writeDependencies, $verbose);
 $codeGen->ProcessDocument($targetDocument, $defines);
+
+sub generateEmptyHeaderAndCpp
+{
+    my ($generator, $targetInterfaceName, $outputHeadersDirectory, $outputDirectory) = @_;
+
+    my $headerName = "${generator}${targetInterfaceName}.h";
+    my $cppName = "${generator}${targetInterfaceName}.cpp";
+    my $contents = "/*
+    This file is generated just to tell build scripts that $headerName and
+    $cppName are created for ${targetInterfaceName}.idl, and thus
+    prevent the build scripts from trying to generate $headerName and
+    $cppName at every build. This file must not be tried to compile.
+*/
+";
+    open FH, "> ${outputHeadersDirectory}/${headerName}" or die "Cannot open $headerName\n";
+    print FH $contents;
+    close FH;
+
+    open FH, "> ${outputDirectory}/${cppName}" or die "Cannot open $cppName\n";
+    print FH $contents;
+    close FH;
+}
