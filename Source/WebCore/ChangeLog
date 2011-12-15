@@ -1,3 +1,18 @@
+2011-12-15  Rakesh KN  <rakesh.kn@motorola.com>
+
+        "user-select none" causes selection to incorrectly escape from clicked container
+        https://bugs.webkit.org/show_bug.cgi?id=57289
+
+        Reviewed by Ryosuke Niwa.
+
+        Not selecting the nearest word from the target node if target node has -webkit-user-select:none
+
+        Test: fast/events/mouse-double-triple-click-should-not-select-next-node-for-user-select-none.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart):
+        If target node has webkit-user-select:none style then do not update the selection.
+
 2011-12-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: Generated HAR is missing pages.startedDateTime

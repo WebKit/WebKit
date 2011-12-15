@@ -292,6 +292,9 @@ static inline bool dispatchSelectStart(Node* node)
 
 bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& newSelection, TextGranularity granularity)
 {
+    if (Position::nodeIsUserSelectNone(targetNode))
+        return false;
+
     if (!dispatchSelectStart(targetNode))
         return false;
 
