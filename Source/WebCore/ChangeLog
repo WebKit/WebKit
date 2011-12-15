@@ -1,3 +1,10 @@
+2011-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch make_name.pl in an attempt to make Qt bots happy.
+
+        * dom/make_names.pl:
+        (printNamesHeaderFile):
+
 2011-12-15  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

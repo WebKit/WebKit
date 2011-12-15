@@ -576,7 +576,7 @@ sub printNamesHeaderFile
         print F "// Tags\n";
         printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%allTags);
     }
-    
+
     if (keys %allAttrs) {
         print F "// Attributes\n";
         printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%allAttrs);
