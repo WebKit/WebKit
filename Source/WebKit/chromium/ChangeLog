@@ -1,3 +1,18 @@
+2011-12-15  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Chromium] add support to inspector test suite to fetch test execution results from console
+        https://bugs.webkit.org/show_bug.cgi?id=74208
+
+        Reviewed by Yury Semikhatsky.
+
+        This adds waitForTestResultsInConsole, a test suite method that monitors console for a message containing
+        either PASS or FAIL and sets result accordingly. This is used by tests running in the extension context to
+        communicate test results to the test driver (see devtools_sanity_unittest.cc for an example).
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testWaitForResultsInConsole.onConsoleMessage):
+        (.TestSuite.prototype.testWaitForResultsInConsole):
+
 2011-12-15  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Enable TestNetscapePlugIn to link for Android

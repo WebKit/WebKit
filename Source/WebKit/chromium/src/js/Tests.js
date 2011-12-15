@@ -558,6 +558,31 @@ TestSuite.prototype.testPauseInSharedWorkerInitialization = function()
 };
 
 
+TestSuite.prototype.waitForTestResultsInConsole = function()
+{
+    var messages = WebInspector.console.messages;
+    for (var i = 0; i < messages.length; ++i) {
+        var text = messages[i].text;
+        if (text === "PASS")
+            return;
+        else if (/^FAIL/.test(text))
+            this.fail(text); // This will throw.
+    }
+    // Neitwer PASS nor FAIL, so wait for more messages.
+    function onConsoleMessage(event)
+    {
+        var text = event.data.text;
+        if (text === "PASS")
+            this.releaseControl();
+        else if (/^FAIL/.test(text))
+            this.fail(text);
+    }
+
+    WebInspector.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, onConsoleMessage, this);
+    this.takeControl();
+};
+
+
 /**
  * Serializes options collection to string.
  * @param {HTMLOptionsCollection} options
