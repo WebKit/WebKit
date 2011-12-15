@@ -35,7 +35,7 @@ class WebGamepad {
 public:
     static const size_t idLengthCap = 128;
     static const size_t axesLengthCap = 16;
-    static const size_t buttonsLengthCap = 16;
+    static const size_t buttonsLengthCap = 32;
 
     WebGamepad()
         : connected(false)

@@ -1,3 +1,12 @@
+2011-12-14  Scott Graham  <scottmg@chromium.org>
+
+        Increase maximum number of gamepad buttons in Chromium port interface
+        https://bugs.webkit.org/show_bug.cgi?id=74559
+
+        Reviewed by Darin Fisher.
+
+        * public/platform/WebGamepad.h:
+
 2011-12-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed, rolling out r102873.
