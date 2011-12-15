@@ -516,5 +516,9 @@ fast/canvas/webgl/canvas-2d-webgl-texture.html
 # Skipped as this is not a expected behaviour on mac.
 fast/forms/select/menulist-onchange-fired-with-key-up-down.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=73304
+# Tiemout. Needs ChromeClient::hasOpenedPopup() impelementation?
+fast/forms/select/menulist-popup-crash.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=74538
 fast/events/autoscroll-should-not-stop-on-keypress.html
