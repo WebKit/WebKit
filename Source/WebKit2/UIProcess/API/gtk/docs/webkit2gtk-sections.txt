@@ -72,6 +72,7 @@ webkit_web_view_go_to_back_forward_list_item
 webkit_web_view_get_uri
 webkit_web_view_set_settings
 webkit_web_view_get_settings
+webkit_web_view_get_window_properties
 
 <SUBSECTION Standard>
 WebKitWebViewClass
@@ -272,6 +273,32 @@ WEBKIT_URI_RESPONSE_GET_CLASS
 <SUBSECTION Private>
 WebKitURIResponsePrivate
 webkit_uri_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>WebKitWindowProperties</FILE>
+WebKitWindowProperties
+webkit_window_properties_get_geometry
+webkit_window_properties_get_toolbar_visible
+webkit_window_properties_get_statusbar_visible
+webkit_window_properties_get_scrollbars_visible
+webkit_window_properties_get_menubar_visible
+webkit_window_properties_get_locationbar_visible
+webkit_window_properties_get_resizable
+webkit_window_properties_get_fullscreen
+
+<SUBSECTION Standard>
+WebKitWindowPropertiesClass
+WEBKIT_TYPE_WINDOW_PROPERTIES
+WEBKIT_WINDOW_PROPERTIES
+WEBKIT_IS_WINDOW_PROPERTIES
+WEBKIT_WINDOW_PROPERTIES_CLASS
+WEBKIT_IS_WINDOW_PROPERTIES_CLASS
+WEBKIT_WINDOW_PROPERTIES_GET_CLASS
+
+<SUBSECTION Private>
+WebKitWindowPropertiesPrivate
+webkit_window_properties_get_type
 </SECTION>
 
 <SECTION>

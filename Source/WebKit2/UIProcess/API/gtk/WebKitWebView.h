@@ -35,6 +35,7 @@
 #include <webkit2/WebKitSettings.h>
 #include <webkit2/WebKitURIRequest.h>
 #include <webkit2/WebKitWebViewBase.h>
+#include <webkit2/WebKitWindowProperties.h>
 
 G_BEGIN_DECLS
 
@@ -172,6 +173,9 @@ webkit_web_view_set_settings                 (WebKitWebView             *web_vie
 
 WEBKIT_API WebKitSettings *
 webkit_web_view_get_settings                 (WebKitWebView             *web_view);
+
+WEBKIT_API WebKitWindowProperties *
+webkit_web_view_get_window_properties        (WebKitWebView             *web_view);
 
 G_END_DECLS
 

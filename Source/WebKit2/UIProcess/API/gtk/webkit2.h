@@ -35,6 +35,7 @@
 #include <webkit2/WebKitWebLoaderClient.h>
 #include <webkit2/WebKitWebViewBase.h>
 #include <webkit2/WebKitWebView.h>
+#include <webkit2/WebKitWindowProperties.h>
 
 #undef __WEBKIT2_H_INSIDE__
 

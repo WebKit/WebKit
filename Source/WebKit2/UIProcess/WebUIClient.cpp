@@ -64,6 +64,7 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const Re
     map.set("menuBarVisible", WebBoolean::create(windowFeatures.menuBarVisible));
     map.set("statusBarVisible", WebBoolean::create(windowFeatures.statusBarVisible));
     map.set("toolBarVisible", WebBoolean::create(windowFeatures.toolBarVisible));
+    map.set("locationBarVisible", WebBoolean::create(windowFeatures.locationBarVisible));
     map.set("scrollbarsVisible", WebBoolean::create(windowFeatures.scrollbarsVisible));
     map.set("resizable", WebBoolean::create(windowFeatures.resizable));
     map.set("fullscreen", WebBoolean::create(windowFeatures.fullscreen));

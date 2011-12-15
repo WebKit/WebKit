@@ -21,6 +21,7 @@
 #include "WebKitUIClient.h"
 
 #include "WebKitWebViewPrivate.h"
+#include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
 #include <WebKit2/WKBase.h>
 
@@ -28,9 +29,9 @@ using namespace WebKit;
 
 G_DEFINE_TYPE(WebKitUIClient, webkit_ui_client, G_TYPE_OBJECT)
 
-static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
+static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void*)
 {
-    return webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    return webkitWebViewCreateNewPage(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()), wkWindowFeatures);
 }
 
 static void showPage(WKPageRef page, const void*)
@@ -59,6 +60,72 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
                                             toImpl(defaultValue)->string().utf8());
 }
 
+static bool toolbarsAreVisible(WKPageRef page, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    return webkit_window_properties_get_toolbar_visible(windowProperties);
+}
+
+static void setToolbarsAreVisible(WKPageRef page, bool toolbarsVisible, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWindowPropertiesSetToolbarVisible(windowProperties, toolbarsVisible);
+}
+
+static bool menuBarIsVisible(WKPageRef page, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    return webkit_window_properties_get_menubar_visible(windowProperties);
+}
+
+static void setMenuBarIsVisible(WKPageRef page, bool menuBarVisible, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWindowPropertiesSetMenubarVisible(windowProperties, menuBarVisible);
+}
+
+static bool statusBarIsVisible(WKPageRef page, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    return webkit_window_properties_get_statusbar_visible(windowProperties);
+}
+
+static void setStatusBarIsVisible(WKPageRef page, bool statusBarVisible, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWindowPropertiesSetStatusbarVisible(windowProperties, statusBarVisible);
+}
+
+static bool isResizable(WKPageRef page, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    return webkit_window_properties_get_resizable(windowProperties);
+}
+
+static void setIsResizable(WKPageRef page, bool resizable, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    webkitWindowPropertiesSetResizable(windowProperties, resizable);
+}
+
+static WKRect getWindowFrame(WKPageRef page, const void*)
+{
+    GdkRectangle geometry = { 0, 0, 0, 0 };
+    GtkWidget* window = gtk_widget_get_toplevel(toImpl(page)->viewWidget());
+    if (gtk_widget_is_toplevel(window)) {
+        gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
+        gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
+    }
+    return WKRectMake(geometry.x, geometry.y, geometry.width, geometry.height);
+}
+
+static void setWindowFrame(WKPageRef page, WKRect frame, const void*)
+{
+    WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(toImpl(page)->viewWidget()));
+    GdkRectangle geometry = { frame.origin.x, frame.origin.y, frame.size.width, frame.size.height };
+    webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
+}
+
 void webkitUIClientAttachUIClientToPage(WebKitUIClient* uiClient, WKPageRef wkPage)
 {
     WKPageUIClient wkUIClient = {
@@ -78,16 +145,16 @@ void webkitUIClientAttachUIClientToPage(WebKitUIClient* uiClient, WKPageRef wkPa
         0, // missingPluginButtonClicked
         0, // didNotHandleKeyEvent
         0, // didNotHandleWheelEvent
-        0, // toolbarsAreVisible
-        0, // setToolbarsAreVisible
-        0, // menuBarIsVisible
-        0, // setMenuBarIsVisible
-        0, // statusBarIsVisible
-        0, // setStatusBarIsVisible
-        0, // isResizable
-        0, // setIsResizable
-        0, // getWindowFrame
-        0, // setWindowFrame
+        toolbarsAreVisible,
+        setToolbarsAreVisible,
+        menuBarIsVisible,
+        setMenuBarIsVisible,
+        statusBarIsVisible,
+        setStatusBarIsVisible,
+        isResizable,
+        setIsResizable,
+        getWindowFrame,
+        setWindowFrame,
         0, // runBeforeUnloadConfirmPanel
         0, // didDraw
         0, // pageDidScroll

@@ -19,7 +19,9 @@
 
 #include "config.h"
 #include "WebViewTest.h"
+#include <wtf/HashSet.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/StringHash.h>
 
 static void testWebViewDefaultContext(WebViewTest* test, gconstpointer)
 {
@@ -96,6 +98,78 @@ public:
         Prompt
     };
 
+    class WindowProperties {
+    public:
+        WindowProperties()
+            : m_toolbarVisible(true)
+            , m_statusbarVisible(true)
+            , m_scrollbarsVisible(true)
+            , m_menubarVisible(true)
+            , m_locationbarVisible(true)
+            , m_resizable(true)
+            , m_fullscreen(false)
+        {
+            memset(&m_geometry, 0, sizeof(GdkRectangle));
+        }
+
+        WindowProperties(WebKitWindowProperties* windowProperties)
+            : m_toolbarVisible(webkit_window_properties_get_toolbar_visible(windowProperties))
+            , m_statusbarVisible(webkit_window_properties_get_statusbar_visible(windowProperties))
+            , m_scrollbarsVisible(webkit_window_properties_get_scrollbars_visible(windowProperties))
+            , m_menubarVisible(webkit_window_properties_get_menubar_visible(windowProperties))
+            , m_locationbarVisible(webkit_window_properties_get_locationbar_visible(windowProperties))
+            , m_resizable(webkit_window_properties_get_resizable(windowProperties))
+            , m_fullscreen(webkit_window_properties_get_fullscreen(windowProperties))
+        {
+            webkit_window_properties_get_geometry(windowProperties, &m_geometry);
+        }
+
+        WindowProperties(GdkRectangle* geometry, bool toolbarVisible, bool statusbarVisible, bool scrollbarsVisible, bool menubarVisible,
+                         bool locationbarVisible, bool resizable, bool fullscreen)
+            : m_geometry(*geometry)
+            , m_toolbarVisible(toolbarVisible)
+            , m_statusbarVisible(statusbarVisible)
+            , m_scrollbarsVisible(scrollbarsVisible)
+            , m_menubarVisible(menubarVisible)
+            , m_locationbarVisible(locationbarVisible)
+            , m_resizable(resizable)
+            , m_fullscreen(fullscreen)
+        {
+        }
+
+        bool operator==(const WindowProperties& other) const
+        {
+            return m_geometry.x == other.m_geometry.x
+                && m_geometry.y == other.m_geometry.y
+                && m_geometry.width == other.m_geometry.width
+                && m_geometry.height == other.m_geometry.height
+                && m_toolbarVisible == other.m_toolbarVisible
+                && m_statusbarVisible == other.m_statusbarVisible
+                && m_scrollbarsVisible == other.m_scrollbarsVisible
+                && m_menubarVisible == other.m_menubarVisible
+                && m_locationbarVisible == other.m_locationbarVisible
+                && m_resizable == other.m_resizable
+                && m_fullscreen == other.m_fullscreen;
+        }
+
+    private:
+        GdkRectangle m_geometry;
+
+        bool m_toolbarVisible;
+        bool m_statusbarVisible;
+        bool m_scrollbarsVisible;
+        bool m_menubarVisible;
+        bool m_locationbarVisible;
+
+        bool m_resizable;
+        bool m_fullscreen;
+    };
+
+    static void windowPropertiesNotifyCallback(GObject*, GParamSpec* paramSpec, UIClientTest* test)
+    {
+        test->m_windowPropertiesChanged.add(g_param_spec_get_name(paramSpec));
+    }
+
     static void viewClose(WebKitWebView* webView, UIClientTest* test)
     {
         g_assert(webView != test->m_webView);
@@ -110,6 +184,10 @@ public:
     {
         g_assert(webView != test->m_webView);
 
+        WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(webView);
+        g_assert(windowProperties);
+        g_assert(WindowProperties(windowProperties) == test->m_windowProperties);
+
         test->m_webViewEvents.append(ReadyToShow);
     }
 
@@ -121,6 +199,12 @@ public:
         g_object_ref_sink(newWebView);
 
         test->m_webViewEvents.append(Create);
+
+        WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(newWebView));
+        g_assert(windowProperties);
+        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(windowProperties));
+        test->m_windowPropertiesChanged.clear();
+        g_signal_connect(windowProperties, "notify", G_CALLBACK(windowPropertiesNotifyCallback), test);
 
         g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShow), test);
         g_signal_connect(newWebView, "close", G_CALLBACK(viewClose), test);
@@ -190,9 +274,16 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    void setExpectedWindowProperties(const WindowProperties& windowProperties)
+    {
+        m_windowProperties = windowProperties;
+    }
+
     Vector<WebViewEvents> m_webViewEvents;
     ScriptType m_scriptType;
     bool m_scriptDialogConfirmed;
+    WindowProperties m_windowProperties;
+    HashSet<WTF::String> m_windowPropertiesChanged;
 };
 
 static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
@@ -233,6 +324,29 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     test->waitUntilMainLoopFinishes();
 }
 
+static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
+{
+    static const char* windowProrpertiesString = "left=100,top=150,width=800,height=600,location=no,menubar=no,status=no,toolbar=no,scrollbars=no";
+    GdkRectangle geometry = { 100, 150, 800, 600 };
+    test->setExpectedWindowProperties(UIClientTest::WindowProperties(&geometry, false, false, false, false, false, true, false));
+
+    GOwnPtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowProrpertiesString));
+    test->loadHtml(htmlString.get(), 0);
+    test->waitUntilMainLoopFinishes();
+
+    static const char* propertiesChanged[] = {
+        "geometry", "locationbar-visible", "menubar-visible", "statusbar-visible", "toolbar-visible", "scrollbars-visible"
+    };
+    for (size_t i = 0; i < G_N_ELEMENTS(propertiesChanged); ++i)
+        g_assert(test->m_windowPropertiesChanged.contains(propertiesChanged[i]));
+
+    Vector<UIClientTest::WebViewEvents>& events = test->m_webViewEvents;
+    g_assert_cmpint(events.size(), ==, 3);
+    g_assert_cmpint(events[0], ==, UIClientTest::Create);
+    g_assert_cmpint(events[1], ==, UIClientTest::ReadyToShow);
+    g_assert_cmpint(events[2], ==, UIClientTest::Close);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -241,6 +355,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
+    UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
 }
 
 void afterAll()

@@ -30,6 +30,7 @@
 #include "WebKitWebLoaderClientPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include "WebKitWindowPropertiesPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/DragIcon.h>
@@ -75,6 +76,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitUIClient> uiClient;
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
+    GRefPtr<WebKitWindowProperties> windowProperties;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -206,6 +208,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
     WebKitWebViewPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webView, WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate);
     webView->priv = priv;
     new (priv) WebKitWebViewPrivate();
+
+    webView->priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 }
 
 static gboolean webkitWebViewAccumulatorObjectHandled(GSignalInvocationHint*, GValue* returnValue, const GValue* handlerReturn, gpointer)
@@ -323,7 +327,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * when it should be displayed to the user. When this signal is emitted
      * all the information about how the window should look, including
      * size, position, whether the location, status and scrollbars
-     * should be displayed, is already set.
+     * should be displayed, is already set on the #WebKitWindowProperties
+     * of @web_view. See also webkit_web_view_get_window_properties().
      */
     signals[READY_TO_SHOW] =
         g_signal_new("ready-to-show",
@@ -458,12 +463,14 @@ void webkitWebViewUpdateURI(WebKitWebView* webView)
     g_object_notify(G_OBJECT(webView), "uri");
 }
 
-WKPageRef webkitWebViewCreateNewPage(WebKitWebView* webView)
+WKPageRef webkitWebViewCreateNewPage(WebKitWebView* webView, WKDictionaryRef wkWindowFeatures)
 {
     WebKitWebView* newWebView;
     g_signal_emit(webView, signals[CREATE], 0, &newWebView);
     if (!newWebView)
         return 0;
+
+    webkitWindowPropertiesUpdateFromWKWindowFeatures(newWebView->priv->windowProperties.get(), wkWindowFeatures);
 
     return static_cast<WKPageRef>(WKRetain(toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(newWebView)))));
 }
@@ -1024,4 +1031,20 @@ WebKitSettings* webkit_web_view_get_settings(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     return webView->priv->settings.get();
+}
+
+/**
+ * webkit_web_view_get_window_properties:
+ * @web_view: a #WebKitWebView
+ *
+ * Get the #WebKitWindowProperties object containing the properties
+ * that the window containing @web_view should have.
+ *
+ * Returns: (transfer none): the #WebKitWindowProperties of @web_view
+ */
+WebKitWindowProperties* webkit_web_view_get_window_properties(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    return webView->priv->windowProperties.get();
 }

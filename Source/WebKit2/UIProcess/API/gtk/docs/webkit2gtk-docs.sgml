@@ -20,6 +20,7 @@
     <xi:include href="xml/WebKitSettings.xml"/>
     <xi:include href="xml/WebKitURIRequest.xml"/>
     <xi:include href="xml/WebKitURIResponse.xml"/>
+    <xi:include href="xml/WebKitWindowProperties.xml"/>
     <xi:include href="xml/WebKitError.xml"/>
   </chapter>
 

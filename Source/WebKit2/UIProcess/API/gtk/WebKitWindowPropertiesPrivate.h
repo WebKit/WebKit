@@ -24,21 +24,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewPrivate_h
-#define WebKitWebViewPrivate_h
+#ifndef WebKitWindowPropertiesPrivate_h
+#define WebKitWindowPropertiesPrivate_h
 
-#include "WebKitWebView.h"
-#include <WebKit2/WebKit2.h>
-#include <wtf/text/CString.h>
+#include "WebKitWindowProperties.h"
+#include <WebKit2/WKBase.h>
 
-void webkitWebViewSetEstimatedLoadProgress(WebKitWebView*, double estimatedLoadProgress);
-void webkitWebViewSetTitle(WebKitWebView*, const CString&);
-void webkitWebViewUpdateURI(WebKitWebView*);
-WKPageRef webkitWebViewCreateNewPage(WebKitWebView*, WKDictionaryRef wkWindowFeatures);
-void webkitWebViewReadyToShowPage(WebKitWebView*);
-void webkitWebViewClosePage(WebKitWebView*);
-void webkitWebViewRunJavaScriptAlert(WebKitWebView*, const CString& message);
-bool webkitWebViewRunJavaScriptConfirm(WebKitWebView*, const CString& message);
-WKStringRef webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message, const CString& defaultText);
+WebKitWindowProperties* webkitWindowPropertiesCreate();
+void webkitWindowPropertiesUpdateFromWKWindowFeatures(WebKitWindowProperties*, WKDictionaryRef wkFeatures);
+void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, GdkRectangle*);
+void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties*, bool toolbarsVisible);
+void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties*, bool menuBarVisible);
+void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties*, bool statusBarVisible);
+void webkitWindowPropertiesSetScrollbarsVisible(WebKitWindowProperties*, bool scrollBarsVisible);
+void webkitWindowPropertiesSetResizable(WebKitWindowProperties*, bool resizable);
+void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties*, bool fullscreen);
 
-#endif // WebKitWebViewPrivate_h
+#endif // WebKitWindowPropertiesPrivate_h

@@ -1,3 +1,86 @@
+2011-12-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWindowProperties to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=74595
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (createNewPage): Pass the dictionary containing the window
+        features to webkitWebViewCreateNewPage().
+        (toolbarsAreVisible): Return
+        WebKitWindowProperties:toolbar-visible.
+        (setToolbarsAreVisible): Set
+        WebKitWindowProperties:toolbar-visible.
+        (menuBarIsVisible): Return WebKitWindowProperties:menu-visible.
+        (setMenuBarIsVisible): Set WebKitWindowProperties:menu-visible.
+        (statusBarIsVisible): Return
+        WebKitWindowProperties:status-visible.
+        (setStatusBarIsVisible): Set
+        WebKitWindowProperties:status-visible.
+        (isResizable): Return WebKitWindowProperties:resizable.
+        (setIsResizable): Set WebKitWindowProperties:resizable.
+        (getWindowFrame): Return WebKitWindowProperties:geometry.
+        (setWindowFrame): Set WebKitWindowProperties:geometry.
+        (webkitUIClientAttachUIClientToPage): Initialize the UI client for
+        the given page.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_init): Create a WebKitWindowProperties object for
+        the view.
+        (webkit_web_view_class_init):
+        (webkitWebViewCreateNewPage): Update the WebKitWindowProperties
+        object using the window features dictionary.
+        (webkit_web_view_get_window_properties): Return the
+        WebKitWindowProperties object of the view.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp: Added.
+        (webkitWindowPropertiesFinalize):
+        (webkitWindowPropertiesGetProperty):
+        (webkitWindowPropertiesSetProperty):
+        (webkit_window_properties_class_init):
+        (webkit_window_properties_init):
+        (webkitWindowPropertiesCreate): Create a new
+        WebKitWindowProperties object.
+        (webkitWindowPropertiesSetGeometry):
+        (webkitWindowPropertiesSetToolbarVisible):
+        (webkitWindowPropertiesSetMenubarVisible):
+        (webkitWindowPropertiesSetStatusbarVisible):
+        (webkitWindowPropertiesSetLocationbarVisible):
+        (webkitWindowPropertiesSetScrollbarsVisible):
+        (webkitWindowPropertiesSetResizable):
+        (webkitWindowPropertiesSetFullscreen):
+        (webkitWindowPropertiesUpdateFromWKWindowFeatures): Parse the
+        window features dictionary and update the WebKitWindowProperties
+        object accordingly.
+        (webkit_window_properties_get_geometry):
+        (webkit_window_properties_get_toolbar_visible):
+        (webkit_window_properties_get_statusbar_visible):
+        (webkit_window_properties_get_scrollbars_visible):
+        (webkit_window_properties_get_menubar_visible):
+        (webkit_window_properties_get_locationbar_visible):
+        (webkit_window_properties_get_resizable):
+        (webkit_window_properties_get_fullscreen):
+        * UIProcess/API/gtk/WebKitWindowProperties.h: Added.
+        * UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h: Copied from Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for
+        WebKitWindowProperties.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_window_properties_get_type.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (WindowProperties::windowPropertiesNotifyCallback):
+        (WindowProperties::viewReadyToShow):
+        (WindowProperties::viewCreate):
+        (WindowProperties::setExpectedWindowProperties):
+        (testWebViewWindowProperties):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitWindowProperties.h.
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::createNewPage): Add also "locationBarVisible"
+        to the window features dictionary.
+
 2011-12-15  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Remove QtWebPageProxy
