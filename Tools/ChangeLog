@@ -1,3 +1,24 @@
+2011-12-14  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r102761.
+        http://trac.webkit.org/changeset/102761
+        https://bugs.webkit.org/show_bug.cgi?id=74485
+
+        we came up with a better fix than this (see comments in bug
+        74485)
+
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists):
+        (printDiff):
+        (diffCommand):
+        (statusCommand):
+        (createPatchCommand):
+        (generateFileList):
+        (isAddedStatus):
+        (isConflictStatus):
+        (statusDescription):
+        (extractLineRange):
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Work around a bug in the MSVC2005 compiler
