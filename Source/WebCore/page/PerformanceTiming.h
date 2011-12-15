@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class DocumentLoadTiming;
+struct DocumentLoadTiming;
 class DocumentLoader;
 struct DocumentTiming;
 class Frame;
