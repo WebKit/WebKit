@@ -1,3 +1,11 @@
+2011-12-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: cleanup unused variable introduced at r102803
+
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.enableResourceTracking):
+        (WebInspector.NetworkManager.prototype.disableResourceTracking):
+
 2011-12-14  Wei James  <james.wei@intel.com>
 
         fast path to accelerate processing in AudioBus::processWithGainFromMonoStereo

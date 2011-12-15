@@ -40,7 +40,6 @@ WebInspector.NetworkManager = function()
         NetworkAgent.setCacheDisabled(true);
 
     NetworkAgent.enable();
-    this._resourceTracking = true;
 
     WebInspector.settings.cacheDisabled.addChangeListener(this._cacheDisabledSettingChanged, this);
 
@@ -78,24 +77,14 @@ WebInspector.NetworkManager.prototype = {
 
     enableResourceTracking: function()
     {
-        function networkAgentEnabled()
-        {
-            this._resourceTracking = true;
-            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled);
-        }
-
-        NetworkAgent.enable(networkAgentEnabled.bind(this));
+        var networkAgentEnabled = this.dispatchEventToListeners.bind(this, WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled);
+        NetworkAgent.enable(networkAgentEnabled);
     },
 
     disableResourceTracking: function()
     {
-        function networkAgentDisabled()
-        {
-            this._resourceTracking = false;
-            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingDisabled);
-        }
-
-        NetworkAgent.disable(networkAgentDisabled.bind(this));
+        var networkAgentDisabled = this.dispatchEventToListeners.bind(this, WebInspector.NetworkManager.EventTypes.ResourceTrackingDisabled);
+        NetworkAgent.disable(networkAgentDisabled);
     },
 
     inflightResourceForURL: function(url)
