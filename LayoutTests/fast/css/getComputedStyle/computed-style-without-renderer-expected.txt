@@ -144,9 +144,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-flex-order: 0
     -webkit-flex-pack: start
     -webkit-flex-align: stretch
-    -webkit-flex-direction: row
     -webkit-flex-flow: row nowrap
-    -webkit-flex-wrap: nowrap
     -webkit-font-smoothing: auto
     -webkit-highlight: none
     -webkit-hyphenate-character: auto
@@ -268,7 +266,7 @@ After changing grandparent's 'color' and the parent's 'font-size' inherited prop
 
 After changing the parent's 'display' property to 'block', so that the child gets a renderer:
     height: 100px
-    margin-left: 385px
+    margin-left: 384px
     width: 384px
 
 After changing the parent's 'display' property back to 'none':
