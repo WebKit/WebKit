@@ -1,3 +1,19 @@
+2011-12-15  Martin Robinson  <mrobinson@igalia.com>
+
+        plugin crash
+
+        [GTK] Plugins sometimes crash WebKitGTK+ with Gdk-CRITICAL **: gdk_window_get_toplevel: assertion `GDK_IS_WINDOW (window)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=73719
+
+        Reviewed by Philippe Normand.
+
+        No new tests. It's difficult to test or reproduce this exact situation
+        as it only occurs when running plugins under nspluginwrapper.
+
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::platformGetValue): Properly handle when the plugin tries to
+        get the window value when the GtkSocket is no longer realized.
+
 2011-12-15  Martin Kosiba  <mkosiba@google.com>
 
         Fix find on web pages with -webkit-user-select: none for Chromium
