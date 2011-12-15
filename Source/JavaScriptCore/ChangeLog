@@ -1,5 +1,16 @@
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
+        Add ScrollingCoordinator class and ENABLE_THREADED_SCROLLING define
+        https://bugs.webkit.org/show_bug.cgi?id=74639
+
+        Reviewed by Andreas Kling.
+
+        Add ENABLE_THREADED_SCROLLING #define.
+
+        * wtf/Platform.h:
+
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
         EventDispatcher should handle wheel events on the connection queue
         https://bugs.webkit.org/show_bug.cgi?id=74627
 

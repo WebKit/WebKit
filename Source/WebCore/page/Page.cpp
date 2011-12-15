@@ -86,6 +86,10 @@
 #include "UserMediaClient.h"
 #endif
 
+#if ENABLE(THREADED_SCROLLING)
+#include "ScrollingCoordinator.h"
+#endif
+
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
@@ -147,6 +151,9 @@ Page::Page(PageClients& pageClients)
 #endif
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClient(pageClients.userMediaClient)
+#endif
+#if ENABLE(THREADED_SCROLLING)
+    , m_scrollingCoordinator(ScrollingCoordinator::create(this))
 #endif
     , m_settings(adoptPtr(new Settings(this)))
     , m_progress(adoptPtr(new ProgressTracker))
@@ -217,6 +224,10 @@ Page::~Page()
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaClient)
         m_userMediaClient->pageDestroyed();
+#endif
+
+#if ENABLE(THREADED_SCROLLING)
+    m_scrollingCoordinator->pageDestroyed();
 #endif
 
     backForward()->close();

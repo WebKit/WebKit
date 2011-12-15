@@ -1,3 +1,26 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Add ScrollingCoordinator class and ENABLE_THREADED_SCROLLING define
+        https://bugs.webkit.org/show_bug.cgi?id=74639
+
+        Reviewed by Andreas Kling.
+
+        Add a ScrollingCoordinator class and make it a member of Page. Tear it down
+        when the page goes away.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        * page/Page.h:
+        (WebCore::Page::scrollingCoordinator):
+        * page/ScrollingCoordinator.cpp: Added.
+        (WebCore::ScrollingCoordinator::create):
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::~ScrollingCoordinator):
+        (WebCore::ScrollingCoordinator::pageDestroyed):
+        * page/ScrollingCoordinator.h: Added.
+
 2011-12-15  Kenneth Russell  <kbr@google.com>
 
         Rename WEBKIT_lose_context to WEBKIT_WEBGL_lose_context

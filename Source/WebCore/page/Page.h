@@ -81,6 +81,7 @@ namespace WebCore {
     class RenderTheme;
     class VisibleSelection;
     class ScrollableArea;
+    class ScrollingCoordinator;
     class Settings;
     class SpeechInput;
     class SpeechInputClient;
@@ -194,6 +195,9 @@ namespace WebCore {
 #endif
 #if ENABLE(MEDIA_STREAM)
         UserMediaClient* userMediaClient() const { return m_userMediaClient; }
+#endif
+#if ENABLE(THREADED_SCROLLING)
+        ScrollingCoordinator* scrollingCoordinator() const { return m_scrollingCoordinator.get(); }
 #endif
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
@@ -387,6 +391,9 @@ namespace WebCore {
 #endif
 #if ENABLE(MEDIA_STREAM)
         UserMediaClient* m_userMediaClient;
+#endif
+#if ENABLE(THREADED_SCROLLING)
+        RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 #endif
         OwnPtr<Settings> m_settings;
         OwnPtr<ProgressTracker> m_progress;

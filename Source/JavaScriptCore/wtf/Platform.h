@@ -1062,6 +1062,10 @@
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) && !defined(BUILDING_ON_LION)
+#define ENABLE_THREADED_SCROLLING 1
+#endif
+
 /* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
