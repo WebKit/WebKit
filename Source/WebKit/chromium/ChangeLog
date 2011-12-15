@@ -1,3 +1,38 @@
+2011-12-14  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Fix CCLayerTreeHostTest shutdown race
+        https://bugs.webkit.org/show_bug.cgi?id=73926
+
+        This patch fixes a shutdown race condition in CCLayerTreeHostTest which
+        may happen if endTest() is called from within the drawLayersOnCCThread()
+        test hook. The sequence of events leading to the problem is:
+
+          1. CCThreadProxy::scheduledActionDrawAndSwap() is called when a frame
+             begins.
+          2. CCThreadProxy calls drawLayersOnCCThread(), which in turn calls
+             endTest().
+          3. Seeing it's not running in the main thread, endTest() posts a task
+             calling itself in the main thread.
+          4. CCThreadProxy posts a task for calling didCommitAndDrawFrame() in
+             the main thread.
+
+        The race is between the task posted in step #3 and the CC thread running
+        in scheduledActionDrawAndSwap(). If the endTask() task is scheduled
+        before the CC thread reaches step #4, it drains the pending message
+        queue (CCLayerTreeHostTest.cpp:369) before the task in step #4 is
+        posted.
+
+        The result is that the didCommitAndDrawFrame() task is executed after
+        the test fixture has been torn down, causing a read of unallocated
+        memory in CCScopedThreadProxy::runTaskIfNotShutdown (as m_targetThread
+        is no longer valid).
+
+        The fix is check m_shutdown before touching m_targetThread in
+        CCScopedThreadProxy. That is, events will still be queued after shutdown
+        but they will not be processed.
+
+        Reviewed by James Robinson.
+
 2011-12-14  Jonathan Backer  <backer@chromium.org>
 
         [chromium] Plumb through flag for enabling partial swap

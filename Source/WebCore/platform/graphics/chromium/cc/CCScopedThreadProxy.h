@@ -71,10 +71,15 @@ private:
 
     void runTaskIfNotShutdown(PassOwnPtr<CCThread::Task> popTask)
     {
-        ASSERT(currentThread() == m_targetThread->threadID());
         OwnPtr<CCThread::Task> task = popTask;
-        if (!m_shutdown)
-            task->performTask();
+        // If our shutdown flag is set, it's possible that m_targetThread has already been destroyed so don't
+        // touch it.
+        if (m_shutdown) {
+            deref();
+            return;
+        }
+        ASSERT(currentThread() == m_targetThread->threadID());
+        task->performTask();
         deref();
     }
 
