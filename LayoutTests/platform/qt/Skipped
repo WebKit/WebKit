@@ -2532,11 +2532,6 @@ plugins/netscape-plugin-page-cache-works.html
 # https://bugs.webkit.org/show_bug.cgi?id=74411
 html5lib/runner.html
 
-# http://trac.webkit.org/changeset/102919 broke them
-# https://bugs.webkit.org/show_bug.cgi?id=74521
-http/tests/inspector/console-resource-errors.html
-http/tests/inspector/console-xhr-logging.html
-
 # REGRESSION(r102829): It made fast/images/move-image-to-new-document.html timeout
 # https://bugs.webkit.org/show_bug.cgi?id=74607
 fast/images/move-image-to-new-document.html

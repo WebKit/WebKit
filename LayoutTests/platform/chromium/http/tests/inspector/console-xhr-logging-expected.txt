@@ -11,17 +11,17 @@ CONSOLE MESSAGE: line 1: XMLHttpRequest cannot load http://localhost:8000/inspec
 Tests that XMLHttpRequest Logging works when Enabled and doesn't show logs when Disabled.
 
 console-xhr-logging.html:10sending a GET request to resources/xhr-exists.html
-XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-exists.html".
+network-test.js:39XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-exists.html".
 console-xhr-logging.html:10sending a GET request to resources/xhr-does-not-exist.html
-resources/xhr-does-not-exist.html:1GET http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html 404 (Not Found)
-XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html".
+network-test.js:39GET http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html 404 (Not Found)
+network-test.js:39XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html".
 console-xhr-logging.html:10sending a POST request to resources/post-target.cgi
-XHR finished loading: "http://127.0.0.1:8000/inspector/resources/post-target.cgi".
+network-test.js:39XHR finished loading: "http://127.0.0.1:8000/inspector/resources/post-target.cgi".
 console-xhr-logging.html:10sending a GET request to http://localhost:8000/inspector/resources/xhr-exists.html
 XMLHttpRequest cannot load http://localhost:8000/inspector/resources/xhr-exists.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 console-xhr-logging.html:10sending a GET request to resources/xhr-exists.html
 console-xhr-logging.html:10sending a GET request to resources/xhr-does-not-exist.html
-resources/xhr-does-not-exist.html:1GET http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html 404 (Not Found)
+network-test.js:39GET http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html 404 (Not Found)
 console-xhr-logging.html:10sending a POST request to resources/post-target.cgi
 console-xhr-logging.html:10sending a GET request to http://localhost:8000/inspector/resources/xhr-exists.html
 XMLHttpRequest cannot load http://localhost:8000/inspector/resources/xhr-exists.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
