@@ -785,7 +785,7 @@ QString QQuickWebView::title() const
 
 QWebPreferences* QQuickWebView::preferences() const
 {
-    QQuickWebViewPrivate* d = const_cast<QQuickWebViewPrivate*>(d_ptr.data());
+    QQuickWebViewPrivate* const d = d_ptr.data();
     if (!d->preferences)
         d->preferences = adoptPtr(QWebPreferencesPrivate::createPreferences(d));
     return d->preferences.get();

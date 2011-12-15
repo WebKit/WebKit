@@ -1,3 +1,12 @@
+2011-12-15  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Cleanup: Remove unnecessary const_cast
+
+        Reviewed by Kenneth Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebView::preferences):
+
 2011-12-15  Michael Brüning  <michael.bruning@nokia.com>
 
         [QT][WK2]Add (experimental) viewport info view to Minibrowser/qt.
