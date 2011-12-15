@@ -7,9 +7,11 @@ echo XX%PROJECTNAME%XX > "%CONFIGURATIONBUILDDIR%\buildfailed"
 
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders"
+mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders\runtime"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
 
 xcopy /y /d "%PROJECTDIR%\..\ForwardingHeaders\wtf\*.h" "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
+xcopy /y /d "%PROJECTDIR%\..\ForwardingHeaders\runtime\*.h" "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders\runtime"
 
 if "%CONFIGURATIONNAME%"=="Debug_Cairo_CFLite" xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\MD5.h" "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"
 if "%CONFIGURATIONNAME%"=="Release_Cairo_CFLite" xcopy /y /d "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\MD5.h" "%CONFIGURATIONBUILDDIR%\include\DumpRenderTree\ForwardingHeaders\wtf"

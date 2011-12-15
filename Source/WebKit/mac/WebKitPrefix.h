@@ -71,23 +71,14 @@ typedef float CGFloat;
 #endif
 
 #include <wtf/Platform.h>
-
+#include <wtf/ExportMacros.h>
+#include <runtime/JSExportMacros.h>
+#include <WebCore/PlatformExportMacros.h>
 #include <WebCore/EmptyProtocolDefinitions.h>
-
-/* WebKit has no way to pull settings from WebCore/config.h for now */
-/* so we assume WebKit is always being compiled on top of JavaScriptCore */
-#define WTF_USE_JSC 1
-#define WTF_USE_V8 0
 
 /* Work around bug with C++ library that screws up Objective-C++ when exception support is disabled. */
 #undef try
 #undef catch
-
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
-#define WEBKIT_EXPORTDATA
-#define WTF_EXPORT_PRIVATE
-#define JS_EXPORT_PRIVATE
 
 #ifdef __cplusplus
 #include <wtf/FastMalloc.h>

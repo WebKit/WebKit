@@ -1,3 +1,23 @@
+2011-12-14  Hajime Morrita  <morrita@chromium.org>
+
+        JS_INLINE and WTF_INLINE should be visible from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        - Moved Export related macro definitions from config.h to ExportMacros.h and JSExportMacros.h.
+        - Moved WTF_USE_JSC and WTF_USE_V8 from various config.h family to Platform.h.
+        - Replaced JS_EXPORTDATA in wtf moudule with newly introduced WTF_EXPORTDATA.
+
+        Reviewed by Kevin Ollivier.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * runtime/JSExportMacros.h: Added.
+        * wtf/ExportMacros.h:
+        * wtf/Platform.h:
+        * wtf/WTFThreadData.h:
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringStatics.cpp:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Work around a bug in the MSVC2005 compiler

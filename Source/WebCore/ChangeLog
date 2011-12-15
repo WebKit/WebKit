@@ -1,3 +1,22 @@
+2011-12-14  Hajime Morrita  <morrita@chromium.org>
+
+        JS_INLINE and WTF_INLINE should be visible from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=73191
+
+        Reviewed by Kevin Ollivier.
+
+        - Moved export related definitions from config.h
+          to ExportMacros.h, JSExportMacros.h and PlatformExportMacros.h
+        - Added forwarding headers which are referred from config.h
+
+        No new tests. Only build related changes.
+
+        * ForwardingHeaders/runtime/JSExportMacros.h: Added.
+        * ForwardingHeaders/wtf/ExportMacros.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * platform/PlatformExportMacros.h: Copied from Source/JavaScriptCore/wtf/ExportMacros.h.
+
 2011-12-14  Enrica Casucci  <enrica@apple.com>
 
         Need a way to produce leaner markup when pasting a fragment containing verbose markup

@@ -492,6 +492,7 @@
 		A7A1F7AC0F252B3C00E184E2 /* ByteArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7A1F7AA0F252B3C00E184E2 /* ByteArray.cpp */; };
 		A7A1F7AD0F252B3C00E184E2 /* ByteArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7B48F490EE8936F00DCBDB6 /* ExecutableAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */; };
+		A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7BC0C82140608B000B1BB71 /* CheckedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = A7BC0C81140608B000B1BB71 /* CheckedArithmetic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7C1E8E4112E72EF00A37F98 /* JITPropertyAccess32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */; };
 		A7C40C0A130B057D00D002A1 /* BlockStack.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C40C07130B057D00D002A1 /* BlockStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -506,6 +507,7 @@
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7FEE67614837B32005DC1A6 /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A275F514837A8E001DBB39 /* ExportMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; };
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
@@ -1315,10 +1317,12 @@
 		A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRefPrivate.h; sourceTree = "<group>"; };
 		A7A1F7AA0F252B3C00E184E2 /* ByteArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ByteArray.cpp; sourceTree = "<group>"; };
 		A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteArray.h; sourceTree = "<group>"; };
+		A7A275F514837A8E001DBB39 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
 		A7A7EE7411B98B8D0065A14F /* ASTBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBuilder.h; sourceTree = "<group>"; };
 		A7A7EE7711B98B8D0065A14F /* SyntaxChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyntaxChecker.h; sourceTree = "<group>"; };
 		A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableAllocator.h; sourceTree = "<group>"; };
 		A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocator.cpp; sourceTree = "<group>"; };
+		A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExportMacros.h; sourceTree = "<group>"; };
 		A7BC0C81140608B000B1BB71 /* CheckedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckedArithmetic.h; sourceTree = "<group>"; };
 		A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess32_64.cpp; sourceTree = "<group>"; };
 		A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = KeywordLookupGenerator.py; sourceTree = "<group>"; };
@@ -1939,6 +1943,7 @@
 				D75AF59512F8CB9500FC0ADF /* DynamicAnnotations.cpp */,
 				D75AF59612F8CB9500FC0ADF /* DynamicAnnotations.h */,
 				5135FAD612D26856003C083B /* Encoder.h */,
+				A7A275F514837A8E001DBB39 /* ExportMacros.h */,
 				E48E0F2C0F82151700A8CA37 /* FastAllocBase.h */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
@@ -2187,6 +2192,7 @@
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				9788FC221471AD0C0068CE2D /* JSDateMath.cpp */,
 				9788FC231471AD0C0068CE2D /* JSDateMath.h */,
+				A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */,
 				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
 				F692A85F0255597D01FF60F7 /* JSFunction.h */,
 				E18E3A570DF9278C00D90B34 /* JSGlobalData.cpp */,
@@ -2667,6 +2673,7 @@
 				BC18C4000E16F5CD00B34460 /* ExceptionHelpers.h in Headers */,
 				86CAFEE31035DDE60028A609 /* Executable.h in Headers */,
 				A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */,
+				A7FEE67614837B32005DC1A6 /* ExportMacros.h in Headers */,
 				E48E0F2D0F82151700A8CA37 /* FastAllocBase.h in Headers */,
 				BC18C4020E16F5CD00B34460 /* FastMalloc.h in Headers */,
 				A7F19ECE11DD490900931E70 /* FixedArray.h in Headers */,
@@ -2712,6 +2719,7 @@
 				BC18C41D0E16F5CD00B34460 /* JSClassRef.h in Headers */,
 				BC18C41E0E16F5CD00B34460 /* JSContextRef.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
+				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
 				BC18C41F0E16F5CD00B34460 /* JSFunction.h in Headers */,
 				BC18C4200E16F5CD00B34460 /* JSGlobalData.h in Headers */,
 				BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */,

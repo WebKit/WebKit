@@ -120,7 +120,7 @@ private:
     StackBounds m_stackBounds;
 #endif
 
-    static JS_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
+    static WTF_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
     friend WTFThreadData& wtfThreadData();
     friend class AtomicStringTable;
 };
