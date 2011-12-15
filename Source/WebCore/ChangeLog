@@ -1,3 +1,11 @@
+2011-12-14  Enrica Casucci  <enrica@apple.com>
+
+        Build fix.
+
+        Unreviewed.
+
+        * editing/ReplaceSelectionCommand.cpp: Added include RenderStyle.h
+
 2011-12-14  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

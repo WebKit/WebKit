@@ -48,6 +48,7 @@
 #include "NodeList.h"
 #include "RenderInline.h"
 #include "RenderObject.h"
+#include "RenderStyle.h"
 #include "RenderText.h"
 #include "SmartReplace.h"
 #include "TextIterator.h"
