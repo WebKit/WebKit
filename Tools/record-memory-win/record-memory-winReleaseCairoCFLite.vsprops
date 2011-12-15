@@ -3,11 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="record-memory-winReleaseCairoCFLite"
-	InheritedPropertySheets="
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;
-      .\record-memory-win-common.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\record-memory-win-common.vsprops"
 	>
 </VisualStudioPropertySheet>

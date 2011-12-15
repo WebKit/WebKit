@@ -1,3 +1,67 @@
+2011-12-14  Sam Weinig  <weinig@apple.com>
+
+        Remove whitespace from InheritedPropertySheets attributes in
+        vsprops files to appease the Visual Studio project migrator.
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginDebug.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginDebugAll.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginDebugCairoCFLite.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginProduction.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginRelease.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginReleaseCairoCFLite.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeDebug.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeDebugAll.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeDebugCairoCFLite.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeProduction.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeRelease.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeReleaseCairoCFLite.vsprops:
+        * DumpRenderTree/win/ImageDiffDebug.vsprops:
+        * DumpRenderTree/win/ImageDiffDebugAll.vsprops:
+        * DumpRenderTree/win/ImageDiffDebugCairoCFLite.vsprops:
+        * DumpRenderTree/win/ImageDiffProduction.vsprops:
+        * DumpRenderTree/win/ImageDiffRelease.vsprops:
+        * DumpRenderTree/win/ImageDiffReleaseCairoCFLite.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserDebug.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserDebugAll.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserDebugCairoCFLite.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserProduction.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserRelease.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserReleaseCairoCFLite.vsprops:
+        * TestWebKitAPI/Configurations/TestWebKitAPIRelease.vsprops:
+        * TestWebKitAPI/Configurations/TestWebKitAPIReleaseCairoCFLite.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinDebug.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinDebugAll.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinDebugCairoCFLite.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinProduction.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinRelease.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinReleaseCairoCFLite.vsprops:
+        * WebKitTestRunner/win/InjectedBundleDebug.vsprops:
+        * WebKitTestRunner/win/InjectedBundleDebugAll.vsprops:
+        * WebKitTestRunner/win/InjectedBundleDebugCairoCFLite.vsprops:
+        * WebKitTestRunner/win/InjectedBundleProduction.vsprops:
+        * WebKitTestRunner/win/InjectedBundleRelease.vsprops:
+        * WebKitTestRunner/win/InjectedBundleReleaseCairoCFLite.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerDebug.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerDebugAll.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerDebugCairoCFLite.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerProduction.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerRelease.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerReleaseCairoCFLite.vsprops:
+        * WinLauncher/WinLauncherDebug.vsprops:
+        * WinLauncher/WinLauncherDebugAll.vsprops:
+        * WinLauncher/WinLauncherDebugCairoCFLite.vsprops:
+        * WinLauncher/WinLauncherProduction.vsprops:
+        * WinLauncher/WinLauncherRelease.vsprops:
+        * WinLauncher/WinLauncherReleaseCairoCFLite.vsprops:
+        * record-memory-win/record-memory-winDebug.vsprops:
+        * record-memory-win/record-memory-winDebugAll.vsprops:
+        * record-memory-win/record-memory-winDebugCairoCFLite.vsprops:
+        * record-memory-win/record-memory-winProduction.vsprops:
+        * record-memory-win/record-memory-winRelease.vsprops:
+        * record-memory-win/record-memory-winReleaseCairoCFLite.vsprops:
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Windows build fix.

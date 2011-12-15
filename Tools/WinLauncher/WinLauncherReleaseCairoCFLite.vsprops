@@ -3,11 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="WinLauncherReleaseCairoCFLite"
-	InheritedPropertySheets="
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;
-      .\WinLauncherCommon.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\WinLauncherCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

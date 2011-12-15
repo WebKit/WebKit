@@ -3,10 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="WinLauncherProduction"
-	InheritedPropertySheets="
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\production.vsprops;
-      .\WinLauncherCommon.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\production.vsprops;.\WinLauncherCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

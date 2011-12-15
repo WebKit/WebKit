@@ -3,11 +3,6 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="DumpRenderTreeDebug"
-	InheritedPropertySheets="
-      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
-      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;
-      .\DumpRenderTreeCommon.vsprops;
-      .\DumpRenderTreeApple.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\DumpRenderTreeCommon.vsprops;.\DumpRenderTreeApple.vsprops"
 	>
 </VisualStudioPropertySheet>
