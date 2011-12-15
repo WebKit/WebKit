@@ -1,3 +1,17 @@
+2011-12-14  Wei James  <james.wei@intel.com>
+
+        fast path to accelerate processing in AudioBus::processWithGainFromMonoStereo
+        https://bugs.webkit.org/show_bug.cgi?id=74054
+
+        Reviewed by Kenneth Russell.
+
+        Avoid de-zippering when the gain has converged on the targetGain. 
+        It can get about 75% performance gain at most when all frames don't need
+        de-zippering.
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::processWithGainFromMonoStereo):
+
 2011-12-14  Adam Klein  <adamk@chromium.org>
 
         Optimize MutationObserverInterestGroup construction

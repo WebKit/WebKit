@@ -231,15 +231,76 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
     }
 }
 
+// Slowly change gain to desired gain.
+#define GAIN_DEZIPPER \
+    gain += (totalDesiredGain - gain) * DezipperRate; \
+    gain = DenormalDisabler::flushDenormalFloatToZero(gain);
+
+// De-zipper for the first framesToDezipper frames and skip de-zippering for the remaining frames
+// because the gain is close enough to the target gain.
+#define PROCESS_WITH_GAIN(OP) \
+    for (k = 0; k < framesToDezipper; ++k) { \
+        OP \
+        GAIN_DEZIPPER \
+    } \
+    gain = totalDesiredGain; \
+    for (; k < framesToProcess; ++k)  \
+        OP
+
+#define STEREO_SUM \
+    { \
+        float sumL = DenormalDisabler::flushDenormalFloatToZero(*destinationL + gain * *sourceL++); \
+        float sumR = DenormalDisabler::flushDenormalFloatToZero(*destinationR + gain * *sourceR++); \
+        *destinationL++ = sumL; \
+        *destinationR++ = sumR; \
+    }
+
+// Mono -> stereo (mix equally into L and R)
+// FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
+#define MONO2STEREO_SUM \
+    { \
+        float scaled = gain * *sourceL++; \
+        float sumL = DenormalDisabler::flushDenormalFloatToZero(*destinationL + scaled); \
+        float sumR = DenormalDisabler::flushDenormalFloatToZero(*destinationR + scaled); \
+        *destinationL++ = sumL; \
+        *destinationR++ = sumR; \
+    }
+
+#define MONO_SUM \
+    { \
+        float sum = DenormalDisabler::flushDenormalFloatToZero(*destinationL + gain * *sourceL++); \
+        *destinationL++ = sum; \
+    }
+
+#define STEREO_NO_SUM \
+    { \
+        float sampleL = *sourceL++; \
+        float sampleR = *sourceR++; \
+        *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleL); \
+        *destinationR++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleR); \
+    }
+
+// Mono -> stereo (mix equally into L and R)
+// FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
+#define MONO2STEREO_NO_SUM \
+    { \
+        float sample = *sourceL++; \
+        *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sample); \
+        *destinationR++ = DenormalDisabler::flushDenormalFloatToZero(gain * sample); \
+    }
+
+#define MONO_NO_SUM \
+    { \
+        float sampleL = *sourceL++; \
+        *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleL); \
+    }
+
 void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* lastMixGain, double targetGain, bool sumToBus)
 {
     // We don't want to suddenly change the gain from mixing one time slice to the next,
     // so we "de-zipper" by slowly changing the gain each sample-frame until we've achieved the target gain.
 
     // FIXME: optimize this method (SSE, etc.)
-    // FIXME: Need fast path here when gain has converged on targetGain. In this case, de-zippering is no longer needed.
-    // FIXME: Need fast path when this==sourceBus && lastMixGain==targetGain==1.0 && sumToBus==false (this is a NOP)
-
     // FIXME: targetGain and lastMixGain should be changed to floats instead of doubles.
     
     // Take master bus gain into account as well as the targetGain.
@@ -262,82 +323,45 @@ void AudioBus::processWithGainFromMonoStereo(const AudioBus &sourceBus, double* 
     const float DezipperRate = 0.005f;
     int framesToProcess = length();
 
+    // If the gain is within epsilon of totalDesiredGain, we can skip dezippering. 
+    // FIXME: this value may need tweaking.
+    const float epsilon = 0.001f; 
+    float gainDiff = fabs(totalDesiredGain - gain);
+
+    // Number of frames to de-zipper before we are close enough to the target gain.
+    int framesToDezipper = (gainDiff < epsilon) ? 0 : framesToProcess; 
+
+    int k = 0;
+
     if (sumToBus) {
         // Sum to our bus
         if (sourceR && destinationR) {
             // Stereo
-            while (framesToProcess--) {
-                float sumL = DenormalDisabler::flushDenormalFloatToZero(*destinationL + gain * *sourceL++);
-                float sumR = DenormalDisabler::flushDenormalFloatToZero(*destinationR + gain * *sourceR++);
-                *destinationL++ = sumL;
-                *destinationR++ = sumR;
-
-                // Slowly change gain to desired gain.
-                gain += (totalDesiredGain - gain) * DezipperRate;
-                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            }
+            PROCESS_WITH_GAIN(STEREO_SUM)
         } else if (destinationR) {
-            // Mono -> stereo (mix equally into L and R)
-            // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
-            while (framesToProcess--) {
-                float scaled = gain * *sourceL++;
-                float sumL = DenormalDisabler::flushDenormalFloatToZero(*destinationL + scaled);
-                float sumR = DenormalDisabler::flushDenormalFloatToZero(*destinationR + scaled);
-
-                *destinationL++ = sumL;
-                *destinationR++ = sumR;
-
-                // Slowly change gain to desired gain.
-                gain += (totalDesiredGain - gain) * DezipperRate;
-                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            }
+            // Mono -> stereo 
+            PROCESS_WITH_GAIN(MONO2STEREO_SUM)
         } else {
             // Mono
-            while (framesToProcess--) {
-                float sum = DenormalDisabler::flushDenormalFloatToZero(*destinationL + gain * *sourceL++);
-                *destinationL++ = sum;
-
-                // Slowly change gain to desired gain.
-                gain += (totalDesiredGain - gain) * DezipperRate;
-                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            }
+            PROCESS_WITH_GAIN(MONO_SUM)
         }
     } else {
         // Process directly (without summing) to our bus
+        // If it is from the same bus and no need to change gain, just return
+        if (this == &sourceBus && *lastMixGain == targetGain && targetGain == 1.0)
+            return;
+
+        // FIXME: if (framesToDezipper == 0) and DenormalDisabler::flushDenormalFloatToZero() is a NOP (gcc vs. Visual Studio) 
+        // then we can further optimize the PROCESS_WITH_GAIN codepaths below using vsmul().
         if (sourceR && destinationR) {
             // Stereo
-            while (framesToProcess--) {
-                float sampleL = *sourceL++;
-                float sampleR = *sourceR++;
-                *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleL);
-                *destinationR++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleR);
-
-                // Slowly change gain to desired gain.
-                gain += (totalDesiredGain - gain) * DezipperRate;
-                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            }
+            PROCESS_WITH_GAIN(STEREO_NO_SUM)
         } else if (destinationR) {
-            // Mono -> stereo (mix equally into L and R)
-            // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
-            while (framesToProcess--) {
-                float sample = *sourceL++;
-                *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sample);
-                *destinationR++ = DenormalDisabler::flushDenormalFloatToZero(gain * sample);
-
-                // Slowly change gain to desired gain.
-                gain += (totalDesiredGain - gain) * DezipperRate;
-                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            }
+            // Mono -> stereo 
+            PROCESS_WITH_GAIN(MONO2STEREO_NO_SUM)
         } else {
             // Mono
-            while (framesToProcess--) {
-                float sampleL = *sourceL++;
-                *destinationL++ = DenormalDisabler::flushDenormalFloatToZero(gain * sampleL);
-
-                // Slowly change gain to desired gain.
-                gain += (totalDesiredGain - gain) * DezipperRate;
-                gain = DenormalDisabler::flushDenormalFloatToZero(gain);
-            }
+            PROCESS_WITH_GAIN(MONO_NO_SUM)
         }
     }
 
