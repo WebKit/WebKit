@@ -1,3 +1,14 @@
+2011-12-14  Jing Zhao  <jingzhao@chromium.org>
+
+        Opening two popup menus by dispatchEvent() makes problems.
+        https://bugs.webkit.org/show_bug.cgi?id=73304
+
+        Reviewed by Kent Tamura.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::hasOpenedPopup): Not implemented.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Overrides hasOpenedPopup().
+
 2011-12-14  Sam Weinig  <weinig@apple.com>
 
         Remove whitespace from InheritedPropertySheets attributes in

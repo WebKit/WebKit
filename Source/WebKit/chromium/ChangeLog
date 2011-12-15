@@ -1,3 +1,22 @@
+2011-12-14  Jing Zhao  <jingzhao@chromium.org>
+
+        Opening two popup menus by dispatchEvent() makes problems.
+        https://bugs.webkit.org/show_bug.cgi?id=73304
+
+        Reviewed by Kent Tamura.
+
+        By using element.dispatchEvent(), a user written script can open two
+        popup menus, which causes the assertion in WebViewImpl::popupOpened()
+        fail.
+
+        ChromeClientImpl::hasOpenedPopup() is called by Chrome::hasOpenedPopup()
+        in RenderMenuList::showPopup(), to check if there is an opened popup
+        menu before opening a new popup menu.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::hasOpenedPopup): Checks the popup in WebViewImpl.
+        * src/ChromeClientImpl.h: Overrides hasOpenedPopup().
+
 2011-12-14  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Implement PluginViewBase::getFormValue

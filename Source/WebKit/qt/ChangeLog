@@ -1,3 +1,14 @@
+2011-12-14  Jing Zhao  <jingzhao@chromium.org>
+
+        Opening two popup menus by dispatchEvent() makes problems.
+        https://bugs.webkit.org/show_bug.cgi?id=73304
+
+        Reviewed by Kent Tamura.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::hasOpenedPopup): Not implemented.
+        * WebCoreSupport/ChromeClientQt.h: Overrides hasOpenedPopup().
+
 2011-12-14  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

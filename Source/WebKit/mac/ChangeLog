@@ -1,3 +1,14 @@
+2011-12-14  Jing Zhao  <jingzhao@chromium.org>
+
+        Opening two popup menus by dispatchEvent() makes problems.
+        https://bugs.webkit.org/show_bug.cgi?id=73304
+
+        Reviewed by Kent Tamura.
+
+        * WebCoreSupport/WebChromeClient.h: Overrides hasOpenedPopup().
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::hasOpenedPopup): Not implemented.
+
 2011-12-14  Michael Saboff  <msaboff@apple.com>
 
         Mac WebScriptDebugger crashes beneath sourceParsed()

@@ -165,6 +165,7 @@ public:
 
     virtual bool selectItemWritingDirectionIsNatural();
     virtual bool selectItemAlignmentFollowsMenuWritingDirection();
+    virtual bool hasOpenedPopup() const;
     virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const;
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const;
 

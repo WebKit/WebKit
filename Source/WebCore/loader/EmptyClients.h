@@ -140,6 +140,7 @@ public:
 
     virtual bool selectItemWritingDirectionIsNatural() { return false; }
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() { return false; }
+    virtual bool hasOpenedPopup() const OVERRIDE { return false; }
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const { return adoptRef(new EmptyPopupMenu()); }
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const { return adoptRef(new EmptySearchPopupMenu()); }
 

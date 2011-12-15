@@ -544,6 +544,12 @@ bool ChromeClientEfl::selectItemAlignmentFollowsMenuWritingDirection()
     return false;
 }
 
+bool ChromeClientEfl::hasOpenedPopup() const
+{
+    notImplemented();
+    return false;
+}
+
 PassRefPtr<PopupMenu> ChromeClientEfl::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuEfl(client));

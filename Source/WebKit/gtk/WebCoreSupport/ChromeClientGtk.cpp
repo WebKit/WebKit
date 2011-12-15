@@ -861,6 +861,12 @@ bool ChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
     return true;
 }
 
+bool ChromeClient::hasOpenedPopup() const
+{
+    notImplemented();
+    return false;
+}
+
 PassRefPtr<WebCore::PopupMenu> ChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuGtk(client));

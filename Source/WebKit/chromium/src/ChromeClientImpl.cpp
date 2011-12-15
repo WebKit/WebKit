@@ -939,6 +939,11 @@ bool ChromeClientImpl::selectItemAlignmentFollowsMenuWritingDirection()
     return true;
 }
 
+bool ChromeClientImpl::hasOpenedPopup() const
+{
+    return !!m_webView->selectPopup();
+}
+
 PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client) const
 {
     if (WebViewImpl::useExternalPopupMenus())

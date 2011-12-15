@@ -1,3 +1,28 @@
+2011-12-14  Jing Zhao  <jingzhao@chromium.org>
+
+        Opening two popup menus by dispatchEvent() makes problems.
+        https://bugs.webkit.org/show_bug.cgi?id=73304
+
+        Reviewed by Kent Tamura.
+
+        By using element.dispatchEvent(), a user written script can open two
+        popup menus, which causes various problems in different platforms.
+
+        Add a hasOpenedPopup() method in ChromeClient and a wrapper in Chrome.
+        In RenderMenuList::showPopup(), check if there is an opened popup menu
+        before opening a new popup menu.
+
+        Test: fast/forms/select-popup-crash.html
+
+        * loader/EmptyClients.h: Overrides hasOpenedPopup().
+        (WebCore::EmptyChromeClient::hasOpenedPopup): Returns false as a default case.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::hasOpenedPopup): Calls ChromeClient::hasOpenedPopup().
+        * page/Chrome.h: Declares hasOpenedPopup().
+        * page/ChromeClient.h: Declares hasOpenedPopup() as a pure virtual function.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::showPopup): Calls Chrome::hasOpenedPopup() before opening a new popup menu.
+
 2011-12-14  Tony Chang  <tony@chromium.org>
 
         Clean up style in CSSStyleSelector.cpp

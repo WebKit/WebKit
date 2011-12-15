@@ -555,6 +555,11 @@ bool Chrome::selectItemAlignmentFollowsMenuWritingDirection()
     return m_client->selectItemAlignmentFollowsMenuWritingDirection();
 }
 
+bool Chrome::hasOpenedPopup() const
+{
+    return m_client->hasOpenedPopup();
+}
+
 PassRefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient* client) const
 {
     return m_client->createPopupMenu(client);

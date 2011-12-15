@@ -302,6 +302,8 @@ namespace WebCore {
 
         virtual bool selectItemWritingDirectionIsNatural() = 0;
         virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
+        // Checks if there is an opened popup, called by RenderMenuList::showPopup().
+        virtual bool hasOpenedPopup() const = 0;
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
         virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
 

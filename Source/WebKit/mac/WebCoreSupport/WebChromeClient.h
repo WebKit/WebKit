@@ -170,6 +170,7 @@ public:
 
     virtual bool selectItemWritingDirectionIsNatural() OVERRIDE;
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() OVERRIDE;
+    virtual bool hasOpenedPopup() const OVERRIDE;
     virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const OVERRIDE;
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const OVERRIDE;
 
