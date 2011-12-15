@@ -157,6 +157,25 @@ private:
     R (C::*m_function)(P0);
 };
 
+template<typename R, typename C, typename P0, typename P1> class FunctionWrapper<R (C::*)(P0, P1)> {
+public:
+    typedef R ResultType;
+    static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
+
+    explicit FunctionWrapper(R (C::*function)(P0, P1))
+        : m_function(function)
+    {
+    }
+
+    R operator()(C* c, P0 p0, P1 p1)
+    {
+        return (c->*m_function)(p0, p1);
+    }
+
+private:
+    R (C::*m_function)(P0, P1);
+};
+
 template<typename T, bool shouldRefAndDeref> struct RefAndDeref {
     static void ref(T) { }
     static void deref(T) { }
@@ -251,6 +270,34 @@ private:
     P1 m_p1;
 };
 
+template<typename FunctionWrapper, typename R, typename P0, typename P1, typename P2> class BoundFunctionImpl<FunctionWrapper, R (P0, P1, P2)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+public:
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1, const P2& p2)
+        : m_functionWrapper(functionWrapper)
+        , m_p0(p0)
+        , m_p1(p1)
+        , m_p2(p2)
+    {
+        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
+    }
+    
+    ~BoundFunctionImpl()
+    {
+        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::deref(m_p0);
+    }
+
+    virtual typename FunctionWrapper::ResultType operator()()
+    {
+        return m_functionWrapper(m_p0, m_p1, m_p2);
+    }
+
+private:
+    FunctionWrapper m_functionWrapper;
+    P0 m_p0;
+    P1 m_p1;
+    P2 m_p2;
+};
+
 class FunctionBase {
 public:
     bool isNull() const
@@ -315,6 +362,12 @@ template<typename FunctionType, typename A1, typename A2>
 Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1, const A2& a2)
 {
     return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1, A2)>(FunctionWrapper<FunctionType>(function), a1, a2)));
+}
+
+template<typename FunctionType, typename A1, typename A2, typename A3>
+Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1, const A2& a2, const A3& a3)
+{
+    return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1, A2, A3)>(FunctionWrapper<FunctionType>(function), a1, a2, a3)));
 }
 
 }

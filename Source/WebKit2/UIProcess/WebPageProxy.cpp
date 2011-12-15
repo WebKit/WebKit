@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaProxy.h"
+#include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
 #include "Logging.h"
 #include "MessageID.h"
@@ -939,7 +940,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
         process()->sendSync(Messages::WebPage::WheelEventSyncForTesting(event), Messages::WebPage::WheelEventSyncForTesting::Reply(handled), m_pageID);
         didReceiveEvent(event.type(), handled);
     } else
-        process()->send(Messages::WebPage::WheelEvent(event), m_pageID);
+        process()->send(Messages::EventDispatcher::WheelEvent(m_pageID, event), 0);
 }
 
 void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
@@ -2929,7 +2930,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
             WebWheelEvent newWheelEvent = coalescedWheelEvent(m_wheelEventQueue, m_currentlyProcessedWheelEvents);
 
             process()->responsivenessTimer()->start();
-            process()->send(Messages::WebPage::WheelEvent(newWheelEvent), m_pageID);
+            process()->send(Messages::EventDispatcher::WheelEvent(m_pageID, newWheelEvent), 0);
         }
 
         break;

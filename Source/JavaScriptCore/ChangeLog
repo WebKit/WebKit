@@ -1,3 +1,17 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        EventDispatcher should handle wheel events on the connection queue
+        https://bugs.webkit.org/show_bug.cgi?id=74627
+
+        Reviewed by Andreas Kling.
+
+        Add a BoundFunctionImpl specialization that takes three parameters.
+
+        * wtf/Functional.h:
+        (WTF::C::):
+        (WTF::R):
+        (WTF::bind):
+
 2011-12-14  Anders Carlsson  <andersca@apple.com>
 
         Add WTF::Function to wtf/Forward.h

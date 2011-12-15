@@ -462,6 +462,8 @@ public:
 
     void contextMenuShowing() { m_isShowingContextMenu = true; }
 
+    void wheelEvent(const WebWheelEvent&);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -510,7 +512,6 @@ private:
 
     void mouseEvent(const WebMouseEvent&);
     void mouseEventSyncForTesting(const WebMouseEvent&, bool&);
-    void wheelEvent(const WebWheelEvent&);
     void wheelEventSyncForTesting(const WebWheelEvent&, bool&);
     void keyEvent(const WebKeyboardEvent&);
     void keyEventSyncForTesting(const WebKeyboardEvent&, bool&);

@@ -26,6 +26,12 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
+#include "RunLoop.h"
+#include "WebEvent.h"
+#include "WebPage.h"
+#include "WebProcess.h"
+#include <wtf/MainThread.h>
+
 namespace WebKit {
 
 EventDispatcher::EventDispatcher()
@@ -44,8 +50,20 @@ void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection
     }
 }
 
-void EventDispatcher::wheelEvent(const WebWheelEvent&)
+void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
 {
+    RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
+}
+
+void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
+{
+    ASSERT(isMainThread());
+
+    WebPage* webPage = WebProcess::shared().webPage(pageID);
+    if (!webPage)
+        return;
+
+    webPage->wheelEvent(wheelEvent);
 }
 
 } // namespace WebKit

@@ -1,3 +1,23 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        EventDispatcher should handle wheel events on the connection queue
+        https://bugs.webkit.org/show_bug.cgi?id=74627
+
+        Reviewed by Andreas Kling.
+
+        Send wheel events to the EventDispatcher, which handles them on the connection work queue, and
+        immediately bounces them to the main thread (for now).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleWheelEvent):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+        (WebKit::EventDispatcher::dispatchWheelEvent):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+
 2011-12-15  Jon Lee  <jonlee@apple.com>
 
         [WK2] Extend WebNotification to include its origin

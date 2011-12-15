@@ -21,5 +21,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> EventDispatcher {
-    WheelEvent(WebKit::WebWheelEvent event) DispatchOnConnectionQueue
+    WheelEvent(uint64_t pageID, WebKit::WebWheelEvent event) DispatchOnConnectionQueue
 }

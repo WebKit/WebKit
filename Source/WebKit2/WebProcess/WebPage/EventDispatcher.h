@@ -47,7 +47,10 @@ private:
     void didReceiveEventDispatcherMessageOnConnectionWorkQueue(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage);
 
     // Message handlers
-    void wheelEvent(const WebWheelEvent&);
+    void wheelEvent(uint64_t pageID, const WebWheelEvent&);
+
+    // This is called on the main thread.
+    void dispatchWheelEvent(uint64_t pageID, const WebWheelEvent&);
 };
 
 } // namespace WebKit
