@@ -143,7 +143,7 @@ void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& re
         stopLoadingForPolicyChange();
     else if (m_substituteData.isValid()) {
         // A redirect resulted in loading substitute data.
-        ASSERT(documentLoader()->timing()->redirectCount);
+        ASSERT(documentLoader()->timing()->redirectCount());
         handle()->cancel();
         handleDataLoadSoon(request);
     }
@@ -182,7 +182,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    ASSERT(documentLoader()->timing()->fetchStart);
+    ASSERT(documentLoader()->timing()->fetchStart());
     if (!redirectResponse.isNull()) {
         // If the redirecting url is not allowed to display content from the target origin,
         // then block the redirect.
@@ -192,19 +192,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
             cancel();
             return;
         }
-
-        DocumentLoadTiming* documentLoadTiming = documentLoader()->timing();
-
-        // Check if the redirected url is allowed to access the redirecting url's timing information.
-        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(newRequest.url());
-        if (!securityOrigin->canRequest(redirectResponse.url()))
-            documentLoadTiming->hasCrossOriginRedirect = true;
-
-        documentLoadTiming->redirectCount++;
-        if (!documentLoadTiming->redirectStart)
-            documentLoadTiming->redirectStart = documentLoadTiming->fetchStart;
-        documentLoadTiming->redirectEnd = currentTime();
-        documentLoadTiming->fetchStart = documentLoadTiming->redirectEnd;
+        documentLoader()->timing()->addRedirect(redirectResponse.url(), newRequest.url());
     }
 
     // Update cookie policy base URL as URL changes, except for subframes, which use the
@@ -471,7 +459,7 @@ void MainResourceLoader::didReceiveData(const char* data, int length, long long 
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    m_timeOfLastDataReceived = currentTime();
+    m_timeOfLastDataReceived = monotonicallyIncreasingTime();
 
     ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
 }
@@ -483,7 +471,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
 #if !USE(CF)
     ASSERT(shouldLoadAsEmptyDocument(frameLoader()->activeDocumentLoader()->url()) || !defersLoading());
 #endif
-    
+
     // The additional processing can do anything including possibly removing the last
     // reference to this object.
     RefPtr<MainResourceLoader> protect(this);
@@ -492,8 +480,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     if (m_loadingMultipartContent)
         dl->maybeFinishLoadingMultipartContent();
 
-    ASSERT(!documentLoader()->timing()->responseEnd);
-    documentLoader()->timing()->responseEnd = finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : currentTime());
+    documentLoader()->timing()->setResponseEnd(finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : monotonicallyIncreasingTime()));
     frameLoader()->finishedLoading();
     ResourceLoader::didFinishLoading(finishTime);
 
@@ -603,9 +590,9 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
 
     m_substituteData = substituteData;
 
-    ASSERT(documentLoader()->timing()->navigationStart);
-    ASSERT(!documentLoader()->timing()->fetchStart);
-    documentLoader()->timing()->fetchStart = currentTime();
+    ASSERT(documentLoader()->timing()->navigationStart());
+    ASSERT(!documentLoader()->timing()->fetchStart());
+    documentLoader()->timing()->markFetchStart();
     ResourceRequest request(r);
 
     documentLoader()->applicationCacheHost()->maybeLoadMainResource(request, m_substituteData);

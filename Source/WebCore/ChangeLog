@@ -1,3 +1,95 @@
+2011-12-15  James Simonsen  <simonjam@chromium.org>
+
+        [Navigation Timing] Use monotonicallyIncreasingTime() instead of currentTime()
+        https://bugs.webkit.org/show_bug.cgi?id=58354
+
+        Reviewed by Pavel Feldman.
+
+        No new tests. Relies on existing webtiming-* tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp: Use monotonic times.
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl): Convert monotonicFinishTime to wall time if needed.
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForTiming): Convert monotonic requestTime to wall time.
+        (WebCore::buildObjectForResourceResponse): Plumbing for above.
+        (WebCore::buildObjectForCachedResource): Ditto.
+        (WebCore::InspectorResourceAgent::willSendRequest): Ditto.
+        (WebCore::InspectorResourceAgent::didReceiveResponse): Ditto.
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache): Ditto.
+        * loader/DocumentLoadTiming.cpp: Added.
+        (WebCore::DocumentLoadTiming::DocumentLoadTiming):
+        (WebCore::DocumentLoadTiming::setNavigationStart): Determine reference time and root reference time.
+        (WebCore::DocumentLoadTiming::addRedirect): Moved logic from MainResourceLoader.
+        (WebCore::DocumentLoadTiming::convertMonotonicTimeToDocumentTime): Helper to compute wall time from monotonic time.
+        * loader/DocumentLoadTiming.h: Turned into class. Made times monotonic.
+        (WebCore::DocumentLoadTiming::setUnloadEventStart):
+        (WebCore::DocumentLoadTiming::setUnloadEventEnd):
+        (WebCore::DocumentLoadTiming::setRedirectStart):
+        (WebCore::DocumentLoadTiming::setRedirectEnd):
+        (WebCore::DocumentLoadTiming::setFetchStart):
+        (WebCore::DocumentLoadTiming::setResponseEnd):
+        (WebCore::DocumentLoadTiming::setLoadEventStart):
+        (WebCore::DocumentLoadTiming::setLoadEventEnd):
+        (WebCore::DocumentLoadTiming::setHasSameOriginAsPreviousDocument):
+        (WebCore::DocumentLoadTiming::navigationStart):
+        (WebCore::DocumentLoadTiming::unloadEventStart):
+        (WebCore::DocumentLoadTiming::unloadEventEnd):
+        (WebCore::DocumentLoadTiming::redirectStart):
+        (WebCore::DocumentLoadTiming::redirectEnd):
+        (WebCore::DocumentLoadTiming::redirectCount):
+        (WebCore::DocumentLoadTiming::fetchStart):
+        (WebCore::DocumentLoadTiming::responseEnd):
+        (WebCore::DocumentLoadTiming::loadEventStart):
+        (WebCore::DocumentLoadTiming::loadEventEnd):
+        (WebCore::DocumentLoadTiming::hasCrossOriginRedirect):
+        (WebCore::DocumentLoadTiming::hasSameOriginAsPreviousDocument):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::loadProvisionalItemFromCachedPage):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::continueAfterNavigationPolicy):
+        (WebCore::MainResourceLoader::willSendRequest): Moved logic to DocumentLoadTiming.
+        (WebCore::MainResourceLoader::didReceiveData): Use monotonic time.
+        (WebCore::MainResourceLoader::didFinishLoading): Ditto.
+        (WebCore::MainResourceLoader::load):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/DOMWindow.h: Removed dispatchTimedEvent. It doesn't really help in the new model.
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::redirectCount):
+        * page/PerformanceTiming.cpp: Removed skew correction code. This should never happen now.
+        (WebCore::PerformanceTiming::navigationStart):
+        (WebCore::PerformanceTiming::unloadEventStart):
+        (WebCore::PerformanceTiming::unloadEventEnd):
+        (WebCore::PerformanceTiming::redirectStart):
+        (WebCore::PerformanceTiming::redirectEnd):
+        (WebCore::PerformanceTiming::fetchStart):
+        (WebCore::PerformanceTiming::responseEnd):
+        (WebCore::PerformanceTiming::domLoading):
+        (WebCore::PerformanceTiming::domInteractive):
+        (WebCore::PerformanceTiming::domContentLoadedEventStart):
+        (WebCore::PerformanceTiming::domContentLoadedEventEnd):
+        (WebCore::PerformanceTiming::domComplete):
+        (WebCore::PerformanceTiming::loadEventStart):
+        (WebCore::PerformanceTiming::loadEventEnd):
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToAbsolute): Used for ResourceLoadTiming.
+        (WebCore::PerformanceTiming::monotonicTimeToIntegerMilliseconds): Used for DocumentTiming and DocumentLoadTiming.
+        * page/PerformanceTiming.h:
+        * platform/network/ResourceLoadTiming.cpp:
+        (WebCore::ResourceLoadTiming::convertResourceLoadTimeToDocumentTime):
+        * platform/network/ResourceLoadTiming.h: Added helper function to convert to wall times. Added instructions for use.
+
 2011-12-15  Martin Robinson  <mrobinson@igalia.com>
 
         plugin crash

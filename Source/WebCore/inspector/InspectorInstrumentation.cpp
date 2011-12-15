@@ -541,11 +541,21 @@ void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents* instrumen
         resourceAgent->didReceiveData(identifier, data, dataLength, encodedDataLength);
 }
 
-void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, double finishTime)
+void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, double monotonicFinishTime)
 {
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+    InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent();
+    InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent();
+    if (!timelineAgent && !resourceAgent)
+        return;
+
+    double finishTime = 0.0;
+    // FIXME: Expose all of the timing details to inspector and have it calculate finishTime.
+    if (monotonicFinishTime)
+        finishTime = loader->timing()->convertMonotonicTimeToDocumentTime(monotonicFinishTime);
+
+    if (timelineAgent)
         timelineAgent->didFinishLoadingResource(identifier, false, finishTime);
-    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+    if (resourceAgent)
         resourceAgent->didFinishLoading(identifier, loader, finishTime);
 }
 
