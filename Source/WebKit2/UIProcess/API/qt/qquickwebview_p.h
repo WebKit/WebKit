@@ -34,6 +34,7 @@ class QWebDownloadItem;
 class QWebNavigationHistory;
 class QWebPreferences;
 class QWebPermissionRequest;
+class QWebViewportInfo;
 
 namespace WTR {
 class PlatformWebView;
@@ -174,6 +175,7 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QDeclarativeComponent* promptDialog READ promptDialog WRITE setPromptDialog NOTIFY promptDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* itemSelector READ itemSelector WRITE setItemSelector NOTIFY itemSelectorChanged)
     Q_PROPERTY(bool useTraditionalDesktopBehaviour READ useTraditionalDesktopBehaviour WRITE setUseTraditionalDesktopBehaviour)
+    Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
 
 public:
     QQuickWebViewExperimental(QQuickWebView* webView);
@@ -187,6 +189,8 @@ public:
     void setPromptDialog(QDeclarativeComponent*);
     QDeclarativeComponent* itemSelector() const;
     void setItemSelector(QDeclarativeComponent*);
+    
+    QWebViewportInfo* viewportInfo();
 
     bool useTraditionalDesktopBehaviour() const;
     QWebNavigationHistory* navigationHistory() const;
@@ -209,6 +213,7 @@ Q_SIGNALS:
 private:
     QQuickWebView* q_ptr;
     QQuickWebViewPrivate* d_ptr;
+    QWebViewportInfo* m_viewportInfo;
 
     friend class QtWebPageProxy;
     friend class QtWebPageUIClient;

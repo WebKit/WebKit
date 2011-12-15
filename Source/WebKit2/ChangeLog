@@ -1,3 +1,45 @@
+2011-12-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [QT][WK2]Add (experimental) viewport info view to Minibrowser/qt.
+        https://bugs.webkit.org/show_bug.cgi?id=72893
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch extends QQuickWebViewExperimental by a property named
+        viewportInfo, which contains the viewport scalability and
+        layout and contents size information. This property is exposed to
+        QML through the experimental extension for QQuickWebView.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didChangeContentsSize):
+        (QQuickWebViewPrivate::computeViewportConstraints):
+        (QQuickWebViewPrivate::PostTransitionState::apply): Added applying
+        contentsSize to viewportInfo.
+        (QQuickWebViewExperimental::QQuickWebViewExperimental):
+        (QQuickWebViewExperimental::viewportInfo):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h: Moved PostTransitionState::apply
+        to qquickwebview.cpp. Added friend QWebViewportInfo.
+        * UIProcess/API/qt/qwebviewportinfo.cpp: Added.
+        (QWebViewportInfo::QWebViewportInfo):
+        (QWebViewportInfo::~QWebViewportInfo):
+        (QWebViewportInfo::contentsSize):
+        (QWebViewportInfo::currentScale):
+        (QWebViewportInfo::devicePixelRatio):
+        (QWebViewportInfo::initialScale):
+        (QWebViewportInfo::minimumScale):
+        (QWebViewportInfo::maximumScale):
+        (QWebViewportInfo::isScalable):
+        (QWebViewportInfo::layoutSize):
+        (QWebViewportInfo::didUpdateContentsSize):
+        (QWebViewportInfo::didUpdateCurrentScale):
+        (QWebViewportInfo::didUpdateViewportConstraints):
+        * UIProcess/API/qt/qwebviewportinfo_p.h: Added.
+        * UIProcess/qt/QtViewportInteractionEngine.h:
+        (WebKit::QtViewportInteractionEngine::Constraints::Constraints): Added layoutSize.
+        (WebKit::QtViewportInteractionEngine::constraints): Added property to access m_contraints.
+
 2011-12-15  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [WK2] WebPage::m_useFixedLayout variable unininitialized

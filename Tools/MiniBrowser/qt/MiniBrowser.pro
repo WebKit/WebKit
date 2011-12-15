@@ -31,4 +31,5 @@ RESOURCES += MiniBrowser.qrc
 
 OTHER_FILES += \
     qml/BrowserWindow.qml \
-    qml/ItemSelector.qml
+    qml/ItemSelector.qml \
+    qml/ViewportInfoItem.qml

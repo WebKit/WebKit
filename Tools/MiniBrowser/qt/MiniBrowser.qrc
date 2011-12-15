@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/info.png</file>
         <file>icons/next.png</file>
         <file>icons/previous.png</file>
         <file>icons/refresh.png</file>
@@ -8,6 +9,7 @@
         <file>qml/BrowserWindow.qml</file>
         <file>qml/ItemSelector.qml</file>
         <file>qml/MockTouchPoint.qml</file>
+        <file>qml/ViewportInfoItem.qml</file>
         <file>useragentlist.txt</file>
     </qresource>
 </RCC>

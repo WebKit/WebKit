@@ -160,6 +160,25 @@ Rectangle {
                     }
                 }
             }
+
+            Rectangle {
+                id: viewportInfoButton
+                height: navigationBar.height - 2
+                width: height
+                color: "#efefef"
+
+                Image {
+                    anchors.centerIn: parent
+                    source: "../icons/info.png"
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                       viewportInfoItem.visible = !viewportInfoItem.visible
+                    }
+                }
+            }
         }
         Rectangle {
             color: "white"
@@ -233,6 +252,18 @@ Rectangle {
         }
 
         experimental.itemSelector: ItemSelector { }
+    }
+
+    ViewportInfoItem {
+        id: viewportInfoItem
+        anchors {
+            top: navigationBar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: false
+        viewportInfo : webView.experimental.viewportInfo
     }
 
     Keys.onPressed: {

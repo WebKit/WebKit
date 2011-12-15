@@ -1,3 +1,21 @@
+2011-12-15  Michael Brüning  <michael.bruning@nokia.com>
+
+        [QT][WK2]Add (experimental) viewport info view to Minibrowser/qt.
+        https://bugs.webkit.org/show_bug.cgi?id=72893
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch extends QQuickWebViewExperimental by a property named
+        viewportInfo, which contains the viewport scalability and
+        layout and contents size information. This property is exposed to
+        QML through the experimental extension for QQuickWebView.
+
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/MiniBrowser.qrc:
+        * MiniBrowser/qt/icons/info.png: Added.
+        * MiniBrowser/qt/qml/BrowserWindow.qml:
+        * MiniBrowser/qt/qml/ViewportInfoItem.qml: Added.
+
 2011-12-15  Shinya Kawanaka  <shinyak@google.com>
 
         [chromium] WebViewHost::requestCheckingOfText should return immediately if text is empty.

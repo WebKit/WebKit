@@ -45,6 +45,7 @@ class WebPageProxy;
 }
 class QtWebPageProxy;
 class QWebNavigationHistory;
+class QWebViewportInfo;
 
 QT_BEGIN_NAMESPACE
 class QDeclarativeComponent;
@@ -55,6 +56,7 @@ class QQuickWebViewPrivate {
     Q_DECLARE_PUBLIC(QQuickWebView)
     friend class QQuickWebViewExperimental;
     friend class QQuickWebPage;
+    friend class QWebViewportInfo;
 
 public:
     static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }
@@ -122,20 +124,7 @@ private:
             : p(parent)
         { }
 
-        void apply()
-        {
-            p->interactionEngine->reset();
-            p->interactionEngine->applyConstraints(p->computeViewportConstraints());
-            p->interactionEngine->pagePositionRequest(position);
-
-            if (contentsSize.isValid()) {
-                p->pageView->setWidth(contentsSize.width());
-                p->pageView->setHeight(contentsSize.height());
-            }
-
-            position = QPoint();
-            contentsSize = QSize();
-        }
+        void apply();
 
         QQuickWebViewPrivate* p;
         QSize contentsSize;

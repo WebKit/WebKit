@@ -20,6 +20,7 @@
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
 #include "qwebdownloaditem_p.h"
+#include "qwebviewportinfo_p.h"
 
 #include "qwebnavigationhistory_p.h"
 
@@ -49,6 +50,8 @@ public:
         qmlRegisterExtendedType<QQuickWebView, QQuickWebViewExperimentalExtension>(uri, 3, 0, "WebView");
         qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 3, 0, "QQuickWebViewExperimental",
             QObject::tr("Cannot create separate instance of QQuickWebViewExperimental"));
+        qmlRegisterUncreatableType<QWebViewportInfo>(uri, 3, 0, "QWebViewportInfo",
+            QObject::tr("Cannot create separate instance of QWebViewportInfo"));
     }
 };
 

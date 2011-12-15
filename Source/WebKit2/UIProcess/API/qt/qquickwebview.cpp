@@ -40,6 +40,7 @@
 #include "qwebnavigationhistory_p_p.h"
 #include "qwebpreferences_p.h"
 #include "qwebpreferences_p_p.h"
+#include "qwebviewportinfo_p.h"
 
 #include <JavaScriptCore/InitializeThreading.h>
 #include <QDeclarativeEngine>
@@ -177,6 +178,7 @@ void QQuickWebViewPrivate::_q_resume()
 
 void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
 {
+    Q_Q(QQuickWebView);
     if (useTraditionalDesktopBehaviour)
         return;
 
@@ -188,6 +190,8 @@ void QQuickWebViewPrivate::didChangeContentsSize(const QSize& newSize)
 
     pageView->setWidth(newSize.width());
     pageView->setHeight(newSize.height());
+
+    q->m_experimental->viewportInfo()->didUpdateContentsSize();
 }
 
 void QQuickWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportArguments& args)
@@ -270,6 +274,7 @@ void QQuickWebViewPrivate::updateVisibleContentRectAndScale()
 
     // FIXME: Once we support suspend and resume, this should be delayed until the page is active if the page is suspended.
     webPageProxy()->setFixedVisibleContentRect(alignedVisibleContentRect);
+    q->m_experimental->viewportInfo()->didUpdateCurrentScale();
 }
 
 void QQuickWebViewPrivate::_q_viewportTrajectoryVectorChanged(const QPointF& trajectoryVector)
@@ -312,6 +317,22 @@ void QQuickWebViewPrivate::updateViewportSize()
     updateVisibleContentRectAndScale();
 }
 
+void QQuickWebViewPrivate::PostTransitionState::apply()
+{
+    p->interactionEngine->reset();
+    p->interactionEngine->applyConstraints(p->computeViewportConstraints());
+    p->interactionEngine->pagePositionRequest(position);
+
+    if (contentsSize.isValid()) {
+        p->pageView->setWidth(contentsSize.width());
+        p->pageView->setHeight(contentsSize.height());
+        p->q_ptr->experimental()->viewportInfo()->didUpdateContentsSize();
+    }
+
+    position = QPoint();
+    contentsSize = QSize();
+}
+
 QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportConstraints()
 {
     Q_Q(QQuickWebView);
@@ -341,6 +362,9 @@ QtViewportInteractionEngine::Constraints QQuickWebViewPrivate::computeViewportCo
     newConstraints.maximumScale = attr.maximumScale;
     newConstraints.devicePixelRatio = attr.devicePixelRatio;
     newConstraints.isUserScalable = !!attr.userScalable;
+    newConstraints.layoutSize = attr.layoutSize;
+
+    q->m_experimental->viewportInfo()->didUpdateViewportConstraints();
 
     return newConstraints;
 }
@@ -540,6 +564,7 @@ QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView)
     : QObject(webView)
     , q_ptr(webView)
     , d_ptr(webView->d_ptr.data())
+    , m_viewportInfo(new QWebViewportInfo(webView->d_ptr.data(), this))
 {
 }
 
@@ -642,6 +667,11 @@ void QQuickWebViewExperimental::goForwardTo(int index)
 void QQuickWebViewExperimental::goBackTo(int index)
 {
     d_ptr->navigationHistory->d->goBackTo(index);
+}
+
+QWebViewportInfo* QQuickWebViewExperimental::viewportInfo()
+{
+    return m_viewportInfo;
 }
 
 QQuickWebView::QQuickWebView(QQuickItem* parent)

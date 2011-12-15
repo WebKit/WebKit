@@ -54,6 +54,7 @@ public:
             , maximumScale(1.8)
             , devicePixelRatio(1.0)
             , isUserScalable(true)
+            , layoutSize(QSize())
         { }
 
         qreal initialScale;
@@ -61,6 +62,7 @@ public:
         qreal maximumScale;
         qreal devicePixelRatio;
         bool isUserScalable;
+        QSize layoutSize;
     };
 
     bool event(QEvent*);
@@ -94,6 +96,7 @@ public:
     void zoomToAreaGestureEnded(const QPointF& touchPoint, const QRectF& targetArea);
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
+    const Constraints& constraints() const { return m_constraints; }
 Q_SIGNALS:
     void contentSuspendRequested();
     void contentResumeRequested();

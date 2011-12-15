@@ -130,6 +130,9 @@ qwk_1.0 {
         *QWebDownloadItem;
         non-virtual?thunk?to?QWebDownloadItem*;
         QWebDownloadItem::*;
+        *QWebViewportInfo;
+        non-virtual?thunk?to?QWebViewportInfo;
+        QWebViewportInfo::*;
         *QQuickWebPage;
         non-virtual?thunk?to?QQuickWebPage*;
         QQuickWebPage::*;
