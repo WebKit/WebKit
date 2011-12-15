@@ -1,0 +1,76 @@
+<html>
+<head>
+<script src='resources/worker-util.js'></script>
+<script>
+var workersStarted;
+var workersClosed;
+
+// Do the test 10 times because the crash didn't happen every time, but
+// it happen with a high degree of confidence in 10 iterations.
+var remainingIterations = 10;
+// 30 workers seemed to cause the crash to happen frequently.
+var workers = new Array(30);
+
+function nextIteration()
+{
+    log('Remaining iterations: ' +  remainingIterations);
+    waitUntilWorkerThreadsExit(startWorkers)
+}
+
+function startWorkers()
+{
+    if (!remainingIterations) {
+        done();
+        return;
+    }
+    remainingIterations--;
+
+    workersStarted = 0;
+    workersClosed = 0;
+    for (var i = 0; i < workers.length; ++i) {
+        workers[i] = new Worker('resources/open-database-sync.js?arg=' + i)
+        workers[i].onmessage = waitForAllWorkersToStart;
+    }
+}
+
+// Do our best to try to interrupt the databse open
+// call by waiting for the worker to start and then
+// telling it to do the open database call (and
+// then terminate the worker).
+function waitForAllWorkersToStart()
+{
+    workersStarted++;
+    if (workersStarted < workers.length)
+        return;
+
+    for (var i = 0; i < workers.length; ++i)
+        workers[i].postMessage('openDatabaseSync');
+
+    setTimeout('closeWorker()', 0);
+}
+
+function closeWorker()
+{
+    workers[workersClosed].terminate();
+    workersClosed++;
+    if (workersClosed < workers.length)
+        setTimeout('closeWorker()', 3);
+    else
+        nextIteration();
+}
+
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    nextIteration();
+}
+</script>
+</head>
+<body onload='runTest()'>
+<div id='result'>
+</div>
+</body>
+</html>

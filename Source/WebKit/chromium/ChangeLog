@@ -1,3 +1,26 @@
+2011-12-14  David Levin  <levin@chromium.org>
+
+        [chromium] DatabaseObserver needs threadsafe fixes and other clean-up.
+        https://bugs.webkit.org/show_bug.cgi?id=74558
+
+        Reviewed by Dmitry Titov.
+
+        The important part of this fix is the removal of AllowCrossThreadAccess so
+        that ref counting happens appropriately.
+
+        Minor clean up throughout: Removed unnecessary WTF prefix in many
+        of these places and unnecessary String().
+
+        * src/DatabaseObserver.cpp:
+        (WebKit::AllowDatabaseMainThreadBridge::create):
+        (WebKit::AllowDatabaseMainThreadBridge::signalCompleted): Get rid of
+        AllowCrossThreadAccess so that "this" get ref counted and remove mode from being
+        a member variable since a String in a ThreadSafeRefCounted class is bad.
+        (WebKit::AllowDatabaseMainThreadBridge::AllowDatabaseMainThreadBridge): Ditto.
+        (WebKit::AllowDatabaseMainThreadBridge::allowDatabaseTask): Pass through mode
+        and minor code cleaning to do only one call to signalCompleted.
+        (WebKit::allowDatabaseForWorker): Just removed unnecessary String()'s.
+
 2011-12-14  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove redundant third_party entries from chromium DEPS

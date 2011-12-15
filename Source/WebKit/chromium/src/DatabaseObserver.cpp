@@ -64,7 +64,7 @@ static const char allowDatabaseMode[] = "allowDatabaseMode";
 // call back to the worker context.
 class AllowDatabaseMainThreadBridge : public ThreadSafeRefCounted<AllowDatabaseMainThreadBridge> {
 public:
-    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
+    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
     {
         return adoptRef(new AllowDatabaseMainThreadBridge(workerLoaderProxy, mode, commonClient, frame, name, displayName, estimatedSize));
     }
@@ -82,33 +82,29 @@ public:
     }
 
     // This method is invoked on the main thread.
-    void signalCompleted(bool result)
+    void signalCompleted(const String& mode, bool result)
     {
         MutexLocker locker(m_mutex);
-        if (m_workerLoaderProxy)
-            m_workerLoaderProxy->postTaskForModeToWorkerContext(
-                createCallbackTask(&didComplete, WebCore::AllowCrossThreadAccess(this), result), 
-                m_mode);
+        if (!m_workerLoaderProxy)
+            return;
+        m_workerLoaderProxy->postTaskForModeToWorkerContext(createCallbackTask(&didComplete, this, result), mode);
     }
 
 private:
-    AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
+    AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
         : m_workerLoaderProxy(workerLoaderProxy)
-        , m_mode(mode)
     {
         WebWorkerBase::dispatchTaskToMainThread(
-            createCallbackTask(&allowDatabaseTask, WebCore::AllowCrossThreadAccess(commonClient),
+            createCallbackTask(&allowDatabaseTask, mode, WebCore::AllowCrossThreadAccess(commonClient),
                                WebCore::AllowCrossThreadAccess(frame),
-                               String(name), String(displayName), estimatedSize,
-                               WebCore::AllowCrossThreadAccess(this)));
+                               name, displayName, estimatedSize,
+                               this));
     }
 
-    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String name, const WTF::String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
+    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, const String mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const String name, const String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
     {
-        if (commonClient)
-            bridge->signalCompleted(commonClient->allowDatabase(frame, name, displayName, estimatedSize));
-        else
-            bridge->signalCompleted(false);
+        bool allowDatabase = commonClient ? commonClient->allowDatabase(frame, name, displayName, estimatedSize) : false;
+        bridge->signalCompleted(mode, allowDatabase);
     }
 
     static void didComplete(WebCore::ScriptExecutionContext* context, PassRefPtr<AllowDatabaseMainThreadBridge> bridge, bool result)
@@ -119,7 +115,6 @@ private:
     bool m_result;
     Mutex m_mutex;
     WebCore::WorkerLoaderProxy* m_workerLoaderProxy;
-    WTF::String m_mode;
 };
 
 bool allowDatabaseForWorker(NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
@@ -134,7 +129,7 @@ bool allowDatabaseForWorker(NewWebCommonWorkerClient* commonClient, WebFrame* fr
     String mode = allowDatabaseMode;
     mode.append(String::number(runLoop.createUniqueId()));
 
-    RefPtr<AllowDatabaseMainThreadBridge> bridge = AllowDatabaseMainThreadBridge::create(workerLoaderProxy, mode, commonClient, frame, String(name), String(displayName), estimatedSize);
+    RefPtr<AllowDatabaseMainThreadBridge> bridge = AllowDatabaseMainThreadBridge::create(workerLoaderProxy, mode, commonClient, frame, name, displayName, estimatedSize);
 
     // Either the bridge returns, or the queue gets terminated.
     if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
