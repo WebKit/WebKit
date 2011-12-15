@@ -4009,3 +4009,6 @@ BUGWK74384 MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
 BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
+
+// LayoutTestController.overridePreference should support WebKitPageCacheSupportsPluginsPreferenceKey
+BUGWK74584 : -media/crash-closing-page-with-media-as-plugin-fallback.html = TEXT
