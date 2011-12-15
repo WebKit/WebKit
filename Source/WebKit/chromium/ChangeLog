@@ -1,3 +1,15 @@
+2011-12-14  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed, rolling out r102873.
+        http://trac.webkit.org/changeset/102873
+        https://bugs.webkit.org/show_bug.cgi?id=64434
+
+        Break the build
+
+        * public/WebPlugin.h:
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebPluginContainerImpl.h:
+
 2011-12-14  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add inhibitDraw to CCScheduler and drop root impl to prevent background flash on tab restore
