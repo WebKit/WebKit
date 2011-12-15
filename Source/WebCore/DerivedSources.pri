@@ -230,6 +230,7 @@ IDL_BINDINGS += \
     html/canvas/WebGLDebugRendererInfo.idl \
     html/canvas/WebGLDebugShaders.idl \
     html/canvas/WebGLFramebuffer.idl \
+    html/canvas/WebGLLoseContext.idl \
     html/canvas/WebGLProgram.idl \
     html/canvas/WebGLRenderbuffer.idl \
     html/canvas/WebGLRenderingContext.idl \
@@ -238,7 +239,6 @@ IDL_BINDINGS += \
     html/canvas/WebGLTexture.idl \
     html/canvas/WebGLUniformLocation.idl \
     html/canvas/WebGLVertexArrayObjectOES.idl \
-    html/canvas/WebKitLoseContext.idl \
     html/canvas/Uint8Array.idl \
     html/canvas/Uint32Array.idl \
     html/canvas/Uint16Array.idl \

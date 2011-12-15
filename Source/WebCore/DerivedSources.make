@@ -531,6 +531,7 @@ DOM_CLASSES = \
     WebGLContextAttributes \
     WebGLContextEvent \
     WebGLFramebuffer \
+    WebGLLoseContext \
     WebGLProgram \
     WebGLRenderbuffer \
     WebGLRenderingContext \
@@ -548,7 +549,6 @@ DOM_CLASSES = \
     WebKitCSSMatrix \
     WebKitCSSTransformValue \
     WebKitFlags \
-    WebKitLoseContext \
     WebKitMutationObserver \
 	WebKitNamedFlow \
     WebKitPoint \

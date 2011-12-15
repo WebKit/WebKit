@@ -17,9 +17,9 @@ function createNewCanvas()
     canvas.height = 1;
 
     context = WebGLTestUtils.create3DContext(canvas);
-    extension = context.getExtension("WEBKIT_lose_context");
+    extension = context.getExtension("WEBKIT_WEBGL_lose_context");
     if (!extension) {
-        debug("Could not find the WEBKIT_lose_context extension.");
+        debug("Could not find the WEBKIT_WEBGL_lose_context extension.");
         return;
     }
 }

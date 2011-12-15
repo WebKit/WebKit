@@ -2159,6 +2159,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLDebugShaders.cpp
         html/canvas/WebGLFramebuffer.cpp
         html/canvas/WebGLGetInfo.cpp
+        html/canvas/WebGLLoseContext.cpp
         html/canvas/WebGLObject.cpp
         html/canvas/WebGLProgram.cpp
         html/canvas/WebGLRenderbuffer.cpp
@@ -2171,7 +2172,6 @@ IF (ENABLE_WEBGL)
         html/canvas/OESStandardDerivatives.cpp
         html/canvas/OESTextureFloat.cpp
         html/canvas/OESVertexArrayObject.cpp
-        html/canvas/WebKitLoseContext.cpp
 
         platform/graphics/ANGLEWebKitBridge.cpp
         platform/graphics/GraphicsContext3D.cpp
@@ -2190,6 +2190,7 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLDebugRendererInfo.idl
         html/canvas/WebGLDebugShaders.idl
         html/canvas/WebGLFramebuffer.idl
+        html/canvas/WebGLLoseContext.idl
         html/canvas/WebGLProgram.idl
         html/canvas/WebGLRenderbuffer.idl
         html/canvas/WebGLRenderingContext.idl
@@ -2197,7 +2198,6 @@ IF (ENABLE_WEBGL)
         html/canvas/WebGLTexture.idl
         html/canvas/WebGLUniformLocation.idl
         html/canvas/WebGLVertexArrayObjectOES.idl
-        html/canvas/WebKitLoseContext.idl
     )
 ENDIF ()
 
