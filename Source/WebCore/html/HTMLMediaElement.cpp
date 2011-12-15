@@ -238,7 +238,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 #endif
 {
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
-    document->registerForDocumentActivationCallbacks(this);
     document->registerForMediaVolumeCallbacks(this);
     document->registerForPrivateBrowsingStateChangedCallbacks(this);
     
@@ -260,7 +259,6 @@ HTMLMediaElement::~HTMLMediaElement()
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
-    document()->unregisterForDocumentActivationCallbacks(this);
     document()->unregisterForMediaVolumeCallbacks(this);
     document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
 #if ENABLE(VIDEO_TRACK)
@@ -283,7 +281,6 @@ void HTMLMediaElement::willMoveToNewOwnerDocument()
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
-    document()->unregisterForDocumentActivationCallbacks(this);
     document()->unregisterForMediaVolumeCallbacks(this);
     removeElementFromDocumentMap(this, document());
     HTMLElement::willMoveToNewOwnerDocument();
@@ -295,7 +292,6 @@ void HTMLMediaElement::didMoveToNewOwnerDocument()
         document()->addMediaCanStartListener(this);
     if (m_readyState < HAVE_CURRENT_DATA)
         setShouldDelayLoadEvent(true);
-    document()->registerForDocumentActivationCallbacks(this);
     document()->registerForMediaVolumeCallbacks(this);
     addElementToDocumentMap(this, document());
     HTMLElement::didMoveToNewOwnerDocument();

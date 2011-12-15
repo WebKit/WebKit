@@ -1,3 +1,18 @@
+2011-12-15  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74631
+        HTMLMediaElement should not register for document activation callbacks as it doesn't use them
+
+        Reviewed by Eric Carlson.
+
+        No new tests. (No behavior change, pruning useless code)
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLMediaElement::didMoveToNewOwnerDocument):
+
 2011-12-15  Eric Carlson  <eric.carlson@apple.com>
 
         Text tracks should be treated differently according to their kind
