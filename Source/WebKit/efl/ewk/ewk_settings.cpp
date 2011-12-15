@@ -99,6 +99,18 @@ uint64_t ewk_settings_web_database_default_quota_get()
     return s_webDatabaseQuota;
 }
 
+void ewk_settings_web_database_default_quota_set(uint64_t maximumSize)
+{
+    s_webDatabaseQuota = maximumSize;
+}
+
+void ewk_settings_web_database_clear()
+{
+#if ENABLE(SQL_DATABASE)
+    WebCore::DatabaseTracker::tracker().deleteAllDatabases();
+#endif
+}
+
 void ewk_settings_web_database_path_set(const char* path)
 {
 #if ENABLE(SQL_DATABASE)

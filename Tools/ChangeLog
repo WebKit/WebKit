@@ -1,3 +1,14 @@
+2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add a few more web database functions to ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=72148
+
+        Reviewed by Antonio Gomes.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::clearAllDatabases):
+        (LayoutTestController::setDatabaseQuota):
+
 2011-12-15  Martin Kosiba  <mkosiba@google.com>
 
         Fix find on web pages with -webkit-user-select: none for Chromium

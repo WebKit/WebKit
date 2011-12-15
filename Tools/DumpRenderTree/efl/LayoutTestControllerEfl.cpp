@@ -543,12 +543,12 @@ long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef)
 
 void LayoutTestController::clearAllDatabases()
 {
-    notImplemented();
+    ewk_settings_web_database_clear();
 }
 
-void LayoutTestController::setDatabaseQuota(unsigned long long)
+void LayoutTestController::setDatabaseQuota(unsigned long long quota)
 {
-    notImplemented();
+    ewk_settings_web_database_default_quota_set(quota);
 }
 
 JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)

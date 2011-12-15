@@ -667,10 +667,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
 # EFL's LayoutTestController does not implement clearAllDatabases
 storage
 
-# EFL's LayoutTestController does not implement setDatabaseQuota
-storage/open-database-creation-callback.html
-storage/quota-tracking.html
-
 # EFL's LayoutTestController does not implement originsWithLocalStorage
 storage/domstorage/localstorage/storagetracker
 

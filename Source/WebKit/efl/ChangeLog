@@ -1,3 +1,18 @@
+2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add a few more web database functions to ewk_settings.
+        https://bugs.webkit.org/show_bug.cgi?id=72148
+
+        Reviewed by Antonio Gomes.
+
+        Add code to change the default quota (there as only a getter so far)
+        and one to clear the databases.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_default_quota_set):
+        (ewk_settings_web_database_clear):
+        * ewk/ewk_settings.h:
+
 2011-12-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Change efl style variable name with WebKit style for internal functions.
