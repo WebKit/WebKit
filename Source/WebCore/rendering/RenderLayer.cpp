@@ -150,7 +150,7 @@ RenderLayer::RenderLayer(RenderBoxModelObject* renderer)
     , m_usedTransparency(false)
     , m_paintingInsideReflection(false)
     , m_inOverflowRelayout(false)
-    , m_needsFullRepaint(false)
+    , m_repaintStatus(NeedsNormalRepaint)
     , m_overflowStatusDirty(true)
     , m_visibleContentStatusDirty(true)
     , m_hasVisibleContent(false)
@@ -363,18 +363,18 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if (flags & CheckForRepaint) {
             if (view && !view->printing()) {
-                if (m_needsFullRepaint) {
+                if (m_repaintStatus & NeedsFullRepaint) {
                     renderer()->repaintUsingContainer(repaintContainer, oldRepaintRect);
                     if (m_repaintRect != oldRepaintRect)
                         renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
-                } else
+                } else if (shouldRepaintAfterLayout())
                     renderer()->repaintAfterLayoutIfNeeded(repaintContainer, oldRepaintRect, oldOutlineBox, &m_repaintRect, &m_outlineBox);
             }
         }
     } else
         clearRepaintRects();
 
-    m_needsFullRepaint = false;
+    m_repaintStatus = NeedsNormalRepaint;
 
     // Go ahead and update the reflection's position and size.
     if (m_reflection)
@@ -885,6 +885,21 @@ static inline const RenderLayer* compositingContainer(const RenderLayer* layer)
     return layer->isNormalFlowOnly() ? layer->parent() : layer->stackingContext();
 }
 
+inline bool RenderLayer::shouldRepaintAfterLayout() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_repaintStatus == NeedsNormalRepaint)
+        return true;
+
+    // Composited layers that were moved during a positioned movement only
+    // layout, don't need to be repainted. They just need to be recomposited.
+    ASSERT(m_repaintStatus == NeedsFullRepaintForPositionedMovementLayout);
+    return !isComposited();
+#else
+    return true;
+#endif
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 RenderLayer* RenderLayer::enclosingCompositingLayer(bool includeSelf) const
 {
@@ -1167,7 +1182,7 @@ void RenderLayer::removeOnlyThisLayer()
         RenderLayer* next = current->nextSibling();
         removeChild(current);
         parent->addChild(current, nextSib);
-        current->setNeedsFullRepaint();
+        current->setRepaintStatus(NeedsFullRepaint);
         LayoutPoint offsetFromRoot = offsetFromRootBeforeMove;
         // updateLayerPositions depends on hasLayer() already being false for proper layout.
         ASSERT(!renderer()->hasLayer());

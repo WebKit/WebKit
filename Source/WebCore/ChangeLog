@@ -1,3 +1,50 @@
+2011-12-15  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Hardware-backed renderLayer could avoid repainting during a positioned movement layout
+        https://bugs.webkit.org/show_bug.cgi?id=74370
+
+        Reviewed by Simon Fraser.
+
+        Tests: compositing/absolute-position-changed-in-composited-layer.html
+               compositing/absolute-position-changed-with-composited-parent-layer.html
+               compositing/fixed-position-changed-in-composited-layer.html
+               compositing/fixed-position-changed-within-composited-parent-layer.html
+
+        To be able to properly skip repainting after a positioned movement layout only, we
+        needed to add more state to the current |setNeedsFullRepaint| method. As part of that
+        we refactored the callers and internal fields to better match the new meaning.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleDidChange):
+        Explicitely gave the RepaintStatus to setRepaintStatus.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::removeOnlyThisLayer):
+        Updated those function after the renamings.
+
+        (WebCore::RenderLayer::updateLayerPositions):
+        Ditto. Also added a sholdRepaintAfterLayout check.
+
+        (WebCore::RenderLayer::shouldRepaintAfterLayout):
+        Heart of the optimization, if we just did a positioned movement layout of composited RenderLayer,
+        then don't repaint. All the other cases should still trigger a repaint.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::setRepaintStatus):
+        Renamed setNeedsFullRepaint to setRepaintStatus. Also added a new enum RepaintStatus.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setLayerNeedsFullRepaint):
+        Updated after the renamings.
+
+        (WebCore::RenderObject::setLayerNeedsFullRepaintForPositionedMovementLayout):
+        New method that pass a new value to the RenderLayer.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        Switched the call to the dedicated method.
+
 2011-12-15  Antti Koivisto  <antti@apple.com>
 
         Don't invoke CSSStyleSelector::pushParent before Text::recalcTextStyle

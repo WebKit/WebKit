@@ -246,6 +246,7 @@ protected:
 private:
     void addAbsoluteRectForLayer(LayoutRect& result);
     void setLayerNeedsFullRepaint();
+    void setLayerNeedsFullRepaintForPositionedMovementLayout();
 
 public:
 #ifndef NDEBUG
@@ -1007,7 +1008,7 @@ inline void RenderObject::setNeedsPositionedMovementLayout()
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer())
-            setLayerNeedsFullRepaint();
+            setLayerNeedsFullRepaintForPositionedMovementLayout();
     }
 }
 
