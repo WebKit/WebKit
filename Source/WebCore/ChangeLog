@@ -1,3 +1,14 @@
+2011-12-16  Hajime Morrita  <morrita@chromium.org>
+
+        Unreviewed, rolling out r103045.
+        http://trac.webkit.org/changeset/103045
+        https://bugs.webkit.org/show_bug.cgi?id=74590
+
+        Breaks select-script-onchange.html on Chromium Windows
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::typeAheadFind):
+
 2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

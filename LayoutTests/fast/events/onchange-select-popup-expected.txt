@@ -6,6 +6,4 @@ PASS: change event fired.
 
 blur event fired.
 
-PASS: change event fired.
-
 
