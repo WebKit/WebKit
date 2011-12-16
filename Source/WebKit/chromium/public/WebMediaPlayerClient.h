@@ -49,6 +49,7 @@ public:
     virtual void durationChanged() = 0;
     virtual void rateChanged() = 0;
     virtual void sizeChanged() = 0;
+    virtual void setOpaque(bool) = 0;
     virtual void sawUnsupportedTracks() = 0;
     virtual float volume() const = 0;
     virtual void playbackStateChanged() = 0;

@@ -79,6 +79,7 @@ public:
     virtual void durationChanged();
     virtual void rateChanged();
     virtual void sizeChanged();
+    virtual void setOpaque(bool);
     virtual void sawUnsupportedTracks();
     virtual float volume() const;
     virtual void playbackStateChanged();
@@ -169,6 +170,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebCore::VideoLayerChromium> m_videoLayer;
     bool m_supportsAcceleratedCompositing;
+    bool m_opaque;
 #endif
     static bool m_isEnabled;
 
