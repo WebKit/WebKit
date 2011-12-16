@@ -1621,6 +1621,14 @@ sub runAutogenForAutotoolsProjectIfNecessary($@)
     # Long argument lists cause bizarre slowdowns in libtool.
     my $relSourceDir = File::Spec->abs2rel($sourceDir) || ".";
 
+    # Compiler options to keep floating point values consistent
+    # between 32-bit and 64-bit architectures. The options are also
+    # used on Chromium build.
+    determineArchitecture();
+    if ($architecture ne "x86_64") {
+        $ENV{'CXXFLAGS'} = "-march=pentium4 -msse2 -mfpmath=sse";
+    }
+
     # Prefix the command with jhbuild run.
     unshift(@buildArgs, "$relSourceDir/autogen.sh");
     unshift(@buildArgs, "$sourceDir/Tools/gtk/run-with-jhbuild");

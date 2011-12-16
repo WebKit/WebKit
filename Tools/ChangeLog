@@ -1,3 +1,16 @@
+2011-12-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Rounding errors on 32-bit machines causes tests to fail
+        https://bugs.webkit.org/show_bug.cgi?id=72254
+
+        Initial patch by vanuan@gmail.com.
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary): Pass additional
+        CXXFLAGS to autogen in an attempt to harmonize floating point
+        values between 32-bit and 64-bit architectures.
+
 2011-12-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Make distcheck fails during the install
