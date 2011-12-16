@@ -1,3 +1,12 @@
+2011-12-15  Stephen White  <senorblanco@chromium.org>
+
+        Enable CSS_FILTERS in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=74334
+
+        Reviewed by Chris Marrin.
+
+        * features.gypi:
+
 2011-12-15  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         PODIntervalTree takes 1.7MB memory on www.nytimes.com.

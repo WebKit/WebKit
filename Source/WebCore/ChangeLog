@@ -1,3 +1,16 @@
+2011-12-15  Stephen White  <senorblanco@chromium.org>
+
+        Enable CSS_FILTERS in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=74334
+
+        Reviewed by Chris Marrin.
+
+        Covered by css3/filters (when enabled).
+
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::PassthroughFilterOperation::PassthroughFilterOperation):
+        Since wingdi.h #define's PASSTHROUGH, #undef it after the includes.
+
 2011-12-16  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix after r102979.
