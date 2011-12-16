@@ -1455,6 +1455,7 @@ fast/dom/Range/getClientRects.html
 
 # 1 pixel difference between 64-bits and 32-bits
 # Some of these also present rounding issues and xx.00 vs xx.
+# https://bugs.webkit.org/show_bug.cgi?id=62204
 svg/as-image/img-preserveAspectRatio-support-1.html
 svg/batik/text/smallFonts.svg
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
@@ -1469,6 +1470,7 @@ svg/custom/use-on-clip-path-with-transformation.svg
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/filters/feColorMatrix-saturate.svg
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
+svg/W3C-SVG-1.1/animate-elem-40-t.svg
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
 svg/W3C-SVG-1.1/paths-data-03-f.svg
@@ -1486,6 +1488,11 @@ svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-04-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-07-f.svg
+
+# Floating point inconsistencies between 32-bit and 64-bit bots
+svg/css/composite-shadow-example.html
+svg/css/composite-shadow-with-opacity.html
+svg/css/stars-with-shadow.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73409
 fast/forms/placeholder-set-attribute.html
