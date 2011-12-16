@@ -151,4 +151,24 @@ TEST(FunctionalTest, MemberFunctionBindRefDeref)
 
 }
 
+namespace RefAndDerefTests {
+    
+    template<typename T> struct RefCounted {
+        void ref();
+        void deref();
+    };
+    struct Connection : RefCounted<Connection> { };
+    COMPILE_ASSERT(WTF::HasRefAndDeref<Connection>::value, class_has_ref_and_deref);
+    
+    struct NoRefOrDeref { };
+    COMPILE_ASSERT(!WTF::HasRefAndDeref<NoRefOrDeref>::value, class_has_no_ref_or_deref);
+    
+    struct RefOnly { void ref(); };
+    COMPILE_ASSERT(!WTF::HasRefAndDeref<RefOnly>::value, class_has_ref_only);
+    
+    struct DerefOnly { void deref(); };
+    COMPILE_ASSERT(!WTF::HasRefAndDeref<DerefOnly>::value, class_has_deref_only);
+
+}
+
 } // namespace TestWebKitAPI

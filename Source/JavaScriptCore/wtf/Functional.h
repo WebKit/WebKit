@@ -46,16 +46,26 @@ template<typename T> class HasRefAndDeref {
         char padding[8];
     };
 
-    template<typename U, U, U> struct TypeChecker { };
+    struct BaseMixin {
+        void deref();
+        void ref();
+    };
+
+    struct Base : public T, public BaseMixin { };
+
+    template<typename U, U> struct
+    TypeChecker { };
 
     template<typename U>
-    static YesType refAndDerefCheck(TypeChecker<void (U::*)(), &U::ref, &U::deref>*);
+    static NoType refCheck(U*, TypeChecker<void (BaseMixin::*)(), &U::ref>* = 0);
+    static YesType refCheck(...);
 
     template<typename U>
-    static NoType refAndDerefCheck(...);
+    static NoType derefCheck(U*, TypeChecker<void (BaseMixin::*)(), &U::deref>* = 0);
+    static YesType derefCheck(...);
 
 public:
-    static const bool value = sizeof(refAndDerefCheck<T>(0)) == sizeof(YesType);
+    static const bool value = sizeof(refCheck(static_cast<Base*>(0))) == sizeof(YesType) && sizeof(derefCheck(static_cast<Base*>(0))) == sizeof(YesType);
 };
 
 // A FunctionWrapper is a class template that can wrap a function pointer or a member function pointer and

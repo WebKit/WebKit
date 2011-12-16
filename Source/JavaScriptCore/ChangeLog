@@ -1,3 +1,17 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Regression (r102866): Navigating away from or closing a page with a plugin crashes
+        https://bugs.webkit.org/show_bug.cgi?id=74655
+        <rdar://problem/10590024>
+
+        Reviewed by Sam Weinig.
+
+        Rewrite HasRefAndDeref to work if ref and deref are implemented in base classes,
+        using a modified version of the technique described here:
+        http://groups.google.com/group/comp.lang.c++.moderated/msg/e5fbc9305539f699
+        
+        * wtf/Functional.h:
+
 2011-12-15  Andy Wingo  <wingo@igalia.com>
 
         Warnings fixes in Interpreter.cpp and PrivateExecute.cpp

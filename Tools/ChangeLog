@@ -1,3 +1,14 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Regression (r102866): Navigating away from or closing a page with a plugin crashes
+        https://bugs.webkit.org/show_bug.cgi?id=74655
+
+        Reviewed by Sam Weinig.
+
+        Add a bunch of tests.
+
+        * TestWebKitAPI/Tests/WTF/Functional.cpp:
+
 2011-12-15  Stephanie Lewis  <slewis@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=74469
