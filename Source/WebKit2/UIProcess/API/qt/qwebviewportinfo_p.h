@@ -37,7 +37,7 @@ class QQuickWebViewPrivate;
 class QWEBKIT_EXPORT QWebViewportInfo : public QObject {
     Q_OBJECT
     Q_PROPERTY(QSize contentsSize READ contentsSize NOTIFY contentsSizeUpdated)
-    Q_PROPERTY(qreal currentScale READ currentScale NOTIFY currentScaleUpdated)
+    Q_PROPERTY(QVariant currentScale READ currentScale NOTIFY currentScaleUpdated)
     Q_PROPERTY(QVariant devicePixelRatio READ devicePixelRatio NOTIFY viewportConstraintsUpdated)
     Q_PROPERTY(QVariant initialScale READ initialScale NOTIFY viewportConstraintsUpdated)
     Q_PROPERTY(QVariant isScalable READ isScalable NOTIFY viewportConstraintsUpdated)
@@ -55,7 +55,7 @@ public:
     virtual ~QWebViewportInfo();
 
     QSize contentsSize() const;
-    qreal currentScale() const;
+    QVariant currentScale() const;
     QVariant devicePixelRatio() const;
     QVariant initialScale() const;
     QVariant isScalable() const;

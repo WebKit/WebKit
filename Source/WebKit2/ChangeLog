@@ -1,3 +1,24 @@
+2011-12-16  Michael Bruning  <michael.bruning@nokia.com>
+
+        [qt][wk2] Viewport info panel shows wrong current scale
+        https://bugs.webkit.org/show_bug.cgi?id=74613
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qwebviewportinfo.cpp:
+        (QWebViewportInfo::currentScale): Added division by devicePixelRatio. Also
+        added emission of currenScaleUpdated signal when the viewport constraints
+        have been updated.
+        (QWebViewportInfo::didUpdateViewportConstraints):
+        * UIProcess/API/qt/qwebviewportinfo_p.h: Changed return type of
+        currentScale to QVariant as it depends on the viewport interaction engine
+        now.
+        * UIProcess/qt/QtViewportInteractionEngine.cpp:
+        (WebKit::QtViewportInteractionEngine::ensureContentWithinViewportBoundary): Changed
+        to use currentCSSScale for getting the current css scale.
+        (WebKit::QtViewportInteractionEngine::currentCSSScale): Added.
+        * UIProcess/qt/QtViewportInteractionEngine.h: Added method currentCSSScale.
+
 2011-12-15  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' in preparation for the GTK+ release.

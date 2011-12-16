@@ -41,9 +41,12 @@ QSize QWebViewportInfo::contentsSize() const
     return QSize(m_webViewPrivate->pageView->width(), m_webViewPrivate->pageView->height());
 }
 
-qreal QWebViewportInfo::currentScale() const
+QVariant QWebViewportInfo::currentScale() const
 {
-    return m_webViewPrivate->pageView->scale();
+    if (!m_webViewPrivate->interactionEngine)
+        return QVariant();
+
+    return m_webViewPrivate->interactionEngine->currentCSSScale();
 }
 
 QVariant QWebViewportInfo::devicePixelRatio() const
@@ -107,4 +110,5 @@ void QWebViewportInfo::didUpdateCurrentScale()
 void QWebViewportInfo::didUpdateViewportConstraints()
 {
     emit viewportConstraintsUpdated();
+    emit currentScaleUpdated();
 }

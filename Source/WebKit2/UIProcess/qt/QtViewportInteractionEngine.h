@@ -97,6 +97,8 @@ public:
     void focusEditableArea(const QRectF& caretArea, const QRectF& targetArea);
 
     const Constraints& constraints() const { return m_constraints; }
+    qreal currentCSSScale();
+
 Q_SIGNALS:
     void contentSuspendRequested();
     void contentResumeRequested();

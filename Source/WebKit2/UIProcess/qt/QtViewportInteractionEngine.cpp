@@ -401,9 +401,7 @@ bool QtViewportInteractionEngine::ensureContentWithinViewportBoundary(bool immed
     if (scrollAnimationActive() || scaleAnimationActive())
         return false;
 
-    qreal currentCSSScale = cssScaleFromItem(m_content->scale());
-
-    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale));
+    qreal endItemScale = itemScaleFromCSS(innerBoundedCSSScale(currentCSSScale()));
 
     const QRectF viewportRect = m_viewport->boundingRect();
     QPointF viewportHotspot = viewportRect.center();
@@ -449,6 +447,11 @@ void QtViewportInteractionEngine::applyConstraints(const Constraints& constraint
     // If the web app changes successively changes the viewport on purpose
     // it wants to be in control and we should disable animations.
     ensureContentWithinViewportBoundary(/* immediate */ true);
+}
+
+qreal QtViewportInteractionEngine::currentCSSScale()
+{
+    return cssScaleFromItem(m_content->scale());
 }
 
 bool QtViewportInteractionEngine::scrollAnimationActive() const
