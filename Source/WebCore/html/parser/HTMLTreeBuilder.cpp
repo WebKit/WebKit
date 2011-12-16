@@ -1000,10 +1000,8 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     if (token.name() == rpTag || token.name() == rtTag) {
         if (m_tree.openElements()->inScope(rubyTag.localName())) {
             m_tree.generateImpliedEndTags();
-            if (!m_tree.currentNode()->hasTagName(rubyTag)) {
+            if (!m_tree.currentNode()->hasTagName(rubyTag))
                 parseError(token);
-                m_tree.openElements()->popUntil(rubyTag.localName());
-            }
         }
         m_tree.insertHTMLElement(token);
         return;

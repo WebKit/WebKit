@@ -1,3 +1,19 @@
+2011-12-15  Adam Barth  <abarth@webkit.org>
+
+        <ruby><div><p><rp> parses incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=74668
+
+        Reviewed by Darin Adler.
+
+        This patch updates our implementation to match a change to the HTML5
+        specification regarding how <ruby> elements parse.  Previously, <rp>
+        and similar tags used to pop the stack up to the <ruby> element.  Now
+        the popping does not occur.
+
+        Tests: html5lib/runner.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+
 2011-12-15  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Avoid strdup() for extra argument when tracing is disabled.
