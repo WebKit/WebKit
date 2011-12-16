@@ -72,7 +72,7 @@
 #ifndef PODRedBlackTree_h
 #define PODRedBlackTree_h
 
-#include "PODArena.h"
+#include "PODFreeListArena.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -97,6 +97,8 @@ enum UninitializedTreeEnum {
 template<class T>
 class PODRedBlackTree {
 public:
+    class Node;
+
     // Visitor interface for walking all of the tree's elements.
     class Visitor {
     public:
@@ -119,9 +121,9 @@ public:
     }
 
     // Constructs a new red-black tree, allocating temporary objects
-    // from a newly constructed PODArena.
+    // from a newly constructed PODFreeListArena.
     PODRedBlackTree()
-        : m_arena(PODArena::create())
+        : m_arena(PODFreeListArena<Node>::create())
         , m_root(0)
         , m_needsFullOrderingComparisons(false)
 #ifndef NDEBUG
@@ -132,7 +134,7 @@ public:
 
     // Constructs a new red-black tree, allocating temporary objects
     // from the given PODArena.
-    explicit PODRedBlackTree(PassRefPtr<PODArena> arena)
+    explicit PODRedBlackTree(PassRefPtr<PODFreeListArena<Node> > arena)
         : m_arena(arena)
         , m_root(0)
         , m_needsFullOrderingComparisons(false)
@@ -148,6 +150,7 @@ public:
     // isInitialized will return false.
     void clear()
     {
+        markFree(m_root);
         m_arena = 0;
         m_root = 0;
     }
@@ -160,13 +163,19 @@ public:
     void initIfNeeded()
     {
         if (!m_arena)
-            m_arena = PODArena::create();
+            m_arena = PODFreeListArena<Node>::create();
+    }
+
+    void initIfNeeded(PODFreeListArena<Node>* arena)
+    {
+        if (!m_arena)
+            m_arena = arena;
     }
 
     void add(const T& data)
     {
         ASSERT(isInitialized());
-        Node* node = m_arena->allocateObject<Node, T>(data);
+        Node* node = m_arena->template allocateObject<T>(data);
         insertNode(node);
     }
 
@@ -235,7 +244,6 @@ public:
     }
 #endif
 
-protected:
     enum Color {
         Red = 1,
         Black
@@ -290,6 +298,7 @@ protected:
         T m_data;
     };
 
+protected:
     // Returns the root of the tree, which is needed by some subclasses.
     Node* root() const { return m_root; }
 
@@ -690,6 +699,8 @@ private:
             propagateUpdates(xParent);
         if (y->color() == Black)
             deleteFixup(x, xParent);
+
+        m_arena->freeObject(y);
     }
 
     // Visits the subtree rooted at the given node in order.
@@ -700,6 +711,18 @@ private:
         visitor->visit(node->data());
         if (node->right())
             visitInorderImpl(node->right(), visitor);
+    }
+
+    void markFree(Node *node)
+    {
+        if (!node)
+            return;
+
+        if (node->left())
+            markFree(node->left());
+        if (node->right())
+            markFree(node->right());
+        m_arena->freeObject(node);
     }
 
     //----------------------------------------------------------------------
@@ -792,7 +815,7 @@ private:
     //----------------------------------------------------------------------
     // Data members
 
-    RefPtr<PODArena> m_arena;
+    RefPtr<PODFreeListArena<Node> > m_arena;
     Node* m_root;
     bool m_needsFullOrderingComparisons;
 #ifndef NDEBUG

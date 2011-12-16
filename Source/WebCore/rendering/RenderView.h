@@ -24,6 +24,7 @@
 
 #include "FrameView.h"
 #include "LayoutState.h"
+#include "PODFreeListArena.h"
 #include "RenderBlock.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
@@ -192,6 +193,8 @@ public:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    IntervalArena* intervalArena();
+
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
@@ -234,7 +237,7 @@ private:
     
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;
-        
+
 protected:
     FrameView* m_frameView;
 
@@ -278,6 +281,7 @@ private:
     OwnPtr<RenderFlowThreadList> m_renderFlowThreadList;
     RenderFlowThread* m_currentRenderFlowThread;
     RenderRegion* m_currentRenderRegion;
+    RefPtr<IntervalArena> m_intervalArena;
 };
 
 inline RenderView* toRenderView(RenderObject* object)

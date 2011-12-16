@@ -112,10 +112,9 @@ public:
     };
 
 protected:
-    ~PODArena() { }
+    virtual ~PODArena() { }
     friend class WTF::RefCounted<PODArena>;
 
-private:
     PODArena()
         : m_allocator(FastMallocAllocator::create())
         , m_current(0)
@@ -173,7 +172,7 @@ private:
 
         // Frees the memory allocated from the Allocator in the
         // constructor.
-        ~Chunk()
+        virtual ~Chunk()
         {
             m_allocator->free(m_base);
         }
@@ -194,7 +193,7 @@ private:
             return result;
         }
 
-    private:
+    protected:
         Allocator* m_allocator;
         uint8_t* m_base;
         size_t m_size;

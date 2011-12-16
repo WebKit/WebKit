@@ -1,3 +1,57 @@
+2011-12-15  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        PODIntervalTree takes 1.7MB memory on www.nytimes.com.
+        https://bugs.webkit.org/show_bug.cgi?id=73712
+
+        Reviewed by Kenneth Russell.
+
+        For a RenderBlock which has floating objects inside, we will create a PODIntervalTree and a PODArena with
+        at least one 16KB chunk.  A page could have a large number of such RenderBlocks and they could take huge
+        amount of memory.  To fix that, we can create a shared PODArena in the root RenderView.  Instead of having
+        their own PODArena, each RenderBlock with floating objects could share this PODArena to reduce memory consumption.
+
+        The shared PODArena could grow unboundedly if we keep removing and adding floating objects.  We can fix that
+        by reusing the freed memory in each chunk.  However, a PODArena could allocate objects of different sizes and
+        it would be complex to keep track of the size for each allocation in PODArena.  To address that, this patch
+        added class PODFreeListArena<T> which only allocates objects of type T (hence the same size).  We can then use a
+        free list to track freed nodes inside the chunk and reuse the free nodes in future allocations.
+
+        Manually tested on nytimes.com and the heap consumption of PODIntervalTree reduced from 1.7MB to 16KB. Performance
+        doesn't regress on test PerformanceTests/Layout/floats.html.
+
+        * WebCore.xcodeproj/project.pbxproj: add new header file PODFreeListArena.h.
+        * platform/PODArena.h:
+        (WebCore::PODArena::~PODArena): change dtor to virtual.
+        (WebCore::PODArena::Chunk::~Chunk): ditto.
+        * platform/PODFreeListArena.h: Added.
+        (WebCore::PODFreeListArena::create): 
+        (WebCore::PODFreeListArena::allocateObject): allocate an object.
+        (WebCore::PODFreeListArena::freeObject): free an object, find the right chunk and update its free list.
+        (WebCore::PODFreeListArena::allocate): allocate memory from the free list or current chunk.
+        (WebCore::PODFreeListArena::FreeListChunk::FreeListChunk): add m_freeList to track freed cells.
+        (WebCore::PODFreeListArena::FreeListChunk::allocate): reuse a free cell if there is one.
+        (WebCore::PODFreeListArena::FreeListChunk::free): make the memory taken by this object is free, and link it to m_freeList.
+        (WebCore::PODFreeListArena::FreeListChunk::contains): check if a pointer is inside this chunk.
+        (WebCore::PODFreeListArena::FreeListChunk::hasFreeList): check if this chunk has free cells.
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::PODRedBlackTree): take PODFreeListArena instead of PODArena, since nodes of a particular PODRedBlackTree
+            is always of the same size.
+        (WebCore::PODRedBlackTree::clear): mark all nodes before clearing the tree.
+        (WebCore::PODRedBlackTree::initIfNeeded): add initIfNeeded to take an external PODFreeListArena.
+        (WebCore::PODRedBlackTree::add):
+        (WebCore::PODRedBlackTree::deleteNode): mark the node free in arena after it is removed from the tree.
+        (WebCore::PODRedBlackTree::markFree): mark all node free in the tree.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::FloatingObjects::computePlacedFloatsTree):  passing the shared PODFreeListArena to m_placedFloatsTree.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObjects::FloatingObjects):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::intervalArena): create the shared PODFreeListArena lazily.
+        * rendering/RenderView.h:
+
 2011-12-15  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rollout r102825 because it didn't improve performance.

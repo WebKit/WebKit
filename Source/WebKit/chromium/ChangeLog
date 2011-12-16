@@ -1,3 +1,16 @@
+2011-12-15  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        PODIntervalTree takes 1.7MB memory on www.nytimes.com.
+        https://bugs.webkit.org/show_bug.cgi?id=73712
+
+        Reviewed by Kenneth Russell.
+
+        Change the test code in chromium port since PODRedBlackTree now takes PODFreeListArena<T>
+        in its constructor.
+
+        * tests/PODRedBlackTreeTest.cpp:
+        (WebCore::TEST):
+
 2011-12-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Clean up WebIDBObjectStore createIndex temp code

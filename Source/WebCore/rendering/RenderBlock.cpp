@@ -38,6 +38,7 @@
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"
+#include "PODFreeListArena.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
@@ -3271,7 +3272,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the list of special objects if we don't aleady have one
     if (!m_floatingObjects)
-        m_floatingObjects = adoptPtr(new FloatingObjects(isHorizontalWritingMode()));
+        m_floatingObjects = adoptPtr(new FloatingObjects(this, isHorizontalWritingMode()));
     else {
         // Don't insert the object again if it's already in the list
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -3936,7 +3937,7 @@ LayoutUnit RenderBlock::addOverhangingFloats(RenderBlock* child, bool makeChildP
 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = adoptPtr(new FloatingObjects(isHorizontalWritingMode()));
+                    m_floatingObjects = adoptPtr(new FloatingObjects(this, isHorizontalWritingMode()));
 
                 m_floatingObjects->add(floatingObj);
             }
@@ -4009,7 +4010,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, LayoutUnit logicalLeftOf
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = adoptPtr(new FloatingObjects(isHorizontalWritingMode()));
+                    m_floatingObjects = adoptPtr(new FloatingObjects(this, isHorizontalWritingMode()));
                 m_floatingObjects->add(floatingObj);
             }
         }
@@ -7010,7 +7011,7 @@ void RenderBlock::FloatingObjects::computePlacedFloatsTree()
     ASSERT(!m_placedFloatsTree.isInitialized());
     if (m_set.isEmpty())
         return;
-    m_placedFloatsTree.initIfNeeded();
+    m_placedFloatsTree.initIfNeeded(m_renderer->view()->intervalArena());
     FloatingObjectSetIterator it = m_set.begin();
     FloatingObjectSetIterator end = m_set.end();
     for (; it != end; ++it) {

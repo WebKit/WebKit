@@ -45,7 +45,8 @@ TEST(PODRedBlackTreeTest, TestTreeAllocatesFromArena)
 {
     RefPtr<TrackedAllocator> allocator = TrackedAllocator::create();
     {
-        RefPtr<PODArena> arena = PODArena::create(allocator);
+        typedef PODFreeListArena<PODRedBlackTree<int>::Node> PODIntegerArena;
+        RefPtr<PODIntegerArena> arena = PODIntegerArena::create(allocator);
         PODRedBlackTree<int> tree(arena);
         int numAdditions = 2 * PODArena::DefaultChunkSize / sizeof(int);
         for (int i = 0; i < numAdditions; ++i)

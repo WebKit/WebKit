@@ -916,7 +916,7 @@ public:
     RenderRegion* regionAtBlockOffset(LayoutUnit) const;
     RenderRegion* clampToStartAndEndRegions(RenderRegion*) const;
 
-private:
+protected:
     struct FloatingObjectHashFunctions {
         static unsigned hash(FloatingObject* key) { return DefaultHash<RenderBox*>::Hash::hash(key->m_renderer); }
         static bool equal(FloatingObject* a, FloatingObject* b) { return a->m_renderer == b->m_renderer; }
@@ -930,6 +930,7 @@ private:
     typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
     typedef PODInterval<int, FloatingObject*> FloatingObjectInterval;
     typedef PODIntervalTree<int, FloatingObject*> FloatingObjectTree;
+    typedef PODFreeListArena<PODRedBlackTree<FloatingObjectInterval>::Node> IntervalArena;
     
     template <FloatingObject::Type FloatTypeValue>
     class FloatIntervalSearchAdapter {
@@ -957,12 +958,13 @@ private:
 
     class FloatingObjects {
     public:
-        FloatingObjects(bool horizontalWritingMode)
+        FloatingObjects(const RenderBlock* renderer, bool horizontalWritingMode)
             : m_placedFloatsTree(UninitializedTree)
             , m_leftObjectsCount(0)
             , m_rightObjectsCount(0)
             , m_positionedObjectsCount(0)
             , m_horizontalWritingMode(horizontalWritingMode)
+            , m_renderer(renderer)
         {
         }
 
@@ -999,6 +1001,7 @@ private:
         unsigned m_rightObjectsCount;
         unsigned m_positionedObjectsCount;
         bool m_horizontalWritingMode;
+        const RenderBlock* m_renderer;
     };
     OwnPtr<FloatingObjects> m_floatingObjects;
     
