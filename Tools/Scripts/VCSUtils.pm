@@ -55,6 +55,7 @@ BEGIN {
         &decodeGitBinaryPatch
         &determineSVNRoot
         &determineVCSRoot
+        &escapeSubversionPath
         &exitStatus
         &fixChangeLogPatch
         &gitBranch
@@ -153,7 +154,9 @@ sub scmMoveOrRenameFile
     my ($source, $destination) = @_;
     return if ! -e $source;
     if (isSVN()) {
-        system("svn", "move", $source, $destination);
+        my $escapedDestination = escapeSubversionPath($destination);
+        my $escapedSource = escapeSubversionPath($source);
+        system("svn", "move", $escapedSource, $escapedDestination);
     } elsif (isGit()) {
         system("git", "mv", $source, $destination);
     }
@@ -176,7 +179,8 @@ sub scmAddExecutableBit($)
     my ($path) = @_;
 
     if (isSVN()) {
-        system("svn", "propset", "svn:executable", "on", $path) == 0 or die "Failed to run 'svn propset svn:executable on $path'.";
+        my $escapedPath = escapeSubversionPath($path);
+        system("svn", "propset", "svn:executable", "on", $escapedPath) == 0 or die "Failed to run 'svn propset svn:executable on $escapedPath'.";
     } elsif (isGit()) {
         chmod(0755, $path);
     }
@@ -187,7 +191,8 @@ sub scmRemoveExecutableBit($)
     my ($path) = @_;
 
     if (isSVN()) {
-        system("svn", "propdel", "svn:executable", $path) == 0 or die "Failed to run 'svn propdel svn:executable $path'.";
+        my $escapedPath = escapeSubversionPath($path);
+        system("svn", "propdel", "svn:executable", $escapedPath) == 0 or die "Failed to run 'svn propdel svn:executable $escapedPath'.";
     } elsif (isGit()) {
         chmod(0664, $path);
     }
@@ -304,8 +309,9 @@ sub determineSVNRoot()
     while (1) {
         my $thisRoot;
         my $thisUUID;
+        my $escapedPath = escapeSubversionPath($path);
         # Ignore error messages in case we've run past the root of the checkout.
-        open INFO, "svn info '$path' 2> " . File::Spec->devnull() . " |" or die;
+        open INFO, "svn info '$escapedPath' 2> " . File::Spec->devnull() . " |" or die;
         while (<INFO>) {
             if (/^Repository Root: (.+)/) {
                 $thisRoot = $1;
@@ -361,7 +367,8 @@ sub svnRevisionForDirectory($)
     my $revision;
 
     if (isSVNDirectory($dir)) {
-        my $svnInfo = `LC_ALL=C svn info $dir | grep Revision:`;
+        my $escapedDir = escapeSubversionPath($dir);
+        my $svnInfo = `LC_ALL=C svn info $escapedDir | grep Revision:`;
         ($revision) = ($svnInfo =~ m/Revision: (\d+).*/g);
     } elsif (isGitDirectory($dir)) {
         my $gitLog = `cd $dir && LC_ALL=C git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:`;
@@ -378,7 +385,8 @@ sub pathRelativeToSVNRepositoryRootForPath($)
 
     my $svnInfo;
     if (isSVN()) {
-        $svnInfo = `LC_ALL=C svn info $relativePath`;
+        my $escapedRelativePath = escapeSubversionPath($relativePath);
+        $svnInfo = `LC_ALL=C svn info $escapedRelativePath`;
     } elsif (isGit()) {
         $svnInfo = `LC_ALL=C git svn info $relativePath`;
     }
@@ -523,8 +531,9 @@ sub parseChunkRange($)
 sub svnStatus($)
 {
     my ($fullPath) = @_;
+    my $escapedFullPath = escapeSubversionPath($fullPath);
     my $svnStatus;
-    open SVN, "svn status --non-interactive --non-recursive '$fullPath' |" or die;
+    open SVN, "svn status --non-interactive --non-recursive '$escapedFullPath' |" or die;
     if (-d $fullPath) {
         # When running "svn stat" on a directory, we can't assume that only one
         # status will be returned (since any files with a status below the
@@ -1965,6 +1974,13 @@ sub applyGitBinaryPatchDelta($$)
     }
 
     return $out;
+}
+
+sub escapeSubversionPath($)
+{
+    my ($path) = @_;
+    $path .= "@" if $path =~ /@/;
+    return $path;
 }
 
 1;

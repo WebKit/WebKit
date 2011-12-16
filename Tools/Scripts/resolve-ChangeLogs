@@ -182,7 +182,8 @@ sub conflictFiles($)
     }
 
     if ($isSVN) {
-        open STAT, "-|", $SVN, "status", $file or die $!;
+        my $escapedFile = escapeSubversionPath($file);
+        open STAT, "-|", $SVN, "status", $escapedFile or die $!;
         my $status = <STAT>;
         close STAT;
         if (!$status || $status !~ m/^C\s+/) {
@@ -193,7 +194,7 @@ sub conflictFiles($)
         $fileMine = "${file}.mine" if -e "${file}.mine";
 
         my $currentRevision;
-        open INFO, "-|", $SVN, "info", $file or die $!;
+        open INFO, "-|", $SVN, "info", $escapedFile or die $!;
         while (my $line = <INFO>) {
             if ($line =~ m/^Revision: ([0-9]+)/) {
                 $currentRevision = $1;
@@ -465,7 +466,8 @@ sub resolveConflict($)
     my ($file) = @_;
 
     if ($isSVN) {
-        system($SVN, "resolved", $file);
+        my $escapedFile = escapeSubversionPath($file);
+        system($SVN, "resolved", $escapedFile);
         die $! if WEXITSTATUS($?);
     } elsif ($isGit) {
         system($GIT, "add", $file);
@@ -480,7 +482,8 @@ sub showStatus($;$)
     my ($file, $isConflictResolved) = @_;
 
     if ($isSVN) {
-        system($SVN, "status", $file);
+        my $escapedFile = escapeSubversionPath($file);
+        system($SVN, "status", $escapedFile);
     } elsif ($isGit) {
         my @args = qw(--name-status);
         unshift @args, qw(--cached) if $isConflictResolved;

@@ -1446,12 +1446,13 @@ sub diffCommand(@)
 {
     my @paths = @_;
 
-    my $pathsString = "'" . join("' '", @paths) . "'"; 
-
     my $command;
     if (isSVN()) {
-        $command = "$SVN diff --diff-cmd diff -x -N $pathsString";
+        my @escapedPaths = map(escapeSubversionPath($_), @paths);
+        my $escapedPathsString = "'" . join("' '", @escapedPaths) . "'";
+        $command = "$SVN diff --diff-cmd diff -x -N $escapedPathsString";
     } elsif (isGit()) {
+        my $pathsString = "'" . join("' '", @paths) . "'"; 
         $command = "$GIT diff --no-ext-diff -U0 " . diffFromToString();
         $command .= " -- $pathsString" unless $gitCommit or $mergeBase;
     }
@@ -1463,11 +1464,13 @@ sub statusCommand(@)
 {
     my @files = @_;
 
-    my $filesString = "\"" . join ("\" \"", @files) . "\"";
     my $command;
     if (isSVN()) {
-        $command = "$SVN stat $filesString";
+        my @escapedFiles = map(escapeSubversionPath($_), @files);
+        my $escapedFilesString = "'" . join("' '", @escapedFiles) . "'";
+        $command = "$SVN stat $escapedFilesString";
     } elsif (isGit()) {
+        my $filesString = "\"" . join ("\" \"", @files) . "\"";
         $command = "$GIT diff -r --name-status -M -C " . diffFromToString();
         $command .= " -- $filesString" unless $gitCommit;
     }
@@ -1508,7 +1511,8 @@ sub findOriginalFileFromSvn($)
     }
     close INFO;
     my $sourceFile;
-    open INFO, "$SVN info '$file' |" or die;
+    my $escapedFile = escapeSubversionPath($file);
+    open INFO, "$SVN info '$escapedFile' |" or die;
     while (<INFO>) {
         if (/^Copied From URL: (.+?)[\r\n]*$/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
@@ -1522,17 +1526,19 @@ sub determinePropertyChanges($$$)
 {
     my ($file, $isAdd, $original) = @_;
 
+    my $escapedFile = escapeSubversionPath($file);
     my %changes;
     if ($isAdd) {
         my %addedProperties;
         my %removedProperties;
-        open PROPLIST, "$SVN proplist '$file' |" or die;
+        open PROPLIST, "$SVN proplist '$escapedFile' |" or die;
         while (<PROPLIST>) {
             $addedProperties{$1} = 1 if /^  (.+?)[\r\n]*$/ && $1 ne 'svn:mergeinfo';
         }
         close PROPLIST;
         if ($original) {
-            open PROPLIST, "$SVN proplist '$original' |" or die;
+            my $escapedOriginal = escapeSubversionPath($original);
+            open PROPLIST, "$SVN proplist '$escapedOriginal' |" or die;
             while (<PROPLIST>) {
                 next unless /^  (.+?)[\r\n]*$/;
                 my $property = $1;
@@ -1546,7 +1552,7 @@ sub determinePropertyChanges($$$)
         $changes{"A"} = [sort keys %addedProperties] if %addedProperties;
         $changes{"D"} = [sort keys %removedProperties] if %removedProperties;
     } else {
-        open DIFF, "$SVN diff '$file' |" or die;
+        open DIFF, "$SVN diff '$escapedFile' |" or die;
         while (<DIFF>) {
             if (/^Property changes on:/) {
                 while (<DIFF>) {

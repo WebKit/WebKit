@@ -156,7 +156,8 @@ sub findBaseUrl($)
 {
     my ($infoPath) = @_;
     my $baseUrl;
-    open INFO, "svn info '$infoPath' |" or die;
+    my $escapedInfoPath = escapeSubversionPath($infoPath);
+    open INFO, "svn info '$escapedInfoPath' |" or die;
     while (<INFO>) {
         if (/^URL: (.+?)[\r\n]*$/) {
             $baseUrl = $1;
@@ -170,7 +171,8 @@ sub findMimeType($;$)
 {
     my ($file, $revision) = @_;
     my $args = $revision ? "--revision $revision" : "";
-    open PROPGET, "svn propget svn:mime-type $args '$file' |" or die;
+    my $escapedFile = escapeSubversionPath($file);
+    open PROPGET, "svn propget svn:mime-type $args '$escapedFile' |" or die;
     my $mimeType = <PROPGET>;
     close PROPGET;
     # svn may output a different EOL sequence than $/, so avoid chomp.
@@ -200,7 +202,8 @@ sub findSourceFileAndRevision($)
     my $baseUrl = findBaseUrl(".");
     my $sourceFile;
     my $sourceRevision;
-    open INFO, "svn info '$file' |" or die;
+    my $escapedFile = escapeSubversionPath($file);
+    open INFO, "svn info '$escapedFile' |" or die;
     while (<INFO>) {
         if (/^Copied From URL: (.+?)[\r\n]*$/) {
             $sourceFile = File::Spec->abs2rel($1, $baseUrl);
@@ -227,7 +230,8 @@ sub generateDiff($$)
     }
 
     my $diffOptions = diffOptionsForFile($file);
-    open DIFF, "svn diff --diff-cmd diff -x -$diffOptions '$file' |" or die;
+    my $escapedFile = escapeSubversionPath($file);
+    open DIFF, "svn diff --diff-cmd diff -x -$diffOptions '$escapedFile' |" or die;
     while (<DIFF>) {
         $patch .= $_;
     }
@@ -248,7 +252,8 @@ sub generateFileList($\%)
 {
     my ($statPath, $diffFiles) = @_;
     my %testDirectories = map { $_ => 1 } qw(LayoutTests);
-    open STAT, "svn stat '$statPath' |" or die;
+    my $escapedStatPath = escapeSubversionPath($statPath);
+    open STAT, "svn stat '$escapedStatPath' |" or die;
     while (my $line = <STAT>) {
         # svn may output a different EOL sequence than $/, so avoid chomp.
         $line =~ s/[\r\n]+$//g;
@@ -312,7 +317,8 @@ sub manufacturePatchForAdditionWithHistory($)
         my $mimeType = findMimeType($file, $sourceRevision);
         print "svn:mime-type = ${mimeType}\n\n";
     } else {
-        print `svn cat ${sourceFile} | diff -u $devNull - | tail -n +3`;
+        my $escapedSourceFile = escapeSubversionPath($sourceFile);
+        print `svn cat ${escapedSourceFile} | diff -u $devNull - | tail -n +3`;
     }
 }
 

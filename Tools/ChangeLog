@@ -1,3 +1,46 @@
+2011-12-15  Stephanie Lewis  <slewis@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74469
+        Escape paths to svn commands so our tools can handle filenames with @ symbols.
+
+        Reviewed by Adam Roben.
+
+        * Scripts/VCSUtils.pm:
+        (scmMoveOrRenameFile):
+        (scmAddExecutableBit):
+        (scmRemoveExecutableBit):
+        (determineSVNRoot):
+        (svnRevisionForDirectory):
+        (pathRelativeToSVNRepositoryRootForPath):
+        (svnStatus):
+        (escapeSubversionPath):
+        * Scripts/parse-malloc-history:
+        (main):
+        * Scripts/prepare-ChangeLog:
+        (diffCommand):
+        (statusCommand):
+        (findOriginalFileFromSvn):
+        (determinePropertyChanges):
+        * Scripts/resolve-ChangeLogs:
+        (conflictFiles):
+        (resolveConflict):
+        (showStatus):
+        * Scripts/svn-apply:
+        (patch):
+        (scmCopy):
+        (scmAdd):
+        (scmRemove):
+        * Scripts/svn-create-patch:
+        (findBaseUrl):
+        (findMimeType):
+        (findSourceFileAndRevision):
+        (generateDiff):
+        (generateFileList):
+        (manufacturePatchForAdditionWithHistory):
+        * Scripts/svn-unapply:
+        (patch):
+        (revertDirectories):
+
 2011-12-15  Michael Bruning  <michael.bruning@nokia.com>
 
         [qt][wk2] MiniBrowser: Add pressed state for viewport info button.

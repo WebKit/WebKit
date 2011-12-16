@@ -168,11 +168,12 @@ sub patch($)
     } else {
         # Either a deletion, an addition or a binary change.
 
+        my $escapedFullPath = escapeSubversionPath($fullPath);
         # FIXME: Add support for Git binary files.
         if ($isSvnBinary) {
             # Reverse binary change
             unlink($fullPath) if (-e $fullPath);
-            system "svn", "revert", $fullPath;
+            system "svn", "revert", $escapedFullPath;
         } elsif ($deletion) {
             # Reverse deletion
             rename($fullPath, "$fullPath.orig") if -e $fullPath;
@@ -186,7 +187,7 @@ sub patch($)
 
             # Keep the version from the patch in case it's different from svn.
             rename($fullPath, $tempPath);
-            system "svn", "revert", $fullPath;
+            system "svn", "revert", $escapedFullPath;
             rename($tempPath, $fullPath);
 
             # This works around a bug in the svn client.
@@ -198,7 +199,7 @@ sub patch($)
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
 
             # Show status if the file is modifed
-            system "svn", "stat", $fullPath;
+            system "svn", "stat", $escapedFullPath;
         } elsif ($addition) {
             # Reverse addition
             #
@@ -207,7 +208,7 @@ sub patch($)
             #        should be used here.
             unapplyPatch($patch, $fullPath, ["--force"]) if $patch;
             unlink($fullPath) if -z $fullPath;
-            system "svn", "revert", $fullPath;
+            system "svn", "revert", $escapedFullPath;
         }
     }
 
@@ -226,12 +227,13 @@ sub revertDirectories()
             next if (exists $checkedDirectories{$dir});
             if (-d $dir) {
                 my $svnOutput = svnStatus($dir);
+                my $escapedDir = escapeSubversionPath($dir);
                 if ($svnOutput && $svnOutput =~ m#A\s+$dir\n#) {
-                   system "svn", "revert", $dir;
+                   system "svn", "revert", $escapedDir;
                    rmdir $dir;
                 }
                 elsif ($svnOutput && $svnOutput =~ m#D\s+$dir\n#) {
-                   system "svn", "revert", $dir;
+                   system "svn", "revert", $escapedDir;
                 }
                 else {
                     # Modification

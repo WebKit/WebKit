@@ -136,7 +136,8 @@ if ($merge) {
     for my $file (sort keys %sourceRevisions) {
         my $version = $sourceRevisions{$file};
         print "Getting version $version of $file\n";
-        system("svn", "update", "-r", $version, $file) == 0 or die "Failed to run svn update -r $version $file.";
+        my $escapedFile = escapeSubversionPath($file);
+        system("svn", "update", "-r", $version, $escapedFile) == 0 or die "Failed to run svn update -r $version $escapedFile.";
     }
 }
 
@@ -354,8 +355,9 @@ sub patch($)
             applyPatch($patch, $fullPath) if $patch;
             unlink("$fullPath.orig") if -e "$fullPath.orig" && checksum($fullPath) eq checksum("$fullPath.orig");
             scmAdd($fullPath);
+            my $escapedFullPath = escapeSubversionPath("$fullPath.orig");
             # What is this for?
-            system("svn", "stat", "$fullPath.orig") if isSVN() && -e "$fullPath.orig";
+            system("svn", "stat", "$escapedFullPath") if isSVN() && -e "$fullPath.orig";
         }
     }
 
@@ -423,7 +425,9 @@ sub scmCopy($$)
 {
     my ($source, $destination) = @_;
     if (isSVN()) {
-        system("svn", "copy", $source, $destination) == 0 or die "Failed to svn copy $source $destination.";
+        my $escapedSource = escapeSubversionPath($source);
+        my $escapedDestination = escapeSubversionPath($destination);
+        system("svn", "copy", $escapedSource, $escapedDestination) == 0 or die "Failed to svn copy $escapedSource $escapedDestination.";
     } elsif (isGit()) {
         system("cp", $source, $destination) == 0 or die "Failed to copy $source $destination.";
         system("git", "add", $destination) == 0 or die "Failed to git add $destination.";
@@ -434,7 +438,8 @@ sub scmAdd($)
 {
     my ($path) = @_;
     if (isSVN()) {
-        system("svn", "add", $path) == 0 or die "Failed to svn add $path.";
+        my $escapedPath = escapeSubversionPath($path);
+        system("svn", "add", $escapedPath) == 0 or die "Failed to svn add $escapedPath.";
     } elsif (isGit()) {
         system("git", "add", $path) == 0 or die "Failed to git add $path.";
     }
@@ -446,7 +451,8 @@ sub scmRemove($)
     if (isSVN()) {
         # SVN is very verbose when removing directories.  Squelch all output except the last line.
         my $svnOutput;
-        open SVN, "svn rm --force '$path' |" or die "svn rm --force '$path' failed!";
+        my $escapedPath = escapeSubversionPath($path);
+        open SVN, "svn rm --force '$escapedPath' |" or die "svn rm --force '$escapedPath' failed!";
         # Only print the last line.  Subversion outputs all changed statuses below $dir
         while (<SVN>) {
             $svnOutput = $_;
