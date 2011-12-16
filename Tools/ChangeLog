@@ -1,3 +1,32 @@
+2011-12-16  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Remove all global variables from prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=74681
+
+        Reviewed by Ryosuke Niwa.
+
+        We are planning to write unit-tests for prepare-ChangeLog in a run-leaks_unittest
+        manner. This bug is one of the incremental refactorings to remove all top-level
+        code and global variables from prepare-ChangeLog. In this patch,
+        we make the following global variables be used only through parameter passing.
+        This patch removes all global variables from prepare-ChangeLog.
+            - $mergeBase
+            - $gitCommit
+            - $gitIndex
+
+        * Scripts/prepare-ChangeLog:
+        (generateFunctionLists):
+        (changeLogNameFromArgs):
+        (changeLogEmailAddressFromArgs):
+        (generateNewChangeLogs):
+        (printDiff):
+        (diffFromToString):
+        (diffCommand):
+        (statusCommand):
+        (createPatchCommand):
+        (generateFileList):
+        (isConflictStatus):
+
 2011-12-15  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Rounding errors on 32-bit machines causes tests to fail
