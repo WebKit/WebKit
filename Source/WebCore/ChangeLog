@@ -1,3 +1,16 @@
+2011-12-16  Andreas Kling  <kling@webkit.org>
+
+        Don't call Document::body() twice in the same function.
+        <http://webkit.org/b/74683>
+
+        Reviewed by Dan Bernstein.
+
+        Document::body() is O(n), so we should avoid calling it multiple
+        times unnecessarily.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIgnorePendingStylesheets):
+
 2011-12-16  Daniel Sievers  <sievers@chromium.org>
 
         [Chromium] Add trace events for decoding and drawing images.
