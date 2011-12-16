@@ -68,7 +68,7 @@ class TestRunner:
             return 1
 
         test_env = os.environ
-        test_env["DISPLAY"] = ":31"
+        test_env["DISPLAY"] = ":55"
 
         exit_status = [0]
         def _error_handler(error):
@@ -89,7 +89,7 @@ class TestRunner:
 
 if __name__ == "__main__":
     try:
-        xvfb = Executive().popen(["Xvfb", ":31", "-screen", "0", "800x600x24", "-nolisten", "tcp"],
+        xvfb = Executive().popen(["Xvfb", ":55", "-screen", "0", "800x600x24", "-nolisten", "tcp"],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
         sys.stderr.write("Failed to run Xvfb\n")
