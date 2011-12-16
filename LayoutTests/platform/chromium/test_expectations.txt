@@ -2804,6 +2804,10 @@ BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 BUGWK49629 SKIP : compositing/iframes/page-cache-layer-tree.html = PASS
 
+// Needs an image-only rebaseline since we no longer invalidate when setting the replica layer
+// to NULL when it already was NULL so we have no damage at the end of the test.
+BUGJAMESR : compositing/iframes/iframe-content-flipping.html = IMAGE
+
 BUGNONE SLOW WIN DEBUG GPU : fast/canvas/canvas-getImageData.html = PASS
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.

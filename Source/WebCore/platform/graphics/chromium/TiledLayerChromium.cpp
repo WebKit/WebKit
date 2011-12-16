@@ -154,13 +154,18 @@ IntSize TiledLayerChromium::contentBounds() const
 
 void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
+    if (host == layerTreeHost())
+        return;
+
+    if (layerTreeHost())
+        cleanupResources();
+
     LayerChromium::setLayerTreeHost(host);
 
-    if (m_tiler || !host)
+    if (!host)
         return;
 
     createTextureUpdater(host);
-
     setTextureFormat(host->layerRendererCapabilities().bestTextureFormat);
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
 }

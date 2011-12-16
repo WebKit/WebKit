@@ -108,14 +108,25 @@ void LayerChromium::cleanupResourcesRecursive()
 
 void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
-    // If we're changing layer renderers then we need to free up any resources
-    // allocated by the old renderer.
-    if (layerTreeHost() && layerTreeHost() != host) {
+    if (m_layerTreeHost == host)
+        return;
+
+    // If we're changing hosts then we need to free up any resources
+    // allocated by the old host.
+    if (m_layerTreeHost) {
         cleanupResources();
         setNeedsDisplay();
     }
 
     m_layerTreeHost = host;
+
+    for (size_t i = 0; i < m_children.size(); ++i)
+        m_children[i]->setLayerTreeHost(host);
+
+    if (m_maskLayer)
+        m_maskLayer->setLayerTreeHost(host);
+    if (m_replicaLayer)
+        m_replicaLayer->setLayerTreeHost(host);
 }
 
 void LayerChromium::setNeedsCommit()
@@ -128,6 +139,7 @@ void LayerChromium::setParent(LayerChromium* layer)
 {
     ASSERT(!layer || !layer->hasAncestor(this));
     m_parent = layer;
+    setLayerTreeHost(m_parent ? m_parent->layerTreeHost() : 0);
 }
 
 bool LayerChromium::hasAncestor(LayerChromium* ancestor) const
@@ -281,7 +293,23 @@ void LayerChromium::setMaskLayer(LayerChromium* maskLayer)
 {
     if (m_maskLayer == maskLayer)
         return;
+    if (m_maskLayer)
+        m_maskLayer->setLayerTreeHost(0);
     m_maskLayer = maskLayer;
+    if (m_maskLayer)
+        m_maskLayer->setLayerTreeHost(m_layerTreeHost.get());
+    setNeedsCommit();
+}
+
+void LayerChromium::setReplicaLayer(LayerChromium* layer)
+{
+    if (m_replicaLayer == layer)
+        return;
+    if (m_replicaLayer)
+        m_replicaLayer->setLayerTreeHost(0);
+    m_replicaLayer = layer;
+    if (m_replicaLayer)
+        m_replicaLayer->setLayerTreeHost(m_layerTreeHost.get());
     setNeedsCommit();
 }
 

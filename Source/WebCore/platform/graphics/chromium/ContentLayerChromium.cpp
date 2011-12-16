@@ -85,7 +85,6 @@ ContentLayerChromium::ContentLayerChromium(CCLayerDelegate* delegate)
 
 ContentLayerChromium::~ContentLayerChromium()
 {
-    cleanupResources();
 }
 
 void ContentLayerChromium::cleanupResources()

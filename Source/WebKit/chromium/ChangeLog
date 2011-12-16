@@ -1,3 +1,20 @@
+2011-12-15  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Set the CCLayerTreeHost pointer on LayerChromium instances eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=74477
+
+        Reviewed by Kenneth Russell.
+
+        Add some new tests for LayerChromium::m_layerTreeHost behavior.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (::MockLayerTreeHost::create):
+        (::MockLayerTreeHost::MockLayerTreeHost):
+        (::CCLayerTreeHostTestShortlived1::beginTest):
+        (::CCLayerTreeHostTestShortlived2::beginTest):
+        (::CCLayerTreeHostTestShortlived3::beginTest):
+        * tests/LayerChromiumTest.cpp:
+
 2011-12-15  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add forUseOnAnotherThread to WebGraphicsContext3D::Attributes

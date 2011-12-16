@@ -169,11 +169,8 @@ void ImageLayerChromium::paintContentsIfDirty()
     if (m_needsDisplay) {
         m_textureUpdater->updateFromImage(m_contents->nativeImageForCurrentFrame());
         updateTileSizeAndTilingOption();
-        IntRect paintRect(IntPoint(), contentBounds());
-        if (m_needsDisplay) {
-            invalidateRect(paintRect);
-            m_needsDisplay = false;
-        }
+        invalidateRect(IntRect(IntPoint(), contentBounds()));
+        m_needsDisplay = false;
     }
 
     prepareToUpdate(visibleLayerRect());
