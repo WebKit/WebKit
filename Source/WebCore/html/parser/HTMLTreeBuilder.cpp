@@ -268,6 +268,13 @@ public:
 
     bool isEmpty() const { return m_current == m_end; }
 
+    void skipAtMostOneLeadingNewline()
+    {
+        ASSERT(!isEmpty());
+        if (*m_current == '\n')
+            ++m_current;
+    }
+
     void skipLeadingWhitespace()
     {
         skipLeading<isHTMLSpace>();
@@ -349,6 +356,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* docum
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
+    , m_shouldSkipLeadingNewline(false)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
     , m_lastScriptElementStartPosition(TextPosition::belowRangePosition())
@@ -367,6 +375,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
     , m_isPaused(false)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
+    , m_shouldSkipLeadingNewline(false)
     , m_parser(parser)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
     , m_lastScriptElementStartPosition(TextPosition::belowRangePosition())
@@ -476,21 +485,26 @@ void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
         ASSERT_NOT_REACHED();
         break;
     case HTMLTokenTypes::DOCTYPE:
+        m_shouldSkipLeadingNewline = false;
         processDoctypeToken(token);
         break;
     case HTMLTokenTypes::StartTag:
+        m_shouldSkipLeadingNewline = false;
         processStartTag(token);
         break;
     case HTMLTokenTypes::EndTag:
+        m_shouldSkipLeadingNewline = false;
         processEndTag(token);
         break;
     case HTMLTokenTypes::Comment:
+        m_shouldSkipLeadingNewline = false;
         processComment(token);
         return;
     case HTMLTokenTypes::Character:
         processCharacter(token);
         break;
     case HTMLTokenTypes::EndOfFile:
+        m_shouldSkipLeadingNewline = false;
         processEndOfFile(token);
         break;
     }
@@ -810,7 +824,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     if (token.name() == preTag || token.name() == listingTag) {
         processFakePEndTagIfPInButtonScope();
         m_tree.insertHTMLElement(token);
-        m_parser->tokenizer()->setSkipLeadingNewLineForListing(true);
+        m_shouldSkipLeadingNewline = true;
         m_framesetOk = false;
         return;
     }
@@ -937,7 +951,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
     }
     if (token.name() == textareaTag) {
         m_tree.insertHTMLElement(token);
-        m_parser->tokenizer()->setSkipLeadingNewLineForListing(true);
+        m_shouldSkipLeadingNewline = true;
         m_parser->tokenizer()->setState(HTMLTokenizerState::RCDATAState);
         m_originalInsertionMode = m_insertionMode;
         m_framesetOk = false;
@@ -2272,6 +2286,24 @@ void HTMLTreeBuilder::processCharacter(AtomicHTMLToken& token)
 void HTMLTreeBuilder::processCharacterBuffer(ExternalCharacterTokenBuffer& buffer)
 {
 ReprocessBuffer:
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
+    // Note that this logic is different than the generic \r\n collapsing
+    // handled in the input stream preprocessor. This logic is here as an
+    // "authoring convenience" so folks can write:
+    //
+    // <pre>
+    // lorem ipsum
+    // lorem ipsum
+    // </pre>
+    //
+    // without getting an extra newline at the start of their <pre> element.
+    if (m_shouldSkipLeadingNewline) {
+        m_shouldSkipLeadingNewline = false;
+        buffer.skipAtMostOneLeadingNewline();
+        if (buffer.isEmpty())
+            return;
+    }
+
     switch (insertionMode()) {
     case InitialMode: {
         ASSERT(insertionMode() == InitialMode);

@@ -66,6 +66,10 @@ void TextDocumentParser::insertFakePreElement()
     AtomicHTMLToken fakePre(HTMLTokenTypes::StartTag, preTag.localName(), attributes.release());
 
     treeBuilder()->constructTreeFromAtomicToken(fakePre);
+    // Normally we would skip the first \n after a <pre> element, but we don't
+    // want to skip the first \n for text documents!
+    treeBuilder()->setShouldSkipLeadingNewline(false);
+
     m_haveInsertedFakePreElement = true;
 }
 

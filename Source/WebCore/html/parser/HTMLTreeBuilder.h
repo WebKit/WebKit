@@ -83,6 +83,8 @@ public:
     // Done, close any open tags, etc.
     void finished();
 
+    void setShouldSkipLeadingNewline(bool shouldSkip) { m_shouldSkipLeadingNewline = shouldSkip; }
+
     static bool scriptEnabled(Frame*);
     static bool pluginsEnabled(Frame*);
 
@@ -238,6 +240,8 @@ private:
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#pending-table-character-tokens
     StringBuilder m_pendingTableCharacters;
+
+    bool m_shouldSkipLeadingNewline;
 
     // We access parser because HTML5 spec requires that we be able to change the state of the tokenizer
     // from within parser actions. We also need it to track the current position.
