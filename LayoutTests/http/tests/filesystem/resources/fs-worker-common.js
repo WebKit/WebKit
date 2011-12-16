@@ -50,7 +50,7 @@ function removeAllInDirectorySync(directory) {
     } while (entries.length);
 }
 
-if (this.importScripts && !this.requestFileSystem) {
+if (this.importScripts && !this.requestFileSystem && !this.webkitRequestFileSystem) {
     debug('This test requires FileSystem API.');
     finishJSTest();
 }

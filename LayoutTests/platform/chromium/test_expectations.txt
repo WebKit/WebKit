@@ -155,6 +155,20 @@ WONTFIX SKIP : fast/workers/shared-worker-name.html = TEXT
 WONTFIX SKIP : fast/workers/shared-worker-script-error.html = TEXT
 WONTFIX SKIP : fast/workers/shared-worker-simple.html = TIMEOUT
 WONTFIX SKIP : fast/workers/worker-crash-with-invalid-location.html = TEXT
+WONTFIX SKIP : http/tests/workers/shared-worker-invalid-url.html = TEXT TIMEOUT
+WONTFIX SKIP : http/tests/workers/shared-worker-redirect.html = TEXT TIMEOUT
+WONTFIX SKIP : http/tests/workers/shared-worker-importScripts.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-close.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-methods-async.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-methods.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-referer.html = TIMEOUT
+WONTFIX SKIP : http/tests/xmlhttprequest/workers/shared-worker-xhr-file-not-found.html = TIMEOUT
+WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/close-in-shared-worker.html = TIMEOUT
+WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/shared-worker-simple.html = TIMEOUT
+WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/close-in-shared-worker.html = TIMEOUT
+WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/shared-worker-simple.html = TIMEOUT
+WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS TIMEOUT FAIL
 
 // test_shell does not support message ports
 BUGWK74459 SKIP : fast/workers/termination-with-port-messages.html = CRASH
@@ -165,24 +179,19 @@ BUGWK74459 SKIP : fast/workers/worker-messageport.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-multi-port.html = CRASH
 
 BUGWK74554 SKIP : fast/workers/storage = CRASH TIMEOUT
+BUGWK74554 SKIP : http/tests/workers/interrupt-database-sync-open-crash.html = CRASH TIMEOUT
 
 BUGWK74449 SKIP : fast/workers/dedicated-worker-lifecycle.html = TIMEOUT
 BUGWK74449 SKIP : fast/workers/worker-close-more.html = TIMEOUT
 BUGWK74449 SKIP : fast/workers/worker-lifecycle.html = TIMEOUT
+
 BUGWK74466 : fast/workers/worker-script-error.html = PASS TIMEOUT FAIL
 
-// test_shell does not support workers
-WONTFIX SKIP : fast/files/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : fast/filesystem/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : fast/canvas/webgl/worker-data-view-test.html = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/filesystem/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/websocket/tests/hixie76/workers/ = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/websocket/tests/hybi/workers/ = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/inspector/network/network-shared-worker.html = PASS TIMEOUT FAIL
-WONTFIX SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT FAIL
+BUGWK74653 SKIP : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TIMEOUT
+
+BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
+
+BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT FAIL
 
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously
 // loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.
