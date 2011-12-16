@@ -2886,6 +2886,7 @@ webcore_sources += \
 	Source/WebCore/platform/PlatformScreen.h \
 	Source/WebCore/platform/PlatformWheelEvent.h \
 	Source/WebCore/platform/PODArena.h \
+	Source/WebCore/platform/PODFreeListArena.h \
 	Source/WebCore/platform/PODInterval.h \
 	Source/WebCore/platform/PODIntervalTree.h \
 	Source/WebCore/platform/PODRedBlackTree.h \

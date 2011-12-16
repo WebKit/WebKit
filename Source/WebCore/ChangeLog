@@ -1,3 +1,9 @@
+2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2011-12-16  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Selection change by type-ahead doesn't fire 'change' event
