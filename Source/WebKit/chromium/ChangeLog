@@ -1,3 +1,17 @@
+2011-12-15  Tony Chang  <tony@chromium.org>
+
+        Chromium Windows (Tests) is failing to build
+        https://bugs.webkit.org/show_bug.cgi?id=74320
+
+        Reviewed by Kenneth Russell.
+
+        Roll chromium deps to r114686 to pull in a change to how generated
+        headers include files from third_party/WebKit.  This should make the
+        file path shorter, reducing the chance of hitting the 260 char path
+        limit on Windows.
+
+        * DEPS: roll to r114686
+
 2011-12-15  James Robinson  <jamesr@chromium.org>
 
         [chromium] Set the CCLayerTreeHost pointer on LayerChromium instances eagerly
