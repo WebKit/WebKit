@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 779x59
+          text run at (0,0) width 476: "This page ensures that WebKit can render unicode variation selector correctly. "
+          text run at (476,0) width 300: "On platforms which support UVSes, the glyphs of"
+          text run at (0,20) width 583: "U+845B should be different. On platforms which don't support UVSes, they should be identical. "
+          text run at (583,20) width 196: "In addition, any glyphs (including"
+          text run at (0,40) width 445: "the last resort glyph) should not appear after the U+845B on all platforms."
+      RenderBlock {DIV} at (0,76) size 784x20
+        RenderText {#text} at (0,0) size 273x19
+          text run at (0,0) width 273: "Glyph for code point U+845B without UVS: "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (273,1) size 16x16
+            text run at (273,1) width 16: "\x{845B}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,96) size 784x20
+        RenderText {#text} at (0,0) size 254x19
+          text run at (0,0) width 254: "Glyph for code point U+845B with UVS: "
+        RenderInline {SPAN} at (0,0) size 16x16
+          RenderText {#text} at (254,1) size 16x16
+            text run at (254,1) width 16: "\x{845B}\x{DB40}\x{DD00}"
+        RenderText {#text} at (0,0) size 0x0
