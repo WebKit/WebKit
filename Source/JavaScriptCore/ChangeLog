@@ -1,3 +1,20 @@
+2011-12-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Value profiling should distinguished between NaN and non-NaN doubles
+        https://bugs.webkit.org/show_bug.cgi?id=74682
+
+        Reviewed by Gavin Barraclough.
+        
+        Added PredictDoubleReal and PredictDoubleNaN. PredictDouble is now the union
+        of the two.
+
+        * bytecode/PredictedType.cpp:
+        (JSC::predictionToString):
+        (JSC::predictionFromValue):
+        * bytecode/PredictedType.h:
+        (JSC::isDoubleRealPrediction):
+        (JSC::isDoublePrediction):
+
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
         Regression (r102866): Navigating away from or closing a page with a plugin crashes

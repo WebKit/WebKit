@@ -128,8 +128,13 @@ const char* predictionToString(PredictedType value)
     else
         isTop = false;
     
-    if (value & PredictDouble)
-        ptr.strcat("Double");
+    if (value & PredictDoubleReal)
+        ptr.strcat("Doublereal");
+    else
+        isTop = false;
+    
+    if (value & PredictDoubleNaN)
+        ptr.strcat("Doublenan");
     else
         isTop = false;
     
@@ -212,8 +217,12 @@ PredictedType predictionFromValue(JSValue value)
 {
     if (value.isInt32())
         return PredictInt32;
-    if (value.isDouble())
-        return PredictDouble;
+    if (value.isDouble()) {
+        double number = value.asNumber();
+        if (number == number)
+            return PredictDoubleReal;
+        return PredictDoubleNaN;
+    }
     if (value.isCell())
         return predictionFromCell(value.asCell());
     if (value.isBoolean())

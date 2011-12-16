@@ -55,9 +55,11 @@ static const PredictedType PredictString        = 0x00002000; // It's definitely
 static const PredictedType PredictCellOther     = 0x00004000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
 static const PredictedType PredictCell          = 0x00007fff; // It's definitely a JSCell.
 static const PredictedType PredictInt32         = 0x00008000; // It's definitely an Int32.
-static const PredictedType PredictDouble        = 0x00010000; // It's definitely a Double.
-static const PredictedType PredictNumber        = 0x00018000; // It's either an Int32 or a Double.
-static const PredictedType PredictBoolean       = 0x00020000; // It's definitely a Boolean.
+static const PredictedType PredictDoubleReal    = 0x00010000; // It's definitely a non-NaN double.
+static const PredictedType PredictDoubleNaN     = 0x00020000; // It's definitely a NaN.
+static const PredictedType PredictDouble        = 0x00030000; // It's either a non-NaN or a NaN double.
+static const PredictedType PredictNumber        = 0x00038000; // It's either an Int32 or a Double.
+static const PredictedType PredictBoolean       = 0x00040000; // It's definitely a Boolean.
 static const PredictedType PredictOther         = 0x40000000; // It's definitely none of the above.
 static const PredictedType PredictTop           = 0x7fffffff; // It can be any of the above.
 static const PredictedType FixedIndexedStorageMask = PredictByteArray | PredictInt8Array | PredictInt16Array | PredictInt32Array | PredictUint8Array | PredictUint16Array | PredictUint32Array | PredictFloat32Array | PredictFloat64Array;
@@ -159,9 +161,14 @@ inline bool isInt32Prediction(PredictedType value)
     return value == PredictInt32;
 }
 
+inline bool isDoubleRealPrediction(PredictedType value)
+{
+    return value == PredictDoubleReal;
+}
+
 inline bool isDoublePrediction(PredictedType value)
 {
-    return value == PredictDouble;
+    return (value & PredictDouble) == value;
 }
 
 inline bool isNumberPrediction(PredictedType value)
