@@ -52,7 +52,7 @@ public:
     // E.g., sending in the enter key gives back "InsertNewline".
     const char* interpretKeyEvent(
         const WebKeyboardEvent& webKeyboardEvent,
-        PlatformKeyboardEvent::Type keyType)
+        PlatformEvent::Type keyType)
     {
         EditorClientImpl editorImpl(0);
         PlatformKeyboardEventBuilder evt(webKeyboardEvent);
@@ -85,7 +85,7 @@ public:
         WebInputEvent::Modifiers osModifier = WebInputEvent::ControlKey;
 #endif
         setupKeyDownEvent(&keyboardEvent, keyCode, osModifier);
-        return interpretKeyEvent(keyboardEvent, PlatformKeyboardEvent::RawKeyDown);
+        return interpretKeyEvent(keyboardEvent, PlatformEvent::RawKeyDown);
     }
 
     // Like interpretKeyEvent, but with pressing down ctrl+|keyCode|.
@@ -93,7 +93,7 @@ public:
     {
         WebKeyboardEvent keyboardEvent;
         setupKeyDownEvent(&keyboardEvent, keyCode, WebInputEvent::ControlKey);
-        return interpretKeyEvent(keyboardEvent, PlatformKeyboardEvent::RawKeyDown);
+        return interpretKeyEvent(keyboardEvent, PlatformEvent::RawKeyDown);
     }
 
     // Like interpretKeyEvent, but with typing a tab.
@@ -101,7 +101,7 @@ public:
     {
         WebKeyboardEvent keyboardEvent;
         setupKeyDownEvent(&keyboardEvent, '\t', modifiers);
-        return interpretKeyEvent(keyboardEvent, PlatformKeyboardEvent::Char);
+        return interpretKeyEvent(keyboardEvent, PlatformEvent::Char);
     }
 
     // Like interpretKeyEvent, but with typing a newline.
@@ -109,7 +109,7 @@ public:
     {
         WebKeyboardEvent keyboardEvent;
         setupKeyDownEvent(&keyboardEvent, '\r', modifiers);
-        return interpretKeyEvent(keyboardEvent, PlatformKeyboardEvent::Char);
+        return interpretKeyEvent(keyboardEvent, PlatformEvent::Char);
     }
 
     // A name for "no modifiers set".
@@ -169,7 +169,7 @@ TEST_F(KeyboardTest, TestEscape)
     setupKeyDownEvent(&keyboardEvent, WebCore::VKEY_ESCAPE, noModifiers);
 
     const char* result = interpretKeyEvent(keyboardEvent,
-                                           PlatformKeyboardEvent::RawKeyDown);
+                                           PlatformEvent::RawKeyDown);
     EXPECT_STREQ("Cancel", result);
 }
 

@@ -26630,6 +26630,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\PlatformEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\PlatformEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\PlatformKeyboardEvent.h"
 				>
 			</File>

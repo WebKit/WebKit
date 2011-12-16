@@ -121,7 +121,7 @@ PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 
 unsigned EventHandler::accessKeyModifiers()
 {
-    return PlatformKeyboardEvent::AltKey;
+    return PlatformEvent::AltKey;
 }
 
 }

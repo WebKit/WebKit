@@ -75,15 +75,15 @@ PlatformMouseEventBuilder::PlatformMouseEventBuilder(Widget* widget, const WebMo
     switch (e.type) {
     case WebInputEvent::MouseMove:
     case WebInputEvent::MouseLeave:  // synthesize a move event
-        m_eventType = MouseEventMoved;
+        m_type = PlatformEvent::MouseMoved;
         break;
 
     case WebInputEvent::MouseDown:
-        m_eventType = MouseEventPressed;
+        m_type = PlatformEvent::MousePressed;
         break;
 
     case WebInputEvent::MouseUp:
-        m_eventType = MouseEventReleased;
+        m_type = PlatformEvent::MouseReleased;
         break;
 
     default:
@@ -103,6 +103,8 @@ PlatformWheelEventBuilder::PlatformWheelEventBuilder(Widget* widget, const WebMo
     m_wheelTicksY = e.wheelTicksY;
     m_granularity = e.scrollByPage ?
         ScrollByPageWheelEvent : ScrollByPixelWheelEvent;
+    
+    m_type = PlatformEvent::Wheel;
     m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);
     m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
     m_altKey = (e.modifiers & WebInputEvent::AltKey);
@@ -122,16 +124,16 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
 {
     switch (e.type) {
     case WebInputEvent::GestureScrollBegin:
-        m_type = PlatformGestureEvent::ScrollBeginType;
+        m_type = PlatformEvent::GestureScrollBegin;
         break;
     case WebInputEvent::GestureScrollEnd:
-        m_type = PlatformGestureEvent::ScrollEndType;
+        m_type = PlatformEvent::GestureScrollEnd;
         break;
     case WebInputEvent::GestureScrollUpdate:
-        m_type = PlatformGestureEvent::ScrollUpdateType;
+        m_type = PlatformEvent::GestureScrollUpdate;
         break;
     case WebInputEvent::GestureTap:
-        m_type = PlatformGestureEvent::TapType;
+        m_type = PlatformEvent::GestureTap;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -150,21 +152,21 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
 
 // MakePlatformKeyboardEvent --------------------------------------------------
 
-static inline PlatformKeyboardEvent::Type toPlatformKeyboardEventType(WebInputEvent::Type type)
+static inline PlatformEvent::Type toPlatformKeyboardEventType(WebInputEvent::Type type)
 {
     switch (type) {
     case WebInputEvent::KeyUp:
-        return PlatformKeyboardEvent::KeyUp;
+        return PlatformEvent::KeyUp;
     case WebInputEvent::KeyDown:
-        return PlatformKeyboardEvent::KeyDown;
+        return PlatformEvent::KeyDown;
     case WebInputEvent::RawKeyDown:
-        return PlatformKeyboardEvent::RawKeyDown;
+        return PlatformEvent::RawKeyDown;
     case WebInputEvent::Char:
-        return PlatformKeyboardEvent::Char;
+        return PlatformEvent::Char;
     default:
         ASSERT_NOT_REACHED();
     }
-    return PlatformKeyboardEvent::KeyDown;
+    return PlatformEvent::KeyDown;
 }
 
 PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder(const WebKeyboardEvent& e)

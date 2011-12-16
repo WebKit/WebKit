@@ -473,7 +473,7 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
 #if ENABLE(GESTURE_EVENTS)
 void ScrollAnimatorNone::zoom(const PlatformGestureEvent& pge)
 {
-    ASSERT(pge.type() == PlatformGestureEvent::DoubleTapType);
+    ASSERT(pge.type() == PlatformEvent::GestureDoubleTap);
     // FIXME: modify this so we can start even if the timer is active.
     if (!m_animationTimer.isActive()) {
         m_currentZoomScale = 1;
@@ -490,7 +490,7 @@ void ScrollAnimatorNone::zoom(const PlatformGestureEvent& pge)
         m_zoomData.m_desiredTransX = (1 - scale) * pge.globalPosition().x();
         m_zoomData.m_desiredTransY = (1 - scale) * pge.globalPosition().y();
 #if ENABLE(DOUBLE_TAP_CENTERS)
-        if (pge.type() == PlatformGestureEvent::DoubleTapType) {
+        if (pge.type() == PlatformEvent::GestureDoubleTap) {
             // Zoom to centre of display. Pinch-to-zoom may not want this behaviour.
             m_zoomData.m_desiredTransX += m_scrollableArea->visibleWidth() / 2 - pge.globalPosition().x();
             m_zoomData.m_desiredTransY += m_scrollableArea->visibleHeight() / 2 - pge.globalPosition().y();
@@ -516,7 +516,7 @@ void ScrollAnimatorNone::handleGestureEvent(const PlatformGestureEvent& pge)
 {
     TRACE_EVENT("ScrollAnimatorNone::handleGestureEvent", this, 0);
     switch (pge.type()) {
-    case PlatformGestureEvent::DoubleTapType:
+    case PlatformEvent::GestureDoubleTap:
         zoom(pge);
         break;
 

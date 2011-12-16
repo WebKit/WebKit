@@ -337,14 +337,14 @@ static int windowsKeyCodeForKeyEvent(unsigned int keycode)
 PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
 {
     if (event.GetEventType() == wxEVT_KEY_UP)
-        m_type = KeyUp;
+        m_type = PlatformEvent::KeyUp;
     else if (event.GetEventType() == wxEVT_KEY_DOWN)
-        m_type = KeyDown;
+        m_type = PlatformEvent::KeyDown;
     else if (event.GetEventType() == wxEVT_CHAR)
-        m_type = Char;
+        m_type = PlatformEvent::Char;
     else
         ASSERT_NOT_REACHED();
-    if (m_type != Char)
+    if (m_type != PlatformEvent::Char)
         m_keyIdentifier = keyIdentifierForWxKeyCode(event.GetKeyCode());
     else {
         //ENTER is an editing command processed as a char (only Enter and Tab are)
@@ -371,9 +371,9 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
-    ASSERT(m_type == KeyDown);
+    ASSERT(m_type == PlatformEvent::KeyDown);
     m_type = type;
-    if (type == RawKeyDown) {
+    if (type == PlatformEvent::RawKeyDown) {
         m_text = String();
         m_unmodifiedText = String();
     } else {

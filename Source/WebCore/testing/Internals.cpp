@@ -355,7 +355,7 @@ void Internals::setZoomAnimatorTransform(Document *document, float scale, float 
     }
 
 #if ENABLE(GESTURE_EVENTS)
-    PlatformGestureEvent pge(PlatformGestureEvent::DoubleTapType, IntPoint(tx, ty), IntPoint(tx, ty), 0, scale, 0.f, 0, 0, 0, 0);
+    PlatformGestureEvent pge(PlatformEvent::GestureDoubleTap, IntPoint(tx, ty), IntPoint(tx, ty), 0, scale, 0.f, 0, 0, 0, 0);
     document->view()->frame()->eventHandler()->handleGestureEvent(pge);
 #else
     UNUSED_PARAM(scale);

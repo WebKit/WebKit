@@ -124,9 +124,9 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 unsigned EventHandler::accessKeyModifiers()
 {
 #if OS(DARWIN)
-    return PlatformKeyboardEvent::CtrlKey | PlatformKeyboardEvent::AltKey;
+    return PlatformEvent::CtrlKey | PlatformEvent::AltKey;
 #else
-    return PlatformKeyboardEvent::AltKey;
+    return PlatformEvent::AltKey;
 #endif
 }
 

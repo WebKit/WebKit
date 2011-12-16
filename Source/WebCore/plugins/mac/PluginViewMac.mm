@@ -625,19 +625,19 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     EventRecord record;
 
     if (event->type() == eventNames().keydownEvent) {
-        // This event is the result of a PlatformKeyboardEvent::KeyDown which
+        // This event is the result of a PlatformEvent::KeyDown which
         // was disambiguated into a PlatformKeyboardEvent::RawKeyDown. Since
         // we don't have access to the text here, we return, and wait for the
         // corresponding event based on PlatformKeyboardEvent::Char.
         return;
     } else if (event->type() == eventNames().keypressEvent) {
         // Which would be this one. This event was disambiguated from the same
-        // PlatformKeyboardEvent::KeyDown, but to a PlatformKeyboardEvent::Char,
+        // PlatformEvent::KeyDown, but to a PlatformEvent::Char,
         // which retains the text from the original event. So, we can safely pass
         // on the event as a key-down event to the plugin.
         record.what = keyDown;
     } else if (event->type() == eventNames().keyupEvent) {
-        // PlatformKeyboardEvent::KeyUp events always have the text, so nothing
+        // PlatformEvent::KeyUp events always have the text, so nothing
         // fancy here.
         record.what = keyUp;
     } else {

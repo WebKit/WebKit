@@ -59,13 +59,10 @@ void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
 
 PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
 #ifndef QT_NO_WHEELEVENT
-    : m_position(e->pos().toPoint())
+    : PlatformEvent(PlatformEvent::Wheel, e->modifiers() & Qt::ShiftModifier, e->modifiers() & Qt::ControlModifier, e->modifiers() & Qt::AltModifier, e->modifiers() & Qt::MetaModifier)
+    , m_position(e->pos().toPoint())
     , m_globalPosition(e->screenPos())
     , m_granularity(ScrollByPixelWheelEvent)
-    , m_shiftKey(e->modifiers() & Qt::ShiftModifier)
-    , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
-    , m_altKey(e->modifiers() & Qt::AltModifier)
-    , m_metaKey(e->modifiers() & Qt::MetaModifier)
     , m_directionInvertedFromDevice(false)
 #endif
 {
@@ -78,13 +75,10 @@ PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
 
 PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
 #ifndef QT_NO_WHEELEVENT
-    : m_position(e->pos())
+    : PlatformEvent(PlatformEvent::Wheel, e->modifiers() & Qt::ShiftModifier, e->modifiers() & Qt::ControlModifier, e->modifiers() & Qt::AltModifier, e->modifiers() & Qt::MetaModifier)
+    , m_position(e->pos())
     , m_globalPosition(e->globalPos())
     , m_granularity(ScrollByPixelWheelEvent)
-    , m_shiftKey(e->modifiers() & Qt::ShiftModifier)
-    , m_ctrlKey(e->modifiers() & Qt::ControlModifier)
-    , m_altKey(e->modifiers() & Qt::AltModifier)
-    , m_metaKey(e->modifiers() & Qt::MetaModifier)
     , m_directionInvertedFromDevice(false)
 #endif
 {

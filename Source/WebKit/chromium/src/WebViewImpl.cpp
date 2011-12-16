@@ -2205,7 +2205,7 @@ void WebViewImpl::dragSourceEndedAt(
 {
     PlatformMouseEvent pme(clientPoint,
                            screenPoint,
-                           LeftButton, MouseEventMoved, 0, false, false, false,
+                           LeftButton, PlatformEvent::MouseMoved, 0, false, false, false,
                            false, 0);
     m_page->mainFrame()->eventHandler()->dragSourceEndedAt(pme,
         static_cast<DragOperation>(operation));

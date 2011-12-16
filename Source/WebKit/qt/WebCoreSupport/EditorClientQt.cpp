@@ -411,7 +411,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         return;
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (!kevent || kevent->type() == PlatformKeyboardEvent::KeyUp)
+    if (!kevent || kevent->type() == PlatformEvent::KeyUp)
         return;
 
     Node* start = frame->selection()->start().containerNode();
@@ -441,7 +441,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
             // (e.g. Tab that inserts a Tab character, or Enter).
             if (cmd && frame->editor()->command(cmd).isTextInsertion()
-                && kevent->type() == PlatformKeyboardEvent::RawKeyDown)
+                && kevent->type() == PlatformEvent::RawKeyDown)
                 return;
 
             m_page->triggerAction(action);
@@ -464,7 +464,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 
             // Text insertion.
             bool shouldInsertText = false;
-            if (kevent->type() != PlatformKeyboardEvent::KeyDown && !kevent->text().isEmpty()) {
+            if (kevent->type() != PlatformEvent::KeyDown && !kevent->text().isEmpty()) {
 
                 if (kevent->ctrlKey()) {
                     if (kevent->altKey())

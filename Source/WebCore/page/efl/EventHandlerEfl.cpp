@@ -120,6 +120,6 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 
 unsigned EventHandler::accessKeyModifiers()
 {
-    return PlatformKeyboardEvent::AltKey;
+    return PlatformEvent::AltKey;
 }
 }

@@ -38,6 +38,8 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
 {
     static const float delta = 1;
 
+    m_type = PlatformEvent::Wheel;
+
     m_deltaX = 0;
     m_deltaY = 0;
 

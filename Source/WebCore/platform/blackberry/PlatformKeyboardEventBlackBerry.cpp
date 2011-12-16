@@ -427,25 +427,21 @@ static inline PlatformKeyboardEvent::Type toWebCorePlatformKeyboardEventType(con
 {
     switch (type) {
     case BlackBerry::Platform::KeyboardEvent::KeyDown:
-        return PlatformKeyboardEvent::KeyDown;
+        return PlatformEvent::KeyDown;
     case BlackBerry::Platform::KeyboardEvent::KeyUp:
-        return PlatformKeyboardEvent::KeyUp;
+        return PlatformEvent::KeyUp;
     case BlackBerry::Platform::KeyboardEvent::KeyChar:
     default:
-        return PlatformKeyboardEvent::Char;
+        return PlatformEvent::Char;
     }
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(BlackBerry::Platform::KeyboardEvent event)
-    : m_type(toWebCorePlatformKeyboardEventType(event.type()))
+    : PlatformEvent(toWebCorePlatformKeyboardEventType(event.type()), event.shiftActive() || (event.character() == KEYCODE_BACK_TAB), event.ctrlActive(), event.altActive(), false)
     , m_keyIdentifier(keyIdentifierForBlackBerryCharacter(event.character()))
     , m_autoRepeat(false)
     , m_windowsVirtualKeyCode(windowsKeyCodeForBlackBerryCharacter(event.character()))
     , m_isKeypad(false)
-    , m_shiftKey(event.shiftActive() || (event.character() == KEYCODE_BACK_TAB)) // BackTab should be treated as Shift + Tab.
-    , m_ctrlKey(event.ctrlActive())
-    , m_altKey(event.altActive())
-    , m_metaKey(false)
     , m_unmodifiedCharacter(event.character())
 {
     unsigned short character = adjustCharacterFromOS(event.character());
@@ -461,16 +457,16 @@ bool PlatformKeyboardEvent::currentCapsLockState()
     return false;
 }
 
-void PlatformKeyboardEvent::disambiguateKeyDownEvent(PlatformKeyboardEvent::Type type, bool backwardCompatibilityMode)
+void PlatformKeyboardEvent::disambiguateKeyDownEvent(PlatformEvent::Type type, bool backwardCompatibilityMode)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
-    ASSERT(m_type == KeyDown);
+    ASSERT(m_type == PlatformEvent::KeyDown);
     m_type = type;
 
     if (backwardCompatibilityMode)
         return;
 
-    if (type == RawKeyDown) {
+    if (type == PlatformEvent::RawKeyDown) {
         m_text = String();
         m_unmodifiedText = String();
     } else {

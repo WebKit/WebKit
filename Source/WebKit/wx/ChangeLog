@@ -1,3 +1,17 @@
+2011-12-16  Sam Weinig  <sam@webkit.org>
+
+        Give PlatformEvents a base class
+        https://bugs.webkit.org/show_bug.cgi?id=74685
+
+        Reviewed by Anders Carlsson.
+
+        Add a base class for PlatformMouseEvent, PlatformKeyboardEvent, PlatformWheelEvent
+        and PlatformGestureEvent and move Type enumeration and modifiers down to it.
+
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::handleEditingKeyboardEvent):
+        (WebCore::EditorClientWx::interpretKeyEvent):
+
 2011-12-11  Robin Dunn  <robin@alldunn.com>
 
         Add a URL argument to the wxWebView constructor,

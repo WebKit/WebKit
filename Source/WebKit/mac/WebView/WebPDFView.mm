@@ -960,7 +960,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             break;
         case NSKeyDown: {
             PlatformKeyboardEvent pe(nsEvent);
-            pe.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
+            pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
             event = KeyboardEvent::create(eventNames().keydownEvent, true, true, 0,
                 pe.keyIdentifier(), pe.windowsVirtualKeyCode(),
                 pe.ctrlKey(), pe.altKey(), pe.shiftKey(), pe.metaKey(), false);

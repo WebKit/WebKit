@@ -93,7 +93,8 @@ STDMETHODIMP_(ULONG) WebDropSource::Release(void)
     return c;
 }
 
-PlatformMouseEvent generateMouseEvent(WebView* webView, bool isDrag) {
+PlatformMouseEvent generateMouseEvent(WebView* webView, bool isDrag)
+{
     POINTL pt;
     ::GetCursorPos((LPPOINT)&pt);
     POINTL localpt = pt;
@@ -101,7 +102,7 @@ PlatformMouseEvent generateMouseEvent(WebView* webView, bool isDrag) {
     if (SUCCEEDED(webView->viewWindow((OLE_HANDLE*)&viewWindow)))
         ::ScreenToClient(viewWindow, (LPPOINT)&localpt);
     return PlatformMouseEvent(IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y),
-        isDrag ? LeftButton : NoButton, MouseEventMoved, 0, false, false, false, false, currentTime());
+        isDrag ? LeftButton : NoButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime());
 }
 
 STDMETHODIMP WebDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)

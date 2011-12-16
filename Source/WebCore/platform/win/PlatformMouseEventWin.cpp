@@ -48,7 +48,7 @@ static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
     return point;
 }
 
-static MouseEventType messageToEventType(UINT message)
+static PlatformEvent::Type messageToEventType(UINT message)
 {
     switch (message) {
         case WM_LBUTTONDBLCLK:
@@ -58,35 +58,32 @@ static MouseEventType messageToEventType(UINT message)
         case WM_LBUTTONDOWN:
         case WM_RBUTTONDOWN:
         case WM_MBUTTONDOWN:
-            return MouseEventPressed;
+            return PlatformEvent::MousePressed;
 
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MBUTTONUP:
-            return MouseEventReleased;
+            return PlatformEvent::MouseReleased;
 
 #if !OS(WINCE)
         case WM_MOUSELEAVE:
 #endif
         case WM_MOUSEMOVE:
-            return MouseEventMoved;
+            return PlatformEvent::MouseMoved;
 
         default:
             ASSERT_NOT_REACHED();
             //Move is relatively harmless
-            return MouseEventMoved;
+            return PlatformEvent::MouseMoved;
     }
 }
+
 PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
-    : m_position(positionForEvent(hWnd, lParam))
+    : PlatformEvent(messageToEventType(message), wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
+    , m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_clickCount(0)
-    , m_shiftKey(wParam & MK_SHIFT)
-    , m_ctrlKey(wParam & MK_CONTROL)
-    , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
-    , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
     , m_didActivateWebView(didActivateWebView)
-    , m_eventType(messageToEventType(message))
     , m_modifierFlags(wParam)
 {
     m_timestamp = ::GetTickCount()*0.001; // GetTickCount returns milliseconds

@@ -695,6 +695,8 @@
             'platform/MemoryPressureHandler.h',
             'platform/MIMETypeRegistry.h',
             'platform/NotImplemented.h',
+            'platform/PlatformEvent.cpp',
+            'platform/PlatformEvent.h',
             'platform/PlatformGestureEvent.h',
             'platform/PlatformGestureRecognizer.h',
             'platform/PlatformKeyboardEvent.h',

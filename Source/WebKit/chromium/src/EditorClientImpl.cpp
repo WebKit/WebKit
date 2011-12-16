@@ -544,7 +544,7 @@ const char* EditorClientImpl::interpretKeyEvent(const KeyboardEvent* evt)
     if (keyEvent->metaKey())
         modifiers |= MetaKey;
 
-    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         int mapKey = modifiers << 16 | evt->keyCode();
         return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
     }
@@ -567,7 +567,7 @@ bool EditorClientImpl::handleEditingKeyboardEvent(KeyboardEvent* evt)
     String commandName = interpretKeyEvent(evt);
     Editor::Command command = frame->editor()->command(commandName);
 
-    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how
         // commands that just insert text if executed via Editor should be treated,
         // so we leave it upon WebCore to either handle them immediately

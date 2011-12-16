@@ -3739,7 +3739,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
     switch ([event type]) {
     case NSKeyDown: {
         PlatformKeyboardEvent platformEvent(event);
-        platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
+        platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         return KeyboardEvent::create(platformEvent, coreFrame->document()->defaultView());
     }
     case NSKeyUp:
@@ -5381,7 +5381,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         }
         // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
         // Keypress (Char event) handler is the latest opportunity to execute.
-        if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char)
+        if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Char)
             [self _executeSavedKeypressCommands];
     }
     _private->interpretKeyEventsParameters = 0;

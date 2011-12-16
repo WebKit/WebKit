@@ -40,13 +40,9 @@
 namespace WebCore {
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
-    : m_type(KeyDown)
+    : PlatformEvent(PlatformEvent::KeyDown, evas_key_modifier_is_set(event->modifiers, "Shift"), evas_key_modifier_is_set(event->modifiers, "Control"), evas_key_modifier_is_set(event->modifiers, "Alt"), evas_key_modifier_is_set(event->modifiers, "Meta"))
     , m_text(String::fromUTF8(event->string))
     , m_unmodifiedText(String::fromUTF8(event->string))
-    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
 {
     String keyName = String(event->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
@@ -58,12 +54,8 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Down* event)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const Evas_Event_Key_Up* event)
-    : m_type(KeyUp)
+    : PlatformEvent(PlatformEvent::KeyUp, evas_key_modifier_is_set(event->modifiers, "Shift"), evas_key_modifier_is_set(event->modifiers, "Control"), evas_key_modifier_is_set(event->modifiers, "Alt"), evas_key_modifier_is_set(event->modifiers, "Meta"))
     , m_text(String::fromUTF8(event->string))
-    , m_shiftKey(evas_key_modifier_is_set(event->modifiers, "Shift"))
-    , m_ctrlKey(evas_key_modifier_is_set(event->modifiers, "Control"))
-    , m_altKey(evas_key_modifier_is_set(event->modifiers, "Alt"))
-    , m_metaKey(evas_key_modifier_is_set(event->modifiers, "Meta"))
 {
     String keyName = String(event->key);
     m_keyIdentifier = keyIdentifierForEvasKeyName(keyName);
@@ -79,7 +71,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
     ASSERT(m_type == KeyDown);
     m_type = type;
 
-    if (type == RawKeyDown) {
+    if (type == PlatformEvent::RawKeyDown) {
         m_text = String();
         m_unmodifiedText = String();
     } else {

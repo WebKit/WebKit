@@ -1,3 +1,30 @@
+2011-12-16  Sam Weinig  <sam@webkit.org>
+
+        Give PlatformEvents a base class
+        https://bugs.webkit.org/show_bug.cgi?id=74685
+
+        Reviewed by Anders Carlsson.
+
+        Add a base class for PlatformMouseEvent, PlatformKeyboardEvent, PlatformWheelEvent
+        and PlatformGestureEvent and move Type enumeration and modifiers down to it.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+        (WebKit::WebPage::setInitialFocus):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::dragEnded):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Only EditCommandComposition should implement unapply and reapply

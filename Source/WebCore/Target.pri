@@ -1118,6 +1118,7 @@ SOURCES += \
     platform/network/ResourceRequestBase.cpp \
     platform/network/ResourceResponseBase.cpp \
     platform/text/RegularExpression.cpp \
+    platform/PlatformEvent.cpp \
     platform/RuntimeApplicationChecks.cpp \
     platform/SchemeRegistry.cpp \
     platform/ScrollableArea.cpp \

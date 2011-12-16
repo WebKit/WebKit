@@ -235,13 +235,13 @@ protected:
     // Simulates a mouse event on the select popup.
     void simulateLeftMouseDownEvent(const IntPoint& point)
     {
-        PlatformMouseEvent mouseEvent(point, point, LeftButton, MouseEventPressed,
+        PlatformMouseEvent mouseEvent(point, point, LeftButton, PlatformEvent::MousePressed,
                                       1, false, false, false, false, 0);
         m_webView->selectPopup()->handleMouseDownEvent(mouseEvent);
     }
     void simulateLeftMouseUpEvent(const IntPoint& point)
     {
-        PlatformMouseEvent mouseEvent(point, point, LeftButton, MouseEventReleased,
+        PlatformMouseEvent mouseEvent(point, point, LeftButton, PlatformEvent::MouseReleased,
                                       1, false, false, false, false, 0);
         m_webView->selectPopup()->handleMouseReleaseEvent(mouseEvent);
     }
@@ -373,7 +373,7 @@ TEST_F(SelectPopupMenuTest, MouseOverItemClickOutside)
     // Y of 18 to be on the item at index 1 (12 font plus border and more to be safe).
     IntPoint row1Point(2, 18);
     // Simulate the mouse moving over the first item.
-    PlatformMouseEvent mouseEvent(row1Point, row1Point, NoButton, MouseEventMoved,
+    PlatformMouseEvent mouseEvent(row1Point, row1Point, NoButton, PlatformEvent::MouseMoved,
                                   1, false, false, false, false, 0);
     m_webView->selectPopup()->handleMouseMoveEvent(mouseEvent);
 

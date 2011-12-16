@@ -199,12 +199,12 @@ static bool isCharacterTypeEvent(const PlatformKeyboardEvent& event)
     // We use RawKeyDown/Char/KeyUp event scheme on all platforms,
     // so PlatformKeyboardEvent::Char (not RawKeyDown) type event
     // is considered as character type event.
-    return event.type() == PlatformKeyboardEvent::Char;
+    return event.type() == PlatformEvent::Char;
 }
 
 bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
 {
-    if (event.type() == PlatformKeyboardEvent::KeyUp)
+    if (event.type() == PlatformEvent::KeyUp)
         return true;
 
     if (!numItems() && event.windowsVirtualKeyCode() != VKEY_ESCAPE)

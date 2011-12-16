@@ -1183,9 +1183,8 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page, bool o
 
     PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
 
-    switch (platformMouseEvent.eventType()) {
-        case WebCore::MouseEventPressed:
-        {
+    switch (platformMouseEvent.type()) {
+        case PlatformEvent::MousePressed: {
             if (isContextClick(platformMouseEvent))
                 page->contextMenuController()->clearContextMenu();
             
@@ -1195,11 +1194,10 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page, bool o
 
             return handled;
         }
-        case WebCore::MouseEventReleased:
+        case PlatformEvent::MouseReleased:
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
-        case WebCore::MouseEventMoved:
+        case PlatformEvent::MouseMoved:
             return frame->eventHandler()->mouseMoved(platformMouseEvent, onlyUpdateScrollbars);
-
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -1532,7 +1530,7 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
 
     if (isKeyboardEventValid && event.type() == WebEvent::KeyDown) {
         PlatformKeyboardEvent platformEvent(platform(event));
-        platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
+        platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         m_page->focusController()->setInitialFocus(forward ? FocusDirectionForward : FocusDirectionBackward, KeyboardEvent::create(platformEvent, frame->document()->defaultView()).get());
         return;
     }
@@ -1903,7 +1901,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 
     Editor::Command command = frame->editor()->command(interpretKeyEvent(evt));
 
-    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
         // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
         // (e.g. Tab that inserts a Tab character, or Enter).
@@ -2051,7 +2049,7 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
-    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
+    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime());
     m_page->mainFrame()->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
 }
 

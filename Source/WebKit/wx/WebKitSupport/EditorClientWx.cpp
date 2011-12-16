@@ -390,7 +390,7 @@ bool EditorClientWx::handleEditingKeyboardEvent(KeyboardEvent* event)
 
     Editor::Command command = frame->editor()->command(interpretKeyEvent(event));
 
-    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
         // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or if not to let a CHAR event be generated
         // (e.g. Tab that inserts a Tab character, or Enter).
@@ -409,7 +409,7 @@ bool EditorClientWx::handleEditingKeyboardEvent(KeyboardEvent* event)
 
 const char* EditorClientWx::interpretKeyEvent(const KeyboardEvent* evt)
 {
-    ASSERT(evt->keyEvent()->type() == PlatformKeyboardEvent::RawKeyDown || evt->keyEvent()->type() == PlatformKeyboardEvent::Char);
+    ASSERT(evt->keyEvent()->type() == PlatformEvent::RawKeyDown || evt->keyEvent()->type() == PlatformEvent::Char);
 
     static HashMap<int, const char*>* keyDownCommandsMap = 0;
     static HashMap<int, const char*>* keyPressCommandsMap = 0;
@@ -433,7 +433,7 @@ const char* EditorClientWx::interpretKeyEvent(const KeyboardEvent* evt)
     if (evt->ctrlKey())
         modifiers |= CtrlKey;
 
-    if (evt->keyEvent()->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (evt->keyEvent()->type() == PlatformEvent::RawKeyDown) {
         int mapKey = modifiers << 16 | evt->keyCode();
         return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
     }

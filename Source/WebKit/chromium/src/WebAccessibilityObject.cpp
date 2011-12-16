@@ -566,13 +566,13 @@ WebString WebAccessibilityObject::keyboardShortcut() const
         // Follow the same order as Mozilla MSAA implementation:
         // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
         // should not be localized and defines the separator as "+".
-        if (modifiers & PlatformKeyboardEvent::CtrlKey)
+        if (modifiers & PlatformEvent::CtrlKey)
             modifierString += "Ctrl+";
-        if (modifiers & PlatformKeyboardEvent::AltKey)
+        if (modifiers & PlatformEvent::AltKey)
             modifierString += "Alt+";
-        if (modifiers & PlatformKeyboardEvent::ShiftKey)
+        if (modifiers & PlatformEvent::ShiftKey)
             modifierString += "Shift+";
-        if (modifiers & PlatformKeyboardEvent::MetaKey)
+        if (modifiers & PlatformEvent::MetaKey)
             modifierString += "Win+";
     }
 

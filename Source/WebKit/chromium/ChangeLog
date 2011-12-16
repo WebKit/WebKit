@@ -1,3 +1,40 @@
+2011-12-16  Sam Weinig  <sam@webkit.org>
+
+        Give PlatformEvents a base class
+        https://bugs.webkit.org/show_bug.cgi?id=74685
+
+        Reviewed by Anders Carlsson.
+
+        Add a base class for PlatformMouseEvent, PlatformKeyboardEvent, PlatformWheelEvent
+        and PlatformGestureEvent and move Type enumeration and modifiers down to it.
+
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::interpretKeyEvent):
+        (WebKit::EditorClientImpl::handleEditingKeyboardEvent):
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::keyboardShortcut):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        (WebKit::toPlatformKeyboardEventType):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragSourceEndedAt):
+        * tests/InnerGestureRecognizerTest.cpp:
+        (SimulateAndTestFirstClick):
+        (TEST_F):
+        * tests/KeyboardTest.cpp:
+        (WebKit::KeyboardTest::interpretKeyEvent):
+        (WebKit::KeyboardTest::interpretOSModifierKeyPress):
+        (WebKit::KeyboardTest::interpretCtrlKeyPress):
+        (WebKit::KeyboardTest::interpretTab):
+        (WebKit::KeyboardTest::interpretNewLine):
+        (WebKit::TEST_F):
+        * tests/PopupMenuTest.cpp:
+        (WebKit::SelectPopupMenuTest::simulateLeftMouseDownEvent):
+        (WebKit::SelectPopupMenuTest::simulateLeftMouseUpEvent):
+        (WebKit::TEST_F):
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Only EditCommandComposition should implement unapply and reapply

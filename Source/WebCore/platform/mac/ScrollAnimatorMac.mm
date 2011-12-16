@@ -1031,9 +1031,9 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 
 void ScrollAnimatorMac::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
-    if (gestureEvent.type() == PlatformGestureEvent::ScrollBeginType)
+    if (gestureEvent.type() == PlatformEvent::GestureScrollBegin)
         beginScrollGesture();
-    else if (gestureEvent.type() == PlatformGestureEvent::ScrollEndType)
+    else if (gestureEvent.type() == PlatformEvent::GestureScrollEnd)
         endScrollGesture();
 }
 

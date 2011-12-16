@@ -5074,6 +5074,8 @@
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B50C3367E800EEA649 /* JSDOMSelection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
+		BC5C762A1497FE1400BC4775 /* PlatformEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5C76281497FE1400BC4775 /* PlatformEvent.cpp */; };
+		BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C76291497FE1400BC4775 /* PlatformEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5CFCA911F793320099ED09 /* LocalizationStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5CFCA811F793320099ED09 /* LocalizationStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12401,6 +12403,8 @@
 		BC5A86830C33676000EEA649 /* DOMSelection.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DOMSelection.idl; sourceTree = "<group>"; };
 		BC5A86B30C3367E800EEA649 /* JSDOMSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMSelection.cpp; sourceTree = "<group>"; };
 		BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMSelection.h; sourceTree = "<group>"; };
+		BC5C76281497FE1400BC4775 /* PlatformEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformEvent.cpp; sourceTree = "<group>"; };
+		BC5C76291497FE1400BC4775 /* PlatformEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEvent.h; sourceTree = "<group>"; };
 		BC5CFCA811F793320099ED09 /* LocalizationStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizationStrategy.h; sourceTree = "<group>"; };
 		BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BorderValue.h; path = style/BorderValue.h; sourceTree = "<group>"; };
 		BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OutlineValue.h; path = style/OutlineValue.h; sourceTree = "<group>"; };
@@ -20259,6 +20263,8 @@
 				1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */,
 				1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */,
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
+				BC5C76281497FE1400BC4775 /* PlatformEvent.cpp */,
+				BC5C76291497FE1400BC4775 /* PlatformEvent.h */,
 				BCBB8AB413F1AFB000734DF0 /* PODArena.h */,
 				1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */,
 				BCBB8AB513F1AFB000734DF0 /* PODInterval.h */,
@@ -24880,6 +24886,7 @@
 				F35AE5AC14925F5B004D5776 /* DOMWrapperVisitor.h in Headers */,
 				26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTileCacheLayer.h in Headers */,
+				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
 				1F3F19531499CA7600A5AEA7 /* PODFreeListArena.h in Headers */,
 				49ECEB681499790D00CDD3A4 /* FECompositeArithmeticNEON.h in Headers */,
@@ -27774,6 +27781,7 @@
 				8C1091981494FB1200B5D3FE /* CSSElementStyleDeclaration.cpp in Sources */,
 				4306E4E614955543007F17AC /* KillRingNone.cpp in Sources */,
 				0F580FA41496939100FB5BD8 /* WebTileCacheLayer.mm in Sources */,
+				BC5C762A1497FE1400BC4775 /* PlatformEvent.cpp in Sources */,
 				49ECEB671499790D00CDD3A4 /* FECompositeArithmeticNEON.cpp in Sources */,
 				49ECEB691499790D00CDD3A4 /* FEGaussianBlurNEON.cpp in Sources */,
 				49ECEB6B1499790D00CDD3A4 /* FELightingNEON.cpp in Sources */,

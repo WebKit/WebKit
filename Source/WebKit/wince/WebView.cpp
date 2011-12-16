@@ -348,7 +348,7 @@ bool WebView::handleKeyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKe
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
-    PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformKeyboardEvent::RawKeyDown, systemKeyDown);
+    PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformEvent::RawKeyDown, systemKeyDown);
     bool handled = frame->eventHandler()->keyEvent(keyEvent);
 
     // These events cannot be canceled, and we have no default handling for them.
@@ -370,7 +370,7 @@ bool WebView::handleKeyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
-    PlatformKeyboardEvent keyEvent(m_windowHandle, charCode, keyData, PlatformKeyboardEvent::Char, systemKeyDown);
+    PlatformKeyboardEvent keyEvent(m_windowHandle, charCode, keyData, PlatformEvent::Char, systemKeyDown);
     // IE does not dispatch keypress event for WM_SYSCHAR.
     if (systemKeyDown)
         return frame->eventHandler()->handleAccessKey(keyEvent);
@@ -382,7 +382,7 @@ bool WebView::handleKeyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown
 
 bool WebView::handleKeyUp(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
-    PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformKeyboardEvent::KeyUp, systemKeyDown);
+    PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformEvent::KeyUp, systemKeyDown);
 
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     return frame->eventHandler()->keyEvent(keyEvent);

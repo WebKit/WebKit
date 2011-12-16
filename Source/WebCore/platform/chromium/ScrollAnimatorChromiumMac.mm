@@ -883,9 +883,9 @@ bool ScrollAnimatorChromiumMac::handleWheelEvent(const PlatformWheelEvent& wheel
 
 void ScrollAnimatorChromiumMac::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
-    if (gestureEvent.type() == PlatformGestureEvent::ScrollBeginType)
+    if (gestureEvent.type() == PlatformEvent::GestureScrollBegin)
         beginScrollGesture();
-    else if (gestureEvent.type() == PlatformGestureEvent::ScrollEndType)
+    else if (gestureEvent.type() == PlatformEvent::GestureScrollEnd)
         endScrollGesture();
 }
 

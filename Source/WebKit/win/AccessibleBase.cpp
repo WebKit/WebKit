@@ -42,7 +42,7 @@
 #include <WebCore/HTMLFrameElementBase.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/IntRect.h>
-#include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/PlatformEvent.h>
 #include <WebCore/RenderFrame.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderView.h>
@@ -366,13 +366,13 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accKeyboardShortcut(VARIANT vChild
         // Follow the same order as Mozilla MSAA implementation:
         // Ctrl+Alt+Shift+Meta+key. MSDN states that keyboard shortcut strings
         // should not be localized and defines the separator as "+".
-        if (modifiers & PlatformKeyboardEvent::CtrlKey)
+        if (modifiers & PlatformEvent::CtrlKey)
             accessKeyModifiers += "Ctrl+";
-        if (modifiers & PlatformKeyboardEvent::AltKey)
+        if (modifiers & PlatformEvent::AltKey)
             accessKeyModifiers += "Alt+";
-        if (modifiers & PlatformKeyboardEvent::ShiftKey)
+        if (modifiers & PlatformEvent::ShiftKey)
             accessKeyModifiers += "Shift+";
-        if (modifiers & PlatformKeyboardEvent::MetaKey)
+        if (modifiers & PlatformEvent::MetaKey)
             accessKeyModifiers += "Win+";
     }
     *shortcut = BString(String(accessKeyModifiers + accessKey)).release();

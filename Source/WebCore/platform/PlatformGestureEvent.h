@@ -29,41 +29,29 @@
 #if ENABLE(GESTURE_EVENTS)
 
 #include "IntPoint.h"
+#include "PlatformEvent.h"
 
 namespace WebCore {
 
-class PlatformGestureEvent {
+class PlatformGestureEvent : public PlatformEvent {
 public:
-    enum Type {
-        ScrollBeginType,
-        ScrollEndType,
-        ScrollUpdateType,
-        TapType,
-        TapDownType,
-        DoubleTapType,
-    };
-
     PlatformGestureEvent()
-        : m_type(ScrollBeginType)
+        : PlatformEvent(PlatformEvent::GestureScrollBegin)
         , m_timestamp(0)
+        , m_deltaX(0)
+        , m_deltaY(0)
     {
     }
 
-    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const double timestamp, const float deltaX, const float deltaY, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
-        : m_type(type)
+    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, float deltaX, float deltaY, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
+        : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey)
         , m_position(position)
         , m_globalPosition(globalPosition)
         , m_timestamp(timestamp)
         , m_deltaX(deltaX)
         , m_deltaY(deltaY)
-        , m_shiftKey(shiftKey)
-        , m_ctrlKey(ctrlKey)
-        , m_altKey(altKey)
-        , m_metaKey(metaKey)
     {
     }
-
-    Type type() const { return m_type; }
 
     const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
     const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
@@ -72,22 +60,13 @@ public:
 
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
-    bool shiftKey() const { return m_shiftKey; }
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool altKey() const { return m_altKey; }
-    bool metaKey() const { return m_metaKey; }
-
+    
 protected:
-    Type m_type;
     IntPoint m_position;
     IntPoint m_globalPosition;
     double m_timestamp;
     float m_deltaX;
     float m_deltaY;
-    bool m_shiftKey;
-    bool m_ctrlKey;
-    bool m_altKey;
-    bool m_metaKey;
 };
 
 } // namespace WebCore

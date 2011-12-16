@@ -706,7 +706,7 @@
 		BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */; };
 		BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */; };
 		BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA284D41492F2C7001F9042 /* WKConnection.mm */; };
-		BCA284D71492F2C7001F9042 /* WKConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA284D51492F2C7001F9042 /* WKConnection.h */; };
+		BCA284D71492F2C7001F9042 /* WKConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA284D51492F2C7001F9042 /* WKConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCA56A1C12F9028E00C566C7 /* WebGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA56A1A12F9028E00C566C7 /* WebGraphicsContext.h */; };
 		BCA56A1D12F9028E00C566C7 /* WebGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA56A1B12F9028E00C566C7 /* WebGraphicsContext.cpp */; };
 		BCA56A6512F9C8F900C566C7 /* WKGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA56A6312F9C8F900C566C7 /* WKGraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };

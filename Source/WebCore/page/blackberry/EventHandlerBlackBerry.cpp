@@ -76,7 +76,7 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 
 unsigned EventHandler::accessKeyModifiers()
 {
-    return PlatformKeyboardEvent::AltKey;
+    return PlatformEvent::AltKey;
 }
 
 void EventHandler::focusDocumentView()

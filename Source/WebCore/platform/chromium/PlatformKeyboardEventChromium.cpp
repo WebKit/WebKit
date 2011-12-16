@@ -48,8 +48,8 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     ASSERT_NOT_REACHED();
 #else
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
-    ASSERT(m_type == KeyDown);
-    ASSERT(type == RawKeyDown || type == Char);
+    ASSERT(m_type == PlatformEvent::KeyDown);
+    ASSERT(type == PlatformEvent::RawKeyDown || type == PlatformEvent::Char);
     m_type = type;
     if (backwardCompatibilityMode)
         return;

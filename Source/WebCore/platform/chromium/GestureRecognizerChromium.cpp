@@ -125,17 +125,17 @@ bool GestureRecognizerChromium::isOverMinFlickSpeed()
 
 void GestureRecognizerChromium::appendTapDownGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapDownType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformEvent::GestureTapDown, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 void GestureRecognizerChromium::appendClickGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformEvent::GestureTap, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 void GestureRecognizerChromium::appendDoubleClickGestureEvent(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::DoubleTapType, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformEvent::GestureDoubleTap, m_firstTouchPosition, m_firstTouchScreenPosition, m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 PlatformGestureRecognizer::PassGestures GestureRecognizerChromium::processTouchEventForGestures(const PlatformTouchEvent& event, bool defaultPrevented)
@@ -159,12 +159,12 @@ PlatformGestureRecognizer::PassGestures GestureRecognizerChromium::processTouchE
 
 void GestureRecognizerChromium::appendScrollGestureBegin(const PlatformTouchPoint& touchPoint, Gestures gestures)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollBeginType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformEvent::GestureScrollBegin, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.f, 0.f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 void GestureRecognizerChromium::appendScrollGestureEnd(const PlatformTouchPoint& touchPoint, Gestures gestures, float xVelocity, float yVelocity)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollEndType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, xVelocity, yVelocity, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformEvent::GestureScrollEnd, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, xVelocity, yVelocity, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
 }
 
 void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoint& touchPoint, Gestures gestures)
@@ -172,7 +172,7 @@ void GestureRecognizerChromium::appendScrollGestureUpdate(const PlatformTouchPoi
     float deltaX(touchPoint.pos().x() - m_firstTouchPosition.x());
     float deltaY(touchPoint.pos().y() - m_firstTouchPosition.y());
 
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollUpdateType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    gestures->append(PlatformGestureEvent(PlatformEvent::GestureScrollUpdate, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
     m_firstTouchPosition = touchPoint.pos();
 }
 

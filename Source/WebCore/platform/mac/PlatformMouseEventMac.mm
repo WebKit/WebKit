@@ -119,57 +119,49 @@ IntPoint globalPointForEvent(NSEvent *event)
     }
 }
 
-static MouseEventType mouseEventForNSEvent(NSEvent* event) 
+static PlatformEvent::Type mouseEventForNSEvent(NSEvent* event) 
 {
     switch ([event type]) {
     case NSScrollWheel:
-        return MouseEventScroll;
+        return PlatformEvent::MouseScroll;
     case NSLeftMouseDragged:
     case NSRightMouseDragged:
     case NSOtherMouseDragged:
     case NSMouseMoved:
-        return MouseEventMoved;
+        return PlatformEvent::MouseMoved;
     case NSLeftMouseDown:
     case NSRightMouseDown:
     case NSOtherMouseDown:
-        return MouseEventPressed;
+        return PlatformEvent::MousePressed;
     case NSLeftMouseUp:
     case NSRightMouseUp:
     case NSOtherMouseUp:
-        return MouseEventReleased;
+        return PlatformEvent::MouseReleased;
     default:
-        return MouseEventMoved;
+        return PlatformEvent::MouseMoved;
     }
 }
 
 PlatformMouseEvent::PlatformMouseEvent(NSEvent* event, NSView *windowView)
-    : m_position(pointForEvent(event, windowView))
+    : PlatformEvent(mouseEventForNSEvent(event), [event modifierFlags] & NSShiftKeyMask, [event modifierFlags] & NSControlKeyMask, [event modifierFlags] & NSAlternateKeyMask, [event modifierFlags] & NSCommandKeyMask)
+    , m_position(pointForEvent(event, windowView))
     , m_globalPosition(globalPointForEvent(event))
     , m_button(mouseButtonForEvent(event))
-    , m_eventType(mouseEventForNSEvent(event))
     , m_clickCount(clickCountForEvent(event))
-    , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
-    , m_ctrlKey([event modifierFlags] & NSControlKeyMask)
-    , m_altKey([event modifierFlags] & NSAlternateKeyMask)
-    , m_metaKey([event modifierFlags] & NSCommandKeyMask)
     , m_timestamp([event timestamp])
     , m_modifierFlags([event modifierFlags])
     , m_eventNumber([event eventNumber])
 {
 }
 
-PlatformMouseEvent::PlatformMouseEvent(int x, int y, int globalX, int globalY, MouseButton button, MouseEventType eventType,
+PlatformMouseEvent::PlatformMouseEvent(int x, int y, int globalX, int globalY, MouseButton button, PlatformEvent::Type type,
                    int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp,
                    unsigned modifierFlags, int eventNumber)
-    : m_position(IntPoint(x, y))
+    : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey)
+    , m_position(IntPoint(x, y))
     , m_globalPosition(IntPoint(globalX, globalY))
     , m_button(button)
-    , m_eventType(eventType)
     , m_clickCount(clickCount)
-    , m_shiftKey(shiftKey)
-    , m_ctrlKey(ctrlKey)
-    , m_altKey(altKey)
-    , m_metaKey(metaKey)
     , m_timestamp(timestamp)
     , m_modifierFlags(modifierFlags)
     , m_eventNumber(eventNumber)

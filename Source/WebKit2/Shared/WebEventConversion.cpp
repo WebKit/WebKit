@@ -34,20 +34,27 @@ class WebKit2PlatformMouseEvent : public WebCore::PlatformMouseEvent {
 public:
     WebKit2PlatformMouseEvent(const WebMouseEvent& webEvent)
     {
+        // PlatformEvent
         switch (webEvent.type()) {
         case WebEvent::MouseDown:
-            m_eventType = WebCore::MouseEventPressed;
+            m_type = WebCore::PlatformEvent::MousePressed;
             break;
         case WebEvent::MouseUp:
-            m_eventType = WebCore::MouseEventReleased;
+            m_type = WebCore::PlatformEvent::MouseReleased;
             break;
         case WebEvent::MouseMove:
-            m_eventType = WebCore::MouseEventMoved;
+            m_type = WebCore::PlatformEvent::MouseMoved;
             break;
         default:
             ASSERT_NOT_REACHED();
         }
 
+        m_shiftKey = webEvent.shiftKey();
+        m_ctrlKey = webEvent.controlKey();
+        m_altKey = webEvent.altKey();
+        m_metaKey = webEvent.metaKey();
+
+        // PlatformMouseEvent
         switch (webEvent.button()) {
         case WebMouseEvent::NoButton:
             m_button = WebCore::NoButton;
@@ -69,10 +76,6 @@ public:
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
         m_timestamp = webEvent.timestamp();
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
 
         m_modifierFlags = 0;
         if (m_shiftKey)
@@ -99,6 +102,14 @@ class WebKit2PlatformWheelEvent : public WebCore::PlatformWheelEvent {
 public:
     WebKit2PlatformWheelEvent(const WebWheelEvent& webEvent)
     {
+        // PlatformEvent
+        m_type = PlatformEvent::Wheel;
+        m_shiftKey = webEvent.shiftKey();
+        m_ctrlKey = webEvent.controlKey();
+        m_altKey = webEvent.altKey();
+        m_metaKey = webEvent.metaKey();
+
+        // PlatformWheelEvent
         m_position = webEvent.position();
         m_globalPosition = webEvent.globalPosition();
         m_deltaX = webEvent.delta().width();
@@ -106,10 +117,6 @@ public:
         m_wheelTicksX = webEvent.wheelTicks().width();
         m_wheelTicksY = webEvent.wheelTicks().height();
         m_granularity = (webEvent.granularity() == WebWheelEvent::ScrollByPageWheelEvent) ? WebCore::ScrollByPageWheelEvent : WebCore::ScrollByPixelWheelEvent;
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
         m_directionInvertedFromDevice = webEvent.directionInvertedFromDevice();
 #if PLATFORM(MAC)
         m_phase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.phase());
@@ -129,22 +136,30 @@ class WebKit2PlatformKeyboardEvent : public WebCore::PlatformKeyboardEvent {
 public:
     WebKit2PlatformKeyboardEvent(const WebKeyboardEvent& webEvent)
     {
+        // PlatformEvent
         switch (webEvent.type()) {
         case WebEvent::KeyDown:
-            m_type = PlatformKeyboardEvent::KeyDown;
+            m_type = WebCore::PlatformEvent::KeyDown;
             break;
         case WebEvent::KeyUp:
-            m_type = PlatformKeyboardEvent::KeyUp;
+            m_type = WebCore::PlatformEvent::KeyUp;
             break;
         case WebEvent::RawKeyDown:
-            m_type = PlatformKeyboardEvent::RawKeyDown;
+            m_type = WebCore::PlatformEvent::RawKeyDown;
             break;
         case WebEvent::Char:
-            m_type = PlatformKeyboardEvent::Char;
+            m_type = WebCore::PlatformEvent::Char;
             break;
         default:
             ASSERT_NOT_REACHED();
         }
+
+        m_shiftKey = webEvent.shiftKey();
+        m_ctrlKey = webEvent.controlKey();
+        m_altKey = webEvent.altKey();
+        m_metaKey = webEvent.metaKey();
+
+        // PlatformKeyboardEvent
         m_text = webEvent.text();
         m_unmodifiedText = webEvent.unmodifiedText();
         m_keyIdentifier = webEvent.keyIdentifier();
@@ -152,10 +167,6 @@ public:
         m_nativeVirtualKeyCode = webEvent.nativeVirtualKeyCode();
         m_autoRepeat = webEvent.isAutoRepeat();
         m_isKeypad = webEvent.isKeypad();
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
         
 #if PLATFORM(WIN)
         // FIXME: We should make m_isSystemKey available (and false) on all platforms
@@ -175,20 +186,27 @@ class WebKit2PlatformGestureEvent : public WebCore::PlatformGestureEvent {
 public:
     WebKit2PlatformGestureEvent(const WebGestureEvent& webEvent)
     {
+        // PlatformEvent
         switch (webEvent.type()) {
         case WebEvent::GestureScrollBegin:
-            m_type = PlatformGestureEvent::ScrollBeginType;
+            m_type = WebCore::PlatformEvent::GestureScrollBegin;
             break;
         case WebEvent::GestureScrollEnd:
-            m_type = PlatformGestureEvent::ScrollEndType;
+            m_type = WebCore::PlatformEvent::GestureScrollEnd;
             break;
         case WebEvent::GestureSingleTap:
-            m_type = PlatformGestureEvent::TapType;
+            m_type = WebCore::PlatformEvent::GestureTap;
             break;
         default:
             ASSERT_NOT_REACHED();
         }
 
+        m_shiftKey = webEvent.shiftKey();
+        m_ctrlKey = webEvent.controlKey();
+        m_altKey = webEvent.altKey();
+        m_metaKey = webEvent.metaKey();
+
+        // PlatformGestureEvent
         m_position = webEvent.position();
         m_globalPosition = webEvent.globalPosition();
         m_timestamp = webEvent.timestamp();

@@ -50,17 +50,13 @@ static String keyIdentifierForKeyEvent(WebEvent *event)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(WebEvent *event)
-    : m_type(event.type == WebEventKeyUp ? PlatformKeyboardEvent::KeyUp : PlatformKeyboardEvent::KeyDown)
+    : PlatformEvent(event.type == WebEventKeyUp ? PlatformEvent::KeyUp : PlatformEvent::KeyDown, event.modifierFlags & WebEventFlagMaskShift, event.modifierFlags & WebEventFlagMaskControl, event.modifierFlags & WebEventFlagMaskAlternate, event.modifierFlags & WebEventFlagMaskCommand)
     , m_text(event.characters)
     , m_unmodifiedText(event.charactersIgnoringModifiers)
     , m_keyIdentifier(keyIdentifierForKeyEvent(event))
     , m_autoRepeat(event.isKeyRepeating)
     , m_windowsVirtualKeyCode(event.keyCode)
     , m_isKeypad(false) // iPhone does not distinguish the numpad <rdar://problem/7190835>
-    , m_shiftKey(event.modifierFlags & WebEventFlagMaskShift)
-    , m_ctrlKey(event.modifierFlags & WebEventFlagMaskControl)
-    , m_altKey(event.modifierFlags & WebEventFlagMaskAlternate)
-    , m_metaKey(event.modifierFlags & WebEventFlagMaskCommand)
     , m_Event(event)
 {
     ASSERT(event.type == WebEventKeyDown || event.type == WebEventKeyUp);
@@ -94,7 +90,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     if (backwardCompatibilityMode)
         return;
 
-    if (type == RawKeyDown) {
+    if (type == PlatformEvent::RawKeyDown) {
         m_text = String();
         m_unmodifiedText = String();
     } else {

@@ -2233,19 +2233,19 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     // end gesture as well.
 
     switch (gestureEvent.type()) {
-    case PlatformGestureEvent::TapDownType:
+    case PlatformEvent::GestureTapDown:
         break;
-    case PlatformGestureEvent::TapType: {
+    case PlatformEvent::GestureTap: {
         // FIXME: Refactor this code to not hit test multiple times once hit testing has been corrected as suggested above.
-        PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, MouseEventMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-        PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, MouseEventPressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-        PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, MouseEventReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
         mouseMoved(fakeMouseMove);
         handleMousePressEvent(fakeMouseDown);
         handleMouseReleaseEvent(fakeMouseUp);
         return true;
     }
-    case PlatformGestureEvent::ScrollUpdateType: {
+    case PlatformEvent::GestureScrollUpdate: {
         const float tickDivisor = (float)WheelEvent::tickMultiplier;
         // FIXME: Replace this interim implementation once the above fixme has been addressed.
         IntPoint point(gestureEvent.position().x(), gestureEvent.position().y());
@@ -2254,15 +2254,18 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         handleWheelEvent(syntheticWheelEvent);
         return true;
     }
-    case PlatformGestureEvent::DoubleTapType:
-    case PlatformGestureEvent::ScrollBeginType:
-    case PlatformGestureEvent::ScrollEndType:
+    case PlatformEvent::GestureDoubleTap:
+    case PlatformEvent::GestureScrollBegin:
+    case PlatformEvent::GestureScrollEnd: {
         FrameView* view = m_frame->view();
         if (!view)
             return false;
 
         view->handleGestureEvent(gestureEvent);
         return true;
+    }
+    default:
+        ASSERT_NOT_REACHED();
     }
     return true;
 }
@@ -2357,9 +2360,9 @@ bool EventHandler::sendContextMenuEventForKey()
     // This is required for web compatibility.
 
 #if OS(WINDOWS)
-    MouseEventType eventType = MouseEventReleased;
+    PlatformEvent::Type eventType = PlatformEvent::MouseReleased;
 #else
-    MouseEventType eventType = MouseEventPressed;
+    PlatformEvent::Type eventType = PlatformEvent::MousePressed;
 #endif
 
     PlatformMouseEvent mouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
@@ -2417,7 +2420,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
     IntPoint globalPoint = view->contentsToScreen(IntRect(view->windowToContents(m_currentMousePosition), IntSize())).location();
-    PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, globalPoint, NoButton, MouseEventMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
+    PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, globalPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }
 
@@ -2471,8 +2474,8 @@ bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& evt)
     // IE matches lower and upper case access keys regardless of Shift key state - but if both upper and
     // lower case variants are present in a document, the correct element is matched based on Shift key state.
     // Firefox only matches an access key if Shift is not pressed, and does that case-insensitively.
-    ASSERT(!(accessKeyModifiers() & PlatformKeyboardEvent::ShiftKey));
-    if ((evt.modifiers() & ~PlatformKeyboardEvent::ShiftKey) != accessKeyModifiers())
+    ASSERT(!(accessKeyModifiers() & PlatformEvent::ShiftKey));
+    if ((evt.modifiers() & ~PlatformEvent::ShiftKey) != accessKeyModifiers())
         return false;
     String key = evt.unmodifiedText();
     Element* elem = m_frame->document()->getElementByAccessKey(key.lower());
@@ -2520,7 +2523,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (Page* page = m_frame->page()) {
         if (page->mainFrame()->eventHandler()->m_panScrollInProgress) {
             // If a key is pressed while the panScroll is in progress then we want to stop
-            if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyDown || initialKeyEvent.type() == PlatformKeyboardEvent::RawKeyDown) 
+            if (initialKeyEvent.type() == PlatformEvent::KeyDown || initialKeyEvent.type() == PlatformEvent::RawKeyDown) 
                 stopAutoscrollTimer();
 
             // If we were in panscroll mode, we swallow the key event
@@ -2550,25 +2553,25 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     // On Windows, WebKit explicitly calls handleAccessKey() instead of dispatching a keypress event for WM_SYSCHAR messages.
     // Other platforms currently match either Mac or Windows behavior, depending on whether they send combined KeyDown events.
     bool matchedAnAccessKey = false;
-    if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyDown)
+    if (initialKeyEvent.type() == PlatformEvent::KeyDown)
         matchedAnAccessKey = handleAccessKey(initialKeyEvent);
 
     // FIXME: it would be fair to let an input method handle KeyUp events before DOM dispatch.
-    if (initialKeyEvent.type() == PlatformKeyboardEvent::KeyUp || initialKeyEvent.type() == PlatformKeyboardEvent::Char)
+    if (initialKeyEvent.type() == PlatformEvent::KeyUp || initialKeyEvent.type() == PlatformEvent::Char)
         return !node->dispatchKeyEvent(initialKeyEvent);
 
     bool backwardCompatibilityMode = needsKeyboardEventDisambiguationQuirks();
 
     ExceptionCode ec;
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
-    if (keyDownEvent.type() != PlatformKeyboardEvent::RawKeyDown)
-        keyDownEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown, backwardCompatibilityMode);
+    if (keyDownEvent.type() != PlatformEvent::RawKeyDown)
+        keyDownEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown, backwardCompatibilityMode);
     RefPtr<KeyboardEvent> keydown = KeyboardEvent::create(keyDownEvent, m_frame->document()->defaultView());
     if (matchedAnAccessKey)
         keydown->setDefaultPrevented(true);
     keydown->setTarget(node);
 
-    if (initialKeyEvent.type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
         node->dispatchEvent(keydown, ec);
         // If frame changed as a result of keydown dispatch, then return true to avoid sending a subsequent keypress message to the new frame.
         bool changedFocusedFrame = m_frame->page() && m_frame != m_frame->page()->focusController()->focusedOrMainFrame();
@@ -2607,7 +2610,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     }
 
     PlatformKeyboardEvent keyPressEvent = initialKeyEvent;
-    keyPressEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::Char, backwardCompatibilityMode);
+    keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Char, backwardCompatibilityMode);
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
     RefPtr<KeyboardEvent> keypress = KeyboardEvent::create(keyPressEvent, m_frame->document()->defaultView());
@@ -2786,7 +2789,7 @@ static bool ExactlyOneBitSet(DragSourceAction n)
 
 bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
 {
-    if (event.event().button() != LeftButton || event.event().eventType() != MouseEventMoved) {
+    if (event.event().button() != LeftButton || event.event().type() != PlatformEvent::MouseMoved) {
         // If we allowed the other side of the bridge to handle a drag
         // last time, then m_mousePressed might still be set. So we
         // clear it now to make sure the next move after a drag
@@ -2822,7 +2825,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
     // or else we bail on the dragging stuff and allow selection to occur
     if (m_mouseDownMayStartDrag && m_dragMayStartSelectionInstead && (dragState().m_dragType & DragSourceActionSelection) && event.event().timestamp() - m_mouseDownTimestamp < TextDragDelay) {
-        ASSERT(event.event().eventType() == MouseEventMoved);
+        ASSERT(event.event().type() == PlatformEvent::MouseMoved);
         if ((dragState().m_dragType & DragSourceActionImage)) {
             // ... unless the mouse is over an image, then we start dragging just the image
             dragState().m_dragType = DragSourceActionImage;

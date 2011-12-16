@@ -2590,7 +2590,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // Simulate a click in the middle of the object.
     LayoutPoint clickPoint = m_object->clickPoint();
     
-    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, MouseEventPressed, 1, false, false, false, false, currentTime());
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
     bool handled = frame->eventHandler()->sendContextMenuEvent(mouseEvent);
     if (handled)
         page->chrome()->showContextMenu();

@@ -596,7 +596,7 @@ static String keyTextForKeyEvent(const QKeyEvent* event)
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
 {
     const int state = event->modifiers();
-    m_type = (event->type() == QEvent::KeyRelease) ? KeyUp : KeyDown;
+    m_type = (event->type() == QEvent::KeyRelease) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
     m_text = keyTextForKeyEvent(event);
     m_unmodifiedText = m_text; // FIXME: not correct
     m_keyIdentifier = keyIdentifierForQtKeyCode(event->key());
@@ -614,10 +614,10 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
 {
     // Can only change type from KeyDown to RawKeyDown or Char, as we lack information for other conversions.
-    ASSERT(m_type == KeyDown);
+    ASSERT(m_type == PlatformEvent::KeyDown);
     m_type = type;
 
-    if (type == RawKeyDown) {
+    if (type == PlatformEvent::RawKeyDown) {
         m_text = String();
         m_unmodifiedText = String();
     } else {

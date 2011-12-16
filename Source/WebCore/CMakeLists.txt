@@ -1054,6 +1054,7 @@ SET(WebCore_SOURCES
     platform/Logging.cpp
     platform/MIMETypeRegistry.cpp
     platform/MemoryPressureHandler.cpp
+    platform/PlatformEvent.cpp
     platform/RuntimeApplicationChecks.cpp
     platform/ScrollAnimator.cpp
     platform/ScrollableArea.cpp

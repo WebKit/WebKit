@@ -153,7 +153,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
                 if (!commandExecutedByEditor) {
-                    bool performedNonEditingBehavior = event->keyEvent()->type() == PlatformKeyboardEvent::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName);
+                    bool performedNonEditingBehavior = event->keyEvent()->type() == PlatformEvent::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName);
                     eventWasHandled |= performedNonEditingBehavior;
                 }
             } else {
@@ -209,7 +209,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands
         }
         // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
         // Keypress (Char event) handler is the latest opportunity to execute.
-        if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char) {
+        if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Char) {
             eventWasHandled = executeKeypressCommandsInternal(event->keypressCommands(), event);
             event->keypressCommands().clear();
         }

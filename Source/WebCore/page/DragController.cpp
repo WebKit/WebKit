@@ -79,7 +79,7 @@ static PlatformMouseEvent createMouseEvent(DragData* dragData)
     shiftKey = ctrlKey = altKey = metaKey = false;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
     return PlatformMouseEvent(dragData->clientPosition(), dragData->globalPosition(),
-                              LeftButton, MouseEventMoved, 0, shiftKey, ctrlKey, altKey,
+                              LeftButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey,
                               metaKey, currentTime());
 }
 

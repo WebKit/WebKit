@@ -189,7 +189,7 @@ static int windowsKeyCodeForKeyEvent(NSEvent *event)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
-    : m_type(isKeyUpEvent(event) ? PlatformKeyboardEvent::KeyUp : PlatformKeyboardEvent::KeyDown)
+    : PlatformEvent(isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown, [event modifierFlags] & NSShiftKeyMask, [event modifierFlags] & NSControlKeyMask, [event modifierFlags] & NSAlternateKeyMask, [event modifierFlags] & NSCommandKeyMask)
     , m_text(textFromEvent(event))
     , m_unmodifiedText(unmodifiedTextFromEvent(event))
     , m_keyIdentifier(keyIdentifierForKeyEvent(event))
@@ -197,10 +197,6 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
     , m_windowsVirtualKeyCode(windowsKeyCodeForKeyEvent(event))
     , m_nativeVirtualKeyCode([event keyCode])
     , m_isKeypad(isKeypadEvent(event))
-    , m_shiftKey([event modifierFlags] & NSShiftKeyMask)
-    , m_ctrlKey([event modifierFlags] & NSControlKeyMask)
-    , m_altKey([event modifierFlags] & NSAlternateKeyMask)
-    , m_metaKey([event modifierFlags] & NSCommandKeyMask)
     , m_macEvent(event)
 {
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.

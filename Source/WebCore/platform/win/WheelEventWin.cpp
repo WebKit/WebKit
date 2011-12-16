@@ -66,10 +66,7 @@ static int verticalScrollLines()
 }
 
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const FloatPoint& location)
-    : m_shiftKey(false)
-    , m_ctrlKey(false)
-    , m_altKey(false)
-    , m_metaKey(false)
+    : PlatformEvent(PlatformEvent::Wheel, false, false, false, false)
     , m_directionInvertedFromDevice(false)
 {
     m_deltaX = delta.width();
@@ -88,12 +85,9 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const 
 }
 
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
-    : m_position(positionForEvent(hWnd, lParam))
+    : PlatformEvent(PlatformEvent::Wheel, wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
+    , m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
-    , m_shiftKey(wParam & MK_SHIFT)
-    , m_ctrlKey(wParam & MK_CONTROL)
-    , m_altKey(GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
-    , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
     , m_directionInvertedFromDevice(false)
 {
     // How many pixels should we scroll per line?  Gecko uses the height of the

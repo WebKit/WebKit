@@ -403,7 +403,7 @@ bool EditorClientEfl::handleEditingKeyboardEvent(KeyboardEvent* event)
 
     Editor::Command command = frame->editor()->command(interpretKeyEvent(event));
 
-    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (keyEvent->type() == PlatformEvent::RawKeyDown) {
         // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
         // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
         // (e.g. Tab that inserts a Tab character, or Enter).

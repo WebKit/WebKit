@@ -1,3 +1,21 @@
+2011-12-16  Sam Weinig  <sam@webkit.org>
+
+        Give PlatformEvents a base class
+        https://bugs.webkit.org/show_bug.cgi?id=74685
+
+        Reviewed by Anders Carlsson.
+
+        Add a base class for PlatformMouseEvent, PlatformKeyboardEvent, PlatformWheelEvent
+        and PlatformGestureEvent and move Type enumeration and modifiers down to it.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _dragSourceEndedAt:operation:]):
+        * WebView/WebHTMLView.mm:
+        (currentKeyboardEvent):
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2011-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix a #elsif fumble in my earlier commit.

@@ -51,9 +51,9 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventButton* event)
     case GDK_2BUTTON_PRESS:
     case GDK_3BUTTON_PRESS:
     case GDK_BUTTON_RELEASE:
-        m_eventType = MouseEventPressed;
+        m_type = PlatformEvent::MousePressed;
         if (event->type == GDK_BUTTON_RELEASE) {
-            m_eventType = MouseEventReleased;
+            m_type = PlatformEvent::MouseReleased;
             m_clickCount = 0;
         } else if (event->type == GDK_BUTTON_PRESS)
             m_clickCount = 1;
@@ -87,7 +87,7 @@ PlatformMouseEvent::PlatformMouseEvent(GdkEventMotion* motion)
 
     switch (motion->type) {
     case GDK_MOTION_NOTIFY:
-        m_eventType = MouseEventMoved;
+        m_type = PlatformEvent::MouseMoved;
         m_button = NoButton;
         m_clickCount = 0;
         break;
