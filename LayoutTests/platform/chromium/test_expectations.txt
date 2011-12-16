@@ -3965,7 +3965,7 @@ BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRA
 
 // Need rebaseline on Linux and Win GPU
 BUGWK73905 GPU LINUX : media/video-layer-crash.html = IMAGE+TEXT
-BUGWK73905 GPU LINUX : media/video-transformed.html = IMAGE
+BUGWK73905 GPU : media/video-transformed.html = IMAGE
 BUGWK73905 GPU LINUX : media/video-zoom-controls.html = IMAGE
 BUGWK73905 GPU WIN : media/video-layer-crash.html = TEXT
 
