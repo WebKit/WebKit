@@ -50,6 +50,19 @@ using namespace HTMLNames;
 static const int defaultRows = 2;
 static const int defaultCols = 20;
 
+// On submission, LF characters are converted into CRLF.
+// This function returns number of characters considering this.
+static unsigned computeLengthForSubmission(const String& text)
+{
+    unsigned count =  numGraphemeClusters(text);
+    unsigned length = text.length();
+    for (unsigned i = 0; i < length; i++) {
+        if (text[i] == '\n')
+            count++;
+    }
+    return count;
+}
+
 HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLTextFormControlElement(tagName, document, form)
     , m_rows(defaultRows)
@@ -244,13 +257,13 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*
         return;
     unsigned unsignedMaxLength = static_cast<unsigned>(signedMaxLength);
 
-    unsigned currentLength = numGraphemeClusters(innerTextValue());
+    unsigned currentLength = computeLengthForSubmission(innerTextValue());
     // selectionLength represents the selection length of this text field to be
     // removed by this insertion.
     // If the text field has no focus, we don't need to take account of the
     // selection length. The selection is the source of text drag-and-drop in
     // that case, and nothing in the text field will be removed.
-    unsigned selectionLength = focused() ? numGraphemeClusters(plainText(document()->frame()->selection()->selection().toNormalizedRange().get())) : 0;
+    unsigned selectionLength = focused() ? computeLengthForSubmission(plainText(document()->frame()->selection()->selection().toNormalizedRange().get())) : 0;
     ASSERT(currentLength >= selectionLength);
     unsigned baseLength = currentLength - selectionLength;
     unsigned appendableLength = unsignedMaxLength > baseLength ? unsignedMaxLength - baseLength : 0;
@@ -402,7 +415,7 @@ bool HTMLTextAreaElement::tooLong(const String& value, NeedsToCheckDirtyFlag che
     int max = maxLength();
     if (max < 0)
         return false;
-    return numGraphemeClusters(value) > static_cast<unsigned>(max);
+    return computeLengthForSubmission(value) > static_cast<unsigned>(max);
 }
 
 bool HTMLTextAreaElement::isValidValue(const String& candidate) const

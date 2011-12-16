@@ -82,7 +82,7 @@ document.execCommand('delete');
 shouldBe('textArea.value', '"abcde"');
 
 // A linebreak is 1 character.
-createFocusedTextAreaWithMaxLength(3);
+createFocusedTextAreaWithMaxLength(4);
 document.execCommand('insertText', false, 'A');
 document.execCommand('insertLineBreak');
 document.execCommand('insertText', false, 'B');
@@ -95,7 +95,7 @@ document.execCommand('insertLineBreak');
 shouldBe('textArea.value', '"a\\n\\n"');
 
 // Confirms correct count for open consecutive linebreaks inputs.
-createFocusedTextAreaWithMaxLength(3);
+createFocusedTextAreaWithMaxLength(6);
 document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');

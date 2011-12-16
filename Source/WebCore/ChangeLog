@@ -1,3 +1,19 @@
+2011-12-16  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] The "maxlength" attribute on "textarea" tag miscounts hard newlines
+        https://bugs.webkit.org/show_bug.cgi?id=74686
+
+        Reviewed by Kent Tamura.
+
+        This patch counts LF in textarea value as two for LF to CRLF conversion on submission.
+
+        No new tests. Existing tests cover all changes.
+
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::computeLengthForSubmission): Count LF as 2 for CR LF conversion on submission.
+        (WebCore::HTMLTextAreaElement::handleBeforeTextInsertedEvent): Use computeLengthForSubmission instead of numGraphemeClusters.
+        (WebCore::HTMLTextAreaElement::tooLong): Use computeLengthForSubmission instead of numGraphemeClusters.
+
 2011-12-16  Hajime Morrita  <morrita@chromium.org>
 
         Unreviewed, rolling out r103045.
