@@ -1,3 +1,21 @@
+2011-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Eliminate dependency to QUndoStack
+        https://bugs.webkit.org/show_bug.cgi?id=74691
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replaced the QUndoStack with two vectors. When calling unapply()
+        on the edit command proxy, it will automatically re-register itself
+        in the redo stack.
+
+        * UIProcess/qt/QtWebUndoController.cpp:
+        (QtWebUndoController::registerEditCommand):
+        (QtWebUndoController::clearAllEditCommands):
+        (QtWebUndoController::canUndoRedo):
+        (QtWebUndoController::executeUndoRedo):
+        * UIProcess/qt/QtWebUndoController.h:
+
 2011-12-16  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Move webView.page into experimental

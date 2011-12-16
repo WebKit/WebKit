@@ -22,23 +22,20 @@
 #define QtWebUndoController_h
 
 #include "PageClient.h"
+#include "WebEditCommandProxy.h"
 #include "WebPageProxy.h"
-#include <QUndoStack>
 
 class QtWebUndoController {
 public:
-    QtWebUndoController();
-
-private:
-    friend class QtPageClient;
-
     // Page Client.
     void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();
     bool canUndoRedo(WebKit::WebPageProxy::UndoOrRedo);
     void executeUndoRedo(WebKit::WebPageProxy::UndoOrRedo);
 
-    QUndoStack m_undoStack;
+    typedef Vector<RefPtr<WebKit::WebEditCommandProxy> > CommandVector;
+    CommandVector m_undoStack;
+    CommandVector m_redoStack;
 };
 
 #endif // QtWebUndoController_h
