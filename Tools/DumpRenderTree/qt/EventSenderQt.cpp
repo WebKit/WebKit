@@ -480,7 +480,18 @@ void EventSender::releaseTouchPoint(int index)
 
 void EventSender::sendTouchEvent(QEvent::Type type)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+    static QTouchDevice* device = 0;
+    if (!device) {
+        device = new QTouchDevice;
+        device->setType(QTouchDevice::TouchScreen);
+        QWindowSystemInterface::registerTouchDevice(device);
+    }
+
+    QTouchEvent event(type, device, m_touchModifiers);
+#else
     QTouchEvent event(type, QTouchEvent::TouchScreen, m_touchModifiers);
+#endif
     event.setTouchPoints(m_touchPoints);
     sendEvent(m_page, &event);
     QList<QTouchEvent::TouchPoint>::Iterator it = m_touchPoints.begin();

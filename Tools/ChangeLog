@@ -1,3 +1,19 @@
+2011-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix the build for newer Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=74703
+
+        Reviewed by Csaba Osztrogonác.
+
+        * QtTestBrowser/launcherwindow.h: Add missing forward declaration.
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::sendTouchEvent): Allocate QTouchDevice and use with QTouchEvent constructor.
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp: Ditto.
+        (WTR::EventSenderProxy::sendTouchEvent):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::sendTouchEvent): Ditto.
+        (MiniBrowserApplication::notify): Adapt to changed API for marking primary touch point.
+
 2011-12-16  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Detect and force clean build when feature defines are added

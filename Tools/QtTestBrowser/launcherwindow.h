@@ -64,6 +64,7 @@
 #include "webview.h"
 
 class QPropertyAnimation;
+class QLineEdit;
 
 class WindowOptions {
 public:

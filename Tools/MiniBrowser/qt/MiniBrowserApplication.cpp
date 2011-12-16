@@ -111,7 +111,6 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
         QWindowSystemInterface::TouchPoint touchPoint;
         touchPoint.area = QRectF(mouseEvent->globalPos(), QSizeF(1, 1));
         touchPoint.pressure = 1;
-        touchPoint.isPrimary = false;
 
         switch (mouseEvent->type()) {
         case QEvent::MouseButtonPress:
@@ -142,7 +141,7 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
 
         // Update current touch-point
         if (m_touchPoints.isEmpty())
-            touchPoint.isPrimary = true;
+            touchPoint.flags |= QTouchEvent::TouchPoint::Primary;
         m_touchPoints.insert(touchPoint.id, touchPoint);
 
         // Update states for all other touch-points
@@ -159,8 +158,15 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
 
 void MiniBrowserApplication::sendTouchEvent(BrowserWindow* browserWindow)
 {
+    static QTouchDevice* device = 0;
+    if (!device) {
+        device = new QTouchDevice;
+        device->setType(QTouchDevice::TouchScreen);
+        QWindowSystemInterface::registerTouchDevice(device);
+    }
+
     m_pendingFakeTouchEventCount++;
-    QWindowSystemInterface::handleTouchEvent(browserWindow, QEvent::None, QTouchEvent::TouchScreen, m_touchPoints.values());
+    QWindowSystemInterface::handleTouchEvent(browserWindow, QEvent::None, device, m_touchPoints.values());
 
     if (!m_windowOptions.useTraditionalDesktopBehavior())
         browserWindow->updateVisualMockTouchPoints(m_touchPoints.values());
