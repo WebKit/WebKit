@@ -878,17 +878,27 @@ BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 // (wrong baseline was committed). No idea about when it really started to fail.
 BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT
 
-// Windows needs rebaselining after 53378 patch.
-BUGWK53378 WIN : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
+// Windows and Mac need rebaselining after 53378 patch.
+BUGWK53378 WIN MAC : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
 // This is a duplicate of BUGCR99500 below.
 //BUGWK53378 WIN : svg/batik/text/textProperties.svg = IMAGE
-BUGWK53378 WIN : svg/clip-path/clip-in-mask.svg = IMAGE
+BUGWK53378 MAC : svg/batik/text/textProperties.svg = IMAGE
+BUGWK53378 WIN MAC : svg/clip-path/clip-in-mask.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
+BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
+BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE+TEXT
-BUGWK53378 WIN : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
-BUGWK53378 WIN : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
-BUGWK53378 WIN : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
+BUGWK53378 MAC : svg/clip-path/deep-nested-clip-in-mask.svg = IMAGE
+BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-image-based-clipping.svg = IMAGE
+BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-and-image-based-clipping.svg = IMAGE
+BUGWK53378 WIN MAC : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
+BUGWK53378 MAC : svg/batik/masking/maskRegions.svg = IMAGE
+BUGWK53378 MAC : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
+BUGWK53378 MAC : svg/clip-path/clip-path-pixelation.svg = IMAGE
+BUGWK53378 MAC : svg/custom/grayscale-gradient-mask.svg = IMAGE
+BUGWK53378 MAC : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
+BUGWK53378 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // Since r89233. May need a new baseline.
 // NOTE that this revision was rolled out, but it isn't clear whether we should remove these
