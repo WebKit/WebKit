@@ -4014,8 +4014,3 @@ BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
 BUGWK74662 MAC : fast/text/unicode-variation-selector.html = PASS CRASH
 
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
-
-BUGCR107668 : fast/speech/input-appearance-numberandspeech.html = IMAGE
-BUGCR107668 : fast/speech/input-appearance-searchandspeech.html = IMAGE
-BUGCR107668 : fast/speech/input-appearance-speechbutton.html = IMAGE
-BUGCR107668 : fast/speech/speech-bidi-rendering.html = IMAGE
