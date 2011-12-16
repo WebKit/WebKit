@@ -1,3 +1,18 @@
+2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Remove ENABLE_DATAGRID from the buildsystem.
+        https://bugs.webkit.org/show_bug.cgi?id=74640
+
+        Reviewed by Antonio Gomes.
+
+        r84991 removed Datagrid from the tree, but the options in CMake were
+        kept.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmake/OptionsWinCE.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-12-15  Ulan Degenbaev  <ulan@chromium.org>
 
         Web Inspector: [Chromium]  Call LowMemoryNotification instead of IdleNotification
