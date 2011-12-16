@@ -1,3 +1,18 @@
+2011-12-15  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Don't prefetch values from key cursors
+        https://bugs.webkit.org/show_bug.cgi?id=74604
+
+        Reviewed by Tony Chang.
+
+        Since index key cursors don't have values, prefetching should not try
+        to retrieve them. Doing so trips an ASSERT in debug builds.
+
+        This will be tested Chromium-side.
+
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::prefetchContinueInternal):
+
 2011-12-16  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] The "maxlength" attribute on "textarea" tag miscounts hard newlines

@@ -149,11 +149,16 @@ void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, Pas
 
         foundKeys.append(cursor->m_cursor->key());
         foundPrimaryKeys.append(cursor->m_cursor->primaryKey());
-        foundValues.append(SerializedScriptValue::createFromWire(cursor->m_cursor->value()));
+
+        if (cursor->m_cursorType != IDBCursorBackendInterface::IndexKeyCursor)
+            foundValues.append(SerializedScriptValue::createFromWire(cursor->m_cursor->value()));
+        else
+            foundValues.append(SerializedScriptValue::create());
 
         sizeEstimate += cursor->m_cursor->key()->sizeEstimate();
         sizeEstimate += cursor->m_cursor->primaryKey()->sizeEstimate();
-        sizeEstimate += cursor->m_cursor->value().length() * sizeof(UChar);
+        if (cursor->m_cursorType != IDBCursorBackendInterface::IndexKeyCursor)
+            sizeEstimate += cursor->m_cursor->value().length() * sizeof(UChar);
 
         if (sizeEstimate > kMaxSizeEstimate)
             break;
