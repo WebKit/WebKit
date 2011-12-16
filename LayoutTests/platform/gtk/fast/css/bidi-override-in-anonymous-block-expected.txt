@@ -113,49 +113,49 @@ layer at (0,0) size 784x1216
           text run at (0,0) width 30: "ruby"
       RenderBlock {DIV} at (0,866) size 768x29 [border: (1px solid #000000)]
         RenderRuby (inline) {RUBY} at (0,0) size 23x17
-          RenderRubyRun (anonymous) at (164,10) size 23x18
+          RenderRubyRun (anonymous) at (184,10) size 23x18
             RenderRubyText {RT} at (0,-9) size 23x9
               RenderText {#text} at (6,0) size 11x9
                 text run at (6,0) width 11: "def"
             RenderRubyBase (anonymous) at (0,0) size 23x18
               RenderText {#text} at (0,0) size 23x17
                 text run at (0,0) width 23 RTL override: "abc"
-        RenderText {#text} at (159,10) size 4x17
-          text run at (159,10) width 4 RTL: " "
+        RenderText {#text} at (179,10) size 4x17
+          text run at (179,10) width 4 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x17
-          RenderRubyRun (anonymous) at (135,10) size 23x18
+          RenderRubyRun (anonymous) at (155,10) size 23x18
             RenderRubyText {RT} at (0,-9) size 23x9
               RenderText {#text} at (6,0) size 11x9
                 text run at (6,0) width 11 RTL override: "def"
             RenderRubyBase (anonymous) at (0,0) size 23x18
               RenderText {#text} at (0,0) size 23x17
                 text run at (0,0) width 23 RTL override: "abc"
-        RenderText {#text} at (130,10) size 4x17
-          text run at (130,10) width 4 RTL: " "
+        RenderText {#text} at (150,10) size 4x17
+          text run at (150,10) width 4 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x17
-          RenderRubyRun (anonymous) at (106,10) size 23x18
+          RenderRubyRun (anonymous) at (126,10) size 23x18
             RenderRubyBase (anonymous) at (0,0) size 23x18
               RenderText {#text} at (0,0) size 23x17
                 text run at (0,0) width 23 RTL override: "abc"
-        RenderText {#text} at (101,10) size 4x17
-          text run at (101,10) width 4 RTL: " "
+        RenderText {#text} at (121,10) size 4x17
+          text run at (121,10) width 4 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 11x17
-          RenderRubyRun (anonymous) at (89,26) size 11x0
+          RenderRubyRun (anonymous) at (109,26) size 11x0
             RenderRubyText {RT} at (0,-9) size 11x9
               RenderText {#text} at (0,0) size 11x9
                 text run at (0,0) width 11: "def"
-        RenderText {#text} at (84,10) size 4x17
-          text run at (84,10) width 4 RTL: " "
+        RenderText {#text} at (104,10) size 4x17
+          text run at (104,10) width 4 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x17
-          RenderRubyRun (anonymous) at (60,10) size 23x18
+          RenderRubyRun (anonymous) at (80,10) size 23x18
             RenderRubyBase (anonymous) at (0,0) size 23x18
               RenderInline {RB} at (0,0) size 23x17
                 RenderText {#text} at (0,0) size 23x17
                   text run at (0,0) width 23 RTL override: "abc"
-        RenderText {#text} at (55,10) size 4x17
-          text run at (55,10) width 4 RTL: " "
+        RenderText {#text} at (75,10) size 4x17
+          text run at (75,10) width 4 RTL: " "
         RenderRuby (inline) {RUBY} at (0,0) size 23x17
-          RenderRubyRun (anonymous) at (31,10) size 23x18
+          RenderRubyRun (anonymous) at (51,10) size 23x18
             RenderRubyText {RT} at (0,-9) size 23x9
               RenderText {#text} at (6,0) size 11x9
                 text run at (6,0) width 11: "def"
@@ -163,17 +163,17 @@ layer at (0,0) size 784x1216
               RenderInline {RB} at (0,0) size 23x17
                 RenderText {#text} at (0,0) size 23x17
                   text run at (0,0) width 23 RTL override: "abc"
-        RenderText {#text} at (26,10) size 4x17
-          text run at (26,10) width 4 RTL: " "
-        RenderRuby (inline) {RUBY} at (0,0) size 23x17
-          RenderRubyRun (anonymous) at (2,10) size 23x18
-            RenderRubyText {RT} at (0,-9) size 23x9
-              RenderText {#text} at (6,0) size 11x9
-                text run at (6,0) width 11: "def"
-            RenderRubyBase (anonymous) at (0,0) size 23x18
-              RenderInline {RB} at (0,0) size 23x17
-                RenderText {#text} at (0,0) size 23x17
-                  text run at (0,0) width 23 RTL override: "abc"
+        RenderText {#text} at (46,10) size 4x17
+          text run at (46,10) width 4 RTL: " "
+        RenderRuby (inline) {RUBY} at (0,0) size 43x17
+          RenderRubyRun (anonymous) at (2,10) size 43x18
+            RenderRubyBase (anonymous) at (0,0) size 43x18
+              RenderInline {RB} at (0,0) size 43x17
+                RenderText {#text} at (20,0) size 23x17
+                  text run at (20,0) width 23 RTL override: "abc"
+                RenderInline {RT} at (0,0) size 21x17
+                  RenderText {#text} at (0,0) size 21x17
+                    text run at (0,0) width 21 RTL override: "def"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,911) size 768x18
         RenderText {#text} at (0,0) size 426x17
