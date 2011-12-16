@@ -242,7 +242,6 @@ DISTCLEANFILES += docs-build.stamp
 
 if ENABLE_WEBKIT2
 docs-build.stamp: \
-	$(BUILT_SOURCES) \
 	Source/WebKit/gtk/docs/webkitenvironment.xml \
 	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
 	Source/WebKit/gtk/docs/webkitgtk-sections.txt \
@@ -254,7 +253,6 @@ docs-build.stamp: \
 	@touch docs-build.stamp
 else
 docs-build.stamp: \
-	$(BUILT_SOURCES) \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	Source/WebKit/gtk/docs/webkitenvironment.xml \
 	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
