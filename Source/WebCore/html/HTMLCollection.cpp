@@ -36,20 +36,28 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type)
-    : m_ownsInfo(false)
+HTMLCollection::HTMLCollection(Document* document, CollectionType type)
+    : m_baseIsRetained(false)
+    , m_ownsInfo(false)
     , m_type(type)
-    , m_base(base)
-    , m_info(m_base->isDocumentNode() ? static_cast<Document*>(m_base.get())->collectionInfo(type) : 0)
+    , m_base(document)
+    , m_info(document->collectionInfo(type))
 {
 }
 
 HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type, CollectionCache* info)
-    : m_ownsInfo(false)
+    : m_baseIsRetained(true)
+    , m_ownsInfo(false)
     , m_type(type)
-    , m_base(base)
+    , m_base(base.get())
     , m_info(info)
 {
+    m_base->ref();
+}
+
+PassRefPtr<HTMLCollection> HTMLCollection::createForCachingOnDocument(Document* document, CollectionType type)
+{
+    return adoptRef(new HTMLCollection(document, type));
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(PassRefPtr<Node> base, CollectionType type)
@@ -61,6 +69,8 @@ HTMLCollection::~HTMLCollection()
 {
     if (m_ownsInfo)
         delete m_info;
+    if (m_baseIsRetained)
+        m_base->deref();
 }
 
 void HTMLCollection::resetCollectionInfo() const
@@ -121,9 +131,9 @@ Element* HTMLCollection::itemAfter(Element* previous) const
     if (!previous)
         current = m_base->firstChild();
     else
-        current = nextNodeOrSibling(m_base.get(), previous, deep);
+        current = nextNodeOrSibling(m_base, previous, deep);
 
-    for (; current; current = nextNodeOrSibling(m_base.get(), current, deep)) {
+    for (; current; current = nextNodeOrSibling(m_base, current, deep)) {
         if (!current->isElementNode())
             continue;
         Element* e = static_cast<Element*>(current);

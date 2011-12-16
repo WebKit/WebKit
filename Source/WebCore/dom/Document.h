@@ -1185,6 +1185,8 @@ private:
     PageVisibilityState visibilityState() const;
 #endif
 
+    const RefPtr<HTMLCollection>& cachedCollection(CollectionType);
+
     int m_guardRefCount;
 
     OwnPtr<CSSStyleSelector> m_styleSelector;
@@ -1364,6 +1366,8 @@ private:
     InheritedBool m_designMode;
     
     CheckedRadioButtons m_checkedRadioButtons;
+
+    RefPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
 
     typedef HashMap<AtomicStringImpl*, CollectionCache*> NamedCollectionMap;
     FixedArray<CollectionCache, NumUnnamedDocumentCachedTypes> m_collectionInfo;

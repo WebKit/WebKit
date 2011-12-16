@@ -1,3 +1,54 @@
+2011-12-16  Andreas Kling  <kling@webkit.org>
+
+        Cache and reuse HTMLCollections exposed by Document.
+        <http://webkit.org/b/71956>
+
+        Reviewed by Antti Koivisto.
+
+        Let Document cache the various HTMLCollection objects it exposes.
+        This is a behavior change in two ways:
+
+        1) The lifetime of returned collections is now tied to the lifetime
+           of the Document. This matches the behavior of Firefox and Opera.
+
+        2) The cached collections returned by document are now exactly equal
+           to those returned by subsequent calls to the same getters.
+
+        This reduces memory consumption by ~800 kB (on 64-bit) when loading
+        the full HTML5 spec. document.links was called 34001 times, yielding
+        34001 separate HTMLCollections, and now we only need 1.
+
+        The document.all collection retains the old behavior, as caching it
+        will be a bit more complicated.
+
+        To avoid a reference cycle between Document and HTMLCollection,
+        collections that are cached on Document do not retained their base
+        node pointer (controlled by a m_baseIsRetained flag.)
+
+        Tests: fast/dom/document-collection-idempotence.html
+               fast/dom/gc-9.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        (WebCore::Document::cachedCollection):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        * dom/Document.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::createForCachingOnDocument):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::HTMLCollection::itemAfter):
+        * html/HTMLCollection.h:
+        (WebCore::HTMLCollection::base):
+
 2011-12-16  Anders Carlsson  <andersca@apple.com>
 
         Add a pretty dumb tile cache to WebTileCacheLayer

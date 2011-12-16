@@ -4190,50 +4190,58 @@ bool Document::hasSVGRootNode() const
 }
 #endif
 
+const RefPtr<HTMLCollection>& Document::cachedCollection(CollectionType type)
+{
+    ASSERT(type < NumUnnamedDocumentCachedTypes);
+    if (!m_collections[type])
+        m_collections[type] = HTMLCollection::createForCachingOnDocument(this, type);
+    return m_collections[type];
+}
+
 PassRefPtr<HTMLCollection> Document::images()
 {
-    return HTMLCollection::create(this, DocImages);
+    return cachedCollection(DocImages);
 }
 
 PassRefPtr<HTMLCollection> Document::applets()
 {
-    return HTMLCollection::create(this, DocApplets);
+    return cachedCollection(DocApplets);
 }
 
 PassRefPtr<HTMLCollection> Document::embeds()
 {
-    return HTMLCollection::create(this, DocEmbeds);
+    return cachedCollection(DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
-    return HTMLCollection::create(this, DocEmbeds);
+    return cachedCollection(DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::objects()
 {
-    return HTMLCollection::create(this, DocObjects);
+    return cachedCollection(DocObjects);
 }
 
 PassRefPtr<HTMLCollection> Document::scripts()
 {
-    return HTMLCollection::create(this, DocScripts);
+    return cachedCollection(DocScripts);
 }
 
 PassRefPtr<HTMLCollection> Document::links()
 {
-    return HTMLCollection::create(this, DocLinks);
+    return cachedCollection(DocLinks);
 }
 
 PassRefPtr<HTMLCollection> Document::forms()
 {
-    return HTMLCollection::create(this, DocForms);
+    return cachedCollection(DocForms);
 }
 
 PassRefPtr<HTMLCollection> Document::anchors()
 {
-    return HTMLCollection::create(this, DocAnchors);
+    return cachedCollection(DocAnchors);
 }
 
 PassRefPtr<HTMLAllCollection> Document::all()
