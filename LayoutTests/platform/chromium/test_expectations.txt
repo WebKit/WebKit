@@ -1713,7 +1713,7 @@ BUGCR9962 MAC : fast/js/function-apply-aliased.html = FAIL
 BUGCR10055 MAC : fast/events/updateLayoutForHitTest.html = FAIL
 
 // New tests from WebKit Merge 42609:42671
-BUGCR10760 LINUX : fast/forms/input-text-scroll-left-on-blur.html = FAIL
+//BUGCR10760 LINUX : fast/forms/input-text-scroll-left-on-blur.html = FAIL
 BUGCR10760 LINUX : fast/inline/25277-2.html = FAIL
 BUGCR10760 LINUX : fast/inline/25277.html = FAIL
 BUGCR10760 LINUX : svg/custom/marker-child-changes.svg = PASS FAIL
@@ -4027,3 +4027,6 @@ BUGMNAGANOV : editing/input/reveal-contenteditable-on-input-vertically.html = FA
 BUGMNAGANOV : editing/input/reveal-contenteditable-on-paste-vertically.html = FAIL
 BUGMNAGANOV : editing/input/reveal-edit-on-input-vertically.html = FAIL
 BUGMNAGANOV : editing/input/reveal-edit-on-paste-vertically.html = FAIL
+
+// When removing this, please reenable the Linux suppression above.
+BUGWK74726 : fast/forms/input-text-scroll-left-on-blur.html = FAIL
