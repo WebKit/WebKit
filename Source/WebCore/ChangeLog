@@ -1,3 +1,18 @@
+2011-12-16  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Selection change by type-ahead doesn't fire 'change' event
+        https://bugs.webkit.org/show_bug.cgi?id=74590
+
+        Reviewed by Kent Tamura.
+
+        Fire onchange even for type ahead selection.
+
+        Test: fast/forms/select/menulist-type-ahead-find.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::typeAheadFind): Add DispatchChangeEvent when
+        calling selectOption method.
+
 2011-12-16  Andreas Kling  <kling@webkit.org>
 
         Don't call Document::body() twice in the same function.
