@@ -1726,6 +1726,7 @@ HEADERS += \
     editing/SplitTextNodeContainingElementCommand.h \
     editing/TextIterator.h \
     editing/TypingCommand.h \
+    editing/UndoStep.h \
     editing/UnlinkCommand.h \
     editing/VisiblePosition.h \
     editing/VisibleSelection.h \

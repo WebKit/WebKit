@@ -701,8 +701,8 @@
 		BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6A113DD19200574BE2 /* WebPage.cpp */; };
 		BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6D113DD1A500574BE2 /* WebPageMac.mm */; };
 		BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B389F10F538BE00443A15 /* WebFrameProxy.h */; };
-		BCA0EF7F12331E78007D3CFB /* WebEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF7D12331E78007D3CFB /* WebEditCommand.h */; };
-		BCA0EF8012331E78007D3CFB /* WebEditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */; };
+		BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF7D12331E78007D3CFB /* WebUndoStep.h */; };
+		BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */; };
 		BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */; };
 		BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */; };
 		BCA284D61492F2C7001F9042 /* WKConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA284D41492F2C7001F9042 /* WKConnection.mm */; };
@@ -1726,8 +1726,8 @@
 		BC963D6A113DD19200574BE2 /* WebPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPage.cpp; sourceTree = "<group>"; };
 		BC963D6D113DD1A500574BE2 /* WebPageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageMac.mm; sourceTree = "<group>"; };
 		BC9B389F10F538BE00443A15 /* WebFrameProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameProxy.h; sourceTree = "<group>"; };
-		BCA0EF7D12331E78007D3CFB /* WebEditCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditCommand.h; sourceTree = "<group>"; };
-		BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEditCommand.cpp; sourceTree = "<group>"; };
+		BCA0EF7D12331E78007D3CFB /* WebUndoStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUndoStep.h; sourceTree = "<group>"; };
+		BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUndoStep.cpp; sourceTree = "<group>"; };
 		BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditCommandProxy.h; sourceTree = "<group>"; };
 		BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEditCommandProxy.cpp; sourceTree = "<group>"; };
 		BCA284D41492F2C7001F9042 /* WKConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKConnection.mm; sourceTree = "<group>"; };
@@ -2799,8 +2799,8 @@
 				BC72B9F911E6476B001EB4EA /* WebBackForwardListProxy.h */,
 				51871B59127CB89D00F76232 /* WebContextMenu.cpp */,
 				51871B5A127CB89D00F76232 /* WebContextMenu.h */,
-				BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */,
-				BCA0EF7D12331E78007D3CFB /* WebEditCommand.h */,
+				BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */,
+				BCA0EF7D12331E78007D3CFB /* WebUndoStep.h */,
 				BC111ADC112F5B9300337BAB /* WebFrame.cpp */,
 				BC032D8910F437A00058C15A /* WebFrame.h */,
 				1C8E281F1275D15400BC7BD0 /* WebInspector.cpp */,
@@ -3901,7 +3901,7 @@
 				BCB0B0DC12305A2500B1341E /* WebContextUserMessageCoders.h in Headers */,
 				BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */,
 				BCB0B0E012305AB100B1341E /* UserMessageCoders.h in Headers */,
-				BCA0EF7F12331E78007D3CFB /* WebEditCommand.h in Headers */,
+				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
 				BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */,
 				BC33DD681238464600360F3F /* WebNumber.h in Headers */,
 				BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */,
@@ -4550,7 +4550,7 @@
 				BC90A1D7122DD66A00CC8C50 /* WebURLResponseMac.mm in Sources */,
 				BCB0AD33122F285800B1341E /* MutableArray.cpp in Sources */,
 				BCB0AEEA122F53E300B1341E /* MutableDictionary.cpp in Sources */,
-				BCA0EF8012331E78007D3CFB /* WebEditCommand.cpp in Sources */,
+				BCA0EF8012331E78007D3CFB /* WebUndoStep.cpp in Sources */,
 				BCA0EFA012332642007D3CFB /* WebEditCommandProxy.cpp in Sources */,
 				BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */,
 				BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */,

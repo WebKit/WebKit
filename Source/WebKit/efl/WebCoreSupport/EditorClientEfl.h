@@ -47,8 +47,8 @@ class Page;
 class EditorClientEfl : public EditorClient, public TextCheckerClient {
 protected:
     bool m_isInRedo;
-    WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > undoStack;
-    WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > redoStack;
+    WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > undoStack;
+    WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > redoStack;
 
 public:
     EditorClientEfl(Evas_Object *view);
@@ -84,8 +84,8 @@ public:
     virtual void didWriteSelectionToPasteboard();
     virtual void didSetSelectionTypesForPasteboard();
 
-    virtual void registerCommandForUndo(WTF::PassRefPtr<EditCommand>);
-    virtual void registerCommandForRedo(WTF::PassRefPtr<EditCommand>);
+    virtual void registerCommandForUndo(WTF::PassRefPtr<UndoStep>);
+    virtual void registerCommandForRedo(WTF::PassRefPtr<UndoStep>);
     virtual void clearUndoRedoOperations();
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const;

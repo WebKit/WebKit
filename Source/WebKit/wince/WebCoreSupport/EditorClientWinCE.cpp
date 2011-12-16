@@ -24,11 +24,11 @@
 #include "config.h"
 #include "EditorClientWinCE.h"
 
-#include "EditCommand.h"
 #include "Frame.h"
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
 #include "PlatformKeyboardEvent.h"
+#include "UndoStep.h"
 #include "Settings.h"
 
 using namespace WebCore;
@@ -144,12 +144,12 @@ void EditorClientWinCE::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClientWinCE::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> command)
+void EditorClientWinCE::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep>)
 {
     notImplemented();
 }
 
-void EditorClientWinCE::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand> command)
+void EditorClientWinCE::registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep>)
 {
     notImplemented();
 }

@@ -1,3 +1,52 @@
+2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Only EditCommandComposition should implement unapply and reapply
+        https://bugs.webkit.org/show_bug.cgi?id=74490
+
+        Reviewed by Eric Seidel.
+
+        Introduce new abstract class UndoStep to replace EditCommand for EditorClient, and make EditCommand
+        private to WebCore.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::create): Takes EditAction instead of boolean for CreateLinkCommand.
+        (WebCore::EditCommandComposition::EditCommandComposition): Ditto.
+        (WebCore::EditCommandComposition::unapply): Moved from EditCommand; we don't have to call isTopLevelCommand
+        anymore because EditCommandComposition is always top-level. In fact, the only thing unapply/reapply do
+        in addition to what doUnapply/doReapply do for sub-level commands is disabling and enabling delete button
+        and defining an event queue scope. However, these can be done at top-level command anyway, so we now only call
+        doApply for sub-level commands.
+        (WebCore::EditCommandComposition::reapply): Ditto.
+        (WebCore::EditCommandComposition::setStartingSelection): Added.
+        (WebCore::EditCommandComposition::setEndingSelection): Added.
+        (WebCore::applyCommand): Moved from EditCommand.
+        (WebCore::CompositeEditCommand::apply): Moved from EditCommand; doesn't call isTopLevelCommand for the same reason.
+        (WebCore::CompositeEditCommand::ensureComposition):
+        (WebCore::CompositeEditCommand::applyCommandToComposite): Call doApply instead of apply for the same reason.
+        * editing/CompositeEditCommand.h:
+        (WebCore::EditCommandComposition::wasCreateLinkCommand):
+        (WebCore::EditCommandComposition::startingSelection): Added.
+        (WebCore::EditCommandComposition::endingSelection): Added.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::setStartingSelection):
+        (WebCore::EditCommand::setEndingSelection):
+        (WebCore::SimpleEditCommand::doReapply): Moved from EditCommand.
+        * editing/EditCommand.h:
+        * editing/UndoStep.h: Added.
+        (WebCore::UndoStep::~UndoStep):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::shouldInsertNode):
+        (WebCore::EmptyEditorClient::didSetSelectionTypesForPasteboard):
+        (WebCore::EmptyEditorClient::registerCommandForUndo): Takes UndoStep instead of EditCommand.
+        (WebCore::EmptyEditorClient::registerCommandForRedo): Ditto.
+        * page/EditorClient.h:
+
 2011-12-16  Simon Fraser  <simon.fraser@apple.com>
 
         Allow a PlatformCALayer to own its own sublayers

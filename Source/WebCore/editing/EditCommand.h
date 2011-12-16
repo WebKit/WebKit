@@ -45,10 +45,6 @@ public:
 
     void setParent(CompositeEditCommand*);
 
-    void apply();
-    void unapply();
-    void reapply();
-
     virtual EditAction editingAction() const;
 
     const VisibleSelection& startingSelection() const { return m_startingSelection; }
@@ -59,31 +55,28 @@ public:
     virtual bool isEditCommandComposition() const { return false; }
     bool isTopLevelCommand() const { return !m_parent; }
 
+    virtual void doApply() = 0;
+
 protected:
     EditCommand(Document*);
     EditCommand(Document*, const VisibleSelection&, const VisibleSelection&);
 
     Document* document() const { return m_document.get(); }
     CompositeEditCommand* parent() const { return m_parent; }
-
-    virtual void setStartingSelection(const VisibleSelection&);
-    virtual void setEndingSelection(const VisibleSelection&);
+    void setStartingSelection(const VisibleSelection&);
+    void setEndingSelection(const VisibleSelection&);
 
 private:
-    virtual void doApply() = 0;
-    virtual void doUnapply() = 0;
-    virtual void doReapply(); // calls doApply()
-
     RefPtr<Document> m_document;
     VisibleSelection m_startingSelection;
     VisibleSelection m_endingSelection;
     CompositeEditCommand* m_parent;
-
-    friend void applyCommand(PassRefPtr<CompositeEditCommand>);
 };
 
 class SimpleEditCommand : public EditCommand {
 public:
+    virtual void doUnapply() = 0;
+    virtual void doReapply(); // calls doApply()
 
 #ifndef NDEBUG
     virtual void getNodesInCommand(HashSet<Node*>&) = 0;
@@ -106,8 +99,6 @@ inline SimpleEditCommand* toSimpleEditCommand(EditCommand* command)
     ASSERT(command->isSimpleEditCommand());
     return static_cast<SimpleEditCommand*>(command);
 }
-
-void applyCommand(PassRefPtr<CompositeEditCommand>);
 
 } // namespace WebCore
 

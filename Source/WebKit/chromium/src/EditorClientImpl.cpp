@@ -28,7 +28,6 @@
 #include "EditorClientImpl.h"
 
 #include "Document.h"
-#include "EditCommand.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -41,6 +40,7 @@
 #include "PlatformString.h"
 #include "RenderObject.h"
 #include "SpellChecker.h"
+#include "UndoStep.h"
 
 #include "DOMUtilitiesPrivate.h"
 #include "WebAutofillClient.h"
@@ -288,18 +288,18 @@ void EditorClientImpl::didSetSelectionTypesForPasteboard()
 {
 }
 
-void EditorClientImpl::registerCommandForUndo(PassRefPtr<EditCommand> command)
+void EditorClientImpl::registerCommandForUndo(PassRefPtr<UndoStep> step)
 {
     if (m_undoStack.size() == maximumUndoStackDepth)
         m_undoStack.removeFirst(); // drop oldest item off the far end
     if (!m_inRedo)
         m_redoStack.clear();
-    m_undoStack.append(command);
+    m_undoStack.append(step);
 }
 
-void EditorClientImpl::registerCommandForRedo(PassRefPtr<EditCommand> command)
+void EditorClientImpl::registerCommandForRedo(PassRefPtr<UndoStep> step)
 {
-    m_redoStack.append(command);
+    m_redoStack.append(step);
 }
 
 void EditorClientImpl::clearUndoRedoOperations()
@@ -335,10 +335,10 @@ bool EditorClientImpl::canRedo() const
 void EditorClientImpl::undo()
 {
     if (canUndo()) {
-        EditCommandStack::iterator back = --m_undoStack.end();
-        RefPtr<EditCommand> command(*back);
+        UndoManagerStack::iterator back = --m_undoStack.end();
+        RefPtr<UndoStep> step(*back);
         m_undoStack.remove(back);
-        command->unapply();
+        step->unapply();
         // unapply will call us back to push this command onto the redo stack.
     }
 }
@@ -346,13 +346,13 @@ void EditorClientImpl::undo()
 void EditorClientImpl::redo()
 {
     if (canRedo()) {
-        EditCommandStack::iterator back = --m_redoStack.end();
-        RefPtr<EditCommand> command(*back);
+        UndoManagerStack::iterator back = --m_redoStack.end();
+        RefPtr<UndoStep> step(*back);
         m_redoStack.remove(back);
 
         ASSERT(!m_inRedo);
         m_inRedo = true;
-        command->reapply();
+        step->reapply();
         // reapply will call us back to push this command onto the undo stack.
         m_inRedo = false;
     }

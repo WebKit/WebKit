@@ -906,8 +906,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/WebBackForwardListProxy.h \
 	Source/WebKit2/WebProcess/WebPage/WebContextMenu.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebContextMenu.h \
-	Source/WebKit2/WebProcess/WebPage/WebEditCommand.cpp \
-	Source/WebKit2/WebProcess/WebPage/WebEditCommand.h \
 	Source/WebKit2/WebProcess/WebPage/WebFrame.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebFrame.h \
 	Source/WebKit2/WebProcess/WebPage/WebInspector.cpp \
@@ -918,6 +916,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/WebPageGroupProxy.cpp \
 	Source/WebKit2/WebProcess/WebPage/WebPageGroupProxy.h \
 	Source/WebKit2/WebProcess/WebPage/WebPage.h \
+	Source/WebKit2/WebProcess/WebPage/WebUndoStep.cpp \
+	Source/WebKit2/WebProcess/WebPage/WebUndoStep.h \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.cpp \
 	Source/WebKit2/WebProcess/WebConnectionToUIProcess.h \
 	Source/WebKit2/WebProcess/WebProcess.cpp \

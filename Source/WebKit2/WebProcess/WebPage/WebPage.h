@@ -44,7 +44,7 @@
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "ShareableBitmap.h"
-#include "WebEditCommand.h"
+#include "WebUndoStep.h"
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -191,8 +191,8 @@ public:
     WebCore::IntRect windowResizerRect() const;
     WebCore::KeyboardUIMode keyboardUIMode();
 
-    WebEditCommand* webEditCommand(uint64_t);
-    void addWebEditCommand(uint64_t, WebEditCommand*);
+    WebUndoStep* webUndoStep(uint64_t);
+    void addWebUndoStep(uint64_t, WebUndoStep*);
     void removeWebEditCommand(uint64_t);
     bool isInRedo() const { return m_isInRedo; }
 
@@ -662,7 +662,7 @@ private:
     
     RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
 
-    HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;
+    HashMap<uint64_t, RefPtr<WebUndoStep> > m_undoStepMap;
 
     WebCore::IntSize m_windowResizerSize;
 

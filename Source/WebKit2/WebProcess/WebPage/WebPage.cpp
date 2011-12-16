@@ -2060,38 +2060,38 @@ void WebPage::willPerformLoadDragDestinationAction()
     m_sandboxExtensionTracker.willPerformLoadDragDestinationAction(m_pendingDropSandboxExtension.release());
 }
 
-WebEditCommand* WebPage::webEditCommand(uint64_t commandID)
+WebUndoStep* WebPage::webUndoStep(uint64_t stepID)
 {
-    return m_editCommandMap.get(commandID).get();
+    return m_undoStepMap.get(stepID).get();
 }
 
-void WebPage::addWebEditCommand(uint64_t commandID, WebEditCommand* command)
+void WebPage::addWebUndoStep(uint64_t stepID, WebUndoStep* entry)
 {
-    m_editCommandMap.set(commandID, command);
+    m_undoStepMap.set(stepID, entry);
 }
 
-void WebPage::removeWebEditCommand(uint64_t commandID)
+void WebPage::removeWebEditCommand(uint64_t stepID)
 {
-    m_editCommandMap.remove(commandID);
+    m_undoStepMap.remove(stepID);
 }
 
-void WebPage::unapplyEditCommand(uint64_t commandID)
+void WebPage::unapplyEditCommand(uint64_t stepID)
 {
-    WebEditCommand* command = webEditCommand(commandID);
-    if (!command)
+    WebUndoStep* step = webUndoStep(stepID);
+    if (!step)
         return;
 
-    command->command()->unapply();
+    step->step()->unapply();
 }
 
-void WebPage::reapplyEditCommand(uint64_t commandID)
+void WebPage::reapplyEditCommand(uint64_t stepID)
 {
-    WebEditCommand* command = webEditCommand(commandID);
-    if (!command)
+    WebUndoStep* step = webUndoStep(stepID);
+    if (!step)
         return;
 
     m_isInRedo = true;
-    command->command()->reapply();
+    step->step()->reapply();
     m_isInRedo = false;
 }
 

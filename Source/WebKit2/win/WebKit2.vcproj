@@ -2038,14 +2038,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\WebProcess\WebPage\WebEditCommand.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\WebPage\WebEditCommand.h"
-					>
-				</File>
-				<File
 					RelativePath="..\WebProcess\WebPage\WebFrame.cpp"
 					>
 				</File>
@@ -2091,6 +2083,14 @@
 				</File>
 				<File
 					RelativePath="..\WebProcess\WebPage\WebPageGroupProxy.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebUndoStep.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebUndoStep.h"
 					>
 				</File>
 				<Filter

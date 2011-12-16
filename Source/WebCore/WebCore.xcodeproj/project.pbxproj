@@ -3012,14 +3012,14 @@
 		93309DDA099E64920056E581 /* BreakBlockquoteCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D8B099E64910056E581 /* BreakBlockquoteCommand.cpp */; };
 		93309DDB099E64920056E581 /* BreakBlockquoteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D8C099E64910056E581 /* BreakBlockquoteCommand.h */; };
 		93309DDC099E64920056E581 /* CompositeEditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D8D099E64910056E581 /* CompositeEditCommand.cpp */; };
-		93309DDD099E64920056E581 /* CompositeEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D8E099E64910056E581 /* CompositeEditCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309DDD099E64920056E581 /* CompositeEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D8E099E64910056E581 /* CompositeEditCommand.h */; };
 		93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D8F099E64910056E581 /* DeleteFromTextNodeCommand.cpp */; };
 		93309DDF099E64920056E581 /* DeleteFromTextNodeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D90099E64910056E581 /* DeleteFromTextNodeCommand.h */; };
 		93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D91099E64910056E581 /* DeleteSelectionCommand.cpp */; };
 		93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D92099E64910056E581 /* DeleteSelectionCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE2099E64920056E581 /* EditAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D93099E64910056E581 /* EditAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE3099E64920056E581 /* EditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D94099E64910056E581 /* EditCommand.cpp */; };
-		93309DE4099E64920056E581 /* EditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D95099E64910056E581 /* EditCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309DE4099E64920056E581 /* EditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D95099E64910056E581 /* EditCommand.h */; };
 		93309DE5099E64920056E581 /* HTMLInterchange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D96099E64910056E581 /* HTMLInterchange.cpp */; };
 		93309DE6099E64920056E581 /* HTMLInterchange.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309D97099E64910056E581 /* HTMLInterchange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DE7099E64920056E581 /* htmlediting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309D98099E64910056E581 /* htmlediting.cpp */; };
@@ -3374,6 +3374,7 @@
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0FB18F140DB5790022588F /* HTTPValidation.cpp */; };
 		9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0FB190140DB5790022588F /* HTTPValidation.h */; };
+		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */; };
 		9B32CDAA13DF7FA900F34D13 /* RenderedPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B32CDA813DF7FA900F34D13 /* RenderedPosition.cpp */; };
 		9B375EDA14478A0100F3CAE5 /* MicroDataItemList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B375ED814478A0100F3CAE5 /* MicroDataItemList.cpp */; };
@@ -10610,6 +10611,7 @@
 		98EB1F941313FE0500D0E1EA /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
 		9B0FB18F140DB5790022588F /* HTTPValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPValidation.cpp; sourceTree = "<group>"; };
 		9B0FB190140DB5790022588F /* HTTPValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPValidation.h; sourceTree = "<group>"; };
+		9B2D8A7814997CCF00ECEF3E /* UndoStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoStep.h; sourceTree = "<group>"; };
 		9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MicroDataItemValue.cpp; sourceTree = "<group>"; };
 		9B2F7CF814562120007F8B50 /* MicroDataItemValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MicroDataItemValue.h; sourceTree = "<group>"; };
 		9B32CDA713DF7FA900F34D13 /* RenderedPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderedPosition.h; sourceTree = "<group>"; };
@@ -17108,6 +17110,7 @@
 				93309DCD099E64910056E581 /* TextIterator.h */,
 				93309DCA099E64910056E581 /* TypingCommand.cpp */,
 				93309DCB099E64910056E581 /* TypingCommand.h */,
+				9B2D8A7814997CCF00ECEF3E /* UndoStep.h */,
 				D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */,
 				D086FE9609D53AAB005BC74D /* UnlinkCommand.h */,
 				93309DCE099E64910056E581 /* visible_units.cpp */,
@@ -24621,6 +24624,7 @@
 				93309E1A099E64920056E581 /* TypingCommand.h in Headers */,
 				85031B4E0A44EFC700F992E0 /* UIEvent.h in Headers */,
 				85031B4F0A44EFC700F992E0 /* UIEventWithKeyState.h in Headers */,
+				9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */,
 				A863E2011343412000274926 /* UnicodeBidi.h in Headers */,
 				B2C3DA4D0D006C1D00EF6F26 /* UnicodeRange.h in Headers */,
 				E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */,

@@ -34,7 +34,6 @@
 #include "DOMCoreClasses.h"
 #include <WebCore/BString.h>
 #include <WebCore/Document.h>
-#include <WebCore/EditCommand.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
@@ -43,6 +42,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
+#include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 #include <WebCore/VisibleSelection.h>
 
@@ -426,7 +426,7 @@ void WebEditorClient::textDidChangeInTextArea(Element* e)
 class WebEditorUndoCommand : public IWebUndoCommand
 {
 public:
-    WebEditorUndoCommand(PassRefPtr<EditCommand> editCommand, bool isUndo);
+    WebEditorUndoCommand(PassRefPtr<UndoStep>, bool isUndo);
     void execute();
 
     // IUnknown
@@ -436,12 +436,12 @@ public:
 
 private:
     ULONG m_refCount;
-    RefPtr<EditCommand> m_editCommand;
+    RefPtr<UndoStep> m_step;
     bool m_isUndo;
 };
 
-WebEditorUndoCommand::WebEditorUndoCommand(PassRefPtr<EditCommand> editCommand, bool isUndo)
-    : m_editCommand(editCommand)
+WebEditorUndoCommand::WebEditorUndoCommand(PassRefPtr<UndoStep> step, bool isUndo)
+    : m_step(step)
     , m_isUndo(isUndo) 
     , m_refCount(1)
 { 
@@ -450,9 +450,9 @@ WebEditorUndoCommand::WebEditorUndoCommand(PassRefPtr<EditCommand> editCommand, 
 void WebEditorUndoCommand::execute()
 {
     if (m_isUndo)
-        m_editCommand->unapply();
+        m_step->unapply();
     else
-        m_editCommand->reapply();
+        m_step->reapply();
 }
 
 HRESULT STDMETHODCALLTYPE WebEditorUndoCommand::QueryInterface(REFIID riid, void** ppvObject)
@@ -527,12 +527,12 @@ static String undoNameForEditAction(EditAction editAction)
     return String();
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> command)
+void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> step)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        String actionName = undoNameForEditAction(command->editingAction());
-        WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(command, true);
+        String actionName = undoNameForEditAction(step->editingAction());
+        WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(step, true);
         if (!undoCommand)
             return;
         uiDelegate->registerUndoWithTarget(m_undoTarget, 0, undoCommand);
@@ -543,11 +543,11 @@ void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> command)
     }
 }
 
-void WebEditorClient::registerCommandForRedo(PassRefPtr<EditCommand> command)
+void WebEditorClient::registerCommandForRedo(PassRefPtr<UndoStep> step)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
-        WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(command, false);
+        WebEditorUndoCommand* undoCommand = new WebEditorUndoCommand(step, false);
         if (!undoCommand)
             return;
         uiDelegate->registerUndoWithTarget(m_undoTarget, 0, undoCommand);

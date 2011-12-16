@@ -349,12 +349,12 @@ HEADERS += \
     WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebContextMenu.h \
-    WebProcess/WebPage/WebEditCommand.h \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebInspector.h \
     WebProcess/WebPage/WebOpenPanelResultListener.h \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebPage/WebPageGroupProxy.h \
+    WebProcess/WebPage/WebUndoStep.h \
     WebProcess/WebConnectionToUIProcess.h \
     WebProcess/WebProcess.h \
     WebProcess/qt/QtBuiltinBundle.h \
@@ -698,12 +698,12 @@ SOURCES += \
     WebProcess/WebPage/TiledDrawingArea.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
-    WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
     WebProcess/WebPage/WebInspector.cpp \
     WebProcess/WebPage/WebOpenPanelResultListener.cpp \
     WebProcess/WebPage/WebPage.cpp \
     WebProcess/WebPage/WebPageGroupProxy.cpp \
+    WebProcess/WebPage/WebUndoStep.cpp \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/qt/LayerTreeHostQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \

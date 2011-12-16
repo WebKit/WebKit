@@ -376,7 +376,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/TiledDrawingArea.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
-    WebProcess/WebPage/WebEditCommand.cpp
+    WebProcess/WebPage/WebUndoStep.cpp
     WebProcess/WebPage/WebFrame.cpp
     WebProcess/WebPage/WebInspector.cpp
     WebProcess/WebPage/WebOpenPanelResultListener.cpp

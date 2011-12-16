@@ -28,6 +28,7 @@
 
 #include "EditCommand.h"
 #include "CSSPropertyNames.h"
+#include "UndoStep.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,16 +38,20 @@ class HTMLElement;
 class StyledElement;
 class Text;
 
-class EditCommandComposition : public EditCommand {
+class EditCommandComposition : public UndoStep {
 public:
-    static PassRefPtr<EditCommandComposition> create(Document*, const VisibleSelection&, const VisibleSelection&, bool wasCreateLinkCommand);
+    static PassRefPtr<EditCommandComposition> create(Document*, const VisibleSelection&, const VisibleSelection&, EditAction);
 
-    virtual void doApply() OVERRIDE;
-    virtual void doUnapply() OVERRIDE;
-    virtual void doReapply() OVERRIDE;
+    virtual void unapply() OVERRIDE;
+    virtual void reapply() OVERRIDE;
+    EditAction editingAction() const OVERRIDE { return m_editAction; }
     void append(SimpleEditCommand*);
-    bool wasCreateLinkCommand() const { return m_wasCreateLinkCommand; }
+    bool wasCreateLinkCommand() const { return m_editAction == EditActionCreateLink; }
 
+    const VisibleSelection& startingSelection() const { return m_startingSelection; }
+    const VisibleSelection& endingSelection() const { return m_endingSelection; }
+    void setStartingSelection(const VisibleSelection&);
+    void setEndingSelection(const VisibleSelection&);
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
 
@@ -55,21 +60,22 @@ public:
 #endif
 
 private:
-    EditCommandComposition(Document*, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand);
-    virtual bool isEditCommandComposition() const OVERRIDE { return true; }
-    virtual void setStartingSelection(const VisibleSelection&) OVERRIDE;
-    virtual void setEndingSelection(const VisibleSelection&) OVERRIDE;
+    EditCommandComposition(Document*, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction);
 
+    RefPtr<Document> m_document;
+    VisibleSelection m_startingSelection;
+    VisibleSelection m_endingSelection;
     Vector<RefPtr<SimpleEditCommand> > m_commands;
     RefPtr<Element> m_startingRootEditableElement;
     RefPtr<Element> m_endingRootEditableElement;
-    bool m_wasCreateLinkCommand;
+    EditAction m_editAction;
 };
 
 class CompositeEditCommand : public EditCommand {
 public:
     virtual ~CompositeEditCommand();
 
+    void apply();
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
     EditCommandComposition* composition() { return m_composition.get(); }
     EditCommandComposition* ensureComposition();
@@ -161,20 +167,12 @@ protected:
     Vector<RefPtr<EditCommand> > m_commands;
 
 private:
-    virtual void doUnapply();
-    virtual void doReapply();
-
     bool isCompositeEditCommand() const OVERRIDE { return true; }
 
     RefPtr<EditCommandComposition> m_composition;
 };
-
-inline EditCommandComposition* toEditCommandComposition(EditCommand* command)
-{
-    ASSERT(command);
-    ASSERT(command->isEditCommandComposition());
-    return static_cast<EditCommandComposition*>(command);
-}
+    
+void applyCommand(PassRefPtr<CompositeEditCommand>);
 
 inline CompositeEditCommand* toCompositeEditCommand(EditCommand* command)
 {

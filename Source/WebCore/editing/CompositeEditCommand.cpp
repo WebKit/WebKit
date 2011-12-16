@@ -28,6 +28,7 @@
 
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
+#include "DeleteButtonController.h"
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -52,6 +53,7 @@
 #include "ReplaceSelectionCommand.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
+#include "ScopedEventQueue.h"
 #include "SetNodeAttributeCommand.h"
 #include "SplitElementCommand.h"
 #include "SplitTextNodeCommand.h"
@@ -71,36 +73,61 @@ namespace WebCore {
 using namespace HTMLNames;
 
 PassRefPtr<EditCommandComposition> EditCommandComposition::create(Document* document,
-    const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand)
+    const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
 {
-    return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection, wasCreateLinkCommand));
+    return adoptRef(new EditCommandComposition(document, startingSelection, endingSelection, editAction));
 }
 
-EditCommandComposition::EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, bool wasCreateLinkCommand)
-    : EditCommand(document, startingSelection, endingSelection)
+EditCommandComposition::EditCommandComposition(Document* document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection, EditAction editAction)
+    : m_document(document)
+    , m_startingSelection(startingSelection)
+    , m_endingSelection(endingSelection)
     , m_startingRootEditableElement(startingSelection.rootEditableElement())
     , m_endingRootEditableElement(endingSelection.rootEditableElement())
-    , m_wasCreateLinkCommand(wasCreateLinkCommand)
+    , m_editAction(editAction)
 {
 }
 
-void EditCommandComposition::doApply()
+void EditCommandComposition::unapply()
 {
-    ASSERT_NOT_REACHED();
-}
+    ASSERT(m_document);
+    Frame* frame = m_document->frame();
+    ASSERT(frame);
 
-void EditCommandComposition::doUnapply()
-{
+    // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
+    // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
+    // if one is necessary (like for the creation of VisiblePositions).
+    m_document->updateLayoutIgnorePendingStylesheets();
+    
+    DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
+    deleteButtonController->disable();
     size_t size = m_commands.size();
     for (size_t i = size; i != 0; --i)
-        m_commands[i - 1]->unapply();
+        m_commands[i - 1]->doUnapply();
+    deleteButtonController->enable();
+    
+    frame->editor()->unappliedEditing(this);
 }
 
-void EditCommandComposition::doReapply()
+void EditCommandComposition::reapply()
 {
+    ASSERT(m_document);
+    Frame* frame = m_document->frame();
+    ASSERT(frame);
+
+    // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
+    // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
+    // if one is necessary (like for the creation of VisiblePositions).
+    m_document->updateLayoutIgnorePendingStylesheets();
+    
+    DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
+    deleteButtonController->disable();
     size_t size = m_commands.size();
     for (size_t i = 0; i != size; ++i)
-        m_commands[i]->reapply();
+        m_commands[i]->doReapply();
+    deleteButtonController->enable();
+    
+    frame->editor()->reappliedEditing(this);
 }
 
 void EditCommandComposition::append(SimpleEditCommand* command)
@@ -110,13 +137,13 @@ void EditCommandComposition::append(SimpleEditCommand* command)
 
 void EditCommandComposition::setStartingSelection(const VisibleSelection& selection)
 {
-    EditCommand::setStartingSelection(selection);
+    m_startingSelection = selection;
     m_startingRootEditableElement = selection.rootEditableElement();
 }
 
 void EditCommandComposition::setEndingSelection(const VisibleSelection& selection)
 {
-    EditCommand::setEndingSelection(selection);
+    m_endingSelection = selection;
     m_endingRootEditableElement = selection.rootEditableElement();
 }
 
@@ -129,6 +156,11 @@ void EditCommandComposition::getNodesInCommand(HashSet<Node*>& nodes)
 }
 #endif
 
+void applyCommand(PassRefPtr<CompositeEditCommand> command)
+{
+    command->apply();
+}
+
 CompositeEditCommand::CompositeEditCommand(Document *document)
     : EditCommand(document)
 {
@@ -139,14 +171,45 @@ CompositeEditCommand::~CompositeEditCommand()
     ASSERT(isTopLevelCommand() || !m_composition);
 }
 
-void CompositeEditCommand::doUnapply()
+void CompositeEditCommand::apply()
 {
-    ASSERT_NOT_REACHED();
-}
+    if (!endingSelection().isContentRichlyEditable()) {
+        switch (editingAction()) {
+        case EditActionTyping:
+        case EditActionPaste:
+        case EditActionDrag:
+        case EditActionSetWritingDirection:
+        case EditActionCut:
+        case EditActionUnspecified:
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+    ensureComposition();
 
-void CompositeEditCommand::doReapply()
-{
-    ASSERT_NOT_REACHED();
+    // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
+    // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
+    // if one is necessary (like for the creation of VisiblePositions).
+    ASSERT(document());
+    document()->updateLayoutIgnorePendingStylesheets();
+
+    Frame* frame = document()->frame();
+    ASSERT(frame);
+    {
+        EventQueueScope scope;
+        DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
+        deleteButtonController->disable();
+        doApply();
+        deleteButtonController->enable();
+    }
+
+    // Only need to call appliedEditing for top-level commands,
+    // and TypingCommands do it on their own (see TypingCommand::typingAddedToOpenCommand).
+    if (!isTypingCommand())
+        frame->editor()->appliedEditing(this);
+    setShouldRetainAutocorrectionIndicator(false);
 }
 
 EditCommandComposition* CompositeEditCommand::ensureComposition()
@@ -155,7 +218,7 @@ EditCommandComposition* CompositeEditCommand::ensureComposition()
     while (command && command->parent())
         command = command->parent();
     if (!command->m_composition)
-        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection(), isCreateLinkCommand());
+        command->m_composition = EditCommandComposition::create(document(), startingSelection(), endingSelection(), editingAction());
     return command->m_composition.get();
 }
 
@@ -190,7 +253,7 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCo
 {
     RefPtr<EditCommand> command = prpCommand;
     command->setParent(this);
-    command->apply();
+    command->doApply();
     if (command->isSimpleEditCommand()) {
         command->setParent(0);
         ensureComposition()->append(toSimpleEditCommand(command.get()));
@@ -198,20 +261,15 @@ void CompositeEditCommand::applyCommandToComposite(PassRefPtr<EditCommand> prpCo
     m_commands.append(command.release());
 }
 
-void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> prpCommand, const VisibleSelection& selection)
+void CompositeEditCommand::applyCommandToComposite(PassRefPtr<CompositeEditCommand> command, const VisibleSelection& selection)
 {
-    RefPtr<CompositeEditCommand> command = prpCommand;
     command->setParent(this);
     if (selection != command->endingSelection()) {
         command->setStartingSelection(selection);
         command->setEndingSelection(selection);
     }
-    command->apply();
-    if (command->isSimpleEditCommand()) {
-        command->setParent(0);
-        ensureComposition()->append(toSimpleEditCommand(command.get()));
-    }
-    m_commands.append(command.release());
+    command->doApply();
+    m_commands.append(command);
 }
 
 void CompositeEditCommand::applyStyle(const EditingStyle* style, EditAction editingAction)

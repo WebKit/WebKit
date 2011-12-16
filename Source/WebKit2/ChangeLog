@@ -1,3 +1,41 @@
+2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Only EditCommandComposition should implement unapply and reapply
+        https://bugs.webkit.org/show_bug.cgi?id=74490
+
+        Reviewed by Eric Seidel.
+
+        Renamed WebEditCommand to WebUndoStep and made necessary changes.
+        Everything on WebProcess side should have the correct name now.
+
+        Names in the proxy and UIProcess are to be updated in a follow up.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerCommandForUndo):
+        (WebKit::WebEditorClient::registerCommandForRedo):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebEditCommand.cpp: Removed.
+        * WebProcess/WebPage/WebEditCommand.h: Removed.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::webUndoStep):
+        (WebKit::WebPage::addWebUndoStep):
+        (WebKit::WebPage::removeWebEditCommand):
+        (WebKit::WebPage::unapplyEditCommand):
+        (WebKit::WebPage::reapplyEditCommand):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebUndoStep.cpp: Copied from Source/WebKit2/WebProcess/WebPage/WebEditCommand.cpp.
+        (WebKit::generateUndoStep):
+        (WebKit::WebUndoStep::create):
+        * WebProcess/WebPage/WebUndoStep.h: Copied from Source/WebKit2/WebProcess/WebPage/WebEditCommand.h.
+        (WebKit::WebUndoStep::entry):
+        (WebKit::WebUndoStep::entryID):
+        (WebKit::WebUndoStep::WebUndoStep):
+        * win/WebKit2.vcproj:
+
 2011-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Eliminate dependency to QUndoStack

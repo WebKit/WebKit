@@ -446,27 +446,21 @@ public:
     virtual bool shouldBeginEditing(Range*) { return false; }
     virtual bool shouldEndEditing(Range*) { return false; }
     virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) { return false; }
-    //  virtual bool shouldInsertNode(Node*, Range* replacingRange, WebViewInsertAction) { return false; }
     virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) { return false; }
     virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) { return false; }
 
     virtual bool shouldApplyStyle(CSSStyleDeclaration*, Range*) { return false; }
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) { return false; }
-    //  virtual bool shouldChangeTypingStyle(CSSStyleDeclaration* fromStyle, CSSStyleDeclaration* toStyle) { return false; }
-    //  virtual bool doCommandBySelector(SEL selector) { return false; }
-    //
+
     virtual void didBeginEditing() { }
     virtual void respondToChangedContents() { }
     virtual void respondToChangedSelection(Frame*) { }
     virtual void didEndEditing() { }
     virtual void didWriteSelectionToPasteboard() { }
     virtual void didSetSelectionTypesForPasteboard() { }
-    //  virtual void webViewDidChangeTypingStyle:(NSNotification *)notification { }
-    //  virtual void webViewDidChangeSelection:(NSNotification *)notification { }
-    //  virtual NSUndoManager* undoManagerForWebView:(WebView *)webView { return 0; }
 
-    virtual void registerCommandForUndo(PassRefPtr<EditCommand>) { }
-    virtual void registerCommandForRedo(PassRefPtr<EditCommand>) { }
+    virtual void registerCommandForUndo(PassRefPtr<UndoStep>) { }
+    virtual void registerCommandForRedo(PassRefPtr<UndoStep>) { }
     virtual void clearUndoRedoOperations() { }
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const { return defaultValue; }

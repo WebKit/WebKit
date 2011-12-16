@@ -20,9 +20,10 @@
 #ifndef EditCommandQt_h
 #define EditCommandQt_h
 
-#include <EditCommand.h>
+#include <UndoStep.h>
 #include <QUndoCommand>
 #include <qglobal.h>
+#include <wtf/RefPtr.h>
 
 class EditCommandQt
 #ifndef QT_NO_UNDOCOMMAND
@@ -31,9 +32,9 @@ class EditCommandQt
 {
     public:
 #ifndef QT_NO_UNDOCOMMAND
-        EditCommandQt(WTF::RefPtr<WebCore::EditCommand> cmd, QUndoCommand *parent = 0);
+        EditCommandQt(WTF::RefPtr<WebCore::UndoStep> cmd, QUndoCommand *parent = 0);
 #else
-        EditCommandQt(WTF::RefPtr<WebCore::EditCommand> cmd);
+        EditCommandQt(WTF::RefPtr<WebCore::UndoStep> cmd);
 #endif
         ~EditCommandQt();
 
@@ -41,7 +42,7 @@ class EditCommandQt
         void undo();
 
     private:
-        WTF::RefPtr<WebCore::EditCommand> m_cmd;
+        WTF::RefPtr<WebCore::UndoStep> m_cmd;
         bool m_first;
 };
 

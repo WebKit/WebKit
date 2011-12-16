@@ -1510,6 +1510,7 @@ webcore_sources += \
 	Source/WebCore/editing/TextIterator.h \
 	Source/WebCore/editing/TypingCommand.cpp \
 	Source/WebCore/editing/TypingCommand.h \
+	Source/WebCore/editing/UndoStep.h \
 	Source/WebCore/editing/UnlinkCommand.cpp \
 	Source/WebCore/editing/UnlinkCommand.h \
 	Source/WebCore/editing/VisiblePosition.cpp \

@@ -35,7 +35,6 @@
 #include "WebProcess.h"
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/DocumentFragment.h>
-#include <WebCore/EditCommand.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -46,6 +45,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 
 using namespace WebCore;
@@ -220,21 +220,21 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> command)
+void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> step)
 {
     // FIXME: Add assertion that the command being reapplied is the same command that is
     // being passed to us.
     if (m_page->isInRedo())
         return;
 
-    RefPtr<WebEditCommand> webCommand = WebEditCommand::create(command);
-    m_page->addWebEditCommand(webCommand->commandID(), webCommand.get());
-    uint32_t editAction = static_cast<uint32_t>(webCommand->command()->editingAction());
+    RefPtr<WebUndoStep> webStep = WebUndoStep::create(step);
+    m_page->addWebUndoStep(webStep->stepID(), webStep.get());
+    uint32_t editAction = static_cast<uint32_t>(webStep->step()->editingAction());
 
-    m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(webCommand->commandID(), editAction));
+    m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(webStep->stepID(), editAction));
 }
 
-void WebEditorClient::registerCommandForRedo(PassRefPtr<EditCommand>)
+void WebEditorClient::registerCommandForRedo(PassRefPtr<UndoStep>)
 {
 }
 

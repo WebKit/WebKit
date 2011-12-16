@@ -24,19 +24,19 @@
  */
 
 #include "config.h"
-#include "WebEditCommand.h"
+#include "WebUndoStep.h"
 
 namespace WebKit {
 
-static uint64_t generateCommandID()
+static uint64_t generateUndoStep()
 {
-    static uint64_t uniqueCommandID = 1;
-    return uniqueCommandID++;
+    static uint64_t uniqueEntryID = 1;
+    return uniqueEntryID++;
 }
 
-PassRefPtr<WebEditCommand> WebEditCommand::create(PassRefPtr<WebCore::EditCommand> command)
+PassRefPtr<WebUndoStep> WebUndoStep::create(PassRefPtr<WebCore::UndoStep> step)
 {
-    return adoptRef(new WebEditCommand(command, generateCommandID()));
+    return adoptRef(new WebUndoStep(step, generateUndoStep()));
 }
 
 } // namespace WebKit

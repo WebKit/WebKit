@@ -1,3 +1,17 @@
+2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Only EditCommandComposition should implement unapply and reapply
+        https://bugs.webkit.org/show_bug.cgi?id=74490
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::registerCommandForUndo):
+        (WebCore::EditorClientEfl::registerCommandForRedo):
+        (WebCore::EditorClientEfl::undo):
+        (WebCore::EditorClientEfl::redo):
+        * WebCoreSupport/EditorClientEfl.h:
+
 2011-12-15  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Clean up and refactor the memory cache functions in ewk_settings.

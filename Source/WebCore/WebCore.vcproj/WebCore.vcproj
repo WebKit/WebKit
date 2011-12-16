@@ -55306,6 +55306,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\editing\UndoStep.h"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\UnlinkCommand.cpp"
 				>
 				<FileConfiguration

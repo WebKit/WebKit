@@ -26,7 +26,6 @@
 
 #include "DataObjectGtk.h"
 #include "DumpRenderTreeSupportGtk.h"
-#include "EditCommand.h"
 #include "Editor.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -38,6 +37,7 @@
 #include "Page.h"
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
+#include "UndoStep.h"
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
 #include "WebKitDOMHTMLElementPrivate.h"
@@ -345,18 +345,18 @@ void EditorClient::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> command)
+void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
     if (undoStack.size() == maximumUndoStackDepth)
         undoStack.removeFirst();
     if (!m_isInRedo)
         redoStack.clear();
-    undoStack.append(command);
+    undoStack.append(step);
 }
 
-void EditorClient::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand> command)
+void EditorClient::registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
-    redoStack.append(command);
+    redoStack.append(step);
 }
 
 void EditorClient::clearUndoRedoOperations()
@@ -388,23 +388,23 @@ bool EditorClient::canRedo() const
 void EditorClient::undo()
 {
     if (canUndo()) {
-        RefPtr<WebCore::EditCommand> command(*(--undoStack.end()));
+        RefPtr<WebCore::UndoStep> step(*(--undoStack.end()));
         undoStack.remove(--undoStack.end());
         // unapply will call us back to push this command onto the redo stack.
-        command->unapply();
+        step->unapply();
     }
 }
 
 void EditorClient::redo()
 {
     if (canRedo()) {
-        RefPtr<WebCore::EditCommand> command(*(--redoStack.end()));
+        RefPtr<WebCore::UndoStep> step(*(--redoStack.end()));
         redoStack.remove(--redoStack.end());
 
         ASSERT(!m_isInRedo);
         m_isInRedo = true;
         // reapply will call us back to push this command onto the undo stack.
-        command->reapply();
+        step->reapply();
         m_isInRedo = false;
     }
 }

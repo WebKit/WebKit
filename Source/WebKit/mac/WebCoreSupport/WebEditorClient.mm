@@ -54,8 +54,6 @@
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
-#import <WebCore/EditAction.h>
-#import <WebCore/EditCommand.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTextAreaElement.h>
@@ -64,6 +62,7 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/SpellChecker.h>
+#import <WebCore/UndoStep.h>
 #import <WebCore/UserTypingGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
@@ -93,17 +92,17 @@ static WebViewInsertAction kit(EditorInsertAction coreAction)
 static const int InvalidCorrectionPanelTag = 0;
 
 
-@interface WebEditCommand : NSObject
+@interface WebUndoStep : NSObject
 {
-    RefPtr<EditCommand> m_command;   
+    RefPtr<UndoStep> m_step;   
 }
 
-+ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command;
-- (EditCommand *)command;
++ (WebUndoStep *)stepWithUndoStep:(PassRefPtr<UndoStep>)step;
+- (UndoStep *)step;
 
 @end
 
-@implementation WebEditCommand
+@implementation WebUndoStep
 
 + (void)initialize
 {
@@ -112,19 +111,19 @@ static const int InvalidCorrectionPanelTag = 0;
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
-- (id)initWithEditCommand:(PassRefPtr<EditCommand>)command
+- (id)initWithUndoStep:(PassRefPtr<UndoStep>)step
 {
-    ASSERT(command);
+    ASSERT(step);
     self = [super init];
     if (!self)
         return nil;
-    m_command = command;
+    m_step = step;
     return self;
 }
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainThread([WebEditCommand class], self))
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebUndoStep class], self))
         return;
 
     [super dealloc];
@@ -137,14 +136,14 @@ static const int InvalidCorrectionPanelTag = 0;
     [super finalize];
 }
 
-+ (WebEditCommand *)commandWithEditCommand:(PassRefPtr<EditCommand>)command
++ (WebUndoStep *)stepWithUndoStep:(PassRefPtr<UndoStep>)step
 {
-    return [[[WebEditCommand alloc] initWithEditCommand:command] autorelease];
+    return [[[WebUndoStep alloc] initWithUndoStep:step] autorelease];
 }
 
-- (EditCommand *)command
+- (UndoStep *)step
 {
-    return m_command.get();
+    return m_step.get();
 }
 
 @end
@@ -162,14 +161,14 @@ static const int InvalidCorrectionPanelTag = 0;
 
 - (void)undoEditing:(id)arg
 {
-    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
-    [arg command]->unapply();
+    ASSERT([arg isKindOfClass:[WebUndoStep class]]);
+    [arg step]->unapply();
 }
 
 - (void)redoEditing:(id)arg
 {
-    ASSERT([arg isKindOfClass:[WebEditCommand class]]);
-    [arg command]->reapply();
+    ASSERT([arg isKindOfClass:[WebUndoStep class]]);
+    [arg step]->reapply();
 }
 
 @end
@@ -513,25 +512,25 @@ static NSString* undoNameForEditAction(EditAction editAction)
     return nil;
 }
 
-void WebEditorClient::registerCommandForUndoOrRedo(PassRefPtr<EditCommand> cmd, bool isRedo)
+void WebEditorClient::registerCommandForUndoOrRedo(PassRefPtr<UndoStep> step, bool isRedo)
 {
-    ASSERT(cmd);
+    ASSERT(step);
     
     NSUndoManager *undoManager = [m_webView undoManager];
-    NSString *actionName = undoNameForEditAction(cmd->editingAction());
-    WebEditCommand *command = [WebEditCommand commandWithEditCommand:cmd];
-    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:command];
+    NSString *actionName = undoNameForEditAction(step->editingAction());
+    WebUndoStep *webEntry = [WebUndoStep stepWithUndoStep:step];
+    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:webEntry];
     if (actionName)
         [undoManager setActionName:actionName];
     m_haveUndoRedoOperations = YES;
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<EditCommand> cmd)
+void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> cmd)
 {
     registerCommandForUndoOrRedo(cmd, false);
 }
 
-void WebEditorClient::registerCommandForRedo(PassRefPtr<EditCommand> cmd)
+void WebEditorClient::registerCommandForRedo(PassRefPtr<UndoStep> cmd)
 {
     registerCommandForUndoOrRedo(cmd, true);
 }

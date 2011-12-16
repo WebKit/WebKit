@@ -23,14 +23,14 @@
 using namespace WebCore;
 
 #ifndef QT_NO_UNDOCOMMAND
-EditCommandQt::EditCommandQt(WTF::RefPtr<EditCommand> cmd, QUndoCommand *parent)
+EditCommandQt::EditCommandQt(WTF::RefPtr<UndoStep> cmd, QUndoCommand *parent)
     : QUndoCommand(parent)
     , m_cmd(cmd)
     , m_first(true)
 {
 }
 #else
-EditCommandQt::EditCommandQt(WTF::RefPtr<EditCommand> cmd)
+EditCommandQt::EditCommandQt(WTF::RefPtr<UndoStep> cmd)
     : m_cmd(cmd)
     , m_first(true)
 {

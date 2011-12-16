@@ -2578,6 +2578,7 @@
             'editing/TextCheckingHelper.h',
             'editing/TextIterator.cpp',
             'editing/TypingCommand.cpp',
+            'editing/UndoStep.h',
             'editing/UnlinkCommand.cpp',
             'editing/UnlinkCommand.h',
             'editing/VisiblePosition.cpp',

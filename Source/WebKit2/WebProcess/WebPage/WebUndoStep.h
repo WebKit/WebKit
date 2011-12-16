@@ -23,31 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEditCommand_h
-#define WebEditCommand_h
+#ifndef WebUndoStep_h
+#define WebUndoStep_h
 
-#include <WebCore/EditCommand.h>
+#include <WebCore/UndoStep.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class WebEditCommand : public RefCounted<WebEditCommand> {
+class WebUndoStep : public RefCounted<WebUndoStep> {
 public:
-    static PassRefPtr<WebEditCommand> create(PassRefPtr<WebCore::EditCommand>);
+    static PassRefPtr<WebUndoStep> create(PassRefPtr<WebCore::UndoStep>);
 
-    WebCore::EditCommand* command() const { return m_command.get(); }
-    uint64_t commandID() const { return m_commandID; }
+    WebCore::UndoStep* step() const { return m_step.get(); }
+    uint64_t stepID() const { return m_stepID; }
 
 private:
-    WebEditCommand(PassRefPtr<WebCore::EditCommand> command, uint64_t commandID)
-        : m_command(command)
-        , m_commandID(commandID)
+    WebUndoStep(PassRefPtr<WebCore::UndoStep> step, uint64_t stepID)
+        : m_step(step)
+        , m_stepID(stepID)
     {
     }
 
-    RefPtr<WebCore::EditCommand> m_command;
-    uint64_t m_commandID;
+    RefPtr<WebCore::UndoStep> m_step;
+    uint64_t m_stepID;
 };
 
 } // namespace WebKit

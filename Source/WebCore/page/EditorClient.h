@@ -31,6 +31,7 @@
 #include "EditorInsertAction.h"
 #include "FloatRect.h"
 #include "TextAffinity.h"
+#include "UndoStep.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -53,7 +54,6 @@ namespace WebCore {
 class ArchiveResource;
 class CSSStyleDeclaration;
 class DocumentFragment;
-class EditCommand;
 class Editor;
 class Element;
 class Frame;
@@ -99,8 +99,8 @@ public:
     virtual void didWriteSelectionToPasteboard() = 0;
     virtual void didSetSelectionTypesForPasteboard() = 0;
     
-    virtual void registerCommandForUndo(PassRefPtr<EditCommand>) = 0;
-    virtual void registerCommandForRedo(PassRefPtr<EditCommand>) = 0;
+    virtual void registerCommandForUndo(PassRefPtr<UndoStep>) = 0;
+    virtual void registerCommandForRedo(PassRefPtr<UndoStep>) = 0;
     virtual void clearUndoRedoOperations() = 0;
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const = 0;

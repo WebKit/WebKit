@@ -237,17 +237,17 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
     return false;
 }
 
-void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> cmd)
+void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
 #ifndef QT_NO_UNDOSTACK
     Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
     if (m_inUndoRedo || (frame && !frame->editor()->lastEditCommand() /* HACK!! Don't recreate undos */))
         return;
-    m_page->undoStack()->push(new EditCommandQt(cmd));
+    m_page->undoStack()->push(new EditCommandQt(step));
 #endif // QT_NO_UNDOSTACK
 }
 
-void EditorClientQt::registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>)
+void EditorClientQt::registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep>)
 {
 }
 

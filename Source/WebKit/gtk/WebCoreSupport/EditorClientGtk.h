@@ -58,8 +58,8 @@ class EditorClient : public WebCore::EditorClient {
     protected:
         bool m_isInRedo;
 
-        WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > undoStack;
-        WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > redoStack;
+        WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > undoStack;
+        WTF::Deque<WTF::RefPtr<WebCore::UndoStep> > redoStack;
 
     public:
         EditorClient(WebKitWebView*);
@@ -105,8 +105,8 @@ class EditorClient : public WebCore::EditorClient {
         virtual void didWriteSelectionToPasteboard();
         virtual void didSetSelectionTypesForPasteboard();
 
-        virtual void registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand>);
-        virtual void registerCommandForRedo(WTF::PassRefPtr<WebCore::EditCommand>);
+        virtual void registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep>);
+        virtual void registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep>);
         virtual void clearUndoRedoOperations();
 
         virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const;
