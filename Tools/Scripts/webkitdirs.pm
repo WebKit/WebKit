@@ -1905,44 +1905,53 @@ sub buildQMakeProject($@)
 
     my $needsCleanBuild = 0;
 
-    # Ease transition to new build layout
+    my $pathToDefinesCache = File::Spec->catfile($dir, ".webkit.config");
     my $pathToOldDefinesFile = File::Spec->catfile($dir, "defaults.txt");
+
+    # Ease transition to new build layout
     if (-e $pathToOldDefinesFile) {
         print "Old build layout detected";
         $needsCleanBuild = 1;
+    } elsif (-e $pathToDefinesCache && open(DEFAULTS, $pathToDefinesCache)) {
+        my %previousDefines;
+        while (<DEFAULTS>) {
+            if ($_ =~ m/(\S+?)=(\S+?)/gi) {
+                $previousDefines{$1} = $2;
+            }
+        }
+        close (DEFAULTS);
+
+        my @uniqueDefineNames = keys %{ +{ map { $_, 1 } (keys %defines, keys %previousDefines) } };
+        foreach my $define (@uniqueDefineNames) {
+            if (! exists $previousDefines{$define}) {
+                print "Feature $define added";
+                $needsCleanBuild = 1;
+                last;
+            }
+
+            if (! exists $defines{$define}) {
+                print "Feature $define removed";
+                $needsCleanBuild = 1;
+                last;
+            }
+
+            if ($defines{$define} != $previousDefines{$define}) {
+                print "Feature $define changed ($previousDefines{$define} -> $defines{$define})";
+                $needsCleanBuild = 1;
+                last;
+            }
+        }
     }
 
-    my $pathToDefinesCache = File::Spec->catfile($dir, ".webkit.config");
-    if ($needsCleanBuild || (-e $pathToDefinesCache && open(DEFAULTS, $pathToDefinesCache))) {
-        if (!$needsCleanBuild) {
-            while (<DEFAULTS>) {
-                if ($_ =~ m/(\S+?)=(\S+?)/gi) {
-                    if (! exists $defines{$1}) {
-                        print "Feature $1 was removed";
-                        $needsCleanBuild = 1;
-                        last;
-                    }
-
-                    if ($defines{$1} != $2) {
-                        print "Feature $1 has changed ($2 -> $defines{$1})";
-                        $needsCleanBuild = 1;
-                        last;
-                    }
-                }
-            }
-            close (DEFAULTS);
-        }
-
-        if ($needsCleanBuild) {
-            print ", clean build needed!\n";
-            # FIXME: This STDIN/STDOUT check does not work on the bots. Disable until it does.
-            # if (! -t STDIN || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
-                chdir $originalCwd;
-                File::Path::rmtree($dir);
-                File::Path::mkpath($dir);
-                chdir $dir or die "Failed to cd into " . $dir . "\n";
-            #}
-        }
+    if ($needsCleanBuild) {
+        print ", clean build needed!\n";
+        # FIXME: This STDIN/STDOUT check does not work on the bots. Disable until it does.
+        # if (! -t STDIN || ( &promptUser("Would you like to clean the build directory?", "yes") eq "yes")) {
+            chdir $originalCwd;
+            File::Path::rmtree($dir);
+            File::Path::mkpath($dir);
+            chdir $dir or die "Failed to cd into " . $dir . "\n";
+        #}
     }
 
     open(DEFAULTS, ">$pathToDefinesCache");
