@@ -112,7 +112,7 @@ static WKRect getWindowFrame(WKPageRef page, const void*)
 {
     GdkRectangle geometry = { 0, 0, 0, 0 };
     GtkWidget* window = gtk_widget_get_toplevel(toImpl(page)->viewWidget());
-    if (gtk_widget_is_toplevel(window)) {
+    if (gtk_widget_is_toplevel(window) && gtk_widget_get_visible(window)) {
         gtk_window_get_position(GTK_WINDOW(window), &geometry.x, &geometry.y);
         gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
     }

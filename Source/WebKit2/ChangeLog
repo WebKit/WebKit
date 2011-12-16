@@ -1,3 +1,14 @@
+2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Window frame should be 0x0 when the toplevel window is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=74709
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (getWindowFrame): Check also whether the toplevel is visible
+        before getting its size and position.
+
 2011-12-16  Michael Bruning  <michael.bruning@nokia.com>
 
         [qt][wk2] Viewport info panel shows wrong current scale
