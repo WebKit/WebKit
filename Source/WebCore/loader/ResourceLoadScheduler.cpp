@@ -77,7 +77,7 @@ ResourceLoadScheduler* resourceLoadScheduler()
 ResourceLoadScheduler::ResourceLoadScheduler()
     : m_nonHTTPProtocolHost(new HostInformation(String(), maxRequestsInFlightForNonHTTPProtocols))
     , m_requestTimer(this, &ResourceLoadScheduler::requestTimerFired)
-    , m_isSuspendingPendingRequests(false)
+    , m_suspendPendingRequestsCount(0)
     , m_isSerialLoadingEnabled(false)
 {
 #if REQUEST_MANAGEMENT_ENABLED
@@ -162,8 +162,8 @@ void ResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resource
 
 void ResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests. m_isSuspendingPendingRequests=%d", m_isSuspendingPendingRequests); 
-    if (m_isSuspendingPendingRequests)
+    LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests. m_suspendPendingRequestsCount=%d", m_suspendPendingRequestsCount); 
+    if (isSuspendingPendingRequests())
         return;
 
     m_requestTimer.stop();
@@ -213,14 +213,15 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Resource
 
 void ResourceLoadScheduler::suspendPendingRequests()
 {
-    ASSERT(!m_isSuspendingPendingRequests);
-    m_isSuspendingPendingRequests = true;
+    ++m_suspendPendingRequestsCount;
 }
 
 void ResourceLoadScheduler::resumePendingRequests()
 {
-    ASSERT(m_isSuspendingPendingRequests);
-    m_isSuspendingPendingRequests = false;
+    ASSERT(m_suspendPendingRequestsCount);
+    --m_suspendPendingRequestsCount;
+    if (m_suspendPendingRequestsCount)
+        return;
     if (!m_hosts.isEmpty() || m_nonHTTPProtocolHost->hasRequests())
         scheduleServePendingRequests();
 }

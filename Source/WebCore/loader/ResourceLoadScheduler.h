@@ -58,6 +58,7 @@ public:
     void crossOriginRedirectReceived(ResourceLoader*, const KURL& redirectURL);
     
     void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
+    bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
     void suspendPendingRequests();
     void resumePendingRequests();
     
@@ -110,7 +111,7 @@ private:
         
     Timer<ResourceLoadScheduler> m_requestTimer;
 
-    bool m_isSuspendingPendingRequests;
+    unsigned m_suspendPendingRequestsCount;
     bool m_isSerialLoadingEnabled;
 };
 

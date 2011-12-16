@@ -1,3 +1,22 @@
+2011-12-15  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74677
+        Count ResourceLoadScheduler suspends/resumes
+
+        Reviewed by Andreas Kling.
+
+        Using boolean is not robust when there are multiple clients calling suspendPendingRequests/resumePendingRequests.
+        
+        Increment and decrement suspend count instead of just setting/unsetting a boolean.
+
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::ResourceLoadScheduler):
+        (WebCore::ResourceLoadScheduler::servePendingRequests):
+        (WebCore::ResourceLoadScheduler::suspendPendingRequests):
+        (WebCore::ResourceLoadScheduler::resumePendingRequests):
+        * loader/ResourceLoadScheduler.h:
+        (WebCore::ResourceLoadScheduler::isSuspendingPendingRequests):
+
 2011-12-16  Adam Klein  <adamk@chromium.org>
 
         Improve performance of ChildListMutationScope when no MutationObservers are present
