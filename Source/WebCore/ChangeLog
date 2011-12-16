@@ -1,3 +1,25 @@
+2011-12-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103062.
+        http://trac.webkit.org/changeset/103062
+        https://bugs.webkit.org/show_bug.cgi?id=74715
+
+        It broke many tests (Requested by Ossy on #webkit).
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::HTMLOListElement):
+        (WebCore::HTMLOListElement::parseMappedAttribute):
+        * html/HTMLOListElement.h:
+        (WebCore::HTMLOListElement::start):
+        * html/HTMLOListElement.idl:
+        * rendering/RenderListItem.cpp:
+        (WebCore::previousListItem):
+        (WebCore::RenderListItem::calcValue):
+        (WebCore::RenderListItem::explicitValueChanged):
+        (WebCore::RenderListItem::updateListMarkerNumbers):
+        * rendering/RenderListItem.h:
+
 2011-12-16  Alexis Menard  <alexis.menard@openbossa.org>, Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Add support for <ol reversed>.

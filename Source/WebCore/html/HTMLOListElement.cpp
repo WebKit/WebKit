@@ -35,11 +35,7 @@ using namespace HTMLNames;
 
 HTMLOListElement::HTMLOListElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_start(0xBADBEEF)
-    , m_itemCount(0)
-    , m_hasExplicitStart(false)
-    , m_isReversed(false)
-    , m_shouldRecalculateItemCount(false)
+    , m_start(1)
 {
     ASSERT(hasTagName(olTag));
 }
@@ -78,20 +74,17 @@ void HTMLOListElement::parseMappedAttribute(Attribute* attr)
         else if (attr->value() == "1")
             addCSSProperty(attr, CSSPropertyListStyleType, CSSValueDecimal);
     } else if (attr->name() == startAttr) {
-        int oldStart = start();
         bool canParse;
-        int parsedStart = attr->value().toInt(&canParse);
-        m_hasExplicitStart = canParse;
-        m_start = canParse ? parsedStart : 0xBADBEEF;
-        if (oldStart == start())
+        int start = attr->value().toInt(&canParse);
+        if (!canParse)
+            start = 1;
+        if (start == m_start)
             return;
-        updateItemValues();
-    } else if (attr->name() == reversedAttr) {
-        bool reversed = !attr->isNull();
-        if (reversed == m_isReversed)
-            return;
-        m_isReversed = reversed;
-        updateItemValues();
+        m_start = start;
+        for (RenderObject* child = renderer(); child; child = child->nextInPreOrder(renderer())) {
+            if (child->isListItem())
+                toRenderListItem(child)->updateValue();
+        }
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -99,22 +92,6 @@ void HTMLOListElement::parseMappedAttribute(Attribute* attr)
 void HTMLOListElement::setStart(int start)
 {
     setAttribute(startAttr, String::number(start));
-}
-
-void HTMLOListElement::updateItemValues()
-{
-    for (RenderListItem* listItem = RenderListItem::nextListItem(renderer()); listItem; listItem = RenderListItem::nextListItem(renderer(), listItem))
-        listItem->updateValue();
-}
-
-void HTMLOListElement::recalculateItemCount()
-{
-    m_itemCount = 0;
-
-    for (RenderListItem* listItem = RenderListItem::nextListItem(renderer()); listItem; listItem = RenderListItem::nextListItem(renderer(), listItem))
-        m_itemCount++;
-
-    m_shouldRecalculateItemCount = false;
 }
 
 }

@@ -22,7 +22,6 @@ module html {
     interface HTMLOListElement : HTMLElement {
         attribute [Reflect] boolean compact;
         attribute long start;
-        attribute [Reflect] boolean reversed;
         attribute [Reflect] DOMString type;
     };
 
