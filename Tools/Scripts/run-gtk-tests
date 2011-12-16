@@ -24,7 +24,8 @@ import os, sys
 class TestRunner:
 
     TEST_DIRS = [ "unittests", "WebKit2APITests" ]
-    SKIPPED = [ ]
+    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=74717
+    SKIPPED = [ "unittests/testdownload", "unittests/testwebview", "unittests/testwebresource"]
 
     def __init__(self):
         self._executive = Executive()

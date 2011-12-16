@@ -1,5 +1,11 @@
 2011-12-16  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skipping 3 failing GTK API tests.
+
+        * Scripts/run-gtk-tests:
+
+2011-12-16  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK API tests build fix attempt.
 
         * Scripts/run-gtk-tests: Run xvfb on a display not used by NRWT.
