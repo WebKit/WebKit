@@ -1,4 +1,33 @@
 =================
+WebKitGTK+ 1.7.3
+=================
+
+What's new in WebKitGTK+ 1.7.3?
+
+  - WebGL is now enabled by default.
+  - Initial support for accelerated compositing has been added.
+  - Add fullscreen setting to WebKit2 GTK+ API.
+  - Fix regression of Push buttons that didn't expose their displayed
+    text/name to accessibility toolkit.
+  - Initial UI client implementation for WebKit2 GTK+ API.
+  - Implement HTML5 History APIs.
+  - Implement cookies management in WebKit2.
+  - Fix a crash when a download fails.
+  - Add support for javascript dialogs in WebKit2 GTK+ API.
+  - Add 'enable-dns-prefetching' setting to WebKit2 GTK+ API.
+  - Initial support for WebAudio data playback.
+  - Add enable-webaudio setting.
+  - Links are now focused with Tab by default in WebKit2.
+  - Fix HTML5 Youtube video fullscreen button.
+  - Improve description of WebSocket errors.
+  - Add WebKitWindowProperties to WebKit2 GTK+ API.
+  - Fullscreen controller support for the new WebKit Fullscreen API.
+  - Add WebKitURIResponse to WebKit2 GTK+ API.
+  - Fix random crash in pages containing plugins.
+  - Fix loading of custom fonts in some web sites like surlybikes.com
+    or boingboing.net.
+
+=================
 WebKitGTK+ 1.7.2
 =================
 

@@ -1,3 +1,12 @@
+2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Update NEWS and configure.ac for 1.7.3 release
+        https://bugs.webkit.org/show_bug.cgi?id=74699
+
+        Reviewed by Philippe Normand.
+
+        * NEWS: Added release notes for 1.7.3.
+
 2011-12-14  Jing Zhao  <jingzhao@chromium.org>
 
         Opening two popup menus by dispatchEvent() makes problems.
