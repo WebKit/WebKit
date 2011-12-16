@@ -1,3 +1,66 @@
+2011-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Add a pretty dumb tile cache to WebTileCacheLayer
+        https://bugs.webkit.org/show_bug.cgi?id=74753
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::requiresTiledLayer):
+        If a layer is a tile cache layer, we never want to swap it out for a tiled layer.
+
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        Assert that we don't have a tile cache layer.
+
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::PlatformCALayer):
+        If we have a tile cache layer, add its tile container to the list of custom sublayers.
+
+        * platform/graphics/ca/mac/TileCache.h: Added.
+        (WebCore::TileCache::tileContainerLayer):
+        Return the tile container layer.
+
+        * platform/graphics/ca/mac/TileCache.mm: Added.
+        (WebCore::TileCache::tileCacheLayerBoundsChanged):
+        Resize the tile grid if necessary.
+
+        (WebCore::TileCache::setNeedsDisplayInRect):
+        Invalidate the necessary tiles.
+
+        (WebCore::TileCache::drawLayer):
+        Set up the transform and draw the layer.
+
+        (WebCore::TileCache::getTileRangeForRect):
+        Given a rect, return the range of tiles that it covers.
+
+        (WebCore::TileCache::numTilesForGridSize):
+        Given a size, return how many tiles are needed to completely cover it.
+
+        (WebCore::TileCache::resizeTileGrid):
+        Create new tile layers if needed, or reuse already existing ones.
+
+        (WebCore::TileCache::tileLayerAtPosition):
+        Given a position in the grid, return the tile layer.
+
+        (WebCore::TileCache::createTileLayer):
+        Create a WebTileLayer and set it up.
+
+        * platform/graphics/ca/mac/WebTileCacheLayer.h:
+        * platform/graphics/ca/mac/WebTileCacheLayer.mm:
+        (-[WebTileCacheLayer setBounds:]):
+        (-[WebTileCacheLayer setNeedsDisplayInRect:]):
+        (-[WebTileCacheLayer tileContainerLayer]):
+        Call down to the tile cache object.
+
+        * platform/graphics/ca/mac/WebTileLayer.h: Added.
+        * platform/graphics/ca/mac/WebTileLayer.mm: Added.
+
+        (-[WebTileLayer drawInContext:]):
+        Ask the tile cache to draw the given layer.
+
+        (-[WebTileLayer setTileCache:WebCore::]):
+
 2011-12-16  Sam Weinig  <sam@webkit.org>
 
         Give PlatformEvents a base class

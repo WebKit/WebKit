@@ -477,6 +477,9 @@
 		1A927FD31416A15B003A83C8 /* npruntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A927FD01416A15B003A83C8 /* npruntime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A927FD41416A15B003A83C8 /* nptypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A927FD11416A15B003A83C8 /* nptypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A98956B0AA78F80005EF5EF /* KURLCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */; };
+		1AA7160A149BC4DB0016EC19 /* TileCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA71608149BC4DA0016EC19 /* TileCache.mm */; };
+		1AA7160B149BC4DB0016EC19 /* TileCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA71609149BC4DB0016EC19 /* TileCache.h */; };
+		1AA7161E149BF2FA0016EC19 /* WebTileLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA7161C149BF2FA0016EC19 /* WebTileLayer.mm */; };
 		1AA84F04143BA7BD0051D153 /* ScrollElasticityController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA84F02143BA7BD0051D153 /* ScrollElasticityController.mm */; };
 		1AA84F05143BA7BD0051D153 /* ScrollElasticityController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA84F03143BA7BD0051D153 /* ScrollElasticityController.h */; };
 		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7610,6 +7613,10 @@
 		1A927FD01416A15B003A83C8 /* npruntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npruntime.h; sourceTree = "<group>"; };
 		1A927FD11416A15B003A83C8 /* nptypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptypes.h; sourceTree = "<group>"; };
 		1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KURLCFNet.cpp; sourceTree = "<group>"; };
+		1AA71608149BC4DA0016EC19 /* TileCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TileCache.mm; path = ca/mac/TileCache.mm; sourceTree = "<group>"; };
+		1AA71609149BC4DB0016EC19 /* TileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileCache.h; path = ca/mac/TileCache.h; sourceTree = "<group>"; };
+		1AA7161C149BF2FA0016EC19 /* WebTileLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebTileLayer.mm; path = ca/mac/WebTileLayer.mm; sourceTree = "<group>"; };
+		1AA71625149BFFB20016EC19 /* WebTileLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebTileLayer.h; path = ca/mac/WebTileLayer.h; sourceTree = "<group>"; };
 		1AA84F02143BA7BD0051D153 /* ScrollElasticityController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollElasticityController.mm; sourceTree = "<group>"; };
 		1AA84F03143BA7BD0051D153 /* ScrollElasticityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollElasticityController.h; sourceTree = "<group>"; };
 		1AA8798F11CBE846003C664F /* PluginStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStrategy.h; sourceTree = "<group>"; };
@@ -15078,8 +15085,12 @@
 				2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */,
 				4958781F12A57DDF007238AC /* PlatformCAAnimationMac.mm */,
 				4958782012A57DDF007238AC /* PlatformCALayerMac.mm */,
+				1AA71609149BC4DB0016EC19 /* TileCache.h */,
+				1AA71608149BC4DA0016EC19 /* TileCache.mm */,
 				0F580FA11496939100FB5BD8 /* WebTileCacheLayer.h */,
 				0F580FA21496939100FB5BD8 /* WebTileCacheLayer.mm */,
+				1AA71625149BFFB20016EC19 /* WebTileLayer.h */,
+				1AA7161C149BF2FA0016EC19 /* WebTileLayer.mm */,
 			);
 			name = mac;
 			sourceTree = "<group>";
@@ -24893,6 +24904,7 @@
 				49ECEB6A1499790D00CDD3A4 /* FEGaussianBlurNEON.h in Headers */,
 				49ECEB6C1499790D00CDD3A4 /* FELightingNEON.h in Headers */,
 				1A2F9D7A14968C740065AC63 /* ScrollingCoordinator.h in Headers */,
+				1AA7160B149BC4DB0016EC19 /* TileCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27788,6 +27800,8 @@
 				49ECEB6D1499790D00CDD3A4 /* FilterOperation.cpp in Sources */,
 				49ECEB6F1499790D00CDD3A4 /* FilterOperations.cpp in Sources */,
 				1A2F9D7914968C740065AC63 /* ScrollingCoordinator.cpp in Sources */,
+				1AA7160A149BC4DB0016EC19 /* TileCache.mm in Sources */,
+				1AA7161E149BF2FA0016EC19 /* WebTileLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -23,8 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "WebTiledLayer.h"
+#import <QuartzCore/QuartzCore.h>
+#import <wtf/OwnPtr.h>
 
-@interface WebTileCacheLayer : WebTiledLayer
+namespace WebCore {
+    class TileCache;
+}
 
+@interface WebTileCacheLayer : CALayer {
+    OwnPtr<WebCore::TileCache> _tileCache;
+}
+
+- (CALayer *)tileContainerLayer;
 @end

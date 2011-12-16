@@ -1,3 +1,24 @@
+2011-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Add a pretty dumb tile cache to WebTileCacheLayer
+        https://bugs.webkit.org/show_bug.cgi?id=74753
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        Always do a layout here, to prevent an ASSERT(!needsLayout()) when painting.
+
+2011-12-16  Anders Carlsson  <andersca@apple.com>
+
+        TiledCoreAnimationDrawingArea should enable the scrolling coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=74724
+
+        Reviewed by Adam Roben.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+
 2011-12-16  Sam Weinig  <sam@webkit.org>
 
         Give PlatformEvents a base class

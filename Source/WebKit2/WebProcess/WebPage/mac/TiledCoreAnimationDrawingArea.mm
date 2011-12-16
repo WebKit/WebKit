@@ -56,8 +56,14 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
     , m_layerFlushScheduler(this)
 {
+    Page* page = webPage->corePage();
+
     // FIXME: It's weird that we're mucking around with the settings here.
-    webPage->corePage()->settings()->setForceCompositingMode(true);
+    page->settings()->setForceCompositingMode(true);
+
+#if ENABLE(THREADED_SCROLLING)
+    page->settings()->setScrollingCoordinatorEnabled(true);
+#endif
 
     m_rootLayer = [CALayer layer];
 
@@ -111,6 +117,8 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
 {
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    m_webPage->layoutIfNeeded();
 
     bool returnValue = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 

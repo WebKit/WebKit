@@ -2138,7 +2138,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || !m_allowTiledLayer)
+    if (!m_drawsContent || !m_allowTiledLayer || m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
         return false;
 
     float contentsScale = pageScaleFactor * deviceScaleFactor();
@@ -2149,6 +2149,7 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
+    ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypeTileCacheLayer);
     ASSERT(useTiledLayer != m_usingTiledLayer);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     

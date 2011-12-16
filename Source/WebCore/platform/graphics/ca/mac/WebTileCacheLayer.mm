@@ -24,10 +24,42 @@
  */
 
 #import "config.h"
-
 #import "WebTileCacheLayer.h"
+
+#import "IntRect.h"
+#import "TileCache.h"
+
+using namespace WebCore;
 
 @implementation WebTileCacheLayer
 
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    // FIXME: The tile size should be configurable.
+    _tileCache = TileCache::create(self, IntSize(512, 512));
+
+    return self;
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+
+    _tileCache->tileCacheLayerBoundsChanged();
+}
+
+- (void)setNeedsDisplayInRect:(CGRect)rect
+{
+    _tileCache->setNeedsDisplayInRect(enclosingIntRect(rect));
+}
+
+- (CALayer *)tileContainerLayer
+{
+    return _tileCache->tileContainerLayer();
+}
 
 @end
