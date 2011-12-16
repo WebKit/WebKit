@@ -223,6 +223,21 @@ function completeCallback()
 function abortCallback()
 {
     testPassed("abort event fired");
+    testDOMStringList();
+}
+
+function testDOMStringList()
+{
+    debug("");
+    debug("Verifying DOMStringList works as argument for IDBDatabase.transaction()");
+    debug("db.objectStoreNames is " + db.objectStoreNames);
+    debug("... which contains: " + JSON.stringify(Array.prototype.slice.call(db.objectStoreNames)));
+    evalAndLog("transaction = db.transaction(db.objectStoreNames)");
+    testPassed("no exception thrown");
+    for (var i = 0; i < db.objectStoreNames.length; ++i) {
+      shouldBeTrue("transaction.objectStore(" + JSON.stringify(db.objectStoreNames[i]) + ") != null");
+    }
+    testPassed("all stores present in transaction");
     finishJSTest();
 }
 

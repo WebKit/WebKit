@@ -38,6 +38,7 @@
 #include "QualifiedName.h"
 #include "StdLibExtras.h"
 #include "Threading.h"
+#include "V8DOMStringList.h"
 #include "V8Element.h"
 #include "V8Proxy.h"
 #include <wtf/MainThread.h>
@@ -620,6 +621,12 @@ void setElementStringAttr(const v8::AccessorInfo& info,
 PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> value)
 {
     v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
+
+    if (V8DOMStringList::HasInstance(v8Value)) {
+        RefPtr<DOMStringList> ret = V8DOMStringList::toNative(v8::Handle<v8::Object>::Cast(v8Value));
+        return ret.release();
+    }
+
     if (!v8Value->IsArray())
         return 0;
 

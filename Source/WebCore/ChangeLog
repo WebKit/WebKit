@@ -1,3 +1,20 @@
+2011-12-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Can't pass DOMStringList to IDBDatabase.transaction()
+        https://bugs.webkit.org/show_bug.cgi?id=74452
+
+        Reviewed by Adam Barth.
+
+        V8 code generator generated checks for DOMStringList arguments, then
+        deferred to a function that only handled array inputs. This previously
+        worked for IndexedDB because it would fall into a now-removed default
+        handler.
+
+        Modified storage/indexeddb/transaction-basics.html to test this.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8ValueToWebCoreDOMStringList):
+
 2011-12-15  Adam Klein  <adamk@chromium.org>
 
         Make Element::setAttributeInternal inline in an attempt to avoid function call overhead

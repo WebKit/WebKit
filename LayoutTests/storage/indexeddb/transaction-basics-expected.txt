@@ -90,6 +90,14 @@ db.transaction(['storeName'])
 store = transaction.objectStore('storeName')
 PASS store.name is "storeName"
 PASS abort event fired
+
+Verifying DOMStringList works as argument for IDBDatabase.transaction()
+db.objectStoreNames is [object DOMStringList]
+... which contains: ["storeName"]
+transaction = db.transaction(db.objectStoreNames)
+PASS no exception thrown
+PASS transaction.objectStore("storeName") != null is true
+PASS all stores present in transaction
 PASS successfullyParsed is true
 
 TEST COMPLETE
