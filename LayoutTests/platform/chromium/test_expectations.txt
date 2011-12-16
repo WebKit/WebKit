@@ -880,7 +880,8 @@ BUGCR52692 LINUX WIN : svg/W3C-SVG-1.1/animate-elem-80-t.svg = IMAGE+TEXT
 
 // Windows needs rebaselining after 53378 patch.
 BUGWK53378 WIN : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
-BUGWK53378 WIN : svg/batik/text/textProperties.svg = IMAGE
+// This is a duplicate of BUGCR99500 below.
+//BUGWK53378 WIN : svg/batik/text/textProperties.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/clip-in-mask.svg = IMAGE
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg = IMAGE+TEXT
 BUGWK53378 WIN : svg/clip-path/deep-nested-clip-in-mask-panning.svg = IMAGE+TEXT
