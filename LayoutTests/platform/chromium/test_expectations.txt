@@ -3355,7 +3355,6 @@ BUGWK74137 : fast/regions/region-style-block-background-color2.html = PASS FAIL 
 BUGWK74137 : fast/regions/region-style-image-background-color.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/region-style-inline-background-color.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/render-region-custom-style-mark.html = PASS FAIL MISSING
-BUGWK74137 : fast/regions/render-region-renderer.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/text-region-split-small-pagination.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/top-overflow-out-of-second-region.html = PASS FAIL MISSING
 BUGWK74137 : fast/regions/webkit-flow-double-pagination-float-push.html = PASS FAIL MISSING
