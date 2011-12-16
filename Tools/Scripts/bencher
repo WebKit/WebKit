@@ -61,6 +61,7 @@ SUNSPIDER_PATH = CONFIGURATION["sunSpiderPath"]
 V8_PATH = CONFIGURATION["v8Path"]
 KRAKEN_PATH = CONFIGURATION["krakenPath"]
 TEMP_PATH = CONFIGURATION["tempPath"]
+BENCH_DATA_PATH = TEMP_PATH + "/benchdata"
 
 IBR_LOOKUP=[0.00615583, 0.0975, 0.22852, 0.341628, 0.430741, 0.500526, 0.555933, 
             0.600706, 0.637513, 0.668244, 0.694254, 0.716537, 0.735827, 0.752684, 
@@ -216,16 +217,20 @@ $includeKraken=true
 $measureGC=false
 $benchmarkPattern=nil
 $verbosity=0
-$innerMode=:reload
-$timeMode=:auto
-$keepFiles=false
+$timeMode=:preciseTime
 $forceVMKind=nil
 $brief=false
 $silent=false
 $remoteHosts=[]
+$alsoLocal=false
 $sshOptions=[]
-$slave=false
 $vms = []
+$needToCopyVMs = false
+$dontCopyVMs = false
+
+$prepare = true
+$run = true
+$analyze = []
 
 # Helpful functions and classes
 
@@ -267,11 +272,14 @@ def usage
   puts "--warmup <n>         Set the number of warm-up runs per invocation.  Default"
   puts "                     is #{$warmup}."
   puts "--timing-mode        Set the way that bencher measures time.  Possible values"
-  puts "                     are 'preciseTime', 'date', and 'auto'.  Default is"
-  puts "                     'auto', which automatically detects the best way."
+  puts "                     are 'preciseTime' and 'date'.  Default is 'preciseTime'."
   puts "--force-vm-kind      Turn off auto-detection of VM kind, and assume that it is"
   puts "                     the one specified.  Valid arguments are 'jsc' or"
   puts "                     'DumpRenderTree'."
+  puts "--force-vm-copy      Force VM builds to be copied to bencher's working directory."
+  puts "                     This may reduce pathologies resulting from path names."
+  puts "--dont-copy-vms      Don't copy VMs even when doing a remote benchmarking run;"
+  puts "                     instead assume that they are already there."
   puts "--v8-only            Only run V8."
   puts "--sunspider-only     Only run SunSpider."
   puts "--kraken-only        Only run Kraken."
@@ -283,7 +291,6 @@ def usage
   puts "                     Works best with large values of --inner.  You can also say"
   puts "                     --measure-gc <conf>, which turns this on for one"
   puts "                     configuration only."
-  puts "--keep-files         Keep temporary files.  Useful for debugging."
   puts "--verbose or -v      Print more stuff."
   puts "--brief              Print only the final result for each VM."
   puts "--silent             Don't print progress. This might slightly reduce some"
@@ -296,6 +303,12 @@ def usage
   puts "                     automatically copies the WebKit release builds of the VMs"
   puts "                     you specified to all of the hosts."
   puts "--ssh-options        Pass additional options to SSH."
+  puts "--local              Also do a local benchmark run even when doing --remote."
+  puts "--prepare-only       Only prepare the bencher runscript (a shell script that"
+  puts "                     invokes the VMs to run benchmarks) but don't run it."
+  puts "--analyze            Only read the output of the runscript but don't do anything"
+  puts "                     else. This requires passing the same arguments to bencher"
+  puts "                     that you passed when running --prepare-only."
   puts "--help or -h         Display this message."
   puts
   puts "Example:"
@@ -406,11 +419,15 @@ class NoChange
     " "
   end
   
+  def longForm
+    "  might be #{numToStr(@amountFaster)}x faster"
+  end
+  
   def to_s
     if @amountFaster < 1.01
       ""
     else
-      "  might be #{numToStr(@amountFaster)}x faster"
+      longForm
     end
   end
 end
@@ -426,8 +443,12 @@ class Faster
     "^"
   end
   
-  def to_s
+  def longForm
     "^ definitely #{numToStr(@amountFaster)}x faster"
+  end
+  
+  def to_s
+    longForm
   end
 end
 
@@ -442,8 +463,12 @@ class Slower
     "!"
   end
   
-  def to_s
+  def longForm
     "! definitely #{numToStr(@amountSlower)}x slower"
+  end
+  
+  def to_s
+    longForm
   end
 end
 
@@ -458,11 +483,15 @@ class MayBeSlower
     "?"
   end
   
+  def longForm
+    "? might be #{numToStr(@amountSlower)}x slower"
+  end
+  
   def to_s
     if @amountSlower < 1.01
       "?"
     else
-      "? might be #{numToStr(@amountSlower)}x slower"
+      longForm
     end
   end
 end
@@ -574,223 +603,303 @@ def doublePuts(out1,out2,msg)
   out2.puts msg
 end
 
-def benchRunHarness(vm, benchpath)
-  $stderr.puts "running #{benchpath} with #{vm}..." if $verbosity>=1
-  result=nil
-  Tempfile.open("bencher") {
-    | file |
-    yield(file)
-    file.flush
-    begin
-      result=vm.runAndReport(file.path)
-    rescue => e
-      $stderr.puts "Could not run #{file.path} because #{e}:"
-      File.open(file.path,"r") {
-        | inp |
-        inp.each_line {
-          | line |
-          $stderr.puts "#{line}"
-        }
-      }
-    end
-    file.unlink unless $keepFiles
-  }
-  raise unless result and result.size == $inner
-  result
-end
-
-def emitTimeHelpers(file)
-  case $timeMode
-  when :preciseTime
-    doublePuts($stderr,file,"function __bencher_curTimeMS() {")
-    doublePuts($stderr,file,"   return preciseTime()*1000")
-    doublePuts($stderr,file,"}")
-  when :date
-    doublePuts($stderr,file,"function __bencher_curTimeMS() {")
-    doublePuts($stderr,file,"   return Date.now()")
-    doublePuts($stderr,file,"}")
-  else
-    raise
+class Benchfile < File
+  @@counter = 0
+  
+  attr_reader :filename, :basename
+  
+  def initialize(name)
+    @basename, @filename = Benchfile.uniqueFilename(name)
+    super(@filename, "w")
   end
-  doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
-  doublePuts($stderr,file,"   var __bencher_before = __bencher_curTimeMS();")
-  $rerun.times {
-    doublePuts($stderr,file,"   run(__bencher_what);")
-  }
-  doublePuts($stderr,file,"   var __bencher_after = __bencher_curTimeMS();")
-  doublePuts($stderr,file,"   return __bencher_after - __bencher_before;")
-  doublePuts($stderr,file,"}")
+  
+  def self.uniqueFilename(name)
+    if name.is_a? Array
+      basename = name[0] + @@counter.to_s + name[1]
+    else
+      basename = name + @@counter.to_s
+    end
+    filename = BENCH_DATA_PATH + "/" + basename
+    @@counter += 1
+    raise "Benchfile #{filename} already exists" if FileTest.exist?(filename)
+    [basename, filename]
+  end
+  
+  def self.create(name)
+    file = Benchfile.new(name)
+    yield file
+    file.close
+    file.basename
+  end
 end
 
-def emitBenchRunCode(vm, file, benchpath)
-  emitTimeHelpers(file)
-  case $innerMode
-  when :reload
-    case vm.vmType
-    when :jsc
-      $warmup.times {
-        doublePuts($stderr,file,"__bencher_run(#{benchpath.inspect})")
-        doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
-      }
-      $inner.times {
-        doublePuts($stderr,file,"print(\"Time: \"+__bencher_run(#{benchpath.inspect}));")
-        doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
-      }
-    when :dumpRenderTree
+$dataFiles={}
+def ensureFile(key, filename)
+  unless $dataFiles[key]
+    $dataFiles[key] = Benchfile.create(key) {
+      | outp |
+      doublePuts($stderr,outp,IO::read(filename))
+    }
+  end
+  $dataFiles[key]
+end
+  
+def emitBenchRunCodeFile(name, plan, benchDataPath, benchPath)
+  case plan.vm.vmType
+  when :jsc
+    Benchfile.create("bencher") {
+      | file |
+      case $timeMode
+      when :preciseTime
+        doublePuts($stderr,file,"function __bencher_curTimeMS() {")
+        doublePuts($stderr,file,"   return preciseTime()*1000")
+        doublePuts($stderr,file,"}")
+      when :date
+        doublePuts($stderr,file,"function __bencher_curTimeMS() {")
+        doublePuts($stderr,file,"   return Date.now()")
+        doublePuts($stderr,file,"}")
+      else
+        raise
+      end
+      
+      if benchDataPath
+        doublePuts($stderr,file,"load(#{benchDataPath.inspect});")
+        doublePuts($stderr,file,"gc();")
+        doublePuts($stderr,file,"for (var __bencher_index = 0; __bencher_index < #{$warmup+$inner}; ++__bencher_index) {")
+        doublePuts($stderr,file,"   before = __bencher_curTimeMS();")
+        $rerun.times {
+          doublePuts($stderr,file,"   load(#{benchPath.inspect});")
+        }
+        doublePuts($stderr,file,"   after = __bencher_curTimeMS();")
+        doublePuts($stderr,file,"   if (__bencher_index >= #{$warmup}) print(\"#{name}: #{plan.vm}: #{plan.iteration}: \" + (__bencher_index - #{$warmup}) + \": Time: \"+(after-before));");
+        doublePuts($stderr,file,"   gc();") unless plan.vm.shouldMeasureGC
+        doublePuts($stderr,file,"}")
+      else
+        doublePuts($stderr,file,"function __bencher_run(__bencher_what) {")
+        doublePuts($stderr,file,"   var __bencher_before = __bencher_curTimeMS();")
+        $rerun.times {
+          doublePuts($stderr,file,"   run(__bencher_what);")
+        }
+        doublePuts($stderr,file,"   var __bencher_after = __bencher_curTimeMS();")
+        doublePuts($stderr,file,"   return __bencher_after - __bencher_before;")
+        doublePuts($stderr,file,"}")
+        $warmup.times {
+          doublePuts($stderr,file,"__bencher_run(#{benchPath.inspect})")
+          doublePuts($stderr,file,"gc();") unless plan.vm.shouldMeasureGC
+        }
+        $inner.times {
+          | innerIndex |
+          doublePuts($stderr,file,"print(\"#{name}: #{plan.vm}: #{plan.iteration}: #{innerIndex}: Time: \"+__bencher_run(#{benchPath.inspect}));")
+          doublePuts($stderr,file,"gc();") unless plan.vm.shouldMeasureGC
+        }
+      end
+    }
+  when :dumpRenderTree
+    mainCode = Benchfile.create("bencher") {
+      | file |
       doublePuts($stderr,file,"__bencher_count = 0;")
       doublePuts($stderr,file,"function __bencher_doNext(result) {")
       doublePuts($stderr,file,"    if (__bencher_count >= #{$warmup})")
-      doublePuts($stderr,file,"        debug(\"Time: \"+result);")
+      doublePuts($stderr,file,"        debug(\"#{name}: #{plan.vm}: #{plan.iteration}: \" + (__bencher_count - #{$warmup}) + \": Time: \" + result);")
       doublePuts($stderr,file,"    __bencher_count++;")
       doublePuts($stderr,file,"    if (__bencher_count < #{$inner+$warmup})")
-      doublePuts($stderr,file,"        __bencher_runImpl(#{benchpath.inspect}, __bencher_doNext);")
+      doublePuts($stderr,file,"        __bencher_runImpl(__bencher_doNext);")
       doublePuts($stderr,file,"    else")
       doublePuts($stderr,file,"        quit();")
       doublePuts($stderr,file,"}")
-      doublePuts($stderr,file,"__bencher_runImpl(#{benchpath.inspect}, __bencher_doNext);")
-    else
-      raise vm.vmType
-    end
-  when :loadOnce
-    doublePuts($stderr,file,"function runit() {")
-    File.open(benchpath,'r') {
-      | inp |
-      inp.each_line {
-        | line |
-        doublePuts($stderr,file,line)
-      }
+      doublePuts($stderr,file,"__bencher_runImpl(__bencher_doNext);")
     }
-    doublePuts($stderr,file,"}")
-    $warmup.times {
-      doublePuts($stderr,file,"runit();")
-      doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
+    
+    cssCode = Benchfile.create("bencher-css") {
+      | file |
+      doublePuts($stderr,file,".pass {\n    font-weight: bold;\n    color: green;\n}\n.fail {\n    font-weight: bold;\n    color: red;\n}\n\#console {\n    white-space: pre-wrap;\n    font-family: monospace;\n}")
     }
-    $inner.times {
-      doublePuts($stderr,file,"before = __bencher_curTimeMS();")
-      $rerun.times {
-        doublePuts($stderr,file,"runit();")
-      }
-      doublePuts($stderr,file,"after = __bencher_curTimeMS();")
-      doublePuts($stderr,file,"print(\"Time: \"+(after-before));")
-      doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
+    
+    preCode = Benchfile.create("bencher-pre") {
+      | file |
+      doublePuts($stderr,file,"if (window.layoutTestController) {")
+      doublePuts($stderr,file,"    layoutTestController.dumpAsText(window.enablePixelTesting);")
+      doublePuts($stderr,file,"    layoutTestController.waitUntilDone();")
+      doublePuts($stderr,file,"}")
+      doublePuts($stderr,file,"")
+      doublePuts($stderr,file,"function debug(msg)")
+      doublePuts($stderr,file,"{")
+      doublePuts($stderr,file,"    var span = document.createElement(\"span\");")
+      doublePuts($stderr,file,"    document.getElementById(\"console\").appendChild(span); // insert it first so XHTML knows the namespace")
+      doublePuts($stderr,file,"    span.innerHTML = msg + '<br />';")
+      doublePuts($stderr,file,"}")
+      doublePuts($stderr,file,"")
+      doublePuts($stderr,file,"function quit() {")
+      doublePuts($stderr,file,"    layoutTestController.notifyDone();")
+      doublePuts($stderr,file,"}")
+      doublePuts($stderr,file,"")
+      doublePuts($stderr,file,"__bencher_continuation=null;")
+      doublePuts($stderr,file,"")
+      doublePuts($stderr,file,"function reportResult(result) {")
+      doublePuts($stderr,file,"    __bencher_continuation(result);")
+      doublePuts($stderr,file,"}")
+      doublePuts($stderr,file,"")
+      doublePuts($stderr,file,"function __bencher_runImpl(continuation) {")
+      doublePuts($stderr,file,"    function doit() {")
+      doublePuts($stderr,file,"        document.getElementById(\"frameparent\").innerHTML = \"\";")
+      doublePuts($stderr,file,"        document.getElementById(\"frameparent\").innerHTML = \"<iframe id='testframe'>\";")
+      doublePuts($stderr,file,"        var testFrame = document.getElementById(\"testframe\");")
+      doublePuts($stderr,file,"        testFrame.contentDocument.open();")
+      doublePuts($stderr,file,"        testFrame.contentDocument.write(\"<!DOCTYPE html>\\n<head></head><body><div id=\\\"console\\\"></div>\");")
+      if benchDataPath
+        doublePuts($stderr,file,"        testFrame.contentDocument.write(\"<script src=\\\"#{benchDataPath}\\\"></script>\");")
+      end
+      doublePuts($stderr,file,"        testFrame.contentDocument.write(\"<script type=\\\"text/javascript\\\">__bencher_before = Date.now();</script><script src=\\\"#{benchPath}\\\"></script><script type=\\\"text/javascript\\\">window.parent.reportResult(Date.now() - __bencher_before);</script></body></html>\");")
+      doublePuts($stderr,file,"        testFrame.contentDocument.close();")
+      doublePuts($stderr,file,"    }")
+      doublePuts($stderr,file,"    __bencher_continuation = continuation;")
+      doublePuts($stderr,file,"    window.setTimeout(doit, 10);")
+      doublePuts($stderr,file,"}")
     }
-    if vm.vmType == :dumpRenderTree
-      doublePuts($stderr,file,"quit();")
-    end
+
+    Benchfile.create(["bencher-htmldoc",".html"]) {
+      | file |
+      doublePuts($stderr,file,"<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n<html><head><link rel=\"stylesheet\" href=\"#{cssCode}\"><script src=\"#{preCode}\"></script></head><body><div id=\"console\"></div><div id=\"frameparent\"></div><script src=\"#{mainCode}\"></script></body></html>")
+    }
   else
-    raise "bad $innerMode: #{$innerMode}"
+    raise
   end
 end
 
-def runBenchmarkAndReport(vm, benchpath)
-  benchRunHarness(vm, benchpath) {
-    | file |
-    emitBenchRunCode(vm, file, benchpath)
-  }
+def emitBenchRunCode(name, plan, benchDataPath, benchPath)
+  plan.vm.emitRunCode(emitBenchRunCodeFile(name, plan, benchDataPath, benchPath))
 end
 
-class StatsAccumulator
-  def initialize
-    @stats = []
-    ($outer*$inner).times {
-      @stats << Stats.new
-    }
+def planForDescription(plans, benchFullname, vmName, iteration)
+  raise unless benchFullname =~ /\//
+  suiteName = $~.pre_match
+  benchName = $~.post_match
+  result = plans.select{|v| v.suite.name == suiteName and v.benchmark.name == benchName and v.vm.name == vmName and v.iteration == iteration}
+  raise unless result.size == 1
+  result[0]
+end
+
+class ParsedResult
+  attr_reader :plan, :innerIndex, :time
+  
+  def initialize(plan, innerIndex, time)
+    @plan = plan
+    @innerIndex = innerIndex
+    @time = time
+    
+    raise unless @plan.is_a? BenchPlan
+    raise unless @innerIndex.is_a? Integer
+    raise unless @time.is_a? Numeric
   end
   
-  def statsForIteration(outerIteration, innerIteration)
-    @stats[outerIteration*$inner + innerIteration]
+  def benchmark
+    plan.benchmark
   end
   
-  def stats
-    result = Stats.new
-    @stats.each {
-      | stat |
-      result.add(yield stat)
-    }
-    result
+  def suite
+    plan.suite
   end
   
-  def geometricMeanStats
-    stats {
-      | stat |
-      stat.geometricMean
-    }
+  def vm
+    plan.vm
   end
   
-  def arithmeticMeanStats
-    stats {
-      | stat |
-      stat.arithmeticMean
-    }
+  def outerIndex
+    plan.iteration
+  end
+  
+  def self.parse(plans, string)
+    if string =~ /([a-zA-Z0-9\/-]+): ([a-zA-Z0-9_# ]+): ([0-9]+): ([0-9]+): Time: /
+      benchFullname = $1
+      vmName = $2
+      outerIndex = $3.to_i
+      innerIndex = $4.to_i
+      time = $~.post_match.to_f
+      ParsedResult.new(planForDescription(plans, benchFullname, vmName, outerIndex), innerIndex, time)
+    else
+      nil
+    end
   end
 end
 
-class VM < StatsAccumulator
-  def initialize(origPath, path, name, nameKind, svnRevision)
-    super()
-    @origPath = origPath
-    @path = path
+class VM
+  def initialize(origPath, name, nameKind, svnRevision)
+    @origPath = origPath.to_s
+    @path = origPath.to_s
     @name = name
     @nameKind = nameKind
     
     if $forceVMKind
       @vmType = $forceVMKind
     else
-      Tempfile.open("bencher-vmtest") {
-        | file |
-        file.puts "print(\"here\");"
-        file.flush
-        
-        result = nil
+      if @origPath =~ /DumpRenderTree$/
+        @vmType = :dumpRenderTree
+      else
         @vmType = :jsc
-        run(file.path) {
-          | inp |
-          result = inp.read
-          $stderr.puts "stdout: #{result}" if $verbosity>=2
-        }
-        
-        if result.chomp == "here"
-          $stderr.puts "#{@name} is definitely a jsc-style VM." if $verbosity>=1
-          @vmType = :jsc
-        else
-          $stderr.puts "Assuming that #{@name} is a DumpRenderTree-style VM." if $verbosity>=1
-          @vmType = :dumpRenderTree
-        end
-      }
+      end
     end
     
     @svnRevision = svnRevision
     
-    unless $slave
-      # Try to detect information about the VM.
-      if path =~ /\/WebKitBuild\/Release\/([a-zA-Z]+)$/
-        @checkoutPath = $~.pre_match
-        unless @svnRevision
-          begin
-            Dir.chdir(@checkoutPath) {
-              $stderr.puts ">> cd #{@checkoutPath} && svn info" if $verbosity>=2
-              IO.popen("svn info", "r") {
-                | inp |
-                inp.each_line {
-                  | line |
-                  if line =~ /Revision: ([0-9]+)/
-                    @svnRevision = $1
-                  end
-                }
+    # Try to detect information about the VM.
+    if path =~ /\/WebKitBuild\/Release\/([a-zA-Z]+)$/
+      @checkoutPath = $~.pre_match
+      # FIXME: Use some variant of this: 
+      # <bdash>   def retrieve_revision
+      # <bdash>     `perl -I#{@path}/Tools/Scripts -MVCSUtils -e 'print svnRevisionForDirectory("#{@path}");'`.to_i
+      # <bdash>   end
+      unless @svnRevision
+        begin
+          Dir.chdir(@checkoutPath) {
+            $stderr.puts ">> cd #{@checkoutPath} && svn info" if $verbosity>=2
+            IO.popen("svn info", "r") {
+              | inp |
+              inp.each_line {
+                | line |
+                if line =~ /Revision: ([0-9]+)/
+                  @svnRevision = $1
+                end
               }
             }
-            unless @svnRevision
-              $stderr.puts "Warning: running svn info for #{name} silently failed."
-            end
-          rescue => e
-            # Failed to detect svn revision.
-            $stderr.puts "Warning: could not get svn revision information for #{name}: #{e}"
+          }
+          unless @svnRevision
+            $stderr.puts "Warning: running svn info for #{name} silently failed."
           end
+        rescue => e
+          # Failed to detect svn revision.
+          $stderr.puts "Warning: could not get svn revision information for #{name}: #{e}"
         end
-      else
-        $stderr.puts "Warning: could not identify checkout location for #{name}"
       end
+    else
+      $stderr.puts "Warning: could not identify checkout location for #{name}"
     end
+    
+    if @path =~ /\/Release\/([a-zA-Z]+)$/
+      @libPath, @relativeBinPath = $~.pre_match+"/Release", "./#{$1}"
+    elsif @path =~ /\/Contents\/Resources\/([a-zA-Z]+)$/
+      @libPath = $~.pre_match
+    elsif @path =~ /\/JavaScriptCore.framework\/Resources\/([a-zA-Z]+)$/
+      @libPath, @relativeBinPath = $~.pre_match, $&[1..-1]
+    end
+  end
+  
+  def canCopyIntoBenchPath
+    if @libPath and @relativeBinPath
+      true
+    else
+      false
+    end
+  end
+  
+  def copyIntoBenchPath
+    raise unless canCopyIntoBenchPath
+    basename, filename = Benchfile.uniqueFilename("vm")
+    raise unless Dir.mkdir(filename)
+    cmd = "cp -a #{@libPath.inspect}/* #{filename.inspect}"
+    $stderr.puts ">> #{cmd}" if $verbosity>=2
+    raise unless system(cmd)
+    @path = "#{basename}/#{@relativeBinPath}"
+    @libPath = basename
   end
   
   def to_s
@@ -840,197 +949,97 @@ class VM < StatsAccumulator
     end
   end
   
-  def run(filename)
-    case @vmType
-    when :jsc
-      if @path =~ /\/Release\/([a-zA-Z]+)$/
-        raise unless @path =~ /\/([a-zA-Z]+)$/
-        libPath = $~.pre_match
-        ENV["DYLD_LIBRARY_PATH"]=libPath
-        ENV["DYLD_FRAMEWORK_PATH"]=libPath
-      else
-        ENV["DYLD_LIBRARY_PATH"]=""
-        ENV["DYLD_FRAMEWORK_PATH"]=""
-      end
-      cmd = "#{@path} #{filename}"
-      $stderr.puts ">> #{cmd}" if $verbosity>=2
-      IO.popen(cmd,"r") {
-        | inp |
-        yield inp
-      }
-      $?.success?
-    when :dumpRenderTree
-      result = nil
-      Tempfile.open(["bencher-htmldoc",".html"]) {
-        | htmlFile |
-        Tempfile.open("bencher-css") {
-          | cssFile |
-          doublePuts($stderr,cssFile,".pass {\n    font-weight: bold;\n    color: green;\n}\n.fail {\n    font-weight: bold;\n    color: red;\n}\n\#console {\n    white-space: pre-wrap;\n    font-family: monospace;\n}")
-          Tempfile.open("bencher-pre") {
-            | preFile |
-            doublePuts($stderr,preFile,
-                       "if (window.layoutTestController) {\n"+
-                       "    layoutTestController.dumpAsText(window.enablePixelTesting);\n"+
-                       "    layoutTestController.waitUntilDone();\n"+
-                       "}\n"+
-                       "\n"+
-                       "function debug(msg)\n"+
-                       "{\n"+
-                       "    var span = document.createElement(\"span\");\n"+
-                       "    document.getElementById(\"console\").appendChild(span); // insert it first so XHTML knows the namespace\n"+
-                       "    span.innerHTML = msg + '<br />';\n"+
-                       "}\n"+
-                       "\n"+
-                       "function quit() {\n"+
-                       "    layoutTestController.notifyDone();\n"+
-                       "}\n"+
-                       "\n"+
-                       "__bencher_continuation=null;\n"+
-                       "\n"+
-                       "function reportResult(result) {\n"+
-                       "    __bencher_continuation(result);\n"+
-                       "}\n"+
-                       "\n"+
-                       "function __bencher_runImpl(filename, continuation) {\n"+
-                       "    function doit() {\n"+
-                       "        document.getElementById(\"frameparent\").innerHTML = \"\";\n"+
-                       "        document.getElementById(\"frameparent\").innerHTML = \"<iframe id='testframe'>\";\n"+
-                       "        var testFrame = document.getElementById(\"testframe\");\n"+
-                       "        testFrame.contentDocument.open();\n"+
-                       "        testFrame.contentDocument.write(\"<!DOCTYPE html>\\n<head></head><body><div id=\\\"console\\\"></div><script type=\\\"text/javascript\\\">__bencher_before = Date.now();</script><script src=\\\"file://\"+filename+\"\\\"></script><script type=\\\"text/javascript\\\">window.parent.reportResult(Date.now() - __bencher_before);</script></body></html>\");\n"+
-                       "        testFrame.contentDocument.close();\n"+
-                       "    }\n"+
-                       "    __bencher_continuation = continuation;\n"+
-                       "    window.setTimeout(doit, 10);\n"+
-                       "}\n")
-            doublePuts($stderr,htmlFile,"<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">\n<html><head><link rel=\"stylesheet\" href=\"file://#{cssFile.path}\"><script src=\"file://#{preFile.path}\"></script></head><body><div id=\"console\"></div><div id=\"frameparent\"></div><script src=\"file://#{filename}\"></script></body></html>")
-            
-            htmlFile.flush
-            preFile.flush
-            cssFile.flush
-            
-            cmd = "#{path} #{htmlFile.path}"
-            $stderr.puts ">> #{cmd}" if $verbosity>=2
-            IO.popen(cmd, "r") {
-              | inp |
-              yield inp
-            }
-            result = $?
-            
-            #sleep 10000
-            
-            htmlFile.unlink unless $keepFiles
-            preFile.unlink unless $keepFiles
-            cssFile.unlink unless $keepFiles
-          }
-        }
-      }
-      result.success?
-    else
-      raise @vmType
-    end
+  def emitRunCode(fileToRun)
+    myLibPath = @libPath
+    myLibPath = "" unless myLibPath
+    $script.puts "export DYLD_LIBRARY_PATH=#{myLibPath.to_s.inspect}"
+    $script.puts "export DYLD_FRAMEWORK_PATH=#{myLibPath.to_s.inspect}"
+    $script.puts "#{path} #{fileToRun}"
+  end
+end
+
+class StatsAccumulator
+  def initialize
+    @stats = []
+    ($outer*$inner).times {
+      @stats << Stats.new
+    }
   end
   
-  def runAndReport(filename)
-    result = nil
-    5.times {
-      result = Stats.new
-      run(filename) {
-        | inp |
-        inp.each_line {
-          | line |
-          $stderr.puts "stdout: #{line}" if $verbosity>=2
-          if line =~ /^Time: /
-            result.add($~.post_match.to_f)
-          end
-        }
-      }
-      break if result.size == $inner
-      if $verbosity == 0
-        $stderr.print "   "
-      end
-      $stderr.puts "Failed to run #{filename} on #{self}, retrying..."
+  def statsForIteration(outerIteration, innerIteration)
+    @stats[outerIteration*$inner + innerIteration]
+  end
+  
+  def stats
+    result = Stats.new
+    @stats.each {
+      | stat |
+      result.add(yield stat)
     }
-    raise "Failed to run #{filename} on #{self}" unless result and result.size == $inner
     result
+  end
+  
+  def geometricMeanStats
+    stats {
+      | stat |
+      stat.geometricMean
+    }
+  end
+  
+  def arithmeticMeanStats
+    stats {
+      | stat |
+      stat.arithmeticMean
+    }
+  end
+end
+
+module Benchmark
+  attr_accessor :benchmarkSuite
+  attr_reader :name
+  
+  def fullname
+    benchmarkSuite.name + "/" + name
+  end
+  
+  def to_s
+    fullname
   end
 end
 
 class SunSpiderBenchmark
-  attr_accessor :benchmarkSuite
+  include Benchmark
   
   def initialize(name)
     @name = name
   end
   
-  def to_s
-    @name
-  end
-  
-  def runAndReport(vm)
-    runBenchmarkAndReport(vm, "#{SUNSPIDER_PATH}/#{@name}.js")
+  def emitRunCode(plan)
+    emitBenchRunCode(fullname, plan, nil, ensureFile("SunSpider-#{@name}", "#{SUNSPIDER_PATH}/#{@name}.js"))
   end
 end
 
 class V8Benchmark
-  attr_accessor :benchmarkSuite
+  include Benchmark
   
   def initialize(name)
     @name = name
   end
   
-  def to_s
-    @name
-  end
-  
-  def runAndReport(vm)
-    runBenchmarkAndReport(vm, "#{V8_PATH}/v8-#{@name}.js")
+  def emitRunCode(plan)
+    emitBenchRunCode(fullname, plan, nil, ensureFile("V8-#{@name}", "#{V8_PATH}/v8-#{@name}.js"))
   end
 end
 
 class KrakenBenchmark
-  attr_accessor :benchmarkSuite
+  include Benchmark
   
   def initialize(name)
     @name = name
   end
   
-  def to_s
-    @name
-  end
-  
-  def runAndReport(vm)
-    # Kraken requires some special-casing
-    
-    dataPath="#{KRAKEN_PATH}/#{@name}-data.js"
-    benchPath="#{KRAKEN_PATH}/#{@name}.js"
-    
-    benchRunHarness(vm, benchPath) {
-      | file |
-      emitTimeHelpers(file)
-      doublePuts($stderr,file,"load(#{dataPath.inspect});")
-      doublePuts($stderr,file,"gc();") unless vm.shouldMeasureGC
-      if $innerMode == :reload
-        case vm.vmType
-        when :jsc
-          doublePuts($stderr,file,"for (var __bencher_index = 0; __bencher_index < #{$warmup+$inner}; ++__bencher_index) {")
-          doublePuts($stderr,file,"   before = __bencher_curTimeMS();")
-          $rerun.times {
-            doublePuts($stderr,file,"   load(#{benchPath.inspect});")
-          }
-          doublePuts($stderr,file,"   after = __bencher_curTimeMS();")
-          doublePuts($stderr,file,"   if (__bencher_index >= #{$warmup}) #{vm.printFunction}(\"Time: \"+(after-before));");
-          doublePuts($stderr,file,"   gc();") unless vm.shouldMeasureGC
-          doublePuts($stderr,file,"}")
-        when :dumpRenderTree
-          raise "Kraken in DumpRenderTree is currently unsupported."
-        else
-          raise vm.vmType
-        end
-      else
-        emitBenchRunCode(vm, file, benchPath)
-      end
-    }
+  def emitRunCode(plan)
+    emitBenchRunCode(fullname, plan, ensureFile("KrakenData-#{@name}", "#{KRAKEN_PATH}/#{@name}-data.js"), ensureFile("Kraken-#{@name}", "#{KRAKEN_PATH}/#{@name}.js"))
   end
 end
 
@@ -1055,7 +1064,7 @@ class BenchmarkSuite
   end
   
   def add(benchmark)
-    if not $benchmarkPattern or "#{@name}/#{benchmark.to_s}" =~ $benchmarkPattern
+    if not $benchmarkPattern or "#{@name}/#{benchmark.name}" =~ $benchmarkPattern
       benchmark.benchmarkSuite = self
       @benchmarks << benchmark
     end
@@ -1063,6 +1072,12 @@ class BenchmarkSuite
   
   def benchmarks
     @benchmarks
+  end
+  
+  def benchmarkForName(name)
+    result = @benchmarks.select{|v| v.name == name}
+    raise unless result.length == 1
+    result[0]
   end
   
   def empty?
@@ -1085,16 +1100,43 @@ class BenchmarkSuite
   end
 end
 
-class BenchmarkOnVM
-  def initialize(vm, benchmark, suiteOnVM)
+class BenchRunPlan
+  def initialize(benchmark, vm, iteration)
+    @benchmark = benchmark
     @vm = vm
+    @iteration = iteration
+  end
+  
+  def benchmark
+    @benchmark
+  end
+  
+  def suite
+    @benchmark.benchmarkSuite
+  end
+  
+  def vm
+    @vm
+  end
+  
+  def iteration
+    @iteration
+  end
+  
+  def emitRunCode
+    @benchmark.emitRunCode(self)
+  end
+end
+
+class BenchmarkOnVM
+  def initialize(benchmark, suiteOnVM)
     @benchmark = benchmark
     @suiteOnVM = suiteOnVM
     @stats = Stats.new
   end
   
   def to_s
-    "#{@benchmark} on #{@vm}"
+    "#{@benchmark} on #{@suiteOnVM.vm}"
   end
   
   def benchmark
@@ -1102,7 +1144,11 @@ class BenchmarkOnVM
   end
   
   def vm
-    @vm
+    @suiteOnVM.vm
+  end
+  
+  def vmStats
+    @suiteOnVM.vmStats
   end
   
   def suite
@@ -1117,18 +1163,23 @@ class BenchmarkOnVM
     @stats
   end
   
-  def runRecordAndReport
-    result = @benchmark.runAndReport(@vm)
-    @stats.add(result)
-    result
+  def parseResult(result)
+    raise "VM mismatch; I've got #{vm} and they've got #{result.vm}" unless result.vm == vm
+    raise unless result.benchmark == @benchmark
+    @stats.add(result.time)
   end
 end
 
 class SuiteOnVM < StatsAccumulator
-  def initialize(vm, suite)
+  def initialize(vm, vmStats, suite)
     super()
     @vm = vm
+    @vmStats = vmStats
     @suite = suite
+    
+    raise unless @vm.is_a? VM
+    raise unless @vmStats.is_a? StatsAccumulator
+    raise unless @suite.is_a? BenchmarkSuite
   end
   
   def to_s
@@ -1141,6 +1192,11 @@ class SuiteOnVM < StatsAccumulator
   
   def vm
     @vm
+  end
+  
+  def vmStats
+    raise unless @vmStats
+    @vmStats
   end
 end
 
@@ -1174,12 +1230,11 @@ class BenchPlan
     @iteration
   end
   
-  def runAndRecord
-    @benchmarkOnVM.runRecordAndReport.array.each_with_index {
-      | value, index |
-      @benchmarkOnVM.vm.statsForIteration(@iteration, index).add(value)
-      @benchmarkOnVM.suiteOnVM.statsForIteration(@iteration, index).add(value)
-    }
+  def parseResult(result)
+    raise unless result.plan == self
+    @benchmarkOnVM.parseResult(result)
+    @benchmarkOnVM.vmStats.statsForIteration(@iteration, result.innerIndex).add(result.time)
+    @benchmarkOnVM.suiteOnVM.statsForIteration(@iteration, result.innerIndex).add(result.time)
   end
 end
 
@@ -1219,477 +1274,115 @@ def statsToStr(stats)
     lpad(numToStr(stats.mean),11)+"+-"+rpad(numToStr(stats.confInt),9)
   end
 end
-  
-begin
-  $sawBenchOptions = false
-  
-  def resetBenchOptionsIfNecessary
-    unless $sawBenchOptions
-      $includeSunSpider = false
-      $includeV8 = false
-      $includeKraken = false
-      $sawBenchOptions = true
-    end
+
+def plural(num)
+  if num == 1
+    ""
+  else
+    "s"
   end
-  
-  GetoptLong.new(['--rerun', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--inner', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--outer', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--warmup', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--timing-mode', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--sunspider-only', GetoptLong::NO_ARGUMENT],
-                 ['--v8-only', GetoptLong::NO_ARGUMENT],
-                 ['--kraken-only', GetoptLong::NO_ARGUMENT],
-                 ['--exclude-sunspider', GetoptLong::NO_ARGUMENT],
-                 ['--exclude-v8', GetoptLong::NO_ARGUMENT],
-                 ['--exclude-kraken', GetoptLong::NO_ARGUMENT],
-                 ['--sunspider', GetoptLong::NO_ARGUMENT],
-                 ['--v8', GetoptLong::NO_ARGUMENT],
-                 ['--kraken', GetoptLong::NO_ARGUMENT],
-                 ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--measure-gc', GetoptLong::OPTIONAL_ARGUMENT],
-                 ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--load-once', GetoptLong::NO_ARGUMENT],
-                 ['--keep-files', GetoptLong::NO_ARGUMENT],
-                 ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
-                 ['--brief', GetoptLong::NO_ARGUMENT],
-                 ['--silent', GetoptLong::NO_ARGUMENT],
-                 ['--remote', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--ssh-options', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--slave', GetoptLong::NO_ARGUMENT],
-                 ['--vms', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
-    | opt, arg |
-    case opt
-    when '--rerun'
-      $rerun = intArg(opt,arg,1,nil)
-    when '--inner'
-      $inner = intArg(opt,arg,1,nil)
-    when '--outer'
-      $outer = intArg(opt,arg,1,nil)
-    when '--warmup'
-      $warmup = intArg(opt,arg,0,nil)
-    when '--timing-mode'
-      if arg.upcase == "PRECISETIME"
-        $timeMode = :preciseTime
-      elsif arg.upcase == "DATE"
-        $timeMode = :date
-      elsif arg.upcase == "AUTO"
-        $timeMode = :auto
-      else
-        quickFail("Expected either 'preciseTime', 'date', or 'auto' for --time-mode, but got '#{arg}'.",
-                  "Invalid argument for command-line option")
-      end
-    when '--force-vm-kind'
-      if arg.upcase == "JSC"
-        $forceVMKind = :jsc
-      elsif arg.upcase == "DUMPRENDERTREE"
-        $forceVMKind = :dumpRenderTree
-      elsif arg.upcase == "AUTO"
-        $forceVMKind = nil
-      else
-        quickFail("Expected either 'jsc' or 'DumpRenderTree' for --force-vm-kind, but got '#{arg}'.",
-                  "Invalid argument for command-line option")
-      end
-    when '--sunspider-only'
-      $includeV8 = false
-      $includeKraken = false
-    when '--v8-only'
-      $includeSunSpider = false
-      $includeKraken = false
-    when '--kraken-only'
-      $includeSunSpider = false
-      $includeV8 = false
-    when '--exclude-sunspider'
-      $includeSunSpider = false
-    when '--exclude-v8'
-      $includeV8 = false
-    when '--exclude-kraken'
-      $includeKraken = false
-    when '--sunspider'
-      resetBenchOptionsIfNecessary
-      $includeSunSpider = true
-    when '--v8'
-      resetBenchOptionsIfNecessary
-      $includeV8 = true
-    when '--kraken'
-      resetBenchOptionsIfNecessary
-      $includeKraken = true
-    when '--benchmarks'
-      $benchmarkPattern = Regexp.new(arg)
-    when '--measure-gc'
-      if arg == ''
-        $measureGC = true
-      else
-        $measureGC = arg
-      end
-    when '--load-once'
-      $innerMode = :loadOnce
-    when '--keep-files'
-      $keepFiles = true
-    when '--verbose'
-      $verbosity += 1
-    when '--brief'
-      $brief = true
-    when '--silent'
-      $silent = true
-    when '--remote'
-      $remoteHosts += arg.split(',')
-    when '--ssh-options'
-      $sshOptions << arg
-    when '--slave'
-      $slave = true
-    when '--vms'
-      JSON.parse(File::read(arg)).each {
-        | vmDescriptor |
-        $vms << VM.new(vmDescriptor["origPath"],
-                       vmDescriptor["path"],
-                       vmDescriptor["name"],
-                       vmDescriptor["nameKind"].to_sym,
-                       vmDescriptor["svnRevision"])
-      }
-    when '--help'
-      usage
+end
+
+def wrap(str, columns)
+  array = str.split
+  result = ""
+  curLine = array.shift
+  array.each {
+    | curStr |
+    if (curLine + " " + curStr).size > columns
+      result += curLine + "\n"
+      curLine = curStr
     else
-      raise "bad option: #{opt}"
+      curLine += " " + curStr
     end
   }
+  result + curLine + "\n"
+end
   
-  SUNSPIDER = BenchmarkSuite.new("SunSpider", SUNSPIDER_PATH, :arithmeticMean)
-  ["3d-cube", "3d-morph", "3d-raytrace", "access-binary-trees",
-   "access-fannkuch", "access-nbody", "access-nsieve",
-   "bitops-3bit-bits-in-byte", "bitops-bits-in-byte", "bitops-bitwise-and",
-   "bitops-nsieve-bits", "controlflow-recursive", "crypto-aes",
-   "crypto-md5", "crypto-sha1", "date-format-tofte", "date-format-xparb",
-   "math-cordic", "math-partial-sums", "math-spectral-norm", "regexp-dna",
-   "string-base64", "string-fasta", "string-tagcloud",
-   "string-unpack-code", "string-validate-input"].each {
-    | name |
-    SUNSPIDER.add SunSpiderBenchmark.new(name)
-  }
-
-  V8 = BenchmarkSuite.new("V8", V8_PATH, :geometricMean)
-  ["crypto", "deltablue", "earley-boyer", "raytrace",
-   "regexp", "richards", "splay"].each {
-    | name |
-    V8.add V8Benchmark.new(name)
-  }
-
-  KRAKEN = BenchmarkSuite.new("Kraken", KRAKEN_PATH, :arithmeticMean)
-  ["ai-astar", "audio-beat-detection", "audio-dft", "audio-fft",
-   "audio-oscillator", "imaging-darkroom", "imaging-desaturate",
-   "imaging-gaussian-blur", "json-parse-financial",
-   "json-stringify-tinderbox", "stanford-crypto-aes",
-   "stanford-crypto-ccm", "stanford-crypto-pbkdf2",
-   "stanford-crypto-sha256-iterative"].each {
-    | name |
-    KRAKEN.add KrakenBenchmark.new(name)
-  }
-
-  ARGV.each {
-    | vm |
-    if vm =~ /([a-zA-Z0-9_ ]+):/
-      name = $1
-      nameKind = :given
-      vm = $~.post_match
-    else
-      name = "Conf\##{$vms.length+1}"
-      nameKind = :auto
-    end
-    $stderr.puts "#{name}: #{vm}" if $verbosity >= 1
-    $vms << VM.new(Pathname.new(vm).realpath, vm, name, nameKind, nil)
-  }
-  
-  if $vms.empty?
-    quickFail("Please specify at least on configuraiton on the command line.",
-              "Insufficient arguments")
-  end
-  
-  if $measureGC and $measureGC != true
-    found = false
-    $vms.each {
-      | vm |
-      if vm.name == $measureGC
-        found = true
-      end
+def runAndGetResults
+  results = nil
+  Dir.chdir(BENCH_DATA_PATH) {
+    IO.popen("sh ./runscript", "r") {
+      | inp |
+      results = inp.read
     }
-    unless found
-      $stderr.puts "Warning: --measure-gc option ignored because no VM is named #{$measureGC}"
-    end
-  end
+    raise "Script did not complete correctly: #{$?}" unless $?.success?
+  }
+  raise unless results
+  results
+end
+
+def parseAndDisplayResults(results)
+  vmStatses = []
+  $vms.each {
+    vmStatses << StatsAccumulator.new
+  }
   
-  if $timeMode == :auto
-    havePreciseTime = true
-    $vms.each {
-      | vm |
-      if vm.vmType == :dumpRenderTree
-        $stderr.puts "Warning: #{vm} does not have preciseTime() because it is DumpRenderTree; using Date.now instead."
-        if $rerun != 1
-          quickFail("Cannot use --rerun with a DumpRenderTree style VM, because this support has not yet been implemented.", "Wrong option for VM type.")
-        end
-        havePreciseTime = false
-      else
-        Tempfile.open("bencher-timetest") {
-          | file |
-          doublePuts($stderr,file,"#{vm.printFunction}(\"Time: \"+preciseTime());")
-          file.flush
-          result = nil
-          vm.run(file.path) {
-            | inp |
-            result = inp.read
-          }
-          thisVMHasPreciseTime = false
-          if result =~ /Time: /
-            secs = $~.post_match.to_i
-            if (secs - Time.now.to_i).abs < 5
-              thisVMHasPreciseTime = true
-            end
-          end
-          unless thisVMHasPreciseTime
-            $stderr.puts "Warning: #{vm} does not have preciseTime(); using Date.now instead."
-            havePreciseTime = false
-          end
-          file.unlink unless $keepFiles
-        }
-      end
-    }
-    
-    if havePreciseTime
-      $timeMode = :preciseTime
-    else
-      $timeMode = :date
-    end
-  end
-  
-  if $outer*$inner == 1
-    $stderr.puts "Warning: will only collect one sample per benchmark/VM.  Confidence interval calculation will fail."
-  end
-  
-  $stderr.puts "Using timeMode = #{$timeMode}." if $verbosity >= 1
-  
-  $suites = []
-  
-  if $includeSunSpider and not SUNSPIDER.empty?
-    $suites << SUNSPIDER
-  end
-  
-  if $includeV8 and not V8.empty?
-    $suites << V8
-  end
-  
-  if $includeKraken and not KRAKEN.empty?
-    $suites << KRAKEN
-  end
-  
-  $benchmarks = []
+  suitesOnVMs = []
+  suitesOnVMsForSuite = {}
   $suites.each {
     | suite |
-    $benchmarks += suite.benchmarks
+    suitesOnVMsForSuite[suite] = []
   }
-  
-  $suitesOnVMs = []
-  $suitesOnVMsForSuite = {}
-  $suites.each {
-    | suite |
-    $suitesOnVMsForSuite[suite] = []
-  }
-  $suitesOnVMsForVM = {}
+  suitesOnVMsForVM = {}
   $vms.each {
     | vm |
-    $suitesOnVMsForVM[vm] = []
+    suitesOnVMsForVM[vm] = []
   }
   
-  $benchmarksOnVMs = []
-  $benchmarksOnVMsForBenchmark = {}
+  benchmarksOnVMs = []
+  benchmarksOnVMsForBenchmark = {}
   $benchmarks.each {
     | benchmark |
-    $benchmarksOnVMsForBenchmark[benchmark] = []
+    benchmarksOnVMsForBenchmark[benchmark] = []
   }
   
-  $vms.each {
-    | vm |
+  $vms.each_with_index {
+    | vm, vmIndex |
+    vmStats = vmStatses[vmIndex]
     $suites.each {
       | suite |
-      suiteOnVM = SuiteOnVM.new(vm, suite)
-      $suitesOnVMs << suiteOnVM
-      $suitesOnVMsForSuite[suite] << suiteOnVM
-      $suitesOnVMsForVM[vm] << suiteOnVM
+      suiteOnVM = SuiteOnVM.new(vm, vmStats, suite)
+      suitesOnVMs << suiteOnVM
+      suitesOnVMsForSuite[suite] << suiteOnVM
+      suitesOnVMsForVM[vm] << suiteOnVM
       suite.benchmarks.each {
         | benchmark |
-        benchmarkOnVM = BenchmarkOnVM.new(vm, benchmark, suiteOnVM)
-        $benchmarksOnVMs << benchmarkOnVM
-        $benchmarksOnVMsForBenchmark[benchmark] << benchmarkOnVM
+        benchmarkOnVM = BenchmarkOnVM.new(benchmark, suiteOnVM)
+        benchmarksOnVMs << benchmarkOnVM
+        benchmarksOnVMsForBenchmark[benchmark] << benchmarkOnVM
       }
     }
   }
   
-  unless $remoteHosts.empty?
-    # Handle the remote benchmarking case.
-    
-    raise unless TEMP_PATH
-    
-    $stderr.puts "Packaging VM builds for remote hosts..." if $verbosity==0
-    
-    # First package all of the release builds.
-    $vms.each_with_index {
-      | vm, index |
-      unless vm.checkoutPath
-        fail("Could not figure out how to package #{vm.name}, because the VM type was not recognized", "Bad VM kind for --remote")
-      end
-      
-      Dir.chdir(vm.checkoutPath + "/WebKitBuild") {
-        cmd = "tar -czf #{TEMP_PATH}/vm#{index}.tar.gz Release"
-        $stderr.puts ">> #{cmd}" if $verbosity>=2
-        raise unless system(cmd)
-      }
-    }
-    
-    # Now actually go talk to the remote hosts.
-    
-    def sshRead(host, command)
-      cmd = "ssh #{$sshOptions.collect{|x| x.inspect}.join(' ')} #{host.inspect} #{command.inspect}"
-      $stderr.puts ">> #{cmd}" if $verbosity>=2
-      result = ""
-      IO.popen(cmd, "r") {
-        | inp |
-        inp.each_line {
-          | line |
-          $stderr.puts "#{host}: #{line}" if $verbosity>=2
-          result += line
-        }
-      }
-      raise "#{$?}" unless $?.success?
-      result
-    end
-    
-    def sshWrite(host, command, data)
-      cmd = "ssh #{$sshOptions.collect{|x| x.inspect}.join(' ')} #{host.inspect} #{command.inspect}"
-      $stderr.puts ">> #{cmd}" if $verbosity>=2
-      IO.popen(cmd, "w") {
-        | outp |
-        outp.write(data)
-      }
-      raise "#{$?}" unless $?.success?
-    end
-    
-    $remoteHosts.each {
-      | host |
-      
-      $stderr.puts "Sending VM builds to #{host}..." if $verbosity==0
-      
-      remoteTempPath = JSON::parse(sshRead(host, "cat ~/.bencher"))["tempPath"]
-      raise unless remoteTempPath
-      
-      sshWrite(host, "cd #{remoteTempPath.inspect} && cat > bencher && chmod 700 bencher", IO::read($0))
-      
-      $vms.size.times {
-        | index |
-        sshWrite(host, "cd #{remoteTempPath.inspect} && rm -rf vm#{index} && mkdir vm#{index} && cd vm#{index} && tar -xzf /dev/stdin", IO::read("#{TEMP_PATH}/vm#{index}.tar.gz"))
-      }
-      
-      config=[]
-      $vms.each_with_index {
-        | vm, index |
-        config << {
-          "origPath" => vm.origPath,
-          "path" => "#{remoteTempPath}/vm#{index}/Release/jsc",
-          "name" => vm.name,
-          "nameKind" => vm.nameKind.to_s,
-          "svnRevision" => vm.svnRevision
-        }
-      }
-      
-      sshWrite(host, "cd #{remoteTempPath.inspect} && (cat > vms.conf)", config.to_json)
-      
-      $stderr.puts "Running on #{host}..." if $verbosity==0
-      
-      cmd = "cd #{remoteTempPath.inspect} && ./bencher"
-      cmd += " --rerun #{$rerun}"
-      cmd += " --inner #{$inner}"
-      cmd += " --outer #{$outer}"
-      cmd += " --warmup #{$warmup}"
-      cmd += " --timing-mode #{$timeMode.to_s}"
-      cmd += " --sunspider" if $includeSunSpider
-      cmd += " --v8" if $includeV8
-      cmd += " --kraken" if $includeKraken
-      if $measureGC
-        if $measureGC == true
-          cmd += " --measure-gc"
-        else
-          cmd += " --measure-gc #{$measureGC.inspect}"
-        end
-      end
-      if $verbosity>=1
-        cmd += " -"
-        $verbosity.times {
-          cmd += "v"
-        }
-      end
-      cmd += " --brief" if $brief
-      cmd += " --silent" if $silent
-      cmd += " --slave"
-      cmd += " --vms #{(remoteTempPath+'/vms.conf').inspect}"
-      result = sshRead(host, cmd)
-      puts result
-      if result =~ /Generating benchmark report at (.*)\n\n/
-        reportName = $1
-        report = $~.post_match
-        File.open(reportName, "w") {
-          | outp |
-          outp.puts report
-        }
-      end
-    }
-    
-    exit 0
-  end
-
-  $plans = []
-  $benchmarksOnVMs.each {
+  plans = []
+  benchmarksOnVMs.each {
     | benchmarkOnVM |
     $outer.times {
       | iteration |
-      $plans << BenchPlan.new(benchmarkOnVM, iteration)
+      plans << BenchPlan.new(benchmarkOnVM, iteration)
     }
   }
-  
-  $plans.shuffle!
-  
-  $suitepad = $suites.collect {
-    | suite |
-    suite.to_s.size
-  }.max + 1
-  
-  $benchpad = ($benchmarks +
-               ["<arithmetic> *", "<geometric> *", "<harmonic> *"]).collect {
-    | benchmark |
-    benchmark.to_s.size
-  }.max + 1
 
-  $vmpad = $vms.collect {
-    | vm |
-    vm.to_s.size
-  }.max + 1
-
-  $plans.each_with_index {
-    | plan, idx |
-    if $verbosity == 0 and not $silent
-      text1 = lpad(idx.to_s,$plans.size.to_s.size)+"/"+$plans.size.to_s
-      text2 = plan.suite.to_s+"/"+plan.benchmark.to_s+"/"+plan.vm.to_s
-      $stderr.print "\r#{text1} #{rpad(text2,$suitepad+1+$benchpad+1+$vmpad)}"
-      $stderr.print "\r#{text1} #{text2}"
-      $stderr.flush
+  hostname = nil
+  hwmodel = nil
+  results.each_line {
+    | line |
+    line.chomp!
+    if line =~ /HOSTNAME:([^.]+)/
+      hostname = $1
+    elsif line =~ /HARDWARE:hw\.model: /
+      hwmodel = $~.post_match.chomp
+    else
+      result = ParsedResult.parse(plans, line.chomp)
+      if result
+        result.plan.parseResult(result)
+      end
     end
-    plan.runAndRecord
   }
   
-  if $verbosity == 0 and not $silent
-    $stderr.print "\r#{$plans.size}/#{$plans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}"
-    $stderr.puts "\r#{$plans.size}/#{$plans.size}"
-  end
-  
   # Compute the geomean of the preferred means of results on a SuiteOnVM
-  $overallResults = []
+  overallResults = []
   $vms.each {
     | vm |
     result = Stats.new
@@ -1698,7 +1391,7 @@ begin
       $inner.times {
         | innerIndex |
         curResult = Stats.new
-        $suitesOnVMsForVM[vm].each {
+        suitesOnVMsForVM[vm].each {
           | suiteOnVM |
           # For a given iteration, suite, and VM, compute the suite's preferred mean
           # over the data collected for all benchmarks in that suite. We'll have one
@@ -1718,19 +1411,20 @@ begin
     # $inner*$outer geomeans, allowing us to compute the arithmetic mean and
     # confidence interval of the geomeans of preferred means. Convoluted, but
     # useful and probably sound.
-    $overallResults << result
+    overallResults << result
   }
   
   if $verbosity >= 2
-    $benchmarksOnVMs.each {
+    benchmarksOnVMs.each {
       | benchmarkOnVM |
       $stderr.puts "#{benchmarkOnVM}: #{benchmarkOnVM.stats}"
     }
     
-    $vms.each {
-      | vm |
-      $stderr.puts "#{vm} (arithmeticMean): #{vm.arithmeticMeanStats}"
-      $stderr.puts "#{vm} (geometricMean): #{vm.geometricMeanStats}"
+    $vms.each_with_index {
+      | vm, vmIndex |
+      vmStats = vmStatses[vmIndex]
+      $stderr.puts "#{vm} (arithmeticMean): #{vmStats.arithmeticMeanStats}"
+      $stderr.puts "#{vm} (geometricMean): #{vmStats.geometricMeanStats}"
     }
   end
 
@@ -1750,6 +1444,11 @@ begin
        | suite |
        suite.to_s
      }.join("")) + "_" +
+    (if hostname
+       hostname + "_"
+     else
+       ""
+     end)+
     (begin
        time = Time.now
        "%04d%02d%02d_%02d%02d" %
@@ -1785,37 +1484,13 @@ begin
     result += "    "
     if $vms.size >= 3
       result += center("#{$vms[-1].name} v. #{$vms[0].name}",26)
-    else
+    elsif $vms.size >= 2
       result += " "*26
     end
     result
   end
   
-  $columns = createVMsString.size
-  
-  def plural(num)
-    if num == 1
-      ""
-    else
-      "s"
-    end
-  end
-  
-  def wrap(str)
-    array = str.split
-    result = ""
-    curLine = array.shift
-    array.each {
-      | curStr |
-      if (curLine + " " + curStr).size > $columns
-        result += curLine + "\n"
-        curLine = curStr
-      else
-        curLine += " " + curStr
-      end
-    }
-    result + curLine + "\n"
-  end
+  columns = [createVMsString.size, 78].max
   
   outp.print "Benchmark report for "
   if $suites.size == 1
@@ -1825,20 +1500,11 @@ begin
   else
     outp.print "#{$suites[0..-2].join(', ')}, and #{$suites[-1]}"
   end
-  outp.print " on #{Socket.gethostname}"
-  begin
-    IO.popen("sysctl hw.model", "r") {
-      | inp |
-      inp.each_line {
-        | line |
-        if line =~ /hw.model: /
-          outp.print " (#{$~.post_match.chomp})"
-          break
-        end
-      }
-    }
-  rescue => e
-    # Silently fail since this isn't critical.
+  if hostname
+    outp.print " on #{hostname}"
+  end
+  if hwmodel
+    outp.print " (#{hwmodel})"
   end
   outp.puts "."
   outp.puts
@@ -1885,15 +1551,9 @@ begin
                   when :date then (" Used the portable Date.now() method to get millisecond-"+
                                    "level timing.")
                   else raise end)+
-                 (case $innerMode
-                  when :reload then "" # nothing interesting to say
-                  when :loadOnce then (" Ran benchmarks using an experimental mode that "+
-                                       "ensures that the benchmark code is loaded only once "+
-                                       "during each VM invocation, which enables more VM "+
-                                       "warm-up.")
-                  else raise end)+
                  " Reporting benchmark execution times with 95% confidence "+
-                 "intervals in milliseconds.")
+                 "intervals in milliseconds.",
+                 columns)
   
   outp.puts
   
@@ -1913,7 +1573,7 @@ begin
       outp.print statsToStr(accumulators[index].stats(&proc))
     }
     if accumulators.size>=2
-      outp.print("    "+accumulators[-1].stats(&proc).compareTo(accumulators[0].stats(&proc)).to_s)
+      outp.print("    "+accumulators[-1].stats(&proc).compareTo(accumulators[0].stats(&proc)).longForm)
     end
     outp.puts
   end
@@ -1954,9 +1614,9 @@ begin
     suite.benchmarks.each {
       | benchmark |
       outp.print "   " if $suites.size > 1
-      outp.print rpad(benchmark.to_s, $benchpad)
+      outp.print rpad(benchmark.name, $benchpad)
       outp.print " "
-      myConfigs = $benchmarksOnVMsForBenchmark[benchmark]
+      myConfigs = benchmarksOnVMsForBenchmark[benchmark]
       myConfigs.size.times {
         | index |
         if index != 0
@@ -1970,14 +1630,14 @@ begin
       outp.puts
     }
     outp.puts
-    allSummaryStats(outp, $suitesOnVMsForSuite[suite], suite.preferredMean)
+    allSummaryStats(outp, suitesOnVMsForSuite[suite], suite.preferredMean)
     outp.puts if $suites.size > 1
   }
   
   if $suites.size > 1
     printVMs(outp)
     outp.puts "All benchmarks:"
-    allSummaryStats(outp, $vms, nil)
+    allSummaryStats(outp, vmStatses, nil)
     
     outp.puts
     printVMs(outp)
@@ -1988,12 +1648,12 @@ begin
     $vms.size.times {
       | index |
       if index != 0
-        outp.print " "+$overallResults[index].compareTo($overallResults[index-1]).shortForm
+        outp.print " "+overallResults[index].compareTo(overallResults[index-1]).shortForm
       end
-      outp.print statsToStr($overallResults[index])
+      outp.print statsToStr(overallResults[index])
     }
-    if $overallResults.size>=2
-      outp.print("    "+$overallResults[-1].compareTo($overallResults[0]).to_s)
+    if overallResults.size>=2
+      outp.print("    "+overallResults[-1].compareTo(overallResults[0]).longForm)
     end
     outp.puts
   end
@@ -2012,10 +1672,425 @@ begin
   end
   
   if $brief
-    puts($overallResults.collect{|stats| stats.mean}.join("\t"))
-    puts($overallResults.collect{|stats| stats.confInt}.join("\t"))
+    puts(overallResults.collect{|stats| stats.mean}.join("\t"))
+    puts(overallResults.collect{|stats| stats.confInt}.join("\t"))
   end
   
+  
+end
+
+begin
+  $sawBenchOptions = false
+  
+  def resetBenchOptionsIfNecessary
+    unless $sawBenchOptions
+      $includeSunSpider = false
+      $includeV8 = false
+      $includeKraken = false
+      $sawBenchOptions = true
+    end
+  end
+  
+  GetoptLong.new(['--rerun', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--inner', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--outer', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--warmup', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--timing-mode', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--sunspider-only', GetoptLong::NO_ARGUMENT],
+                 ['--v8-only', GetoptLong::NO_ARGUMENT],
+                 ['--kraken-only', GetoptLong::NO_ARGUMENT],
+                 ['--exclude-sunspider', GetoptLong::NO_ARGUMENT],
+                 ['--exclude-v8', GetoptLong::NO_ARGUMENT],
+                 ['--exclude-kraken', GetoptLong::NO_ARGUMENT],
+                 ['--sunspider', GetoptLong::NO_ARGUMENT],
+                 ['--v8', GetoptLong::NO_ARGUMENT],
+                 ['--kraken', GetoptLong::NO_ARGUMENT],
+                 ['--benchmarks', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--measure-gc', GetoptLong::OPTIONAL_ARGUMENT],
+                 ['--force-vm-kind', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--force-vm-copy', GetoptLong::NO_ARGUMENT],
+                 ['--dont-copy-vms', GetoptLong::NO_ARGUMENT],
+                 ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+                 ['--brief', GetoptLong::NO_ARGUMENT],
+                 ['--silent', GetoptLong::NO_ARGUMENT],
+                 ['--remote', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--local', GetoptLong::NO_ARGUMENT],
+                 ['--ssh-options', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--slave', GetoptLong::NO_ARGUMENT],
+                 ['--prepare-only', GetoptLong::NO_ARGUMENT],
+                 ['--analyze', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--vms', GetoptLong::REQUIRED_ARGUMENT],
+                 ['--help', '-h', GetoptLong::NO_ARGUMENT]).each {
+    | opt, arg |
+    case opt
+    when '--rerun'
+      $rerun = intArg(opt,arg,1,nil)
+    when '--inner'
+      $inner = intArg(opt,arg,1,nil)
+    when '--outer'
+      $outer = intArg(opt,arg,1,nil)
+    when '--warmup'
+      $warmup = intArg(opt,arg,0,nil)
+    when '--timing-mode'
+      if arg.upcase == "PRECISETIME"
+        $timeMode = :preciseTime
+      elsif arg.upcase == "DATE"
+        $timeMode = :date
+      elsif arg.upcase == "AUTO"
+        $timeMode = :auto
+      else
+        quickFail("Expected either 'preciseTime', 'date', or 'auto' for --time-mode, but got '#{arg}'.",
+                  "Invalid argument for command-line option")
+      end
+    when '--force-vm-kind'
+      if arg.upcase == "JSC"
+        $forceVMKind = :jsc
+      elsif arg.upcase == "DUMPRENDERTREE"
+        $forceVMKind = :dumpRenderTree
+      elsif arg.upcase == "AUTO"
+        $forceVMKind = nil
+      else
+        quickFail("Expected either 'jsc' or 'DumpRenderTree' for --force-vm-kind, but got '#{arg}'.",
+                  "Invalid argument for command-line option")
+      end
+    when '--force-vm-copy'
+      $needToCopyVMs = true
+    when '--dont-copy-vms'
+      $dontCopyVMs = true
+    when '--sunspider-only'
+      $includeV8 = false
+      $includeKraken = false
+    when '--v8-only'
+      $includeSunSpider = false
+      $includeKraken = false
+    when '--kraken-only'
+      $includeSunSpider = false
+      $includeV8 = false
+    when '--exclude-sunspider'
+      $includeSunSpider = false
+    when '--exclude-v8'
+      $includeV8 = false
+    when '--exclude-kraken'
+      $includeKraken = false
+    when '--sunspider'
+      resetBenchOptionsIfNecessary
+      $includeSunSpider = true
+    when '--v8'
+      resetBenchOptionsIfNecessary
+      $includeV8 = true
+    when '--kraken'
+      resetBenchOptionsIfNecessary
+      $includeKraken = true
+    when '--benchmarks'
+      $benchmarkPattern = Regexp.new(arg)
+    when '--measure-gc'
+      if arg == ''
+        $measureGC = true
+      else
+        $measureGC = arg
+      end
+    when '--verbose'
+      $verbosity += 1
+    when '--brief'
+      $brief = true
+    when '--silent'
+      $silent = true
+    when '--remote'
+      $remoteHosts += arg.split(',')
+      $needToCopyVMs = true
+    when '--ssh-options'
+      $sshOptions << arg
+    when '--local'
+      $alsoLocal = true
+    when '--prepare-only'
+      $run = false
+    when '--analyze'
+      $prepare = false
+      $run = false
+      $analyze << arg
+    when '--help'
+      usage
+    else
+      raise "bad option: #{opt}"
+    end
+  }
+  
+  # If the --dont-copy-vms option was passed, it overrides the --force-vm-copy option.
+  if $dontCopyVMs
+    $needToCopyVMs = false
+  end
+  
+  SUNSPIDER = BenchmarkSuite.new("SunSpider", SUNSPIDER_PATH, :arithmeticMean)
+  ["3d-cube", "3d-morph", "3d-raytrace", "access-binary-trees",
+   "access-fannkuch", "access-nbody", "access-nsieve",
+   "bitops-3bit-bits-in-byte", "bitops-bits-in-byte", "bitops-bitwise-and",
+   "bitops-nsieve-bits", "controlflow-recursive", "crypto-aes",
+   "crypto-md5", "crypto-sha1", "date-format-tofte", "date-format-xparb",
+   "math-cordic", "math-partial-sums", "math-spectral-norm", "regexp-dna",
+   "string-base64", "string-fasta", "string-tagcloud",
+   "string-unpack-code", "string-validate-input"].each {
+    | name |
+    SUNSPIDER.add SunSpiderBenchmark.new(name)
+  }
+
+  V8 = BenchmarkSuite.new("V8", V8_PATH, :geometricMean)
+  ["crypto", "deltablue", "earley-boyer", "raytrace",
+   "regexp", "richards", "splay"].each {
+    | name |
+    V8.add V8Benchmark.new(name)
+  }
+
+  KRAKEN = BenchmarkSuite.new("Kraken", KRAKEN_PATH, :arithmeticMean)
+  ["ai-astar", "audio-beat-detection", "audio-dft", "audio-fft",
+   "audio-oscillator", "imaging-darkroom", "imaging-desaturate",
+   "imaging-gaussian-blur", "json-parse-financial",
+   "json-stringify-tinderbox", "stanford-crypto-aes",
+   "stanford-crypto-ccm", "stanford-crypto-pbkdf2",
+   "stanford-crypto-sha256-iterative"].each {
+    | name |
+    KRAKEN.add KrakenBenchmark.new(name)
+  }
+
+  ARGV.each {
+    | vm |
+    if vm =~ /([a-zA-Z0-9_ ]+):/
+      name = $1
+      nameKind = :given
+      vm = $~.post_match
+    else
+      name = "Conf\##{$vms.length+1}"
+      nameKind = :auto
+    end
+    $stderr.puts "#{name}: #{vm}" if $verbosity >= 1
+    $vms << VM.new(Pathname.new(vm).realpath, name, nameKind, nil)
+  }
+  
+  if $vms.empty?
+    quickFail("Please specify at least on configuraiton on the command line.",
+              "Insufficient arguments")
+  end
+  
+  $vms.each {
+    | vm |
+    if vm.vmType != :jsc and $timeMode != :date
+      $timeMode = :date
+      $stderr.puts "Warning: using Date.now() instead of preciseTime() because #{vm} doesn't support the latter."
+    end
+  }
+  
+  if FileTest.exist? BENCH_DATA_PATH
+    cmd = "rm -rf #{BENCH_DATA_PATH}"
+    $stderr.puts ">> #{cmd}" if $verbosity >= 2
+    raise unless system cmd
+  end
+  
+  Dir.mkdir BENCH_DATA_PATH
+  
+  if $needToCopyVMs
+    canCopyIntoBenchPath = true
+    $vms.each {
+      | vm |
+      canCopyIntoBenchPath = false unless vm.canCopyIntoBenchPath
+    }
+    
+    if canCopyIntoBenchPath
+      $vms.each {
+        | vm |
+        $stderr.puts "Copying #{vm} into #{BENCH_DATA_PATH}..."
+        vm.copyIntoBenchPath
+      }
+      $stderr.puts "All VMs are in place."
+    else
+      $stderr.puts "Warning: don't know how to copy some VMs into #{BENCH_DATA_PATH}, so I won't do it."
+    end
+  end
+  
+  if $measureGC and $measureGC != true
+    found = false
+    $vms.each {
+      | vm |
+      if vm.name == $measureGC
+        found = true
+      end
+    }
+    unless found
+      $stderr.puts "Warning: --measure-gc option ignored because no VM is named #{$measureGC}"
+    end
+  end
+  
+  if $outer*$inner == 1
+    $stderr.puts "Warning: will only collect one sample per benchmark/VM.  Confidence interval calculation will fail."
+  end
+  
+  $stderr.puts "Using timeMode = #{$timeMode}." if $verbosity >= 1
+  
+  $suites = []
+  
+  if $includeSunSpider and not SUNSPIDER.empty?
+    $suites << SUNSPIDER
+  end
+  
+  if $includeV8 and not V8.empty?
+    $suites << V8
+  end
+  
+  if $includeKraken and not KRAKEN.empty?
+    $suites << KRAKEN
+  end
+  
+  $benchmarks = []
+  $suites.each {
+    | suite |
+    $benchmarks += suite.benchmarks
+  }
+  
+  $runPlans = []
+  $vms.each {
+    | vm |
+    $benchmarks.each {
+      | benchmark |
+      $outer.times {
+        | iteration |
+        $runPlans << BenchRunPlan.new(benchmark, vm, iteration)
+      }
+    }
+  }
+  
+  $runPlans.shuffle!
+  
+  $suitepad = $suites.collect {
+    | suite |
+    suite.to_s.size
+  }.max + 1
+  
+  $benchpad = ($benchmarks +
+               ["<arithmetic> *", "<geometric> *", "<harmonic> *"]).collect {
+    | benchmark |
+    if benchmark.respond_to? :name
+      benchmark.name.size
+    else
+      benchmark.size
+    end
+  }.max + 1
+
+  $vmpad = $vms.collect {
+    | vm |
+    vm.to_s.size
+  }.max + 1
+  
+  if $prepare
+    File.open("#{BENCH_DATA_PATH}/runscript", "w") {
+      | file |
+      file.puts "echo \"HOSTNAME:\\c\""
+      file.puts "hostname"
+      file.puts "echo"
+      file.puts "echo \"HARDWARE:\\c\""
+      file.puts "/usr/sbin/sysctl hw.model"
+      file.puts "echo"
+      file.puts "set -e"
+      $script = file
+      $runPlans.each_with_index {
+        | plan, idx |
+        if $verbosity == 0 and not $silent
+          text1 = lpad(idx.to_s,$runPlans.size.to_s.size)+"/"+$runPlans.size.to_s
+          text2 = plan.benchmark.to_s+"/"+plan.vm.to_s
+          file.puts("echo "+("\r#{text1} #{rpad(text2,$suitepad+1+$benchpad+1+$vmpad)}".inspect)[0..-2]+"\\c\" 1>&2")
+          file.puts("echo "+("\r#{text1} #{text2}".inspect)[0..-2]+"\\c\" 1>&2")
+        end
+        plan.emitRunCode
+      }
+      if $verbosity == 0 and not $silent
+        file.puts("echo "+("\r#{$runPlans.size}/#{$runPlans.size} #{' '*($suitepad+1+$benchpad+1+$vmpad)}".inspect)[0..-2]+"\\c\" 1>&2")
+        file.puts("echo "+("\r#{$runPlans.size}/#{$runPlans.size}".inspect)+" 1>&2")
+      end
+    }
+  end
+  
+  if $run
+    unless $remoteHosts.empty?
+      $stderr.puts "Packaging benchmarking directory for remote hosts..." if $verbosity==0
+      Dir.chdir(TEMP_PATH) {
+        cmd = "tar -czf payload.tar.gz benchdata"
+        $stderr.puts ">> #{cmd}" if $verbosity>=2
+        raise unless system(cmd)
+      }
+      
+      def grokHost(host)
+        if host =~ /:([0-9]+)$/
+          "-p " + $1 + " " + $~.pre_match.inspect
+        else
+          host.inspect
+        end
+      end
+      
+      def sshRead(host, command)
+        cmd = "ssh #{$sshOptions.collect{|x| x.inspect}.join(' ')} #{grokHost(host)} #{command.inspect}"
+        $stderr.puts ">> #{cmd}" if $verbosity>=2
+        result = ""
+        IO.popen(cmd, "r") {
+          | inp |
+          inp.each_line {
+            | line |
+            $stderr.puts "#{host}: #{line}" if $verbosity>=2
+            result += line
+          }
+        }
+        raise "#{$?}" unless $?.success?
+        result
+      end
+      
+      def sshWrite(host, command, data)
+        cmd = "ssh #{$sshOptions.collect{|x| x.inspect}.join(' ')} #{grokHost(host)} #{command.inspect}"
+        $stderr.puts ">> #{cmd}" if $verbosity>=2
+        IO.popen(cmd, "w") {
+          | outp |
+          outp.write(data)
+        }
+        raise "#{$?}" unless $?.success?
+      end
+      
+      $remoteHosts.each {
+        | host |
+        $stderr.puts "Sending benchmark payload to #{host}..." if $verbosity==0
+        
+        remoteTempPath = JSON::parse(sshRead(host, "cat ~/.bencher"))["tempPath"]
+        raise unless remoteTempPath
+        
+        sshWrite(host, "cd #{remoteTempPath.inspect} && rm -rf benchdata && tar -xz", IO::read("#{TEMP_PATH}/payload.tar.gz"))
+        
+        $stderr.puts "Running on #{host}..." if $verbosity==0
+        
+        parseAndDisplayResults(sshRead(host, "cd #{(remoteTempPath+'/benchdata').inspect} && sh runscript"))
+      }
+    end
+    
+    if not $remoteHosts.empty? and $alsoLocal
+      $stderr.puts "Running locally..."
+    end
+    
+    if $remoteHosts.empty? or $alsoLocal
+      parseAndDisplayResults(runAndGetResults)
+    end
+  end
+  
+  $analyze.each_with_index {
+    | filename, index |
+    if index >= 1
+      puts
+    end
+    parseAndDisplayResults(IO::read(filename))
+  }
+  
+  if $prepare and not $run and $analyze.empty?
+    puts wrap("Benchmarking script and data are in #{BENCH_DATA_PATH}. You can run "+
+              "the benchmarks and get the results by doing:", 78)
+    puts
+    puts "cd #{BENCH_DATA_PATH}"
+    puts "sh runscript > results.txt"
+    puts
+    puts wrap("Then you can analyze the results by running bencher with the same arguments "+
+              "as now, but replacing --prepare-only with --analyze results.txt.", 78)
+  end
 rescue => e
   fail(e)
 end

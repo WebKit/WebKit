@@ -1,3 +1,34 @@
+2011-12-15  Filip Pizlo  <fpizlo@apple.com>
+
+        bencher script should support remote benchmarking on platforms that don't have ruby
+        https://bugs.webkit.org/show_bug.cgi?id=74659
+
+        Rubber-stamped by Sam Weinig.
+        
+        Added the ability to have bencher generate a benchmarking playload that consists of
+        copies of all of the benchmarks, optionally copies of all of the frameworks and
+        binaries to run all of the VMs, and a sh script that runs the benchmarks in random
+        order, which then spits out a raw results file that bencher can parse.
+        
+        In normal operating mode, you never see this, as it just generates the payload and
+        script internally, runs it, parses the results, and spits them out.
+        
+        The --remote mode has been changed to use this style, so any remote host that has
+        sshd, passwordless login support, a ~/.bencher file that points to a "tempPath", and
+        a sh-compatible shell can be used for remote benchmarking.
+        
+        The feature to include VMs in the benchmarking payload is by default only activated
+        when using --remote, but it can also be activated when doing local benchmarking; the
+        benefit is that you remove any pathname-related performance pathologies. All VMs
+        become equal because they are all located in
+        /path/to/bencher/directory/temp/benchdata/vmN where N is the configuration number
+        (usually 0 or 1).
+        
+        Also fixed bugs in the DumpRenderTree support. It's now possible to run all benchmarks
+        through DumpRenderTree. This is only a bit slower than running in jsc.
+
+        * Scripts/bencher:
+
 2011-12-15  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up TestPort to (mostly) not create a new filesystem
