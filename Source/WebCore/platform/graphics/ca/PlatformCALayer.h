@@ -81,6 +81,9 @@ public:
 
     PlatformCALayer* rootLayer() const;
     
+    // A list of sublayers that GraphicsLayerCA should maintain as the first sublayers.
+    const PlatformCALayerList* customSublayers() const { return m_customSublayers.get(); }
+    
     static bool isValueFunctionSupported();
     
     PlatformCALayerClient* owner() const { return m_owner; }
@@ -214,6 +217,7 @@ private:
     PlatformCALayerClient* m_owner;
     LayerType m_layerType;
     
+    OwnPtr<PlatformCALayerList> m_customSublayers;
 #if PLATFORM(MAC) || PLATFORM(WIN)
     RetainPtr<PlatformLayer> m_layer;
 #endif

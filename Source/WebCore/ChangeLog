@@ -1,3 +1,25 @@
+2011-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow a PlatformCALayer to own its own sublayers
+        https://bugs.webkit.org/show_bug.cgi?id=74744
+
+        Reviewed by Anders Carlsson.
+
+        GraphicsLayerCA rebuilds the sublayer list of CALayers, which would
+        blow away any custom layers that a PlatformCALayer wants to maintain
+        as children.
+        
+        Make it possible for a PlatformLayerCA to indicate that it wants
+        a specific list of sublayers to be maintained as the first layers
+        in the child list.
+        
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::customSublayers):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::PlatformCALayer):
+
 2011-12-16  Adam Barth  <abarth@webkit.org>
 
         <!DOCTYPE html><pre>&#x0a;&#x0a;A</pre> doesn't parse correctly

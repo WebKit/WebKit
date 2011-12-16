@@ -216,6 +216,13 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
         [tiledLayer setContentsGravity:@"bottomLeft"];
     }
     
+    if (m_layerType == LayerTypeTileCacheLayer) {
+        // FIXME: hook this up to the tile cache.
+//        m_customSublayers = adoptPtr(new PlatformCALayerList(1));
+//        CALayer* tileCacheTileContainerLayer = [static_cast<WebTileCacheLayer *>(m_layer.get()) tileContainerLayer];
+//        m_customSublayers->append(PlatformCALayer::create(tileCacheTileContainerLayer, 0));
+    }
+    
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

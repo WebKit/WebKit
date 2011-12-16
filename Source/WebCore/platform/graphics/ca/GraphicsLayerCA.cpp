@@ -1018,6 +1018,9 @@ void GraphicsLayerCA::updateSublayerList()
     PlatformCALayerList newSublayers;
     const Vector<GraphicsLayer*>& childLayers = children();
 
+    if (const PlatformCALayerList* customSublayers = m_layer->customSublayers())
+        newSublayers.appendRange(customSublayers->begin(), customSublayers->end());
+    
     if (m_structuralLayer || m_contentsLayer || childLayers.size() > 0) {
         if (m_structuralLayer) {
             // Add the replica layer first.
