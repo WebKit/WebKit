@@ -1,5 +1,26 @@
 2011-12-15  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up TestPort to (mostly) not create a new filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=74556
+
+        This change modifies the TestPort to be ready to add tests to an
+        existing filesystem instead of creating a new filesystem; we
+        leave unit_test_filesystem() in for now for compatibility.
+
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+          - call add_unit_tests_to_mock_filesystem by default to make
+            the MockHost more generally useful for layout_test unit tests.
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestInstance.__init__):
+        (add_unit_tests_to_mock_filesystem):
+        (add_file):
+        (unit_test_filesystem):
+        (TestPort.__init__):
+        (TestPort._set_default_overriding_none):
+
+2011-12-15  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: cleanup prior to systemhostifying the layout_test/port* classes
         https://bugs.webkit.org/show_bug.cgi?id=74551
 
