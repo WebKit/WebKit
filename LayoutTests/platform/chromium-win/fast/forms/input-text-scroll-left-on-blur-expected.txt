@@ -24,7 +24,7 @@ layer at (175,13) size 151x16 scrollX 187 scrollWidth 338
   RenderBlock {DIV} at (2,3) size 151x16
     RenderText {#text} at (-187,0) size 337x16
       text run at (-187,0) width 337: "this text field has a lot of text in it so that it needs to scroll"
-layer at (338,13) size 151x16 scrollX 187 scrollWidth 339
+layer at (338,13) size 151x16 scrollX 188 scrollWidth 339
   RenderBlock {DIV} at (2,3) size 151x16
     RenderText {#text} at (1,0) size 337x16
       text run at (1,0) width 337: "this text field has a lot of text in it so that it needs to scroll"
