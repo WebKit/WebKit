@@ -2157,7 +2157,15 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBorderRight:
         case CSSPropertyBorderStyle:
         case CSSPropertyBorderTop:
-        case CSSPropertyBorderWidth:
+            break;
+        case CSSPropertyBorderWidth: {
+            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+            list->append(zoomAdjustedPixelValue(style->borderTopWidth(), style.get(), cssValuePool));
+            list->append(zoomAdjustedPixelValue(style->borderRightWidth(), style.get(), cssValuePool));
+            list->append(zoomAdjustedPixelValue(style->borderBottomWidth(), style.get(), cssValuePool));
+            list->append(zoomAdjustedPixelValue(style->borderLeftWidth(), style.get(), cssValuePool));
+            return list.release();
+        }
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
         case CSSPropertyOutline:
