@@ -1,3 +1,15 @@
+2011-12-16  Adrienne Walker  <enne@google.com>
+
+        [chromium] Disable compositor CCLayerTreeHostTestsetNeedsCommit1 test
+        https://bugs.webkit.org/show_bug.cgi?id=74623
+
+        Unreviewed gardening.
+
+        This has been failing (timeout) intermittently on Mac.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::TEST_F):
+
 2011-12-16  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add setOpaque to WebMediaPlayerClient interface, don't set VideoLayer's opaque when grabbing current frame.

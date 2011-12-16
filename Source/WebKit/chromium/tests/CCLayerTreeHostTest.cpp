@@ -604,7 +604,7 @@ private:
     int m_numDraws;
 };
 
-TEST_F(CCLayerTreeHostTestSetNeedsCommit1, runMultiThread)
+TEST_F(CCLayerTreeHostTestSetNeedsCommit1, DISABLED_runMultiThread)
 {
     runTestThreaded();
 }
