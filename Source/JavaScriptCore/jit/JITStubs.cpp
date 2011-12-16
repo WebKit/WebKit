@@ -544,7 +544,7 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "str r1, [sp, #" STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "]" "\n"
     "str r2, [sp, #" STRINGIZE_VALUE_OF(CALLFRAME_OFFSET) "]" "\n"
     "str r3, [sp, #" STRINGIZE_VALUE_OF(EXCEPTION_OFFSET) "]" "\n"
-    "cpy r5, r2" "\n"
+    "mov r5, r2" "\n"
     "mov r6, #512" "\n"
     "blx r0" "\n"
     "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
@@ -568,7 +568,7 @@ HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
 ".thumb" "\n"
 ".thumb_func " THUMB_FUNC_PARAM(ctiVMThrowTrampoline) "\n"
 SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
-    "cpy r0, sp" "\n"
+    "mov r0, sp" "\n"
     "bl " SYMBOL_STRING_RELOCATION(cti_vm_throw) "\n"
     "ldr r11, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R11_OFFSET) "]" "\n"
     "ldr r10, [sp, #" STRINGIZE_VALUE_OF(PRESERVED_R10_OFFSET) "]" "\n"
@@ -659,7 +659,7 @@ __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, P
     str r1, [sp, # REGISTER_FILE_OFFSET ]
     str r2, [sp, # CALLFRAME_OFFSET ]
     str r3, [sp, # EXCEPTION_OFFSET ]
-    cpy r5, r2
+    mov r5, r2
     mov r6, #512
     blx r0
     ldr r11, [sp, # PRESERVED_R11_OFFSET ]
@@ -678,7 +678,7 @@ __asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, P
 __asm void ctiVMThrowTrampoline()
 {
     PRESERVE8
-    cpy r0, sp
+    mov r0, sp
     bl cti_vm_throw
     ldr r11, [sp, # PRESERVED_R11_OFFSET ]
     ldr r10, [sp, # PRESERVED_R10_OFFSET ]

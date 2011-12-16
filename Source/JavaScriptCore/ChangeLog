@@ -1,3 +1,16 @@
+2011-12-15  Sam Weinig  <sam@webkit.org>
+
+        <rdar://problem/10552550> JavaScriptCore uses obsolete 'cpy' mnemonic in ARM assembly
+
+        Reviewed by Gavin Barraclough.
+
+        Original patch by Jim Grosbach.
+
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::ctiVMThrowTrampoline):
+        Replace uses of the 'cpy' mnemonic with 'mov'.
+
 2011-12-15  Filip Pizlo  <fpizlo@apple.com>
 
         Value profiling should distinguished between NaN and non-NaN doubles
