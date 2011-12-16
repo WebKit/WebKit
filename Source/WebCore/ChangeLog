@@ -1,3 +1,21 @@
+2011-12-15  Adrienne Walker  <enne@google.com>
+
+        [chromium] Clean up unnecessary leaf functions in GraphicsLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=74140
+
+        Reviewed by James Robinson.
+
+        Tested by existing compositor layout tests.
+
+        This is a follow-on cleanup to r102196, which made some of these
+        functions less useful than they had been in the past.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsOpaque):
+        (WebCore::GraphicsLayerChromium::setBackfaceVisibility):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+
 2011-12-15  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r103000.

@@ -105,8 +105,6 @@ public:
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }
 
 private:
-    void updateOpacityOnLayer();
-
     LayerChromium* primaryLayer() const  { return m_transformLayer.get() ? m_transformLayer.get() : m_layer.get(); }
     LayerChromium* hostLayerForChildren() const;
     LayerChromium* layerForParent() const;
@@ -119,8 +117,6 @@ private:
     void updateTransform();
     void updateChildrenTransform();
     void updateMasksToBounds();
-    void updateContentsOpaque();
-    void updateBackfaceVisibility();
     void updateLayerPreserves3D();
     void updateLayerDrawsContent();
     void updateLayerBackgroundColor();
