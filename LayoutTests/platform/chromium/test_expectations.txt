@@ -3958,7 +3958,7 @@ BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIME
 
 BUGWK73681 : http/tests/appcache/video.html = TIMEOUT PASS
 
-BUGWK73692 WIN LEOPARD : media/event-attributes.html = TEXT PASS
+BUGWK73692 : media/event-attributes.html = TEXT PASS
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
