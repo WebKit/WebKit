@@ -139,8 +139,10 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #endif
     m_graphicsLayer = createGraphicsLayer(layerName);
 
-    if (m_isMainFrameRenderViewLayer)
+    if (m_isMainFrameRenderViewLayer) {
+        m_graphicsLayer->setContentsOpaque(true);
         m_graphicsLayer->setAppliesPageScale();
+    }
     
     updateLayerOpacity(renderer()->style());
     updateLayerTransform(renderer()->style());
