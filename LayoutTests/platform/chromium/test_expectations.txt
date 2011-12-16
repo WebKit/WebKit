@@ -4030,3 +4030,5 @@ BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-la
 BUGWK74688 : fast/css/bidi-override-in-anonymous-block.html = TEXT
 
 BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE
+
+BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
