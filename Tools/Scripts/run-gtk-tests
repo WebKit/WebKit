@@ -24,7 +24,7 @@ import os, sys
 class TestRunner:
 
     TEST_DIRS = [ "unittests", "WebKit2APITests" ]
-    SKIPPED = [ "unittests/testdownload" ]
+    SKIPPED = [ ]
 
     def __init__(self):
         self._executive = Executive()

@@ -1,3 +1,9 @@
+2011-12-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskipping GTK testdownload. Should pass on the bot now.
+
+        * Scripts/run-gtk-tests:
+
 2011-12-16  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix the build for newer Qt5
