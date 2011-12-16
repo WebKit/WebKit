@@ -2764,8 +2764,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         transform.translateRight(layerOrigin.x(), layerOrigin.y());
         p->concatCTM(transform.toAffineTransform());
         
-        LayoutRect filterBounds = LayoutRect(0, 0, size().width(), size().height());
-        p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), filterBounds, CompositeSourceOver);
+        p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), LayoutRect(m_filter->outputRect()), CompositeSourceOver);
         return;
     }
 #endif

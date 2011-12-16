@@ -63,7 +63,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool hasBorderOutlineOrShadow(const RenderStyle*);
+static bool hasBoxDecorations(const RenderStyle*);
 static bool hasBoxDecorationsOrBackground(const RenderObject*);
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle*);
 static LayoutRect clipBox(RenderBox* renderer);
@@ -743,19 +743,19 @@ float RenderLayerBacking::compositingOpacity(float rendererOpacity) const
     return finalOpacity;
 }
 
-static bool hasBorderOutlineOrShadow(const RenderStyle* style)
+static bool hasBoxDecorations(const RenderStyle* style)
 {
-    return style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || style->hasAppearance() || style->boxShadow();
+    return style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || style->hasAppearance() || style->boxShadow() || style->hasFilter();
 }
 
 static bool hasBoxDecorationsOrBackground(const RenderObject* renderer)
 {
-    return hasBorderOutlineOrShadow(renderer->style()) || renderer->hasBackground();
+    return hasBoxDecorations(renderer->style()) || renderer->hasBackground();
 }
 
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle* style)
 {
-    return hasBorderOutlineOrShadow(style) || style->hasBackgroundImage();
+    return hasBoxDecorations(style) || style->hasBackgroundImage();
 }
 
 bool RenderLayerBacking::rendererHasBackground() const

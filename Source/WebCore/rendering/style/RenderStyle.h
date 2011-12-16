@@ -399,6 +399,23 @@ public:
         return getImageOutsets(maskBoxImage(), top, right, bottom, left);
     }
 
+#if ENABLE(CSS_FILTERS)
+    void getFilterOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left, const LayoutSize& borderBoxSize) const
+    {
+        if (hasFilter())
+            filter().getOutsets(top, right, bottom, left, borderBoxSize);
+        else {
+            top = 0;
+            right = 0;
+            bottom = 0;
+            left = 0;
+        }
+    }
+    bool hasFilterOutsets() const { return hasFilter() && filter().hasOutsets(); }
+#else
+    bool hasFilterOutsets() const { return false; }
+#endif
+
     Order rtlOrdering() const { return static_cast<Order>(inherited_flags.m_rtlOrdering); }
     void setRTLOrdering(Order o) { inherited_flags.m_rtlOrdering = o; }
 

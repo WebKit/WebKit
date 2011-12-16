@@ -52,7 +52,10 @@ void FEImage::determineAbsolutePaintRect()
     FloatRect srcRect(FloatPoint(), m_image->size());
     FloatRect paintRect(m_absoluteSubregion);
     m_preserveAspectRatio.transformRect(paintRect, srcRect);
-    paintRect.intersect(maxEffectRect());
+    if (clipsToBounds())
+        paintRect.intersect(maxEffectRect());
+    else
+        paintRect.unite(maxEffectRect());
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 

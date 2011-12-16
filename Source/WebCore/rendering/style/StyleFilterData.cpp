@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StyleFilterData.h"
 
+#include "FEGaussianBlur.h"
+
 #if ENABLE(CSS_FILTERS)
 
 #include "RenderStyle.h"

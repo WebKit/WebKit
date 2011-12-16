@@ -223,6 +223,9 @@ void FilterEffectRenderer::build(const FilterOperations& operations, const Layou
         }
 
         if (effect) {
+            // Unlike SVG, filters applied here should not clip to their primitive subregions.
+            effect->setClipsToBounds(false);
+            
             if (previousEffect)
                 effect->inputEffects().append(previousEffect);
             m_effects.append(effect);

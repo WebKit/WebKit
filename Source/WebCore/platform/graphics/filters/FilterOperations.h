@@ -29,6 +29,7 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "FilterOperation.h"
+#include "LayoutTypes.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -57,6 +58,9 @@ public:
     const FilterOperation* at(size_t index) const { return index < m_operations.size() ? m_operations.at(index).get() : 0; }
 
     bool operationsMatch(const FilterOperations&) const;
+
+    bool hasOutsets() const;
+    void getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left, const LayoutSize& borderBoxSize) const;
 
 private:
     Vector<RefPtr<FilterOperation> > m_operations;

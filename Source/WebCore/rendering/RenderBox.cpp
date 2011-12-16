@@ -3516,9 +3516,9 @@ bool RenderBox::avoidsFloats() const
     return isReplaced() || hasOverflowClip() || isHR() || isLegend() || isWritingModeRoot() || isDeprecatedFlexItem();
 }
 
-void RenderBox::addBoxShadowAndBorderOverflow()
+void RenderBox::addVisualEffectOverflow()
 {
-    if (!style()->boxShadow() && !style()->hasBorderImageOutsets())
+    if (!style()->boxShadow() && !style()->hasBorderImageOutsets() && !style()->hasFilterOutsets())
         return;
 
     bool isFlipped = style()->isFlippedBlocksWritingMode();
@@ -3561,6 +3561,21 @@ void RenderBox::addBoxShadowAndBorderOverflow()
         overflowMaxY = max(overflowMaxY, borderBox.maxY() + ((!isFlipped || !isHorizontal) ? borderOutsetBottom : borderOutsetTop));
     }
 
+#if ENABLE(CSS_FILTERS)
+    // Compute any filter outset overflow.
+    if (style()->hasFilterOutsets()) {
+        LayoutUnit filterOutsetLeft;
+        LayoutUnit filterOutsetRight;
+        LayoutUnit filterOutsetTop;
+        LayoutUnit filterOutsetBottom;
+        style()->getFilterOutsets(filterOutsetTop, filterOutsetRight, filterOutsetBottom, filterOutsetLeft, borderBox.size());
+        
+        overflowMinX = min(overflowMinX, borderBox.x() - filterOutsetLeft);
+        overflowMaxX = max(overflowMaxX, borderBox.maxX() + filterOutsetRight);
+        overflowMinY = min(overflowMinY, borderBox.y() - filterOutsetTop);
+        overflowMaxY = max(overflowMaxY, borderBox.maxY() + filterOutsetBottom);
+    }
+#endif
     // Add in the final overflow with shadows and outsets combined.
     addVisualOverflow(LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY));
 }

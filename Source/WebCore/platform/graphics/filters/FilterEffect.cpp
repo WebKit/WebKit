@@ -38,6 +38,7 @@ FilterEffect::FilterEffect(Filter* filter)
     , m_hasY(false)
     , m_hasWidth(false)
     , m_hasHeight(false)
+    , m_clipsToBounds(true)
 {
     ASSERT(m_filter);
 }
@@ -61,8 +62,12 @@ void FilterEffect::determineAbsolutePaintRect()
     for (unsigned i = 0; i < size; ++i)
         m_absolutePaintRect.unite(m_inputEffects.at(i)->absolutePaintRect());
     
-    // SVG specification wants us to clip to primitive subregion.
-    m_absolutePaintRect.intersect(enclosingIntRect(m_maxEffectRect));
+    // Filters in SVG clip to primitive subregion, while CSS doesn't.
+    if (m_clipsToBounds)
+        m_absolutePaintRect.intersect(enclosingIntRect(m_maxEffectRect));
+    else
+        m_absolutePaintRect.unite(enclosingIntRect(m_maxEffectRect));
+    
 }
 
 IntRect FilterEffect::requestedRegionOfInputImageData(const IntRect& effectRect) const

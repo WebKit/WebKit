@@ -61,7 +61,10 @@ void FEDropShadow::determineAbsolutePaintRect()
     FloatRect absoluteOffsetPaintRect(absolutePaintRect);
     absoluteOffsetPaintRect.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
     absolutePaintRect.unite(absoluteOffsetPaintRect);
-    absolutePaintRect.intersect(maxEffectRect());
+    if (clipsToBounds())
+        absolutePaintRect.intersect(maxEffectRect());
+    else
+        absolutePaintRect.unite(maxEffectRect());
     
     unsigned kernelSizeX = 0;
     unsigned kernelSizeY = 0;

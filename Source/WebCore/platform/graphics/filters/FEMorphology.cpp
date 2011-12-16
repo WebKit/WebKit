@@ -89,7 +89,10 @@ void FEMorphology::determineAbsolutePaintRect()
     Filter* filter = this->filter();
     paintRect.inflateX(filter->applyHorizontalScale(m_radiusX));
     paintRect.inflateY(filter->applyVerticalScale(m_radiusY));
-    paintRect.intersect(maxEffectRect());
+    if (clipsToBounds())
+        paintRect.intersect(maxEffectRect());
+    else
+        paintRect.unite(maxEffectRect());
     setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 

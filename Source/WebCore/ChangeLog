@@ -1,3 +1,92 @@
+2011-12-16  Dean Jackson  <dino@apple.com>
+
+        Filters need to affect visual overflow
+        https://bugs.webkit.org/show_bug.cgi?id=71930
+
+        Reviewed by Simon Fraser.
+
+        Make sure filters are included in visual overflow.
+        Add a new method to calculate the expansion of overflow
+        region given a list of FilterOperations. This is a slight
+        duplication of code from the rendering path, but is needed
+        because overflow is calculated before the FilterEffect
+        chain is built.
+
+        Also, filters were always rendered into their
+        input rectangle which was wrong for any effect
+        that produced a different sized result - drop-shadow
+        and blur. This required two changes. First, FilterEffect
+        needed a flag to decide whether or not to clip
+        output to primitive regions (as required by SVG but not
+        what we want here). Second, the rendering operation
+        draws into the rectangle the filter claims is its painting
+        rectangle.
+
+        Test: css3/filters/regions-expanding.html
+
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::determineAbsolutePaintRect): Only
+        clipToBounds if necessary.
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateUnscaledKernelSize): CSS filters
+        ask for the kernel size before the Filter object is created, so
+        add a new method to return an unscaled kernel.
+        (WebCore::FEGaussianBlur::calculateKernelSize):
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect): Only
+        clipToBounds if necessary.
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::determineAbsolutePaintRect): Only
+        clipToBounds if necessary.
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::determineAbsolutePaintRect): Only
+        clipToBounds if necessary.
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect): Initialize clipToBounds
+        as false so SVG remains unchanged.
+        (WebCore::FilterEffect::determineAbsolutePaintRect): Only
+        clipToBounds if necessary.
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::clipsToBounds):
+        (WebCore::FilterEffect::setClipsToBounds):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build): Make sure we set our
+        filters here to NOT clip to bounds.
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRenderer::outputRect): Asks the filter
+        operation for the size of the result image.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addVisualEffectOverflow): Change the name
+        from addBoxShadowAndBorderOverflow().
+        * rendering/RenderBox.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout):
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::layout):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::hasBoxDecorations): Change name from
+        hasBorderOutlineOrShadow().
+        (WebCore::hasBoxDecorationsOrBackground):
+        (WebCore::hasBoxDecorationsOrBackgroundImage):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        * rendering/style/FilterOperations.cpp:
+        (WebCore::outsetSizeForBlur): Return an IntSize that is the amount
+        of offset.
+        (WebCore::FilterOperations::hasOutsets):
+        (WebCore::FilterOperations::getOutsets):
+        * rendering/style/FilterOperations.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::getFilterOutsets):
+        (WebCore::InheritedFlags::hasFilterOutsets):
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::determineAbsolutePaintRect): Only
+        clipToBounds if necessary.
+
 2011-12-16  Alexis Menard  <alexis.menard@openbossa.org>, Jakub Wieczorek  <jwieczorek@webkit.org>
 
         Add support for <ol reversed>.

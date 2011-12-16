@@ -26,9 +26,26 @@
 #include "config.h"
 #include "FilterOperations.h"
 
+#include "FEGaussianBlur.h"
+#include "IntSize.h"
+
 #if ENABLE(CSS_FILTERS)
 
 namespace WebCore {
+
+static inline IntSize outsetSizeForBlur(float stdX, float stdY)
+{
+    unsigned kernelSizeX = 0;
+    unsigned kernelSizeY = 0;
+    FEGaussianBlur::calculateUnscaledKernelSize(kernelSizeX, kernelSizeY, stdX, stdY);
+
+    IntSize outset;
+    // We take the half kernel size and multiply it with three, because we run box blur three times.
+    outset.setWidth(3 * kernelSizeX * 0.5f);
+    outset.setHeight(3 * kernelSizeY * 0.5f);
+
+    return outset;
+}
 
 FilterOperations::FilterOperations()
 {
@@ -61,6 +78,57 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
             return false;
     }
     return true;
+}
+
+bool FilterOperations::hasOutsets() const
+{
+    for (size_t i = 0; i < m_operations.size(); ++i) {
+        FilterOperation::OperationType operationType = m_operations.at(i).get()->getOperationType();
+        if (operationType == FilterOperation::BLUR || operationType == FilterOperation::DROP_SHADOW)
+            return true;
+    }
+    return false;
+}
+
+void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left, const LayoutSize& borderBoxSize) const
+{
+    top = 0;
+    right = 0;
+    bottom = 0;
+    left = 0;
+    for (size_t i = 0; i < m_operations.size(); ++i) {
+        FilterOperation* filterOperation = m_operations.at(i).get();
+        switch (filterOperation->getOperationType()) {
+        case FilterOperation::BLUR: {
+            BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
+            float stdDeviationX = blurOperation->stdDeviationX().calcFloatValue(borderBoxSize.width());
+            float stdDeviationY = blurOperation->stdDeviationY().calcFloatValue(borderBoxSize.height());
+            IntSize outset = outsetSizeForBlur(stdDeviationX, stdDeviationY);
+            top += outset.height();
+            right += outset.width();
+            bottom += outset.height();
+            left += outset.width();
+            break;
+        }
+        case FilterOperation::DROP_SHADOW: {
+            DropShadowFilterOperation* dropShadowOperation = static_cast<DropShadowFilterOperation*>(filterOperation);
+            IntSize outset = outsetSizeForBlur(dropShadowOperation->stdDeviation(), dropShadowOperation->stdDeviation());
+            top += outset.height() - dropShadowOperation->y();
+            right += outset.width() + dropShadowOperation->x();
+            bottom += outset.height() + dropShadowOperation->y();
+            left += outset.width() - dropShadowOperation->x();
+            break;
+        }
+#if ENABLE(CSS_SHADERS)
+        case FilterOperation::CUSTOM: {
+            // Need to include the filter margins here.
+            break;
+        }
+#endif
+        default:
+            break;
+        }
+    }
 }
 
 } // namespace WebCore

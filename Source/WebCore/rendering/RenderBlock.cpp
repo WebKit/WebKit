@@ -1451,7 +1451,7 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeF
     }
         
     // Add visual overflow from box-shadow and border-image-outset.
-    addBoxShadowAndBorderOverflow();
+    addVisualEffectOverflow();
 }
 
 void RenderBlock::addOverflowFromBlockChildren()

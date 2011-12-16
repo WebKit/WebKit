@@ -71,6 +71,8 @@ public:
     void prepare();
     void apply();
     
+    IntRect outputRect() const { return lastEffect()->hasResult() ? lastEffect()->requestedRegionOfInputImageData(IntRect(m_filterRegion)) : IntRect(); }
+    
 private:
 
     void setMaxEffectRects(const FloatRect& effectRect)

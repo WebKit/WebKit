@@ -88,7 +88,7 @@ void RenderReplaced::layout()
     computeLogicalHeight();
 
     m_overflow.clear();
-    addBoxShadowAndBorderOverflow();
+    addVisualEffectOverflow();
     updateLayerTransform();
     
     repainter.repaintAfterLayout();

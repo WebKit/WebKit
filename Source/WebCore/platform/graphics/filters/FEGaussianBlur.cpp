@@ -228,11 +228,8 @@ inline void FEGaussianBlur::platformApply(ByteArray* srcPixelArray, ByteArray* t
 #endif
 }
 
-void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
+void FEGaussianBlur::calculateUnscaledKernelSize(unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
 {
-    stdX = filter->applyHorizontalScale(stdX);
-    stdY = filter->applyVerticalScale(stdY);
-    
     kernelSizeX = 0;
     if (stdX)
         kernelSizeX = max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gaussianKernelFactor() + 0.5f)));
@@ -248,10 +245,21 @@ void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, 
         kernelSizeY = gMaxKernelSize;
 }
 
+void FEGaussianBlur::calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
+{
+    stdX = filter->applyHorizontalScale(stdX);
+    stdY = filter->applyVerticalScale(stdY);
+
+    calculateUnscaledKernelSize(kernelSizeX, kernelSizeY, stdX, stdY);
+}
+
 void FEGaussianBlur::determineAbsolutePaintRect()
 {
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
-    absolutePaintRect.intersect(maxEffectRect());
+    if (clipsToBounds())
+        absolutePaintRect.intersect(maxEffectRect());
+    else
+        absolutePaintRect.unite(maxEffectRect());
 
     unsigned kernelSizeX = 0;
     unsigned kernelSizeY = 0;
