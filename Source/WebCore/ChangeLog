@@ -1,3 +1,16 @@
+2011-12-16  Adam Barth  <abarth@webkit.org>
+
+        <!doctype html><div><body><frameset> doesn't parse correctly
+        https://bugs.webkit.org/show_bug.cgi?id=74745
+
+        Reviewed by Eric Seidel.
+
+        We were missing one place the spec tells us to set this bool.
+
+        Tests: html5lib/runner.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+
 2011-12-16  Jarred Nicholls  <jarred@sencha.com>
 
         Support HTML documents in XHR.responseXML

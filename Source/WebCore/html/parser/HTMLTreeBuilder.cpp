@@ -765,6 +765,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
             ASSERT(isParsingFragment());
             return;
         }
+        m_framesetOk = false;
         m_tree.insertHTMLBodyStartTagInBody(token);
         return;
     }
