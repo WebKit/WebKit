@@ -113,8 +113,11 @@ IntSize RenderVideo::calculateIntrinsicSize()
     // of the video resource, if that is available; otherwise it is the intrinsic 
     // height of the poster frame, if that is available; otherwise it is 150 CSS pixels.
     MediaPlayer* player = mediaElement()->player();
-    if (player && video->readyState() >= HTMLVideoElement::HAVE_METADATA)
-        return player->naturalSize();
+    if (player && video->readyState() >= HTMLVideoElement::HAVE_METADATA) {
+        IntSize size = player->naturalSize();
+        if (!size.isEmpty())
+            return size;
+    }
 
     if (video->shouldDisplayPosterImage() && !m_cachedImageSize.isEmpty() && !imageResource()->errorOccurred())
         return m_cachedImageSize;
