@@ -1,3 +1,17 @@
+2011-12-15  Eric Seidel  <eric@webkit.org>
+
+        NRWT should use free + inactive memory for default_child_processes on OS X (and never return < 1 process)
+        https://bugs.webkit.org/show_bug.cgi?id=74650
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._compute_bytes_from_vm_stat_output):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_child_processes):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_default_child_processes):
+
 2011-12-15  Filip Pizlo  <fpizlo@apple.com>
 
         bencher script should support remote benchmarking on platforms that don't have ruby

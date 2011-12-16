@@ -169,7 +169,7 @@ class Port(object):
         free_memory = self.host.platform.free_bytes_memory()
         if free_memory:
             bytes_per_drt = 200 * 1024 * 1024  # Assume each DRT needs 200MB to run.
-            supportable_instances = free_memory / bytes_per_drt
+            supportable_instances = max(free_memory / bytes_per_drt, 1)  # Always use one process, even if we don't have space for it.
             if supportable_instances < cpu_count:
                 # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
                 print "This machine could support %s child processes, but only has enough memory for %s." % (cpu_count, supportable_instances)

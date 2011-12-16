@@ -51,9 +51,9 @@ class PlatformInfo(object):
             return int(self._executive.run_command(["sysctl", "-n", "hw.memsize"]))
         return None
 
-    def _compute_free_bytes_from_vm_stat_output(self, vm_stat_output):
+    def _compute_bytes_from_vm_stat_output(self, label_text, vm_stat_output):
         page_size_match = re.search(r"page size of (\d+) bytes", vm_stat_output)
-        free_pages_match = re.search(r"Pages free:\s+(\d+).", vm_stat_output)
+        free_pages_match = re.search(r"%s:\s+(\d+)." % label_text, vm_stat_output)
         if not page_size_match or not free_pages_match:
             return None
         free_page_count = int(free_pages_match.group(1))
@@ -64,5 +64,8 @@ class PlatformInfo(object):
         system_name = platform.system()
         if system_name == "Darwin":
             vm_stat_output = self._executive.run_command(["vm_stat"])
-            return self._compute_free_bytes_from_vm_stat_output(vm_stat_output)
+            free_bytes = self._compute_bytes_from_vm_stat_output("Pages free", vm_stat_output)
+            # Per https://bugs.webkit.org/show_bug.cgi?id=74650 include inactive memory since the OS is lazy about freeing memory.
+            free_bytes += self._compute_bytes_from_vm_stat_output("Pages inactive", vm_stat_output)
+            return free_bytes
         return None
