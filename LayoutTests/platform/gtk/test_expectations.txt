@@ -90,6 +90,9 @@ BUGWK74297 DEBUG : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = 
 
 BUGWK74493 : platform/gtk/accessibility/unknown-roles-not-exposed.html = PASS TEXT
 
+BUGWK74710 : editing/pasteboard/paste-text-013.html = PASS TEXT
+BUGWK74712 : fast/canvas/canvas-lineWidth.html = PASS TIMEOUT TEXT
+
 // End of Flaky tests
 
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
