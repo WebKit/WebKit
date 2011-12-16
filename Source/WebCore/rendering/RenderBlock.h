@@ -480,7 +480,7 @@ private:
         FloatWithRect(RenderBox* f)
             : object(f)
             , rect(LayoutRect(f->x() - f->marginLeft(), f->y() - f->marginTop(), f->width() + f->marginLeft() + f->marginRight(), f->height() + f->marginTop() + f->marginBottom()))
-            , everHadLayout(f->m_everHadLayout)
+            , everHadLayout(f->everHadLayout())
         {
         }
 

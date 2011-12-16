@@ -369,16 +369,16 @@ public:
          return container;
     }
 
-    bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
-    void setHasCounterNodeMap(bool hasCounterNodeMap) { m_hasCounterNodeMap = hasCounterNodeMap; }
+    bool hasCounterNodeMap() const { return m_bitfields.hasCounterNodeMap(); }
+    void setHasCounterNodeMap(bool hasCounterNodeMap) { m_bitfields.setHasCounterNodeMap(hasCounterNodeMap); }
 
-    bool childrenInline() const { return m_childrenInline; }
-    void setChildrenInline(bool b) { m_childrenInline = b; }
-    bool hasColumns() const { return m_hasColumns; }
-    void setHasColumns(bool b = true) { m_hasColumns = b; }
+    bool childrenInline() const { return m_bitfields.childrenInline(); }
+    void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
+    bool hasColumns() const { return m_bitfields.hasColumns(); }
+    void setHasColumns(bool b = true) { m_bitfields.setHasColumns(b); }
 
-    bool inRenderFlowThread() const { return m_inRenderFlowThread; }
-    void setInRenderFlowThread(bool b = true) { m_inRenderFlowThread = b; }
+    bool inRenderFlowThread() const { return m_bitfields.inRenderFlowThread(); }
+    void setInRenderFlowThread(bool b = true) { m_bitfields.setInRenderFlowThread(b); }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
 
@@ -443,15 +443,15 @@ public:
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 #endif
 
-    bool isAnonymous() const { return m_isAnonymous; }
-    void setIsAnonymous(bool b) { m_isAnonymous = b; }
+    bool isAnonymous() const { return m_bitfields.isAnonymous(); }
+    void setIsAnonymous(bool b) { m_bitfields.setIsAnonymous(b); }
     bool isAnonymousBlock() const
     {
         // This function is kept in sync with anonymous block creation conditions in
         // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
         // RenderBlock having a BLOCK or BOX display. Other classes such as RenderTextFragment
         // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
-        return m_isAnonymous && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker()
+        return isAnonymous() && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker()
 #if ENABLE(FULLSCREEN_API)
             && !isRenderFullScreen()
             && !isRenderFullScreenPlaceholder()
@@ -465,39 +465,49 @@ public:
     bool isBlockElementContinuation() const { return isElementContinuation() && !isInline(); }
     virtual RenderBoxModelObject* virtualContinuation() const { return 0; }
 
-    bool isFloating() const { return m_floating; }
-    bool isPositioned() const { return m_positioned; } // absolute or fixed positioning
-    bool isRelPositioned() const { return m_relPositioned; } // relative positioning
-    bool isText() const  { return m_isText; }
-    bool isBox() const { return m_isBox; }
-    bool isInline() const { return m_inline; }  // inline object
+    bool isFloating() const { return m_bitfields.floating(); }
+    bool isPositioned() const { return m_bitfields.positioned(); } // absolute or fixed positioning
+    bool isRelPositioned() const { return m_bitfields.relPositioned(); } // relative positioning
+    bool isText() const  { return m_bitfields.isText(); }
+    bool isBox() const { return m_bitfields.isBox(); }
+    bool isInline() const { return m_bitfields.isInline(); } // inline object
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
-    bool isDragging() const { return m_isDragging; }
-    bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
-    bool isHorizontalWritingMode() const { return m_horizontalWritingMode; }
+    bool isDragging() const { return m_bitfields.isDragging(); }
+    bool isReplaced() const { return m_bitfields.isReplaced(); } // a "replaced" element (see CSS)
+    bool isHorizontalWritingMode() const { return m_bitfields.horizontalWritingMode(); }
 
-    bool hasLayer() const { return m_hasLayer; }
+    bool hasLayer() const { return m_bitfields.hasLayer(); }
     
-    bool hasBoxDecorations() const { return m_paintBackground; }
+    bool hasBoxDecorations() const { return m_bitfields.paintBackground(); }
     bool borderImageIsLoadedAndCanBeRendered() const;
     bool mustRepaintBackgroundOrBorder() const;
     bool hasBackground() const { return style()->hasBackground(); }
-    bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsSimplifiedNormalFlowLayout || m_needsPositionedMovementLayout; }
-    bool selfNeedsLayout() const { return m_needsLayout; }
-    bool needsPositionedMovementLayout() const { return m_needsPositionedMovementLayout; }
-    bool needsPositionedMovementLayoutOnly() const { return m_needsPositionedMovementLayout && !m_needsLayout && !m_normalChildNeedsLayout && !m_posChildNeedsLayout && !m_needsSimplifiedNormalFlowLayout; }
-    bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
-    bool needsSimplifiedNormalFlowLayout() const { return m_needsSimplifiedNormalFlowLayout; }
-    bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
+    bool needsLayout() const
+    {
+        return m_bitfields.needsLayout() || m_bitfields.normalChildNeedsLayout() || m_bitfields.posChildNeedsLayout()
+            || m_bitfields.needsSimplifiedNormalFlowLayout() || m_bitfields.needsPositionedMovementLayout();
+    }
+
+    bool selfNeedsLayout() const { return m_bitfields.needsLayout(); }
+    bool needsPositionedMovementLayout() const { return m_bitfields.needsPositionedMovementLayout(); }
+    bool needsPositionedMovementLayoutOnly() const
+    {
+        return m_bitfields.needsPositionedMovementLayout() && !m_bitfields.needsLayout() && !m_bitfields.normalChildNeedsLayout()
+            && !m_bitfields.posChildNeedsLayout() && !m_bitfields.needsSimplifiedNormalFlowLayout();
+    }
+
+    bool posChildNeedsLayout() const { return m_bitfields.posChildNeedsLayout(); }
+    bool needsSimplifiedNormalFlowLayout() const { return m_bitfields.needsSimplifiedNormalFlowLayout(); }
+    bool normalChildNeedsLayout() const { return m_bitfields.normalChildNeedsLayout(); }
     
-    bool preferredLogicalWidthsDirty() const { return m_preferredLogicalWidthsDirty; }
+    bool preferredLogicalWidthsDirty() const { return m_bitfields.preferredLogicalWidthsDirty(); }
 
     bool isSelectionBorder() const;
 
     bool hasClip() const { return isPositioned() && style()->hasClip(); }
-    bool hasOverflowClip() const { return m_hasOverflowClip; }
+    bool hasOverflowClip() const { return m_bitfields.hasOverflowClip(); }
 
-    bool hasTransform() const { return m_hasTransform; }
+    bool hasTransform() const { return m_bitfields.hasTransform(); }
     bool hasMask() const { return style() && style()->hasMask(); }
 
 #if ENABLE(CSS_FILTERS)
@@ -528,7 +538,7 @@ public:
     // Returns true if this renderer is rooted, and optionally returns the hosting view (the root of the hierarchy).
     bool isRooted(RenderView** = 0);
 
-    Node* node() const { return m_isAnonymous ? 0 : m_node; }
+    Node* node() const { return isAnonymous() ? 0 : m_node; }
 
     // Returns the styled node that caused the generation of this renderer.
     // This is the same as node() except for renderers of :before and :after
@@ -566,19 +576,19 @@ public:
         setPreferredLogicalWidthsDirty(true);
     }
 
-    void setPositioned(bool b = true)  { m_positioned = b;  }
-    void setRelPositioned(bool b = true) { m_relPositioned = b; }
-    void setFloating(bool b = true) { m_floating = b; }
-    void setInline(bool b = true) { m_inline = b; }
-    void setHasBoxDecorations(bool b = true) { m_paintBackground = b; }
-    void setIsText() { m_isText = true; }
-    void setIsBox() { m_isBox = true; }
-    void setReplaced(bool b = true) { m_replaced = b; }
-    void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
-    void setHasOverflowClip(bool b = true) { m_hasOverflowClip = b; }
-    void setHasLayer(bool b = true) { m_hasLayer = b; }
-    void setHasTransform(bool b = true) { m_hasTransform = b; }
-    void setHasReflection(bool b = true) { m_hasReflection = b; }
+    void setPositioned(bool b = true)  { m_bitfields.setPositioned(b);  }
+    void setRelPositioned(bool b = true) { m_bitfields.setRelPositioned(b); }
+    void setFloating(bool b = true) { m_bitfields.setFloating(b); }
+    void setInline(bool b = true) { m_bitfields.setIsInline(b); }
+    void setHasBoxDecorations(bool b = true) { m_bitfields.setPaintBackground(b); }
+    void setIsText() { m_bitfields.setIsText(true); }
+    void setIsBox() { m_bitfields.setIsBox(true); }
+    void setReplaced(bool b = true) { m_bitfields.setIsReplaced(b); }
+    void setHorizontalWritingMode(bool b = true) { m_bitfields.setHorizontalWritingMode(b); }
+    void setHasOverflowClip(bool b = true) { m_bitfields.setHasOverflowClip(b); }
+    void setHasLayer(bool b = true) { m_bitfields.setHasLayer(b); }
+    void setHasTransform(bool b = true) { m_bitfields.setHasTransform(b); }
+    void setHasReflection(bool b = true) { m_bitfields.setHasReflection(b); }
 
     void scheduleRelayout();
 
@@ -736,13 +746,13 @@ public:
     bool isTransparent() const { return style()->opacity() < 1.0f; }
     float opacity() const { return style()->opacity(); }
 
-    bool hasReflection() const { return m_hasReflection; }
+    bool hasReflection() const { return m_bitfields.hasReflection(); }
 
     // Applied as a "slop" to dirty rect checks during the outline painting phase's dirty-rect checks.
     LayoutUnit maximalOutlineSize(PaintPhase) const;
 
-    void setHasMarkupTruncation(bool b = true) { m_hasMarkupTruncation = b; }
-    bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
+    void setHasMarkupTruncation(bool b = true) { m_bitfields.setHasMarkupTruncation(b); }
+    bool hasMarkupTruncation() const { return m_bitfields.hasMarkupTruncation(); }
 
     enum SelectionState {
         SelectionNone, // The object is not selected.
@@ -754,21 +764,16 @@ public:
 
     // The current selection state for an object.  For blocks, the state refers to the state of the leaf
     // descendants (as described above in the SelectionState enum declaration).
-    SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState);; }
-
-    // Sets the selection state for an object.
-    virtual void setSelectionState(SelectionState state) { m_selectionState = state; }
+    SelectionState selectionState() const { return m_bitfields.selectionState(); }
+    virtual void setSelectionState(SelectionState state) { m_bitfields.setSelectionState(state); }
 
     // A single rectangle that encompasses all of the selected objects within this object.  Used to determine the tightest
     // possible bounding box for the selection.
     LayoutRect selectionRect(bool clipToVisibleContent = true) { return selectionRectForRepaint(0, clipToVisibleContent); }
     virtual LayoutRect selectionRectForRepaint(RenderBoxModelObject* /*repaintContainer*/, bool /*clipToVisibleContent*/ = true) { return LayoutRect(); }
 
-    // Whether or not an object can be part of the leaf elements of the selection.
     virtual bool canBeSelectionLeaf() const { return false; }
-
-    // Whether or not a block has selected children.
-    bool hasSelectedChildren() const { return m_selectionState != SelectionNone; }
+    bool hasSelectedChildren() const { return selectionState() != SelectionNone; }
 
     // Obtains the selection colors that should be used when painting a selection.
     Color selectionBackgroundColor() const;
@@ -786,10 +791,10 @@ public:
      */
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    bool isMarginBeforeQuirk() const { return m_marginBeforeQuirk; }
-    bool isMarginAfterQuirk() const { return m_marginAfterQuirk; }
-    void setMarginBeforeQuirk(bool b = true) { m_marginBeforeQuirk = b; }
-    void setMarginAfterQuirk(bool b = true) { m_marginAfterQuirk = b; }
+    bool isMarginBeforeQuirk() const { return m_bitfields.marginBeforeQuirk(); }
+    bool isMarginAfterQuirk() const { return m_bitfields.marginAfterQuirk(); }
+    void setMarginBeforeQuirk(bool b = true) { m_bitfields.setMarginBeforeQuirk(b); }
+    void setMarginAfterQuirk(bool b = true) { m_bitfields.setMarginAfterQuirk(b); }
 
     // When performing a global document tear-down, the renderer of the document is cleared.  We use this
     // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
@@ -847,7 +852,7 @@ public:
     }
 
 protected:
-    bool everHadLayout() const { return m_everHadLayout; }
+    bool everHadLayout() const { return m_bitfields.everHadLayout(); }
 
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
@@ -887,49 +892,113 @@ private:
     RenderObject* m_next;
 
 #ifndef NDEBUG
-    bool m_hasAXObject;
+    bool m_hasAXObject             : 1;
     bool m_setNeedsLayoutForbidden : 1;
 #endif
 
-    // 32 bits have been used here. THERE ARE NO FREE BITS AVAILABLE.
-    bool m_needsLayout               : 1;
-    bool m_needsPositionedMovementLayout :1;
-    bool m_normalChildNeedsLayout    : 1;
-    bool m_posChildNeedsLayout       : 1;
-    bool m_needsSimplifiedNormalFlowLayout  : 1;
-    bool m_preferredLogicalWidthsDirty           : 1;
-    bool m_floating                  : 1;
+#define ADD_BOOLEAN_BITFIELD(name, Name) \
+    private:\
+        unsigned m_##name : 1;\
+    public:\
+        bool name() const { return m_##name; }\
+        void set##Name(bool name) { m_##name = name; }\
 
-    bool m_positioned                : 1;
-    bool m_relPositioned             : 1;
-    bool m_paintBackground           : 1; // if the box has something to paint in the
-                                          // background painting phase (background, border, etc)
+    class RenderObjectBitfields {
+    public:
+        RenderObjectBitfields(Node* node)
+            : m_needsLayout(false)
+            , m_needsPositionedMovementLayout(false)
+            , m_normalChildNeedsLayout(false)
+            , m_posChildNeedsLayout(false)
+            , m_needsSimplifiedNormalFlowLayout(false)
+            , m_preferredLogicalWidthsDirty(false)
+            , m_floating(false)
+            , m_positioned(false)
+            , m_relPositioned(false)
+            , m_paintBackground(false)
+            , m_isAnonymous(node == node->document())
+            , m_isText(false)
+            , m_isBox(false)
+            , m_isInline(true)
+            , m_isReplaced(false)
+            , m_horizontalWritingMode(true)
+            , m_isDragging(false)
+            , m_hasLayer(false)
+            , m_hasOverflowClip(false)
+            , m_hasTransform(false)
+            , m_hasReflection(false)
+            , m_hasCounterNodeMap(false)
+            , m_everHadLayout(false)
+            , m_inRenderFlowThread(false)
+            , m_childrenInline(false)
+            , m_marginBeforeQuirk(false) 
+            , m_marginAfterQuirk(false)
+            , m_hasMarkupTruncation(false)
+            , m_hasColumns(false)
+            , m_selectionState(SelectionNone)
+        {
+        }
+        
+        // 32 bits have been used here. THERE ARE NO FREE BITS AVAILABLE.
+        ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
+        ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
+        ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);
+        ADD_BOOLEAN_BITFIELD(posChildNeedsLayout, PosChildNeedsLayout);
+        ADD_BOOLEAN_BITFIELD(needsSimplifiedNormalFlowLayout, NeedsSimplifiedNormalFlowLayout);
+        ADD_BOOLEAN_BITFIELD(preferredLogicalWidthsDirty, PreferredLogicalWidthsDirty);
+        ADD_BOOLEAN_BITFIELD(floating, Floating);
 
-    bool m_isAnonymous               : 1;
-    bool m_isText                    : 1;
-    bool m_isBox                     : 1;
-    bool m_inline                    : 1;
-    bool m_replaced                  : 1;
-    bool m_horizontalWritingMode : 1;
-    bool m_isDragging                : 1;
+        ADD_BOOLEAN_BITFIELD(positioned, Positioned);
+        ADD_BOOLEAN_BITFIELD(relPositioned, RelPositioned);
+        ADD_BOOLEAN_BITFIELD(paintBackground, PaintBackground); // if the box has something to paint in the
+        // background painting phase (background, border, etc)
 
-    bool m_hasLayer                  : 1;
-    bool m_hasOverflowClip           : 1; // Set in the case of overflow:auto/scroll/hidden
-    bool m_hasTransform              : 1;
-    bool m_hasReflection             : 1;
+        ADD_BOOLEAN_BITFIELD(isAnonymous, IsAnonymous);
+        ADD_BOOLEAN_BITFIELD(isText, IsText);
+        ADD_BOOLEAN_BITFIELD(isBox, IsBox);
+        ADD_BOOLEAN_BITFIELD(isInline, IsInline);
+        ADD_BOOLEAN_BITFIELD(isReplaced, IsReplaced);
+        ADD_BOOLEAN_BITFIELD(horizontalWritingMode, HorizontalWritingMode);
+        ADD_BOOLEAN_BITFIELD(isDragging, IsDragging);
 
-    bool m_hasCounterNodeMap         : 1;
-    bool m_everHadLayout             : 1;
+        ADD_BOOLEAN_BITFIELD(hasLayer, HasLayer);
+        ADD_BOOLEAN_BITFIELD(hasOverflowClip, HasOverflowClip); // Set in the case of overflow:auto/scroll/hidden
+        ADD_BOOLEAN_BITFIELD(hasTransform, HasTransform);
+        ADD_BOOLEAN_BITFIELD(hasReflection, HasReflection);
 
-    // These bitfields are moved here from subclasses to pack them together
-    // from RenderBlock
-    bool m_childrenInline : 1;
-    bool m_marginBeforeQuirk : 1;
-    bool m_marginAfterQuirk : 1;
-    bool m_hasMarkupTruncation : 1;
-    unsigned m_selectionState : 3; // SelectionState
-    bool m_hasColumns : 1;
-    bool m_inRenderFlowThread : 1;
+        ADD_BOOLEAN_BITFIELD(hasCounterNodeMap, HasCounterNodeMap);
+        ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);
+
+        // These bitfields are moved here from subclasses to pack them together.
+        // from RenderFlowThread
+        ADD_BOOLEAN_BITFIELD(inRenderFlowThread, InRenderFlowThread);
+
+        // from RenderBlock
+        ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
+        ADD_BOOLEAN_BITFIELD(marginBeforeQuirk, MarginBeforeQuirk);
+        ADD_BOOLEAN_BITFIELD(marginAfterQuirk, MarginAfterQuirk);
+        ADD_BOOLEAN_BITFIELD(hasMarkupTruncation, HasMarkupTruncation);
+        ADD_BOOLEAN_BITFIELD(hasColumns, HasColumns);
+
+    private:
+        unsigned m_selectionState : 3; // SelectionState
+
+    public:
+        ALWAYS_INLINE SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
+        ALWAYS_INLINE void setSelectionState(SelectionState selectionState) { m_selectionState = selectionState; }
+    };
+
+#undef ADD_BOOLEAN_BITFIELD
+
+    RenderObjectBitfields m_bitfields;
+
+    void setNeedsPositionedMovementLayout(bool b) { m_bitfields.setNeedsPositionedMovementLayout(b); }
+    void setNormalChildNeedsLayout(bool b) { m_bitfields.setNormalChildNeedsLayout(b); }
+    void setPosChildNeedsLayout(bool b) { m_bitfields.setPosChildNeedsLayout(b); }
+    void setNeedsSimplifiedNormalFlowLayout(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
+    void setPaintBackground(bool b) { m_bitfields.setPaintBackground(b); }
+    void setIsDragging(bool b) { m_bitfields.setIsDragging(b); }
+    void setEverHadLayout(bool b) { m_bitfields.setEverHadLayout(b); }
 
 private:
     // Store state between styleWillChange and styleDidChange
@@ -968,8 +1037,8 @@ inline bool RenderObject::isBeforeOrAfterContent() const
 
 inline void RenderObject::setNeedsLayout(bool b, bool markParents)
 {
-    bool alreadyNeededLayout = m_needsLayout;
-    m_needsLayout = b;
+    bool alreadyNeededLayout = m_bitfields.needsLayout();
+    m_bitfields.setNeedsLayout(b);
     if (b) {
         ASSERT(!isSetNeedsLayoutForbidden());
         if (!alreadyNeededLayout) {
@@ -979,34 +1048,34 @@ inline void RenderObject::setNeedsLayout(bool b, bool markParents)
                 setLayerNeedsFullRepaint();
         }
     } else {
-        m_everHadLayout = true;
-        m_posChildNeedsLayout = false;
-        m_needsSimplifiedNormalFlowLayout = false;
-        m_normalChildNeedsLayout = false;
-        m_needsPositionedMovementLayout = false;
+        setEverHadLayout(true);
+        setPosChildNeedsLayout(false);
+        setNeedsSimplifiedNormalFlowLayout(false);
+        setNormalChildNeedsLayout(false);
+        setNeedsPositionedMovementLayout(false);
     }
 }
 
 inline void RenderObject::setChildNeedsLayout(bool b, bool markParents)
 {
-    bool alreadyNeededLayout = m_normalChildNeedsLayout;
-    m_normalChildNeedsLayout = b;
+    bool alreadyNeededLayout = normalChildNeedsLayout();
+    setNormalChildNeedsLayout(b);
     if (b) {
         ASSERT(!isSetNeedsLayoutForbidden());
         if (!alreadyNeededLayout && markParents)
             markContainingBlocksForLayout();
     } else {
-        m_posChildNeedsLayout = false;
-        m_needsSimplifiedNormalFlowLayout = false;
-        m_normalChildNeedsLayout = false;
-        m_needsPositionedMovementLayout = false;
+        setPosChildNeedsLayout(false);
+        setNeedsSimplifiedNormalFlowLayout(false);
+        setNormalChildNeedsLayout(false);
+        setNeedsPositionedMovementLayout(false);
     }
 }
 
 inline void RenderObject::setNeedsPositionedMovementLayout()
 {
-    bool alreadyNeededLayout = m_needsPositionedMovementLayout;
-    m_needsPositionedMovementLayout = true;
+    bool alreadyNeededLayout = needsPositionedMovementLayout();
+    setNeedsPositionedMovementLayout(true);
     ASSERT(!isSetNeedsLayoutForbidden());
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
@@ -1017,8 +1086,8 @@ inline void RenderObject::setNeedsPositionedMovementLayout()
 
 inline void RenderObject::setNeedsSimplifiedNormalFlowLayout()
 {
-    bool alreadyNeededLayout = m_needsSimplifiedNormalFlowLayout;
-    m_needsSimplifiedNormalFlowLayout = true;
+    bool alreadyNeededLayout = needsSimplifiedNormalFlowLayout();
+    setNeedsSimplifiedNormalFlowLayout(true);
     ASSERT(!isSetNeedsLayoutForbidden());
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();

@@ -1198,7 +1198,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, everHadLayout() && checkForRepaintDuringLayout());
 
     LayoutUnit oldWidth = logicalWidth();
     LayoutUnit oldColumnWidth = desiredColumnWidth();
@@ -1235,7 +1235,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
             }
             setLogicalHeight(0);
         }
-        if (colInfo->columnHeight() != pageLogicalHeight && m_everHadLayout) {
+        if (colInfo->columnHeight() != pageLogicalHeight && everHadLayout()) {
             colInfo->setColumnHeight(pageLogicalHeight);
             pageLogicalHeightChanged = true;
         }
@@ -2070,7 +2070,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     if (!child->needsLayout())
         child->markForPaginationRelayoutIfNeeded();
 
-    bool childHadLayout = child->m_everHadLayout;
+    bool childHadLayout = child->everHadLayout();
     bool childNeededLayout = child->needsLayout();
     if (childNeededLayout)
         child->layout();
@@ -4029,7 +4029,7 @@ bool RenderBlock::containsFloat(RenderBox* renderer)
 
 void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove, bool inLayout)
 {
-    if (!m_everHadLayout)
+    if (!everHadLayout())
         return;
 
     setChildNeedsLayout(true, !inLayout);
@@ -4688,7 +4688,7 @@ bool RenderBlock::layoutColumns(bool hasSpecifiedPageLogicalHeight, LayoutUnit p
         
         if (columnHeight && columnHeight != pageLogicalHeight) {
             statePusher.pop();
-            m_everHadLayout = true;
+            setEverHadLayout(true);
             layoutBlock(false, columnHeight);
             return true;
         }

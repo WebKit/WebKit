@@ -1,3 +1,105 @@
+2011-12-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        sizeof(RenderObject) is 32 instead of 24 on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=74646
+
+        Reviewed by Darin Adler.
+
+        Make all bitfields in RenderObject to unsigned and wrap them around by RenderObjectBitfields.
+        Also add a compilation time assertion to make sure we won't grow RenderObject's size unintentionally.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::markAllDescendantsWithFloatsForLayout):
+        (WebCore::RenderBlock::layoutColumns):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatWithRect::FloatWithRect):
+        * rendering/RenderObject.cpp:
+        (WebCore::SameSizeAsRenderObject::~SameSizeAsRenderObject):
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        (WebCore::RenderObject::setPreferredLogicalWidthsDirty):
+        (WebCore::RenderObject::invalidateContainerPreferredLogicalWidths):
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore::RenderObject::styleDidChange):
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::updateDragState):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasCounterNodeMap):
+        (WebCore::RenderObject::setHasCounterNodeMap):
+        (WebCore::RenderObject::childrenInline):
+        (WebCore::RenderObject::setChildrenInline):
+        (WebCore::RenderObject::hasColumns):
+        (WebCore::RenderObject::setHasColumns):
+        (WebCore::RenderObject::inRenderFlowThread):
+        (WebCore::RenderObject::setInRenderFlowThread):
+        (WebCore::RenderObject::isAnonymous):
+        (WebCore::RenderObject::setIsAnonymous):
+        (WebCore::RenderObject::isAnonymousBlock):
+        (WebCore::RenderObject::isFloating):
+        (WebCore::RenderObject::isPositioned):
+        (WebCore::RenderObject::isRelPositioned):
+        (WebCore::RenderObject::isText):
+        (WebCore::RenderObject::isBox):
+        (WebCore::RenderObject::isInline):
+        (WebCore::RenderObject::isDragging):
+        (WebCore::RenderObject::isReplaced):
+        (WebCore::RenderObject::isHorizontalWritingMode):
+        (WebCore::RenderObject::hasLayer):
+        (WebCore::RenderObject::hasBoxDecorations):
+        (WebCore::RenderObject::needsLayout):
+        (WebCore::RenderObject::selfNeedsLayout):
+        (WebCore::RenderObject::needsPositionedMovementLayout):
+        (WebCore::RenderObject::needsPositionedMovementLayoutOnly):
+        (WebCore::RenderObject::posChildNeedsLayout):
+        (WebCore::RenderObject::needsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::normalChildNeedsLayout):
+        (WebCore::RenderObject::preferredLogicalWidthsDirty):
+        (WebCore::RenderObject::hasOverflowClip):
+        (WebCore::RenderObject::hasTransform):
+        (WebCore::RenderObject::node):
+        (WebCore::RenderObject::setPositioned):
+        (WebCore::RenderObject::setRelPositioned):
+        (WebCore::RenderObject::setFloating):
+        (WebCore::RenderObject::setInline):
+        (WebCore::RenderObject::setHasBoxDecorations):
+        (WebCore::RenderObject::setIsText):
+        (WebCore::RenderObject::setIsBox):
+        (WebCore::RenderObject::setReplaced):
+        (WebCore::RenderObject::setHorizontalWritingMode):
+        (WebCore::RenderObject::setHasOverflowClip):
+        (WebCore::RenderObject::setHasLayer):
+        (WebCore::RenderObject::setHasTransform):
+        (WebCore::RenderObject::setHasReflection):
+        (WebCore::RenderObject::hasReflection):
+        (WebCore::RenderObject::setHasMarkupTruncation):
+        (WebCore::RenderObject::hasMarkupTruncation):
+        (WebCore::RenderObject::selectionState):
+        (WebCore::RenderObject::setSelectionState):
+        (WebCore::RenderObject::hasSelectedChildren):
+        (WebCore::RenderObject::isMarginBeforeQuirk):
+        (WebCore::RenderObject::isMarginAfterQuirk):
+        (WebCore::RenderObject::setMarginBeforeQuirk):
+        (WebCore::RenderObject::setMarginAfterQuirk):
+        (WebCore::RenderObject::everHadLayout):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::RenderObjectBitfields::selectionState):
+        (WebCore::RenderObject::RenderObjectBitfields::setSelectionState):
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        (WebCore::RenderObject::setNormalChildNeedsLayout):
+        (WebCore::RenderObject::setPosChildNeedsLayout):
+        (WebCore::RenderObject::setNeedsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::setPaintBackground):
+        (WebCore::RenderObject::setIsDragging):
+        (WebCore::RenderObject::setEverHadLayout):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setChildNeedsLayout):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+
 2011-12-15  Wei Charles  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Upstream BlackBerry porting of pluginView
