@@ -104,7 +104,7 @@ public:
     String getResponseHeader(const AtomicString& name, ExceptionCode&) const;
     String responseText(ExceptionCode&);
     Document* responseXML(ExceptionCode&);
-    Document* optionalResponseXML() const { return m_responseXML.get(); }
+    Document* optionalResponseXML() const { return m_responseDocument.get(); }
 #if ENABLE(XHR_RESPONSE_BLOB)
     Blob* responseBlob(ExceptionCode&) const;
     Blob* optionalResponseBlob() const { return m_responseBlob.get(); }
@@ -206,7 +206,7 @@ private:
 
     StringBuilder m_responseBuilder;
     mutable bool m_createdDocument;
-    mutable RefPtr<Document> m_responseXML;
+    mutable RefPtr<Document> m_responseDocument;
     
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
     mutable RefPtr<ArrayBuffer> m_responseArrayBuffer;

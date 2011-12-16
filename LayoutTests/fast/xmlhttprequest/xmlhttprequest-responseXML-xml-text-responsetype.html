@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        description('This tests the XMLHttpRequest responseXML loading an XML document with responseType "text".');
+
+        window.jsTestIsAsync = true;
+        var xhr = new XMLHttpRequest(),
+            url = 'resources/xmlhttprequest-get-data.xml',
+            id3;
+        xhr.onload = function() {
+            shouldThrow('xhr.responseXML');
+            finishJSTest();
+        };
+        xhr.onerror = function() {
+            testFailed('The XHR request to an existing resource failed: "' + url + '"');
+            finishJSTest();
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'text';
+        xhr.send(null);
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+</head>
+<body>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

@@ -63,7 +63,7 @@ finish = function()
 
     // Last test - verify that non-attached document does not keep iframe alive even if adoptNode() is used.
     var xhr = new XMLHttpRequest();
-    xhr.open("GET","data:text/html,<html xmlns='http://www.w3.org/1999/xhtml'><body id='body'>Hello</body></html>", false);
+    xhr.open("GET","data:application/xhtml+xml,<html xmlns='http://www.w3.org/1999/xhtml'><body id='body'>Hello</body></html>", false);
     xhr.send(null);
     var doc = xhr.responseXML;
     log(doc.getElementById("body").innerText == "Hello" ? "PASS: XHR-loaded Document is correct." : "FAIL: XHR-loaded document is not correct.");
