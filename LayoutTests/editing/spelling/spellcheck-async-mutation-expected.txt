@@ -1,0 +1,45 @@
+Test for asynchronous spellchecking in case DOM mutation happens. This test checks crash won't happen if DOM mutations happened.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Test Start: 1
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 2
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 3
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 4
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 5
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 6
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 7
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 8
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+
+Test Start: 9
+PASS requestId is >= lastRequestId + 1
+PASS Request has been processed.
+zz zz zz
+
