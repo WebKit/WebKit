@@ -33,6 +33,10 @@
 
 #include "webp/decode.h"
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)
 inline WEBP_CSP_MODE outputMode() { return MODE_RGBA; }
 #else // LITTLE_ENDIAN, output BGRA pixels.
@@ -81,6 +85,9 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 
 bool WEBPImageDecoder::decode(bool onlySize)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("WEBPImageDecoder::decode", this, 0);
+#endif
     if (failed())
         return false;
 

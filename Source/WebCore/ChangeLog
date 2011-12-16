@@ -1,3 +1,29 @@
+2011-12-16  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Add trace events for decoding and drawing images.
+        https://bugs.webkit.org/show_bug.cgi?id=74547
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawResampledBitmap):
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::resizedBitmap):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::decode):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::decode):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::decode):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decode):
+
 2011-12-15  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' in preparation for the GTK+ release.

@@ -50,6 +50,10 @@
 #include "skia/ext/image_operations.h"
 #include "skia/ext/platform_canvas.h"
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 // Used by computeResamplingMode to tell how bitmaps should be resampled.
@@ -166,6 +170,9 @@ static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext
 // scaling or translation.
 static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeImageSkia& bitmap, const SkIRect& srcIRect, const SkRect& destRect)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("drawResampledBitmap", &canvas, 0);
+#endif
     // Apply forward transform to destRect to estimate required size of
     // re-sampled bitmap, and use only in calls required to resize, or that
     // check for the required size.
@@ -212,6 +219,9 @@ static bool hasNon90rotation(PlatformContextSkia* context)
 
 static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, const SkIRect& srcRect, const SkRect& destRect, const SkXfermode::Mode& compOp)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("paintSkBitmap", platformContext, 0);
+#endif
     SkPaint paint;
     paint.setXfermodeMode(compOp);
     paint.setFilterBitmap(true);
@@ -296,6 +306,9 @@ void Image::drawPattern(GraphicsContext* context,
                         CompositeOperator compositeOp,
                         const FloatRect& destRect)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("Image::drawPattern", this, 0);
+#endif
     FloatRect normSrcRect = normalizeRect(floatSrcRect);
     if (destRect.isEmpty() || normSrcRect.isEmpty())
         return; // nothing to draw

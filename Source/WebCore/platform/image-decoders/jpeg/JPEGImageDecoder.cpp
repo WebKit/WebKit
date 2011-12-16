@@ -42,6 +42,10 @@
 #include <stdio.h>  // Needed by jpeglib.h for FILE.
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 #if OS(WINCE)
 // Remove warning: 'FAR' macro redefinition
 #undef FAR
@@ -561,6 +565,9 @@ void JPEGImageDecoder::jpegComplete()
 
 void JPEGImageDecoder::decode(bool onlySize)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("JPEGImageDecoder::decode", this, 0);
+#endif
     if (failed())
         return;
 

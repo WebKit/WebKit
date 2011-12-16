@@ -29,6 +29,10 @@
 #include "GIFImageReader.h"
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 GIFImageDecoder::GIFImageDecoder(ImageSource::AlphaOption alphaOption,
@@ -310,6 +314,9 @@ void GIFImageDecoder::gifComplete()
 
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("GIFImageDecoder::decode", this, 0);
+#endif
     if (failed())
         return;
 

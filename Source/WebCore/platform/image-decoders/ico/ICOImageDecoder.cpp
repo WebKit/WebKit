@@ -37,6 +37,10 @@
 #include "PNGImageDecoder.h"
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 // Number of bits in .ICO/.CUR used to store the directory and its entries,
@@ -153,6 +157,9 @@ void ICOImageDecoder::setDataForPNGDecoderAtIndex(size_t index)
 
 void ICOImageDecoder::decode(size_t index, bool onlySize)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("ICOImageDecoder::decode", this, 0);
+#endif
     if (failed())
         return;
 

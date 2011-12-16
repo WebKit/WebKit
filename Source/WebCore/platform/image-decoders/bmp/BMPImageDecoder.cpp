@@ -34,6 +34,10 @@
 #include "BMPImageReader.h"
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 // Number of bits in .BMP used to store the file header (doesn't match
@@ -90,6 +94,9 @@ bool BMPImageDecoder::setFailed()
 
 void BMPImageDecoder::decode(bool onlySize)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("BMPImageDecoder::decode", this, 0);
+#endif
     if (failed())
         return;
 

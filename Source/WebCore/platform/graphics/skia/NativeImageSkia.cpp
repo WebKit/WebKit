@@ -36,6 +36,10 @@
 #include "GraphicsContext3D.h"
 #include "SkiaUtils.h"
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 NativeImageSkia::NativeImageSkia()
@@ -70,6 +74,9 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
                                         int destHeight,
                                         const SkIRect& destVisibleSubset) const
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("NativeImageSkia::resizedBitmap", const_cast<NativeImageSkia*>(this), 0);
+#endif
     if (!hasResizedBitmap(srcSubset, destWidth, destHeight)) {
         bool shouldCache = m_isDataComplete
             && shouldCacheResampling(srcSubset, destWidth, destHeight, destVisibleSubset);
@@ -77,12 +84,18 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
         SkBitmap subset;
         m_image.extractSubset(&subset, srcSubset);
         if (!shouldCache) {
+#if PLATFORM(CHROMIUM)
+            TRACE_EVENT("nonCachedResize", const_cast<NativeImageSkia*>(this), 0);
+#endif
             // Just resize the visible subset and return it.
             SkBitmap resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight, destVisibleSubset);
             return resizedImage;
+        } else {
+#if PLATFORM(CHROMIUM)
+            TRACE_EVENT("cachedResize", const_cast<NativeImageSkia*>(this), 0);
+#endif
+            m_resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight);
         }
-
-        m_resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight);
     }
 
     SkBitmap visibleBitmap;

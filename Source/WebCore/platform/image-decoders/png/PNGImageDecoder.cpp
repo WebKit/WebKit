@@ -43,6 +43,10 @@
 #include "png.h"
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 #if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 4))
 #define JMPBUF(png_ptr) png_jmpbuf(png_ptr)
 #else
@@ -426,6 +430,9 @@ void PNGImageDecoder::pngComplete()
 
 void PNGImageDecoder::decode(bool onlySize)
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT("PNGImageDecoder::decode", this, 0);
+#endif
     if (failed())
         return;
 
