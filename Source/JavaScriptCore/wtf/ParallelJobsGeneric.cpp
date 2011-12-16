@@ -66,7 +66,7 @@ ParallelEnvironment::ParallelEnvironment(ThreadFunction threadFunction, size_t s
     int maxNumberOfNewThreads = requestedJobNumber - 1;
 
     for (int i = 0; i < s_maxNumberOfParallelThreads && m_threads.size() < static_cast<unsigned>(maxNumberOfNewThreads); ++i) {
-        if (s_threadPool->size() < i + 1)
+        if (s_threadPool->size() < static_cast<unsigned>(i) + 1U)
             s_threadPool->append(ThreadPrivate::create());
 
         if ((*s_threadPool)[i]->tryLockFor(this))

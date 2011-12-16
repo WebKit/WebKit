@@ -2655,17 +2655,17 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ScopeChainNode* scopeChain = callFrame->scopeChain();
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator end = scopeChain->end();
-        ASSERT(iter != end);
+        ASSERT_UNUSED(end, iter != end);
         ASSERT(codeBlock == callFrame->codeBlock());
         bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
         ASSERT(skip || !checkTopLevel);
-    if (checkTopLevel && skip--) {
+        if (checkTopLevel && skip--) {
             if (callFrame->r(codeBlock->activationRegister()).jsValue())
                 ++iter;
         }
         while (skip--) {
             ++iter;
-            ASSERT(iter != end);
+            ASSERT_UNUSED(end, iter != end);
         }
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(iter->get());
@@ -2686,16 +2686,16 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator end = scopeChain->end();
         ASSERT(codeBlock == callFrame->codeBlock());
-        ASSERT(iter != end);
+        ASSERT_UNUSED(end, iter != end);
         bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
         ASSERT(skip || !checkTopLevel);
-    if (checkTopLevel && skip--) {
+        if (checkTopLevel && skip--) {
             if (callFrame->r(codeBlock->activationRegister()).jsValue())
                 ++iter;
         }
         while (skip--) {
             ++iter;
-            ASSERT(iter != end);
+            ASSERT_UNUSED(end, iter != end);
         }
 
         ASSERT((*iter)->isVariableObject());
