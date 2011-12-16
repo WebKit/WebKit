@@ -30,6 +30,7 @@ function Buildbot(baseURL) {
 
 Buildbot.prototype = {
     _builders: {},
+    _resultsDirectory: 'results/',
 
     buildURL: function(builderName, buildName) {
         return this.baseURL + 'builders/' + builderName + '/builds/' + buildName;
@@ -49,7 +50,7 @@ Buildbot.prototype = {
         }
 
         var self = this;
-        getResource(this.baseURL + 'results/', function(xhr) {
+        getResource(this.baseURL + this._resultsDirectory, function(xhr) {
             var root = document.createElement('html');
             root.innerHTML = xhr.responseText;
             var names = Array.prototype.map.call(root.querySelectorAll('td:first-child > a > b'), function(elem) {
@@ -69,7 +70,7 @@ Buildbot.prototype = {
     },
 
     resultsDirectoryURL: function(builderName, buildName) {
-        return this.baseURL + 'results/' + encodeURIComponent(builderName) + '/' + encodeURIComponent(buildName) + '/';
+        return this.baseURL + this._resultsDirectory + encodeURIComponent(builderName) + '/' + encodeURIComponent(buildName) + '/';
     },
 
     _buildersForNames: function(names) {
