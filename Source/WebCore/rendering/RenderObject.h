@@ -371,6 +371,7 @@ public:
 
     bool hasCounterNodeMap() const { return m_bitfields.hasCounterNodeMap(); }
     void setHasCounterNodeMap(bool hasCounterNodeMap) { m_bitfields.setHasCounterNodeMap(hasCounterNodeMap); }
+    bool everHadLayout() const { return m_bitfields.everHadLayout(); }
 
     bool childrenInline() const { return m_bitfields.childrenInline(); }
     void setChildrenInline(bool b) { m_bitfields.setChildrenInline(b); }
@@ -852,8 +853,6 @@ public:
     }
 
 protected:
-    bool everHadLayout() const { return m_bitfields.everHadLayout(); }
-
     // Overrides should call the superclass at the end
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     // Overrides should call the superclass at the start
