@@ -1,3 +1,13 @@
+2011-12-15  Daniel Sievers  <sievers@chromium.org>
+
+        [Chromium] Avoid strdup() for extra argument when tracing is disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=74637
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/TraceEvent.h:
+        (WebCore::internal::ScopeTracer::ScopeTracer):
+
 2011-12-15  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Add a document-level flag that can trivially be checked to avoid doing unnessary work if mutation observers absent

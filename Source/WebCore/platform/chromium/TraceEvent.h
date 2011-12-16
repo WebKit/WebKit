@@ -59,7 +59,7 @@ inline ScopeTracer::ScopeTracer(const char* name, void* id, const char* extra)
     , m_id(id)
 {
     PlatformSupport::traceEventBegin(name, id, extra); \
-    if (extra)
+    if (extra && PlatformSupport::isTraceEventEnabled())
         m_extra = adoptArrayPtr(strdup(extra));
 }
 
