@@ -27,6 +27,8 @@
 #define TiledCoreAnimationDrawingArea_h
 
 #include "DrawingArea.h"
+#include <WebCore/LayerFlushScheduler.h>
+#include <WebCore/LayerFlushSchedulerClient.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
@@ -36,7 +38,7 @@ typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
 
 namespace WebKit {
 
-class TiledCoreAnimationDrawingArea : public DrawingArea {
+class TiledCoreAnimationDrawingArea : public DrawingArea, private WebCore::LayerFlushSchedulerClient {
 public:
     static PassOwnPtr<TiledCoreAnimationDrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~TiledCoreAnimationDrawingArea();
@@ -51,14 +53,16 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerSync() OVERRIDE;
 
+    // WebCore::LayerFlushSchedulerClient
+    virtual bool flushLayers() OVERRIDE;
+
     // Message handlers.
     virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
 
+    WebCore::LayerFlushScheduler m_layerFlushScheduler;
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
 
     RetainPtr<CALayer> m_rootLayer;
-
-    RetainPtr<WKContentLayer> m_contentLayer;
 };
 
 } // namespace WebKit

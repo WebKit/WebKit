@@ -31,7 +31,12 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/Page.h>
+#import <WebCore/ScrollingCoordinator.h>
+#import <WebCore/Settings.h>
 #import <WebKitSystemInterface.h>
 
 @interface CATransaction (Details)
@@ -39,37 +44,6 @@
 @end
 
 using namespace WebCore;
-
-@interface WKContentLayer : CALayer {
-    WebKit::WebPage *_webPage;
-}
-
-- (id)initWithWebPage:(WebKit::WebPage *)webPage;
-
-@end
-
-@implementation WKContentLayer
-
-- (id)initWithWebPage:(WebKit::WebPage *)webPage
-{
-    self = [super init];
-    if (self)
-        self->_webPage = webPage;
-
-    return self;
-}
-
-- (void)drawInContext:(CGContextRef)context
-{
-    _webPage->layoutIfNeeded();
-
-    CGRect clipRect = CGContextGetClipBoundingBox(context);
-
-    GraphicsContext graphicsContext(context);
-    _webPage->drawRect(graphicsContext, enclosingIntRect(NSRectFromCGRect(clipRect)));
-}
-
-@end
 
 namespace WebKit {
 
@@ -80,7 +54,11 @@ PassOwnPtr<TiledCoreAnimationDrawingArea> TiledCoreAnimationDrawingArea::create(
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, webPage)
+    , m_layerFlushScheduler(this)
 {
+    // FIXME: It's weird that we're mucking around with the settings here.
+    webPage->corePage()->settings()->setForceCompositingMode(true);
+
     m_rootLayer = [CALayer layer];
 
     CGRect rootLayerFrame = m_webPage->bounds();
@@ -90,11 +68,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 
     // Give the root layer a background color so it's visible on screen.
     m_rootLayer.get().backgroundColor = CGColorCreateGenericRGB(1, 0, 0, 1);
-
-    m_contentLayer.adoptNS([[WKContentLayer alloc] initWithWebPage:webPage]);
-    m_contentLayer.get().frame = m_rootLayer.get().frame;
-
-    [m_rootLayer.get() addSublayer:m_contentLayer.get()];
 
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
@@ -107,27 +80,44 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
+    m_layerFlushScheduler.invalidate();
 }
 
 void TiledCoreAnimationDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
-    [m_contentLayer.get() setNeedsDisplayInRect:rect];
 }
 
 void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    [m_contentLayer.get() setNeedsDisplayInRect:scrollRect];
 }
 
-void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer*)
+void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
-    // FIXME: Implement.
+    if (!graphicsLayer) {
+        m_rootLayer.get().sublayers = nil;
+        return;
+    }
+
+    m_rootLayer.get().sublayers = [NSArray arrayWithObject:graphicsLayer->platformLayer()];
 }
 
 void TiledCoreAnimationDrawingArea::scheduleCompositingLayerSync()
 {
+    m_layerFlushScheduler.schedule();
     // FIXME: Implement
 }
+
+bool TiledCoreAnimationDrawingArea::flushLayers()
+{
+    // This gets called outside of the normal event loop so wrap in an autorelease pool
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    bool returnValue = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+
+    [pool drain];
+    return returnValue;
+}
+
 
 void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 {
@@ -138,7 +128,6 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     [CATransaction setDisableActions:YES];
 
     m_rootLayer.get().frame = CGRectMake(0, 0, viewSize.width(), viewSize.height());
-    m_contentLayer.get().frame = CGRectMake(0, 0, viewSize.width(), viewSize.height());
 
     [CATransaction commit];
     
