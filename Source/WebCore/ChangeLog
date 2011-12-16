@@ -1,3 +1,21 @@
+2011-12-15  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream FileSystemBlackBerry.cpp into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=74491
+
+        Reviewed by Rob Buis.
+
+        We are using POSIX porting of FileSystem, so here only implement other 
+        necessary functions.
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/FileSystemBlackBerry.cpp: Added.
+        (WebCore::homeDirectoryPath):
+        (WebCore::fileSystemRepresentation):
+        (WebCore::unloadModule):
+        (WebCore::openTemporaryFile):
+
 2011-12-15  Adrienne Walker  <enne@google.com>
 
         [chromium] Clean up unnecessary leaf functions in GraphicsLayerChromium
