@@ -4018,3 +4018,5 @@ BUGWK74662 MAC : fast/text/unicode-variation-selector.html = PASS CRASH
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
 
 BUGWK74688 : fast/css/bidi-override-in-anonymous-block.html = TEXT
+
+BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE
