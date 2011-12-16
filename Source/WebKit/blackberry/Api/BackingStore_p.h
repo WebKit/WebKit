@@ -110,6 +110,8 @@ public:
     // the minimum number of tiles required to scroll.
     bool shouldDirectRenderingToWindow() const;
 
+    bool isSuspended() const { return m_suspendBackingStoreUpdates; }
+
     // Suspends all screen updates so that 'blitContents' is disabled.
     void suspendScreenAndBackingStoreUpdates();
 
@@ -180,8 +182,8 @@ public:
     void requestLayoutIfNeeded() const;
 
     // Helper render methods.
-    void renderVisibleContents();
-    void renderBackingStore();
+    bool renderVisibleContents();
+    bool renderBackingStore();
     void blitVisibleContents(bool force = false);
 
     // Assumes the rect to be in window/viewport coordinates.

@@ -333,8 +333,8 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
 #endif
 
         if (immediate) {
-            render(rect);
-            blitVisibleContents();
+            if (render(rect))
+                blitVisibleContents();
         } else
             m_renderQueue->addToQueue(RenderQueue::RegularRender, rect);
     }
@@ -354,8 +354,8 @@ void BackingStorePrivate::slowScroll(const Platform::IntSize& delta, const Platf
     Platform::IntRect rect = m_webPage->d->mapToTransformed(m_client->mapFromViewportToContents(windowRect));
 
     if (immediate) {
-        render(rect);
-        blitVisibleContents();
+        if (render(rect) && !isSuspended())
+            blitVisibleContents();
     } else {
         m_renderQueue->addToQueue(RenderQueue::VisibleScroll, rect);
         // We only blit here if the client did not generate the scroll as the client
@@ -1087,16 +1087,19 @@ void BackingStorePrivate::requestLayoutIfNeeded() const
     m_webPage->d->requestLayoutIfNeeded();
 }
 
-void BackingStorePrivate::renderVisibleContents()
+bool BackingStorePrivate::renderVisibleContents()
 {
     Platform::IntRect renderRect = shouldDirectRenderingToWindow() ? visibleContentsRect() : visibleTilesRect();
-    render(renderRect);
-    m_renderQueue->clear(renderRect, true /*clearRegularRenderJobs*/);
+    if (render(renderRect)) {
+        m_renderQueue->clear(renderRect, true /*clearRegularRenderJobs*/);
+        return true;
+    }
+    return false;
 }
 
-void BackingStorePrivate::renderBackingStore()
+bool BackingStorePrivate::renderBackingStore()
 {
-    render(frontState()->backingStoreRect());
+    return render(frontState()->backingStoreRect());
 }
 
 void BackingStorePrivate::blitVisibleContents(bool force)

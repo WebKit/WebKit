@@ -1,3 +1,24 @@
+2011-12-15  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Regression: lots of checkerboarding
+        https://bugs.webkit.org/show_bug.cgi?id=74611
+
+        Reviewed by Daniel Bates.
+
+        Fix a regression caused by r102843 which introduced a lot of unnecessary
+        checkerboarding. R102843 changed behavior by removing a check for blit
+        based on whether the render actually took place and whether the
+        backingstore was in the midst of suspended updates.
+        The initial anthor is Adam Treat <atreat@rim.com>.
+
+        * blackberry/Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::renderVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::renderBackingStore):
+        * blackberry/Api/BackingStore_p.h:
+        (BlackBerry::WebKit::BackingStorePrivate::isSuspended):
+
 2011-12-15  Adam Treat  <atreat@rim.com>
 
         Reviewed by Rob Buis.
