@@ -56,7 +56,7 @@
 #endif
 
 #if PLATFORM(BLACKBERRY)
-#include <BlackBerryPlatformMisc.h>
+#include <BlackBerryPlatformLog.h>
 #endif
 
 extern "C" {

@@ -1,3 +1,15 @@
+2011-12-16  Daniel Bates  <dbates@rim.com>
+
+        Include BlackBerryPlatformLog.h instead of BlackBerryPlatformMisc.h
+
+        Rubber-stamped by Antonio Gomes.
+
+        BlackBerry::Platform::logV() is declared in BlackBerryPlatformLog.h. That is, it isn't
+        declared in BlackBerryPlatformMisc.h. Hence, we should include BlackBerryPlatformLog.h
+        instead of BlackBerryPlatformMisc.h.
+
+        * wtf/Assertions.cpp:
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize destructors
