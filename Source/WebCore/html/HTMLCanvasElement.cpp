@@ -402,6 +402,13 @@ FloatSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize
     return FloatSize(width, height);
 }
 
+FloatSize HTMLCanvasElement::convertDeviceToLogical(const FloatSize& deviceSize) const
+{
+    float width = ceilf(deviceSize.width() / m_deviceScaleFactor);
+    float height = ceilf(deviceSize.height() / m_deviceScaleFactor);
+    return FloatSize(width, height);
+}
+
 SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 {
     return document()->securityOrigin();

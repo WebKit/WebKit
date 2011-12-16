@@ -1361,7 +1361,15 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, float x, flo
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    drawImage(canvas, x, y, canvas->width(), canvas->height(), ec);
+
+    // In order to emulate drawing the result of toDataURL() into the canvas, we
+    // need to deflate the size of the source rectangle by the source canvas's
+    // backing store scale factor.
+    // See https://www.w3.org/Bugs/Public/show_bug.cgi?id=15041 for motivation.
+
+    FloatSize logicalSize = canvas->convertDeviceToLogical(canvas->size());
+
+    drawImage(canvas, 0, 0, logicalSize.width(), logicalSize.height(), x, y, canvas->width(), canvas->height(), ec);
 }
 
 void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas,
@@ -1430,18 +1438,21 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     sourceCanvas->makeRenderingResultsAvailable();
 #endif
 
+    // drawImageBuffer's srcRect is in buffer pixels (backing store pixels, in our case), dstRect is in canvas pixels.
+    FloatRect bufferSrcRect(sourceCanvas->convertLogicalToDevice(srcRect));
+
     if (rectContainsCanvas(dstRect)) {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else if (isFullCanvasCompositeMode(state().m_globalComposite)) {
-        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        fullCanvasCompositedDrawImage(buffer, ColorSpaceDeviceRGB, bufferSrcRect, srcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else if (state().m_globalComposite == CompositeCopy) {
         clearCanvas();
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
         didDrawEntireCanvas();
     } else {
-        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
+        c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, bufferSrcRect, state().m_globalComposite);
         didDraw(dstRect);
     }
 }

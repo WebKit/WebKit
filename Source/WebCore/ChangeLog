@@ -1,3 +1,22 @@
+2011-12-16  Tim Horton  <timothy_horton@apple.com>
+
+        Canvas should respect backing store scale ratio when used as drawImage() source
+        https://bugs.webkit.org/show_bug.cgi?id=74758
+        <rdar://problem/10350194>
+
+        Reviewed by Simon Fraser.
+
+        Interpret the source rectangle passed into drawImage() when using a Canvas source in the source Canvas coordinate space,
+        instead of in the backing store coordinate space, without changing the behavior of drawImage(canvas, x, y).
+
+        No new tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::convertDeviceToLogical):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+
 2011-12-16  Anders Carlsson  <andersca@apple.com>
 
         Subpixel antialiasing not working in tiled mode

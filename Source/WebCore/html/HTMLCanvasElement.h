@@ -115,6 +115,8 @@ public:
     FloatRect convertLogicalToDevice(const FloatRect&) const;
     FloatSize convertLogicalToDevice(const FloatSize&) const;
 
+    FloatSize convertDeviceToLogical(const FloatSize&) const;
+
     SecurityOrigin* securityOrigin() const;
     void setOriginTainted() { m_originClean = false; }
     bool originClean() const { return m_originClean; }
