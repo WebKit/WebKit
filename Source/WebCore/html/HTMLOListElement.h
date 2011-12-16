@@ -32,16 +32,36 @@ public:
     static PassRefPtr<HTMLOListElement> create(Document*);
     static PassRefPtr<HTMLOListElement> create(const QualifiedName&, Document*);
 
-    int start() const { return m_start; }
+    int start() const { return m_hasExplicitStart ? m_start : (m_isReversed ? itemCount() : 1); }
     void setStart(int);
+
+    bool isReversed() const { return m_isReversed; }
+
+    void itemCountChanged() { m_shouldRecalculateItemCount = true; }
 
 private:
     HTMLOListElement(const QualifiedName&, Document*);
         
+    void updateItemValues();
+
+    unsigned itemCount() const
+    {
+        if (m_shouldRecalculateItemCount)
+            const_cast<HTMLOListElement*>(this)->recalculateItemCount();
+        return m_itemCount;
+    }
+
+    void recalculateItemCount();
+
     virtual bool mapToEntry(const QualifiedName&, MappedAttributeEntry&) const;
     virtual void parseMappedAttribute(Attribute*);
 
     int m_start;
+    unsigned m_itemCount;
+
+    bool m_hasExplicitStart : 1;
+    bool m_isReversed : 1;
+    bool m_shouldRecalculateItemCount : 1;
 };
 
 

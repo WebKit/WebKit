@@ -101,14 +101,35 @@ static Node* enclosingList(const RenderListItem* listItem)
     return firstNode;
 }
 
-static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
+RenderListItem* RenderListItem::nextListItem(RenderObject* list, const RenderListItem* item)
 {
-    for (RenderObject* renderer = item->previousInPreOrder(); renderer && renderer != list->renderer(); renderer = renderer->previousInPreOrder()) {
+    if (!list)
+        return 0;
+
+    RenderObject* renderer = item ? item->nextInPreOrder(list) : list->nextInPreOrder(list);
+    while (renderer) {
+        if (renderer->node() && isList(renderer->node())) {
+            // We've found a nested, independent list: nothing to do here.
+            renderer = renderer->nextInPreOrderAfterChildren(list);
+            continue;
+        }
+
+        if (renderer->isListItem())
+            return toRenderListItem(renderer);
+
+        renderer = renderer->nextInPreOrder(list);
+    }
+    return 0;
+}
+
+static RenderListItem* previousListItem(RenderObject* list, const RenderListItem* item)
+{
+    for (RenderObject* renderer = item->previousInPreOrder(); renderer && renderer != list; renderer = renderer->previousInPreOrder()) {
         if (!renderer->isListItem())
             continue;
         Node* otherList = enclosingList(toRenderListItem(renderer));
         // This item is part of our current list, so it's what we're looking for.
-        if (list == otherList)
+        if (list->node() == otherList)
             return toRenderListItem(renderer);
         // We found ourself inside another list; lets skip the rest of it.
         // Use nextInPreOrder() here because the other list itself may actually
@@ -124,13 +145,22 @@ inline int RenderListItem::calcValue() const
 {
     if (m_hasExplicitValue)
         return m_explicitValue;
+
     Node* list = enclosingList(this);
+    RenderObject* listRenderer = list ? list->renderer() : 0;
+    HTMLOListElement* oListElement = (list && list->hasTagName(olTag)) ? static_cast<HTMLOListElement*>(list) : 0;
+    int valueStep = 1;
+    if (oListElement && oListElement->isReversed())
+        valueStep = -1;
+
     // FIXME: This recurses to a possible depth of the length of the list.
     // That's not good -- we need to change this to an iterative algorithm.
-    if (RenderListItem* previousItem = previousListItem(list, this))
-        return previousItem->value() + 1;
-    if (list && list->hasTagName(olTag))
-        return static_cast<HTMLOListElement*>(list)->start();
+    if (RenderListItem* previousItem = previousListItem(listRenderer, this))
+        return previousItem->value() + valueStep;
+
+    if (oListElement)
+        return oListElement->start();
+
     return 1;
 }
 
@@ -392,15 +422,8 @@ void RenderListItem::explicitValueChanged()
     RenderObject* listRenderer = 0;
     if (listNode)
         listRenderer = listNode->renderer();
-    for (RenderObject* renderer = this; renderer; renderer = renderer->nextInPreOrder(listRenderer))
-        if (renderer->isListItem()) {
-            RenderListItem* item = toRenderListItem(renderer);
-            if (!item->m_hasExplicitValue) {
-                item->m_isValueUpToDate = false;
-                if (RenderListMarker* marker = item->m_marker)
-                    marker->setNeedsLayoutAndPrefWidthsRecalc();
-            }
-        }
+    for (RenderListItem* item = this; item; item = nextListItem(listRenderer, item))
+        item->updateValue();
 }
 
 void RenderListItem::setExplicitValue(int value)
@@ -426,6 +449,11 @@ void RenderListItem::clearExplicitValue()
     explicitValueChanged();
 }
 
+static RenderListItem* previousOrNextItem(bool isListReversed, RenderObject* list, RenderListItem* item)
+{
+    return isListReversed ? previousListItem(list, item) : RenderListItem::nextListItem(list, item);
+}
+
 void RenderListItem::updateListMarkerNumbers()
 {
     Node* listNode = enclosingList(this);
@@ -433,30 +461,22 @@ void RenderListItem::updateListMarkerNumbers()
     if (!listNode || !listNode->renderer())
         return;
 
+    bool isListReversed = false;
     RenderObject* list = listNode->renderer();
-    RenderObject* child = nextInPreOrder(list);
-    while (child) {
-        if (child->node() && isList(child->node())) {
-            // We've found a nested, independent list: nothing to do here.
-            child = child->nextInPreOrderAfterChildren(list);
-            continue;
+    HTMLOListElement* oListElement = (listNode && listNode->hasTagName(olTag)) ? static_cast<HTMLOListElement*>(listNode) : 0;
+    if (oListElement) {
+        oListElement->itemCountChanged();
+        isListReversed = oListElement->isReversed();
+    }
+    for (RenderListItem* item = previousOrNextItem(isListReversed, list, this); item; item = previousOrNextItem(isListReversed, list, item)) {
+        if (!item->m_isValueUpToDate) {
+            // If an item has been marked for update before, we can safely
+            // assume that all the following ones have too.
+            // This gives us the opportunity to stop here and avoid
+            // marking the same nodes again.
+            break;
         }
-
-        if (child->isListItem()) {
-            RenderListItem* item = toRenderListItem(child);
-
-            if (!item->m_isValueUpToDate) {
-                // If an item has been marked for update before, we can safely
-                // assume that all the following ones have too.
-                // This gives us the opportunity to stop here and avoid
-                // marking the same nodes again.
-                break;
-            }
-
-            item->updateValue();
-        }
-
-        child = child->nextInPreOrder(list);
+        item->updateValue();
     }
 }
 

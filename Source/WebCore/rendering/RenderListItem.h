@@ -49,6 +49,8 @@ public:
 
     void updateListMarkerNumbers();
 
+    static RenderListItem* nextListItem(RenderObject* listRenderer, const RenderListItem* = 0);
+
 private:
     virtual const char* renderName() const { return "RenderListItem"; }
 

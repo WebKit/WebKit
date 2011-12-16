@@ -1,3 +1,41 @@
+2011-12-16  Alexis Menard  <alexis.menard@openbossa.org>, Jakub Wieczorek  <jwieczorek@webkit.org>
+
+        Add support for <ol reversed>.
+        https://bugs.webkit.org/show_bug.cgi?id=36724
+
+        The reversed attribute makes an ordered list appear with marker values
+        decreasing from n, where n is the number of items.
+        See: http://www.whatwg.org/specs/web-apps/current-work/#attr-ol-reversed
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/lists/ol-reversed-dynamic-simple.html
+               fast/lists/ol-reversed-dynamic.html
+               fast/lists/ol-reversed-nested-items.html
+               fast/lists/ol-reversed-nested-list.html
+               fast/lists/ol-reversed-simple.html
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::HTMLOListElement):
+        (WebCore::HTMLOListElement::parseMappedAttribute):
+        (WebCore::HTMLOListElement::updateItemValues):
+        (WebCore::HTMLOListElement::recalculateItemCount):
+        * html/HTMLOListElement.h:
+        (WebCore::HTMLOListElement::start):
+        (WebCore::HTMLOListElement::isReversed):
+        (WebCore::HTMLOListElement::itemCountChanged):
+        (WebCore::HTMLOListElement::itemCount):
+        * html/HTMLOListElement.idl:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::nextListItem):
+        (WebCore::previousListItem):
+        (WebCore::RenderListItem::calcValue):
+        (WebCore::RenderListItem::explicitValueChanged):
+        (WebCore::previousOrNextItem):
+        (WebCore::RenderListItem::updateListMarkerNumbers):
+        * rendering/RenderListItem.h:
+
 2011-12-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Scroll non-visible edit controls and caret into the center of the view when starting typing.
