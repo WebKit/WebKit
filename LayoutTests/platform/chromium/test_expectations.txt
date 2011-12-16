@@ -2339,7 +2339,6 @@ BUGWK45061 : fast/forms/focus2.html = TIMEOUT FAIL
 
 BUGCR54330 MAC : fast/forms/number/input-spinbutton-capturing.html = PASS TEXT
 BUGCR54331 MAC : fast/forms/number/input-number-events.html = PASS TEXT
-BUGCR54333 LINUX WIN : fast/replaced/embed-display-none.html = PASS TIMEOUT
 
 // WebKit r67068
 BUGWK45450 LINUX WIN : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
@@ -4009,8 +4008,7 @@ BUGWK74157 LEOPARD : animations/cross-fade-list-style-image.html = IMAGE+TEXT IM
 BUGWK74157 LEOPARD : animations/cross-fade-webkit-mask-box-image.html = IMAGE+TEXT IMAGE
 BUGWK74157 LEOPARD : animations/cross-fade-webkit-mask-image.html = IMAGE+TEXT IMAGE
 
-
-BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE
+BUGWK74167 WIN LINUX : fast/replaced/width100percent-textarea.html = IMAGE PASS
 
 BUGWK74317 LINUX : transitions/cross-fade-border-image.html = PASS CRASH
 
