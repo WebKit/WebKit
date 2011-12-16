@@ -5498,7 +5498,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 #ifdef BUILDING_ON_LEOPARD
     [viewLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)]; // setGeometryFlipped: doesn't exist on Leopard.
     [self _updateLayerHostingViewPosition];
-#else
+#elsif (BUILDING_ON_SNOW_LEOPARD || BUILDING_ON_LION)
     // Do geometry flipping here, which flips all the compositing layers so they are top-down.
     [viewLayer setGeometryFlipped:YES];
 #endif

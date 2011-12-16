@@ -1,3 +1,15 @@
+2011-12-16  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/10589427> Avoid calling -setGeometryFlipped ourselves on the layer hosting view's layer
+
+        Reviewed by Sam Weinig.
+        
+        Now that we're using a flipped view to host the compositing layers,
+        we should not set geometryFlipped on the root layer ourselves.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attachRootLayer:]):
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize destructors
