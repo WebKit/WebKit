@@ -64,6 +64,10 @@ class MockFileSystem(object):
 
     sep = property(_get_sep, doc="pathname separator")
 
+    def clear_written_files(self):
+        # This function can be used to track what is written between steps in a test.
+        self.written_files = {}
+
     def _raise_not_found(self, path):
         raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
 
@@ -243,8 +247,9 @@ class MockFileSystem(object):
 
     def maybe_make_directory(self, *path):
         norm_path = self.normpath(self.join(*path))
-        if not self.isdir(norm_path):
+        while norm_path and not self.isdir(norm_path):
             self.dirs.add(norm_path)
+            norm_path = self.dirname(norm_path)
 
     def move(self, source, destination):
         if self.files[source] is None:
@@ -275,6 +280,7 @@ class MockFileSystem(object):
         return self.files[path]
 
     def write_binary_file(self, path, contents):
+        # FIXME: should this assert if dirname(path) doesn't exist?
         self.files[path] = contents
         self.written_files[path] = contents
 

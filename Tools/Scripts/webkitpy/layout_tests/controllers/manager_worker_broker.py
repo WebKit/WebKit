@@ -52,7 +52,9 @@ try:
 except ImportError:
     multiprocessing = None
 
-from webkitpy.common.host import Host  # FIXME: This should not be needed!
+# These are needed when workers are launched in new child processes.
+from webkitpy.common.host import Host
+
 from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.views import printing
 
@@ -252,11 +254,13 @@ if multiprocessing:
             self._client = client
 
         def run(self):
-            options = self._options
-            # FIXME: This should get the Host from the owner of this object
-            # so this function can be properly mocked!
+            # We need to create a new Host object here because this is
+            # running in a new process and we can't require the parent's
+            # Host to be pickleable and passed to the child.
             host = Host()
             host._initialize_scm()
+
+            options = self._options
             port_obj = host.port_factory.get(self._platform_name, options)
 
             # The unix multiprocessing implementation clones the

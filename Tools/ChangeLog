@@ -1,3 +1,30 @@
+2011-12-15  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: cleanup prior to systemhostifying the layout_test/port* classes
+        https://bugs.webkit.org/show_bug.cgi?id=74551
+
+        This is some minor cleanup prior to making all of the host/port
+        changes described in bug 74138.
+
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+          - make sure the scm object is initialized with the same mock
+            executive and filesystem objects.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.clear_written_files):
+          - add a routine that will be useful in testing.
+        (MockFileSystem.maybe_make_directory):
+        (MockFileSystem.write_binary_file):
+          - fix bugs to make sure directories are created properly.
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_Process.run):
+          - add clarifying comments.
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        (MockDRTPort.__init__):
+        (MockDRT.__init__):
+          - add clarifying comments.
+
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
         Regression (r102866): Navigating away from or closing a page with a plugin crashes

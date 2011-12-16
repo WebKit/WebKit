@@ -44,7 +44,7 @@ class MockHost(MockSystemHost):
         self.web = MockWeb()
 
         self._checkout = MockCheckout()
-        self._scm = MockSCM()
+        self._scm = MockSCM(filesystem=self.filesystem, executive=self.executive)
         # Various pieces of code (wrongly) call filesystem.chdir(checkout_root).
         # Making the checkout_root exist in the mock filesystem makes that chdir not raise.
         self.filesystem.maybe_make_directory(self._scm.checkout_root)

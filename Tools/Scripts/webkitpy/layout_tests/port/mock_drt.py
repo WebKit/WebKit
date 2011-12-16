@@ -30,15 +30,20 @@
 """
 This is an implementation of the Port interface that overrides other
 ports and changes the Driver binary to "MockDRT".
+
+The MockDRT objects emulate what a real DRT would do. In particular, they
+return the output a real DRT would return for a given test, assuming that
+test actually passes (except for reftests, which currently cause the
+MockDRT to crash).
 """
 
 import base64
 import logging
 import sys
 
-from webkitpy.common.host import Host
+from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.tool.mocktool import MockOptions
-
 
 _log = logging.getLogger(__name__)
 
@@ -51,7 +56,7 @@ class MockDRTPort(object):
         if 'port_name' in kwargs:
             kwargs['port_name'] = kwargs['port_name'][len(prefix):]
         self._host = host
-        self.__delegate = host.port_factory.get(**kwargs)
+        self.__delegate = PortFactory(host).get(**kwargs)
         self.__real_name = prefix + self.__delegate.name()
 
     def real_name(self):
@@ -180,7 +185,7 @@ class MockDRT(object):
         port_name = None
         if options.platform:
             port_name = options.platform
-        self._port = self._host.port_factory.get(port_name, options=options)
+        self._port = PortFactory(host).get(port_name=port_name, options=options)
 
     def run(self):
         while True:
@@ -277,7 +282,6 @@ class MockChromiumDRT(MockDRT):
 
 
 if __name__ == '__main__':
-    # FIXME: Why is this using a real Host object instead of MockHost?
-    host = Host()
-    host._initialize_scm()
-    sys.exit(main(sys.argv[1:], host, sys.stdin, sys.stdout, sys.stderr))
+    # Note that the Mock in MockDRT refers to the fact that it is emulating a
+    # real DRT, and as such, it needs access to a real SystemHost, not a MockSystemHost.
+    sys.exit(main(sys.argv[1:], SystemHost(), sys.stdin, sys.stdout, sys.stderr))
