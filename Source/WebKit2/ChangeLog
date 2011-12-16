@@ -1,3 +1,32 @@
+2011-12-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r102652 and r102717.
+        http://trac.webkit.org/changeset/102652
+        http://trac.webkit.org/changeset/102717
+        https://bugs.webkit.org/show_bug.cgi?id=74674
+
+        Broke too many webs. (Requested by kling on #webkit).
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::windowFrameInScreenCoordinates):
+        (WebKit::WebPage::viewFrameInWindowCoordinates):
+        (WebKit::WebPage::accessibilityPosition):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2011-12-15  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [GTK] New API test for WindowProperties fails

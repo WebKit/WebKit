@@ -289,8 +289,8 @@ public:
     void removePluginView(PluginView*);
 
     bool windowIsVisible() const { return m_windowIsVisible; }
-    const WebCore::FloatRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
-    const WebCore::FloatRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
+    const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
+    const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
 #endif
@@ -356,8 +356,8 @@ public:
 #if PLATFORM(MAC)
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
-    const WebCore::FloatPoint& accessibilityPosition() const { return m_accessibilityPosition; }
-
+    WebCore::IntPoint accessibilityPosition() const { return m_accessibilityPosition; }    
+    
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
     void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, EditorState& newState);
@@ -561,7 +561,7 @@ private:
     void performDictionaryLookupForRange(DictionaryPopupInfo::Type, WebCore::Frame*, WebCore::Range*, NSDictionary *options);
 
     void setWindowIsVisible(bool windowIsVisible);
-    void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
 #endif
 
     void unapplyEditCommand(uint64_t commandID);
@@ -638,14 +638,14 @@ private:
     bool m_isSmartInsertDeleteEnabled;
 
     // The frame of the containing window in screen coordinates.
-    WebCore::FloatRect m_windowFrameInScreenCoordinates;
+    WebCore::IntRect m_windowFrameInScreenCoordinates;
 
     // The frame of the view in window coordinates.
-    WebCore::FloatRect m_viewFrameInWindowCoordinates;
+    WebCore::IntRect m_viewFrameInWindowCoordinates;
 
     // The accessibility position of the view.
-    WebCore::FloatPoint m_accessibilityPosition;
-
+    WebCore::IntPoint m_accessibilityPosition;
+    
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
 

@@ -105,12 +105,6 @@ void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 
 FloatRect WebChromeClient::windowRect()
 {
-#if PLATFORM(MAC)
-    FloatRect cachedWindowFrame(m_page->windowFrameInScreenCoordinates());
-    if (!cachedWindowFrame.isEmpty())
-        return cachedWindowFrame;
-#endif
-
     FloatRect newWindowFrame;
 
     if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetWindowFrame(), Messages::WebPageProxy::GetWindowFrame::Reply(newWindowFrame), m_page->pageID()))
