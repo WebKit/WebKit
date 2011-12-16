@@ -27,6 +27,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
+#include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NodeRenderingContext.h"
 #include "RenderText.h"

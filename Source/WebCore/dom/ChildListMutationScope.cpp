@@ -36,6 +36,7 @@
 
 #include "DocumentFragment.h"
 #include "Element.h"
+#include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "Node.h"
 #include "StaticNodeList.h"

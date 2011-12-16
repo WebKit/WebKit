@@ -527,6 +527,7 @@ SOURCES += \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
     dom/MutationEvent.cpp \
+    dom/MutationObserverInterestGroup.cpp \
     dom/MutationObserverRegistration.cpp \
     dom/MutationRecord.cpp \
     dom/NamedNodeMap.cpp \

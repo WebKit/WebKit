@@ -35,6 +35,7 @@
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StyledElement.h"
 #include "WebKitMutationObserver.h"

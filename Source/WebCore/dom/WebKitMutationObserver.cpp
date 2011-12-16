@@ -40,7 +40,6 @@
 #include "MutationObserverRegistration.h"
 #include "MutationRecord.h"
 #include "Node.h"
-#include "QualifiedName.h"
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {
@@ -84,8 +83,7 @@ void WebKitMutationObserver::observe(Node* node, MutationObserverOptions options
     MutationObserverRegistration* registration = node->registerMutationObserver(this);
     registration->resetObservation(options, attributeFilter);
 
-    if (registration->isSubtree())
-        node->document()->addSubtreeMutationObserverTypes(registration->mutationTypes());
+    node->document()->addMutationObserverTypes(registration->mutationTypes());
 }
 
 void WebKitMutationObserver::disconnect()
@@ -147,55 +145,6 @@ void WebKitMutationObserver::deliverAllMutations()
     }
 
     deliveryInProgress = false;
-}
-
-PassOwnPtr<MutationObserverInterestGroup> MutationObserverInterestGroup::createIfNeeded(Node* target, WebKitMutationObserver::MutationType type, const AtomicString& attributeName, MutationRecordDeliveryOptions oldValueFlag)
-{
-    if (!target->mayHaveMutationObserversOfType(type))
-        return nullptr;
-
-    HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions> observers;
-    target->getRegisteredMutationObserversOfType(observers, type, attributeName);
-    if (observers.isEmpty())
-        return nullptr;
-
-    return adoptPtr(new MutationObserverInterestGroup(observers, oldValueFlag));
-}
-
-MutationObserverInterestGroup::MutationObserverInterestGroup(HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>& observers, MutationRecordDeliveryOptions oldValueFlag)
-    : m_oldValueFlag(oldValueFlag)
-{
-    ASSERT(!observers.isEmpty());
-    m_observers.swap(observers);
-}
-
-bool MutationObserverInterestGroup::isOldValueRequested()
-{
-    for (HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {
-        if (hasOldValue(iter->second))
-            return true;
-    }
-    return false;
-}
-
-void MutationObserverInterestGroup::enqueueMutationRecord(PassRefPtr<MutationRecord> prpMutation)
-{
-    RefPtr<MutationRecord> mutation = prpMutation;
-    RefPtr<MutationRecord> mutationWithNullOldValue;
-    for (HashMap<WebKitMutationObserver*, MutationRecordDeliveryOptions>::iterator iter = m_observers.begin(); iter != m_observers.end(); ++iter) {
-        WebKitMutationObserver* observer = iter->first;
-        if (hasOldValue(iter->second)) {
-            observer->enqueueMutationRecord(mutation);
-            continue;
-        }
-        if (!mutationWithNullOldValue) {
-            if (mutation->oldValue().isNull())
-                mutationWithNullOldValue = mutation;
-            else
-                mutationWithNullOldValue = MutationRecord::createWithNullOldValue(mutation).get();
-        }
-        observer->enqueueMutationRecord(mutationWithNullOldValue);
-    }
 }
 
 } // namespace WebCore

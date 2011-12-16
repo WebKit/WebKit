@@ -382,7 +382,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_compatibilityModeLocked(false)
     , m_domTreeVersion(++s_globalTreeVersion)
 #if ENABLE(MUTATION_OBSERVERS)
-    , m_subtreeMutationObserverTypes(0)
+    , m_mutationObserverTypes(0)
 #endif
     , m_styleSheets(StyleSheetList::create(this))
     , m_readyState(Complete)

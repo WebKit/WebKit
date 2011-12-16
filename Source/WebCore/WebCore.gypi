@@ -5350,6 +5350,8 @@
             'dom/MutationCallback.h',
             'dom/MutationEvent.cpp',
             'dom/MutationEvent.h',
+            'dom/MutationObserverInterestGroup.cpp',
+            'dom/MutationObserverInterestGroup.h',
             'dom/MutationObserverRegistration.cpp',
             'dom/MutationObserverRegistration.h',
             'dom/MutationRecord.cpp',

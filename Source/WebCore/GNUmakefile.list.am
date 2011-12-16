@@ -1281,6 +1281,8 @@ webcore_sources += \
 	Source/WebCore/dom/MutationCallback.h \
 	Source/WebCore/dom/MutationEvent.cpp \
 	Source/WebCore/dom/MutationEvent.h \
+	Source/WebCore/dom/MutationObserverInterestGroup.cpp \
+	Source/WebCore/dom/MutationObserverInterestGroup.h \
 	Source/WebCore/dom/MutationObserverRegistration.cpp \
 	Source/WebCore/dom/MutationObserverRegistration.h \
 	Source/WebCore/dom/MutationRecord.cpp \

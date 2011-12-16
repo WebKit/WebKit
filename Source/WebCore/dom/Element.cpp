@@ -48,6 +48,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
+#include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"

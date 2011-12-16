@@ -1,3 +1,57 @@
+2011-12-15  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Add a document-level flag that can trivially be checked to avoid doing unnessary work if mutation observers absent
+        https://bugs.webkit.org/show_bug.cgi?id=74641
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds a byte of flags to Document, of which three bits are used to signal if any
+        node owned by the document has a Mutation Observer of the given type. This is used to
+        reduce the cost of discovering there are none to a single (inlined) method call and bit-check.
+        Also, a similar byte of flags which was used to optimize a particular case when mutation observers
+        are present has been removed, with the reasoning that we should first focus on minimizing impact on
+        the null-case before optimizing particular in-use cases.
+
+        Also, MutationObserverInterestGroup is broken out into its own file (which probably should have happened
+        earlier, but now avoids a circular header dependency).
+
+        No tests needed. This patch is just a refactor.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSMutableStyleDeclaration.cpp:
+        * dom/CharacterData.cpp:
+        * dom/ChildListMutationScope.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Document::hasMutationObserversOfType):
+        (WebCore::Document::hasMutationObservers):
+        (WebCore::Document::addMutationObserverTypes):
+        * dom/Element.cpp:
+        * dom/MutationObserverInterestGroup.cpp: Added.
+        (WebCore::MutationObserverInterestGroup::createIfNeeded):
+        (WebCore::MutationObserverInterestGroup::MutationObserverInterestGroup):
+        (WebCore::MutationObserverInterestGroup::isOldValueRequested):
+        (WebCore::MutationObserverInterestGroup::enqueueMutationRecord):
+        * dom/MutationObserverInterestGroup.h: Copied from Source/WebCore/dom/WebKitMutationObserver.h.
+        (WebCore::MutationObserverInterestGroup::createForChildListMutation):
+        (WebCore::MutationObserverInterestGroup::createForCharacterDataMutation):
+        (WebCore::MutationObserverInterestGroup::createForAttributesMutation):
+        (WebCore::MutationObserverInterestGroup::hasOldValue):
+        * dom/Node.cpp:
+        (WebCore::Node::didMoveToNewOwnerDocument):
+        (WebCore::Node::getRegisteredMutationObserversOfType):
+        (WebCore::Node::notifyMutationObserversNodeWillDetach):
+        * dom/Node.h:
+        * dom/WebKitMutationObserver.cpp:
+        (WebCore::WebKitMutationObserver::observe):
+        * dom/WebKitMutationObserver.h:
+
 2011-12-15  Adam Barth  <abarth@webkit.org>
 
         <!DOCTYPE html><pre>&#x0a;&#x0a;A</pre> doesn't parse correctly
