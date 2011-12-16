@@ -3505,8 +3505,8 @@ BUGWK65199 : fast/writing-mode/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
-BUGWK65462 VISTA LINUX : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
-BUGWK74694 LINUX : http/tests/cache/history-only-cached-subresource-loads.html = PASS TIMEOUT
+BUGWK65462 VISTA LINUX : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT TEXT
+BUGWK74694 LINUX : http/tests/cache/history-only-cached-subresource-loads.html = PASS TIMEOUT TEXT
 
 BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 
