@@ -33,7 +33,7 @@ if ($option eq "ColorData") {
     my $colorDataGperf             = $ARGV[0];
     shift;
 
-    system("gperf --key-positions=\"*\" -D -s 2 $colorDataGperf > $colorDataGenerated") == 0 || die "calling gperf failed: $?";
+    system("gperf --key-positions=\"*\" -D -s 2 $colorDataGperf --output-file=$colorDataGenerated") == 0 || die "calling gperf failed: $?";
 
 } else {
     die "Unknown option.";

@@ -155,4 +155,4 @@ const char* getValueName(unsigned short id);
 EOF
 close HEADER;
 
-system("gperf --key-positions=\"*\" -D -n -s 2 CSSValueKeywords.gperf > CSSValueKeywords.cpp") == 0 || die "calling gperf failed: $?";
+system("gperf --key-positions=\"*\" -D -n -s 2 CSSValueKeywords.gperf --output-file=CSSValueKeywords.cpp") == 0 || die "calling gperf failed: $?";

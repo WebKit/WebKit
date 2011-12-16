@@ -200,4 +200,4 @@ EOF
 
 close HEADER;
 
-system("gperf --key-positions=\"*\" -D -n -s 2 CSSPropertyNames.gperf > CSSPropertyNames.cpp") == 0 || die "calling gperf failed: $?";
+system("gperf --key-positions=\"*\" -D -n -s 2 CSSPropertyNames.gperf --output-file=CSSPropertyNames.cpp") == 0 || die "calling gperf failed: $?";

@@ -1,3 +1,14 @@
+2011-12-15  Rafael Ávila de Espíndola  <rafael.espindola@gmail.com>
+
+        Don't create empty files on error.
+        https://bugs.webkit.org/show_bug.cgi?id=74373
+
+        Reviewed by Ryosuke Niwa.
+
+        * css/makeprop.pl:
+        * css/makevalues.pl:
+        * make-hash-tools.pl:
+
 2011-12-15  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         PODIntervalTree takes 1.7MB memory on www.nytimes.com.
