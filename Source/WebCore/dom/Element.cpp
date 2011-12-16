@@ -648,7 +648,7 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
     setAttributeInternal(old, name, value);
 }
 
-void Element::setAttributeInternal(Attribute* old, const QualifiedName& name, const AtomicString& value)
+inline void Element::setAttributeInternal(Attribute* old, const QualifiedName& name, const AtomicString& value)
 {
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())

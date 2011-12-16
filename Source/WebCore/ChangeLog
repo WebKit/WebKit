@@ -1,3 +1,21 @@
+2011-12-15  Adam Klein  <adamk@chromium.org>
+
+        Make Element::setAttributeInternal inline in an attempt to avoid function call overhead
+        https://bugs.webkit.org/show_bug.cgi?id=74638
+
+        Reviewed by Andreas Kling.
+
+        In r102695, I factored common code in setAttribute into
+        Element::setAttributeInternal. This may have caused a perf regression
+        due to the extra function call, which inlining should eliminate.
+
+        Running Dromaeo locally suggests that this will improve performance
+        by ~9% on the "dom-attr element.property = value" test (which assigns
+        a value to an element's id).
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+
 2011-12-15  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         Upstream FileSystemBlackBerry.cpp into WebCore/platform/blackberry
