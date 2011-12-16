@@ -197,8 +197,9 @@ namespace WebCore {
         UserMediaClient* userMediaClient() const { return m_userMediaClient; }
 #endif
 #if ENABLE(THREADED_SCROLLING)
-        ScrollingCoordinator* scrollingCoordinator() const { return m_scrollingCoordinator.get(); }
+        ScrollingCoordinator* scrollingCoordinator();
 #endif
+
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
         BackForwardController* backForward() const { return m_backForwardController.get(); }

@@ -373,7 +373,7 @@
 		1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E580CC55213004A2062 /* SQLValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */; };
 		1A2F9D7914968C740065AC63 /* ScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2F9D7714968C740065AC63 /* ScrollingCoordinator.cpp */; };
-		1A2F9D7A14968C740065AC63 /* ScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2F9D7814968C740065AC63 /* ScrollingCoordinator.h */; };
+		1A2F9D7A14968C740065AC63 /* ScrollingCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2F9D7814968C740065AC63 /* ScrollingCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */; };
 		1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */; };
 		1A494BFA0A122F4400FDAFC1 /* JSHTMLElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A494BF80A122F4400FDAFC1 /* JSHTMLElement.cpp */; };

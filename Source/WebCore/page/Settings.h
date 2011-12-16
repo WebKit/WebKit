@@ -509,6 +509,11 @@ namespace WebCore {
         void setPartialSwapEnabled(bool enabled) { m_partialSwapEnabled = enabled; }
         bool partialSwapEnabled() const { return m_partialSwapEnabled; }
 
+#if ENABLE(THREADED_SCROLLING)
+        void setScrollingCoordinatorEnabled(bool enabled) { m_scrollingCoordinatorEnabled = enabled; }
+        bool scrollingCoordinatorEnabled() const { return m_scrollingCoordinatorEnabled; }
+#endif
+
     private:
         Page* m_page;
 
@@ -644,6 +649,10 @@ namespace WebCore {
 #endif
         bool m_perTileDrawingEnabled : 1;
         bool m_partialSwapEnabled : 1;
+
+#if ENABLE(THREADED_SCROLLING)
+        bool m_scrollingCoordinatorEnabled : 1;
+#endif
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

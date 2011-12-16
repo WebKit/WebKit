@@ -91,12 +91,17 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     if (renderer()->isRenderView()) {
         Frame* frame = toRenderView(renderer())->frameView()->frame();
         Page* page = frame ? frame->page() : 0;
-        if (page && frame && page->mainFrame() == frame)
+        if (page && frame && page->mainFrame() == frame) {
             m_isMainFrameRenderViewLayer = true;
+
+#if ENABLE(THREADED_SCROLLING)
+            // FIXME: It's a little weird that we base this decision on whether there's a scrolling coordinator or not.
+            if (page->scrollingCoordinator())
+                m_usingTiledCacheLayer = true;
+#endif
+        }
     }
     
-    m_usingTiledCacheLayer = false; // FIXME: At some point this will test m_isMainFrameRenderViewLayer and check a Setting.
-
     createPrimaryGraphicsLayer();
 }
 

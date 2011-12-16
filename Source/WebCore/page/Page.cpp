@@ -152,9 +152,6 @@ Page::Page(PageClients& pageClients)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClient(pageClients.userMediaClient)
 #endif
-#if ENABLE(THREADED_SCROLLING)
-    , m_scrollingCoordinator(ScrollingCoordinator::create(this))
-#endif
     , m_settings(adoptPtr(new Settings(this)))
     , m_progress(adoptPtr(new ProgressTracker))
     , m_backForwardController(adoptPtr(new BackForwardController(this, pageClients.backForwardClient)))
@@ -227,7 +224,8 @@ Page::~Page()
 #endif
 
 #if ENABLE(THREADED_SCROLLING)
-    m_scrollingCoordinator->pageDestroyed();
+    if (m_scrollingCoordinator)
+        m_scrollingCoordinator->pageDestroyed();
 #endif
 
     backForward()->close();
@@ -236,6 +234,16 @@ Page::~Page()
     pageCounter.decrement();
 #endif
 }
+
+#if ENABLE(THREADED_SCROLLING)
+ScrollingCoordinator* Page::scrollingCoordinator()
+{
+    if (!m_scrollingCoordinator && m_settings->scrollingCoordinatorEnabled())
+        m_scrollingCoordinator = ScrollingCoordinator::create(this);
+
+    return m_scrollingCoordinator.get();
+}
+#endif
 
 struct ViewModeInfo {
     const char* name;

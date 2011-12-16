@@ -1,3 +1,33 @@
+2011-12-15  Anders Carlsson  <andersca@apple.com>
+
+        Lazily create the scrolling coordinator and add a setting for enabling it
+        https://bugs.webkit.org/show_bug.cgi?id=74667
+
+        Reviewed by Darin Adler.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make ScrollingCoordinator.h a private header so it can be used in WebKit.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        Don't create the scrolling coordinator.
+
+        (WebCore::Page::~Page):
+        Check for a null scrolling coordinator.
+
+        (WebCore::Page::scrollingCoordinator):
+        Create the scrolling coordinator lazily.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setScrollingCoordinatorEnabled):
+        (WebCore::Settings::scrollingCoordinatorEnabled):
+        Add a setting for enabling the scrolling coordinator.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        Use a tile cache layer for the main frame when the scrolling coordinator is neabled.
+
 2011-12-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build break when data-transfer-items is enabled.
