@@ -3557,8 +3557,7 @@ BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT CRASH
 BUGWK66900 LINUX DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 BUGWK66900 SNOWLEOPARD CPU-CG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
-BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
-BUGWK66908 LEOPARD GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+BUGWK66908 GPU : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK66908 WIN SNOWLEOPARD : fast/css/font-face-multiple-faces.html = PASS IMAGE+TEXT
