@@ -1,3 +1,14 @@
+2011-12-15  Wei Charles  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Upstream BlackBerry porting of pluginView
+        https://bugs.webkit.org/show_bug.cgi?id=73397
+
+        Reviewed by Daniel Bates.
+
+        No new tests for now.
+
+        * plugins/blackberry/PluginViewBlackBerry.cpp: Added.
+
 2011-12-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Can't pass DOMStringList to IDBDatabase.transaction()
