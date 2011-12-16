@@ -42,7 +42,7 @@ namespace JSC {
         typedef JSCell Base;
 
         static RegExp* create(JSGlobalData&, const UString& pattern, RegExpFlags);
-        ~RegExp();
+        static void destroy(JSCell*);
 
         bool global() const { return m_flags & FlagGlobal; }
         bool ignoreCase() const { return m_flags & FlagIgnoreCase; }

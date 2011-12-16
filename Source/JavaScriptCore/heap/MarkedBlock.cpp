@@ -60,18 +60,17 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, si
     HEAP_LOG_BLOCK_STATE_TRANSITION(this);
 }
 
-inline void MarkedBlock::callDestructor(JSCell* cell, void* jsFinalObjectVPtr)
+inline void MarkedBlock::callDestructor(JSCell* cell)
 {
     // A previous eager sweep may already have run cell's destructor.
     if (cell->isZapped())
         return;
 
-    void* vptr = cell->vptr();
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_heap->m_destroyedTypeCounts.countVPtr(vptr);
 #endif
-    if (vptr != jsFinalObjectVPtr)
-        cell->~JSCell();
+    if (cell->classInfo() != &JSFinalObject::s_info)
+        cell->methodTable()->destroy(cell);
 
     cell->zap();
 }
@@ -85,7 +84,6 @@ MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
     // This is fine, since the allocation code makes no assumptions about the
     // order of the free list.
     FreeCell* head = 0;
-    void* jsFinalObjectVPtr = m_heap->globalData()->jsFinalObjectVPtr;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (blockState == Marked && m_marks.get(i))
             continue;
@@ -95,7 +93,7 @@ MarkedBlock::FreeCell* MarkedBlock::specializedSweep()
             continue;
 
         if (blockState != New)
-            callDestructor(cell, jsFinalObjectVPtr);
+            callDestructor(cell);
 
         if (sweepMode == SweepToFreeList) {
             FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);

@@ -165,7 +165,7 @@ namespace JSC {
         MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize);
         Atom* atoms();
         size_t atomNumber(const void*);
-        void callDestructor(JSCell*, void* jsFinalObjectVPtr);
+        void callDestructor(JSCell*);
         template<BlockState, SweepMode> FreeCell* specializedSweep();
         
 #if ENABLE(GGC)

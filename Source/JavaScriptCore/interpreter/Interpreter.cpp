@@ -506,7 +506,7 @@ CallFrame* loadVarargs(CallFrame* callFrame, RegisterFile* registerFile, JSValue
         return newCallFrame;
     }
 
-    if (isJSArray(&callFrame->globalData(), arguments)) {
+    if (isJSArray(arguments)) {
         JSArray* array = asArray(arguments);
         unsigned argCount = array->length();
         CallFrame* newCallFrame = CallFrame::create(callFrame->registers() + firstFreeRegister + CallFrame::offsetFor(argCount + 1));
@@ -1508,13 +1508,12 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         return;
     }
 
-    JSGlobalData* globalData = &callFrame->globalData();
-    if (isJSArray(globalData, baseValue) && propertyName == callFrame->propertyNames().length) {
+    if (isJSArray(baseValue) && propertyName == callFrame->propertyNames().length) {
         vPC[0] = getOpcode(op_get_array_length);
         return;
     }
 
-    if (isJSString(globalData, baseValue) && propertyName == callFrame->propertyNames().length) {
+    if (isJSString(baseValue) && propertyName == callFrame->propertyNames().length) {
         vPC[0] = getOpcode(op_get_string_length);
         return;
     }
@@ -3218,7 +3217,7 @@ skip_id_custom_self:
 
         int base = vPC[2].u.operand;
         JSValue baseValue = callFrame->r(base).jsValue();
-        if (LIKELY(isJSArray(globalData, baseValue))) {
+        if (LIKELY(isJSArray(baseValue))) {
             int dst = vPC[1].u.operand;
             callFrame->uncheckedR(dst) = jsNumber(asArray(baseValue)->length());
             vPC += OPCODE_LENGTH(op_get_array_length);
@@ -3242,7 +3241,7 @@ skip_id_custom_self:
 
         int base = vPC[2].u.operand;
         JSValue baseValue = callFrame->r(base).jsValue();
-        if (LIKELY(isJSString(globalData, baseValue))) {
+        if (LIKELY(isJSString(baseValue))) {
             int dst = vPC[1].u.operand;
             callFrame->uncheckedR(dst) = jsNumber(asString(baseValue)->length());
             vPC += OPCODE_LENGTH(op_get_string_length);
@@ -3511,15 +3510,15 @@ skip_id_custom_self:
 
         if (LIKELY(subscript.isUInt32())) {
             uint32_t i = subscript.asUInt32();
-            if (isJSArray(globalData, baseValue)) {
+            if (isJSArray(baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
                 if (jsArray->canGetIndex(i))
                     result = jsArray->getIndex(i);
                 else
                     result = jsArray->JSArray::get(callFrame, i);
-            } else if (isJSString(globalData, baseValue) && asString(baseValue)->canGetIndex(i))
+            } else if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
                 result = asString(baseValue)->getIndex(callFrame, i);
-            else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i))
+            else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i))
                 result = asByteArray(baseValue)->getIndex(callFrame, i);
             else
                 result = baseValue.get(callFrame, i);
@@ -3553,13 +3552,13 @@ skip_id_custom_self:
 
         if (LIKELY(subscript.isUInt32())) {
             uint32_t i = subscript.asUInt32();
-            if (isJSArray(globalData, baseValue)) {
+            if (isJSArray(baseValue)) {
                 JSArray* jsArray = asArray(baseValue);
                 if (jsArray->canSetIndex(i))
                     jsArray->setIndex(*globalData, i, callFrame->r(value).jsValue());
                 else
                     jsArray->JSArray::putByIndex(jsArray, callFrame, i, callFrame->r(value).jsValue());
-            } else if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+            } else if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
                 JSByteArray* jsByteArray = asByteArray(baseValue);
                 JSValue jsValue = callFrame->r(value).jsValue();
                 if (jsValue.isInt32())

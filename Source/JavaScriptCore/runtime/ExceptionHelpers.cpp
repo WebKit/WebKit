@@ -41,6 +41,8 @@
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(InterruptedExecutionError);
+
 const ClassInfo InterruptedExecutionError::s_info = { "InterruptedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(InterruptedExecutionError) };
 
 JSValue InterruptedExecutionError::defaultValue(const JSObject*, ExecState* exec, PreferredPrimitiveType hint)
@@ -65,6 +67,8 @@ bool isInterruptedExecutionException(JSValue value)
     return value.inherits(&InterruptedExecutionError::s_info);
 }
 
+
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(TerminatedExecutionError);
 
 const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(TerminatedExecutionError) };
 

@@ -46,6 +46,11 @@ UserObjectImp::~UserObjectImp()
         fJSUserObject->Release();
 }
 
+void UserObjectImp::destroy(JSCell* cell)
+{
+    jsCast<UserObjectImp*>(cell)->UserObjectImp::~UserObjectImp();
+}
+
 CallType UserObjectImp::getCallData(JSCell* cell, CallData& callData)
 {
     UserObjectImp* thisObject = jsCast<UserObjectImp*>(cell);

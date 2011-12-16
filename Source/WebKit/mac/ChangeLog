@@ -1,3 +1,13 @@
+2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize destructors
+        https://bugs.webkit.org/show_bug.cgi?id=74331
+
+        Reviewed by Geoffrey Garen.
+
+        * Plugins/Hosted/ProxyRuntimeObject.h: Remove empty virtual destructor.
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+
 2011-12-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after r102874.

@@ -109,12 +109,6 @@ extern const HashTable regExpPrototypeTable;
 extern const HashTable stringTable;
 extern const HashTable stringConstructorTable;
 
-void* JSGlobalData::jsFinalObjectVPtr;
-void* JSGlobalData::jsArrayVPtr;
-void* JSGlobalData::jsByteArrayVPtr;
-void* JSGlobalData::jsStringVPtr;
-void* JSGlobalData::jsFunctionVPtr;
-
 #if COMPILER(GCC)
 // Work around for gcc trying to coalesce our reads of the various cell vptrs
 #define CLOBBER_MEMORY() do { \
@@ -123,52 +117,6 @@ void* JSGlobalData::jsFunctionVPtr;
 #else
 #define CLOBBER_MEMORY() do { } while (false)
 #endif
-
-void JSGlobalData::storeVPtrs()
-{
-    // Enough storage to fit a JSArray, JSByteArray, JSString, or JSFunction.
-    // COMPILE_ASSERTS below check that this is true.
-    char storage[64];
-
-    COMPILE_ASSERT(sizeof(JSFinalObject) <= sizeof(storage), sizeof_JSFinalObject_must_be_less_than_storage);
-    JSCell* jsFinalObject = new (storage) JSFinalObject(JSFinalObject::VPtrStealingHack);
-    CLOBBER_MEMORY();
-    JSGlobalData::jsFinalObjectVPtr = jsFinalObject->vptr();
-
-    COMPILE_ASSERT(sizeof(JSArray) <= sizeof(storage), sizeof_JSArray_must_be_less_than_storage);
-    JSCell* jsArray = new (storage) JSArray(JSArray::VPtrStealingHack);
-    CLOBBER_MEMORY();
-    JSGlobalData::jsArrayVPtr = jsArray->vptr();
-
-    COMPILE_ASSERT(sizeof(JSByteArray) <= sizeof(storage), sizeof_JSByteArray_must_be_less_than_storage);
-    JSCell* jsByteArray = new (storage) JSByteArray(JSByteArray::VPtrStealingHack);
-    CLOBBER_MEMORY();
-    JSGlobalData::jsByteArrayVPtr = jsByteArray->vptr();
-
-    COMPILE_ASSERT(sizeof(JSString) <= sizeof(storage), sizeof_JSString_must_be_less_than_storage);
-    JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
-    CLOBBER_MEMORY();
-    JSGlobalData::jsStringVPtr = jsString->vptr();
-
-    COMPILE_ASSERT(sizeof(JSFunction) <= sizeof(storage), sizeof_JSFunction_must_be_less_than_storage);
-    JSCell* jsFunction = new (storage) JSFunction(JSCell::VPtrStealingHack);
-    CLOBBER_MEMORY();
-    JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
-
-    // Until we fully remove our reliance on vptrs, we need to make sure that everybody that 
-    // we think has a unique virtual pointer actually does.
-    if (jsFinalObjectVPtr == jsArrayVPtr
-        || jsFinalObjectVPtr == jsByteArrayVPtr
-        || jsFinalObjectVPtr == jsStringVPtr
-        || jsFinalObjectVPtr == jsFunctionVPtr
-        || jsArrayVPtr == jsByteArrayVPtr
-        || jsArrayVPtr == jsStringVPtr
-        || jsArrayVPtr == jsFunctionVPtr
-        || jsByteArrayVPtr == jsStringVPtr
-        || jsByteArrayVPtr == jsFunctionVPtr
-        || jsStringVPtr == jsFunctionVPtr)
-        CRASH();
-}
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
     : globalDataType(globalDataType)

@@ -28,6 +28,8 @@
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(GetterSetter);
+
 const ClassInfo GetterSetter::s_info = { "GetterSetter", 0, 0, 0, CREATE_METHOD_TABLE(GetterSetter) };
 
 void GetterSetter::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -49,17 +49,11 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
-        // Only used to allow us to determine the JSFunction vptr
-        InternalFunction(VPtrStealingHackType);
-
         InternalFunction(JSGlobalObject*, Structure*);
 
         void finishCreation(JSGlobalData&, const Identifier& name);
 
         static CallType getCallData(JSCell*, CallData&);
-
-    private:
-        virtual void vtableAnchor();
     };
 
     InternalFunction* asInternalFunction(JSValue);

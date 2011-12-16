@@ -54,6 +54,11 @@ RuntimeArray::~RuntimeArray()
     delete getConcreteArray();
 }
 
+void RuntimeArray::destroy(JSCell* cell)
+{
+    jsCast<RuntimeArray*>(cell)->RuntimeArray::~RuntimeArray();
+}
+
 JSValue RuntimeArray::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)
 {
     RuntimeArray* thisObj = static_cast<RuntimeArray*>(asObject(slotBase));

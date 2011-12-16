@@ -26,15 +26,12 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(StringObject);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(StringObject);
 
 const ClassInfo StringObject::s_info = { "String", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(StringObject) };
 
 StringObject::StringObject(JSGlobalData& globalData, Structure* structure)
     : JSWrapperObject(globalData, structure)
-{
-}
-
-void StringObject::vtableAnchor()
 {
 }
 

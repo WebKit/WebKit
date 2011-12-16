@@ -45,8 +45,6 @@ namespace JSC {
         {
         }
 
-        virtual ~ScopeChainNode();
-
     protected:
         void finishCreation(JSGlobalData* globalData, JSGlobalObject* globalObject)
         {

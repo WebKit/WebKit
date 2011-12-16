@@ -43,6 +43,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSONObject);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSONObject);
 
 static EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
@@ -495,7 +496,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
     // First time through, initialize.
     if (!m_index) {
         if (m_isArray) {
-            m_isJSArray = isJSArray(&exec->globalData(), m_object.get());
+            m_isJSArray = isJSArray(m_object.get());
             m_size = m_object->get(exec, exec->globalData().propertyNames->length).toUInt32(exec);
             builder.append('[');
         } else {
@@ -669,7 +670,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(isJSArray(&m_exec->globalData(), asObject(inValue)) || asObject(inValue)->inherits(&JSArray::s_info));
+                ASSERT(isJSArray(asObject(inValue)) || asObject(inValue)->inherits(&JSArray::s_info));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
                     return throwError(m_exec, createStackOverflowError(m_exec));
 
@@ -694,7 +695,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     indexStack.removeLast();
                     break;
                 }
-                if (isJSArray(&m_exec->globalData(), array) && array->canGetIndex(index))
+                if (isJSArray(array) && array->canGetIndex(index))
                     inValue = array->getIndex(index);
                 else {
                     PropertySlot slot;
@@ -717,7 +718,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 if (filteredValue.isUndefined())
                     array->methodTable()->deletePropertyByIndex(array, m_exec, indexStack.last());
                 else {
-                    if (isJSArray(&m_exec->globalData(), array) && array->canSetIndex(indexStack.last()))
+                    if (isJSArray(array) && array->canSetIndex(indexStack.last()))
                         array->setIndex(m_exec->globalData(), indexStack.last(), filteredValue);
                     else
                         array->methodTable()->putByIndex(array, m_exec, indexStack.last(), filteredValue);
@@ -730,7 +731,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                ASSERT(!isJSArray(&m_exec->globalData(), asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::s_info));
+                ASSERT(!isJSArray(asObject(inValue)) && !asObject(inValue)->inherits(&JSArray::s_info));
                 if (objectStack.size() + arrayStack.size() > maximumFilterRecursion)
                     return throwError(m_exec, createStackOverflowError(m_exec));
 
@@ -797,7 +798,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     break;
                 }
                 JSObject* object = asObject(inValue);
-                if (isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::s_info))
+                if (isJSArray(object) || object->inherits(&JSArray::s_info))
                     goto arrayStartState;
                 goto objectStartState;
         }

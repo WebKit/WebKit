@@ -28,6 +28,8 @@
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSAPIValueWrapper);
+
 const ClassInfo JSAPIValueWrapper::s_info = { "API Wrapper", 0, 0, 0, CREATE_METHOD_TABLE(JSAPIValueWrapper) };
 
 } // namespace JSC

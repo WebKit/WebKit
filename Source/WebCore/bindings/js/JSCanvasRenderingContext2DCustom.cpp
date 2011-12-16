@@ -154,7 +154,7 @@ JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
 
 void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue value)
 {
-    if (!isJSArray(&exec->globalData(), value))
+    if (!isJSArray(value))
         return;
 
     DashArray dash;

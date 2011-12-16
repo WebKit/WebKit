@@ -48,7 +48,7 @@ namespace JSC {
 
         SymbolTable& symbolTable() const { return *m_symbolTable; }
 
-        virtual ~JSVariableObject();
+        static void destroy(JSCell*);
 
         static NO_RETURN_DUE_TO_ASSERT void putWithAttributes(JSObject*, ExecState*, const Identifier&, JSValue, unsigned attributes);
 

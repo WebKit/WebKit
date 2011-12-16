@@ -24,6 +24,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanObject);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(BooleanObject);
 
 const ClassInfo BooleanObject::s_info = { "Boolean", &JSWrapperObject::s_info, 0, 0, CREATE_METHOD_TABLE(BooleanObject) };
 

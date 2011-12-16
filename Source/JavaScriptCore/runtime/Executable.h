@@ -77,6 +77,8 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
+        static void destroy(JSCell*);
+
         bool isHostFunction() const
         {
             ASSERT((m_numParametersForCall == NUM_PARAMETERS_IS_HOST) == (m_numParametersForConstruct == NUM_PARAMETERS_IS_HOST));
@@ -206,7 +208,7 @@ namespace JSC {
         }
 #endif
 
-        virtual ~NativeExecutable();
+        static void destroy(JSCell*);
 
         NativeFunction function() { return m_function; }
         NativeFunction constructor() { return m_constructor; }
@@ -274,6 +276,8 @@ namespace JSC {
         {
         }
 
+        static void destroy(JSCell*);
+
         const SourceCode& source() { return m_source; }
         intptr_t sourceID() const { return m_source.provider()->asID(); }
         const UString& sourceURL() const { return m_source.provider()->url(); }
@@ -318,7 +322,7 @@ namespace JSC {
     public:
         typedef ScriptExecutable Base;
 
-        virtual ~EvalExecutable();
+        static void destroy(JSCell*);
 
         JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
@@ -391,7 +395,7 @@ namespace JSC {
             return executable;
         }
 
-        virtual ~ProgramExecutable();
+        static void destroy(JSCell*);
 
         JSObject* compile(ExecState* exec, ScopeChainNode* scopeChainNode)
         {
@@ -468,7 +472,7 @@ namespace JSC {
             return executable;
         }
 
-        virtual ~FunctionExecutable();
+        static void destroy(JSCell*);
 
         JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
         {

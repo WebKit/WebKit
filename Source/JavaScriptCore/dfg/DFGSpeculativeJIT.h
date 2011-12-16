@@ -1950,12 +1950,12 @@ private:
     bool compilePeepHoleBranch(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition);
-    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, void* vptr, PredictionChecker);
-    void compileObjectEquality(Node&, void* vptr, PredictionChecker);
+    void compilePeepHoleObjectEquality(Node&, NodeIndex branchNodeIndex, const ClassInfo*, PredictionChecker);
+    void compileObjectEquality(Node&, const ClassInfo*, PredictionChecker);
     void compileValueAdd(Node&);
-    void compileObjectOrOtherLogicalNot(NodeIndex value, void* vptr, bool needSpeculationCheck);
+    void compileObjectOrOtherLogicalNot(NodeIndex value, const ClassInfo*, bool needSpeculationCheck);
     void compileLogicalNot(Node&);
-    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, void *vptr, bool needSpeculationCheck);
+    void emitObjectOrOtherBranch(NodeIndex value, BlockIndex taken, BlockIndex notTaken, const ClassInfo*, bool needSpeculationCheck);
     void emitBranch(Node&);
     
     void compileIntegerCompare(Node&, MacroAssembler::RelationalCondition);
@@ -2011,8 +2011,8 @@ private:
         m_jit.loadPtr(MacroAssembler::Address(resultGPR), scratchGPR);
         m_jit.storePtr(scratchGPR, &sizeClass->firstFreeCell);
         
-        // Initialize the object's vtable
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsFinalObjectVPtr), MacroAssembler::Address(resultGPR));
+        // Initialize the object's classInfo pointer
+        m_jit.storePtr(MacroAssembler::TrustedImmPtr(&JSFinalObject::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));
         
         // Initialize the object's inheritorID.
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));

@@ -50,8 +50,9 @@ RuntimeMethod::RuntimeMethod(JSGlobalObject* globalObject, Structure* structure,
 {
 }
 
-void RuntimeMethod::vtableAnchor()
+void RuntimeMethod::destroy(JSCell* cell)
 {
+    jsCast<RuntimeMethod*>(cell)->RuntimeMethod::~RuntimeMethod();
 }
 
 void RuntimeMethod::finishCreation(JSGlobalData& globalData, const Identifier& ident)

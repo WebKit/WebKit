@@ -29,6 +29,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(NativeErrorConstructor);
 
 const ClassInfo NativeErrorConstructor::s_info = { "Function", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(NativeErrorConstructor) };
 

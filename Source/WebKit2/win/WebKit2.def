@@ -168,6 +168,8 @@ EXPORTS
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
         ?removeShadowRoot@Element@WebCore@@QAEXXZ
+        ?s_info@JSDOMWrapper@WebCore@@2UClassInfo@JSC@@B
+        ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
         ?setShouldLayoutFixedElementsRelativeToFrame@FrameView@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
@@ -189,4 +191,3 @@ EXPORTS
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
-        ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ

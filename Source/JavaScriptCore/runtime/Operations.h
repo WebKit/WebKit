@@ -47,7 +47,7 @@ namespace JSC {
         if ((length1 + length2) < length1)
             return throwOutOfMemoryError(exec);
 
-        return fixupVPtr(&globalData, JSString::create(globalData, s1, s2));
+        return JSString::create(globalData, s1, s2);
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
@@ -69,7 +69,7 @@ namespace JSC {
         if ((length1 + length2 + length3) < length3)
             return throwOutOfMemoryError(exec);
 
-        return fixupVPtr(globalData, JSString::create(exec->globalData(), jsString(globalData, u1), jsString(globalData, u2), jsString(globalData, u3)));
+        return JSString::create(exec->globalData(), jsString(globalData, u1), jsString(globalData, u2), jsString(globalData, u3));
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
@@ -230,8 +230,7 @@ namespace JSC {
         if (v1.isNumber() && v2.isNumber())
             return v1.asNumber() < v2.asNumber();
 
-        JSGlobalData* globalData = &callFrame->globalData();
-        if (isJSString(globalData, v1) && isJSString(globalData, v2))
+        if (isJSString(v1) && isJSString(v2))
             return asString(v1)->value(callFrame) < asString(v2)->value(callFrame);
 
         double n1;
@@ -265,8 +264,7 @@ namespace JSC {
         if (v1.isNumber() && v2.isNumber())
             return v1.asNumber() <= v2.asNumber();
 
-        JSGlobalData* globalData = &callFrame->globalData();
-        if (isJSString(globalData, v1) && isJSString(globalData, v2))
+        if (isJSString(v1) && isJSString(v2))
             return !(asString(v2)->value(callFrame) < asString(v1)->value(callFrame));
 
         double n1;

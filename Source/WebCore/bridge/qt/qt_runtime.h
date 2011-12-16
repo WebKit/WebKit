@@ -133,7 +133,8 @@ class QtRuntimeMethod : public InternalFunction {
 public:
     typedef InternalFunction Base;
 
-    virtual ~QtRuntimeMethod();
+    ~QtRuntimeMethod();
+    static void destroy(JSCell*);
 
     static const ClassInfo s_info;
 

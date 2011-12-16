@@ -46,15 +46,22 @@ ASSERT_CLASS_FITS_IN_CELL(JSObject);
 ASSERT_CLASS_FITS_IN_CELL(JSNonFinalObject);
 ASSERT_CLASS_FITS_IN_CELL(JSFinalObject);
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSObject);
+
 const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
 
 const ClassInfo JSObject::s_info = { "Object", 0, 0, 0, CREATE_METHOD_TABLE(JSObject) };
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFinalObject) };
 
-void JSFinalObject::vtableAnchor()
+void JSFinalObject::destroy(JSCell* cell)
 {
-    printf("Something Visual Studio can't optimize away.\n");
+    jsCast<JSFinalObject*>(cell)->JSFinalObject::~JSFinalObject();
+}
+
+void JSNonFinalObject::destroy(JSCell* cell)
+{
+    jsCast<JSNonFinalObject*>(cell)->JSNonFinalObject::~JSNonFinalObject();
 }
 
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
@@ -81,8 +88,9 @@ void JSObject::finalize(JSCell* cell)
     delete [] jsCast<JSObject*>(cell)->m_propertyStorage.get();
 }
 
-void JSObject::vtableAnchor()
+void JSObject::destroy(JSCell* cell)
 {
+    jsCast<JSObject*>(cell)->JSObject::~JSObject();
 }
 
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

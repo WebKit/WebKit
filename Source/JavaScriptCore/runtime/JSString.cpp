@@ -45,9 +45,10 @@ void JSString::RopeBuilder::expand()
     append(jsString);
 }
 
-JSString::~JSString()
+void JSString::destroy(JSCell* cell)
 {
-    ASSERT(vptr() == JSGlobalData::jsStringVPtr);
+    JSString* thisObject = jsCast<JSString*>(cell);
+    thisObject->JSString::~JSString();
 }
 
 void JSString::visitChildren(JSCell* cell, SlotVisitor& visitor)

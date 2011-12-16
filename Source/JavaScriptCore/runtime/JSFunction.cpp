@@ -73,11 +73,6 @@ JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, in
     return function;
 }
 
-JSFunction::JSFunction(VPtrStealingHackType)
-    : Base(VPtrStealingHack)
-{
-}
-
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : Base(exec->globalData(), structure)
     , m_executable()
@@ -113,14 +108,11 @@ void JSFunction::finishCreation(ExecState* exec, FunctionExecutable* executable,
     putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
-JSFunction::~JSFunction()
+void JSFunction::destroy(JSCell* cell)
 {
-    ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
-}
-
-void JSFunction::vtableAnchor()
-{
-    fprintf(stderr, "We need something here that Visual Studio can't optimize away.\n");
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
+    ASSERT(thisObject->classInfo()->isSubClassOf(&JSFunction::s_info));
+    thisObject->JSFunction::~JSFunction();
 }
 
 void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
@@ -138,7 +130,7 @@ const UString JSFunction::displayName(ExecState* exec)
 {
     JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
     
-    if (displayName && isJSString(&exec->globalData(), displayName))
+    if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
     
     return UString();

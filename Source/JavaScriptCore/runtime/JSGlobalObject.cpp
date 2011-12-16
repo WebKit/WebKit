@@ -122,6 +122,11 @@ JSGlobalObject::~JSGlobalObject()
     }
 }
 
+void JSGlobalObject::destroy(JSCell* cell)
+{
+    jsCast<JSGlobalObject*>(cell)->JSGlobalObject::~JSGlobalObject();
+}
+
 void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());

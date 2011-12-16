@@ -30,8 +30,6 @@ namespace JSC {
     public:
         typedef JSWrapperObject Base;
 
-        virtual void vtableAnchor();
-
         static StringObject* create(ExecState* exec, Structure* structure)
         {
             JSString* string = jsEmptyString(exec);

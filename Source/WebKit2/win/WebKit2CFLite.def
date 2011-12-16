@@ -182,4 +182,3 @@ EXPORTS
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
-        ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ

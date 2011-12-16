@@ -42,7 +42,8 @@ public:
         return constructor;
     }
     
-    virtual ~JSCallbackConstructor();
+    ~JSCallbackConstructor();
+    static void destroy(JSCell*);
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo s_info;

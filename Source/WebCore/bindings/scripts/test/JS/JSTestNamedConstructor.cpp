@@ -32,6 +32,7 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestNamedConstructor);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestNamedConstructor);
 
 /* Hash table for constructor */
 
@@ -50,7 +51,9 @@ static const HashTableValue JSTestNamedConstructorConstructorTableValues[] =
 };
 
 static const HashTable JSTestNamedConstructorConstructorTable = { 1, 0, JSTestNamedConstructorConstructorTableValues, 0 };
-const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &DOMConstructorObject::s_info, &JSTestNamedConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestNamedConstructorConstructor);
+
+const ClassInfo JSTestNamedConstructorConstructor::s_info = { "TestNamedConstructorConstructor", &Base::s_info, &JSTestNamedConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorConstructor) };
 
 JSTestNamedConstructorConstructor::JSTestNamedConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -74,7 +77,7 @@ bool JSTestNamedConstructorConstructor::getOwnPropertyDescriptor(JSObject* objec
     return getStaticValueDescriptor<JSTestNamedConstructorConstructor, JSDOMWrapper>(exec, &JSTestNamedConstructorConstructorTable, static_cast<JSTestNamedConstructorConstructor*>(object), propertyName, descriptor);
 }
 
-const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "AudioConstructor", &DOMConstructorObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
+const ClassInfo JSTestNamedConstructorNamedConstructor::s_info = { "AudioConstructor", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorNamedConstructor) };
 
 JSTestNamedConstructorNamedConstructor::JSTestNamedConstructorNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorWithDocument(structure, globalObject)
@@ -125,14 +128,14 @@ static const HashTableValue JSTestNamedConstructorPrototypeTableValues[] =
 };
 
 static const HashTable JSTestNamedConstructorPrototypeTable = { 1, 0, JSTestNamedConstructorPrototypeTableValues, 0 };
-const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructorPrototype", &JSC::JSNonFinalObject::s_info, &JSTestNamedConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorPrototype) };
+const ClassInfo JSTestNamedConstructorPrototype::s_info = { "TestNamedConstructorPrototype", &Base::s_info, &JSTestNamedConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestNamedConstructorPrototype) };
 
 JSObject* JSTestNamedConstructorPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestNamedConstructor>(exec, globalObject);
 }
 
-const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &JSDOMWrapper::s_info, &JSTestNamedConstructorTable, 0 , CREATE_METHOD_TABLE(JSTestNamedConstructor) };
+const ClassInfo JSTestNamedConstructor::s_info = { "TestNamedConstructor", &Base::s_info, &JSTestNamedConstructorTable, 0 , CREATE_METHOD_TABLE(JSTestNamedConstructor) };
 
 JSTestNamedConstructor::JSTestNamedConstructor(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestNamedConstructor> impl)
     : JSDOMWrapper(structure, globalObject)

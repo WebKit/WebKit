@@ -48,8 +48,6 @@ public:
         return object;
     }
 
-    virtual ~JavaRuntimeObject();
-
     JavaInstance* getInternalJavaInstance() const;
 
     static const ClassInfo s_info;

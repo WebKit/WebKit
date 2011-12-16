@@ -31,6 +31,13 @@
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSCell);
+
+void JSCell::destroy(JSCell* cell)
+{
+    cell->JSCell::~JSCell();
+}
+
 bool JSCell::getString(ExecState* exec, UString&stringValue) const
 {
     if (!isString())

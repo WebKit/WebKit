@@ -39,8 +39,9 @@ StructureChain::StructureChain(JSGlobalData& globalData, Structure* structure)
 {
 }
 
-StructureChain::~StructureChain()
+void StructureChain::destroy(JSCell* cell)
 {
+    jsCast<StructureChain*>(cell)->StructureChain::~StructureChain();
 }
 
 void StructureChain::visitChildren(JSCell* cell, SlotVisitor& visitor)

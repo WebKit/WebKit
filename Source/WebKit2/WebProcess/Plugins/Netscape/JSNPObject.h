@@ -52,6 +52,7 @@ public:
     }
 
     ~JSNPObject();
+    static void destroy(JSCell*);
 
     void invalidate();
 

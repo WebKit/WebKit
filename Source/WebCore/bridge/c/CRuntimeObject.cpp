@@ -48,10 +48,6 @@ void CRuntimeObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-CRuntimeObject::~CRuntimeObject()
-{
-}
-
 CInstance* CRuntimeObject::getInternalCInstance() const
 {
     return static_cast<CInstance*>(getInternalInstance());

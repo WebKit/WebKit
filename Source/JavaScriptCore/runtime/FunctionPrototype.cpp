@@ -33,6 +33,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(FunctionPrototype);
 
 const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionPrototype) };
 
@@ -136,7 +137,7 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
             if (asArguments(array)->length(exec) > Arguments::MaxArguments)
                 return JSValue::encode(throwStackOverflowError(exec));
             asArguments(array)->fillArgList(exec, applyArgs);
-        } else if (isJSArray(&exec->globalData(), array)) {
+        } else if (isJSArray(array)) {
             if (asArray(array)->length() > Arguments::MaxArguments)
                 return JSValue::encode(throwStackOverflowError(exec));
             asArray(array)->fillArgList(exec, applyArgs);

@@ -144,7 +144,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
 {
     JSGlobalData* globalData = &exec->globalData();
 
-    if (isJSArray(globalData, baseValue)) {
+    if (isJSArray(baseValue)) {
         JSArray* array = asArray(baseValue);
         if (array->canSetIndex(index)) {
             array->setIndex(*globalData, index, value);
@@ -155,7 +155,7 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
         return;
     }
 
-    if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(index)) {
+    if (isJSByteArray(baseValue) && asByteArray(baseValue)->canAccessIndex(index)) {
         JSByteArray* byteArray = asByteArray(baseValue);
         // FIXME: the JITstub used to relink this to an optimized form!
         if (value.isInt32()) {
@@ -269,18 +269,16 @@ EncodedJSValue DFG_OPERATION operationValueAddNotNumber(ExecState* exec, Encoded
 
 static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
 {
-    JSGlobalData* globalData = &exec->globalData();
-
     // FIXME: the JIT used to handle these in compiled code!
-    if (isJSArray(globalData, base) && asArray(base)->canGetIndex(index))
+    if (isJSArray(base) && asArray(base)->canGetIndex(index))
         return JSValue::encode(asArray(base)->getIndex(index));
 
     // FIXME: the JITstub used to relink this to an optimized form!
-    if (isJSString(globalData, base) && asString(base)->canGetIndex(index))
+    if (isJSString(base) && asString(base)->canGetIndex(index))
         return JSValue::encode(asString(base)->getIndex(exec, index));
 
     // FIXME: the JITstub used to relink this to an optimized form!
-    if (isJSByteArray(globalData, base) && asByteArray(base)->canAccessIndex(index))
+    if (isJSByteArray(base) && asByteArray(base)->canAccessIndex(index))
         return JSValue::encode(asByteArray(base)->getIndex(exec, index));
 
     return JSValue::encode(JSValue(base).get(exec, index));

@@ -40,11 +40,13 @@ namespace WebCore {
         JSDOMWindowBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWindow>, JSDOMWindowShell*);
         void finishCreation(JSC::JSGlobalData&, JSDOMWindowShell*);
 
+        static void destroy(JSCell*);
+
     public:
         void updateDocument();
 
         DOMWindow* impl() const { return m_impl.get(); }
-        virtual ScriptExecutionContext* scriptExecutionContext() const;
+        ScriptExecutionContext* scriptExecutionContext() const;
 
         // Called just before removing this window from the JSDOMWindowShell.
         void willRemoveFromWindowShell();

@@ -310,7 +310,7 @@ private:
         if (!value.isObject())
             return false;
         JSObject* object = asObject(value);
-        return isJSArray(&m_exec->globalData(), object) || object->inherits(&JSArray::s_info);
+        return isJSArray(object) || object->inherits(&JSArray::s_info);
     }
 
     bool startObjectInternal(JSObject* object)
@@ -357,7 +357,7 @@ private:
     JSValue getSparseIndex(JSArray* array, unsigned propertyName, bool& hasIndex)
     {
         PropertySlot slot(array);
-        if (isJSArray(&m_exec->globalData(), array)) {
+        if (isJSArray(array)) {
             if (JSArray::getOwnPropertySlotByIndex(array, m_exec, propertyName, slot)) {
                 hasIndex = true;
                 return slot.getValue(m_exec, propertyName);

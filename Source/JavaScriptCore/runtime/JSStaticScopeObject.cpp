@@ -34,6 +34,11 @@ ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 
 const ClassInfo JSStaticScopeObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSStaticScopeObject) };
 
+void JSStaticScopeObject::destroy(JSCell* cell)
+{
+    jsCast<JSStaticScopeObject*>(cell)->JSStaticScopeObject::~JSStaticScopeObject();
+}
+
 void JSStaticScopeObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSStaticScopeObject* thisObject = jsCast<JSStaticScopeObject*>(cell);

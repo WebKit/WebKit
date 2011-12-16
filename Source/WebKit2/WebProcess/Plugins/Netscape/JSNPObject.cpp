@@ -74,6 +74,11 @@ JSNPObject::~JSNPObject()
     ASSERT(!m_npObject);
 }
 
+void JSNPObject::destroy(JSCell* cell)
+{
+    jsCast<JSNPObject*>(cell)->JSNPObject::~JSNPObject();
+}
+
 void JSNPObject::invalidate()
 {
     ASSERT(m_npObject);

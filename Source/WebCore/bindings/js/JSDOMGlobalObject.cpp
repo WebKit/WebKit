@@ -49,8 +49,9 @@ JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* struct
 {
 }
 
-JSDOMGlobalObject::~JSDOMGlobalObject()
+void JSDOMGlobalObject::destroy(JSCell* cell)
 {
+    jsCast<JSDOMGlobalObject*>(cell)->JSDOMGlobalObject::~JSDOMGlobalObject();
 }
 
 void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData)
@@ -63,6 +64,18 @@ void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSGlobalThis* t
 {
     Base::finishCreation(globalData, thisValue);
     ASSERT(inherits(&s_info));
+}
+
+ScriptExecutionContext* JSDOMGlobalObject::scriptExecutionContext() const
+{
+    if (inherits(&JSDOMWindowBase::s_info))
+        return jsCast<const JSDOMWindowBase*>(this)->scriptExecutionContext();
+#if ENABLE(WORKERS)
+    if (inherits(&JSWorkerContextBase::s_info))
+        return jsCast<const JSWorkerContextBase*>(this)->scriptExecutionContext();
+#endif
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

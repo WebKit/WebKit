@@ -53,6 +53,11 @@ void DateInstance::finishCreation(JSGlobalData& globalData, double time)
     setInternalValue(globalData, jsNumber(timeClip(time)));
 }
 
+void DateInstance::destroy(JSCell* cell)
+{
+    jsCast<DateInstance*>(cell)->DateInstance::~DateInstance();
+}
+
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exec) const
 {
     double milli = internalNumber();

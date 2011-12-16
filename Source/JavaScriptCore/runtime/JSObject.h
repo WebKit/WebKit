@@ -80,7 +80,7 @@ namespace JSC {
     public:
         typedef JSCell Base;
 
-        virtual void vtableAnchor();
+        static void destroy(JSCell*);
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -243,6 +243,7 @@ namespace JSC {
             ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
             ASSERT_UNUSED(inlineStorage, static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
             ASSERT(structure()->isObject());
+            ASSERT(classInfo());
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
@@ -255,11 +256,6 @@ namespace JSC {
         // To instantiate objects you likely want JSFinalObject, below.
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);
-        JSObject(VPtrStealingHackType, PropertyStorage inlineStorage)
-            : JSCell(VPtrStealingHack)
-            , m_propertyStorage(inlineStorage, StorageBarrier::Unchecked)
-        {
-        }
 
     private:
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
@@ -319,12 +315,9 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
         }
 
+        static void destroy(JSCell*);
+
     protected:
-        explicit JSNonFinalObject(VPtrStealingHackType)
-            : JSObject(VPtrStealingHack, m_inlineStorage)
-        {
-        }
-    
         explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure)
             : JSObject(globalData, structure, m_inlineStorage)
         {
@@ -335,6 +328,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             Base::finishCreation(globalData, m_inlineStorage);
             ASSERT(!(OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage) % sizeof(double)));
             ASSERT(this->structure()->propertyStorageCapacity() == JSNonFinalObject_inlineStorageCapacity);
+            ASSERT(classInfo());
         }
 
     private:
@@ -349,11 +343,6 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
     public:
         typedef JSObject Base;
 
-        explicit JSFinalObject(VPtrStealingHackType)
-            : JSObject(VPtrStealingHack, m_inlineStorage)
-        {
-        }
-        
         static JSFinalObject* create(ExecState* exec, Structure* structure)
         {
             JSFinalObject* finalObject = new (allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
@@ -374,7 +363,10 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
             Base::finishCreation(globalData, m_inlineStorage);
             ASSERT(!(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double)));
             ASSERT(this->structure()->propertyStorageCapacity() == JSFinalObject_inlineStorageCapacity);
+            ASSERT(classInfo());
         }
+
+        static void destroy(JSCell*);
 
     private:
         explicit JSFinalObject(JSGlobalData& globalData, Structure* structure)
@@ -382,12 +374,20 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         {
         }
 
-        virtual void vtableAnchor();
-
         static const unsigned StructureFlags = JSObject::StructureFlags;
 
         WriteBarrierBase<Unknown> m_inlineStorage[JSFinalObject_inlineStorageCapacity];
     };
+
+inline bool isJSFinalObject(JSCell* cell)
+{
+    return cell->classInfo() == &JSFinalObject::s_info;
+}
+
+inline bool isJSFinalObject(JSValue value)
+{
+    return value.isCell() && isJSFinalObject(value.asCell());
+}
 
 inline size_t JSObject::offsetOfInlineStorage()
 {

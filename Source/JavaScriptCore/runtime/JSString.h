@@ -69,6 +69,8 @@ namespace JSC {
 
         typedef JSCell Base;
 
+        static void destroy(JSCell*);
+
         class RopeBuilder {
         public:
             RopeBuilder(JSGlobalData& globalData)
@@ -197,8 +199,6 @@ namespace JSC {
             return newString;
         }
 
-        virtual ~JSString();
-
         const UString& value(ExecState* exec) const
         {
             if (isRope())
@@ -243,11 +243,6 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
     private:
-        JSString(VPtrStealingHackType) 
-            : JSCell(VPtrStealingHack)
-        {
-        }
-
         void resolveRope(ExecState*) const;
         void resolveRopeSlowCase8(LChar*) const;
         void resolveRopeSlowCase(UChar*) const;
@@ -279,16 +274,6 @@ namespace JSC {
 
     JSString* asString(JSValue);
 
-    // When an object is created from a different DLL, MSVC changes vptr to a "local" one right after invoking a constructor,
-    // see <http://groups.google.com/group/microsoft.public.vc.language/msg/55cdcefeaf770212>.
-    // This breaks isJSString(), and we don't need that hack anyway, so we change vptr back to primary one.
-    // The below function must be called by any inline function that invokes a JSString constructor.
-#if COMPILER(MSVC) && !defined(BUILDING_JavaScriptCore)
-    inline JSString* fixupVPtr(JSGlobalData* globalData, JSString* string) { string->setVPtr(globalData->jsStringVPtr); return string; }
-#else
-    inline JSString* fixupVPtr(JSGlobalData*, JSString* string) { return string; }
-#endif
-
     inline JSString* asString(JSValue value)
     {
         ASSERT(value.asCell()->isString());
@@ -304,7 +289,7 @@ namespace JSC {
     {
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
-        return fixupVPtr(globalData, JSString::create(*globalData, UString(&c, 1).impl()));
+        return JSString::create(*globalData, UString(&c, 1).impl());
     }
 
     inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
@@ -314,7 +299,7 @@ namespace JSC {
         UChar c = s[offset];
         if (c <= maxSingleCharacterString)
             return globalData->smallStrings.singleCharacterString(globalData, c);
-        return fixupVPtr(globalData, JSString::create(*globalData, StringImpl::create(s.impl(), offset, 1)));
+        return JSString::create(*globalData, StringImpl::create(s.impl(), offset, 1));
     }
 
     inline JSString* jsNontrivialString(JSGlobalData* globalData, const char* s)
@@ -322,13 +307,13 @@ namespace JSC {
         ASSERT(s);
         ASSERT(s[0]);
         ASSERT(s[1]);
-        return fixupVPtr(globalData, JSString::create(*globalData, UString(s).impl()));
+        return JSString::create(*globalData, UString(s).impl());
     }
 
     inline JSString* jsNontrivialString(JSGlobalData* globalData, const UString& s)
     {
         ASSERT(s.length() > 1);
-        return fixupVPtr(globalData, JSString::create(*globalData, s.impl()));
+        return JSString::create(*globalData, s.impl());
     }
 
     inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
@@ -350,7 +335,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, JSString::create(*globalData, s.impl()));
+        return JSString::create(*globalData, s.impl());
     }
 
     inline JSString* jsSubstring(ExecState* exec, JSString* s, unsigned offset, unsigned length)
@@ -376,7 +361,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, StringImpl::create8(s.impl(), offset, length)));
+        return JSString::createHasOtherOwner(*globalData, StringImpl::create8(s.impl(), offset, length));
     }
 
     inline JSString* jsSubstring(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
@@ -391,7 +376,7 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, StringImpl::create(s.impl(), offset, length)));
+        return JSString::createHasOtherOwner(*globalData, StringImpl::create(s.impl(), offset, length));
     }
 
     inline JSString* jsOwnedString(JSGlobalData* globalData, const UString& s)
@@ -404,12 +389,12 @@ namespace JSC {
             if (c <= maxSingleCharacterString)
                 return globalData->smallStrings.singleCharacterString(globalData, c);
         }
-        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, s.impl()));
+        return JSString::createHasOtherOwner(*globalData, s.impl());
     }
 
     inline JSString* jsStringBuilder(JSGlobalData* globalData)
     {
-        return fixupVPtr(globalData, JSString::createNull(*globalData));
+        return JSString::createNull(*globalData);
     }
 
     inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }
@@ -448,7 +433,7 @@ namespace JSC {
         return false;
     }
 
-    inline bool isJSString(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsStringVPtr; }
+    inline bool isJSString(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSString::s_info; }
 
     inline bool JSCell::toBoolean(ExecState* exec) const
     {

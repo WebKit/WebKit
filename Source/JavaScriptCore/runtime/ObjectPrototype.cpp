@@ -44,6 +44,8 @@ static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(ObjectPrototype);
+
 const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, 0, ExecState::objectPrototypeTable, CREATE_METHOD_TABLE(ObjectPrototype) };
 
 /* Source for ObjectPrototype.lut.h

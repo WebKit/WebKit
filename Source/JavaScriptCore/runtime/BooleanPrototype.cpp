@@ -48,6 +48,7 @@ const ClassInfo BooleanPrototype::s_info = { "Boolean", &BooleanObject::s_info, 
 */
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanPrototype);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(BooleanPrototype);
 
 BooleanPrototype::BooleanPrototype(ExecState* exec, Structure* structure)
     : BooleanObject(exec->globalData(), structure)

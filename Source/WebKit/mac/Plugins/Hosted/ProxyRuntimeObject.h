@@ -49,8 +49,6 @@ public:
         return object;
     }
 
-    virtual ~ProxyRuntimeObject();
-
     ProxyInstance* getInternalProxyInstance() const;
 
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)

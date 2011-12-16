@@ -54,7 +54,8 @@ void VTableSpectrum::countVPtr(void* vTablePointer)
 
 void VTableSpectrum::count(JSCell* cell)
 {
-    countVPtr(cell->vptr());
+    // FIXME: we need to change this class to count ClassInfos rather than vptrs
+    UNUSED_PARAM(cell);
 }
 
 void VTableSpectrum::dump(FILE* output, const char* comment)

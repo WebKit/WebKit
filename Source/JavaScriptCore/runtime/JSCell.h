@@ -65,15 +65,12 @@ namespace JSC {
         enum CreatingEarlyCellTag { CreatingEarlyCell };
         JSCell(CreatingEarlyCellTag);
 
-        enum VPtrStealingHackType { VPtrStealingHack };
-        explicit JSCell(VPtrStealingHackType) { }
-
     public:
         void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; } // Used for initialization after GC allocation.
 
     protected:
         JSCell(JSGlobalData&, Structure*);
-        virtual ~JSCell(); // Invoked by GC finalization.
+        static void destroy(JSCell*);
 
     public:
         // Querying the type.
@@ -108,6 +105,7 @@ namespace JSC {
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
+        const ClassInfo* validatedClassInfo() const;
         const MethodTable* methodTable() const;
         static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue);
@@ -117,8 +115,6 @@ namespace JSC {
 
         static JSObject* toThisObject(JSCell*, ExecState*);
 
-        void* vptr() const { ASSERT(!isZapped()); return *reinterpret_cast<void* const*>(this); }
-        void setVPtr(void* vptr) { *reinterpret_cast<void**>(this) = vptr; ASSERT(!isZapped()); }
         void zap() { *reinterpret_cast<uintptr_t**>(this) = 0; }
         bool isZapped() const { return !*reinterpret_cast<uintptr_t* const*>(this); }
 
@@ -132,6 +128,11 @@ namespace JSC {
         static ptrdiff_t structureOffset()
         {
             return OBJECT_OFFSETOF(JSCell, m_structure);
+        }
+
+        static ptrdiff_t classInfoOffset()
+        {
+            return OBJECT_OFFSETOF(JSCell, m_classInfo);
         }
         
         void* structureAddress()
@@ -166,13 +167,9 @@ namespace JSC {
         static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
 
     private:
+        const ClassInfo* m_classInfo;
         WriteBarrier<Structure> m_structure;
     };
-    
-    inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
-        : m_structure(globalData, this, structure)
-    {
-    }
 
     inline JSCell::JSCell(CreatingEarlyCellTag)
     {
@@ -189,25 +186,14 @@ namespace JSC {
         ASSERT(m_structure);
     }
 
-    inline void JSCell::finishCreation(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
-    {
-#if ENABLE(GC_VALIDATION)
-        ASSERT(globalData.isInitializingObject());
-        globalData.setInitializingObject(false);
-        if (structure)
-#endif
-            m_structure.setEarlyValue(globalData, this, structure);
-        // Very first set of allocations won't have a real structure.
-        ASSERT(m_structure || !globalData.structureStructure);
-    }
-
-    inline JSCell::~JSCell()
-    {
-    }
-
     inline Structure* JSCell::structure() const
     {
         return m_structure.get();
+    }
+
+    inline const ClassInfo* JSCell::classInfo() const
+    {
+        return m_classInfo;
     }
 
     inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)

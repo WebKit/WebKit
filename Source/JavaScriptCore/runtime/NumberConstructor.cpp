@@ -42,6 +42,8 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(NumberConstructor);
+
 const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable, CREATE_METHOD_TABLE(NumberConstructor) };
 
 /* Source for NumberConstructor.lut.h

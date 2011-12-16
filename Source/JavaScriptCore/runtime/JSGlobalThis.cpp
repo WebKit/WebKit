@@ -31,6 +31,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSGlobalThis);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSGlobalThis);
 
 const ClassInfo JSGlobalThis::s_info = { "JSGlobalThis", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSGlobalThis) };
 

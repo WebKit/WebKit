@@ -71,8 +71,8 @@ namespace JSC {
     public:
         typedef JSNonFinalObject Base;
 
-        JSArray(VPtrStealingHackType);
-        virtual ~JSArray();
+        ~JSArray();
+        static void destroy(JSCell*);
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure)
         {
@@ -216,8 +216,8 @@ namespace JSC {
         return asArray(value.asCell());
     }
 
-    inline bool isJSArray(JSGlobalData* globalData, JSCell* cell) { return cell->vptr() == globalData->jsArrayVPtr; }
-    inline bool isJSArray(JSGlobalData* globalData, JSValue v) { return v.isCell() && isJSArray(globalData, v.asCell()); }
+    inline bool isJSArray(JSCell* cell) { return cell->classInfo() == &JSArray::s_info; }
+    inline bool isJSArray(JSValue v) { return v.isCell() && isJSArray(v.asCell()); }
 
     // Rule from ECMA 15.2 about what an array index is.
     // Must exactly match string form of an unsigned integer, and be less than 2^32 - 1.

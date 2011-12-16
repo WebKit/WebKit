@@ -75,7 +75,7 @@ namespace JSC {
 
     private:
         StructureChain(JSGlobalData&, Structure*);
-        ~StructureChain();
+        static void destroy(JSCell*);
         OwnArrayPtr<WriteBarrier<Structure> > m_vector;
     };
 

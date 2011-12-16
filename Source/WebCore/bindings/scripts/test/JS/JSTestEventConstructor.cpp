@@ -33,6 +33,7 @@ using namespace JSC;
 namespace WebCore {
 
 ASSERT_CLASS_FITS_IN_CELL(JSTestEventConstructor);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestEventConstructor);
 
 /* Hash table for constructor */
 
@@ -53,7 +54,9 @@ static const HashTableValue JSTestEventConstructorConstructorTableValues[] =
 };
 
 static const HashTable JSTestEventConstructorConstructorTable = { 1, 0, JSTestEventConstructorConstructorTableValues, 0 };
-const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructorConstructor", &DOMConstructorObject::s_info, &JSTestEventConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSTestEventConstructorConstructor);
+
+const ClassInfo JSTestEventConstructorConstructor::s_info = { "TestEventConstructorConstructor", &Base::s_info, &JSTestEventConstructorConstructorTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorConstructor) };
 
 JSTestEventConstructorConstructor::JSTestEventConstructorConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -127,14 +130,14 @@ static const HashTableValue JSTestEventConstructorPrototypeTableValues[] =
 };
 
 static const HashTable JSTestEventConstructorPrototypeTable = { 1, 0, JSTestEventConstructorPrototypeTableValues, 0 };
-const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &JSC::JSNonFinalObject::s_info, &JSTestEventConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
+const ClassInfo JSTestEventConstructorPrototype::s_info = { "TestEventConstructorPrototype", &Base::s_info, &JSTestEventConstructorPrototypeTable, 0, CREATE_METHOD_TABLE(JSTestEventConstructorPrototype) };
 
 JSObject* JSTestEventConstructorPrototype::self(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMPrototype<JSTestEventConstructor>(exec, globalObject);
 }
 
-const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &JSDOMWrapper::s_info, &JSTestEventConstructorTable, 0 , CREATE_METHOD_TABLE(JSTestEventConstructor) };
+const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor", &Base::s_info, &JSTestEventConstructorTable, 0 , CREATE_METHOD_TABLE(JSTestEventConstructor) };
 
 JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestEventConstructor> impl)
     : JSDOMWrapper(structure, globalObject)

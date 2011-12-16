@@ -102,9 +102,8 @@ namespace JSC {
 
         WTF::ByteArray* storage() const { return m_storage.get(); }
 
-#if !ASSERT_DISABLED
-        virtual ~JSByteArray();
-#endif
+        ~JSByteArray();
+        static void destroy(JSCell*);
 
         static size_t offsetOfStorage() { return OBJECT_OFFSETOF(JSByteArray, m_storage); }
 
@@ -118,11 +117,6 @@ namespace JSC {
         }
 
     private:
-        JSByteArray(VPtrStealingHackType)
-            : JSNonFinalObject(VPtrStealingHack)
-        {
-        }
-
         RefPtr<WTF::ByteArray> m_storage;
     };
     
@@ -132,7 +126,7 @@ namespace JSC {
         return static_cast<JSByteArray*>(value.asCell());
     }
 
-    inline bool isJSByteArray(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsByteArrayVPtr; }
+    inline bool isJSByteArray(JSValue v) { return v.isCell() && v.asCell()->classInfo() == &JSByteArray::s_info; }
 
 } // namespace JSC
 

@@ -57,8 +57,9 @@ void JSDOMWindowShell::finishCreation(JSGlobalData& globalData, PassRefPtr<DOMWi
     setWindow(window);
 }
 
-JSDOMWindowShell::~JSDOMWindowShell()
+void JSDOMWindowShell::destroy(JSCell* cell)
 {
+    jsCast<JSDOMWindowShell*>(cell)->JSDOMWindowShell::~JSDOMWindowShell();
 }
 
 void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)

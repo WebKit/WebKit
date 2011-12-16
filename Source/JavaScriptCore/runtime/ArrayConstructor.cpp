@@ -41,6 +41,8 @@ static EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState*);
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(ArrayConstructor);
+
 const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::arrayConstructorTable, CREATE_METHOD_TABLE(ArrayConstructor) };
 
 /* Source for ArrayConstructor.lut.h

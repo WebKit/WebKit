@@ -177,6 +177,8 @@ protected:
 private:
     static UString className(const JSObject*);
 
+    static void destroy(JSCell*);
+
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
     

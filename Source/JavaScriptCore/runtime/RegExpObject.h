@@ -44,8 +44,6 @@ namespace JSC {
             return object;
         }
 
-        virtual ~RegExpObject();
-
         void setRegExp(JSGlobalData& globalData, RegExp* r) { d->regExp.set(globalData, this, r); }
         RegExp* regExp() const { return d->regExp.get(); }
 
@@ -79,6 +77,8 @@ namespace JSC {
     protected:
         RegExpObject(JSGlobalObject*, Structure*, RegExp*);
         void finishCreation(JSGlobalObject*);
+        static void destroy(JSCell*);
+
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | Base::StructureFlags;
 
         static void visitChildren(JSCell*, SlotVisitor&);

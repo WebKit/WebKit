@@ -122,6 +122,7 @@ protected:
 
 private:
     ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, const Identifier& propertyName);
+    static void destroy(JSCell*);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier&, PropertyDescriptor&);
@@ -130,7 +131,7 @@ private:
     static bool deleteProperty(JSCell*, ExecState*, const Identifier& propertyName);
     static JSValue defaultValue(const JSObject*, ExecState*, PreferredPrimitiveType);
 
-    virtual bool toBoolean(ExecState*) const;
+    bool toBoolean(ExecState*) const; // FIXME: Currently this is broken because none of the superclasses are marked virtual. We need to solve this in the longer term.
 
     RefPtr<ObjcInstance> _instance;
     Identifier _item;

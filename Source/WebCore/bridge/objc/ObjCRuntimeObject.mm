@@ -46,10 +46,6 @@ void ObjCRuntimeObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-ObjCRuntimeObject::~ObjCRuntimeObject()
-{
-}
-
 ObjcInstance* ObjCRuntimeObject::getInternalObjCInstance() const
 {
     return static_cast<ObjcInstance*>(getInternalInstance());

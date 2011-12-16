@@ -72,6 +72,7 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
 */
 
 ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(DateConstructor);
 
 DateConstructor::DateConstructor(JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(globalObject, structure) 

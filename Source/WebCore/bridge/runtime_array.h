@@ -47,7 +47,8 @@ public:
     }
 
     typedef Bindings::Array BindingsArray;
-    virtual ~RuntimeArray();
+    ~RuntimeArray();
+    static void destroy(JSCell*);
 
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);

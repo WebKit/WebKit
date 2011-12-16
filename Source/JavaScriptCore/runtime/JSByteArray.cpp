@@ -41,13 +41,15 @@ JSByteArray::JSByteArray(ExecState* exec, Structure* structure, ByteArray* stora
 {
 }
         
-#if !ASSERT_DISABLED
 JSByteArray::~JSByteArray()
 {
-    ASSERT(vptr() == JSGlobalData::jsByteArrayVPtr);
+    ASSERT(jsCast<JSByteArray*>(this));
 }
-#endif
 
+void JSByteArray::destroy(JSCell* cell)
+{
+    jsCast<JSByteArray*>(cell)->JSByteArray::~JSByteArray();
+}
 
 Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const JSC::ClassInfo* classInfo)
 {

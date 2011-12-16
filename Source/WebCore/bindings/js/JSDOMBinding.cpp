@@ -38,6 +38,9 @@ using namespace JSC;
 
 namespace WebCore {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(DOMConstructorObject);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(DOMConstructorWithDocument);
+
 const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const JSC::HashTable* staticTable)
 {
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);

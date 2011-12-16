@@ -28,6 +28,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(ErrorConstructor);
 
 const ClassInfo ErrorConstructor::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ErrorConstructor) };
 

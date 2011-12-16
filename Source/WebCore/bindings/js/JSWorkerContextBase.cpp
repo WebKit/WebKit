@@ -60,8 +60,9 @@ void JSWorkerContextBase::finishCreation(JSGlobalData& globalData)
     ASSERT(inherits(&s_info));
 }
 
-JSWorkerContextBase::~JSWorkerContextBase()
+void JSWorkerContextBase::destroy(JSCell* cell)
 {
+    jsCast<JSWorkerContextBase*>(cell)->JSWorkerContextBase::~JSWorkerContextBase();
 }
 
 ScriptExecutionContext* JSWorkerContextBase::scriptExecutionContext() const

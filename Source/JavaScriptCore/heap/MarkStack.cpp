@@ -219,7 +219,7 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other)
 void MarkStackThreadSharedData::markingThreadMain()
 {
     WTF::registerGCThread();
-    SlotVisitor slotVisitor(*this, m_globalData->jsArrayVPtr, m_globalData->jsFinalObjectVPtr, m_globalData->jsStringVPtr);
+    SlotVisitor slotVisitor(*this);
     ParallelModeEnabler enabler(slotVisitor);
     slotVisitor.drainFromShared(SlotVisitor::SlaveDrain);
 }
@@ -294,7 +294,7 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
         internalAppend(roots[i]);
 }
 
-ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell, void* jsFinalObjectVPtr, void* jsArrayVPtr, void* jsStringVPtr)
+ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell)
 {
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     m_visitedTypeCounts.count(cell);
@@ -302,17 +302,17 @@ ALWAYS_INLINE static void visitChildren(SlotVisitor& visitor, const JSCell* cell
 
     ASSERT(Heap::isMarked(cell));
 
-    if (cell->vptr() == jsStringVPtr) {
+    if (isJSString(cell)) {
         JSString::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
     }
 
-    if (cell->vptr() == jsFinalObjectVPtr) {
+    if (isJSFinalObject(cell)) {
         JSObject::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
     }
 
-    if (cell->vptr() == jsArrayVPtr) {
+    if (isJSArray(cell)) {
         JSArray::visitChildren(const_cast<JSCell*>(cell), visitor);
         return;
     }
@@ -338,16 +338,12 @@ void SlotVisitor::drain()
 {
     ASSERT(m_isInParallelMode);
     
-    void* jsFinalObjectVPtr = m_jsFinalObjectVPtr;
-    void* jsArrayVPtr = m_jsArrayVPtr;
-    void* jsStringVPtr = m_jsStringVPtr;
-
 #if ENABLE(PARALLEL_GC)
     if (Options::numberOfGCMarkers > 1) {
         while (!m_stack.isEmpty()) {
             m_stack.refill();
             for (unsigned countdown = Options::minimumNumberOfScansBetweenRebalance; m_stack.canRemoveLast() && countdown--;)
-                visitChildren(*this, m_stack.removeLast(), jsFinalObjectVPtr, jsArrayVPtr, jsStringVPtr);
+                visitChildren(*this, m_stack.removeLast());
             donateKnownParallel();
         }
         
@@ -359,7 +355,7 @@ void SlotVisitor::drain()
     while (!m_stack.isEmpty()) {
         m_stack.refill();
         while (m_stack.canRemoveLast())
-            visitChildren(*this, m_stack.removeLast(), jsFinalObjectVPtr, jsArrayVPtr, jsStringVPtr);
+            visitChildren(*this, m_stack.removeLast());
     }
 }
 

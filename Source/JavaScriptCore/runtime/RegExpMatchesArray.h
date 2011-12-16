@@ -37,7 +37,8 @@ namespace JSC {
             regExp->finishCreation(exec->globalData(), ctorPrivate);
             return regExp;
         }
-        virtual ~RegExpMatchesArray();
+        ~RegExpMatchesArray();
+        static void destroy(JSCell*);
 
         static JS_EXPORTDATA const ClassInfo s_info;
         

@@ -38,6 +38,11 @@ namespace JSC {
 
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0, CREATE_METHOD_TABLE(ExecutableBase) };
 
+void ExecutableBase::destroy(JSCell* cell)
+{
+    jsCast<ExecutableBase*>(cell)->ExecutableBase::~ExecutableBase();
+}
+
 inline void ExecutableBase::clearCode()
 {
 #if ENABLE(JIT)
@@ -61,8 +66,9 @@ Intrinsic ExecutableBase::intrinsic() const
 
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(NativeExecutable) };
 
-NativeExecutable::~NativeExecutable()
+void NativeExecutable::destroy(JSCell* cell)
 {
+    jsCast<NativeExecutable*>(cell)->NativeExecutable::~NativeExecutable();
 }
 
 #if ENABLE(DFG_JIT)
@@ -93,6 +99,11 @@ void NativeExecutable::finalize(JSCell* cell)
 
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
 
+void ScriptExecutable::destroy(JSCell* cell)
+{
+    jsCast<ScriptExecutable*>(cell)->ScriptExecutable::~ScriptExecutable();
+}
+
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(EvalExecutable) };
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
@@ -100,8 +111,9 @@ EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool i
 {
 }
 
-EvalExecutable::~EvalExecutable()
+void EvalExecutable::destroy(JSCell* cell)
 {
+    jsCast<EvalExecutable*>(cell)->EvalExecutable::~EvalExecutable();
 }
 
 const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(ProgramExecutable) };
@@ -111,8 +123,9 @@ ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
 {
 }
 
-ProgramExecutable::~ProgramExecutable()
+void ProgramExecutable::destroy(JSCell* cell)
 {
+    jsCast<ProgramExecutable*>(cell)->ProgramExecutable::~ProgramExecutable();
 }
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, 0, CREATE_METHOD_TABLE(FunctionExecutable) };
@@ -137,8 +150,9 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
 {
 }
 
-FunctionExecutable::~FunctionExecutable()
+void FunctionExecutable::destroy(JSCell* cell)
 {
+    jsCast<FunctionExecutable*>(cell)->FunctionExecutable::~FunctionExecutable();
 }
 
 JSObject* EvalExecutable::compileOptimized(ExecState* exec, ScopeChainNode* scopeChainNode)

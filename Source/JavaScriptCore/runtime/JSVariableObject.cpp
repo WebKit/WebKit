@@ -37,8 +37,9 @@
 
 namespace JSC {
 
-JSVariableObject::~JSVariableObject()
+void JSVariableObject::destroy(JSCell* cell)
 {
+    jsCast<JSVariableObject*>(cell)->JSVariableObject::~JSVariableObject();
 }
 
 bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)

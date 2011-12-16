@@ -188,8 +188,10 @@ JSValue JSNode::appendChild(ExecState* exec)
     return jsNull();
 }
 
-ScopeChainNode* JSNode::pushEventHandlerScope(ExecState*, ScopeChainNode* node) const
+ScopeChainNode* JSNode::pushEventHandlerScope(ExecState* exec, ScopeChainNode* node) const
 {
+    if (inherits(&JSHTMLElement::s_info))
+        return jsCast<const JSHTMLElement*>(this)->pushEventHandlerScope(exec, node);
     return node;
 }
 

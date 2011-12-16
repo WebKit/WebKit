@@ -59,6 +59,8 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState*);
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(MathObject);
+
 const ClassInfo MathObject::s_info = { "Math", &JSNonFinalObject::s_info, 0, ExecState::mathTable, CREATE_METHOD_TABLE(MathObject) };
 
 /* Source for MathObject.lut.h

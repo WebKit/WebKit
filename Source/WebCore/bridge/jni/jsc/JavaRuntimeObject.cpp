@@ -46,10 +46,6 @@ void JavaRuntimeObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-JavaRuntimeObject::~JavaRuntimeObject()
-{
-}
-
 JavaInstance* JavaRuntimeObject::getInternalJavaInstance() const
 {
     return static_cast<JavaInstance*>(getInternalInstance());

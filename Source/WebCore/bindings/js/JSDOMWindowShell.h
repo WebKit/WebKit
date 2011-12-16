@@ -41,7 +41,7 @@ namespace WebCore {
         typedef JSC::JSGlobalThis Base;
     public:
         JSDOMWindowShell(PassRefPtr<DOMWindow>, JSC::Structure*, DOMWrapperWorld*);
-        virtual ~JSDOMWindowShell();
+        static void destroy(JSCell*);
 
         JSDOMWindow* window() const { return static_cast<JSDOMWindow*>(m_unwrappedObject.get()); }
         void setWindow(JSC::JSGlobalData& globalData, JSDOMWindow* window)

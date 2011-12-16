@@ -193,7 +193,8 @@ namespace JSC {
         }
 
     public:
-        virtual ~JSGlobalObject();
+        ~JSGlobalObject();
+        static void destroy(JSCell*);
 
         static void visitChildren(JSCell*, SlotVisitor&);
 

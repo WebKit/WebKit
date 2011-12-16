@@ -52,7 +52,9 @@ namespace JSC {
             iterator->finishCreation(exec, propertyNameArrayData);
             return iterator;
         }
-        
+
+        static void destroy(JSCell*);
+       
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
         {
             return Structure::create(globalData, globalObject, prototype, TypeInfo(CompoundType, OverridesVisitChildren), &s_info);

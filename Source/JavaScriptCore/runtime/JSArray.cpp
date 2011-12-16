@@ -126,11 +126,6 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 #endif
 
-JSArray::JSArray(VPtrStealingHackType)
-    : JSNonFinalObject(VPtrStealingHack)
-{
-}
-
 JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
 {
@@ -277,11 +272,16 @@ void JSArray::finishCreation(JSGlobalData& globalData, const JSValue* values, si
 
 JSArray::~JSArray()
 {
-    ASSERT(vptr() == JSGlobalData::jsArrayVPtr);
+    ASSERT(jsCast<JSArray*>(this));
     checkConsistency(DestructorConsistencyCheck);
 
     delete m_storage->m_sparseValueMap;
     fastFree(m_storage->m_allocBase);
+}
+
+void JSArray::destroy(JSCell* cell)
+{
+    jsCast<JSArray*>(cell)->JSArray::~JSArray();
 }
 
 bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)

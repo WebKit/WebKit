@@ -115,6 +115,11 @@ void RegExpConstructor::finishCreation(ExecState* exec, RegExpPrototype* regExpP
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
+void RegExpConstructor::destroy(JSCell* cell)
+{
+    jsCast<RegExpConstructor*>(cell)->RegExpConstructor::~RegExpConstructor();
+}
+
 RegExpMatchesArray::RegExpMatchesArray(ExecState* exec)
     : JSArray(exec->globalData(), exec->lexicalGlobalObject()->regExpMatchesArrayStructure())
 {
@@ -138,6 +143,11 @@ void RegExpMatchesArray::finishCreation(JSGlobalData& globalData, RegExpConstruc
 RegExpMatchesArray::~RegExpMatchesArray()
 {
     delete static_cast<RegExpConstructorPrivate*>(subclassData());
+}
+
+void RegExpMatchesArray::destroy(JSCell* cell)
+{
+    jsCast<RegExpMatchesArray*>(cell)->RegExpMatchesArray::~RegExpMatchesArray();
 }
 
 void RegExpMatchesArray::fillArrayInstance(ExecState* exec)

@@ -1,3 +1,86 @@
+2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize destructors
+        https://bugs.webkit.org/show_bug.cgi?id=74331
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        Doing everything here that was done to the JSCell hierarchy in JavaScriptCore. 
+        See the ChangeLog for this commit for a more in-depth description.
+
+        * WebCore.exp.in: Add/remove symbols.
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp: Remove first arg from isJSArray call.
+        (WebCore::JSCanvasRenderingContext2D::setWebkitLineDash):
+        * bindings/js/JSDOMBinding.cpp: Add trival destructor assert for DOMConstructorObject 
+        and DOMConstructorWithDocument.
+        * bindings/js/JSDOMGlobalObject.cpp: Add static destroy.  Add implementation for 
+        scriptExecutionContext that dispatches to different functions in subclasses 
+        depending on our current ClassInfo.  We do this so that we can get rid of the 
+        virtual-ness of scriptExecutionContext, because any virtual functions will throw 
+        off the layout of the object and we'll crash at runtime.
+        (WebCore::JSDOMGlobalObject::destroy):
+        (WebCore::JSDOMGlobalObject::scriptExecutionContext):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp: Add static destroy.
+        (WebCore::JSDOMWindowBase::destroy):
+        * bindings/js/JSDOMWindowBase.h: De-virtualize scriptExecutionContext.
+        * bindings/js/JSDOMWindowShell.cpp: Add static destroy.
+        (WebCore::JSDOMWindowShell::destroy):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDOMWrapper.cpp: Add trivial destructor assert.
+        * bindings/js/JSDOMWrapper.h: Add a ClassInfo to JSDOMWrapper since it now overrides 
+        a MethodTable function. Remove vtableAnchor virtual function.
+        * bindings/js/JSImageConstructor.cpp: Add trivial destructor assert.
+        * bindings/js/JSNodeCustom.cpp: Change implementation of pushEventHandlerScope so that 
+        it dispatches to the correct function depending on the 
+        identity of the class as specified by the ClassInfo.  
+        See JSDOMGlobalObject::scriptExecutionContext for explanation.
+        (WebCore::JSNode::pushEventHandlerScope):
+        * bindings/js/JSWebSocketCustom.cpp: Remove first arg to isJSArray call.
+        (WebCore::JSWebSocketConstructor::constructJSWebSocket):
+        * bindings/js/JSWorkerContextBase.cpp: Add static destroy.
+        (WebCore::JSWorkerContextBase::destroy):
+        * bindings/js/JSWorkerContextBase.h: 
+        * bindings/js/ScriptValue.cpp: Remove first arg to isJSArray call.
+        (WebCore::jsToInspectorValue): 
+        * bindings/js/SerializedScriptValue.cpp: Ditto.
+        (WebCore::CloneSerializer::isArray):
+        (WebCore::CloneSerializer::getSparseIndex):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Remove virtual-ness of any custom pushEventHandlerScope (see 
+        JSNodeCustom::pushEventHandlerScope for explanation).  Remove virtual toBoolean 
+        for anybody who masquerades as undefined, since our JSObject implementation handles 
+        this based on the TypeInfo in the Structure. Add trivial destructor assert for any 
+        class other than DOMWindow or WorkerContexts.
+        (GenerateImplementation): Change ClassInfo definitions to use Base::s_info, since 
+        typing the parent class more than once is duplication of information and increases 
+        the likelihood of mistakes.  Pass ClassInfo to TypeArrayDescriptors instead of vptr. 
+        (GenerateConstructorDefinition): Add trivial destructor assert for all generated constructors.
+        * bridge/c/CRuntimeObject.cpp: Remove empty virtual destructor.
+        * bridge/c/CRuntimeObject.h: 
+        * bridge/jni/jsc/JavaRuntimeObject.cpp: Ditto.
+        * bridge/jni/jsc/JavaRuntimeObject.h: 
+        * bridge/objc/ObjCRuntimeObject.h: Ditto.
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/objc_runtime.h: Add static destroy for ObjcFallbackObjectImp. De-virtualize 
+        toBoolean in the short term.  Need longer term fix.
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::destroy):
+        * bridge/qt/qt_runtime.cpp: Add static destroy to QtRuntimeMethod.
+        (JSC::Bindings::QtRuntimeMethod::destroy):
+        * bridge/qt/qt_runtime.h: De-virtualize ~QtRuntimeMethod.
+        * bridge/runtime_array.cpp: De-virtualize destructor. Add static destroy.
+        (JSC::RuntimeArray::destroy):
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.cpp: Remove vtableAnchor. Add static destroy.
+        (JSC::RuntimeMethod::destroy):
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.cpp: Add static destroy.
+        (JSC::Bindings::RuntimeObject::destroy):
+        * bridge/runtime_object.h:
+
 2011-12-15  Alexey Proskuryakov  <ap@apple.com>
 
         Poor XPath performance when evaluating an expression that returns a lot of nodes

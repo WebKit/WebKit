@@ -48,7 +48,7 @@ namespace WebCore {
         struct JSDOMGlobalObjectData;
 
         JSDOMGlobalObject(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>, const JSC::GlobalObjectMethodTable* = 0);
-        virtual ~JSDOMGlobalObject();
+        static void destroy(JSC::JSCell*);
         void finishCreation(JSC::JSGlobalData&);
         void finishCreation(JSC::JSGlobalData&, JSC::JSGlobalThis*);
 
@@ -56,7 +56,7 @@ namespace WebCore {
         JSDOMStructureMap& structures() { return m_structures; }
         JSDOMConstructorMap& constructors() { return m_constructors; }
 
-        virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
+        ScriptExecutionContext* scriptExecutionContext() const;
 
         // Make binding code generation easier.
         JSDOMGlobalObject* globalObject() { return this; }

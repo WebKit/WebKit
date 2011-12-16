@@ -133,7 +133,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
         return InspectorString::create(String(s.characters(), s.length()));
     }
     if (value.isObject()) {
-        if (isJSArray(&scriptState->globalData(), value)) {
+        if (isJSArray(value)) {
             RefPtr<InspectorArray> inspectorArray = InspectorArray::create();
             JSArray* array = asArray(value);
             unsigned length = array->length();

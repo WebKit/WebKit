@@ -45,7 +45,8 @@ public:
         return object;
     }
     
-    virtual ~UserObjectImp();
+    ~UserObjectImp();
+    static void destroy(JSCell*);
 
     static const ClassInfo s_info;
 
@@ -53,12 +54,12 @@ public:
 
     static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
 
-    virtual JSValue callAsFunction(ExecState *exec);
+    JSValue callAsFunction(ExecState*); // TODO: Figure out how to re-virtualize this without breaking the fact that we don't allow vptrs in the JSCell hierarchy.
     static bool getOwnPropertySlot(JSCell*, ExecState *, const Identifier&, PropertySlot&);
     static void put(JSCell*, ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
 
     JSValue toPrimitive(ExecState*, PreferredPrimitiveType preferredType = NoPreference) const;
-    virtual bool toBoolean(ExecState *exec) const;
+    bool toBoolean(ExecState*) const; // TODO: Figure out how to re-virtualize this without breaking the fact that we don't allow vptrs in the JSCell hierarchy.
 
     static void visitChildren(JSCell*, SlotVisitor&);
 

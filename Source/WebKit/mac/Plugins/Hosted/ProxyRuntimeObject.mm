@@ -47,10 +47,6 @@ void ProxyRuntimeObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-ProxyRuntimeObject::~ProxyRuntimeObject()
-{
-}
-
 ProxyInstance* ProxyRuntimeObject::getInternalProxyInstance() const
 {
     return static_cast<ProxyInstance*>(getInternalInstance());

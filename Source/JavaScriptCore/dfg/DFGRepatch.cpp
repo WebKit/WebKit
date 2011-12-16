@@ -164,7 +164,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     CodeBlock* codeBlock = exec->codeBlock();
     JSGlobalData* globalData = &exec->globalData();
     
-    if (isJSArray(globalData, baseValue) && propertyName == exec->propertyNames().length) {
+    if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
         GPRReg baseGPR = static_cast<GPRReg>(stubInfo.baseGPR);
 #if USE(JSVALUE32_64)
         GPRReg resultTagGPR = static_cast<GPRReg>(stubInfo.valueTagGPR);
@@ -183,7 +183,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         MacroAssembler::JumpList failureCases;
         
-        failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(globalData->jsArrayVPtr)));
+        failureCases.append(stubJit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
         
         stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), scratchGPR);
         stubJit.load32(MacroAssembler::Address(scratchGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), scratchGPR);

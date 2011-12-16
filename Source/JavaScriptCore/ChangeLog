@@ -1,3 +1,322 @@
+2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize destructors
+        https://bugs.webkit.org/show_bug.cgi?id=74331
+
+        Reviewed by Geoffrey Garen.
+
+        This is a megapatch which frees us from the chains of virtual destructors.
+
+        In order to remove the virtual destructors, which are the last of the virtual 
+        functions, from the JSCell hierarchy, we need to add the ClassInfo pointer to 
+        the cell rather than to the structure because in order to be able to lazily call 
+        the static destroy() functions that will replace the virtual destructors, we 
+        need to be able to access the ClassInfo without the danger of the object's 
+        Structure being collected before the object itself.
+
+        After adding the ClassInfo to the cell, we can then begin to remove our use 
+        of vptrs for optimizations within the JIT and the GC.  When we have removed 
+        all of the stored vptrs from JSGlobalData, we can then also remove all of 
+        the related VPtrStealingHack code.
+
+        The replacement for virtual destructors will be to add a static destroy function 
+        pointer to the MethodTable stored in ClassInfo.  Any subclass of JSCell that has 
+        a non-trivial destructor will require its own static destroy function to static 
+        call its corresponding destructor, which will now be non-virtual.  In future 
+        patches we will slowly move away from destructors altogether as we make more and 
+        more objects backed by GC memory rather than malloc-ed memory.  The GC will now 
+        call the static destroy method rather than the virtual destructor.
+
+        As we go through the hierarchy and add static destroy functions to classes, 
+        we will also add a new assert, ASSERT_HAS_TRIVIAL_DESTRUCTOR, to those classes 
+        to which it applies.  The future goal is to eventually have every class have that assert.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::destroy): Add a destroy function to statically call 
+        ~JSCallbackConstructor because it has some extra destruction logic.
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp: Add trivial destructor assert for JSCallbackFunction.
+        * API/JSCallbackObject.cpp: Add a destroy function to statically call ~JSCallbackObject 
+        because it has a member OwnPtr that needs destruction.
+        (JSC::::destroy):
+        * API/JSCallbackObject.h:
+        * JavaScriptCore.exp: Add/remove necessary symbols for JSC.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Same for Windows symbols.
+        * debugger/DebuggerActivation.cpp: DebuggerActivation, for some strange reason, didn't 
+        have its own ClassInfo despite the fact that it overrides a number of MethodTable 
+        methods.  Added the ClassInfo, along with an assertion that its destructor is trivial.
+        * debugger/DebuggerActivation.h:
+        * dfg/DFGOperations.cpp: Remove global data first argument to isJSArray, isJSByteArray, 
+        isJSString, as it is no longer necessary.
+        (JSC::DFG::putByVal):
+        * dfg/DFGRepatch.cpp:  Ditto.  Also remove uses of jsArrayVPtr in favor of using the 
+        JSArray ClassInfo pointer.
+        (JSC::DFG::tryCacheGetByID):
+        * dfg/DFGSpeculativeJIT.cpp:  Replace uses of the old vptrs with new ClassInfo 
+        comparisons since we don't have vptrs anymore.
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayLength):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h: Ditto.
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSFinalObject):
+        * dfg/DFGSpeculativeJIT32_64.cpp: Ditto.
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp: Ditto.
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/Heap.cpp: Remove all uses of vptrs in GC optimizations and replace them with 
+        ClassInfo comparisons.
+        (JSC::Heap::Heap):
+        * heap/MarkStack.cpp: Ditto.
+        (JSC::MarkStackThreadSharedData::markingThreadMain):
+        (JSC::visitChildren):
+        (JSC::SlotVisitor::drain):
+        * heap/MarkStack.h: Ditto.
+        (JSC::MarkStack::MarkStack):
+        * heap/MarkedBlock.cpp: Ditto.
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::specializedSweep):
+        * heap/MarkedBlock.h: Ditto.
+        * heap/SlotVisitor.h: Ditto.
+        (JSC::SlotVisitor::SlotVisitor):
+        * heap/VTableSpectrum.cpp: Now that we don't have vptrs, we can't count them.  
+        We'll have to rename this class and make it use ClassInfo ptrs in a future patch.
+        (JSC::VTableSpectrum::count):
+        * interpreter/Interpreter.cpp: Remove all global data arguments from isJSArray, 
+        etc. functions.
+        (JSC::loadVarargs):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.h: Remove vptr argument from emitAllocateBasicJSObject 
+        * jit/JITInlineMethods.h: Remove vptr planting, and add ClassInfo planting, 
+        remove all vtable related code.
+        (JSC::JIT::emitLoadCharacterString):
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateJSFinalObject):
+        (JSC::JIT::emitAllocateJSFunction):
+        * jit/JITOpcodes.cpp: Replace vptr related branch code with corresponding ClassInfo.
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_convert_this):
+        * jit/JITOpcodes32_64.cpp: Ditto.
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_convert_this):
+        * jit/JITPropertyAccess.cpp: Ditto.
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp: Ditto.
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITStubs.cpp: Remove global data argument from isJSString, etc.
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/SpecializedThunkJIT.h: Replace vptr related stuff with ClassInfo stuff.
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+        * runtime/ArrayConstructor.cpp: Add trivial destructor assert.
+        * runtime/ArrayPrototype.cpp: Remove global data argument from isJSArray.
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        * runtime/BooleanConstructor.cpp: Add trivial destructor assert.
+        * runtime/BooleanObject.cpp: Ditto.
+        * runtime/BooleanPrototype.cpp: Ditto.
+        * runtime/ClassInfo.h: Add destroy function pointer to MethodTable.
+        * runtime/DateConstructor.cpp: Add trivial destructor assert.
+        * runtime/DateInstance.cpp: Add destroy function for DateInstance because it has a RefPtr 
+        that needs destruction.
+        (JSC::DateInstance::destroy):
+        * runtime/DateInstance.h:
+        * runtime/Error.cpp: Ditto (because of UString member).
+        (JSC::StrictModeTypeErrorFunction::destroy):
+        * runtime/Error.h:
+        * runtime/ErrorConstructor.cpp: Add trivial destructor assert.
+        * runtime/ErrorInstance.cpp: Ditto.
+        * runtime/ExceptionHelpers.cpp: Ditto.
+        * runtime/Executable.cpp: Add destroy functions for ExecutableBase and subclasses.
+        (JSC::ExecutableBase::destroy):
+        (JSC::NativeExecutable::destroy):
+        (JSC::ScriptExecutable::destroy):
+        (JSC::EvalExecutable::destroy):
+        (JSC::ProgramExecutable::destroy):
+        (JSC::FunctionExecutable::destroy):
+        * runtime/Executable.h:
+        * runtime/FunctionConstructor.cpp: Add trivial destructor assert.
+        * runtime/FunctionPrototype.cpp: Ditto. Also remove global data first arg from isJSArray.
+        (JSC::functionProtoFuncApply):
+        * runtime/GetterSetter.cpp: Ditto.
+        * runtime/InitializeThreading.cpp: Remove call to JSGlobalData::storeVPtrs since it no 
+        longer exists.
+        (JSC::initializeThreadingOnce):
+        * runtime/InternalFunction.cpp: Remove vtableAnchor function, add trivial destructor assert, 
+        remove first arg from isJSString.
+        (JSC::InternalFunction::displayName):
+        * runtime/InternalFunction.h: Remove VPtrStealingHack.
+        * runtime/JSAPIValueWrapper.cpp: Add trivial destructor assert.
+        * runtime/JSArray.cpp: Add static destroy to call ~JSArray.  Replace vptr checks in 
+        destructor with ClassInfo checks.
+        (JSC::JSArray::~JSArray):
+        (JSC::JSArray::destroy):
+        * runtime/JSArray.h: Remove VPtrStealingHack.  Remove globalData argument from isJSArray 
+        and change them to check the ClassInfo rather than the vptrs.
+        (JSC::isJSArray):
+        * runtime/JSBoundFunction.cpp: Add trival destructor assert. Remove first arg from isJSArray.
+        (JSC::boundFunctionCall):
+        (JSC::boundFunctionConstruct):
+        * runtime/JSByteArray.cpp: Add static destroy function, replace vptr checks with ClassInfo checks.
+        (JSC::JSByteArray::~JSByteArray):
+        (JSC::JSByteArray::destroy):
+        * runtime/JSByteArray.h: Remove VPtrStealingHack code.
+        (JSC::isJSByteArray):
+        * runtime/JSCell.cpp: Add trivial destructor assert.  Add static destroy function.
+        (JSC::JSCell::destroy):
+        * runtime/JSCell.h: Remove VPtrStealingHack code.  Add function for returning the offset 
+        of the ClassInfo pointer in the object for use by the JIT.  Add the ClassInfo pointer to 
+        the JSCell itself, and grab it from the Structure.  Remove the vptr and setVPtr functions, 
+        as they are no longer used.  Add a validatedClassInfo function to JSCell for any clients 
+        that want to verify, while in Debug mode, that the ClassInfo contained in the cell is the 
+        same one as that contained in the Structure.  This isn't used too often, because most of 
+        the places where we compare the ClassInfo to things can be called during destruction.  
+        Since the Structure is unreliable during the phase when destructors are being called, 
+        we can't call validatedClassInfo.
+        (JSC::JSCell::classInfoOffset):
+        (JSC::JSCell::structure):
+        (JSC::JSCell::classInfo):
+        * runtime/JSFunction.cpp: Remove VPtrStealingHack code.  Add static destroy, remove vtableAnchor, 
+        remove first arg from call to isJSString.
+        (JSC::JSFunction::destroy):
+        (JSC::JSFunction::displayName):
+        * runtime/JSFunction.h: 
+        * runtime/JSGlobalData.cpp: Remove all VPtr stealing code and storage, including storeVPtrs, 
+        as these vptrs are no longer needed in the codebase.
+        * runtime/JSGlobalData.h:
+        (JSC::TypedArrayDescriptor::TypedArrayDescriptor): Changed the TypedArrayDescriptor to use 
+        ClassInfo rather than the vptr.
+        * runtime/JSGlobalObject.cpp: Add static destroy function.
+        (JSC::JSGlobalObject::destroy):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalThis.cpp: Add trivial destructor assert.
+        * runtime/JSNotAnObject.cpp: Ditto.
+        * runtime/JSONObject.cpp: Ditto. Remove first arg from isJSArray calls.
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp: 
+        (JSC::JSFinalObject::destroy):
+        (JSC::JSNonFinalObject::destroy):
+        (JSC::JSObject::destroy):
+        * runtime/JSObject.h: Add trivial destructor assert for JSObject, remove vtableAnchor 
+        from JSNonFinalObject and JSFinalObject, add static destroy for JSFinalObject and 
+        JSNonFinalObject, add isJSFinalObject utility function similar to isJSArray, remove all VPtrStealingHack code.
+        (JSC::JSObject::finishCreation):
+        (JSC::JSNonFinalObject::finishCreation):
+        (JSC::JSFinalObject::finishCreation):
+        (JSC::isJSFinalObject):
+        * runtime/JSPropertyNameIterator.cpp: Add static destroy.
+        (JSC::JSPropertyNameIterator::destroy):
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.cpp: Ditto.
+        (JSC::JSStaticScopeObject::destroy):
+        * runtime/JSStaticScopeObject.h: Ditto. 
+        * runtime/JSString.cpp:
+        (JSC::JSString::destroy):
+        * runtime/JSString.h: Ditto. Remove VPtrStealingHack code. Also remove fixupVPtr code, 
+        since we no longer need to fixup vptrs.
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsNontrivialString):
+        (JSC::jsString):
+        (JSC::jsSubstring8):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        (JSC::jsStringBuilder):
+        (JSC::isJSString):
+        * runtime/JSVariableObject.cpp: 
+        (JSC::JSVariableObject::destroy):
+        * runtime/JSVariableObject.h: Ditto.
+        * runtime/JSWrapperObject.cpp:
+        * runtime/JSWrapperObject.h: Add trivial destructor assert.
+        * runtime/MathObject.cpp: Ditto.
+        * runtime/NativeErrorConstructor.cpp: Ditto.
+        * runtime/NumberConstructor.cpp: Ditto.
+        * runtime/NumberObject.cpp: Ditto.
+        * runtime/NumberPrototype.cpp: Ditto.
+        * runtime/ObjectConstructor.cpp: Ditto.
+        * runtime/ObjectPrototype.cpp: Ditto.
+        * runtime/Operations.h: Remove calls to fixupVPtr, remove first arg to isJSString.
+        (JSC::jsString):
+        (JSC::jsLess):
+        (JSC::jsLessEq):
+        * runtime/RegExp.cpp: Add static destroy.
+        (JSC::RegExp::destroy):
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.cpp: Add static destroy for RegExpConstructor and RegExpMatchesArray.
+        (JSC::RegExpConstructor::destroy):
+        (JSC::RegExpMatchesArray::destroy):
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.cpp: Add static destroy.
+        (JSC::RegExpObject::destroy):
+        * runtime/RegExpObject.h:
+        * runtime/ScopeChain.cpp: Add trivial destructor assert.
+        * runtime/ScopeChain.h:
+        * runtime/StrictEvalActivation.cpp: Ditto.
+        * runtime/StringConstructor.cpp:
+        * runtime/StringObject.cpp: Ditto. Remove vtableAnchor.
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp: Ditto.
+        * runtime/Structure.cpp: Add static destroy.
+        (JSC::Structure::destroy):
+        * runtime/Structure.h: Move JSCell::finishCreation and JSCell constructor into Structure.h 
+        because they need to have the full Structure type to access the ClassInfo to store in the JSCell.
+        (JSC::JSCell::setStructure):
+        (JSC::JSCell::validatedClassInfo):
+        (JSC::JSCell::JSCell):
+        (JSC::JSCell::finishCreation):
+        * runtime/StructureChain.cpp: Add static destroy.
+        (JSC::StructureChain::destroy):
+        * runtime/StructureChain.h:
+        * wtf/Assertions.h: Add new assertion ASSERT_HAS_TRIVIAL_DESTRUCTOR, which uses clangs 
+        ability to tell us when a class has a trivial destructor. We will use this assert 
+        more in future patches as we move toward having all JSC objects backed by GC memory, 
+        which means moving away from using destructors/finalizers.
+
 2011-12-15  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' in preparation for the GTK+ release.

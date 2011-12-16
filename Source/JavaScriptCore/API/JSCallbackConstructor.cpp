@@ -59,6 +59,11 @@ JSCallbackConstructor::~JSCallbackConstructor()
         JSClassRelease(m_class);
 }
 
+void JSCallbackConstructor::destroy(JSCell* cell)
+{
+    jsCast<JSCallbackConstructor*>(cell)->JSCallbackConstructor::~JSCallbackConstructor();
+}
+
 static EncodedJSValue JSC_HOST_CALL constructJSCallback(ExecState* exec)
 {
     JSObject* constructor = exec->callee();

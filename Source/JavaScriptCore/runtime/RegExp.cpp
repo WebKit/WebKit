@@ -248,11 +248,13 @@ void RegExp::finishCreation(JSGlobalData& globalData)
         m_numSubpatterns = pattern.m_numSubpatterns;
 }
 
-RegExp::~RegExp()
+void RegExp::destroy(JSCell* cell)
 {
+    RegExp* thisObject = jsCast<RegExp*>(cell);
 #if REGEXP_FUNC_TEST_DATA_GEN
     RegExpFunctionalTestCollector::get()->clearRegExp(this);
 #endif
+    thisObject->RegExp::~RegExp();
 }
 
 RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)

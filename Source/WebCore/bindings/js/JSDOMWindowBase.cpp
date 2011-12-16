@@ -65,6 +65,11 @@ void JSDOMWindowBase::finishCreation(JSGlobalData& globalData, JSDOMWindowShell*
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
 }
 
+void JSDOMWindowBase::destroy(JSCell* cell)
+{
+    jsCast<JSDOMWindowBase*>(cell)->JSDOMWindowBase::~JSDOMWindowBase();
+}
+
 void JSDOMWindowBase::updateDocument()
 {
     ASSERT(m_impl->document());

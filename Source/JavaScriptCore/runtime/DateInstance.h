@@ -34,7 +34,9 @@ namespace JSC {
         DateInstance(ExecState*, Structure*);
         void finishCreation(JSGlobalData&);
         void finishCreation(JSGlobalData&, double);
-        
+
+        static void destroy(JSCell*);
+ 
     public:
         typedef JSWrapperObject Base;
 

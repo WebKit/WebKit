@@ -75,8 +75,9 @@ void RegExpObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-RegExpObject::~RegExpObject()
+void RegExpObject::destroy(JSCell* cell)
 {
+    jsCast<RegExpObject*>(cell)->RegExpObject::~RegExpObject();
 }
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)

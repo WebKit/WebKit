@@ -50,8 +50,6 @@ public:
         return object;
     }
 
-    virtual ~CRuntimeObject();
-
     CInstance* getInternalCInstance() const;
 
     static const ClassInfo s_info;

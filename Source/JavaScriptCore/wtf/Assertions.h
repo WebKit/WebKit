@@ -383,4 +383,10 @@ while (0)
 #define ASSERT_GC_OBJECT_INHERITS(object, classInfo) do { (void)object; (void)classInfo; } while (0)
 #endif
 
+#if COMPILER(CLANG)
+#define ASSERT_HAS_TRIVIAL_DESTRUCTOR(klass) COMPILE_ASSERT(__has_trivial_destructor(klass), klass##_has_trivial_destructor_check)
+#else
+#define ASSERT_HAS_TRIVIAL_DESTRUCTOR(klass)
+#endif
+
 #endif /* WTF_Assertions_h */

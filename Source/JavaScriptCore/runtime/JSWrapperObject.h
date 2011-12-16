@@ -46,8 +46,6 @@ namespace JSC {
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        virtual ~JSWrapperObject();
-        
     private:
         WriteBarrier<Unknown> m_internalValue;
     };

@@ -33,11 +33,9 @@ EXPORTS
     ??1Debugger@JSC@@UAE@XZ
     ??1DropAllLocks@JSLock@JSC@@QAE@XZ
     ??1JSGlobalData@JSC@@QAE@XZ
-    ??1JSGlobalObject@JSC@@UAE@XZ
-    ??1JSVariableObject@JSC@@UAE@XZ
+   ??1JSGlobalObject@JSC@@QAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
-    ??1ScopeChainNode@JSC@@EAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -158,6 +156,9 @@ EXPORTS
     ?despecifyDictionaryFunction@Structure@JSC@@QAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
     ?despecifyFunctionTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
+    ?destroy@JSByteArray@JSC@@SAXPAVJSCell@2@@Z
+    ?destroy@JSGlobalObject@JSC@@SAXPAVJSCell@2@@Z
+    ?destroy@JSNonFinalObject@JSC@@SAXPAVJSCell@2@@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
@@ -363,9 +364,6 @@ EXPORTS
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSGlobalThis@JSC@@KAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
-    ?vtableAnchor@InternalFunction@JSC@@EAEXXZ
-    ?vtableAnchor@JSFinalObject@JSC@@EAEXXZ
-    ?vtableAnchor@JSObject@JSC@@UAEXXZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ

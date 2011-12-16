@@ -33,6 +33,9 @@ namespace JSC {
     struct HashTable;
 
     struct MethodTable {
+        typedef void (*DestroyFunctionPtr)(JSCell*);
+        DestroyFunctionPtr destroy;
+
         typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
         VisitChildrenFunctionPtr visitChildren;
 
@@ -114,6 +117,7 @@ struct MemberCheck##member { \
 #define HAS_MEMBER_NAMED(klass, name) (MemberCheck##name<klass>::has)
 
 #define CREATE_METHOD_TABLE(ClassName) { \
+        &ClassName::destroy, \
         &ClassName::visitChildren, \
         &ClassName::getCallData, \
         &ClassName::getConstructData, \

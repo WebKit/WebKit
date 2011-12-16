@@ -170,6 +170,11 @@ ASSERT_CLASS_FITS_IN_CELL(StrictModeTypeErrorFunction);
 
 const ClassInfo StrictModeTypeErrorFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(StrictModeTypeErrorFunction) };
 
+void StrictModeTypeErrorFunction::destroy(JSCell* cell)
+{
+    jsCast<StrictModeTypeErrorFunction*>(cell)->StrictModeTypeErrorFunction::~StrictModeTypeErrorFunction();
+}
+
 JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();

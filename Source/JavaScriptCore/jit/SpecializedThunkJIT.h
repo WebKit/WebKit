@@ -60,7 +60,7 @@ namespace JSC {
         void loadJSStringArgument(int argument, RegisterID dst)
         {
             loadCellArgument(argument, dst);
-            m_failures.append(branchPtr(NotEqual, Address(dst, 0), TrustedImmPtr(m_globalData->jsStringVPtr)));
+            m_failures.append(branchPtr(NotEqual, Address(dst, JSCell::classInfoOffset()), TrustedImmPtr(&JSString::s_info)));
         }
         
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)

@@ -29,17 +29,10 @@
 
 namespace JSC {
 
-// Ensure the compiler generates a vtable for InternalFunction!
-void InternalFunction::vtableAnchor() {}
-
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(InternalFunction);
 
 const ClassInfo InternalFunction::s_info = { "Function", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(InternalFunction) };
-
-InternalFunction::InternalFunction(VPtrStealingHackType)
-    : JSNonFinalObject(VPtrStealingHack)
-{
-}
 
 InternalFunction::InternalFunction(JSGlobalObject* globalObject, Structure* structure)
     : JSNonFinalObject(globalObject->globalData(), structure)
@@ -63,7 +56,7 @@ const UString InternalFunction::displayName(ExecState* exec)
 {
     JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
     
-    if (displayName && isJSString(&exec->globalData(), displayName))
+    if (displayName && isJSString(displayName))
         return asString(displayName)->tryGetValue();
     
     return UString();

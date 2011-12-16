@@ -29,9 +29,7 @@
 
 namespace JSC {
 
-ScopeChainNode::~ScopeChainNode()
-{
-}
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(ScopeChainNode);
 
 #ifndef NDEBUG
 

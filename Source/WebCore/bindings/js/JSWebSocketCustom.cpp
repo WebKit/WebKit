@@ -69,7 +69,7 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
         webSocket->connect(urlString, ec);
     else {
         JSValue protocolsValue = exec->argument(1);
-        if (isJSArray(&exec->globalData(), protocolsValue)) {
+        if (isJSArray(protocolsValue)) {
             Vector<String> protocols;
             JSArray* protocolsArray = asArray(protocolsValue);
             for (unsigned i = 0; i < protocolsArray->length(); ++i) {

@@ -1,3 +1,17 @@
+2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        De-virtualize destructors
+        https://bugs.webkit.org/show_bug.cgi?id=74331
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.cpp: Add trivial destructor assert.
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp: Add static destroy.
+        (WebKit::JSNPObject::destroy):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * win/WebKit2.def: Add/remove necessary symbols.
+        * win/WebKit2CFLite.def: Ditto.
+
 2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use bit field for bool members of WebKitWindowPropertiesPrivate

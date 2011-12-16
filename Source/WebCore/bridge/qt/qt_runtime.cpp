@@ -145,7 +145,7 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
         return Boolean;
     else if (val.isNull())
         return Null;
-    else if (isJSByteArray(&exec->globalData(), val))
+    else if (isJSByteArray(val))
         return JSByteArray;
     else if (val.isObject()) {
         JSObject *object = val.toObject(exec);
@@ -978,6 +978,11 @@ void QtRuntimeMethod::finishCreation(ExecState* exec, const Identifier& identifi
 QtRuntimeMethod::~QtRuntimeMethod()
 {
     delete d_ptr;
+}
+
+void QtRuntimeMethod::destroy(JSCell* cell)
+{
+    jsCast<QtRuntimeMethod*>(cell)->QtRuntimeMethod::~QtRuntimeMethod();
 }
 
 // ===============

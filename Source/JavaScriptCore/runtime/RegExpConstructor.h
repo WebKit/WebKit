@@ -98,6 +98,7 @@ namespace JSC {
 
     private:
         RegExpConstructor(JSGlobalObject*, Structure*);
+        static void destroy(JSCell*);
         static ConstructType getConstructData(JSCell*, ConstructData&);
         static CallType getCallData(JSCell*, CallData&);
 

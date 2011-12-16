@@ -67,7 +67,9 @@ namespace JSC{
             : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
         {
         }
-        
+
+        static void destroy(JSCell*);
+
         SymbolTable m_symbolTable;
         WriteBarrier<Unknown> m_registerStore;
     };

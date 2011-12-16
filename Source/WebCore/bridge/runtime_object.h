@@ -43,7 +43,7 @@ public:
         return object;
     }
 
-    virtual ~RuntimeObject();
+    static void destroy(JSCell*);
 
     static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier& propertyName, PropertySlot&);
     static bool getOwnPropertyDescriptor(JSObject*, ExecState*, const Identifier& propertyName, PropertyDescriptor&);

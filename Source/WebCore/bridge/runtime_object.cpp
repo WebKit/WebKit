@@ -49,9 +49,11 @@ void RuntimeObject::finishCreation(JSGlobalObject* globalObject)
     ASSERT(inherits(&s_info));
 }
 
-RuntimeObject::~RuntimeObject()
+void RuntimeObject::destroy(JSCell* cell)
 {
-    ASSERT(!m_instance);
+    RuntimeObject* thisObject = jsCast<RuntimeObject*>(cell);
+    ASSERT(!thisObject->m_instance);
+    thisObject->RuntimeObject::~RuntimeObject();
 }
 
 void RuntimeObject::invalidate()

@@ -30,6 +30,10 @@
 
 namespace JSC {
 
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(DebuggerActivation);
+
+const ClassInfo DebuggerActivation::s_info = { "DebuggerActivation", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(DebuggerActivation) };
+
 DebuggerActivation::DebuggerActivation(JSGlobalData& globalData)
     : JSNonFinalObject(globalData, globalData.debuggerActivationStructure.get())
 {

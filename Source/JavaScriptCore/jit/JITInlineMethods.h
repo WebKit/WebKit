@@ -84,7 +84,7 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHea
 
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
-    failures.append(branchPtr(NotEqual, Address(src), TrustedImmPtr(m_globalData->jsStringVPtr)));
+    failures.append(branchPtr(NotEqual, Address(src, JSCell::classInfoOffset()), TrustedImmPtr(&JSString::s_info)));
     failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
     failures.append(branchTest32(Zero, dst));
@@ -399,7 +399,7 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, void* vtable, RegisterID result, RegisterID storagePtr)
+template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, RegisterID result, RegisterID storagePtr)
 {
     MarkedSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassForObject(sizeof(ClassType));
     loadPtr(&sizeClass->firstFreeCell, result);
@@ -409,11 +409,11 @@ template <typename ClassType, typename StructureType> inline void JIT::emitAlloc
     loadPtr(Address(result), storagePtr);
     storePtr(storagePtr, &sizeClass->firstFreeCell);
 
-    // initialize the object's vtable
-    storePtr(TrustedImmPtr(vtable), Address(result));
-
     // initialize the object's structure
     storePtr(structure, Address(result, JSCell::structureOffset()));
+
+    // initialize the object's classInfo pointer
+    storePtr(TrustedImmPtr(&ClassType::s_info), Address(result, JSCell::classInfoOffset()));
 
     // initialize the inheritor ID
     storePtr(TrustedImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
@@ -425,12 +425,12 @@ template <typename ClassType, typename StructureType> inline void JIT::emitAlloc
 
 template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
 {
-    emitAllocateBasicJSObject<JSFinalObject>(structure, m_globalData->jsFinalObjectVPtr, result, scratch);
+    emitAllocateBasicJSObject<JSFinalObject>(structure, result, scratch);
 }
 
 inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, RegisterID scopeChain, RegisterID result, RegisterID storagePtr)
 {
-    emitAllocateBasicJSObject<JSFunction>(TrustedImmPtr(m_codeBlock->globalObject()->namedFunctionStructure()), m_globalData->jsFunctionVPtr, result, storagePtr);
+    emitAllocateBasicJSObject<JSFunction>(TrustedImmPtr(m_codeBlock->globalObject()->namedFunctionStructure()), result, storagePtr);
 
     // store the function's scope chain
     storePtr(scopeChain, Address(result, JSFunction::offsetOfScopeChain()));

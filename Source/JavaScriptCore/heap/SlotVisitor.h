@@ -35,7 +35,7 @@ class Heap;
 class SlotVisitor : public MarkStack {
     friend class HeapRootVisitor;
 public:
-    SlotVisitor(MarkStackThreadSharedData&, void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr);
+    SlotVisitor(MarkStackThreadSharedData&);
 
     void donate()
     {
@@ -71,8 +71,8 @@ private:
     }
 };
 
-inline SlotVisitor::SlotVisitor(MarkStackThreadSharedData& shared, void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr)
-    : MarkStack(shared, jsArrayVPtr, jsFinalObjectVPtr, jsStringVPtr)
+inline SlotVisitor::SlotVisitor(MarkStackThreadSharedData& shared)
+    : MarkStack(shared)
 {
 }
 

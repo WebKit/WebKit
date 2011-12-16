@@ -82,6 +82,8 @@ namespace JSC {
         {
         }
 
+        static void destroy(JSCell*);
+
     public:
         typedef InternalFunction Base;
 

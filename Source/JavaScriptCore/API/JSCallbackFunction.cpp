@@ -40,6 +40,7 @@
 namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSCallbackFunction);
+ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSCallbackFunction);
 
 const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackFunction) };
 

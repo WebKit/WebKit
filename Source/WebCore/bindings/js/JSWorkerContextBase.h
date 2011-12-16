@@ -41,12 +41,12 @@ namespace WebCore {
     class JSWorkerContextBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     public:
-        virtual ~JSWorkerContextBase();
+        static void destroy(JSC::JSCell*);
 
         static const JSC::ClassInfo s_info;
 
         WorkerContext* impl() const { return m_impl.get(); }
-        virtual ScriptExecutionContext* scriptExecutionContext() const;
+        ScriptExecutionContext* scriptExecutionContext() const;
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
         {

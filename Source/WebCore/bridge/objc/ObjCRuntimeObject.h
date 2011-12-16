@@ -47,8 +47,6 @@ public:
         return object;
     }
 
-    virtual ~ObjCRuntimeObject();
-
     ObjcInstance* getInternalObjCInstance() const;
 
     static const ClassInfo s_info;

@@ -204,7 +204,7 @@ namespace JSC {
         friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
 
     public:
-        MarkStack(MarkStackThreadSharedData&, void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr);
+        MarkStack(MarkStackThreadSharedData&);
         ~MarkStack();
 
         void append(ConservativeRoots&);
@@ -267,9 +267,6 @@ namespace JSC {
         }
         
         MarkStackArray m_stack;
-        void* m_jsArrayVPtr;
-        void* m_jsFinalObjectVPtr;
-        void* m_jsStringVPtr;
         HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
         
 #if !ASSERT_DISABLED
@@ -286,11 +283,8 @@ namespace JSC {
         MarkStackThreadSharedData& m_shared;
     };
 
-    inline MarkStack::MarkStack(MarkStackThreadSharedData& shared, void* jsArrayVPtr, void* jsFinalObjectVPtr, void* jsStringVPtr)
+    inline MarkStack::MarkStack(MarkStackThreadSharedData& shared)
         : m_stack(shared.m_segmentAllocator)
-        , m_jsArrayVPtr(jsArrayVPtr)
-        , m_jsFinalObjectVPtr(jsFinalObjectVPtr)
-        , m_jsStringVPtr(jsStringVPtr)
 #if !ASSERT_DISABLED
         , m_isCheckingForDefaultMarkViolation(false)
         , m_isDraining(false)
