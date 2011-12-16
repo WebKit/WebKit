@@ -99,8 +99,8 @@ public:
     virtual void didWriteSelectionToPasteboard() = 0;
     virtual void didSetSelectionTypesForPasteboard() = 0;
     
-    virtual void registerCommandForUndo(PassRefPtr<UndoStep>) = 0;
-    virtual void registerCommandForRedo(PassRefPtr<UndoStep>) = 0;
+    virtual void registerUndoStep(PassRefPtr<UndoStep>) = 0;
+    virtual void registerRedoStep(PassRefPtr<UndoStep>) = 0;
     virtual void clearUndoRedoOperations() = 0;
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const = 0;

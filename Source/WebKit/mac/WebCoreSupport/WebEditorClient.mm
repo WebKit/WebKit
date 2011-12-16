@@ -512,7 +512,7 @@ static NSString* undoNameForEditAction(EditAction editAction)
     return nil;
 }
 
-void WebEditorClient::registerCommandForUndoOrRedo(PassRefPtr<UndoStep> step, bool isRedo)
+void WebEditorClient::registerUndoOrRedoStep(PassRefPtr<UndoStep> step, bool isRedo)
 {
     ASSERT(step);
     
@@ -525,14 +525,14 @@ void WebEditorClient::registerCommandForUndoOrRedo(PassRefPtr<UndoStep> step, bo
     m_haveUndoRedoOperations = YES;
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> cmd)
+void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> cmd)
 {
-    registerCommandForUndoOrRedo(cmd, false);
+    registerUndoOrRedoStep(cmd, false);
 }
 
-void WebEditorClient::registerCommandForRedo(PassRefPtr<UndoStep> cmd)
+void WebEditorClient::registerRedoStep(PassRefPtr<UndoStep> cmd)
 {
-    registerCommandForUndoOrRedo(cmd, true);
+    registerUndoOrRedoStep(cmd, true);
 }
 
 void WebEditorClient::clearUndoRedoOperations()

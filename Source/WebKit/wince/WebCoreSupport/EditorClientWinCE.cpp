@@ -144,12 +144,12 @@ void EditorClientWinCE::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClientWinCE::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep>)
+void EditorClientWinCE::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep>)
 {
     notImplemented();
 }
 
-void EditorClientWinCE::registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep>)
+void EditorClientWinCE::registerRedoStep(WTF::PassRefPtr<WebCore::UndoStep>)
 {
     notImplemented();
 }

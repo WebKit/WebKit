@@ -220,7 +220,7 @@ void WebEditorClient::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> step)
+void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> step)
 {
     // FIXME: Add assertion that the command being reapplied is the same command that is
     // being passed to us.
@@ -234,7 +234,7 @@ void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> step)
     m_page->send(Messages::WebPageProxy::RegisterEditCommandForUndo(webStep->stepID(), editAction));
 }
 
-void WebEditorClient::registerCommandForRedo(PassRefPtr<UndoStep>)
+void WebEditorClient::registerRedoStep(PassRefPtr<UndoStep>)
 {
 }
 

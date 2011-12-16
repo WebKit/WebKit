@@ -288,7 +288,7 @@ void EditorClientImpl::didSetSelectionTypesForPasteboard()
 {
 }
 
-void EditorClientImpl::registerCommandForUndo(PassRefPtr<UndoStep> step)
+void EditorClientImpl::registerUndoStep(PassRefPtr<UndoStep> step)
 {
     if (m_undoStack.size() == maximumUndoStackDepth)
         m_undoStack.removeFirst(); // drop oldest item off the far end
@@ -297,7 +297,7 @@ void EditorClientImpl::registerCommandForUndo(PassRefPtr<UndoStep> step)
     m_undoStack.append(step);
 }
 
-void EditorClientImpl::registerCommandForRedo(PassRefPtr<UndoStep> step)
+void EditorClientImpl::registerRedoStep(PassRefPtr<UndoStep> step)
 {
     m_redoStack.append(step);
 }

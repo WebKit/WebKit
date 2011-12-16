@@ -276,7 +276,7 @@ void EditorClientWx::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClientWx::registerCommandForUndo(PassRefPtr<EditCommand> command)
+void EditorClientWx::registerUndoStep(PassRefPtr<EditCommand> command)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 
@@ -288,7 +288,7 @@ void EditorClientWx::registerCommandForUndo(PassRefPtr<EditCommand> command)
     }
 }
 
-void EditorClientWx::registerCommandForRedo(PassRefPtr<EditCommand> command)
+void EditorClientWx::registerRedoStep(PassRefPtr<EditCommand> command)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
 

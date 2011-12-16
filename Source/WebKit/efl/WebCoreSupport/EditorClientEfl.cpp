@@ -160,14 +160,14 @@ void EditorClientEfl::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClientEfl::registerCommandForUndo(WTF::PassRefPtr<UndoStep> step)
+void EditorClientEfl::registerUndoStep(WTF::PassRefPtr<UndoStep> step)
 {
     if (!m_isInRedo)
         redoStack.clear();
     undoStack.prepend(step);
 }
 
-void EditorClientEfl::registerCommandForRedo(WTF::PassRefPtr<UndoStep> step)
+void EditorClientEfl::registerRedoStep(WTF::PassRefPtr<UndoStep> step)
 {
     redoStack.prepend(step);
 }

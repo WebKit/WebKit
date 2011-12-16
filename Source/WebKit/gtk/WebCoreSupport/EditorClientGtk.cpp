@@ -345,7 +345,7 @@ void EditorClient::didSetSelectionTypesForPasteboard()
     notImplemented();
 }
 
-void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep> step)
+void EditorClient::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
     if (undoStack.size() == maximumUndoStackDepth)
         undoStack.removeFirst();
@@ -354,7 +354,7 @@ void EditorClient::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep> ste
     undoStack.append(step);
 }
 
-void EditorClient::registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep> step)
+void EditorClient::registerRedoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
     redoStack.append(step);
 }

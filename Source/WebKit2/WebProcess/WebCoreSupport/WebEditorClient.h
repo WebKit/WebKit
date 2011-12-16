@@ -69,8 +69,8 @@ private:
     virtual void didWriteSelectionToPasteboard() OVERRIDE;
     virtual void didSetSelectionTypesForPasteboard() OVERRIDE;
     
-    virtual void registerCommandForUndo(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
-    virtual void registerCommandForRedo(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
+    virtual void registerUndoStep(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
+    virtual void registerRedoStep(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
     virtual void clearUndoRedoOperations() OVERRIDE;
 
     virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const OVERRIDE;

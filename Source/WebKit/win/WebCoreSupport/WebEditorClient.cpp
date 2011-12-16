@@ -527,7 +527,7 @@ static String undoNameForEditAction(EditAction editAction)
     return String();
 }
 
-void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> step)
+void WebEditorClient::registerUndoStep(PassRefPtr<UndoStep> step)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
@@ -543,7 +543,7 @@ void WebEditorClient::registerCommandForUndo(PassRefPtr<UndoStep> step)
     }
 }
 
-void WebEditorClient::registerCommandForRedo(PassRefPtr<UndoStep> step)
+void WebEditorClient::registerRedoStep(PassRefPtr<UndoStep> step)
 {
     IWebUIDelegate* uiDelegate = 0;
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {

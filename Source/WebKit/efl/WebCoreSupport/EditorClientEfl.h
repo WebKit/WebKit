@@ -84,8 +84,8 @@ public:
     virtual void didWriteSelectionToPasteboard();
     virtual void didSetSelectionTypesForPasteboard();
 
-    virtual void registerCommandForUndo(WTF::PassRefPtr<UndoStep>);
-    virtual void registerCommandForRedo(WTF::PassRefPtr<UndoStep>);
+    virtual void registerUndoStep(WTF::PassRefPtr<UndoStep>);
+    virtual void registerRedoStep(WTF::PassRefPtr<UndoStep>);
     virtual void clearUndoRedoOperations();
 
     virtual bool canCopyCut(Frame*, bool defaultValue) const;

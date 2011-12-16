@@ -237,7 +237,7 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
     return false;
 }
 
-void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep> step)
+void EditorClientQt::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
 #ifndef QT_NO_UNDOSTACK
     Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
@@ -247,7 +247,7 @@ void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::UndoStep> s
 #endif // QT_NO_UNDOSTACK
 }
 
-void EditorClientQt::registerCommandForRedo(WTF::PassRefPtr<WebCore::UndoStep>)
+void EditorClientQt::registerRedoStep(WTF::PassRefPtr<WebCore::UndoStep>)
 {
 }
 

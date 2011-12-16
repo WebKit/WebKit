@@ -100,8 +100,8 @@ public:
     virtual void respondToChangedContents() OVERRIDE;
     virtual void respondToChangedSelection(WebCore::Frame*) OVERRIDE;
 
-    virtual void registerCommandForUndo(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
-    virtual void registerCommandForRedo(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
+    virtual void registerUndoStep(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
+    virtual void registerRedoStep(PassRefPtr<WebCore::UndoStep>) OVERRIDE;
     virtual void clearUndoRedoOperations() OVERRIDE;
 
     virtual bool canCopyCut(WebCore::Frame*, bool defaultValue) const OVERRIDE;
@@ -143,7 +143,7 @@ public:
     virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) OVERRIDE;
 #endif
 private:
-    void registerCommandForUndoOrRedo(PassRefPtr<WebCore::UndoStep>, bool isRedo);
+    void registerUndoOrRedoStep(PassRefPtr<WebCore::UndoStep>, bool isRedo);
     WebEditorClient();
 
     WebView *m_webView;
