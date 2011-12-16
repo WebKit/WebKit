@@ -192,9 +192,12 @@ private:
         }
             
         case PutByVal: {
-            changed |= m_graph[node.child1()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
-            changed |= m_graph[node.child2()].mergeArithNodeFlags(flags | NodeUsedAsNumber);
-            changed |= m_graph[node.child3()].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            NodeIndex base = m_graph.m_varArgChildren[node.firstChild()];
+            NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+            NodeIndex value = m_graph.m_varArgChildren[node.firstChild() + 2];
+            changed |= m_graph[base].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
+            changed |= m_graph[property].mergeArithNodeFlags(flags | NodeUsedAsNumber);
+            changed |= m_graph[value].mergeArithNodeFlags(flags | NodeUsedAsNumber | NodeNeedsNegZero);
             break;
         }
             
@@ -927,6 +930,14 @@ private:
             }
             break;
         }
+        case PutByVal:
+        case PutByValAlias: {
+            NodeIndex storage = m_graph.m_varArgChildren[node.firstChild() + 3];
+            if (m_graph[storage].op == Phantom)
+                node.children.variable.numChildren = 3;
+            break;
+        }
+            
         case GetByVal:
         case StringCharAt:
         case StringCharCodeAt: {
@@ -1082,9 +1093,9 @@ private:
         return isBooleanPrediction(prediction) || !prediction;
     }
     
-    bool byValIsPure(Node& node)
+    bool byValIndexIsPure(Node& node)
     {
-        PredictedType prediction = m_graph[node.child2()].prediction();
+        PredictedType prediction = node.prediction();
         return (prediction & PredictInt32) || !prediction;
     }
     
@@ -1106,7 +1117,7 @@ private:
         case LogicalNot:
             return !logicalNotIsPure(node);
         case GetByVal:
-            return !byValIsPure(node);
+            return !byValIndexIsPure(m_graph[node.child2()]);
         default:
             ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
@@ -1176,21 +1187,25 @@ private:
             Node& node = m_graph[index];
             switch (node.op) {
             case GetByVal:
-                if (!byValIsPure(node))
+                if (!byValIndexIsPure(m_graph[node.child2()]))
                     return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return index;
                 break;
             case PutByVal:
-            case PutByValAlias:
-                if (!byValIsPure(node))
+            case PutByValAlias: {
+                
+                NodeIndex base = m_graph.m_varArgChildren[node.firstChild()];
+                    NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+                if (!byValIndexIsPure(m_graph[property]))
                     return NoNode;
-                if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
-                    return node.child3();
+                if (base == child1 && canonicalize(property) == canonicalize(child2))
+                    return m_graph.m_varArgChildren[node.firstChild() + 2];
                 // We must assume that the PutByVal will clobber the location we're getting from.
                 // FIXME: We can do better; if we know that the PutByVal is accessing an array of a
                 // different type than the GetByVal, then we know that they won't clobber each other.
                 return NoNode;
+            }
             case PutStructure:
             case PutByOffset:
                 // GetByVal currently always speculates that it's accessing an
@@ -1246,15 +1261,17 @@ private:
                 break;
                 
             case PutByVal:
-            case PutByValAlias:
-                if (byValIsPure(node)) {
+            case PutByValAlias: {
+                NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+                if (byValIndexIsPure(m_graph[property])) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
                     break;
                 }
                 return false;
-                
+            }
+
             default:
                 if (clobbersWorld(index))
                     return false;
@@ -1289,15 +1306,17 @@ private:
                 break;
                 
             case PutByVal:
-            case PutByValAlias:
-                if (byValIsPure(node)) {
+            case PutByValAlias: {
+                NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+                if (byValIndexIsPure(m_graph[property])) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
                     break;
                 }
                 return NoNode;
-                
+            }
+
             default:
                 if (clobbersWorld(index))
                     return NoNode;
@@ -1325,15 +1344,17 @@ private:
                 break;
                 
             case PutByVal:
-            case PutByValAlias:
-                if (byValIsPure(node)) {
+            case PutByValAlias: {
+                NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+                if (byValIndexIsPure(m_graph[property])) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
                     break;
                 }
                 return NoNode;
-                
+            }
+
             default:
                 if (clobbersWorld(index))
                     return NoNode;
@@ -1343,7 +1364,7 @@ private:
         return NoNode;
     }
 
-    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, bool hasIntegerIndexPrediction)
+    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
         for (NodeIndex index = m_compileIndex; index-- > start;) {
@@ -1352,7 +1373,7 @@ private:
             case GetIndexedPropertyStorage: {
                 PredictedType basePrediction = m_graph[node.child2()].prediction();
                 bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
-                if (node.child1() == child1 && hasIntegerIndexPrediction == nodeHasIntegerIndexPrediction)
+                if (node.child1() == child1 && nodeHasIntegerIndexPrediction)
                     return index;
                 break;
             }
@@ -1367,10 +1388,13 @@ private:
                 // PutByValAlias can't change the indexed storage pointer
                 break;
                 
-            case PutByVal:
-                if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && byValIsPure(node))
+            case PutByVal: {
+                NodeIndex base = m_graph.m_varArgChildren[node.firstChild()];
+                NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+                if (isFixedIndexedStorageObjectPrediction(m_graph[base].prediction()) && byValIndexIsPure(m_graph[property]))
                     break;
                 return NoNode;
+            }
 
             default:
                 if (clobbersWorld(index))
@@ -1551,14 +1575,17 @@ private:
             break;
             
         case GetByVal:
-            if (byValIsPure(node))
+            if (byValIndexIsPure(m_graph[node.child2()]))
                 setReplacement(getByValLoadElimination(node.child1(), node.child2()));
             break;
             
-        case PutByVal:
-            if (byValIsPure(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
+        case PutByVal: {
+            NodeIndex base = m_graph.m_varArgChildren[node.firstChild()];
+            NodeIndex property = m_graph.m_varArgChildren[node.firstChild() + 1];
+            if (byValIndexIsPure(m_graph[property]) && getByValLoadElimination(base, property) != NoNode)
                 node.op = PutByValAlias;
             break;
+        }
             
         case CheckStructure:
             if (checkStructureLoadElimination(node.structureSet(), node.child1()))
@@ -1573,7 +1600,8 @@ private:
         case GetIndexedPropertyStorage: {
             PredictedType basePrediction = m_graph[node.child2()].prediction();
             bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
-            setReplacement(getIndexedPropertyStorageLoadElimination(node.child1(), nodeHasIntegerIndexPrediction));
+            if (nodeHasIntegerIndexPrediction)
+                setReplacement(getIndexedPropertyStorageLoadElimination(node.child1()));
             break;
         }
 

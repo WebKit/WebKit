@@ -1545,13 +1545,17 @@ static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg sou
 
 }
 
-void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, Node& node)
+void SpeculativeJIT::compilePutByValForByteArray(Node& node)
 {
-    NodeIndex baseIndex = node.child1();
-    NodeIndex valueIndex = node.child3();
+    NodeIndex baseIndex = m_jit.graph().m_varArgChildren[node.firstChild()];
+    NodeIndex propertyIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1];
+    NodeIndex valueIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 2];
+    NodeIndex storageIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 3];
     
-    if (!isByteArrayPrediction(m_state.forNode(baseIndex).m_type))
-        speculationCheck(BadType, JSValueSource::unboxedCell(base), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
+    if (!isByteArrayPrediction(m_state.forNode(baseIndex).m_type)) {
+        SpeculateCellOperand base(this, baseIndex);
+        speculationCheck(BadType, JSValueSource::unboxedCell(base.gpr()), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base.gpr(), JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
+    }
     GPRTemporary value;
     GPRReg valueGPR;
 
@@ -1598,14 +1602,11 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         value.adopt(result);
         valueGPR = gpr;
     }
-    ASSERT_UNUSED(valueGPR, valueGPR != property);
-    ASSERT(valueGPR != base);
-    GPRTemporary storage(this);
+    StorageOperand storage(this, storageIndex);
+    SpeculateIntegerOperand property(this, propertyIndex);
     GPRReg storageReg = storage.gpr();
-    ASSERT(valueGPR != storageReg);
-    m_jit.loadPtr(MacroAssembler::Address(base, JSByteArray::offsetOfStorage()), storageReg);
-    MacroAssembler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, property, MacroAssembler::Address(storageReg, ByteArray::offsetOfSize()));
-    m_jit.store8(value.gpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesOne, ByteArray::offsetOfData()));
+    MacroAssembler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, property.gpr(), MacroAssembler::Address(storageReg, ByteArray::offsetOfSize()));
+    m_jit.store8(value.gpr(), MacroAssembler::BaseIndex(storageReg, property.gpr(), MacroAssembler::TimesOne, ByteArray::offsetOfData()));
     outOfBounds.link(&m_jit);
     noResult(m_compileIndex);
 }
@@ -1702,13 +1703,30 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
     }
 }
 
-void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements, TypedArraySignedness signedness)
+void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor& descriptor, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements, TypedArraySignedness signedness)
 {
-    NodeIndex baseIndex = node.child1();
-    NodeIndex valueIndex = node.child3();
+    NodeIndex baseIndex = m_jit.graph().m_varArgChildren[node.firstChild()];
+    NodeIndex propertyIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1];
+    NodeIndex valueIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 2];
+    NodeIndex storageIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 3];
+
+    if (speculationRequirements != NoTypedArrayTypeSpecCheck) {
+        SpeculateCellOperand base(this, baseIndex);
+        speculationCheck(BadType, JSValueSource::unboxedCell(base.gpr()), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base.gpr()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
+    }
     
-    if (speculationRequirements != NoTypedArrayTypeSpecCheck)
-        speculationCheck(BadType, JSValueSource::unboxedCell(base), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
+    StorageOperand storage(this, storageIndex);
+    GPRReg storageReg = storage.gpr();
+    SpeculateIntegerOperand property(this, propertyIndex);
+    GPRReg propertyReg = property.gpr();
+    MacroAssembler::Jump outOfBounds;
+    if (speculationRequirements != NoTypedArrayTypeSpecCheck || speculationRequirements != NoTypedArraySpecCheck) {
+        SpeculateCellOperand base(this, baseIndex);
+        if (speculationRequirements != NoTypedArrayTypeSpecCheck)
+            speculationCheck(BadType, JSValueSource::unboxedCell(base.gpr()), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base.gpr(), JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
+        if (speculationRequirements != NoTypedArraySpecCheck)
+            outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(base.gpr(), descriptor.m_lengthOffset));
+    }
     GPRTemporary value;
     GPRReg valueGPR;
     
@@ -1750,25 +1768,16 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         value.adopt(result);
         valueGPR = gpr;
     }
-    ASSERT_UNUSED(valueGPR, valueGPR != property);
-    ASSERT(valueGPR != base);
-    GPRTemporary storage(this);
-    GPRReg storageReg = storage.gpr();
-    ASSERT(valueGPR != storageReg);
-    m_jit.loadPtr(MacroAssembler::Address(base, descriptor.m_storageOffset), storageReg);
-    MacroAssembler::Jump outOfBounds;
-    if (speculationRequirements != NoTypedArraySpecCheck)
-        outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, property, MacroAssembler::Address(base, descriptor.m_lengthOffset));
 
     switch (elementSize) {
     case 1:
-        m_jit.store8(value.gpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesOne));
+        m_jit.store8(value.gpr(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesOne));
         break;
     case 2:
-        m_jit.store16(value.gpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesTwo));
+        m_jit.store16(value.gpr(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesTwo));
         break;
     case 4:
-        m_jit.store32(value.gpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesFour));
+        m_jit.store32(value.gpr(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour));
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -1823,36 +1832,40 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
     doubleResult(resultReg, m_compileIndex);
 }
 
-void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescriptor& descriptor, GPRReg base, GPRReg property, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements)
+void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescriptor& descriptor, Node& node, size_t elementSize, TypedArraySpeculationRequirements speculationRequirements)
 {
-    NodeIndex baseIndex = node.child1();
-    NodeIndex valueIndex = node.child3();
+    NodeIndex baseIndex = m_jit.graph().m_varArgChildren[node.firstChild()];
+    NodeIndex propertyIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1];
+    NodeIndex valueIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 2];
+    NodeIndex storageIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 3];
     
     SpeculateDoubleOperand valueOp(this, valueIndex);
-    
-    if (speculationRequirements != NoTypedArrayTypeSpecCheck)
-        speculationCheck(BadType, JSValueSource::unboxedCell(base), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
-    
-    GPRTemporary result(this);
-    
-    GPRTemporary storage(this);
+    SpeculateStrictInt32Operand property(this, propertyIndex);
+    StorageOperand storage(this, storageIndex);
     GPRReg storageReg = storage.gpr();
+    GPRReg propertyReg = property.gpr();
     
-    m_jit.loadPtr(MacroAssembler::Address(base, descriptor.m_storageOffset), storageReg);
     MacroAssembler::Jump outOfBounds;
-    if (speculationRequirements != NoTypedArraySpecCheck)
-        outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, property, MacroAssembler::Address(base, descriptor.m_lengthOffset));
+    if (speculationRequirements != NoTypedArrayTypeSpecCheck || speculationRequirements != NoTypedArraySpecCheck) {
+        SpeculateCellOperand base(this, baseIndex);
+        if (speculationRequirements != NoTypedArrayTypeSpecCheck)
+            speculationCheck(BadType, JSValueSource::unboxedCell(base.gpr()), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base.gpr(), JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
+        if (speculationRequirements != NoTypedArraySpecCheck)
+            outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(base.gpr(), descriptor.m_lengthOffset));
+    }
+    
+
     
     switch (elementSize) {
     case 4: {
         FPRTemporary scratch(this);
         m_jit.moveDouble(valueOp.fpr(), scratch.fpr());
         m_jit.convertDoubleToFloat(valueOp.fpr(), scratch.fpr());
-        m_jit.storeFloat(scratch.fpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesFour));
+        m_jit.storeFloat(scratch.fpr(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour));
         break;
     }
     case 8:
-        m_jit.storeDouble(valueOp.fpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesEight));
+        m_jit.storeDouble(valueOp.fpr(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight));
         break;
     default:
         ASSERT_NOT_REACHED();
