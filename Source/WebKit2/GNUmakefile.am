@@ -470,6 +470,9 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/API/C/WKFrame.h \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.cpp \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.h \
+	Source/WebKit2/UIProcess/API/C/WKGeolocationManager.h \
+	Source/WebKit2/UIProcess/API/C/WKGeolocationPermissionRequest.h \
+	Source/WebKit2/UIProcess/API/C/WKGeolocationPosition.h \
 	Source/WebKit2/UIProcess/API/C/WKGrammarDetail.cpp \
 	Source/WebKit2/UIProcess/API/C/WKGrammarDetail.h \
 	Source/WebKit2/UIProcess/API/C/WKHitTestResult.cpp \

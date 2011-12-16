@@ -1,3 +1,9 @@
+2011-12-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix 'make dist' in preparation for the GTK+ release.
+
+        * GNUmakefile.am: Add missing header.
+
 2011-12-15  Anders Carlsson  <andersca@apple.com>
 
         Add support for accelerated compositing to the tiled Core Animation drawing area

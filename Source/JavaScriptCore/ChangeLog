@@ -1,3 +1,9 @@
+2011-12-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix 'make dist' in preparation for the GTK+ release.
+
+        * GNUmakefile.list.am: Add missing header.
+
 2011-12-15  Sam Weinig  <sam@webkit.org>
 
         <rdar://problem/10552550> JavaScriptCore uses obsolete 'cpy' mnemonic in ARM assembly

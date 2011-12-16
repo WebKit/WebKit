@@ -381,6 +381,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSFunction.h \
 	Source/JavaScriptCore/runtime/JSBoundFunction.cpp \
 	Source/JavaScriptCore/runtime/JSBoundFunction.h \
+	Source/JavaScriptCore/runtime/JSExportMacros.h \
 	Source/JavaScriptCore/runtime/JSGlobalData.cpp \
 	Source/JavaScriptCore/runtime/JSGlobalData.h \
 	Source/JavaScriptCore/runtime/JSGlobalObject.cpp \
@@ -530,6 +531,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/Deque.h \
 	Source/JavaScriptCore/wtf/DisallowCType.h \
 	Source/JavaScriptCore/wtf/DoublyLinkedList.h \
+	Source/JavaScriptCore/wtf/ExportMacros.h \
 	Source/JavaScriptCore/wtf/dtoa.cpp \
 	Source/JavaScriptCore/wtf/dtoa.h \
 	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc \
