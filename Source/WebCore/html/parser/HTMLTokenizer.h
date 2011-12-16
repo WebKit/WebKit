@@ -146,6 +146,10 @@ public:
     //
     void updateStateFor(const AtomicString& tagName, Frame*);
 
+    // Hack to skip leading newline in <pre>/<listing> for authoring ease.
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
+    void setSkipLeadingNewLineForListing(bool value) { m_skipLeadingNewLineForListing = value; }
+
     bool forceNullCharacterReplacement() const { return m_forceNullCharacterReplacement; }
     void setForceNullCharacterReplacement(bool value) { m_forceNullCharacterReplacement = value; }
 

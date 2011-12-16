@@ -197,6 +197,7 @@ protected:
     Token* m_token;
     int m_lineNumber;
 
+    bool m_skipLeadingNewLineForListing;
     bool m_forceNullCharacterReplacement;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#additional-allowed-character

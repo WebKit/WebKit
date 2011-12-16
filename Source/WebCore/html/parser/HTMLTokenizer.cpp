@@ -136,6 +136,7 @@ void HTMLTokenizer::reset()
     m_state = HTMLTokenizerState::DataState;
     m_token = 0;
     m_lineNumber = 0;
+    m_skipLeadingNewLineForListing = false;
     m_forceNullCharacterReplacement = false;
     m_shouldAllowCDATA = false;
     m_additionalAllowedCharacter = '\0';
@@ -209,6 +210,30 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     if (source.isEmpty() || !m_inputStreamPreprocessor.peek(source, m_lineNumber))
         return haveBufferedCharacterToken();
     UChar cc = m_inputStreamPreprocessor.nextInputCharacter();
+
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
+    // Note that this logic is different than the generic \r\n collapsing
+    // handled in the input stream preprocessor. This logic is here as an
+    // "authoring convenience" so folks can write:
+    //
+    // <pre>
+    // lorem ipsum
+    // lorem ipsum
+    // </pre>
+    //
+    // without getting an extra newline at the start of their <pre> element.
+    if (m_skipLeadingNewLineForListing) {
+        m_skipLeadingNewLineForListing = false;
+        if (cc == '\n') {
+            if (m_state == HTMLTokenizerState::DataState)
+                HTML_ADVANCE_TO(DataState);
+            if (m_state == HTMLTokenizerState::RCDATAState)
+                HTML_ADVANCE_TO(RCDATAState);
+            // When parsing text/plain documents, we run the tokenizer in the
+            // PLAINTEXTState and ignore m_skipLeadingNewLineForListing.
+            ASSERT(m_state == HTMLTokenizerState::PLAINTEXTState);
+        }
+    }
 
     // Source: http://www.whatwg.org/specs/web-apps/current-work/#tokenisation0
     switch (m_state) {
