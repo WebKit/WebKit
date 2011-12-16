@@ -205,7 +205,7 @@ protected:
         unsigned char _white_space : 3; // EWhiteSpace
         unsigned char _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
         // 34 bits
-        
+
         // non CSS2 inherited
         unsigned char m_rtlOrdering : 1; // Order
         unsigned char m_printColorAdjust : PrintColorAdjustBits;

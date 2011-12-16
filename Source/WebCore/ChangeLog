@@ -1,3 +1,9 @@
+2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Touch RenderStyle in an attempt to fix linking errors on Chromium Windows bots.
+
+        * rendering/style/RenderStyle.h:
+
 2011-12-14  Nat Duca  <nduca@chromium.org>
 
         [chromium] DelayBasedTimeSource should not change its timebase on late ticks
