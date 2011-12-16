@@ -33,22 +33,70 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
+#include "Document.h"
+#include "Node.h"
+#include "WebKitMutationObserver.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
-
-class Node;
 
 class ChildListMutationScope {
     WTF_MAKE_NONCOPYABLE(ChildListMutationScope);
 public:
-    ChildListMutationScope(Node* target);
-    ~ChildListMutationScope();
+    ChildListMutationScope(Node* target)
+        : m_target(target->document()->hasMutationObserversOfType(WebKitMutationObserver::ChildList) ? target : 0)
+    {
+        if (m_target)
+            MutationAccumulationRouter::instance()->incrementScopingLevel(m_target);
+    }
 
-    void childAdded(Node*);
-    void willRemoveChild(Node*);
+    ~ChildListMutationScope()
+    {
+        if (m_target)
+            MutationAccumulationRouter::instance()->decrementScopingLevel(m_target);
+    }
+
+    void childAdded(Node* child)
+    {
+        if (m_target)
+            MutationAccumulationRouter::instance()->childAdded(m_target, child);
+    }
+
+    void willRemoveChild(Node* child)
+    {
+        if (m_target)
+            MutationAccumulationRouter::instance()->willRemoveChild(m_target, child);
+    }
 
 private:
+    class MutationAccumulator;
+
+    class MutationAccumulationRouter {
+        WTF_MAKE_NONCOPYABLE(MutationAccumulationRouter);
+    public:
+        ~MutationAccumulationRouter();
+
+        static MutationAccumulationRouter* instance();
+
+        void incrementScopingLevel(Node*);
+        void decrementScopingLevel(Node*);
+
+        void childAdded(Node* target, Node* child);
+        void willRemoveChild(Node* target, Node* child);
+
+    private:
+        MutationAccumulationRouter();
+        static void initialize();
+
+        typedef HashMap<Node*, unsigned> ScopingLevelMap;
+        ScopingLevelMap m_scopingLevels;
+        HashMap<Node*, OwnPtr<MutationAccumulator> > m_accumulations;
+
+        static MutationAccumulationRouter* s_instance;
+    };
+
     Node* m_target;
 };
 

@@ -1,3 +1,44 @@
+2011-12-16  Adam Klein  <adamk@chromium.org>
+
+        Improve performance of ChildListMutationScope when no MutationObservers are present
+        https://bugs.webkit.org/show_bug.cgi?id=74671
+
+        Reviewed by Ojan Vafai.
+
+        Inline ChildListMutationScope's methods (including constructor and
+        destructor), and provide a fast-fail case when no mutation observers
+        are present.
+
+        The code reorganization necessary for the above also removed the
+        anonymous namespace in ChildListMutationScope.cpp, making both helper
+        classes private inner classes of ChildListMutationScope.
+
+        No new tests, refactoring only.
+
+        * dom/ChildListMutationScope.cpp:
+        (WebCore::ChildListMutationScope::MutationAccumulator::MutationAccumulator):
+        (WebCore::ChildListMutationScope::MutationAccumulator::~MutationAccumulator):
+        (WebCore::ChildListMutationScope::MutationAccumulator::isAddedNodeInOrder):
+        (WebCore::ChildListMutationScope::MutationAccumulator::childAdded):
+        (WebCore::ChildListMutationScope::MutationAccumulator::isRemovedNodeInOrder):
+        (WebCore::ChildListMutationScope::MutationAccumulator::willRemoveChild):
+        (WebCore::ChildListMutationScope::MutationAccumulator::enqueueMutationRecord):
+        (WebCore::ChildListMutationScope::MutationAccumulator::clear):
+        (WebCore::ChildListMutationScope::MutationAccumulator::isEmpty):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::MutationAccumulationRouter):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::~MutationAccumulationRouter):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::initialize):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::instance):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::childAdded):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::willRemoveChild):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::incrementScopingLevel):
+        (WebCore::ChildListMutationScope::MutationAccumulationRouter::decrementScopingLevel):
+        * dom/ChildListMutationScope.h:
+        (WebCore::ChildListMutationScope::ChildListMutationScope):
+        (WebCore::ChildListMutationScope::~ChildListMutationScope):
+        (WebCore::ChildListMutationScope::childAdded):
+        (WebCore::ChildListMutationScope::willRemoveChild):
+
 2011-12-16  Dean Jackson  <dino@apple.com>
 
         Filters need to affect visual overflow
