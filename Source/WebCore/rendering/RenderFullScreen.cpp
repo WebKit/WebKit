@@ -90,7 +90,7 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
     fullscreenStyle->font().update(0);
 
     fullscreenStyle->setDisplay(BOX);
-    fullscreenStyle->setBoxPack(Center);
+    fullscreenStyle->setBoxPack(BCENTER);
     fullscreenStyle->setBoxAlign(BCENTER);
     fullscreenStyle->setBoxOrient(VERTICAL);
     

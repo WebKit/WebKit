@@ -1,3 +1,31 @@
+2011-12-15  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r102989.
+        http://trac.webkit.org/changeset/102989
+        https://bugs.webkit.org/show_bug.cgi?id=74580
+
+        Caused SHOULD NOT BE REACHED assertions in debug builds.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EBoxAlignment):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFullScreen.cpp:
+        (createFullScreenStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::boxPack):
+        (WebCore::InheritedFlags::setBoxAlign):
+        (WebCore::InheritedFlags::setBoxPack):
+        (WebCore::InheritedFlags::initialBoxPack):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleDeprecatedFlexibleBoxData.h:
+
 2011-12-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch make_name.pl in an attempt to make Qt bots happy.

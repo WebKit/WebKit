@@ -649,43 +649,6 @@ template<> inline CSSPrimitiveValue::operator EFillRepeat() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxPack e)
-    : CSSValue(PrimitiveClass)
-{
-    m_primitiveUnitType = CSS_IDENT;
-    switch (e) {
-    case Start:
-        m_value.ident = CSSValueStart;
-        break;
-    case Center:
-        m_value.ident = CSSValueCenter;
-        break;
-    case End:
-        m_value.ident = CSSValueEnd;
-        break;
-    case Justify:
-        m_value.ident = CSSValueJustify;
-        break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator EBoxPack() const
-{
-    switch (m_value.ident) {
-    case CSSValueStart:
-        return Start;
-    case CSSValueEnd:
-        return End;
-    case CSSValueCenter:
-        return Center;
-    case CSSValueJustify:
-        return Justify;
-    default:
-        ASSERT_NOT_REACHED();
-        return Justify;
-    }
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxAlignment e)
     : CSSValue(PrimitiveClass)
 {
@@ -706,6 +669,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxAlignment e)
         case BBASELINE:
             m_value.ident = CSSValueBaseline;
             break;
+        case BJUSTIFY:
+            m_value.ident = CSSValueJustify;
+            break;
     }
 }
 
@@ -722,6 +688,8 @@ template<> inline CSSPrimitiveValue::operator EBoxAlignment() const
             return BCENTER;
         case CSSValueBaseline:
             return BBASELINE;
+        case CSSValueJustify:
+            return BJUSTIFY;
         default:
             ASSERT_NOT_REACHED();
             return BSTRETCH;

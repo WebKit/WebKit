@@ -3241,7 +3241,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxOrient, BoxOrient)
         return;
     case CSSPropertyWebkitBoxPack:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxPack, BoxPack)
+    {
+        HANDLE_INHERIT_AND_INITIAL(boxPack, BoxPack)
+        if (!primitiveValue)
+            return;
+        EBoxAlignment boxPack = *primitiveValue;
+        if (boxPack != BSTRETCH && boxPack != BBASELINE)
+            m_style->setBoxPack(boxPack);
+        return;
+    }
     case CSSPropertyWebkitBoxFlex:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxFlex, BoxFlex)
         return;

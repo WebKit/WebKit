@@ -46,7 +46,7 @@ public:
     unsigned int ordinal_group;
 
     unsigned align : 3; // EBoxAlignment
-    unsigned pack: 2; // EBoxPack
+    unsigned pack: 3; // EBoxAlignment
     unsigned orient: 1; // EBoxOrient
     unsigned lines : 1; // EBoxLines
 
