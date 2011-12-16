@@ -1,3 +1,10 @@
+2011-12-16  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed debug build fix after r103115.
+
+        * dom/Document.cpp:
+        (WebCore::Document::cachedCollection):
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Windows test fix

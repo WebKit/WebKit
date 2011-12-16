@@ -4192,7 +4192,7 @@ bool Document::hasSVGRootNode() const
 
 const RefPtr<HTMLCollection>& Document::cachedCollection(CollectionType type)
 {
-    ASSERT(type < NumUnnamedDocumentCachedTypes);
+    ASSERT(static_cast<unsigned>(type) < NumUnnamedDocumentCachedTypes);
     if (!m_collections[type])
         m_collections[type] = HTMLCollection::createForCachingOnDocument(this, type);
     return m_collections[type];
