@@ -2532,3 +2532,7 @@ plugins/netscape-plugin-page-cache-works.html
 # [Qt][GTK] The html5lib/runner.html test is start to fail after r102626
 # https://bugs.webkit.org/show_bug.cgi?id=74411
 html5lib/runner.html
+
+# [Qt] REGRESSION(103045): It made fast/forms/select-script-onchange.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=74700
+fast/forms/select-script-onchange.html
