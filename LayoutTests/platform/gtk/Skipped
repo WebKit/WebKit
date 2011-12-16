@@ -68,10 +68,6 @@ media/adopt-node-crash.html
 # https://bugs.webkit.org/show_bug.cgi?id=60055
 media/video-volume-slider.html
 
-# Timing out in all the GTK bots since r87605
-# https://bugs.webkit.org/show_bug.cgi?id=61919
-svg/wicd/test-scalable-background-image1.xhtml
-
 ###############################################################################
 # TESTS CRASHING
 ###############################################################################
@@ -639,18 +635,6 @@ plugins/form-value.html
 #   Tests failing
 security/set-form-autocomplete-attribute.html
 
-# Tests in svg/ directory
-#   Tests failing
-svg/filters/feColorMatrix-values.svg
-
-# This test needs to be looked at: runs on other platforms,
-# may fail here due to debug output limitations.
-# https://bugs.webkit.org/show_bug.cgi?id=25645
-svg/custom/pattern-excessive-malloc.svg
-
-# https://bugs.webkit.org/show_bug.cgi?id=49065
-svg/animations/animate-path-nested-transforms.html
-
 # Tests that failed because we don't have an eventSender implementation
 http/tests/plugins/plugin-document-has-focus.html
 
@@ -877,17 +861,8 @@ http/tests/mime/uppercase-mime-type.html
 http/tests/loading/preload-append-scan.php
 
 # SVG tests that seem to produce incorrect output
-svg/custom/marker-strokeWidth-changes.svg
 svg/zoom/text/zoom-hixie-mixed-009.xml
-svg/filters/shadow-on-rect-with-filter.svg
 svg/custom/mask-excessive-malloc.svg
-
-# There seem to be some bugs with path clipping.
-svg/clip-path/clip-path-use-as-child2.svg
-svg/clip-path/clip-path-use-as-child3.svg
-svg/clip-path/clip-path-use-as-child4.svg
-svg/clip-path/clip-path-with-different-unittypes.svg
-svg/clip-path/clip-path-with-different-unittypes2.svg
 
 # No matching language preference set
 svg/W3C-SVG-1.1/struct-cond-02-t.svg
@@ -1481,44 +1456,24 @@ fast/dom/Range/getClientRects.html
 # 1 pixel difference between 64-bits and 32-bits
 # Some of these also present rounding issues and xx.00 vs xx.
 svg/as-image/img-preserveAspectRatio-support-1.html
-svg/batik/masking/maskRegions.svg
 svg/batik/text/smallFonts.svg
-svg/batik/text/xmlSpace.svg
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
-svg/css/composite-shadow-example.html
-svg/css/composite-shadow-with-opacity.html
-svg/css/stars-with-shadow.html
 svg/custom/circular-marker-reference-4.svg
-svg/custom/embedding-external-svgs.xhtml
 svg/custom/empty-merge.svg
-svg/custom/image-with-transform-clip-filter.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 svg/custom/use-css-events.svg
-svg/custom/glyph-selection-lang-attribute.svg
 svg/custom/image-small-width-height.svg
-svg/custom/relative-sized-use-on-symbol.xhtml
 svg/custom/small-rect-scale.svg
-svg/custom/svg-fonts-fallback.xhtml
-svg/custom/svg-fonts-without-missing-glyph.xhtml
 svg/custom/use-on-clip-path-with-transformation.svg
 svg/custom/use-on-symbol-inside-pattern.svg
-svg/dom/css-transforms.xhtml
 svg/filters/feColorMatrix-saturate.svg
-svg/overflow/overflow-on-inner-svg-element.svg
 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html
-svg/zoom/page/zoom-mask-with-percentages.svg
-svg/W3C-SVG-1.1/animate-elem-36-t.svg
-svg/W3C-SVG-1.1/animate-elem-40-t.svg
-svg/W3C-SVG-1.1/animate-elem-80-t.svg
 svg/W3C-SVG-1.1/extend-namespace-01-f.svg
 svg/W3C-SVG-1.1/metadata-example-01-b.svg
 svg/W3C-SVG-1.1/paths-data-03-f.svg
 svg/W3C-SVG-1.1/text-align-08-b.svg
 svg/W3C-SVG-1.1/coords-units-02-b.svg
-svg/W3C-SVG-1.1/fonts-elem-07-b.svg
-svg/W3C-SVG-1.1/fonts-glyph-03-t.svg
-svg/W3C-SVG-1.1/fonts-glyph-04-t.svg
 svg/W3C-SVG-1.1/masking-path-02-b.svg
 svg/W3C-SVG-1.1-SE/coords-dom-03-f.svg
 svg/W3C-SVG-1.1-SE/coords-dom-04-f.svg
@@ -1531,31 +1486,6 @@ svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-02-f.svg
 svg/W3C-SVG-1.1-SE/types-dom-04-b.svg
 svg/W3C-SVG-1.1-SE/types-dom-07-f.svg
-svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
-svg/W3C-SVG-1.1-SE/struct-use-11-f.svg
-tables/mozilla/marvin/backgr_layers-opacity.html
-tables/mozilla/marvin/backgr_position-table.html
-tables/mozilla/marvin/backgr_simple-table-cell.html
-tables/mozilla/marvin/backgr_simple-table-column-group.html
-tables/mozilla/marvin/backgr_simple-table-column.html
-tables/mozilla/marvin/backgr_simple-table-row-group.html
-tables/mozilla/marvin/backgr_simple-table-row.html
-tables/mozilla/marvin/backgr_simple-table.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_border-table-row.html
-tables/mozilla_expected_failures/marvin/backgr_border-table.html
-tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html
-tables/mozilla_expected_failures/marvin/backgr_layers-hide.html
-tables/mozilla_expected_failures/marvin/backgr_layers-show.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-column.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html
-tables/mozilla_expected_failures/marvin/backgr_position-table-row.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=73409
 fast/forms/placeholder-set-attribute.html

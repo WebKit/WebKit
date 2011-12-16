@@ -56,7 +56,7 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 1 at (24.21,-3.00) startOffset 0 endOffset 6 width 51.57: "Mask 2"
       RenderSVGContainer {g} at (284,202) size 52x78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(260.00,220.00)}]
         RenderSVGContainer {use} at (285,240) size 50x40
-          [masker="mask_3"] RenderSVGResourceMasker {mask} at (25,20) size 50.00x40
+          [masker="mask_3"] RenderSVGResourceMasker {mask} at (25,20) size 50x40
           RenderSVGContainer {g} at (260,220) size 100x80
             RenderSVGPath {rect} at (260,220) size 100x80 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
         RenderSVGText {text} at (24,-18) size 52x18 contains 1 chunk(s)

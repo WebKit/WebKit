@@ -41,7 +41,7 @@ layer at (0,0) size 500x500
         RenderSVGViewportContainer {svg} at (150,150) size 100x100
           RenderSVGPath {rect} at (150,150) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
           RenderSVGPath {rect} at (150,150) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-    RenderSVGContainer {g} at (0,50) size 400x400 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(450.00,-0.00)}]
+    RenderSVGContainer {g} at (0,50) size 400x400 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(450.00,0.00)}]
       RenderSVGContainer {use} at (200,50) size 200x200
         RenderSVGContainer {g} at (200,50) size 200x200
           RenderSVGContainer {g} at (200,50) size 200x200

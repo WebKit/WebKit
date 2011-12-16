@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
           [SourceGraphic]
     RenderSVGImage {image} at (0,0) size 100x75 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-25.00)}]
       [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
-      [filter="myfilter"] RenderSVGResourceFilter {filter} at (-50.30,9.00) size 603.60x492
+      [filter="myfilter"] RenderSVGResourceFilter {filter} at (-50.30,9) size 603.60x492
     RenderSVGText {text} at (0,110) size 551x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 551x18
         chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 84 width 550.01: "You should see a solid green block above (a blurred and clipped green checkerboard)."
