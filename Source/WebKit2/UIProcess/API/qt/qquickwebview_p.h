@@ -58,7 +58,6 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool loading READ loading NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
-    Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
     Q_ENUMS(NavigationRequestAction)
     Q_ENUMS(ErrorType)
 
@@ -166,6 +165,7 @@ QML_DECLARE_TYPEINFO(QQuickWebView, QML_HAS_ATTACHED_PROPERTIES)
 
 class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QQuickWebPage* page READ page CONSTANT FINAL)
     Q_PROPERTY(QWebNavigationHistory* navigationHistory READ navigationHistory CONSTANT FINAL)
     Q_PROPERTY(QDeclarativeComponent* alertDialog READ alertDialog WRITE setAlertDialog NOTIFY alertDialogChanged)
     Q_PROPERTY(QDeclarativeComponent* confirmDialog READ confirmDialog WRITE setConfirmDialog NOTIFY confirmDialogChanged)
@@ -193,6 +193,7 @@ public:
     QWebPreferences* preferences() const;
     bool useTraditionalDesktopBehaviour() const;
     QWebNavigationHistory* navigationHistory() const;
+    QQuickWebPage* page();
 
 public Q_SLOTS:
     void setUseTraditionalDesktopBehaviour(bool enable);

@@ -670,6 +670,11 @@ QWebViewportInfo* QQuickWebViewExperimental::viewportInfo()
     return m_viewportInfo;
 }
 
+QQuickWebPage* QQuickWebViewExperimental::page()
+{
+    return q_ptr->page();
+}
+
 QQuickWebView::QQuickWebView(QQuickItem* parent)
     : QQuickItem(parent)
     , d_ptr(new QQuickWebViewPrivate(this))

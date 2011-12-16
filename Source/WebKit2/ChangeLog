@@ -1,3 +1,16 @@
+2011-12-16  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Move webView.page into experimental
+        https://bugs.webkit.org/show_bug.cgi?id=74406
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewExperimental::page):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::accessPage):
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize destructors
