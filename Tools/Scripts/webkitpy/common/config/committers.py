@@ -96,6 +96,7 @@ watchers_who_are_not_contributors = [
     Account("Chromium Compositor Bugs", ["cc-bugs@google.com"], ""),
     Account("David Levin", ["levin+threading@chromium.org"], ""),
     Account("David Levin", ["levin+watchlist@chromium.org"], ""),
+    Account("Radar WebKit Bug Importer", ["webkit-bug-importer@group.apple.com"], "radar"),
 ]
 
 
