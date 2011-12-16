@@ -78,6 +78,8 @@ public:
     void deleteIndex(const String& name, ExceptionCode&);
 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, unsigned short direction, ExceptionCode&); 
+    PassRefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) { return count(context, 0, ec); }
+    PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
 
 private:
     IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);

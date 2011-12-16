@@ -1,3 +1,44 @@
+2011-12-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBObjectStore.count() and IDBIndex.count()
+        https://bugs.webkit.org/show_bug.cgi?id=73686
+
+        Reviewed by Tony Chang.
+
+        These new methods open an internal cursor and iterate through the
+        results, returning the number of items found. Note that only
+        passing an IDBKeyRange is supported, not an IDBKey. Supporting
+        that will require some IDL/binding monkeying; several other
+        methods also need the same Key-or-KeyRange behavior.
+
+        Tests: storage/indexeddb/index-count.html
+               storage/indexeddb/objectstore-count.html
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::numberValue):
+        * bindings/v8/SerializedScriptValue.h:
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::count):
+        * storage/IDBIndex.h:
+        (WebCore::IDBIndex::count):
+        * storage/IDBIndex.idl:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::countInternal):
+        (WebCore::IDBIndexBackendImpl::count):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBIndexBackendInterface.h:
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::count):
+        * storage/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::count):
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::count):
+        (WebCore::IDBObjectStoreBackendImpl::countInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBObjectStoreBackendInterface.h:
+
 2011-12-16  Yael Aharon  <yael.aharon@nokia.com>
 
         Audio file in video element has a size of 0x0 .

@@ -1,0 +1,118 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's IDBObjectStore.count().");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    evalAndLog("window.indexedDB = window.indexedDB || window.webkitIndexedDB");
+    evalAndLog("window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction");
+    evalAndLog("window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange");
+    request = evalAndLog("indexedDB.open('objectstore-count')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+        db = evalAndLog("db = event.target.result");
+        request = evalAndLog("db.setVersion('new version')");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = prepareDatabase;
+    };
+}
+
+function prepareDatabase()
+{
+    debug("");
+    debug("preparing database");
+    window.trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+
+    deleteAllObjectStores(db);
+
+    store = evalAndLog("store = db.createObjectStore('storeName', null)");
+
+    debug("adding 0 ... 99");
+    for (var i = 0; i < 100; ++i) {
+        request = store.add(i, i);
+        request.onerror = unexpectedErrorCallback;
+    }
+    trans.oncomplete = verifyCount;
+}
+
+function verifyCount()
+{
+    debug("");
+    debug("verifying count without range");
+    trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
+    shouldBeTrue("trans != null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = verifyCountWithRange;
+
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    shouldBeTrue("store != null");
+
+    request = evalAndLog("request = store.count()");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = function() {
+         shouldBeTrue("typeof request.result == 'number'");
+         shouldBe("request.result", "100");
+         // let the transaction complete
+    };
+}
+
+function verifyCountWithRange()
+{
+    debug("");
+    debug("verifying count with range");
+    trans = evalAndLog("trans = db.transaction('storeName', IDBTransaction.READ_ONLY)");
+    shouldBeTrue("trans != null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = done;
+
+    store = evalAndLog("store = trans.objectStore('storeName')");
+    shouldBeTrue("store != null");
+
+    var tests = [
+        { lower: 0, lowerOpen: false, upper: 99, upperOpen: false, expected: 100 },
+        { lower: 0, lowerOpen: true, upper: 99, upperOpen: false, expected: 99 },
+        { lower: 0, lowerOpen: false, upper: 99, upperOpen: true, expected: 99 },
+        { lower: 0, lowerOpen: true, upper: 99, upperOpen: true, expected: 98 },
+        { lower: 0, lowerOpen: false, upper: 100, upperOpen: false, expected: 100 },
+        { lower: 0, lowerOpen: false, upper: 100, upperOpen: false, expected: 100 },
+        { lower: 10, lowerOpen: false, upper: 100, upperOpen: false, expected: 90 },
+        { lower: 0, lowerOpen: false, upper: 0, upperOpen: false, expected: 1 },
+        { lower: 0, lowerOpen: true, upper: 0, upperOpen: true, expected: 0 },
+        { lower: 20, lowerOpen: true, upper: 10, upperOpen: true, expected: 0 }
+    ];
+
+    function nextTest() {
+        debug("");
+        evalAndLog("test = " + JSON.stringify(tests.shift()));
+        request = evalAndLog("request = store.count(IDBKeyRange.bound(test.lower, test.upper, test.lowerOpen, test.upperOpen))");
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function() {
+             shouldBeTrue("typeof request.result == 'number'");
+             shouldBe("request.result", String(test.expected));
+
+             if (tests.length) {
+                 nextTest();
+             }
+             // otherwise let the transaction complete
+        };
+    }
+
+    nextTest();
+}
+
+test();
+
+</script>
+</body>
+</html>

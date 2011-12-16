@@ -66,6 +66,7 @@ public:
     static SerializedScriptValue* nullValue();
     static PassRefPtr<SerializedScriptValue> undefinedValue();
     static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
+    static PassRefPtr<SerializedScriptValue> numberValue(double value);
 
     PassRefPtr<SerializedScriptValue> release();
 

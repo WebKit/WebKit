@@ -42,6 +42,31 @@ function setVersionSuccess()
     window.store = evalAndLog("store = db.createObjectStore('storeName', null)");
     var storeNames = evalAndLog("storeNames = db.objectStoreNames");
 
+    shouldBeTrue("'name' in store");
+    shouldBeTrue("'keyPath' in store");
+    shouldBeTrue("'indexNames' in store");
+    shouldBeTrue("'transaction' in store");
+    shouldBeTrue("'put' in store");
+    shouldBeEqualToString("typeof store.put", "function");
+    shouldBeTrue("'add' in store");
+    shouldBeEqualToString("typeof store.add", "function");
+    shouldBeTrue("'delete' in store");
+    shouldBeEqualToString("typeof store.delete", "function");
+    shouldBeTrue("'get' in store");
+    shouldBeEqualToString("typeof store.get", "function");
+    shouldBeTrue("'clear' in store");
+    shouldBeEqualToString("typeof store.clear", "function");
+    shouldBeTrue("'openCursor' in store");
+    shouldBeEqualToString("typeof store.openCursor", "function");
+    shouldBeTrue("'createIndex' in store");
+    shouldBeEqualToString("typeof store.createIndex", "function");
+    shouldBeTrue("'index' in store");
+    shouldBeEqualToString("typeof store.index", "function");
+    shouldBeTrue("'deleteIndex' in store");
+    shouldBeEqualToString("typeof store.deleteIndex", "function");
+    shouldBeTrue("'count' in store");
+    shouldBeEqualToString("typeof store.count", "function");
+
     shouldBeEqualToString("store.name", "storeName");
     shouldBeNull("store.keyPath");
     shouldBe("storeNames.contains('storeName')", "true");

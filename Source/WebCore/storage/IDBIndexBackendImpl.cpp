@@ -122,6 +122,29 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> prpKeyRange, uns
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
+void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
+    uint32_t count = 0;
+
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), IDBCursor::NEXT);
+    if (!backingStoreCursor) {
+        callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+        return;
+    }
+
+    do {
+        ++count;
+    } while (backingStoreCursor->continueFunction(0));
+    backingStoreCursor->close();
+    callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+}
+
+void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    if (!transaction->scheduleTask(createCallbackTask(&countInternal, this, range, callbacks, transaction)))
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+}
+
 void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKey> key, bool getObject, PassRefPtr<IDBCallbacks> callbacks)
 {
     // FIXME: Split getInternal into two functions, getting rid off |getObject|.

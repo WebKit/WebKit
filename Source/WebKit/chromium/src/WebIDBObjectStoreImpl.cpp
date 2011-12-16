@@ -113,6 +113,11 @@ void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned 
     m_objectStore->openCursor(keyRange, direction, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
+void WebIDBObjectStoreImpl::count(const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+{
+    m_objectStore->count(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

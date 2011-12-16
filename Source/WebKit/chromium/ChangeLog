@@ -1,3 +1,25 @@
+2011-12-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Implement IDBObjectStore.count() and IDBIndex.count()
+        https://bugs.webkit.org/show_bug.cgi?id=73686
+
+        Reviewed by Tony Chang.
+
+        Plumbing to support the new methods in Chromium.
+
+        * src/IDBIndexBackendProxy.cpp:
+        (WebKit::IDBIndexBackendProxy::count):
+        * src/IDBIndexBackendProxy.h:
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::count):
+        * src/IDBObjectStoreBackendProxy.h:
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::count):
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::count):
+        * src/WebIDBObjectStoreImpl.h:
+
 2011-12-16  Adrienne Walker  <enne@google.com>
 
         [chromium] Disable compositor CCLayerTreeHostTestsetNeedsCommit1 test

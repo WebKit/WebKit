@@ -51,5 +51,7 @@ module storage {
             raises (IDBDatabaseException);
         void deleteIndex(in DOMString name)
             raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest count(in [Optional] IDBKeyRange range)
+            raises (IDBDatabaseException);
     };
 }

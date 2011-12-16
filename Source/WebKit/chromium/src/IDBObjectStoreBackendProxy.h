@@ -56,6 +56,7 @@ public:
     void deleteIndex(const String& name, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
     virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    virtual void count(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
 private:
     IDBObjectStoreBackendProxy(PassOwnPtr<WebIDBObjectStore>);

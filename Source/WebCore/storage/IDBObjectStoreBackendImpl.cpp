@@ -546,6 +546,29 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
     callbacks->onSuccess(cursor.release());
 }
 
+void IDBObjectStoreBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::countInternal, this, range, callbacks, transaction)))
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+}
+
+void IDBObjectStoreBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
+    uint32_t count = 0;
+    RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->m_backingStore->openObjectStoreCursor(objectStore->m_databaseId, objectStore->id(), range.get(), IDBCursor::NEXT);
+    if (!backingStoreCursor) {
+        callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+        return;
+    }
+
+    do {
+        ++count;
+    } while (backingStoreCursor->continueFunction(0));
+
+    backingStoreCursor->close();
+    callbacks->onSuccess(SerializedScriptValue::numberValue(count));
+}
+
 void IDBObjectStoreBackendImpl::loadIndexes()
 {
     Vector<int64_t> ids;

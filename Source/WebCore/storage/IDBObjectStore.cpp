@@ -202,6 +202,17 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
     return request.release();
 }
 
+PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, ExceptionCode& ec)
+{
+    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
+    m_backend->count(range, request, m_transaction->backend(), ec);
+    if (ec) {
+        request->markEarlyDeath();
+        return 0;
+    }
+    return request.release();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

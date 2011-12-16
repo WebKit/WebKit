@@ -57,9 +57,15 @@ function addData()
     shouldBeFalse("indexObject.unique");
     shouldBeFalse("indexObject.multiEntry");
     shouldBeTrue("'openKeyCursor' in indexObject");
+    shouldBeEqualToString("typeof indexObject.openKeyCursor", "function");
     shouldBeTrue("'openCursor' in indexObject");
+    shouldBeEqualToString("typeof indexObject.openCursor", "function");
     shouldBeTrue("'getKey' in indexObject");
+    shouldBeEqualToString("typeof indexObject.getKey", "function");
     shouldBeTrue("'get' in indexObject");
+    shouldBeEqualToString("typeof indexObject.get", "function");
+    shouldBeTrue("'count' in indexObject");
+    shouldBeEqualToString("typeof indexObject.count", "function");
 
     request = evalAndLog("store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')");
     request.onsuccess = addData2;

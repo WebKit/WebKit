@@ -14,6 +14,30 @@ Deleted all object stores.
 createObjectStore():
 store = db.createObjectStore('storeName', null)
 storeNames = db.objectStoreNames
+PASS 'name' in store is true
+PASS 'keyPath' in store is true
+PASS 'indexNames' in store is true
+PASS 'transaction' in store is true
+PASS 'put' in store is true
+PASS typeof store.put is "function"
+PASS 'add' in store is true
+PASS typeof store.add is "function"
+PASS 'delete' in store is true
+PASS typeof store.delete is "function"
+PASS 'get' in store is true
+PASS typeof store.get is "function"
+PASS 'clear' in store is true
+PASS typeof store.clear is "function"
+PASS 'openCursor' in store is true
+PASS typeof store.openCursor is "function"
+PASS 'createIndex' in store is true
+PASS typeof store.createIndex is "function"
+PASS 'index' in store is true
+PASS typeof store.index is "function"
+PASS 'deleteIndex' in store is true
+PASS typeof store.deleteIndex is "function"
+PASS 'count' in store is true
+PASS typeof store.count is "function"
 PASS store.name is "storeName"
 PASS store.keyPath is null
 PASS storeNames.contains('storeName') is true

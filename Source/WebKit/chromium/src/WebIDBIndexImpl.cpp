@@ -83,6 +83,11 @@ void WebIDBIndexImpl::openKeyCursor(const WebIDBKeyRange& keyRange, unsigned sho
     m_backend->openKeyCursor(keyRange, direction, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
+void WebIDBIndexImpl::count(const WebIDBKeyRange& keyRange,  WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+{
+    m_backend->count(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
+}
+
 void WebIDBIndexImpl::getObject(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
     m_backend->get(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);

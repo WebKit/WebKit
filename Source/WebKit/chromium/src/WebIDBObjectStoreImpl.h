@@ -61,6 +61,7 @@ public:
     void deleteIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
 
     void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    void count(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
  private:
     WTF::RefPtr<WebCore::IDBObjectStoreBackendInterface> m_objectStore;

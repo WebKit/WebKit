@@ -51,6 +51,7 @@ public:
 
     virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&); 
     virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    virtual void count(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     virtual void getObject(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     virtual void getKey(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 

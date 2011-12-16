@@ -141,6 +141,14 @@ void IDBObjectStoreBackendProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsig
     m_webIDBObjectStore->openCursor(range, direction, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
+void IDBObjectStoreBackendProxy::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+{
+    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
+    // all implementations of IDB interfaces are proxy objects.
+    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
+    m_webIDBObjectStore->count(range, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

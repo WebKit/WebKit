@@ -2124,6 +2124,14 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::booleanValue(bool value
     return adoptRef(new SerializedScriptValue(wireData));
 }
 
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::numberValue(double value)
+{
+    Writer writer;
+    writer.writeNumber(value);
+    String wireData = StringImpl::adopt(writer.data());
+    return adoptRef(new SerializedScriptValue(wireData));
+}
+
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()
 {
     RefPtr<SerializedScriptValue> result = adoptRef(new SerializedScriptValue(m_data));

@@ -68,6 +68,7 @@ public:
     virtual void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
+    virtual void count(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 };
 
 } // namespace WebCore

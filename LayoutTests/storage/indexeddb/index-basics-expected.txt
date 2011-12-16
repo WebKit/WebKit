@@ -25,9 +25,15 @@ PASS 'multiEntry' in indexObject is true
 PASS indexObject.unique is false
 PASS indexObject.multiEntry is false
 PASS 'openKeyCursor' in indexObject is true
+PASS typeof indexObject.openKeyCursor is "function"
 PASS 'openCursor' in indexObject is true
+PASS typeof indexObject.openCursor is "function"
 PASS 'getKey' in indexObject is true
+PASS typeof indexObject.getKey is "function"
 PASS 'get' in indexObject is true
+PASS typeof indexObject.get is "function"
+PASS 'count' in indexObject is true
+PASS typeof indexObject.count is "function"
 store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
 event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
 store.createIndex('indexWhileAddIsInFlight', 'x')
