@@ -29,6 +29,7 @@
 #include "cc/CCThread.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -121,11 +122,8 @@ double CCDelayBasedTimeSource::monotonicallyIncreasingTimeMs() const
 //      now=18   tickTarget=16.667  newTarget=33.333   --> tick(), postDelayedTask(floor(33.333-18)) --> postDelayedTask(15)
 // This brings us back to 18+15 = 33, which was where we would have been if the task hadn't been late.
 //
-// For the really late delay, we fire a tick immediately reset the timebase from the current tim. E.g.:
-//      now=37   tickTarget=16.667  newTarget=53.6667   --> tick(), postDelayedTask(floor(53.667-37)) --> postDelayedTask(16)
-//
-// Here we realize we're more than a tick late. We adjust newTarget to be 16.667 from now, and post a task off that new
-// target.
+// For the really late delay, we we move to the next logical tick. The timebase is not reset.
+//      now=37   tickTarget=16.667  newTarget=50.000  --> tick(), postDelayedTask(floor(50.000-37)) --> postDelayedTask(13)
 void CCDelayBasedTimeSource::updateState()
 {
     if (m_state == STATE_INACTIVE)
@@ -138,18 +136,19 @@ void CCDelayBasedTimeSource::updateState()
         m_state = STATE_ACTIVE;
     }
 
-    const double maxLateBeforeResettingTimebase = 5.0;
+    int numIntervalsElapsed = static_cast<int>(floor((now - m_tickTarget) / m_intervalMs));
+    double lastEffectiveTick = m_tickTarget + m_intervalMs * numIntervalsElapsed;
+    double newTickTarget = lastEffectiveTick + m_intervalMs;
 
-    double newTickTarget = 0;
-    double amountLate = now - m_tickTarget;
-    if (amountLate <= maxLateBeforeResettingTimebase)
-        newTickTarget = m_tickTarget + m_intervalMs;
-    else
-        newTickTarget = now + m_intervalMs;
+    long long delay = static_cast<long long>(newTickTarget - now);
+    if (!delay) {
+        newTickTarget = newTickTarget + m_intervalMs;
+        delay = static_cast<long long>(newTickTarget - now);
+    }
 
     // Post another task *before* the tick and update state
     ASSERT(newTickTarget > now);
-    postTickTask(static_cast<long long>(newTickTarget - now));
+    postTickTask(delay);
     m_tickTarget = newTickTarget;
 
     // Fire the tick

@@ -1,3 +1,20 @@
+2011-12-14  Nat Duca  <nduca@chromium.org>
+
+        [chromium] DelayBasedTimeSource should not change its timebase on late ticks
+        https://bugs.webkit.org/show_bug.cgi?id=74573
+
+        The original DelayBasedTimeSource was designed to shift its timebase
+        to the tick time when a tick came back "late." The rationale was that it is
+        better to just "start fresh" after a stutter. After profiling this,
+        this time-rebasing just destabilizes frame rate anytime the thread gets
+        loaded.  This patch keeps the timebase stationary, leading to vastly
+        smoother framerates when the message loop is under load.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.cpp:
+        (WebCore::CCDelayBasedTimeSource::updateState):
+
 2011-12-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103062.

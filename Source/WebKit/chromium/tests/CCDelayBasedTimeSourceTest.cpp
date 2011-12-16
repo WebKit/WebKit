@@ -92,6 +92,112 @@ TEST(CCDelayBasedTimeSource, StartWhenRunningDoesntTick)
     EXPECT_FALSE(thread.hasPendingTask());
 }
 
+// At 60Hz, when the tick returns at exactly the requested next time, make sure
+// a 16ms next delay is posted.
+TEST(CCDelayBasedTimeSource, NextDelaySaneWhenExactlyOnRequestedTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1000.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+
+    timer->setMonotonicallyIncreasingTimeMs(interval);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+}
+
+// At 60Hz, when the tick returns at slightly after the requested next time, make sure
+// a 16ms next delay is posted.
+TEST(CCDelayBasedTimeSource, NextDelaySaneWhenSlightlyAfterRequestedTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1000.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+
+    timer->setMonotonicallyIncreasingTimeMs(interval + 0.0001);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+}
+
+// At 60Hz, when the tick returns at exactly 2*interval after the requested next time, make sure
+// a 16ms next delay is posted.
+TEST(CCDelayBasedTimeSource, NextDelaySaneWhenExactlyTwiceAfterRequestedTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1000.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+
+    timer->setMonotonicallyIncreasingTimeMs(2*interval);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+}
+
+// At 60Hz, when the tick returns at 2*interval and a bit after the requested next time, make sure
+// a 16ms next delay is posted.
+TEST(CCDelayBasedTimeSource, NextDelaySaneWhenSlightlyAfterTwiceRequestedTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1000.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+
+    timer->setMonotonicallyIncreasingTimeMs(2*interval + 0.0001);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+}
+
+// At 60Hz, when the tick returns halfway to the next frame time, make sure
+// a correct next delay value is posted.
+TEST(CCDelayBasedTimeSource, NextDelaySaneWhenHalfAfterRequestedTime)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1000.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelay());
+
+    timer->setMonotonicallyIncreasingTimeMs(interval + interval * 0.5);
+    thread.runPendingTask();
+
+    EXPECT_EQ(8, thread.pendingDelay());
+}
+
+
 TEST(CCDelayBasedTimeSourceTest, AchievesTargetRateWithNoNoise)
 {
     int numIterations = 1000;
