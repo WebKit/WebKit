@@ -1,3 +1,11 @@
+2011-12-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build break when data-transfer-items is enabled.
+
+        * platform/efl/ClipboardEfl.cpp:
+        (WebCore::ClipboardEfl::items):
+        * platform/efl/ClipboardEfl.h:
+
 2011-12-15  Adam Barth  <abarth@webkit.org>
 
         <ruby><div><p><rp> parses incorrectly

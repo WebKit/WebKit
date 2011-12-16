@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ClipboardEfl.h"
 
+#include "DataTransferItemList.h"
 #include "Editor.h"
 #include "FileList.h"
 #include "NotImplemented.h"
@@ -142,5 +143,14 @@ bool ClipboardEfl::hasData()
     notImplemented();
     return false;
 }
+
+#if ENABLE(DATA_TRANSFER_ITEMS)
+PassRefPtr<DataTransferItemList> ClipboardEfl::items()
+{
+    notImplemented();
+    return 0;
+}
+#endif
+
 
 }

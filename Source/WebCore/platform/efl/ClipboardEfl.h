@@ -57,6 +57,10 @@ public:
 
     virtual void writePlainText(const WTF::String&);
 
+#if ENABLE(DATA_TRANSFER_ITEMS)
+    virtual PassRefPtr<DataTransferItemList> items();
+#endif
+
 private:
     ClipboardEfl(ClipboardAccessPolicy, ClipboardType);
 };
