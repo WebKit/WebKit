@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 321x279
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=objectBoundingBox]
+        RenderSVGPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=0.50]
+        RenderSVGPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=1.00] [r=0.50]
+      RenderSVGResourceClipper {clipPath} [id="clip2"] [clipPathUnits=objectBoundingBox]
+        RenderSVGPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [cx=1.00] [cy=0.00] [r=0.50]
+        RenderSVGPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [cx=1.00] [cy=1.00] [r=0.50]
+      RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=objectBoundingBox]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (-0.50,-0.50) size 1x2
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (0.50,-0.50) size 1x2
+      RenderSVGResourceMasker {mask} [id="mask1a"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip1"] RenderSVGResourceClipper {clipPath} at (-0.50,-0.50) size 1x2
+      RenderSVGResourceMasker {mask} [id="mask1b"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [clipPath="clip2"] RenderSVGResourceClipper {clipPath} at (0.50,-0.50) size 1x2
+      RenderSVGResourceMasker {mask} [id="mask2"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [masker="mask1a"] RenderSVGResourceMasker {mask} at (0,0) size 1x1
+      RenderSVGResourceMasker {mask} [id="mask3"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
+        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+          [masker="mask1b"] RenderSVGResourceMasker {mask} at (0,0) size 1x1
+    RenderSVGContainer {g} at (0,0) size 25x100
+      [masker="mask1a"] RenderSVGResourceMasker {mask} at (0,0) size 100x100
+      RenderSVGPath {circle} at (0,0) size 25x100 [fill={[type=SOLID] [color=#000000]}] [cx=50.00] [cy=50.00] [r=50.00]
+        [masker="mask1b"] RenderSVGResourceMasker {mask} at (0,0) size 100x100
+    RenderSVGContainer {g} at (25,100) size 100x100
+      [masker="mask3"] RenderSVGResourceMasker {mask} at (100,100) size 100x100
+      RenderSVGPath {circle} at (25,100) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=150.00] [cy=150.00] [r=50.00]
+        [masker="mask2"] RenderSVGResourceMasker {mask} at (100,100) size 100x100
+    RenderSVGText {text} at (104,235) size 291x44 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 291x19
+        chunk 1 (middle anchor) text run 1 at (104.50,250.00) startOffset 0 endOffset 52 width 291.00: "The left shape should still be visible after panning"
+      RenderSVGTSpan {tspan} at (0,0) size 263x19
+        RenderSVGInlineText {#text} at (14,25) size 262x19
+          chunk 1 (middle anchor) text run 1 at (119.00,275.00) startOffset 0 endOffset 44 width 262.00: "And the right shape shouldn't look distorted"

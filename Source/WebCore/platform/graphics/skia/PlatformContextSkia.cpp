@@ -96,7 +96,7 @@ struct PlatformContextSkia::State {
     // If non-empty, the current State is clipped to this image.
     SkBitmap m_imageBufferClip;
     // If m_imageBufferClip is non-empty, this is the region the image is clipped to.
-    FloatRect m_clip;
+    SkRect m_clip;
 
     InterpolationQuality m_interpolationQuality;
 
@@ -231,11 +231,15 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
     // Skia doesn't support clipping to an image, so we create a layer. The next
     // time restore is invoked the layer and |imageBuffer| are combined to
     // create the resulting image.
-    m_state->m_clip = rect;
     SkRect bounds = { SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()),
                       SkFloatToScalar(rect.maxX()), SkFloatToScalar(rect.maxY()) };
+    m_state->m_clip = bounds;
+    // Get the absolute coordinates of the stored clipping rectangle to make it
+    // independent of any transform changes.
+    canvas()->getTotalMatrix().mapRect(&m_state->m_clip);
 
     canvas()->clipRect(bounds);
+
     if (imageBuffer->size().isEmpty())
         return;
 
@@ -576,13 +580,16 @@ bool PlatformContextSkia::hasImageResamplingHint() const
     return !m_imageResamplingHintSrcSize.isEmpty() && !m_imageResamplingHintDstSize.isEmpty();
 }
 
-void PlatformContextSkia::applyClipFromImage(const FloatRect& rect, const SkBitmap& imageBuffer)
+void PlatformContextSkia::applyClipFromImage(const SkRect& rect, const SkBitmap& imageBuffer)
 {
     // NOTE: this assumes the image mask contains opaque black for the portions that are to be shown, as such we
     // only look at the alpha when compositing. I'm not 100% sure this is what WebKit expects for image clipping.
     SkPaint paint;
     paint.setXfermodeMode(SkXfermode::kDstIn_Mode);
-    m_canvas->drawBitmap(imageBuffer, SkFloatToScalar(rect.x()), SkFloatToScalar(rect.y()), &paint);
+    m_canvas->save(SkCanvas::kMatrix_SaveFlag);
+    m_canvas->resetMatrix();
+    m_canvas->drawBitmapRect(imageBuffer, 0, rect, &paint);
+    m_canvas->restore();
 }
 
 void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context)

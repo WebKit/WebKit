@@ -1,3 +1,28 @@
+2011-12-16  Branimir Lambov  <blambov@google.com>
+
+        [chromium] svg/clip-path/clip-in-mask.svg fails on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=53378
+
+        Reviewed by Tony Chang.
+
+        Fixes a problem in Skia's clipping layer code's handling of coordinate
+        transformations that was causing all complex clipping (including text
+        and/or masks) to fail.
+
+        The method beginLayerClippedToImage was taking rectangle coordinates
+        in one local coordinate space, but it was applying them in a different  
+        one because of the delay between the time it is called and the actual 
+        application occurs in applyClipFromImage. The fix translates the 
+        coordinates passed to beginLayerClippedToImage to absolute ones, so 
+        that they are not affected by any change in the transform matrix, and 
+        makes sure that applyClipFromImage clears the matrix before drawing
+        the clip layer to correctly apply the absolute coordinates.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+        (WebCore::PlatformContextSkia::applyClipFromImage):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         De-virtualize destructors
