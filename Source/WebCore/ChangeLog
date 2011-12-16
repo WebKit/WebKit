@@ -1,3 +1,32 @@
+2011-12-15  Adam Barth  <abarth@webkit.org>
+
+        <!DOCTYPE html><pre>&#x0a;&#x0a;A</pre> doesn't parse correctly
+        https://bugs.webkit.org/show_bug.cgi?id=74658
+
+        Reviewed by Darin Adler.
+
+        Previously, we handled skipping newlines after <pre> in the tokenizer,
+        which isn't how the spec handles them.  Instead, the spec skips them in
+        the tree builder.  This isn't usually observable, except in the case of
+        an HTML entity.  In that case, the tokenzier sees '&' (because the
+        entity hasn't been decoded yet), but the tree builder sees '\n' (the
+        decoded entity).  This patch fixes the bug by more closely aligning our
+        implementation with the spec.
+
+        Test: html5lib/runner.html
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::nextToken):
+        * html/parser/HTMLTokenizer.h:
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::ExternalCharacterTokenBuffer::skipAtMostOneLeadingNewline):
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        * html/parser/HTMLTreeBuilder.h:
+        * xml/parser/MarkupTokenizerBase.h:
+
 2011-12-15  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r102989.
