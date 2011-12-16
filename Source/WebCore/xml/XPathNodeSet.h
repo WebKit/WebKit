@@ -71,6 +71,8 @@ namespace WebCore {
             void reverse();
         
         private:
+            void traversalSort() const;
+
             bool m_isSorted;
             bool m_subtreesAreDisjoint;
             Vector<RefPtr<Node> > m_nodes;

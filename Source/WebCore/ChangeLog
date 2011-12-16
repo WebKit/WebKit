@@ -1,3 +1,27 @@
+2011-12-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Poor XPath performance when evaluating an expression that returns a lot of nodes
+        https://bugs.webkit.org/show_bug.cgi?id=74665
+        <rdar://problem/10517146>
+
+        Reviewed by Darin Adler.
+
+        No change in funcitonality. Well covered by existing tests (ran them with zero cutoff to
+        execute the new code path).
+
+        Our sorting function is optimized for small node sets in large documents, and this is the
+        opposite of it. Added another one that traverses the whole document, adding nodes from the
+        node set to sorted list. That doesn't grow with the number of nodes nearly as fast.
+
+        Cutoff amount chosen for the document referenced in bug - this is roughly where the algorithms
+        have the same performance on it.
+
+        * xml/XPathNodeSet.cpp:
+        (WebCore::XPath::NodeSet::sort):
+        (WebCore::XPath::findRootNode):
+        (WebCore::XPath::NodeSet::traversalSort):
+        * xml/XPathNodeSet.h:
+
 2011-12-15  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=74677

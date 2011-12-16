@@ -33,6 +33,10 @@
 namespace WebCore {
 namespace XPath {
 
+// When a node set is large, sorting it by traversing the whole document is better (we can
+// assume that we aren't dealing with documents that we cannot even traverse in reasonable time).
+const unsigned traversalSortCutoff = 10000;
+
 static inline Node* parentWithDepth(unsigned depth, const Vector<Node*>& parents)
 {
     ASSERT(parents.size() >= depth + 1);
@@ -140,7 +144,12 @@ void NodeSet::sort() const
         const_cast<bool&>(m_isSorted) = true;
         return;
     }
-    
+
+    if (nodeCount > traversalSortCutoff) {
+        traversalSort();
+        return;
+    }
+
     bool containsAttributeNodes = false;
     
     Vector<Vector<Node*> > parentMatrix(nodeCount);
@@ -164,7 +173,60 @@ void NodeSet::sort() const
     for (unsigned i = 0; i < nodeCount; ++i)
         sortedNodes.append(parentMatrix[i][0]);
     
-    const_cast<Vector<RefPtr<Node> >& >(m_nodes).swap(sortedNodes);
+    const_cast<Vector<RefPtr<Node> >&>(m_nodes).swap(sortedNodes);
+}
+
+static Node* findRootNode(Node* node)
+{
+    if (node->isAttributeNode())
+        node = static_cast<Attr*>(node)->ownerElement();
+    if (node->inDocument())
+        node = node->document();
+    else {
+        while (Node* parent = node->parentNode())
+            node = parent;
+    }
+    return node;
+}
+
+void NodeSet::traversalSort() const
+{
+    HashSet<Node*> nodes;
+    bool containsAttributeNodes = false;
+
+    unsigned nodeCount = m_nodes.size();
+    ASSERT(nodeCount > 1);
+    for (unsigned i = 0; i < nodeCount; ++i) {
+        Node* node = m_nodes[i].get();
+        nodes.add(node);
+        if (node->isAttributeNode())
+            containsAttributeNodes = true;
+    }
+
+    Vector<RefPtr<Node> > sortedNodes;
+    sortedNodes.reserveInitialCapacity(nodeCount);
+
+    for (Node* n = findRootNode(m_nodes.first().get()); n; n = n->traverseNextNode()) {
+        if (nodes.contains(n))
+            sortedNodes.append(n);
+
+        if (!containsAttributeNodes || !n->isElementNode())
+            continue;
+
+        NamedNodeMap* attributes = toElement(n)->attributes(true /* read-only */);
+        if (!attributes)
+            continue;
+
+        unsigned attributeCount = attributes->length();
+        for (unsigned i = 0; i < attributeCount; ++i) {
+            Attr* attribute = attributes->attributeItem(i)->attr();
+            if (attribute && nodes.contains(attribute))
+                sortedNodes.append(attribute);
+        }
+    }
+
+    ASSERT(sortedNodes.size() == nodeCount);
+    const_cast<Vector<RefPtr<Node> >&>(m_nodes).swap(sortedNodes);
 }
 
 void NodeSet::reverse()
