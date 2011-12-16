@@ -112,14 +112,14 @@ G_DEFINE_TYPE(WebKitWindowProperties, webkit_window_properties, G_TYPE_OBJECT)
 struct _WebKitWindowPropertiesPrivate {
     GdkRectangle geometry;
 
-    bool toolbarVisible;
-    bool statusbarVisible;
-    bool scrollbarsVisible;
-    bool menubarVisible;
-    bool locationbarVisible;
+    bool toolbarVisible : 1;
+    bool statusbarVisible : 1;
+    bool scrollbarsVisible : 1;
+    bool menubarVisible : 1;
+    bool locationbarVisible : 1;
 
-    bool resizable;
-    bool fullscreen;
+    bool resizable : 1;
+    bool fullscreen : 1;
 };
 
 static void webkitWindowPropertiesFinalize(GObject* object)

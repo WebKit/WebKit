@@ -1,5 +1,16 @@
 2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Use bit field for bool members of WebKitWindowPropertiesPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=74713
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Most of the members are bools, so it reduces the memory footprint.
+
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+
+2011-12-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Window frame should be 0x0 when the toplevel window is not visible
         https://bugs.webkit.org/show_bug.cgi?id=74709
 
