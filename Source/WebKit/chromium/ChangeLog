@@ -1,3 +1,16 @@
+2011-12-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Clean up WebIDBObjectStore createIndex temp code
+        https://bugs.webkit.org/show_bug.cgi?id=74205
+
+        Reviewed by Darin Fisher.
+
+        Remove a method and an implementation that only needed for
+        older Chromium revisions.
+
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+
 2011-12-15  Tony Chang  <tony@chromium.org>
 
         Chromium Windows (Tests) is failing to build

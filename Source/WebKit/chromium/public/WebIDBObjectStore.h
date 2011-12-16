@@ -70,15 +70,10 @@ public:
     virtual void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteFunction(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    // FIXME: Remove once callers are updated.
-    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec)
-    {
-        return createIndex(name, keyPath, unique, false, transaction, ec);
-    }
     virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, bool multiEntry, const WebIDBTransaction& transaction, WebExceptionCode& ec)
     {
-        // FIXME: Assert not reached once implementing classes are updated.
-        return createIndex(name, keyPath, unique, transaction, ec);
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
     }
     // Transfers ownership of the WebIDBIndex to the caller.
     virtual WebIDBIndex* index(const WebString& name, WebExceptionCode&)
