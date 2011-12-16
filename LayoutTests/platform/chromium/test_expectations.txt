@@ -4037,6 +4037,12 @@ BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-la
 
 BUGWK74688 : fast/css/bidi-override-in-anonymous-block.html = TEXT
 
+BUGWK74726 CPU-CG : fast/forms/input-text-scroll-left-on-blur.html = IMAGE
+BUGWK74726 LEOPARD CPU-CG : editing/input/caret-at-the-edge-of-contenteditable.html = IMAGE
+BUGWK74726 LEOPARD CPU-CG : editing/input/caret-at-the-edge-of-input.html = IMAGE
+BUGWK74726 LEOPARD CPU-CG : editing/input/reveal-caret-of-multiline-contenteditable.html = IMAGE
+BUGWK74726 LEOPARD CPU-CG : editing/input/reveal-caret-of-multiline-input.html = IMAGE
+
 BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE
 
 BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
