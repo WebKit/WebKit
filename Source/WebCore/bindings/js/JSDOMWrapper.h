@@ -42,13 +42,6 @@ public:
         return globalObject()->scriptExecutionContext();
     }
 
-    static const JSC::ClassInfo s_info;
-
-    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);
-    }
-
 protected:
     explicit JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
         : JSNonFinalObject(globalObject->globalData(), structure)

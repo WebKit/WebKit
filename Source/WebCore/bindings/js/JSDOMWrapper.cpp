@@ -34,6 +34,4 @@ namespace WebCore {
 
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSDOMWrapper);
 
-const ClassInfo JSDOMWrapper::s_info = { "JSDOMWrapper", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWrapper) };
-
 } // namespace WebCore
