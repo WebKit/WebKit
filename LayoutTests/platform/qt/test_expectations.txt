@@ -24,3 +24,13 @@ BUGWK74270 : fast/forms/basic-selects.html = FAIL
 
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
+
+// Landing new tests, need to grab results from bots.
+BUGMNAGANOV : editing/input/caret-at-the-edge-of-contenteditable.html = FAIL
+BUGMNAGANOV : editing/input/caret-at-the-edge-of-input.html = FAIL
+BUGMNAGANOV : editing/input/reveal-caret-of-multiline-contenteditable.html = FAIL
+BUGMNAGANOV : editing/input/reveal-caret-of-multiline-input.html = FAIL
+BUGMNAGANOV : editing/input/reveal-contenteditable-on-input-vertically.html = FAIL
+BUGMNAGANOV : editing/input/reveal-contenteditable-on-paste-vertically.html = FAIL
+BUGMNAGANOV : editing/input/reveal-edit-on-input-vertically.html = FAIL
+BUGMNAGANOV : editing/input/reveal-edit-on-paste-vertically.html = FAIL

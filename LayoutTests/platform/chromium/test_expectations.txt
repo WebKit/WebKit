@@ -4017,3 +4017,13 @@ BUGWK74662 MAC : fast/text/unicode-variation-selector.html = PASS CRASH
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
 
 BUGWK74688  : fast/css/bidi-override-in-anonymous-block.html = TEXT
+
+// Landing new tests, need to grab results from bots.
+BUGMNAGANOV : editing/input/caret-at-the-edge-of-contenteditable.html = FAIL
+BUGMNAGANOV : editing/input/caret-at-the-edge-of-input.html = FAIL
+BUGMNAGANOV : editing/input/reveal-caret-of-multiline-contenteditable.html = FAIL
+BUGMNAGANOV : editing/input/reveal-caret-of-multiline-input.html = FAIL
+BUGMNAGANOV : editing/input/reveal-contenteditable-on-input-vertically.html = FAIL
+BUGMNAGANOV : editing/input/reveal-contenteditable-on-paste-vertically.html = FAIL
+BUGMNAGANOV : editing/input/reveal-edit-on-input-vertically.html = FAIL
+BUGMNAGANOV : editing/input/reveal-edit-on-paste-vertically.html = FAIL

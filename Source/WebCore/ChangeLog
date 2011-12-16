@@ -1,3 +1,23 @@
+2011-12-16  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Scroll non-visible edit controls and caret into the center of the view when starting typing.
+        https://bugs.webkit.org/show_bug.cgi?id=65027
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: editing/input/caret-at-the-edge-of-contenteditable.html
+               editing/input/caret-at-the-edge-of-input.html
+               editing/input/reveal-caret-of-multiline-contenteditable.html
+               editing/input/reveal-caret-of-multiline-input.html
+               editing/input/reveal-contenteditable-on-input-vertically.html
+               editing/input/reveal-contenteditable-on-paste-vertically.html
+               editing/input/reveal-edit-on-input-vertically.html
+               editing/input/reveal-edit-on-paste-vertically.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Touch RenderStyle in an attempt to fix linking errors on Chromium Windows bots.
