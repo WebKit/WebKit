@@ -1,3 +1,56 @@
+2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        invalidateNodeListsCacheAfterAttributeChanged has too many callers
+        https://bugs.webkit.org/show_bug.cgi?id=74692
+
+        Reviewed by Sam Weinig.
+
+        Call invalidateNodeListsCacheAfterAttributeChanged in Element::updateAfterAttributeChanged instead of
+        parsedMappedAttribute of various elements. Also make invalidateNodeListsCacheAfterAttributeChanged take
+        the qualified name of the changed attribute so that we can exit early when the changed attribute isn't
+        one of attributes we care.
+
+        In addition, added a missing call to invalidateNodeListsCacheAfterAttributeChanged in Attr::setValue.
+
+        Test: fast/dom/Attr/invalidate-nodelist-after-attr-setvalue.html
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childrenChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::updateAfterAttributeChanged):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::addAttribute):
+        (WebCore::NamedNodeMap::removeAttribute):
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListsCacheAfterAttributeChanged):
+        * dom/Node.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseMappedAttribute):
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::parseMappedAttribute):
+
 2011-12-16  Andreas Kling  <kling@webkit.org>
 
         Cache and reuse HTMLCollections exposed by Document.

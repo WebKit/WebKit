@@ -141,7 +141,6 @@ void HTMLFrameElementBase::parseMappedAttribute(Attribute* attr)
         m_frameName = attr->value();
     } else if (attr->name() == nameAttr) {
         m_frameName = attr->value();
-        invalidateNodeListsCacheAfterAttributeChanged();
         // FIXME: If we are already attached, this doesn't actually change the frame's name.
         // FIXME: If we are already attached, this doesn't check for frame name
         // conflicts and generate a unique frame name.

@@ -126,6 +126,8 @@ void Attr::setValue(const AtomicString& value)
     m_attribute->setValue(value);
     createTextChild();
     m_ignoreChildrenChanged--;
+
+    invalidateNodeListsCacheAfterAttributeChanged(m_attribute->name());
 }
 
 void Attr::setValue(const AtomicString& value, ExceptionCode&)
@@ -180,10 +182,10 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
 
     Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
-    invalidateNodeListsCacheAfterAttributeChanged();
+    invalidateNodeListsCacheAfterAttributeChanged(m_attribute->name());
 
     // FIXME: We should include entity references in the value
-    
+
     String val = "";
     for (Node *n = firstChild(); n; n = n->nextSibling()) {
         if (n->isTextNode())

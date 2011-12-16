@@ -392,7 +392,6 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
             document->addNamedItem(newName);
         }
         m_name = newName;
-        invalidateNodeListsCacheAfterAttributeChanged();
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

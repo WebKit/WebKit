@@ -118,7 +118,6 @@ void HTMLEmbedElement::parseMappedAttribute(Attribute* attr)
             document->addNamedItem(value);
         }
         m_name = value;
-        invalidateNodeListsCacheAfterAttributeChanged();
     } else
         HTMLPlugInImageElement::parseMappedAttribute(attr);
 }

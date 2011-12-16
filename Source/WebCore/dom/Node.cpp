@@ -1020,13 +1020,22 @@ void Node::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
     removeNodeListCacheIfPossible(this, data);
 }
 
-void Node::invalidateNodeListsCacheAfterAttributeChanged()
+void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& attrName)
 {
     if (hasRareData() && isAttributeNode()) {
         NodeRareData* data = rareData();
         ASSERT(!data->nodeLists());
         data->clearChildNodeListCache();
     }
+
+    // This list should be sync'ed with NodeListsNodeData.
+    if (attrName != classAttr
+#if ENABLE(MICRODATA)
+        && attrName != itemscopeAttr
+        && attrName != itempropAttr
+#endif
+        && attrName != nameAttr)
+        return;
 
     if (!treeScope()->hasNodeListCaches())
         return;

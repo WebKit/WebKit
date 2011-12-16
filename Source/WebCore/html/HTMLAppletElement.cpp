@@ -64,7 +64,6 @@ void HTMLAppletElement::parseMappedAttribute(Attribute* attr)
             document->addNamedItem(newName);
         }
         m_name = newName;
-        invalidateNodeListsCacheAfterAttributeChanged();
     } else if (isIdAttributeName(attr->name())) {
         const AtomicString& newId = attr->value();
         if (inDocument() && document()->isHTMLDocument()) {

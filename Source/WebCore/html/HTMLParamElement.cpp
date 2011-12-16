@@ -57,7 +57,6 @@ void HTMLParamElement::parseMappedAttribute(Attribute* attr)
         m_name = attr->value();
     } else if (attr->name() == nameAttr) {
         m_name = attr->value();
-        invalidateNodeListsCacheAfterAttributeChanged();
     } else if (attr->name() == valueAttr) {
         m_value = attr->value();
     } else

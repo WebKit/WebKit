@@ -120,8 +120,6 @@ void HTMLMapElement::parseMappedAttribute(Attribute* attribute)
         if (inDocument())
             treeScope()->addImageMap(this);
 
-        if (attrName == nameAttr)
-            invalidateNodeListsCacheAfterAttributeChanged();
         return;
     }
 

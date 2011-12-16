@@ -697,6 +697,8 @@ void Element::attributeChanged(Attribute* attr, bool)
 
 void Element::updateAfterAttributeChanged(Attribute* attr)
 {
+    invalidateNodeListsCacheAfterAttributeChanged(attr->name());
+
     if (!AXObjectCache::accessibilityEnabled())
         return;
 

@@ -223,9 +223,7 @@ void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
             }
         }
         invalidateCachedVisitedLinkHash();
-    } else if (attr->name() == nameAttr) {
-        invalidateNodeListsCacheAfterAttributeChanged();
-    } else if (attr->name() == titleAttr) {
+    } else if (attr->name() == nameAttr || attr->name() == titleAttr) {
         // Do nothing.
     } else if (attr->name() == relAttr)
         setRel(attr->value());
