@@ -1,3 +1,38 @@
+2011-12-16  Eric Penner  <epenner@google.com>
+
+        [chromium] Need to prepaint tiles in TiledLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=72686
+
+        Reviewed by James Robinson.
+
+        Tests: TiledLayerChromiumTest (idlePaintOutOfMemory, pushIdlePaintTiles)
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::idlePaintContentsIfDirty): added idle paint function
+        * platform/graphics/chromium/ContentLayerChromium.h: ditto
+        * platform/graphics/chromium/LayerChromium.h: ditto
+        (WebCore::LayerChromium::idlePaintContentsIfDirty): ditto
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::protectTexture): removed assert for protecting a texture twice
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::cleanupResources):
+        (WebCore::TiledLayerChromium::updateCompositorResources): refactoring to use tile indices
+        (WebCore::TiledLayerChromium::prepareToUpdateTiles): refactored common code and made idle/visible versions
+        (WebCore::TiledLayerChromium::prepareToUpdate): ditto
+        (WebCore::TiledLayerChromium::prepareToUpdateIdle): ditto
+        (WebCore::TiledLayerChromium::needsIdlePaint): 
+        (WebCore::TiledLayerChromium::idlePaintRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::compositeAndReadback): set flag to avoid idle paint durring composite and readback
+        (WebCore::CCLayerTreeHost::updateLayers): added idle flag parameter
+        (WebCore::CCLayerTreeHost::paintContentsIfDirty): ditto
+        (WebCore::CCLayerTreeHost::paintMaskAndReplicaForRenderSurface): ditto
+        (WebCore::CCLayerTreeHost::paintLayerContents): chooses idle or visible paint
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+
 2011-12-16  Dean Jackson  <dino@apple.com>
 
         Miscellaneous Filter updates to align with spec

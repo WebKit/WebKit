@@ -50,6 +50,7 @@ public:
     virtual ~ContentLayerChromium();
 
     virtual void paintContentsIfDirty();
+    virtual void idlePaintContentsIfDirty();
 
 protected:
     explicit ContentLayerChromium(CCLayerDelegate*);

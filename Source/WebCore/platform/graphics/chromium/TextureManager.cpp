@@ -141,7 +141,6 @@ bool TextureManager::isProtected(TextureToken token)
 void TextureManager::protectTexture(TextureToken token)
 {
     ASSERT(hasTexture(token));
-    ASSERT(!m_textures.get(token).isProtected);
     TextureInfo info = m_textures.take(token);
     info.isProtected = true;
     m_textures.add(token, info);

@@ -67,6 +67,7 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_pageScale(1)
     , m_minPageScale(1)
     , m_maxPageScale(1)
+    , m_triggerIdlePaints(true)
 {
     ASSERT(CCProxy::isMainThread());
     numLayerTreeInstances++;
@@ -190,7 +191,9 @@ GraphicsContext3D* CCLayerTreeHost::context()
 
 bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 {
+    m_triggerIdlePaints = false;
     return m_proxy->compositeAndReadback(pixels, rect);
+    m_triggerIdlePaints = true;
 }
 
 void CCLayerTreeHost::finishAllRendering()
@@ -375,10 +378,36 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer)
         CCLayerTreeHostCommon::calculateDrawTransformsAndVisibility(rootLayer, rootLayer, identityMatrix, identityMatrix, m_updateList, rootRenderSurface->layerList(), layerRendererCapabilities().maxTextureSize);
     }
 
-    paintLayerContents(m_updateList);
+    paintLayerContents(m_updateList, PaintVisible);
+    if (!m_triggerIdlePaints)
+        return;
+
+    size_t preferredLimitBytes = TextureManager::reclaimLimitBytes(m_viewportSize);
+    size_t maxLimitBytes = TextureManager::highLimitBytes(m_viewportSize);
+    contentsTextureManager()->reduceMemoryToLimit(preferredLimitBytes);
+    if (contentsTextureManager()->currentMemoryUseBytes() >= preferredLimitBytes)
+        return;
+
+    // Idle painting should fail when we hit the preferred memory limit,
+    // otherwise it will always push us towards the maximum limit.
+    m_contentsTextureManager->setMaxMemoryLimitBytes(preferredLimitBytes);
+    // The second (idle) paint will be a no-op in layers where painting already occured above.
+    paintLayerContents(m_updateList, PaintIdle);
+    m_contentsTextureManager->setMaxMemoryLimitBytes(maxLimitBytes);
 }
 
-void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer)
+// static
+void CCLayerTreeHost::paintContentsIfDirty(LayerChromium* layer, PaintType paintType)
+{
+    ASSERT(layer);
+    ASSERT(PaintVisible == paintType || PaintIdle == paintType);
+    if (PaintVisible == paintType)
+        layer->paintContentsIfDirty();
+    else
+        layer->idlePaintContentsIfDirty();
+}
+
+void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderSurfaceLayer, PaintType paintType)
 {
     // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
     // in code, we already know that at least something will be drawn into this render surface, so the
@@ -386,22 +415,22 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
 
     if (renderSurfaceLayer->maskLayer()) {
         renderSurfaceLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
-        renderSurfaceLayer->maskLayer()->paintContentsIfDirty();
+        paintContentsIfDirty(renderSurfaceLayer->maskLayer(), paintType);
     }
 
     LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
     if (replicaLayer) {
 
-        replicaLayer->paintContentsIfDirty();
+        paintContentsIfDirty(replicaLayer, paintType);
 
         if (replicaLayer->maskLayer()) {
             replicaLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
-            replicaLayer->maskLayer()->paintContentsIfDirty();
+            paintContentsIfDirty(replicaLayer->maskLayer(), paintType);
         }
     }
 }
 
-void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList)
+void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, PaintType paintType)
 {
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
@@ -409,7 +438,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         ASSERT(renderSurface);
         ASSERT(renderSurface->drawOpacity());
 
-        paintMaskAndReplicaForRenderSurface(renderSurfaceLayer);
+        paintMaskAndReplicaForRenderSurface(renderSurfaceLayer, paintType);
 
         const LayerList& layerList = renderSurface->layerList();
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
@@ -420,10 +449,9 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerChromium>(layer, renderSurfaceLayer->id()))
                 continue;
 
-            ASSERT(layer->opacity());
             ASSERT(!layer->bounds().isEmpty());
 
-            layer->paintContentsIfDirty();
+            paintContentsIfDirty(layer, paintType);
         }
     }
 }

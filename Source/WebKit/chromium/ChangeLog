@@ -1,3 +1,21 @@
+2011-12-16  Eric Penner  <epenner@google.com>
+
+        [chromium] Need to prepaint tiles in TiledLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=72686
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::ContentLayerChromiumWithUpdateTracking::idlePaintContentsCount):
+        (WTF::ContentLayerChromiumWithUpdateTracking::resetPaintContentsCount):
+        (WTF::ContentLayerChromiumWithUpdateTracking::idlePaintContentsIfDirty):
+        (WTF::ContentLayerChromiumWithUpdateTracking::ContentLayerChromiumWithUpdateTracking):
+        (WTF::CCLayerTreeHostTestOpacityChange::afterTest):
+        * tests/TiledLayerChromiumTest.cpp:
+        (WTF::FakeTiledLayerChromium::prepareToUpdateIdle):
+        (WTF::FakeTiledLayerChromium::needsIdlePaint):
+        (WTF::TEST):
+
 2011-12-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebCString's dependency on WebCore

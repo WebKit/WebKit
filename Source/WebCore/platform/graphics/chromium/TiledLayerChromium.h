@@ -75,8 +75,15 @@ protected:
 
     // Set invalidations to be potentially repainted during update().
     void invalidateRect(const IntRect& contentRect);
+
     // Prepare data needed to update textures that intersect with contentRect.
     void prepareToUpdate(const IntRect& contentRect);
+
+    // Same as above, but this will try to paint additional surrounding content if idle.
+    void prepareToUpdateIdle(const IntRect& contentRect);
+
+    // After preparing an update, returns true if more pre-painting is needed.
+    bool needsIdlePaint(const IntRect& contentRect);
 
     virtual void protectVisibleTileTextures();
 
@@ -90,17 +97,22 @@ private:
     void createTilerIfNeeded();
     void setTilingOption(TilingOption);
 
+    void prepareToUpdateTiles(bool idle, int left, int top, int right, int bottom);
+    IntRect idlePaintRect(const IntRect& visibleContentRect);
+
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);
 
     // Temporary state held between prepareToUpdate() and updateCompositorResources().
-    IntRect m_requestedUpdateRect;
+    IntRect m_requestedUpdateTilesRect;
+
     // State held between prepareToUpdate() and pushPropertiesTo(). This represents the area
     // of the layer that is actually re-painted by WebKit.
     IntRect m_paintRect;
 
     GC3Denum m_textureFormat;
     bool m_skipsDraw;
+    bool m_skipsIdlePaint;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
 
     TilingOption m_tilingOption;

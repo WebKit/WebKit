@@ -108,6 +108,20 @@ void ContentLayerChromium::paintContentsIfDirty()
     m_needsDisplay = false;
 }
 
+void ContentLayerChromium::idlePaintContentsIfDirty()
+{
+    if (!drawsContent())
+        return;
+
+    const IntRect& layerRect = visibleLayerRect();
+    if (layerRect.isEmpty())
+        return;
+
+    prepareToUpdateIdle(layerRect);
+    if (needsIdlePaint(layerRect))
+        setNeedsCommit();
+}
+
 bool ContentLayerChromium::drawsContent() const
 {
     return m_delegate && m_delegate->drawsContent() && TiledLayerChromium::drawsContent();

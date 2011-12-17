@@ -161,6 +161,7 @@ public:
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
     virtual void paintContentsIfDirty() { }
+    virtual void idlePaintContentsIfDirty() { }
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&) { }
     virtual void setIsMask(bool) { }
     virtual void unreserveContentsTexture() { }

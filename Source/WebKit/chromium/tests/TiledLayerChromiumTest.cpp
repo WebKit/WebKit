@@ -97,6 +97,16 @@ public:
         TiledLayerChromium::prepareToUpdate(rect);
     }
 
+    void prepareToUpdateIdle(const IntRect& rect)
+    {
+        TiledLayerChromium::prepareToUpdateIdle(rect);
+    }
+
+    bool needsIdlePaint(const IntRect& rect)
+    {
+        return TiledLayerChromium::needsIdlePaint(rect);
+    }
+
     virtual TextureManager* textureManager() const { return m_textureManager; }
 
 private:
@@ -122,6 +132,7 @@ TEST(TiledLayerChromiumTest, pushDirtyTiles)
     CCTextureUpdater updater(&textureAllocator);
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
+    layer->setBounds(IntSize(100, 200));
     layer->invalidateRect(IntRect(0, 0, 100, 200));
     layer->prepareToUpdate(IntRect(0, 0, 100, 200));
     layer->updateCompositorResources(0, updater);
@@ -143,6 +154,108 @@ TEST(TiledLayerChromiumTest, pushDirtyTiles)
     // We should only have the first tile since the other tile was invalidated but not painted.
     EXPECT_TRUE(layerImpl->hasTileAt(0, 0));
     EXPECT_FALSE(layerImpl->hasTileAt(0, 1));
+}
+
+TEST(TiledLayerChromiumTest, pushIdlePaintTiles)
+{
+    OwnPtr<TextureManager> textureManager = TextureManager::create(4*1024*1024, 2*1024*1024, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    RefPtr<FakeCCTiledLayerImpl> layerImpl = adoptRef(new FakeCCTiledLayerImpl(0));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // The tile size is 100x100. Setup 5x5 tiles with one visible tile in the center.
+    IntSize contentBounds(500, 500);
+    IntRect contentRect(IntPoint::zero(), contentBounds);
+    IntRect visibleRect(200, 200, 100, 100);
+
+    // This invalidates 25 tiles and then paints one visible tile.
+    layer->setBounds(contentBounds);
+    layer->setVisibleLayerRect(visibleRect);
+    layer->invalidateRect(contentRect);
+    layer->prepareToUpdate(visibleRect);
+
+    // We should need idle-painting for 3x3 tiles in the center.
+    EXPECT_TRUE(layer->needsIdlePaint(visibleRect));
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should have one tile on the impl side.
+    EXPECT_TRUE(layerImpl->hasTileAt(2, 2));
+
+    textureManager->unprotectAllTextures();
+
+    // For the next four updates, we should detect we still need idle painting.
+    for (int i = 0; i < 4; i++) {
+        layer->prepareToUpdate(visibleRect);
+        EXPECT_TRUE(layer->needsIdlePaint(visibleRect));
+        layer->prepareToUpdateIdle(visibleRect);
+        layer->updateCompositorResources(0, updater);
+        layer->pushPropertiesTo(layerImpl.get());
+        textureManager->unprotectAllTextures();
+    }
+
+    // After four passes of idle painting, we should be finished painting
+    EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
+
+    // We should have one tile surrounding the visible tile on all sides, but no other tiles.
+    IntRect idlePaintTiles(1, 1, 3, 3);
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            if (idlePaintTiles.contains(i, j))
+                EXPECT_TRUE(layerImpl->hasTileAt(i, j));
+            else
+                EXPECT_FALSE(layerImpl->hasTileAt(i, j));
+        }
+    }
+}
+
+
+TEST(TiledLayerChromiumTest, idlePaintOutOfMemory)
+{
+    // The tile size is 100x100. Setup 5x5 tiles with one 1x1 visible tile in the center.
+    IntSize contentBounds(300, 300);
+    IntRect contentRect(IntPoint::zero(), contentBounds);
+    IntRect visibleRect(100, 100, 100, 100);
+
+    // We have enough memory for only the visible rect, so we will run out of memory in first idle paint.
+    int memoryLimit = 4 * 100 * 100; // 2 tiles, 4 bytes per pixel.
+
+    OwnPtr<TextureManager> textureManager = TextureManager::create(memoryLimit, memoryLimit / 2, 1024);
+    RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+    DebugScopedSetImplThread implThread;
+    RefPtr<FakeCCTiledLayerImpl> layerImpl = adoptRef(new FakeCCTiledLayerImpl(0));
+
+    FakeTextureAllocator textureAllocator;
+    CCTextureUpdater updater(&textureAllocator);
+
+    // This invalidates 9 tiles and then paints one visible tile.
+    layer->setBounds(contentBounds);
+    layer->setVisibleLayerRect(visibleRect);
+    layer->invalidateRect(contentRect);
+    layer->prepareToUpdate(visibleRect);
+
+    // We should need idle-painting for 3x3 tiles surounding visible tile.
+    EXPECT_TRUE(layer->needsIdlePaint(visibleRect));
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
+
+    // We should have one tile on the impl side.
+    EXPECT_TRUE(layerImpl->hasTileAt(1, 1));
+
+    textureManager->unprotectAllTextures();
+    layer->prepareToUpdate(visibleRect);
+    layer->prepareToUpdateIdle(visibleRect);
+
+    // We shouldn't signal we need another idle paint after we run out of memory.
+    EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
+
+    layer->updateCompositorResources(0, updater);
+    layer->pushPropertiesTo(layerImpl.get());
 }
 
 } // namespace

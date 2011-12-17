@@ -953,7 +953,8 @@ public:
     static PassRefPtr<ContentLayerChromiumWithUpdateTracking> create(CCLayerDelegate *delegate) { return adoptRef(new ContentLayerChromiumWithUpdateTracking(delegate)); }
 
     int paintContentsCount() { return m_paintContentsCount; }
-    void resetPaintContentsCount() { m_paintContentsCount = 0; }
+    int idlePaintContentsCount() { return m_idlePaintContentsCount; }
+    void resetPaintContentsCount() { m_paintContentsCount = 0; m_idlePaintContentsCount = 0;}
 
     int updateCount() { return m_updateCount; }
     void resetUpdateCount() { m_updateCount = 0; }
@@ -962,6 +963,12 @@ public:
     {
         ContentLayerChromium::paintContentsIfDirty();
         m_paintContentsCount++;
+    }
+
+    virtual void idlePaintContentsIfDirty()
+    {
+        ContentLayerChromium::idlePaintContentsIfDirty();
+        m_idlePaintContentsCount++;
     }
 
     virtual void updateCompositorResources(GraphicsContext3D* context, CCTextureUpdater& updater)
@@ -974,12 +981,14 @@ private:
     explicit ContentLayerChromiumWithUpdateTracking(CCLayerDelegate *delegate)
         : ContentLayerChromium(delegate)
         , m_paintContentsCount(0)
+        , m_idlePaintContentsCount(0)
         , m_updateCount(0)
     {
         setBounds(IntSize(10, 10));
     }
 
     int m_paintContentsCount;
+    int m_idlePaintContentsCount;
     int m_updateCount;
 };
 
@@ -1009,6 +1018,9 @@ public:
     {
         // paintContentsIfDirty() should have been called once.
         EXPECT_EQ(1, m_updateCheckLayer->paintContentsCount());
+
+        // idlePaintContentsIfDirty() should have been called once
+        EXPECT_EQ(1, m_updateCheckLayer->idlePaintContentsCount());
 
         // updateCompositorResources() should have been called the same
         // amout of times as paintContentsIfDirty().
