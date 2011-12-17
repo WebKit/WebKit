@@ -3703,8 +3703,6 @@ BUGWK68736 MAC : fast/table/border-collapsing/cached-change-tbody-border-width.h
 // main bots too, although not as flaky for some reason.
 BUGABARTH WIN LINUX : svg/custom/svg-fonts-word-spacing.html = PASS FAIL
 
-BUGWK68747 : media/controls-right-click-on-timebar.html = TIMEOUT PASS
-
 BUGCR97657 MAC CPU-CG : media/audio-repaint.html = TIMEOUT IMAGE PASS
 
 BUGWK68970 MAC CPU-CG : fast/multicol/float-paginate-empty-lines.html = IMAGE
