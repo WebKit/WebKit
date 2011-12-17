@@ -1,3 +1,30 @@
+2011-12-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the duplicated code from ASCIICType.h
+        https://bugs.webkit.org/show_bug.cgi?id=74771
+
+        Reviewed by Andreas Kling.
+
+        The functions were sharing similar code and were defined for the various input types.
+        Use templates instead to avoid code duplication.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCII):
+        (WTF::isASCIIAlpha):
+        (WTF::isASCIIAlphanumeric):
+        (WTF::isASCIIDigit):
+        (WTF::isASCIIHexDigit):
+        (WTF::isASCIILower):
+        (WTF::isASCIIOctalDigit):
+        (WTF::isASCIIPrintable):
+        (WTF::isASCIISpace):
+        (WTF::isASCIIUpper):
+        (WTF::toASCIILower):
+        (WTF::toASCIIUpper):
+        (WTF::toASCIIHexValue):
+        (WTF::lowerNibbleToASCIIHexDigit):
+        (WTF::upperNibbleToASCIIHexDigit):
+
 2011-12-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reverted r103120, this breaks v8 on ARMv7 DFG.
