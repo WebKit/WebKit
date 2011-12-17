@@ -1,3 +1,17 @@
+2011-12-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebCString's dependency on WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=74761
+
+        Reviewed by Darin Fisher.
+
+        Remove WebCString::fromUTF16(), which are never called, and implement WebCString::utf16() using WTF instead of
+        WebCore/platform/text/TextEncoding.
+
+        * public/platform/WebCString.h:
+        * src/WebCString.cpp:
+        (WebKit::WebCString::utf16):
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename registerCommandFor(Undo|Redo) to register(Undo|Redo)Step

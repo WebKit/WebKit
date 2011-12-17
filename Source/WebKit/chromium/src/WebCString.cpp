@@ -31,7 +31,6 @@
 #include "config.h"
 #include "platform/WebCString.h"
 
-#include "TextEncoding.h"
 #include "platform/WebString.h"
 #include <wtf/text/CString.h>
 
@@ -91,21 +90,7 @@ const char* WebCString::data() const
 
 WebString WebCString::utf16() const
 {
-    return WebCore::UTF8Encoding().decode(data(), length());
-}
-
-WebCString WebCString::fromUTF16(const WebUChar* data, size_t length)
-{
-    return WebCore::UTF8Encoding().encode(
-        data, length, WebCore::QuestionMarksForUnencodables);
-}
-
-WebCString WebCString::fromUTF16(const WebUChar* data)
-{
-    size_t len = 0;
-    while (data[len] != WebUChar(0))
-        len++;
-    return fromUTF16(data, len);
+    return WebString::fromUTF8(data(), length());
 }
 
 WebCString::WebCString(const WTF::CString& s)

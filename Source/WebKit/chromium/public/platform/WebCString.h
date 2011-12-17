@@ -89,9 +89,6 @@ public:
 
     WEBKIT_EXPORT WebString utf16() const;
 
-    WEBKIT_EXPORT static WebCString fromUTF16(const WebUChar* data, size_t length);
-    WEBKIT_EXPORT static WebCString fromUTF16(const WebUChar* data);
-
 #if WEBKIT_IMPLEMENTATION
     WebCString(const WTF::CString&);
     WebCString& operator=(const WTF::CString&);
@@ -112,12 +109,6 @@ public:
     {
         size_t len = length();
         return len ? std::string(data(), len) : std::string();
-    }
-
-    template <class UTF16String>
-    static WebCString fromUTF16(const UTF16String& s)
-    {
-        return fromUTF16(s.data(), s.length());
     }
 #endif
 
