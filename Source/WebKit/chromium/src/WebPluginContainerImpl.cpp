@@ -464,6 +464,16 @@ NPObject* WebPluginContainerImpl::scriptableObject()
     return m_webPlugin->scriptableObject();
 }
 
+bool WebPluginContainerImpl::getFormValue(String& value)
+{
+    WebString webValue;
+    if (m_webPlugin->getFormValue(webValue)) {
+        value = webValue;
+        return true;
+    }
+    return false;
+}
+
 void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver* observer)
 {
     size_t pos = m_pluginLoadObservers.find(observer);

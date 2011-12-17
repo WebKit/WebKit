@@ -1,3 +1,20 @@
+2011-12-17  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Implement PluginViewBase::getFormValue
+        https://bugs.webkit.org/show_bug.cgi?id=64434
+
+        Reviewed by Darin Fisher.
+
+        This patch was landed as r102873, but reverted because of Chromium Mac build failure.
+        The fix was landed as Chromium r114920. The patch should be safe to land.
+
+        No new tests. No behavior change at this time. We should add a test for PPAPI after chromium supports the feature.
+
+        * public/WebPlugin.h: Added getFormValue().
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::getFormValue): Added.
+        * src/WebPluginContainerImpl.h: Added getFormValue().
+
 2011-12-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCLayerDelegate and WebLayerClient do not need notifySyncRequired
