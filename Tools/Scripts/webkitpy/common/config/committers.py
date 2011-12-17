@@ -96,11 +96,10 @@ watchers_who_are_not_contributors = [
     Account("Chromium Compositor Bugs", ["cc-bugs@google.com"], ""),
     Account("David Levin", ["levin+threading@chromium.org"], ""),
     Account("David Levin", ["levin+watchlist@chromium.org"], ""),
-    Account("Radar WebKit Bug Importer", ["webkit-bug-importer@group.apple.com"], "radar"),
 ]
 
 
-# This is a list of people who are neither committers nor reviewers, but get
+# This is a list of people (or bots) who are neither committers nor reviewers, but get
 # frequently CC'ed by others on Bugzilla bugs, so their names should be
 # supported by autocomplete. No review needed to add to the list.
 
@@ -138,6 +137,7 @@ contributors_who_are_not_committers = [
     Contributor("Oliver Varga", ["voliver@inf.u-szeged.hu", "Varga.Oliver@stud.u-szeged.hu"], "TwistO"),
     Contributor("Peter Gal", "galpeter@inf.u-szeged.hu", "elecro"),
     Contributor("Peter Linss", "peter.linss@hp.com", "plinss"),
+    Contributor("Radar WebKit Bug Importer", ["webkit-bug-importer@group.apple.com"], "radar"),
     Contributor("Shawn Singh", "shawnsingh@chromium.org", "shawnsingh"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
     Contributor("Tamas Czene", ["tczene@inf.u-szeged.hu", "Czene.Tamas@stud.u-szeged.hu"], "tczene"),

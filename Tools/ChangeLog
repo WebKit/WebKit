@@ -1,5 +1,16 @@
 2011-12-16  Dean Jackson  <dino@apple.com>
 
+        Move webkit-bug-importer to Contributor. It won't
+        autocomplete as an Account.
+        See https://bugs.webkit.org/show_bug.cgi?id=74739
+        for some discussion.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2011-12-16  Dean Jackson  <dino@apple.com>
+
         Add webkit-bug-importer@group.apple.com to accounts
         so that it autocompletes in bugzilla.
 
