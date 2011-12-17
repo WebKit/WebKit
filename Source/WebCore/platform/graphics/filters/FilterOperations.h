@@ -60,7 +60,7 @@ public:
     bool operationsMatch(const FilterOperations&) const;
 
     bool hasOutsets() const;
-    void getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left, const LayoutSize& borderBoxSize) const;
+    void getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const;
 
 private:
     Vector<RefPtr<FilterOperation> > m_operations;

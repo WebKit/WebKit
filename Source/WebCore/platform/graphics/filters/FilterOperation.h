@@ -54,9 +54,9 @@ public:
         HUE_ROTATE,
         INVERT,
         OPACITY,
-        GAMMA,
+        BRIGHTNESS,
+        CONTRAST,
         BLUR,
-        SHARPEN,
         DROP_SHADOW,
 #if ENABLE(CSS_SHADERS)
         CUSTOM,
@@ -165,7 +165,7 @@ private:
     double m_amount;
 };
 
-// INVERT and OPACITY are variations on a basic component transfer effect.
+// INVERT, BRIGHTNESS, CONTRAST and OPACITY are variations on a basic component transfer effect.
 class BasicComponentTransferFilterOperation : public FilterOperation {
 public:
     static PassRefPtr<BasicComponentTransferFilterOperation> create(double amount, OperationType type)
@@ -234,13 +234,12 @@ private:
 
 class BlurFilterOperation : public FilterOperation {
 public:
-    static PassRefPtr<BlurFilterOperation> create(Length stdDeviationX, Length stdDeviationY, OperationType type)
+    static PassRefPtr<BlurFilterOperation> create(Length stdDeviation, OperationType type)
     {
-        return adoptRef(new BlurFilterOperation(stdDeviationX, stdDeviationY, type));
+        return adoptRef(new BlurFilterOperation(stdDeviation, type));
     }
 
-    Length stdDeviationX() const { return m_stdDeviationX; }
-    Length stdDeviationY() const { return m_stdDeviationY; }
+    Length stdDeviation() const { return m_stdDeviation; }
 
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, bool blendToPassthrough = false);
 
@@ -250,52 +249,16 @@ private:
         if (!isSameType(o))
             return false;
         const BlurFilterOperation* other = static_cast<const BlurFilterOperation*>(&o);
-        return m_stdDeviationX == other->m_stdDeviationX && m_stdDeviationY == other->m_stdDeviationY;
+        return m_stdDeviation == other->m_stdDeviation;
     }
 
-    BlurFilterOperation(Length stdDeviationX, Length stdDeviationY, OperationType type)
+    BlurFilterOperation(Length stdDeviation, OperationType type)
         : FilterOperation(type)
-        , m_stdDeviationX(stdDeviationX)
-        , m_stdDeviationY(stdDeviationY)
+        , m_stdDeviation(stdDeviation)
     {
     }
 
-    Length m_stdDeviationX;
-    Length m_stdDeviationY;
-};
-
-// FIXME: sharpen will be removed.
-class SharpenFilterOperation : public FilterOperation {
-public:
-    static PassRefPtr<SharpenFilterOperation> create(double amount, Length radius, double threshold, OperationType type)
-    {
-        return adoptRef(new SharpenFilterOperation(amount, radius, threshold, type));
-    }
-
-    double amount() const { return m_amount; }
-    Length radius() const { return m_radius; }
-    double threshold() const { return m_threshold; }
-
-private:
-    virtual bool operator==(const FilterOperation& o) const
-    {
-        if (!isSameType(o))
-            return false;
-        const SharpenFilterOperation* other = static_cast<const SharpenFilterOperation*>(&o);
-        return m_radius == other->m_radius && m_threshold == other->m_threshold && m_amount == other->m_amount;
-    }
-
-    SharpenFilterOperation(double amount, Length radius, double threshold, OperationType type)
-        : FilterOperation(type)
-        , m_amount(amount)
-        , m_radius(radius)
-        , m_threshold(threshold)
-    {
-    }
-
-    double m_amount;
-    Length m_radius;
-    double m_threshold;
+    Length m_stdDeviation;
 };
 
 class DropShadowFilterOperation : public FilterOperation {

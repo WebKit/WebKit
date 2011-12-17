@@ -67,7 +67,7 @@ public:
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    void build(const FilterOperations&, const LayoutRect&);
+    void build(const FilterOperations&);
     void prepare();
     void apply();
     

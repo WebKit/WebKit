@@ -720,27 +720,22 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
             filterValue->append(cssValuePool->createValue(componentTransferOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
-        case FilterOperation::GAMMA: {
-            GammaFilterOperation* gammaOperation = static_cast<GammaFilterOperation*>(filterOperation);
-            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::GammaFilterOperation);
-            filterValue->append(cssValuePool->createValue(gammaOperation->amplitude(), CSSPrimitiveValue::CSS_NUMBER));
-            filterValue->append(cssValuePool->createValue(gammaOperation->exponent(), CSSPrimitiveValue::CSS_NUMBER));
-            filterValue->append(cssValuePool->createValue(gammaOperation->offset(), CSSPrimitiveValue::CSS_NUMBER));
+        case FilterOperation::BRIGHTNESS: {
+            BasicComponentTransferFilterOperation* brightnessOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::BrightnessFilterOperation);
+            filterValue->append(cssValuePool->createValue(brightnessOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
+            break;
+        }
+        case FilterOperation::CONTRAST: {
+            BasicComponentTransferFilterOperation* contrastOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
+            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::ContrastFilterOperation);
+            filterValue->append(cssValuePool->createValue(contrastOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
             break;
         }
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::BlurFilterOperation);
-            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationX().value(), style, cssValuePool));
-            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviationY().value(), style, cssValuePool));
-            break;
-        }
-        case FilterOperation::SHARPEN: {
-            SharpenFilterOperation* sharpenOperation = static_cast<SharpenFilterOperation*>(filterOperation);
-            filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::SharpenFilterOperation);
-            filterValue->append(cssValuePool->createValue(sharpenOperation->amount(), CSSPrimitiveValue::CSS_NUMBER));
-            filterValue->append(zoomAdjustedPixelValue(sharpenOperation->radius().value(), style, cssValuePool));
-            filterValue->append(cssValuePool->createValue(sharpenOperation->threshold(), CSSPrimitiveValue::CSS_NUMBER));
+            filterValue->append(zoomAdjustedPixelValue(blurOperation->stdDeviation().value(), style, cssValuePool));
             break;
         }
         case FilterOperation::DROP_SHADOW: {

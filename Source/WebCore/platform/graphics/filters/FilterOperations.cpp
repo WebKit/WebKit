@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-static inline IntSize outsetSizeForBlur(float stdX, float stdY)
+static inline IntSize outsetSizeForBlur(float stdDeviation)
 {
     unsigned kernelSizeX = 0;
     unsigned kernelSizeY = 0;
-    FEGaussianBlur::calculateUnscaledKernelSize(kernelSizeX, kernelSizeY, stdX, stdY);
+    FEGaussianBlur::calculateUnscaledKernelSize(kernelSizeX, kernelSizeY, stdDeviation, stdDeviation);
 
     IntSize outset;
     // We take the half kernel size and multiply it with three, because we run box blur three times.
@@ -90,7 +90,7 @@ bool FilterOperations::hasOutsets() const
     return false;
 }
 
-void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left, const LayoutSize& borderBoxSize) const
+void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
 {
     top = 0;
     right = 0;
@@ -101,9 +101,8 @@ void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit
         switch (filterOperation->getOperationType()) {
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
-            float stdDeviationX = blurOperation->stdDeviationX().calcFloatValue(borderBoxSize.width());
-            float stdDeviationY = blurOperation->stdDeviationY().calcFloatValue(borderBoxSize.height());
-            IntSize outset = outsetSizeForBlur(stdDeviationX, stdDeviationY);
+            float stdDeviation = blurOperation->stdDeviation().calcFloatValue(0);
+            IntSize outset = outsetSizeForBlur(stdDeviation);
             top += outset.height();
             right += outset.width();
             bottom += outset.height();
@@ -112,7 +111,7 @@ void FilterOperations::getOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit
         }
         case FilterOperation::DROP_SHADOW: {
             DropShadowFilterOperation* dropShadowOperation = static_cast<DropShadowFilterOperation*>(filterOperation);
-            IntSize outset = outsetSizeForBlur(dropShadowOperation->stdDeviation(), dropShadowOperation->stdDeviation());
+            IntSize outset = outsetSizeForBlur(dropShadowOperation->stdDeviation());
             top += outset.height() - dropShadowOperation->y();
             right += outset.width() + dropShadowOperation->x();
             bottom += outset.height() + dropShadowOperation->y();

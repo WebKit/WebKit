@@ -5147,12 +5147,12 @@ static FilterOperation::OperationType filterOperationForType(WebKitCSSFilterValu
         return FilterOperation::INVERT;
     case WebKitCSSFilterValue::OpacityFilterOperation:
         return FilterOperation::OPACITY;
-    case WebKitCSSFilterValue::GammaFilterOperation:
-        return FilterOperation::GAMMA;
+    case WebKitCSSFilterValue::BrightnessFilterOperation:
+        return FilterOperation::BRIGHTNESS;
+    case WebKitCSSFilterValue::ContrastFilterOperation:
+        return FilterOperation::CONTRAST;
     case WebKitCSSFilterValue::BlurFilterOperation:
         return FilterOperation::BLUR;
-    case WebKitCSSFilterValue::SharpenFilterOperation:
-        return FilterOperation::SHARPEN;
     case WebKitCSSFilterValue::DropShadowFilterOperation:
         return FilterOperation::DROP_SHADOW;
 #if ENABLE(CSS_SHADERS)
@@ -5349,68 +5349,29 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             break;
         }
         case WebKitCSSFilterValue::InvertFilterOperation:
+        case WebKitCSSFilterValue::BrightnessFilterOperation:
+        case WebKitCSSFilterValue::ContrastFilterOperation:
         case WebKitCSSFilterValue::OpacityFilterOperation: {
             double amount = 1;
             if (filterValue->length() == 1) {
                 amount = firstValue->getDoubleValue();
-                if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                if (firstValue->isPercentage())
                     amount /= 100;
             }
 
             operations.operations().append(BasicComponentTransferFilterOperation::create(amount, operationType));
             break;
         }
-        case WebKitCSSFilterValue::GammaFilterOperation: {
-            double amplitude = 1;
-            double exponent = 1;
-            double offset = 0;
-            if (filterValue->length() >= 1)
-                amplitude = firstValue->getDoubleValue();
-            if (filterValue->length() >= 2)
-                exponent = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(1))->getDoubleValue();
-            if (filterValue->length() == 3)
-                offset = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(2))->getDoubleValue();
-
-            operations.operations().append(GammaFilterOperation::create(amplitude, exponent, offset, operationType));
-            break;
-        }
         case WebKitCSSFilterValue::BlurFilterOperation: {
             bool ok = true;
-            Length stdDeviationX = Length(0, Fixed);
-            Length stdDeviationY = Length(0, Fixed);
+            Length stdDeviation = Length(0, Fixed);
             if (filterValue->length() >= 1) {
-                stdDeviationX = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
-                stdDeviationY = stdDeviationX;
-            }
-            if (!ok)
-                return false;
-            if (filterValue->length() == 2) {
-                CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(1));
-                stdDeviationY = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
+                stdDeviation = convertToFloatLength(firstValue, style, rootStyle, zoomFactor, &ok);
             }
             if (!ok)
                 return false;
 
-            operations.operations().append(BlurFilterOperation::create(stdDeviationX, stdDeviationY, operationType));
-            break;
-        }
-        case WebKitCSSFilterValue::SharpenFilterOperation: {
-            bool ok = true;
-            double amount = 0;
-            Length radius = Length(0, Fixed);
-            double threshold = 1;
-            if (filterValue->length() >= 1)
-                amount = firstValue->getDoubleValue();
-            if (filterValue->length() >= 2) {
-                CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(1));
-                radius = convertToFloatLength(secondValue, style, rootStyle, zoomFactor, &ok);
-            }
-            if (!ok)
-                return false;
-            if (filterValue->length() == 3)
-                threshold = static_cast<CSSPrimitiveValue*>(filterValue->itemWithoutBoundsCheck(2))->getDoubleValue();
-
-            operations.operations().append(SharpenFilterOperation::create(amount, radius, threshold, operationType));
+            operations.operations().append(BlurFilterOperation::create(stdDeviation, operationType));
             break;
         }
         case WebKitCSSFilterValue::DropShadowFilterOperation: {

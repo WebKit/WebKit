@@ -40,9 +40,9 @@ module css {
         const unsigned short CSS_FILTER_HUE_ROTATE = 5;
         const unsigned short CSS_FILTER_INVERT = 6;
         const unsigned short CSS_FILTER_OPACITY = 7;
-        const unsigned short CSS_FILTER_GAMMA = 8;
-        const unsigned short CSS_FILTER_BLUR = 9;
-        const unsigned short CSS_FILTER_SHARPEN = 10;
+        const unsigned short CSS_FILTER_BRIGHTNESS = 8;
+        const unsigned short CSS_FILTER_CONTRAST = 9;
+        const unsigned short CSS_FILTER_BLUR = 10;
         const unsigned short CSS_FILTER_DROP_SHADOW = 11;
 
 #if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS

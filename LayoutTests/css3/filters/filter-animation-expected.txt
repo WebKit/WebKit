@@ -1,0 +1,11 @@
+        
+PASS - "webkitFilter" property for "grayscale-box" element at 1s saw something close to: grayscale(0.5)
+PASS - "webkitFilter" property for "sepia-box" element at 1s saw something close to: sepia(0.5)
+PASS - "webkitFilter" property for "saturate-box" element at 1s saw something close to: saturate(0.5)
+PASS - "webkitFilter" property for "huerotate-box" element at 1s saw something close to: huerotate(90deg)
+PASS - "webkitFilter" property for "invert-box" element at 1s saw something close to: invert(0.5)
+PASS - "webkitFilter" property for "opacity-box" element at 1s saw something close to: opacity(0.5)
+PASS - "webkitFilter" property for "brightness-box" element at 1s saw something close to: brightness(0.5)
+PASS - "webkitFilter" property for "contrast-box" element at 1s saw something close to: contrast(0.5)
+PASS - "webkitFilter" property for "blur-box" element at 1s saw something close to: blur(10px)
+

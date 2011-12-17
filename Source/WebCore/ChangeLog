@@ -1,3 +1,65 @@
+2011-12-16  Dean Jackson  <dino@apple.com>
+
+        Miscellaneous Filter updates to align with spec
+        https://bugs.webkit.org/show_bug.cgi?id=74736
+
+        Reviewed by Simon Fraser.
+
+        Combine a bunch of small updates to filters where
+        we were not compliant with the specification.
+
+        - blur() only takes one value, not two
+        - blur() does not accept percentages. This allowed us
+          to stop passing the borderBoxSize around while building
+          the filter chain or calculating visual overflow.
+        - gamma() and sharpen() removed
+        - brightness() and contrast() added
+
+        Tests: css3/filters/effect-brightness.html
+               css3/filters/effect-contrast.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter): Create new
+        variations on component transfer functions for brightness() and
+        contrast() effects. Also remove sharpen() and gamma().
+        * css/CSSParser.cpp:
+        (WebCore::filterInfoForName):
+        (WebCore::CSSParser::parseBuiltinFilterArguments): Ditto, and blur
+        only takes one argument.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::filterOperationForType):
+        (WebCore::CSSStyleSelector::createFilterOperations): Ditto, and
+        use ->isPercentage() to test rather than getting the type.
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::customCssText):
+        * css/WebKitCSSFilterValue.h:
+        * css/WebKitCSSFilterValue.idl: Remove sharpen and gamma, add
+        brightness and contrast.
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BlurFilterOperation::blend): Blurs only need to blend
+        between one standard deviation parameter.
+        * platform/graphics/filters/FilterOperation.h: Remove sharpen and
+        gamma, add brightness and contrast.
+        (WebCore::BlurFilterOperation::create):
+        (WebCore::BlurFilterOperation::stdDeviation):
+        (WebCore::BlurFilterOperation::operator==):
+        (WebCore::BlurFilterOperation::BlurFilterOperation): Blur only takes
+        one standard deviation / radius parameter.
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::outsetSizeForBlur):
+        (WebCore::FilterOperations::getOutsets): No need for borderBox now.
+        * platform/graphics/filters/FilterOperations.h:
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build): Build new effect types.
+        * rendering/FilterEffectRenderer.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addVisualEffectOverflow): No need to pass
+        borderBox size when calculating overflow on filter.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::getFilterOutsets): Ditto.
+
 2011-12-16  Andreas Kling  <kling@webkit.org>
 
         Unreviewed debug build fix after r103115.

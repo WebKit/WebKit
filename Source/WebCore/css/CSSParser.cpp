@@ -6606,16 +6606,13 @@ static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue:
         filterType = WebKitCSSFilterValue::InvertFilterOperation;
     else if (equalIgnoringCase(name, "opacity("))
         filterType = WebKitCSSFilterValue::OpacityFilterOperation;
-    else if (equalIgnoringCase(name, "gamma(")) {
-        filterType = WebKitCSSFilterValue::GammaFilterOperation;
-        maximumArgumentCount = 3;
-    } else if (equalIgnoringCase(name, "blur(")) {
+    else if (equalIgnoringCase(name, "brightness("))
+        filterType = WebKitCSSFilterValue::BrightnessFilterOperation;
+    else if (equalIgnoringCase(name, "contrast("))
+        filterType = WebKitCSSFilterValue::ContrastFilterOperation;
+    else if (equalIgnoringCase(name, "blur("))
         filterType = WebKitCSSFilterValue::BlurFilterOperation;
-        maximumArgumentCount = 2;
-    } else if (equalIgnoringCase(name, "sharpen(")) {
-        filterType = WebKitCSSFilterValue::SharpenFilterOperation;
-        maximumArgumentCount = 3;
-    } else if (equalIgnoringCase(name, "drop-shadow(")) {
+    else if (equalIgnoringCase(name, "drop-shadow(")) {
         filterType = WebKitCSSFilterValue::DropShadowFilterOperation;
         maximumArgumentCount = 4;  // x-offset, y-offset, blur-radius, color -- spread and inset style not allowed.
     }
@@ -6776,7 +6773,9 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
     case WebKitCSSFilterValue::SepiaFilterOperation:
     case WebKitCSSFilterValue::SaturateFilterOperation:
     case WebKitCSSFilterValue::InvertFilterOperation:
-    case WebKitCSSFilterValue::OpacityFilterOperation: {
+    case WebKitCSSFilterValue::OpacityFilterOperation:
+    case WebKitCSSFilterValue::BrightnessFilterOperation:
+    case WebKitCSSFilterValue::ContrastFilterOperation: {
         // One optional argument, 0-1 or 0%-100%, if missing use 100%.
         if (args->size() > 1)
             return 0;
@@ -6788,8 +6787,10 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
                 
             double amount = value->fValue;
             
-            // Saturate allows values over 100%.
-            if (filterType != WebKitCSSFilterValue::SaturateFilterOperation) {
+            // Saturate, Brightness and Contrast allow values over 100%.
+            if (filterType != WebKitCSSFilterValue::SaturateFilterOperation
+                && filterType != WebKitCSSFilterValue::BrightnessFilterOperation
+                && filterType != WebKitCSSFilterValue::ContrastFilterOperation) {
                 double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
                 if (amount > maxAllowed)
                     return 0;
@@ -6813,61 +6814,17 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParse
         }
         break;
     }
-    case WebKitCSSFilterValue::GammaFilterOperation:
-        // Three optional arguments, values unlimited.
-        if (args->size() > 3)
-            return 0;
-
-        for (CSSParserValue* value = args->current(); value; value = args->next()) {
-            if (!validUnit(value, FNumber | FNonNeg, true))
-                return 0;
-                
-            filterValue->append(createPrimitiveNumericValue(value));
-        }
-        break;
     case WebKitCSSFilterValue::BlurFilterOperation: {
-        // Blur takes one or two lengths. Zero parameters are allowed.
-        if (args->size() > 2)
+        // Blur takes a single length. Zero parameters are allowed.
+        if (args->size() > 1)
             return 0;
-
-        for (CSSParserValue* value = args->current(); value; value = args->next()) {
-            if (!validUnit(value, FLength | FPercent | FNonNeg, true))
-                return 0;
-
-            filterValue->append(createPrimitiveNumericValue(value));
-        }
-        break;
-    }
-    // FIXME: sharpen will be removed.
-    case WebKitCSSFilterValue::SharpenFilterOperation: {
-        // Sharpen has up to 3 arguments: 0-1 (or percentage) defaulting to 0, radius (a length, default 0), and optional threshold (0-1, defaults to 1).
-        if (args->size() > 3)
-            return 0;
-
-        CSSParserValue* value = args->current();
-        if (args->size() > 0) {
-            if (!validUnit(value, FNumber | FPercent, true))
-                return 0;
-
-            double maxAllowed = value->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 100.0 : 1.0;
-            double amount = max<double>(min<double>(value->fValue, maxAllowed), 0);
-            filterValue->append(cssValuePool()->createValue(amount, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit)));
-        }
         
-        if (args->size() > 1) {
-            value = args->next();
-            if (!validUnit(value, FLength | FNonNeg, true))
+        if (args->size()) {
+            CSSParserValue* argument = args->current();
+            if (!validUnit(argument, FLength | FNonNeg, true))
                 return 0;
 
-            filterValue->append(createPrimitiveNumericValue(value));
-        }
-
-        if (args->size() > 2) {
-            value = args->next();
-            if (!validUnit(value, FNumber, true))
-                return 0;
-
-            filterValue->append(createPrimitiveNumericValue(value));
+            filterValue->append(createPrimitiveNumericValue(argument));
         }
         break;
     }

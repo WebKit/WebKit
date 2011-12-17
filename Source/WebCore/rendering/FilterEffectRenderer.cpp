@@ -72,7 +72,7 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage()->context();
 }
 
-void FilterEffectRenderer::build(const FilterOperations& operations, const LayoutRect& borderBox)
+void FilterEffectRenderer::build(const FilterOperations& operations)
 {
     m_effects.clear();
 
@@ -182,28 +182,32 @@ void FilterEffectRenderer::build(const FilterOperations& operations, const Layou
             effect = FEComponentTransfer::create(this, nullFunction, nullFunction, nullFunction, transferFunction);
             break;
         }
-        case FilterOperation::GAMMA: {
-            GammaFilterOperation* gammaOperation = static_cast<GammaFilterOperation*>(filterOperation);
+        case FilterOperation::BRIGHTNESS: {
+            BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
             ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_GAMMA;
-            transferFunction.amplitude = narrowPrecisionToFloat(gammaOperation->amplitude());
-            transferFunction.exponent = narrowPrecisionToFloat(gammaOperation->exponent());
-            transferFunction.offset = narrowPrecisionToFloat(gammaOperation->offset());
+            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+            transferFunction.slope = narrowPrecisionToFloat(componentTransferOperation->amount());
 
+            ComponentTransferFunction nullFunction;
+            effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);
+            break;
+        }
+        case FilterOperation::CONTRAST: {
+            BasicComponentTransferFilterOperation* componentTransferOperation = static_cast<BasicComponentTransferFilterOperation*>(filterOperation);
+            ComponentTransferFunction transferFunction;
+            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+            float amount = narrowPrecisionToFloat(componentTransferOperation->amount());
+            transferFunction.slope = amount;
+            transferFunction.intercept = -0.5 * amount + 0.5;
+            
             ComponentTransferFunction nullFunction;
             effect = FEComponentTransfer::create(this, transferFunction, transferFunction, transferFunction, nullFunction);
             break;
         }
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
-            float stdDeviationX = blurOperation->stdDeviationX().calcFloatValue(borderBox.width());
-            float stdDeviationY = blurOperation->stdDeviationY().calcFloatValue(borderBox.height());
-            effect = FEGaussianBlur::create(this, stdDeviationX, stdDeviationY);
-            break;
-        }
-        case FilterOperation::SHARPEN: {
-            // FIXME: Currently unimplemented.
-            // https://bugs.webkit.org/show_bug.cgi?id=72442
+            float stdDeviation = blurOperation->stdDeviation().calcFloatValue(0);
+            effect = FEGaussianBlur::create(this, stdDeviation, stdDeviation);
             break;
         }
         case FilterOperation::DROP_SHADOW: {

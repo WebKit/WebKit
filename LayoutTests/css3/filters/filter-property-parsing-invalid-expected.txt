@@ -34,6 +34,11 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
+Negative percent : grayscale(-10%)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
 Parameter out of bounds : grayscale(1.5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
@@ -55,6 +60,11 @@ PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
 Negative parameter : sepia(-0.01)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative percent : sepia(-10%)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
@@ -85,6 +95,11 @@ PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
 Negative parameter : saturate(-0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative percent : saturate(-10%)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
@@ -169,47 +184,72 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
+Negative percent : opacity(-10%)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
 Parameter out of bounds : opacity(1.5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Length instead of number : gamma(10px 10 10)
+Length instead of number : brightness(10px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Length instead of number : gamma(10 10px 10)
+Too many parameters : brightness(0.5 0.5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Length instead of number : gamma(10 10 10px)
+Too many parameters and commas : brightness(0.5, 0.5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Negative number : gamma(-0.1)
+Trailing comma : brightness(0.5,)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Negative number : gamma(1.0 -0.1)
+Negative parameter : brightness(-0.5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Too many parameters : gamma(1.0 1.0 1.0 1.0)
+Negative percent : brightness(-10%)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Commas : gamma(1.0, 1.0, 1.0)
+Length instead of number : contrast(10px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Trailing comma : gamma(1.0, 1.0,)
+Too many parameters : contrast(0.5 0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Too many parameters and commas : contrast(0.5, 0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Trailing comma : contrast(0.5,)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative parameter : contrast(-0.5)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative percent : contrast(-10%)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
@@ -219,27 +259,22 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Bare number : blur(1px 1)
+Negative number : blur(-1px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Negative number : blur(-1px 1px)
+Percentage : blur(10%)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Negative number : blur(1px -1px)
+Too many parameters : blur(1px 1px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
-Too many parameters : blur(1px 1px 1px)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Too many parameters and commas : blur(1em, 1em, 2em)
+Too many parameters and commas : blur(1em, 1em)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
@@ -250,36 +285,6 @@ PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
 Trailing comma : blur(1em,)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Missing length : sharpen(1 1 1)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Wrong length type : sharpen(1 1deg 1)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Too many parameters : sharpen(1 1px 1 1)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Too many parameters and commas : sharpen(1, 1px, 1, 1)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Commas : sharpen(1, 10px, 1)
-PASS cssRule.type is 1
-PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-filter') is null
-
-Trailing comma : sharpen(1, 10px,)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null

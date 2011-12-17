@@ -26,12 +26,14 @@ testInvalidFilterRule("Too many parameters", "grayscale(0.5 0.5)");
 testInvalidFilterRule("Too many parameters and commas", "grayscale(0.5, 0.5)");
 testInvalidFilterRule("Trailing comma", "grayscale(0.5,)");
 testInvalidFilterRule("Negative parameter", "grayscale(-0.5)");
+testInvalidFilterRule("Negative percent", "grayscale(-10%)");
 testInvalidFilterRule("Parameter out of bounds", "grayscale(1.5)");
 
 testInvalidFilterRule("Too many parameters", "sepia(0.5 0.5 3.0)");
 testInvalidFilterRule("Too many parameters and commas", "sepia(0.1, 0.1)");
 testInvalidFilterRule("Trailing comma", "sepia(0.5,)");
 testInvalidFilterRule("Negative parameter", "sepia(-0.01)");
+testInvalidFilterRule("Negative percent", "sepia(-10%)");
 testInvalidFilterRule("Parameter out of bounds", "sepia(10000)");
 
 testInvalidFilterRule("Length instead of number", "saturate(10px)");
@@ -39,6 +41,7 @@ testInvalidFilterRule("Too many parameters", "saturate(0.5 0.5)");
 testInvalidFilterRule("Too many parameters and commas", "saturate(0.5, 0.5)");
 testInvalidFilterRule("Trailing comma", "saturate(0.5,)");
 testInvalidFilterRule("Negative parameter", "saturate(-0.5)");
+testInvalidFilterRule("Negative percent", "saturate(-10%)");
 
 testInvalidFilterRule("Bare number", "hue-rotate(10)");
 testInvalidFilterRule("Length", "hue-rotate(10px)");
@@ -58,32 +61,30 @@ testInvalidFilterRule("Too many parameters", "opacity(0.5 0.5)");
 testInvalidFilterRule("Too many parameters and commas", "opacity(0.5, 0.5)");
 testInvalidFilterRule("Trailing comma", "opacity(0.5,)");
 testInvalidFilterRule("Negative parameter", "opacity(-0.5)");
+testInvalidFilterRule("Negative percent", "opacity(-10%)");
 testInvalidFilterRule("Parameter out of bounds", "opacity(1.5)");
 
-testInvalidFilterRule("Length instead of number", "gamma(10px 10 10)");
-testInvalidFilterRule("Length instead of number", "gamma(10 10px 10)");
-testInvalidFilterRule("Length instead of number", "gamma(10 10 10px)");
-testInvalidFilterRule("Negative number", "gamma(-0.1)");
-testInvalidFilterRule("Negative number", "gamma(1.0 -0.1)");
-testInvalidFilterRule("Too many parameters", "gamma(1.0 1.0 1.0 1.0)");
-testInvalidFilterRule("Commas", "gamma(1.0, 1.0, 1.0)");
-testInvalidFilterRule("Trailing comma", "gamma(1.0, 1.0,)");
+testInvalidFilterRule("Length instead of number", "brightness(10px)");
+testInvalidFilterRule("Too many parameters", "brightness(0.5 0.5)");
+testInvalidFilterRule("Too many parameters and commas", "brightness(0.5, 0.5)");
+testInvalidFilterRule("Trailing comma", "brightness(0.5,)");
+testInvalidFilterRule("Negative parameter", "brightness(-0.5)");
+testInvalidFilterRule("Negative percent", "brightness(-10%)");
+
+testInvalidFilterRule("Length instead of number", "contrast(10px)");
+testInvalidFilterRule("Too many parameters", "contrast(0.5 0.5)");
+testInvalidFilterRule("Too many parameters and commas", "contrast(0.5, 0.5)");
+testInvalidFilterRule("Trailing comma", "contrast(0.5,)");
+testInvalidFilterRule("Negative parameter", "contrast(-0.5)");
+testInvalidFilterRule("Negative percent", "contrast(-10%)");
 
 testInvalidFilterRule("Bare number", "blur(1)");
-testInvalidFilterRule("Bare number", "blur(1px 1)");
-testInvalidFilterRule("Negative number", "blur(-1px 1px)");
-testInvalidFilterRule("Negative number", "blur(1px -1px)");
-testInvalidFilterRule("Too many parameters", "blur(1px 1px 1px)");
-testInvalidFilterRule("Too many parameters and commas", "blur(1em, 1em, 2em)");
+testInvalidFilterRule("Negative number", "blur(-1px)");
+testInvalidFilterRule("Percentage", "blur(10%)");
+testInvalidFilterRule("Too many parameters", "blur(1px 1px)");
+testInvalidFilterRule("Too many parameters and commas", "blur(1em, 1em)");
 testInvalidFilterRule("Commas", "blur(10px, 10px)");
 testInvalidFilterRule("Trailing comma", "blur(1em,)");
-
-testInvalidFilterRule("Missing length", "sharpen(1 1 1)");
-testInvalidFilterRule("Wrong length type", "sharpen(1 1deg 1)");
-testInvalidFilterRule("Too many parameters", "sharpen(1 1px 1 1)");
-testInvalidFilterRule("Too many parameters and commas", "sharpen(1, 1px, 1, 1)");
-testInvalidFilterRule("Commas", "sharpen(1, 10px, 1)");
-testInvalidFilterRule("Trailing comma", "sharpen(1, 10px,)");
 
 testInvalidFilterRule("No values", "drop-shadow()");
 testInvalidFilterRule("Missing lengths", "drop-shadow(red)");

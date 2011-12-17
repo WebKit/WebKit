@@ -3568,7 +3568,7 @@ void RenderBox::addVisualEffectOverflow()
         LayoutUnit filterOutsetRight;
         LayoutUnit filterOutsetTop;
         LayoutUnit filterOutsetBottom;
-        style()->getFilterOutsets(filterOutsetTop, filterOutsetRight, filterOutsetBottom, filterOutsetLeft, borderBox.size());
+        style()->getFilterOutsets(filterOutsetTop, filterOutsetRight, filterOutsetBottom, filterOutsetLeft);
         
         overflowMinX = min(overflowMinX, borderBox.x() - filterOutsetLeft);
         overflowMaxX = max(overflowMaxX, borderBox.maxX() + filterOutsetRight);

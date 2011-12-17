@@ -35,8 +35,12 @@
       -webkit-animation: opacity-anim 2s linear
     }
 
-    #gamma-box {
-      -webkit-animation: gamma-anim 2s linear
+    #brightness-box {
+      -webkit-animation: brightness-anim 2s linear
+    }
+
+    #contrast-box {
+      -webkit-animation: contrast-anim 2s linear
     }
 
     #blur-box {
@@ -78,14 +82,19 @@
         to   { -webkit-filter: opacity(0); }
     }
 
-    @-webkit-keyframes gamma-anim {
-        from { -webkit-filter: gamma(1 1 0); }
-        to   { -webkit-filter: gamma(0 0 1); }
+    @-webkit-keyframes brightness-anim {
+        from { -webkit-filter: brightness(1); }
+        to   { -webkit-filter: brightness(0); }
+    }
+
+    @-webkit-keyframes contrast-anim {
+        from { -webkit-filter: contrast(1); }
+        to   { -webkit-filter: contrast(0); }
     }
 
     @-webkit-keyframes blur-anim {
         from { -webkit-filter: blur(0); }
-        to   { -webkit-filter: blur(20px 20px); }
+        to   { -webkit-filter: blur(20px); }
     }
 
     @-webkit-keyframes dropshadow-anim {
@@ -108,8 +117,9 @@
       ["huerotate-anim",  1, "huerotate-box", "webkitFilter", 'huerotate(90deg)', 2],
       ["invert-anim",  1, "invert-box", "webkitFilter", 'invert(0.5)', 2],
       ["opacity-anim",  1, "opacity-box", "webkitFilter", 'opacity(0.5)', 2],
-      ["gamma-anim",  1, "gamma-box", "webkitFilter", 'gamma(0.5, 0.5 0.5)', 2],
-      ["blur-anim",  1, "blur-box", "webkitFilter", 'blur(10px 10px)', 2],
+      ["brightness-anim",  1, "brightness-box", "webkitFilter", 'brightness(0.5)', 2],
+      ["contrast-anim",  1, "contrast-box", "webkitFilter", 'contrast(0.5)', 2],
+      ["blur-anim",  1, "blur-box", "webkitFilter", 'blur(10px)', 2],
       // FIXME when we implement drop-shadow.
       // ["dropshadow-anim",  1, "dropshadow-box", "webkitFilter", 'drop-shadow(rgba(0, 0, 0, 0.5) 10px 15px 5px )', 2],
     ];
@@ -129,7 +139,8 @@
 <div class="box" id="huerotate-box"></div>
 <div class="box" id="invert-box"></div>
 <div class="box" id="opacity-box"></div>
-<div class="box" id="gamma-box"></div>
+<div class="box" id="brightness-box"></div>
+<div class="box" id="contrast-box"></div>
 <div class="box" id="blur-box"></div>
 <!-- <div class="box" id="dropshadow-box"></div> -->
 

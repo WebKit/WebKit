@@ -400,10 +400,10 @@ public:
     }
 
 #if ENABLE(CSS_FILTERS)
-    void getFilterOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left, const LayoutSize& borderBoxSize) const
+    void getFilterOutsets(LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const
     {
         if (hasFilter())
-            filter().getOutsets(top, right, bottom, left, borderBoxSize);
+            filter().getOutsets(top, right, bottom, left);
         else {
             top = 0;
             right = 0;

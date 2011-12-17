@@ -46,9 +46,9 @@ public:
         HueRotateFilterOperation,
         InvertFilterOperation,
         OpacityFilterOperation,
-        GammaFilterOperation,
+        BrightnessFilterOperation,
+        ContrastFilterOperation,
         BlurFilterOperation,
-        SharpenFilterOperation,
         DropShadowFilterOperation
 #if ENABLE(CSS_SHADERS)
         , CustomFilterOperation

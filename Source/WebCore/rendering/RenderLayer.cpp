@@ -4449,7 +4449,7 @@ void RenderLayer::updateOrRemoveFilterEffect()
             m_filter->setRenderingMode(renderingMode);
         }
 
-        m_filter->build(renderer()->style()->filter(), toRenderBox(renderer())->borderBoxRect());
+        m_filter->build(renderer()->style()->filter());
     } else {
         m_filter = 0;
     }

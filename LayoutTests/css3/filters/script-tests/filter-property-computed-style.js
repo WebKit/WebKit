@@ -226,85 +226,95 @@ testComputedFilterRule("Rule combinations",
                        ["WebKitCSSFilterValue.CSS_FILTER_OPACITY", "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
                        ["opacity(0.5)", "grayscale(0.25)"]);
 
-testComputedFilterRule("Three values",
-                       "gamma(1 1 0)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
-                       ["gamma(1 1 0)"]);
+testComputedFilterRule("Integer value",
+                      "brightness(1)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+                      ["brightness(1)"]);
 
-testComputedFilterRule("Two values",
-                       "gamma(1 1)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
-                       ["gamma(1 1 0)"]);
+testComputedFilterRule("Value greater than 1",
+                      "brightness(2)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+                      ["brightness(2)"]);
 
-testComputedFilterRule("One value",
-                       "gamma(1)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
-                       ["gamma(1 1 0)"]);
+testComputedFilterRule("Float value converts to integer",
+                      "brightness(1.0)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+                      ["brightness(1)"]);
+
+testComputedFilterRule("Zero value",
+                      "brightness(0)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+                      ["brightness(0)"]);
 
 testComputedFilterRule("No values",
-                       "gamma()", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
-                       ["gamma(1 1 0)"]);
+                      "brightness()", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+                      ["brightness(1)"]);
 
-testComputedFilterRule("Float value",
-                       "gamma(1.3)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_GAMMA"],
-                       ["gamma(1.3 1 0)"]);
+testComputedFilterRule("Multiple values",
+                      "brightness(0.5) brightness(0.25)", 2,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS", "WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS"],
+                      ["brightness(0.5)", "brightness(0.25)"]);
 
-testComputedFilterRule("Two zeros to px",
-                       "blur(0 0)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
-                       ["blur(0px 0px)"]);
+testComputedFilterRule("Rule combinations",
+                      "brightness(0.5) grayscale(0.25)", 2,
+                      ["WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS", "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
+                      ["brightness(0.5)", "grayscale(0.25)"]);
+
+testComputedFilterRule("Integer value",
+                      "contrast(1)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST"],
+                      ["contrast(1)"]);
+
+testComputedFilterRule("Value greater than 1",
+                      "contrast(2)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST"],
+                      ["contrast(2)"]);
+
+testComputedFilterRule("Float value converts to integer",
+                      "contrast(1.0)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST"],
+                      ["contrast(1)"]);
+
+testComputedFilterRule("Zero value",
+                      "contrast(0)", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST"],
+                      ["contrast(0)"]);
+
+testComputedFilterRule("No values",
+                      "contrast()", 1,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST"],
+                      ["contrast(1)"]);
+
+testComputedFilterRule("Multiple values",
+                      "contrast(0.5) contrast(0.25)", 2,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST", "WebKitCSSFilterValue.CSS_FILTER_CONTRAST"],
+                      ["contrast(0.5)", "contrast(0.25)"]);
+
+testComputedFilterRule("Rule combinations",
+                      "contrast(0.5) grayscale(0.25)", 2,
+                      ["WebKitCSSFilterValue.CSS_FILTER_CONTRAST", "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE"],
+                      ["contrast(0.5)", "grayscale(0.25)"]);
 
 testComputedFilterRule("One zero to px",
                        "blur(0)", 1,
                        ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
-                       ["blur(0px 0px)"]);
-
-testComputedFilterRule("Two lengths",
-                       "blur(5px 2em)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
-                       ["blur(5px 32px)"]);
+                       ["blur(0px)"]);
 
 testComputedFilterRule("One length",
-                       "blur(10%)", 1,
+                       "blur(2em)", 1,
                        ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
-                       ["blur(10px 10px)"]);
+                       ["blur(32px)"]);
 
 testComputedFilterRule("One length",
                        "blur(5px)", 1,
                        ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
-                       ["blur(5px 5px)"]);
+                       ["blur(5px)"]);
 
 testComputedFilterRule("No values",
                        "blur()", 1,
                        ["WebKitCSSFilterValue.CSS_FILTER_BLUR"],
-                       ["blur(0px 0px)"]);
-
-testComputedFilterRule("Three values",
-                       "sharpen(1.0 10px 1)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
-                       ["sharpen(1 10px 1)"]);
-
-testComputedFilterRule("Three values with zero length",
-                       "sharpen(1.0 0 1)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
-                       ["sharpen(1 0px 1)"]);
-
-testComputedFilterRule("Two values",
-                       "sharpen(0.7 1em)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
-                       ["sharpen(0.7 16px 1)"]);
-
-testComputedFilterRule("One value",
-                       "sharpen(0.5)", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
-                       ["sharpen(0.5 0px 1)"]);
-
-testComputedFilterRule("No values",
-                       "sharpen()", 1,
-                       ["WebKitCSSFilterValue.CSS_FILTER_SHARPEN"],
-                       ["sharpen(0 0px 1)"]);
+                       ["blur(0px)"]);
 
 testComputedFilterRule("Color then three values",
                        "drop-shadow(red 1px 2px 3px)", 1,
@@ -332,7 +342,7 @@ testComputedFilterRule("Two values no color",
                        ["drop-shadow(rgba(0, 0, 0, 0) 1px 2px 0px)"]);
 
 testComputedFilterRule("Multiple operations",
-                       "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) gamma(2 1.1 1) blur(5px 2em)", 8,
+                       "grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px)", 7,
                        [
                            "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",
                            "WebKitCSSFilterValue.CSS_FILTER_SEPIA",
@@ -340,7 +350,6 @@ testComputedFilterRule("Multiple operations",
                            "WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE",
                            "WebKitCSSFilterValue.CSS_FILTER_INVERT",
                            "WebKitCSSFilterValue.CSS_FILTER_OPACITY",
-                           "WebKitCSSFilterValue.CSS_FILTER_GAMMA",
                            "WebKitCSSFilterValue.CSS_FILTER_BLUR",
                ],
                        [
@@ -350,18 +359,19 @@ testComputedFilterRule("Multiple operations",
                            "hue-rotate(35deg)",
                            "invert(0.2)",
                            "opacity(0.9)",
-                           "gamma(2 1.1 1)",
-                           "blur(5px 32px)"
+                           "blur(5px)"
                ]);
 
 testComputedFilterRule("Percentage values",
-                      "grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%)", 5,
+                      "grayscale(50%) sepia(25%) saturate(75%) invert(20%) opacity(90%) brightness(130%) contrast(30%)", 7,
                       [
                           "WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",
                           "WebKitCSSFilterValue.CSS_FILTER_SEPIA",
                           "WebKitCSSFilterValue.CSS_FILTER_SATURATE",
                           "WebKitCSSFilterValue.CSS_FILTER_INVERT",
-                          "WebKitCSSFilterValue.CSS_FILTER_OPACITY"
+                          "WebKitCSSFilterValue.CSS_FILTER_OPACITY",
+                          "WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS",
+                          "WebKitCSSFilterValue.CSS_FILTER_CONTRAST"
               ],
                       [
                           "grayscale(0.5)",
@@ -369,6 +379,8 @@ testComputedFilterRule("Percentage values",
                           "saturate(0.75)",
                           "invert(0.2)",
                           "opacity(0.9)",
+                          "brightness(1.3)",
+                          "contrast(0.3)"
               ]);
 
 successfullyParsed = true;
