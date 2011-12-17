@@ -2510,7 +2510,7 @@ webcore_sources += \
 	Source/WebCore/platform/GeolocationService.cpp \
 	Source/WebCore/platform/GeolocationService.h \
 	Source/WebCore/platform/HashTools.h \
-	Source/WebCore/platform/HistogramSupport.cop \
+	Source/WebCore/platform/HistogramSupport.cpp \
 	Source/WebCore/platform/HistogramSupport.h \
 	Source/WebCore/platform/graphics/BitmapImage.cpp \
 	Source/WebCore/platform/graphics/BitmapImage.h \

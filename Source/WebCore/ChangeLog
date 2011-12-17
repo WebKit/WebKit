@@ -1,3 +1,9 @@
+2011-12-17  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix after r103131.
+
+        * GNUmakefile.list.am: Fix typo... s/.cop/.cpp
+
 2011-12-16  Benjamin Poulain  <bpoulain@apple.com>
 
         FEComposite does not build when you disable filters on ARMv7
