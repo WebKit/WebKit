@@ -1,0 +1,104 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x249
+  RenderBlock {HTML} at (0,0) size 800x249
+    RenderBody {BODY} at (8,8) size 784x233
+      RenderBlock {DIV} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 658x21
+          text run at (0,0) width 658: "When the caret is scrolled out, on starting typing it must be brought to the center of the control."
+layer at (8,29) size 784x212 clip at (9,30) size 766x194 scrollY 292 scrollHeight 651
+  RenderBlock {DIV} at (0,21) size 784x212 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 18x21
+      text run at (1,1) width 18: "00"
+    RenderBR {BR} at (19,1) size 0x21
+    RenderText {#text} at (1,22) size 18x21
+      text run at (1,22) width 18: "01"
+    RenderBR {BR} at (19,22) size 0x21
+    RenderText {#text} at (1,43) size 18x21
+      text run at (1,43) width 18: "02"
+    RenderBR {BR} at (19,43) size 0x21
+    RenderText {#text} at (1,64) size 18x21
+      text run at (1,64) width 18: "03"
+    RenderBR {BR} at (19,64) size 0x21
+    RenderText {#text} at (1,85) size 18x21
+      text run at (1,85) width 18: "04"
+    RenderBR {BR} at (19,85) size 0x21
+    RenderText {#text} at (1,106) size 18x21
+      text run at (1,106) width 18: "05"
+    RenderBR {BR} at (19,106) size 0x21
+    RenderText {#text} at (1,127) size 18x21
+      text run at (1,127) width 18: "06"
+    RenderBR {BR} at (19,127) size 0x21
+    RenderText {#text} at (1,148) size 18x21
+      text run at (1,148) width 18: "07"
+    RenderBR {BR} at (19,148) size 0x21
+    RenderText {#text} at (1,169) size 18x21
+      text run at (1,169) width 18: "08"
+    RenderBR {BR} at (19,169) size 0x21
+    RenderText {#text} at (1,190) size 18x21
+      text run at (1,190) width 18: "09"
+    RenderBR {BR} at (19,190) size 0x21
+    RenderText {#text} at (1,211) size 18x21
+      text run at (1,211) width 18: "10"
+    RenderBR {BR} at (19,211) size 0x21
+    RenderText {#text} at (1,232) size 18x21
+      text run at (1,232) width 18: "11"
+    RenderBR {BR} at (19,232) size 0x21
+    RenderText {#text} at (1,253) size 18x21
+      text run at (1,253) width 18: "12"
+    RenderBR {BR} at (19,253) size 0x21
+    RenderText {#text} at (1,274) size 18x21
+      text run at (1,274) width 18: "13"
+    RenderBR {BR} at (19,274) size 0x21
+    RenderText {#text} at (1,295) size 18x21
+      text run at (1,295) width 18: "14"
+    RenderBR {BR} at (19,295) size 0x21
+    RenderText {#text} at (1,316) size 18x21
+      text run at (1,316) width 18: "15"
+    RenderBR {BR} at (19,316) size 0x21
+    RenderText {#text} at (1,337) size 18x21
+      text run at (1,337) width 18: "16"
+    RenderBR {BR} at (19,337) size 0x21
+    RenderText {#text} at (1,358) size 18x21
+      text run at (1,358) width 18: "17"
+    RenderBR {BR} at (19,358) size 0x21
+    RenderText {#text} at (1,379) size 27x21
+      text run at (1,379) width 27: ">18"
+    RenderBR {BR} at (28,379) size 0x21
+    RenderText {#text} at (1,400) size 18x21
+      text run at (1,400) width 18: "19"
+    RenderBR {BR} at (19,400) size 0x21
+    RenderText {#text} at (1,421) size 18x21
+      text run at (1,421) width 18: "20"
+    RenderBR {BR} at (19,421) size 0x21
+    RenderText {#text} at (1,442) size 18x21
+      text run at (1,442) width 18: "21"
+    RenderBR {BR} at (19,442) size 0x21
+    RenderText {#text} at (1,463) size 18x21
+      text run at (1,463) width 18: "22"
+    RenderBR {BR} at (19,463) size 0x21
+    RenderText {#text} at (1,484) size 18x21
+      text run at (1,484) width 18: "23"
+    RenderBR {BR} at (19,484) size 0x21
+    RenderText {#text} at (1,505) size 18x21
+      text run at (1,505) width 18: "24"
+    RenderBR {BR} at (19,505) size 0x21
+    RenderText {#text} at (1,526) size 18x21
+      text run at (1,526) width 18: "25"
+    RenderBR {BR} at (19,526) size 0x21
+    RenderText {#text} at (1,547) size 18x21
+      text run at (1,547) width 18: "26"
+    RenderBR {BR} at (19,547) size 0x21
+    RenderText {#text} at (1,568) size 18x21
+      text run at (1,568) width 18: "27"
+    RenderBR {BR} at (19,568) size 0x21
+    RenderText {#text} at (1,589) size 18x21
+      text run at (1,589) width 18: "28"
+    RenderBR {BR} at (19,589) size 0x21
+    RenderText {#text} at (1,610) size 18x21
+      text run at (1,610) width 18: "29"
+    RenderBR {BR} at (19,610) size 0x21
+    RenderText {#text} at (1,631) size 18x21
+      text run at (1,631) width 18: "30"
+    RenderBR {BR} at (19,631) size 0x21
+caret: position 1 of child 36 {#text} of child 5 {DIV} of body
