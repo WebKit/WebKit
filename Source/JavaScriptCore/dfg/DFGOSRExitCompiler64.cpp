@@ -272,7 +272,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     //    Note that GPRs do not have a fast change (like haveFPRs) because we expect that
     //    most OSR failure points will have at least one GPR that needs to be dumped.
     
-    unsigned scratchIndex = 0;
+    initializePoisoned(exit.m_variables.size());
+    unsigned currentPoisonIndex = 0;
+    
     for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
         const ValueRecovery& recovery = exit.valueRecovery(index);
         int operand = exit.operandForIndex(index);
@@ -280,9 +282,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         case InGPR:
         case UnboxedInt32InGPR:
         case UInt32InGPR:
-            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
-                m_jit.storePtr(recovery.gpr(), scratchBuffer + scratchIndex++);
-            else
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
+                m_jit.storePtr(recovery.gpr(), scratchBuffer + currentPoisonIndex);
+                m_poisonScratchIndices[exit.variableForIndex(index)] = currentPoisonIndex;
+                currentPoisonIndex++;
+            } else
                 m_jit.storePtr(recovery.gpr(), AssemblyHelpers::addressFor((VirtualRegister)operand));
             break;
         default:
@@ -312,9 +316,11 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             if (recovery.technique() != InFPR)
                 continue;
             GPRReg gpr = GPRInfo::toRegister(FPRInfo::toIndex(recovery.fpr()));
-            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
-                m_jit.storePtr(gpr, scratchBuffer + scratchIndex++);
-            else
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
+                m_jit.storePtr(gpr, scratchBuffer + currentPoisonIndex);
+                m_poisonScratchIndices[exit.variableForIndex(index)] = currentPoisonIndex;
+                currentPoisonIndex++;
+            } else
                 m_jit.storePtr(gpr, AssemblyHelpers::addressFor((VirtualRegister)exit.operandForIndex(index)));
         }
     }
@@ -333,7 +339,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
+    ASSERT(currentPoisonIndex == numberOfPoisonedVirtualRegisters);
     
     // 10) Reshuffle displaced virtual registers. Optimize for the case that
     //    the number of displaced virtual registers is not more than the number
@@ -403,6 +409,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             // location in memory, and then transferring from that scratch location
             // to their new (old JIT) locations.
         
+            unsigned scratchIndex = numberOfPoisonedVirtualRegisters;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
                 
@@ -453,7 +460,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     
     // 11) Dump all poisoned virtual registers.
     
-    scratchIndex = 0;
     if (numberOfPoisonedVirtualRegisters) {
         for (int virtualRegister = 0; virtualRegister < (int)exit.m_variables.size(); ++virtualRegister) {
             if (!poisonedVirtualRegisters[virtualRegister])
@@ -465,7 +471,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             case UnboxedInt32InGPR:
             case UInt32InGPR:
             case InFPR:
-                m_jit.loadPtr(scratchBuffer + scratchIndex++, GPRInfo::regT0);
+                m_jit.loadPtr(scratchBuffer + poisonIndex(virtualRegister), GPRInfo::regT0);
                 m_jit.storePtr(GPRInfo::regT0, AssemblyHelpers::addressFor((VirtualRegister)virtualRegister));
                 break;
                 
@@ -474,7 +480,6 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             }
         }
     }
-    ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters);
     
     // 12) Dump all constants. Optimize for Undefined, since that's a constant we see
     //     often.

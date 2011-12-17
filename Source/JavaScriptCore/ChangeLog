@@ -1,3 +1,23 @@
+2011-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit may get confused about where in the scratch buffer it stored a value
+        https://bugs.webkit.org/show_bug.cgi?id=74695
+
+        Reviewed by Oliver Hunt.
+        
+        The code that reads from the scratch buffer now explicitly knows which locations to
+        read from. No new tests, since this patch covers a case so uncommon that I don't know
+        how to make a test for it.
+
+        * dfg/DFGOSRExitCompiler.h:
+        (JSC::DFG::OSRExitCompiler::badIndex):
+        (JSC::DFG::OSRExitCompiler::initializePoisoned):
+        (JSC::DFG::OSRExitCompiler::poisonIndex):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+
 2011-12-16  Oliver Hunt  <oliver@apple.com>
 
         PutByVal[Alias] unnecessarily reloads the storage buffer

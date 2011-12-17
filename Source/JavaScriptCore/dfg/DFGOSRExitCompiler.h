@@ -50,7 +50,28 @@ public:
     void compileExit(const OSRExit&, SpeculationRecovery*);
 
 private:
+#if !ASSERT_DISABLED
+    static unsigned badIndex() { return static_cast<unsigned>(-1); };
+#endif
+    
+    void initializePoisoned(unsigned size)
+    {
+#if ASSERT_DISABLED
+        m_poisonScratchIndices.resize(size);
+#else
+        m_poisonScratchIndices.fill(badIndex(), size);
+#endif
+    }
+    
+    unsigned poisonIndex(unsigned index)
+    {
+        unsigned result = m_poisonScratchIndices[index];
+        ASSERT(result != badIndex());
+        return result;
+    }
+    
     AssemblyHelpers& m_jit;
+    Vector<unsigned> m_poisonScratchIndices;
 };
 
 extern "C" {
