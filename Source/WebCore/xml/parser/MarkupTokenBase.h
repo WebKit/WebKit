@@ -452,7 +452,7 @@ public:
         return m_attributes.get();
     }
 
-    PassRefPtr<NamedNodeMap> takeAtributes()
+    PassRefPtr<NamedNodeMap> takeAttributes()
     {
         ASSERT(usesAttributes());
         return m_attributes.release();

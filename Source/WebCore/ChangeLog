@@ -1,3 +1,20 @@
+2011-12-16  Adam Klein  <adamk@chromium.org>
+
+        Fix typo in MarkupTokenBase: rename takeAtributes to takeAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=74766
+
+        Reviewed by Darin Adler.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::attributesForIsindexInput):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::AtomicMarkupTokenBase::takeAttributes):
+
 2011-12-16  Adam Barth  <abarth@webkit.org>
 
         <option><span><option> doesn't parse correctly

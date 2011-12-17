@@ -557,7 +557,7 @@ void HTMLTreeBuilder::processFakePEndTagIfPInButtonScope()
 
 PassRefPtr<NamedNodeMap> HTMLTreeBuilder::attributesForIsindexInput(AtomicHTMLToken& token)
 {
-    RefPtr<NamedNodeMap> attributes = token.takeAtributes();
+    RefPtr<NamedNodeMap> attributes = token.takeAttributes();
     if (!attributes)
         attributes = NamedNodeMap::create();
     else {
