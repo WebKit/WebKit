@@ -1662,14 +1662,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(currentInstruction[1].u.operand);
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
-            NodeIndex propertyStorage = addToGraph(GetIndexedPropertyStorage, base, property);
 
-            addVarArgChild(base);
-            addVarArgChild(property);
-            addVarArgChild(value);
-            addVarArgChild(propertyStorage);
-            
-            addToGraph(Node::VarArg, PutByVal, OpInfo(0), OpInfo(0));
+            addToGraph(PutByVal, base, property, value);
 
             NEXT_OPCODE(op_put_by_val);
         }

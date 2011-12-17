@@ -493,73 +493,70 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             
     case PutByVal:
     case PutByValAlias: {
-        NodeIndex child1 = m_graph.m_varArgChildren[node.firstChild()];
-        NodeIndex child2 = m_graph.m_varArgChildren[node.firstChild() + 1];
-        NodeIndex child3 = m_graph.m_varArgChildren[node.firstChild() + 2];
-        PredictedType indexPrediction = m_graph[child2].prediction();
+        PredictedType indexPrediction = m_graph[node.child2()].prediction();
         if (!(indexPrediction & PredictInt32) && indexPrediction) {
             clobberStructures(nodeIndex);
             forNode(nodeIndex).makeTop();
             break;
         }
-        if (m_graph[child1].shouldSpeculateByteArray()) {
-            forNode(child1).filter(PredictByteArray);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateByteArray()) {
+            forNode(node.child1()).filter(PredictByteArray);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
         
-        if (m_graph[child1].shouldSpeculateInt8Array()) {
-            forNode(child1).filter(PredictInt8Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
+            forNode(node.child1()).filter(PredictInt8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateInt16Array()) {
-            forNode(child1).filter(PredictInt16Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
+            forNode(node.child1()).filter(PredictInt16Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateInt32Array()) {
-            forNode(child1).filter(PredictInt32Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
+            forNode(node.child1()).filter(PredictInt32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateUint8Array()) {
-            forNode(child1).filter(PredictUint8Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
+            forNode(node.child1()).filter(PredictUint8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateUint16Array()) {
-            forNode(child1).filter(PredictUint16Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
+            forNode(node.child1()).filter(PredictUint16Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateUint32Array()) {
-            forNode(child1).filter(PredictUint32Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
+            forNode(node.child1()).filter(PredictUint32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateFloat32Array()) {
-            forNode(child1).filter(PredictFloat32Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
-        if (m_graph[child1].shouldSpeculateFloat64Array()) {
-            forNode(child1).filter(PredictFloat64Array);
-            forNode(child2).filter(PredictInt32);
-            forNode(child3).filter(PredictNumber);
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
             break;
         }
             
-        forNode(child1).filter(PredictArray);
-        forNode(child2).filter(PredictInt32);
+        forNode(node.child1()).filter(PredictArray);
+        forNode(node.child2()).filter(PredictInt32);
         break;
     }
             

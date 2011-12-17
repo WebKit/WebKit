@@ -1970,7 +1970,7 @@ private:
     void compileValueToInt32(Node&);
     void compileUInt32ToNumber(Node&);
     void compileGetByValOnByteArray(Node&);
-    void compilePutByValForByteArray(Node&);
+    void compilePutByValForByteArray(GPRReg base, GPRReg property, Node&);
     void compileArithMul(Node&);
     void compileArithMod(Node&);
     void compileSoftModulo(Node&);
@@ -1986,9 +1986,9 @@ private:
     };
     void compileGetIndexedPropertyStorage(Node&);
     void compileGetByValOnIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness);
-    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness);
+    void compilePutByValForIntTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements, TypedArraySignedness);
     void compileGetByValOnFloatTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements);
-    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, Node&, size_t elementSize, TypedArraySpeculationRequirements);
+    void compilePutByValForFloatTypedArray(const TypedArrayDescriptor&, GPRReg base, GPRReg property, Node&, size_t elementSize, TypedArraySpeculationRequirements);
     
     // It is acceptable to have structure be equal to scratch, so long as you're fine
     // with the structure GPR being clobbered.
