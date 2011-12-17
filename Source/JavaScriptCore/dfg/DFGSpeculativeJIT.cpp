@@ -1553,6 +1553,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
     if (!isByteArrayPrediction(m_state.forNode(baseIndex).m_type))
         speculationCheck(BadType, JSValueSource::unboxedCell(base), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSByteArray::s_info)));
     GPRTemporary value;
+    GPRReg valueGPR;
 
     if (at(valueIndex).isConstant()) {
         JSValue jsValue = valueOfJSConstant(valueIndex);
@@ -1571,6 +1572,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         GPRReg scratchReg = scratch.gpr();
         m_jit.move(Imm32((int)d), scratchReg);
         value.adopt(scratch);
+        valueGPR = scratchReg;
     } else if (!at(valueIndex).shouldNotSpeculateInteger()) {
         SpeculateIntegerOperand valueOp(this, valueIndex);
         GPRTemporary scratch(this);
@@ -1585,6 +1587,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         clamped.link(&m_jit);
         inBounds.link(&m_jit);
         value.adopt(scratch);
+        valueGPR = scratchReg;
     } else {
         SpeculateDoubleOperand valueOp(this, valueIndex);
         GPRTemporary result(this);
@@ -1593,6 +1596,7 @@ void SpeculativeJIT::compilePutByValForByteArray(GPRReg base, GPRReg property, N
         GPRReg gpr = result.gpr();
         compileClampDoubleToByte(m_jit, gpr, fpr, floatScratch.fpr());
         value.adopt(result);
+        valueGPR = gpr;
     }
     ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
@@ -1706,6 +1710,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
     if (speculationRequirements != NoTypedArrayTypeSpecCheck)
         speculationCheck(BadType, JSValueSource::unboxedCell(base), baseIndex, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(base, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(descriptor.m_classInfo)));
     GPRTemporary value;
+    GPRReg valueGPR;
     
     if (at(valueIndex).isConstant()) {
         JSValue jsValue = valueOfJSConstant(valueIndex);
@@ -1719,12 +1724,14 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         GPRReg scratchReg = scratch.gpr();
         m_jit.move(Imm32((int)d), scratchReg);
         value.adopt(scratch);
+        valueGPR = scratchReg;
     } else if (!at(valueIndex).shouldNotSpeculateInteger()) {
         SpeculateIntegerOperand valueOp(this, valueIndex);
         GPRTemporary scratch(this);
         GPRReg scratchReg = scratch.gpr();
         m_jit.move(valueOp.gpr(), scratchReg);
         value.adopt(scratch);
+        valueGPR = scratchReg;
     } else {
         SpeculateDoubleOperand valueOp(this, valueIndex);
         GPRTemporary result(this);
@@ -1741,6 +1748,7 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
             m_jit.truncateDoubleToUint32(fpr, gpr);
         fixed.link(&m_jit);
         value.adopt(result);
+        valueGPR = gpr;
     }
     ASSERT_UNUSED(valueGPR, valueGPR != property);
     ASSERT(valueGPR != base);
