@@ -1,3 +1,33 @@
+2011-12-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Reverting r103011, r103135 due to Aura test failures
+
+        Unreviewed gardening.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::notifySyncRequired):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerTreeHost):
+        (WebCore::LayerChromium::setNeedsCommit):
+        (WebCore::LayerChromium::setParent):
+        (WebCore::LayerChromium::setMaskLayer):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setReplicaLayer):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::didRecreateGraphicsContext):
+        (WebCore::CCLayerTreeHost::paintMaskAndReplicaForRenderSurface):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::setRootLayer):
+
 2011-12-16  Chris Marrin  <cmarrin@apple.com>
 
         Hardware acceleration of W3C Filter Effects

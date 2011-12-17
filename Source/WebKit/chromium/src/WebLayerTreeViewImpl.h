@@ -39,7 +39,7 @@ public:
     static PassRefPtr<WebLayerTreeViewImpl> create(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
 
 private:
-    WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayerTreeView::Settings&);
+    WebLayerTreeViewImpl(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&);
     virtual ~WebLayerTreeViewImpl();
     virtual void animateAndLayout(double frameBeginTime);
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale);

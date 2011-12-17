@@ -99,6 +99,7 @@ public:
     // The following functions implement the CCLayerDelegate interface.
     virtual bool drawsContent() const;
     virtual void paintContents(GraphicsContext&, const IntRect& clip);
+    virtual void notifySyncRequired();
 
     // Exposed for tests.
     LayerChromium* contentsLayer() const { return m_contentsLayer.get(); }

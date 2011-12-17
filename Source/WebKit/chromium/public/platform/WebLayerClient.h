@@ -30,8 +30,14 @@ namespace WebKit {
 
 class WebLayerClient {
 public:
-    // This empty interface exists only for legacy reasons - it will be deleted as soon
-    // as downstream consumers stop depending on this interface existing.
+    // Notifies the client that the layer has changed in a way that needs a
+    // compositing pass to visually update. The client should eventually call
+    // WebLayerTreeView::composite.
+    // Note: some complex operations (e.g layer reparenting) can cause this to
+    // be called while the layer tree is in an inconsistent state, so to get
+    // correct results, WebLayerTreeView::composite should be called after the
+    // operation has finished (e.g. by posting a task).
+    virtual void notifyNeedsComposite() = 0;
 
 protected:
     virtual ~WebLayerClient() { }

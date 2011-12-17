@@ -26,10 +26,10 @@
 
 #include "cc/CCLayerTreeHost.h"
 
-#include "CompositorFakeGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
-#include "FakeWebGraphicsContext3D.h"
+#include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
+#include "MockWebGraphicsContext3D.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
@@ -103,13 +103,12 @@ class MockLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     {
-        RefPtr<MockLayerTreeHost> mock = adoptRef(new MockLayerTreeHost(testHooks, client, settings));
-        bool success = mock->initialize();
-        EXPECT_TRUE(success);
-        mock->setRootLayer(rootLayer);
+        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, rootLayer, settings));
+
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
-        mock->setViewport(IntSize(1, 1));
-        return mock.release();
+        layerTreeHost->setViewport(IntSize(1, 1));
+
+        return layerTreeHost;
     }
 
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
@@ -118,13 +117,34 @@ public:
     }
 
 private:
-    MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, const CCSettings& settings)
+    MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
         : CCLayerTreeHost(client, settings)
         , m_testHooks(testHooks)
     {
+        setRootLayer(rootLayer);
+        bool success = initialize();
+        EXPECT_TRUE(success);
     }
 
     TestHooks* m_testHooks;
+};
+
+// Test stub for WebGraphicsContext3D. Returns canned values needed for compositor initialization.
+class CompositorMockWebGraphicsContext3D : public MockWebGraphicsContext3D {
+public:
+    static PassOwnPtr<CompositorMockWebGraphicsContext3D> create()
+    {
+        return adoptPtr(new CompositorMockWebGraphicsContext3D());
+    }
+
+    virtual bool makeContextCurrent() { return true; }
+    virtual WebGLId createProgram() { return 1; }
+    virtual WebGLId createShader(WGC3Denum) { return 1; }
+    virtual void getShaderiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
+    virtual void getProgramiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
+
+private:
+    CompositorMockWebGraphicsContext3D() { }
 };
 
 // Implementation of CCLayerTreeHost callback interface.
@@ -147,7 +167,10 @@ public:
 
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
     {
-        return createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes());
+        OwnPtr<WebGraphicsContext3D> mock = CompositorMockWebGraphicsContext3D::create();
+        GraphicsContext3D::Attributes attrs;
+        RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(mock.release(), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnAnotherThread);
+        return context;
     }
 
     virtual void didCommitAndDrawFrame()
@@ -430,7 +453,7 @@ public:
     virtual void beginTest()
     {
         // Kill the layerTreeHost immediately.
-        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
         m_layerTreeHost.clear();
 
         endTest();
@@ -463,7 +486,7 @@ public:
         postSetNeedsCommitToMainThread();
 
         // Kill the layerTreeHost immediately.
-        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
         m_layerTreeHost.clear();
 
         endTest();
@@ -486,7 +509,7 @@ public:
         postSetNeedsRedrawToMainThread();
 
         // Kill the layerTreeHost immediately.
-        m_layerTreeHost->setRootLayer(0);
+        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
         m_layerTreeHost.clear();
 
         endTest();
@@ -734,7 +757,7 @@ public:
         postSetNeedsCommitToMainThread();
     }
 
-    virtual void animateAndLayout(double frameBeginTime)
+    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
     {
         LayerChromium* root = m_layerTreeHost->rootLayer();
         if (!m_layerTreeHost->frameNumber())
@@ -919,6 +942,7 @@ public:
 
     virtual bool drawsContent() const { return true; }
     virtual bool preserves3D() { return false; }
+    virtual void notifySyncRequired() { }
 
 private:
     CCLayerTreeHostTest* m_test;

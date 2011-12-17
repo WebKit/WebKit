@@ -27,6 +27,7 @@
 #include "WebContentLayerImpl.h"
 
 #include "platform/WebContentLayerClient.h"
+#include "platform/WebLayerClient.h"
 #include "platform/WebRect.h"
 #include "GraphicsContext.h"
 #include "platform/WebCanvas.h"
@@ -38,13 +39,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebContentLayerImpl> WebContentLayerImpl::create(WebContentLayerClient* contentClient)
+PassRefPtr<WebContentLayerImpl> WebContentLayerImpl::create(WebLayerClient* client, WebContentLayerClient* contentClient)
 {
-    return adoptRef(new WebContentLayerImpl(contentClient));
+    return adoptRef(new WebContentLayerImpl(client, contentClient));
 }
 
-WebContentLayerImpl::WebContentLayerImpl(WebContentLayerClient* contentClient)
+WebContentLayerImpl::WebContentLayerImpl(WebLayerClient* client, WebContentLayerClient* contentClient)
     : ContentLayerChromium(this)
+    , m_client(client)
     , m_contentClient(contentClient)
     , m_drawsContent(true)
 {
@@ -76,6 +78,12 @@ void WebContentLayerImpl::paintContents(GraphicsContext& gc, const IntRect& clip
     WebCanvas* canvas = gc.platformContext();
 #endif
     m_contentClient->paintContents(canvas, WebRect(clip));
+}
+
+void WebContentLayerImpl::notifySyncRequired()
+{
+    if (m_client)
+        m_client->notifyNeedsComposite();
 }
 
 } // namespace WebKit

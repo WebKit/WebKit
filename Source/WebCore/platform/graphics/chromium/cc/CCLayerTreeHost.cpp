@@ -104,7 +104,6 @@ CCLayerTreeHost::~CCLayerTreeHost()
 {
     ASSERT(CCProxy::isMainThread());
     TRACE_EVENT("CCLayerTreeHost::~CCLayerTreeHost", this, 0);
-    ASSERT(m_proxy);
     m_proxy->stop();
     m_proxy.clear();
     clearPendingUpdate();
@@ -176,10 +175,8 @@ PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayer
 
 void CCLayerTreeHost::didRecreateGraphicsContext(bool success)
 {
-    if (m_rootLayer) {
-        m_rootLayer->setLayerTreeHost(0);
-        m_rootLayer->setLayerTreeHost(this);
-    }
+    if (rootLayer())
+        rootLayer()->cleanupResourcesRecursive();
     m_client->didRecreateGraphicsContext(success);
 }
 
@@ -237,19 +234,6 @@ void CCLayerTreeHost::setNeedsRedraw()
         m_proxy->setNeedsRedraw();
     else
         m_client->scheduleComposite();
-}
-
-void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
-{
-    if (m_rootLayer == rootLayer)
-        return;
-
-    if (m_rootLayer)
-        m_rootLayer->setLayerTreeHost(0);
-    m_rootLayer = rootLayer;
-    if (m_rootLayer)
-        m_rootLayer->setLayerTreeHost(this);
-    setNeedsCommit();
 }
 
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)
@@ -416,16 +400,18 @@ void CCLayerTreeHost::paintMaskAndReplicaForRenderSurface(LayerChromium* renderS
     // mask and replica should be painted.
 
     if (renderSurfaceLayer->maskLayer()) {
+        renderSurfaceLayer->maskLayer()->setLayerTreeHost(this);
         renderSurfaceLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), renderSurfaceLayer->contentBounds()));
         paintContentsIfDirty(renderSurfaceLayer->maskLayer(), paintType);
     }
 
     LayerChromium* replicaLayer = renderSurfaceLayer->replicaLayer();
     if (replicaLayer) {
-
+        replicaLayer->setLayerTreeHost(this);
         paintContentsIfDirty(replicaLayer, paintType);
 
         if (replicaLayer->maskLayer()) {
+            replicaLayer->maskLayer()->setLayerTreeHost(this);
             replicaLayer->maskLayer()->setVisibleLayerRect(IntRect(IntPoint(), replicaLayer->maskLayer()->contentBounds()));
             paintContentsIfDirty(replicaLayer->maskLayer(), paintType);
         }
@@ -440,6 +426,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
         ASSERT(renderSurface);
         ASSERT(renderSurface->drawOpacity());
 
+        renderSurfaceLayer->setLayerTreeHost(this);
         paintMaskAndReplicaForRenderSurface(renderSurfaceLayer, paintType);
 
         const LayerList& layerList = renderSurface->layerList();
@@ -451,6 +438,7 @@ void CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
             if (CCLayerTreeHostCommon::renderSurfaceContributesToTarget<LayerChromium>(layer, renderSurfaceLayer->id()))
                 continue;
 
+            layer->setLayerTreeHost(this);
             ASSERT(!layer->bounds().isEmpty());
 
             paintContentsIfDirty(layer, paintType);

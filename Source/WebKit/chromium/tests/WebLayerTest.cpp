@@ -25,17 +25,14 @@
 #include "config.h"
 #include "platform/WebLayer.h"
 
-#include "CompositorFakeWebGraphicsContext3D.h"
-#include "WebCompositor.h"
+#include "platform/WebFloatPoint.h"
+#include "platform/WebFloatRect.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
 #include "platform/WebContentLayer.h"
 #include "platform/WebContentLayerClient.h"
 #include "platform/WebExternalTextureLayer.h"
-#include "platform/WebFloatPoint.h"
-#include "platform/WebFloatRect.h"
-#include "platform/WebLayerTreeView.h"
-#include "platform/WebLayerTreeViewClient.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
+#include "platform/WebLayerClient.h"
 
 #include <gmock/gmock.h>
 
@@ -44,14 +41,9 @@ using namespace testing;
 
 namespace {
 
-class MockWebLayerTreeViewClient : public WebLayerTreeViewClient {
+class MockWebLayerClient : public WebLayerClient {
 public:
-    MOCK_METHOD0(scheduleComposite, void());
-
-    virtual void animateAndLayout(double frameBeginTime) { }
-    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
-    virtual WebGraphicsContext3D* createContext3D() { return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr(); }
-    virtual void didRebindGraphicsContext(bool success) { }
+    MOCK_METHOD0(notifyNeedsComposite, void());
 };
 
 class MockWebContentLayerClient : public WebContentLayerClient {
@@ -61,30 +53,7 @@ public:
 
 class WebLayerTest : public Test {
 public:
-    virtual void SetUp()
-    {
-        // Initialize without threading support.
-        WebKit::WebCompositor::initialize(0);
-        m_rootLayer = WebLayer::create();
-        EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-        m_view = WebLayerTreeView::create(&m_client, m_rootLayer, WebLayerTreeView::Settings());
-        Mock::VerifyAndClearExpectations(&m_client);
-    }
-
-    virtual void TearDown()
-    {
-        // We may get any number of scheduleComposite calls during shutdown.
-        EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-        m_view.setRootLayer(0);
-        m_rootLayer.reset();
-        m_view.reset();
-        WebKit::WebCompositor::shutdown();
-    }
-
-protected:
-    MockWebLayerTreeViewClient m_client;
-    WebLayer m_rootLayer;
-    WebLayerTreeView m_view;
+    WebLayerTest() { }
 };
 
 // Tests that the client gets called to ask for a composite if we change the
@@ -92,100 +61,99 @@ protected:
 TEST_F(WebLayerTest, Client)
 {
     // Base layer.
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-    WebLayer layer = WebLayer::create();
-    m_rootLayer.addChild(layer);
-    Mock::VerifyAndClearExpectations(&m_client);
+    MockWebLayerClient client;
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AnyNumber());
+    WebLayer layer = WebLayer::create(&client);
+    Mock::VerifyAndClearExpectations(&client);
 
     WebFloatPoint point(3, 4);
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     layer.setAnchorPoint(point);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(point, layer.anchorPoint());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     float anchorZ = 5;
     layer.setAnchorPointZ(anchorZ);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(anchorZ, layer.anchorPointZ());
 
     WebSize size(7, 8);
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     layer.setBounds(size);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(size, layer.bounds());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     layer.setMasksToBounds(true);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_TRUE(layer.masksToBounds());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-    WebLayer otherLayer = WebLayer::create();
-    m_rootLayer.addChild(otherLayer);
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    MockWebLayerClient otherClient;
+    EXPECT_CALL(otherClient, notifyNeedsComposite()).Times(AnyNumber());
+    WebLayer otherLayer = WebLayer::create(&otherClient);
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     layer.setMaskLayer(otherLayer);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(otherLayer, layer.maskLayer());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     float opacity = 0.123;
     layer.setOpacity(opacity);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(opacity, layer.opacity());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     layer.setOpaque(true);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_TRUE(layer.opaque());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     layer.setPosition(point);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(point, layer.position());
 
     // Texture layer.
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-    WebExternalTextureLayer textureLayer = WebExternalTextureLayer::create();
-    m_rootLayer.addChild(textureLayer);
-    Mock::VerifyAndClearExpectations(&m_client);
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AnyNumber());
+    WebExternalTextureLayer textureLayer = WebExternalTextureLayer::create(&client);
+    Mock::VerifyAndClearExpectations(&client);
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     textureLayer.setTextureId(3);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_EQ(3u, textureLayer.textureId());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     textureLayer.setFlipped(true);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_TRUE(textureLayer.flipped());
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     WebFloatRect uvRect(0.1, 0.1, 0.9, 0.9);
     textureLayer.setUVRect(uvRect);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_TRUE(textureLayer.flipped());
 
 
     // Content layer.
     MockWebContentLayerClient contentClient;
     EXPECT_CALL(contentClient, paintContents(_, _)).Times(AnyNumber());
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-    WebContentLayer contentLayer = WebContentLayer::create(&contentClient);
-    m_rootLayer.addChild(contentLayer);
-    Mock::VerifyAndClearExpectations(&m_client);
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AnyNumber());
+    WebContentLayer contentLayer = WebContentLayer::create(&client, &contentClient);
+    Mock::VerifyAndClearExpectations(&client);
 
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AtLeast(1));
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AtLeast(1));
     contentLayer.setDrawsContent(false);
-    Mock::VerifyAndClearExpectations(&m_client);
+    Mock::VerifyAndClearExpectations(&client);
     EXPECT_FALSE(contentLayer.drawsContent());
 }
 
 TEST_F(WebLayerTest, Hierarchy)
 {
-    EXPECT_CALL(m_client, scheduleComposite()).Times(AnyNumber());
-    WebLayer layer1 = WebLayer::create();
-    WebLayer layer2 = WebLayer::create();
+    MockWebLayerClient client;
+    EXPECT_CALL(client, notifyNeedsComposite()).Times(AnyNumber());
+    WebLayer layer1 = WebLayer::create(&client);
+    WebLayer layer2 = WebLayer::create(&client);
 
     EXPECT_TRUE(layer1.parent().isNull());
     EXPECT_TRUE(layer2.parent().isNull());
@@ -204,8 +172,8 @@ TEST_F(WebLayerTest, Hierarchy)
 
     MockWebContentLayerClient contentClient;
     EXPECT_CALL(contentClient, paintContents(_, _)).Times(AnyNumber());
-    WebContentLayer contentLayer = WebContentLayer::create(&contentClient);
-    WebExternalTextureLayer textureLayer = WebExternalTextureLayer::create();
+    WebContentLayer contentLayer = WebContentLayer::create(&client, &contentClient);
+    WebExternalTextureLayer textureLayer = WebExternalTextureLayer::create(&client);
 
     textureLayer.addChild(contentLayer);
     contentLayer.addChild(layer1);

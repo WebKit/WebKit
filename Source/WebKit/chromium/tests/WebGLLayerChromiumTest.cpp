@@ -26,8 +26,9 @@
 
 #include "WebGLLayerChromium.h"
 
-#include "CompositorFakeGraphicsContext3D.h"
 #include "DrawingBuffer.h"
+#include "GraphicsContext3DPrivate.h"
+#include "MockWebGraphicsContext3D.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -35,6 +36,32 @@ using namespace WebCore;
 using namespace WebKit;
 
 namespace {
+
+// Test stub for WebGraphicsContext3D. Returns canned values needed for compositor initialization.
+class CompositorMockWebGraphicsContext3D : public MockWebGraphicsContext3D {
+public:
+    static PassOwnPtr<CompositorMockWebGraphicsContext3D> create(GraphicsContext3D::Attributes attrs) { return adoptPtr(new CompositorMockWebGraphicsContext3D(attrs)); }
+    virtual bool makeContextCurrent() { return true; }
+    virtual WebGLId createProgram() { return 1; }
+    virtual WebGLId createShader(WGC3Denum) { return 1; }
+    virtual void getShaderiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
+    virtual void getProgramiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
+    virtual WebGraphicsContext3D::Attributes getContextAttributes() { return m_attrs; }
+
+private:
+    CompositorMockWebGraphicsContext3D(GraphicsContext3D::Attributes attrs) { m_attrs.alpha = attrs.alpha; }
+
+    WebGraphicsContext3D::Attributes m_attrs;
+};
+
+static PassRefPtr<GraphicsContext3D> createGraphicsContext(GraphicsContext3D::Attributes attrs)
+{
+    OwnPtr<WebGraphicsContext3D> webContext = CompositorMockWebGraphicsContext3D::create(attrs);
+    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(
+        webContext.release(), attrs, 0,
+        GraphicsContext3D::RenderDirectlyToHostWindow,
+        GraphicsContext3DPrivate::ForUseOnAnotherThread);
+}
 
 TEST(WebGLLayerChromiumTest, opaqueFormats)
 {
@@ -45,9 +72,9 @@ TEST(WebGLLayerChromiumTest, opaqueFormats)
     GraphicsContext3D::Attributes opaqueAttrs;
     opaqueAttrs.alpha = false;
 
-    RefPtr<GraphicsContext3D> alphaContext = createCompositorMockGraphicsContext3D(alphaAttrs);
+    RefPtr<GraphicsContext3D> alphaContext = createGraphicsContext(alphaAttrs);
     EXPECT_TRUE(alphaContext);
-    RefPtr<GraphicsContext3D> opaqueContext = createCompositorMockGraphicsContext3D(opaqueAttrs);
+    RefPtr<GraphicsContext3D> opaqueContext = createGraphicsContext(opaqueAttrs);
     EXPECT_TRUE(opaqueContext);
 
     buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), false);

@@ -26,17 +26,18 @@
 #include "config.h"
 #include "WebLayerImpl.h"
 
+#include "platform/WebLayerClient.h"
+
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebLayerImpl> WebLayerImpl::create()
+PassRefPtr<WebLayerImpl> WebLayerImpl::create(WebLayerClient* client)
 {
-    return adoptRef(new WebLayerImpl());
+    return adoptRef(new WebLayerImpl(client));
 }
 
-WebLayerImpl::WebLayerImpl()
-    : LayerChromium(this)
+WebLayerImpl::WebLayerImpl(WebLayerClient* client) : LayerChromium(this), m_client(client)
 {
 }
 
@@ -52,6 +53,12 @@ bool WebLayerImpl::drawsContent() const
 
 void WebLayerImpl::paintContents(GraphicsContext&, const IntRect& clip)
 {
+}
+
+void WebLayerImpl::notifySyncRequired()
+{
+    if (m_client)
+        m_client->notifyNeedsComposite();
 }
 
 } // namespace WebKit

@@ -163,13 +163,12 @@ public:
     void loseCompositorContext(int numTimes);
 
     void setNeedsAnimate();
-    // virtual for testing
-    virtual void setNeedsCommit();
+    void setNeedsCommit();
     void setNeedsRedraw();
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
-    void setRootLayer(PassRefPtr<LayerChromium>);
+    void setRootLayer(PassRefPtr<LayerChromium> rootLayer) { m_rootLayer = rootLayer; }
 
     const CCSettings& settings() const { return m_settings; }
 

@@ -1,3 +1,246 @@
+2011-12-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Reverting r103011, r103135 due to Aura test failures
+
+        Unreviewed gardening.
+
+        * WebKit.gypi:
+        * public/platform/WebContentLayer.h:
+        * public/platform/WebExternalTextureLayer.h:
+        * public/platform/WebLayer.h:
+        * public/platform/WebLayerClient.h:
+        * src/WebContentLayer.cpp:
+        (WebKit::WebContentLayer::create):
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::create):
+        (WebKit::WebContentLayerImpl::WebContentLayerImpl):
+        (WebKit::WebContentLayerImpl::notifySyncRequired):
+        * src/WebContentLayerImpl.h:
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::create):
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::create):
+        (WebKit::WebExternalTextureLayerImpl::WebExternalTextureLayerImpl):
+        (WebKit::WebExternalTextureLayerImpl::notifySyncRequired):
+        * src/WebExternalTextureLayerImpl.h:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::create):
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::create):
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        (WebKit::WebLayerImpl::notifySyncRequired):
+        * src/WebLayerImpl.h:
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::create):
+        (WebKit::WebLayerTreeViewImpl::WebLayerTreeViewImpl):
+        * src/WebLayerTreeViewImpl.h:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::create):
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        (WTF::CompositorMockWebGraphicsContext3D::create):
+        (WTF::CompositorMockWebGraphicsContext3D::makeContextCurrent):
+        (WTF::CompositorMockWebGraphicsContext3D::createProgram):
+        (WTF::CompositorMockWebGraphicsContext3D::createShader):
+        (WTF::CompositorMockWebGraphicsContext3D::getShaderiv):
+        (WTF::CompositorMockWebGraphicsContext3D::getProgramiv):
+        (WTF::CompositorMockWebGraphicsContext3D::CompositorMockWebGraphicsContext3D):
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        (WTF::CCLayerTreeHostTestShortlived1::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived2::beginTest):
+        (WTF::CCLayerTreeHostTestShortlived3::beginTest):
+        (WTF::CCLayerTreeHostTestScrollSimple::beginCommitOnCCThread):
+        (WTF::TestOpacityChangeLayerDelegate::notifySyncRequired):
+        * tests/CompositorFakeGraphicsContext3D.h: Removed.
+        * tests/CompositorFakeWebGraphicsContext3D.h: Removed.
+        * tests/LayerChromiumTest.cpp:
+        * tests/MockGraphicsContext3DTest.cpp: Renamed from Source/WebKit/chromium/tests/FakeGraphicsContext3DTest.cpp.
+        (FrameCountingContext::FrameCountingContext):
+        (FrameCountingContext::prepareTexture):
+        (FrameCountingContext::frameCount):
+        (TEST):
+        (ContextThatCountsMakeCurrents::ContextThatCountsMakeCurrents):
+        (ContextThatCountsMakeCurrents::makeContextCurrent):
+        (ContextThatCountsMakeCurrents::makeCurrentCount):
+        (ContextWithMakeCurrentThatFails::ContextWithMakeCurrentThatFails):
+        (ContextWithMakeCurrentThatFails::makeContextCurrent):
+        * tests/MockWebGraphicsContext3D.h: Renamed from Source/WebKit/chromium/tests/FakeWebGraphicsContext3D.h.
+        (WebKit::MockWebGraphicsContext3D::initialize):
+        (WebKit::MockWebGraphicsContext3D::makeContextCurrent):
+        (WebKit::MockWebGraphicsContext3D::width):
+        (WebKit::MockWebGraphicsContext3D::height):
+        (WebKit::MockWebGraphicsContext3D::reshape):
+        (WebKit::MockWebGraphicsContext3D::isGLES2Compliant):
+        (WebKit::MockWebGraphicsContext3D::readBackFramebuffer):
+        (WebKit::MockWebGraphicsContext3D::getPlatformTextureId):
+        (WebKit::MockWebGraphicsContext3D::prepareTexture):
+        (WebKit::MockWebGraphicsContext3D::postSubBufferCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::synthesizeGLError):
+        (WebKit::MockWebGraphicsContext3D::isContextLost):
+        (WebKit::MockWebGraphicsContext3D::mapBufferSubDataCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::unmapBufferSubDataCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::mapTexSubImage2DCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::unmapTexSubImage2DCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::setVisibilityCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::getRequestableExtensionsCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::requestExtensionCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::blitFramebufferCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::renderbufferStorageMultisampleCHROMIUM):
+        (WebKit::MockWebGraphicsContext3D::activeTexture):
+        (WebKit::MockWebGraphicsContext3D::attachShader):
+        (WebKit::MockWebGraphicsContext3D::bindAttribLocation):
+        (WebKit::MockWebGraphicsContext3D::bindBuffer):
+        (WebKit::MockWebGraphicsContext3D::bindFramebuffer):
+        (WebKit::MockWebGraphicsContext3D::bindRenderbuffer):
+        (WebKit::MockWebGraphicsContext3D::bindTexture):
+        (WebKit::MockWebGraphicsContext3D::blendColor):
+        (WebKit::MockWebGraphicsContext3D::blendEquation):
+        (WebKit::MockWebGraphicsContext3D::blendEquationSeparate):
+        (WebKit::MockWebGraphicsContext3D::blendFunc):
+        (WebKit::MockWebGraphicsContext3D::blendFuncSeparate):
+        (WebKit::MockWebGraphicsContext3D::bufferData):
+        (WebKit::MockWebGraphicsContext3D::bufferSubData):
+        (WebKit::MockWebGraphicsContext3D::checkFramebufferStatus):
+        (WebKit::MockWebGraphicsContext3D::clear):
+        (WebKit::MockWebGraphicsContext3D::clearColor):
+        (WebKit::MockWebGraphicsContext3D::clearDepth):
+        (WebKit::MockWebGraphicsContext3D::clearStencil):
+        (WebKit::MockWebGraphicsContext3D::colorMask):
+        (WebKit::MockWebGraphicsContext3D::compileShader):
+        (WebKit::MockWebGraphicsContext3D::compressedTexImage2D):
+        (WebKit::MockWebGraphicsContext3D::compressedTexSubImage2D):
+        (WebKit::MockWebGraphicsContext3D::copyTexImage2D):
+        (WebKit::MockWebGraphicsContext3D::copyTexSubImage2D):
+        (WebKit::MockWebGraphicsContext3D::cullFace):
+        (WebKit::MockWebGraphicsContext3D::depthFunc):
+        (WebKit::MockWebGraphicsContext3D::depthMask):
+        (WebKit::MockWebGraphicsContext3D::depthRange):
+        (WebKit::MockWebGraphicsContext3D::detachShader):
+        (WebKit::MockWebGraphicsContext3D::disable):
+        (WebKit::MockWebGraphicsContext3D::disableVertexAttribArray):
+        (WebKit::MockWebGraphicsContext3D::drawArrays):
+        (WebKit::MockWebGraphicsContext3D::drawElements):
+        (WebKit::MockWebGraphicsContext3D::enable):
+        (WebKit::MockWebGraphicsContext3D::enableVertexAttribArray):
+        (WebKit::MockWebGraphicsContext3D::finish):
+        (WebKit::MockWebGraphicsContext3D::flush):
+        (WebKit::MockWebGraphicsContext3D::framebufferRenderbuffer):
+        (WebKit::MockWebGraphicsContext3D::framebufferTexture2D):
+        (WebKit::MockWebGraphicsContext3D::frontFace):
+        (WebKit::MockWebGraphicsContext3D::generateMipmap):
+        (WebKit::MockWebGraphicsContext3D::getActiveAttrib):
+        (WebKit::MockWebGraphicsContext3D::getActiveUniform):
+        (WebKit::MockWebGraphicsContext3D::getAttachedShaders):
+        (WebKit::MockWebGraphicsContext3D::getAttribLocation):
+        (WebKit::MockWebGraphicsContext3D::getBooleanv):
+        (WebKit::MockWebGraphicsContext3D::getBufferParameteriv):
+        (WebKit::MockWebGraphicsContext3D::getContextAttributes):
+        (WebKit::MockWebGraphicsContext3D::getError):
+        (WebKit::MockWebGraphicsContext3D::getFloatv):
+        (WebKit::MockWebGraphicsContext3D::getFramebufferAttachmentParameteriv):
+        (WebKit::MockWebGraphicsContext3D::getIntegerv):
+        (WebKit::MockWebGraphicsContext3D::getProgramiv):
+        (WebKit::MockWebGraphicsContext3D::getProgramInfoLog):
+        (WebKit::MockWebGraphicsContext3D::getRenderbufferParameteriv):
+        (WebKit::MockWebGraphicsContext3D::getShaderiv):
+        (WebKit::MockWebGraphicsContext3D::getShaderInfoLog):
+        (WebKit::MockWebGraphicsContext3D::getShaderSource):
+        (WebKit::MockWebGraphicsContext3D::getString):
+        (WebKit::MockWebGraphicsContext3D::getTexParameterfv):
+        (WebKit::MockWebGraphicsContext3D::getTexParameteriv):
+        (WebKit::MockWebGraphicsContext3D::getUniformfv):
+        (WebKit::MockWebGraphicsContext3D::getUniformiv):
+        (WebKit::MockWebGraphicsContext3D::getUniformLocation):
+        (WebKit::MockWebGraphicsContext3D::getVertexAttribfv):
+        (WebKit::MockWebGraphicsContext3D::getVertexAttribiv):
+        (WebKit::MockWebGraphicsContext3D::getVertexAttribOffset):
+        (WebKit::MockWebGraphicsContext3D::hint):
+        (WebKit::MockWebGraphicsContext3D::isBuffer):
+        (WebKit::MockWebGraphicsContext3D::isEnabled):
+        (WebKit::MockWebGraphicsContext3D::isFramebuffer):
+        (WebKit::MockWebGraphicsContext3D::isProgram):
+        (WebKit::MockWebGraphicsContext3D::isRenderbuffer):
+        (WebKit::MockWebGraphicsContext3D::isShader):
+        (WebKit::MockWebGraphicsContext3D::isTexture):
+        (WebKit::MockWebGraphicsContext3D::lineWidth):
+        (WebKit::MockWebGraphicsContext3D::linkProgram):
+        (WebKit::MockWebGraphicsContext3D::pixelStorei):
+        (WebKit::MockWebGraphicsContext3D::polygonOffset):
+        (WebKit::MockWebGraphicsContext3D::readPixels):
+        (WebKit::MockWebGraphicsContext3D::releaseShaderCompiler):
+        (WebKit::MockWebGraphicsContext3D::renderbufferStorage):
+        (WebKit::MockWebGraphicsContext3D::sampleCoverage):
+        (WebKit::MockWebGraphicsContext3D::scissor):
+        (WebKit::MockWebGraphicsContext3D::shaderSource):
+        (WebKit::MockWebGraphicsContext3D::stencilFunc):
+        (WebKit::MockWebGraphicsContext3D::stencilFuncSeparate):
+        (WebKit::MockWebGraphicsContext3D::stencilMask):
+        (WebKit::MockWebGraphicsContext3D::stencilMaskSeparate):
+        (WebKit::MockWebGraphicsContext3D::stencilOp):
+        (WebKit::MockWebGraphicsContext3D::stencilOpSeparate):
+        (WebKit::MockWebGraphicsContext3D::texImage2D):
+        (WebKit::MockWebGraphicsContext3D::texParameterf):
+        (WebKit::MockWebGraphicsContext3D::texParameteri):
+        (WebKit::MockWebGraphicsContext3D::texSubImage2D):
+        (WebKit::MockWebGraphicsContext3D::uniform1f):
+        (WebKit::MockWebGraphicsContext3D::uniform1fv):
+        (WebKit::MockWebGraphicsContext3D::uniform1i):
+        (WebKit::MockWebGraphicsContext3D::uniform1iv):
+        (WebKit::MockWebGraphicsContext3D::uniform2f):
+        (WebKit::MockWebGraphicsContext3D::uniform2fv):
+        (WebKit::MockWebGraphicsContext3D::uniform2i):
+        (WebKit::MockWebGraphicsContext3D::uniform2iv):
+        (WebKit::MockWebGraphicsContext3D::uniform3f):
+        (WebKit::MockWebGraphicsContext3D::uniform3fv):
+        (WebKit::MockWebGraphicsContext3D::uniform3i):
+        (WebKit::MockWebGraphicsContext3D::uniform3iv):
+        (WebKit::MockWebGraphicsContext3D::uniform4f):
+        (WebKit::MockWebGraphicsContext3D::uniform4fv):
+        (WebKit::MockWebGraphicsContext3D::uniform4i):
+        (WebKit::MockWebGraphicsContext3D::uniform4iv):
+        (WebKit::MockWebGraphicsContext3D::uniformMatrix2fv):
+        (WebKit::MockWebGraphicsContext3D::uniformMatrix3fv):
+        (WebKit::MockWebGraphicsContext3D::uniformMatrix4fv):
+        (WebKit::MockWebGraphicsContext3D::useProgram):
+        (WebKit::MockWebGraphicsContext3D::validateProgram):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib1f):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib1fv):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib2f):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib2fv):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib3f):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib3fv):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib4f):
+        (WebKit::MockWebGraphicsContext3D::vertexAttrib4fv):
+        (WebKit::MockWebGraphicsContext3D::vertexAttribPointer):
+        (WebKit::MockWebGraphicsContext3D::viewport):
+        (WebKit::MockWebGraphicsContext3D::createBuffer):
+        (WebKit::MockWebGraphicsContext3D::createFramebuffer):
+        (WebKit::MockWebGraphicsContext3D::createProgram):
+        (WebKit::MockWebGraphicsContext3D::createRenderbuffer):
+        (WebKit::MockWebGraphicsContext3D::createShader):
+        (WebKit::MockWebGraphicsContext3D::createTexture):
+        (WebKit::MockWebGraphicsContext3D::deleteBuffer):
+        (WebKit::MockWebGraphicsContext3D::deleteFramebuffer):
+        (WebKit::MockWebGraphicsContext3D::deleteProgram):
+        (WebKit::MockWebGraphicsContext3D::deleteRenderbuffer):
+        (WebKit::MockWebGraphicsContext3D::deleteShader):
+        (WebKit::MockWebGraphicsContext3D::deleteTexture):
+        (WebKit::MockWebGraphicsContext3D::texStorage2DEXT):
+        * tests/WebGLLayerChromiumTest.cpp:
+        (WebKit::CompositorMockWebGraphicsContext3D::create):
+        (WebKit::CompositorMockWebGraphicsContext3D::makeContextCurrent):
+        (WebKit::CompositorMockWebGraphicsContext3D::createProgram):
+        (WebKit::CompositorMockWebGraphicsContext3D::createShader):
+        (WebKit::CompositorMockWebGraphicsContext3D::getShaderiv):
+        (WebKit::CompositorMockWebGraphicsContext3D::getProgramiv):
+        (WebKit::CompositorMockWebGraphicsContext3D::getContextAttributes):
+        (WebKit::CompositorMockWebGraphicsContext3D::CompositorMockWebGraphicsContext3D):
+        (WebKit::createGraphicsContext):
+        (WebKit::TEST):
+        * tests/WebLayerTest.cpp:
+        (testing::WebLayerTest::WebLayerTest):
+        (testing::TEST_F):
+
 2011-12-17  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Implement PluginViewBase::getFormValue

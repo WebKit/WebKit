@@ -43,17 +43,17 @@ namespace WebKit {
 
 PassRefPtr<WebLayerTreeViewImpl> WebLayerTreeViewImpl::create(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)
 {
-    RefPtr<WebLayerTreeViewImpl> host = adoptRef(new WebLayerTreeViewImpl(client, settings));
+    RefPtr<WebLayerTreeViewImpl> host = adoptRef(new WebLayerTreeViewImpl(client, root, settings));
     if (!host->initialize())
         return 0;
-    host->setRootLayer(root);
     return host;
 }
 
-WebLayerTreeViewImpl::WebLayerTreeViewImpl(WebLayerTreeViewClient* client, const WebLayerTreeView::Settings& settings)
+WebLayerTreeViewImpl::WebLayerTreeViewImpl(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings) 
     : CCLayerTreeHost(this, settings)
     , m_client(client)
 {
+    setRootLayer(root);
 }
 
 WebLayerTreeViewImpl::~WebLayerTreeViewImpl()

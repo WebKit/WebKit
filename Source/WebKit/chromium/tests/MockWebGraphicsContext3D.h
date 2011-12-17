@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FakeWebGraphicsContext3D_h
-#define FakeWebGraphicsContext3D_h
+#ifndef MockWebGraphicsContext3D_h
+#define MockWebGraphicsContext3D_h
 
 #include "GraphicsContext3D.h"
 #include "platform/WebGraphicsContext3D.h"
@@ -33,7 +33,7 @@ namespace WebKit {
 
 // WebGraphicsContext3D base class for use in WebKit unit tests.
 // All operations are no-ops (returning 0 if necessary).
-class FakeWebGraphicsContext3D : public WebGraphicsContext3D {
+class MockWebGraphicsContext3D : public WebGraphicsContext3D {
 public:
     virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) { return false; }
 
@@ -128,7 +128,7 @@ public:
     virtual WGC3Dint getAttribLocation(WebGLId program, const WGC3Dchar* name) { return 0; }
     virtual void getBooleanv(WGC3Denum pname, WGC3Dboolean* value) { }
     virtual void getBufferParameteriv(WGC3Denum target, WGC3Denum pname, WGC3Dint* value) { }
-    virtual Attributes getContextAttributes() { return m_attrs; }
+    virtual Attributes getContextAttributes() { return Attributes(); }
     virtual WGC3Denum getError() { return 0; }
     virtual void getFloatv(WGC3Denum pname, WGC3Dfloat* value) { }
     virtual void getFramebufferAttachmentParameteriv(WGC3Denum target, WGC3Denum attachment, WGC3Denum pname, WGC3Dint* value) { }
@@ -254,11 +254,8 @@ public:
 
     virtual void texStorage2DEXT(WGC3Denum target, WGC3Dint levels, WGC3Duint internalformat,
                                  WGC3Dint width, WGC3Dint height) { }
-
-protected:
-    Attributes m_attrs;
 };
 
 } // namespace WebKit
 
-#endif // FakeWebGraphicsContext3D_h
+#endif // MockWebGraphicsContext3D_h
