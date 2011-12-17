@@ -995,7 +995,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         return;
     }
     if (token.name() == optgroupTag || token.name() == optionTag) {
-        if (m_tree.openElements()->inScope(optionTag.localName())) {
+        if (m_tree.currentNode()->hasTagName(optionTag)) {
             AtomicHTMLToken endOption(HTMLTokenTypes::EndTag, optionTag.localName());
             processEndTag(endOption);
         }

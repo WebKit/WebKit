@@ -1,3 +1,17 @@
+2011-12-16  Adam Barth  <abarth@webkit.org>
+
+        <option><span><option> doesn't parse correctly
+        https://bugs.webkit.org/show_bug.cgi?id=74760
+
+        Reviewed by Eric Seidel.
+
+        The <option> start tag shouldn't be quite as aggressive in closing open
+        <option> tags.  I'm not sure whether this was a change in the spec or a
+        mistranscription, but this patch causes us to match the spec.  I've
+        checked the other optionTag checks, and they all seem to be correct.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+
 2011-12-16  Rafael Weinstein  <rafaelw@chromium.org>
 
         [MutationObservers] Remove platform-dependent code in Document.cpp resulting from Mutation Event histogram collection
