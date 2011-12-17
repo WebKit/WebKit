@@ -51,6 +51,12 @@ FilterOperations::FilterOperations()
 {
 }
 
+FilterOperations& FilterOperations::operator=(const FilterOperations& other)
+{
+    m_operations = other.m_operations;
+    return *this;
+}
+
 bool FilterOperations::operator==(const FilterOperations& o) const
 {
     if (m_operations.size() != o.m_operations.size())

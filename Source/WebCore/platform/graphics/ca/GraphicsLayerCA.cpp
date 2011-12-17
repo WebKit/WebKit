@@ -568,6 +568,16 @@ void GraphicsLayerCA::setOpacity(float opacity)
     noteLayerPropertyChanged(OpacityChanged);
 }
 
+#if ENABLE(CSS_FILTERS)
+bool GraphicsLayerCA::setFilters(const FilterOperations& filters)
+{
+    GraphicsLayer::setFilters(filters);
+    noteLayerPropertyChanged(FiltersChanged);
+    
+    return PlatformCALayer::filtersCanBeComposited(filters);
+}
+#endif
+
 void GraphicsLayerCA::setNeedsDisplay()
 {
     FloatRect hugeRect(-numeric_limits<float>::max() / 2, -numeric_limits<float>::max() / 2,
@@ -965,6 +975,11 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     if (m_uncommittedChanges & OpacityChanged)
         updateOpacityOnLayer();
     
+#if ENABLE(CSS_FILTERS)
+    if (m_uncommittedChanges & FiltersChanged)
+        updateFilters();
+#endif
+    
     if (m_uncommittedChanges & AnimationChanged)
         updateLayerAnimations();
     
@@ -1229,6 +1244,23 @@ void GraphicsLayerCA::updateBackfaceVisibility()
     }
 }
 
+#if ENABLE(CSS_FILTERS)
+void GraphicsLayerCA::updateFilters()
+{
+    primaryLayer()->setFilters(m_filters);
+
+    if (LayerMap* layerCloneMap = primaryLayerClones()) {
+        LayerMap::const_iterator end = layerCloneMap->end();
+        for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
+            if (m_replicaLayer && isReplicatedRootClone(it->first))
+                continue;
+
+            it->second->setFilters(m_filters);
+        }
+    }
+}
+#endif
+
 void GraphicsLayerCA::updateStructuralLayer(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
     ensureStructuralLayer(structuralLayerPurpose(), pageScaleFactor, positionRelativeToBase);
@@ -1256,6 +1288,10 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, floa
             updateGeometry(pageScaleFactor, positionRelativeToBase);
             updateTransform();
             updateChildrenTransform();
+            
+#if ENABLE(CSS_FILTERS)
+            updateFilters();
+#endif
 
             updateSublayerList();
             updateOpacityOnLayer();
@@ -1293,6 +1329,10 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose, floa
     updateTransform();
     updateChildrenTransform();
     updateBackfaceVisibility();
+    
+#if ENABLE(CSS_FILTERS)
+    updateFilters();
+#endif
     
     // Set properties of m_layer to their default values, since these are expressed on on the structural layer.
     FloatPoint point(m_size.width() / 2.0f, m_size.height() / 2.0f);
@@ -2194,6 +2234,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     updateTransform();
     updateChildrenTransform();
     updateMasksToBounds();
+#if ENABLE(CSS_FILTERS)
+    updateFilters();
+#endif
     updateContentsOpaque();
     updateBackfaceVisibility();
     updateLayerBackgroundColor();

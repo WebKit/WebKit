@@ -87,6 +87,9 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     , m_artificiallyInflatedBounds(false)
     , m_isMainFrameRenderViewLayer(false)
     , m_usingTiledCacheLayer(false)
+#if ENABLE(CSS_FILTERS)
+    , m_canCompositeFilters(false)
+#endif
 {
     if (renderer()->isRenderView()) {
         Frame* frame = toRenderView(renderer())->frameView()->frame();
@@ -146,6 +149,9 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     
     updateLayerOpacity(renderer()->style());
     updateLayerTransform(renderer()->style());
+#if ENABLE(CSS_FILTERS)
+    updateLayerFilters(renderer()->style());
+#endif
 }
 
 void RenderLayerBacking::destroyGraphicsLayers()
@@ -176,6 +182,13 @@ void RenderLayerBacking::updateLayerTransform(const RenderStyle* style)
     
     m_graphicsLayer->setTransform(t);
 }
+
+#if ENABLE(CSS_FILTERS)
+void RenderLayerBacking::updateLayerFilters(const RenderStyle* style)
+{
+    m_canCompositeFilters = m_graphicsLayer->setFilters(style->filter());
+}
+#endif
 
 static bool hasNonZeroTransformOrigin(const RenderObject* renderer)
 {
@@ -380,6 +393,10 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // Set opacity, if it is not animating.
     if (!renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyOpacity))
         updateLayerOpacity(renderer()->style());
+        
+#if ENABLE(CSS_FILTERS)
+    updateLayerFilters(renderer()->style());
+#endif
     
     m_owningLayer->updateVisibilityStatus();
     m_graphicsLayer->setContentsVisible(m_owningLayer->hasVisibleContent());

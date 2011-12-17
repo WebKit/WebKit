@@ -26,6 +26,17 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+# HW filters not yet supported on Windows
+css3/filters/effect-blur-hw.html
+css3/filters/effect-combined-hw.html
+css3/filters/effect-drop-shadow-hw.html
+css3/filters/effect-grayscale-hw.html
+css3/filters/effect-hue-rotate-hw.html
+css3/filters/effect-invert-hw.html
+css3/filters/effect-opacity-hw.html
+css3/filters/effect-saturate-hw.html
+css3/filters/effect-sepia-hw.html
+
 # Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html
 

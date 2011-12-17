@@ -269,6 +269,23 @@ bool RenderLayer::canRender3DTransforms() const
 #endif
 }
 
+#if ENABLE(CSS_FILTERS)
+bool RenderLayer::paintsWithFilters() const
+{
+    // FIXME: Eventually there will be more factors than isComposited() to decide whether or not to render the filter
+    if (!renderer()->hasFilter())
+        return false;
+        
+    if (!isComposited())
+        return true;
+
+    if (!m_backing || !m_backing->canCompositeFilters())
+        return true;
+
+    return false;
+}
+#endif
+
 LayoutPoint RenderLayer::computeOffsetFromRoot(bool& hasLayerOffset) const
 {
     hasLayerOffset = true;
@@ -2727,7 +2744,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         return;
 
 #if ENABLE(CSS_FILTERS)
-    if (!p->paintingDisabled() && hasFilter() && !size().isZero() && !(paintFlags & PaintLayerPaintingFilter)) {
+    if (!p->paintingDisabled() && paintsWithFilters() && !size().isZero() && !(paintFlags & PaintLayerPaintingFilter)) {
         // Update the filter's image if necessary.
         // The filter is always built at this point.
         updateFilterBackingStore();
@@ -4442,7 +4459,7 @@ void RenderLayer::updateReflectionStyle()
 #if ENABLE(CSS_FILTERS)
 void RenderLayer::updateOrRemoveFilterEffect()
 {
-    if (hasFilter()) {
+    if (paintsWithFilters()) {
         if (!m_filter) {
             m_filter = FilterEffectRenderer::create();
             RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;

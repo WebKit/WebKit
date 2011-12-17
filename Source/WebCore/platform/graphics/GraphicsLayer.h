@@ -30,6 +30,9 @@
 
 #include "Animation.h"
 #include "Color.h"
+#if ENABLE(CSS_FILTERS)
+#include "FilterOperations.h"
+#endif
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
 #include "FloatSize.h"
@@ -311,6 +314,13 @@ public:
     float opacity() const { return m_opacity; }
     virtual void setOpacity(float opacity) { m_opacity = opacity; }
 
+#if ENABLE(CSS_FILTERS)
+    const FilterOperations& filters() const { return m_filters; }
+    
+    // Returns true if filter can be rendered by the compositor
+    virtual bool setFilters(const FilterOperations& filters) { m_filters = filters; return true; }
+#endif
+
     // Some GraphicsLayers paint only the foreground or the background content
     GraphicsLayerPaintingPhase paintingPhase() const { return m_paintingPhase; }
     void setPaintingPhase(GraphicsLayerPaintingPhase phase) { m_paintingPhase = phase; }
@@ -444,6 +454,10 @@ protected:
     Color m_backgroundColor;
     float m_opacity;
     float m_zPosition;
+    
+#if ENABLE(CSS_FILTERS)
+    FilterOperations m_filters;
+#endif
 
     bool m_backgroundColorSet : 1;
     bool m_contentsOpaque : 1;

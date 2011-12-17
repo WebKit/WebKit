@@ -97,6 +97,10 @@ public:
     // return true if we started an animation
     virtual void setOpacity(float);
 
+#if ENABLE(CSS_FILTERS)
+    virtual bool setFilters(const FilterOperations&);
+#endif
+
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
     virtual void setContentsNeedsDisplay();
@@ -153,6 +157,10 @@ private:
     virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
 
     void updateOpacityOnLayer();
+    
+#if ENABLE(CSS_FILTERS)
+    void updateFilters();
+#endif
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;
@@ -341,6 +349,9 @@ private:
         AcceleratesDrawingChanged = 1 << 22,
         ContentsScaleChanged = 1 << 23,
         ContentsVisibilityChanged = 1 << 24,
+#if ENABLE(CSS_FILTERS)
+        FiltersChanged = 1 << 25,
+#endif
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);

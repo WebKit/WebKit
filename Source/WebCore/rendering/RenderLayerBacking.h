@@ -145,6 +145,10 @@ public:
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 
+#if ENABLE(CSS_FILTERS)
+    bool canCompositeFilters() const { return m_canCompositeFilters; }
+#endif
+    
 private:
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
@@ -173,6 +177,9 @@ private:
 
     void updateLayerOpacity(const RenderStyle*);
     void updateLayerTransform(const RenderStyle*);
+#if ENABLE(CSS_FILTERS)
+    void updateLayerFilters(const RenderStyle*);
+#endif
 
     // Return the opacity value that this layer should use for compositing.
     float compositingOpacity(float rendererOpacity) const;
@@ -219,6 +226,9 @@ private:
     bool m_artificiallyInflatedBounds;      // bounds had to be made non-zero to make transform-origin work
     bool m_isMainFrameRenderViewLayer;
     bool m_usingTiledCacheLayer;
+#if ENABLE(CSS_FILTERS)
+    bool m_canCompositeFilters;
+#endif
 };
 
 } // namespace WebCore

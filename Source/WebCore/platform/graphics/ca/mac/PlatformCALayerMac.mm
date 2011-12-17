@@ -700,6 +700,161 @@ void PlatformCALayer::setOpacity(float value)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
+#if ENABLE(CSS_FILTERS)
+void PlatformCALayer::setFilters(const FilterOperations& filters)
+{
+    if (!filters.size()) {
+        [m_layer.get() setFilters:0];
+        return;
+    }
+    
+    // Assume filtersCanBeComposited was called and it returned true
+    ASSERT(filtersCanBeComposited(filters));
+    
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    
+    RetainPtr<NSMutableArray> array(AdoptNS, [[NSMutableArray alloc] init]);
+    
+    for (unsigned i = 0; i < filters.size(); ++i) {
+        const FilterOperation* filterOperation = filters.at(i);
+        switch(filterOperation->getOperationType()) {
+        case FilterOperation::DROP_SHADOW: {
+            // FIXME: For now assume drop shadow is the last filter, put it on the layer
+            const DropShadowFilterOperation* op = static_cast<const DropShadowFilterOperation*>(filterOperation);
+            [m_layer.get() setShadowOffset:CGSizeMake(op->x(), op->y())];
+
+            CGFloat components[4];
+            op->color().getRGBA(components[0], components[1], components[2], components[3]);
+            RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+            RetainPtr<CGColorRef> color(AdoptCF, CGColorCreate(colorSpace.get(), components));
+            [m_layer.get() setShadowColor:color.get()];
+            
+            [m_layer.get() setShadowRadius:op->stdDeviation()];
+            [m_layer.get() setShadowOpacity:1];
+
+            break;
+        }
+        case FilterOperation::GRAYSCALE: {
+            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMonochrome"];
+            [caFilter setDefaults];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputIntensity"];
+            [caFilter setValue:[CIColor colorWithRed:1 green:1 blue:1] forKey:@"inputColor"];
+            [caFilter setName:@"grayscaleFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::SEPIA: {
+            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CISepiaTone"];
+            [caFilter setDefaults];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputIntensity"];
+            [caFilter setName:@"sepiaFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::SATURATE: {
+            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorControls"];
+            [caFilter setDefaults];
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount()] forKey:@"inputSaturation"];
+            [caFilter setName:@"saturateFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::HUE_ROTATE: {
+            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIHueAdjust"];
+            [caFilter setDefaults];
+            
+            // The CIHueAdjust value is in radians
+            [caFilter setValue:[NSNumber numberWithFloat:op->amount() * M_PI * 2 / 360] forKey:@"inputAngle"];
+            [caFilter setName:@"hueRotateFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::INVERT: {
+            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMatrix"];
+            [caFilter setDefaults];
+            
+            double multiplier = 1 - op->amount() * 2;
+            
+            [caFilter setValue:[CIVector vectorWithX:multiplier Y:0 Z:0 W:0] forKey:@"inputRVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:multiplier Z:0 W:0] forKey:@"inputGVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:multiplier W:0] forKey:@"inputBVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
+            [caFilter setValue:[CIVector vectorWithX:op->amount() Y:op->amount() Z:op->amount() W:0] forKey:@"inputBiasVector"];
+            [caFilter setName:@"invertFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::OPACITY: {
+            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIColorMatrix"];
+            [caFilter setDefaults];
+            
+            [caFilter setValue:[CIVector vectorWithX:1 Y:0 Z:0 W:0] forKey:@"inputRVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:1 Z:0 W:0] forKey:@"inputGVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:1 W:0] forKey:@"inputBVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:op->amount()] forKey:@"inputAVector"];
+            [caFilter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:0] forKey:@"inputBiasVector"];
+            [caFilter setName:@"opacityFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::BLUR: {
+            // FIXME: For now we ignore stdDeviationY
+            const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(filterOperation);
+            CIFilter* caFilter = [CIFilter filterWithName:@"CIGaussianBlur"];
+            [caFilter setDefaults];
+            [caFilter setValue:[NSNumber numberWithFloat:op->stdDeviation().calcFloatValue(0)] forKey:@"inputRadius"];
+            [caFilter setName:@"blurFilter"];
+            [array.get() addObject:caFilter];
+            break;
+        }
+        case FilterOperation::PASSTHROUGH:
+            break;
+        default:
+            ASSERT(0);
+            break;
+        }
+    }
+
+    if ([array.get() count] > 0)
+        [m_layer.get() setFilters:array.get()];
+    
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+bool PlatformCALayer::filtersCanBeComposited(const FilterOperations& filters)
+{
+    // Return false if there are no filters to avoid needless work
+    if (!filters.size())
+        return false;
+        
+    for (unsigned i = 0; i < filters.size(); ++i) {
+        const FilterOperation* filterOperation = filters.at(i);
+        switch(filterOperation->getOperationType()) {
+        case FilterOperation::REFERENCE:
+#if ENABLE(CSS_SHADERS)
+        case FilterOperation::CUSTOM:
+#endif
+            return false;
+        case FilterOperation::DROP_SHADOW:
+            // FIXME: For now we can only handle drop-shadow is if it's last in the list
+            if (i < (filters.size() - 1))
+                return false;
+            break;
+        default:
+            break;
+        }
+    }
+    
+    return true;
+}
+#endif
+
 String PlatformCALayer::name() const
 {
     return [m_layer.get() name];

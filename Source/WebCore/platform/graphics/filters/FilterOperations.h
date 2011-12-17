@@ -39,6 +39,9 @@ class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FilterOperations();
+    FilterOperations(const FilterOperations& other) { *this = other; }
+    
+    FilterOperations& operator=(const FilterOperations&);
     
     bool operator==(const FilterOperations&) const;
     bool operator!=(const FilterOperations& o) const

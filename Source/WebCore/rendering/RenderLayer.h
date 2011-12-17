@@ -514,10 +514,6 @@ public:
     bool preserves3D() const { return renderer()->style()->transformStyle3D() == TransformStyle3DPreserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
 
-#if ENABLE(CSS_FILTERS)
-    bool hasFilter() const { return renderer()->hasFilter(); }
-#endif
-
     // Overloaded new operator. Derived classes must override operator new
     // in order to allocate out of the RenderArena.
     void* operator new(size_t, RenderArena*) throw();
@@ -550,6 +546,10 @@ public:
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
 private:
+#if ENABLE(CSS_FILTERS)
+    bool paintsWithFilters() const;
+#endif
+
     void updateZOrderListsSlowCase();
 
     void computeRepaintRects(IntPoint* offsetFromRoot = 0);

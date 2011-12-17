@@ -1,3 +1,60 @@
+2011-12-16  Chris Marrin  <cmarrin@apple.com>
+
+        Hardware acceleration of W3C Filter Effects
+        https://bugs.webkit.org/show_bug.cgi?id=68479
+
+        Reviewed by Simon Fraser.
+
+        Tests: css3/filters/effect-blur-hw.html
+               css3/filters/effect-combined-hw.html
+               css3/filters/effect-drop-shadow-hw.html
+               css3/filters/effect-grayscale-hw.html
+               css3/filters/effect-hue-rotate-hw.html
+               css3/filters/effect-invert-hw.html
+               css3/filters/effect-opacity-hw.html
+               css3/filters/effect-saturate-hw.html
+               css3/filters/effect-sepia-hw.html
+
+        Implement hardware acceleration of filters. If a filter is
+        on a RenderLayer and that layer has a GraphicsLayer, a test
+        is done to see if the desired filter can be rendered in hardware.
+        If so, skip rendering it when painting, and add the filters to the
+        CALayer. Currently Mac only, using CoreImage. Animation is done in
+        software, with the filters being recreated every frame. There are
+        some fidelity issues with the software renderer, but those will
+        be dealt with as bugs to be fixed.
+
+        * platform/graphics/GraphicsLayer.h: Pass down FilterOperations
+        (WebCore::GraphicsLayer::filter):
+        (WebCore::GraphicsLayer::setFilter):
+        * platform/graphics/ca/GraphicsLayerCA.cpp: Deferred passdown of FilterOperations to PlatformCALayer
+        (WebCore::GraphicsLayerCA::setFilter):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateFilter):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm: Mac implementation using CI
+        (PlatformCALayer::setFilter):
+        (PlatformCALayer::filterCanBeComposited): Static function to tell GraphicsLayer if this Filter object can be rendered
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::operator=):
+        * platform/graphics/filters/FilterOperations.h:
+        (WebCore::FilterOperations::FilterOperations):
+        * rendering/RenderLayer.cpp: Pass filter object to GraphicsLayer
+        (WebCore::RenderLayer::rendersFilter):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::createPrimaryGraphicsLayer):
+        (WebCore::RenderLayerBacking::updateLayerFilter):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::canCompositeFilter):
+
 2011-12-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix after r103131.
