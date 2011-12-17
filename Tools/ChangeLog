@@ -1,3 +1,16 @@
+2011-12-17  Kentaro Hara  <haraken@chromium.org>
+
+        Remove top-level code completely from prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=74698
+
+        Reviewed by Darin Adler.
+
+        We are planning to write unit-tests for prepare-ChangeLog in a run-leaks_unittest manner.
+        This patch just moves all top-level code into main().
+
+        * Scripts/prepare-ChangeLog:
+        (main):
+
 2011-12-16  Dean Jackson  <dino@apple.com>
 
         Move webkit-bug-importer to Contributor. It won't

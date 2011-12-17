@@ -104,7 +104,6 @@ sub reviewerAndDescriptionForGitCommit($$);
 sub normalizeLineEndings($$);
 sub decodeEntities($);
 
-
 ### Constant variables.
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
@@ -114,124 +113,121 @@ my $GIT = "git";
 
 my %supportedTestExtensions = map { $_ => 1 } qw(html shtml svg xml xhtml pl php);
 
+exit(main());
 
-### Global variables for arguments.
-my $bugDescription;
-my $bugNumber;
-my $name;
-my $emailAddress;
-my $mergeBase = 0;
-my $gitCommit = 0;
-my $gitIndex = "";
-my $gitReviewer = "";
-my $openChangeLogs = 0;
-my $writeChangeLogs = 1;
-my $showHelp = 0;
-my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
-my $updateChangeLogs = 1;
-my $parseOptionsResult =
-    GetOptions("diff|d!" => \$spewDiff,
-               "bug|b:i" => \$bugNumber,
-               "description:s" => \$bugDescription,
-               "name:s" => \$name,
-               "email:s" => \$emailAddress,
-               "merge-base:s" => \$mergeBase,
-               "git-commit|g:s" => \$gitCommit,
-               "git-index" => \$gitIndex,
-               "git-reviewer:s" => \$gitReviewer,
-               "help|h!" => \$showHelp,
-               "open|o!" => \$openChangeLogs,
-               "write!" => \$writeChangeLogs,
-               "update!" => \$updateChangeLogs);
-if (!$parseOptionsResult || $showHelp) {
-    print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
-    print STDERR "  -b|--bug        Fill in the ChangeLog bug information from the given bug.\n";
-    print STDERR "  --description   One-line description that matches the bug title.\n";
-    print STDERR "  -d|--diff       Spew diff to stdout when running\n";
-    print STDERR "  --merge-base    Populate the ChangeLogs with the diff to this branch\n";
-    print STDERR "  -g|--git-commit Populate the ChangeLogs from the specified git commit\n";
-    print STDERR "  --git-index     Populate the ChangeLogs from the git index only\n";
-    print STDERR "  --git-reviewer  When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
-    print STDERR "                  This option is useful when the git commit lacks a Signed-Off-By: line\n";
-    print STDERR "  -h|--help       Show this help message\n";
-    print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
-    print STDERR "  --[no-]update   Update ChangeLogs from svn before adding entry (default: update)\n";
-    print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
-    print STDERR "  --email=        Specify the email address to be used in the patch\n";
-    exit 1;
+sub main()
+{
+    my $bugDescription;
+    my $bugNumber;
+    my $name;
+    my $emailAddress;
+    my $mergeBase = 0;
+    my $gitCommit = 0;
+    my $gitIndex = "";
+    my $gitReviewer = "";
+    my $openChangeLogs = 0;
+    my $writeChangeLogs = 1;
+    my $showHelp = 0;
+    my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
+    my $updateChangeLogs = 1;
+    my $parseOptionsResult =
+        GetOptions("diff|d!" => \$spewDiff,
+                   "bug|b:i" => \$bugNumber,
+                   "description:s" => \$bugDescription,
+                   "name:s" => \$name,
+                   "email:s" => \$emailAddress,
+                   "merge-base:s" => \$mergeBase,
+                   "git-commit|g:s" => \$gitCommit,
+                   "git-index" => \$gitIndex,
+                   "git-reviewer:s" => \$gitReviewer,
+                   "help|h!" => \$showHelp,
+                   "open|o!" => \$openChangeLogs,
+                   "write!" => \$writeChangeLogs,
+                   "update!" => \$updateChangeLogs);
+    if (!$parseOptionsResult || $showHelp) {
+        print STDERR basename($0) . " [-b|--bug=<bugid>] [-d|--diff] [-h|--help] [-o|--open] [-g|--git-commit=<committish>] [--git-reviewer=<name>] [svndir1 [svndir2 ...]]\n";
+        print STDERR "  -b|--bug        Fill in the ChangeLog bug information from the given bug.\n";
+        print STDERR "  --description   One-line description that matches the bug title.\n";
+        print STDERR "  -d|--diff       Spew diff to stdout when running\n";
+        print STDERR "  --merge-base    Populate the ChangeLogs with the diff to this branch\n";
+        print STDERR "  -g|--git-commit Populate the ChangeLogs from the specified git commit\n";
+        print STDERR "  --git-index     Populate the ChangeLogs from the git index only\n";
+        print STDERR "  --git-reviewer  When populating the ChangeLogs from a git commit claim that the spcified name reviewed the change.\n";
+        print STDERR "                  This option is useful when the git commit lacks a Signed-Off-By: line\n";
+        print STDERR "  -h|--help       Show this help message\n";
+        print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
+        print STDERR "  --[no-]update   Update ChangeLogs from svn before adding entry (default: update)\n";
+        print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
+        print STDERR "  --email=        Specify the email address to be used in the patch\n";
+        return 1;
+    }
+
+    die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit);
+
+    isSVN() || isGit() || die "Couldn't determine your version control system.";
+
+    my %paths = processPaths(@ARGV);
+
+    # Find the list of modified files
+    my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths, $gitCommit, $gitIndex, $mergeBase);
+
+    if (!@$changedFiles && !@$conflictFiles && !keys %$functionLists) {
+        print STDERR "  No changes found.\n";
+        return 1;
+    }
+
+    if (@$conflictFiles) {
+        print STDERR "  The following files have conflicts. Run prepare-ChangeLog again after fixing the conflicts:\n";
+        print STDERR join("\n", @$conflictFiles), "\n";
+        return 1;
+    }
+
+    generateFunctionLists($changedFiles, $functionLists, $gitCommit, $gitIndex, $mergeBase);
+
+    # Get some parameters for the ChangeLog we are about to write.
+    $name = changeLogNameFromArgs($name, $gitCommit);
+    $emailAddress = changeLogEmailAddressFromArgs($emailAddress, $gitCommit);
+
+    print STDERR "  Change author: $name <$emailAddress>.\n";
+
+    # Remove trailing parenthesized notes from user name (bit of hack).
+    $name =~ s/\(.*?\)\s*$//g;
+
+    my $bugURL;
+    if ($bugNumber) {
+        $bugURL = "https://bugs.webkit.org/show_bug.cgi?id=$bugNumber";
+    }
+
+    if ($bugNumber && !$bugDescription) {
+        $bugDescription = fetchBugDescriptionFromURL($bugURL, $bugNumber);
+    }
+
+    my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists);
+
+    # Get the latest ChangeLog files from svn.
+    my $changeLogs = getLatestChangeLogs($prefixes);
+
+    if (@$changeLogs && $updateChangeLogs && isSVN()) {
+        resolveConflictedChangeLogs($changeLogs);
+    }
+
+    generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs);
+
+    if ($writeChangeLogs) {
+        print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
+    }
+
+    # Write out another diff.
+    if ($spewDiff && @$changedFiles) {
+        printDiff($changedFiles, $gitCommit, $gitIndex, $mergeBase);
+    }
+
+    # Open ChangeLogs.
+    if ($openChangeLogs && @$changeLogs) {
+        openChangeLogs($changeLogs);
+    }
+    return 0;
 }
-
-die "--git-commit and --git-index are incompatible." if ($gitIndex && $gitCommit);
-
-
-### Main routine.
-
-isSVN() || isGit() || die "Couldn't determine your version control system.";
-
-my %paths = processPaths(@ARGV);
-
-# Find the list of modified files
-my ($changedFiles, $conflictFiles, $functionLists, $addedRegressionTests) = generateFileList(%paths, $gitCommit, $gitIndex, $mergeBase);
-
-if (!@$changedFiles && !@$conflictFiles && !keys %$functionLists) {
-    print STDERR "  No changes found.\n";
-    exit 1;
-}
-
-if (@$conflictFiles) {
-    print STDERR "  The following files have conflicts. Run prepare-ChangeLog again after fixing the conflicts:\n";
-    print STDERR join("\n", @$conflictFiles), "\n";
-    exit 1;
-}
-
-generateFunctionLists($changedFiles, $functionLists, $gitCommit, $gitIndex, $mergeBase);
-
-# Get some parameters for the ChangeLog we are about to write.
-$name = changeLogNameFromArgs($name, $gitCommit);
-$emailAddress = changeLogEmailAddressFromArgs($emailAddress, $gitCommit);
-
-print STDERR "  Change author: $name <$emailAddress>.\n";
-
-# Remove trailing parenthesized notes from user name (bit of hack).
-$name =~ s/\(.*?\)\s*$//g;
-
-my $bugURL;
-if ($bugNumber) {
-    $bugURL = "https://bugs.webkit.org/show_bug.cgi?id=$bugNumber";
-}
-
-if ($bugNumber && !$bugDescription) {
-    $bugDescription = fetchBugDescriptionFromURL($bugURL, $bugNumber);
-}
-
-my ($filesInChangeLog, $prefixes) = findChangeLogs($functionLists);
-
-# Get the latest ChangeLog files from svn.
-my $changeLogs = getLatestChangeLogs($prefixes);
-
-if (@$changeLogs && $updateChangeLogs && isSVN()) {
-    resolveConflictedChangeLogs($changeLogs);
-}
-
-generateNewChangeLogs($prefixes, $filesInChangeLog, $addedRegressionTests, $functionLists, $bugURL, $bugDescription, $name, $emailAddress, $gitReviewer, $gitCommit, $writeChangeLogs);
-
-if ($writeChangeLogs) {
-    print STDERR "-- Please remember to include a detailed description in your ChangeLog entry. --\n-- See <http://webkit.org/coding/contributing.html> for more info --\n";
-}
-
-# Write out another diff.
-if ($spewDiff && @$changedFiles) {
-    printDiff($changedFiles, $gitCommit, $gitIndex, $mergeBase);
-}
-
-# Open ChangeLogs.
-if ($openChangeLogs && @$changeLogs) {
-    openChangeLogs($changeLogs);
-}
-
-# Done.
-exit;
-
 
 sub generateFunctionLists($$$$$)
 {
