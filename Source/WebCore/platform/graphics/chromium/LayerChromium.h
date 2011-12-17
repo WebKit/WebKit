@@ -61,7 +61,6 @@ public:
     virtual ~CCLayerDelegate() { }
     virtual bool drawsContent() const = 0;
     virtual void paintContents(GraphicsContext&, const IntRect& clip) = 0;
-    virtual void notifySyncRequired() = 0;
 };
 
 // Base class for composited layers. Special layer types are derived from

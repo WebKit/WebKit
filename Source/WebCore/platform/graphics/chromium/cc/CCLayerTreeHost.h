@@ -163,7 +163,8 @@ public:
     void loseCompositorContext(int numTimes);
 
     void setNeedsAnimate();
-    void setNeedsCommit();
+    // virtual for testing
+    virtual void setNeedsCommit();
     void setNeedsRedraw();
 
     LayerChromium* rootLayer() { return m_rootLayer.get(); }

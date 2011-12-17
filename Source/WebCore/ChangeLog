@@ -1,3 +1,34 @@
+2011-12-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] CCLayerDelegate and WebLayerClient do not need notifySyncRequired
+        https://bugs.webkit.org/show_bug.cgi?id=74376
+
+        Reviewed by Kenneth Russell.
+
+        CCLayerDelegate::notifySyncRequired is an odd bit of interface that we originally cargo-culted from the
+        CoreAnimation compositor implementation. It is a mechanism by which a LayerChromium instance may request a new
+        frame via its CCLayerDelegate, which in WebCore is always a GraphicsLayerClient. In practice, all
+        implementations eventually ended up routing to CCLayerTreeHost::setNeedsCommit which then made the proper
+        scheduling decision.
+
+        This patch routes all changes that would have gone through CCLayerDelegate::notifySyncRequired directly to
+        CCLayerTreeHost::setNeedsCommit, which greatly simplifies the scheduling logic.
+
+        There is a large amount of unit test coverage for this change, largely in LayerChromiumTest
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setNeedsCommit):
+        (WebCore::LayerChromium::insertChild):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::~CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCScopedThreadProxy.h:
+        (WebCore::CCScopedThreadProxy::runTaskIfNotShutdown):
+
 2011-12-16  Adam Klein  <adamk@chromium.org>
 
         Fix typo in MarkupTokenBase: rename takeAtributes to takeAttributes

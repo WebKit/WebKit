@@ -22,43 +22,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CompositorFakeGraphicsContext3D_h
+#define CompositorFakeGraphicsContext3D_h
 
-#include "WebGLLayerChromium.h"
+#include "CompositorFakeWebGraphicsContext3D.h"
+#include "GraphicsContext3D.h"
+#include "GraphicsContext3DPrivate.h"
 
-#include "CompositorFakeGraphicsContext3D.h"
-#include "DrawingBuffer.h"
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+namespace WebCore {
 
-using namespace WebCore;
-using namespace WebKit;
-
-namespace {
-
-TEST(WebGLLayerChromiumTest, opaqueFormats)
+static PassRefPtr<GraphicsContext3D> createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes attrs)
 {
-    RefPtr<DrawingBuffer> buffer;
+    WebKit::WebGraphicsContext3D::Attributes webAttrs;
+    webAttrs.alpha = attrs.alpha;
 
-    GraphicsContext3D::Attributes alphaAttrs;
-    alphaAttrs.alpha = true;
-    GraphicsContext3D::Attributes opaqueAttrs;
-    opaqueAttrs.alpha = false;
-
-    RefPtr<GraphicsContext3D> alphaContext = createCompositorMockGraphicsContext3D(alphaAttrs);
-    EXPECT_TRUE(alphaContext);
-    RefPtr<GraphicsContext3D> opaqueContext = createCompositorMockGraphicsContext3D(opaqueAttrs);
-    EXPECT_TRUE(opaqueContext);
-
-    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), false);
-    EXPECT_FALSE(buffer->platformLayer()->opaque());
-    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), true);
-    EXPECT_FALSE(buffer->platformLayer()->opaque());
-
-    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), false);
-    EXPECT_TRUE(buffer->platformLayer()->opaque());
-    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), true);
-    EXPECT_TRUE(buffer->platformLayer()->opaque());
+    OwnPtr<WebKit::WebGraphicsContext3D> webContext = WebKit::CompositorFakeWebGraphicsContext3D::create(webAttrs);
+    return GraphicsContext3DPrivate::createGraphicsContextFromWebContext(
+        webContext.release(), attrs, 0,
+        GraphicsContext3D::RenderDirectlyToHostWindow,
+        GraphicsContext3DPrivate::ForUseOnAnotherThread);
 }
 
-} // namespace
+}
+
+#endif

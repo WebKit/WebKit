@@ -22,43 +22,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CompositorFakeWebGraphicsContext3D_h
+#define CompositorFakeWebGraphicsContext3D_h
 
-#include "WebGLLayerChromium.h"
+#include "FakeWebGraphicsContext3D.h"
 
-#include "CompositorFakeGraphicsContext3D.h"
-#include "DrawingBuffer.h"
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+namespace WebKit {
 
-using namespace WebCore;
-using namespace WebKit;
+// Test stub for WebGraphicsContext3D. Returns canned values needed for compositor initialization.
+class CompositorFakeWebGraphicsContext3D : public FakeWebGraphicsContext3D {
+public:
+    static PassOwnPtr<CompositorFakeWebGraphicsContext3D> create(Attributes attrs)
+    {
+        return adoptPtr(new CompositorFakeWebGraphicsContext3D(attrs));
+    }
 
-namespace {
+    virtual bool makeContextCurrent() { return true; }
+    virtual WebGLId createProgram() { return 1; }
+    virtual WebGLId createShader(WGC3Denum) { return 1; }
+    virtual void getShaderiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
+    virtual void getProgramiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
 
-TEST(WebGLLayerChromiumTest, opaqueFormats)
-{
-    RefPtr<DrawingBuffer> buffer;
+private:
+    explicit CompositorFakeWebGraphicsContext3D(Attributes attrs)
+    {
+        m_attrs = attrs;
+    }
+};
 
-    GraphicsContext3D::Attributes alphaAttrs;
-    alphaAttrs.alpha = true;
-    GraphicsContext3D::Attributes opaqueAttrs;
-    opaqueAttrs.alpha = false;
-
-    RefPtr<GraphicsContext3D> alphaContext = createCompositorMockGraphicsContext3D(alphaAttrs);
-    EXPECT_TRUE(alphaContext);
-    RefPtr<GraphicsContext3D> opaqueContext = createCompositorMockGraphicsContext3D(opaqueAttrs);
-    EXPECT_TRUE(opaqueContext);
-
-    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), false);
-    EXPECT_FALSE(buffer->platformLayer()->opaque());
-    buffer = DrawingBuffer::create(alphaContext.get(), IntSize(), true);
-    EXPECT_FALSE(buffer->platformLayer()->opaque());
-
-    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), false);
-    EXPECT_TRUE(buffer->platformLayer()->opaque());
-    buffer = DrawingBuffer::create(opaqueContext.get(), IntSize(), true);
-    EXPECT_TRUE(buffer->platformLayer()->opaque());
 }
 
-} // namespace
+#endif

@@ -104,6 +104,7 @@ CCLayerTreeHost::~CCLayerTreeHost()
 {
     ASSERT(CCProxy::isMainThread());
     TRACE_EVENT("CCLayerTreeHost::~CCLayerTreeHost", this, 0);
+    ASSERT(m_proxy);
     m_proxy->stop();
     m_proxy.clear();
     clearPendingUpdate();
@@ -248,6 +249,7 @@ void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
     m_rootLayer = rootLayer;
     if (m_rootLayer)
         m_rootLayer->setLayerTreeHost(this);
+    setNeedsCommit();
 }
 
 void CCLayerTreeHost::setViewport(const IntSize& viewportSize)

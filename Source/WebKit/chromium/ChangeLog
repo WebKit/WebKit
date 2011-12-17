@@ -1,3 +1,80 @@
+2011-12-16  James Robinson  <jamesr@chromium.org>
+
+        [chromium] CCLayerDelegate and WebLayerClient do not need notifySyncRequired
+        https://bugs.webkit.org/show_bug.cgi?id=74376
+
+        Reviewed by Kenneth Russell.
+
+        WebLayerClient::notifyNeedsComposite() is an odd interface for the same reason that
+        CCLayerDelegate::notifySyncRequired() is - all scheduling decisions should route through the WebLayerTreeView,
+        not individual layers. In practice, all implementations of WebLayerClient::notifySyncRequired() do the exact
+        same thing as WebLayerTreeView::scheduleComposite(). This removes that callback, making WebLayerClient an empty
+        interface, and routes all calls that would go to that interface to WebLayerTreeView::scheduleComposite().
+
+        Once downstream implementations of WebLayerClient are removed, WebLayerClient.h and the constructors associated
+        with it can be deleted.
+
+        The bulk of the changes here are to the test harness. Many tests that were designed around notifySyncRequired()
+        are rewritten to check for CCLayerTreeHost::setNeedsCommit() or WebLayerTreeView::scheduleComposite() instead.
+        In a few instances, this required changing the setup logic around somewhat so that the layers being manipulated
+        were in a tree that initialized without errors.
+
+        * WebKit.gypi:
+        * public/platform/WebContentLayer.h:
+        * public/platform/WebExternalTextureLayer.h:
+        * public/platform/WebLayer.h:
+        * public/platform/WebLayerClient.h:
+        * src/WebContentLayer.cpp:
+        (WebKit::WebContentLayer::create):
+        * src/WebContentLayerImpl.cpp:
+        (WebKit::WebContentLayerImpl::create):
+        (WebKit::WebContentLayerImpl::WebContentLayerImpl):
+        * src/WebContentLayerImpl.h:
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebExternalTextureLayer::create):
+        * src/WebExternalTextureLayerImpl.cpp:
+        (WebKit::WebExternalTextureLayerImpl::create):
+        (WebKit::WebExternalTextureLayerImpl::WebExternalTextureLayerImpl):
+        * src/WebExternalTextureLayerImpl.h:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::create):
+        * src/WebLayerImpl.cpp:
+        (WebKit::WebLayerImpl::create):
+        (WebKit::WebLayerImpl::WebLayerImpl):
+        * src/WebLayerImpl.h:
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewImpl::create):
+        (WebKit::WebLayerTreeViewImpl::WebLayerTreeViewImpl):
+        * src/WebLayerTreeViewImpl.h:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::MockLayerTreeHost::create):
+        (WTF::MockLayerTreeHost::MockLayerTreeHost):
+        (WTF::MockLayerTreeHostClient::createLayerTreeHostContext3D):
+        (WTF::CCLayerTreeHostTestScrollSimple::animateAndLayout):
+        * tests/CompositorMockGraphicsContext3D.h: Added.
+        (WebCore::createCompositorMockGraphicsContext3D):
+        * tests/CompositorMockWebGraphicsContext3D.h: Added.
+        (WebKit::CompositorMockWebGraphicsContext3D::create):
+        (WebKit::CompositorMockWebGraphicsContext3D::makeContextCurrent):
+        (WebKit::CompositorMockWebGraphicsContext3D::createProgram):
+        (WebKit::CompositorMockWebGraphicsContext3D::createShader):
+        (WebKit::CompositorMockWebGraphicsContext3D::getShaderiv):
+        (WebKit::CompositorMockWebGraphicsContext3D::getProgramiv):
+        (WebKit::CompositorMockWebGraphicsContext3D::CompositorMockWebGraphicsContext3D):
+        * tests/LayerChromiumTest.cpp:
+        * tests/MockWebGraphicsContext3D.h:
+        (WebKit::MockWebGraphicsContext3D::getContextAttributes):
+        * tests/WebGLLayerChromiumTest.cpp:
+        (WebKit::TEST):
+        * tests/WebLayerTest.cpp:
+        (testing::MockWebLayerTreeViewClient::animateAndLayout):
+        (testing::MockWebLayerTreeViewClient::applyScrollAndScale):
+        (testing::MockWebLayerTreeViewClient::createContext3D):
+        (testing::MockWebLayerTreeViewClient::didRebindGraphicsContext):
+        (testing::WebLayerTest::SetUp):
+        (testing::WebLayerTest::TearDown):
+        (testing::TEST_F):
+
 2011-12-16  Eric Penner  <epenner@google.com>
 
         [chromium] Need to prepaint tiles in TiledLayerChromium

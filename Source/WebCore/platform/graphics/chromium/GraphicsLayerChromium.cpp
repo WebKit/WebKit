@@ -665,12 +665,6 @@ void GraphicsLayerChromium::paintContents(GraphicsContext& context, const IntRec
     paintGraphicsLayerContents(context, clip);
 }
 
-void GraphicsLayerChromium::notifySyncRequired()
-{
-    if (m_client)
-        m_client->notifySyncRequired(this);
-}
-
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)

@@ -42,6 +42,8 @@ class WebLayerClient;
 // the WebLayerTreeView is destroyed.
 class WebExternalTextureLayer : public WebLayer {
 public:
+    WEBKIT_EXPORT static WebExternalTextureLayer create();
+    // FIXME: Remove as soon as downstream clients are updated.
     WEBKIT_EXPORT static WebExternalTextureLayer create(WebLayerClient*);
 
     WebExternalTextureLayer() { }
