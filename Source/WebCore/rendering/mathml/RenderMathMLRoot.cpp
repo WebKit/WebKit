@@ -142,7 +142,7 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     LayoutUnit start = adjustedPaintOffset.x() + indexWidth + gRadicalLeftMargin + style()->paddingLeft().value() - rootPad;
     adjustedPaintOffset.setY(adjustedPaintOffset.y() + style()->paddingTop().value() - rootPad);
     
-    FloatPoint topStart(start - topStartShift, paintOffset.y());
+    FloatPoint topStart(start - topStartShift, adjustedPaintOffset.y());
     FloatPoint bottomLeft(start - gRadicalBottomPointXPos * frontWidth , adjustedPaintOffset.y() + maxHeight + gRadicalBasePad);
     FloatPoint topLeft(start - gRadicalTopLeftPointXPos * frontWidth , adjustedPaintOffset.y() + gRadicalTopLeftPointYPos * maxHeight);
     FloatPoint leftEnd(start - frontWidth , topLeft.y() + gRadicalLeftEndYShift * style()->fontSize());

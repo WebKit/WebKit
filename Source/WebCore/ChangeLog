@@ -1,3 +1,17 @@
+2011-12-17  David Barton  <dbarton@mathscribe.com>
+
+        Radical sign drawn incorrectly due to refactoring typo
+        https://bugs.webkit.org/show_bug.cgi?id=74780
+
+        Reviewed by Dan Bernstein.
+
+        LayoutTests/mathml/presentation/roots.xhtml shows the bug, but apparently its .png
+        checksum is ok so run-webkit-tests can't detect the problem.
+
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::paint):
+        In revision 88250, one paintOffset should have been adjustedPaintOffset.
+
 2011-12-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Reverting r103011, r103135 due to Aura test failures
