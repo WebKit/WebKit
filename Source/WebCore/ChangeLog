@@ -1,3 +1,9 @@
+2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after r103104.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-12-16  Adam Klein  <adamk@chromium.org>
 
         Consolidate before-advice regarding attribute modification into a single method
