@@ -655,14 +655,9 @@ inline void Element::setAttributeInternal(Attribute* old, const QualifiedName& n
         InspectorInstrumentation::willModifyDOMAttr(document(), this);
 #endif
 
-#if ENABLE(MUTATION_OBSERVERS)
-    enqueueAttributesMutationRecordIfRequested(name, old ? old->value() : nullAtom);
-#endif
-
     document()->incDOMTreeVersion();
 
-    if (isIdAttributeName(name))
-        updateId(old ? old->value() : nullAtom, value);
+    willModifyAttribute(name, old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
         m_attributeMap->removeAttribute(name);

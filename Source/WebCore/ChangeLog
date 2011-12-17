@@ -1,3 +1,37 @@
+2011-12-16  Adam Klein  <adamk@chromium.org>
+
+        Consolidate before-advice regarding attribute modification into a single method
+        https://bugs.webkit.org/show_bug.cgi?id=74752
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a willModifyAttribute method to Element, meant to be called
+        before an attribute on that Element is added/removed/changed.
+
+        Replace most calls to Element::updateId and all calls to
+        Element::enqueueAttributesMutationRecordIfRequested with calls to
+        willModifyAttribute. Moreover, enqueueAttributesMutation... can now
+        be private since its only caller is willModifyAttribute.
+
+        The only remaining direct calls to updateId are in cases the entire
+        NamedNodeMap is being replaced. These are implementation details of
+        WebCore that shouldn't be exposed via MutationObservers.
+
+        No new tests, no expected change in behavior.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue):
+        (WebCore::Attr::childrenChanged): Besides the above change, use a
+        StringBuilder to build up value, and only do String -> AtomicString
+        conversion once.
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        * dom/Element.h:
+        (WebCore::Element::willModifyAttribute):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItem):
+
 2011-12-16  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCLayerDelegate and WebLayerClient do not need notifySyncRequired

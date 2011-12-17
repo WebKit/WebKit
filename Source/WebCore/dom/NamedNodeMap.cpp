@@ -119,12 +119,7 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
         return 0;
     }
 
-#if ENABLE(MUTATION_OBSERVERS)
-    m_element->enqueueAttributesMutationRecordIfRequested(attribute->name(), oldAttribute ? oldAttribute->value() : nullAtom);
-#endif
-
-    if (attr->isId())
-        m_element->updateId(oldAttribute ? oldAttribute->value() : nullAtom, attribute->value());
+    m_element->willModifyAttribute(attribute->name(), oldAttribute ? oldAttribute->value() : nullAtom, attribute->value());
 
     // ### slightly inefficient - resizes attribute array twice.
     RefPtr<Attr> oldAttr;
@@ -147,21 +142,17 @@ PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
 // because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, ExceptionCode& ec)
 {
+    ASSERT(m_element);
+
     Attribute* attribute = getAttributeItem(name);
     if (!attribute) {
         ec = NOT_FOUND_ERR;
         return 0;
     }
 
-#if ENABLE(MUTATION_OBSERVERS)
-    if (m_element)
-        m_element->enqueueAttributesMutationRecordIfRequested(attribute->name(), attribute->value());
-#endif
-
     RefPtr<Attr> attr = attribute->createAttrIfNeeded(m_element);
 
-    if (attr->isId())
-        m_element->updateId(attribute->value(), nullAtom);
+    m_element->willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
 
     removeAttribute(name);
     return attr.release();

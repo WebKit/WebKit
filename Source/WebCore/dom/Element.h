@@ -266,6 +266,7 @@ public:
     virtual String title() const;
 
     void updateId(const AtomicString& oldId, const AtomicString& newId);
+    void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     LayoutSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const LayoutSize&);
@@ -364,10 +365,6 @@ public:
     
     PassRefPtr<RenderStyle> styleForRenderer();
 
-#if ENABLE(MUTATION_OBSERVERS)
-    void enqueueAttributesMutationRecordIfRequested(const QualifiedName&, const AtomicString& oldValue);
-#endif
-
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
         : ContainerNode(document, type)
@@ -435,6 +432,10 @@ private:
     ElementRareData* ensureRareData();
 
     SpellcheckAttributeState spellcheckAttributeState() const;
+
+#if ENABLE(MUTATION_OBSERVERS)
+    void enqueueAttributesMutationRecordIfRequested(const QualifiedName&, const AtomicString& oldValue);
+#endif
 
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;
@@ -509,6 +510,18 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         scope->removeElementById(oldId, this);
     if (!newId.isEmpty())
         scope->addElementById(newId, this);
+}
+
+inline void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
+{
+    if (isIdAttributeName(name))
+        updateId(oldValue, newValue);
+
+    // FIXME: Should probably call InspectorInstrumentation::willModifyDOMAttr here.
+
+#if ENABLE(MUTATION_OBSERVERS)
+    enqueueAttributesMutationRecordIfRequested(name, oldValue);
+#endif
 }
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
