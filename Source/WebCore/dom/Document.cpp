@@ -77,6 +77,7 @@
 #include "FrameView.h"
 #include "GeolocationController.h"
 #include "HashChangeEvent.h"
+#include "HistogramSupport.h"
 #include "HTMLAllCollection.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
@@ -159,10 +160,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
-
-#if PLATFORM(CHROMIUM)
-#include "PlatformSupport.h"
-#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
@@ -502,17 +499,15 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_docID = docID++;
 }
 
-#if PLATFORM(CHROMIUM)
 static void histogramMutationEventUsage(const unsigned short& listenerTypes)
 {
-    PlatformSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMSubtreeModified", static_cast<bool>(listenerTypes & Document::DOMSUBTREEMODIFIED_LISTENER), 2);
-    PlatformSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeInserted", static_cast<bool>(listenerTypes & Document::DOMNODEINSERTED_LISTENER), 2);
-    PlatformSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeRemoved", static_cast<bool>(listenerTypes & Document::DOMNODEREMOVED_LISTENER), 2);
-    PlatformSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeRemovedFromDocument", static_cast<bool>(listenerTypes & Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER), 2);
-    PlatformSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeInsertedIntoDocument", static_cast<bool>(listenerTypes & Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER), 2);
-    PlatformSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMCharacterDataModified", static_cast<bool>(listenerTypes & Document::DOMCHARACTERDATAMODIFIED_LISTENER), 2);
+    HistogramSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMSubtreeModified", static_cast<bool>(listenerTypes & Document::DOMSUBTREEMODIFIED_LISTENER), 2);
+    HistogramSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeInserted", static_cast<bool>(listenerTypes & Document::DOMNODEINSERTED_LISTENER), 2);
+    HistogramSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeRemoved", static_cast<bool>(listenerTypes & Document::DOMNODEREMOVED_LISTENER), 2);
+    HistogramSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeRemovedFromDocument", static_cast<bool>(listenerTypes & Document::DOMNODEREMOVEDFROMDOCUMENT_LISTENER), 2);
+    HistogramSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMNodeInsertedIntoDocument", static_cast<bool>(listenerTypes & Document::DOMNODEINSERTEDINTODOCUMENT_LISTENER), 2);
+    HistogramSupport::histogramEnumeration("DOMAPI.PerDocumentMutationEventUsage.DOMCharacterDataModified", static_cast<bool>(listenerTypes & Document::DOMCHARACTERDATAMODIFIED_LISTENER), 2);
 }
-#endif
 
 Document::~Document()
 {
@@ -526,9 +521,7 @@ Document::~Document()
 
     m_scriptRunner.clear();
 
-#if PLATFORM(CHROMIUM)
     histogramMutationEventUsage(m_listenerTypes);
-#endif
 
     removeAllEventListeners();
 

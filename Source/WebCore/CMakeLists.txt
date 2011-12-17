@@ -1046,6 +1046,7 @@ SET(WebCore_SOURCES
     platform/FileSystem.cpp
     platform/ClockGeneric.cpp
     platform/GeolocationService.cpp
+    platform/HistogramSupport.cpp
     platform/KURL.cpp
     platform/KillRingNone.cpp
     platform/Language.cpp

@@ -5843,10 +5843,12 @@
 		D3D4E973130C7CFE007BA540 /* HTMLSummaryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */; };
 		D619A307144E00BE004BC302 /* ChildListMutationScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */; };
 		D619A308144E00BE004BC302 /* ChildListMutationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = D619A306144E00BE004BC302 /* ChildListMutationScope.h */; };
+		D630E2AC149BF344005B2F93 /* HistogramSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = D630E2AB149BF344005B2F93 /* HistogramSupport.h */; };
 		D6E276AF14637455001D280A /* MutationObserverRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E276AD14637455001D280A /* MutationObserverRegistration.cpp */; };
 		D6E276B014637455001D280A /* MutationObserverRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E276AE14637455001D280A /* MutationObserverRegistration.h */; };
 		D6E528A3149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */; };
 		D6E528A4149A926D00EFE1F3 /* MutationObserverInterestGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = D6E528A2149A926D00EFE1F3 /* MutationObserverInterestGroup.h */; };
+		D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */; };
 		D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D70AD65513E1342B005B50B4 /* RenderRegion.cpp */; };
 		D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = D70AD65613E1342B005B50B4 /* RenderRegion.h */; };
 		D7613A501474F13F00DB8606 /* WebKitNamedFlow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7613A4E1474F13F00DB8606 /* WebKitNamedFlow.cpp */; };
@@ -13237,10 +13239,12 @@
 		D3D4E971130C7CFE007BA540 /* HTMLSummaryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSummaryElement.h; sourceTree = "<group>"; };
 		D619A305144E00BE004BC302 /* ChildListMutationScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildListMutationScope.cpp; sourceTree = "<group>"; };
 		D619A306144E00BE004BC302 /* ChildListMutationScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildListMutationScope.h; sourceTree = "<group>"; };
+		D630E2AB149BF344005B2F93 /* HistogramSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistogramSupport.h; sourceTree = "<group>"; };
 		D6E276AD14637455001D280A /* MutationObserverRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserverRegistration.cpp; sourceTree = "<group>"; };
 		D6E276AE14637455001D280A /* MutationObserverRegistration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserverRegistration.h; sourceTree = "<group>"; };
 		D6E528A1149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutationObserverInterestGroup.cpp; sourceTree = "<group>"; };
 		D6E528A2149A926D00EFE1F3 /* MutationObserverInterestGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutationObserverInterestGroup.h; sourceTree = "<group>"; };
+		D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistogramSupport.cpp; sourceTree = "<group>"; };
 		D70AD65513E1342B005B50B4 /* RenderRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderRegion.cpp; sourceTree = "<group>"; };
 		D70AD65613E1342B005B50B4 /* RenderRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderRegion.h; sourceTree = "<group>"; };
 		D7613A4A1474EE9500DB8606 /* WebKitNamedFlow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitNamedFlow.idl; sourceTree = "<group>"; };
@@ -20240,6 +20244,8 @@
 				514B3F720C722047000530DF /* FileSystem.h */,
 				BC073BA90C399B1F000F5979 /* FloatConversion.h */,
 				A8748BDF12CBF2DC001FBA41 /* HashTools.h */,
+				D6FDAEF2149C06190037B1E1 /* HistogramSupport.cpp */,
+				D630E2AB149BF344005B2F93 /* HistogramSupport.h */,
 				BC3BC29B0E91AB0F00835588 /* HostWindow.h */,
 				521D46F711AEC9B100514613 /* KillRing.h */,
 				4306E4E514955543007F17AC /* KillRingNone.cpp */,
@@ -23000,6 +23006,7 @@
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
 				FD31603312B0267600C1A359 /* HighPass2FilterNode.h in Headers */,
+				D630E2AC149BF344005B2F93 /* HistogramSupport.h in Headers */,
 				BC94D1540C275C8B006BC617 /* History.h in Headers */,
 				97DCE20210807C750057D394 /* HistoryController.h in Headers */,
 				51741D110B07259A00ED442C /* HistoryItem.h in Headers */,
@@ -26013,6 +26020,7 @@
 				C50B561612119D23008B46E0 /* GroupSettings.cpp in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
 				FD31603212B0267600C1A359 /* HighPass2FilterNode.cpp in Sources */,
+				D6FDAEF3149C06190037B1E1 /* HistogramSupport.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,
 				97DCE20110807C750057D394 /* HistoryController.cpp in Sources */,
 				51741D120B07259A00ED442C /* HistoryItem.cpp in Sources */,

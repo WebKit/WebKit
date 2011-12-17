@@ -1,3 +1,27 @@
+2011-12-16  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [MutationObservers] Remove platform-dependent code in Document.cpp resulting from Mutation Event histogram collection
+        https://bugs.webkit.org/show_bug.cgi?id=73026
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds platform/HistogramSupport which has an empty implementation for all ports
+        except Chromium.
+
+        No tests need. This patch is just a refactor.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::histogramMutationEventUsage):
+        (WebCore::Document::~Document):
+        * platform/HistogramSupport.h: Added.
+        (WebCore::HistogramSupport::histogramEnumeration):
+        * platform/chromium/HistogramSupportChromium.cpp: Added.
+        (WebCore::HistogramSupport::histogramEnumeration):
+
 2011-12-16  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/10576732> and https://bugs.webkit.org/show_bug.cgi?id=74533

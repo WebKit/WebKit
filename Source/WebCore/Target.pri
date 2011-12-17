@@ -1031,6 +1031,7 @@ SOURCES += \
     platform/FileStream.cpp \
     platform/FileSystem.cpp \
     platform/GeolocationService.cpp \
+    platform/HistogramSupport.cpp \
     platform/image-decoders/qt/ImageFrameQt.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFallbackList.cpp \
@@ -2073,6 +2074,7 @@ HEADERS += \
     platform/FileStreamClient.h \
     platform/FileSystem.h \
     platform/GeolocationService.h \
+    platform/HistogramSupport.h \
     platform/image-decoders/ImageDecoder.h \
     platform/mock/DeviceOrientationClientMock.h \
     platform/mock/GeolocationClientMock.cpp \

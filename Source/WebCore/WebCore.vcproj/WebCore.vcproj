@@ -26525,6 +26525,14 @@
 				RelativePath="..\platform\GeolocationService.h"
 				>
 			</File>
+            <File
+                RelativePath="..\platform\HistogramSupport.cpp"
+                >
+            </File>
+            <File
+                RelativePath="..\platform\HistogramSupport.h"
+                >
+            </File>
 			<File
 				RelativePath="..\platform\HostWindow.h"
 				>
