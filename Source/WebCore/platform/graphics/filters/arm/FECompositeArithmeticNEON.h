@@ -29,6 +29,7 @@
 
 #include <wtf/Platform.h>
 
+#if ENABLE(FILTERS)
 #if CPU(ARM_NEON) && COMPILER(GCC)
 
 #include "FEComposite.h"
@@ -47,5 +48,6 @@ inline void FEComposite::platformArithmeticNeon(unsigned char* source, unsigned 
 } // namespace WebCore
 
 #endif // CPU(ARM_NEON) && COMPILER(GCC)
+#endif // ENABLE(FILTERS)
 
 #endif // FECompositeArithmeticNEON_h

@@ -25,6 +25,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(FILTERS)
 #include "FECompositeArithmeticNEON.h"
 
 #if CPU(ARM_NEON) && COMPILER(GCC)
@@ -148,3 +150,6 @@ TOSTRING(neonDrawCompositeArithmetic) ":" NL
 } // namespace WebCore
 
 #endif // CPU(ARM_NEON) && COMPILER(GCC)
+
+#endif // ENABLE(FILTERS)
+
