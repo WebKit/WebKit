@@ -4039,5 +4039,6 @@ BUGWK74726 LEOPARD CPU-CG : editing/input/reveal-caret-of-multiline-input.html =
 BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE
 
 BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
+BUGWK74746 : fast/filesystem/workers/file-entry-to-uri-sync.html = PASS CRASH
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods.html = FAIL
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = FAIL
