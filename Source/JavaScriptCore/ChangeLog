@@ -1,3 +1,17 @@
+2011-12-10  Andreas Kling  <kling@webkit.org>
+
+        OpaqueJSClass: Remove RVCT2 workarounds.
+        <http://webkit.org/b/74250>
+
+        Reviewed by Benjamin Poulain.
+
+        We no longer need workarounds for the RVCT2 compiler since it was
+        only used for the Symbian port of WebKit which is now defunct.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+
 2011-12-16  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the duplicated code from ASCIICType.h
