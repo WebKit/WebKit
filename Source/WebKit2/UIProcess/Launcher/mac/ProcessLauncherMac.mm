@@ -182,7 +182,7 @@ void ProcessLauncher::launchProcess()
     }
     
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processIdentifier, listeningPort));
+    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, processIdentifier, listeningPort));
 }
 
 void ProcessLauncher::terminateProcess()

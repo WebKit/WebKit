@@ -1,3 +1,25 @@
+2011-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Convert more WorkItems over to WTF::Functions
+        https://bugs.webkit.org/show_bug.cgi?id=74770
+
+        Reviewed by Andreas Kling.
+
+        * Platform/WorkQueue.cpp:
+        (WorkQueue::dispatchAfterDelay):
+        * Platform/WorkQueue.h:
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::didCloseOnConnectionWorkQueue):
+        * UIProcess/Launcher/ThreadLauncher.cpp:
+        (WebKit::ThreadLauncher::launchThread):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginThreadAsyncCall):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::derefPluginView):
+        (WebKit::PluginView::unprotectPluginFromDestruction):
+
 2011-12-16  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Windows test fix

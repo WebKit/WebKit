@@ -43,7 +43,7 @@ void ThreadLauncher::launchThread()
     CoreIPC::Connection::Identifier connectionIdentifier = createWebThread();
 
     // We've finished launching the thread, message back to the main run loop.
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &ThreadLauncher::didFinishLaunchingThread, connectionIdentifier));
+    RunLoop::main()->dispatch(bind(&ThreadLauncher::didFinishLaunchingThread, this, connectionIdentifier));
 }
 
 void ThreadLauncher::didFinishLaunchingThread(CoreIPC::Connection::Identifier identifier)

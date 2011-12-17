@@ -93,8 +93,8 @@ void ChildProcess::didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::
     // If the connection has been closed and we haven't responded in the main thread for 10 seconds
     // the process will exit forcibly.
     static const double watchdogDelay = 10.0;
-    
-    workQueue.scheduleWorkAfterDelay(WorkItem::create(watchdogCallback), watchdogDelay);
+
+    workQueue.dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
 }
     
 } // namespace WebKit

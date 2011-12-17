@@ -1202,6 +1202,11 @@ void PluginView::protectPluginFromDestruction()
         ref();
 }
 
+static void derefPluginView(PluginView* pluginView)
+{
+    pluginView->deref();
+}
+
 void PluginView::unprotectPluginFromDestruction()
 {
     if (m_isBeingDestroyed)
@@ -1213,7 +1218,7 @@ void PluginView::unprotectPluginFromDestruction()
     // the destroyed object higher on the stack. To prevent this, if the plug-in has
     // only one remaining reference, call deref() asynchronously.
     if (hasOneRef())
-        RunLoop::main()->scheduleWork(WorkItem::createDeref(this));
+        RunLoop::main()->dispatch(bind(derefPluginView, this));
     else
         deref();
 }

@@ -68,6 +68,9 @@ public:
     // Will dispatch the given function to run as soon as possible.
     void dispatch(const Function<void()>&);
 
+    // Will dispatch the given function after the given delay (in seconds).
+    void dispatchAfterDelay(const Function<void()>&, double delay);
+
     // FIXME: Get rid of WorkItem everywhere.
 
     // Will schedule the given work item to run as soon as possible.
