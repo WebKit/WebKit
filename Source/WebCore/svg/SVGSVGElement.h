@@ -171,8 +171,8 @@ private:
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
-    virtual void documentWillBecomeInactive();
-    virtual void documentDidBecomeActive();
+    virtual void documentWillSuspendForPageCache();
+    virtual void documentDidResumeFromPageCache();
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const;
 

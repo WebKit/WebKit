@@ -1844,8 +1844,6 @@ void Document::detach()
 
     RenderObject* render = renderer();
 
-    // Send out documentWillBecomeInactive() notifications to registered elements,
-    // in order to stop media elements
     documentWillBecomeInactive();
 
 #if ENABLE(SHARED_WORKERS)
@@ -3919,25 +3917,30 @@ void Document::setInPageCache(bool flag)
     }
 }
 
-void Document::documentWillBecomeInactive() 
+void Document::documentWillBecomeInactive()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (renderer())
         renderView()->willMoveOffscreen();
 #endif
-
-    HashSet<Element*>::iterator end = m_documentActivationCallbackElements.end();
-    for (HashSet<Element*>::iterator i = m_documentActivationCallbackElements.begin(); i != end; ++i)
-        (*i)->documentWillBecomeInactive();
 }
 
-void Document::documentDidBecomeActive() 
+void Document::documentWillSuspendForPageCache()
+{
+    documentWillBecomeInactive();
+
+    HashSet<Element*>::iterator end = m_documentSuspensionCallbackElements.end();
+    for (HashSet<Element*>::iterator i = m_documentSuspensionCallbackElements.begin(); i != end; ++i)
+        (*i)->documentWillSuspendForPageCache();
+}
+
+void Document::documentDidResumeFromPageCache() 
 {
     Vector<Element*> elements;
-    copyToVector(m_documentActivationCallbackElements, elements);
+    copyToVector(m_documentSuspensionCallbackElements, elements);
     Vector<Element*>::iterator end = elements.end();
     for (Vector<Element*>::iterator i = elements.begin(); i != end; ++i)
-        (*i)->documentDidBecomeActive();
+        (*i)->documentDidResumeFromPageCache();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (renderer())
@@ -3951,14 +3954,14 @@ void Document::documentDidBecomeActive()
     m_frame->loader()->client()->dispatchDidBecomeFrameset(isFrameSet());
 }
 
-void Document::registerForDocumentActivationCallbacks(Element* e)
+void Document::registerForPageCacheSuspensionCallbacks(Element* e)
 {
-    m_documentActivationCallbackElements.add(e);
+    m_documentSuspensionCallbackElements.add(e);
 }
 
-void Document::unregisterForDocumentActivationCallbacks(Element* e)
+void Document::unregisterForPageCacheSuspensionCallbacks(Element* e)
 {
-    m_documentActivationCallbackElements.remove(e);
+    m_documentSuspensionCallbackElements.remove(e);
 }
 
 void Document::mediaVolumeDidChange() 

@@ -1805,7 +1805,7 @@ void FrameLoader::commitProvisionalLoad()
         history()->updateForClientRedirect();
 
     if (m_loadingFromCachedPage) {
-        m_frame->document()->documentDidBecomeActive();
+        m_frame->document()->documentDidResumeFromPageCache();
         
         // Force a layout to update view size and thereby update scrollbars.
         m_frame->view()->forceLayout();

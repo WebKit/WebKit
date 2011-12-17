@@ -77,8 +77,8 @@ protected:
     virtual void willMoveToNewOwnerDocument() OVERRIDE;
     virtual void didMoveToNewOwnerDocument() OVERRIDE;
     
-    virtual void documentWillBecomeInactive() OVERRIDE;
-    virtual void documentDidBecomeActive() OVERRIDE;
+    virtual void documentWillSuspendForPageCache() OVERRIDE;
+    virtual void documentDidResumeFromPageCache() OVERRIDE;
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 

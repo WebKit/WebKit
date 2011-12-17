@@ -1,0 +1,10 @@
+<script src="../media-file.js"></script>
+<body onload="opener.childLoaded()">
+<object height="500" width="500">
+<video id="theVideo" controls="controls" poster="../content/abe.png" preload="auto">
+</video>
+<script>
+document.getElementById("theVideo").src = findMediaFile('video', '../content/counting');
+</script>
+</object>
+</body>

@@ -970,13 +970,15 @@ public:
 
     bool inPageCache() const { return m_inPageCache; }
     void setInPageCache(bool flag);
-    
-    // Elements can register themselves for the "documentWillBecomeInactive()" and  
-    // "documentDidBecomeActive()" callbacks
-    void registerForDocumentActivationCallbacks(Element*);
-    void unregisterForDocumentActivationCallbacks(Element*);
+
+    // Elements can register themselves for the "documentWillSuspendForPageCache()" and  
+    // "documentDidResumeFromPageCache()" callbacks
+    void registerForPageCacheSuspensionCallbacks(Element*);
+    void unregisterForPageCacheSuspensionCallbacks(Element*);
+
     void documentWillBecomeInactive();
-    void documentDidBecomeActive();
+    void documentWillSuspendForPageCache();
+    void documentDidResumeFromPageCache();
 
     void registerForMediaVolumeCallbacks(Element*);
     void unregisterForMediaVolumeCallbacks(Element*);
@@ -1391,7 +1393,7 @@ private:
     bool m_inPageCache;
     Vector<IconURL> m_iconURLs;
 
-    HashSet<Element*> m_documentActivationCallbackElements;
+    HashSet<Element*> m_documentSuspensionCallbackElements;
     HashSet<Element*> m_mediaVolumeCallbackElements;
     HashSet<Element*> m_privateBrowsingStateChangedElements;
 

@@ -126,7 +126,7 @@ private:
 
     virtual bool isURLAttribute(Attribute*) const;
 
-    virtual void documentDidBecomeActive();
+    virtual void documentDidResumeFromPageCache();
 
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();

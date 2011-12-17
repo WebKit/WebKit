@@ -271,8 +271,8 @@ public:
     void setMinimumSizeForResizing(const LayoutSize&);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
-    virtual void documentWillBecomeInactive() { }
-    virtual void documentDidBecomeActive() { }
+    virtual void documentWillSuspendForPageCache() { }
+    virtual void documentDidResumeFromPageCache() { }
 
     // Use Document::registerForMediaVolumeCallbacks() to subscribe to this
     virtual void mediaVolumeDidChange() { }

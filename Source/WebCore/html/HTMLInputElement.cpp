@@ -114,8 +114,8 @@ void HTMLInputElement::createShadowSubtree()
 
 HTMLInputElement::~HTMLInputElement()
 {
-    if (needsActivationCallback())
-        document()->unregisterForDocumentActivationCallbacks(this);
+    if (needsSuspensionCallback())
+        document()->unregisterForPageCacheSuspensionCallbacks(this);
 
     document()->checkedRadioButtons().removeButton(this);
 
@@ -562,7 +562,7 @@ void HTMLInputElement::updateType()
         detach();
 
     bool didStoreValue = m_inputType->storesValueSeparateFromAttribute();
-    bool neededActivationCallback = needsActivationCallback();
+    bool neededSuspensionCallback = needsSuspensionCallback();
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
 
     m_inputType->destroyShadowSubtree();
@@ -587,10 +587,10 @@ void HTMLInputElement::updateType()
 
     m_wasModifiedByUser = false;
 
-    if (neededActivationCallback)
-        unregisterForActivationCallbackIfNeeded();
+    if (neededSuspensionCallback)
+        unregisterForSuspensionCallbackIfNeeded();
     else
-        registerForActivationCallbackIfNeeded();
+        registerForSuspensionCallbackIfNeeded();
 
     if (didRespectHeightAndWidth != m_inputType->shouldRespectHeightAndWidthAttributes()) {
         NamedNodeMap* map = attributeMap();
@@ -735,7 +735,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == autocompleteAttr) {
         if (equalIgnoringCase(attr->value(), "off")) {
             m_autocomplete = Off;
-            registerForActivationCallbackIfNeeded();
+            registerForSuspensionCallbackIfNeeded();
         } else {
             bool needsToUnregister = m_autocomplete == Off;
 
@@ -745,7 +745,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
                 m_autocomplete = On;
 
             if (needsToUnregister)
-                unregisterForActivationCallbackIfNeeded();
+                unregisterForSuspensionCallbackIfNeeded();
         }
     } else if (attr->name() == typeAttr) {
         updateType();
@@ -1462,21 +1462,21 @@ bool HTMLInputElement::isOutOfRange() const
     return m_inputType->supportsRangeLimitation() && (rangeUnderflow(value()) || rangeOverflow(value()));
 }
 
-bool HTMLInputElement::needsActivationCallback()
+bool HTMLInputElement::needsSuspensionCallback()
 {
     return m_autocomplete == Off || m_inputType->shouldResetOnDocumentActivation();
 }
 
-void HTMLInputElement::registerForActivationCallbackIfNeeded()
+void HTMLInputElement::registerForSuspensionCallbackIfNeeded()
 {
-    if (needsActivationCallback())
-        document()->registerForDocumentActivationCallbacks(this);
+    if (needsSuspensionCallback())
+        document()->registerForPageCacheSuspensionCallbacks(this);
 }
 
-void HTMLInputElement::unregisterForActivationCallbackIfNeeded()
+void HTMLInputElement::unregisterForSuspensionCallbackIfNeeded()
 {
-    if (!needsActivationCallback())
-        document()->unregisterForDocumentActivationCallbacks(this);
+    if (!needsSuspensionCallback())
+        document()->unregisterForPageCacheSuspensionCallbacks(this);
 }
 
 bool HTMLInputElement::isRequiredFormControl() const
@@ -1499,9 +1499,9 @@ void HTMLInputElement::onSearch()
     dispatchEvent(Event::create(eventNames().searchEvent, true, false));
 }
 
-void HTMLInputElement::documentDidBecomeActive()
+void HTMLInputElement::documentDidResumeFromPageCache()
 {
-    ASSERT(needsActivationCallback());
+    ASSERT(needsSuspensionCallback());
     reset();
 }
 
@@ -1510,8 +1510,8 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
     m_inputType->willMoveToNewOwnerDocument();
 
     // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
-    if (needsActivationCallback())
-        document()->unregisterForDocumentActivationCallbacks(this);
+    if (needsSuspensionCallback())
+        document()->unregisterForPageCacheSuspensionCallbacks(this);
 
     document()->checkedRadioButtons().removeButton(this);
 
@@ -1520,7 +1520,7 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
 
 void HTMLInputElement::didMoveToNewOwnerDocument()
 {
-    registerForActivationCallbackIfNeeded();
+    registerForSuspensionCallbackIfNeeded();
 
     HTMLTextFormControlElement::didMoveToNewOwnerDocument();
 }

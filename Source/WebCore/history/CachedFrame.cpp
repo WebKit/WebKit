@@ -137,7 +137,7 @@ void CachedFrameBase::restore()
         m_document->page()->chrome()->client()->needTouchEvents(true);
 #endif
 
-    m_document->documentDidBecomeActive();
+    m_document->documentDidResumeFromPageCache();
 }
 
 CachedFrame::CachedFrame(Frame* frame)
@@ -169,7 +169,7 @@ CachedFrame::CachedFrame(Frame* frame)
     // Suspending must also happen after we've recursed over child frames, in case
     // those create more objects.
     // FIXME: It's still possible to have objects created after suspending in some cases, see http://webkit.org/b/53733 for more details.
-    m_document->documentWillBecomeInactive();
+    m_document->documentWillSuspendForPageCache();
     m_document->suspendScriptedAnimationControllerCallbacks();
     m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);
     m_cachedFrameScriptData = adoptPtr(new ScriptCachedFrameData(frame));

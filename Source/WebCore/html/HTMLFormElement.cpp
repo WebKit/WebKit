@@ -92,7 +92,7 @@ PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName
 HTMLFormElement::~HTMLFormElement()
 {
     if (!shouldAutocomplete())
-        document()->unregisterForDocumentActivationCallbacks(this);
+        document()->unregisterForPageCacheSuspensionCallbacks(this);
 
     for (unsigned i = 0; i < m_associatedElements.size(); ++i)
         m_associatedElements[i]->formDestroyed();
@@ -377,9 +377,9 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
         m_attributes.setAcceptCharset(attr->value());
     else if (attr->name() == autocompleteAttr) {
         if (!shouldAutocomplete())
-            document()->registerForDocumentActivationCallbacks(this);
+            document()->registerForPageCacheSuspensionCallbacks(this);
         else
-            document()->unregisterForDocumentActivationCallbacks(this);
+            document()->unregisterForPageCacheSuspensionCallbacks(this);
     } else if (attr->name() == onsubmitAttr)
         setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onresetAttr)
@@ -636,7 +636,7 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
         addElementAlias(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);
 }
 
-void HTMLFormElement::documentDidBecomeActive()
+void HTMLFormElement::documentDidResumeFromPageCache()
 {
     ASSERT(!shouldAutocomplete());
 
@@ -649,14 +649,14 @@ void HTMLFormElement::documentDidBecomeActive()
 void HTMLFormElement::willMoveToNewOwnerDocument()
 {
     if (!shouldAutocomplete())
-        document()->unregisterForDocumentActivationCallbacks(this);
+        document()->unregisterForPageCacheSuspensionCallbacks(this);
     HTMLElement::willMoveToNewOwnerDocument();
 }
 
 void HTMLFormElement::didMoveToNewOwnerDocument()
 {
     if (!shouldAutocomplete())
-        document()->registerForDocumentActivationCallbacks(this);
+        document()->registerForPageCacheSuspensionCallbacks(this);
     HTMLElement::didMoveToNewOwnerDocument();
 }
 

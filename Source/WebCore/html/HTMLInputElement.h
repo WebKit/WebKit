@@ -298,13 +298,13 @@ private:
     virtual bool isInRange() const;
     virtual bool isOutOfRange() const;
 
-    virtual void documentDidBecomeActive();
+    virtual void documentDidResumeFromPageCache();
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    bool needsActivationCallback();
-    void registerForActivationCallbackIfNeeded();
-    void unregisterForActivationCallbackIfNeeded();
+    bool needsSuspensionCallback();
+    void registerForSuspensionCallbackIfNeeded();
+    void unregisterForSuspensionCallbackIfNeeded();
 
     bool supportsMaxLength() const { return isTextType(); }
     bool isTextType() const;

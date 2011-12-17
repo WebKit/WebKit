@@ -1,3 +1,77 @@
+2011-12-16  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/10576732> and https://bugs.webkit.org/show_bug.cgi?id=74533
+        REGRESSION(r102619): Reproducible crash closing window with video + poster image inside an object element
+
+        Reviewed by Darin Adler.
+
+        Test: media/crash-closing-page-with-media-as-plugin-fallback.html
+
+        At some point documentWillBecomeInactive() was overloaded to not only notify elements they were going in to the page
+        cache but also do some other work that was necessary during Document teardown.
+
+        This crash occurs because we're notifying elements they're going in to the page cache at document teardown, so this
+        patch breaks that work back out in to a separate function.
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach): Remove obsolete comment.
+        (WebCore::Document::documentWillBecomeInactive): Handle only accelerated compositing cleanup.
+        (WebCore::Document::documentWillSuspendForPageCache): Call documentWillBecomeInactive before notifying elements of suspension.
+        (WebCore::Document::documentDidResumeFromPageCache):
+        (WebCore::Document::registerForPageCacheSuspensionCallbacks):
+        (WebCore::Document::unregisterForPageCacheSuspensionCallbacks):
+        * dom/Document.h:
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore): Call the renamed documentDidResumeFromPageCache.
+        (WebCore::CachedFrame::CachedFrame): Call documentWillSuspendForPageCache instead of documentDidBecomeInactive.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad): Call the renamed documentDidResumeFromPageCache.
+
+        * dom/Element.h:
+        (WebCore::Element::documentWillSuspendForPageCache): Renamed from documentWillBecomeInactive()
+        (WebCore::Element::documentDidResumeFromPageCache): Renamed from documentDidBecomeActive()
+
+        Change to the renamed registration and callbacks functions in the handful of classes that use them:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        (WebCore::HTMLFormElement::documentDidResumeFromPageCache):
+        (WebCore::HTMLFormElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLFormElement::didMoveToNewOwnerDocument):
+        * html/HTMLFormElement.h:
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::needsSuspensionCallback):
+        (WebCore::HTMLInputElement::registerForSuspensionCallbackIfNeeded):
+        (WebCore::HTMLInputElement::unregisterForSuspensionCallbackIfNeeded):
+        (WebCore::HTMLInputElement::documentDidResumeFromPageCache):
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument):
+        * html/HTMLInputElement.h:
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::~HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::createRenderer):
+        (WebCore::HTMLPlugInImageElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLPlugInImageElement::didMoveToNewOwnerDocument):
+        (WebCore::HTMLPlugInImageElement::documentWillSuspendForPageCache):
+        (WebCore::HTMLPlugInImageElement::documentDidResumeFromPageCache):
+        * html/HTMLPlugInImageElement.h:
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::~SVGSVGElement):
+        (WebCore::SVGSVGElement::willMoveToNewOwnerDocument):
+        (WebCore::SVGSVGElement::didMoveToNewOwnerDocument):
+        (WebCore::SVGSVGElement::documentWillSuspendForPageCache):
+        (WebCore::SVGSVGElement::documentDidResumeFromPageCache):
+        * svg/SVGSVGElement.h:
+
 2011-12-16  Eric Penner  <epenner@google.com>
 
         [chromium] Need to prepaint tiles in TiledLayerChromium

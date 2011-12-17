@@ -90,7 +90,7 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
 {
     ASSERT(hasTagName(SVGNames::svgTag));
     registerAnimatedPropertiesForSVGSVGElement();
-    doc->registerForDocumentActivationCallbacks(this);
+    doc->registerForPageCacheSuspensionCallbacks(this);
 }
 
 PassRefPtr<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Document* document)
@@ -100,7 +100,7 @@ PassRefPtr<SVGSVGElement> SVGSVGElement::create(const QualifiedName& tagName, Do
 
 SVGSVGElement::~SVGSVGElement()
 {
-    document()->unregisterForDocumentActivationCallbacks(this);
+    document()->unregisterForPageCacheSuspensionCallbacks(this);
     // There are cases where removedFromDocument() is not called.
     // see ContainerNode::removeAllChildren, called by its destructor.
     document()->accessSVGExtensions()->removeTimeContainer(this);
@@ -108,13 +108,13 @@ SVGSVGElement::~SVGSVGElement()
 
 void SVGSVGElement::willMoveToNewOwnerDocument()
 {
-    document()->unregisterForDocumentActivationCallbacks(this);
+    document()->unregisterForPageCacheSuspensionCallbacks(this);
     SVGStyledLocatableElement::willMoveToNewOwnerDocument();
 }
 
 void SVGSVGElement::didMoveToNewOwnerDocument()
 {
-    document()->registerForDocumentActivationCallbacks(this);
+    document()->registerForPageCacheSuspensionCallbacks(this);
     SVGStyledLocatableElement::didMoveToNewOwnerDocument();
 }
 
@@ -657,12 +657,12 @@ void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
     
-void SVGSVGElement::documentWillBecomeInactive()
+void SVGSVGElement::documentWillSuspendForPageCache()
 {
     pauseAnimations();
 }
 
-void SVGSVGElement::documentDidBecomeActive()
+void SVGSVGElement::documentDidResumeFromPageCache()
 {
     unpauseAnimations();
 }
