@@ -41,6 +41,8 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-dee
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
 // See BUGCR104797
 
+BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
+
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
