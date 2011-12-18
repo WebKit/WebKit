@@ -1,3 +1,15 @@
+2011-12-18  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r103149): prepare-ChangeLog outputs a warning
+        https://bugs.webkit.org/show_bug.cgi?id=74808
+
+        Reviewed by David Kilzer.
+
+        Added the prototype declaration of main() to avoid warning messages.
+        Sorted subroutine declarations in the alphabetical order.
+
+        * Scripts/prepare-ChangeLog:
+
 2011-12-17  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [Qt] Fix QtTestBrowser compilation with QtWidgets module
