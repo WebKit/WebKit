@@ -1,3 +1,13 @@
+2011-12-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: chromium profiler: change default root type for retaining paths from GC Roots to DOMWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=74697
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.get isTracingToWindowObjects):
+
 2011-12-18  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: Switch to type-safe JSON ConsoleMessage.cpp, InspectorDOMAgent.cpp, InspectorDebuggerAgent.cpp, ScriptCallFrame.cpp

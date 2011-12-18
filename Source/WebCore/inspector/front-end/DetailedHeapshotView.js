@@ -621,8 +621,8 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     toGCRootsTraceOption.label = WebInspector.UIString("to GC roots");
     var toWindowObjectsTraceOption = document.createElement("option");
     toWindowObjectsTraceOption.label = WebInspector.UIString("to window objects");
-    this.retainingPathsRoot.appendChild(toGCRootsTraceOption);
     this.retainingPathsRoot.appendChild(toWindowObjectsTraceOption);
+    this.retainingPathsRoot.appendChild(toGCRootsTraceOption);
     retainingPathsTitleDiv.appendChild(retainingPathsTitle);
     retainingPathsTitleDiv.appendChild(this.retainingPathsRoot);
     this.retainmentViewHeader.appendChild(retainingPathsTitleDiv);
@@ -1117,7 +1117,7 @@ WebInspector.DetailedHeapshotView.prototype = {
 
     get isTracingToWindowObjects()
     {
-        return this.retainingPathsRoot.selectedIndex === 1;
+        return this.retainingPathsRoot.selectedIndex === 0;
     },
 
     get _isShowingAsPercent()
