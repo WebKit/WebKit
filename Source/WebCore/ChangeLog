@@ -1,5 +1,21 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        TagNodeList: Optimize nodeMatches() for the common case.
+        <http://webkit.org/b/74796>
+
+        Reviewed by Antti Koivisto.
+
+        Reject based on tag name mismatch before comparing the namespaces,
+        as this case is vastly more common.
+
+        nodeMatches() is very hot on the DOM Query (Dojo) test on Dromaeo.
+        This change takes it from 8.3% to 7.7% on my MBP.
+
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::nodeMatches):
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         NameNodeList: Use fastGetAttribute() in nodeMatches().
         <http://webkit.org/b/74797>
 

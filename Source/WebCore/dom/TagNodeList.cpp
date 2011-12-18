@@ -47,10 +47,10 @@ TagNodeList::~TagNodeList()
 
 bool TagNodeList::nodeMatches(Element* testNode) const
 {
-    if (m_namespaceURI != starAtom && m_namespaceURI != testNode->namespaceURI())
+    if (m_localName != starAtom && m_localName != testNode->localName())
         return false;
 
-    return m_localName == starAtom || m_localName == testNode->localName();
+    return m_namespaceURI == starAtom || m_namespaceURI == testNode->namespaceURI();
 }
 
 } // namespace WebCore
