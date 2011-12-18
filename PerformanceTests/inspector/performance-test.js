@@ -78,9 +78,8 @@ InspectorTest.runPerformanceTest = function(perfTest, executeTime, callback)
             var url = WebInspector.inspectedPageURL;
             var regExp = /([^\/]+)\.html/;
             var matches = regExp.exec(url);
-            InspectorTest.dumpTestStats(groupName, "heap-delta-" + matches[1], this._heapSizeDeltas, "kB", 1024);
+            InspectorTest.dumpTestStats("heap-delta", matches[1], this._heapSizeDeltas, "kB", 1024);
         },
-
     }
 
     InspectorTest.timer = new Timer(perfTest, callback);

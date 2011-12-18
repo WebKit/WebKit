@@ -1,3 +1,14 @@
+2011-12-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: move heap data stats to separate tab.
+        https://bugs.webkit.org/show_bug.cgi?id=74704
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/performance-test.js:
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest.Timer.prototype._dump):
+        (initialize_TimeTracker.InspectorTest.runPerformanceTest):
+
 2011-12-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium: move and adapt Inspector's performance tests for running with run-inspector-perf-tests.py.
