@@ -1,5 +1,51 @@
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
+        Interacting with GMail message lists is sluggish.
+        <http://webkit.org/b/74813>
+
+        Reviewed by Dan Bernstein.
+
+        Add an argument to collapsed*Border() to control whether the border
+        color is computed or not. This allows us to avoid expensive work when
+        we're only interested in the metrics.
+
+        RenderStyle::visitedDependentColor() was very hot (4.5%) when hit-testing
+        on GMail and this removes its usage altogether.
+        This should be an improvement for table rendering as well, since it was
+        all happening below RenderBox::overflowClipRect().
+
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedLeftBorder):
+        (WebCore::RenderTableCell::collapsedRightBorder):
+        (WebCore::RenderTableCell::collapsedTopBorder):
+        (WebCore::RenderTableCell::collapsedBottomBorder):
+
+            Add and propagate an IncludeBorderColorOrNot argument that decides
+            whether we compute the CollapsedBorderValue's color.
+
+        (WebCore::RenderTableCell::collapsedStartBorder):
+        (WebCore::RenderTableCell::collapsedEndBorder):
+
+            Renamed start & end to startColorProperty & endColorProperty
+            for clarity. Also same modifications as the above functions.
+
+        (WebCore::RenderTableCell::collapsedBeforeBorder):
+        (WebCore::RenderTableCell::collapsedAfterBorder):
+
+            Renamed before & after to beforeColorProperty & afterColorProperty
+            for clarity. Also same modifications as the above functions.
+
+        (WebCore::RenderTableCell::borderHalfStart):
+        (WebCore::RenderTableCell::borderHalfEnd):
+        (WebCore::RenderTableCell::borderHalfBefore):
+        (WebCore::RenderTableCell::borderHalfAfter):
+
+            Pass DoNotIncludeBorderColor to collapsed*Border() since we only care
+            about the metrics here.
+
+2011-12-18  Andreas Kling  <kling@webkit.org>
+
         The scrolling coordinator should keep track of the main frame geometry
         https://bugs.webkit.org/show_bug.cgi?id=74816
 
