@@ -80,6 +80,18 @@ void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection
 
 void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
 {
+#if ENABLE(THREADED_SCROLLING)
+    MutexLocker locker(m_scrollingCoordinatorsMutex);
+    if (ScrollingCoordinator* scrollingCoordinator = m_scrollingCoordinators.get(pageID).get()) {
+        PlatformWheelEvent platformWheelEvent = platform(wheelEvent);
+
+        if (scrollingCoordinator->handleWheelEvent(platformWheelEvent)) {
+            sendDidHandleEvent(pageID, wheelEvent);
+            return;
+        }
+    }
+#endif
+
     RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
 }
 

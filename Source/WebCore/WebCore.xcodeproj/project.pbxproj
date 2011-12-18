@@ -357,6 +357,7 @@
 		1A1414B613A0F0500019996C /* WebKitFontFamilyNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */; settings = {ATTRIBUTES = (); }; };
 		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
+		1A1F28A1149E629800FBC35F /* ScrollingCoordinatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1F289F149E629800FBC35F /* ScrollingCoordinatorMac.mm */; };
 		1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2246490CC98DDB00C05240 /* SQLiteDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */; };
 		1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7487,6 +7488,7 @@
 		1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitFontFamilyNames.h; sourceTree = "<group>"; };
 		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
+		1A1F289F149E629800FBC35F /* ScrollingCoordinatorMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingCoordinatorMac.mm; sourceTree = "<group>"; };
 		1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npfunctions.h; sourceTree = "<group>"; };
 		1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteDatabase.cpp; path = sql/SQLiteDatabase.cpp; sourceTree = "<group>"; };
 		1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteDatabase.h; path = sql/SQLiteDatabase.h; sourceTree = "<group>"; };
@@ -17189,6 +17191,7 @@
 				93C09A7E0B064EEF005ABD4D /* EventHandlerMac.mm */,
 				65BF023C0974819000C43196 /* FrameMac.mm */,
 				1C26497B0D7E24EC00BD10F2 /* PageMac.cpp */,
+				1A1F289F149E629800FBC35F /* ScrollingCoordinatorMac.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 			);
 			path = mac;
@@ -27838,6 +27841,7 @@
 				1A2F9D7914968C740065AC63 /* ScrollingCoordinator.cpp in Sources */,
 				1AA7160A149BC4DB0016EC19 /* TileCache.mm in Sources */,
 				1AA7161E149BF2FA0016EC19 /* WebTileLayer.mm in Sources */,
+				1A1F28A1149E629800FBC35F /* ScrollingCoordinatorMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

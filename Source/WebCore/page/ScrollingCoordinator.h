@@ -44,8 +44,17 @@ public:
 
     void pageDestroyed();
 
+    // Can be called from any thread. Will try to handle the wheel event on the scrolling thread,
+    // and return false if the event must be sent again to the WebCore event handler.
+    bool handleWheelEvent(const PlatformWheelEvent&);
+
 private:
     explicit ScrollingCoordinator(Page*);
+
+    // FIXME: Once we have a proper thread/run loop abstraction we should get rid of these
+    // functions and just use something like scrollingRunLoop()->dispatch(function);
+    static bool isScrollingThread();
+    static void dispatchOnScrollingThread(const Function<void()>&);
 
 private:
     Page* m_page;

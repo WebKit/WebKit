@@ -1,5 +1,18 @@
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
+        Add a scrolling thread to the scrolling coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=74814
+
+        Reviewed by Andreas Kling.
+
+        Check if the scrolling coordinator can handle the wheel event before dispatching it
+        to the main thread.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
         EventDispatcher should keep track of all scrolling coordinators
         https://bugs.webkit.org/show_bug.cgi?id=74810
 

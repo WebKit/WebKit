@@ -24,11 +24,13 @@
  */
 
 #include "config.h"
-#include "ScrollingCoordinator.h"
-
-#include <wtf/PassRefPtr.h>
 
 #if ENABLE(THREADED_SCROLLING)
+
+#include "ScrollingCoordinator.h"
+
+#include <wtf/Functional.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -51,6 +53,12 @@ void ScrollingCoordinator::pageDestroyed()
 {
     ASSERT(m_page);
     m_page = 0;
+}
+
+bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent&)
+{
+    // FIXME: Implement.
+    return false;
 }
 
 } // namespace WebCore

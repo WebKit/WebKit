@@ -1,5 +1,33 @@
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
+        Add a scrolling thread to the scrolling coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=74814
+
+        Reviewed by Andreas Kling.
+
+        * WebCore.exp.in:
+        Export ScrollingCoordinator::handleWheelEvent.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ScrollingCoordinatorMac.mm
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        Add a stub function.
+
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm: Added.
+        Add a ScrollingThread object which creates a thread and attaches a run loop source
+        to it, allowing for functions to be dispatched and run on said thread.
+
+        (WebCore::ScrollingCoordinator::isScrollingThread):
+        Call ScrollingThread::isCurrentThread.
+
+        (WebCore::ScrollingCoordinator::dispatchOnScrollingThread):
+        Call ScrollingThread::dispatch.
+
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
         EventDispatcher should keep track of all scrolling coordinators
         https://bugs.webkit.org/show_bug.cgi?id=74810
 

@@ -2019,6 +2019,7 @@ __ZN7WebCore12Notification18dispatchCloseEventEv
 #endif
 
 #if ENABLE(THREADED_SCROLLING)
+__ZN7WebCore20ScrollingCoordinator16handleWheelEventERKNS_18PlatformWheelEventE
 __ZN7WebCore20ScrollingCoordinatorD1Ev
 __ZN7WebCore4Page20scrollingCoordinatorEv
 #endif
