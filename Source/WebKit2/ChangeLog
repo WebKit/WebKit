@@ -1,3 +1,31 @@
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
+        EventDispatcher should keep track of all scrolling coordinators
+        https://bugs.webkit.org/show_bug.cgi?id=74810
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::addScrollingCoordinatorForPage):
+        Get the scrolling coordinator from the WebCore page and add it to the map.
+
+        (WebKit::EventDispatcher::removeScrollingCoordinatorForPage):
+        Remove the scrolling coordinator from the map.
+
+        (WebKit::EventDispatcher::sendDidHandleEvent):
+        Add a new helper function, currently unused.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Add the scrolling coordinator.
+
+        (WebKit::TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea):
+        Remove the scrolling coordinator.
+
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::eventDispatcher):
+        Add a getter.
+
 2011-12-16  Anders Carlsson  <andersca@apple.com>
 
         Move everyone off of WorkItem

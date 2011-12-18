@@ -27,17 +27,32 @@
 #define EventDispatcher_h
 
 #include "Connection.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
 #include <wtf/ThreadingPrimitives.h>
+
+namespace WebCore {
+    class ScrollingCoordinator;
+}
 
 namespace WebKit {
 
+class WebEvent;
+class WebPage;
 class WebWheelEvent;
 
 class EventDispatcher : public CoreIPC::Connection::QueueClient {
+    WTF_MAKE_NONCOPYABLE(EventDispatcher);
+
 public:
     EventDispatcher();
     ~EventDispatcher();
+
+#if ENABLE(THREADED_SCROLLING)
+    void addScrollingCoordinatorForPage(WebPage*);
+    void removeScrollingCoordinatorForPage(WebPage*);
+#endif
 
 private:
     // CoreIPC::Connection::QueueClient
@@ -51,6 +66,13 @@ private:
 
     // This is called on the main thread.
     void dispatchWheelEvent(uint64_t pageID, const WebWheelEvent&);
+
+#if ENABLE(THREADED_SCROLLING)
+    void sendDidHandleEvent(uint64_t pageID, const WebEvent&);
+
+    Mutex m_scrollingCoordinatorsMutex;
+    HashMap<uint64_t, RefPtr<WebCore::ScrollingCoordinator> > m_scrollingCoordinators;
+#endif
 };
 
 } // namespace WebKit

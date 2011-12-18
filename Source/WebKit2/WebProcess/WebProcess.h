@@ -141,6 +141,8 @@ public:
     bool disablePluginProcessMessageTimeout() const { return m_disablePluginProcessMessageTimeout; }
 #endif
 
+    EventDispatcher& eventDispatcher() { return m_eventDispatcher; }
+
 private:
     WebProcess();
 

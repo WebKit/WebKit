@@ -27,6 +27,7 @@
 #import "TiledCoreAnimationDrawingArea.h"
 
 #import "DrawingAreaProxyMessages.h"
+#import "EventDispatcher.h"
 #import "LayerTreeContext.h"
 #import "WebPage.h"
 #import "WebProcess.h"
@@ -63,6 +64,8 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 
 #if ENABLE(THREADED_SCROLLING)
     page->settings()->setScrollingCoordinatorEnabled(true);
+
+    WebProcess::shared().eventDispatcher().addScrollingCoordinatorForPage(webPage);
 #endif
 
     m_rootLayer = [CALayer layer];
@@ -86,6 +89,10 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
 
 TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
 {
+#if ENABLE(THREADED_SCROLLING)
+    WebProcess::shared().eventDispatcher().removeScrollingCoordinatorForPage(m_webPage);
+#endif
+
     m_layerFlushScheduler.invalidate();
 }
 

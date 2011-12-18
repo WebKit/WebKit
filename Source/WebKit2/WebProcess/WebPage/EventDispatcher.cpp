@@ -28,9 +28,18 @@
 
 #include "RunLoop.h"
 #include "WebEvent.h"
+#include "WebEventConversion.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/Page.h>
 #include <wtf/MainThread.h>
+
+#if ENABLE(THREADED_SCROLLING)
+#include <WebCore/ScrollingCoordinator.h>
+#endif
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -41,6 +50,25 @@ EventDispatcher::EventDispatcher()
 EventDispatcher::~EventDispatcher()
 {
 }
+
+#if ENABLE(THREADED_SCROLLING)
+void EventDispatcher::addScrollingCoordinatorForPage(WebPage* webPage)
+{
+    MutexLocker locker(m_scrollingCoordinatorsMutex);
+
+    ASSERT(webPage->corePage()->scrollingCoordinator());
+    ASSERT(!m_scrollingCoordinators.contains(webPage->pageID()));
+    m_scrollingCoordinators.set(webPage->pageID(), webPage->corePage()->scrollingCoordinator());
+}
+
+void EventDispatcher::removeScrollingCoordinatorForPage(WebPage* webPage)
+{
+    MutexLocker locker(m_scrollingCoordinatorsMutex);
+    ASSERT(m_scrollingCoordinators.contains(webPage->pageID()));
+
+    m_scrollingCoordinators.remove(webPage->pageID());
+}
+#endif
 
 void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, bool& didHandleMessage)
 {
@@ -65,5 +93,12 @@ void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& w
 
     webPage->wheelEvent(wheelEvent);
 }
+
+#if ENABLE(THREADED_SCROLLING)
+void EventDispatcher::sendDidHandleEvent(uint64_t pageID, const WebEvent& event)
+{
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(event.type()), true), pageID);
+}
+#endif
 
 } // namespace WebKit

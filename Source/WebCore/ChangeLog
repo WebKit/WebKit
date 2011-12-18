@@ -1,3 +1,14 @@
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
+        EventDispatcher should keep track of all scrolling coordinators
+        https://bugs.webkit.org/show_bug.cgi?id=74810
+
+        Reviewed by Andreas Kling.
+
+        Export symbols needed by WebKit2.
+
+        * WebCore.exp.in:
+
 2011-12-18  Raul Hudea  <rhudea@adobe.com>
 
         Add transform function completion to web-inspector
