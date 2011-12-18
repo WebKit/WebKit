@@ -40,6 +40,9 @@ class RenderPart;
 #if ENABLE(VIDEO)
 class RenderVideo;
 #endif
+#if ENABLE(THREADED_SCROLLING)
+class ScrollingCoordinator;
+#endif
 
 enum CompositingUpdateType {
     CompositingUpdateAfterLayoutOrStyleChange,
@@ -291,6 +294,10 @@ private:
     bool requiresScrollCornerLayer() const;
 #if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
     bool requiresOverhangAreasLayer() const;
+#endif
+
+#if ENABLE(THREADED_SCROLLING)
+    ScrollingCoordinator* scrollingCoordinator() const;
 #endif
 
 private:

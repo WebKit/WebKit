@@ -28,12 +28,14 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "IntRect.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
+class Frame;
 class Page;
 class PlatformWheelEvent;
 
@@ -43,6 +45,10 @@ public:
     ~ScrollingCoordinator();
 
     void pageDestroyed();
+
+    // Should be called whenever the geometry of the given frame changes,
+    // including the visible content rect and the content size.
+    void syncFrameGeometry(Frame*);
 
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread,
     // and return false if the event must be sent again to the WebCore event handler.
@@ -58,6 +64,10 @@ private:
 
 private:
     Page* m_page;
+
+    Mutex m_mainFrameGeometryMutex;
+    IntRect m_mainFrameVisibleContentRect;
+    IntSize m_mainFrameContentsSize;
 };
 
 } // namespace WebCore

@@ -29,7 +29,12 @@
 
 #include "ScrollingCoordinator.h"
 
+#include "Frame.h"
+#include "FrameView.h"
+#include "IntRect.h"
+#include "Page.h"
 #include <wtf/Functional.h>
+#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -53,6 +58,27 @@ void ScrollingCoordinator::pageDestroyed()
 {
     ASSERT(m_page);
     m_page = 0;
+}
+
+void ScrollingCoordinator::syncFrameGeometry(Frame* frame)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (frame != m_page->mainFrame())
+        return;
+
+    IntRect visibleContentRect = frame->view()->visibleContentRect();
+    IntSize contentsSize = frame->view()->contentsSize();
+
+    MutexLocker locker(m_mainFrameGeometryMutex);
+    if (m_mainFrameVisibleContentRect == visibleContentRect && m_mainFrameContentsSize == contentsSize)
+        return;
+
+    m_mainFrameVisibleContentRect = visibleContentRect;
+    m_mainFrameContentsSize = contentsSize;
+
+    // FIXME: Inform the scrolling thread that the frame geometry has changed.
 }
 
 bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent&)

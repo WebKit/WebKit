@@ -1,3 +1,23 @@
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
+        The scrolling coordinator should keep track of the main frame geometry
+        https://bugs.webkit.org/show_bug.cgi?id=74816
+
+        Reviewed by Andreas Kling.
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::syncFrameGeometry):
+        Update the frame geometry accordingly when it changes.
+
+        * page/ScrollingCoordinator.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        Call ScrollingCoordinator::syncFrameGeometry.
+
+        (WebCore::RenderLayerCompositor::scrollingCoordinator):
+        Add new getter.
+
 2011-12-17  Sam Weinig  <sam@webkit.org>
 
         Move timestamp down from PlatformEvent subclasses to the base class

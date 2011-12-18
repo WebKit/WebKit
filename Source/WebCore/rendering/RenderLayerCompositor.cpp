@@ -56,6 +56,10 @@
 #include "HTMLMediaElement.h"
 #endif
 
+#if ENABLE(THREADED_SCROLLING)
+#include "ScrollingCoordinator.h"
+#endif
+
 #if PROFILE_LAYER_REBUILD
 #include <wtf/CurrentTime.h>
 #endif
@@ -979,6 +983,11 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         if (m_layerForOverhangAreas)
             m_layerForOverhangAreas->setSize(frameView->frameRect().size());
 #endif
+
+#if ENABLE(THREADED_SCROLLING)
+        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->syncFrameGeometry(frameView->frame());
+#endif
     }
 }
 
@@ -1232,6 +1241,11 @@ void RenderLayerCompositor::updateRootLayerPosition()
         FrameView* frameView = m_renderView->frameView();
         m_clipLayer->setSize(frameView->visibleContentRect(false /* exclude scrollbars */).size());
     }
+
+#if ENABLE(THREADED_SCROLLING)
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        scrollingCoordinator->syncFrameGeometry(m_renderView->frameView()->frame());
+#endif
 }
 
 void RenderLayerCompositor::didStartAcceleratedAnimation(CSSPropertyID property)
@@ -1999,6 +2013,18 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
     if (GraphicsLayer* rootLayer = viewLayer->backing()->graphicsLayer())
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
+
+#if ENABLE(THREADED_SCROLLING)
+ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const
+{
+    if (Frame* frame = m_renderView->frameView()->frame()) {
+        if (Page* page = frame->page())
+            return page->scrollingCoordinator();
+    }
+
+    return 0;
+}
+#endif
 
 } // namespace WebCore
 
