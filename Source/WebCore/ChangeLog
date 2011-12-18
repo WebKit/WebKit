@@ -1,3 +1,43 @@
+2011-12-18  Antti Koivisto  <antti@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=73954
+        REGRESSION (r97745): Transitions don't work on links
+
+        Reviewed by Andreas Kling.
+
+        Test: transitions/visited-link-color.html
+        
+        Since visited link colors are now part of the RenderStyle, they need to be transitioned
+        along with the corresponding regular colors.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::PropertyWrapperVisitedAffectedColor::PropertyWrapperVisitedAffectedColor):
+        (WebCore::PropertyWrapperVisitedAffectedColor::equals):
+        (WebCore::PropertyWrapperVisitedAffectedColor::blend):
+        (WebCore::AnimationBase::ensurePropertyMap):
+        
+            Add new wrapper class that applies both regular and visited color.
+        
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::visitedLinkColor):
+        (WebCore::InheritedFlags::visitedLinkBackgroundColor):
+        (WebCore::InheritedFlags::visitedLinkBorderLeftColor):
+        (WebCore::InheritedFlags::visitedLinkBorderRightColor):
+        (WebCore::InheritedFlags::visitedLinkBorderBottomColor):
+        (WebCore::InheritedFlags::visitedLinkBorderTopColor):
+        (WebCore::InheritedFlags::visitedLinkOutlineColor):
+        (WebCore::InheritedFlags::visitedLinkColumnRuleColor):
+        (WebCore::InheritedFlags::visitedLinkTextEmphasisColor):
+        (WebCore::InheritedFlags::visitedLinkTextFillColor):
+        (WebCore::InheritedFlags::visitedLinkTextStrokeColor):
+        
+            Add accessors.
+        
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        
+            Opportunistic fix. Don't know how to test.
+
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         Set the main frame view scroll position asynchronously

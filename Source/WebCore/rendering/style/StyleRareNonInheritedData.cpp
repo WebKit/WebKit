@@ -113,7 +113,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_wrapMargin(o.m_wrapMargin)
     , m_wrapPadding(o.m_wrapPadding)
     , m_visitedLinkBackgroundColor(o.m_visitedLinkBackgroundColor)
-    , m_visitedLinkOutlineColor(o.m_visitedLinkBackgroundColor)
+    , m_visitedLinkOutlineColor(o.m_visitedLinkOutlineColor)
     , m_visitedLinkBorderLeftColor(o.m_visitedLinkBorderLeftColor)
     , m_visitedLinkBorderRightColor(o.m_visitedLinkBorderRightColor)
     , m_visitedLinkBorderTopColor(o.m_visitedLinkBorderTopColor)
