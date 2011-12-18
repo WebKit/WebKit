@@ -60,9 +60,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLCollection* collection, cons
 
 bool JSHTMLCollection::canGetItemsForName(ExecState*, HTMLCollection* collection, const Identifier& propertyName)
 {
-    Vector<RefPtr<Node> > namedItems;
-    collection->namedItems(identifierToAtomicString(propertyName), namedItems);
-    return !namedItems.isEmpty();
+    return collection->hasNamedItem(identifierToAtomicString(propertyName));
 }
 
 JSValue JSHTMLCollection::nameGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)

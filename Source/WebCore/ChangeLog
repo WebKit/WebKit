@@ -1,3 +1,22 @@
+2011-12-18  Andreas Kling  <kling@webkit.org>
+
+        JSC/HTMLCollection: Optimize canGetItemsForName().
+        <http://webkit.org/b/74806>
+
+        Reviewed by Sam Weinig.
+
+        Add HTMLCollection::hasNamedItem(name) and use that in the JSC bindings'
+        canGetItemsForName() instead of fetching the list of named items just to
+        check if it's empty or not.
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::JSHTMLAllCollection::canGetItemsForName):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::canGetItemsForName):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::hasNamedItem):
+        * html/HTMLCollection.h:
+
 2011-12-18  Sam Weinig  <sam@webkit.org>
 
         Spruce up PlatformWheelEvent a bit

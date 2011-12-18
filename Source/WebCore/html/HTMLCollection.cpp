@@ -331,6 +331,28 @@ void HTMLCollection::updateNameCache() const
     m_info->hasNameCache = true;
 }
 
+bool HTMLCollection::hasNamedItem(const AtomicString& name) const
+{
+    if (name.isEmpty())
+        return false;
+
+    resetCollectionInfo();
+    updateNameCache();
+    m_info->checkConsistency();
+
+    if (Vector<Element*>* idCache = m_info->idCache.get(name.impl())) {
+        if (!idCache->isEmpty())
+            return true;
+    }
+
+    if (Vector<Element*>* nameCache = m_info->nameCache.get(name.impl())) {
+        if (!nameCache->isEmpty())
+            return true;
+    }
+
+    return false;
+}
+
 void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >& result) const
 {
     ASSERT(result.isEmpty());

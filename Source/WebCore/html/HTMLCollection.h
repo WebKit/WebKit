@@ -53,6 +53,7 @@ public:
 
     Node* firstItem() const;
 
+    bool hasNamedItem(const AtomicString& name) const;
     void namedItems(const AtomicString& name, Vector<RefPtr<Node> >&) const;
 
     PassRefPtr<NodeList> tags(const String&);
