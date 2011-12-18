@@ -458,19 +458,9 @@ void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
 #endif
 
 #if ENABLE(INPUT_COLOR)
-void Chrome::openColorChooser(ColorChooser* colorChooser, const Color& initialColor)
+PassOwnPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
-    m_client->openColorChooser(colorChooser, initialColor);
-}
-
-void Chrome::cleanupColorChooser(ColorChooser* colorChooser)
-{
-    m_client->cleanupColorChooser(colorChooser);
-}
-
-void Chrome::setSelectedColorInColorChooser(ColorChooser* colorChooser, const Color& color)
-{
-    m_client->setSelectedColorInColorChooser(colorChooser, color);
+    return m_client->createColorChooser(client, initialColor);
 }
 #endif
 

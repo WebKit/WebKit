@@ -1,3 +1,39 @@
+2011-12-17  Keishi Hattori  <keishi@webkit.org>
+
+        Refactor input type color WebCore part
+        https://bugs.webkit.org/show_bug.cgi?id=74591
+
+        Reviewed by Kent Tamura.
+
+        Changing ColorChooser to address issues raised in Bug 65897.
+        Chrome::createColorChooser will return a WebCore::ColorChooser instance
+        so the WebCore side (ColorInputType) and call the WebKit side. We pass the ColorChooserClient as an argument
+        to Chrome::createColorChooser so the WebKit side can call callbacks, didEndChooser and didChooseColor.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::~ColorInputType):
+        (WebCore::ColorInputType::setValue):
+        (WebCore::ColorInputType::handleDOMActivateEvent): Calls createColorChooser to open the color chooser.
+        (WebCore::ColorInputType::detach):
+        (WebCore::ColorInputType::didEndChooser): Release the ColorChooser object.
+        (WebCore::ColorInputType::endColorChooser):
+        (WebCore::ColorInputType::updateColorSwatch): Added argument so it will compile again.
+        * html/ColorInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::selectColorInColorChooser):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::createColorChooser):
+        * loader/FrameLoader.cpp:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createColorChooser): Opens the color chooser. Returns a ColorChooser PassOwnPtr.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ColorChooser.h:
+        (WebCore::ColorChooser::~ColorChooser):
+        (WebCore::ColorChooser::setSelectedColor):
+        (WebCore::ColorChooser::endChooser):
+        * platform/ColorChooserClient.h: Added.
+
 2011-12-17  Sam Weinig  <sam@webkit.org>
 
         Make PlatformTouchEvent inherit from PlatformEvent

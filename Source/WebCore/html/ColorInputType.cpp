@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ColorInputType.h"
 
+#include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "Color.h"
 #include "HTMLDivElement.h"
@@ -38,6 +39,7 @@
 #include "MouseEvent.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
+
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,7 +68,7 @@ PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
 
 ColorInputType::~ColorInputType()
 {
-    cleanupColorChooser();
+    endColorChooser();
 }
 
 bool ColorInputType::isColorControl() const
@@ -126,9 +128,8 @@ void ColorInputType::setValue(const String& value, bool valueChanged, bool sendC
         return;
 
     updateColorSwatch();
-    Chrome* chrome = this->chrome();
-    if (chrome && chooser())
-        chrome->setSelectedColorInColorChooser(chooser(), valueAsColor());
+    if (m_chooser)
+        m_chooser->setSelectedColor(valueAsColor());
 }
 
 void ColorInputType::handleDOMActivateEvent(Event* event)
@@ -139,14 +140,16 @@ void ColorInputType::handleDOMActivateEvent(Event* event)
     if (!ScriptController::processingUserGesture())
         return;
 
-    if (Chrome* chrome = this->chrome())
-        chrome->openColorChooser(newColorChooser(), valueAsColor());
+    Chrome* chrome = this->chrome();
+    if (chrome && !m_chooser)
+        m_chooser = chrome->createColorChooser(this, valueAsColor());
+
     event->setDefaultHandled();
 }
 
 void ColorInputType::detach()
 {
-    cleanupColorChooser();
+    endColorChooser();
 }
 
 void ColorInputType::didChooseColor(const Color& color)
@@ -158,17 +161,15 @@ void ColorInputType::didChooseColor(const Color& color)
     element()->dispatchFormControlChangeEvent();
 }
 
-void ColorInputType::didCleanup()
+void ColorInputType::didEndChooser()
 {
-    discardChooser();
+    m_chooser.clear();
 }
 
-void ColorInputType::cleanupColorChooser()
+void ColorInputType::endColorChooser()
 {
-    Chrome* chrome = this->chrome();
-    if (chrome && chooser())
-        chrome->cleanupColorChooser(chooser());
-    discardChooser();
+    if (m_chooser)
+        m_chooser->endChooser();
 }
 
 void ColorInputType::updateColorSwatch()
@@ -177,8 +178,7 @@ void ColorInputType::updateColorSwatch()
     if (!colorSwatch)
         return;
 
-    ExceptionCode ec;
-    colorSwatch->style()->setProperty("background-color", element()->value(), ec);
+    colorSwatch->style()->setProperty(CSSPropertyBackgroundColor, element()->value(), false, ASSERT_NO_EXCEPTION);
 }
 
 HTMLElement* ColorInputType::shadowColorSwatch() const

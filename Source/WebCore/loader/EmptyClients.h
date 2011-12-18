@@ -50,6 +50,10 @@
 #include <v8.h>
 #endif
 
+#if ENABLE(INPUT_COLOR)
+#include "ColorChooser.h"
+#endif
+
 /*
  This file holds empty Client stubs for use by WebCore.
  Viewless element needs to create a dummy Page->Frame->FrameView tree for use in parsing or executing JavaScript.
@@ -193,9 +197,7 @@ public:
 #endif
 
 #if ENABLE(INPUT_COLOR)
-    void openColorChooser(ColorChooser*, const Color&) { }
-    void cleanupColorChooser(ColorChooser*) { }
-    void setSelectedColorInColorChooser(ColorChooser*, const Color&) { }
+    virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) { return nullptr; }
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }

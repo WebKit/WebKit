@@ -31,7 +31,7 @@
 #ifndef ColorInputType_h
 #define ColorInputType_h
 
-#include "ColorChooser.h"
+#include "ColorChooserClient.h"
 #include "InputType.h"
 
 #if ENABLE(INPUT_COLOR)
@@ -42,6 +42,10 @@ class ColorInputType : public InputType, public ColorChooserClient {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
     virtual ~ColorInputType();
+
+    // ColorChooserClient implementation.
+    virtual void didChooseColor(const Color&) OVERRIDE;
+    virtual void didEndChooser() OVERRIDE;
 
 private:
     ColorInputType(HTMLInputElement* element) : InputType(element) { }
@@ -56,13 +60,11 @@ private:
     virtual void handleDOMActivateEvent(Event*);
     virtual void detach();
 
-    // ColorChooserClient implementation.
-    virtual void didChooseColor(const Color&) OVERRIDE;
-    virtual void didCleanup() OVERRIDE;
-
-    void cleanupColorChooser();
+    void endColorChooser();
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;
+
+    OwnPtr<ColorChooser> m_chooser;
 };
 
 } // namespace WebCore

@@ -30,45 +30,18 @@
 #ifndef ColorChooser_h
 #define ColorChooser_h
 
-#include "Color.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-
 #if ENABLE(INPUT_COLOR)
 
 namespace WebCore {
 
-class ColorChooser;
+class Color;
 
-class ColorChooserClient {
+class ColorChooser {
 public:
-    virtual ~ColorChooserClient();
-    virtual void didChooseColor(const Color&) = 0;
-    virtual void didCleanup() = 0;
-    ColorChooser* chooser() { return m_chooser.get(); }
+    virtual ~ColorChooser() { }
 
-protected:
-    ColorChooser* newColorChooser();
-    void discardChooser();
-
-private:
-    RefPtr<ColorChooser> m_chooser;
-};
-
-class ColorChooser : public RefCounted<ColorChooser> {
-public:
-    static PassRefPtr<ColorChooser> create(ColorChooserClient*);
-    ~ColorChooser();
-
-    void disconnectClient() { m_client = 0; }
-
-    void didChooseColor(const Color&);
-    void didCleanup();
-
-private:
-    ColorChooser(ColorChooserClient*);
-
-    ColorChooserClient* m_client;
+    virtual void setSelectedColor(const Color&) { }
+    virtual void endChooser() { }
 };
 
 } // namespace WebCore

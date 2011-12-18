@@ -73,6 +73,7 @@ namespace WebCore {
 
 #if ENABLE(INPUT_COLOR)
     class ColorChooser;
+    class ColorChooserClient;
 #endif
 
     class ChromeClient {
@@ -219,9 +220,7 @@ namespace WebCore {
         virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) = 0;
 
 #if ENABLE(INPUT_COLOR)
-        virtual void openColorChooser(ColorChooser*, const Color&) = 0;
-        virtual void cleanupColorChooser(ColorChooser*) = 0;
-        virtual void setSelectedColorInColorChooser(ColorChooser*, const Color&) = 0;
+        virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) = 0;
 #endif
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;

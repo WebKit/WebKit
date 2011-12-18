@@ -103,11 +103,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(INPUT_COLOR)
-#include "ColorChooser.h"
-#include "ColorInputType.h"
-#endif
-
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
 #endif

@@ -57,7 +57,6 @@
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(INPUT_COLOR)
-#include "ColorChooser.h"
 #include "ColorInputType.h"
 #endif
 
@@ -1542,10 +1541,7 @@ void HTMLInputElement::selectColorInColorChooser(const Color& color)
 {
     if (!m_inputType->isColorControl())
         return;
-    RefPtr<ColorChooser> chooser = static_cast<ColorInputType*>(m_inputType.get())->chooser();
-    if (!chooser)
-        return;
-    chooser->didChooseColor(color);
+    static_cast<ColorInputType*>(m_inputType.get())->didChooseColor(color);
 }
 #endif
     
