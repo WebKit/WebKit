@@ -33,7 +33,7 @@
 
 #include "CSSStyleDeclaration.h"
 #include "Document.h"
-#include "EditCommandQt.h"
+#include "UndoStepQt.h"
 #include "Editor.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -243,7 +243,7 @@ void EditorClientQt::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
     Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
     if (m_inUndoRedo || (frame && !frame->editor()->lastEditCommand() /* HACK!! Don't recreate undos */))
         return;
-    m_page->undoStack()->push(new EditCommandQt(step));
+    m_page->undoStack()->push(new UndoStepQt(step));
 #endif // QT_NO_UNDOSTACK
 }
 

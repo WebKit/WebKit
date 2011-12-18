@@ -17,47 +17,34 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include "config.h"
-#include "EditCommandQt.h"
+#ifndef UndoStepQt_h
+#define UndoStepQt_h
 
-using namespace WebCore;
+#include <QUndoCommand>
+#include <UndoStep.h>
+#include <wtf/RefPtr.h>
 
+class UndoStepQt
 #ifndef QT_NO_UNDOCOMMAND
-EditCommandQt::EditCommandQt(WTF::RefPtr<UndoStep> cmd, QUndoCommand *parent)
-    : QUndoCommand(parent)
-    , m_cmd(cmd)
-    , m_first(true)
-{
-}
-#else
-EditCommandQt::EditCommandQt(WTF::RefPtr<UndoStep> cmd)
-    : m_cmd(cmd)
-    , m_first(true)
-{
-}
+    : public QUndoCommand
 #endif
-
-EditCommandQt::~EditCommandQt()
 {
-}
+    public:
+#ifndef QT_NO_UNDOCOMMAND
+        UndoStepQt(WTF::RefPtr<WebCore::UndoStep> step, QUndoCommand *parent = 0);
+#else
+        UndoStepQt(WTF::RefPtr<WebCore::UndoStep> step);
+#endif
+        ~UndoStepQt();
 
+        void redo();
+        void undo();
 
-void EditCommandQt::redo()
-{
-    if (m_first) {
-        m_first = false;
-        return;
-    }
-    if (m_cmd)
-        m_cmd->reapply();
-}
+    private:
+        WTF::RefPtr<WebCore::UndoStep> m_step;
+        bool m_first;
+};
 
-
-void EditCommandQt::undo()
-{
-    if (m_cmd)
-        m_cmd->unapply();
-}
-
+#endif
 
 // vim: ts=4 sw=4 et

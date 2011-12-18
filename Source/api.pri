@@ -48,7 +48,7 @@ SOURCES += \
     $$PWD/WebKit/qt/WebCoreSupport/DragClientQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/EditorClientQt.cpp \
-    $$PWD/WebKit/qt/WebCoreSupport/EditCommandQt.cpp \
+    $$PWD/WebKit/qt/WebCoreSupport/UndoStepQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/FrameNetworkingContextQt.cpp \
     $$PWD/WebKit/qt/WebCoreSupport/GeolocationPermissionClientQt.cpp \
