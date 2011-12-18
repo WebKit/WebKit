@@ -71,6 +71,13 @@ private:
     static bool isScrollingThread();
     static void dispatchOnScrollingThread(const Function<void()>&);
 
+
+    // The following functions can only be called from the scrolling thread.
+    void scrollByOnScrollingThread(const IntSize& offset);
+
+    // This function must be called with the main frame geometry mutex held.
+    void updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint&);
+
 private:
     Page* m_page;
 

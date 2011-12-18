@@ -30,6 +30,7 @@
 #import "ScrollingCoordinator.h"
 
 #import "Page.h"
+#import <QuartzCore/QuartzCore.h>
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -181,6 +182,36 @@ bool ScrollingCoordinator::isScrollingThread()
 void ScrollingCoordinator::dispatchOnScrollingThread(const Function<void()>& function)
 {
     return scrollingThread().dispatch(function);
+}
+
+void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
+{
+    ASSERT(isScrollingThread());
+
+    MutexLocker locker(m_mainFrameGeometryMutex);
+
+    // FIXME: Should we cache the scroll position as well or always get it from the layer?
+    IntPoint scrollPosition = IntPoint([m_mainFrameScrollLayer.get() position]);
+    scrollPosition = -scrollPosition;
+
+    scrollPosition += offset;
+    scrollPosition.clampNegativeToZero();
+
+    IntPoint maximumScrollPosition = IntPoint(m_mainFrameContentsSize.width() - m_mainFrameVisibleContentRect.width(), m_mainFrameContentsSize.height() - m_mainFrameVisibleContentRect.height());
+    scrollPosition = scrollPosition.shrunkTo(maximumScrollPosition);
+
+    updateMainFrameScrollLayerPositionOnScrollingThread(-scrollPosition);
+}
+
+void ScrollingCoordinator::updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint& scrollLayerPosition)
+{
+    ASSERT(isScrollingThread());
+    ASSERT(!m_mainFrameGeometryMutex.tryLock());
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [m_mainFrameScrollLayer.get() setPosition:scrollLayerPosition];
+    [CATransaction commit];
 }
 
 } // namespace WebCore

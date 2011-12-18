@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "IntRect.h"
 #include "Page.h"
+#include "PlatformWheelEvent.h"
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
@@ -81,10 +82,25 @@ void ScrollingCoordinator::syncFrameGeometry(Frame* frame)
     // FIXME: Inform the scrolling thread that the frame geometry has changed.
 }
 
-bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent&)
+bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
-    // FIXME: Implement.
-    return false;
+    // FIXME: Check for wheel event handlers.
+    // FIXME: Check if we're over a subframe or overflow div.
+    // FIXME: As soon as we've determined that we can handle the wheel event, we should do the
+    // bulk of the work on the scrolling thread and return from this function.
+    // FIXME: Handle rubberbanding.
+    float deltaX = wheelEvent.deltaX();
+    float deltaY = wheelEvent.deltaY();
+
+    // Slightly prefer scrolling vertically by applying the = case to deltaY
+    if (fabsf(deltaY) >= fabsf(deltaX))
+        deltaX = 0;
+    else
+        deltaY = 0;
+
+    IntSize scrollOffset = IntSize(-deltaX, -deltaY);
+    dispatchOnScrollingThread(bind(&ScrollingCoordinator::scrollByOnScrollingThread, this, scrollOffset));
+    return true;
 }
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Scroll the main frame on the scrolling thread
+        https://bugs.webkit.org/show_bug.cgi?id=74820
+
+        Reviewed by Andreas Kling.
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::handleWheelEvent):
+        Compute a scroll offset from the wheel event and tell the scrolling thread to scroll by the given offset.
+
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::scrollByOnScrollingThread):
+        Clamp the updated position to the minimum and maximum scrollable position.
+
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollLayerPositionOnScrollingThread):
+        Actually reposition the layer.
+
 2011-12-18  Andreas Kling  <kling@webkit.org>
 
         HTMLAllCollection: Get rid of stateful namedItem traversal.
