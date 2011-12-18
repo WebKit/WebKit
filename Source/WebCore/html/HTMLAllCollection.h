@@ -35,13 +35,10 @@ public:
     static PassRefPtr<HTMLAllCollection> create(Document*);
     virtual ~HTMLAllCollection();
 
-    Node* nextNamedItem(const AtomicString& name) const; // In case of multiple items named the same way.
+    Node* namedItemWithIndex(const AtomicString& name, unsigned index) const;
 
 private:
     HTMLAllCollection(Document*);
-
-    mutable bool m_idsDone; // for nextNamedItem()
-
 };
 
 } // namespace WebCore

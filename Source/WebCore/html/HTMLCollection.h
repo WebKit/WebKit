@@ -67,14 +67,14 @@ protected:
     CollectionCache* info() const { return m_info; }
     void resetCollectionInfo() const;
 
+    virtual void updateNameCache() const;
     virtual Element* itemAfter(Element*) const;
-    bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
 private:
     static bool shouldIncludeChildren(CollectionType);
+    bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
     virtual unsigned calcLength() const;
-    virtual void updateNameCache() const;
 
     bool isAcceptableElement(Element*) const;
 

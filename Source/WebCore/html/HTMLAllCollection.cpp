@@ -38,7 +38,6 @@ PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(Document* document)
 
 HTMLAllCollection::HTMLAllCollection(Document* document)
     : HTMLCollection(document, DocAll)
-    , m_idsDone(false)
 {
 }
 
@@ -46,29 +45,21 @@ HTMLAllCollection::~HTMLAllCollection()
 {
 }
 
-Node* HTMLAllCollection::nextNamedItem(const AtomicString& name) const
+Node* HTMLAllCollection::namedItemWithIndex(const AtomicString& name, unsigned index) const
 {
     resetCollectionInfo();
+    updateNameCache();
     info()->checkConsistency();
 
-    for (Element* e = itemAfter(info()->current); e; e = itemAfter(e)) {
-        if (checkForNameMatch(e, m_idsDone, name)) {
-            info()->current = e;
-            return e;
-        }
+    if (Vector<Element*>* idCache = info()->idCache.get(name.impl())) {
+        if (index < idCache->size())
+            return idCache->at(index);
+        index -= idCache->size();
     }
 
-    if (m_idsDone) {
-        info()->current = 0;
-        return 0;
-    }
-    m_idsDone = true;
-
-    for (Element* e = itemAfter(info()->current); e; e = itemAfter(e)) {
-        if (checkForNameMatch(e, m_idsDone, name)) {
-            info()->current = e;
-            return e;
-        }
+    if (Vector<Element*>* nameCache = info()->nameCache.get(name.impl())) {
+        if (index < nameCache->size())
+            return nameCache->at(index);
     }
 
     return 0;

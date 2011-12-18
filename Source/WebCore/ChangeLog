@@ -1,3 +1,45 @@
+2011-12-18  Andreas Kling  <kling@webkit.org>
+
+        HTMLAllCollection: Get rid of stateful namedItem traversal.
+        <http://webkit.org/b/74803>
+
+        Reviewed by Sam Weinig.
+
+        Add a namedItemWithIndex() function to HTMLAllCollection to cover the
+        document.all(name, index) use-case. This moves the collection traversal
+        into WebCore and allows us to remove some complexity.
+
+        This incidentally fixes a bug where the CollectionCache would point to
+        the last node returned by document.all(name, index) without the correct
+        associated node index (because info()->current was getting set without
+        updating info()->position.) Added a layout test for that.
+
+        Test: fast/dom/htmlallcollection-call-with-index-caching-bug.html
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::callHTMLAllCollection):
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        (WebCore::V8HTMLAllCollection::callAsFunctionCallback):
+
+            Replace collection traversal by calls to namedItemWithIndex().
+
+        * html/HTMLCollection.h:
+
+            Promoted updateNameCache() to protected (for HTMLAllCollection.)
+            Demoted checkForNameMatch() to private.
+
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+
+            Added for document.all(name, index). Uses the name/id cache.
+
+        * html/HTMLAllCollection.cpp:
+        * html/HTMLAllCollection.h:
+        (WebCore::HTMLAllCollection::HTMLAllCollection):
+
+            Removed m_idsDone, HTMLAllCollection is now stateless.
+
+
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         The scrolling coordinator should know about the main frame scroll layer

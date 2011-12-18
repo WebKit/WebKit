@@ -120,15 +120,8 @@ v8::Handle<v8::Value> V8HTMLAllCollection::callAsFunctionCallback(const v8::Argu
     if (index.IsEmpty())
         return v8::Undefined();
 
-    unsigned current = index->Uint32Value();
-    Node* node = imp->namedItem(name);
-    while (node) {
-        if (!current)
-            return toV8(node);
-
-        node = imp->nextNamedItem(name);
-        current--;
-    }
+    if (Node* node = imp->namedItemWithIndex(name, index->Uint32Value()))
+        return toV8(node);
 
     return v8::Undefined();
 }
