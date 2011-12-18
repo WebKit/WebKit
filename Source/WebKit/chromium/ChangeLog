@@ -1,3 +1,38 @@
+2011-12-18  Keishi Hattori  <keishi@webkit.org>
+
+        Implement <input type=color> UI WebKit chromium part
+        https://bugs.webkit.org/show_bug.cgi?id=65897
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp: Added new files.
+        * features.gypi: Added ENABLE_INPUT_COLOR.
+        * public/WebColorChooser.h: Added. Interface for ColorChooserProxy to call.
+        (WebKit::WebColorChooser::~WebColorChooser):
+        (WebKit::WebColorChooser::setSelectedColor):
+        (WebKit::WebColorChooser::endChooser):
+        * public/WebColorChooserClient.h: Added.
+        (WebKit::WebColorChooserClient::~WebColorChooserClient):
+        (WebKit::WebColorChooserClient::didChooseColor): Only called when user changes the color.
+        (WebKit::WebColorChooserClient::didEndChooser): Called when WebColorChooser::endChooser is called.
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createColorChooser): Creates a new color chooser. If there is an old color chooser, this will end it.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createColorChooser): Calls WebViewClient::createColorChooser.
+        * src/ChromeClientImpl.h:
+        * src/ColorChooserProxy.cpp: Proxies calls to WebCore::ColorChooser to WebKit::WebColorChooser.
+        (WebKit::ColorChooserProxy::ColorChooserProxy):
+        (WebKit::ColorChooserProxy::~ColorChooserProxy):
+        (WebKit::ColorChooserProxy::setSelectedColor):
+        (WebKit::ColorChooserProxy::endChooser):
+        * src/ColorChooserProxy.h:
+        * src/WebColorChooserClientImpl.cpp: Proxies calls to WebKit::WebColorChooserClient to WebCore::ColorChooserClient.
+        (WebKit::WebColorChooserClientImpl::WebColorChooserClientImpl):
+        (WebKit::WebColorChooserClientImpl::~WebColorChooserClientImpl):
+        (WebKit::WebColorChooserClientImpl::didChooseColor):
+        (WebKit::WebColorChooserClientImpl::didEndChooser):
+        * src/WebColorChooserClientImpl.h: Added.
+
 2011-12-17  Sam Weinig  <sam@webkit.org>
 
         Make PlatformTouchEvent inherit from PlatformEvent
