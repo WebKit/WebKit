@@ -52,27 +52,20 @@ RunLoop* RunLoop::main()
 
 void RunLoop::performWork()
 {
-    Vector<OwnPtr<WorkItem> > workItemQueue;
+    Vector<Function<void()> > functionQueue;
     {
-        MutexLocker locker(m_workItemQueueLock);
-        m_workItemQueue.swap(workItemQueue);
+        MutexLocker locker(m_functionQueueLock);
+        m_functionQueue.swap(functionQueue);
     }
 
-    for (size_t i = 0; i < workItemQueue.size(); ++i) {
-        OwnPtr<WorkItem> item = workItemQueue[i].release();
-        item->execute();
-    }
+    for (size_t i = 0; i < functionQueue.size(); ++i)
+        functionQueue[i]();
 }
 
 void RunLoop::dispatch(const Function<void()>& function)
 {
-    scheduleWork(WorkItem::create(function));
-}
-
-void RunLoop::scheduleWork(PassOwnPtr<WorkItem> item)
-{
-    MutexLocker locker(m_workItemQueueLock);
-    m_workItemQueue.append(item);
+    MutexLocker locker(m_functionQueueLock);
+    m_functionQueue.append(function);
 
     wakeUp();
 }

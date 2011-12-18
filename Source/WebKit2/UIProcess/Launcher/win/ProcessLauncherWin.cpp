@@ -102,7 +102,7 @@ void ProcessLauncher::launchProcess()
     ::CloseHandle(processInformation.hThread);
 
     // We've finished launching the process, message back to the run loop.
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, processInformation.hProcess, serverIdentifier));
+    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, processInformation.hProcess, serverIdentifier));
 }
 
 void ProcessLauncher::terminateProcess()

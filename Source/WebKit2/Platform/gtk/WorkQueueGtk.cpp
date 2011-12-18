@@ -36,8 +36,8 @@
 // WorkQueue::EventSource
 class WorkQueue::EventSource {
 public:
-    EventSource(PassOwnPtr<WorkItem> workItem, WorkQueue* workQueue, GCancellable* cancellable)
-        : m_workItem(workItem)
+    EventSource(const Function<void()>& function, WorkQueue* workQueue, GCancellable* cancellable)
+        : m_function(function)
         , m_workQueue(workQueue)
         , m_cancellable(cancellable)
     {
@@ -60,7 +60,7 @@ public:
                 return;
         }
 
-        eventSource->m_workItem->execute();
+        eventSource->m_function();
     }
 
     static gboolean performWorkOnce(EventSource* eventSource)
@@ -93,7 +93,7 @@ public:
     }
    
 public:
-    PassOwnPtr<WorkItem> m_workItem;
+    Function<void()> m_function;
     WorkQueue* m_workQueue;
     GCancellable* m_cancellable;
 };
@@ -153,14 +153,14 @@ void WorkQueue::workQueueThreadBody()
     g_main_loop_run(m_eventLoop);
 }
 
-void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, PassOwnPtr<WorkItem> item)
+void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, const Function<void()>& function)
 {
     GRefPtr<GSocket> socket = adoptGRef(g_socket_new_from_fd(fileDescriptor, 0));
     ASSERT(socket);
     GRefPtr<GCancellable> cancellable = adoptGRef(g_cancellable_new());
     GRefPtr<GSource> dispatchSource = adoptGRef(g_socket_create_source(socket.get(), static_cast<GIOCondition>(condition), cancellable.get()));
     ASSERT(dispatchSource);
-    EventSource* eventSource = new EventSource(item, this, cancellable.get());
+    EventSource* eventSource = new EventSource(function, this, cancellable.get());
     ASSERT(eventSource);
 
     g_source_set_callback(dispatchSource.get(), reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWork),
@@ -200,9 +200,9 @@ void WorkQueue::unregisterEventSourceHandler(int fileDescriptor)
     }
 }
 
-void WorkQueue::scheduleWorkOnSource(GSource* dispatchSource, PassOwnPtr<WorkItem> item, GSourceFunc sourceCallback)
+void WorkQueue::dispatchOnSource(GSource* dispatchSource, const Function<void()>& function, GSourceFunc sourceCallback)
 {
-    EventSource* eventSource = new EventSource(item, this, 0);
+    EventSource* eventSource = new EventSource(function, this, 0);
 
     g_source_set_callback(dispatchSource, sourceCallback, eventSource,
                           reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
@@ -210,27 +210,27 @@ void WorkQueue::scheduleWorkOnSource(GSource* dispatchSource, PassOwnPtr<WorkIte
     g_source_attach(dispatchSource, m_eventContext);
 }
 
-void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
+void WorkQueue::dispatch(const Function<void()>& function)
 {
     GRefPtr<GSource> dispatchSource = adoptGRef(g_idle_source_new());
     ASSERT(dispatchSource);
     g_source_set_priority(dispatchSource.get(), G_PRIORITY_DEFAULT);
 
-    scheduleWorkOnSource(dispatchSource.get(), item, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
+    dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
 }
 
-void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
+void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
 {
     GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(static_cast<guint>(delay * 1000)));
     ASSERT(dispatchSource);
 
-    scheduleWorkOnSource(dispatchSource.get(), item, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
+    dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce));
 }
 
-void WorkQueue::scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier process, PassOwnPtr<WorkItem> item)
+void WorkQueue::dispatchOnTermination(WebKit::PlatformProcessIdentifier process, const Function<void()>& function)
 {
     GRefPtr<GSource> dispatchSource = adoptGRef(g_child_watch_source_new(process));
     ASSERT(dispatchSource);
 
-    scheduleWorkOnSource(dispatchSource.get(), item, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnTermination));
+    dispatchOnSource(dispatchSource.get(), function, reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnTermination));
 }

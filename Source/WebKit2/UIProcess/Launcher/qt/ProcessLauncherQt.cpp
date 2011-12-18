@@ -174,7 +174,7 @@ void ProcessLauncher::launchProcess()
 
     setpriority(PRIO_PROCESS, webProcess->pid(), 10);
 
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &WebKit::ProcessLauncher::didFinishLaunchingProcess, webProcess, connector));
+    RunLoop::main()->dispatch(bind(&WebKit::ProcessLauncher::didFinishLaunchingProcess, this, webProcess, connector));
 }
 
 void ProcessLauncher::terminateProcess()

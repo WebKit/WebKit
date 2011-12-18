@@ -29,6 +29,7 @@
 #define RunLoop_h
 
 #include <wtf/Forward.h>
+#include <wtf/Functional.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSpecific.h>
@@ -55,9 +56,6 @@ public:
 
     static RunLoop* current();
     static RunLoop* main();
-
-    // FIXME: Get rid of this overload and use WTF::Function everywhere.
-    void scheduleWork(PassOwnPtr<WorkItem>);
 
     void dispatch(const Function<void()>&);
 
@@ -143,8 +141,8 @@ private:
     void performWork();
     void wakeUp();
 
-    Mutex m_workItemQueueLock;
-    Vector<OwnPtr<WorkItem> > m_workItemQueue;
+    Mutex m_functionQueueLock;
+    Vector<Function<void()> > m_functionQueue;
 
 #if PLATFORM(WIN)
     static bool registerRunLoopMessageWindowClass();

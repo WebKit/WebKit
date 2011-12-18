@@ -27,7 +27,7 @@
 #include "Connection.h"
 
 #include "ArgumentEncoder.h"
-#include "WorkItem.h"
+#include <wtf/Functional.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
 
@@ -263,11 +263,11 @@ bool Connection::open()
     m_isConnected = true;
 
     // Start listening for read and write state events.
-    m_connectionQueue.registerHandle(m_readState.hEvent, WorkItem::create(this, &Connection::readEventHandler));
-    m_connectionQueue.registerHandle(m_writeState.hEvent, WorkItem::create(this, &Connection::writeEventHandler));
+    m_connectionQueue.registerHandle(m_readState.hEvent, bind(&Connection::readEventHandler, this));
+    m_connectionQueue.registerHandle(m_writeState.hEvent, bind(&Connection::writeEventHandler, this));
 
     // Schedule a read.
-    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::readEventHandler));
+    m_connectionQueue.dispatch(bind(&Connection::readEventHandler, this));
 
     return true;
 }

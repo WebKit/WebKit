@@ -133,7 +133,7 @@ void ProcessLauncher::launchProcess()
     g_child_watch_add(m_processIdentifier, childFinishedFunction, GINT_TO_POINTER(sockets[1]));
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, m_processIdentifier, sockets[1]));
+    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, m_processIdentifier, sockets[1]));
 }
 
 void ProcessLauncher::terminateProcess()

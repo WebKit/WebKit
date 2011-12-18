@@ -29,32 +29,32 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/Threading.h>
 
-inline WorkQueue::WorkItemWin::WorkItemWin(PassOwnPtr<WorkItem> item, WorkQueue* queue)
-    : m_item(item)
+inline WorkQueue::WorkItemWin::WorkItemWin(const Function<void()>& function, WorkQueue* queue)
+    : m_function(function)
     , m_queue(queue)
 {
 }
 
-PassRefPtr<WorkQueue::WorkItemWin> WorkQueue::WorkItemWin::create(PassOwnPtr<WorkItem> item, WorkQueue* queue)
+PassRefPtr<WorkQueue::WorkItemWin> WorkQueue::WorkItemWin::create(const Function<void()>& function, WorkQueue* queue)
 {
-    return adoptRef(new WorkItemWin(item, queue));
+    return adoptRef(new WorkItemWin(function, queue));
 }
 
 WorkQueue::WorkItemWin::~WorkItemWin()
 {
 }
 
-inline WorkQueue::HandleWorkItem::HandleWorkItem(HANDLE handle, PassOwnPtr<WorkItem> item, WorkQueue* queue)
-    : WorkItemWin(item, queue)
+inline WorkQueue::HandleWorkItem::HandleWorkItem(HANDLE handle, const Function<void()>& function, WorkQueue* queue)
+    : WorkItemWin(function, queue)
     , m_handle(handle)
     , m_waitHandle(0)
 {
     ASSERT_ARG(handle, handle);
 }
 
-PassRefPtr<WorkQueue::HandleWorkItem> WorkQueue::HandleWorkItem::createByAdoptingHandle(HANDLE handle, PassOwnPtr<WorkItem> item, WorkQueue* queue)
+PassRefPtr<WorkQueue::HandleWorkItem> WorkQueue::HandleWorkItem::createByAdoptingHandle(HANDLE handle, const Function<void()>& function, WorkQueue* queue)
 {
-    return adoptRef(new HandleWorkItem(handle, item, queue));
+    return adoptRef(new HandleWorkItem(handle, function, queue));
 }
 
 WorkQueue::HandleWorkItem::~HandleWorkItem()
@@ -87,9 +87,9 @@ void WorkQueue::handleCallback(void* context, BOOLEAN timerOrWaitFired)
     queue->performWorkOnRegisteredWorkThread();
 }
 
-void WorkQueue::registerHandle(HANDLE handle, PassOwnPtr<WorkItem> item)
+void WorkQueue::registerHandle(HANDLE handle, const Function<void()>& function)
 {
-    RefPtr<HandleWorkItem> handleItem = HandleWorkItem::createByAdoptingHandle(handle, item, this);
+    RefPtr<HandleWorkItem> handleItem = HandleWorkItem::createByAdoptingHandle(handle, function, this);
 
     {
         MutexLocker lock(m_handlesLock);
@@ -194,11 +194,11 @@ void WorkQueue::platformInvalidate()
     ::DeleteTimerQueueEx(m_timerQueue, 0);
 }
 
-void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
+void WorkQueue::dispatch(const Function<void()>& function))
 {
     MutexLocker locker(m_workItemQueueLock);
 
-    m_workItemQueue.append(WorkItemWin::create(item, this));
+    m_workItemQueue.append(WorkItemWin::create(function, this));
 
     // Spawn a work thread to perform the work we just added. As an optimization, we avoid
     // spawning the thread if a work thread is already registered. This prevents multiple work
@@ -214,7 +214,7 @@ struct TimerContext : public ThreadSafeRefCounted<TimerContext> {
     static PassRefPtr<TimerContext> create() { return adoptRef(new TimerContext); }
 
     WorkQueue* queue;
-    OwnPtr<WorkItem> item;
+    Function<void()> function;
     Mutex timerMutex;
     HANDLE timer;
 
@@ -230,7 +230,7 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
     // Balanced by leakRef in scheduleWorkAfterDelay.
     RefPtr<TimerContext> timerContext = adoptRef(static_cast<TimerContext*>(context));
 
-    timerContext->queue->scheduleWork(timerContext->item.release());
+    timerContext->queue->dispatch(timerContext->function);
 
     MutexLocker lock(timerContext->timerMutex);
     ASSERT(timerContext->timer);
@@ -239,13 +239,13 @@ void WorkQueue::timerCallback(void* context, BOOLEAN timerOrWaitFired)
         ASSERT_WITH_MESSAGE(false, "::DeleteTimerQueueTimer failed with error %lu", ::GetLastError());
 }
 
-void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
+void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
 {
     ASSERT(m_timerQueue);
 
     RefPtr<TimerContext> context = TimerContext::create();
     context->queue = this;
-    context->item = item;
+    context->function = function;
 
     {
         // The timer callback could fire before ::CreateTimerQueueTimer even returns, so we protect

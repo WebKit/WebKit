@@ -33,8 +33,8 @@
 #endif
 #endif
 
-#include "WorkItem.h"
 #include <wtf/Forward.h>
+#include <wtf/Functional.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -71,14 +71,6 @@ public:
     // Will dispatch the given function after the given delay (in seconds).
     void dispatchAfterDelay(const Function<void()>&, double delay);
 
-    // FIXME: Get rid of WorkItem everywhere.
-
-    // Will schedule the given work item to run as soon as possible.
-    void scheduleWork(PassOwnPtr<WorkItem>);
-
-    // Will schedule the given work item to run after the given delay (in seconds).
-    void scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double delay);
-
     void invalidate();
 
 #if OS(DARWIN)
@@ -95,15 +87,15 @@ public:
     void registerMachPortEventHandler(mach_port_t, MachPortEventType, const Function<void()>&);
     void unregisterMachPortEventHandler(mach_port_t);
 #elif PLATFORM(WIN)
-    void registerHandle(HANDLE, PassOwnPtr<WorkItem>);
+    void registerHandle(HANDLE, const Function<void()>&);
     void unregisterAndCloseHandle(HANDLE);
 #elif PLATFORM(QT)
-    QSocketNotifier* registerSocketEventHandler(int, QSocketNotifier::Type, PassOwnPtr<WorkItem>);
-    void scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier, PassOwnPtr<WorkItem>);
+    QSocketNotifier* registerSocketEventHandler(int, QSocketNotifier::Type, const Function<void()>&);
+    void dispatchOnTermination(WebKit::PlatformProcessIdentifier, const Function<void()>&);
 #elif PLATFORM(GTK)
-    void registerEventSourceHandler(int, int, PassOwnPtr<WorkItem>);
+    void registerEventSourceHandler(int, int, const Function<void()>&);
     void unregisterEventSourceHandler(int);
-    void scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier, PassOwnPtr<WorkItem>);
+    void dispatchOnTermination(WebKit::PlatformProcessIdentifier, const Function<void()>&);
 #endif
 
 private:
@@ -116,7 +108,7 @@ private:
 
 #if OS(DARWIN)
 #if HAVE(DISPATCH_H)
-    static void executeWorkItem(void*);
+    static void executeFunction(void*);
     Mutex m_eventSourcesMutex;
     class EventSource;
     HashMap<mach_port_t, EventSource*> m_eventSources;
@@ -125,30 +117,30 @@ private:
 #elif PLATFORM(WIN)
     class WorkItemWin : public ThreadSafeRefCounted<WorkItemWin> {
     public:
-        static PassRefPtr<WorkItemWin> create(PassOwnPtr<WorkItem>, WorkQueue*);
+        static PassRefPtr<WorkItemWin> create(const Function<void()>&, WorkQueue*);
         virtual ~WorkItemWin();
 
-        WorkItem* item() const { return m_item.get(); }
+        Function<void()>& function() { return m_function; }
         WorkQueue* queue() const { return m_queue; }
 
     protected:
-        WorkItemWin(PassOwnPtr<WorkItem>, WorkQueue*);
+        WorkItemWin(const Function<void()>&, WorkQueue*);
 
     private:
-        OwnPtr<WorkItem> m_item;
+        Function<void()> m_function;
         WorkQueue* m_queue;
     };
 
     class HandleWorkItem : public WorkItemWin {
     public:
-        static PassRefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, PassOwnPtr<WorkItem>, WorkQueue*);
+        static PassRefPtr<HandleWorkItem> createByAdoptingHandle(HANDLE, const Function<void()>&, WorkQueue*);
         virtual ~HandleWorkItem();
 
         void setWaitHandle(HANDLE waitHandle) { m_waitHandle = waitHandle; }
         HANDLE waitHandle() const { return m_waitHandle; }
 
     private:
-        HandleWorkItem(HANDLE, PassOwnPtr<WorkItem>, WorkQueue*);
+        HandleWorkItem(HANDLE, const Function<void()>&, WorkQueue*);
 
         HANDLE m_handle;
         HANDLE m_waitHandle;
@@ -182,7 +174,7 @@ private:
 #elif PLATFORM(GTK)
     static void* startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
-    void scheduleWorkOnSource(GSource*, PassOwnPtr<WorkItem>, GSourceFunc);
+    void dispatchOnSource(GSource*, const Function<void()>&, GSourceFunc);
 
     ThreadIdentifier m_workQueueThread;
     GMainContext* m_eventContext;

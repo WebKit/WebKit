@@ -32,30 +32,30 @@
 
 #if HAVE(DISPATCH_H)
 
-void WorkQueue::executeWorkItem(void* item)
+void WorkQueue::executeFunction(void* context)
 {
     WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));
-    OwnPtr<WorkItem> workItem = adoptPtr(static_cast<WorkItem*>(item));
+    OwnPtr<Function<void()> > function = adoptPtr(static_cast<Function<void()>*>(context));
     
     {
         MutexLocker locker(queue->m_isValidMutex);
         if (!queue->m_isValid)
             return;
     }
-    
-    workItem->execute();
+
+    (*function)();
 }
 
-void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
+void WorkQueue::dispatch(const Function<void()>& function)
 {
-    dispatch_async_f(m_dispatchQueue, item.leakPtr(), executeWorkItem);
+    dispatch_async_f(m_dispatchQueue, new Function<void()>(function), executeFunction);
 }
 
-void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
+void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
 {
     dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
 
-    dispatch_after_f(delayTime, m_dispatchQueue, item.leakPtr(), executeWorkItem);
+    dispatch_after_f(delayTime, m_dispatchQueue, new Function<void()>(function), executeFunction);
 }
 
 class WorkQueue::EventSource {

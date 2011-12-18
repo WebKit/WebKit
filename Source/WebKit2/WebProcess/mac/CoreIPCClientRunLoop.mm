@@ -68,8 +68,8 @@ static NSArray *coreIPCRunLoopModesArray()
 
 void callOnCoreIPCClientRunLoopAndWait(FunctionWithContext function, void* context)
 {
-    // FIXME: It would fit better with WebKit2 coding style to use a WorkItem here.
-    // To do that we'd need to make scheduleWork have an overload that takes an array of run loop modes or find some
+    // FIXME: It would fit better with WebKit2 coding style to use a WTF Function here.
+    // To do that we'd need to make dispatch have an overload that takes an array of run loop modes or find some
     // other way to specify that we want to include the synchronous load run loop mode.
     RetainPtr<WKFunctionAdapter> adapter(AdoptNS, [[WKFunctionAdapter alloc] init]);
     adapter->function = function;

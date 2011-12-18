@@ -40,16 +40,6 @@ WorkQueue::~WorkQueue()
 #endif
 }
 
-void WorkQueue::dispatch(const Function<void()>& function)
-{
-    scheduleWork(WorkItem::create(function));
-}
-
-void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double delay)
-{
-    scheduleWorkAfterDelay(WorkItem::create(function), delay);
-}
-
 void WorkQueue::invalidate()
 {
     {

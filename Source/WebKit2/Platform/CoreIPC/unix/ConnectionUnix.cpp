@@ -29,13 +29,13 @@
 #include "Connection.h"
 
 #include "ArgumentEncoder.h"
-#include "WorkItem.h"
 #include "SharedMemory.h"
 #include <sys/socket.h>
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <wtf/Assertions.h>
+#include <wtf/Functional.h>
 #include <wtf/OwnArrayPtr.h>
 
 #if PLATFORM(QT)
@@ -419,15 +419,15 @@ bool Connection::open()
 
     m_isConnected = true;
 #if PLATFORM(QT)
-    m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WorkItem::create(this, &Connection::readyReadHandler));
+    m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(GTK)
-    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WorkItem::create(this, &Connection::connectionDidClose));
-    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WorkItem::create(this, &Connection::readyReadHandler));
+    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), bind(&Connection::connectionDidClose, this));
+    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, bind(&Connection::readyReadHandler, this));
 #endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
     // handler.
-    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::readyReadHandler));
+    m_connectionQueue.dispatch(bind(&Connection::readyReadHandler, this));
 
     return true;
 }
@@ -555,7 +555,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 #if PLATFORM(QT)
 void Connection::setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier process)
 {
-    m_connectionQueue.scheduleWorkOnTermination(process, WorkItem::create(this, &Connection::connectionDidClose));
+    m_connectionQueue.dispatchOnTermination(process, bind(&Connection::connectionDidClose, this));
 }
 #endif
 

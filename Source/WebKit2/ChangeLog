@@ -1,3 +1,60 @@
+2011-12-16  Anders Carlsson  <andersca@apple.com>
+
+        Move everyone off of WorkItem
+        https://bugs.webkit.org/show_bug.cgi?id=74773
+
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::setShouldCloseConnectionOnProcessTermination):
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::open):
+        * Platform/RunLoop.cpp:
+        (RunLoop::performWork):
+        (RunLoop::dispatch):
+        * Platform/RunLoop.h:
+        * Platform/WorkQueue.cpp:
+        * Platform/WorkQueue.h:
+        (WorkQueue::WorkItemWin::function):
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::EventSource):
+        (WorkQueue::EventSource::executeEventSource):
+        (WorkQueue::registerEventSourceHandler):
+        (WorkQueue::dispatchOnSource):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        (WorkQueue::dispatchOnTermination):
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::executeFunction):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::WorkItemQt::WorkItemQt):
+        (WorkQueue::WorkItemQt::~WorkItemQt):
+        (WorkQueue::WorkItemQt::execute):
+        (WorkQueue::registerSocketEventHandler):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+        (WorkQueue::dispatchOnTermination):
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::wakeUp):
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::WorkItemWin::WorkItemWin):
+        (WorkQueue::WorkItemWin::create):
+        (WorkQueue::HandleWorkItem::HandleWorkItem):
+        (WorkQueue::HandleWorkItem::createByAdoptingHandle):
+        (WorkQueue::registerHandle):
+        (WorkQueue::dispatch):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/mac/CoreIPCClientRunLoop.mm:
+        (WebKit::callOnCoreIPCClientRunLoopAndWait):
+
 2011-12-17  Sam Weinig  <sam@webkit.org>
 
         Make PlatformTouchEvent inherit from PlatformEvent
