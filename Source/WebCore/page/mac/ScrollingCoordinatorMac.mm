@@ -201,6 +201,12 @@ void ScrollingCoordinator::scrollByOnScrollingThread(const IntSize& offset)
     scrollPosition = scrollPosition.shrunkTo(maximumScrollPosition);
 
     updateMainFrameScrollLayerPositionOnScrollingThread(-scrollPosition);
+
+    m_mainFrameScrollPosition = scrollPosition;
+    if (!m_didDispatchDidUpdateMainFrameScrollPosition) {
+        callOnMainThread(bind(&ScrollingCoordinator::didUpdateMainFrameScrollPosition, this));
+        m_didDispatchDidUpdateMainFrameScrollPosition = true;
+    }
 }
 
 void ScrollingCoordinator::updateMainFrameScrollLayerPositionOnScrollingThread(const FloatPoint& scrollLayerPosition)

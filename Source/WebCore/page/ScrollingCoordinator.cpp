@@ -47,6 +47,7 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
+    , m_didDispatchDidUpdateMainFrameScrollPosition(false)
 {
 }
 
@@ -101,6 +102,27 @@ bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent& wheelEvent
     IntSize scrollOffset = IntSize(-deltaX, -deltaY);
     dispatchOnScrollingThread(bind(&ScrollingCoordinator::scrollByOnScrollingThread, this, scrollOffset));
     return true;
+}
+
+void ScrollingCoordinator::didUpdateMainFrameScrollPosition()
+{
+    ASSERT(isMainThread());
+
+    if (!m_page)
+        return;
+
+    IntPoint scrollPosition;
+
+    {
+        MutexLocker locker(m_mainFrameGeometryMutex);
+        ASSERT(m_didDispatchDidUpdateMainFrameScrollPosition);
+
+        scrollPosition = m_mainFrameScrollPosition;
+        m_didDispatchDidUpdateMainFrameScrollPosition = false;
+    }
+
+    if (FrameView* frameView = m_page->mainFrame()->view())
+        frameView->setScrollOffset(scrollPosition);
 }
 
 } // namespace WebCore

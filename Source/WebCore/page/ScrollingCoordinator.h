@@ -71,6 +71,8 @@ private:
     static bool isScrollingThread();
     static void dispatchOnScrollingThread(const Function<void()>&);
 
+    // The following functions can only be called from the main thread.
+    void didUpdateMainFrameScrollPosition();
 
     // The following functions can only be called from the scrolling thread.
     void scrollByOnScrollingThread(const IntSize& offset);
@@ -87,6 +89,9 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_mainFrameScrollLayer;
 #endif
+
+    bool m_didDispatchDidUpdateMainFrameScrollPosition;
+    IntPoint m_mainFrameScrollPosition;
 };
 
 } // namespace WebCore

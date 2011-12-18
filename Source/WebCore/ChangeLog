@@ -1,3 +1,24 @@
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
+        Set the main frame view scroll position asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=74823
+
+        Reviewed by Sam Weinig.
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator):
+        Initialize m_didDispatchDidUpdateMainFrameScrollPosition to false.
+
+        (WebCore::ScrollingCoordinator::didUpdateMainFrameScrollPosition):
+        Get the scroll position, reset m_didDispatchDidUpdateMainFrameScrollPosition to false and
+        then call FrameView::setScrollOffset to update the scroll position.
+
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::scrollByOnScrollingThread):
+        Update the scroll position and dispatch ScrollingCoordinator::didUpdateMainFrameScrollPosition on
+        the main thread if needed.
+
 2011-12-18  Andreas Kling  <kling@webkit.org>
 
         JSC/HTMLCollection: Optimize canGetItemsForName().

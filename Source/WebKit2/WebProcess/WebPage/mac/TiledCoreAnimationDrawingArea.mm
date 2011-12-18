@@ -75,9 +75,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     m_rootLayer.get().opaque = YES;
     m_rootLayer.get().geometryFlipped = YES;
 
-    // Give the root layer a background color so it's visible on screen.
-    m_rootLayer.get().backgroundColor = CGColorCreateGenericRGB(1, 0, 0, 1);
-
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
     WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer.get());
