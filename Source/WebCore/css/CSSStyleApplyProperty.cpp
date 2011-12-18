@@ -245,9 +245,9 @@ public:
             applyInheritValue(selector);
         else {
             if (selector->applyPropertyToRegularStyle())
-                (selector->style()->*setterFunction)(selector->getColorFromPrimitiveValue(primitiveValue, false));
+                (selector->style()->*setterFunction)(selector->colorFromPrimitiveValue(primitiveValue));
             if (selector->applyPropertyToVisitedLinkStyle())
-                (selector->style()->*visitedLinkSetterFunction)(selector->getColorFromPrimitiveValue(primitiveValue, true));
+                (selector->style()->*visitedLinkSetterFunction)(selector->colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
         }
     }
 

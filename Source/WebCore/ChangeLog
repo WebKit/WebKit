@@ -1,3 +1,25 @@
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
+        CSSStyleSelector: Clean up getColorFromPrimitiveValue().
+        <http://webkit.org/b/74789>
+
+        Reviewed by Antti Koivisto.
+
+        Rename getColorFromPrimitiveValue() to colorFromPrimitiveValue() and rework
+        it to be a bit more readable.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyColor::applyValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::colorFromPrimitiveValue):
+        (WebCore::CSSStyleSelector::createFilterOperations):
+        * css/CSSStyleSelector.h:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+
 2011-12-17  Kenichi Ishibashi  <bashi@chromium.org>
 
         Text dispappear when SVG font has no latin character

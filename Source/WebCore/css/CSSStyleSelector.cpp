@@ -3179,7 +3179,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             ShadowStyle shadowStyle = item->style && item->style->getIdent() == CSSValueInset ? Inset : Normal;
             Color color;
             if (item->color)
-                color = getColorFromPrimitiveValue(item->color.get());
+                color = colorFromPrimitiveValue(item->color.get());
             OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
             if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
@@ -3552,7 +3552,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!primitiveValue)
             break;
 
-        Color col = getColorFromPrimitiveValue(primitiveValue);
+        Color col = colorFromPrimitiveValue(primitiveValue);
         m_style->setTapHighlightColor(col);
         return;
     }
@@ -4783,26 +4783,30 @@ static Color colorForCSSValue(int cssValueId)
     return RenderTheme::defaultTheme()->systemColor(cssValueId);
 }
 
-Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue, bool forVisitedLink) const
+Color CSSStyleSelector::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forVisitedLink) const
 {
-    Color col;
-    int ident = primitiveValue->getIdent();
-    if (ident) {
-        if (ident == CSSValueWebkitText)
-            col = m_element->document()->textColor();
-        else if (ident == CSSValueWebkitLink)
-            col = (m_element->isLink() && forVisitedLink) ? m_element->document()->visitedLinkColor() : m_element->document()->linkColor();
-        else if (ident == CSSValueWebkitActivelink)
-            col = m_element->document()->activeLinkColor();
-        else if (ident == CSSValueWebkitFocusRingColor)
-            col = RenderTheme::focusRingColor();
-        else if (ident == CSSValueCurrentcolor)
-            col = m_style->color();
-        else
-            col = colorForCSSValue(ident);
-    } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
-        col.setRGB(primitiveValue->getRGBA32Value());
-    return col;
+    if (value->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+        return Color(value->getRGBA32Value());
+
+    if (value->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
+        return Color();
+
+    int ident = value->getIdent();
+
+    switch (ident) {
+    case CSSValueWebkitText:
+        return m_element->document()->textColor();
+    case CSSValueWebkitLink:
+        return (m_element->isLink() && forVisitedLink) ? m_element->document()->visitedLinkColor() : m_element->document()->linkColor();
+    case CSSValueWebkitActivelink:
+        return m_element->document()->activeLinkColor();
+    case CSSValueWebkitFocusRingColor:
+        return RenderTheme::focusRingColor();
+    case CSSValueCurrentcolor:
+        return m_style->color();
+    default:
+        return colorForCSSValue(ident);
+    }
 }
 
 bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname) const
@@ -5388,8 +5392,8 @@ bool CSSStyleSelector::createFilterOperations(CSSValue* inValue, RenderStyle* st
             int blur = item->blur ? item->blur->computeLength<int>(style, rootStyle, zoomFactor) : 0;
             Color color;
             if (item->color)
-                color = getColorFromPrimitiveValue(item->color.get());
-            
+                color = colorFromPrimitiveValue(item->color.get());
+
             operations.operations().append(DropShadowFilterOperation::create(x, y, blur, color.isValid() ? color : Color::transparent, operationType));
             break;
         }

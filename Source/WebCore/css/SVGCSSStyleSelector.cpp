@@ -576,7 +576,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             int blur = item->blur ? item->blur->computeLength<int>(style(), m_rootElementStyle) : 0;
             Color color;
             if (item->color)
-                color = getColorFromPrimitiveValue(item->color.get());
+                color = colorFromPrimitiveValue(item->color.get());
 
             // -webkit-svg-shadow does should not have a spread or style
             ASSERT(!item->spread);

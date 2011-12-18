@@ -114,7 +114,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
         // We have to resolve colors.
         for (unsigned i = 0; i < m_stops.size(); i++) {
             const CSSGradientColorStop& stop = m_stops[i];
-            Color color = renderer->document()->styleSelector()->getColorFromPrimitiveValue(stop.m_color.get());
+            Color color = renderer->document()->styleSelector()->colorFromPrimitiveValue(stop.m_color.get());
 
             float offset;
             if (stop.m_position->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
@@ -147,7 +147,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
     for (size_t i = 0; i < numStops; ++i) {
         const CSSGradientColorStop& stop = m_stops[i];
 
-        stops[i].color = renderer->document()->styleSelector()->getColorFromPrimitiveValue(stop.m_color.get());
+        stops[i].color = renderer->document()->styleSelector()->colorFromPrimitiveValue(stop.m_color.get());
 
         if (stop.m_position) {
             int type = stop.m_position->primitiveType();

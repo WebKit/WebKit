@@ -191,7 +191,7 @@ private:
 public:
     bool useSVGZoomRules();
 
-    Color getColorFromPrimitiveValue(CSSPrimitiveValue*, bool forVisitedLink = false) const;
+    Color colorFromPrimitiveValue(CSSPrimitiveValue*, bool forVisitedLink = false) const;
 
     bool hasSelectorForAttribute(const AtomicString&) const;
 
