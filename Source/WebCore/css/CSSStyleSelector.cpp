@@ -1964,8 +1964,7 @@ void RuleSet::addPageRule(CSSPageRule* rule)
 
 void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
 {
-    if (!sheet)
-        return;
+    ASSERT(sheet);
 
     // No media implies "all", but if a media list exists it must
     // contain our current medium
@@ -1982,7 +1981,7 @@ void RuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator&
             addPageRule(static_cast<CSSPageRule*>(rule));
         else if (rule->isImportRule()) {
             CSSImportRule* import = static_cast<CSSImportRule*>(rule);
-            if (!import->media() || medium.eval(import->media(), styleSelector))
+            if (import->styleSheet() && (!import->media() || medium.eval(import->media(), styleSelector)))
                 addRulesFromSheet(import->styleSheet(), medium, styleSelector);
         }
         else if (rule->isMediaRule()) {

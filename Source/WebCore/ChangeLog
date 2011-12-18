@@ -1,5 +1,19 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        RuleSet: Remove style sheet null-check in addRulesFromSheet().
+        <http://webkit.org/b/74792>
+
+        Reviewed by Antti Koivisto.
+
+        Replace the "sheet" null-check in addRulesFromSheet() by an assertion.
+        The only call-site where it could be null was when adding rules from
+        an @import'ed sheet, so add a check there instead.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::RuleSet::addRulesFromSheet):
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         CSSStyleSelector: Clean up getColorFromPrimitiveValue().
         <http://webkit.org/b/74789>
 
