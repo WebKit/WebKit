@@ -1,4 +1,4 @@
-2011-12-18  Anders Carlsson  <andersca@apple.com>
+2011-12-18  Andreas Kling  <kling@webkit.org>
 
         Interacting with GMail message lists is sluggish.
         <http://webkit.org/b/74813>
@@ -44,7 +44,7 @@
             Pass DoNotIncludeBorderColor to collapsed*Border() since we only care
             about the metrics here.
 
-2011-12-18  Andreas Kling  <kling@webkit.org>
+2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         The scrolling coordinator should keep track of the main frame geometry
         https://bugs.webkit.org/show_bug.cgi?id=74816
