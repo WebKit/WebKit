@@ -455,5 +455,9 @@ WebInspector.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "-webkit-text-emphasis-style": [
         "circle", "filled", "open", "dot", "double-circle", "triangle", "sesame"
+    ],
+    "-webkit-transform": [
+        "scale", "scaleX", "scaleY", "scale3d", "rotate", "rotateX", "rotateY", "rotateZ", "rotate3d", "skew", "skewX", "skewY", 
+        "translate", "translateX", "translateY", "translateZ", "translate3d", "matrix", "matrix3d", "perspective"
     ]
 }

@@ -1,3 +1,16 @@
+2011-12-18  Raul Hudea  <rhudea@adobe.com>
+
+        Add transform function completion to web-inspector
+
+        Web Inspector: Auto-complete transform functions for -webkit-transform
+        https://bugs.webkit.org/show_bug.cgi?id=74730
+
+        Reviewed by Pavel Feldman.
+
+        No new test. Trivial change.
+
+        * inspector/front-end/CSSKeywordCompletions.js:
+
 2011-12-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: chromium profiler: change default root type for retaining paths from GC Roots to DOMWindow.
