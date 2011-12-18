@@ -27,6 +27,7 @@
 #include <QGraphicsSceneWheelEvent>
 #include <QWheelEvent>
 #include <qapplication.h>
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
 
 PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
 #ifndef QT_NO_WHEELEVENT
-    : PlatformEvent(PlatformEvent::Wheel, e->modifiers() & Qt::ShiftModifier, e->modifiers() & Qt::ControlModifier, e->modifiers() & Qt::AltModifier, e->modifiers() & Qt::MetaModifier)
+    : PlatformEvent(PlatformEvent::Wheel, e->modifiers() & Qt::ShiftModifier, e->modifiers() & Qt::ControlModifier, e->modifiers() & Qt::AltModifier, e->modifiers() & Qt::MetaModifier, WTF::currentTime())
     , m_position(e->pos().toPoint())
     , m_globalPosition(e->screenPos())
     , m_granularity(ScrollByPixelWheelEvent)
@@ -75,7 +76,7 @@ PlatformWheelEvent::PlatformWheelEvent(QGraphicsSceneWheelEvent* e)
 
 PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
 #ifndef QT_NO_WHEELEVENT
-    : PlatformEvent(PlatformEvent::Wheel, e->modifiers() & Qt::ShiftModifier, e->modifiers() & Qt::ControlModifier, e->modifiers() & Qt::AltModifier, e->modifiers() & Qt::MetaModifier)
+    : PlatformEvent(PlatformEvent::Wheel, e->modifiers() & Qt::ShiftModifier, e->modifiers() & Qt::ControlModifier, e->modifiers() & Qt::AltModifier, e->modifiers() & Qt::MetaModifier, WTF::currentTime())
     , m_position(e->pos())
     , m_globalPosition(e->globalPos())
     , m_granularity(ScrollByPixelWheelEvent)

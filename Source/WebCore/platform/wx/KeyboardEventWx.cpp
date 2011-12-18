@@ -27,6 +27,8 @@
 #include "PlatformKeyboardEvent.h"
 
 #include "WindowsKeyboardCodes.h"
+#include <wtf/CurrentTime.h>
+
 #include <wx/defs.h>
 #include <wx/event.h>
 
@@ -366,6 +368,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(wxKeyEvent& event)
     m_ctrlKey = event.CmdDown();
     m_altKey = event.AltDown();
     m_metaKey = event.MetaDown();
+    m_timestamp = WTF::currentTime();
 }
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)

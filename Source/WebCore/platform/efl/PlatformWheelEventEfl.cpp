@@ -34,6 +34,7 @@
 #include "Scrollbar.h"
 
 #include <Evas.h>
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ enum {
 };
 
 PlatformWheelEvent::PlatformWheelEvent(const Evas_Event_Mouse_Wheel* ev)
-    : PlatformEvent(PlatformEvent::Wheel, evas_key_modifier_is_set(ev->modifiers, "Shift"), evas_key_modifier_is_set(ev->modifiers, "Control"), evas_key_modifier_is_set(ev->modifiers, "Alt"), evas_key_modifier_is_set(ev->modifiers, "Meta"))
+    : PlatformEvent(PlatformEvent::Wheel, evas_key_modifier_is_set(ev->modifiers, "Shift"), evas_key_modifier_is_set(ev->modifiers, "Control"), evas_key_modifier_is_set(ev->modifiers, "Alt"), evas_key_modifier_is_set(ev->modifiers, "Meta"), currentTime())
     , m_position(IntPoint(ev->canvas.x, ev->canvas.y))
     , m_globalPosition(IntPoint(ev->canvas.x, ev->canvas.y))
     , m_granularity(ScrollByPixelWheelEvent)

@@ -1,3 +1,59 @@
+2011-12-17  Sam Weinig  <sam@webkit.org>
+
+        Move timestamp down from PlatformEvent subclasses to the base class
+        https://bugs.webkit.org/show_bug.cgi?id=74805
+
+        Reviewed by Anders Carlsson.
+
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::type):
+        (WebCore::PlatformEvent::timestamp):
+        (WebCore::PlatformEvent::PlatformEvent):
+        * platform/PlatformGestureEvent.h:
+        (WebCore::PlatformGestureEvent::PlatformGestureEvent):
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        (WebCore::PlatformMouseEvent::clickCount):
+        * platform/PlatformTouchEvent.h:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/efl/PlatformKeyboardEventEfl.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/efl/PlatformMouseEventEfl.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/efl/PlatformTouchEventEfl.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/efl/PlatformWheelEventEfl.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/mac/PlatformMouseEventMac.mm:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::singleCharacterString):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/PlatformMouseEventWin.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/KeyboardEventWx.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/wx/MouseEventWx.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/wx/MouseWheelEventWx.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         Add a scrolling thread to the scrolling coordinator

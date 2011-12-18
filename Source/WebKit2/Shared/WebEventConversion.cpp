@@ -53,6 +53,7 @@ public:
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_metaKey = webEvent.metaKey();
+        m_timestamp = webEvent.timestamp();
 
         // PlatformMouseEvent
         switch (webEvent.button()) {
@@ -75,7 +76,6 @@ public:
         m_position = webEvent.position();
         m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
-        m_timestamp = webEvent.timestamp();
 
         m_modifierFlags = 0;
         if (m_shiftKey)
@@ -108,6 +108,7 @@ public:
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_metaKey = webEvent.metaKey();
+        m_timestamp = webEvent.timestamp();
 
         // PlatformWheelEvent
         m_position = webEvent.position();
@@ -122,7 +123,6 @@ public:
         m_phase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.phase());
         m_momentumPhase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.momentumPhase());
         m_hasPreciseScrollingDeltas = webEvent.hasPreciseScrollingDeltas();
-        m_timestamp = webEvent.timestamp();
 #endif
     }
 };
@@ -158,6 +158,7 @@ public:
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_metaKey = webEvent.metaKey();
+        m_timestamp = webEvent.timestamp();
 
         // PlatformKeyboardEvent
         m_text = webEvent.text();
@@ -205,11 +206,11 @@ public:
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_metaKey = webEvent.metaKey();
+        m_timestamp = webEvent.timestamp();
 
         // PlatformGestureEvent
         m_position = webEvent.position();
         m_globalPosition = webEvent.globalPosition();
-        m_timestamp = webEvent.timestamp();
     }
 };
 
@@ -277,6 +278,7 @@ public:
         m_altKey = webEvent.altKey();
         m_shiftKey = webEvent.shiftKey();
         m_metaKey = webEvent.metaKey();
+        m_timestamp = webEvent.timestamp();
 
         // PlatformTouchEvent
         for (int i = 0; i < webEvent.touchPoints().size(); ++i)

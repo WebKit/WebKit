@@ -43,7 +43,6 @@ class PlatformTouchEvent : public PlatformEvent {
 public:
     PlatformTouchEvent()
         : PlatformEvent(PlatformEvent::TouchStart)
-        , m_timestamp(0)
     {
     }
 
@@ -55,12 +54,8 @@ public:
 
     const Vector<PlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
-    // Time in seconds.
-    double timestamp() const { return m_timestamp; }
-
 protected:
     Vector<PlatformTouchPoint> m_touchPoints;
-    double m_timestamp;
 };
 
 }

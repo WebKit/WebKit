@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "Assertions.h"
 #include "PlatformMouseEvent.h"
-#include <wtf/CurrentTime.h>
 
+#include "Assertions.h"
 #include <wx/defs.h>
 #include <wx/event.h>
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -48,8 +48,8 @@ static PlatformEvent::Type typeFromMouseEvent(const wxMouseEvent& event)
 }
 
 PlatformMouseEvent::PlatformMouseEvent(const wxMouseEvent& event, const wxPoint& globalPoint, int clickCount)
-    : PlatformEvent(typeFromMouseEvent(event), event.ShiftDown(), event.CmdDown() || event.ControlDown(), event.AltDown(), event.MetaDown())
-    : m_position(event.GetPosition())
+    : PlatformEvent(typeFromMouseEvent(event), event.ShiftDown(), event.CmdDown() || event.ControlDown(), event.AltDown(), event.MetaDown(), WTF::currentTime())
+    , m_position(event.GetPosition())
     , m_globalPosition(globalPoint)
 {
 
@@ -64,8 +64,6 @@ PlatformMouseEvent::PlatformMouseEvent(const wxMouseEvent& event, const wxPoint&
         m_clickCount = 0;
     else
         m_clickCount = clickCount;
-
-    m_timestamp = WTF::currentTime();
 }
 
 }

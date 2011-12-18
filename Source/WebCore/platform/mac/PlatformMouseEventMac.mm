@@ -143,12 +143,11 @@ static PlatformEvent::Type mouseEventForNSEvent(NSEvent* event)
 }
 
 PlatformMouseEvent::PlatformMouseEvent(NSEvent* event, NSView *windowView)
-    : PlatformEvent(mouseEventForNSEvent(event), [event modifierFlags] & NSShiftKeyMask, [event modifierFlags] & NSControlKeyMask, [event modifierFlags] & NSAlternateKeyMask, [event modifierFlags] & NSCommandKeyMask)
+    : PlatformEvent(mouseEventForNSEvent(event), [event modifierFlags] & NSShiftKeyMask, [event modifierFlags] & NSControlKeyMask, [event modifierFlags] & NSAlternateKeyMask, [event modifierFlags] & NSCommandKeyMask, [event timestamp])
     , m_position(pointForEvent(event, windowView))
     , m_globalPosition(globalPointForEvent(event))
     , m_button(mouseButtonForEvent(event))
     , m_clickCount(clickCountForEvent(event))
-    , m_timestamp([event timestamp])
     , m_modifierFlags([event modifierFlags])
     , m_eventNumber([event eventNumber])
 {
@@ -157,12 +156,11 @@ PlatformMouseEvent::PlatformMouseEvent(NSEvent* event, NSView *windowView)
 PlatformMouseEvent::PlatformMouseEvent(int x, int y, int globalX, int globalY, MouseButton button, PlatformEvent::Type type,
                    int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp,
                    unsigned modifierFlags, int eventNumber)
-    : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey)
+    : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
     , m_position(IntPoint(x, y))
     , m_globalPosition(IntPoint(globalX, globalY))
     , m_button(button)
     , m_clickCount(clickCount)
-    , m_timestamp(timestamp)
     , m_modifierFlags(modifierFlags)
     , m_eventNumber(eventNumber)
 {

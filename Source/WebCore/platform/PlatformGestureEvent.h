@@ -37,17 +37,15 @@ class PlatformGestureEvent : public PlatformEvent {
 public:
     PlatformGestureEvent()
         : PlatformEvent(PlatformEvent::GestureScrollBegin)
-        , m_timestamp(0)
         , m_deltaX(0)
         , m_deltaY(0)
     {
     }
 
     PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, double timestamp, float deltaX, float deltaY, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
-        : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey)
+        : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
         , m_position(position)
         , m_globalPosition(globalPosition)
-        , m_timestamp(timestamp)
         , m_deltaX(deltaX)
         , m_deltaY(deltaY)
     {
@@ -55,8 +53,6 @@ public:
 
     const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
     const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
-
-    double timestamp() const { return m_timestamp; }
 
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }

@@ -25,7 +25,9 @@
 
 #include "config.h"
 #include "PlatformWheelEvent.h"
+
 #include "Scrollbar.h"
+#include <wtf/CurrentTime.h>
 
 #include <wx/defs.h>
 #include <wx/event.h>
@@ -33,7 +35,7 @@
 namespace WebCore {
 
 PlatformWheelEvent::PlatformWheelEvent(const wxMouseEvent& event, const wxPoint& globalPoint)
-    : PlatformEvent(PlatformEvent::Wheel, event.ShiftDown(), event.ControlDown(), event.AltDown(), event.MetaDown())
+    : PlatformEvent(PlatformEvent::Wheel, event.ShiftDown(), event.ControlDown(), event.AltDown(), event.MetaDown(), WTF::currentTime())
     , m_position(event.GetPosition())
     , m_globalPosition(globalPoint)
     , m_granularity(ScrollByPixelWheelEvent)

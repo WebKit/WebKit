@@ -99,13 +99,12 @@ namespace WebCore {
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
             , m_momentumPhase(PlatformWheelEventPhaseNone)
-            , m_timestamp(0)
 #endif
         {
         }
 
         PlatformWheelEvent(IntPoint position, IntPoint globalPosition, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, PlatformWheelEventGranularity granularity, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
-            : PlatformEvent(PlatformEvent::Wheel, shiftKey, ctrlKey, altKey, metaKey)
+            : PlatformEvent(PlatformEvent::Wheel, shiftKey, ctrlKey, altKey, metaKey, 0)
             , m_position(position)
             , m_globalPosition(globalPosition)
             , m_deltaX(deltaX)
@@ -118,7 +117,6 @@ namespace WebCore {
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
             , m_momentumPhase(PlatformWheelEventPhaseNone)
-            , m_timestamp(0)
 #endif
         {
         }
@@ -203,7 +201,6 @@ namespace WebCore {
         bool m_hasPreciseScrollingDeltas;
         PlatformWheelEventPhase m_phase;
         PlatformWheelEventPhase m_momentumPhase;
-        double m_timestamp;
 #endif
     };
 

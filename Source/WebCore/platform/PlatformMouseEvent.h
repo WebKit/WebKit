@@ -69,7 +69,6 @@ namespace WebCore {
             : PlatformEvent(PlatformEvent::MouseMoved)
             , m_button(NoButton)
             , m_clickCount(0)
-            , m_timestamp(0)
             , m_modifierFlags(0)
 #if PLATFORM(MAC)
             , m_eventNumber(0)
@@ -81,12 +80,11 @@ namespace WebCore {
 
         PlatformMouseEvent(const IntPoint& position, const IntPoint& globalPosition, MouseButton button, PlatformEvent::Type type,
                            int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp)
-            : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey)
+            : PlatformEvent(type, shiftKey, ctrlKey, altKey, metaKey, timestamp)
             , m_position(position)
             , m_globalPosition(globalPosition)
             , m_button(button)
             , m_clickCount(clickCount)
-            , m_timestamp(timestamp)
             , m_modifierFlags(0)
 #if PLATFORM(MAC)
             , m_eventNumber(0)
@@ -105,16 +103,11 @@ namespace WebCore {
         int movementX() const { return m_movementDelta.x(); }
         int movementY() const { return m_movementDelta.y(); }
 #endif
+
         MouseButton button() const { return m_button; }
         int clickCount() const { return m_clickCount; }
-        bool shiftKey() const { return m_shiftKey; }
-        bool ctrlKey() const { return m_ctrlKey; }
-        bool altKey() const { return m_altKey; }
-        bool metaKey() const { return m_metaKey; }
         unsigned modifierFlags() const { return m_modifierFlags; }
         
-        // Time in seconds.
-        double timestamp() const { return m_timestamp; }
 
 #if PLATFORM(GTK) 
         PlatformMouseEvent(GdkEventButton*);
@@ -162,7 +155,6 @@ namespace WebCore {
 #endif
         MouseButton m_button;
         int m_clickCount;
-        double m_timestamp; // unit: seconds
         unsigned m_modifierFlags;
 
 #if PLATFORM(MAC)

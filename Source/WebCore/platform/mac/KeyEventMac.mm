@@ -189,7 +189,7 @@ static int windowsKeyCodeForKeyEvent(NSEvent *event)
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(NSEvent *event)
-    : PlatformEvent(isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown, [event modifierFlags] & NSShiftKeyMask, [event modifierFlags] & NSControlKeyMask, [event modifierFlags] & NSAlternateKeyMask, [event modifierFlags] & NSCommandKeyMask)
+    : PlatformEvent(isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown, [event modifierFlags] & NSShiftKeyMask, [event modifierFlags] & NSControlKeyMask, [event modifierFlags] & NSAlternateKeyMask, [event modifierFlags] & NSCommandKeyMask, [event timestamp])
     , m_text(textFromEvent(event))
     , m_unmodifiedText(unmodifiedTextFromEvent(event))
     , m_keyIdentifier(keyIdentifierForKeyEvent(event))

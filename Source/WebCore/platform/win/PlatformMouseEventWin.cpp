@@ -79,15 +79,13 @@ static PlatformEvent::Type messageToEventType(UINT message)
 }
 
 PlatformMouseEvent::PlatformMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
-    : PlatformEvent(messageToEventType(message), wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
+    : PlatformEvent(messageToEventType(message), wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, ::GetTickCount() * 0.001)
     , m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_clickCount(0)
     , m_didActivateWebView(didActivateWebView)
     , m_modifierFlags(wParam)
 {
-    m_timestamp = ::GetTickCount()*0.001; // GetTickCount returns milliseconds
-
     switch (message) {
         case WM_LBUTTONDOWN:
         case WM_LBUTTONUP:

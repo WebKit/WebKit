@@ -29,13 +29,14 @@
 #include "PlatformTouchEvent.h"
 
 #include "ewk_frame.h"
+#include <wtf/CurrentTime.h>
 
 #if ENABLE(TOUCH_EVENTS)
 
 namespace WebCore {
 
 PlatformTouchEvent::PlatformTouchEvent(Eina_List* points, const IntPoint pos, PlatformEvent::Type type, int metaState)
-    : PlatformEvent(type, false, false, false, false)
+    : PlatformEvent(type, false, false, false, false, currentTime())
 {
     void* item;
 

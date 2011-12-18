@@ -65,17 +65,14 @@ public:
 #endif
     };
 
-    Type type() const { return static_cast<Type>(m_type); }
-
-
-    // Event Modifiers
-
     enum ModifierKey {
         AltKey = 1 << 0,
         CtrlKey = 1 << 1,
         MetaKey = 1 << 2,
         ShiftKey = 1 << 3
     };
+
+    Type type() const { return static_cast<Type>(m_type); }
 
     bool shiftKey() const { return m_shiftKey; }
     bool ctrlKey() const { return m_ctrlKey; }
@@ -90,31 +87,36 @@ public:
             | (shiftKey() ? ShiftKey : 0);
     }
 
+    double timestamp() const { return m_timestamp; }
+
 protected:
     PlatformEvent()
-        : m_shiftKey(false)
+        : m_type(NoType)
+        , m_shiftKey(false)
         , m_ctrlKey(false)
         , m_altKey(false)
         , m_metaKey(false)
-        , m_type(NoType)
+        , m_timestamp(0)
     {
     }
 
     PlatformEvent(Type type)
-        : m_shiftKey(false)
+        : m_type(type)
+        , m_shiftKey(false)
         , m_ctrlKey(false)
         , m_altKey(false)
         , m_metaKey(false)
-        , m_type(type)
+        , m_timestamp(0)
     {
     }
 
-    PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
-        : m_shiftKey(shiftKey)
+    PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp)
+        : m_type(type)
+        , m_shiftKey(shiftKey)
         , m_ctrlKey(ctrlKey)
         , m_altKey(altKey)
         , m_metaKey(metaKey)
-        , m_type(type)
+        , m_timestamp(timestamp)
     {
     }
 
@@ -124,11 +126,12 @@ protected:
     {
     }
 
+    unsigned m_type;
     bool m_shiftKey;
     bool m_ctrlKey;
     bool m_altKey;
     bool m_metaKey;
-    unsigned m_type;
+    double m_timestamp;
 };
 
 } // namespace WebCore
