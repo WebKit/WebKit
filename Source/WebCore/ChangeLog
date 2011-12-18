@@ -1,3 +1,39 @@
+2011-12-18  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: use generated types in method parameters
+        https://bugs.webkit.org/show_bug.cgi?id=74661
+
+        Reviewed by Pavel Feldman.
+
+        Type binding object is added to raw_type object.
+
+        * inspector/CodeGeneratorInspector.py:
+        (TypeBindings.create_for_named_type_declaration.EnumBinding.generate_type_builder):
+        (TypeBindings.create_for_named_type_declaration.EnumBinding.get_in_c_type_text):
+        (TypeBindings.create_for_named_type_declaration.EnumBinding):
+        (TypeBindings.create_for_named_type_declaration.EnumBinding.reduce_to_raw_type):
+        (TypeBindings.create_for_named_type_declaration.PlainString.generate_type_builder):
+        (TypeBindings.create_for_named_type_declaration.PlainString.reduce_to_raw_type):
+        (TypeBindings.create_for_named_type_declaration.PlainString):
+        (TypeBindings.create_for_named_type_declaration.PlainString.get_in_c_type_text):
+        (TypeBindings):
+        (TypeBindings.create_for_named_type_declaration.ClassBinding):
+        (get_in_c_type_text):
+        (reduce_to_raw_type):
+        (PlainObjectBinding.generate_type_builder):
+        (PlainObjectBinding.get_in_c_type_text):
+        (PlainObjectBinding):
+        (PlainObjectBinding.reduce_to_raw_type):
+        (RawTypesBinding.generate_type_builder):
+        (RawTypesBinding.get_in_c_type_text):
+        (RawTypesBinding):
+        (RawTypesBinding.reduce_to_raw_type):
+        (resolve_param_type.RawTypeBinding.reduce_to_raw_type):
+        (resolve_param_type.RawTypeBinding):
+        (resolve_param_type.RawTypeBinding.get_in_c_type_text):
+        (resolve_param_type):
+        (Generator.process_event):
+
 2011-12-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103169.

@@ -505,6 +505,14 @@ class TypeBindings:
                         output.append(enum_name)
                         output.append("\n\n")
 
+                    @classmethod
+                    def get_in_c_type_text(cls, optional):
+                        return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
+                    @staticmethod
+                    def reduce_to_raw_type():
+                        return RawTypes.String
+
                 return EnumBinding
             else:
 
@@ -516,12 +524,23 @@ class TypeBindings:
                         output.append("typedef String ")
                         output.append(fixed_type_name.class_name)
                         output.append(";\n\n")
+
+                    @staticmethod
+                    def reduce_to_raw_type():
+                        return RawTypes.String
+
+                    @classmethod
+                    def get_in_c_type_text(cls, optional):
+                        return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
                 return PlainString
 
         elif json_type["type"] == "object":
             if "properties" in json_type:
 
                 class ClassBinding:
+                    class_name_ = json_type["id"]
+
                     @staticmethod
                     def generate_type_builder(output, forward_listener):
                         write_doc(output)
@@ -644,6 +663,16 @@ class TypeBindings:
                                 output.append("    using InspectorObject::%s;\n\n" % setter_name)
 
                         output.append("};\n\n")
+
+                    @classmethod
+                    def get_in_c_type_text(cls, optional):
+                        return "PassRefPtr<TypeBuilder::" + context_domain_name + "::" + cls.class_name_ + ">"
+
+                    @staticmethod
+                    def reduce_to_raw_type():
+                        return RawTypes.Object
+
+                        output.append("};\n\n")
                 return ClassBinding
             else:
 
@@ -652,6 +681,15 @@ class TypeBindings:
                     def generate_type_builder(output, forward_listener):
                         # No-op
                         pass
+
+                    @classmethod
+                    def get_in_c_type_text(cls, optional):
+                        return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
+                    @staticmethod
+                    def reduce_to_raw_type():
+                        return RawTypes.Object
+
                 return PlainObjectBinding
         else:
             raw_type = RawTypes.get(json_type["type"])
@@ -661,6 +699,15 @@ class TypeBindings:
                 def generate_type_builder(output, forward_listener):
                     # No-op
                     pass
+
+                @classmethod
+                def get_in_c_type_text(cls, optional):
+                    return cls.reduce_to_raw_type().get_c_param_type(ParamType.EVENT, optional).get_text()
+
+                @staticmethod
+                def reduce_to_raw_type():
+                    return raw_type
+
             return RawTypesBinding
 
 
@@ -726,6 +773,28 @@ class TypeMap:
     def get(self, domain_name, type_name):
         return self.map_[domain_name][type_name]
 
+
+def resolve_param_type(json_parameter, scope_domain_name):
+    if "$ref" in json_parameter:
+        json_ref = json_parameter["$ref"]
+        type_data = get_ref_data(json_ref, scope_domain_name)
+        return type_data.get_binding()
+    elif "type" in json_parameter:
+        json_type = json_parameter["type"]
+        raw_type = RawTypes.get(json_type)
+
+        class RawTypeBinding:
+            @staticmethod
+            def reduce_to_raw_type():
+                return raw_type
+
+            @staticmethod
+            def get_in_c_type_text(optional):
+                return raw_type.get_c_param_type(ParamType.EVENT, optional).get_text()
+
+        return RawTypeBinding
+    else:
+        raise Exception("Unknown type")
 
 def resolve_param_raw_type(json_parameter, scope_domain_name):
     if "$ref" in json_parameter:
@@ -1306,6 +1375,13 @@ $domainInitializers
 
 type_map = TypeMap(json_api)
 
+
+def get_annotated_type_text(raw_type, annotated_type):
+    if annotated_type != raw_type:
+        return "/*%s*/ %s" % (annotated_type, raw_type)
+    else:
+        return raw_type
+
 class Generator:
     frontend_class_field_lines = []
     frontend_domain_class_lines = []
@@ -1436,7 +1512,11 @@ class Generator:
 
                 optional = optional_mask and json_optional
 
-                parameter_list.append("%s %s" % (c_type.get_text(), parameter_name))
+                param_type_binding = resolve_param_type(json_parameter, domain_name)
+
+                annotated_type = get_annotated_type_text(c_type.get_text(), param_type_binding.get_in_c_type_text(json_optional))
+
+                parameter_list.append("%s %s" % (annotated_type, parameter_name))
 
                 setter_argument = c_type.get_setter_format() % parameter_name
 
