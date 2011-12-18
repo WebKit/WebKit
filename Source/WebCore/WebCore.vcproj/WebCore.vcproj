@@ -29632,6 +29632,22 @@
 					Name="filters"
 					>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterMesh.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterMesh.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterShader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterShader.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\DistantLightSource.cpp"
 						>
 					</File>
@@ -29685,6 +29701,14 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\filters\FEConvolveMatrix.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FECustomFilter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\FECustomFilter.h"
 						>
 					</File>
 					<File

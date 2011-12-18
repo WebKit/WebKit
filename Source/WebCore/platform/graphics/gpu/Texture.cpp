@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(CSS_SHADERS)
 
 #include "Texture.h"
 

@@ -2084,11 +2084,14 @@ HEADERS += \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
     platform/graphics/CrossfadeGeneratedImage.h \
+    platform/graphics/filters/CustomFilterMesh.h \
+    platform/graphics/filters/CustomFilterShader.h \
     platform/graphics/filters/FEBlend.h \
     platform/graphics/filters/FEColorMatrix.h \
     platform/graphics/filters/FEComponentTransfer.h \
     platform/graphics/filters/FEComposite.h \
     platform/graphics/filters/FEConvolveMatrix.h \
+    platform/graphics/filters/FECustomFilter.h \
     platform/graphics/filters/FEDiffuseLighting.h \
     platform/graphics/filters/FEDisplacementMap.h \
     platform/graphics/filters/FEDropShadow.h \
@@ -3242,12 +3245,15 @@ contains(DEFINES, ENABLE_XSLT=1) {
 
 contains(DEFINES, ENABLE_FILTERS=1) {
     SOURCES += \
+        platform/graphics/filters/CustomFilterMesh.cpp \
+        platform/graphics/filters/CustomFilterShader.cpp \
         platform/graphics/filters/DistantLightSource.cpp \
         platform/graphics/filters/FEBlend.cpp \
         platform/graphics/filters/FEColorMatrix.cpp \
         platform/graphics/filters/FEComponentTransfer.cpp \
         platform/graphics/filters/FEComposite.cpp \
         platform/graphics/filters/FEConvolveMatrix.cpp \
+        platform/graphics/filters/FECustomFilter.cpp \
         platform/graphics/filters/FEDiffuseLighting.cpp \
         platform/graphics/filters/FEDisplacementMap.cpp \
         platform/graphics/filters/FEDropShadow.cpp \

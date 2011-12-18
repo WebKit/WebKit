@@ -1113,12 +1113,15 @@ SET(WebCore_SOURCES
     platform/graphics/TextRun.cpp
     platform/graphics/WidthIterator.cpp
 
+    platform/graphics/filters/CustomFilterMesh.cpp
+    platform/graphics/filters/CustomFilterShader.cpp
     platform/graphics/filters/DistantLightSource.cpp
     platform/graphics/filters/FEBlend.cpp
     platform/graphics/filters/FEColorMatrix.cpp
     platform/graphics/filters/FEComponentTransfer.cpp
     platform/graphics/filters/FEComposite.cpp
     platform/graphics/filters/FEConvolveMatrix.cpp
+    platform/graphics/filters/FECustomFilter.cpp
     platform/graphics/filters/FEDiffuseLighting.cpp
     platform/graphics/filters/FEDisplacementMap.cpp
     platform/graphics/filters/FEDropShadow.cpp

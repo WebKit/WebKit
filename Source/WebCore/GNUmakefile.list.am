@@ -2542,6 +2542,10 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterMesh.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterMesh.h \
+	Source/WebCore/platform/graphics/filters/CustomFilterShader.cpp \
+	Source/WebCore/platform/graphics/filters/CustomFilterShader.h \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
@@ -2554,6 +2558,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/FEComposite.h \
 	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.cpp \
 	Source/WebCore/platform/graphics/filters/FEConvolveMatrix.h \
+	Source/WebCore/platform/graphics/filters/FECustomFilter.cpp \
+	Source/WebCore/platform/graphics/filters/FECustomFilter.h \
 	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.cpp \
 	Source/WebCore/platform/graphics/filters/FEDiffuseLighting.h \
 	Source/WebCore/platform/graphics/filters/FEDisplacementMap.cpp \

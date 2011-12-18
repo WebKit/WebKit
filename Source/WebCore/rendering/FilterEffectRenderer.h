@@ -28,6 +28,8 @@
 
 #if ENABLE(CSS_FILTERS)
 
+#include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "FilterOperations.h"
@@ -44,12 +46,16 @@
 namespace WebCore {
 
 typedef Vector<RefPtr<FilterEffect> > FilterEffectList;
+class Document;
+class FilterEffectObserver;
+class CachedShader;
 
-class FilterEffectRenderer : public Filter {
+class FilterEffectRenderer : public Filter, public CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<FilterEffectRenderer> create()
+    static PassRefPtr<FilterEffectRenderer> create(FilterEffectObserver* observer)
     {
-        return adoptRef(new FilterEffectRenderer());
+        return adoptRef(new FilterEffectRenderer(observer));
     }
 
     virtual void setSourceImageRect(const FloatRect& sourceImageRect)
@@ -67,11 +73,13 @@ public:
     GraphicsContext* inputContext();
     ImageBuffer* output() const { return lastEffect()->asImageBuffer(); }
 
-    void build(const FilterOperations&);
+    void build(Document*, const FilterOperations&);
     void prepare();
     void apply();
     
     IntRect outputRect() const { return lastEffect()->hasResult() ? lastEffect()->requestedRegionOfInputImageData(IntRect(m_filterRegion)) : IntRect(); }
+
+    virtual void notifyFinished(CachedResource*);
     
 private:
 
@@ -89,7 +97,7 @@ private:
         return 0;
     }
 
-    FilterEffectRenderer();
+    FilterEffectRenderer(FilterEffectObserver*);
     virtual ~FilterEffectRenderer();
     
     FloatRect m_sourceDrawingRegion;
@@ -97,6 +105,12 @@ private:
     
     FilterEffectList m_effects;
     RefPtr<SourceGraphic> m_sourceGraphic;
+    FilterEffectObserver* m_observer; // No need for a strong references here. It owns us.
+    
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+    typedef Vector<CachedResourceHandle<CachedShader> > CachedShaderList;
+    CachedShaderList m_cachedShaders;
+#endif
     
     bool m_graphicsBufferAttached;
 };

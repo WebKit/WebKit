@@ -34,10 +34,18 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FEMerge.h"
+#include "FilterEffectObserver.h"
 #include "FloatConversion.h"
 
 #include <algorithm>
 #include <wtf/MathExtras.h>
+
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+#include "CachedShader.h"
+#include "CustomFilterOperation.h"
+#include "FECustomFilter.h"
+#include "Settings.h"
+#endif
 
 namespace WebCore {
 
@@ -55,9 +63,20 @@ static inline void lastMatrixRow(Vector<float>& parameters)
     parameters.append(1);
     parameters.append(0);
 }
+    
+    
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+static bool isWebGLEnabled(Document* document)
+{
+    // We only want to enable shaders if WebGL is also enabled on this platform.
+    Settings* settings = document->settings();
+    return settings && settings->webGLEnabled();
+}
+#endif
 
-FilterEffectRenderer::FilterEffectRenderer()
-    : m_graphicsBufferAttached(false)
+FilterEffectRenderer::FilterEffectRenderer(FilterEffectObserver* observer)
+    : m_observer(observer)
+    , m_graphicsBufferAttached(false)
 {
     setFilterResolution(FloatSize(1, 1));
     m_sourceGraphic = SourceGraphic::create(this);
@@ -72,8 +91,14 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage()->context();
 }
 
-void FilterEffectRenderer::build(const FilterOperations& operations)
+void FilterEffectRenderer::build(Document* document, const FilterOperations& operations)
 {
+#if !ENABLE(CSS_SHADERS) || !ENABLE(WEBGL)
+    UNUSED_PARAM(document);
+#else
+    CachedShaderList cachedShaders;
+#endif
+
     m_effects.clear();
 
     RefPtr<FilterEffect> effect;
@@ -218,7 +243,41 @@ void FilterEffectRenderer::build(const FilterOperations& operations)
         }
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM: {
-            // Not implemented in the software path.
+#if ENABLE(WEBGL)
+            if (!isWebGLEnabled(document))
+                continue;
+            
+            CustomFilterOperation* customFilterOperation = static_cast<CustomFilterOperation*>(filterOperation);
+            
+            // Check that the filters are already loaded. If not just skip them here.
+            String vertexShader, fragmentShader;
+            bool shadersLoaded = true;
+            if (customFilterOperation->vertexShader()) {
+                CachedShader* cachedShader = customFilterOperation->vertexShader()->cachedShader();
+                ASSERT(cachedShader);
+                cachedShaders.append(cachedShader);
+                cachedShader->addClient(this);
+                if (cachedShader->isLoaded())
+                    vertexShader = cachedShader->shaderString();
+                else
+                    shadersLoaded = false;
+            }
+            if (customFilterOperation->fragmentShader()) {
+                CachedShader* cachedShader = customFilterOperation->fragmentShader()->cachedShader();
+                ASSERT(cachedShader);
+                cachedShaders.append(cachedShader);
+                cachedShader->addClient(this);
+                if (cachedShader->isLoaded())
+                    fragmentShader = cachedShader->shaderString();
+                else
+                    shadersLoaded = false;
+            }
+            if (shadersLoaded) {
+                effect = FECustomFilter::create(this, document, vertexShader, fragmentShader,
+                                                customFilterOperation->meshRows(), customFilterOperation->meshColumns(),
+                                                customFilterOperation->meshBoxType(), customFilterOperation->meshType());
+            }
+#endif
             break;
         }
 #endif
@@ -243,6 +302,17 @@ void FilterEffectRenderer::build(const FilterOperations& operations)
 
     m_effects.first()->inputEffects().append(m_sourceGraphic);
     setMaxEffectRects(m_sourceDrawingRegion);
+    
+#if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
+    for (CachedShaderList::iterator iter = m_cachedShaders.begin(), end = m_cachedShaders.end(); iter != end; ++iter)
+        iter->get()->removeClient(this);
+    m_cachedShaders.swap(cachedShaders);
+#endif
+}
+
+void FilterEffectRenderer::notifyFinished(CachedResource*)
+{
+    m_observer->filterNeedsRepaint();
 }
 
 void FilterEffectRenderer::prepare()

@@ -189,6 +189,7 @@ compositing/video-page-visibility.html
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
+css3/filters/custom-filter.html
 fast/canvas/webgl/framebuffer-object-attachment.html
 fast/canvas/webgl/gl-vertex-attrib-zero-issues.html
 fast/events/pagehide-timeout.html

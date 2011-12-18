@@ -44,6 +44,9 @@
 #ifndef RenderLayer_h
 #define RenderLayer_h
 
+#if ENABLE(CSS_FILTERS)
+#include "FilterEffectObserver.h"
+#endif
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "ScrollBehavior.h"
@@ -208,7 +211,11 @@ private:
     bool m_fixed : 1;
 };
 
-class RenderLayer : public ScrollableArea {
+class RenderLayer : public ScrollableArea
+#if ENABLE(CSS_FILTERS)
+    , public FilterEffectObserver
+#endif
+{
 public:
     friend class RenderReplica;
 
@@ -513,6 +520,10 @@ public:
     FloatPoint perspectiveOrigin() const;
     bool preserves3D() const { return renderer()->style()->transformStyle3D() == TransformStyle3DPreserve3D; }
     bool has3DTransform() const { return m_transform && !m_transform->isAffine(); }
+
+#if ENABLE(CSS_FILTERS)
+    virtual void filterNeedsRepaint();
+#endif
 
     // Overloaded new operator. Derived classes must override operator new
     // in order to allocate out of the RenderArena.

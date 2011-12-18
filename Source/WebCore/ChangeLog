@@ -1,3 +1,95 @@
+2011-12-18  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Add FECustomFilter that renders custom filters
+        https://bugs.webkit.org/show_bug.cgi?id=73317
+
+        Using a GraphicsContext3D to render the shaders in GPU, read the
+        result back and use it in the software filters pipeline.
+
+        Reviewed by Chris Marrin.
+
+        Test: css3/filters/effect-custom.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::CachedShader):
+        (WebCore::CachedShader::shaderString):
+        (WebCore::CachedShader::data):
+        * loader/cache/CachedShader.h:
+        * platform/graphics/filters/CustomFilterMesh.cpp: Added.
+        (WebCore::MeshGenerator::MeshGenerator):
+        (WebCore::MeshGenerator::vertices):
+        (WebCore::MeshGenerator::indices):
+        (WebCore::MeshGenerator::points):
+        (WebCore::MeshGenerator::pointsCount):
+        (WebCore::MeshGenerator::tiles):
+        (WebCore::MeshGenerator::tilesCount):
+        (WebCore::MeshGenerator::indicesCount):
+        (WebCore::MeshGenerator::floatsPerVertex):
+        (WebCore::MeshGenerator::vertexCount):
+        (WebCore::MeshGenerator::addTile):
+        (WebCore::MeshGenerator::addAttachedMeshIndex):
+        (WebCore::MeshGenerator::generateAttachedMesh):
+        (WebCore::MeshGenerator::addDetachedMeshVertexAndIndex):
+        (WebCore::MeshGenerator::generateDetachedMesh):
+        (WebCore::MeshGenerator::addPositionAttribute):
+        (WebCore::MeshGenerator::addTexCoordAttribute):
+        (WebCore::MeshGenerator::addMeshCoordAttribute):
+        (WebCore::MeshGenerator::addTriangleCoordAttribute):
+        (WebCore::MeshGenerator::addAttachedMeshVertexAttributes):
+        (WebCore::MeshGenerator::addDetachedMeshVertexAttributes):
+        (WebCore::MeshGenerator::dumpBuffers):
+        (WebCore::CustomFilterMesh::CustomFilterMesh):
+        (WebCore::CustomFilterMesh::~CustomFilterMesh):
+        * platform/graphics/filters/CustomFilterMesh.h: Added.
+        (WebCore::CustomFilterMesh::create):
+        (WebCore::CustomFilterMesh::verticesBufferObject):
+        (WebCore::CustomFilterMesh::bytesPerVertex):
+        (WebCore::CustomFilterMesh::elementsBufferObject):
+        (WebCore::CustomFilterMesh::indicesCount):
+        (WebCore::CustomFilterMesh::meshBox):
+        (WebCore::CustomFilterMesh::meshType):
+        * platform/graphics/filters/CustomFilterShader.cpp: Added.
+        (WebCore::CustomFilterShader::defaultVertexShaderString):
+        (WebCore::CustomFilterShader::defaultFragmentShaderString):
+        (WebCore::CustomFilterShader::CustomFilterShader):
+        (WebCore::CustomFilterShader::~CustomFilterShader):
+        * platform/graphics/filters/CustomFilterShader.h: Added.
+        * platform/graphics/filters/FECustomFilter.cpp: Added.
+        (WebCore::orthoMatrix):
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::create):
+        (WebCore::FECustomFilter::platformApplySoftware):
+        (WebCore::FECustomFilter::dump):
+        (WebCore::FECustomFilter::externalRepresentation):
+        * platform/graphics/filters/FECustomFilter.h: Added.
+        * platform/graphics/gpu/Texture.cpp:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::toColumnMajorFloatArray):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/FilterEffectObserver.h: Copied from Source/WebCore/loader/cache/CachedShader.cpp.
+        (WebCore::FilterEffectObserver::~FilterEffectObserver):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::isWebGLEnabled):
+        (WebCore::FilterEffectRenderer::FilterEffectRenderer):
+        (WebCore::FilterEffectRenderer::build):
+        (WebCore::FilterEffectRenderer::notifyFinished):
+        * rendering/FilterEffectRenderer.h:
+        (WebCore::FilterEffectRenderer::create):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        (WebCore::RenderLayer::filterNeedsRepaint):
+        * rendering/RenderLayer.h:
+        * rendering/style/StyleCachedShader.h:
+        (WebCore::StyleCachedShader::cachedShader):
+        * rendering/style/StyleShader.h:
+        (WebCore::StyleShader::cachedShader):
+
 2011-12-18  Keishi Hattori  <keishi@webkit.org>
 
         Implement <input type=color> UI WebKit chromium part

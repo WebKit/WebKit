@@ -36,10 +36,19 @@
 
 namespace WebCore {
 
+class TextResourceDecoder;
+
 class CachedShader : public CachedResource {
 public:
     CachedShader(const ResourceRequest&);
     virtual ~CachedShader();
+    
+    const String& shaderString();
+    void data(PassRefPtr<SharedBuffer>, bool allDataReceived);
+    
+private:
+    RefPtr<TextResourceDecoder> m_decoder;
+    String m_shaderString;
 };
 
 }

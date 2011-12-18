@@ -4461,12 +4461,12 @@ void RenderLayer::updateOrRemoveFilterEffect()
 {
     if (paintsWithFilters()) {
         if (!m_filter) {
-            m_filter = FilterEffectRenderer::create();
+            m_filter = FilterEffectRenderer::create(this);
             RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
             m_filter->setRenderingMode(renderingMode);
         }
 
-        m_filter->build(renderer()->style()->filter());
+        m_filter->build(renderer()->document(), renderer()->style()->filter());
     } else {
         m_filter = 0;
     }
@@ -4483,6 +4483,11 @@ void RenderLayer::updateFilterBackingStore()
     }
 }
 
+void RenderLayer::filterNeedsRepaint()
+{
+    renderer()->node()->setNeedsStyleRecalc(SyntheticStyleChange);
+    renderer()->repaint();
+}
 #endif
 
 } // namespace WebCore

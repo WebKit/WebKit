@@ -46,6 +46,8 @@ public:
     
     virtual PassRefPtr<CSSValue> cssValue() const;
     
+    virtual CachedShader* cachedShader() const { return m_shader.get(); }
+    
 private:
     StyleCachedShader(CachedShader*);
     

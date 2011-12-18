@@ -32,16 +32,37 @@
 #if ENABLE(CSS_SHADERS)
 
 #include "CachedShader.h"
+#include "SharedBuffer.h"
+#include "TextResourceDecoder.h"
 
 namespace WebCore {
 
 CachedShader::CachedShader(const ResourceRequest& resourceRequest)
     : CachedResource(resourceRequest, ShaderResource)
+    , m_decoder(TextResourceDecoder::create("application/shader"))
 {
 }
 
 CachedShader::~CachedShader()
 {
+}
+
+const String& CachedShader::shaderString()
+{
+    if (!m_shaderString && m_data) {
+        m_shaderString = m_decoder->decode(m_data->data(), m_data->size());
+        m_shaderString += m_decoder->flush();
+    }
+
+    return m_shaderString;
+}
+
+void CachedShader::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+{
+    if (allDataReceived)
+        m_data = data;
+
+    CachedResource::data(data, allDataReceived);
 }
 
 } // namespace WebCore
