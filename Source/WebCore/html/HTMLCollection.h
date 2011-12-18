@@ -71,10 +71,15 @@ protected:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
 private:
+    static bool shouldIncludeChildren(CollectionType);
+
     virtual unsigned calcLength() const;
     virtual void updateNameCache() const;
 
+    bool isAcceptableElement(Element*) const;
+
     bool m_baseIsRetained : 1;
+    bool m_includeChildren : 1;
     mutable bool m_ownsInfo : 1;
     unsigned m_type : 5; // CollectionType
 

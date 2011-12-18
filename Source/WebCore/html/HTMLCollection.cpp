@@ -38,6 +38,7 @@ using namespace HTMLNames;
 
 HTMLCollection::HTMLCollection(Document* document, CollectionType type)
     : m_baseIsRetained(false)
+    , m_includeChildren(shouldIncludeChildren(type))
     , m_ownsInfo(false)
     , m_type(type)
     , m_base(document)
@@ -47,12 +48,45 @@ HTMLCollection::HTMLCollection(Document* document, CollectionType type)
 
 HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type, CollectionCache* info)
     : m_baseIsRetained(true)
+    , m_includeChildren(shouldIncludeChildren(type))
     , m_ownsInfo(false)
     , m_type(type)
     , m_base(base.get())
     , m_info(info)
 {
     m_base->ref();
+}
+
+bool HTMLCollection::shouldIncludeChildren(CollectionType type)
+{
+    switch (type) {
+    case DocAll:
+    case DocAnchors:
+    case DocApplets:
+    case DocEmbeds:
+    case DocForms:
+    case DocImages:
+    case DocLinks:
+    case DocObjects:
+    case DocScripts:
+    case DocumentNamedItems:
+    case MapAreas:
+    case OtherCollection:
+    case SelectOptions:
+    case DataListOptions:
+    case WindowNamedItems:
+#if ENABLE(MICRODATA)
+    case ItemProperties:
+#endif
+        return true;
+    case NodeChildren:
+    case TRCells:
+    case TSectionRows:
+    case TableTBodies:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::createForCachingOnDocument(Document* document, CollectionType type)
@@ -90,6 +124,57 @@ void HTMLCollection::resetCollectionInfo() const
     }
 }
 
+inline bool HTMLCollection::isAcceptableElement(Element* element) const
+{
+    switch (m_type) {
+    case DocImages:
+        return element->hasLocalName(imgTag);
+    case DocScripts:
+        return element->hasLocalName(scriptTag);
+    case DocForms:
+        return element->hasLocalName(formTag);
+    case TableTBodies:
+        return element->hasLocalName(tbodyTag);
+    case TRCells:
+        return element->hasLocalName(tdTag) || element->hasLocalName(thTag);
+    case TSectionRows:
+        return element->hasLocalName(trTag);
+    case SelectOptions:
+        return element->hasLocalName(optionTag);
+    case DataListOptions:
+        if (element->hasLocalName(optionTag)) {
+            HTMLOptionElement* option = static_cast<HTMLOptionElement*>(element);
+            if (!option->disabled() && !option->value().isEmpty())
+                return true;
+        }
+        return false;
+    case MapAreas:
+        return element->hasLocalName(areaTag);
+    case DocApplets:
+        return element->hasLocalName(appletTag) || (element->hasLocalName(objectTag) && static_cast<HTMLObjectElement*>(element)->containsJavaApplet());
+    case DocEmbeds:
+        return element->hasLocalName(embedTag);
+    case DocObjects:
+        return element->hasLocalName(objectTag);
+    case DocLinks:
+        return (element->hasLocalName(aTag) || element->hasLocalName(areaTag)) && element->fastHasAttribute(hrefAttr);
+    case DocAnchors:
+        return element->hasLocalName(aTag) && element->fastHasAttribute(nameAttr);
+    case DocAll:
+    case NodeChildren:
+        return true;
+#if ENABLE(MICRODATA)
+    case ItemProperties:
+        return element->isHTMLElement() && element->fastHasAttribute(itempropAttr);
+#endif
+    case DocumentNamedItems:
+    case OtherCollection:
+    case WindowNamedItems:
+        ASSERT_NOT_REACHED();
+    }
+    return false;
+}
+
 static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
 {
     return includeChildren ? node->traverseNextNode(base) : node->traverseNextSibling(base);
@@ -97,123 +182,18 @@ static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
 
 Element* HTMLCollection::itemAfter(Element* previous) const
 {
-    bool deep = true;
-
-    switch (m_type) {
-        case DocAll:
-        case DocAnchors:
-        case DocApplets:
-        case DocEmbeds:
-        case DocForms:
-        case DocImages:
-        case DocLinks:
-        case DocObjects:
-        case DocScripts:
-        case DocumentNamedItems:
-        case MapAreas:
-        case OtherCollection:
-        case SelectOptions:
-        case DataListOptions:
-        case WindowNamedItems:
-#if ENABLE(MICRODATA)
-        case ItemProperties:
-#endif
-            break;
-        case NodeChildren:
-        case TRCells:
-        case TSectionRows:
-        case TableTBodies:
-            deep = false;
-            break;
-    }
-
     Node* current;
     if (!previous)
         current = m_base->firstChild();
     else
-        current = nextNodeOrSibling(m_base, previous, deep);
+        current = nextNodeOrSibling(m_base, previous, m_includeChildren);
 
-    for (; current; current = nextNodeOrSibling(m_base, current, deep)) {
+    for (; current; current = nextNodeOrSibling(m_base, current, m_includeChildren)) {
         if (!current->isElementNode())
             continue;
-        Element* e = static_cast<Element*>(current);
-        switch (m_type) {
-            case DocImages:
-                if (e->hasLocalName(imgTag))
-                    return e;
-                break;
-            case DocScripts:
-                if (e->hasLocalName(scriptTag))
-                    return e;
-                break;
-            case DocForms:
-                if (e->hasLocalName(formTag))
-                    return e;
-                break;
-            case TableTBodies:
-                if (e->hasLocalName(tbodyTag))
-                    return e;
-                break;
-            case TRCells:
-                if (e->hasLocalName(tdTag) || e->hasLocalName(thTag))
-                    return e;
-                break;
-            case TSectionRows:
-                if (e->hasLocalName(trTag))
-                    return e;
-                break;
-            case SelectOptions:
-                if (e->hasLocalName(optionTag))
-                    return e;
-                break;
-            case DataListOptions:
-                if (e->hasLocalName(optionTag)) {
-                    HTMLOptionElement* option = static_cast<HTMLOptionElement*>(e);
-                    if (!option->disabled() && !option->value().isEmpty())
-                        return e;
-                }
-                break;
-            case MapAreas:
-                if (e->hasLocalName(areaTag))
-                    return e;
-                break;
-            case DocApplets: // all <applet> elements and <object> elements that contain Java Applets
-                if (e->hasLocalName(appletTag))
-                    return e;
-                if (e->hasLocalName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet())
-                    return e;
-                break;
-            case DocEmbeds:
-                if (e->hasLocalName(embedTag))
-                    return e;
-                break;
-            case DocObjects:
-                if (e->hasLocalName(objectTag))
-                    return e;
-                break;
-            case DocLinks: // all <a> and <area> elements with a value for href
-                if ((e->hasLocalName(aTag) || e->hasLocalName(areaTag)) && e->fastHasAttribute(hrefAttr))
-                    return e;
-                break;
-            case DocAnchors: // all <a> elements with a value for name
-                if (e->hasLocalName(aTag) && e->fastHasAttribute(nameAttr))
-                    return e;
-                break;
-            case DocAll:
-            case NodeChildren:
-                return e;
-#if ENABLE(MICRODATA)
-            case ItemProperties:
-                if (e->isHTMLElement() && e->hasAttribute(itempropAttr))
-                    return e;
-                break;
-#endif
-            case DocumentNamedItems:
-            case OtherCollection:
-            case WindowNamedItems:
-                ASSERT_NOT_REACHED();
-                break;
-        }
+        Element* element = static_cast<Element*>(current);
+        if (isAcceptableElement(element))
+            return element;
     }
 
     return 0;

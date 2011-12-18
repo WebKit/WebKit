@@ -1,5 +1,29 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        HTMLCollection: Simplify itemAfter().
+        <http://webkit.org/b/74795>
+
+        Reviewed by Antti Koivisto.
+
+        Whether to do deep traversal of children depends on m_type which
+        doesn't change after construction, so move that decision there
+        by caching it in a "m_includeChildren" bit.
+
+        Also factored out the big switch statement in itemAfter() into
+        an isAcceptableElement() function.
+
+        Last and least, use fastHasAttribute() to check for itempropAttr
+        since it's not SVG animatable.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::shouldIncludeChildren):
+        (WebCore::HTMLCollection::isAcceptableElement):
+        (WebCore::HTMLCollection::itemAfter):
+        * html/HTMLCollection.h:
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         TagNodeList: Optimize nodeMatches() for the common case.
         <http://webkit.org/b/74796>
 
