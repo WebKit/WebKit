@@ -132,12 +132,7 @@ namespace WebCore {
 
         PlatformWheelEventGranularity granularity() const { return m_granularity; }
 
-        int x() const { return m_position.x(); } // PlatformWindow coordinates.
-        int y() const { return m_position.y(); }
-        int globalX() const { return m_globalPosition.x(); } // Screen coordinates.
-        int globalY() const { return m_globalPosition.y(); }
-
-        bool webkitDirectionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
+        bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
 
         void turnVerticalTicksIntoHorizontal()
         {

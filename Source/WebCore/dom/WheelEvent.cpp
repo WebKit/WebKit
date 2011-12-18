@@ -108,8 +108,8 @@ WheelEventDispatchMediator::WheelEventDispatchMediator(const PlatformWheelEvent&
         return;
 
     setEvent(WheelEvent::create(FloatPoint(event.wheelTicksX(), event.wheelTicksY()), FloatPoint(event.deltaX(), event.deltaY()),
-                                granularity(event), view, IntPoint(event.globalX(), event.globalY()), IntPoint(event.x(), event.y()),
-                                event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.webkitDirectionInvertedFromDevice()));
+                                granularity(event), view, event.globalPos(), event.pos(),
+                                event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.directionInvertedFromDevice()));
 }
 
 WheelEvent* WheelEventDispatchMediator::event() const

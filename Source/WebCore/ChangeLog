@@ -1,3 +1,18 @@
+2011-12-18  Sam Weinig  <sam@webkit.org>
+
+        Spruce up PlatformWheelEvent a bit
+        https://bugs.webkit.org/show_bug.cgi?id=74821
+
+        Reviewed by Dan Bernstein.
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEventDispatchMediator::WheelEventDispatchMediator):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::directionInvertedFromDevice):
+        Remove x/y getters in favor of direct access to the IntPoints, and rename 
+        webkitDirectionInvertedFromDevice() to directionInvertedFromDevice() since
+        it is not an exposed API.
+
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         Scroll the main frame on the scrolling thread
