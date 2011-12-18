@@ -204,7 +204,8 @@ public:
 
     CSSWrapShape* getShapeValue() const { return m_primitiveUnitType != CSS_SHAPE ? 0 : m_value.shape; }
 
-    int getIdent() const;
+    int getIdent() const { return m_primitiveUnitType == CSS_IDENT ? m_value.ident : 0; }
+
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
 
     String customCssText() const;

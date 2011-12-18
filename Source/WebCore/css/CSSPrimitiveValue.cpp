@@ -673,13 +673,6 @@ Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
     return m_value.pair;
 }
 
-int CSSPrimitiveValue::getIdent() const
-{
-    if (m_primitiveUnitType != CSS_IDENT)
-        return 0;
-    return m_value.ident;
-}
-
 static String formatNumber(double number)
 {
     DecimalNumber decimal(number);

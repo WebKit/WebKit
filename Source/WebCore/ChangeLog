@@ -1,5 +1,18 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        CSSPrimitiveValue: Inline getIdent().
+        <http://webkit.org/b/74793>
+
+        Reviewed by Antti Koivisto.
+
+        Inline the trivial getIdent(), the same as its getFoo() siblings.
+
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getIdent):
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         CSSStyleSelector: Clean up matchRules().
         <http://webkit.org/b/74794>
 
