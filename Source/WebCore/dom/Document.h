@@ -1370,6 +1370,7 @@ private:
     CheckedRadioButtons m_checkedRadioButtons;
 
     RefPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
+    RefPtr<HTMLAllCollection> m_allCollection;
 
     typedef HashMap<AtomicStringImpl*, CollectionCache*> NamedCollectionMap;
     FixedArray<CollectionCache, NumUnnamedDocumentCachedTypes> m_collectionInfo;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(PassRefPtr<Node> base)
+PassRefPtr<HTMLAllCollection> HTMLAllCollection::create(Document* document)
 {
-    return adoptRef(new HTMLAllCollection(base));
+    return adoptRef(new HTMLAllCollection(document));
 }
 
-HTMLAllCollection::HTMLAllCollection(PassRefPtr<Node> base)
-    : HTMLCollection(base, DocAll)
+HTMLAllCollection::HTMLAllCollection(Document* document)
+    : HTMLCollection(document, DocAll)
     , m_idsDone(false)
 {
 }

@@ -1,9 +1,9 @@
-This test verifies that the HTMLCollection getters on document (excluding .all) returns the same object when called repeatedly.
+This test verifies that the HTMLCollection getters on document return the same object when called repeatedly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.all === document.all is false
+PASS document.all === document.all is true
 PASS document.images === document.images is true
 PASS document.embeds === document.embeds is true
 PASS document.plugins === document.plugins is true

@@ -4242,7 +4242,9 @@ PassRefPtr<HTMLCollection> Document::anchors()
 
 PassRefPtr<HTMLAllCollection> Document::all()
 {
-    return HTMLAllCollection::create(this);
+    if (!m_allCollection)
+        m_allCollection = HTMLAllCollection::create(this);
+    return m_allCollection;
 }
 
 PassRefPtr<HTMLCollection> Document::windowNamedItems(const String &name)

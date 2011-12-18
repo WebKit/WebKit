@@ -7,11 +7,9 @@
 <body>
 <script>
 
-description("This test verifies that the HTMLCollection getters on document (excluding .all) returns the same object when called repeatedly.");
+description("This test verifies that the HTMLCollection getters on document return the same object when called repeatedly.");
 
-var collections = [ "images", "embeds", "plugins", "applets", "links", "forms", "anchors", "scripts" ];
-
-shouldBe("document.all === document.all", "false");
+var collections = [ "all", "images", "embeds", "plugins", "applets", "links", "forms", "anchors", "scripts" ];
 
 for (i = 0; i < collections.length; ++i) {
     var collection = collections[i];

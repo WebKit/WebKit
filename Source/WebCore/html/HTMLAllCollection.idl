@@ -29,7 +29,8 @@ module html {
         HasIndexGetter,
         HasNameGetter,
         CustomCall,
-        MasqueradesAsUndefined
+        MasqueradesAsUndefined,
+        GenerateIsReachable
     ] HTMLAllCollection {
         readonly attribute unsigned long length;
         [Custom] Node item(in [Optional=CallWithDefaultValue] unsigned long index);

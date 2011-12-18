@@ -14,8 +14,8 @@ PASS: document.getElementsByTagName('canvas')[0].getContext('2d').myCustomProper
 PASS: document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0).myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat').myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('select')[0].options.myCustomProperty should be undefined and is.
-PASS: document.all.myCustomProperty should be undefined and is.
 PASS: document.body.childNodes.myCustomProperty should be undefined and is.
+PASS: document.all.myCustomProperty should be 1 and is.
 PASS: document.images.myCustomProperty should be 1 and is.
 PASS: document.embeds.myCustomProperty should be 1 and is.
 PASS: document.applets.myCustomProperty should be 1 and is.
@@ -50,8 +50,8 @@ PASS: document.getElementsByTagName('canvas')[0].getContext('2d').myCustomProper
 PASS: document.getElementsByTagName('canvas')[0].getContext('2d').createLinearGradient(0, 0, 0, 0).myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('canvas')[0].getContext('2d').createPattern(new Image(), 'no-repeat').myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('select')[0].options.myCustomProperty should be undefined and is.
-PASS: document.all.myCustomProperty should be undefined and is.
 PASS: document.body.childNodes.myCustomProperty should be undefined and is.
+PASS: document.all.myCustomProperty should be 1 and is.
 PASS: document.images.myCustomProperty should be 1 and is.
 PASS: document.embeds.myCustomProperty should be 1 and is.
 PASS: document.applets.myCustomProperty should be 1 and is.

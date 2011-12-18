@@ -1,5 +1,41 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        Cache and reuse the HTMLAllCollection returned by document.all.
+        <http://webkit.org/b/74768>
+
+        Reviewed by Antti Koivisto.
+
+        Let Document cache the document.all collection, just like we do for
+        the other collections (.links, .images, etc.)
+        This is primarily a memory optimization, as repeated calls to
+        document.all will no longer cause collection objects to stack up.
+
+        Tests: fast/dom/document-collection-idempotence.html
+               fast/dom/gc-9.html
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::all):
+
+            Cache the HTMLAllCollection and reuse it across calls instead of
+            creating a new one each time.
+
+        * html/HTMLAllCollection.h:
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::create):
+        (WebCore::HTMLAllCollection::HTMLAllCollection):
+
+            Make the HTMLAllCollection constructor take a Document* to enforce
+            the fact that it's the only way it should ever be created.
+
+        * html/HTMLAllCollection.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
+            Custom reachability code for JSC, same as HTMLCollection.
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         HTMLCollection: Simplify itemAfter().
         <http://webkit.org/b/74795>
 
