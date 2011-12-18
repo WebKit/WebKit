@@ -28,14 +28,20 @@
 
 #if ENABLE(THREADED_SCROLLING)
 
+#include "GraphicsLayer.h"
 #include "IntRect.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebCore {
 
 class Frame;
+class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
 
@@ -45,6 +51,9 @@ public:
     ~ScrollingCoordinator();
 
     void pageDestroyed();
+
+    // Should be called whenever the scroll layer for the given frame changes.
+    void setFrameScrollLayer(Frame*, const GraphicsLayer* scrollLayer);
 
     // Should be called whenever the geometry of the given frame changes,
     // including the visible content rect and the content size.
@@ -68,6 +77,9 @@ private:
     Mutex m_mainFrameGeometryMutex;
     IntRect m_mainFrameVisibleContentRect;
     IntSize m_mainFrameContentsSize;
+#if PLATFORM(MAC)
+    RetainPtr<PlatformLayer> m_mainFrameScrollLayer;
+#endif
 };
 
 } // namespace WebCore

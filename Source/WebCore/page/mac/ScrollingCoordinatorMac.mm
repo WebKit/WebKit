@@ -29,6 +29,7 @@
 
 #import "ScrollingCoordinator.h"
 
+#import "Page.h"
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
@@ -92,7 +93,7 @@ void ScrollingThread::createThreadIfNeeded()
     }
 }
 
-void* ScrollingThread::threadCallback(void *scrollingThread)
+void* ScrollingThread::threadCallback(void* scrollingThread)
 {
     static_cast<ScrollingThread*>(scrollingThread)->threadBody();
 
@@ -156,6 +157,20 @@ static ScrollingThread& scrollingThread()
 {
     DEFINE_STATIC_LOCAL(ScrollingThread, scrollingThread, ());
     return scrollingThread;
+}
+
+void ScrollingCoordinator::setFrameScrollLayer(Frame* frame, const GraphicsLayer* scrollLayer)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (frame != m_page->mainFrame())
+        return;
+
+    MutexLocker locker(m_mainFrameGeometryMutex);
+    m_mainFrameScrollLayer = scrollLayer->platformLayer();
+
+    // FIXME: Inform the scrolling thread?
 }
 
 bool ScrollingCoordinator::isScrollingThread()

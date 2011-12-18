@@ -1,3 +1,22 @@
+2011-12-18  Anders Carlsson  <andersca@apple.com>
+
+        The scrolling coordinator should know about the main frame scroll layer
+        https://bugs.webkit.org/show_bug.cgi?id=74817
+
+        Reviewed by Andreas Kling.
+
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingThread::threadCallback):
+        Move the * to where it belongs.
+
+        (WebCore::ScrollingCoordinator::setFrameScrollLayer):
+        Keep track of the underlying CALayer of the frame scroll layer.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+        Call ScrollingCoordinator::setFrameScrollLayer.
+
 2011-12-18  Andreas Kling  <kling@webkit.org>
 
         Interacting with GMail message lists is sluggish.

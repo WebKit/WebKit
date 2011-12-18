@@ -1805,6 +1805,11 @@ void RenderLayerCompositor::ensureRootLayer()
 
             frameViewDidChangeSize();
             frameViewDidScroll(m_renderView->frameView()->scrollPosition());
+
+#if ENABLE(THREADED_SCROLLING)
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->setFrameScrollLayer(m_renderView->frameView()->frame(), m_scrollLayer.get());
+#endif
         }
     } else {
         if (m_overflowControlsHostLayer) {
