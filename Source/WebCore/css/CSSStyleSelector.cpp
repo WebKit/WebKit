@@ -642,31 +642,29 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
     matchRulesForList(rules->tagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     matchRulesForList(rules->universalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
 
-    // If we didn't match any rules, we're done.
     if (m_matchedRules.isEmpty())
         return;
 
-    // Sort the set of matched rules.
     sortMatchedRules();
 
-    // Now transfer the set of matched rules over to our list of decls.
-    if (!m_checker.isCollectingRulesOnly()) {
-        // FIXME: This sucks, the inspector should get the style from the visited style itself.
-        bool swapVisitedUnvisited = InspectorInstrumentation::forcePseudoState(m_element, CSSSelector::PseudoVisited);
-        for (unsigned i = 0; i < m_matchedRules.size(); i++) {
-            if (m_style && m_matchedRules[i]->containsUncommonAttributeSelector())
-                m_style->setAffectedByUncommonAttributeSelectors();
-            unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
-            if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
-                linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
-            addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType, m_matchedRules[i]->regionStyleRule());
-        }
-    } else {
-        for (unsigned i = 0; i < m_matchedRules.size(); i++) {
-            if (!m_ruleList)
-                m_ruleList = CSSRuleList::create();
+    if (m_checker.isCollectingRulesOnly()) {
+        if (!m_ruleList)
+            m_ruleList = CSSRuleList::create();
+        for (unsigned i = 0; i < m_matchedRules.size(); ++i)
             m_ruleList->append(m_matchedRules[i]->rule());
-        }
+        return;
+    }
+
+    // Now transfer the set of matched rules over to our list of declarations.
+    // FIXME: This sucks, the inspector should get the style from the visited style itself.
+    bool swapVisitedUnvisited = InspectorInstrumentation::forcePseudoState(m_element, CSSSelector::PseudoVisited);
+    for (unsigned i = 0; i < m_matchedRules.size(); i++) {
+        if (m_style && m_matchedRules[i]->containsUncommonAttributeSelector())
+            m_style->setAffectedByUncommonAttributeSelectors();
+        unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
+        if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
+            linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
+        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration(), linkMatchType, m_matchedRules[i]->regionStyleRule());
     }
 }
 

@@ -1,5 +1,19 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        CSSStyleSelector: Clean up matchRules().
+        <http://webkit.org/b/74794>
+
+        Reviewed by Antti Koivisto.
+
+        - Early return from the isCollectingRulesOnly() path to reduce nesting.
+        - Move the creation of m_ruleList out of the loop that builds the list.
+        - Removed some comments from the Captain Obvious department.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         RuleSet: Remove style sheet null-check in addRulesFromSheet().
         <http://webkit.org/b/74792>
 
