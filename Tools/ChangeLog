@@ -1,3 +1,12 @@
+2011-12-17  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [Qt] Fix QtTestBrowser compilation with QtWidgets module
+        https://bugs.webkit.org/show_bug.cgi?id=74791
+
+        Reviewed by Andreas Kling.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+
 2011-12-17  Kentaro Hara  <haraken@chromium.org>
 
         Remove top-level code completely from prepare-ChangeLog

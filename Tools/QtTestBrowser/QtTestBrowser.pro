@@ -42,8 +42,9 @@ CONFIG += qtwebkit
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
 QT += network
+
 macx:QT += xml
-haveQt(5): QT += printsupport
+haveQt(5): QT += printsupport widgets
 
 !embedded: PKGCONFIG += fontconfig
 
