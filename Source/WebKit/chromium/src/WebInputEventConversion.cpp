@@ -218,21 +218,21 @@ bool PlatformKeyboardEventBuilder::isCharacterKey() const
 }
 
 #if ENABLE(TOUCH_EVENTS)
-static inline TouchEventType toPlatformTouchEventType(const WebInputEvent::Type type)
+static inline PlatformEvent::Type toPlatformTouchEventType(const WebInputEvent::Type type)
 {
     switch (type) {
     case WebInputEvent::TouchStart:
-        return TouchStart;
+        return PlatformEvent::TouchStart;
     case WebInputEvent::TouchMove:
-        return TouchMove;
+        return PlatformEvent::TouchMove;
     case WebInputEvent::TouchEnd:
-        return TouchEnd;
+        return PlatformEvent::TouchEnd;
     case WebInputEvent::TouchCancel:
-        return TouchCancel;
+        return PlatformEvent::TouchCancel;
     default:
         ASSERT_NOT_REACHED();
     }
-    return TouchStart;
+    return PlatformEvent::TouchStart;
 }
 
 static inline PlatformTouchPoint::State toPlatformTouchPointState(const WebTouchPoint::State state)

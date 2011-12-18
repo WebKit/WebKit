@@ -31,10 +31,17 @@ namespace WebCore {
 PlatformTouchEvent::PlatformTouchEvent(QTouchEvent* event)
 {
     switch (event->type()) {
-    case QEvent::TouchBegin: m_type = TouchStart; break;
-    case QEvent::TouchUpdate: m_type = TouchMove; break;
-    case QEvent::TouchEnd: m_type = TouchEnd; break;
+    case QEvent::TouchBegin:
+        m_type = PlatformEvent::TouchStart;
+        break;
+    case QEvent::TouchUpdate:
+        m_type = PlatformEvent::TouchMove;
+        break;
+    case QEvent::TouchEnd:
+        m_type = PlatformEvent::TouchEnd;
+        break;
     }
+
     const QList<QTouchEvent::TouchPoint>& points = event->touchPoints();
     for (int i = 0; i < points.count(); ++i)
         m_touchPoints.append(PlatformTouchPoint(points.at(i)));

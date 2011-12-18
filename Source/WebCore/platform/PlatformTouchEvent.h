@@ -20,6 +20,7 @@
 #ifndef PlatformTouchEvent_h
 #define PlatformTouchEvent_h
 
+#include "PlatformEvent.h"
 #include "PlatformTouchPoint.h"
 #include <wtf/Vector.h>
 
@@ -37,47 +38,28 @@ typedef struct _Eina_List Eina_List;
 
 namespace WebCore {
 
-enum TouchEventType {
-    TouchStart
-    , TouchMove
-    , TouchEnd
-    , TouchCancel
-};
 
-class PlatformTouchEvent {
+class PlatformTouchEvent : public PlatformEvent {
 public:
     PlatformTouchEvent()
-        : m_type(TouchStart)
-        , m_ctrlKey(false)
-        , m_altKey(false)
-        , m_shiftKey(false)
-        , m_metaKey(false)
+        : PlatformEvent(PlatformEvent::TouchStart)
         , m_timestamp(0)
-    {}
+    {
+    }
+
 #if PLATFORM(QT)
     PlatformTouchEvent(QTouchEvent*);
 #elif PLATFORM(EFL)
-    PlatformTouchEvent(Eina_List*, const IntPoint, TouchEventType, int metaState);
+    PlatformTouchEvent(Eina_List*, const IntPoint, PlatformEvent::Type, int metaState);
 #endif
 
-    TouchEventType type() const { return m_type; }
     const Vector<PlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
-
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool altKey() const { return m_altKey; }
-    bool shiftKey() const { return m_shiftKey; }
-    bool metaKey() const { return m_metaKey; }
 
     // Time in seconds.
     double timestamp() const { return m_timestamp; }
 
 protected:
-    TouchEventType m_type;
     Vector<PlatformTouchPoint> m_touchPoints;
-    bool m_ctrlKey;
-    bool m_altKey;
-    bool m_shiftKey;
-    bool m_metaKey;
     double m_timestamp;
 };
 

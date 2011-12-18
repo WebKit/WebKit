@@ -946,7 +946,7 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
-    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), static_cast<WebCore::TouchEventType>(action), metaState);
+    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), static_cast<WebCore::PlatformEvent::Type>(action), metaState);
     return smartData->frame->eventHandler()->handleTouchEvent(touchEvent);
 #else
     return false;

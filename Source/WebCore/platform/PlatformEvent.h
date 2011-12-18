@@ -44,10 +44,10 @@ public:
         MousePressed,
         MouseReleased,
         MouseScroll,
-        
+
         // PlatformWheelEvent
         Wheel,
-        
+
         // PlatformGestureEvent
         GestureScrollBegin,
         GestureScrollEnd,
@@ -55,6 +55,14 @@ public:
         GestureTap,
         GestureTapDown,
         GestureDoubleTap,
+
+#if ENABLE(TOUCH_EVENTS)
+        // PlatformTouchEvent
+        TouchStart,
+        TouchMove,
+        TouchEnd,
+        TouchCancel,
+#endif
     };
 
     Type type() const { return static_cast<Type>(m_type); }

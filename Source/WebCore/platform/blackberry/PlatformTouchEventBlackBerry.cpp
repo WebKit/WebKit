@@ -28,30 +28,27 @@
 
 namespace WebCore {
 
+static PlatformEvent::Type touchEventType(BlackBerry::Platform::TouchEvent* event)
+{
+    switch (event->m_type) {
+    case BlackBerry::Platform::TouchEvent::TouchStart:
+        return PlatformEvent::TouchStart;
+    case BlackBerry::Platform::TouchEvent::TouchMove:
+        return PlatformEvent::TouchMove;
+    case BlackBerry::Platform::TouchEvent::TouchEnd:
+        return PlatformEvent::TouchEnd;
+    case BlackBerry::Platform::TouchEvent::TouchCancel:
+        return PlatformEvent::TouchCancel;
+    }
+}
+
 PlatformTouchEvent::PlatformTouchEvent(BlackBerry::Platform::TouchEvent* event)
-    : m_ctrlKey(0)
-    , m_altKey(event->m_altKey)
-    , m_shiftKey(event->m_shiftKey)
-    , m_metaKey(0)
+    : PlatformEvent(touchEventType(event), false, event->m_altKey, event->m_shiftKey, false)
     , m_rotation(0)
     , m_scale(1)
     , m_doubleTap(false)
     , m_touchHold(false)
 {
-    switch (event->m_type) {
-    case BlackBerry::Platform::TouchEvent::TouchStart:
-        m_type = TouchStart;
-        break;
-    case BlackBerry::Platform::TouchEvent::TouchMove:
-        m_type = TouchMove;
-        break;
-    case BlackBerry::Platform::TouchEvent::TouchEnd:
-        m_type = TouchEnd;
-        break;
-    case BlackBerry::Platform::TouchEvent::TouchCancel:
-        m_type = TouchCancel;
-        break;
-    }
 
     for (unsigned i = 0; i < event->m_points.size(); ++i)
         m_touchPoints.append(PlatformTouchPoint(event->m_points[i]));

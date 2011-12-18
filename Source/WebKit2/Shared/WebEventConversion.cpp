@@ -255,30 +255,32 @@ class WebKit2PlatformTouchEvent : public WebCore::PlatformTouchEvent {
 public:
     WebKit2PlatformTouchEvent(const WebTouchEvent& webEvent)
     {
+        // PlatformEvent
         switch (webEvent.type()) {
         case WebEvent::TouchStart: 
-            m_type = WebCore::TouchStart; 
+            m_type = WebCore::PlatformEvent::TouchStart;
             break;
         case WebEvent::TouchMove: 
-            m_type = WebCore::TouchMove; 
+            m_type = WebCore::PlatformEvent::TouchMove;
             break;
         case WebEvent::TouchEnd: 
-            m_type = WebCore::TouchEnd; 
+            m_type = WebCore::PlatformEvent::TouchEnd;
             break;
         case WebEvent::TouchCancel:
-            m_type = WebCore::TouchCancel;
+            m_type = WebCore::PlatformEvent::TouchCancel;
             break;
         default:
             ASSERT_NOT_REACHED();
         }
 
-        for (int i = 0; i < webEvent.touchPoints().size(); ++i)
-            m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
-
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_shiftKey = webEvent.shiftKey();
         m_metaKey = webEvent.metaKey();
+
+        // PlatformTouchEvent
+        for (int i = 0; i < webEvent.touchPoints().size(); ++i)
+            m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
     }
 };
 

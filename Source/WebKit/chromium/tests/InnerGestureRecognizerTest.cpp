@@ -141,14 +141,14 @@ BuildablePlatformTouchPoint::BuildablePlatformTouchPoint(int x, int y, PlatformT
 
 class BuildablePlatformTouchEvent : public WebCore::PlatformTouchEvent {
 public:
-    BuildablePlatformTouchEvent(WebCore::TouchEventType type, PlatformTouchPoint& point, double time)
+    BuildablePlatformTouchEvent(WebCore::PlatformEvent::Type type, PlatformTouchPoint& point, double time)
     {
         m_type = type;
         m_touchPoints.append(point);
         m_timestamp = time;
     }
 
-    BuildablePlatformTouchEvent(WebCore::TouchEventType type, PlatformTouchPoint& point)
+    BuildablePlatformTouchEvent(WebCore::PlatformEvent::Type type, PlatformTouchPoint& point)
     {
         m_type = type;
         m_touchPoints.append(point);
@@ -170,14 +170,14 @@ void SimulateAndTestFirstClick(InspectableGestureRecognizerChromium& gm)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000.);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000.);
     OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ((unsigned int)1, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(10, 16, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.7);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000. + 0.7);
     OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ((unsigned int)1, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureTap, (*gestureEnd)[0].type());
@@ -323,20 +323,20 @@ TEST_F(GestureRecognizerTest, DISABLED_doubleTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000 + .5);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000 + .5);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ(1u, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 16, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000 + .5 + .01);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move, 1000 + .5 + .01);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     ASSERT_EQ(0u, gestureMove->size());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(10, 16, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000 + .5 + .02);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000 + .5 + .02);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ(2u, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureTap, (*gestureEnd)[0].type());
@@ -351,14 +351,14 @@ TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000. + 0.7 + 0.01);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000. + 0.7 + 0.01);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ(1u, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000. + 0.7 + 0.02);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move, 1000. + 0.7 + 0.02);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     ASSERT_EQ(2u, gestureMove->size());
     ASSERT_EQ(PlatformEvent::GestureScrollBegin, (*gestureMove)[0].type());
@@ -366,7 +366,7 @@ TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteTest)
     ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
 
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.7 + 0.03);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000. + 0.7 + 0.03);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ(1u, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureScrollEnd, (*gestureEnd)[0].type());
@@ -382,14 +382,14 @@ TEST_F(GestureRecognizerTest, doubleTapGestureIncompleteDueToSecondClickPosition
     IntPoint awayFromFirstClick(24, 26);
 
     BuildablePlatformTouchPoint press(awayFromFirstClick.x(), awayFromFirstClick.y(), PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000. + 0.7 + 0.01);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000. + 0.7 + 0.01);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ(1u, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(awayFromFirstClick.x(), awayFromFirstClick.y(), PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.7 + 0.025);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000. + 0.7 + 0.025);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ(1u, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureTap, (*gestureEnd)[0].type());
@@ -402,21 +402,21 @@ TEST_F(GestureRecognizerTest, tapDownWithoutTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ(1u, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     for (unsigned int i = 0; i < gestureMove->size(); i++)
         ASSERT_NE(PlatformEvent::GestureTap, (*gestureMove)[i].type());
     ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
 
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     for (unsigned int i = 0; i < gestureEnd->size(); i++)
         ASSERT_NE(PlatformEvent::GestureTap, (*gestureEnd)[i].type());
@@ -429,20 +429,20 @@ TEST_F(GestureRecognizerTest, tapDownWithTapGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000.);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000.);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ(1u, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 16, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000.);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move, 1000.);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     ASSERT_EQ(0u, gestureMove->size());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(10, 16, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.011);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000. + 0.011);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ(1u, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureTap, (*gestureEnd)[0].type());
@@ -458,20 +458,20 @@ TEST_F(GestureRecognizerTest, noDoubleTapGestureBecauseOfInterTouchIntervalTest)
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
     // Values are from GestureRecognizerChromium.cpp
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000 + .8 + 10 + .1);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000 + .8 + 10 + .1);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ(1u, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 16, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000 + .8 + 10 + .1 + .05);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move, 1000 + .8 + 10 + .1 + .05);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     ASSERT_EQ(0u, gestureMove->size());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint release(11, 17, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000 + .8 + 10 + .1 + .02);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000 + .8 + 10 + .1 + .02);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ(1u, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureTap, (*gestureEnd)[0].type());
@@ -487,13 +487,13 @@ TEST_F(GestureRecognizerTest, gestureScrollEvents)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000.);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000.);
     gm.processTouchEventForGestures(pressEvent, false);
 
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000. + 0.2);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move, 1000. + 0.2);
     Gestures gestureStart(gm.processTouchEventForGestures(moveEvent, false));
     bool scrollStarted = false, scrollUpdated = false;
     for (unsigned int i = 0; i < gestureStart->size(); i++) {
@@ -514,7 +514,7 @@ TEST_F(GestureRecognizerTest, gestureScrollEvents)
     ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
 
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.2 + 0.2);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000. + 0.2 + 0.2);
     bool scrollEnd = false;
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     for (unsigned int i = 0; i < gestureEnd->size(); i++) {
@@ -538,14 +538,14 @@ TEST_F(GestureRecognizerTest, flickGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::NoGesture, gm.state());
 
     BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
-    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press, 1000.);
+    BuildablePlatformTouchEvent pressEvent(WebCore::PlatformEvent::TouchStart, press, 1000.);
     Gestures gestureStart(gm.processTouchEventForGestures(pressEvent, false));
     ASSERT_EQ((unsigned int)1, gestureStart->size());
     ASSERT_EQ(PlatformEvent::GestureTapDown, (*gestureStart)[0].type());
     ASSERT_EQ(GestureRecognizerChromium::PendingSyntheticClick, gm.state());
 
     BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
-    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move, 1000. + 0.02);
+    BuildablePlatformTouchEvent moveEvent(WebCore::PlatformEvent::TouchMove, move, 1000. + 0.02);
     Gestures gestureMove(gm.processTouchEventForGestures(moveEvent, false));
     bool scrollStarted = false, scrollUpdated = false;
     for (unsigned int i = 0; i < gestureMove->size(); i++) {
@@ -566,7 +566,7 @@ TEST_F(GestureRecognizerTest, flickGestureTest)
     ASSERT_EQ(GestureRecognizerChromium::Scroll, gm.state());
 
     BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
-    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release, 1000. + 0.06);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::PlatformEvent::TouchEnd, release, 1000. + 0.06);
     Gestures gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
     ASSERT_EQ((unsigned int) 1, gestureEnd->size());
     ASSERT_EQ(PlatformEvent::GestureScrollEnd, (*gestureEnd)[0].type());
@@ -577,7 +577,7 @@ TEST_F(GestureRecognizerTest, flickGestureTest)
 
 struct TouchPointAndEvent {
 public:
-    TouchPointAndEvent(int x, int y, double timestamp, PlatformTouchPoint::State state, WebCore::TouchEventType type)
+    TouchPointAndEvent(int x, int y, double timestamp, PlatformTouchPoint::State state, WebCore::PlatformEvent::Type type)
         : m_point(x, y, state)
         , m_event(type, m_point, timestamp)
     { }
@@ -611,115 +611,115 @@ const int numberOfFlickSamples = 11;
 TouchSequence sampleFlickSequence[numberOfFlickSamples] =
 {
     TouchSequence(8,
-        new TouchPointAndEvent(256, 348, 1308336245.407, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(254, 345, 1308336245.470, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(252, 336, 1308336245.488, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(242, 261, 1308336245.505, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(242, 179, 1308336245.521, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(255, 100, 1308336245.533, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(262, 74, 1308336245.549, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(262, 74, 1308336245.566, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(256, 348, 1308336245.407, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(254, 345, 1308336245.470, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(252, 336, 1308336245.488, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(242, 261, 1308336245.505, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(242, 179, 1308336245.521, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(255, 100, 1308336245.533, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(262, 74, 1308336245.549, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(262, 74, 1308336245.566, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(8,
-        new TouchPointAndEvent(178, 339, 1308336266.180, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(177, 335, 1308336266.212, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(172, 314, 1308336266.226, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(160, 248, 1308336266.240, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(156, 198, 1308336266.251, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(166, 99, 1308336266.266, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(179, 41, 1308336266.280, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(179, 41, 1308336266.291, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(178, 339, 1308336266.180, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(177, 335, 1308336266.212, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(172, 314, 1308336266.226, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(160, 248, 1308336266.240, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(156, 198, 1308336266.251, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(166, 99, 1308336266.266, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(179, 41, 1308336266.280, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(179, 41, 1308336266.291, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(7,
-        new TouchPointAndEvent(238, 386, 1308336272.068, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(237, 383, 1308336272.121, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(236, 374, 1308336272.138, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(223, 264, 1308336272.155, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(231, 166, 1308336272.173, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(243, 107, 1308336272.190, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(243, 107, 1308336272.202, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(238, 386, 1308336272.068, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(237, 383, 1308336272.121, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(236, 374, 1308336272.138, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(223, 264, 1308336272.155, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(231, 166, 1308336272.173, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(243, 107, 1308336272.190, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(243, 107, 1308336272.202, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(10,
-        new TouchPointAndEvent(334, 351, 1308336313.581, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(334, 348, 1308336313.694, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(335, 346, 1308336313.714, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(334, 343, 1308336313.727, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(332, 336, 1308336313.738, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(328, 316, 1308336313.753, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(317, 277, 1308336313.770, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(306, 243, 1308336313.784, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(292, 192, 1308336313.799, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(292, 192, 1308336313.815, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(334, 351, 1308336313.581, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(334, 348, 1308336313.694, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(335, 346, 1308336313.714, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(334, 343, 1308336313.727, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(332, 336, 1308336313.738, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(328, 316, 1308336313.753, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(317, 277, 1308336313.770, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(306, 243, 1308336313.784, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(292, 192, 1308336313.799, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(292, 192, 1308336313.815, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(14,
-        new TouchPointAndEvent(92, 112, 1308336323.955, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(92, 115, 1308336324.056, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(91, 116, 1308336324.066, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(91, 117, 1308336324.074, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(90, 122, 1308336324.089, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(90, 129, 1308336324.102, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(89, 147, 1308336324.120, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(89, 163, 1308336324.135, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(89, 188, 1308336324.151, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(89, 213, 1308336324.169, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(89, 252, 1308336324.189, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(90, 283, 1308336324.204, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(91, 308, 1308336324.218, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(91, 308, 1308336324.230, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(92, 112, 1308336323.955, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(92, 115, 1308336324.056, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(91, 116, 1308336324.066, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(91, 117, 1308336324.074, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(90, 122, 1308336324.089, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(90, 129, 1308336324.102, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(89, 147, 1308336324.120, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(89, 163, 1308336324.135, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(89, 188, 1308336324.151, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(89, 213, 1308336324.169, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(89, 252, 1308336324.189, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(90, 283, 1308336324.204, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(91, 308, 1308336324.218, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(91, 308, 1308336324.230, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(5,
-        new TouchPointAndEvent(55, 249, 1308336349.093, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(59, 249, 1308336349.179, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(66, 248, 1308336349.191, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(128, 253, 1308336349.208, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(128, 253, 1308336349.258, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(55, 249, 1308336349.093, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(59, 249, 1308336349.179, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(66, 248, 1308336349.191, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(128, 253, 1308336349.208, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(128, 253, 1308336349.258, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(9,
-        new TouchPointAndEvent(376, 290, 1308336353.071, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(373, 288, 1308336353.127, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(372, 287, 1308336353.140, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(353, 280, 1308336353.156, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(319, 271, 1308336353.171, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(264, 258, 1308336353.188, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(215, 251, 1308336353.200, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(151, 246, 1308336353.217, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(151, 246, 1308336353.231, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(376, 290, 1308336353.071, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(373, 288, 1308336353.127, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(372, 287, 1308336353.140, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(353, 280, 1308336353.156, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(319, 271, 1308336353.171, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(264, 258, 1308336353.188, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(215, 251, 1308336353.200, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(151, 246, 1308336353.217, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(151, 246, 1308336353.231, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(5,
-        new TouchPointAndEvent(60, 166, 1308336358.898, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(63, 166, 1308336358.944, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(68, 167, 1308336358.958, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(118, 179, 1308336358.971, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(118, 179, 1308336358.984, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(60, 166, 1308336358.898, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(63, 166, 1308336358.944, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(68, 167, 1308336358.958, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(118, 179, 1308336358.971, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(118, 179, 1308336358.984, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(5,
-        new TouchPointAndEvent(66, 318, 1308336362.996, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(70, 316, 1308336363.046, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(77, 314, 1308336363.058, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(179, 295, 1308336363.082, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(179, 295, 1308336363.096, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(66, 318, 1308336362.996, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(70, 316, 1308336363.046, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(77, 314, 1308336363.058, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(179, 295, 1308336363.082, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(179, 295, 1308336363.096, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(11,
-        new TouchPointAndEvent(345, 333, 1308336366.618, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(344, 330, 1308336366.664, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(343, 329, 1308336366.681, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(339, 324, 1308336366.694, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(332, 317, 1308336366.709, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(312, 300, 1308336366.728, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(279, 275, 1308336366.741, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(246, 251, 1308336366.752, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(198, 219, 1308336366.769, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(155, 196, 1308336366.783, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(155, 196, 1308336366.794, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(345, 333, 1308336366.618, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(344, 330, 1308336366.664, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(343, 329, 1308336366.681, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(339, 324, 1308336366.694, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(332, 317, 1308336366.709, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(312, 300, 1308336366.728, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(279, 275, 1308336366.741, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(246, 251, 1308336366.752, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(198, 219, 1308336366.769, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(155, 196, 1308336366.783, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(155, 196, 1308336366.794, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     ),
     TouchSequence(7,
-        new TouchPointAndEvent(333, 360, 1308336369.547, PlatformTouchPoint::TouchPressed, WebCore::TouchStart),
-        new TouchPointAndEvent(332, 357, 1308336369.596, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(331, 353, 1308336369.661, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(326, 345, 1308336369.713, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(310, 323, 1308336369.748, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(250, 272, 1308336369.801, PlatformTouchPoint::TouchMoved, WebCore::TouchMove),
-        new TouchPointAndEvent(250, 272, 1308336369.840, PlatformTouchPoint::TouchReleased, WebCore::TouchEnd)
+        new TouchPointAndEvent(333, 360, 1308336369.547, PlatformTouchPoint::TouchPressed, WebCore::PlatformEvent::TouchStart),
+        new TouchPointAndEvent(332, 357, 1308336369.596, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(331, 353, 1308336369.661, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(326, 345, 1308336369.713, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(310, 323, 1308336369.748, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(250, 272, 1308336369.801, PlatformTouchPoint::TouchMoved, WebCore::PlatformEvent::TouchMove),
+        new TouchPointAndEvent(250, 272, 1308336369.840, PlatformTouchPoint::TouchReleased, WebCore::PlatformEvent::TouchEnd)
     )
 };
 

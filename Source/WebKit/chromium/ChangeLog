@@ -1,3 +1,18 @@
+2011-12-17  Sam Weinig  <sam@webkit.org>
+
+        Make PlatformTouchEvent inherit from PlatformEvent
+        https://bugs.webkit.org/show_bug.cgi?id=74777
+
+        Reviewed by Andreas Kling.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::toPlatformTouchEventType):
+        * tests/InnerGestureRecognizerTest.cpp:
+        (BuildablePlatformTouchEvent::BuildablePlatformTouchEvent):
+        (SimulateAndTestFirstClick):
+        (TouchPointAndEvent::TouchPointAndEvent):
+        Add PlatformEvent prefix to enum types.
+
 2011-12-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Reverting r103011, r103135 due to Aura test failures

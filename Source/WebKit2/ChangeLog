@@ -1,3 +1,14 @@
+2011-12-17  Sam Weinig  <sam@webkit.org>
+
+        Make PlatformTouchEvent inherit from PlatformEvent
+        https://bugs.webkit.org/show_bug.cgi?id=74777
+
+        Reviewed by Andreas Kling.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        Add PlatformEvent prefix to enum types.
+
 2011-12-16  Anders Carlsson  <andersca@apple.com>
 
         Convert more WorkItems over to WTF::Functions

@@ -1,3 +1,26 @@
+2011-12-17  Sam Weinig  <sam@webkit.org>
+
+        Make PlatformTouchEvent inherit from PlatformEvent
+        https://bugs.webkit.org/show_bug.cgi?id=74777
+
+        Reviewed by Andreas Kling.
+
+        * platform/PlatformEvent.h:
+        Add TouchEvent types.
+
+        * platform/PlatformTouchEvent.h:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        Make inherit from PlatformEvent.
+
+        * platform/blackberry/PlatformTouchEventBlackBerry.cpp:
+        (WebCore::touchEventType):
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/efl/PlatformTouchEventEfl.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/qt/PlatformTouchEventQt.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        Make necessary changes to work with new base class.
+
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
         Cache and reuse the HTMLAllCollection returned by document.all.

@@ -34,12 +34,8 @@
 
 namespace WebCore {
 
-PlatformTouchEvent::PlatformTouchEvent(Eina_List* points, const IntPoint pos, TouchEventType type, int metaState)
-    : m_type(type)
-    , m_ctrlKey(false)
-    , m_altKey(false)
-    , m_shiftKey(false)
-    , m_metaKey(false)
+PlatformTouchEvent::PlatformTouchEvent(Eina_List* points, const IntPoint pos, PlatformEvent::Type type, int metaState)
+    : PlatformEvent(type, false, false, false, false)
 {
     void* item;
 
