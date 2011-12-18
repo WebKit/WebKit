@@ -44,7 +44,7 @@ NameNodeList::~NameNodeList()
 
 bool NameNodeList::nodeMatches(Element* testNode) const
 {
-    return testNode->getAttribute(nameAttr) == m_nodeName;
+    return testNode->fastGetAttribute(nameAttr) == m_nodeName;
 }
 
 } // namespace WebCore

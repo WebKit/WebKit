@@ -1,5 +1,18 @@
 2011-12-17  Andreas Kling  <kling@webkit.org>
 
+        NameNodeList: Use fastGetAttribute() in nodeMatches().
+        <http://webkit.org/b/74797>
+
+        Reviewed by Darin Adler.
+
+        It's safe and slightly more efficient to use fastGetAttribute()
+        for HTMLNames::nameAttr here.
+
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::nodeMatches):
+
+2011-12-17  Andreas Kling  <kling@webkit.org>
+
         CSSPrimitiveValue: Inline getIdent().
         <http://webkit.org/b/74793>
 
