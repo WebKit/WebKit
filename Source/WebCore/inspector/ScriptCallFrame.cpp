@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScriptCallFrame.h"
 
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include <wtf/RefPtr.h>
 
@@ -58,11 +59,11 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 #if ENABLE(INSPECTOR)
 PassRefPtr<InspectorObject> ScriptCallFrame::buildInspectorObject() const
 {
-    RefPtr<InspectorObject> frame = InspectorObject::create();
-    frame->setString("functionName", m_functionName);
-    frame->setString("url", m_scriptName);
-    frame->setNumber("lineNumber", m_lineNumber);
-    frame->setNumber("columnNumber", m_column);
+    RefPtr<TypeBuilder::Console::CallFrame> frame = TypeBuilder::Console::CallFrame::create()
+        .setFunctionName(m_functionName)
+        .setUrl(m_scriptName)
+        .setLineNumber(m_lineNumber)
+        .setColumnNumber(m_column);
     return frame;
 }
 #endif

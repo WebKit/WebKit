@@ -318,10 +318,10 @@ PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const Stri
         debugServerBreakpointIdsIterator = m_breakpointIdToDebugServerBreakpointIds.set(breakpointId, Vector<String>()).first;
     debugServerBreakpointIdsIterator->second.append(debugServerBreakpointId);
 
-    RefPtr<InspectorObject> location = InspectorObject::create();
-    location->setString("scriptId", scriptId);
-    location->setNumber("lineNumber", actualLineNumber);
-    location->setNumber("columnNumber", actualColumnNumber);
+    RefPtr<TypeBuilder::Debugger::Location> location = TypeBuilder::Debugger::Location::create()
+        .setScriptId(scriptId)
+        .setLineNumber(actualLineNumber);
+    location->setColumnNumber(actualColumnNumber);
     return location;
 }
 

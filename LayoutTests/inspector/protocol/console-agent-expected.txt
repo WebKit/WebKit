@@ -54,12 +54,12 @@ event ConsoleAgent.messageAdded
     params : {
         message : {
             source : "console-api"
-            type : "log"
             level : "log"
+            text : "test"
+            type : "log"
             line : 1
             url : ""
             repeatCount : 1
-            text : "test"
             parameters : [
                 {
                     type : "string"

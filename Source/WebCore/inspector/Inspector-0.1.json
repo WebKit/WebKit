@@ -369,8 +369,8 @@
                 "properties": [
                     { "name": "functionName", "type": "string", "description": "JavaScript function name." },
                     { "name": "url", "type": "string", "description": "JavaScript script name or url." },
-                    { "name": "lineNumber", "type": "string", "description": "JavaScript script line number." },
-                    { "name": "columnNumber", "type": "string", "description": "JavaScript script column number." }
+                    { "name": "lineNumber", "type": "integer", "description": "JavaScript script line number." },
+                    { "name": "columnNumber", "type": "integer", "description": "JavaScript script column number." }
                 ]
             },
             {
