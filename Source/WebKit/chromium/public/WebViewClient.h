@@ -41,14 +41,11 @@
 #include "WebTextAffinity.h"
 #include "WebTextDirection.h"
 #include "WebWidgetClient.h"
-#include "platform/WebColor.h"
 #include "platform/WebString.h"
 
 namespace WebKit {
 
 class WebAccessibilityObject;
-class WebColorChooser;
-class WebColorChooserClient;
 class WebDeviceOrientationClient;
 class WebDragData;
 class WebElement;
@@ -180,14 +177,8 @@ public:
     // indicating that the default action should be suppressed.
     virtual bool handleCurrentKeyboardEvent() { return false; }
 
-    // Dialogs -------------------------------------------------------------
 
-    // This method opens the color chooser and returns a new WebColorChooser
-    // instance. If there is a WebColorChooser already from the last time this
-    // was called, it ends the color chooser by calling endChooser, and replaces
-    // it with the new one.
-    virtual WebColorChooser* createColorChooser(WebColorChooserClient*,
-                                                const WebColor&) { return 0; }
+    // Dialogs -------------------------------------------------------------
 
     // This method returns immediately after showing the dialog. When the
     // dialog is closed, it should call the WebFileChooserCompletion to

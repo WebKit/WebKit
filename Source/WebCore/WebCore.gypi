@@ -667,8 +667,6 @@
             'page/mac/WebCoreFrameView.h',
             'platform/AsyncFileStream.h',
             'platform/Clock.h',
-            'platform/ColorChooser.h',
-            'platform/ColorChooserClient.h',
             'platform/ContextMenu.h',
             'platform/ContextMenuItem.h',
             'platform/Cookie.h',

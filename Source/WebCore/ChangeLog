@@ -1,3 +1,23 @@
+2011-12-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103169.
+        http://trac.webkit.org/changeset/103169
+        https://bugs.webkit.org/show_bug.cgi?id=74809
+
+        it broke compilation on many platforms (Requested by loislo_
+        on #webkit).
+
+        * WebCore.gypi:
+        * platform/ColorChooser.cpp: Renamed from Source/WebKit/chromium/src/ColorChooserProxy.h.
+        (WebCore::ColorChooserClient::~ColorChooserClient):
+        (WebCore::ColorChooserClient::newColorChooser):
+        (WebCore::ColorChooserClient::discardChooser):
+        (WebCore::ColorChooser::ColorChooser):
+        (WebCore::ColorChooser::create):
+        (WebCore::ColorChooser::~ColorChooser):
+        (WebCore::ColorChooser::didChooseColor):
+        (WebCore::ColorChooser::didCleanup):
+
 2011-12-18  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Add FECustomFilter that renders custom filters

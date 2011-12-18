@@ -1,3 +1,23 @@
+2011-12-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103169.
+        http://trac.webkit.org/changeset/103169
+        https://bugs.webkit.org/show_bug.cgi?id=74809
+
+        it broke compilation on many platforms (Requested by loislo_
+        on #webkit).
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebColorChooser.h: Removed.
+        * public/WebColorChooserClient.h: Removed.
+        * public/WebViewClient.h:
+        * src/ChromeClientImpl.cpp:
+        * src/ChromeClientImpl.h:
+        * src/ColorChooserProxy.cpp: Removed.
+        * src/WebColorChooserClientImpl.cpp: Removed.
+        * src/WebColorChooserClientImpl.h: Removed.
+
 2011-12-18  Keishi Hattori  <keishi@webkit.org>
 
         Implement <input type=color> UI WebKit chromium part
