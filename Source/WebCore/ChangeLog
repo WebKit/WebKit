@@ -1,3 +1,11 @@
+2011-12-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        Build fix for ScrollingCoordinatorMac.mm when building on a case sensitive system
+
+        Unreviewed build fix for r103180. StdlibExtras.h->StdLibExtras.h to compile on case sensitive system.
+
+        * page/mac/ScrollingCoordinatorMac.mm:
+
 2011-12-19  Kentaro Hara  <haraken@chromium.org>
 
         Remove unnecessary [JSCCustomGetter] IDLs from DOMWindow.idl

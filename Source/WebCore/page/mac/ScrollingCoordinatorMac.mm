@@ -34,7 +34,7 @@
 #import <wtf/Functional.h>
 #import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/StdlibExtras.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Vector.h>
 
 namespace WebCore {
