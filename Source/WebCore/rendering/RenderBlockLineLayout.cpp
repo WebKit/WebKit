@@ -1861,10 +1861,10 @@ void RenderBlock::LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, 
 {
     while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
         RenderObject* object = iterator.m_obj;
-        if (object->isFloating()) {
-            m_block->insertFloatingObject(toRenderBox(object));
-        } else if (object->isPositioned())
+        if (object->isPositioned())
             setStaticPositions(m_block, toRenderBox(object));
+        else if (object->isFloating())
+            m_block->insertFloatingObject(toRenderBox(object));
         iterator.increment();
     }
 }
@@ -1874,10 +1874,10 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject* object = resolver.position().m_obj;
-        if (object->isFloating())
-            m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
-        else if (object->isPositioned())
+        if (object->isPositioned())
             setStaticPositions(m_block, toRenderBox(object));
+        else if (object->isFloating())
+            m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
         resolver.increment();
     }
     resolver.commitExplicitEmbedding();
@@ -2156,21 +2156,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             goto end;
         }
 
-        if (current.m_obj->isFloating()) {
-            RenderBox* floatBox = toRenderBox(current.m_obj);
-            FloatingObject* f = m_block->insertFloatingObject(floatBox);
-            // check if it fits in the current line.
-            // If it does, position it now, otherwise, position
-            // it after moving to next line (in newLine() func)
-            if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f))) {
-                m_block->positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineInfo, width);
-                if (lBreak.m_obj == current.m_obj) {
-                    ASSERT(!lBreak.m_pos);
-                    lBreak.increment();
-                }
-            } else
-                floatsFitOnLine = false;
-        } else if (current.m_obj->isPositioned()) {
+        if (current.m_obj->isPositioned()) {
             // If our original display wasn't an inline type, then we can
             // go ahead and determine our static inline position now.
             RenderBox* box = toRenderBox(current.m_obj);
@@ -2195,6 +2181,20 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                 trailingObjects.appendBoxIfNeeded(box);
             } else
                 m_positionedObjects.append(box);
+        } else if (current.m_obj->isFloating()) {
+            RenderBox* floatBox = toRenderBox(current.m_obj);
+            FloatingObject* f = m_block->insertFloatingObject(floatBox);
+            // check if it fits in the current line.
+            // If it does, position it now, otherwise, position
+            // it after moving to next line (in newLine() func)
+            if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f))) {
+                m_block->positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineInfo, width);
+                if (lBreak.m_obj == current.m_obj) {
+                    ASSERT(!lBreak.m_pos);
+                    lBreak.increment();
+                }
+            } else
+                floatsFitOnLine = false;
         } else if (current.m_obj->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
             ASSERT(!current.m_obj->firstChild());

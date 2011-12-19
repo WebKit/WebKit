@@ -1,3 +1,20 @@
+2011-12-18  Dan Bernstein  <mitz@apple.com>
+
+        Positioned Floats: Assertion hit in fast/block/positioning/positioned-float-layout-after-image-load.html
+        https://bugs.webkit.org/show_bug.cgi?id=67759
+
+        Reviewed by Darin Adler.
+
+        Test: fast/block/positioning/positioned-float-layout-after-image-load.html
+
+        Positioned floats are both floating and positioned. Made the following functions treat them as
+        positioned rather than as floats by reordering code.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::skipTrailingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2011-12-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Add support for 8 bits strings to Document::isValidName()
