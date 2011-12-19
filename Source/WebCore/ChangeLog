@@ -1,3 +1,18 @@
+2011-12-18  Adam Barth  <abarth@webkit.org>
+
+        Adoption agency iteration limits in HTML parser don't match HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=74822
+
+        Reviewed by Eric Seidel.
+
+        Previously, we were using the iteration limits from the old tree
+        builder.  Now we use the iteration limits from the HTML5 specification.
+
+        Tests: html5lib/runner.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2011-12-18  Antti Koivisto  <antti@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=73954

@@ -1525,12 +1525,14 @@ HTMLElementStack::ElementRecord* HTMLTreeBuilder::furthestBlockForFormattingElem
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-inbody
 void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
 {
-    // The adoption agency algorithm is N^2.  We limit the number of iterations
-    // to stop from hanging the whole browser.  This limit is copied from the
-    // legacy tree builder and might need to be tweaked in the future.
-    static const int adoptionAgencyIterationLimit = 10;
+    // The adoption agency algorithm is N^2. We limit the number of iterations
+    // to stop from hanging the whole browser. This limit is specifying in the
+    // adoption agency algorithm: 
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#parsing-main-inbody
+    static const int outerIterationLimit = 8;
+    static const int innerIterationLimit = 3;
 
-    for (int i = 0; i < adoptionAgencyIterationLimit; ++i) {
+    for (int i = 0; i < outerIterationLimit; ++i) {
         // 1.
         Element* formattingElement = m_tree.activeFormattingElements()->closestElementInScopeWithName(token.name());
         if (!formattingElement || ((m_tree.openElements()->contains(formattingElement)) && !m_tree.openElements()->inScope(formattingElement))) {
@@ -1563,7 +1565,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         HTMLElementStack::ElementRecord* node = furthestBlock;
         HTMLElementStack::ElementRecord* nextNode = node->next();
         HTMLElementStack::ElementRecord* lastNode = furthestBlock;
-        for (int i = 0; i < adoptionAgencyIterationLimit; ++i) {
+        for (int i = 0; i < innerIterationLimit; ++i) {
             // 6.1
             node = nextNode;
             ASSERT(node);
