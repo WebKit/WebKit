@@ -79,6 +79,30 @@ public:
         if (node.ref())
             refChildren(nodeIndex);
     }
+    
+    void clearAndDerefChild1(Node& node)
+    {
+        if (node.children.fixed.child1 == NoNode)
+            return;
+        at(node.children.fixed.child1).deref();
+        node.children.fixed.child1 = NoNode;
+    }
+
+    void clearAndDerefChild2(Node& node)
+    {
+        if (node.children.fixed.child2 == NoNode)
+            return;
+        at(node.children.fixed.child2).deref();
+        node.children.fixed.child2 = NoNode;
+    }
+
+    void clearAndDerefChild3(Node& node)
+    {
+        if (node.children.fixed.child3 == NoNode)
+            return;
+        at(node.children.fixed.child3).deref();
+        node.children.fixed.child3 = NoNode;
+    }
 
 #ifndef NDEBUG
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).

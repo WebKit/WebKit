@@ -1042,6 +1042,14 @@ void SpeculativeJIT::compile(BasicBlock& block)
         if (node.shouldGenerate())
             checkConsistency();
     }
+    
+    // Perform the most basic verification that children have been used correctly.
+#if !ASSERT_DISABLED
+    for (unsigned index = 0; index < m_generationInfo.size(); ++index) {
+        GenerationInfo& info = m_generationInfo[index];
+        ASSERT(!info.alive());
+    }
+#endif
 }
 
 // If we are making type predictions about our arguments then

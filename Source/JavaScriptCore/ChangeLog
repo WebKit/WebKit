@@ -1,3 +1,56 @@
+2011-12-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG is too sloppy with register allocation
+        https://bugs.webkit.org/show_bug.cgi?id=74835
+
+        Reviewed by Gavin Barraclough.
+        
+        Added assertions that at the end of a successfully generated basic block,
+        all use counts should be zero. This revealed a number of bugs:
+        
+        - Array length optimizations were turning a must-generate node into one
+          that is not must-generate, but failing to change the ref count
+          accordingly.
+          
+        - Indexed property storage optimizations were failing to deref their
+          children, or to deref the indexed property storage node itself. Also,
+          they used the Phantom node as a replacement. But the Phantom node is
+          must-generate, which was causing bizarre issues. So this introduces a
+          Nop node, which should be used in cases where you want a node that is
+          skipped and has no children.
+          
+        This does not have any significant performance effect, but it should
+        relieve some register pressure. The main thing this patch adds, though,
+        are the assertions, which should make it easier to do register allocation
+        related changes in the future.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::initConstant):
+        (JSC::DFG::GenerationInfo::initInteger):
+        (JSC::DFG::GenerationInfo::initJSValue):
+        (JSC::DFG::GenerationInfo::initCell):
+        (JSC::DFG::GenerationInfo::initBoolean):
+        (JSC::DFG::GenerationInfo::initDouble):
+        (JSC::DFG::GenerationInfo::initStorage):
+        (JSC::DFG::GenerationInfo::use):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::clearAndDerefChild1):
+        (JSC::DFG::Graph::clearAndDerefChild2):
+        (JSC::DFG::Graph::clearAndDerefChild3):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::deref):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateNodePredictions):
+        (JSC::DFG::Propagator::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove the duplicated code from ASCIICType.h
