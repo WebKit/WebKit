@@ -53,7 +53,9 @@ import time
 from webkitpy.layout_tests.port import Driver, DriverOutput, factory
 
 
-# FIXME: Why not inherit from Port?
+# Note that we don't inherit from base.Port in order for delegation to
+# work properly: except for the methods defined here, we want to ensure that
+# all of the methods are passed to the __delegate, not to the base class.
 class DryRunPort(object):
     """DryRun implementation of the Port interface."""
 
@@ -64,7 +66,7 @@ class DryRunPort(object):
                 kwargs['port_name'] = kwargs['port_name'][len(pfx):]
             else:
                 kwargs['port_name'] = None
-        self.__delegate = host.port_factory.get(**kwargs)
+        self.__delegate = factory.PortFactory(host).get(**kwargs)
 
     def __getattr__(self, name):
         return getattr(self.__delegate, name)

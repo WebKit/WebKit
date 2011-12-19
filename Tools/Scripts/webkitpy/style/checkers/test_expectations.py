@@ -67,15 +67,15 @@ class TestExpectationsChecker(object):
             _log.warn("Exception while getting port for path %s" % expectations_path)
             return None
 
-    def __init__(self, file_path, handle_style_error):
+    def __init__(self, file_path, handle_style_error, host=None):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
         self._handle_style_error.turn_off_line_filtering()
         self._tab_checker = TabChecker(file_path, handle_style_error)
         self._output_regex = re.compile('Line:(?P<line>\d+)\s*(?P<message>.+)')
 
-        # FIXME: A host should be passed to the constructor instead!
-        host = Host()
+        # FIXME: host should be a required parameter, not an optional one.
+        host = host or Host()
         host._initialize_scm()
 
         # Determining the port of this expectations.

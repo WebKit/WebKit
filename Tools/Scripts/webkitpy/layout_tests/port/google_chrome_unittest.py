@@ -27,11 +27,7 @@
 import unittest
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.executive_mock import MockExecutive
-
-
-import google_chrome
+from webkitpy.layout_tests.port import google_chrome
 
 
 class GetGoogleChromePortTest(unittest.TestCase):
@@ -59,7 +55,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         host = MockHost()
         chromium_port = host.port_factory.get("chromium-cg-mac")
         chromium_base = chromium_port.path_from_chromium_base()
-        port = google_chrome.GetGoogleChromePort(port_name=port_name, options=None, host=host)
+        port = google_chrome.GetGoogleChromePort(host, port_name=port_name, options=None)
 
         expected_chromium_overrides = '// chromium overrides\n'
         expected_chrome_overrides = '// chrome overrides\n'

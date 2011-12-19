@@ -32,7 +32,7 @@ import unittest
 import optparse
 import random
 
-from webkitpy.common.system import filesystem_mock
+from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port import test
@@ -89,8 +89,9 @@ class JSONGeneratorTest(unittest.TestCase):
                 failed=(test in failed_tests),
                 elapsed_time=test_timings[test])
 
+        host = MockHost()
         port = Mock()
-        port._filesystem = filesystem_mock.MockFileSystem()
+        port._filesystem = host.filesystem
         generator = json_results_generator.JSONResultsGeneratorBase(port,
             self.builder_name, self.build_name, self.build_number,
             '',
@@ -213,7 +214,7 @@ class JSONGeneratorTest(unittest.TestCase):
         self._test_json_generation(['foo/A'], ['foo/B', 'bar/C'])
 
     def test_test_timings_trie(self):
-        test_port = test.TestPort()
+        test_port = test.TestPort(MockHost())
         individual_test_timings = []
         individual_test_timings.append(json_results_generator.TestResult('foo/bar/baz.html', elapsed_time=1.2))
         individual_test_timings.append(json_results_generator.TestResult('bar.html', elapsed_time=0.0001))

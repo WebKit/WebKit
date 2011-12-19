@@ -65,7 +65,7 @@ class TestExpectationsTestCase(unittest.TestCase):
 
     def _expect_port_for_expectations_path(self, expected_port_or_port_class, expectations_path):
         host = MockHost()
-        checker = TestExpectationsChecker(expectations_path, ErrorCollector())
+        checker = TestExpectationsChecker(expectations_path, ErrorCollector(), host=host)
         port = checker._determine_port_from_exepectations_path(host, expectations_path)
         if port:
             self.assertEquals(port.__class__.__name__, expected_port_or_port_class)
@@ -79,7 +79,7 @@ class TestExpectationsTestCase(unittest.TestCase):
     def assert_lines_lint(self, lines, expected):
         self._error_collector.reset_errors()
         checker = TestExpectationsChecker('test/test_expectations.txt',
-                                          self._error_collector)
+                                          self._error_collector, host=MockHost())
         checker.check_test_expectations(expectations_str='\n'.join(lines),
                                         tests=[self._test_file],
                                         overrides=None)

@@ -1,3 +1,72 @@
+2011-12-19  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: update unit tests in preparation for making host a mandatory parameter to Port objects
+        https://bugs.webkit.org/show_bug.cgi?id=74562
+
+        Reviewed by Eric Seidel.
+
+        Apart from a minor change to style/checkers/test_expectations.py
+        to take a host as a parameter to a TestExpectationsChecker(),
+        there are only refactoring changes to unit tests here.
+
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        (JSONGeneratorTest._test_json_generation):
+        (JSONGeneratorTest.test_test_timings_trie):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (Base.__init__):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.make_port):
+        (PortTest.test_layout_tests_skipping):
+        (PortTest.test_test_dirs):
+        (PortTest.test_additional_platform_directory):
+        (PortTest.test_uses_test_expectations_file):
+        (PortTest.test_find_no_paths_specified):
+        (PortTest.test_find_one_test):
+        (PortTest.test_find_glob):
+        (PortTest.test_find_with_skipped_directories):
+        (PortTest.test_find_with_skipped_directories_2):
+        (PortTest.test_parse_reftest_list):
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        (DryRunPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.setUp):
+        (FactoryTest.tearDown):
+        (FactoryTest.assert_port):
+        (FactoryTest.assert_platform_port):
+        (FactoryTest.test_unknown_specified):
+        (FactoryTest.test_unknown_default):
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        (GetGoogleChromePortTest._verify_expectations_overrides):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.make_port):
+        (MockDRTTest.assertTest):
+        (MockDRTTest.test_main):
+        (MockChromiumDRTTest.test_pixeltest__fails):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest._assert_search_path):
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+        (TestWebKitPort.__init__):
+        (WebKitPortTest.test_skipped_directories_for_symbols):
+        (test_skipped_directories_for_features):
+        (test_skipped_layout_tests):
+        (test_skipped_file_search_paths):
+        (test_root_option):
+        (test_test_expectations):
+        (test_build_driver):
+        (test_linux_distro_detection):
+        (test_apache_config_file_name_for_platform):
+        (test_path_to_apache_config_file):
+        (WebKitDriverTest.test_read_block):
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.__init__):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase._expect_port_for_expectations_path):
+        (TestExpectationsTestCase.assert_lines_lint):
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        (get_test_config.TestMacPort):
+
 2011-12-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [Efl] Fix path returned by builtDylibPathForName in webkitdirs.pm

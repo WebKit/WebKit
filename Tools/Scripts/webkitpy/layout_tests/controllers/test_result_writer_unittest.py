@@ -26,6 +26,7 @@
 
 import unittest
 
+from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.controllers import test_result_writer
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.port.driver import DriverOutput
@@ -43,14 +44,14 @@ class TestResultWriterTest(unittest.TestCase):
                 used_tolerance_values.append(tolerance)
                 return (True, 1)
 
-        port = ImageDiffTestPort()
-        fs = port._filesystem
+        host = MockHost()
+        port = ImageDiffTestPort(host)
         test_name = 'failures/unexpected/reftest.html'
-        test_reference_file = fs.join(port.layout_tests_dir(), 'failures/unexpected/reftest-expected.html')
+        test_reference_file = host.filesystem.join(port.layout_tests_dir(), 'failures/unexpected/reftest-expected.html')
         driver_output1 = DriverOutput('text1', 'image1', 'imagehash1', 'audio1')
         driver_output2 = DriverOutput('text2', 'image2', 'imagehash2', 'audio2')
         failures = [test_failures.FailureReftestMismatch(test_reference_file)]
-        test_result_writer.write_test_result(ImageDiffTestPort(), test_name,
+        test_result_writer.write_test_result(ImageDiffTestPort(host), test_name,
                                              driver_output1, driver_output2, failures)
         self.assertEqual([0], used_tolerance_values)
 

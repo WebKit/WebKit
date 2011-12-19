@@ -47,11 +47,12 @@ from webkitpy.layout_tests.port.test import TestPort
 import config
 import config_mock
 
-
 class PortTest(unittest.TestCase):
-    def make_port(self, host=None, **kwargs):
-        host = host or MockHost()
-        return Port(host, **kwargs)
+    def make_port(self, executive=None, **kwargs):
+        host = MockHost()
+        if executive:
+            host.executive = executive
+        return Port(host, executive=executive, **kwargs)
 
     def test_default_child_processes(self):
         port = self.make_port()
@@ -204,11 +205,9 @@ class PortTest(unittest.TestCase):
         self.assertEqual(port.default_configuration(), 'default')
 
     def test_layout_tests_skipping(self):
-        filesystem = MockFileSystem({
-            '/mock-checkout/LayoutTests/media/video-zoom.html': '',
-            '/mock-checkout/LayoutTests/foo/bar.html': '',
-        })
-        port = self.make_port(filesystem=filesystem)
+        port = self.make_port()
+        port.filesystem.write_text_file(port.layout_tests_dir() + '/media/video-zoom.html', '')
+        port.filesystem.write_text_file(port.layout_tests_dir() + '/foo/bar.html', '')
         port.skipped_layout_tests = lambda: ['foo/bar.html', 'media']
         self.assertTrue(port.skips_layout_test('foo/bar.html'))
         self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
@@ -220,11 +219,10 @@ class PortTest(unittest.TestCase):
         port.setup_test_run()
 
     def test_test_dirs(self):
-        filesystem = MockFileSystem({
-            '/mock-checkout/LayoutTests/canvas/test': '',
-            '/mock-checkout/LayoutTests/css2.1/test': '',
-        })
-        port = self.make_port(filesystem=filesystem)
+        port = self.make_port()
+        # FIXME: Consider adding a filesystem.touch()?
+        port._filesystem.write_text_file(port.layout_tests_dir() + '/canvas/test', '')
+        port._filesystem.write_text_file(port.layout_tests_dir() + '/css2.1/test', '')
         dirs = port.test_dirs()
         self.assertTrue('canvas' in dirs)
         self.assertTrue('css2.1' in dirs)
@@ -262,8 +260,7 @@ class PortTest(unittest.TestCase):
         self.assertEqual(port.name(), 'foo')
 
     def test_additional_platform_directory(self):
-        filesystem = MockFileSystem()
-        port = self.make_port(port_name='foo', filesystem=filesystem)
+        port = self.make_port(port_name='foo')
         port.baseline_search_path = lambda: ['LayoutTests/platform/foo']
         layout_test_dir = port.layout_tests_dir()
         test_file = 'fast/test.html'
@@ -276,9 +273,7 @@ class PortTest(unittest.TestCase):
 
         # Simple additional platform directory
         port._options.additional_platform_directory = ['/tmp/local-baselines']
-        filesystem.files = {
-            '/tmp/local-baselines/fast/test-expected.txt': 'foo',
-        }
+        port._filesystem.write_text_file('/tmp/local-baselines/fast/test-expected.txt', 'foo')
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
@@ -292,36 +287,35 @@ class PortTest(unittest.TestCase):
         self.assertEqual(port.baseline_path(), '/foo')
 
     def test_uses_test_expectations_file(self):
-        filesystem = MockFileSystem()
-        port = self.make_port(port_name='foo', filesystem=filesystem)
+        port = self.make_port(port_name='foo')
         port.path_to_test_expectations_file = lambda: '/mock-results/test_expectations.txt'
         self.assertFalse(port.uses_test_expectations_file())
         port._filesystem = MockFileSystem({'/mock-results/test_expectations.txt': ''})
         self.assertTrue(port.uses_test_expectations_file())
 
     def test_find_no_paths_specified(self):
-        port = TestPort()
+        port = TestPort(MockHost())
         layout_tests_dir = port.layout_tests_dir()
         tests = port.tests([])
         self.assertNotEqual(len(tests), 0)
 
     def test_find_one_test(self):
-        port = TestPort()
+        port = TestPort(MockHost())
         tests = port.tests(['failures/expected/image.html'])
         self.assertEqual(len(tests), 1)
 
     def test_find_glob(self):
-        port = TestPort()
+        port = TestPort(MockHost())
         tests = port.tests(['failures/expected/im*'])
         self.assertEqual(len(tests), 2)
 
     def test_find_with_skipped_directories(self):
-        port = TestPort()
+        port = TestPort(MockHost())
         tests = port.tests('userscripts')
         self.assertTrue('userscripts/resources/iframe.html' not in tests)
 
     def test_find_with_skipped_directories_2(self):
-        port = TestPort()
+        port = TestPort(MockHost())
         tests = port.tests(['userscripts/resources'])
         self.assertEqual(tests, set([]))
 
@@ -341,7 +335,7 @@ class PortTest(unittest.TestCase):
         self.assertFalse(Port._is_test_file(filesystem, '', 'notref-foo.xhr'))
 
     def test_parse_reftest_list(self):
-        port = TestPort()
+        port = TestPort(MockHost())
         port.host.filesystem.files['bar/reftest.list'] = "\n".join(["== test.html test-ref.html",
         "",
         "# some comment",
