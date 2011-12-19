@@ -2132,7 +2132,7 @@ bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&) c
 }
 #endif
 
-bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
+bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 {
     Document* doc = m_frame->document();
 
@@ -2177,9 +2177,12 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         isOverWidget = result.isOverWidget();
     }
 
-    // FIXME: This should not mutate the event.
+    // FIXME: It should not be necessary to do this mutation here.
+    // Instead, the handlers should know convert vertical scrolls
+    // appropriately.
+    PlatformWheelEvent event = e;
     if (shouldTurnVerticalTicksIntoHorizontal(result))
-        e.turnVerticalTicksIntoHorizontal();
+        event = event.copyTurningVerticalTicksIntoHorizontalTicks();
 
     if (node) {
         // Figure out which view to send the event to.
@@ -2192,7 +2195,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
         }
 
         node = node->shadowAncestorNode();
-        if (node && !node->dispatchWheelEvent(e))
+        if (node && !node->dispatchWheelEvent(event))
             return true;
     }
 
@@ -2202,7 +2205,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     if (!view)
         return false;
     
-    return view->wheelEvent(e);
+    return view->wheelEvent(event);
 }
     
 void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEvent)

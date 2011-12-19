@@ -74,7 +74,7 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
     return passMouseDownEventToWidget(renderWidget->widget());
 }
 
-bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& event, Widget* widget)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widget* widget)
 {
     if (!widget || !widget->isFrameView())
         return false;

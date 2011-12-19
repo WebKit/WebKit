@@ -1,3 +1,33 @@
+2011-12-18  Sam Weinig  <sam@webkit.org>
+
+        Make EventHandler::handleWheelEvent take const PlatformWheelEvent&
+        https://bugs.webkit.org/show_bug.cgi?id=74824
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/EventHandler.h:
+        * page/blackberry/EventHandlerBlackBerry.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::passWheelEventToWidget):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::copyTurningVerticalTicksIntoHorizontalTicks):
+
 2011-12-18  James Kozianski  <koz@chromium.org>
 
         [chromium] Add worldId parameter to allowScriptExtension()

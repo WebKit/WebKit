@@ -57,7 +57,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
     return true;
 }
 
-bool EventHandler::passWheelEventToWidget(PlatformWheelEvent&, Widget*)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget*)
 {
     notImplemented();
     return false;

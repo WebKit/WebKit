@@ -121,6 +121,18 @@ namespace WebCore {
         {
         }
 
+        PlatformWheelEvent copyTurningVerticalTicksIntoHorizontalTicks() const
+        {
+            PlatformWheelEvent copy = *this;
+
+            copy.m_deltaX = copy.m_deltaY;
+            copy.m_deltaY = 0;
+            copy.m_wheelTicksX = copy.m_wheelTicksY;
+            copy.m_wheelTicksY = 0;
+
+            return copy;
+        }
+
         const IntPoint& pos() const { return m_position; } // PlatformWindow coordinates.
         const IntPoint& globalPos() const { return m_globalPosition; } // Screen coordinates.
 
@@ -133,15 +145,6 @@ namespace WebCore {
         PlatformWheelEventGranularity granularity() const { return m_granularity; }
 
         bool directionInvertedFromDevice() const { return m_directionInvertedFromDevice; }
-
-        void turnVerticalTicksIntoHorizontal()
-        {
-            m_deltaX = m_deltaY;
-            m_deltaY = 0;
-
-            m_wheelTicksX = m_wheelTicksY;
-            m_wheelTicksY = 0;
-        }
 
 #if PLATFORM(GTK)
         PlatformWheelEvent(GdkEventScroll*);
