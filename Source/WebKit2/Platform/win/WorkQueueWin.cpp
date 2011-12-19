@@ -149,7 +149,7 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
             isValid = m_isValid;
             if (!isValid)
                 break;
-            workItemQueue[i]->item()->execute();
+            workItemQueue[i]->function();
         }
         m_workItemQueueLock.lock();
     }
