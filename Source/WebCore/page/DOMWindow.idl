@@ -512,16 +512,16 @@ module window {
 
         attribute DOMStringMapConstructor DOMStringMap;
 
-        attribute [JSCCustomGetter] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
-        attribute [JSCCustomGetter] Int8ArrayConstructor Int8Array; // Usable with new operator
-        attribute [JSCCustomGetter] Uint8ArrayConstructor Uint8Array; // Usable with new operator
-        attribute [JSCCustomGetter] Int16ArrayConstructor Int16Array; // Usable with new operator
-        attribute [JSCCustomGetter] Uint16ArrayConstructor Uint16Array; // Usable with new operator
-        attribute [JSCCustomGetter] Int32ArrayConstructor Int32Array; // Usable with new operator
-        attribute [JSCCustomGetter] Uint32ArrayConstructor Uint32Array; // Usable with new operator
-        attribute [JSCCustomGetter] Float32ArrayConstructor Float32Array; // Usable with new operator
-        attribute [JSCCustomGetter] Float64ArrayConstructor Float64Array; // Usable with new operator
-        attribute [JSCCustomGetter] DataViewConstructor DataView; // Usable with new operator
+        attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
+        attribute Int8ArrayConstructor Int8Array; // Usable with new operator
+        attribute Uint8ArrayConstructor Uint8Array; // Usable with new operator
+        attribute Int16ArrayConstructor Int16Array; // Usable with new operator
+        attribute Uint16ArrayConstructor Uint16Array; // Usable with new operator
+        attribute Int32ArrayConstructor Int32Array; // Usable with new operator
+        attribute Uint32ArrayConstructor Uint32Array; // Usable with new operator
+        attribute Float32ArrayConstructor Float32Array; // Usable with new operator
+        attribute Float64ArrayConstructor Float64Array; // Usable with new operator
+        attribute DataViewConstructor DataView; // Usable with new operator
 
         attribute [Supplemented, JSCCustomGetter, Conditional=WEB_AUDIO, EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
         attribute [Supplemented, Conditional=WEB_AUDIO] AudioPannerNodeConstructor webkitAudioPannerNode; // Needed for panning model constants
@@ -564,9 +564,9 @@ module window {
         attribute WebKitCSSKeyframeRuleConstructor WebKitCSSKeyframeRule;
         attribute WebKitCSSKeyframesRuleConstructor WebKitCSSKeyframesRule;
 
-        attribute [JSCCustomGetter] WebKitCSSMatrixConstructor WebKitCSSMatrix; // Usable with the new operator
+        attribute WebKitCSSMatrixConstructor WebKitCSSMatrix; // Usable with the new operator
 
-        attribute [JSCCustomGetter] WebKitPointConstructor WebKitPoint; // Usable with new the operator
+        attribute WebKitPointConstructor WebKitPoint; // Usable with new the operator
 
         attribute ClipboardConstructor Clipboard;
 
@@ -578,7 +578,7 @@ module window {
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;
 
-        attribute [JSCCustomGetter] EventSourceConstructor EventSource; // Usable with new the operator
+        attribute EventSourceConstructor EventSource; // Usable with new the operator
 
         // Mozilla has a separate XMLDocument object for XML documents. 
         // We just use Document for this.
@@ -587,19 +587,19 @@ module window {
         attribute DOMParserConstructor DOMParser;
         attribute XMLSerializerConstructor XMLSerializer;
 
-        attribute [JSCCustomGetter] XMLHttpRequestConstructor XMLHttpRequest; // Usable with the new operator
+        attribute XMLHttpRequestConstructor XMLHttpRequest; // Usable with the new operator
         attribute XMLHttpRequestUploadConstructor XMLHttpRequestUpload;
         attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
 
-        attribute [JSCCustomGetter,Conditional=XSLT] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
+        attribute [Conditional=XSLT] XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 
 #if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
         attribute MessagePortConstructor MessagePort;
-        attribute [JSCCustomGetter] MessageChannelConstructor MessageChannel; // Usable with the new operator
+        attribute MessageChannelConstructor MessageChannel; // Usable with the new operator
 #endif
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
-        attribute [JSCCustomGetter] WorkerConstructor Worker; // Usable with the new operator
+        attribute WorkerConstructor Worker; // Usable with the new operator
 #endif
 
 #if defined(ENABLE_SHARED_WORKERS) && ENABLE_SHARED_WORKERS

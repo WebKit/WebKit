@@ -1,3 +1,19 @@
+2011-12-19  Kentaro Hara  <haraken@chromium.org>
+
+        Remove unnecessary [JSCCustomGetter] IDLs from DOMWindow.idl
+        https://bugs.webkit.org/show_bug.cgi?id=74829
+
+        Reviewed by Adam Barth.
+
+        Now JSC has implemented the [Constructor] IDL and it generates
+        getDOMConstructor() automatically. This patch removes hand-written
+        unnecessary getDOMConstructor()s from JSDOMWindowCustom.cpp.
+
+        No new tests. No change in behavior.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * page/DOMWindow.idl:
+
 2011-12-19  Adam Barth  <abarth@webkit.org>
 
         The HTML parser doesn't enforce the "Noah's Ark condition" from the HTML5 spec
