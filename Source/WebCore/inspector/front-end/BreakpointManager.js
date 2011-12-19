@@ -112,8 +112,23 @@ WebInspector.BreakpointManager.prototype = {
         var breakpoint = this._breakpoint(uiSourceCode.id, lineNumber);
         if (!breakpoint)
             return;
+        this._removeBreakpoint(breakpoint);
+    },
+
+    /**
+     * @param {WebInspector.Breakpoint} breakpoint
+     */
+    _removeBreakpoint: function(breakpoint)
+    {
         this._deleteBreakpointFromUI(breakpoint);
         this._removeBreakpointFromDebugger(breakpoint);
+    },
+
+    /**
+     */
+    removeAllBreakpoints: function()
+    {
+        this._forEachBreakpoint(this._removeBreakpoint.bind(this));
     },
 
     /**

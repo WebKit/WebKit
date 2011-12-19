@@ -471,6 +471,13 @@ WebInspector.DebuggerPresentationModel.prototype = {
     },
 
     /**
+     */
+    removeAllBreakpoints: function()
+    {
+        this._breakpointManager.removeAllBreakpoints();
+    },
+
+    /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {number} lineNumber
      * @return {WebInspector.Breakpoint|undefined}

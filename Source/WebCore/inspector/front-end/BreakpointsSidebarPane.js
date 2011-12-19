@@ -42,6 +42,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane = function(model, showSourceLineDe
     this.emptyElement.textContent = WebInspector.UIString("No Breakpoints");
 
     this.bodyElement.appendChild(this.emptyElement);
+    this.bodyElement.addEventListener("contextmenu", this._contextMenu.bind(this), false);
 
     this._items = {};
 }
@@ -55,7 +56,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
 
         var element = document.createElement("li");
         element.addStyleClass("cursor-pointer");
-        element.addEventListener("contextmenu", this._contextMenu.bind(this, breakpoint), true);
+        element.addEventListener("contextmenu", this._breakpointContextMenu.bind(this, breakpoint), true);
         element.addEventListener("click", this._breakpointClicked.bind(this, breakpoint), false);
 
         var checkbox = document.createElement("input");
@@ -144,13 +145,23 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
         this._model.setBreakpointEnabled(breakpoint.uiSourceCode, breakpoint.lineNumber, event.target.checked);
     },
 
-    _contextMenu: function(breakpoint, event)
+    _breakpointContextMenu: function(breakpoint, event)
     {
         var contextMenu = new WebInspector.ContextMenu();
 
         var removeHandler = this._model.removeBreakpoint.bind(this._model, breakpoint.uiSourceCode, breakpoint.lineNumber);
         contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), removeHandler);
+        var removeAllTitle = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all JavaScript breakpoints" : "Remove All JavaScript Breakpoints");
+        contextMenu.appendItem(removeAllTitle, this._model.removeAllBreakpoints.bind(this._model));
 
+        contextMenu.show(event);
+    },
+
+    _contextMenu: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu();
+        var removeAllTitle = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all JavaScript breakpoints" : "Remove All JavaScript Breakpoints");
+        contextMenu.appendItem(removeAllTitle, this._model.removeAllBreakpoints.bind(this._model));
         contextMenu.show(event);
     },
 

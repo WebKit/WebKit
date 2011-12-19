@@ -1,3 +1,20 @@
+2011-12-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Feature Request: Able to remove all breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=63055
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.removeAllBreakpoints):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointContextMenu):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._contextMenu):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.removeAllBreakpoints):
+
 2011-12-19  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix for ScrollingCoordinatorMac.mm when building on a case sensitive system
