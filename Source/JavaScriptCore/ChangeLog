@@ -1,3 +1,46 @@
+2011-12-16  Oliver Hunt  <oliver@apple.com>
+
+        Rolling r103120 back in with merge errors corrected.
+
+        PutByVal[Alias] unnecessarily reloads the storage buffer
+        https://bugs.webkit.org/show_bug.cgi?id=74747
+
+        Reviewed by Gavin Barraclough.
+
+        Make PutByVal use GetIndexedStorage to load the storage buffer.
+        This required switching PutByVal to a vararg node (which is
+        responsible for most of the noise in this patch).  This fixes the
+        remaining portion of the kraken regression caused by the GetByVal
+        storage load elimination, and a 1-5% win on some of the sub tests of
+        the typed array benchmark at:
+        http://stepheneb.github.com/webgl-matrix-benchmarks/matrix_benchmark.html
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::propagateArithNodeFlags):
+        (JSC::DFG::Propagator::fixupNode):
+        (JSC::DFG::Propagator::byValIndexIsPure):
+        (JSC::DFG::Propagator::clobbersWorld):
+        (JSC::DFG::Propagator::getByValLoadElimination):
+        (JSC::DFG::Propagator::checkStructureLoadElimination):
+        (JSC::DFG::Propagator::getByOffsetLoadElimination):
+        (JSC::DFG::Propagator::getPropertyStorageLoadElimination):
+        (JSC::DFG::Propagator::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::Propagator::performNodeCSE):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-15  Geoffrey Garen  <ggaren@apple.com>
 
         Placement new does an unnecessary NULL check
@@ -332,36 +375,6 @@
         (WTF::toASCIIHexValue):
         (WTF::lowerNibbleToASCIIHexDigit):
         (WTF::upperNibbleToASCIIHexDigit):
-
-2011-12-16  Gavin Barraclough  <barraclough@apple.com>
-
-        Reverted r103120, this breaks v8 on ARMv7 DFG.
-
-        * dfg/DFGAbstractState.cpp:
-        (JSC::DFG::AbstractState::execute):
-        * dfg/DFGByteCodeParser.cpp:
-        (JSC::DFG::ByteCodeParser::parseBlock):
-        * dfg/DFGNode.h:
-        * dfg/DFGPropagator.cpp:
-        (JSC::DFG::Propagator::propagateArithNodeFlags):
-        (JSC::DFG::Propagator::fixupNode):
-        (JSC::DFG::Propagator::byValIsPure):
-        (JSC::DFG::Propagator::clobbersWorld):
-        (JSC::DFG::Propagator::getByValLoadElimination):
-        (JSC::DFG::Propagator::checkStructureLoadElimination):
-        (JSC::DFG::Propagator::getByOffsetLoadElimination):
-        (JSC::DFG::Propagator::getPropertyStorageLoadElimination):
-        (JSC::DFG::Propagator::getIndexedPropertyStorageLoadElimination):
-        (JSC::DFG::Propagator::performNodeCSE):
-        * dfg/DFGSpeculativeJIT.cpp:
-        (JSC::DFG::SpeculativeJIT::compilePutByValForByteArray):
-        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
-        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
-        * dfg/DFGSpeculativeJIT.h:
-        * dfg/DFGSpeculativeJIT32_64.cpp:
-        (JSC::DFG::SpeculativeJIT::compile):
-        * dfg/DFGSpeculativeJIT64.cpp:
-        (JSC::DFG::SpeculativeJIT::compile):
 
 2011-12-16  Filip Pizlo  <fpizlo@apple.com>
 
