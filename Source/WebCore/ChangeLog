@@ -1,3 +1,14 @@
+2011-12-19  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: only the first @rule is highlighted in CSS
+        https://bugs.webkit.org/show_bug.cgi?id=74568
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/front-end/SourceCSSTokenizer.js:
+        (WebInspector.SourceCSSTokenizer.prototype.nextToken):
+        * inspector/front-end/SourceCSSTokenizer.re2js:
+
 2011-12-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Feature Request: Able to remove all breakpoints.
