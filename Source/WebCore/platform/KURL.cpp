@@ -60,14 +60,19 @@ typedef Vector<UChar, 512> UCharBuffer;
 static const unsigned maximumValidPortNumber = 0xFFFE;
 static const unsigned invalidPortNumber = 0xFFFF;
 
-template<typename CharType>
-static inline bool isLetterMatchIgnoringCase(CharType character, char lowercaseLetter)
+static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLetter)
 {
     ASSERT(isASCIILower(lowercaseLetter));
     return (character | 0x20) == lowercaseLetter;
 }
 
 #if !USE(GOOGLEURL)
+
+static inline bool isLetterMatchIgnoringCase(char character, char lowercaseLetter)
+{
+    ASSERT(isASCIILower(lowercaseLetter));
+    return (character | 0x20) == lowercaseLetter;
+}
 
 enum URLCharacterClasses {
     // alpha 
@@ -1714,25 +1719,16 @@ void KURL::copyToBuffer(CharBuffer& buffer) const
     copyASCII(m_string, buffer.data());
 }
 
-template<typename CharType>
-bool charactersAreProtocol(const CharType* url, const char* protocol)
+bool protocolIs(const String& url, const char* protocol)
 {
+    // Do the comparison without making a new string object.
+    assertProtocolIsGood(protocol);
     for (int i = 0; ; ++i) {
         if (!protocol[i])
             return url[i] == ':';
         if (!isLetterMatchIgnoringCase(url[i], protocol[i]))
             return false;
     }
-}
-
-bool protocolIs(const String& url, const char* protocol)
-{
-    assertProtocolIsGood(protocol);
-
-    // Do the comparison without making a new string object.
-    if (url.is8Bit())
-        return charactersAreProtocol(url.characters8(), protocol);
-    return charactersAreProtocol(url.characters16(), protocol);
 }
 
 bool isValidProtocol(const String& protocol)
