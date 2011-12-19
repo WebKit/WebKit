@@ -1,3 +1,21 @@
+2011-12-19  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Setting QWebPreferences affect multiple WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=71559
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The QWebPreferences are per WebView, but the actual implementation
+        in WebKit2 make them per page group. Currently we share only one
+        page group between all the views, so if we set preferences
+        to one WebView the preferences are shared between them all, generating
+        unexpected behavior. This patch fixes this by making each WebView have
+        its own page group.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_preferences.qml:
+
 2011-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         Enable <track> for Mac build

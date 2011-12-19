@@ -73,8 +73,14 @@ QQuickWebViewPrivate::~QQuickWebViewPrivate()
 // Note: we delay this initialization to make sure that QQuickWebView has its d-ptr in-place.
 void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
+    RefPtr<WebPageGroup> pageGroup;
+    if (pageGroupRef)
+        pageGroup = toImpl(pageGroupRef);
+    else
+        pageGroup = WebPageGroup::create();
+
     context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
-    webPageProxy = context->createWebPage(&pageClient, toImpl(pageGroupRef));
+    webPageProxy = context->createWebPage(&pageClient, pageGroup.get());
 
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->initialize(webPageProxy.get());
