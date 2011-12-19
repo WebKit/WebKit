@@ -1,5 +1,24 @@
 2011-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [Qt] Add methods for setting, cancelling and confirming the composition
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::cancelComposition):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::targetFrameForEditing):
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::cancelComposition):
+
+2011-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         First stab at upstreaming our virtual keyboard code
 
         Reviewed by Simon Hausmann.

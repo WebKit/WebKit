@@ -1,3 +1,11 @@
+2011-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Make the Editor::setIgnoreCompositionSelectionChange public as it is needed by Qt
+
+        Reviewed by Simon Hausmann.
+
+        * editing/Editor.h:
+
 2011-12-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement CSS selector profiler backend

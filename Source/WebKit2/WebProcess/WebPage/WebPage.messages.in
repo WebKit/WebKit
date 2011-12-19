@@ -195,6 +195,12 @@ messages -> WebPage {
     SetCanRunBeforeUnloadConfirmPanel(bool canRunBeforeUnloadConfirmPanel)
     SetCanRunModal(bool canRunModal)
 
+#if PLATFORM(QT)
+    SetComposition(WTF::String text, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd)
+    ConfirmComposition(WTF::String text, int64_t selectionStart, int64_t selectionLength)
+    CancelComposition()
+#endif
+
 #if PLATFORM(MAC)
     # Complex text input support for plug-ins.
     SendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, String textInput)
