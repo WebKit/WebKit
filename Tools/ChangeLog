@@ -1,3 +1,34 @@
+2011-12-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Add support for modal event loop processing for WTR
+        https://bugs.webkit.org/show_bug.cgi?id=74852
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rewrote event loop processing: Instead of terminating the event loop
+        in notifyDone() - something no other platform does - we now respect the
+        "bool& condition" parameter passed to platformRunUntil. This ensures
+        proper termination even when the condition is changed from within a
+        nested event loop, because only when we _exit_ from the nested event
+        loop we will check the condition and terminate the test properly.
+
+        In addition this patch implements TestController::runModal by means of
+        a nested event loop, which is passed to the platform webview that is
+        supposed to be modal. It is that view's responsibility to exit the
+        loop, upon destruction. I believe that's similar to how it works on the Mac,
+        where it doesn't seem that NSApp's runModalForWindow is terminate via
+        abort/stopModal but simply because the window is closed.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::setModalEventLoop):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::notifyDone):
+        (WTR::TestController::platformRunUntil):
+        (WTR::TestController::runModal):
+
 2011-12-18  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION(r103149): prepare-ChangeLog outputs a warning

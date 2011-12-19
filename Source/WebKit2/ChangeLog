@@ -1,3 +1,16 @@
+2011-12-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Add support for modal event loop processing for WTR
+        https://bugs.webkit.org/show_bug.cgi?id=74852
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for nested event loops, used by WebPage::runModal().
+
+        * Platform/qt/RunLoopQt.cpp:
+        (RunLoop::run):
+        (RunLoop::stop):
+
 2011-12-18  Sam Weinig  <sam@webkit.org>
 
         Another attempt to fix the windows build.

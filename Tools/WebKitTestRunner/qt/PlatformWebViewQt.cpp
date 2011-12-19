@@ -32,6 +32,7 @@
 
 #include <QApplication>
 #include <QDeclarativeProperty>
+#include <QEventLoop>
 #include <QtQuick/QQuickView>
 #include <qwindowsysteminterface_qpa.h>
 
@@ -72,12 +73,15 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     : m_view(new QQuickWebView(contextRef, pageGroupRef))
     , m_window(new WrapperWindow(m_view))
     , m_windowIsKey(true)
+    , m_modalEventLoop(0)
 {
 }
 
 PlatformWebView::~PlatformWebView()
 {
     delete m_window;
+    if (m_modalEventLoop)
+        m_modalEventLoop->exit();
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)

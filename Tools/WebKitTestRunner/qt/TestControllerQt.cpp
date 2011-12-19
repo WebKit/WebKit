@@ -27,10 +27,12 @@
 #include "config.h"
 #include "TestController.h"
 
+#include "PlatformWebView.h"
 #include "WKStringQt.h"
 
 #include <cstdlib>
 #include <QCoreApplication>
+#include <QElapsedTimer>
 #include <QEventLoop>
 #include <QFileInfo>
 #include <QLibrary>
@@ -42,43 +44,8 @@
 
 namespace WTR {
 
-class TestControllerRunLoop : public QObject {
-    Q_OBJECT
-public:
-    static TestControllerRunLoop* instance()
-    {
-        static TestControllerRunLoop* result = new TestControllerRunLoop;
-        return result;
-    }
-
-    void start(int msec)
-    {
-        m_timerID = startTimer(msec);
-        ASSERT(m_timerID);
-        m_eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
-    }
-
-    void stop()
-    {
-        killTimer(m_timerID);
-        m_eventLoop.quit();
-    }
-private:
-    TestControllerRunLoop() {}
-
-    void timerEvent(QTimerEvent*)
-    {
-        fprintf(stderr, "FAIL: TestControllerRunLoop timed out.\n");
-        stop();
-    }
-
-    QEventLoop m_eventLoop;
-    int m_timerID;
-};
-
 void TestController::notifyDone()
 {
-    TestControllerRunLoop::instance()->stop();
 }
 
 void TestController::platformInitialize()
@@ -86,9 +53,16 @@ void TestController::platformInitialize()
     QQuickWebView::platformInitialize();
 }
 
-void TestController::platformRunUntil(bool&, double timeout)
+void TestController::platformRunUntil(bool& condition, double timeout)
 {
-    TestControllerRunLoop::instance()->start(static_cast<int>(timeout * 1000));
+    int timeoutInMSecs = timeout * 1000;
+    QElapsedTimer timer;
+    timer.start();
+    while (!condition) {
+        if (timer.elapsed() > timeoutInMSecs)
+            return;
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, timeoutInMSecs - timer.elapsed());
+    }
 }
 
 static bool isExistingLibrary(const QString& path)
@@ -130,16 +104,16 @@ void TestController::platformInitializeContext()
 {
 }
 
-void TestController::runModal(PlatformWebView*)
+void TestController::runModal(PlatformWebView* view)
 {
-    // FIXME: Need to implement this to test showModalDialog.
+    QEventLoop eventLoop;
+    view->setModalEventLoop(&eventLoop);
+    eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
 }
 
 const char* TestController::platformLibraryPathForTesting()
 {
     return 0;
 }
-
-#include "TestControllerQt.moc"
 
 } // namespace WTR

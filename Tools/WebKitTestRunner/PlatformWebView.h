@@ -33,6 +33,7 @@ class QQuickWebView;
 typedef QQuickWebView* PlatformWKView;
 class QQuickView;
 typedef QQuickView* PlatformWindow;
+class QEventLoop;
 #elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;
@@ -68,6 +69,7 @@ public:
 #if PLATFORM(QT)
     bool sendEvent(QEvent*);
     void postEvent(QEvent*);
+    void setModalEventLoop(QEventLoop* eventLoop) { m_modalEventLoop = eventLoop; }
 #endif
 
     WKRect windowFrame();
@@ -85,6 +87,9 @@ private:
     PlatformWKView m_view;
     PlatformWindow m_window;
     bool m_windowIsKey;
+#if PLATFORM(QT)
+    QEventLoop* m_modalEventLoop;
+#endif
 };
 
 } // namespace WTR
