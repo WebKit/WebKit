@@ -394,7 +394,7 @@ public:
 #if USE(V8)
     virtual void didCreateScriptContext(v8::Handle<v8::Context>, int worldId) { }
     virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) { }
-    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) { return false; }
+    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) { return false; }
 #endif
 
 #if PLATFORM(MAC)

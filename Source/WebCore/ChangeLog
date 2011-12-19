@@ -1,3 +1,24 @@
+2011-12-18  James Kozianski  <koz@chromium.org>
+
+        [chromium] Add worldId parameter to allowScriptExtension()
+        https://bugs.webkit.org/show_bug.cgi?id=74214
+
+        Chromium uses the worldId to determine what extension is running in a
+        v8 context and knowing that at the time allowScriptExtension() is
+        called allows us to conditionally inject extension APIs.
+
+        Reviewed by Darin Fisher.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        (WebCore::V8DOMWindowShell::createNewContext):
+        * bindings/v8/V8DOMWindowShell.h:
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::allowScriptExtension):
+        * loader/FrameLoaderClient.h:
+
 2011-12-18  Adam Barth  <abarth@webkit.org>
 
         Adoption agency iteration limits in HTML parser don't match HTML5 spec

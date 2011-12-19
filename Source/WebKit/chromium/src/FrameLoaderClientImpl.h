@@ -68,7 +68,7 @@ public:
 
     // Returns true if we should allow the given V8 extension to be added to
     // the script context at the currently loading page and given extension group.
-    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup);
+    virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId);
 
     virtual bool hasWebView() const;
     virtual bool hasFrameView() const;

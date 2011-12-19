@@ -277,7 +277,7 @@ namespace WebCore {
 #if USE(V8)
         virtual void didCreateScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
         virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
-        virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) = 0;
+        virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) = 0;
 #endif
 
         virtual void registerForIconNotification(bool listen = true) = 0;

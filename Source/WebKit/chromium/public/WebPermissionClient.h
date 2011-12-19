@@ -74,6 +74,11 @@ public:
     // value.
     virtual bool allowScriptExtension(WebFrame*, const WebString& extensionName, int extensionGroup) { return true; }
 
+    virtual bool allowScriptExtension(WebFrame* webFrame, const WebString& extensionName, int extensionGroup, int worldId)
+    {
+        return allowScriptExtension(webFrame, extensionName, extensionGroup);
+    }
+
     // Controls whether HTML5 Web Storage is allowed for this frame.
     // If local is true, then this is for local storage, otherwise it's for session storage.
     virtual bool allowStorage(WebFrame*, bool local) { return true; }

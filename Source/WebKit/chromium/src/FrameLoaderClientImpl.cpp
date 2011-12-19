@@ -155,11 +155,12 @@ void FrameLoaderClientImpl::willReleaseScriptContext(v8::Handle<v8::Context> con
 #endif
 
 bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
-                                                 int extensionGroup)
+                                                 int extensionGroup,
+                                                 int worldId)
 {
     WebViewImpl* webview = m_webFrame->viewImpl();
     if (webview && webview->permissionClient())
-        return webview->permissionClient()->allowScriptExtension(m_webFrame, extensionName, extensionGroup);
+        return webview->permissionClient()->allowScriptExtension(m_webFrame, extensionName, extensionGroup, worldId);
 
     return true;
 }

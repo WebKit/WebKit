@@ -305,7 +305,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
         isV8Initialized = true;
     }
 
-    m_context = createNewContext(m_global, 0);
+    m_context = createNewContext(m_global, 0, 0);
     if (m_context.IsEmpty())
         return false;
 
@@ -348,7 +348,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
     return true;
 }
 
-v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Object> global, int extensionGroup)
+v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Object> global, int extensionGroup, int worldId)
 {
     v8::Persistent<v8::Context> result;
 
@@ -379,7 +379,7 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     for (size_t i = 0; i < extensions.size(); ++i) {
         // Ensure our date extension is always allowed.
         if (extensions[i] != DateExtension::get()
-            && !m_frame->loader()->client()->allowScriptExtension(extensions[i]->name(), extensionGroup))
+            && !m_frame->loader()->client()->allowScriptExtension(extensions[i]->name(), extensionGroup, worldId))
             continue;
 
         extensionNames[index++] = extensions[i]->name();
