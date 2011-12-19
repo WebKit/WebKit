@@ -4056,6 +4056,8 @@ BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE
 
 BUGWK74746 : fast/filesystem/workers/file-from-file-entry-sync.html = PASS CRASH
 BUGWK74746 : fast/filesystem/workers/file-entry-to-uri-sync.html = PASS CRASH
+BUGWK74746 : http/tests/filesystem/workers/resolve-url-sync.html = PASS CRASH
+BUGWK74746 : http/tests/filesystem/workers/resolve-url.html = PASS CRASH
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods.html = FAIL
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = FAIL
 
