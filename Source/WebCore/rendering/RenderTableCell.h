@@ -125,6 +125,7 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
+    void paintCollapsedBorders(PaintInfo&, const LayoutPoint&);
     void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderObject* backgroundObject);
 
     LayoutUnit cellBaselinePosition() const;
@@ -173,8 +174,6 @@ private:
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
-
-    void paintCollapsedBorder(GraphicsContext*, const LayoutRect&);
 
     unsigned m_row : 31;
     bool m_cellWidthChanged : 1;

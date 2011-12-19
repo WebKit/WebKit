@@ -995,7 +995,7 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         if (!row->hasSelfPaintingLayer())
             cell->paintBackgroundsBehindCell(paintInfo, cellPoint, row);
     }
-    if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
+    if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()))
         cell->paint(paintInfo, cellPoint);
 }
 
@@ -1060,14 +1060,31 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
     }
     if (startcol < endcol) {
         if (!m_hasMultipleCellLevels && !m_overflowingCells.size()) {
-            // Draw the dirty cells in the order that they appear.
-            for (unsigned r = startrow; r < endrow; r++) {
-                for (unsigned c = startcol; c < endcol; c++) {
-                    CellStruct& current = cellAt(r, c);
-                    RenderTableCell* cell = current.primaryCell();
-                    if (!cell || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
-                        continue;
-                    paintCell(cell, paintInfo, paintOffset);
+            if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
+                // Collapsed borders are painted from the bottom right to the top left so that precedence
+                // due to cell position is respected.
+                for (unsigned r = endrow; r > startrow; r--) {
+                    unsigned row = r - 1;
+                    for (unsigned c = endcol; c > startcol; c--) {
+                        unsigned col = c - 1;
+                        CellStruct& current = cellAt(row, col);
+                        RenderTableCell* cell = current.primaryCell();
+                        if (!cell || (row > startrow && primaryCellAt(row - 1, col) == cell) || (col > startcol && primaryCellAt(row, col - 1) == cell))
+                            continue;
+                        LayoutPoint cellPoint = flipForWritingModeForChild(cell, paintOffset);
+                        cell->paintCollapsedBorders(paintInfo, cellPoint);
+                    }
+                }
+            } else {
+                // Draw the dirty cells in the order that they appear.
+                for (unsigned r = startrow; r < endrow; r++) {
+                    for (unsigned c = startcol; c < endcol; c++) {
+                        CellStruct& current = cellAt(r, c);
+                        RenderTableCell* cell = current.primaryCell();
+                        if (!cell || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
+                            continue;
+                        paintCell(cell, paintInfo, paintOffset);
+                    }
                 }
             }
         } else {
@@ -1106,8 +1123,15 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, const LayoutPoint& pa
             else
                 std::sort(cells.begin(), cells.end(), compareCellPositionsWithOverflowingCells);
 
-            for (unsigned i = 0; i < cells.size(); ++i)
-                paintCell(cells[i], paintInfo, paintOffset);
+            if (paintInfo.phase == PaintPhaseCollapsedTableBorders) {
+                for (unsigned i = cells.size(); i > 0; --i) {
+                    LayoutPoint cellPoint = flipForWritingModeForChild(cells[i - 1], paintOffset);
+                    cells[i - 1]->paintCollapsedBorders(paintInfo, cellPoint);
+                }
+            } else {
+                for (unsigned i = 0; i < cells.size(); ++i)
+                    paintCell(cells[i], paintInfo, paintOffset);
+            }
         }
     }
 }

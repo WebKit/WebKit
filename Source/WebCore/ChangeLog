@@ -1,3 +1,64 @@
+2011-12-04  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: border-conflict-element-*
+        https://bugs.webkit.org/show_bug.cgi?id=71244
+
+        Reviewed by Darin Adler.
+
+        From http://www.w3.org/TR/CSS21/tables.html#border-conflict-resolution :
+         "When two adjacent cells have the same border-width and the same border-style in a 
+          'border-collapse: collapse' table, then the color of the border from the leftmost cell wins
+          (if the table's 'direction' is 'ltr'; right, if it is 'rtl') and the color of the border
+          from the topmost cell wins."
+
+        RenderTable manages collapsed borders by first creating a list of unique border values sorted in ascending
+        priority. A unique border value is determined by style, width and color and cell-type precedence. For each 
+        entry in this list RenderTableSection paints each cell in its section starting at the top-left. If a cell 
+        is using the border RenderTable is currently iterating for, the cell will paint that border. 
+
+        The problems with this approach are:
+          1. Painting cells from the top-left to the bottom-right means that borders further to the right and to the bottom
+             of the table will paint over those further to the left and the top, breaking the precedence due to cell position.
+          2. It creates more unique borders in the list than necessary. Borders that differ only on color do not need to be painted in 
+             a separate iteration. Precedence in such cases is determined by cell position.
+
+        So in order to respect cell position when painting collapsed borders:
+          1. RenderTableCell now treats borders with the same style, width and precedence as equal. This results in a performance
+             improvement on tables where collapsed borders differ only in color, since RenderTable is no longer painting every cell in the table
+             for each unique collapsed border color. It also allows color to be a function of cell position rather than border type.
+          2. RenderTableSection now paints collapsed borders separately from cells and from the bottom-right to the top-left instead of top-left
+             to bottom-right. If a collapsed border has precedence due to style, width or cell-group-type it will still be respected but precedence 
+             due to color is enforced by painting cells nearer to the top and left *after* cells nearer to the bottom and right.
+
+        The order in which collapsed borders paint over each other in the same cell has not changed. Unlike Firefox,
+        WebKit does not attempt render them as diagonals or attempt to give borders on the edge of the table precedence
+        so that grooved and ridged styles have a smooth edge all round the table.
+
+        This fixes the following failing tests from the border-conflict-element-* set
+        in the CSS 2.1 test suite:
+          border-conflict-element-001d.htm
+          border-conflict-element-0037.htm
+          border-conflict-element-0038.htm
+
+        One test in the suite is known to be wrong, so a corrected version has been landed outside the 
+        css2.1 folder:
+          border-conflict-element-002.htm
+
+        This change entails rebaselining quite a few tests, see the LayoutTests ChangeLog for a full
+        explanation of the rebaselines.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paint):
+        (WebCore::addBorderStyle):
+        (WebCore::compareBorderValuesForQSort):
+        (WebCore::RenderTableCell::paintCollapsedBorders):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintCell):
+        (WebCore::RenderTableSection::paintObject):
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::isSameIgnoringColor):
+
 2011-12-19  Jer Noble  <jer.noble@apple.com>
 
         MediaController: cannot scrub while playing.

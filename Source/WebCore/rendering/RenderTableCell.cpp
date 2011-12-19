@@ -806,18 +806,7 @@ LayoutUnit RenderTableCell::borderHalfAfter(bool outer) const
 
 void RenderTableCell::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
-        if (!paintInfo.shouldPaintWithinRoot(this))
-            return;
-
-        LayoutPoint adjustedPaintOffset = paintOffset + location();
-        LayoutUnit os = 2 * maximalOutlineSize(paintInfo.phase);
-        if (adjustedPaintOffset.y() - table()->outerBorderTop() < paintInfo.rect.maxY() + os
-            && adjustedPaintOffset.y() + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
-            paintCollapsedBorder(paintInfo.context, LayoutRect(adjustedPaintOffset, size()));
-        return;
-    } 
-    
+    ASSERT(paintInfo.phase != PaintPhaseCollapsedTableBorders);
     RenderBlock::paint(paintInfo, paintOffset);
 }
 
@@ -887,7 +876,7 @@ static void addBorderStyle(RenderTable::CollapsedBorderValues& borderValues,
         return;
     size_t count = borderValues.size();
     for (size_t i = 0; i < count; ++i)
-        if (borderValues[i] == borderValue)
+        if (borderValues[i].isSameIgnoringColor(borderValue))
             return;
     borderValues.append(borderValue);
 }
@@ -904,7 +893,7 @@ static int compareBorderValuesForQSort(const void* pa, const void* pb)
 {
     const CollapsedBorderValue* a = static_cast<const CollapsedBorderValue*>(pa);
     const CollapsedBorderValue* b = static_cast<const CollapsedBorderValue*>(pb);
-    if (*a == *b)
+    if (a->isSameIgnoringColor(*b))
         return 0;
     return compareBorders(*a, *b);
 }
@@ -915,11 +904,25 @@ void RenderTableCell::sortBorderValues(RenderTable::CollapsedBorderValues& borde
         compareBorderValuesForQSort);
 }
 
-void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, const LayoutRect& paintRect)
+void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    ASSERT(paintInfo.phase == PaintPhaseCollapsedTableBorders);
+
+    if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE)
+        return;
+
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
+    LayoutUnit os = 2 * maximalOutlineSize(paintInfo.phase);
+    if (!(adjustedPaintOffset.y() - table()->outerBorderTop() < paintInfo.rect.maxY() + os
+        && adjustedPaintOffset.y() + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os))
+        return;
+
+    GraphicsContext* graphicsContext = paintInfo.context;
     if (!table()->currentBorderValue() || graphicsContext->paintingDisabled())
         return;
-    
+
+    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
+
     CollapsedBorderValue leftVal = collapsedLeftBorder();
     CollapsedBorderValue rightVal = collapsedRightBorder();
     CollapsedBorderValue topVal = collapsedTopBorder();
@@ -957,7 +960,7 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     bool antialias = shouldAntialiasLines(graphicsContext);
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
-        if (border->borderValue == *table()->currentBorderValue())
+        if (border->borderValue.isSameIgnoringColor(*table()->currentBorderValue()))
             drawLineForBoxSide(graphicsContext, border->x1, border->y1, border->x2, border->y2, border->side, 
                                border->borderValue.color(), border->style, 0, 0, antialias);
     }

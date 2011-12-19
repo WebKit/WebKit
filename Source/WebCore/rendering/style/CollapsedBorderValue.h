@@ -50,9 +50,9 @@ public:
     bool isTransparent() const { return m_border.isTransparent(); }
     EBorderPrecedence precedence() const { return m_precedence; }
 
-    bool operator==(const CollapsedBorderValue& o) const
+    bool isSameIgnoringColor(const CollapsedBorderValue& o) const
     {
-        return m_border == o.m_border && m_borderColor == o.m_borderColor && m_precedence == o.m_precedence;
+        return m_border.width() == o.m_border.width() && m_border.style() == o.m_border.style() && m_precedence == o.m_precedence;
     }
 
 private:
