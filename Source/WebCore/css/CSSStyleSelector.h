@@ -126,6 +126,7 @@ public:
     void setZoom(float f) { m_fontDirty |= style()->setZoom(f); }
     void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
     void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
+    bool hasParentNode() const { return m_parentNode; }
 
 private:
     void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
@@ -163,15 +164,6 @@ public:
     // Given a font size in pixel, this function will return legacy font size between 1 and 7.
     static int legacyFontSize(Document*, int pixelFontSize, bool shouldUseFixedDefaultSize);
 
-private:
-
-    // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
-    // table, and failing that, will simply multiply by 1.2.
-    float largerFontSize(float size, bool quirksMode) const;
-
-    // Like the previous function, but for the keyword "smaller".
-    float smallerFontSize(float size, bool quirksMode) const;
-
 public:
     void setStyle(PassRefPtr<RenderStyle> s) { m_style = s; } // Used by the document when setting up its root style.
 
@@ -183,9 +175,9 @@ public:
 
     static float getComputedSizeFromSpecifiedSize(Document*, float zoomFactor, bool isAbsoluteSize, float specifiedSize, ESmartMinimumForFontSize = UseSmartMinimumForFontFize);
 
-private:
     void setFontSize(FontDescription&, float size);
 
+private:
     static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
 
 public:

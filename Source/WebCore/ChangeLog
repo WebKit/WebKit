@@ -1,3 +1,25 @@
+2011-12-18  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSS font-size property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=74368
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyFontSize::largerFontSize):
+        (WebCore::ApplyPropertyFontSize::smallerFontSize):
+        (WebCore::ApplyPropertyFontSize::applyInheritValue):
+        (WebCore::ApplyPropertyFontSize::applyInitialValue):
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        (WebCore::ApplyPropertyFontSize::createHandler):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::hasParentNode):
+
 2011-12-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103199.

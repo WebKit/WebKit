@@ -578,6 +578,122 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
+class ApplyPropertyFontSize {
+private:
+    // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
+    // table, and failing that, will simply multiply by 1.2.
+    static float largerFontSize(float size)
+    {
+        // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale up to
+        // the next size level.
+        return size * 1.2f;
+    }
+
+    // Like the previous function, but for the keyword "smaller".
+    static float smallerFontSize(float size)
+    {
+        // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
+        // the next size level.
+        return size / 1.2f;
+    }
+public:
+    static void applyInheritValue(CSSStyleSelector* selector)
+    {
+        float size = selector->parentStyle()->fontDescription().specifiedSize();
+
+        if (size < 0)
+            return;
+
+        FontDescription fontDescription = selector->style()->fontDescription();
+        fontDescription.setKeywordSize(selector->parentStyle()->fontDescription().keywordSize());
+        selector->setFontSize(fontDescription, size);
+        selector->setFontDescription(fontDescription);
+        return;
+    }
+
+    static void applyInitialValue(CSSStyleSelector* selector)
+    {
+        FontDescription fontDescription = selector->style()->fontDescription();
+        float size = selector->fontSizeForKeyword(selector->document(), CSSValueMedium, fontDescription.useFixedDefaultSize());
+
+        if (size < 0)
+            return;
+
+        fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
+        selector->setFontSize(fontDescription, size);
+        selector->setFontDescription(fontDescription);
+        return;
+    }
+
+    static void applyValue(CSSStyleSelector* selector, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+        FontDescription fontDescription = selector->style()->fontDescription();
+        fontDescription.setKeywordSize(0);
+        float parentSize = 0;
+        bool parentIsAbsoluteSize = false;
+        float size = 0;
+
+        if (selector->hasParentNode()) {
+            parentSize = selector->parentStyle()->fontDescription().specifiedSize();
+            parentIsAbsoluteSize = selector->parentStyle()->fontDescription().isAbsoluteSize();
+        }
+
+        if (int ident = primitiveValue->getIdent()) {
+            // Keywords are being used.
+            switch (ident) {
+            case CSSValueXxSmall:
+            case CSSValueXSmall:
+            case CSSValueSmall:
+            case CSSValueMedium:
+            case CSSValueLarge:
+            case CSSValueXLarge:
+            case CSSValueXxLarge:
+            case CSSValueWebkitXxxLarge:
+                size = selector->fontSizeForKeyword(selector->document(), ident, fontDescription.useFixedDefaultSize());
+                fontDescription.setKeywordSize(ident - CSSValueXxSmall + 1);
+                break;
+            case CSSValueLarger:
+                size = largerFontSize(parentSize);
+                break;
+            case CSSValueSmaller:
+                size = smallerFontSize(parentSize);
+                break;
+            default:
+                return;
+            }
+
+            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize && (ident == CSSValueLarger || ident == CSSValueSmaller));
+        } else {
+            int type = primitiveValue->primitiveType();
+            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
+                                              || (type != CSSPrimitiveValue::CSS_PERCENTAGE
+                                                  && type != CSSPrimitiveValue::CSS_EMS
+                                                  && type != CSSPrimitiveValue::CSS_EXS
+                                                  && type != CSSPrimitiveValue::CSS_REMS));
+            if (primitiveValue->isLength())
+                size = primitiveValue->computeLength<float>(selector->parentStyle(), selector->rootElementStyle(), 1.0, true);
+            else if (primitiveValue->isPercentage())
+                size = (primitiveValue->getFloatValue() * parentSize) / 100.0f;
+            else
+                return;
+        }
+
+        if (size < 0)
+            return;
+
+        selector->setFontSize(fontDescription, size);
+        selector->setFontDescription(fontDescription);
+        return;
+    }
+
+    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
+};
+
 class ApplyPropertyFontWeight {
 public:
     static void applyValue(CSSStyleSelector* selector, CSSValue* value)
@@ -1525,6 +1641,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitFlexWrap, ApplyPropertyDefault<EFlexWrap, &RenderStyle::flexWrap, EFlexWrap, &RenderStyle::setFlexWrap, EFlexWrap, &RenderStyle::initialFlexWrap>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexFlow, ApplyPropertyExpanding<SuppressValue, CSSPropertyWebkitFlexDirection, CSSPropertyWebkitFlexWrap>::createHandler());
 
+    setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());
     setPropertyHandler(CSSPropertyTextRendering, ApplyPropertyFont<TextRenderingMode, &FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering>::createHandler());

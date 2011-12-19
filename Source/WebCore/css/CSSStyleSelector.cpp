@@ -2681,76 +2681,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMatchNearestMailBlockquoteColor:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
         return;
-    case CSSPropertyFontSize:
-    {
-        FontDescription fontDescription = m_style->fontDescription();
-        fontDescription.setKeywordSize(0);
-        float oldSize = 0;
-        float size = 0;
-
-        bool parentIsAbsoluteSize = false;
-        if (m_parentNode) {
-            oldSize = m_parentStyle->fontDescription().specifiedSize();
-            parentIsAbsoluteSize = m_parentStyle->fontDescription().isAbsoluteSize();
-        }
-
-        if (isInherit) {
-            size = oldSize;
-            if (m_parentNode)
-                fontDescription.setKeywordSize(m_parentStyle->fontDescription().keywordSize());
-        } else if (isInitial) {
-            size = fontSizeForKeyword(m_checker.document(), CSSValueMedium, fontDescription.useFixedDefaultSize());
-            fontDescription.setKeywordSize(CSSValueMedium - CSSValueXxSmall + 1);
-        } else if (primitiveValue->getIdent()) {
-            // Keywords are being used.
-            switch (primitiveValue->getIdent()) {
-                case CSSValueXxSmall:
-                case CSSValueXSmall:
-                case CSSValueSmall:
-                case CSSValueMedium:
-                case CSSValueLarge:
-                case CSSValueXLarge:
-                case CSSValueXxLarge:
-                case CSSValueWebkitXxxLarge:
-                    size = fontSizeForKeyword(m_checker.document(), primitiveValue->getIdent(), fontDescription.useFixedDefaultSize());
-                    fontDescription.setKeywordSize(primitiveValue->getIdent() - CSSValueXxSmall + 1);
-                    break;
-                case CSSValueLarger:
-                    size = largerFontSize(oldSize, m_checker.document()->inQuirksMode());
-                    break;
-                case CSSValueSmaller:
-                    size = smallerFontSize(oldSize, m_checker.document()->inQuirksMode());
-                    break;
-                default:
-                    return;
-            }
-
-            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
-                                              && (primitiveValue->getIdent() == CSSValueLarger
-                                                  || primitiveValue->getIdent() == CSSValueSmaller));
-        } else {
-            int type = primitiveValue->primitiveType();
-            fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize
-                                              || (type != CSSPrimitiveValue::CSS_PERCENTAGE
-                                                  && type != CSSPrimitiveValue::CSS_EMS
-                                                  && type != CSSPrimitiveValue::CSS_EXS
-                                                  && type != CSSPrimitiveValue::CSS_REMS));
-            if (CSSPrimitiveValue::isUnitTypeLength(type))
-                size = primitiveValue->computeLength<float>(m_parentStyle, m_rootElementStyle, 1.0, true);
-            else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                size = (primitiveValue->getFloatValue() * oldSize) / 100.0f;
-            else
-                return;
-        }
-
-        if (size < 0)
-            return;
-
-        setFontSize(fontDescription, size);
-        setFontDescription(fontDescription);
-        return;
-    }
-
     case CSSPropertyWidows:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(widows, Widows)
         return;
@@ -3801,6 +3731,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexWrap:
+    case CSSPropertyFontSize:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
     case CSSPropertyTextRendering:
@@ -4727,20 +4658,6 @@ int CSSStyleSelector::legacyFontSize(Document* document, int pixelFontSize, bool
     }
 
     return findNearestLegacyFontSize<float>(pixelFontSize, fontSizeFactors, mediumSize);
-}
-
-float CSSStyleSelector::largerFontSize(float size, bool) const
-{
-    // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale up to
-    // the next size level.
-    return size * 1.2f;
-}
-
-float CSSStyleSelector::smallerFontSize(float size, bool) const
-{
-    // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
-    // the next size level.
-    return size / 1.2f;
 }
 
 static Color colorForCSSValue(int cssValueId)
