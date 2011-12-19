@@ -88,13 +88,7 @@ class Port(object):
 
     ALL_BUILD_TYPES = ('debug', 'release')
 
-    def __init__(self, host,
-                 port_name=None, options=None,
-                 executive=None,
-                 user=None,
-                 filesystem=None,
-                 config=None,
-                 **kwargs):
+    def __init__(self, host, port_name=None, options=None, config=None, **kwargs):
 
         # These are default values that should be overridden in a subclasses.
         self._name = port_name or self.port_name  # Subclasses may append a -VERSION (like mac-leopard) or other qualifiers.

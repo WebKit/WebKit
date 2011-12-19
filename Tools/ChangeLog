@@ -1,5 +1,19 @@
 2011-12-19  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: remove executive,filesystem,user parameters from Port constructor
+        https://bugs.webkit.org/show_bug.cgi?id=74878
+
+        Reviewed by Eric Seidel.
+
+        This change concludes the refactoring that makes Host a required
+        parameter for Port and ensures that all access to filesystem,
+        executives, etc. is going through the Host.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+
+2011-12-19  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: finish refactoring port classes to make a host mandatory
         https://bugs.webkit.org/show_bug.cgi?id=74566
 
