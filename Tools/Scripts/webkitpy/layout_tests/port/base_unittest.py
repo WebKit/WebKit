@@ -52,7 +52,7 @@ class PortTest(unittest.TestCase):
         host = MockHost()
         if executive:
             host.executive = executive
-        return Port(host, executive=executive, **kwargs)
+        return Port(host, **kwargs)
 
     def test_default_child_processes(self):
         port = self.make_port()
@@ -220,7 +220,6 @@ class PortTest(unittest.TestCase):
 
     def test_test_dirs(self):
         port = self.make_port()
-        # FIXME: Consider adding a filesystem.touch()?
         port._filesystem.write_text_file(port.layout_tests_dir() + '/canvas/test', '')
         port._filesystem.write_text_file(port.layout_tests_dir() + '/css2.1/test', '')
         dirs = port.test_dirs()

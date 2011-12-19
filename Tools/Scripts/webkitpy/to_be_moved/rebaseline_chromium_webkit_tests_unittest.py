@@ -39,10 +39,7 @@ from webkitpy.common.system import zipfileset_mock
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system.executive import Executive, ScriptError
 
-from webkitpy.common.checkout.scm.scm_mock import MockSCM
-
 from webkitpy.layout_tests import port
-from webkitpy.layout_tests.port.test import unit_test_filesystem
 from webkitpy.to_be_moved import rebaseline_chromium_webkit_tests
 
 
@@ -79,10 +76,9 @@ def test_options():
 def test_host_port_and_filesystem(options, expectations):
     host = MockHost()
     host_port_obj = host.port_factory.get('test', options)
-
     expectations_path = host_port_obj.path_to_test_expectations_file()
-    host_port_obj.filesystem.write_text_file(expectations_path, expectations)
-    return (host_port_obj, host_port_obj.filesystem)
+    host.filesystem.write_text_file(expectations_path, expectations)
+    return (host, host_port_obj, host.filesystem)
 
 
 def test_url_fetcher(filesystem):
@@ -205,24 +201,20 @@ class TestRebaseliner(unittest.TestCase):
 
     def make_rebaseliner(self, expectations):
         options = test_options()
-        host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
+        host, host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
 
         target_options = options
-        host = MockHost()
-        target_port_obj = host.port_factory.get('test', target_options, filesystem=filesystem)
-        target_port_obj._expectations = expectations
+        target_port_obj = host.port_factory.get('test', target_options)
         platform = target_port_obj.name()
 
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
-        mock_scm = MockSCM(filesystem)
-        filesystem.maybe_make_directory(mock_scm.checkout_root)
 
         # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
         filesystem.chdir("/test.checkout")
 
-        rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host_port_obj,
-            target_port_obj, platform, options, url_fetcher, zip_factory, mock_scm)
+        rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host, host_port_obj,
+            target_port_obj, platform, options, url_fetcher, zip_factory)
         return rebaseliner, filesystem
 
     def test_noop(self):
@@ -350,19 +342,17 @@ class TestRealMain(unittest.TestCase):
         expectations = "BUGX REBASELINE : failures/expected/image.html = IMAGE"
 
         options = test_options()
-        host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
+        host, host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
-        mock_scm = MockSCM()
-        filesystem.maybe_make_directory(mock_scm.checkout_root)
 
         # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
         filesystem.chdir("/test.checkout")
 
         oc = outputcapture.OutputCapture()
         oc.capture_output()
-        res = rebaseline_chromium_webkit_tests.real_main(options, options,
-            host_port_obj, host_port_obj, url_fetcher, zip_factory, mock_scm)
+        res = rebaseline_chromium_webkit_tests.real_main(host, options, options,
+            host_port_obj, host_port_obj, url_fetcher, zip_factory)
         oc.restore_output()
 
         # We expect to have written 38 files over the course of this rebaseline:
@@ -382,7 +372,11 @@ class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, files, tests):
         options = MockOptions(configuration=None, html_directory='/tmp')
         host = MockHost()
-        host_port = host.port_factory.get('test', options, filesystem=unit_test_filesystem(files))
+        fs = host.filesystem
+        for filename, contents in files.iteritems():
+            fs.maybe_make_directory(fs.dirname(filename))
+            fs.write_binary_file(filename, contents)
+        host_port = host.port_factory.get('test', options)
         generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host_port,
             target_port=None, options=options, platforms=['test-mac-leopard'], rebaselining_tests=tests)
         return generator, host_port

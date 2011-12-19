@@ -67,7 +67,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.port import Port
-from webkitpy.layout_tests.port.test import TestPort, TestDriver, unit_test_filesystem
+from webkitpy.layout_tests.port.test import TestPort, TestDriver
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 
@@ -97,27 +97,25 @@ def parse_args(extra_args=None, record_results=False, tests_included=False, new_
     return run_webkit_tests.parse_args(args)
 
 
-def passing_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None):
+def passing_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, host=None):
     options, parsed_args = parse_args(extra_args, record_results, tests_included)
-    filesystem = filesystem or unit_test_filesystem()
     if not port_obj:
-        host = MockHost()
-        port_obj = host.port_factory.get(port_name=options.platform, options=options, filesystem=filesystem)
+        host = host or MockHost()
+        port_obj = host.port_factory.get(port_name=options.platform, options=options)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
     res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
     return res == 0 and regular_output.empty() and buildbot_output.empty()
 
 
-def logging_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None, new_results=False):
+def logging_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, host=None, new_results=False):
     options, parsed_args = parse_args(extra_args=extra_args,
                                       record_results=record_results,
                                       tests_included=tests_included,
                                       print_nothing=False, new_results=new_results)
-    host = MockHost()
-    filesystem = filesystem or unit_test_filesystem()
+    host = host or MockHost()
     if not port_obj:
-        port_obj = host.port_factory.get(port_name=options.platform, options=options, filesystem=filesystem)
+        port_obj = host.port_factory.get(port_name=options.platform, options=options)
 
     res, buildbot_output, regular_output = run_and_capture(port_obj, options, parsed_args)
     return (res, buildbot_output, regular_output, host.user)
@@ -138,7 +136,7 @@ def run_and_capture(port_obj, options, parsed_args):
 
 
 def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
-                  filesystem=None, include_reference_html=False):
+                  host=None, include_reference_html=False):
     extra_args = extra_args or []
     if not tests_included:
         # Not including http tests since they get run out of order (that
@@ -146,10 +144,8 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
         extra_args = ['passes', 'failures'] + extra_args
     options, parsed_args = parse_args(extra_args, tests_included=True)
 
-    host = MockHost()
-
+    host = host or MockHost()
     test_batches = []
-
 
     class RecordingTestDriver(TestDriver):
         def __init__(self, port, worker_number):
@@ -177,7 +173,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
         def create_driver(self, worker_number):
             return RecordingTestDriver(self, worker_number)
 
-    recording_port = RecordingTestPort(options=options, host=host, filesystem=filesystem)
+    recording_port = RecordingTestPort(host, options=options)
     run_and_capture(recording_port, options, parsed_args)
 
     if flatten_batches:
@@ -389,9 +385,9 @@ class MainTest(unittest.TestCase):
     def test_single_file(self):
         # FIXME: We should consider replacing more of the get_tests_run()-style tests
         # with tests that read the tests_run* files, like this one.
-        fs = unit_test_filesystem()
-        tests_run = passing_run(['passes/text.html'], tests_included=True, filesystem=fs)
-        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/tests_run0.txt'),
+        host = MockHost()
+        tests_run = passing_run(['passes/text.html'], tests_included=True, host=host)
+        self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/tests_run0.txt'),
                           'passes/text.html\n')
 
     def test_single_file_with_prefix(self):
@@ -403,28 +399,28 @@ class MainTest(unittest.TestCase):
         self.assertEquals([], tests_run)
 
     def test_stderr_is_saved(self):
-        fs = unit_test_filesystem()
-        self.assertTrue(passing_run(filesystem=fs))
-        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/passes/error-stderr.txt'),
+        host = MockHost()
+        self.assertTrue(passing_run(host=host))
+        self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/passes/error-stderr.txt'),
                           'stuff going to stderr')
 
     def test_test_list(self):
-        fs = unit_test_filesystem()
+        host = MockHost()
         filename = '/tmp/foo.txt'
-        fs.write_text_file(filename, 'passes/text.html')
-        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
+        host.filesystem.write_text_file(filename, 'passes/text.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, host=host)
         self.assertEquals(['passes/text.html'], tests_run)
-        fs.remove(filename)
+        host.filesystem.remove(filename)
         res, out, err, user = logging_run(['--test-list=%s' % filename],
-                                          tests_included=True, filesystem=fs)
+                                          tests_included=True, host=host)
         self.assertEqual(res, -1)
         self.assertFalse(err.empty())
 
     def test_test_list_with_prefix(self):
-        fs = unit_test_filesystem()
+        host = MockHost()
         filename = '/tmp/foo.txt'
-        fs.write_text_file(filename, 'LayoutTests/passes/text.html')
-        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
+        host.filesystem.write_text_file(filename, 'LayoutTests/passes/text.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, host=host)
         self.assertEquals(['passes/text.html'], tests_run)
 
     def test_unexpected_failures(self):
@@ -440,17 +436,17 @@ class MainTest(unittest.TestCase):
     def test_missing_and_unexpected_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, out, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/text-image-checksum.html'],
-            tests_included=True, filesystem=fs, record_results=True)
-        file_list = fs.written_files.keys()
+            tests_included=True, host=host, record_results=True)
+        file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEquals(res, 1)
         expected_token = '"unexpected":{"text-image-checksum.html":{"expected":"PASS","actual":"TEXT"},"missing_text.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING"}'
-        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
         self.assertTrue(json_string.find(expected_token) != -1)
         self.assertTrue(json_string.find('"num_regressions":1') != -1)
         self.assertTrue(json_string.find('"num_flaky":0') != -1)
@@ -459,75 +455,74 @@ class MainTest(unittest.TestCase):
     def test_missing_and_unexpected_results_with_custom_exit_code(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = unit_test_filesystem()
-
         class CustomExitCodePort(TestPort):
             def exit_code_from_summarized_results(self, unexpected_results):
                 return unexpected_results['num_regressions'] + unexpected_results['num_missing']
 
+        host = MockHost()
         options, parsed_args = run_webkit_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
-        test_port = CustomExitCodePort(options=options)
+        test_port = CustomExitCodePort(host, options=options)
         res, out, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/text-image-checksum.html'],
-            tests_included=True, filesystem=fs, record_results=True, port_obj=test_port)
+            tests_included=True, host=host, record_results=True, port_obj=test_port)
         self.assertEquals(res, 2)
 
     def test_crash_with_stderr(self):
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/crash-with-stderr.html',
             ],
             tests_included=True,
             record_results=True,
-            filesystem=fs)
-        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/full_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
+            host=host)
+        self.assertTrue(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
     def test_no_image_failure_with_image_diff(self):
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/checksum-with-matching-image.html',
             ],
             tests_included=True,
             record_results=True,
-            filesystem=fs)
-        self.assertTrue(fs.read_text_file('/tmp/layout-test-results/full_results.json').find('"num_regressions":0') != -1)
+            host=host)
+        self.assertTrue(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json').find('"num_regressions":0') != -1)
 
     def test_crash_log(self):
         mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 12345)
-        fs = unit_test_filesystem()
-        fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
+        host = MockHost()
+        host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/crash-with-stderr.html',
             ],
             tests_included=True,
             record_results=True,
-            filesystem=fs)
+            host=host)
         expected_crash_log = mock_crash_report
         # Currently CrashLog uploading only works on Darwin.
         if sys.platform != "darwin":
             expected_crash_log = "mock-std-error-output"
-        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
+        self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_web_process_crash_log(self):
         mock_crash_report = make_mock_crash_report_darwin('WebProcess', 12345)
-        fs = unit_test_filesystem()
-        fs.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
+        host = MockHost()
+        host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/web-process-crash-with-stderr.html',
             ],
             tests_included=True,
             record_results=True,
-            filesystem=fs)
+            host=host)
         expected_crash_log = mock_crash_report
         # Currently CrashLog uploading only works on Darwin.
         if sys.platform != "darwin":
             expected_crash_log = "mock-std-error-output"
-        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), expected_crash_log)
+        self.assertEquals(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), expected_crash_log)
 
     def test_exit_after_n_failures_upload(self):
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/text-image-checksum.html',
                 'passes/text.html',
@@ -535,8 +530,8 @@ class MainTest(unittest.TestCase):
             ],
             tests_included=True,
             record_results=True,
-            filesystem=fs)
-        self.assertTrue('/tmp/layout-test-results/incremental_results.json' in fs.files)
+            host=host)
+        self.assertTrue('/tmp/layout-test-results/incremental_results.json' in host.filesystem.files)
 
     def test_exit_after_n_failures(self):
         # Unexpected failures should result in tests stopping.
@@ -605,11 +600,11 @@ class MainTest(unittest.TestCase):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
 
-        fs = unit_test_filesystem()
-        with fs.mkdtemp() as tmpdir:
+        host = MockHost()
+        with host.filesystem.mkdtemp() as tmpdir:
             res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)],
-                                              tests_included=True, filesystem=fs)
-            self.assertEqual(user.opened_urls, [fs.join(tmpdir, 'results.html')])
+                                              tests_included=True, host=host)
+            self.assertEqual(user.opened_urls, [host.filesystem.join(tmpdir, 'results.html')])
 
     def test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
@@ -622,17 +617,17 @@ class MainTest(unittest.TestCase):
     def test_results_directory_relative(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
-        fs = unit_test_filesystem()
-        fs.maybe_make_directory('/tmp/cwd')
-        fs.chdir('/tmp/cwd')
+        host = MockHost()
+        host.filesystem.maybe_make_directory('/tmp/cwd')
+        host.filesystem.chdir('/tmp/cwd')
         res, out, err, user = logging_run(['--results-directory=foo'],
-                                          tests_included=True, filesystem=fs)
+                                          tests_included=True, host=host)
         self.assertEqual(user.opened_urls, ['/tmp/cwd/foo/results.html'])
 
     def test_retries_directory(self):
-        fs = unit_test_filesystem()
-        res, out, err, user = logging_run(tests_included=True, filesystem=fs)
-        self.assertTrue('/tmp/layout-test-results/retries/tests_run0.txt' in fs.files)
+        host = MockHost()
+        res, out, err, user = logging_run(tests_included=True, host=host)
+        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/tests_run0.txt'))
 
     # These next tests test that we run the tests in ascending alphabetical
     # order per directory. HTTP tests are sharded separately from other tests,
@@ -659,7 +654,8 @@ class MainTest(unittest.TestCase):
 
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
-            test_port = ImageDiffTestPort(options=options)
+            host = MockHost()
+            test_port = ImageDiffTestPort(host, options=options)
             res = passing_run(args, port_obj=test_port, tests_included=True)
             self.assertTrue(res)
             return test_port
@@ -724,11 +720,9 @@ class MainTest(unittest.TestCase):
         self.assertEquals(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
 
     def test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist(self):
-        fs = unit_test_filesystem()
-        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, filesystem=fs, record_results=True)
-        file_list = fs.written_files.keys()
-        file_list.remove('/tmp/layout-test-results/tests_run0.txt')
-        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        host = MockHost()
+        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host, record_results=True)
+        json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
         self.assertTrue(json_string.find('"unlistedtest.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING","is_missing_image":true}') != -1)
         self.assertTrue(json_string.find('"num_regressions":4') != -1)
         self.assertTrue(json_string.find('"num_flaky":0') != -1)
@@ -774,11 +768,11 @@ class EndToEndTest(unittest.TestCase):
         return compressed_results
 
     def test_end_to_end(self):
-        fs = unit_test_filesystem()
-        res, out, err, user = logging_run(record_results=True, tests_included=True, filesystem=fs)
+        host = MockHost()
+        res, out, err, user = logging_run(record_results=True, tests_included=True, host=host)
 
         self.assertEquals(res, unexpected_tests_count)
-        results = self.parse_full_results(fs.files['/tmp/layout-test-results/full_results.json'])
+        results = self.parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
 
         # Check to ensure we're passing back image diff %age correctly.
         self.assertEquals(results['tests']['failures']['expected']['image.html']['image_diff_percent'], 1)
@@ -789,11 +783,11 @@ class EndToEndTest(unittest.TestCase):
     def test_reftest_with_two_notrefs(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = unit_test_filesystem()
-        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, filesystem=fs, record_results=True)
-        file_list = fs.written_files.keys()
+        host = MockHost()
+        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host, record_results=True)
+        file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
-        json_string = fs.read_text_file('/tmp/layout-test-results/full_results.json')
+        json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
         json = self.parse_full_results(json_string)
         self.assertTrue("multiple-match-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertTrue("multiple-mismatch-success.html" not in json["tests"]["reftests"]["foo"])
@@ -821,13 +815,13 @@ class RebaselineTest(unittest.TestCase):
     def test_reset_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, out, err, _ = logging_run(['--pixel-tests',
                         '--reset-results',
                         'passes/image.html',
                         'failures/expected/missing_image.html'],
-                        tests_included=True, filesystem=fs, new_results=True)
-        file_list = fs.written_files.keys()
+                        tests_included=True, host=host, new_results=True)
+        file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEquals(res, 0)
         self.assertTrue(out.empty())
@@ -838,14 +832,14 @@ class RebaselineTest(unittest.TestCase):
     def test_missing_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, out, err, _ = logging_run(['--no-show-results',
                      'failures/unexpected/missing_text.html',
                      'failures/unexpected/missing_image.html',
                      'failures/unexpected/missing_audio.html',
                      'failures/unexpected/missing_render_tree_dump.html'],
-                     tests_included=True, filesystem=fs, new_results=True)
-        file_list = fs.written_files.keys()
+                     tests_included=True, host=host, new_results=True)
+        file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEquals(res, 0)
         self.assertFalse(out.empty())
@@ -857,13 +851,13 @@ class RebaselineTest(unittest.TestCase):
     def test_new_baseline(self):
         # Test that we update the platform expectations. If the expectation
         # is mssing, then create a new expectation in the platform dir.
-        fs = unit_test_filesystem()
+        host = MockHost()
         res, out, err, _ = logging_run(['--pixel-tests',
                         '--new-baseline',
                         'passes/image.html',
                         'failures/expected/missing_image.html'],
-                    tests_included=True, filesystem=fs, new_results=True)
-        file_list = fs.written_files.keys()
+                    tests_included=True, host=host, new_results=True)
+        file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEquals(res, 0)
         self.assertTrue(out.empty())

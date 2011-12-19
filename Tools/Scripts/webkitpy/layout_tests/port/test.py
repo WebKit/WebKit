@@ -55,7 +55,7 @@ class TestInstance(object):
 
         # The values of each field are treated as raw byte strings. They
         # will be converted to unicode strings where appropriate using
-        # MockFileSystem.read_text_file().
+        # FileSystem.read_text_file().
         self.actual_text = self.base + '-txt'
         self.actual_checksum = self.base + '-checksum'
 
@@ -299,13 +299,6 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
     filesystem.clear_written_files()
 
 
-def unit_test_filesystem(files=None):
-    files = files or {}
-    fs = MockFileSystem(files, dirs=set(['/mock-checkout']))  # Make sure at least the checkout_root exists as a directory.
-    add_unit_tests_to_mock_filesystem(fs)
-    return fs
-
-
 class TestPort(Port):
     """Test implementation of the Port interface."""
     ALL_BASELINE_VARIANTS = (
@@ -314,26 +307,15 @@ class TestPort(Port):
         'test-linux-x86_64',
     )
 
-    def _set_default_overriding_none(self, dictionary, key, default):
-        # dict.setdefault almost works, but won't actually override None values, which we want.
-        if not dictionary.get(key):
-            dictionary[key] = default
-        return dictionary[key]
-
-    def __init__(self, host=None, port_name=None, **kwargs):
+    def __init__(self, host, port_name=None, **kwargs):
         if not port_name or port_name == 'test':
             port_name = 'test-mac-leopard'
 
-        # FIXME: we import this here instead of at the top-level in order to avoid
-        # a circular import. This should be removed when host become a required parameter.
-        from webkitpy.common.host_mock import MockHost
-        host = host or MockHost()
-        filesystem = self._set_default_overriding_none(kwargs, 'filesystem', unit_test_filesystem())
-
-        Port.__init__(self, host, port_name=port_name, **kwargs)
+        self._tests = unit_test_list()
+        self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
         self._results_directory = None
 
-        self._tests = unit_test_list()
+        Port.__init__(self, host, port_name=port_name, **kwargs)
 
         self._operating_system = 'mac'
         if port_name.startswith('test-win'):
@@ -351,7 +333,6 @@ class TestPort(Port):
         }
         self._version = version_map[port_name]
 
-        self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
 
     def _path_to_driver(self):
         # This routine shouldn't normally be called, but it is called by

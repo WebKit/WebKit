@@ -1,5 +1,60 @@
 2011-12-19  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: finish refactoring port classes to make a host mandatory
+        https://bugs.webkit.org/show_bug.cgi?id=74566
+
+        Reviewed by Eric Seidel.
+
+        This change makes all Port objects take a required (System)Host
+        parameter, and updates the TestPort object to no longer create a
+        mock filesystem or add files to the existing filesystem by
+        default.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory.__init__):
+        (PortFactory._get_kwargs):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestInstance.__init__):
+        (TestPort.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (passing_run):
+        (logging_run):
+        (get_tests_run):
+        (MainTest.test_single_file):
+        (MainTest.test_stderr_is_saved):
+        (MainTest.test_test_list):
+        (MainTest.test_test_list_with_prefix):
+        (MainTest.test_missing_and_unexpected_results):
+        (MainTest.test_missing_and_unexpected_results_with_custom_exit_code):
+        (MainTest.test_crash_with_stderr):
+        (MainTest.test_no_image_failure_with_image_diff):
+        (MainTest.test_crash_log):
+        (MainTest.test_web_process_crash_log):
+        (MainTest.test_exit_after_n_failures_upload):
+        (MainTest.test_results_directory_absolute):
+        (MainTest.test_results_directory_relative):
+        (MainTest.test_retries_directory):
+        (MainTest.test_tolerance.get_port_for_run):
+        (MainTest.test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist):
+        (EndToEndTest.test_end_to_end):
+        (EndToEndTest.test_reftest_with_two_notrefs):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        (Rebaseliner.__init__):
+        (main):
+        (real_main):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        (test_host_port_and_filesystem):
+        (TestRebaseliner.make_rebaseliner):
+        (TestRealMain.test_all_platforms):
+        (TestHtmlGenerator.make_generator):
+
+2011-12-19  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: update unit tests in preparation for making host a mandatory parameter to Port objects
         https://bugs.webkit.org/show_bug.cgi?id=74562
 

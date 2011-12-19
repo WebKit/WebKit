@@ -51,6 +51,7 @@ from webkitpy.common import find_files
 from webkitpy.common.system import logutils
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.layout_tests import read_checksum_from_png
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
@@ -110,9 +111,9 @@ class Port(object):
         self.host = host
 
         # FIXME: Remove thes accessors once all callers have moved to using self.host.
-        self.executive = executive or self.host.executive
-        self.user = user or self.host.user
-        self.filesystem = filesystem or self.host.filesystem
+        self.executive = self.host.executive
+        self.user = self.host.user
+        self.filesystem = self.host.filesystem
         self.config = config or port_config.Config(self.executive, self.filesystem)
 
         # FIXME: Remove all of the old "protected" versions when we can.

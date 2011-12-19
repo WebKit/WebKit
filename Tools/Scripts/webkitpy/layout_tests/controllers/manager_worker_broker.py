@@ -46,6 +46,7 @@ import optparse
 import Queue
 import sys
 
+
 # Handle Python < 2.6 where multiprocessing isn't available.
 try:
     import multiprocessing
@@ -54,6 +55,7 @@ except ImportError:
 
 # These are needed when workers are launched in new child processes.
 from webkitpy.common.host import Host
+from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests.controllers import message_broker
 from webkitpy.layout_tests.views import printing
@@ -257,7 +259,10 @@ if multiprocessing:
             # We need to create a new Host object here because this is
             # running in a new process and we can't require the parent's
             # Host to be pickleable and passed to the child.
-            host = Host()
+            if self._platform_name.startswith('test'):
+                host = MockHost()
+            else:
+                host = Host()
             host._initialize_scm()
 
             options = self._options

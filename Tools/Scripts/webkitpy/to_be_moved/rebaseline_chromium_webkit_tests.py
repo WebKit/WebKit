@@ -145,7 +145,7 @@ class Rebaseliner(object):
 
     REVISION_REGEX = r'<a href=\"(\d+)/\">'
 
-    def __init__(self, running_port, target_port, platform, options, url_fetcher, zip_factory, scm, logged_before=False):
+    def __init__(self, host, running_port, target_port, platform, options, url_fetcher, zip_factory, logged_before=False):
         """
         Args:
             running_port: the Port the script is running on.
@@ -162,12 +162,10 @@ class Rebaseliner(object):
         self._platform = platform
         self._options = options
         self._port = running_port
-        self._filesystem = running_port._filesystem
+        self._filesystem = host.filesystem
         self._target_port = target_port
 
-        # FIXME: This should get its PortFactory from a Host object.
-        # Note: using running_port.executive, running_port.user since we can't get them from a host.
-        self._rebaseline_port = PortFactory().get(platform, options, filesystem=self._filesystem, executive=running_port.executive, user=running_port.user)
+        self._rebaseline_port = host.port_factory.get(platform, options)
         self._rebaselining_tests = set()
         self._rebaselined_tests = []
         self._logged_before = logged_before
@@ -182,7 +180,7 @@ class Rebaseliner(object):
             self._rebaseline_port, None, expectations_str, self._rebaseline_port.test_configuration(), False)
         self._url_fetcher = url_fetcher
         self._zip_factory = zip_factory
-        self._scm = scm
+        self._scm = host.scm()
 
     def run(self):
         """Run rebaseline process."""
@@ -948,7 +946,7 @@ def main(args):
     if not host_port_obj or not target_port_obj:
         return 1
 
-    url_fetcher = urlfetcher.UrlFetcher(host_port_obj._filesystem)
+    url_fetcher = urlfetcher.UrlFetcher(host.filesystem)
 
     # We use the default zip factory method.
     zip_factory = None
@@ -956,7 +954,7 @@ def main(args):
     # FIXME: SCM module doesn't handle paths that aren't relative to the checkout_root consistently.
     host_port_obj._filesystem.chdir(host.scm().checkout_root)
 
-    ret_code = real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory, host.scm())
+    ret_code = real_main(host, options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory)
     if not ret_code and log_handler.num_failures:
         ret_code = 1
     print ''
@@ -967,13 +965,14 @@ def main(args):
     return ret_code
 
 
-def real_main(options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory, scm_obj):
+def real_main(host, options, target_options, host_port_obj, target_port_obj, url_fetcher, zip_factory):
     """Main function to produce new baselines. The Rebaseliner object uses two
     different Port objects - one to represent the machine the object is running
     on, and one to represent the port whose expectations are being updated.
     E.g., you can run the script on a mac and rebaseline the 'win' port.
 
     Args:
+        host: Host object
         options: command-line argument used for the host_port_obj (see below)
         target_options: command_line argument used for the target_port_obj.
             This object may have slightly different values than |options|.
@@ -986,7 +985,6 @@ def real_main(options, target_options, host_port_obj, target_port_obj, url_fetch
         url_fetcher: object used to download the build archives from the bots
         zip_factory: factory function used to create zip file objects for
             the archives.
-        scm_obj: object used to add new baselines to the source control system.
     """
     options.html_directory = setup_html_directory(host_port_obj._filesystem, options.html_directory)
     all_platforms = target_port_obj.all_baseline_variants()
@@ -1012,9 +1010,9 @@ def real_main(options, target_options, host_port_obj, target_port_obj, url_fetch
     rebaselined_tests = set()
     logged_before = False
     for platform in rebaseline_platforms:
-        rebaseliner = Rebaseliner(host_port_obj, target_port_obj,
+        rebaseliner = Rebaseliner(host, host_port_obj, target_port_obj,
                                   platform, options, url_fetcher, zip_factory,
-                                  scm_obj, logged_before)
+                                  logged_before)
 
         _log.debug('')
         log_dashed_string('Rebaseline started', platform)

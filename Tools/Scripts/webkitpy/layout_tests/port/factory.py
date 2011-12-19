@@ -42,7 +42,7 @@ class BuilderOptions(object):
 
 
 class PortFactory(object):
-    def __init__(self, host=None):
+    def __init__(self, host):
         self._host = host
 
     def _port_name_from_arguments_and_options(self, **kwargs):
@@ -67,23 +67,12 @@ class PortFactory(object):
             raise NotImplementedError('unknown port; sys.platform = "%s"' % sys.platform)
         return port_to_use
 
-    def _set_default_overriding_none(self, dictionary, key, default):
-        # dict.setdefault almost works, but won't actually override None values, which we want.
-        if not dictionary.get(key):
-            dictionary[key] = default
-        return dictionary[key]
-
-    def _get_kwargs(self, host=None, **kwargs):
+    def _get_kwargs(self, **kwargs):
         port_to_use = self._port_name_from_arguments_and_options(**kwargs)
 
         if port_to_use.startswith('test'):
             import test
             maker = test.TestPort
-            # FIXME: This is a hack to override the "default" filesystem
-            # provided to the port.  The unit_test_filesystem has an extra
-            # _tests attribute which a bunch of unittests depend on.
-            from .test import unit_test_filesystem
-            self._set_default_overriding_none(kwargs, 'filesystem', unit_test_filesystem())
         elif port_to_use.startswith('dryrun'):
             import dryrun
             maker = dryrun.DryRunPort
@@ -123,8 +112,7 @@ class PortFactory(object):
         else:
             raise NotImplementedError('unsupported port: %s' % port_to_use)
 
-        host = host or self._host
-        return maker(host, **kwargs)
+        return maker(self._host, **kwargs)
 
     def all_port_names(self):
         """Return a list of all valid, fully-specified, "real" port names.
