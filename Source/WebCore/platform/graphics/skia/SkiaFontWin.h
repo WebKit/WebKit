@@ -38,6 +38,7 @@ struct SkPoint;
 
 namespace WebCore {
 
+class FontPlatformData;
 class GraphicsContext;
 class PlatformContextSkia;
 
@@ -69,8 +70,20 @@ bool windowsCanHandleTextDrawing(GraphicsContext*);
 bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext*);
 #endif
 
-// Note that the offsets parameter is optional.  If not NULL it represents a
+// Note that the offsets parameter is optional. If not null it represents a
 // per glyph offset (such as returned by ScriptPlace Windows API function).
+void paintSkiaText(GraphicsContext*,
+                   const FontPlatformData&,
+                   int numGlyphs,
+                   const WORD* glyphs,
+                   const int* advances,
+                   const GOFFSET* offsets,
+                   const SkPoint* origin);
+
+// Note that the offsets parameter is optional. If not null it represents a
+// per glyph offset (such as returned by ScriptPlace Windows API function).
+// Note: this is less efficient than calling the version with FontPlatformData,
+// as that caches the SkTypeface object.
 void paintSkiaText(GraphicsContext*,
                    HFONT,
                    int numGlyphs,

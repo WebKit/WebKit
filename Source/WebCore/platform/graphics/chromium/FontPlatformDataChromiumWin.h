@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "FontOrientation.h"
+#include "SkTypeface.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -45,6 +46,11 @@
 typedef struct HFONT__ *HFONT;
 
 namespace WebCore {
+
+// Return a typeface associated with the hfont, and return its size and
+// lfQuality from the hfont's LOGFONT. The caller is now an owner of the
+// typeface.
+SkTypeface* CreateTypefaceFromHFont(HFONT, int* size, int* lfQuality);
 
 class FontDescription;
 
@@ -57,6 +63,7 @@ public:
     // set everything to NULL.
     FontPlatformData(WTF::HashTableDeletedValueType);
     FontPlatformData();
+    // This constructor takes ownership of the HFONT
     FontPlatformData(HFONT, float size);
     FontPlatformData(float size, bool bold, bool oblique);
     FontPlatformData(const FontPlatformData&);
@@ -69,12 +76,14 @@ public:
 
     HFONT hfont() const { return m_font ? m_font->hfont() : 0; }
     float size() const { return m_size; }
+    SkTypeface* typeface() const { return m_typeface; }
+    int lfQuality() const { return m_lfQuality; }
 
     FontOrientation orientation() const { return Horizontal; } // FIXME: Implement.
     void setOrientation(FontOrientation) { } // FIXME: Implement.
 
     unsigned hash() const
-    { 
+    {
         return m_font ? m_font->hash() : NULL;
     }
 
@@ -128,6 +137,9 @@ private:
 
     RefPtr<RefCountedHFONT> m_font;
     float m_size;  // Point size of the font in pixels.
+
+    SkTypeface* m_typeface; // cached from m_font
+    int m_lfQuality; // cached from m_font
 
     mutable SCRIPT_CACHE m_scriptCache;
     mutable SCRIPT_FONTPROPERTIES* m_scriptFontProperties;

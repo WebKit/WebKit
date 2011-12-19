@@ -1,3 +1,29 @@
+2011-12-19  Mike Reed  <reed@google.com>
+
+        [skia] cache typeface in FontPlatformData
+        https://bugs.webkit.org/show_bug.cgi?id=74415
+
+        Reviewed by Stephen White.
+
+        No new tests. optimization only, existing tests in play
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::CreateTypefaceFromHFont):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (WebCore::FontPlatformData::typeface):
+        (WebCore::FontPlatformData::lfQuality):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::setupPaintForFont):
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2011-12-04  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: border-conflict-element-*

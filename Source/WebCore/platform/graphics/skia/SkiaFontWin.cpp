@@ -32,16 +32,16 @@
 #include "SkiaFontWin.h"
 
 #include "AffineTransform.h"
-#include "PlatformContextSkia.h"
-#include "PlatformSupport.h"
 #include "Gradient.h"
 #include "Pattern.h"
+#include "PlatformContextSkia.h"
+#include "PlatformSupport.h"
+#include "SimpleFontData.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
 #include "SkPaint.h"
 #include "SkShader.h"
 #include "SkTemplates.h"
-#include "SkTypeface_win.h"
 
 namespace WebCore {
 
@@ -179,27 +179,15 @@ static uint32_t getDefaultGDITextFlags()
     return gFlags;
 }
 
-static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* pcs)
+static void setupPaintForFont(SkPaint* paint, PlatformContextSkia* pcs,
+                              SkTypeface* face, float size, int quality)
 {
-    //  FIXME:
-    //  Much of this logic could also happen in
-    //  FontCustomPlatformData::fontPlatformData and be cached,
-    //  allowing us to avoid talking to GDI at this point.
-    //
-    LOGFONT info;
-    GetObject(hfont, sizeof(info), &info);
-    int size = info.lfHeight;
-    if (size < 0)
-        size = -size; // We don't let GDI dpi-scale us (see SkFontHost_win.cpp).
-    paint->setTextSize(SkIntToScalar(size));
-
-    SkTypeface* face = SkCreateTypefaceFromLOGFONT(info);
+    paint->setTextSize(SkFloatToScalar(size));
     paint->setTypeface(face);
-    SkSafeUnref(face);
 
-    // turn lfQuality into text flags
+    // turn quality into text flags
     uint32_t textFlags;
-    switch (info.lfQuality) {
+    switch (quality) {
     case NONANTIALIASED_QUALITY:
         textFlags = 0;
         break;
@@ -227,13 +215,13 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint, PlatformContextSkia* 
     paint->setFlags(flags);
 }
 
-void paintSkiaText(GraphicsContext* context,
-                   HFONT hfont,
-                   int numGlyphs,
-                   const WORD* glyphs,
-                   const int* advances,
-                   const GOFFSET* offsets,
-                   const SkPoint* origin)
+static void paintSkiaText(GraphicsContext* context, HFONT hfont,
+                          SkTypeface* face, float size, int quality,
+                          int numGlyphs,
+                          const WORD* glyphs,
+                          const int* advances,
+                          const GOFFSET* offsets,
+                          const SkPoint* origin)
 {
     PlatformContextSkia* platformContext = context->platformContext();
     SkCanvas* canvas = platformContext->canvas();
@@ -246,7 +234,7 @@ void paintSkiaText(GraphicsContext* context,
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);
     paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    setupPaintForFont(hfont, &paint, platformContext);
+    setupPaintForFont(&paint, platformContext, face, size, quality);
 
     bool didFill = false;
 
@@ -263,7 +251,7 @@ void paintSkiaText(GraphicsContext* context,
         paint.reset();
         platformContext->setupPaintForStroking(&paint, 0, 0);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        setupPaintForFont(hfont, &paint, platformContext);
+        setupPaintForFont(&paint, platformContext, face, size, quality);
 
         if (didFill) {
             // If there is a shadow and we filled above, there will already be
@@ -280,6 +268,36 @@ void paintSkiaText(GraphicsContext* context,
 
         skiaDrawText(canvas, *origin, &paint, &glyphs[0], &advances[0], &offsets[0], numGlyphs);
     }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+void paintSkiaText(GraphicsContext* context,
+                   const FontPlatformData& data,
+                   int numGlyphs,
+                   const WORD* glyphs,
+                   const int* advances,
+                   const GOFFSET* offsets,
+                   const SkPoint* origin)
+{
+    paintSkiaText(context, data.hfont(), data.typeface(), data.size(), data.lfQuality(),
+                  numGlyphs, glyphs, advances, offsets, origin);
+}
+
+void paintSkiaText(GraphicsContext* context,
+                   HFONT hfont,
+                   int numGlyphs,
+                   const WORD* glyphs,
+                   const int* advances,
+                   const GOFFSET* offsets,
+                   const SkPoint* origin)
+{
+    int size;
+    int quality;
+    SkTypeface* face = CreateTypefaceFromHFont(hfont, &size, &quality);
+    SkAutoUnref aur(face);
+
+    paintSkiaText(context, hfont, face, size, quality, numGlyphs, glyphs, advances, offsets, origin);
 }
 
 }  // namespace WebCore
