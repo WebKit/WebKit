@@ -1,3 +1,20 @@
+2011-12-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add support for 8 bits strings to Document::isValidName()
+        https://bugs.webkit.org/show_bug.cgi?id=74784
+
+        Reviewed by Andreas Kling.
+
+        The valid name has a fast path for ASCII, and a slow path
+        taking Unicode characters into account.
+
+        For 8-bit strings, we don't need to take the non-ASCII path
+        as it could never succeed if the ASCII path didn't.
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameASCII):
+        (WebCore::Document::isValidName):
+
 2011-12-18  Huang Dongsung  <luxtella@company100.net>
 
         [Qt] Remove redundant m_glWidget->makeCurrent() calls in GraphicsContext3DQt.
