@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (33,221) size 651x144
-      RenderSVGText {text} at (91,133) size 277x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 277x21
-          chunk 1 (middle anchor) text run 1 at (91.70,150.00) startOffset 0 endOffset 35 width 276.60 RTL override: "W3C \x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} dirRTL ubOverride!"
+      RenderSVGText {text} at (92,133) size 276x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 276x21
+          chunk 1 (middle anchor) text run 1 at (92.30,150.00) startOffset 0 endOffset 35 width 275.40 RTL override: "W3C \x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} dirRTL ubOverride!"
       RenderSVGText {text} at (20,171) size 85x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 85x12
           chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 18 width 84.60: "Reference graphic:"
