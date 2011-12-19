@@ -65,7 +65,7 @@ void WebMediaStreamDescriptor::sources(WebVector<WebMediaStreamSource>& webSourc
     size_t numberOfSources = m_private->numberOfComponents();
     WebVector<WebMediaStreamSource> result(numberOfSources);
     for (size_t i = 0; i < numberOfSources; ++i)
-        result[i] =  m_private->component(i)->source();
+        result[i] = m_private->component(i)->source();
     webSources.swap(result);
 }
 

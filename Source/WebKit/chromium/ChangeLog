@@ -1,3 +1,18 @@
+2011-12-19  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Fixing memory leak in WebMediaStreamSource
+        https://bugs.webkit.org/show_bug.cgi?id=74714
+
+        Reviewed by Eric Seidel.
+
+        Missed that PassRefPtr does a ref if constructed with a raw pointer.
+        Also removed an extra space in WebMediaStreamDescriptor.cpp.
+
+        * src/WebMediaStreamDescriptor.cpp:
+        (WebKit::WebMediaStreamDescriptor::sources):
+        * src/WebMediaStreamSource.cpp:
+        (WebKit::WebMediaStreamSource::operator=):
+
 2011-12-19  Adrienne Walker  <enne@google.com>
 
         Try to fix the Chromium win builder NotNull conflict.
