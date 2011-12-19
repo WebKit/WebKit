@@ -540,6 +540,9 @@ WONTFIX SKIP WIN LINUX : compositing/plugins/small-to-large-composited-plugin.ht
 // Mac's popup behavior is different.
 WONTFIX MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down.html = FAIL
 
+// CG appears to blend borders differently, but this config is going away soon.
+WONTFIX CPU-CG : css2.1/20110323/border-conflict-element-001d.htm = IMAGE
+
 // -----------------------------------------------------------------
 // LIGHTTPD
 // -----------------------------------------------------------------
@@ -1503,7 +1506,6 @@ BUGCR23473 MAC : fast/repaint/subtree-root-skipped.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-cell-move.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-cell-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-col-background.html = IMAGE
-BUGCR23473 MAC : fast/repaint/table-collapsed-border.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-extra-bottom-grow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-outer-border.html = IMAGE
 BUGCR23473 MAC : fast/repaint/table-row.html = IMAGE
@@ -1522,9 +1524,6 @@ BUGCR23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-translate.html = IMAGE
-
-// Fails due to r67862.
-BUGWK39966 LINUX : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
 // Thicker shadow than expected
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
