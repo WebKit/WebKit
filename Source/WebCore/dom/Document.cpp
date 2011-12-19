@@ -3775,10 +3775,9 @@ static bool isValidNameNonASCII(const UChar* characters, unsigned length)
     return true;
 }
 
-template<typename CharType>
-static inline bool isValidNameASCII(const CharType* characters, unsigned length)
+static inline bool isValidNameASCII(const UChar* characters, unsigned length)
 {
-    CharType c = characters[0];
+    UChar c = characters[0];
     if (!(isASCIIAlpha(c) || c == ':' || c == '_'))
         return false;
 
@@ -3797,9 +3796,7 @@ bool Document::isValidName(const String& name)
     if (!length)
         return false;
 
-    if (name.is8Bit())
-        return isValidNameASCII(name.characters8(), length);
-    const UChar* characters = name.characters16();
+    const UChar* characters = name.characters();
     return isValidNameASCII(characters, length) || isValidNameNonASCII(characters, length);
 }
 
