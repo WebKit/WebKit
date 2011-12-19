@@ -2693,16 +2693,11 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutByVal: {
-        NodeIndex child1 = m_jit.graph().m_varArgChildren[node.firstChild()];
-        NodeIndex child2 = m_jit.graph().m_varArgChildren[node.firstChild() + 1];
-        NodeIndex child3 = m_jit.graph().m_varArgChildren[node.firstChild() + 2];
-        NodeIndex child4 = m_jit.graph().m_varArgChildren[node.firstChild() + 3];
-
-        PredictedType basePrediction = at(child2).prediction();
+        PredictedType basePrediction = at(node.child2()).prediction();
         if (!(basePrediction & PredictInt32) && basePrediction) {
-            SpeculateCellOperand base(this, child1); // Save a register, speculate cell. We'll probably be right.
-            JSValueOperand property(this, child2);
-            JSValueOperand value(this, child3);
+            SpeculateCellOperand base(this, node.child1()); // Save a register, speculate cell. We'll probably be right.
+            JSValueOperand property(this, node.child2());
+            JSValueOperand value(this, node.child3());
             GPRReg baseGPR = base.gpr();
             GPRReg propertyTagGPR = property.tagGPR();
             GPRReg propertyPayloadGPR = property.payloadGPR();
@@ -2716,107 +2711,110 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
 
-        if (at(child1).shouldSpeculateByteArray()) {
-            compilePutByValForByteArray(node);
+        SpeculateCellOperand base(this, node.child1());
+        SpeculateStrictInt32Operand property(this, node.child2());
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
+            break;
+        }
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
             break;
         }
         
-        if (at(child1).shouldSpeculateInt8Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), node, sizeof(int8_t), isInt8ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+        if (at(node.child1()).shouldSpeculateInt8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int8_t), isInt8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateInt16Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), node, sizeof(int16_t), isInt16ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+        if (at(node.child1()).shouldSpeculateInt16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int16_t), isInt16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateInt32Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), node, sizeof(int32_t), isInt32ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
+        if (at(node.child1()).shouldSpeculateInt32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int32_t), isInt32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, SignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateUint8Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), node, sizeof(uint8_t), isUint8ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+        if (at(node.child1()).shouldSpeculateUint8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint8_t), isUint8ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateUint16Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), node, sizeof(uint16_t), isUint16ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+        if (at(node.child1()).shouldSpeculateUint16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint16_t), isUint16ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateUint32Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), node, sizeof(uint32_t), isUint32ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
+        if (at(node.child1()).shouldSpeculateUint32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint32_t), isUint32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks, UnsignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateFloat32Array()) {
-            compilePutByValForFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), node, sizeof(float), isFloat32ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
+        if (at(node.child1()).shouldSpeculateFloat32Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(float), isFloat32ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateFloat64Array()) {
-            compilePutByValForFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), node, sizeof(double), isFloat64ArrayPrediction(m_state.forNode(child1).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
+        if (at(node.child1()).shouldSpeculateFloat64Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(double), isFloat64ArrayPrediction(m_state.forNode(node.child1()).m_type) ? NoTypedArrayTypeSpecCheck : AllTypedArraySpecChecks);
             if (!m_compileOkay)
                 return;
             break;            
         }
 
-        SpeculateCellOperand base(this, child1);
-        SpeculateStrictInt32Operand property(this, child2);
-        JSValueOperand value(this, child3);
+        JSValueOperand value(this, node.child3());
+        GPRTemporary scratch(this);
 
         // Map base, property & value into registers, allocate a scratch register.
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
         GPRReg valueTagReg = value.tagGPR();
         GPRReg valuePayloadReg = value.payloadGPR();
+        GPRReg scratchReg = scratch.gpr();
         
         if (!m_compileOkay)
             return;
-
-        {
-            GPRTemporary scratch(this);
-            writeBarrier(baseReg, valueTagReg, child3, WriteBarrierForPropertyAccess, scratch.gpr());
-        }
+        
+        writeBarrier(baseReg, valueTagReg, node.child3(), WriteBarrierForPropertyAccess, scratchReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
-        if (!isArrayPrediction(m_state.forNode(child1).m_type))
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), child1, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
-
-        StorageOperand storage(this, child4);
-        GPRReg storageReg = storage.gpr();
+        if (!isArrayPrediction(m_state.forNode(node.child1()).m_type))
+            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
 
         base.use();
         property.use();
         value.use();
-        storage.use();
         
         MacroAssembler::Jump withinArrayBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
 
         // Code to handle put beyond array bounds.
-        silentSpillAllRegisters(InvalidGPRReg);
+        silentSpillAllRegisters(scratchReg);
         callOperation(operationPutByValBeyondArrayBounds, baseReg, propertyReg, valueTagReg, valuePayloadReg);
-        silentFillAllRegisters(InvalidGPRReg);
+        silentFillAllRegisters(scratchReg);
         JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
 
         withinArrayBounds.link(&m_jit);
+
+        // Get the array storage.
+        GPRReg storageReg = scratchReg;
+        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
         // Check if we're writing to a hole; if so increment m_numValuesInVector.
         MacroAssembler::Jump notHoleValue = m_jit.branch32(MacroAssembler::NotEqual, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), TrustedImm32(JSValue::EmptyValueTag));
@@ -2842,87 +2840,86 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case PutByValAlias: {
-        NodeIndex child1 = m_jit.graph().m_varArgChildren[node.firstChild()];
-        NodeIndex child2 = m_jit.graph().m_varArgChildren[node.firstChild() + 1];
-        NodeIndex child3 = m_jit.graph().m_varArgChildren[node.firstChild() + 2];
-        NodeIndex child4 = m_jit.graph().m_varArgChildren[node.firstChild() + 3];
+        SpeculateCellOperand base(this, node.child1());
+        SpeculateStrictInt32Operand property(this, node.child2());
 
-        if (at(child1).shouldSpeculateByteArray()) {
-            compilePutByValForByteArray(node);
+        if (at(node.child1()).shouldSpeculateByteArray()) {
+            compilePutByValForByteArray(base.gpr(), property.gpr(), node);
             break;
         }
         
-        if (at(child1).shouldSpeculateInt8Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), node, sizeof(int8_t), NoTypedArraySpecCheck, SignedTypedArray);
+        if (at(node.child1()).shouldSpeculateInt8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int8_t), NoTypedArraySpecCheck, SignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateInt16Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), node, sizeof(int16_t), NoTypedArraySpecCheck, SignedTypedArray);
+        if (at(node.child1()).shouldSpeculateInt16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int16_t), NoTypedArraySpecCheck, SignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateInt32Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), node, sizeof(int32_t), NoTypedArraySpecCheck, SignedTypedArray);
+        if (at(node.child1()).shouldSpeculateInt32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->int32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(int32_t), NoTypedArraySpecCheck, SignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateUint8Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), node, sizeof(uint8_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+        if (at(node.child1()).shouldSpeculateUint8Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint8ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint8_t), NoTypedArraySpecCheck, UnsignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateUint16Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), node, sizeof(uint16_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+        if (at(node.child1()).shouldSpeculateUint16Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint16ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint16_t), NoTypedArraySpecCheck, UnsignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateUint32Array()) {
-            compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), node, sizeof(uint32_t), NoTypedArraySpecCheck, UnsignedTypedArray);
+        if (at(node.child1()).shouldSpeculateUint32Array()) {
+            compilePutByValForIntTypedArray(m_jit.globalData()->uint32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(uint32_t), NoTypedArraySpecCheck, UnsignedTypedArray);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateFloat32Array()) {
-            compilePutByValForFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), node, sizeof(float), NoTypedArraySpecCheck);
+        if (at(node.child1()).shouldSpeculateFloat32Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float32ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(float), NoTypedArraySpecCheck);
             if (!m_compileOkay)
                 return;
             break;            
         }
         
-        if (at(child1).shouldSpeculateFloat64Array()) {
-            compilePutByValForFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), node, sizeof(double), NoTypedArraySpecCheck);
+        if (at(node.child1()).shouldSpeculateFloat64Array()) {
+            compilePutByValForFloatTypedArray(m_jit.globalData()->float64ArrayDescriptor(), base.gpr(), property.gpr(), node, sizeof(double), NoTypedArraySpecCheck);
             if (!m_compileOkay)
                 return;
             break;            
         }
+
+        JSValueOperand value(this, node.child3());
+        GPRTemporary scratch(this, base);
         
-        JSValueOperand value(this, child3);
-        {
-            SpeculateCellOperand base(this, child1);
-            GPRTemporary scratch(this, base);
-            GPRReg baseReg = base.gpr();
-            GPRReg scratchReg = scratch.gpr();
-            writeBarrier(baseReg, value.tagGPR(), child3, WriteBarrierForPropertyAccess, scratchReg);
-        }
-    
-        SpeculateStrictInt32Operand property(this, child2);
-        StorageOperand storage(this, child4);
+        GPRReg baseReg = base.gpr();
+        GPRReg scratchReg = scratch.gpr();
+
+        writeBarrier(baseReg, value.tagGPR(), node.child3(), WriteBarrierForPropertyAccess, scratchReg);
+
+        // Get the array storage.
+        GPRReg storageReg = scratchReg;
+        m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
+
         // Store the value to the array.
         GPRReg propertyReg = property.gpr();
-        m_jit.store32(value.tagGPR(), MacroAssembler::BaseIndex(storage.gpr(), propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        m_jit.store32(value.payloadGPR(), MacroAssembler::BaseIndex(storage.gpr(), propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+        m_jit.store32(value.tagGPR(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+        m_jit.store32(value.payloadGPR(), MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
 
         noResult(m_compileIndex);
         break;
