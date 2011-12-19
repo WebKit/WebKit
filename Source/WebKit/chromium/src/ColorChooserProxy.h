@@ -6,13 +6,10 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
- * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -24,64 +21,34 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-#include "config.h"
-#include "ColorChooser.h"
+#ifndef ColorChooserProxy_h
+#define ColorChooserProxy_h
 
+#include "ColorChooser.h"
+#include "WebColorChooser.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INPUT_COLOR)
 
-namespace WebCore {
+namespace WebKit {
 
-ColorChooserClient::~ColorChooserClient()
-{
-    discardChooser();
-}
+class ColorChooserProxy : public WebCore::ColorChooser {
+public:
+    ColorChooserProxy(PassOwnPtr<WebColorChooser>);
+    virtual ~ColorChooserProxy();
 
-ColorChooser* ColorChooserClient::newColorChooser()
-{
-    discardChooser();
+    virtual void setSelectedColor(const WebCore::Color&);
+    virtual void endChooser();
 
-    m_chooser = ColorChooser::create(this);
-    return m_chooser.get();
-}
+private:
+    OwnPtr<WebColorChooser> m_chooser;
+};
 
-void ColorChooserClient::discardChooser()
-{
-    if (m_chooser)
-        m_chooser->disconnectClient();
-    m_chooser.clear();
-}
-
-inline ColorChooser::ColorChooser(ColorChooserClient* client)
-    : m_client(client)
-{
-}
-
-PassRefPtr<ColorChooser> ColorChooser::create(ColorChooserClient* client)
-{
-    return adoptRef(new ColorChooser(client));
-}
-
-ColorChooser::~ColorChooser()
-{
-}
-
-void ColorChooser::didChooseColor(const Color& color)
-{
-    if (m_client)
-        m_client->didChooseColor(color);
-}
-
-void ColorChooser::didCleanup()
-{
-    if (m_client)
-        m_client->didCleanup();
-}
-
-}
+} // namespace WebKit
 
 #endif // ENABLE(INPUT_COLOR)
+
+#endif // ColorChooserProxy_h

@@ -2475,8 +2475,8 @@ webcore_sources += \
 	Source/WebCore/platform/Clock.h \
 	Source/WebCore/platform/ClockGeneric.cpp \
 	Source/WebCore/platform/ClockGeneric.h \
-	Source/WebCore/platform/ColorChooser.cpp \
 	Source/WebCore/platform/ColorChooser.h \
+	Source/WebCore/platform/ColorChooserClient.h \
 	Source/WebCore/platform/ContentType.cpp \
 	Source/WebCore/platform/ContentType.h \
 	Source/WebCore/platform/ContextMenu.h \

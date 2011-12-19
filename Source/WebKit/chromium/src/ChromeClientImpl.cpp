@@ -34,6 +34,11 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
+#if ENABLE(INPUT_COLOR)
+#include "ColorChooser.h"
+#include "ColorChooserClient.h"
+#include "ColorChooserProxy.h"
+#endif
 #include "Console.h"
 #include "Cursor.h"
 #include "DatabaseTracker.h"
@@ -68,6 +73,10 @@
 #include "V8Proxy.h"
 #endif
 #include "WebAccessibilityObject.h"
+#if ENABLE(INPUT_COLOR)
+#include "WebColorChooser.h"
+#include "WebColorChooserClientImpl.h"
+#endif
 #include "WebConsoleMessage.h"
 #include "WebCursorInfo.h"
 #include "WebFileChooserCompletionImpl.h"
@@ -674,6 +683,21 @@ void ChromeClientImpl::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64
 {
     ASSERT_NOT_REACHED();
 }
+
+#if ENABLE(INPUT_COLOR)
+PassOwnPtr<ColorChooser> ChromeClientImpl::createColorChooser(ColorChooserClient* chooserClient, const Color& initialColor)
+{
+    WebViewClient* client = m_webView->client();
+    if (!client)
+        return nullptr;
+    WebColorChooserClientImpl* chooserClientProxy = new WebColorChooserClientImpl(chooserClient);
+    WebColor webColor = static_cast<WebColor>(initialColor.rgb());
+    WebColorChooser* chooser = client->createColorChooser(chooserClientProxy, webColor);
+    if (!chooser)
+        return nullptr;
+    return adoptPtr(new ColorChooserProxy(adoptPtr(chooser)));
+}
+#endif
 
 void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
 {
