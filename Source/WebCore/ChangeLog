@@ -1,3 +1,21 @@
+2011-12-16  Zhenyao Mo  <zmo@google.com>
+
+        Postpone deleteRenderbuffer/deleteTexture until all framebuffer attachment points are removed.
+        https://bugs.webkit.org/show_bug.cgi?id=74741
+
+        Reviewed by Kenneth Russell.
+
+        Use WebGLObject's attachment count mechanism to track if a renderbuffer/texture
+        is still attached to framebuffers, and if its deletion should be delated or not.
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::setAttachmentForBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::getAttachment):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::deleteObjectImpl):
+        (WebCore::WebGLFramebuffer::isBound):
+        * html/canvas/WebGLFramebuffer.h:
+
 2011-12-19  Iain Merrick  <husky@google.com>
 
         [chromium] Accelerated canvas broken in threaded compositing mode

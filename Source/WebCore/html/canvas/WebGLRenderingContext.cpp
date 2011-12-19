@@ -1415,7 +1415,7 @@ void WebGLRenderingContext::deleteRenderbuffer(WebGLRenderbuffer* renderbuffer)
     if (renderbuffer == m_renderbufferBinding)
         m_renderbufferBinding = 0;
     if (m_framebufferBinding)
-        m_framebufferBinding->removeAttachment(renderbuffer);
+        m_framebufferBinding->removeAttachmentFromBoundFramebuffer(renderbuffer);
 }
 
 void WebGLRenderingContext::deleteShader(WebGLShader* shader)
@@ -1434,7 +1434,7 @@ void WebGLRenderingContext::deleteTexture(WebGLTexture* texture)
             m_textureUnits[i].m_textureCubeMapBinding = 0;
     }
     if (m_framebufferBinding)
-        m_framebufferBinding->removeAttachment(texture);
+        m_framebufferBinding->removeAttachmentFromBoundFramebuffer(texture);
 }
 
 void WebGLRenderingContext::depthFunc(GC3Denum func)
@@ -1918,7 +1918,7 @@ void WebGLRenderingContext::framebufferRenderbuffer(GC3Denum target, GC3Denum at
     default:
         m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
     }
-    m_framebufferBinding->setAttachment(attachment, buffer);
+    m_framebufferBinding->setAttachmentForBoundFramebuffer(attachment, buffer);
     if (reattachDepth) {
         Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_ATTACHMENT));
         if (object)
@@ -1963,7 +1963,7 @@ void WebGLRenderingContext::framebufferTexture2D(GC3Denum target, GC3Denum attac
         return;
     }
     m_context->framebufferTexture2D(target, attachment, textarget, objectOrZero(texture), level);
-    m_framebufferBinding->setAttachment(attachment, textarget, texture, level);
+    m_framebufferBinding->setAttachmentForBoundFramebuffer(attachment, textarget, texture, level);
     cleanupAfterGraphicsCall(false);
 }
 

@@ -309,6 +309,7 @@ public:
     unsigned getMaxVertexAttribs() const { return m_maxVertexAttribs; }
 
   private:
+    friend class WebGLFramebuffer;
     friend class WebGLObject;
     friend class OESVertexArrayObject;
     friend class WebGLDebugShaders;
