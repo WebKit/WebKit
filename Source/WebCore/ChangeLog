@@ -1,3 +1,20 @@
+2011-12-18  Andreas Kling  <kling@webkit.org>
+
+        KURL::protocolIs() should handle 8-bit strings.
+        <http://webkit.org/b/74827>
+
+        Reviewed by Antti Koivisto.
+
+        * platform/KURL.cpp:
+        (WebCore::isLetterMatchIgnoringCase):
+
+            Turned this into a template method so it can be used for both UChar and LChar.
+
+        (WebCore::charactersAreProtocol):
+        (WebCore::protocolIs):
+
+            Handle 8/16 bit strings separately to avoid conversion.
+
 2011-12-18  Alice Boxhall  <aboxhall@chromium.org>
 
         Make AccessibilityObject::lineForPosition return the correct value for cases where the position is not within the current object.

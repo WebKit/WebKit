@@ -127,6 +127,7 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
+    printf("scrollToOffsetWithoutAnimation: %g, %g\n", offset.x(), offset.y());
     scrollAnimator()->scrollToOffsetWithoutAnimation(offset);
 }
 
