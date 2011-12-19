@@ -949,8 +949,6 @@ public:
     void resetBorderBottomLeftRadius() { SET_VAR(surround, border.m_bottomLeft, initialBorderRadius()) }
     void resetBorderBottomRightRadius() { SET_VAR(surround, border.m_bottomRight, initialBorderRadius()) }
 
-    void resetOutline() { SET_VAR(m_background, m_outline, OutlineValue()) }
-
     void setBackgroundColor(const Color& v) { SET_VAR(m_background, m_color, v) }
 
     void setBackgroundXPosition(Length l) { SET_VAR(m_background, m_background.m_xPosition, l) }

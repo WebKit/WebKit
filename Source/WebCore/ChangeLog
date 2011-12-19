@@ -1,3 +1,22 @@
+2011-12-18  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSS outline shorthand property in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=74467
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        RenderStyle::resetOutline was removed in favor of explicity expanding to the
+        initial values of the shorthand expansion. This improves consistency because
+        the initial values to use are more clearly (and singularly) defined.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+
 2011-12-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103205.

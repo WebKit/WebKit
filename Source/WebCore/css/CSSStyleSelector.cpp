@@ -3063,16 +3063,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
 
-    case CSSPropertyOutline:
-        if (isInherit) {
-            m_style->setOutlineWidth(m_parentStyle->outlineWidth());
-            m_style->setOutlineColor(m_parentStyle->outlineColor().isValid() ? m_parentStyle->outlineColor() : m_parentStyle->color());
-            m_style->setOutlineStyle(m_parentStyle->outlineStyle());
-        }
-        else if (isInitial)
-            m_style->resetOutline();
-        return;
-
     // CSS3 Properties
     case CSSPropertyWebkitAppearance:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(appearance, Appearance)
@@ -3731,6 +3721,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyFontWeight:
+    case CSSPropertyOutline:
     case CSSPropertyOutlineStyle:
     case CSSPropertyOutlineWidth:
     case CSSPropertyOutlineOffset:
