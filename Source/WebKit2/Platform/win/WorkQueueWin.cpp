@@ -149,7 +149,7 @@ void WorkQueue::performWorkOnRegisteredWorkThread()
             isValid = m_isValid;
             if (!isValid)
                 break;
-            workItemQueue[i]->function();
+            workItemQueue[i]->function()();
         }
         m_workItemQueueLock.lock();
     }
@@ -194,7 +194,7 @@ void WorkQueue::platformInvalidate()
     ::DeleteTimerQueueEx(m_timerQueue, 0);
 }
 
-void WorkQueue::dispatch(const Function<void()>& function))
+void WorkQueue::dispatch(const Function<void()>& function)
 {
     MutexLocker locker(m_workItemQueueLock);
 

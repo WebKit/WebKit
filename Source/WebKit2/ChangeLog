@@ -1,5 +1,13 @@
 2011-12-18  Sam Weinig  <sam@webkit.org>
 
+        Another attempt to fix the windows build.
+
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::performWorkOnRegisteredWorkThread):
+        (WorkQueue::dispatch):
+
+2011-12-18  Sam Weinig  <sam@webkit.org>
+
         Try to fix the windows build.
 
         * Platform/win/WorkQueueWin.cpp:
