@@ -348,11 +348,11 @@ sub determineConfigurationForVisualStudio
 
 sub usesPerConfigurationBuildDirectory
 {
-    # [Gtk][Efl] We don't have Release/Debug configurations in straight
+    # [Gtk] We don't have Release/Debug configurations in straight
     # autotool builds (non build-webkit). In this case and if
     # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
     # allows us to run run-webkit-tests without using build-webkit.
-    return ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) || isAppleWinWebKit();
+    return ($ENV{"WEBKITOUTPUTDIR"} && isGtk()) || isAppleWinWebKit();
 }
 
 sub determineConfigurationProductDir
@@ -689,7 +689,7 @@ sub builtDylibPathForName
         return "NotFound";
     }
     if (isEfl()) {
-        return "$configurationProductDir/$libraryName/../WebKit/libewebkit.so";
+        return "$configurationProductDir/Source/WebKit/libewebkit.so";
     }
     if (isWinCE()) {
         return "$configurationProductDir/$libraryName";
