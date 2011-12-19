@@ -1412,8 +1412,10 @@ void RenderLayer::scrollToOffset(LayoutUnit x, LayoutUnit y, ScrollOffsetClampin
         x = min(max<LayoutUnit>(x, 0), maxX);
         y = min(max<LayoutUnit>(y, 0), maxY);
     }
-    
-    ScrollableArea::scrollToOffsetWithoutAnimation(LayoutPoint(x, y));
+
+    LayoutPoint newScrollOffset(x, y);
+    if (newScrollOffset != LayoutPoint(scrollXOffset(), scrollYOffset()))
+        scrollToOffsetWithoutAnimation(newScrollOffset);
 }
 
 void RenderLayer::scrollTo(int x, int y)

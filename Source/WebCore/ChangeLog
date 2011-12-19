@@ -1,3 +1,21 @@
+2011-12-19  Andreas Kling  <kling@webkit.org>
+
+        Avoid instantiating ScrollAnimators when possible.
+        <http://webkit.org/b/74830>
+
+        Reviewed by Beth Dakin.
+
+        Have RenderLayer::scrollToOffset() check if we're scrolling to the already
+        current offset. In that case, don't call down to scrollToOffsetWithoutAnimation(),
+        avoiding the instantiation of a ScrollAnimator.
+
+        This reduces memory consumption by 400 kB (on 32-bit) when viewing the full HTML5
+        spec on <http://whatwg.org/c>, since we were creating a ScrollAnimator for every
+        single RenderLayer.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+
 2011-12-19  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [BlackBerry] remove one file related to multipart from the BlackBerry build system
