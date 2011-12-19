@@ -1,3 +1,17 @@
+2011-12-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the duplicated code from ASCIICType.h
+        https://bugs.webkit.org/show_bug.cgi?id=74771
+
+        Reviewed by Andreas Kling.
+
+        Use isASCIIDigit() and isASCIIAlpha() instead of copying the code.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIDigit):
+        (WTF::isASCIIAlphanumeric):
+        (WTF::isASCIIHexDigit):
+
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         Set the main frame view scroll position asynchronously

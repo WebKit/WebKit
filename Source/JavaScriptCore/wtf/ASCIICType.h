@@ -53,19 +53,19 @@ template<typename CharType> inline bool isASCIIAlpha(CharType c)
     return (c | 0x20) >= 'a' && (c | 0x20) <= 'z';
 }
 
-template<typename CharType> inline bool isASCIIAlphanumeric(CharType c)
-{
-    return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'z');
-}
-
 template<typename CharType> inline bool isASCIIDigit(CharType c)
 {
-    return (c >= '0') & (c <= '9');
+    return c >= '0' && c <= '9';
+}
+
+template<typename CharType> inline bool isASCIIAlphanumeric(CharType c)
+{
+    return isASCIIDigit(c) || isASCIIAlpha(c);
 }
 
 template<typename CharType> inline bool isASCIIHexDigit(CharType c)
 {
-    return (c >= '0' && c <= '9') || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f');
+    return isASCIIDigit(c) || ((c | 0x20) >= 'a' && (c | 0x20) <= 'f');
 }
 
 template<typename CharType> inline bool isASCIILower(CharType c)
