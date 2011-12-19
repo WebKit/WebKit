@@ -17,34 +17,27 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "DeviceMotionClientQt.h"
 
-#include "DeviceMotionController.h"
 #include "DeviceMotionProviderQt.h"
-
-#include "qwebpage.h"
 
 namespace WebCore {
 
-DeviceMotionClientQt::DeviceMotionClientQt(QWebPage* page)
-    : m_page(page)
-    , m_controller(0)
-    , m_provider(new DeviceMotionProviderQt())
+DeviceMotionClientQt::DeviceMotionClientQt()
+    : m_provider(new DeviceMotionProviderQt)
 {
-
-    connect(m_provider, SIGNAL(deviceMotionChanged()), SLOT(changeDeviceMotion()));
 }
 
 DeviceMotionClientQt::~DeviceMotionClientQt()
 {
-    disconnect();
     delete m_provider;
 }
 
 void DeviceMotionClientQt::setController(DeviceMotionController* controller)
 {
-    m_controller = controller;
+    m_provider->setController(controller);
 }
 
 void DeviceMotionClientQt::startUpdating()
@@ -67,14 +60,4 @@ void DeviceMotionClientQt::deviceMotionControllerDestroyed()
     delete this;
 }
 
-void DeviceMotionClientQt::changeDeviceMotion()
-{
-    if (!m_controller)
-        return;
-
-    m_controller->didChangeDeviceMotion(currentDeviceMotion());
-}
-
 } // namespace WebCore
-
-#include "moc_DeviceMotionClientQt.cpp"

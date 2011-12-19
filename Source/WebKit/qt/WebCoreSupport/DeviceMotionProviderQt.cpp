@@ -17,27 +17,33 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #include "config.h"
 #include "DeviceMotionProviderQt.h"
 
+#include "DeviceMotionController.h"
 #include "DeviceOrientationProviderQt.h"
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-QTM_USE_NAMESPACE
-#endif
 
 namespace WebCore {
 
 DeviceMotionProviderQt::DeviceMotionProviderQt()
+    : m_motion(DeviceMotionData::create())
+    , m_deviceOrientation(new DeviceOrientationProviderQt)
+    , m_controller(0)
 {
     m_acceleration.addFilter(this);
-    m_motion = DeviceMotionData::create();
-    m_deviceOrientation = new DeviceOrientationProviderQt;
 }
 
 DeviceMotionProviderQt::~DeviceMotionProviderQt()
 {
     delete m_deviceOrientation;
+}
+
+void DeviceMotionProviderQt::setController(DeviceMotionController* controller)
+{
+    ASSERT(controller);
+    ASSERT(!m_controller);
+    m_controller = controller;
 }
 
 void DeviceMotionProviderQt::start()
@@ -54,6 +60,11 @@ void DeviceMotionProviderQt::stop()
 
 bool DeviceMotionProviderQt::filter(QAccelerometerReading* reading)
 {
+    if (!m_controller) {
+        // We are the only filter. No need to propagate from here.
+        return false;
+    }
+
     RefPtr<DeviceMotionData::Acceleration> accel = DeviceMotionData::Acceleration::create(
             /* x available */ true, reading->x(),
             /* y available */ true, reading->y(),
@@ -69,11 +80,10 @@ bool DeviceMotionProviderQt::filter(QAccelerometerReading* reading)
             rotation,
             false, 0 /* The interval is treated internally by Qt mobility */);
 
-    emit deviceMotionChanged();
+    m_controller->didChangeDeviceMotion(m_motion.get());
 
+    // We are the only filter. No need to propagate from here.
     return false;
 }
 
 } // namespace WebCore
-
-#include "moc_DeviceMotionProviderQt.cpp"

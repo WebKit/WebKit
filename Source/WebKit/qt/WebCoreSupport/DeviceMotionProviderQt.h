@@ -17,52 +17,44 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef DeviceMotionProviderQt_h
 #define DeviceMotionProviderQt_h
 
 #include "DeviceMotionData.h"
-#include "RefPtr.h"
 
+#include <wtf/RefPtr.h>
 #include <QAccelerometerFilter>
-#include <QObject>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+using QTM_NAMESPACE::QAccelerometer;
+using QTM_NAMESPACE::QAccelerometerFilter;
+using QTM_NAMESPACE::QAccelerometerReading;
+#endif
 
 namespace WebCore {
 
+class DeviceMotionController;
 class DeviceOrientationProviderQt;
 
-class DeviceMotionProviderQt
-    : public QObject
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    , public QTM_NAMESPACE::QAccelerometerFilter {
-#else
-    , public QAccelerometerFilter {
-#endif
-    Q_OBJECT
+class DeviceMotionProviderQt : public QAccelerometerFilter {
 public:
     DeviceMotionProviderQt();
     ~DeviceMotionProviderQt();
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    bool filter(QTM_NAMESPACE::QAccelerometerReading*);
-#else
+    void setController(DeviceMotionController*);
+
     bool filter(QAccelerometerReading*);
-#endif
 
     void start();
     void stop();
     DeviceMotionData* currentDeviceMotion() const { return m_motion.get(); }
 
-Q_SIGNALS:
-    void deviceMotionChanged();
-
 private:
     RefPtr<DeviceMotionData> m_motion;
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QTM_NAMESPACE::QAccelerometer m_acceleration;
-#else
     QAccelerometer m_acceleration;
-#endif
     DeviceOrientationProviderQt* m_deviceOrientation;
+    DeviceMotionController* m_controller;
 };
 
 } // namespace WebCore

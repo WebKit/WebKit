@@ -1,3 +1,32 @@
+2011-12-19  Alexander Færøy  <ahf@0x90.dk>
+
+        [Qt] Cleanup DeviceMotionClientQt and friends.
+        https://bugs.webkit.org/show_bug.cgi?id=74849
+
+        This patch cleans up the DeviceMotionQt class and friends by applying
+        the following changes:
+
+        - Remove unnecessary pointer to QWebPage. This is needed to be able to
+          reuse the code for WebKit2.
+        - Remove QObject dependencies and all signals/slots. Instead, we call
+          didChangeDeviceMotion() on the controller directly from
+          DeviceMotionProviderQt.
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DeviceMotionClientQt.cpp:
+        (WebCore::DeviceMotionClientQt::DeviceMotionClientQt):
+        (WebCore::DeviceMotionClientQt::~DeviceMotionClientQt):
+        (WebCore::DeviceMotionClientQt::setController):
+        * WebCoreSupport/DeviceMotionClientQt.h:
+        * WebCoreSupport/DeviceMotionProviderQt.cpp:
+        (WebCore::DeviceMotionProviderQt::DeviceMotionProviderQt):
+        (WebCore::DeviceMotionProviderQt::setController):
+        (WebCore::DeviceMotionProviderQt::filter):
+        * WebCoreSupport/DeviceMotionProviderQt.h:
+
 2011-12-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rename EditCommandQt to UndoStepQt

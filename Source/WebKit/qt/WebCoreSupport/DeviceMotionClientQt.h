@@ -17,24 +17,21 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+
 #ifndef DeviceMotionClientQt_h
 #define DeviceMotionClientQt_h
 
 #include "DeviceMotionClient.h"
 #include "DeviceMotionData.h"
 
-#include <QObject>
-
-class QWebPage;
-
 namespace WebCore {
 
+class DeviceMotionController;
 class DeviceMotionProviderQt;
 
-class DeviceMotionClientQt : public QObject, public DeviceMotionClient {
-    Q_OBJECT
+class DeviceMotionClientQt : public DeviceMotionClient {
 public:
-    DeviceMotionClientQt(QWebPage*);
+    DeviceMotionClientQt();
     virtual ~DeviceMotionClientQt();
 
     virtual void setController(DeviceMotionController*);
@@ -43,12 +40,7 @@ public:
     virtual DeviceMotionData* currentDeviceMotion() const;
     virtual void deviceMotionControllerDestroyed();
 
-public Q_SLOTS:
-    void changeDeviceMotion();
-
 private:
-    QWebPage* m_page;
-    DeviceMotionController* m_controller;
     DeviceMotionProviderQt* m_provider;
 };
 

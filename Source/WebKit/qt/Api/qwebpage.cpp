@@ -329,7 +329,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     else
         pageClients.deviceOrientationClient = new DeviceOrientationClientQt;
 
-    pageClients.deviceMotionClient = new DeviceMotionClientQt(q);
+    pageClients.deviceMotionClient = new DeviceMotionClientQt;
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (useMock)
