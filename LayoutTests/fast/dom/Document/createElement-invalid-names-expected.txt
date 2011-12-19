@@ -1,0 +1,21 @@
+Test various valid name for elements according to the definition of DOM Level 2.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.createElement('0ascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('.Ascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('-Ascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement(' ascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('	ascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('֑sc.ii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('⃣scii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('िascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('ʳascii') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('asc i') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('asc	i') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS document.createElement('asciiⅦ') threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,17 @@
+2011-12-19  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add support for 8 bits strings to Document::isValidName()
+        https://bugs.webkit.org/show_bug.cgi?id=74784
+
+        Reviewed by Darin Adler.
+
+        Avoid the conversion to 16bits when we are in the ASCII fast path,
+        otherwise fallback to the Unicode testing in 16bits.
+
+        * dom/Document.cpp:
+        (WebCore::isValidNameASCII):
+        (WebCore::Document::isValidName):
+
 2011-12-18  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION(r101445): [JSC] Generated code for custom getters and setters
