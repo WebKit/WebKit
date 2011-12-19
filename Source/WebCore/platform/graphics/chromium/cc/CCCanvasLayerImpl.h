@@ -46,6 +46,7 @@ public:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
+    unsigned textureId() const { return m_textureId; }
     void setTextureId(unsigned id) { m_textureId = id; }
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }

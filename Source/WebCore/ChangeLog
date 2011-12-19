@@ -1,3 +1,48 @@
+2011-12-19  Iain Merrick  <husky@google.com>
+
+        [chromium] Accelerated canvas broken in threaded compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=72738
+
+        We were flushing the Skia canvas in updateCompositorResources, which
+        is illegal as it runs on the wrong thread. Moved to paintContentsIfDirty
+        instead. For correct rendering on the compositor thread, we make a copy
+        of the canvas texture in updateCompositorResources.
+
+        Removed m_textureId and pushPropertiesTo from CanvasLayerChromium, as
+        it's no longer common between Canvas2DLayerChromium and
+        WebGLLayerChromium. WebGL changes do not change functionality.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::create):
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::setTextureId):
+        (WebCore::Canvas2DLayerChromium::contentChanged):
+        (WebCore::Canvas2DLayerChromium::drawsContent):
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        (WebCore::Canvas2DLayerChromium::setLayerTreeHost):
+        (WebCore::Canvas2DLayerChromium::setTextureManager):
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        (WebCore::Canvas2DLayerChromium::pushPropertiesTo):
+        (WebCore::Canvas2DLayerChromium::unreserveContentsTexture):
+        (WebCore::Canvas2DLayerChromium::cleanupResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        (WebCore::WebGLLayerChromium::textureId):
+        (WebCore::WebGLLayerChromium::setTextureId):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        (WebCore::CCCanvasLayerImpl::textureId):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::createAcceleratedCanvas):
+
 2011-12-19  Mike Reed  <reed@google.com>
 
         [skia] cache typeface in FontPlatformData

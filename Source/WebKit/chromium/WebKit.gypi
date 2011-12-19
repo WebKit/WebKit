@@ -54,6 +54,7 @@
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
+            'tests/Canvas2DLayerChromiumTest.cpp',
             'tests/CCDamageTrackerTest.cpp',
             'tests/CCDelayBasedTimeSourceTest.cpp',
             'tests/CCFrameRateControllerTest.cpp',

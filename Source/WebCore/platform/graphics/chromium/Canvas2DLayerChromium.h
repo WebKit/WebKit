@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "CanvasLayerChromium.h"
+#include "ManagedTexture.h"
 
 namespace WebCore {
 
@@ -43,16 +44,34 @@ class GraphicsContext3D;
 // A layer containing an accelerated 2d canvas
 class Canvas2DLayerChromium : public CanvasLayerChromium {
 public:
-    static PassRefPtr<Canvas2DLayerChromium> create(GraphicsContext3D*);
+    static PassRefPtr<Canvas2DLayerChromium> create(GraphicsContext3D*, const IntSize&);
     virtual ~Canvas2DLayerChromium();
-    virtual bool drawsContent() const;
-    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
+
+    void setTextureId(unsigned);
 
     virtual void contentChanged();
 
+    virtual bool drawsContent() const;
+    virtual void paintContentsIfDirty();
+
+    virtual void setLayerTreeHost(CCLayerTreeHost*);
+    virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
+    virtual void pushPropertiesTo(CCLayerImpl*);
+    virtual void unreserveContentsTexture();
+    virtual void cleanupResources();
+
 private:
-    explicit Canvas2DLayerChromium(GraphicsContext3D*);
+    Canvas2DLayerChromium(GraphicsContext3D*, const IntSize&);
+
+    // Visible for testing so we can bypass setLayerTreeHost.
+    friend class Canvas2DLayerChromiumTest;
+    void setTextureManager(TextureManager*);
+
     GraphicsContext3D* m_context;
+    IntSize m_size;
+    unsigned m_backTextureId;
+    Platform3DObject m_fbo;
+    OwnPtr<ManagedTexture> m_frontTexture;
 };
 
 }

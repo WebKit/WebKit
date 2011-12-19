@@ -87,7 +87,7 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     canvas->setDevice(new SkGpuDevice(gr, texture.get()))->unref();
     data->m_platformContext.setGraphicsContext3D(context3D);
 #if USE(ACCELERATED_COMPOSITING)
-    data->m_platformLayer = Canvas2DLayerChromium::create(context3D);
+    data->m_platformLayer = Canvas2DLayerChromium::create(context3D, size);
     data->m_platformLayer->setTextureId(texture.get()->getTextureHandle());
 #endif
     return canvas;

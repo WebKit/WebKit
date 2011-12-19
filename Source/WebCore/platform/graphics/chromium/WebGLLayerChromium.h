@@ -49,8 +49,12 @@ public:
 
     virtual ~WebGLLayerChromium();
 
+    unsigned textureId() const { return m_textureId; }
+    void setTextureId(unsigned textureId) { m_textureId = textureId; }
+
     virtual bool drawsContent() const;
     virtual void updateCompositorResources(GraphicsContext3D*, CCTextureUpdater&);
+    virtual void pushPropertiesTo(CCLayerImpl*);
     virtual void contentChanged();
     bool paintRenderedResultsToCanvas(ImageBuffer*);
 
@@ -64,6 +68,9 @@ private:
 
     GraphicsContext3D* layerRendererContext();
 
+    bool m_hasAlpha;
+    bool m_premultipliedAlpha;
+    unsigned m_textureId;
     bool m_textureChanged;
     bool m_textureUpdated;
 

@@ -49,6 +49,9 @@ PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(CCLayerDelegate* deleg
 
 WebGLLayerChromium::WebGLLayerChromium(CCLayerDelegate* delegate)
     : CanvasLayerChromium(delegate)
+    , m_hasAlpha(true)
+    , m_premultipliedAlpha(true)
+    , m_textureId(0)
     , m_textureChanged(true)
     , m_textureUpdated(false)
     , m_drawingBuffer(0)
@@ -93,6 +96,16 @@ void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererCo
         m_needsDisplay = false;
         m_textureUpdated = false;
     }
+}
+
+void WebGLLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
+{
+    CanvasLayerChromium::pushPropertiesTo(layer);
+
+    CCCanvasLayerImpl* canvasLayer = static_cast<CCCanvasLayerImpl*>(layer);
+    canvasLayer->setTextureId(m_textureId);
+    canvasLayer->setHasAlpha(m_hasAlpha);
+    canvasLayer->setPremultipliedAlpha(m_premultipliedAlpha);
 }
 
 bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
