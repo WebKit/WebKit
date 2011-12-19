@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 #include <QBasicTimer>
 #include <QKeyEvent>
+#include <QInputMethodEvent>
 #include <QTouchEvent>
 #include <WKPage.h>
 
@@ -85,6 +86,7 @@ private:
     void timerEvent(QTimerEvent*);
 
     void touchEvent(QTouchEvent*);
+    void inputMethodEvent(QInputMethodEvent*);
 
     QPoint m_lastClick;
     QBasicTimer m_clickTimer;

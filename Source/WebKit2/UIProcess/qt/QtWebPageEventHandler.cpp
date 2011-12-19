@@ -32,8 +32,10 @@
 #include <QMimeData>
 #include <QtQuick/QQuickCanvas>
 #include <QStyleHints>
+#include <QTextFormat>
 #include <QTouchEvent>
 #include <WebCore/DragData.h>
+#include <WebCore/Editor.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -135,6 +137,9 @@ bool QtWebPageEventHandler::handleEvent(QEvent* ev)
     case QEvent::TouchUpdate:
         touchEvent(static_cast<QTouchEvent*>(ev));
         return true;
+    case QEvent::InputMethod:
+        inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
+        return false; // Look at comment in qquickwebpage.cpp
     }
 
     // FIXME: Move all common event handling here.
@@ -309,6 +314,68 @@ bool QtWebPageEventHandler::handleFocusOutEvent(QFocusEvent*)
 void QtWebPageEventHandler::setViewportInteractionEngine(QtViewportInteractionEngine* engine)
 {
     m_interactionEngine = engine;
+}
+
+void QtWebPageEventHandler::inputMethodEvent(QInputMethodEvent* ev)
+{
+    QString commit = ev->commitString();
+    QString composition = ev->preeditString();
+
+    // NOTE: We might want to handle events of one char as special
+    // and resend them as key events to make web site completion work.
+
+    int cursorPositionWithinComposition = 0;
+
+    Vector<CompositionUnderline> underlines;
+
+    for (int i = 0; i < ev->attributes().size(); ++i) {
+        const QInputMethodEvent::Attribute& attr = ev->attributes().at(i);
+        switch (attr.type) {
+        case QInputMethodEvent::TextFormat: {
+            if (composition.isEmpty())
+                break;
+
+            QTextCharFormat textCharFormat = attr.value.value<QTextFormat>().toCharFormat();
+            QColor qcolor = textCharFormat.underlineColor();
+            Color color = makeRGBA(qcolor.red(), qcolor.green(), qcolor.blue(), qcolor.alpha());
+            int start = qMin(attr.start, (attr.start + attr.length));
+            int end = qMax(attr.start, (attr.start + attr.length));
+            underlines.append(CompositionUnderline(start, end, color, false));
+            break;
+        }
+        case QInputMethodEvent::Cursor:
+            if (attr.length)
+                cursorPositionWithinComposition = attr.start;
+            break;
+        // Selection is handled further down.
+        default: break;
+        }
+    }
+
+    if (composition.isEmpty()) {
+        int selectionStart = -1;
+        int selectionLength = 0;
+        for (int i = 0; i < ev->attributes().size(); ++i) {
+            const QInputMethodEvent::Attribute& attr = ev->attributes().at(i);
+            if (attr.type == QInputMethodEvent::Selection) {
+                selectionStart = attr.start;
+                selectionLength = attr.length;
+
+                ASSERT(selectionStart >= 0);
+                ASSERT(selectionLength >= 0);
+                break;
+            }
+        }
+
+        // FIXME: Confirm the composition here.
+    } else {
+        ASSERT(cursorPositionWithinComposition >= 0);
+        ASSERT(replacementStart >= 0);
+
+        // FIXME: Set the composition here.
+    }
+
+    ev->accept();
 }
 
 void QtWebPageEventHandler::touchEvent(QTouchEvent* event)

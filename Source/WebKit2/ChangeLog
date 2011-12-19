@@ -1,3 +1,16 @@
+2011-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        First stab at upstreaming our virtual keyboard code
+
+        Reviewed by Simon Hausmann.
+
+        Add basic implementation of inputMethodEvent
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::handleEvent):
+        (QtWebPageEventHandler::inputMethodEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+
 2011-12-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Add support for modal event loop processing for WTR
