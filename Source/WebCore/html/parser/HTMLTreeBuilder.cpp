@@ -1526,7 +1526,7 @@ HTMLElementStack::ElementRecord* HTMLTreeBuilder::furthestBlockForFormattingElem
 void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
 {
     // The adoption agency algorithm is N^2. We limit the number of iterations
-    // to stop from hanging the whole browser. This limit is specifying in the
+    // to stop from hanging the whole browser. This limit is specified in the
     // adoption agency algorithm: 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tree-construction.html#parsing-main-inbody
     static const int outerIterationLimit = 8;

@@ -1,3 +1,10 @@
+2011-12-18  Adam Barth  <abarth@webkit.org>
+
+        Fix typo in comment.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2011-12-18  Keishi Hattori  <keishi@webkit.org>
 
         Implement <input type=color> UI WebKit chromium part
