@@ -503,7 +503,6 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'toolbar') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'top') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'undefined') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'unescape') is 'object'
-PASS typeof Object.getOwnPropertyDescriptor(window, 'webkitNotifications') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'window') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'windowPropertyNames') is 'object'
 PASS Object.getOwnPropertyDescriptor(window, '__defineGetter__') is undefined.

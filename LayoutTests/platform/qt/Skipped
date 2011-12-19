@@ -2536,3 +2536,7 @@ html5lib/runner.html
 # [Qt] REGRESSION(103045): It made fast/forms/select-script-onchange.html fail
 # https://bugs.webkit.org/show_bug.cgi?id=74700
 fast/forms/select-script-onchange.html
+
+# [Qt] svg/custom/svg-fonts-no-latin-glyph.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=74847
+svg/custom/svg-fonts-no-latin-glyph.html

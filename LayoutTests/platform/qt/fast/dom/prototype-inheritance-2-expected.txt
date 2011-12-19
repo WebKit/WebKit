@@ -181,8 +181,6 @@ PASS NodeList from inner.document.forms.testForm
 PASS NodeListConstructor from inner.document.forms.testForm.constructor
 PASS NodeListPrototype from inner.document.forms.testForm.__proto__
 PASS NodePrototype from inner.document.forms.testForm.0.attributes.0.__proto__.__proto__
-PASS NotificationCenter from inner.document.forms.testForm.0.ownerDocument.defaultView.webkitNotifications
-PASS NotificationCenterPrototype from inner.document.forms.testForm.0.ownerDocument.defaultView.webkitNotifications.__proto__
 PASS Object from inner.document.location.__proto__.__proto__
 PASS Performance from inner.document.forms.testForm.0.ownerDocument.defaultView.performance
 PASS PerformanceNavigation from inner.document.forms.testForm.0.ownerDocument.defaultView.performance.navigation
