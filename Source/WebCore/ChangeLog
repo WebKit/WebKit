@@ -1,5 +1,12 @@
 2011-12-18  Andreas Kling  <kling@webkit.org>
 
+        Removing unrelated printf() that slipped into my last commit.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollToOffsetWithoutAnimation):
+
+2011-12-18  Andreas Kling  <kling@webkit.org>
+
         KURL::protocolIs() should handle 8-bit strings.
         <http://webkit.org/b/74827>
 
