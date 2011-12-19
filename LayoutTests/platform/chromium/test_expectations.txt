@@ -1921,8 +1921,6 @@ BUGCR27850 : fast/history/back-forward-reset-after-error-handling.html = TEXT
 // in isolated worlds are cleared.
 BUGCR27849 : http/tests/security/isolatedWorld/didClearWindowObject.html = TEXT
 
-BUGCR28040 MAC WIN DEBUG : fast/body-propagation/overflow/003-xhtml.xhtml = PASS IMAGE IMAGE+TEXT
-
 BUGCR28092 WIN : http/tests/xmlhttprequest/redirect-cross-origin-post.html = PASS FAIL
 
 // Started failing with move from Lighttpd to Apache.
