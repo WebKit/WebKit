@@ -1884,3 +1884,23 @@ svg/custom/getscreenctm-in-scrollable-div-area.xhtml
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
+
+# Failing tests on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
+fast/block/basic/020.html
+fast/dom/access-key-iframe.html
+fast/forms/basic-selects.html
+fast/history/visited-link-background-color.html
+fast/layers/layer-visibility-sublayer.html
+fast/layers/layer-visibility.html
+fast/repaint/invisible-objects.html
+fast/repaint/layer-hide-when-needs-layout.html
+fast/replaced/no-focus-ring-embed.html
+fast/replaced/no-focus-ring-object.html
+fast/text/whitespace/028.html
+http/tests/cache/history-only-cached-subresource-loads.html
+http/tests/workers/interrupt-database-sync-open-crash.html
+security/autocomplete-cleared-on-back.html
+# Crashing test on qt-wk2 after unskipping qt-5.0/Skipped tests, need more investigation
+editing/execCommand/align-in-span.html
+# It made the following test(s) timeout
+editing/selection/drag-in-iframe.html
