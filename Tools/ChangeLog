@@ -1,3 +1,16 @@
+2011-12-19  Daniel Bates  <dbates@webkit.org>
+
+        Pass command line arguments to GDB when debugging a Mac WebKit application
+        https://bugs.webkit.org/show_bug.cgi?id=72829
+
+        Reviewed by David Kilzer.
+
+        Pass through any command line arguments given to debug-{safari, minibrowser}
+        to GDB so that they may influence the application instance launched by GDB.
+
+        * Scripts/webkitdirs.pm:
+        (execMacWebKitAppForDebugging):
+
 2011-12-19  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: remove executive,filesystem,user parameters from Port constructor
