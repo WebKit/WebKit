@@ -1,3 +1,14 @@
+2011-12-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Status bar button glyph for the "Record" buttons broken
+        https://bugs.webkit.org/show_bug.cgi?id=74861
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.css:
+        (.record-cpu-profile-status-bar-item .glyph, .record-profile-status-bar-item .glyph):
+        (.record-cpu-profile-status-bar-item.toggled-on .glyph, .record-profile-status-bar-item.toggled-on .glyph):
+
 2011-12-19  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: only the first @rule is highlighted in CSS
