@@ -1,5 +1,38 @@
 2011-12-18  Luke Macpherson   <macpherson@chromium.org>
 
+        Separate box alignment and box pack values into separate enums.
+        https://bugs.webkit.org/show_bug.cgi?id=74580
+
+        Reviewed by Andreas Kling.
+
+        No new tests / refactoring only.
+
+        Separating these types cleans up the code by removing several assertions that
+        values are in the correct ranges, as this is ensured by the type system.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EBoxPack):
+        (WebCore::CSSPrimitiveValue::operator EBoxAlignment):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        * rendering/RenderFullScreen.cpp:
+        (createFullScreenStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::boxPack):
+        (WebCore::InheritedFlags::setBoxAlign):
+        (WebCore::InheritedFlags::setBoxPack):
+        (WebCore::InheritedFlags::initialBoxPack):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleDeprecatedFlexibleBoxData.h:
+
+2011-12-18  Luke Macpherson   <macpherson@chromium.org>
+
         Implement CSS font-size property in CSSStyleApplyProperty.
         https://bugs.webkit.org/show_bug.cgi?id=74368
 
