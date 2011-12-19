@@ -4171,3 +4171,6 @@ BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-89-d.html = IMAGE
 BUGWK74427 MAC : fast/borders/border-antialiasing.html = IMAGE
 
 BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
+
+// These probably just need a rebaseline after the test change.
+BUGENNE CPU GPU : media/media-controller-playback.html = TEXT
