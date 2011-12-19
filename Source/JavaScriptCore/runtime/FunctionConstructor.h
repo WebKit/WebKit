@@ -37,7 +37,7 @@ namespace JSC {
 
         static FunctionConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, FunctionPrototype* functionPrototype)
         {
-            FunctionConstructor* constructor = new (allocateCell<FunctionConstructor>(*exec->heap())) FunctionConstructor(globalObject, structure);
+            FunctionConstructor* constructor = new (NotNull, allocateCell<FunctionConstructor>(*exec->heap())) FunctionConstructor(globalObject, structure);
             constructor->finishCreation(exec, functionPrototype);
             return constructor;
         }

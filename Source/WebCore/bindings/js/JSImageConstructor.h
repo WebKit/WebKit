@@ -31,7 +31,7 @@ namespace WebCore {
 
         static JSImageConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
         {
-            JSImageConstructor* constructor = new (JSC::allocateCell<JSImageConstructor>(*exec->heap())) JSImageConstructor(structure, globalObject);
+            JSImageConstructor* constructor = new (NotNull, JSC::allocateCell<JSImageConstructor>(*exec->heap())) JSImageConstructor(structure, globalObject);
             constructor->finishCreation(exec, globalObject);
             return constructor;
         }

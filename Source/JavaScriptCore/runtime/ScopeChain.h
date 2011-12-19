@@ -57,13 +57,13 @@ namespace JSC {
 
         static ScopeChainNode* create(ExecState* exec, ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
-            ScopeChainNode* node = new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            ScopeChainNode* node = new (NotNull, allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
             node->finishCreation(globalData, globalObject);
             return node;
         }
         static ScopeChainNode* create(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
-            ScopeChainNode* node = new (allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+            ScopeChainNode* node = new (NotNull, allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
             node->finishCreation(globalData, globalObject);
             return node;
         }

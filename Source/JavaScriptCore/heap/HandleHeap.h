@@ -158,7 +158,7 @@ inline HandleSlot HandleHeap::allocate()
         grow();
 
     Node* node = m_freeList.pop();
-    new (node) Node(this);
+    new (NotNull, node) Node(this);
     m_immediateList.push(node);
     return toHandle(node);
 }

@@ -745,14 +745,14 @@ sub GenerateHeader
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* windowShell)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl, windowShell);\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl, windowShell);\n");
         push(@headerContent, "        ptr->finishCreation(globalData, windowShell);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
         push(@headerContent, "        ptr->finishCreation(globalData);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
@@ -760,7 +760,7 @@ sub GenerateHeader
         AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (JSC::allocateCell<$className>(globalObject->globalData().heap)) $className(structure, globalObject, impl);\n");
+        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->globalData().heap)) $className(structure, globalObject, impl);\n");
         push(@headerContent, "        ptr->finishCreation(globalObject->globalData());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
@@ -1065,7 +1065,7 @@ sub GenerateHeader
 
     push(@headerContent, "    static ${className}Prototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
     push(@headerContent, "    {\n");
-    push(@headerContent, "        ${className}Prototype* ptr = new (JSC::allocateCell<${className}Prototype>(globalData.heap)) ${className}Prototype(globalData, globalObject, structure);\n");
+    push(@headerContent, "        ${className}Prototype* ptr = new (NotNull, JSC::allocateCell<${className}Prototype>(globalData.heap)) ${className}Prototype(globalData, globalObject, structure);\n");
     push(@headerContent, "        ptr->finishCreation(globalData);\n");
     push(@headerContent, "        return ptr;\n");
     push(@headerContent, "    }\n\n");
@@ -3326,7 +3326,7 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    typedef DOMConstructorObject Base;\n");
     push(@$outputArray, "    static $constructorClassName* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    {\n");
-    push(@$outputArray, "        $constructorClassName* ptr = new (JSC::allocateCell<$constructorClassName>(*exec->heap())) $constructorClassName(structure, globalObject);\n");
+    push(@$outputArray, "        $constructorClassName* ptr = new (NotNull, JSC::allocateCell<$constructorClassName>(*exec->heap())) $constructorClassName(structure, globalObject);\n");
     push(@$outputArray, "        ptr->finishCreation(exec, globalObject);\n");
     push(@$outputArray, "        return ptr;\n");
     push(@$outputArray, "    }\n\n");
@@ -3361,7 +3361,7 @@ public:
 
     static JS${interfaceName}NamedConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JS${interfaceName}NamedConstructor* constructor = new (JSC::allocateCell<JS${interfaceName}NamedConstructor>(*exec->heap())) JS${interfaceName}NamedConstructor(structure, globalObject);
+        JS${interfaceName}NamedConstructor* constructor = new (NotNull, JSC::allocateCell<JS${interfaceName}NamedConstructor>(*exec->heap())) JS${interfaceName}NamedConstructor(structure, globalObject);
         constructor->finishCreation(exec, globalObject);
         return constructor;
     }

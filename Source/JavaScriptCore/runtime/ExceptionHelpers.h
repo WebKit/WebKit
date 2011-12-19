@@ -69,7 +69,7 @@ public:
 
     static InterruptedExecutionError* create(JSGlobalData& globalData)
     {
-        InterruptedExecutionError* error = new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
+        InterruptedExecutionError* error = new (NotNull, allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
         error->finishCreation(globalData);
         return error;
     }
@@ -96,7 +96,7 @@ public:
 
     static TerminatedExecutionError* create(JSGlobalData& globalData)
     {
-        TerminatedExecutionError* error = new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
+        TerminatedExecutionError* error = new (NotNull, allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);
         error->finishCreation(globalData);
         return error;
     }

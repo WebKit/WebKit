@@ -33,7 +33,7 @@ namespace JSC {
 
         static RegExpMatchesArray* create(ExecState* exec, RegExpConstructorPrivate* ctorPrivate)
         {
-            RegExpMatchesArray* regExp = new (allocateCell<RegExpMatchesArray>(*exec->heap())) RegExpMatchesArray(exec);
+            RegExpMatchesArray* regExp = new (NotNull, allocateCell<RegExpMatchesArray>(*exec->heap())) RegExpMatchesArray(exec);
             regExp->finishCreation(exec->globalData(), ctorPrivate);
             return regExp;
         }

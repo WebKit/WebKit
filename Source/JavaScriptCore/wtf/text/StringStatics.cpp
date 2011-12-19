@@ -68,13 +68,13 @@ void AtomicString::init()
         ASSERT(isMainThread());
 
         // Use placement new to initialize the globals.
-        new ((void*)&nullAtom) AtomicString;
-        new ((void*)&emptyAtom) AtomicString("");
-        new ((void*)&textAtom) AtomicString("#text");
-        new ((void*)&commentAtom) AtomicString("#comment");
-        new ((void*)&starAtom) AtomicString("*");
-        new ((void*)&xmlAtom) AtomicString("xml");
-        new ((void*)&xmlnsAtom) AtomicString("xmlns");
+        new (NotNull, (void*)&nullAtom) AtomicString;
+        new (NotNull, (void*)&emptyAtom) AtomicString("");
+        new (NotNull, (void*)&textAtom) AtomicString("#text");
+        new (NotNull, (void*)&commentAtom) AtomicString("#comment");
+        new (NotNull, (void*)&starAtom) AtomicString("*");
+        new (NotNull, (void*)&xmlAtom) AtomicString("xml");
+        new (NotNull, (void*)&xmlnsAtom) AtomicString("xmlns");
 
         initialized = true;
     }

@@ -32,14 +32,14 @@ namespace JSC {
 
         static RegExpObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            RegExpObject* object = new (allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
+            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
             object->finishCreation(globalObject);
             return object;
         }
         
         static RegExpObject* create(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            RegExpObject* object = new (allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
+            RegExpObject* object = new (NotNull, allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
             object->finishCreation(globalObject);
             return object;
         }

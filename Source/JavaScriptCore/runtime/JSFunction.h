@@ -58,7 +58,7 @@ namespace JSC {
 
         static JSFunction* create(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChain)
         {
-            JSFunction* function = new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, executable, scopeChain);
+            JSFunction* function = new (NotNull, allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, executable, scopeChain);
             ASSERT(function->structure()->globalObject());
             function->finishCreation(exec, executable, scopeChain);
             return function;

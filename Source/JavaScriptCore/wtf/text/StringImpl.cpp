@@ -89,7 +89,7 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& 
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
 
     data = reinterpret_cast<LChar*>(string + 1);
-    return adoptRef(new (string) StringImpl(length, Force8BitConstructor));
+    return adoptRef(new (NotNull, string) StringImpl(length, Force8BitConstructor));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& data)
@@ -108,7 +108,7 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
 
     data = reinterpret_cast<UChar*>(string + 1);
-    return adoptRef(new (string) StringImpl(length));
+    return adoptRef(new (NotNull, string) StringImpl(length));
 }
 
 PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, LChar*& data)
@@ -130,7 +130,7 @@ PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalStr
     StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
 
     data = reinterpret_cast<LChar*>(string + 1);
-    return adoptRef(new (string) StringImpl(length, Force8BitConstructor));
+    return adoptRef(new (NotNull, string) StringImpl(length, Force8BitConstructor));
 }
 
 PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalString, unsigned length, UChar*& data)
@@ -152,7 +152,7 @@ PassRefPtr<StringImpl> StringImpl::reallocate(PassRefPtr<StringImpl> originalStr
     StringImpl* string = static_cast<StringImpl*>(fastRealloc(originalString.leakRef(), size));
 
     data = reinterpret_cast<UChar*>(string + 1);
-    return adoptRef(new (string) StringImpl(length));
+    return adoptRef(new (NotNull, string) StringImpl(length));
 }
 
 PassRefPtr<StringImpl> StringImpl::create(const UChar* characters, unsigned length)

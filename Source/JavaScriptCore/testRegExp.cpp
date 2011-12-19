@@ -117,7 +117,7 @@ public:
 
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     {
-        return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
+        return new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
     }
 
     static const ClassInfo s_info;

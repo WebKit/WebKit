@@ -22,6 +22,7 @@
 #define WTF_HashTraits_h
 
 #include "HashFunctions.h"
+#include "StdLibExtras.h"
 #include "TypeTraits.h"
 #include <utility>
 #include <limits>
@@ -105,7 +106,7 @@ namespace WTF {
 
     template<typename T> struct SimpleClassHashTraits : GenericHashTraits<T> {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(T& slot) { new (&slot) T(HashTableDeletedValue); }
+        static void constructDeletedValue(T& slot) { new (NotNull, &slot) T(HashTableDeletedValue); }
         static bool isDeletedValue(const T& value) { return value.isHashTableDeletedValue(); }
     };
 

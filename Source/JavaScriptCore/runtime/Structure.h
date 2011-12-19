@@ -60,7 +60,7 @@ namespace JSC {
         {
             ASSERT(globalData.structureStructure);
             ASSERT(classInfo);
-            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo);
+            Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo);
             structure->finishCreation(globalData);
             return structure;
         }
@@ -188,7 +188,7 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData)
         {
             ASSERT(!globalData.structureStructure);
-            Structure* structure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData);
+            Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData);
             structure->finishCreation(globalData, CreatingEarlyCell);
             return structure;
         }
@@ -203,7 +203,7 @@ namespace JSC {
         static Structure* create(JSGlobalData& globalData, const Structure* structure)
         {
             ASSERT(globalData.structureStructure);
-            Structure* newStructure = new (allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
+            Structure* newStructure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
             newStructure->finishCreation(globalData);
             return newStructure;
         }

@@ -247,9 +247,9 @@ public:
         output = reinterpret_cast<T*>(resultImpl + 1);
 
         if (sizeof(T) == sizeof(char))
-            return adoptRef(new(resultImpl) StringImpl(length, Force8BitConstructor));
+            return adoptRef(new (NotNull, resultImpl) StringImpl(length, Force8BitConstructor));
 
-        return adoptRef(new(resultImpl) StringImpl(length));
+        return adoptRef(new (NotNull, resultImpl) StringImpl(length));
     }
 
     // Reallocate the StringImpl. The originalString must be only owned by the PassRefPtr,

@@ -35,7 +35,7 @@ namespace JSC {
 
         static NativeErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, NativeErrorConstructor* constructor)
         {
-            NativeErrorPrototype* prototype = new (allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, structure);
+            NativeErrorPrototype* prototype = new (NotNull, allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, structure);
             prototype->finishCreation(exec, globalObject, name, constructor);
             return prototype;
         }

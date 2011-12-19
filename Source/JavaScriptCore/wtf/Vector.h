@@ -74,7 +74,7 @@ namespace WTF {
         static void initialize(T* begin, T* end) 
         {
             for (T* cur = begin; cur != end; ++cur)
-                new (cur) T;
+                new (NotNull, cur) T;
         }
     };
 
@@ -96,7 +96,7 @@ namespace WTF {
         static void move(const T* src, const T* srcEnd, T* dst)
         {
             while (src != srcEnd) {
-                new (dst) T(*src);
+                new (NotNull, dst) T(*src);
 #if COMPILER(SUNCC) && __SUNPRO_CC <= 0x590
                 const_cast<T*>(src)->~T(); // Work around obscure SunCC 12 compiler bug.
 #else
@@ -115,7 +115,7 @@ namespace WTF {
                 while (src != srcEnd) {
                     --srcEnd;
                     --dstEnd;
-                    new (dstEnd) T(*srcEnd);
+                    new (NotNull, dstEnd) T(*srcEnd);
                     srcEnd->~T();
                 }
             }
@@ -144,7 +144,7 @@ namespace WTF {
         static void uninitializedCopy(const T* src, const T* srcEnd, T* dst) 
         {
             while (src != srcEnd) {
-                new (dst) T(*src);
+                new (NotNull, dst) T(*src);
                 ++dst;
                 ++src;
             }
@@ -169,7 +169,7 @@ namespace WTF {
         static void uninitializedFill(T* dst, T* dstEnd, const T& val) 
         {
             while (dst != dstEnd) {
-                new (dst) T(val);
+                new (NotNull, dst) T(val);
                 ++dst;
             }
         }
@@ -927,7 +927,7 @@ namespace WTF {
             CRASH();
         T* dest = end();
         for (size_t i = 0; i < dataSize; ++i)
-            new (&dest[i]) T(data[i]);
+            new (NotNull, &dest[i]) T(data[i]);
         m_size = newSize;
     }
 
@@ -945,7 +945,7 @@ namespace WTF {
             return false;
         T* dest = end();
         for (size_t i = 0; i < dataSize; ++i)
-            new (&dest[i]) T(data[i]);
+            new (NotNull, &dest[i]) T(data[i]);
         m_size = newSize;
         return true;
     }
@@ -967,9 +967,9 @@ namespace WTF {
         // only assume it is a bug with the compiler. Casting is a bad solution,
         // however, because it subverts implicit conversions, so a better 
         // one is needed. 
-        new (end()) T(static_cast<T>(*ptr));
+        new (NotNull, end()) T(static_cast<T>(*ptr));
 #else
-        new (end()) T(*ptr);
+        new (NotNull, end()) T(*ptr);
 #endif
         ++m_size;
     }
@@ -982,7 +982,7 @@ namespace WTF {
     {
         ASSERT(size() < capacity());
         const U* ptr = &val;
-        new (end()) T(*ptr);
+        new (NotNull, end()) T(*ptr);
         ++m_size;
     }
 
@@ -1010,7 +1010,7 @@ namespace WTF {
         T* spot = begin() + position;
         TypeOperations::moveOverlapping(spot, end(), spot + dataSize);
         for (size_t i = 0; i < dataSize; ++i)
-            new (&spot[i]) T(data[i]);
+            new (NotNull, &spot[i]) T(data[i]);
         m_size = newSize;
     }
      
@@ -1026,7 +1026,7 @@ namespace WTF {
         }
         T* spot = begin() + position;
         TypeOperations::moveOverlapping(spot, end(), spot + 1);
-        new (spot) T(*data);
+        new (NotNull, spot) T(*data);
         ++m_size;
     }
    

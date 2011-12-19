@@ -110,7 +110,7 @@ public:
         allocatorPool = allocatorPool->ensureCapacity(size);
         if (!allocatorPool)
             CRASH();
-        return new(allocatorPool->alloc(size)) DisjunctionContext();
+        return new (allocatorPool->alloc(size)) DisjunctionContext();
     }
 
     void freeDisjunctionContext(DisjunctionContext* context)
@@ -131,7 +131,7 @@ public:
                 output[(firstSubpatternId << 1) + i] = -1;
             }
 
-            new(getDisjunctionContext(term)) DisjunctionContext();
+            new (getDisjunctionContext(term)) DisjunctionContext();
         }
 
         void* operator new(size_t, void* where)
@@ -160,7 +160,7 @@ public:
         allocatorPool = allocatorPool->ensureCapacity(size);
         if (!allocatorPool)
             CRASH();
-        return new(allocatorPool->alloc(size)) ParenthesesDisjunctionContext(output, term);
+        return new (allocatorPool->alloc(size)) ParenthesesDisjunctionContext(output, term);
     }
 
     void freeParenthesesDisjunctionContext(ParenthesesDisjunctionContext* context)

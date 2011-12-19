@@ -48,7 +48,7 @@ namespace JSC {
 
         static GetterSetter* create(ExecState* exec)
         {
-            GetterSetter* getterSetter = new (allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
+            GetterSetter* getterSetter = new (NotNull, allocateCell<GetterSetter>(*exec->heap())) GetterSetter(exec);
             getterSetter->finishCreation(exec->globalData());
             return getterSetter;
         }

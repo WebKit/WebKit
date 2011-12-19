@@ -156,7 +156,7 @@ public:
 
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     {
-        GlobalObject* object = new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
+        GlobalObject* object = new (NotNull, allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure);
         object->finishCreation(globalData, arguments);
         return object;
     }

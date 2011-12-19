@@ -90,6 +90,7 @@
 #include <string.h>
 #include "Assertions.h"
 #include "FastMalloc.h"
+#include "StdLibExtras.h"
 #include "TypeTraits.h"
 
 #define WTF_MAKE_FAST_ALLOCATED \
@@ -122,6 +123,11 @@ public: \
          ::WTF::fastMallocMatchValidateFree(p, ::WTF::Internal::AllocTypeClassNewArray); \
          ::WTF::fastFree(p); \
     } \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(location); \
+        return location; \
+    } \
 private: \
 typedef int ThisIsHereToForceASemicolonAfterThisMacro
 
@@ -138,7 +144,7 @@ namespace WTF {
             return 0;
 
         fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNew);
-        return ::new(p) T;
+        return ::new (p) T;
     }
 
     template <typename T, typename Arg1>
@@ -150,7 +156,7 @@ namespace WTF {
             return 0;
 
         fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNew);
-        return ::new(p) T(arg1);
+        return ::new (p) T(arg1);
     }
 
     template <typename T, typename Arg1, typename Arg2>
@@ -162,7 +168,7 @@ namespace WTF {
             return 0;
 
         fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNew);
-        return ::new(p) T(arg1, arg2);
+        return ::new (p) T(arg1, arg2);
     }
 
     template <typename T, typename Arg1, typename Arg2, typename Arg3>
@@ -174,7 +180,7 @@ namespace WTF {
             return 0;
 
         fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNew);
-        return ::new(p) T(arg1, arg2, arg3);
+        return ::new (p) T(arg1, arg2, arg3);
     }
 
     template <typename T, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
@@ -186,7 +192,7 @@ namespace WTF {
             return 0;
 
         fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNew);
-        return ::new(p) T(arg1, arg2, arg3, arg4);
+        return ::new (p) T(arg1, arg2, arg3, arg4);
     }
 
     template <typename T, typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
@@ -198,7 +204,7 @@ namespace WTF {
             return 0;
 
         fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNew);
-        return ::new(p) T(arg1, arg2, arg3, arg4, arg5);
+        return ::new (p) T(arg1, arg2, arg3, arg4, arg5);
     }
 
     namespace Internal {
@@ -244,7 +250,7 @@ namespace WTF {
                 fastMallocMatchValidateMalloc(p, Internal::AllocTypeFastNewArray);
 
                 for (T* pObject = p, *pObjectEnd = pObject + count; pObject != pObjectEnd; ++pObject)
-                    ::new(pObject) T;
+                    ::new (pObject) T;
 
                 return p;
             }
@@ -286,7 +292,7 @@ namespace WTF {
                 *a.size++ = count;
 
                 for (T* pT = a.t, *pTEnd = pT + count; pT != pTEnd; ++pT)
-                    ::new(pT) T;
+                    ::new (pT) T;
 
                 return a.t;
             }

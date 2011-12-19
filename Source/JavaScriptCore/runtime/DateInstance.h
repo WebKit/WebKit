@@ -42,14 +42,14 @@ namespace JSC {
 
         static DateInstance* create(ExecState* exec, Structure* structure, double date)
         {
-            DateInstance* instance = new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
+            DateInstance* instance = new (NotNull, allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
             instance->finishCreation(exec->globalData(), date);
             return instance;
         }
 
         static DateInstance* create(ExecState* exec, Structure* structure)
         {
-            DateInstance* instance = new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
+            DateInstance* instance = new (NotNull, allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure);
             instance->finishCreation(exec->globalData());
             return instance;
         }

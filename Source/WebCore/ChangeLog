@@ -1,3 +1,51 @@
+2011-12-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Placement new does an unnecessary NULL check
+        https://bugs.webkit.org/show_bug.cgi?id=74676
+
+        Reviewed by Sam Weinig.
+
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::create):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateConstructorDeclaration):
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::create):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::create):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaRuntimeMethod::create):
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        (JSC::Bindings::JavaRuntimeObject::create):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::create):
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::create):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::create):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::create):
+        * bridge/runtime_object.h:
+        (JSC::Bindings::RuntimeObject::create):
+        * dom/Document.h:
+        (WebCore::FormElementKeyHashTraits::constructDeletedValue): Use NotNull
+        placement new, as in JavaScriptCore.
+
+        * platform/PODArena.h:
+        (WebCore::PODArena::allocateObject): No need to check for NULL explicitly,
+        since that's the built-in behavior of placement new.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontDataCacheKeyTraits::constructDeletedValue):
+        * platform/graphics/IntRectHash.h:
+        * platform/graphics/IntSizeHash.h: More NotNull.
+
+        * rendering/RenderObject.h: Declaring that we throw is the C++ way to say
+        that operator new will not return NULL.
+
 2011-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         Render text tracks

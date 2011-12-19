@@ -163,7 +163,7 @@ namespace JSC {
 
         static JSString* createNull(JSGlobalData& globalData)
         {
-            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData);
+            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData);
             newString->finishCreation(globalData);
             return newString;
         }
@@ -174,19 +174,19 @@ namespace JSC {
             ASSERT(value);
             size_t length = value->length();
             size_t cost = value->cost();
-            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
+            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
             newString->finishCreation(globalData, length, cost);
             return newString;
         }
         static JSString* create(JSGlobalData& globalData, JSString* s1, JSString* s2)
         {
-            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData);
+            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData);
             newString->finishCreation(globalData, s1, s2);
             return newString;
         }
         static JSString* create(JSGlobalData& globalData, JSString* s1, JSString* s2, JSString* s3)
         {
-            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData);
+            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData);
             newString->finishCreation(globalData, s1, s2, s3);
             return newString;
         }
@@ -194,7 +194,7 @@ namespace JSC {
         {
             ASSERT(value);
             size_t length = value->length();
-            JSString* newString = new (allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
+            JSString* newString = new (NotNull, allocateCell<JSString>(globalData.heap)) JSString(globalData, value);
             newString->finishCreation(globalData, length);
             return newString;
         }

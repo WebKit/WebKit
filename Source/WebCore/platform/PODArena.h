@@ -86,23 +86,13 @@ public:
     // Allocates an object from the arena.
     template<class T> T* allocateObject()
     {
-        void* ptr = allocateBase<T>();
-        if (ptr) {
-            // Use placement operator new to allocate a T at this location.
-            new(ptr) T();
-        }
-        return static_cast<T*>(ptr);
+        return new (allocateBase<T>()) T();
     }
 
     // Allocates an object from the arena, calling a single-argument constructor.
     template<class T, class Argument1Type> T* allocateObject(const Argument1Type& argument1)
     {
-        void* ptr = allocateBase<T>();
-        if (ptr) {
-            // Use placement operator new to allocate a T at this location.
-            new(ptr) T(argument1);
-        }
-        return static_cast<T*>(ptr);
+        return new (allocateBase<T>()) T(argument1);
     }
 
     // The initial size of allocated chunks; increases as necessary to

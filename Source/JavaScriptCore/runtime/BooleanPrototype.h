@@ -31,7 +31,7 @@ namespace JSC {
 
         static BooleanPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            BooleanPrototype* prototype = new (allocateCell<BooleanPrototype>(*exec->heap())) BooleanPrototype(exec, structure);
+            BooleanPrototype* prototype = new (NotNull, allocateCell<BooleanPrototype>(*exec->heap())) BooleanPrototype(exec, structure);
             prototype->finishCreation(exec, globalObject);
             return prototype;
         }

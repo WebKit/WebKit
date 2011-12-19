@@ -56,7 +56,7 @@ void HandleHeap::grow()
     Node* block = m_blockStack.grow();
     for (int i = m_blockStack.blockLength - 1; i >= 0; --i) {
         Node* node = &block[i];
-        new (node) Node(this);
+        new (NotNull, node) Node(this);
         m_freeList.push(node);
     }
 }

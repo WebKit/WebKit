@@ -36,7 +36,7 @@ public:
 
     static StrictEvalActivation* create(ExecState* exec)
     {
-        StrictEvalActivation* activation = new (allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+        StrictEvalActivation* activation = new (NotNull, allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
         activation->finishCreation(exec->globalData());
         return activation;
     }

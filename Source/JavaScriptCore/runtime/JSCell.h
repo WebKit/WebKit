@@ -65,9 +65,6 @@ namespace JSC {
         enum CreatingEarlyCellTag { CreatingEarlyCell };
         JSCell(CreatingEarlyCellTag);
 
-    public:
-        void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; } // Used for initialization after GC allocation.
-
     protected:
         JSCell(JSGlobalData&, Structure*);
         static void destroy(JSCell*);

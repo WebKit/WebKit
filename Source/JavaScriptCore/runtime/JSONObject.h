@@ -38,7 +38,7 @@ namespace JSC {
 
         static JSONObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            JSONObject* object = new (allocateCell<JSONObject>(*exec->heap())) JSONObject(globalObject, structure);
+            JSONObject* object = new (NotNull, allocateCell<JSONObject>(*exec->heap())) JSONObject(globalObject, structure);
             object->finishCreation(globalObject);
             return object;
         }

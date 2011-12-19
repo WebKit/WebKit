@@ -76,7 +76,7 @@ BitVector::OutOfLineBits* BitVector::OutOfLineBits::create(size_t numBits)
 {
     numBits = (numBits + bitsInPointer() - 1) & ~(bitsInPointer() - 1);
     size_t size = sizeof(OutOfLineBits) + sizeof(uintptr_t) * (numBits / bitsInPointer());
-    OutOfLineBits* result = new (fastMalloc(size)) OutOfLineBits(numBits);
+    OutOfLineBits* result = new (NotNull, fastMalloc(size)) OutOfLineBits(numBits);
     return result;
 }
 

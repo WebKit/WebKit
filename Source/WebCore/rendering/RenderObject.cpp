@@ -98,7 +98,7 @@ COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObj
 
 bool RenderObject::s_affectsParentBlock = false;
 
-void* RenderObject::operator new(size_t sz, RenderArena* renderArena) throw()
+void* RenderObject::operator new(size_t sz, RenderArena* renderArena)
 {
     return renderArena->allocate(sz);
 }

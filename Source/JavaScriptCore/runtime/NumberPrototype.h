@@ -31,7 +31,7 @@ namespace JSC {
 
         static NumberPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            NumberPrototype* prototype = new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, structure);
+            NumberPrototype* prototype = new (NotNull, allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, structure);
             prototype->finishCreation(exec, globalObject);
             return prototype;
         }

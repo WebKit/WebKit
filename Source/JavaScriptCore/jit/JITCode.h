@@ -147,7 +147,7 @@ namespace JSC {
         void clear()
         {
             m_ref.~CodeRef();
-            new (&m_ref) CodeRef();
+            new (NotNull, &m_ref) CodeRef();
         }
 
     private:

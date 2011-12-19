@@ -36,7 +36,7 @@ namespace JSC {
 
         static DebuggerActivation* create(JSGlobalData& globalData, JSObject* object)
         {
-            DebuggerActivation* activation = new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData);
+            DebuggerActivation* activation = new (NotNull, allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData);
             activation->finishCreation(globalData, object);
             return activation;
         }

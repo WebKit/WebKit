@@ -119,10 +119,6 @@ class JSCallbackObject : public Parent {
 protected:
     JSCallbackObject(ExecState*, Structure*, JSClassRef, void* data);
     JSCallbackObject(JSGlobalData&, JSClassRef, Structure*);
-    // We'd like to use the placement version of operator new defined in JSCell, but 
-    // we can't because Parent is a template argument, so we just duplicate the same 
-    // functionality here.
-    void* operator new(size_t, void* ptr) { return ptr; }
 
     void finishCreation(ExecState*);
     void finishCreation(JSGlobalData&);
@@ -133,13 +129,13 @@ public:
     static JSCallbackObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, void* data)
     {
         ASSERT_UNUSED(globalObject, !structure->globalObject() || structure->globalObject() == globalObject);
-        JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, structure, classRef, data);
+        JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(*exec->heap())) JSCallbackObject(exec, structure, classRef, data);
         callbackObject->finishCreation(exec);
         return callbackObject;
     }
     static JSCallbackObject* create(JSGlobalData& globalData, JSClassRef classRef, Structure* structure)
     {
-        JSCallbackObject* callbackObject = new (allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
+        JSCallbackObject* callbackObject = new (NotNull, allocateCell<JSCallbackObject>(globalData.heap)) JSCallbackObject(globalData, classRef, structure);
         callbackObject->finishCreation(globalData);
         return callbackObject;
     }

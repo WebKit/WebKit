@@ -166,7 +166,7 @@ void LayoutState::destroy(RenderArena* renderArena)
     renderArena->free(*(size_t*)this, this);
 }
 
-void* LayoutState::operator new(size_t sz, RenderArena* renderArena) throw()
+void* LayoutState::operator new(size_t sz, RenderArena* renderArena)
 {
     return renderArena->allocate(sz);
 }

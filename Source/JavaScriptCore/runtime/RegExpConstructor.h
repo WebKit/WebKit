@@ -61,7 +61,7 @@ namespace JSC {
 
         static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
         {
-            RegExpConstructor* constructor = new (allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(globalObject, structure);
+            RegExpConstructor* constructor = new (NotNull, allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(globalObject, structure);
             constructor->finishCreation(exec, regExpPrototype);
             return constructor;
         }

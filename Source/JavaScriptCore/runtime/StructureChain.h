@@ -47,7 +47,7 @@ namespace JSC {
 
         static StructureChain* create(JSGlobalData& globalData, Structure* head)
         { 
-            StructureChain* chain = new (allocateCell<StructureChain>(globalData.heap)) StructureChain(globalData, globalData.structureChainStructure.get());
+            StructureChain* chain = new (NotNull, allocateCell<StructureChain>(globalData.heap)) StructureChain(globalData, globalData.structureChainStructure.get());
             chain->finishCreation(globalData, head);
             return chain;
         }

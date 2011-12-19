@@ -33,7 +33,7 @@ namespace JSC {
 
         static ErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            ErrorPrototype* prototype = new (allocateCell<ErrorPrototype>(*exec->heap())) ErrorPrototype(exec, structure);
+            ErrorPrototype* prototype = new (NotNull, allocateCell<ErrorPrototype>(*exec->heap())) ErrorPrototype(exec, structure);
             prototype->finishCreation(exec, globalObject);
             return prototype;
         }

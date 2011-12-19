@@ -48,7 +48,7 @@ namespace JSC {
 
         static JSNotAnObject* create(ExecState* exec)
         {
-            JSNotAnObject* object = new (allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);
+            JSNotAnObject* object = new (NotNull, allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);
             object->finishCreation(exec->globalData());
             return object;
         }

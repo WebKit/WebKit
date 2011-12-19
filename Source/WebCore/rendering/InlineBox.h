@@ -124,7 +124,7 @@ public:
     InlineBox* next() const { return m_next; }
 
     // Overloaded new operator.
-    void* operator new(size_t, RenderArena*) throw();
+    void* operator new(size_t, RenderArena*);
 
     // Overridden to prevent the normal delete from being called.
     void operator delete(void*, size_t);

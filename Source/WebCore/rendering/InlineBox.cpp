@@ -86,7 +86,7 @@ void InlineBox::destroy(RenderArena* renderArena)
     renderArena->free(*(size_t *)this, this);
 }
 
-void* InlineBox::operator new(size_t sz, RenderArena* renderArena) throw()
+void* InlineBox::operator new(size_t sz, RenderArena* renderArena)
 {
     return renderArena->allocate(sz);
 }

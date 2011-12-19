@@ -34,7 +34,7 @@ namespace JSC {
 
         static ErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errorPrototype)
         {
-            ErrorConstructor* constructor = new (allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(globalObject, structure);
+            ErrorConstructor* constructor = new (NotNull, allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(globalObject, structure);
             constructor->finishCreation(exec, errorPrototype);
             return constructor;
         }

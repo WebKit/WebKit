@@ -160,7 +160,7 @@ namespace JSC {
 
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
-            JSGlobalObject* globalObject = new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
+            JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
             globalObject->finishCreation(globalData);
             return globalObject;
         }

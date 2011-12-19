@@ -76,28 +76,28 @@ namespace JSC {
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure)
         {
-            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
             array->finishCreation(globalData);
             return array;
         }
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode createMode)
         {
-            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
             array->finishCreation(globalData, initialLength, createMode);
             return array;
         }
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure, const ArgList& initialValues)
         {
-            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
             array->finishCreation(globalData, initialValues);
             return array;
         }
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure, const JSValue* values, size_t length)
         {
-            JSArray* array = new (allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
+            JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
             array->finishCreation(globalData, values, length);
             return array;
         }

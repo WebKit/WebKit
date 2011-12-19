@@ -46,7 +46,7 @@ namespace JSC {
         
         static JSAPIValueWrapper* create(ExecState* exec, JSValue value) 
         {
-            JSAPIValueWrapper* wrapper = new (allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec);
+            JSAPIValueWrapper* wrapper = new (NotNull, allocateCell<JSAPIValueWrapper>(*exec->heap())) JSAPIValueWrapper(exec);
             wrapper->finishCreation(exec, value);
             return wrapper;
         }

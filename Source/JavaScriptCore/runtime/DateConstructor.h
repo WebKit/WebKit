@@ -33,7 +33,7 @@ namespace JSC {
 
         static DateConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, DatePrototype* datePrototype)
         {
-            DateConstructor* constructor = new (allocateCell<DateConstructor>(*exec->heap())) DateConstructor(globalObject, structure);
+            DateConstructor* constructor = new (NotNull, allocateCell<DateConstructor>(*exec->heap())) DateConstructor(globalObject, structure);
             constructor->finishCreation(exec, datePrototype);
             return constructor;
         }

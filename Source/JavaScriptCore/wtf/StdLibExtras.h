@@ -275,6 +275,14 @@ inline ArrayElementType* genericBinarySearch(ArrayType& array, size_t size, KeyT
 
 } // namespace WTF
 
+// This version of placement new omits a 0 check.
+enum NotNullTag { NotNull };
+inline void* operator new(size_t, NotNullTag, void* location)
+{
+    ASSERT(location);
+    return location;
+}
+
 using WTF::binarySearch;
 using WTF::bitwise_cast;
 using WTF::safeCast;

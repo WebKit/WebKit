@@ -89,7 +89,7 @@ namespace JSC {
 
         static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
         {
-            StrictModeTypeErrorFunction* function = new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(globalObject, structure, message);
+            StrictModeTypeErrorFunction* function = new (NotNull, allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(globalObject, structure, message);
             function->finishCreation(exec->globalData(), exec->globalData().propertyNames->emptyIdentifier);
             return function;
         }

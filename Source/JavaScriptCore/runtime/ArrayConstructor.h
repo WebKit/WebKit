@@ -33,7 +33,7 @@ namespace JSC {
 
         static ArrayConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
         {
-            ArrayConstructor* constructor = new (allocateCell<ArrayConstructor>(*exec->heap())) ArrayConstructor(globalObject, structure);
+            ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(*exec->heap())) ArrayConstructor(globalObject, structure);
             constructor->finishCreation(exec, arrayPrototype);
             return constructor;
         }

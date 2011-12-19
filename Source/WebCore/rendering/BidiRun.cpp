@@ -53,7 +53,7 @@ void BidiRun::destroy()
     renderArena->free(*reinterpret_cast<size_t*>(this), this);
 }
 
-void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
+void* BidiRun::operator new(size_t sz, RenderArena* renderArena)
 {
 #ifndef NDEBUG
     bidiRunCounter.increment();

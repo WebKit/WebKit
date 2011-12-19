@@ -121,7 +121,7 @@ private:
 
         PageAllocation allocation = PageAllocation::allocate(poolSize);
         if (!!allocation)
-            return new(allocation) BumpPointerPool(allocation);
+            return new (allocation) BumpPointerPool(allocation);
         return 0;
     }
 

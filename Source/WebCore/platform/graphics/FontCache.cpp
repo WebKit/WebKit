@@ -240,7 +240,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
     static void constructDeletedValue(FontPlatformData& slot)
     {
-        new (&slot) FontPlatformData(HashTableDeletedValue);
+        new (NotNull, &slot) FontPlatformData(HashTableDeletedValue);
     }
     static bool isDeletedValue(const FontPlatformData& value)
     {

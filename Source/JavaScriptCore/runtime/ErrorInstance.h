@@ -38,14 +38,14 @@ namespace JSC {
 
         static ErrorInstance* create(JSGlobalData& globalData, Structure* structure, const UString& message)
         {
-            ErrorInstance* instance = new (allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure);
+            ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(globalData.heap)) ErrorInstance(globalData, structure);
             instance->finishCreation(globalData, message);
             return instance;
         }
         static ErrorInstance* create(ExecState* exec, Structure* structure, JSValue message)
         {
             if (message.isUndefined()) {
-                ErrorInstance* instance = new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure);
+                ErrorInstance* instance = new (NotNull, allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure);
                 instance->finishCreation(exec->globalData(), UString("", 0));
                 return instance;
             }

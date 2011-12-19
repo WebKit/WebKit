@@ -87,7 +87,7 @@ namespace WTF {
     template<> struct HashTraits<JSC::CallIdentifier> : GenericHashTraits<JSC::CallIdentifier> {
         static void constructDeletedValue(JSC::CallIdentifier& slot)
         {
-            new (&slot) JSC::CallIdentifier(JSC::UString(), JSC::UString(), std::numeric_limits<unsigned>::max());
+            new (NotNull, &slot) JSC::CallIdentifier(JSC::UString(), JSC::UString(), std::numeric_limits<unsigned>::max());
         }
         static bool isDeletedValue(const JSC::CallIdentifier& value)
         {

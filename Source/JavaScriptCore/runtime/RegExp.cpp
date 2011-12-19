@@ -259,7 +259,7 @@ void RegExp::destroy(JSCell* cell)
 
 RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
 {
-    RegExp* regExp = new (allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
+    RegExp* regExp = new (NotNull, allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
     regExp->finishCreation(globalData);
     return regExp;
 }

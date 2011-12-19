@@ -59,7 +59,7 @@ namespace JSC {
 
         static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
         {
-            Arguments* arguments = new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+            Arguments* arguments = new (NotNull, allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
             arguments->finishCreation(callFrame);
             return arguments;
         }

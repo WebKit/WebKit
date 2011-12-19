@@ -37,12 +37,12 @@ MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize)
     PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
-    return new (allocation.base()) MarkedBlock(allocation, heap, cellSize);
+    return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize);
 }
 
 MarkedBlock* MarkedBlock::recycle(MarkedBlock* block, size_t cellSize)
 {
-    return new (block) MarkedBlock(block->m_allocation, block->m_heap, cellSize);
+    return new (NotNull, block) MarkedBlock(block->m_allocation, block->m_heap, cellSize);
 }
 
 void MarkedBlock::destroy(MarkedBlock* block)

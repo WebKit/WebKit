@@ -35,7 +35,7 @@ namespace JSC {
 
         static NumberObject* create(JSGlobalData& globalData, Structure* structure)
         {
-            NumberObject* number = new (allocateCell<NumberObject>(globalData.heap)) NumberObject(globalData, structure);
+            NumberObject* number = new (NotNull, allocateCell<NumberObject>(globalData.heap)) NumberObject(globalData, structure);
             number->finishCreation(globalData);
             return number;
         }

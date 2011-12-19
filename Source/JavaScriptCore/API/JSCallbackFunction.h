@@ -41,7 +41,7 @@ public:
 
     static JSCallbackFunction* create(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const Identifier& name)
     {
-        JSCallbackFunction* function = new (allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(globalObject, callback);
+        JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(globalObject, callback);
         function->finishCreation(exec->globalData(), name);
         return function;
     }

@@ -37,7 +37,7 @@ namespace JSC {
         static StringPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             JSString* empty = jsEmptyString(exec);
-            StringPrototype* prototype = new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, structure);
+            StringPrototype* prototype = new (NotNull, allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, structure);
             prototype->finishCreation(exec, globalObject, empty);
             return prototype;
         }

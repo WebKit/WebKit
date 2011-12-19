@@ -1,3 +1,212 @@
+2011-12-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Placement new does an unnecessary NULL check
+        https://bugs.webkit.org/show_bug.cgi?id=74676
+
+        Reviewed by Sam Weinig.
+
+        We can define our own version, which skips the NULL check.
+        
+        Not a measurable speedup, but code inspection shows better code generated,
+        and I believe this is a step toward turning off -fomit-frame-pointer.
+
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::create):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::create): Use the NotNull version of placement
+        new to skip the NULL check.
+
+        * API/JSCallbackObject.h: Removed a conflicting, unnecessaray placement new.
+
+        (JSC::JSCallbackObject::create):
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::create):
+        * heap/HandleHeap.cpp:
+        (JSC::HandleHeap::grow):
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::allocate):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::recycle):
+        * jit/JITCode.h:
+        (JSC::JITCode::clear):
+        * jsc.cpp:
+        (GlobalObject::create):
+        * profiler/CallIdentifier.h:
+        * runtime/Arguments.h:
+        (JSC::Arguments::create):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::create):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::create):
+        * runtime/BooleanConstructor.h:
+        (JSC::BooleanConstructor::create):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::create):
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::create):
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::create):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::create):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::create):
+        * runtime/Error.h:
+        (JSC::StrictModeTypeErrorFunction::create):
+        * runtime/ErrorConstructor.h:
+        (JSC::ErrorConstructor::create):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::create):
+        * runtime/ExceptionHelpers.h:
+        (JSC::InterruptedExecutionError::create):
+        (JSC::TerminatedExecutionError::create):
+        * runtime/Executable.h:
+        (JSC::NativeExecutable::create):
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::create):
+        (JSC::FunctionExecutable::create):
+        * runtime/FunctionConstructor.h:
+        (JSC::FunctionConstructor::create):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::create):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::create):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::create):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::create):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::create):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::create): Use the NotNull version of placement
+        new to skip the NULL check.
+
+        * runtime/JSCell.h: Removed a conflicting, unnecessaray placement new.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::create):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::create):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create):
+        * runtime/JSGlobalThis.h:
+        (JSC::JSGlobalThis::create):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::create):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::create):
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::create):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::create):
+        * runtime/JSString.cpp:
+        (JSC::StringObject::create):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::createNull):
+        (JSC::RopeBuilder::create):
+        (JSC::RopeBuilder::createHasOtherOwner):
+        * runtime/MathObject.h:
+        (JSC::MathObject::create):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::create):
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::create):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::create):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::create):
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::create):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::create):
+        * runtime/ObjectPrototype.h:
+        (JSC::ObjectPrototype::create):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::createWithoutCaching):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::create):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::RegExpMatchesArray::create):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::create):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::create):
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::create):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create):
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::create):
+        * runtime/StringObject.h:
+        (JSC::StringObject::create):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::create):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::createStructure):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::create):
+        * testRegExp.cpp:
+        (GlobalObject::create):
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::OutOfLineBits::create): Use the NotNull version of placement
+        new to skip the NULL check.
+
+        * wtf/BumpPointerAllocator.h:
+        (WTF::BumpPointerPool::create): Standardized spacing to make grep easier.
+
+        * wtf/ByteArray.cpp:
+        (WTF::ByteArray::create):
+        * wtf/Deque.h:
+        (WTF::::append):
+        (WTF::::prepend): Use NotNull, as above.
+
+        * wtf/FastAllocBase.h: Added a placement new, since this class would otherwise
+        hide the name of the global placement new.
+
+        (WTF::fastNew): Standardized spacing. Most of these functions don't need
+        NotNull, since they check for NULL, and the optimizer can see that.
+
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        (WTF::SimpleClassHashTraits::constructDeletedValue):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::allocFreeSpaceNode): NotNull, as above.
+
+        * wtf/StdLibExtras.h:
+        (throw): This is our NotNull placement new. Declaring that we throw is
+        the C++ way to say that operator new will not return NULL.
+
+        * wtf/ThreadSpecific.h:
+        (WTF::T):
+        * wtf/Vector.h:
+        (WTF::::append):
+        (WTF::::tryAppend):
+        (WTF::::uncheckedAppend):
+        (WTF::::insert):
+        * wtf/text/AtomicStringHash.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createUninitialized):
+        (WTF::StringImpl::reallocate):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::tryCreateUninitialized):
+        * wtf/text/StringStatics.cpp:
+        (WTF::AtomicString::init): Use NotNull, as above.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::allocDisjunctionContext):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::ParenthesesDisjunctionContext):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext): Standardized
+        spacing for easy grep.
+
 2011-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         Enable <track> for Mac build

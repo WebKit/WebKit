@@ -123,7 +123,7 @@ public:
         // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
         // We need to pass in the right global object for "i".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<JavaRuntimeMethod>(exec);
-        JavaRuntimeMethod* method = new (allocateCell<JavaRuntimeMethod>(*exec->heap())) JavaRuntimeMethod(globalObject, domStructure, list);
+        JavaRuntimeMethod* method = new (NotNull, allocateCell<JavaRuntimeMethod>(*exec->heap())) JavaRuntimeMethod(globalObject, domStructure, list);
         method->finishCreation(exec->globalData(), name);
         return method;
     }

@@ -32,7 +32,7 @@ namespace JSC {
 
         static RegExpPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
-            RegExpPrototype* prototype = new (allocateCell<RegExpPrototype>(*exec->heap())) RegExpPrototype(globalObject, structure, regExp);
+            RegExpPrototype* prototype = new (NotNull, allocateCell<RegExpPrototype>(*exec->heap())) RegExpPrototype(globalObject, structure, regExp);
             prototype->finishCreation(globalObject);
             return prototype;
         }

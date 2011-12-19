@@ -33,7 +33,7 @@ namespace JSC {
 
         static ObjectConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
         {
-            ObjectConstructor* constructor = new (allocateCell<ObjectConstructor>(*exec->heap())) ObjectConstructor(globalObject, structure);
+            ObjectConstructor* constructor = new (NotNull, allocateCell<ObjectConstructor>(*exec->heap())) ObjectConstructor(globalObject, structure);
             constructor->finishCreation(exec, objectPrototype);
             return constructor;
         }

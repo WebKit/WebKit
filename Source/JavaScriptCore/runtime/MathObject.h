@@ -34,7 +34,7 @@ namespace JSC {
 
         static MathObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            MathObject* object = new (allocateCell<MathObject>(*exec->heap())) MathObject(globalObject, structure);
+            MathObject* object = new (NotNull, allocateCell<MathObject>(*exec->heap())) MathObject(globalObject, structure);
             object->finishCreation(exec, globalObject);
             return object;
         }

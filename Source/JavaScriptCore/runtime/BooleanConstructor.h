@@ -33,7 +33,7 @@ namespace JSC {
 
         static BooleanConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
         {
-            BooleanConstructor* constructor = new (allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(globalObject, structure);
+            BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(*exec->heap())) BooleanConstructor(globalObject, structure);
             constructor->finishCreation(exec, booleanPrototype);
             return constructor;
         }

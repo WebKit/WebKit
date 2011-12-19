@@ -265,7 +265,7 @@ public:
 
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
-    void* operator new(size_t, RenderArena*) throw();
+    void* operator new(size_t, RenderArena*);
 
     // Overridden to prevent the normal delete from being called.
     void operator delete(void*, size_t);

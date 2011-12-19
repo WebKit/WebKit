@@ -36,7 +36,7 @@ namespace JSC{
 
         static JSStaticScopeObject* create(ExecState* exec, const Identifier& identifier, JSValue value, unsigned attributes)
         {
-            JSStaticScopeObject* scopeObject = new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec);
+            JSStaticScopeObject* scopeObject = new (NotNull, allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec);
             scopeObject->finishCreation(exec, identifier, value, attributes);
             return scopeObject;
         }

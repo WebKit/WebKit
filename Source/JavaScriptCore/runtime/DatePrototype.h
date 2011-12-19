@@ -36,7 +36,7 @@ namespace JSC {
 
         static DatePrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            DatePrototype* prototype = new (allocateCell<DatePrototype>(*exec->heap())) DatePrototype(exec, structure);
+            DatePrototype* prototype = new (NotNull, allocateCell<DatePrototype>(*exec->heap())) DatePrototype(exec, structure);
             prototype->finishCreation(exec, globalObject);
             return prototype;
         }

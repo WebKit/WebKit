@@ -50,7 +50,7 @@ template<> struct DefaultHash<WebCore::IntRect> { typedef IntHash<WebCore::IntRe
 template<> struct HashTraits<WebCore::IntRect> : GenericHashTraits<WebCore::IntRect> {
     static const bool emptyValueIsZero = true;
     static const bool needsDestruction = false;
-    static void constructDeletedValue(WebCore::IntRect& slot) { new (&slot) WebCore::IntRect(-1, -1, -1, -1); }
+    static void constructDeletedValue(WebCore::IntRect& slot) { new (NotNull, &slot) WebCore::IntRect(-1, -1, -1, -1); }
     static bool isDeletedValue(const WebCore::IntRect& value) { return value.x() == -1 && value.y() == -1 && value.width() == -1 && value.height() == -1; }
 };
 

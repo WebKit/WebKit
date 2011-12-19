@@ -123,7 +123,7 @@ using namespace HTMLNames;
 const int MinimumWidthWhileResizing = 100;
 const int MinimumHeightWhileResizing = 40;
 
-void* ClipRects::operator new(size_t sz, RenderArena* renderArena) throw()
+void* ClipRects::operator new(size_t sz, RenderArena* renderArena)
 {
     return renderArena->allocate(sz);
 }
@@ -1072,7 +1072,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const RenderLayer*
     }
 }
 
-void* RenderLayer::operator new(size_t sz, RenderArena* renderArena) throw()
+void* RenderLayer::operator new(size_t sz, RenderArena* renderArena)
 {
     return renderArena->allocate(sz);
 }

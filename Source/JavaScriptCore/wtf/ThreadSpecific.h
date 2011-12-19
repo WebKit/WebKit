@@ -253,7 +253,7 @@ inline ThreadSpecific<T>::operator T*()
         // needs to access the value, to avoid recursion.
         ptr = static_cast<T*>(fastZeroedMalloc(sizeof(T)));
         set(ptr);
-        new (ptr) T;
+        new (NotNull, ptr) T;
     }
     return ptr;
 }

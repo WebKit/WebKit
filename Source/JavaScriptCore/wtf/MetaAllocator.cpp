@@ -397,7 +397,7 @@ MetaAllocator::FreeSpaceNode* MetaAllocator::allocFreeSpaceNode()
 #ifndef NDEBUG
     m_mallocBalance++;
 #endif
-    return new (fastMalloc(sizeof(FreeSpaceNode))) FreeSpaceNode(0, 0);
+    return new (NotNull, fastMalloc(sizeof(FreeSpaceNode))) FreeSpaceNode(0, 0);
 }
 
 void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)

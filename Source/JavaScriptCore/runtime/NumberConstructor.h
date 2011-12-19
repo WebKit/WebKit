@@ -33,7 +33,7 @@ namespace JSC {
 
         static NumberConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NumberPrototype* numberPrototype)
         {
-            NumberConstructor* constructor = new (allocateCell<NumberConstructor>(*exec->heap())) NumberConstructor(globalObject, structure);
+            NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(*exec->heap())) NumberConstructor(globalObject, structure);
             constructor->finishCreation(exec, numberPrototype);
             return constructor;
         }

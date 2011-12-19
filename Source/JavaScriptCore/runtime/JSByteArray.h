@@ -81,7 +81,7 @@ namespace JSC {
     public:
         static JSByteArray* create(ExecState* exec, Structure* structure, ByteArray* storage)
         {
-            JSByteArray* array = new (allocateCell<JSByteArray>(*exec->heap())) JSByteArray(exec, structure, storage);
+            JSByteArray* array = new (NotNull, allocateCell<JSByteArray>(*exec->heap())) JSByteArray(exec, structure, storage);
             array->finishCreation(exec);
             return array;
         }
