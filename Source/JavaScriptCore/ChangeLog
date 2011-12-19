@@ -1,3 +1,12 @@
+2011-12-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Enable <track> for Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=74838
+
+        Reviewed by Darin Adler.
+
+        * wtf/Platform.h:
+
 2011-12-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG is too sloppy with register allocation

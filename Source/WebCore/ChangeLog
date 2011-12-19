@@ -1,3 +1,13 @@
+2011-12-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Enable <track> for Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=74838
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+
 2011-12-19  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Make the Editor::setIgnoreCompositionSelectionChange public as it is needed by Qt

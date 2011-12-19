@@ -1,3 +1,12 @@
+2011-12-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Enable <track> for Mac build
+        https://bugs.webkit.org/show_bug.cgi?id=74838
+
+        Reviewed by Darin Adler.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename registerCommandFor(Undo|Redo) to register(Undo|Redo)Step

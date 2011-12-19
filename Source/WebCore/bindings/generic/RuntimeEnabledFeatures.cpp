@@ -173,7 +173,11 @@ bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
-bool RuntimeEnabledFeatures::isVideoTrackEnabled = false;
+#if PLATFORM(MAC)
+    bool RuntimeEnabledFeatures::isVideoTrackEnabled = true;
+#else
+    bool RuntimeEnabledFeatures::isVideoTrackEnabled = false;
+#endif
 #endif
 
 } // namespace WebCore
