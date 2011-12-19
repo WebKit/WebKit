@@ -1,3 +1,27 @@
+2011-12-19  Anders Carlsson  <andersca@apple.com>
+
+        Send gesture events through the event dispatcher and scrolling coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=74879
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleGestureEvent):
+        Use the EventDispatcher message.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::gestureEvent):
+        Try to send the event to the scrolling coordinator first before dispatching it on the main thread.
+
+        (WebKit::EventDispatcher::dispatchGestureEvent):
+        Just call through to the WebPageProxy.
+
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Move the GestureEvent message from WebPage to EventDispatcher.
+
 2011-12-19  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Setting QWebPreferences affect multiple WebViews

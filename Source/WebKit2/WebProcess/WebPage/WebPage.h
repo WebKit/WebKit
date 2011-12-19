@@ -469,6 +469,9 @@ public:
     void contextMenuShowing() { m_isShowingContextMenu = true; }
 
     void wheelEvent(const WebWheelEvent&);
+#if ENABLE(GESTURE_EVENTS)
+    void gestureEvent(const WebGestureEvent&);
+#endif
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -521,9 +524,6 @@ private:
     void wheelEventSyncForTesting(const WebWheelEvent&, bool&);
     void keyEvent(const WebKeyboardEvent&);
     void keyEventSyncForTesting(const WebKeyboardEvent&, bool&);
-#if ENABLE(GESTURE_EVENTS)
-    void gestureEvent(const WebGestureEvent&);
-#endif
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
     void touchEventSyncForTesting(const WebTouchEvent&, bool& handled);

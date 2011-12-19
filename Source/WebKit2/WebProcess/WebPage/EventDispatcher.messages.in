@@ -22,4 +22,9 @@
 
 messages -> EventDispatcher {
     WheelEvent(uint64_t pageID, WebKit::WebWheelEvent event) DispatchOnConnectionQueue
+
+#if ENABLE(GESTURE_EVENTS)
+    GestureEvent(uint64_t pageID, WebKit::WebGestureEvent event) DispatchOnConnectionQueue
+#endif
+
 }

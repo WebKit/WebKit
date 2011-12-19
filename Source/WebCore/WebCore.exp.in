@@ -2022,6 +2022,11 @@ __ZN7WebCore12Notification18dispatchCloseEventEv
 __ZN7WebCore20ScrollingCoordinator16handleWheelEventERKNS_18PlatformWheelEventE
 __ZN7WebCore20ScrollingCoordinatorD1Ev
 __ZN7WebCore4Page20scrollingCoordinatorEv
+
+#if ENABLE(GESTURE_EVENTS)
+__ZN7WebCore20ScrollingCoordinator18handleGestureEventERKNS_20PlatformGestureEventE
+#endif
+
 #endif
 
 

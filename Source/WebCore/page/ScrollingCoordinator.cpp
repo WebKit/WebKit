@@ -104,6 +104,14 @@ bool ScrollingCoordinator::handleWheelEvent(const PlatformWheelEvent& wheelEvent
     return true;
 }
 
+#if ENABLE(GESTURE_EVENTS)
+bool ScrollingCoordinator::handleGestureEvent(const PlatformGestureEvent&)
+{
+    // FIXME: Implement.
+    return false;
+}
+#endif
+
 void ScrollingCoordinator::didUpdateMainFrameScrollPosition()
 {
     ASSERT(isMainThread());

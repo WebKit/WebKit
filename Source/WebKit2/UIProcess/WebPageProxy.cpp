@@ -968,7 +968,7 @@ void WebPageProxy::handleGestureEvent(const WebGestureEvent& event)
         return;
 
     process()->responsivenessTimer()->start();
-    process()->send(Messages::WebPage::GestureEvent(event), m_pageID);
+    process()->send(Messages::EventDispatcher::GestureEvent(m_pageID, event), 0);
 }
 #endif
 

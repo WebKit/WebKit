@@ -45,6 +45,10 @@ class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
 
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEvent;
+#endif
+
 class ScrollingCoordinator : public ThreadSafeRefCounted<ScrollingCoordinator> {
 public:
     static PassRefPtr<ScrollingCoordinator> create(Page*);
@@ -62,6 +66,12 @@ public:
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread,
     // and return false if the event must be sent again to the WebCore event handler.
     bool handleWheelEvent(const PlatformWheelEvent&);
+
+#if ENABLE(GESTURE_EVENTS)
+    // Can be called from any thread. Will try to handle the gesture event on the scrolling thread,
+    // and return false if the event must be sent again to the WebCore event handler.
+    bool handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
 private:
     explicit ScrollingCoordinator(Page*);

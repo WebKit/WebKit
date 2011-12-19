@@ -95,6 +95,25 @@ void EventDispatcher::wheelEvent(uint64_t pageID, const WebWheelEvent& wheelEven
     RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchWheelEvent, this, pageID, wheelEvent));
 }
 
+#if ENABLE(GESTURE_EVENTS)
+void EventDispatcher::gestureEvent(uint64_t pageID, const WebGestureEvent& gestureEvent)
+{
+#if ENABLE(THREADED_SCROLLING)
+    MutexLocker locker(m_scrollingCoordinatorsMutex);
+    if (ScrollingCoordinator* scrollingCoordinator = m_scrollingCoordinators.get(pageID).get()) {
+        PlatformGestureEvent platformGestureEvent = platform(gestureEvent);
+
+        if (scrollingCoordinator->handleGestureEvent(platformGestureEvent)) {
+            sendDidHandleEvent(pageID, gestureEvent);
+            return;
+        }
+    }
+#endif
+
+    RunLoop::main()->dispatch(bind(&EventDispatcher::dispatchGestureEvent, this, pageID, gestureEvent));
+}
+#endif
+
 void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& wheelEvent)
 {
     ASSERT(isMainThread());
@@ -105,6 +124,19 @@ void EventDispatcher::dispatchWheelEvent(uint64_t pageID, const WebWheelEvent& w
 
     webPage->wheelEvent(wheelEvent);
 }
+
+#if ENABLE(GESTURE_EVENTS)
+void EventDispatcher::dispatchGestureEvent(uint64_t pageID, const WebGestureEvent& gestureEvent)
+{
+    ASSERT(isMainThread());
+
+    WebPage* webPage = WebProcess::shared().webPage(pageID);
+    if (!webPage)
+        return;
+
+    webPage->gestureEvent(gestureEvent);
+}
+#endif
 
 #if ENABLE(THREADED_SCROLLING)
 void EventDispatcher::sendDidHandleEvent(uint64_t pageID, const WebEvent& event)
