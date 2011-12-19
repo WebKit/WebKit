@@ -2687,33 +2687,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyOrphans:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(orphans, Orphans)
         return;
-// length, percent, number
-    case CSSPropertyLineHeight:
-    {
-        HANDLE_INHERIT_AND_INITIAL(lineHeight, LineHeight)
-        if (!primitiveValue)
-            return;
-        Length lineHeight;
-        int type = primitiveValue->primitiveType();
-        if (primitiveValue->getIdent() == CSSValueNormal)
-            lineHeight = Length(-100.0, Percent);
-        else if (CSSPrimitiveValue::isUnitTypeLength(type)) {
-            double multiplier = zoomFactor;
-            if (m_style->textSizeAdjust()) {
-                if (Frame* frame = m_checker.document()->frame())
-                    multiplier *= frame->textZoomFactor();
-            }
-            lineHeight = primitiveValue->computeLength<Length>(style(), m_rootElementStyle, multiplier);
-        } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            lineHeight = Length((m_style->fontSize() * primitiveValue->getIntValue()) / 100, Fixed);
-        else if (type == CSSPrimitiveValue::CSS_NUMBER)
-            lineHeight = Length(primitiveValue->getDoubleValue() * 100.0, Percent);
-        else
-            return;
-        m_style->setLineHeight(lineHeight);
-        return;
-    }
-
 // rect
     case CSSPropertyClip:
     {
@@ -3753,6 +3726,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBottom:
     case CSSPropertyWidth:
     case CSSPropertyMinWidth:
+    case CSSPropertyLineHeight:
     case CSSPropertyListStyle:
     case CSSPropertyListStyleImage:
     case CSSPropertyListStylePosition:
