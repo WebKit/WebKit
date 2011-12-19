@@ -753,6 +753,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSDOMWindowCustom.h \
 	Source/WebCore/bindings/js/JSDOMWindowShell.cpp \
 	Source/WebCore/bindings/js/JSDOMWindowShell.h \
+	Source/WebCore/bindings/js/JSDOMWindowWebAudioCustom.cpp \
+	Source/WebCore/bindings/js/JSDOMWindowWebSocketCustom.cpp \
 	Source/WebCore/bindings/js/JSDOMWrapper.cpp \
 	Source/WebCore/bindings/js/JSDOMWrapper.h \
 	Source/WebCore/bindings/js/JSDataViewCustom.cpp \

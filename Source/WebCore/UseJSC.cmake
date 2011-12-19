@@ -46,6 +46,8 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSDOMWindowBase.cpp
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
+    bindings/js/JSDOMWindowWebAudioCustom.cpp
+    bindings/js/JSDOMWindowWebSocketCustom.cpp
     bindings/js/JSDOMWrapper.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp

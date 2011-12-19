@@ -1861,6 +1861,8 @@
             'bindings/js/JSDOMWindowCustom.cpp',
             'bindings/js/JSDOMWindowCustom.h',
             'bindings/js/JSDOMWindowShell.cpp',
+            'bindings/js/JSDOMWindowWebAudioCustom.cpp',
+            'bindings/js/JSDOMWindowWebSocketCustom.cpp',
             'bindings/js/JSDOMWrapper.cpp',
             'bindings/js/JSDataViewCustom.cpp',
             'bindings/js/JSDedicatedWorkerContextCustom.cpp',

@@ -1,3 +1,42 @@
+2011-12-19  Kentaro Hara  <haraken@chromium.org>
+
+        Move WebAudio and WebSocket getters from JSDOMWindowCustom.cpp
+        to JSDOMWindow{WebAudio,WebSocket}Custom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74841
+
+        Reviewed by Adam Barth.
+
+        This is the second step for bug 74599. We are planning to enable the [Supplemental]
+        IDL and modularize WebAudio and WebSocket on AppleWebKit. This patch moves
+        webkitAudioContext() and webSocket() from JSDOMWindowCustom.cpp to JSDOMWindowWebAudioCustom.cpp
+        and JSDOMWindowWebSocketCustom.cpp, for modularization.
+
+        Tests: Confirm that build succeeds.
+               http/tests/websocket/tests/*
+
+        * GNUmakefile.list.am: Added JSDOMWindowWebAudioCustom.cpp and JSDOMWindowWebSocketCustom.cpp.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
+        * bindings/js/JSDOMWindowCustom.cpp: For now we do not remove settingsForWindow(),
+        webkitAudioContext() and webSocket(), since other build systems are still using them.
+        We will remove them after all build systems implement the [Supplemental] IDL.
+        * bindings/js/JSDOMWindowWebAudioCustom.cpp: Added.
+        (WebCore::settingsForWindowWebAudio):
+        (WebCore::JSDOMWindow::webkitAudioContext):
+        * bindings/js/JSDOMWindowWebSocketCustom.cpp: Added.
+        (WebCore::settingsForWindowWebSocket):
+        (WebCore::JSDOMWindow::webSocket):
+
+        * bindings/scripts/CodeGeneratorJS.pm: Until we implement the [Supplemental] IDL
+        on all build systems, we need to temporarily allow two kinds of webkitAudioContext()
+        and webSocket().
+        (GenerateHeader):
+
 2011-12-16  Zhenyao Mo  <zmo@google.com>
 
         Postpone deleteRenderbuffer/deleteTexture until all framebuffer attachment points are removed.
