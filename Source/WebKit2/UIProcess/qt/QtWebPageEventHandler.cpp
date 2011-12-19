@@ -361,16 +361,15 @@ void QtWebPageEventHandler::inputMethodEvent(QInputMethodEvent* ev)
                 selectionStart = attr.start;
                 selectionLength = attr.length;
 
-                ASSERT(selectionStart >= 0);
-                ASSERT(selectionLength >= 0);
+                ASSERT_UNUSED(selectionStart, selectionStart >= 0);
+                ASSERT_UNUSED(selectionLength, selectionLength >= 0);
                 break;
             }
         }
 
         // FIXME: Confirm the composition here.
     } else {
-        ASSERT(cursorPositionWithinComposition >= 0);
-        ASSERT(replacementStart >= 0);
+        ASSERT_UNUSED(cursorPositionWithinComposition, cursorPositionWithinComposition >= 0);
 
         // FIXME: Set the composition here.
     }
