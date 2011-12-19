@@ -27,8 +27,6 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "WorkItem.h"
-
 #include <QCoreApplication>
 #include <QAbstractEventDispatcher>
 #include <QObject>

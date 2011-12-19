@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "WorkItem.h"
 #include <wtf/StdLibExtras.h>
 
 static RunLoop* s_mainRunLoop;

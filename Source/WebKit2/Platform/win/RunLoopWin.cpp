@@ -27,7 +27,6 @@
 #include "RunLoop.h"
 
 #include "BinarySemaphore.h"
-#include "WorkItem.h"
 #include <wtf/CurrentTime.h>
 
 using namespace CoreIPC;

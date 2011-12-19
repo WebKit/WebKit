@@ -37,7 +37,6 @@ HEADERS += \
     Platform/PlatformProcessIdentifier.h \
     Platform/RunLoop.h \
     Platform/SharedMemory.h \
-    Platform/WorkItem.h \
     Platform/WorkQueue.h \
     PluginProcess/PluginControllerProxy.h \
     PluginProcess/PluginProcess.h \

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ResponsivenessTimer.h"
 
-#include "WorkItem.h"
-
 namespace WebKit {
 
 static const double kResponsivenessTimeout = 3;

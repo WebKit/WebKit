@@ -1,3 +1,27 @@
+2011-12-18  Sam Weinig  <sam@webkit.org>
+
+        Remove now unused WorkItem.h
+        https://bugs.webkit.org/show_bug.cgi?id=74818
+
+        Reviewed by Andreas Kling.
+
+        * GNUmakefile.am:
+        * Platform/CoreIPC/Connection.cpp:
+        * Platform/RunLoop.cpp:
+        * Platform/RunLoop.h:
+        * Platform/WorkItem.h: Removed.
+        * Platform/gtk/RunLoopGtk.cpp:
+        * Platform/mac/RunLoopMac.mm:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::platformInvalidate):
+        * Platform/qt/RunLoopQt.cpp:
+        * Platform/win/RunLoopWin.cpp:
+        * Target.pri:
+        * UIProcess/ResponsivenessTimer.cpp:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * win/WebKit2.vcproj:
+
 2011-12-18  Anders Carlsson  <andersca@apple.com>
 
         Set the main frame view scroll position asynchronously

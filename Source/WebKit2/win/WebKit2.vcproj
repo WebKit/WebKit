@@ -3899,10 +3899,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Platform\WorkItem.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Platform\WorkQueue.cpp"
 				>
 			</File>

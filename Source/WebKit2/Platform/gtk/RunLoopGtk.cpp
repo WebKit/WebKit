@@ -28,7 +28,6 @@
 #include "RunLoop.h"
 
 #include "WKBase.h"
-#include "WorkItem.h"
 #include <glib.h>
 
 RunLoop::RunLoop()

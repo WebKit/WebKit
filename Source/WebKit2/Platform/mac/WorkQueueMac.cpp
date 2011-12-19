@@ -30,8 +30,6 @@
 #include <mach/mach_port.h>
 #include <wtf/PassOwnPtr.h>
 
-#if HAVE(DISPATCH_H)
-
 void WorkQueue::executeFunction(void* context)
 {
     WorkQueue* queue = static_cast<WorkQueue*>(dispatch_get_context(dispatch_get_current_queue()));
@@ -178,27 +176,3 @@ void WorkQueue::platformInvalidate()
 
     dispatch_release(m_dispatchQueue);
 }
-
-#else /* !HAVE(DISPATCH_H) */
-
-void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
-{
-}
-
-void WorkQueue::registerMachPortEventHandler(mach_port_t, MachPortEventType, PassOwnPtr<WorkItem>)
-{
-}
-
-void WorkQueue::unregisterMachPortEventHandler(mach_port_t)
-{
-}
-
-void WorkQueue::platformInitialize(const char*)
-{
-}
-
-void WorkQueue::platformInvalidate()
-{
-}
-
-#endif

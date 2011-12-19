@@ -29,7 +29,6 @@
 #include "BinarySemaphore.h"
 #include "CoreIPCMessageKinds.h"
 #include "RunLoop.h"
-#include "WorkItem.h"
 #include <wtf/CurrentTime.h>
 
 using namespace std;

@@ -43,8 +43,6 @@ typedef struct _GMainContext GMainContext;
 typedef int gboolean;
 #endif
 
-class WorkItem;
-
 namespace CoreIPC {
 class BinarySemaphore;
 }
