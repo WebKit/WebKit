@@ -43,59 +43,65 @@ function typeStringNullAware(value)
         : "[" + valueType + "]";
 }
 
+// FIXME: We really need to share this list with window-property-descriptors.js, which has a nearly-identical list.
 var __skip__ = {
     "window.__skip__" : 1,
-    "window.opener" : 1, // Work around DumpRenderTree bug where previous tests add window properties
-    "window.Components" : 1, // Work around Firefox exception
 
-    // Don't log DumpRenderTree injected objects
-    "window.layoutTestController" : 1, // Work around http://bugs.webkit.org/show_bug.cgi?id=11373
+    "window.opener" : 1, // Work around DumpRenderTree bug where previous tests add window properties.
+
+    "window.Components" : 1, // Work around Firefox exception so we can run this test in Firefox.
+
+    // Don't log DumpRenderTree injected objects.
     "window.GCController" : 1, 
     "window.accessibilityController" : 1,
     "window.appleScriptController" : 1,
     "window.eventSender" : 1,
+    "window.internals" : 1,
+    "window.layoutTestController" : 1, // Also needed to work around http://bugs.webkit.org/show_bug.cgi?id=11373
     "window.navigationController" : 1,
     "window.objCController" : 1,
     "window.objCPlugin" : 1,
     "window.objCPluginFunction" : 1,
     "window.plainText" : 1,
     "window.textInputController" : 1,
-    "window.internals" : 1,
-    // Ignore these properties because they do not exist in all implementations. They will be tested separately
-    "window.WebGLRenderingContext" : 1, 
+
+    // Don't log these properties because they do not exist in all implementations. They will need to be tested separately.
+    "window.ArrayBuffer" : 1,
+    "window.Blob.prototype.webkitSlice" : 1,
+    "window.DataView" : 1,
+    "window.DeviceMotionEvent" : 1,
+    "window.DeviceOrientationEvent" : 1,
+    "window.FileError" : 1,
+    "window.FileReader" : 1,
+    "window.Float32Array" : 1,
+    "window.Float64Array" : 1,
+    "window.Int16Array" : 1,
+    "window.Int32Array" : 1,
+    "window.Int8Array" : 1,
+    "window.Uint16Array" : 1,
+    "window.Uint32Array" : 1,
+    "window.Uint8Array" : 1,
     "window.WebGLActiveInfo" : 1, 
     "window.WebGLBuffer" : 1, 
     "window.WebGLFramebuffer" : 1, 
     "window.WebGLProgram" : 1, 
     "window.WebGLRenderbuffer" : 1, 
+    "window.WebGLRenderingContext" : 1, 
     "window.WebGLShader" : 1, 
     "window.WebGLTexture" : 1, 
     "window.WebGLUniformLocation" : 1, 
-    "window.ArrayBuffer" : 1,
-    "window.DataView" : 1,
-    "window.Int8Array" : 1,
-    "window.Uint8Array" : 1,
-    "window.Int16Array" : 1,
-    "window.Uint16Array" : 1,
-    "window.Int32Array" : 1,
-    "window.Uint32Array" : 1,
-    "window.Float32Array" : 1,
-    "window.Float64Array" : 1,
-    "window.clientInformation.geolocation" : 1,
-    "window.Blob.prototype.webkitSlice" : 1,
-    "window.FileError" : 1,
-    "window.FileReader" : 1,
     "window.WebKitBlobBuilder" : 1,
-    "window.DeviceOrientationEvent" : 1,
-    "window.ondeviceorientation" : 1,
-    "window.DeviceMotionEvent" : 1,
+    "window.clientInformation.geolocation" : 1,
     "window.ondevicemotion" : 1,
+    "window.ondeviceorientation" : 1,
     "window.performance" : 1,
+    "window.webkitNotifications" : 1,
     "window.webkitURL" : 1,
 
-    // showModalDialog is not implemented on all platforms in DumpRenderTree.
+    // Don't log this property because showModalDialog is not implemented on all platforms in DumpRenderTree.
     "window.showModalDialog" : 1,
-    // Ignore this property because it only appears in debug builds.
+
+    // Don't log this property because it only appears in debug builds.
     "window.jscprint" : 1
 };
 
