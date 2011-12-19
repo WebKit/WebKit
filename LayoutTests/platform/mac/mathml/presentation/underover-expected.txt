@@ -4,8 +4,8 @@ layer at (0,0) size 800x262
   RenderBlock {html} at (0,0) size 800x262
     RenderBody {body} at (8,16) size 784x230
       RenderBlock {p} at (0,0) size 784x39
-        RenderText {#text} at (0,12) size 92x18
-          text run at (0,12) width 92: "under & over: "
+        RenderText {#text} at (0,9) size 92x18
+          text run at (0,9) width 92: "under & over: "
         RenderMathMLMath {math} at (92,0) size 12x39
           RenderMathMLUnderOver {munderover} at (1,0) size 10x39
             RenderMathMLBlock (anonymous) at (0,0) size 10x16
@@ -22,8 +22,8 @@ layer at (0,0) size 800x262
                   text run at (0,3) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,55) size 784x39
-        RenderText {#text} at (0,12) size 92x18
-          text run at (0,12) width 92: "under & over: "
+        RenderText {#text} at (0,9) size 92x18
+          text run at (0,9) width 92: "under & over: "
         RenderMathMLMath {math} at (92,0) size 12x39
           RenderMathMLUnderOver {munderover} at (1,0) size 10x39
             RenderMathMLBlock (anonymous) at (0,0) size 10x16
@@ -40,8 +40,8 @@ layer at (0,0) size 800x262
                   text run at (0,3) width 7: "X"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,110) size 784x52
-        RenderText {#text} at (0,18) size 92x18
-          text run at (0,18) width 92: "under & over: "
+        RenderText {#text} at (0,15) size 92x18
+          text run at (0,15) width 92: "under & over: "
         RenderMathMLMath {math} at (92,0) size 20x52
           RenderMathMLUnderOver {munderover} at (1,0) size 18x52
             RenderMathMLBlock (anonymous) at (0,0) size 18x16
@@ -75,8 +75,8 @@ layer at (0,0) size 800x262
                     text run at (11,0) width 6: "0"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,178) size 784x52
-        RenderText {#text} at (0,18) size 92x18
-          text run at (0,18) width 92: "under & over: "
+        RenderText {#text} at (0,15) size 92x18
+          text run at (0,15) width 92: "under & over: "
         RenderMathMLMath {math} at (92,0) size 22x52
           RenderMathMLUnderOver {munderover} at (1,0) size 20x52
             RenderMathMLBlock (anonymous) at (0,0) size 20x16

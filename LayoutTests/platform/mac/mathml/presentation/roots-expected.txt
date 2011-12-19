@@ -28,8 +28,8 @@ layer at (0,0) size 800x537
                 RenderText {#text} at (17,0) size 8x16
                   text run at (17,0) width 8: "1"
       RenderBlock {p} at (0,70) size 784x22
-        RenderText {#text} at (0,0) size 222x18
-          text run at (0,0) width 222: "long square root with implied row: "
+        RenderText {#text} at (0,3) size 222x18
+          text run at (0,3) width 222: "long square root with implied row: "
         RenderMathMLMath {math} at (222,0) size 44x22
           RenderMathMLSquareRoot {msqrt} at (1,0) size 42x22
             RenderMathMLSubSup {msup} at (12,3) size 13x19
@@ -40,13 +40,13 @@ layer at (0,0) size 800x537
               RenderInline {mn} at (0,0) size 6x12
                 RenderText {#text} at (7,0) size 6x12
                   text run at (7,0) width 6: "2"
-            RenderMathMLOperator {mo} at (25,3) size 9x16
+            RenderMathMLOperator {mo} at (25,6) size 9x16
               RenderMathMLBlock {mo} at (0,0) size 9x16
                 RenderText {mo} at (0,0) size 9x16
                   text run at (0,0) width 9: "+"
             RenderInline {mn} at (0,0) size 8x16
-              RenderText {#text} at (34,3) size 8x16
-                text run at (34,3) width 8: "1"
+              RenderText {#text} at (34,6) size 8x16
+                text run at (34,6) width 8: "1"
       RenderBlock {p} at (0,108) size 784x40
         RenderText {#text} at (0,10) size 113x18
           text run at (0,10) width 113: "root of a fraction: "

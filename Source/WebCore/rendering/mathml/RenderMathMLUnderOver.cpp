@@ -247,7 +247,7 @@ void RenderMathMLUnderOver::layout()
 int RenderMathMLUnderOver::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     RenderObject* current = firstChild();
-    if (!current)
+    if (!current || linePositionMode == PositionOfInteriorLineBoxes)
         return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
 
     int baseline = 0;
@@ -272,9 +272,6 @@ int RenderMathMLUnderOver::baselinePosition(FontBaseline, bool firstLine, LineDi
             baseline += toRenderBoxModelObject(base)->baselinePosition(AlphabeticBaseline, true, HorizontalLine);
     }
 
-    // FIXME: Where is the extra 2-3px adjusted for zoom coming from?
-    float zoomFactor = style()->effectiveZoom();
-    baseline += static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
     return baseline;
 }
 

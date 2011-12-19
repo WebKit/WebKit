@@ -1,3 +1,19 @@
+2011-12-18  David Barton  <dbarton@mathscribe.com>
+
+        <msup>, <munder>, <mover>, and <munderover> baseline positions are wrong
+        https://bugs.webkit.org/show_bug.cgi?id=72821
+
+        Reviewed by Darin Adler.
+
+        Tested by rebaselining 8 existing tests. (Pardon the pun.)
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::baselinePosition):
+        Just using the base's (these puns are not my fault) baseline did not leave room for the exponent.
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::baselinePosition):
+        Added a guard condition, and removed some bad lines apparently mistakenly copied from RenderMathMLSubSup.cpp.
+
 2011-12-18  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSS line-height property in CSSStyleApplyProperty.

@@ -121,7 +121,7 @@ layer at (0,0) size 800x544
               RenderText {#text} at (1,38) size 7x16
                 text run at (1,38) width 7: "y"
             RenderMathMLOperator {mo} at (8,0) size 6x85
-            RenderMathMLUnderOver {munder} at (14,35) size 13x27
+            RenderMathMLUnderOver {munder} at (14,38) size 13x27
               RenderMathMLBlock (anonymous) at (0,0) size 13x16
                 RenderInline {mi} at (0,0) size 13x16
                   RenderText {#text} at (0,0) size 13x16

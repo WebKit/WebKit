@@ -207,9 +207,7 @@ int RenderMathMLSubSup::baselinePosition(FontBaseline, bool firstLine, LineDirec
         break;
     case Sup: 
     case Sub:
-        RenderBoxModelObject* box = toRenderBoxModelObject(base);
-        baseline = box->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
-        break;
+        return RenderMathMLBlock::baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode);
     }
     
     return baseline;

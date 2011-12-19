@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x102
-  RenderBlock {html} at (0,0) size 800x102
-    RenderBody {body} at (8,16) size 784x70
-      RenderBlock {p} at (0,0) size 784x27
+layer at (0,0) size 800x108
+  RenderBlock {html} at (0,0) size 800x108
+    RenderBody {body} at (8,16) size 784x76
+      RenderBlock {p} at (0,0) size 784x30
         RenderText {#text} at (0,0) size 44x18
           text run at (0,0) width 44: "under: "
-        RenderMathMLMath {math} at (44,0) size 12x27
+        RenderMathMLMath {math} at (44,3) size 12x27
           RenderMathMLUnderOver {munder} at (1,0) size 10x27
             RenderMathMLBlock (anonymous) at (0,0) size 10x16
               RenderInline {mi} at (0,0) size 10x16
@@ -17,10 +17,10 @@ layer at (0,0) size 800x102
                 RenderText {#text} at (0,3) size 5x12
                   text run at (0,3) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,43) size 784x27
+      RenderBlock {p} at (0,46) size 784x30
         RenderText {#text} at (0,0) size 44x18
           text run at (0,0) width 44: "under: "
-        RenderMathMLMath {math} at (44,0) size 12x27
+        RenderMathMLMath {math} at (44,3) size 12x27
           RenderMathMLUnderOver {munder} at (1,0) size 10x27
             RenderMathMLBlock (anonymous) at (0,0) size 10x16
               RenderInline {mi} at (0,0) size 10x16
