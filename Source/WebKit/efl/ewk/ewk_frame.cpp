@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ewk_frame.h"
 
+#include "Assertions.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
@@ -39,6 +40,7 @@
 #include "HitTestResult.h"
 #include "IntSize.h"
 #include "KURL.h"
+#include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformTouchEvent.h"
@@ -946,7 +948,27 @@ Eina_Bool ewk_frame_feed_touch_event(Evas_Object* ewkFrame, Ewk_Touch_Event_Type
     Evas_Coord x, y;
     evas_object_geometry_get(smartData->view, &x, &y, 0, 0);
 
-    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), static_cast<WebCore::PlatformEvent::Type>(action), metaState);
+    WebCore::PlatformEvent::Type type;
+    switch (action)
+    {
+    case EWK_TOUCH_START:
+        type = WebCore::PlatformEvent::TouchStart;
+        break;
+    case EWK_TOUCH_MOVE:
+        type = WebCore::PlatformEvent::TouchMove;
+        break;
+    case EWK_TOUCH_END:
+        type = WebCore::PlatformEvent::TouchEnd;
+        break;
+    case EWK_TOUCH_CANCEL:
+        type = WebCore::PlatformEvent::TouchCancel;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    WebCore::PlatformTouchEvent touchEvent(points, WebCore::IntPoint(x, y), type, metaState);
     return smartData->frame->eventHandler()->handleTouchEvent(touchEvent);
 #else
     return false;

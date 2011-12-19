@@ -1,3 +1,17 @@
+2011-12-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed; fix the build with ENABLE(TOUCH_EVENTS) after r103167.
+
+        This partly reverts r102297: the Touch{Start,Move,End,Cancel} events
+        are not in a separate enum anymore (they are part of
+        WebCore::PlatformEvent), so the assertions in AssertMatchingEnums.cpp
+        always fail. Setting EWK_TOUCH_START to TouchStart feels even more
+        hackish, so we just convert the types manually again for now.
+
+        * WebCoreSupport/AssertMatchingEnums.cpp:
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+
 2011-12-17  Sam Weinig  <sam@webkit.org>
 
         Make PlatformTouchEvent inherit from PlatformEvent
