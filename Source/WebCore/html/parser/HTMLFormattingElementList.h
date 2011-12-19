@@ -127,6 +127,11 @@ public:
 private:
     Entry* first() { return &at(0); }
 
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#list-of-active-formatting-elements
+    // These functions enforce the "Noah's Ark" condition, which removes redundant mis-nested elements.
+    void tryToEnsureNoahsArkConditionQuickly(Element*, Vector<Element*>& remainingCandiates);
+    void ensureNoahsArkCondition(Element*);
+
     Vector<Entry> m_entries;
 };
 

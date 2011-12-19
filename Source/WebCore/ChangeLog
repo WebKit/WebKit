@@ -1,3 +1,28 @@
+2011-12-19  Adam Barth  <abarth@webkit.org>
+
+        The HTML parser doesn't enforce the "Noah's Ark condition" from the HTML5 spec
+        https://bugs.webkit.org/show_bug.cgi?id=74828
+
+        Reviewed by Darin Adler.
+
+        This patch implement the "Noah's Ark condition" from the HTML5
+        specification.  This condition limits the number of identitical
+        elements that can be in the list of active formatting elements.  I'm not
+        entirely sure that enforcing this condition is worth the complexity,
+        but given that we've come this far in support of the HTML5 parsing
+        algorithm, we might as well finish it.
+
+        After this patch, we pass all but one of the html5lib parsing tests!
+
+        Tests: html5lib/runner.html
+
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::attributeCount):
+        (WebCore::HTMLFormattingElementList::append):
+        (WebCore::HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly):
+        (WebCore::HTMLFormattingElementList::ensureNoahsArkCondition):
+        * html/parser/HTMLFormattingElementList.h:
+
 2011-12-19  Benjamin Poulain  <bpoulain@apple.com>
 
         Add support for 8 bits strings to Document::isValidName()
