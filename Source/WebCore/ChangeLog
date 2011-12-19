@@ -1,5 +1,34 @@
 2011-12-19  Alexander Pavlov  <apavlov@chromium.org>
 
+        Web Inspector: Implement CSS selector profiler backend
+        https://bugs.webkit.org/show_bug.cgi?id=74603
+
+        Reviewed by Pavel Feldman.
+
+        No new tests, as the changed code does not result in visible effects yet.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::RuleMatchingStats::RuleMatchingStats):
+        (WebCore::SelectorProfile::SelectorProfile):
+        (WebCore::SelectorProfile::~SelectorProfile):
+        (WebCore::SelectorProfile::totalMatchingTimeMs):
+        (WebCore::SelectorProfile::startSelector):
+        (WebCore::SelectorProfile::commitSelector):
+        (WebCore::SelectorProfile::commitSelectorTime):
+        (WebCore::SelectorProfile::toInspectorObject):
+        (WebCore::InspectorCSSAgent::clearFrontend):
+        (WebCore::InspectorCSSAgent::restore):
+        (WebCore::InspectorCSSAgent::startSelectorProfiler):
+        (WebCore::InspectorCSSAgent::stopSelectorProfiler):
+        (WebCore::InspectorCSSAgent::willMatchRule):
+        (WebCore::InspectorCSSAgent::didMatchRule):
+        (WebCore::InspectorCSSAgent::willProcessRule):
+        (WebCore::InspectorCSSAgent::didProcessRule):
+        * inspector/InspectorCSSAgent.h:
+
+2011-12-19  Alexander Pavlov  <apavlov@chromium.org>
+
         Web Inspector: Status bar button glyph for the "Record" buttons broken
         https://bugs.webkit.org/show_bug.cgi?id=74861
 

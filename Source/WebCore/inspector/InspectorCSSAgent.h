@@ -50,6 +50,7 @@ class InspectorFrontend;
 class InstrumentingAgents;
 class NameNodeMap;
 class Node;
+class SelectorProfile;
 
 #if ENABLE(INSPECTOR)
 
@@ -88,6 +89,13 @@ public:
     void addRule(ErrorString*, const int contextNodeId, const String& selector, RefPtr<InspectorObject>* result);
     void getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>* result);
 
+    void startSelectorProfiler(ErrorString*);
+    void stopSelectorProfiler(ErrorString*, RefPtr<InspectorObject>* = 0);
+    void willMatchRule(const CSSStyleRule*);
+    void didMatchRule(bool);
+    void willProcessRule(const CSSStyleRule*);
+    void didProcessRule();
+
 private:
     InspectorCSSAgent(InstrumentingAgents*, InspectorState*, InspectorDOMAgent*);
 
@@ -118,17 +126,20 @@ private:
 
     InspectorFrontend::CSS* m_frontend;
     InspectorDOMAgent* m_domAgent;
-    RefPtr<Element> m_lastElementWithPseudoState;
-    unsigned m_lastPseudoState;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;
     NodeToInspectorStyleSheet m_nodeToInspectorStyleSheet;
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
 
+    RefPtr<Element> m_lastElementWithPseudoState;
+    unsigned m_lastPseudoState;
+
     int m_lastStyleSheetId;
     int m_lastRuleId;
     int m_lastStyleId;
+
+    OwnPtr<SelectorProfile> m_currentSelectorProfile;
 };
 
 #endif

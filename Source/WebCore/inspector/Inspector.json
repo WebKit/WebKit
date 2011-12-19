@@ -1613,6 +1613,25 @@
                     { "name": "sourceLine", "type": "integer", "optional": true, "description": "Line in the document containing the media query (not defined for the \"stylesheet\" source)." }
                 ],
                 "description": "CSS media query descriptor."
+            },
+            {
+                "id": "SelectorProfileEntry",
+                "type": "object",
+                "properties": [
+                    { "name": "selector", "type": "string", "description": "CSS selector." },
+                    { "name": "time", "type": "number", "description": "Total time this selector handling contributed to the browser running time during profiling (in milliseconds.)" },
+                    { "name": "hitCount", "type": "integer", "description": "Number of times this selector was considered a candidate for matching against DOM elements." },
+                    { "name": "matchCount", "type": "integer", "description": "Number of times this selector actually matched a DOM element." }
+                ],
+                "description": "CSS selector profile entry."
+            },
+            {
+                "id": "SelectorProfile",
+                "type": "object",
+                "properties": [
+                    { "name": "totalTime", "type": "number", "description": "Total processing time for all selectors in the profile (in milliseconds.)" },
+                    { "name": "data", "type": "array", "items": { "$ref": "SelectorProfileEntry" }, "description": "CSS selector profile entries." }
+                ]
             }
         ],
         "commands": [
@@ -1749,6 +1768,15 @@
                     { "name": "cssProperties", "type": "array", "items": { "type": "string" }, "description": "Supported property names." }
                 ],
                 "description": "Returns all supported CSS property names."
+            },
+            {
+                "name": "startSelectorProfiler"
+            },
+            {
+                "name": "stopSelectorProfiler",
+                "returns": [
+                    { "name": "profile", "$ref": "SelectorProfile" }
+                ]
             }
         ],
         "events": [
