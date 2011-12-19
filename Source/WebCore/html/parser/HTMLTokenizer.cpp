@@ -126,8 +126,7 @@ inline bool MarkupTokenizerBase<HTMLToken, HTMLTokenizerState>::shouldSkipNullCh
     return !m_forceNullCharacterReplacement
         && (m_state == HTMLTokenizerState::DataState
             || m_state == HTMLTokenizerState::RCDATAState
-            || m_state == HTMLTokenizerState::RAWTEXTState
-            || m_state == HTMLTokenizerState::PLAINTEXTState);
+            || m_state == HTMLTokenizerState::RAWTEXTState);
 }
 
 

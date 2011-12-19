@@ -450,7 +450,7 @@ void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
     // HTMLToken. Fortuantely, Character tokens can't cause use to re-enter
     // the parser.
     //
-    // FIXME: Top clearing the rawToken once we start running the parser off
+    // FIXME: Stop clearing the rawToken once we start running the parser off
     // the main thread or once we stop allowing synchronous JavaScript
     // execution from parseMappedAttribute.
     if (rawToken.type() != HTMLTokenTypes::Character)
@@ -471,11 +471,13 @@ void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken& token)
     else
         processToken(token);
 
-    // Swallowing U+0000 characters isn't in the HTML5 spec, but turning all
-    // the U+0000 characters into replacement characters has compatibility
-    // problems.
-    m_parser->tokenizer()->setForceNullCharacterReplacement(m_insertionMode == TextMode);
-    m_parser->tokenizer()->setShouldAllowCDATA(!m_tree.isEmpty() && !isInHTMLNamespace(m_tree.currentNode()));
+    bool inForeignContent = !m_tree.isEmpty()
+        && !isInHTMLNamespace(m_tree.currentNode())
+        && !HTMLElementStack::isHTMLIntegrationPoint(m_tree.currentNode())
+        && !HTMLElementStack::isMathMLTextIntegrationPoint(m_tree.currentNode());
+
+    m_parser->tokenizer()->setForceNullCharacterReplacement(m_insertionMode == TextMode || inForeignContent);
+    m_parser->tokenizer()->setShouldAllowCDATA(inForeignContent);
 }
 
 void HTMLTreeBuilder::processToken(AtomicHTMLToken& token)
@@ -2816,7 +2818,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken& token)
     case HTMLTokenTypes::Character: {
         String characters = String(token.characters().data(), token.characters().size());
         m_tree.insertTextNode(characters);
-        if (m_framesetOk && !isAllWhitespace(characters))
+        if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
             m_framesetOk = false;
         break;
     }

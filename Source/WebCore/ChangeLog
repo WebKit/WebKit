@@ -1,5 +1,37 @@
 2011-12-19  Adam Barth  <abarth@webkit.org>
 
+        We don't pass all of the html5lib unsafe-text.dat tests
+        https://bugs.webkit.org/show_bug.cgi?id=74825
+
+        Reviewed by Eric Seidel.
+
+        This patch is actually three (tiny) related patches.  Together these
+        changes cause use to pass the plain-text-unsafe.dat tests from html5lib.
+
+        Tests: html5lib/runner.html
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::::shouldSkipNullCharacters):
+            - We're not supposed to skip null characters in the PLAINTEXTState.
+              This might cause compatibility problems with text/plain documents
+              that contains NUL characters because we use the PLAINTEXTState
+              to parse them.  If we run into any trouble, it's easy to fix in
+              TextDocumentParser.
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+            - Fix typo.
+        (WebCore::HTMLTreeBuilder::constructTreeFromAtomicToken):
+            - We're supposed to replace NUL characters if the next character
+              token if we're in foreign content.  The previous check didn't
+              quite get this case correctly.
+        (WebCore::HTMLTreeBuilder::processTokenInForeignContent):
+            - Now that we replace NUL characters with the replacement
+              character, we need to be more careful about the fact that
+              replacement characters don't flip m_framesetOk to false.  Note:
+              This new check matches the check for non-foreign content.
+
+2011-12-19  Adam Barth  <abarth@webkit.org>
+
         WebKit should support HTML entities that expand to more than one character
         https://bugs.webkit.org/show_bug.cgi?id=74826
 
