@@ -20,10 +20,6 @@
 #include "config.h"
 #include "DeviceOrientationProviderQt.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-QTM_USE_NAMESPACE
-#endif
-
 namespace WebCore {
 
 DeviceOrientationProviderQt::DeviceOrientationProviderQt()

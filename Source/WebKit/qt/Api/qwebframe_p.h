@@ -30,6 +30,9 @@
 #include "PlatformString.h"
 #if ENABLE(ORIENTATION_EVENTS)
 #include "qorientationsensor.h"
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+using QTM_NAMESPACE::QOrientationSensor;
+#endif // QT_VERSION < QT_VERSION_CHECK(5, 0, 0).
 #endif // ENABLE(ORIENTATION_EVENTS).
 #include "qwebelement.h"
 #include "wtf/RefPtr.h"
@@ -127,11 +130,7 @@ public:
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QTM_NAMESPACE::QOrientationSensor m_orientation;
-#else
     QOrientationSensor m_orientation;
-#endif // QT_VERSION < QT_VERSION_CHECK(5, 0, 0).
 #endif // ENABLE(ORIENTATION_EVENTS).
 
 private:

@@ -1,5 +1,16 @@
 2011-12-19  Alexander Færøy  <ahf@0x90.dk>
 
+        [Qt] Cleanup QTM_NAMESPACE usage in DeviceOrientationProviderQt
+        https://bugs.webkit.org/show_bug.cgi?id=74853
+
+        Reviewed by Simon Hausmann.
+
+        * Api/qwebframe_p.h:
+        * WebCoreSupport/DeviceOrientationProviderQt.cpp:
+        * WebCoreSupport/DeviceOrientationProviderQt.h:
+
+2011-12-19  Alexander Færøy  <ahf@0x90.dk>
+
         [Qt] Cleanup DeviceMotionClientQt and friends.
         https://bugs.webkit.org/show_bug.cgi?id=74849
 

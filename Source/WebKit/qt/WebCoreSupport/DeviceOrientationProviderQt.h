@@ -26,24 +26,21 @@
 
 #include <QRotationFilter>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+using QTM_NAMESPACE::QRotationFilter;
+using QTM_NAMESPACE::QRotationReading;
+using QTM_NAMESPACE::QRotationSensor;
+#endif
+
 namespace WebCore {
 
-class DeviceOrientationProviderQt
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    : public QTM_NAMESPACE::QRotationFilter {
-#else
-    : public QRotationFilter {
-#endif
+class DeviceOrientationProviderQt : public QRotationFilter {
 public:
     DeviceOrientationProviderQt();
 
     void setController(DeviceOrientationController*);
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    bool filter(QTM_NAMESPACE::QRotationReading*);
-#else
     bool filter(QRotationReading*);
-#endif
 
     void start();
     void stop();
@@ -54,11 +51,7 @@ public:
 private:
     RefPtr<DeviceOrientation> m_lastOrientation;
     DeviceOrientationController* m_controller;
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    QTM_NAMESPACE::QRotationSensor m_sensor;
-#else
     QRotationSensor m_sensor;
-#endif
 };
 
 }
