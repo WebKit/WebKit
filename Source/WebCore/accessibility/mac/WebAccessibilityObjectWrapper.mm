@@ -1889,9 +1889,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             // if selectionEnd > 0, then there is selected text and this question should not be answered
             if (m_object->isPasswordField() || m_object->selectionEnd() > 0)
                 return nil;
-            int lineNumber = m_object->lineForPosition(m_object->visiblePositionForIndex(m_object->selectionStart(), true));
+
+            AccessibilityObject* focusedObject = m_object->focusedUIElement();
+            if (focusedObject != m_object)
+                return nil;
+
+            VisiblePosition focusedPosition = focusedObject->visiblePositionForIndex(focusedObject->selectionStart(), true);
+            int lineNumber = m_object->lineForPosition(focusedPosition);
             if (lineNumber < 0)
                 return nil;
+
             return [NSNumber numberWithInt:lineNumber];
         }
     }

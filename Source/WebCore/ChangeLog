@@ -1,3 +1,15 @@
+2011-12-18  Alice Boxhall  <aboxhall@chromium.org>
+
+        Make AccessibilityObject::lineForPosition return the correct value for cases where the position is not within the current object.
+        https://bugs.webkit.org/show_bug.cgi?id=71348
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::lineForPosition):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2011-12-18  Sam Weinig  <sam@webkit.org>
 
         Make EventHandler::handleWheelEvent take const PlatformWheelEvent&

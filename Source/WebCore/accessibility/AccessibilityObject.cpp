@@ -1023,24 +1023,29 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
 
 int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
-    if (visiblePos.isNull())
-        return 0;
+    if (visiblePos.isNull() || !node())
+        return -1;
 
-    unsigned lineCount = 0;
+    // If the position is not in the same editable region as this AX object, return -1.
+    Node* containerNode = visiblePos.deepEquivalent().containerNode();
+    if (!containerNode->containsIncludingShadowDOM(node()) && !node()->containsIncludingShadowDOM(containerNode))
+        return -1;
+
+    int lineCount = -1;
     VisiblePosition currentVisiblePos = visiblePos;
     VisiblePosition savedVisiblePos;
 
     // move up until we get to the top
     // FIXME: This only takes us to the top of the rootEditableElement, not the top of the
     // top document.
-    while (currentVisiblePos.isNotNull() && !(inSameLine(currentVisiblePos, savedVisiblePos))) {
-        ++lineCount;
+    do {
         savedVisiblePos = currentVisiblePos;
         VisiblePosition prevVisiblePos = previousLinePosition(currentVisiblePos, 0);
         currentVisiblePos = prevVisiblePos;
-    }
+        ++lineCount;
+    }  while (currentVisiblePos.isNotNull() && !(inSameLine(currentVisiblePos, savedVisiblePos)));
 
-    return lineCount - 1;
+    return lineCount;
 }
 
 // NOTE: Consider providing this utility method as AX API

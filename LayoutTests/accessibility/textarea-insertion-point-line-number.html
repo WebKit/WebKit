@@ -1,12 +1,11 @@
 <html>
+<script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 </script>
 <body>
-    
-    <div id="result"></div>
-    
+    <div id="console"></div>
     <textarea name="area1" id="area1" rows="5" cols="40">
 line 1
 line 2
@@ -14,31 +13,54 @@ line 3
     </textarea>
 
     <textarea name="area2" id="area2" rows="5" cols="40"></textarea>
-     
+
+
+    <div id="contenteditable-div" role="textbox" contenteditable="true" tabindex="0">
+      <div id="contenteditable-line1">Line1</div>
+      <textarea id="contenteditable-line2" rows="1" cols="40">Line2</textarea>
+      <div id="contenteditable-line3">Line3</div>
+    </div>
     <script>
+        description("This tests that lineNumberForPosition is reported correctly for textarea and contenteditable elements.");
+
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
+            var console = document.getElementById("console");
 
             var area1 = document.getElementById("area1");
             area1.focus();
+            var area1AXUIElement = accessibilityController.focusedElement;
+            var lineNumber = -2;
 
-            for (var k = 0; k < 3; k++) {
-                area1.selectionStart = (k*7);
-                area1.selectionEnd = (k*7);
-                var lineNumber = accessibilityController.focusedElement.insertionPointLineNumber;            
-                if (lineNumber == k) {
-                    result.innerText += "Test:" + k + ") Line Number: Pass [" + area1.selectionStart + "->" + lineNumber + "]\n";       
-                }
-                else {
-                    result.innerText += "Test:" + k + ") Line Number: Fail [" + area1.selectionStart + "->" + lineNumber + "]\n";       
-                }
+            for (var currentLine = 0; currentLine < 3; currentLine++ ) {
+                shouldBe("area1.selectionStart = (" + (currentLine * 7) + "); " +
+                         "area1.selectionEnd = (" + (currentLine * 7) +"); " +
+                         "area1AXUIElement.insertionPointLineNumber;", "currentLine");
             }
 
             var area2 = document.getElementById("area2");
-            area2.focus();
-            var lineNumber = accessibilityController.focusedElement.insertionPointLineNumber
-            result.innerText += "Not focused on text area line number: " + lineNumber + "\n";
+            shouldBe("area2.focus(); area1AXUIElement.insertionPointLineNumber;", "-1");
+
+            var contenteditableDiv = document.getElementById("contenteditable-div");
+            contenteditableDiv.focus();
+            var contenteditableAXUIElement = accessibilityController.focusedElement;
+
+            var contenteditableLine1 = document.getElementById("contenteditable-line1");
+            shouldBe("window.getSelection().setBaseAndExtent(contenteditableLine1, 1, contenteditableLine1, 1); " +
+                     "contenteditableAXUIElement.insertionPointLineNumber;", "0");
+
+            var contenteditableLine2 = document.getElementById("contenteditable-line2");
+            shouldBe("contenteditableLine2.selectionStart = 1; contenteditableLine2.selectionEnd = 1;" +
+                     "contenteditableAXUIElement.insertionPointLineNumber;", "-1");
+
+            var contenteditableLine3 = document.getElementById("contenteditable-line3");
+            shouldBe("window.getSelection().setBaseAndExtent(contenteditableLine3, 1, contenteditableLine3, 1); " +
+                     "contenteditableAXUIElement.insertionPointLineNumber;", "2");
+
+            contenteditableLine2.focus();
+            var textareaAXUIElement = accessibilityController.focusedElement;
+            shouldBe("textareaAXUIElement.insertionPointLineNumber", "0");
         }
     </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

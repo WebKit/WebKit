@@ -1,5 +1,20 @@
-Test:0) Line Number: Pass [0->0]
-Test:1) Line Number: Pass [7->1]
-Test:2) Line Number: Pass [14->2]
-Not focused on text area line number: -1
+This tests that lineNumberForPosition is reported correctly for textarea and contenteditable elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS area1.selectionStart = (0); area1.selectionEnd = (0); area1AXUIElement.insertionPointLineNumber; is currentLine
+PASS area1.selectionStart = (7); area1.selectionEnd = (7); area1AXUIElement.insertionPointLineNumber; is currentLine
+PASS area1.selectionStart = (14); area1.selectionEnd = (14); area1AXUIElement.insertionPointLineNumber; is currentLine
+PASS area2.focus(); area1AXUIElement.insertionPointLineNumber; is -1
+PASS window.getSelection().setBaseAndExtent(contenteditableLine1, 1, contenteditableLine1, 1); contenteditableAXUIElement.insertionPointLineNumber; is 0
+PASS contenteditableLine2.selectionStart = 1; contenteditableLine2.selectionEnd = 1;contenteditableAXUIElement.insertionPointLineNumber; is -1
+PASS window.getSelection().setBaseAndExtent(contenteditableLine3, 1, contenteditableLine3, 1); contenteditableAXUIElement.insertionPointLineNumber; is 2
+PASS textareaAXUIElement.insertionPointLineNumber is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
   
+Line1
+
+Line3
