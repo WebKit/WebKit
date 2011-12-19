@@ -1,3 +1,16 @@
+2011-12-19  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [BlackBerry] remove one file related to multipart from the BlackBerry build system
+        https://bugs.webkit.org/show_bug.cgi?id=74839
+
+        Reviewed by Daniel Bates.
+
+        After refactored multipart, the code of MultipartResponseDelegate have been moved 
+        out of WebCore, we do not need to upstream MultipartResponseDelegate any more. 
+        So remove it from PlatformBlackBerry.cmake to update build system. 
+        
+        * PlatformBlackBerry.cmake:
+
 2011-12-15  Geoffrey Garen  <ggaren@apple.com>
 
         Placement new does an unnecessary NULL check
