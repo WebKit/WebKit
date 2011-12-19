@@ -3626,11 +3626,11 @@ void HTMLMediaElement::setController(PassRefPtr<MediaController> controller)
 
     m_mediaController = controller;
 
-    if (hasMediaControls())
-        mediaControls()->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
-
     if (m_mediaController)
         m_mediaController->addMediaElement(this);
+
+    if (hasMediaControls())
+        mediaControls()->setMediaController(m_mediaController ? m_mediaController.get() : static_cast<MediaControllerInterface*>(this));
 }
 
 void HTMLMediaElement::updateMediaController()

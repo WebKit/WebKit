@@ -63,10 +63,14 @@ PlatformClockCA::~PlatformClockCA()
 
 void PlatformClockCA::setCurrentTime(float time)
 {
+    if (m_running)
+        CAClockStop(m_clock);
     CAClockTime caTime;
     caTime.format = kCAClockTimeFormat_Seconds;
     caTime.time.seconds = time;
     CAClockSetCurrentTime(m_clock, &caTime);
+    if (m_running)
+        CAClockStart(m_clock);
 }
 
 float PlatformClockCA::currentTime() const

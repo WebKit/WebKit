@@ -373,7 +373,6 @@ void MediaController::updatePlaybackState()
         if (!m_paused && hasEnded()) {
             // changes the MediaController object to a paused media controller
             m_paused = true;
-            m_clock->stop();
 
             // and then fires a simple event named pause at the MediaController object.
             scheduleEvent(eventNames().pauseEvent);
@@ -387,9 +386,11 @@ void MediaController::updatePlaybackState()
     switch (newPlaybackState) {
     case WAITING:
         eventName = eventNames().waitingEvent;
+        m_clock->stop();
         break;
     case ENDED:
         eventName = eventNames().endedEvent;
+        m_clock->stop();
         break;
     case PLAYING:
         eventName = eventNames().playingEvent;
@@ -538,16 +539,23 @@ void MediaController::beginScrubbing()
 {
     for (size_t index = 0; index < m_mediaElements.size(); ++index)
         m_mediaElements[index]->beginScrubbing();
+    if (m_playbackState == PLAYING)
+        m_clock->stop();
 }
 
 void MediaController::endScrubbing()
 {
     for (size_t index = 0; index < m_mediaElements.size(); ++index)
         m_mediaElements[index]->endScrubbing();
+    if (m_playbackState == PLAYING)
+        m_clock->start();
 }
 
 bool MediaController::canPlay() const
 {
+    if (m_paused)
+        return true;
+
     for (size_t index = 0; index < m_mediaElements.size(); ++index) {
         if (!m_mediaElements[index]->canPlay())
             return false;

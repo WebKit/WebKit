@@ -22,9 +22,6 @@
         function canplaythrough() {
             consoleWrite("EVENT(canplaythrough)");
             controller.removeEventListener('canplaythrough', canplaythrough, true);
-            run('controller.currentTime = 5');
-            testExpected('video.currentTime', 5);
-            testExpected('video2.currentTime', 5);
             run('video.play()');
             run('video2.play()');
             controller.addEventListener('playing', playing, true);
@@ -36,6 +33,9 @@
             controller.removeEventListener('playing', playing, true);
             testExpected('controller.paused', false);
             controller.addEventListener('ended', ended, true);
+            run('controller.currentTime = 5');
+            testExpected('video.currentTime', 5);
+            testExpected('video2.currentTime', 5);
         }
 
         function ended() { 

@@ -1,3 +1,24 @@
+2011-12-19  Jer Noble  <jer.noble@apple.com>
+
+        MediaController: cannot scrub while playing.
+        https://bugs.webkit.org/show_bug.cgi?id=74870
+        rdar://problem/10602037
+
+        Reviewed by Eric Carlson.
+
+        Updated media/media-controller-playback.html test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setController): Change order of operations; set the controllers media
+            element before passing controller to the controls.
+        * html/MediaController.cpp:
+        (MediaController::updatePlaybackState): Stop the playback clock when WAITING or ENDED.
+        (MediaController::beginScrubbing): Stop the playback clock.
+        (MediaController::endScrubbing): Restart (if necessary) the playback clock.
+        (MediaController::canPlay): Return true if paused.
+        * platform/mac/PlatformClockCA.cpp:
+        (PlatformClockCA::setCurrentTime): Stop the CAClock before changing the current time.
+
 2011-12-19  Adam Barth  <abarth@webkit.org>
 
         We don't pass all of the html5lib unsafe-text.dat tests
