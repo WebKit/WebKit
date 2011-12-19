@@ -2708,7 +2708,6 @@ BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = PASS CRASH
 BUGCR68436 LINUX DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 MAC WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT TEXT
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS CRASH TIMEOUT
-BUGCR68599 : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
 // Disabled scrollbars are rendered differently
 BUGWK52414 MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
