@@ -1,5 +1,13 @@
 2011-12-19  Adrienne Walker  <enne@google.com>
 
+        [chromium] Add more using statements to (re)fix Chromium builders.
+
+        Unreviewed gardening.
+
+        * tests/Canvas2DLayerChromiumTest.cpp:
+
+2011-12-19  Adrienne Walker  <enne@google.com>
+
         [chromium] Fix win builder due to more NotNull ambiguity errors.
 
         Unreviewed gardening.

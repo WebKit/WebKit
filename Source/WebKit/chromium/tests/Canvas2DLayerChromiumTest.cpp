@@ -39,7 +39,9 @@
 
 using namespace WebCore;
 using namespace WebKit;
+using testing::InSequence;
 using testing::Return;
+using testing::Test;
 
 namespace WebCore {
 
