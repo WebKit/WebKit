@@ -26,7 +26,6 @@
 
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
-#include "JSTestSupplemental.h"
 #include "TestInterface.h"
 #include "TestSupplemental.h"
 #include <runtime/Error.h>
@@ -201,7 +200,8 @@ JSValue jsTestInterfaceStr2(ExecState* exec, JSValue slotBase, const Identifier&
 JSValue jsTestInterfaceStr3(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
-    return JSTestSupplemental::str3(castedThis, exec);
+    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
+    return castedThis->str3(imp, exec);
 }
 
 #endif
@@ -232,7 +232,9 @@ void setJSTestInterfaceStr2(ExecState* exec, JSObject* thisObject, JSValue value
 #if ENABLE(Condition11) || ENABLE(Condition12)
 void setJSTestInterfaceStr3(ExecState* exec, JSObject* thisObject, JSValue value)
 {
-    JSTestSupplemental::setStr3(static_cast<JSTestInterface*>(thisObject), exec, value);
+    JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
+    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
+    castedThis->setStr3(imp, exec, value);
 }
 
 #endif

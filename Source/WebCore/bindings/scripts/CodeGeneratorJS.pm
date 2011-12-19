@@ -875,8 +875,8 @@ sub GenerateHeader
         foreach (@{$dataNode->attributes}) {
             my $attribute = $_;
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"};
-            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"};
-            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"};
+            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"});
+            $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"});
             if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                 push(@headerContent, "    JSC::WriteBarrier<JSC::Unknown> m_" . $attribute->signature->name . ";\n");
                 $numCachedAttributes++;
@@ -900,11 +900,20 @@ sub GenerateHeader
                 if ($attribute->type !~ /^readonly/) {
                     push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
                 }
-            } elsif (($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                push(@headerContent, "    JSC::JSValue " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(JSC::ExecState*) const;\n");
-            } elsif (($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) && !$attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+            } elsif (($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"})) {
+                my $methodName = $codeGenerator->WK_lcfirst($attribute->signature->name);
+                if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                    push(@headerContent, "    JSC::JSValue " . $methodName . "(" . $interfaceName . "*, JSC::ExecState*) const;\n");
+                } else {
+                    push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
+                }
+            } elsif (($attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"})) {
                 if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
+                    if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
+                        push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(" . $interfaceName . "*, JSC::ExecState*, JSC::JSValue);\n");
+                    } else {
+                        push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
+                    }
                 }
             }
         }
@@ -1716,9 +1725,8 @@ sub GenerateImplementation
 
                 if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCCustomGetter"}) {
                     if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                        my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
-                        $implIncludes{"JS${implementedBy}.h"} = 1;
-                        push(@implContent, "    return JS${implementedBy}::$implGetterFunctionName(castedThis, exec);\n");
+                        push(@implContent, "    ${interfaceName}* imp = static_cast<${interfaceName}*>(castedThis->impl());\n");
+                        push(@implContent, "    return castedThis->$implGetterFunctionName(imp, exec);\n");
                     } else {
                         push(@implContent, "    return castedThis->$implGetterFunctionName(exec);\n");
                     }
@@ -1905,9 +1913,9 @@ sub GenerateImplementation
 
                         if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCCustomSetter"}) {
                             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
-                                my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
-                                $implIncludes{"JS${implementedBy}.h"} = 1;
-                                push(@implContent, "    JS${implementedBy}::set$implSetterFunctionName(static_cast<$className*>(thisObject), exec, value);\n");
+                                push(@implContent, "    ${className}* castedThis = static_cast<${className}*>(thisObject);\n");
+                                push(@implContent, "    ${interfaceName}* imp = static_cast<${interfaceName}*>(castedThis->impl());\n");
+                                push(@implContent, "    castedThis->set$implSetterFunctionName(imp, exec, value);\n");
                             } else {
                                 push(@implContent, "    static_cast<$className*>(thisObject)->set$implSetterFunctionName(exec, value);\n");
                             }

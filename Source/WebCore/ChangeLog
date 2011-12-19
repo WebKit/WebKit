@@ -1,3 +1,40 @@
+2011-12-18  Kentaro Hara  <haraken@chromium.org>
+
+        REGRESSION(r101445): [JSC] Generated code for custom getters and setters
+        with the [Supplemental] IDL is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=74837
+
+        Reviewed by Darin Adler.
+
+        In bug 73162, we implemented the [Supplemental] IDL, but the generated code
+        for custom getters and setters was wrong in JSC. This patch fixes CodeGeneratorJS.pm
+        so that the result of WebCore/bindings/scripts/test/TestInterface.idl becomes as follows:
+
+        Wrong:
+            JSValue jsTestInterfaceStr3(ExecState* exec, JSValue slotBase, const Identifier&)
+            {
+                JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+                return JSTestSupplemental::str3(castedThis, exec);
+            }
+
+        Correct:
+            JSValue jsTestInterfaceStr3(ExecState* exec, JSValue slotBase, const Identifier&)
+            {
+                JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
+                TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
+                return castedThis->str3(imp, exec);
+            }
+
+        Tests: bindings/scripts/test/JS/TestInterface.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSTestInterface.cpp: Updated run-bindings-tests result.
+        (WebCore::jsTestInterfaceStr3):
+        (WebCore::setJSTestInterfaceStr3):
+        * bindings/scripts/test/JS/JSTestInterface.h: Ditto.
+
 2011-12-18  Adam Barth  <abarth@webkit.org>
 
         Fix typo in comment.

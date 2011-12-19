@@ -53,6 +53,9 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);
+
+    // Custom attributes
+    JSC::JSValue str3(TestInterface*, JSC::ExecState*) const;
     TestInterface* impl() const { return m_impl; }
     void releaseImpl() { m_impl->deref(); m_impl = 0; }
 
