@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../editing.js"></script>
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 6px;
+    font-size: 18px;
+}
+</style>
+</head>
+<body>
+<pre id="description"></pre>
+<pre id="console"></pre>
+
+<div id="source">zz zz zz</textarea>
+
+<div id="container"></div>
+
+<div id="move-target"></div>
+
+<script>
+description(
+    "Test for asynchronous spellchecking in case DOM mutation happens. " +
+    "This test checks crash won't happen if DOM mutations happened."
+);
+
+var jsTestIsAsync = true;
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.setAsynchronousSpellCheckingEnabled(true);
+}
+
+if (window.internals)
+    internals.setUnifiedTextCheckingEnabled(document, true);
+
+var sourceIds = ['source'];
+var destElems = ['textarea', 'input', 'contenteditable'];
+var tweaks = ['delete', 'move', 'mutate'];
+
+var testData = [];
+for (var i = 0; i < sourceIds.length; ++i) {
+    for (var j = 0; j < destElems.length; ++j) {
+        for (var k = 0; k < tweaks.length; ++k) {
+            testData.push({
+                sourceId: sourceIds[i],
+                destElem: destElems[j],
+                tweak: tweaks[k]
+            });
+        }
+    }
+}
+
+var sel = window.getSelection();
+
+function removeAllChildren(elem) {
+    while (elem.firstChild)
+        elem.removeChild(elem.firstChild);
+}
+
+var testNo = 0;
+function doTestIfAny() {
+    // Clean up first.
+    removeAllChildren(document.getElementById('container'));
+    removeAllChildren(document.getElementById('move-target'));
+
+    var next = testData.shift();
+    if (next)
+        return window.setTimeout(function(){ doTest(++testNo, next); }, 0);
+
+    // No more tests. Tear down.
+    removeAllChildren(document.getElementById('container'));
+    removeAllChildren(document.getElementById('move-target'));
+
+    if (window.internals)
+        internals.setUnifiedTextCheckingEnabled(document, false);
+
+    if (window.layoutTestController) {
+        layoutTestController.setAsynchronousSpellCheckingEnabled(false);
+        finishJSTest();
+    }
+}
+
+var requestId;
+var lastRequestId;
+function doTest(testNo, testData) {
+    function createElement(kind) {
+        if (kind == 'textarea' || kind == 'input')
+            return document.createElement(kind);
+
+        var div = document.createElement('div');
+        div.setAttribute('contenteditable', true);
+        return div;
+    }
+
+    debug("");
+    debug("Test Start: " + testNo);
+
+    var source = document.getElementById(testData.sourceId);
+    var destination = createElement(testData.destElem);
+    document.getElementById('container').appendChild(destination);
+
+    if (window.internals)
+        lastRequestId = internals.lastSpellCheckRequestSequence(document);
+
+    // A spellcheck request will be invoked.
+    doCopyAndPaste(source, destination);
+
+    setTimeout(function() {
+        if (window.internals)
+            requestId = internals.lastSpellCheckRequestSequence(document);
+        shouldBeGreaterThanOrEqual('requestId', 'lastRequestId + 1');
+
+        // Then, tweak
+        tweak(destination, testData.tweak);
+
+        waitForSpellCheckRequestDone(requestId, destination, testData.tweak, 10, 1);
+    }, 0);
+}
+
+function doCopyAndPaste(source, dest) {
+    function focusOn(elem) {
+        if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement)
+            elem.focus();
+        else
+            sel.selectAllChildren(elem);
+    }
+
+    sel.selectAllChildren(source);
+    document.execCommand("Copy");
+
+    focusOn(dest);
+    document.execCommand("Paste");
+}
+
+function tweak(elem, kind) {
+    switch (kind) {
+    case 'delete':
+        elem.parentNode.removeChild(elem);
+        return;
+    case 'move':
+        var target = document.getElementById('move-target');
+        target.appendChild(elem);
+        return;
+    case 'mutate':
+        if (elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement)
+            elem.value = 'zzz';
+        else
+            elem.innerHTML = 'zzz';
+        return;
+    default:
+        testFailed('Unknown kind of tweak');
+        return;
+    }
+}
+
+function waitForSpellCheckRequestDone(requestId, destination, tweakKind, restTry, nsleep) {
+    // No more try.
+    if (restTry <= 0) {
+        testFailed('Failed verification');
+        setTimeout(doTestIfAny, 0);
+        return;
+    }
+
+    if (window.internals)
+        var lastProcessedId = internals.lastSpellCheckProcessedSequence(document);
+
+    if (requestId != lastProcessedId) {
+        setTimeout(function() {
+            waitForSpellCheckRequestDone(requestId, destination, tweakKind, restTry - 1, nsleep * 2);
+        }, nsleep);
+        return;
+    }
+
+    if (verifyExistenceOfMarkers(destination, tweakKind)) {
+        testPassed('Request has been processed.');
+    } else {
+        testFailed('Request has been processed but we detected unexpected marker location.');
+    }
+
+    setTimeout(doTestIfAny, 0);
+}
+
+function findFirstTextNode(node)
+{
+    function iterToFindFirstTextNode(node)
+    {
+        if (node instanceof Text)
+            return node;
+
+        var childNodes = node.childNodes;
+        for (var i = 0; i < childNodes.length; ++i) {
+            var n = iterToFindFirstTextNode(childNodes[i]);
+            if (n)
+                return n;
+        }
+
+        return null;
+    }
+
+    if (node instanceof HTMLInputElement || node instanceof HTMLTextAreaElement)
+        return iterToFindFirstTextNode(internals.shadowRoot(node));
+    else
+        return iterToFindFirstTextNode(node);
+}
+
+function verifyExistenceOfMarkers(elem, tweakKind) {
+    if (!window.internals)
+        return true;
+
+    switch (tweakKind) {
+    case 'delete':
+        return true;
+    case 'move':
+        // In move, marker should be there.
+        var markerNum = internals.markerCountForNode(findFirstTextNode(elem), "spelling");
+        if (markerNum != 3)
+            return false;
+        for (var i = 0; i < 3; ++i) {
+            var range = internals.markerRangeForNode(findFirstTextNode(elem), "spelling", i);
+            if (range.toString() != "zz")
+                return false;
+        }
+        return true;
+    case 'mutate':
+        // In mutation, there aren't markers.
+        return internals.markerCountForNode(findFirstTextNode(elem), "spelling") == 0;
+    default:
+        testFailed('Unknown kind of tweak');
+        return true;
+    }
+}
+
+doTestIfAny();
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

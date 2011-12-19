@@ -1195,6 +1195,7 @@ editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
+editing/spelling/spellcheck-async-mutation.html
 
 # For https://bugs.webkit.org/show_bug.cgi?id=50758
 # These require DRT setSerializeHTTPLoads implementation to be reliable.
