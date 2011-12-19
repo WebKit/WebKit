@@ -1,3 +1,11 @@
+2011-12-19  Adrienne Walker  <enne@google.com>
+
+        Try to fix the Chromium win builder NotNull conflict.
+
+        Unreviewed gardening.
+
+        * tests/MockGraphicsContext3DTest.cpp:
+
 2011-12-18  Keishi Hattori  <keishi@webkit.org>
 
         Implement <input type=color> UI WebKit chromium part

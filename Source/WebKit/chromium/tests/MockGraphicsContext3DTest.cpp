@@ -35,7 +35,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace testing;
+using testing::Return;
 
 class FrameCountingContext : public MockWebGraphicsContext3D {
 public:
