@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>            
+
+        var testTrack;
+        var seekedCount = 0;
+        var info = [ "Lorem", "ipsum", "dolor", "sit" ];
+
+        function testFontSizes()
+        {
+            consoleWrite("<br>Test that the cue display font size is resized as the video element resizes.");
+            run("video.width = 320");
+            run("video.height = 240");
+            document.body.offsetTop;
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "16px");
+
+            consoleWrite("");
+            run("video.width = 640");
+            run("video.height = 480");
+            document.body.offsetTop;
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "19px");
+
+            consoleWrite("");
+            run("video.width = 1280");
+            run("video.height = 960");
+            document.body.offsetTop;
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "38px");
+
+            consoleWrite("");
+            run("video.width = 2560");
+            run("video.height = 1440");
+            document.body.offsetTop;
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "58px");
+
+            endTest();
+        }
+
+        function seeked()
+        {
+            testExpected("video.currentTime", seekedCount + .5);
+            testExpected("testTrack.track.activeCues.length", 1);
+            testExpected("testTrack.track.activeCues[0].getCueAsSource()", info[seekedCount]);
+            testExpected("textTrackDisplayElement(video).innerText", info[seekedCount]);
+
+            if (++seekedCount == info.length)
+                testFontSizes();
+            else {
+                consoleWrite("");
+                run("video.currentTime = " + (video.currentTime + 1));
+                return;
+            }
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that TextTrack's cues are rendered correctly.");
+            findMediaElement();
+            testTrack = document.querySelectorAll('track')[0];
+            video.src = findMediaFile('video', '../content/test');
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = .5; });
+        }
+        
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/captions.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

@@ -186,3 +186,28 @@ audio::-webkit-media-controls-fullscreen-volume-min-button, video::-webkit-media
 audio::-webkit-media-controls-fullscreen-volume-max-button, video::-webkit-media-controls-fullscreen-volume-max-button {
     display: none;
 }
+
+video::-webkit-media-text-track-container {
+    position: absolute;
+    width: 100%;
+    overflow: hidden;
+
+    font-size: 22px;
+    font-family: sans-serif;
+    text-align: center;
+    
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+}
+
+video::-webkit-media-text-track-display {
+    display: inline;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: yellow;
+    padding: 0px 2px;
+}

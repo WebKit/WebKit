@@ -55,6 +55,11 @@ class MediaPlayer;
 class RenderBox;
 class RenderMedia;
 
+#if ENABLE(VIDEO_TRACK)
+class MediaControlTextTrackContainerElement;
+class MediaControlTextTrackDisplayElement;
+#endif
+
 class MediaControlRootElementChromium : public MediaControls {
 public:
     static PassRefPtr<MediaControlRootElementChromium> create(Document*);
@@ -87,6 +92,13 @@ public:
     void updateTimeDisplay();
     void updateStatusDisplay();
 
+#if ENABLE(VIDEO_TRACK)
+    void createTextTrackDisplay();
+    void showTextTrackDisplay();
+    void hideTextTrackDisplay();
+    void updateTextTrackDisplay();
+#endif
+
     virtual bool shouldHideControls();
 
 private:
@@ -108,6 +120,10 @@ private:
     MediaControlVolumeSliderElement* m_volumeSlider;
     MediaControlVolumeSliderContainerElement* m_volumeSliderContainer;
     MediaControlPanelElement* m_panel;
+#if ENABLE(VIDEO_TRACK)
+    MediaControlTextTrackContainerElement* m_textDisplayContainer;
+    MediaControlTextTrackDisplayElement* m_textTrackDisplay;
+#endif
 
     bool m_opaque;
     bool m_isMouseOverControls;

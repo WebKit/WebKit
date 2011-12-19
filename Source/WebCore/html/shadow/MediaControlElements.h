@@ -69,6 +69,8 @@ enum MediaControlElementType {
     MediaVolumeSlider,
     MediaVolumeSliderThumb,
     MediaVolumeSliderMuteButton,
+    MediaTextTrackDisplayContainer,
+    MediaTextTrackDisplay,
 };
 
 HTMLMediaElement* toParentMediaElement(Node*);
@@ -482,6 +484,42 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
 };
  
+// ----------------------------
+
+#if ENABLE(VIDEO_TRACK)
+class MediaControlTextTrackContainerElement : public MediaControlElement {
+public:
+    
+    static PassRefPtr<MediaControlTextTrackContainerElement> create(Document*);
+    
+    void updateSizes();
+
+private:
+    MediaControlTextTrackContainerElement(Document*);
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual MediaControlElementType displayType() const { return MediaTextTrackDisplayContainer; }
+    virtual const AtomicString& shadowPseudoId() const;
+
+    IntRect m_videoDisplaySize;
+    float m_fontSize;
+    LayoutUnit m_bottom;
+};
+
+// ----------------------------
+
+class MediaControlTextTrackDisplayElement : public MediaControlElement {
+public:
+    static PassRefPtr<MediaControlTextTrackDisplayElement> create(Document*);
+
+private:
+    MediaControlTextTrackDisplayElement(Document*);
+
+    virtual MediaControlElementType displayType() const { return MediaTextTrackDisplay; }
+    virtual const AtomicString& shadowPseudoId() const;
+};
+#endif
+
 // ----------------------------
 
 } // namespace WebCore

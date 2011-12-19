@@ -1,5 +1,67 @@
 2011-12-19  Eric Carlson  <eric.carlson@apple.com>
 
+        Render text tracks
+        https://bugs.webkit.org/show_bug.cgi?id=62886
+
+        Reviewed by Sam Weinig.
+
+        Test: media/track/track-cue-rendering.html
+
+        * css/mediaControls.css:
+        (video::-webkit-media-text-track-container):
+        (video::-webkit-media-text-track-display):
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_haveVisibleTextTrack.
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Trigger an update of the text
+            track display.
+        (WebCore::HTMLMediaElement::textTrackModeChanged): call configureTextTrackDisplay() so 
+            the text track display is hidden or shown when necessary.
+        (WebCore::HTMLMediaElement::userIsInterestedInThisTrack): Minor cleanup.
+        (WebCore::HTMLMediaElement::createMediaControls): configureMediaControls() always called
+            reset after creating the controls, do it here instead.
+        (WebCore::HTMLMediaElement::configureMediaControls): Simplify and cleanup.
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Show and hide text track display.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::currentlyVisibleCues):
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::RenderTextTrackContainerElement::RenderTextTrackContainerElement): New.
+        (WebCore::RenderTextTrackContainerElement::layout): New. Call the display element so it can
+            update the position and font size.
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement): New.
+        (WebCore::MediaControlTextTrackContainerElement::create): Ditto.
+        (WebCore::MediaControlTextTrackContainerElement::createRenderer): Ditto.
+        (WebCore::MediaControlTextTrackContainerElement::shadowPseudoId): Ditto.
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Keep the cue display element
+            positioned above the bottom of the video box, and size the font according to the video height.
+        (WebCore::MediaControlTextTrackDisplayElement::MediaControlTextTrackDisplayElement): New.
+        (WebCore::MediaControlTextTrackDisplayElement::create): Ditto.
+        (WebCore::MediaControlTextTrackDisplayElement::shadowPseudoId): Ditto.
+        * html/shadow/MediaControlElements.h:
+        (WebCore::MediaControlTextTrackContainerElement::displayType):
+        (WebCore::MediaControlTextTrackDisplayElement::displayType):
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement): New.
+        (WebCore::MediaControlRootElement::setMediaController): Ditto.
+        (WebCore::MediaControlRootElement::createTextTrackDisplay): Ditto.
+        (WebCore::MediaControlRootElement::showTextTrackDisplay): Ditto.
+        (WebCore::MediaControlRootElement::hideTextTrackDisplay): Ditto.
+        (WebCore::MediaControlRootElement::updateTextTrackDisplay): Ditto.
+        * html/shadow/MediaControlRootElement.h:
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::MediaControlRootElementChromium): New.
+        (WebCore::MediaControlRootElement::createTextTrackDisplay): Ditto.
+        (WebCore::MediaControlRootElement::showTextTrackDisplay): Ditto.
+        (WebCore::MediaControlRootElement::hideTextTrackDisplay): Ditto.
+        (WebCore::MediaControlRootElement::updateTextTrackDisplay): Ditto.
+        * html/shadow/MediaControlRootElementChromium.h:
+        * html/shadow/MediaControls.h:
+
+2011-12-19  Eric Carlson  <eric.carlson@apple.com>
+
         Enable <track> for Mac build
         https://bugs.webkit.org/show_bug.cgi?id=74838
 

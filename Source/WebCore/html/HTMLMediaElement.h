@@ -66,6 +66,11 @@ class Widget;
 class DisplaySleepDisabler;
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+typedef PODIntervalTree<double, TextTrackCue*> CueIntervalTree;
+typedef Vector<CueIntervalTree::IntervalType> CueList;
+#endif
+
 // FIXME: The inheritance from MediaPlayerClient here should be private inheritance.
 // But it can't be until the Chromium WebMediaPlayerClientImpl class is fixed so it
 // no longer depends on typecasting a MediaPlayerClient to an HTMLMediaElement.
@@ -196,6 +201,7 @@ public:
     PassRefPtr<TextTrack> addTrack(const String& kind, ExceptionCode& ec) { return addTrack(kind, emptyString(), emptyString(), ec); }
 
     TextTrackList* textTracks();
+    CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
     virtual void trackWasAdded(HTMLTrackElement*);
     virtual void trackWillBeRemoved(HTMLTrackElement*);
@@ -203,6 +209,7 @@ public:
     void configureTextTrack(HTMLTrackElement*);
     void configureTextTracks();
     bool textTracksAreReady() const;
+    void configureTextTrackDisplay();
 
     // TextTrackClient
     virtual void textTrackReadyStateChanged(TextTrack*);
@@ -549,12 +556,12 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;
+    bool m_haveVisibleTextTrack : 1;
+
     RefPtr<TextTrackList> m_textTracks;
     Vector<RefPtr<TextTrack> > m_textTracksWhenResourceSelectionBegan;
-    
-    typedef PODIntervalTree <double, TextTrackCue*> CueIntervalTree;
     CueIntervalTree m_cueTree;
-    Vector<CueIntervalTree::IntervalType> m_currentlyVisibleCues;
+    CueList m_currentlyActiveCues;
 #endif
 
 #if ENABLE(WEB_AUDIO)

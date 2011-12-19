@@ -72,6 +72,12 @@ class MediaControls : public HTMLDivElement {
 
     virtual bool shouldHideControls() = 0;
 
+#if ENABLE(VIDEO_TRACK)
+    virtual void showTextTrackDisplay() = 0;
+    virtual void hideTextTrackDisplay() = 0;
+    virtual void updateTextTrackDisplay() = 0;
+#endif
+
 protected:
     MediaControls(Document*);
 

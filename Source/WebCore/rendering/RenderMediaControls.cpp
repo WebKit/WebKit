@@ -174,6 +174,9 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
             break;
         case MediaControlsPanel:
             ASSERT_NOT_REACHED();
+        case MediaTextTrackDisplayContainer:
+        case MediaTextTrackDisplay:
+            ASSERT_NOT_REACHED();
             break;
     }
 

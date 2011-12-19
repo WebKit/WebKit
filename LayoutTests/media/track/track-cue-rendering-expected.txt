@@ -1,0 +1,47 @@
+Test that TextTrack's cues are rendered correctly.
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (video.currentTime == '0.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'Lorem') OK
+EXPECTED (textTrackDisplayElement(video).innerText == 'Lorem') OK
+
+RUN(video.currentTime = 1.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '1.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'ipsum') OK
+EXPECTED (textTrackDisplayElement(video).innerText == 'ipsum') OK
+
+RUN(video.currentTime = 2.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '2.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'dolor') OK
+EXPECTED (textTrackDisplayElement(video).innerText == 'dolor') OK
+
+RUN(video.currentTime = 3.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '3.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'sit') OK
+EXPECTED (textTrackDisplayElement(video).innerText == 'sit') OK
+
+Test that the cue display font size is resized as the video element resizes.
+RUN(video.width = 320)
+RUN(video.height = 240)
+EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '16px') OK
+
+RUN(video.width = 640)
+RUN(video.height = 480)
+EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '19px') OK
+
+RUN(video.width = 1280)
+RUN(video.height = 960)
+EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '38px') OK
+
+RUN(video.width = 2560)
+RUN(video.height = 1440)
+EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '58px') OK
+END OF TEST
+

@@ -31,10 +31,16 @@
 
 #include "Chrome.h"
 #include "HTMLMediaElement.h"
+#include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderTheme.h"
+#include "Text.h"
+
+#if ENABLE(VIDEO_TRACK)
+#include "TextTrackCue.h"
+#endif
 
 using namespace std;
 
@@ -65,8 +71,12 @@ MediaControlRootElement::MediaControlRootElement(Document* document)
     , m_fullScreenVolumeSlider(0)
     , m_fullScreenMaxVolumeButton(0)
     , m_panel(0)
-    , m_isMouseOverControls(false)
+#if ENABLE(VIDEO_TRACK)
+    , m_textDisplayContainer(0)
+    , m_textTrackDisplay(0)
+#endif
     , m_hideFullscreenControlsTimer(this, &MediaControlRootElement::hideFullscreenControlsTimerFired)
+    , m_isMouseOverControls(false)
 {
 }
 
@@ -264,6 +274,12 @@ void MediaControlRootElement::setMediaController(MediaControllerInterface* contr
         m_fullScreenMaxVolumeButton->setMediaController(controller);
     if (m_panel)
         m_panel->setMediaController(controller);
+#if ENABLE(VIDEO_TRACK)
+    if (m_textDisplayContainer)
+        m_textDisplayContainer->setMediaController(controller);
+    if (m_textTrackDisplay)
+        m_textTrackDisplay->setMediaController(controller);
+#endif
     reset();
 }
 
@@ -575,6 +591,75 @@ void MediaControlRootElement::stopHideFullscreenControlsTimer()
 {
     m_hideFullscreenControlsTimer.stop();
 }
+
+#if ENABLE(VIDEO_TRACK)
+void MediaControlRootElement::createTextTrackDisplay()
+{
+    if (m_textDisplayContainer)
+        return;
+
+    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
+    m_textDisplayContainer = textDisplayContainer.get();
+
+    RefPtr<MediaControlTextTrackDisplayElement> textDisplay = MediaControlTextTrackDisplayElement::create(document());
+    m_textDisplayContainer->hide();
+    m_textTrackDisplay = textDisplay.get();
+
+    ExceptionCode ec;
+    textDisplayContainer->appendChild(textDisplay.release(), ec, true);
+    if (ec)
+        return;
+
+    // Insert it before the first controller element so it always displays behind the controls.
+    insertBefore(textDisplayContainer.release(), m_panel, ec, true);
+}
+
+void MediaControlRootElement::showTextTrackDisplay()
+{
+    if (!m_textDisplayContainer)
+        createTextTrackDisplay();
+    m_textDisplayContainer->show();
+}
+
+void MediaControlRootElement::hideTextTrackDisplay()
+{
+    if (!m_textDisplayContainer)
+        createTextTrackDisplay();
+    m_textDisplayContainer->hide();
+}
+
+void MediaControlRootElement::updateTextTrackDisplay()
+{
+    if (!m_textDisplayContainer)
+        createTextTrackDisplay();
+
+    CueList activeCues = toParentMediaElement(m_textDisplayContainer)->currentlyActiveCues();
+    if (activeCues.isEmpty())
+        return;
+
+    m_textTrackDisplay->removeChildren();
+    bool nothingToDisplay = true;
+    for (size_t i = 0; i < activeCues.size(); ++i) {
+        TextTrackCue* cue = activeCues[i].data();
+        ASSERT(cue->isActive());
+        if (!cue->track() || cue->track()->mode() != TextTrack::SHOWING)
+            continue;
+
+        String cueText = cue->getCueAsSource();
+        if (!cueText.isEmpty()) {
+            if (!nothingToDisplay)
+                m_textTrackDisplay->appendChild(document()->createElement(HTMLNames::brTag, false), ASSERT_NO_EXCEPTION);
+            m_textTrackDisplay->appendChild(document()->createTextNode(cueText), ASSERT_NO_EXCEPTION);
+            nothingToDisplay = false;
+        }
+    }
+
+    if (!nothingToDisplay)
+        m_textDisplayContainer->show();
+    else
+        m_textDisplayContainer->hide();
+}
+#endif
 
 const AtomicString& MediaControlRootElement::shadowPseudoId() const
 {

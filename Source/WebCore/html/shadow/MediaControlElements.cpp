@@ -47,6 +47,7 @@
 #include "RenderMedia.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
+#include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -1114,6 +1115,112 @@ const AtomicString& MediaControlCurrentTimeDisplayElement::shadowPseudoId() cons
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-current-time-display"));
     return id;
 }
+
+// ----------------------------
+
+#if ENABLE(VIDEO_TRACK)
+
+class RenderTextTrackContainerElement : public RenderBlock {
+public:
+    RenderTextTrackContainerElement(Node*);
+    
+private:
+    virtual void layout();
+};
+
+RenderTextTrackContainerElement::RenderTextTrackContainerElement(Node* node)
+    : RenderBlock(node)
+{
+}
+
+void RenderTextTrackContainerElement::layout()
+{
+    RenderBlock::layout();
+    if (style()->display() == NONE)
+        return;
+
+    ASSERT(mediaControlElementType(node()) == MediaTextTrackDisplayContainer);
+
+    LayoutStateDisabler layoutStateDisabler(view());
+    static_cast<MediaControlTextTrackContainerElement*>(node())->updateSizes();
+}
+
+inline MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Document* document)
+    : MediaControlElement(document)
+    , m_fontSize(0)
+    , m_bottom(0)
+{
+}
+
+PassRefPtr<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement::create(Document* document)
+{
+    RefPtr<MediaControlTextTrackContainerElement> element = adoptRef(new MediaControlTextTrackContainerElement(document));
+    element->hide();
+    return element.release();
+}
+
+RenderObject* MediaControlTextTrackContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderTextTrackContainerElement(this);
+}
+
+const AtomicString& MediaControlTextTrackContainerElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-text-track-container"));
+    return id;
+}
+
+static const float mimimumFontSize = 16;
+static const float videoHeightFontSizeDivisor = 25;
+static const float trackBottomMultiplier = 0.9;
+    
+void MediaControlTextTrackContainerElement::updateSizes()
+{
+    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    if (!mediaElement || !mediaElement->renderer() || !mediaElement->renderer()->isVideo())
+        return;
+    
+    IntRect videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
+    if (m_videoDisplaySize == videoBox)
+        return;
+    m_videoDisplaySize = videoBox;
+
+    float fontSize = m_videoDisplaySize.size().height() / videoHeightFontSizeDivisor;
+    if (fontSize < mimimumFontSize)
+        fontSize = mimimumFontSize;
+    if (fontSize != m_fontSize) {
+        m_fontSize = fontSize;
+        ensureInlineStyleDecl()->setProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
+    }
+
+    LayoutUnit bottom = static_cast<LayoutUnit>(m_videoDisplaySize.y() + m_videoDisplaySize.height() - (m_videoDisplaySize.height() * trackBottomMultiplier));
+    if (bottom != m_bottom) {
+        m_bottom = bottom;
+        ensureInlineStyleDecl()->setProperty(CSSPropertyBottom, String::number(bottom) + "px");
+    }
+}
+
+// ----------------------------
+
+MediaControlTextTrackDisplayElement::MediaControlTextTrackDisplayElement(Document* document)
+    : MediaControlElement(document)
+{
+}
+
+PassRefPtr<MediaControlTextTrackDisplayElement> MediaControlTextTrackDisplayElement::create(Document* document)
+{
+    return adoptRef(new MediaControlTextTrackDisplayElement(document));
+}
+
+const AtomicString& MediaControlTextTrackDisplayElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-text-track-display"));
+    return id;
+}
+
+#endif
+
+// ----------------------------
 
 } // namespace WebCore
 
