@@ -33,7 +33,9 @@
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
+// FIXME: Why are we including HTML entity information in the XML parser?
 #include "HTMLEntitySearch.h"
+#include "HTMLEntityTable.h"
 #include "NewXMLDocumentParser.h"
 #include "ProcessingInstruction.h"
 #include "ScriptElement.h"
@@ -370,9 +372,19 @@ void XMLTreeBuilder::processHTMLEntity(const AtomicXMLToken& token)
         }
     }
     search.advance(';');
-    UChar32 entityValue = search.currentValue();
+    if (!search.isEntityPrefix()) {
+        m_parser->stopParsing();
+        return;
+    }
+    UChar32 entityValue = search.mostRecentMatch()->firstValue;
+    // FIXME: We need to account for secondValue if any XML entities are longer
+    // than one unicode character.
+    ASSERT_NOT_REACHED();
+    // Darin Adler writes:
+    //   You can see given the code above that this else is dead code. This code is in a strange state.
+    //   And the reinterpret_cast to UChar* makes the code little-endian-specific. That is not good!
     if (entityValue <= 0xFFFF)
-       appendToText(reinterpret_cast<UChar*>(&entityValue), 1);
+        appendToText(reinterpret_cast<UChar*>(&entityValue), 1);
     else {
         UChar utf16Pair[2] = { U16_LEAD(entityValue), U16_TRAIL(entityValue) };
         appendToText(utf16Pair, 2);

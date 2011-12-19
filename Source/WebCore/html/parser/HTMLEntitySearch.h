@@ -39,7 +39,6 @@ public:
     void advance(UChar);
 
     bool isEntityPrefix() const { return !!m_first; }
-    UChar32 currentValue() const { return m_currentValue; }
     int currentLength() const { return m_currentLength; }
 
     const HTMLEntityTableEntry* mostRecentMatch() const { return m_mostRecentMatch; }
@@ -57,13 +56,11 @@ private:
 
     void fail()
     {
-        m_currentValue = 0;
         m_first = 0;
         m_last = 0;
     }
 
     int m_currentLength;
-    UChar32 m_currentValue;
 
     const HTMLEntityTableEntry* m_mostRecentMatch;
     const HTMLEntityTableEntry* m_first;

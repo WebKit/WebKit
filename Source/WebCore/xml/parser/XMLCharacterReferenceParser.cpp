@@ -46,17 +46,16 @@ public:
         return value;
     }
 
-    inline static bool convertToUTF16(UChar32 value, StringBuilder& decodedCharacter)
+    inline static void convertToUTF16(UChar32 value, StringBuilder& decodedCharacter)
     {
         if (U_IS_BMP(value)) {
-        UChar character = static_cast<UChar>(value);
-        ASSERT(character == value);
-        decodedCharacter.append(character);
-        return true;
+            UChar character = static_cast<UChar>(value);
+            ASSERT(character == value);
+            decodedCharacter.append(character);
+            return;
         }
         decodedCharacter.append(U16_LEAD(value));
         decodedCharacter.append(U16_TRAIL(value));
-        return true;
     }
 
     inline static bool acceptMalformed() { return false; }

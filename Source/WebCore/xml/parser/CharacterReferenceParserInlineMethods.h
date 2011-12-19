@@ -128,10 +128,12 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 result = result * 16 + 10 + cc - 'A';
             else if (cc == ';') {
                 source.advanceAndASSERT(cc);
-                return ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
-            } else if (ParserFunctions::acceptMalformed())
-                return ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
-            else {
+                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                return true;
+            } else if (ParserFunctions::acceptMalformed()) {
+                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                return true;
+            } else {
                 unconsumeCharacters(source, consumedCharacters);
                 return false;
             }
@@ -142,10 +144,12 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
                 result = result * 10 + cc - '0';
             else if (cc == ';') {
                 source.advanceAndASSERT(cc);
-                return ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
-            } else if (ParserFunctions::acceptMalformed())
-                return ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
-            else {
+                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                return true;
+            } else if (ParserFunctions::acceptMalformed()) {
+                ParserFunctions::convertToUTF16(ParserFunctions::legalEntityFor(result), decodedCharacter);
+                return true;
+            } else {
                 unconsumeCharacters(source, consumedCharacters);
                 return false;
             }

@@ -70,17 +70,16 @@ public:
         return value;
     }
 
-    inline static bool convertToUTF16(UChar32 value, StringBuilder& decodedEntity)
+    inline static void convertToUTF16(UChar32 value, StringBuilder& decodedEntity)
     {
         if (U_IS_BMP(value)) {
             UChar character = static_cast<UChar>(value);
             ASSERT(character == value);
             decodedEntity.append(character);
-            return true;
+            return;
         }
         decodedEntity.append(U16_LEAD(value));
         decodedEntity.append(U16_TRAIL(value));
-        return true;
     }
 
     inline static bool acceptMalformed() { return true; }
@@ -105,7 +104,6 @@ public:
             return false;
         }
         if (!entitySearch.mostRecentMatch()) {
-            ASSERT(!entitySearch.currentValue());
             unconsumeCharacters(source, consumedCharacters);
             return false;
         }
@@ -129,7 +127,10 @@ public:
         if (entitySearch.mostRecentMatch()->lastCharacter() == ';'
             || !additionalAllowedCharacter
             || !(isAlphaNumeric(cc) || cc == '=')) {
-            return convertToUTF16(entitySearch.mostRecentMatch()->value, decodedEntity);
+            convertToUTF16(entitySearch.mostRecentMatch()->firstValue, decodedEntity);
+            if (entitySearch.mostRecentMatch()->secondValue)
+                convertToUTF16(entitySearch.mostRecentMatch()->secondValue, decodedEntity);
+            return true;
         }
         unconsumeCharacters(source, consumedCharacters);
         return false;
@@ -137,7 +138,6 @@ public:
 };
 
 }
-
 
 bool consumeHTMLEntity(SegmentedString& source, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
 {
@@ -153,14 +153,16 @@ UChar decodeNamedEntity(const char* name)
             return 0;
     }
     search.advance(';');
-    UChar32 entityValue = search.currentValue();
-    if (U16_LENGTH(entityValue) != 1) {
-        // Callers need to move off this API if the entity table has values
-        // which do no fit in a 16 bit UChar!
-        ASSERT_NOT_REACHED();
+    if (!search.isEntityPrefix())
+        return 0;
+
+    UChar32 firstValue = search.mostRecentMatch()->firstValue;
+    if (U16_LENGTH(firstValue) != 1 || search.mostRecentMatch()->secondValue) {
+        // FIXME: Callers need to move off this API. Not all entities can be
+        // represented in a single UChar!
         return 0;
     }
-    return static_cast<UChar>(entityValue);
+    return static_cast<UChar>(firstValue);
 }
 
 } // namespace WebCore

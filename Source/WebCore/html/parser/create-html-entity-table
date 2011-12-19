@@ -47,6 +47,8 @@ def convert_entity_to_uchar_array(entity):
 
 
 def convert_value_to_int(value):
+    if not value:
+        return "0";
     assert(value[0] == "U")
     assert(value[1] == "+")
     return "0x" + value[2:]
@@ -124,10 +126,13 @@ for entry in entries:
     letter = entry[ENTITY][0]
     if not index.get(letter):
         index[letter] = offset
-    output_file.write('    { %s, %s, %s },\n' % (
+    values = entry[VALUE].split(' ')
+    assert len(values) <= 2, values
+    output_file.write('    { %s, %s, %s, %s },\n' % (
         convert_entity_to_cpp_name(entry[ENTITY]),
         len(entry[ENTITY]),
-        convert_value_to_int(entry[VALUE])))
+        convert_value_to_int(values[0]),
+        convert_value_to_int(values[1] if len(values) >= 2 else "")))
     offset += 1
 
 output_file.write("""};

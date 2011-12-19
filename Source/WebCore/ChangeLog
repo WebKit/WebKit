@@ -1,3 +1,55 @@
+2011-12-19  Adam Barth  <abarth@webkit.org>
+
+        WebKit should support HTML entities that expand to more than one character
+        https://bugs.webkit.org/show_bug.cgi?id=74826
+
+        Reviewed by Darin Adler.
+
+        Tests: html5lib/runner.html
+
+        * html/parser/HTMLEntityNames.in:
+            - Add missing HTML entities from HTML5 spec.  I'll sort this file
+              in a followup patch.  (It's not quite sorted perfectly and
+              sorting in this patch would introduce noise into the patch.)
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::decodeNamedEntity):
+            - convertToUTF16 always returns true, so make it return void instead.
+            - Teach the entity parse that some entities expand to two characters.
+        * html/parser/HTMLEntityParser.h:
+            - Add a warning that decodeNamedEntity is really a broken API.
+            - This patch doesn't actually change any behavior of this API, but
+              it does illustrate that the two callers of this API (the two XML
+              parsers) really need to move a more sensible API.
+        * html/parser/HTMLEntitySearch.cpp:
+        (WebCore::HTMLEntitySearch::HTMLEntitySearch):
+        (WebCore::HTMLEntitySearch::advance):
+        * html/parser/HTMLEntitySearch.h:
+        (WebCore::HTMLEntitySearch::fail):
+            - Remove the concept of currentValue.  This isn't really used for
+              anything and conflicts with the idea that entities can expand
+              to more than one character.
+        * html/parser/HTMLEntityTable.h:
+            - Add storage for two UChar32 values per entity.
+        * html/parser/create-html-entity-table:
+        (convert_value_to_int):
+            - Teach this script to handle entities that expand to multiple
+              Unicode characters.
+        * xml/parser/CharacterReferenceParserInlineMethods.h:
+        (WebCore::consumeCharacterReference):
+            - Update this function now that convertToUTF16 returns void.
+        * xml/parser/XMLCharacterReferenceParser.cpp:
+            - The XML version of convertToUTF16 also needs to return void to
+              match the HTML signature.  (It used to return true all the time
+              as well.)
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::processHTMLEntity):
+            - Update this caller use leftValue instead of value.  My sense is
+              that this code is moderately broken today because it's using HTML
+              entities in parsing XML.  I've added a FIXME.  This code is
+              disabled in all builds, so I don't feel a big need to fix this
+              issue in this patch.  We should either finish this project or
+              delete this complexity from the project.
+
 2011-12-19  Andreas Kling  <kling@webkit.org>
 
         Avoid instantiating ScrollAnimators when possible.

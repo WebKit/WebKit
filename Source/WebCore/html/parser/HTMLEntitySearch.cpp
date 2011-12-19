@@ -41,7 +41,6 @@ const HTMLEntityTableEntry* halfway(const HTMLEntityTableEntry* left, const HTML
     
 HTMLEntitySearch::HTMLEntitySearch()
     : m_currentLength(0)
-    , m_currentValue(0)
     , m_mostRecentMatch(0)
     , m_first(HTMLEntityTable::firstEntry())
     , m_last(HTMLEntityTable::lastEntry())
@@ -124,11 +123,9 @@ void HTMLEntitySearch::advance(UChar nextCharacter)
     }
     ++m_currentLength;
     if (m_first->length != m_currentLength) {
-        m_currentValue = 0;
         return;
     }
     m_mostRecentMatch = m_first;
-    m_currentValue = m_mostRecentMatch->value;
 }
 
 }
