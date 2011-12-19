@@ -4167,4 +4167,7 @@ BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-86-d.html = IMAGE
 BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-87-d.html = IMAGE
 BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-88-d.html = IMAGE
 BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-89-d.html = IMAGE
-BUGWK74427 MAC WIN : fast/borders/border-antialiasing.html = IMAGE
+// WIN also affected, but duplicated above in BUGCR99500
+BUGWK74427 MAC : fast/borders/border-antialiasing.html = IMAGE
+
+BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
