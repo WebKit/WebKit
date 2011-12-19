@@ -39,7 +39,7 @@
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace testing;
+using testing::Return;
 
 namespace WebCore {
 

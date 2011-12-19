@@ -1,3 +1,11 @@
+2011-12-19  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix win builder due to more NotNull ambiguity errors.
+
+        Unreviewed gardening.
+
+        * tests/Canvas2DLayerChromiumTest.cpp:
+
 2011-12-19  Iain Merrick  <husky@google.com>
 
         [chromium] Accelerated canvas broken in threaded compositing mode
