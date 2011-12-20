@@ -1,3 +1,11 @@
+2011-12-20  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Build fix for gcc used on WK2 build bot.
+
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction): Don't do case:
+        with values outside the range of the type. Instead switch() on the int instead.
+
 2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] Extend QQuickWebview::navigationRequested API

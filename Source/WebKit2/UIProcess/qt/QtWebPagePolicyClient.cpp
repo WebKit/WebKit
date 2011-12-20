@@ -49,7 +49,7 @@ void QtWebPagePolicyClient::decidePolicyForNavigationAction(const QUrl& url, con
     QWebNavigationRequest navigationRequest(url, originatingUrl, mouseButton, keyboardModifiers);
     emit m_webView->navigationRequested(&navigationRequest);
 
-    switch (QQuickWebView::NavigationRequestAction(navigationRequest.action())) {
+    switch (navigationRequest.action()) {
     case QQuickWebView::IgnoreRequest:
         WKFramePolicyListenerIgnore(listener);
         return;
