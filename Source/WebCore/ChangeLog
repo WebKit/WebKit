@@ -1,3 +1,24 @@
+2011-12-20  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] compositing/shadows tests fail with accelerated painting
+        https://bugs.webkit.org/show_bug.cgi?id=74871
+
+        Reviewed by James Robinson.
+        
+        Switched over to new API for creating accelerated canvas GrContext::createPlatformTexture.
+        It correctly binds the stencil buffer to the FBO.
+
+        Test: compositing/shadows/shadow-drawing.html (existing)
+
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::createAcceleratedCanvas):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        (WebCore::ManagedTexture::allocate):
+        (WebCore::ManagedTexture::bindTexture):
+        (WebCore::ManagedTexture::framebufferTexture2D):
+        * platform/graphics/chromium/ManagedTexture.h:
+
 2011-12-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103291.

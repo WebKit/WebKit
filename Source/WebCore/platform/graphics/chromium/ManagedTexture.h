@@ -55,6 +55,7 @@ public:
         return m_textureManager->isProtected(m_token);
     }
 
+    void allocate(TextureAllocator*);
     void bindTexture(GraphicsContext3D*, TextureAllocator*);
     void framebufferTexture2D(GraphicsContext3D*, TextureAllocator*);
 

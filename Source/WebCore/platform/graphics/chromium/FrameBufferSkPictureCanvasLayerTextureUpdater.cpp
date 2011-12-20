@@ -37,63 +37,25 @@
 
 namespace WebCore {
 
-namespace {
-
-class FrameBuffer {
-public:
-    FrameBuffer();
-    ~FrameBuffer();
-
-    SkCanvas* initialize(GraphicsContext3D*, TextureAllocator*, ManagedTexture*);
-
-private:
-    GraphicsContext3D* m_context;
-    Platform3DObject m_fbo;
-    OwnPtr<SkCanvas> m_canvas;
-};
-
-FrameBuffer::FrameBuffer()
-    : m_context(0)
-    , m_fbo(0)
+static PassOwnPtr<SkCanvas> createAcceleratedCanvas(GraphicsContext3D* context,
+                                                    TextureAllocator* allocator,
+                                                    ManagedTexture* texture)
 {
-}
+    // Allocate so that we have a valid texture id.
+    texture->allocate(allocator);
 
-FrameBuffer::~FrameBuffer()
-{
-    m_canvas.clear();
-
-    if (m_fbo)
-        m_context->deleteFramebuffer(m_fbo);
-}
-
-SkCanvas* FrameBuffer::initialize(GraphicsContext3D* context, TextureAllocator* allocator, ManagedTexture* texture)
-{
-    m_context = context;
-    m_fbo = m_context->createFramebuffer();
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    texture->framebufferTexture2D(m_context, allocator);
-
-    // Create a skia gpu canvas.
-    GrContext* grContext = m_context->grContext();
+    GrContext* grContext = context->grContext();
     IntSize canvasSize = texture->size();
-    GrPlatformSurfaceDesc targetDesc;
-    targetDesc.reset();
-    targetDesc.fSurfaceType = kTextureRenderTarget_GrPlatformSurfaceType;
-    targetDesc.fRenderTargetFlags = kNone_GrPlatformRenderTargetFlagBit;
-    targetDesc.fWidth = canvasSize.width();
-    targetDesc.fHeight = canvasSize.height();
-    targetDesc.fConfig = kRGBA_8888_GrPixelConfig;
-    targetDesc.fStencilBits = 8;
-    targetDesc.fPlatformTexture = texture->textureId();
-    targetDesc.fPlatformRenderTarget = m_fbo;
-    SkAutoTUnref<GrTexture> target(static_cast<GrTexture*>(grContext->createPlatformSurface(targetDesc)));
+    GrPlatformTextureDesc textureDesc;
+    textureDesc.fFlags = kRenderTarget_GrPlatformTextureFlag;
+    textureDesc.fWidth = canvasSize.width();
+    textureDesc.fHeight = canvasSize.height();
+    textureDesc.fConfig = kRGBA_8888_GrPixelConfig;
+    textureDesc.fTextureHandle = texture->textureId();
+    SkAutoTUnref<GrTexture> target(grContext->createPlatformTexture(textureDesc));
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(grContext, target.get()));
-    m_canvas = adoptPtr(new SkCanvas(device.get()));
-
-    return m_canvas.get();
+    return adoptPtr(new SkCanvas(device.get()));
 }
-
-} // namespace
 
 FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::Texture(FrameBufferSkPictureCanvasLayerTextureUpdater* textureUpdater, PassOwnPtr<ManagedTexture> texture)
     : LayerTextureUpdater::Texture(texture)
@@ -143,8 +105,7 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsCo
     context->grContext()->resetContext();
 
     // Create an accelerated canvas to draw on.
-    FrameBuffer buffer;
-    SkCanvas* canvas = buffer.initialize(context, allocator, texture);
+    OwnPtr<SkCanvas> canvas = createAcceleratedCanvas(context, allocator, texture);
 
     canvas->clipRect(SkRect(destRect));
     // The compositor expects the textures to be upside-down so it can flip
@@ -156,7 +117,7 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(GraphicsCo
     // Note that destRect is defined relative to sourceRect.
     canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
                       contentRect().y() - sourceRect.y() + destRect.y());
-    drawPicture(canvas);
+    drawPicture(canvas.get());
 
     // Flush SKIA context so that all the rendered stuff appears on the texture.
     context->grContext()->flush();
