@@ -27,107 +27,20 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumMac.h"
 
-#include "BitmapImage.h"
 #include "FrameView.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
 #include "LocalCurrentGraphicsContext.h"
-#include "PlatformMouseEvent.h"
+#include "NSScrollerImpDetails.h"
 #include "PlatformSupport.h"
-#include "ScrollAnimatorChromiumMac.h"
+#include "ScrollAnimatorMac.h"
 #include "ScrollView.h"
 #include <Carbon/Carbon.h>
-#include <wtf/HashMap.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
 
 #if USE(SKIA)
 #include "PlatformContextSkia.h"
 #include "skia/ext/skia_utils_mac.h"
 #endif
-
-
-
-// FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
-
-using namespace std;
-using namespace WebCore;
-
-// This file (and its associated .h file) is a clone of ScrollbarThemeMac.mm.
-// Because we want to draw tickmarks in the scrollbar, we must maintain a fork.
-// Please maintain this file by performing parallel changes to it.
-//
-// The only changes from ScrollbarThemeMac should be:
-// - The classname change from ScrollbarThemeMac to ScrollbarThemeChromiumMac.
-// - In paint() the code to paint the track, tickmarks, and thumb separately.
-// - In paint() the thumb is drawn via ChromeBridge/WebThemeEngine.
-// - Various functions that were split using #if USE(WK_SCROLLBAR_PAINTER)
-//   have been combined using runtime checks instead.
-//
-// For all other differences, if it was introduced in this file, then the
-// maintainer forgot to include it in the list; otherwise it is an update that
-// should have been applied to this file but was not.
-
-namespace WebCore {
-
-typedef HashMap<Scrollbar*, RetainPtr<WKScrollbarPainterRef> > ScrollbarPainterMap;
-
-static ScrollbarPainterMap* scrollbarMap()
-{
-    static ScrollbarPainterMap* map = new ScrollbarPainterMap;
-    return map;
-}
-
-}
-
-@interface ScrollbarPrefsObserver : NSObject
-{
-}
-
-+ (void)registerAsObserver;
-+ (void)appearancePrefsChanged:(NSNotification*)theNotification;
-+ (void)behaviorPrefsChanged:(NSNotification*)theNotification;
-
-@end
-
-@implementation ScrollbarPrefsObserver
-
-+ (void)appearancePrefsChanged:(NSNotification*)unusedNotification
-{
-    UNUSED_PARAM(unusedNotification);
-
-    ScrollbarTheme* theme = ScrollbarTheme::theme();
-    if (theme->isMockTheme())
-        return;
-
-    static_cast<ScrollbarThemeChromiumMac*>(theme)->preferencesChanged();
-    if (scrollbarMap()->isEmpty())
-        return;
-    ScrollbarPainterMap::iterator end = scrollbarMap()->end();
-    for (ScrollbarPainterMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
-        it->first->styleChanged();
-        it->first->invalidate();
-    }
-}
-
-+ (void)behaviorPrefsChanged:(NSNotification*)unusedNotification
-{
-    UNUSED_PARAM(unusedNotification);
-
-    ScrollbarTheme* theme = ScrollbarTheme::theme();
-    if (theme->isMockTheme())
-        return;
-
-    static_cast<ScrollbarThemeChromiumMac*>(theme)->preferencesChanged();
-}
-
-+ (void)registerAsObserver
-{
-    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(appearancePrefsChanged:) name:@"AppleAquaScrollBarVariantChanged" object:nil suspensionBehavior:NSNotificationSuspensionBehaviorDeliverImmediately];
-    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(behaviorPrefsChanged:) name:@"AppleNoRedisplayAppearancePreferenceChanged" object:nil suspensionBehavior:NSNotificationSuspensionBehaviorCoalesce];
-}
-
-@end
 
 namespace WebCore {
 
@@ -137,331 +50,15 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
     return &theme;
 }
 
-// FIXME: Get these numbers from CoreUI.
-static int cScrollbarThickness[] = { 15, 11 };
-static int cRealButtonLength[] = { 28, 21 };
-static int cButtonInset[] = { 14, 11 };
-static int cButtonHitInset[] = { 3, 2 };
-// cRealButtonLength - cButtonInset
-static int cButtonLength[] = { 14, 10 };
-static int cThumbMinLength[] = { 26, 20 };
-
-static int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
-static int cOuterButtonOverlap = 2;
-
-static float gInitialButtonDelay = 0.5f;
-static float gAutoscrollButtonDelay = 0.05f;
-static bool gJumpOnTrackClick = false;
-static ScrollbarButtonsPlacement gButtonPlacement = isScrollbarOverlayAPIAvailable() ? ScrollbarButtonsNone : ScrollbarButtonsDoubleEnd;
-
-static void updateArrowPlacement()
-{
-    if (isScrollbarOverlayAPIAvailable())
-        return;
-
-    NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
-    if ([buttonPlacement isEqualToString:@"Single"])
-        gButtonPlacement = ScrollbarButtonsSingle;
-    else if ([buttonPlacement isEqualToString:@"DoubleMin"])
-        gButtonPlacement = ScrollbarButtonsDoubleStart;
-    else if ([buttonPlacement isEqualToString:@"DoubleBoth"])
-        gButtonPlacement = ScrollbarButtonsDoubleBoth;
-    else
-        gButtonPlacement = ScrollbarButtonsDoubleEnd;
-}
-
-void ScrollbarThemeChromiumMac::registerScrollbar(Scrollbar* scrollbar)
-{
-    bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
-    WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
-    scrollbarMap()->add(scrollbar, scrollbarPainter);
-    updateEnabledState(scrollbar);
-    updateScrollbarOverlayStyle(scrollbar);
-}
-
-void ScrollbarThemeChromiumMac::unregisterScrollbar(Scrollbar* scrollbar)
-{
-    scrollbarMap()->remove(scrollbar);
-}
-
-void ScrollbarThemeChromiumMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScrollbarPainterRef newPainter)
-{
-    scrollbarMap()->set(scrollbar, newPainter);
-    updateEnabledState(scrollbar);
-    updateScrollbarOverlayStyle(scrollbar);
-}
-
-WKScrollbarPainterRef ScrollbarThemeChromiumMac::painterForScrollbar(Scrollbar* scrollbar)
-{
-    return scrollbarMap()->get(scrollbar).get();
-}
-
 ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac()
 {
-    static bool initialized;
-    if (!initialized) {
-        initialized = true;
-
-        // Load the linen pattern image used for overhang drawing.
-        RefPtr<Image> patternImage = Image::loadPlatformResource("overhangPattern");
-        m_overhangPattern = Pattern::create(patternImage, true, true);
-
-        [ScrollbarPrefsObserver registerAsObserver];
-        preferencesChanged();
-    }
+    // Load the linen pattern image used for overhang drawing.
+    RefPtr<Image> patternImage = Image::loadPlatformResource("overhangPattern");
+    m_overhangPattern = Pattern::create(patternImage, true, true);
 }
 
 ScrollbarThemeChromiumMac::~ScrollbarThemeChromiumMac()
 {
-}
-
-void ScrollbarThemeChromiumMac::preferencesChanged()
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults synchronize];
-    updateArrowPlacement();
-    gInitialButtonDelay = [defaults floatForKey:@"NSScrollerButtonDelay"];
-    gAutoscrollButtonDelay = [defaults floatForKey:@"NSScrollerButtonPeriod"];
-    gJumpOnTrackClick = [defaults boolForKey:@"AppleScrollerPagingBehavior"];
-}
-
-int ScrollbarThemeChromiumMac::scrollbarThickness(ScrollbarControlSize controlSize)
-{
-    if (isScrollbarOverlayAPIAvailable())
-        return wkScrollbarThickness(controlSize);
-    else
-        return cScrollbarThickness[controlSize];
-}
-
-bool ScrollbarThemeChromiumMac::usesOverlayScrollbars() const
-{
-    if (isScrollbarOverlayAPIAvailable())
-        return wkScrollbarPainterUsesOverlayScrollers();
-    else
-        return false;
-}
-
-static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
-{
-    switch (style) {
-    case ScrollbarOverlayStyleDark:
-        return wkScrollerKnobStyleDark;
-    case ScrollbarOverlayStyleLight:
-        return wkScrollerKnobStyleLight;
-    default:
-        return wkScrollerKnobStyleDefault;
-    }
-}
-
-void ScrollbarThemeChromiumMac::updateScrollbarOverlayStyle(Scrollbar* scrollbar)
-{
-    if (isScrollbarOverlayAPIAvailable()) {
-        wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->scrollbarOverlayStyle()));
-    }
-}
-
-double ScrollbarThemeChromiumMac::initialAutoscrollTimerDelay()
-{
-    return gInitialButtonDelay;
-}
-
-double ScrollbarThemeChromiumMac::autoscrollTimerDelay()
-{
-    return gAutoscrollButtonDelay;
-}
-
-ScrollbarButtonsPlacement ScrollbarThemeChromiumMac::buttonsPlacement() const
-{
-    return gButtonPlacement;
-}
-
-bool ScrollbarThemeChromiumMac::hasButtons(Scrollbar* scrollbar)
-{
-    return scrollbar->enabled() && gButtonPlacement != ScrollbarButtonsNone
-             && (scrollbar->orientation() == HorizontalScrollbar
-             ? scrollbar->width()
-             : scrollbar->height()) >= 2 * (cRealButtonLength[scrollbar->controlSize()] - cButtonHitInset[scrollbar->controlSize()]);
-}
-
-bool ScrollbarThemeChromiumMac::hasThumb(Scrollbar* scrollbar)
-{
-    int minLengthForThumb;
-    if (isScrollbarOverlayAPIAvailable())
-        minLengthForThumb = wkScrollbarMinimumTotalLengthNeededForThumb(scrollbarMap()->get(scrollbar).get());
-    else
-        minLengthForThumb = 2 * cButtonInset[scrollbar->controlSize()] + cThumbMinLength[scrollbar->controlSize()] + 1;
-    return scrollbar->enabled() && (scrollbar->orientation() == HorizontalScrollbar ?
-             scrollbar->width() :
-             scrollbar->height()) >= minLengthForThumb;
-}
-
-static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, bool start)
-{
-    ASSERT(gButtonPlacement != ScrollbarButtonsNone);
-
-    IntRect paintRect(buttonRect);
-    if (orientation == HorizontalScrollbar) {
-        paintRect.setWidth(cRealButtonLength[controlSize]);
-        if (!start)
-            paintRect.setX(buttonRect.x() - (cRealButtonLength[controlSize] - buttonRect.width()));
-    } else {
-        paintRect.setHeight(cRealButtonLength[controlSize]);
-        if (!start)
-            paintRect.setY(buttonRect.y() - (cRealButtonLength[controlSize] - buttonRect.height()));
-    }
-
-    return paintRect;
-}
-
-IntRect ScrollbarThemeChromiumMac::backButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool painting)
-{
-    IntRect result;
-
-    if (part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleEnd))
-        return result;
-
-    if (part == BackButtonEndPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsSingle))
-        return result;
-
-    int thickness = scrollbarThickness(scrollbar->controlSize());
-    bool outerButton = part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
-    if (outerButton) {
-        if (scrollbar->orientation() == HorizontalScrollbar)
-            result = IntRect(scrollbar->x(), scrollbar->y(), cOuterButtonLength[scrollbar->controlSize()] + (painting ? cOuterButtonOverlap : 0), thickness);
-        else
-            result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cOuterButtonLength[scrollbar->controlSize()] + (painting ? cOuterButtonOverlap : 0));
-        return result;
-    }
-
-    // Our repaint rect is slightly larger, since we are a button that is adjacent to the track.
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        int start = part == BackButtonStartPart ? scrollbar->x() : scrollbar->x() + scrollbar->width() - cOuterButtonLength[scrollbar->controlSize()] - cButtonLength[scrollbar->controlSize()];
-        result = IntRect(start, scrollbar->y(), cButtonLength[scrollbar->controlSize()], thickness);
-    } else {
-        int start = part == BackButtonStartPart ? scrollbar->y() : scrollbar->y() + scrollbar->height() - cOuterButtonLength[scrollbar->controlSize()] - cButtonLength[scrollbar->controlSize()];
-        result = IntRect(scrollbar->x(), start, thickness, cButtonLength[scrollbar->controlSize()]);
-    }
-
-    if (painting)
-        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), part == BackButtonStartPart);
-    return result;
-}
-
-IntRect ScrollbarThemeChromiumMac::forwardButtonRect(Scrollbar* scrollbar, ScrollbarPart part, bool painting)
-{
-    IntRect result;
-
-    if (part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleStart))
-        return result;
-
-    if (part == ForwardButtonStartPart && (buttonsPlacement() == ScrollbarButtonsNone || buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsSingle))
-        return result;
-
-    int thickness = scrollbarThickness(scrollbar->controlSize());
-    int outerButtonLength = cOuterButtonLength[scrollbar->controlSize()];
-    int buttonLength = cButtonLength[scrollbar->controlSize()];
-
-    bool outerButton = part == ForwardButtonEndPart && (buttonsPlacement() == ScrollbarButtonsDoubleEnd || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
-    if (outerButton) {
-        if (scrollbar->orientation() == HorizontalScrollbar) {
-            result = IntRect(scrollbar->x() + scrollbar->width() - outerButtonLength, scrollbar->y(), outerButtonLength, thickness);
-            if (painting)
-                result.inflateX(cOuterButtonOverlap);
-        } else {
-            result = IntRect(scrollbar->x(), scrollbar->y() + scrollbar->height() - outerButtonLength, thickness, outerButtonLength);
-            if (painting)
-                result.inflateY(cOuterButtonOverlap);
-        }
-        return result;
-    }
-
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        int start = part == ForwardButtonEndPart ? scrollbar->x() + scrollbar->width() - buttonLength : scrollbar->x() + outerButtonLength;
-        result = IntRect(start, scrollbar->y(), buttonLength, thickness);
-    } else {
-        int start = part == ForwardButtonEndPart ? scrollbar->y() + scrollbar->height() - buttonLength : scrollbar->y() + outerButtonLength;
-        result = IntRect(scrollbar->x(), start, thickness, buttonLength);
-    }
-    if (painting)
-        return buttonRepaintRect(result, scrollbar->orientation(), scrollbar->controlSize(), part == ForwardButtonStartPart);
-    return result;
-}
-
-IntRect ScrollbarThemeChromiumMac::trackRect(Scrollbar* scrollbar, bool painting)
-{
-    if (painting || !hasButtons(scrollbar))
-        return scrollbar->frameRect();
-
-    IntRect result;
-    int thickness = scrollbarThickness(scrollbar->controlSize());
-    int startWidth = 0;
-    int endWidth = 0;
-    int outerButtonLength = cOuterButtonLength[scrollbar->controlSize()];
-    int buttonLength = cButtonLength[scrollbar->controlSize()];
-    int doubleButtonLength = outerButtonLength + buttonLength;
-    switch (buttonsPlacement()) {
-        case ScrollbarButtonsSingle:
-            startWidth = buttonLength;
-            endWidth = buttonLength;
-            break;
-        case ScrollbarButtonsDoubleStart:
-            startWidth = doubleButtonLength;
-            break;
-        case ScrollbarButtonsDoubleEnd:
-            endWidth = doubleButtonLength;
-            break;
-        case ScrollbarButtonsDoubleBoth:
-            startWidth = doubleButtonLength;
-            endWidth = doubleButtonLength;
-            break;
-        default:
-            break;
-    }
-
-    int totalWidth = startWidth + endWidth;
-    if (scrollbar->orientation() == HorizontalScrollbar)
-        return IntRect(scrollbar->x() + startWidth, scrollbar->y(), scrollbar->width() - totalWidth, thickness);
-    return IntRect(scrollbar->x(), scrollbar->y() + startWidth, thickness, scrollbar->height() - totalWidth);
-}
-
-int ScrollbarThemeChromiumMac::minimumThumbLength(Scrollbar* scrollbar)
-{
-    if (isScrollbarOverlayAPIAvailable())
-        return wkScrollbarMinimumThumbLength(scrollbarMap()->get(scrollbar).get());
-    else
-        return cThumbMinLength[scrollbar->controlSize()];
-}
-
-bool ScrollbarThemeChromiumMac::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
-{
-    if (evt.button() != LeftButton)
-        return false;
-    if (gJumpOnTrackClick)
-        return !evt.altKey();
-    return evt.altKey();
-}
-
-bool ScrollbarThemeChromiumMac::shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent& event)
-{
-    return event.altKey();
-}
-
-static int scrollbarPartToHIPressedState(ScrollbarPart part)
-{
-    switch (part) {
-        case BackButtonStartPart:
-            return kThemeTopOutsideArrowPressed;
-        case BackButtonEndPart:
-            return kThemeTopOutsideArrowPressed; // This does not make much sense.  For some reason the outside constant is required.
-        case ForwardButtonStartPart:
-            return kThemeTopInsideArrowPressed;
-        case ForwardButtonEndPart:
-            return kThemeBottomOutsideArrowPressed;
-        case ThumbPart:
-            return kThemeThumbPressed;
-        default:
-            return 0;
-    }
 }
 
 static PlatformSupport::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar)
@@ -476,13 +73,27 @@ static PlatformSupport::ThemePaintState scrollbarStateToThemeState(Scrollbar* sc
     return PlatformSupport::StateActive;
 }
 
-void ScrollbarThemeChromiumMac::updateEnabledState(Scrollbar* scrollbar)
+static void scrollbarPainterPaintTrack(ScrollbarPainter scrollbarPainter, bool enabled, double value, CGFloat proportion, CGRect frameRect)
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        wkScrollbarPainterSetEnabled(scrollbarMap()->get(scrollbar).get(), scrollbar->enabled());
-    }
+    [scrollbarPainter setEnabled:enabled];
+    [scrollbarPainter setBoundsSize: NSSizeFromCGSize(frameRect.size)];
+    [scrollbarPainter setDoubleValue:value];
+    [scrollbarPainter setKnobProportion:proportion];
+
+    // The scrollbar's frameRect includes a side inset for overlay scrollers, so we have to use the 
+    // trackWidth for drawKnobSlotInRect
+    NSRect trackRect;
+    if ([scrollbarPainter isHorizontal])
+        trackRect = NSMakeRect(0, 0, frameRect.size.width, [scrollbarPainter trackWidth]);
+    else
+        trackRect = NSMakeRect(0, 0, [scrollbarPainter trackWidth], frameRect.size.height);
+    [scrollbarPainter drawKnobSlotInRect:trackRect highlight:NO];
 }
 
+// Override ScrollbarThemeMac::paint() to add support for the following:
+//     - drawing using PlatformSupport functions
+//     - drawing tickmarks
+//     - Skia specific changes
 bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
     // Get the tickmarks for the frameview.
@@ -510,33 +121,32 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
                 value = 0;
         }
 
-        ScrollAnimatorChromiumMac* scrollAnimator = static_cast<ScrollAnimatorChromiumMac*>(scrollbar->scrollableArea()->scrollAnimator());
 #if !USE(SKIA)
-        scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
+        setIsCurrentlyDrawingIntoLayer(context->isCALayerContext());
 #else
-        scrollAnimator->setIsDrawingIntoLayer(false);
+        setIsCurrentlyDrawingIntoLayer(false);
 #endif
 
         CGFloat oldKnobAlpha = 0;
         CGFloat oldTrackAlpha = 0;
         bool hasTickmarks = tickmarks.size() > 0 && scrollbar->orientation() == VerticalScrollbar;
+        ScrollbarPainter scrollbarPainter = painterForScrollbar(scrollbar);
         if (hasTickmarks) {
-          oldKnobAlpha = wkScrollbarPainterKnobAlpha(painterForScrollbar(scrollbar));
-          wkSetScrollbarPainterKnobAlpha(painterForScrollbar(scrollbar), 1.0);
-          oldTrackAlpha = wkScrollbarPainterTrackAlpha(painterForScrollbar(scrollbar));
-          wkSetScrollbarPainterTrackAlpha(painterForScrollbar(scrollbar), 1.0);
+            oldKnobAlpha = [scrollbarPainter knobAlpha];
+            [scrollbarPainter setKnobAlpha:1.0];
+            oldTrackAlpha = [scrollbarPainter trackAlpha];
+            [scrollbarPainter setTrackAlpha:1.0];
         }
 
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(damageRect);
         context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
         LocalCurrentGraphicsContext localContext(context);
-        WKScrollbarPainterRef scrollbarPainter = scrollbarMap()->get(scrollbar).get();
-        wkScrollbarPainterPaintTrack(scrollbarPainter,
-                                     scrollbar->enabled(),
-                                     value,
-                                     (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
-                                     scrollbar->frameRect());
+        scrollbarPainterPaintTrack(scrollbarPainter,
+                                   scrollbar->enabled(),
+                                   value,
+                                   (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
+                                   scrollbar->frameRect());
 
         IntRect tickmarkTrackRect(IntPoint(), trackRect(scrollbar, false).size());
         if (tickmarkTrackRect.width() <= 10) {
@@ -550,13 +160,14 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
         }
         paintGivenTickmarks(context, scrollbar, tickmarkTrackRect, tickmarks);
 
-        wkScrollbarPainterPaintKnob(scrollbarPainter);
+        if (scrollbar->enabled())
+            [scrollbarPainter drawKnob];
 
-        scrollAnimator->setIsDrawingIntoLayer(false);
+        setIsCurrentlyDrawingIntoLayer(false);
 
         if (hasTickmarks) {
-          wkSetScrollbarPainterKnobAlpha(scrollbarPainter, oldKnobAlpha);
-          wkSetScrollbarPainterTrackAlpha(scrollbarPainter, oldTrackAlpha);
+            [scrollbarPainter setKnobAlpha:oldKnobAlpha];
+            [scrollbarPainter setTrackAlpha:oldTrackAlpha];
         }
 
         return true;

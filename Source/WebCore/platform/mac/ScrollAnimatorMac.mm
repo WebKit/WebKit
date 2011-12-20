@@ -30,6 +30,7 @@
 #include "ScrollAnimatorMac.h"
 
 #include "BlockExceptions.h"
+#include "EmptyProtocolDefinitions.h"
 #include "FloatPoint.h"
 #include "NSScrollerImpDetails.h"
 #include "PlatformGestureEvent.h"
@@ -39,13 +40,20 @@
 #include "ScrollbarTheme.h"
 #include "ScrollbarThemeMac.h"
 #include "WebCoreSystemInterface.h"
+#include <sys/time.h>
+#include <sys/sysctl.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 
 using namespace WebCore;
 using namespace std;
 
-#if USE(SCROLLBAR_PAINTER)
+#ifdef BUILDING_ON_LEOPARD
+@interface NSProcessInfo (ScrollAnimatorMacExt)
+- (NSTimeInterval)systemUptime;
+@end
+#endif
+
 static bool supportsUIStateTransitionProgress()
 {
     // FIXME: This is temporary until all platforms that support ScrollbarPainter support this part of the API.
@@ -66,7 +74,28 @@ static ScrollbarPainter scrollbarPainterForScrollbar(Scrollbar* scrollbar)
 
     return nil;
 }
-#endif
+
+static NSTimeInterval systemUptime() {
+    if ([[NSProcessInfo processInfo] respondsToSelector:@selector(systemUptime)])
+        return [[NSProcessInfo processInfo] systemUptime];
+
+    // Get how long system has been up. Found by looking getting "boottime" from the kernel.
+    static struct timeval boottime = {};
+    if (!boottime.tv_sec) {
+        int mib[2] = {CTL_KERN, KERN_BOOTTIME};
+        size_t size = sizeof(boottime);
+        if (-1 == sysctl(mib, 2, &boottime, &size, 0, 0))
+            boottime.tv_sec = 0;
+    }
+    struct timeval now;
+    if (boottime.tv_sec && -1 != gettimeofday(&now, 0)) {
+        struct timeval uptime;
+        timersub(&now, &boottime, &uptime);
+        NSTimeInterval result = uptime.tv_sec + (uptime.tv_usec / 1E+6);
+        return result;
+    }
+    return 0;
+}
 
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
@@ -171,8 +200,6 @@ static NSSize abs(NSSize size)
 }
 
 @end
-
-#if USE(SCROLLBAR_PAINTER)
 
 @interface WebScrollbarPainterControllerDelegate : NSObject
 {
@@ -409,6 +436,7 @@ enum FeatureToAnimate {
     return aRect;
 }
 
+#if !PLATFORM(CHROMIUM)
 - (CALayer *)layer
 {
     if (!_scrollbar)
@@ -421,6 +449,7 @@ enum FeatureToAnimate {
     static CALayer *dummyLayer = [[CALayer alloc] init];
     return dummyLayer;
 }
+#endif
 
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(id)scrollerImp
 {
@@ -541,8 +570,6 @@ enum FeatureToAnimate {
 
 @end
 
-#endif // USE(SCROLLBAR_PAINTER)
-
 namespace WebCore {
 
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
@@ -552,9 +579,7 @@ PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea
 
 ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
-#if USE(SCROLLBAR_PAINTER)
     , m_initialScrollbarPaintTimer(this, &ScrollAnimatorMac::initialScrollbarPaintTimerFired)
-#endif
 #if ENABLE(RUBBER_BANDING)
     , m_scrollElasticityController(this)
     , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
@@ -565,25 +590,25 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     m_scrollAnimationHelperDelegate.adoptNS([[WebScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
 
-#if USE(SCROLLBAR_PAINTER)
-    m_scrollbarPainterControllerDelegate.adoptNS([[WebScrollbarPainterControllerDelegate alloc] initWithScrollableArea:scrollableArea]);
-    m_scrollbarPainterController = [[[NSClassFromString(@"NSScrollerImpPair") alloc] init] autorelease];
-    [m_scrollbarPainterController.get() setDelegate:m_scrollbarPainterControllerDelegate.get()];
-    [m_scrollbarPainterController.get() setScrollerStyle:wkRecommendedScrollerStyle()];
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        m_scrollbarPainterControllerDelegate.adoptNS([[WebScrollbarPainterControllerDelegate alloc] initWithScrollableArea:scrollableArea]);
+        m_scrollbarPainterController = [[[NSClassFromString(@"NSScrollerImpPair") alloc] init] autorelease];
+        [m_scrollbarPainterController.get() setDelegate:m_scrollbarPainterControllerDelegate.get()];
+        [m_scrollbarPainterController.get() setScrollerStyle:recommendedScrollerStyle()];
+    }
 }
 
 ScrollAnimatorMac::~ScrollAnimatorMac()
 {
-#if USE(SCROLLBAR_PAINTER)
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [m_scrollbarPainterControllerDelegate.get() invalidate];
-    [m_scrollbarPainterController.get() setDelegate:nil];
-    [m_horizontalScrollbarPainterDelegate.get() invalidate];
-    [m_verticalScrollbarPainterDelegate.get() invalidate];
-    [m_scrollAnimationHelperDelegate.get() invalidate];
-    END_BLOCK_OBJC_EXCEPTIONS;
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        [m_scrollbarPainterControllerDelegate.get() invalidate];
+        [m_scrollbarPainterController.get() setDelegate:nil];
+        [m_horizontalScrollbarPainterDelegate.get() invalidate];
+        [m_verticalScrollbarPainterDelegate.get() invalidate];
+        [m_scrollAnimationHelperDelegate.get() invalidate];
+        END_BLOCK_OBJC_EXCEPTIONS;
+    }
 }
 
 bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
@@ -695,13 +720,13 @@ void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoin
 
 void ScrollAnimatorMac::notifyPositionChanged()
 {
-#if USE(SCROLLBAR_PAINTER)
-    // This function is called when a page is going into the page cache, but the page 
-    // isn't really scrolling in that case. We should only pass the message on to the
-    // ScrollbarPainterController when we're really scrolling on an active page.
-    if (scrollableArea()->isOnActivePage())
-        [m_scrollbarPainterController.get() contentAreaScrolled];
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        // This function is called when a page is going into the page cache, but the page 
+        // isn't really scrolling in that case. We should only pass the message on to the
+        // ScrollbarPainterController when we're really scrolling on an active page.
+        if (scrollableArea()->isOnActivePage())
+            [m_scrollbarPainterController.get() contentAreaScrolled];
+    }
     ScrollAnimator::notifyPositionChanged();
 }
 
@@ -709,214 +734,190 @@ void ScrollAnimatorMac::contentAreaWillPaint() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() contentAreaWillDraw];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() contentAreaWillDraw];
 }
 
 void ScrollAnimatorMac::mouseEnteredContentArea() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() mouseEnteredContentArea];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() mouseEnteredContentArea];
 }
 
 void ScrollAnimatorMac::mouseExitedContentArea() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() mouseExitedContentArea];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() mouseExitedContentArea];
 }
 
 void ScrollAnimatorMac::mouseMovedInContentArea() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() mouseMovedInContentArea];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() mouseMovedInContentArea];
 }
 
 void ScrollAnimatorMac::mouseEnteredScrollbar(Scrollbar* scrollbar) const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    if (!supportsUIStateTransitionProgress())
-        return;
-    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar))
-        [painter mouseEnteredScroller];
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        if (!supportsUIStateTransitionProgress())
+            return;
+        if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar))
+            [painter mouseEnteredScroller];
+    }
 }
 
 void ScrollAnimatorMac::mouseExitedScrollbar(Scrollbar* scrollbar) const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    if (!supportsUIStateTransitionProgress())
-        return;
-    if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar))
-        [painter mouseExitedScroller];
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        if (!supportsUIStateTransitionProgress())
+            return;
+        if (ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar))
+            [painter mouseExitedScroller];
+    }
 }
 
 void ScrollAnimatorMac::willStartLiveResize()
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() startLiveResize];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() startLiveResize];
 }
 
 void ScrollAnimatorMac::contentsResized() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() contentAreaDidResize];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() contentAreaDidResize];
 }
 
 void ScrollAnimatorMac::willEndLiveResize()
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() endLiveResize];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() endLiveResize];
 }
 
 void ScrollAnimatorMac::contentAreaDidShow() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() windowOrderedIn];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() windowOrderedIn];
 }
 
 void ScrollAnimatorMac::contentAreaDidHide() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() windowOrderedOut];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() windowOrderedOut];
 }
 
 void ScrollAnimatorMac::didBeginScrollGesture() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() beginScrollGesture];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() beginScrollGesture];
 }
 
 void ScrollAnimatorMac::didEndScrollGesture() const
 {
     if (!scrollableArea()->isOnActivePage())
         return;
-#if USE(SCROLLBAR_PAINTER)
-    [m_scrollbarPainterController.get() endScrollGesture];
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        [m_scrollbarPainterController.get() endScrollGesture];
 }
 
 void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
-    if (!painter)
-        return;
+    if (isScrollbarOverlayAPIAvailable()) {
+        ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+        if (!painter)
+            return;
 
-    ASSERT(!m_verticalScrollbarPainterDelegate);
-    m_verticalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollbar:scrollbar]);
+        ASSERT(!m_verticalScrollbarPainterDelegate);
+        m_verticalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollbar:scrollbar]);
 
-    [painter setDelegate:m_verticalScrollbarPainterDelegate.get()];
-    [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
-    if (scrollableArea()->inLiveResize())
-        [painter setKnobAlpha:1];
-
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+        [painter setDelegate:m_verticalScrollbarPainterDelegate.get()];
+        [m_scrollbarPainterController.get() setVerticalScrollerImp:painter];
+        if (scrollableArea()->inLiveResize())
+            [painter setKnobAlpha:1];
+    }
 }
 
 void ScrollAnimatorMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
-    if (!painter)
-        return;
+    if (isScrollbarOverlayAPIAvailable()) {
+        ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+        if (!painter)
+            return;
 
-    ASSERT(m_verticalScrollbarPainterDelegate);
-    [m_verticalScrollbarPainterDelegate.get() invalidate];
-    m_verticalScrollbarPainterDelegate = nullptr;
+        ASSERT(m_verticalScrollbarPainterDelegate);
+        [m_verticalScrollbarPainterDelegate.get() invalidate];
+        m_verticalScrollbarPainterDelegate = nullptr;
 
-    [painter setDelegate:nil];
-    [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+        [painter setDelegate:nil];
+        [m_scrollbarPainterController.get() setVerticalScrollerImp:nil];
+    }
 }
 
 void ScrollAnimatorMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
-    if (!painter)
-        return;
+    if (isScrollbarOverlayAPIAvailable()) {
+        ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+        if (!painter)
+            return;
 
-    ASSERT(!m_horizontalScrollbarPainterDelegate);
-    m_horizontalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollbar:scrollbar]);
+        ASSERT(!m_horizontalScrollbarPainterDelegate);
+        m_horizontalScrollbarPainterDelegate.adoptNS([[WebScrollbarPainterDelegate alloc] initWithScrollbar:scrollbar]);
 
-    [painter setDelegate:m_horizontalScrollbarPainterDelegate.get()];
-    [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
-    if (scrollableArea()->inLiveResize())
-        [painter setKnobAlpha:1];
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+        [painter setDelegate:m_horizontalScrollbarPainterDelegate.get()];
+        [m_scrollbarPainterController.get() setHorizontalScrollerImp:painter];
+        if (scrollableArea()->inLiveResize())
+            [painter setKnobAlpha:1];
+    }
 }
 
 void ScrollAnimatorMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(SCROLLBAR_PAINTER)
-    ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
-    if (!painter)
-        return;
+    if (isScrollbarOverlayAPIAvailable()) {
+        ScrollbarPainter painter = scrollbarPainterForScrollbar(scrollbar);
+        if (!painter)
+            return;
 
-    ASSERT(m_horizontalScrollbarPainterDelegate);
-    [m_horizontalScrollbarPainterDelegate.get() invalidate];
-    m_horizontalScrollbarPainterDelegate = nullptr;
+        ASSERT(m_horizontalScrollbarPainterDelegate);
+        [m_horizontalScrollbarPainterDelegate.get() invalidate];
+        m_horizontalScrollbarPainterDelegate = nullptr;
 
-    [painter setDelegate:nil];
-    [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+        [painter setDelegate:nil];
+        [m_scrollbarPainterController.get() setHorizontalScrollerImp:nil];
+    }
 }
 
 void ScrollAnimatorMac::cancelAnimations()
 {
     m_haveScrolledSincePageLoad = false;
 
-#if USE(SCROLLBAR_PAINTER)
-    if (scrollbarPaintTimerIsActive())
-        stopScrollbarPaintTimer();
-    [m_horizontalScrollbarPainterDelegate.get() cancelAnimations];
-    [m_verticalScrollbarPainterDelegate.get() cancelAnimations];
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        if (scrollbarPaintTimerIsActive())
+            stopScrollbarPaintTimer();
+        [m_horizontalScrollbarPainterDelegate.get() cancelAnimations];
+        [m_verticalScrollbarPainterDelegate.get() cancelAnimations];
+    }
 }
 
 #if ENABLE(RUBBER_BANDING)
@@ -1295,7 +1296,7 @@ void ScrollAnimatorMac::endScrollGesture()
 
 void ScrollAnimatorMac::snapRubberBand()
 {
-    CFTimeInterval timeDelta = [[NSProcessInfo processInfo] systemUptime] - m_scrollElasticityController.m_lastMomentumScrollTimestamp;
+    CFTimeInterval timeDelta = systemUptime() - m_scrollElasticityController.m_lastMomentumScrollTimestamp;
     if (m_scrollElasticityController.m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
         m_scrollElasticityController.m_momentumVelocity = FloatSize();
 
@@ -1404,15 +1405,17 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
 
 void ScrollAnimatorMac::setIsActive()
 {
-#if USE(SCROLLBAR_PAINTER)
-    if (needsScrollerStyleUpdate())
-        updateScrollerStyle();
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        if (needsScrollerStyleUpdate())
+            updateScrollerStyle();
+    }
 }
 
-#if USE(SCROLLBAR_PAINTER)
 void ScrollAnimatorMac::updateScrollerStyle()
 {
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+
     if (!scrollableArea()->isOnActivePage()) {
         setNeedsScrollerStyleUpdate(true);
         return;
@@ -1486,12 +1489,13 @@ void ScrollAnimatorMac::stopScrollbarPaintTimer()
 
 void ScrollAnimatorMac::initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*)
 {
-    // To force the scrollbars to flash, we have to call hide first. Otherwise, the ScrollbarPainterController
-    // might think that the scrollbars are already showing and bail early.
-    [m_scrollbarPainterController.get() hideOverlayScrollers];
-    [m_scrollbarPainterController.get() flashScrollers];
+    if (isScrollbarOverlayAPIAvailable()) {
+        // To force the scrollbars to flash, we have to call hide first. Otherwise, the ScrollbarPainterController
+        // might think that the scrollbars are already showing and bail early.
+        [m_scrollbarPainterController.get() hideOverlayScrollers];
+        [m_scrollbarPainterController.get() flashScrollers];
+    }
 }
-#endif
 
 void ScrollAnimatorMac::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
