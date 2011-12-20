@@ -1,14 +1,14 @@
  
 RUN(controller = video.controller)
 EVENT(canplaythrough)
-RUN(controller.currentTime = 5)
-EXPECTED (video.currentTime == '5') OK
-EXPECTED (video2.currentTime == '5') OK
 RUN(video.play())
 RUN(video2.play())
 RUN(controller.play())
 EVENT(playing)
 EXPECTED (controller.paused == 'false') OK
+RUN(controller.currentTime = 5)
+EXPECTED (video.currentTime == '5') OK
+EXPECTED (video2.currentTime == '5') OK
 EVENT(ended)
 END OF TEST
 
