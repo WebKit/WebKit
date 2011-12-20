@@ -115,8 +115,8 @@ public:
 
     // Methods called from the frontend for DOM nodes inspection.
     void querySelector(ErrorString*, int nodeId, const String& selectors, int* elementId);
-    void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<InspectorArray>* result);
-    void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
+    void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<InspectorArray>& result);
+    void getDocument(ErrorString*, RefPtr<InspectorObject>& root);
     void requestChildNodes(ErrorString*, int nodeId);
     void setAttributeValue(ErrorString*, int elementId, const String& name, const String& value);
     void setAttributesAsText(ErrorString*, int elementId, const String& text, const String* const name);
@@ -126,12 +126,12 @@ public:
     void getOuterHTML(ErrorString*, int nodeId, WTF::String* outerHTML);
     void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML, int* newId);
     void setNodeValue(ErrorString*, int nodeId, const String& value);
-    void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray);
+    void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>& listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, String* searchId, int* resultCount);
-    void getSearchResults(ErrorString*, const String& searchId, int fromIndex, int toIndex, RefPtr<InspectorArray>*);
+    void getSearchResults(ErrorString*, const String& searchId, int fromIndex, int toIndex, RefPtr<InspectorArray>&);
     void discardSearchResults(ErrorString*, const String& searchId);
-    void resolveNode(ErrorString*, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result);
-    void getAttributes(ErrorString*, int nodeId, RefPtr<InspectorArray>* result);
+    void resolveNode(ErrorString*, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>& result);
+    void getAttributes(ErrorString*, int nodeId, RefPtr<InspectorArray>& result);
     void setInspectModeEnabled(ErrorString*, bool enabled, const RefPtr<InspectorObject>* highlightConfig);
     void requestNode(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);

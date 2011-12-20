@@ -64,7 +64,7 @@ public:
     // Called from the front-end.
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries);
+    void getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries);
     void setDOMStorageItem(ErrorString*, int storageId, const String& key, const String& value, bool* success);
     void removeDOMStorageItem(ErrorString*, int storageId, const String& key, bool* success);
 

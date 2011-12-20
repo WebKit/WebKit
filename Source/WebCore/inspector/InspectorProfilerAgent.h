@@ -81,8 +81,8 @@ public:
     void enable(bool skipRecompile);
     bool enabled() { return m_enabled; }
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
-    void getProfileHeaders(ErrorString* error, RefPtr<InspectorArray>* headers);
-    void getProfile(ErrorString* error, const String& type, unsigned uid, RefPtr<InspectorObject>* profileObject);
+    void getProfileHeaders(ErrorString* error, RefPtr<InspectorArray>& headers);
+    void getProfile(ErrorString* error, const String& type, unsigned uid, RefPtr<InspectorObject>& profileObject);
     void removeProfile(ErrorString* error, const String& type, unsigned uid);
 
     virtual void setFrontend(InspectorFrontend*);
@@ -92,7 +92,7 @@ public:
     void takeHeapSnapshot(ErrorString*);
     void toggleRecordButton(bool isProfiling);
 
-    void getObjectByHeapObjectId(ErrorString*, int id, RefPtr<InspectorObject>* result);
+    void getObjectByHeapObjectId(ErrorString*, int id, RefPtr<InspectorObject>& result);
 
 private:
     typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;

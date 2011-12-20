@@ -351,7 +351,7 @@ HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, int 
     return toHTMLElement(element);
 }
 
-void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
+void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>& root)
 {
     m_state->setBoolean(DOMAgentState::documentRequested, true);
 
@@ -363,7 +363,7 @@ void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
     reset();
     m_document = doc;
 
-    *root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
+    root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
 }
 
 void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
@@ -421,7 +421,7 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<InspectorArray>* result)
+void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<InspectorArray>& result)
 {
     Node* node = assertNode(errorString, nodeId);
     if (!node)
@@ -435,7 +435,7 @@ void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, c
     }
 
     for (unsigned i = 0; i < nodes->length(); ++i)
-        (*result)->pushNumber(pushNodePathToFrontend(nodes->item(i)));
+        result->pushNumber(pushNodePathToFrontend(nodes->item(i)));
 }
 
 int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
@@ -710,7 +710,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
         *errorString = "DOM Error while setting the node value";
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>& listenersArray)
 {
     Node* node = nodeForId(nodeId);
     EventTargetData* d;
@@ -757,7 +757,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
         for (size_t j = 0; j < vector.size(); ++j) {
             const RegisteredEventListener& listener = vector[j];
             if (listener.useCapture)
-                (*listenersArray)->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
+                listenersArray->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
         }
     }
 
@@ -768,7 +768,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
         for (size_t j = 0; j < vector.size(); ++j) {
             const RegisteredEventListener& listener = vector[j];
             if (!listener.useCapture)
-                (*listenersArray)->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
+                listenersArray->pushObject(buildObjectForEventListener(listener, info.eventType, info.node));
         }
     }
 }
@@ -868,7 +868,7 @@ void InspectorDOMAgent::performSearch(ErrorString*, const String& whitespaceTrim
     *resultCount = resultsIt->second.size();
 }
 
-void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<InspectorArray>* nodeIds)
+void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String& searchId, int fromIndex, int toIndex, RefPtr<InspectorArray>& nodeIds)
 {
     SearchResults::iterator it = m_searchResults.find(searchId);
     if (it == m_searchResults.end()) {
@@ -883,7 +883,7 @@ void InspectorDOMAgent::getSearchResults(ErrorString* errorString, const String&
     }
 
     for (int i = fromIndex; i < toIndex; ++i)
-        (*nodeIds)->pushNumber(pushNodePathToFrontend((it->second)[i].get()));
+        nodeIds->pushNumber(pushNodePathToFrontend((it->second)[i].get()));
 }
 
 void InspectorDOMAgent::discardSearchResults(ErrorString*, const String& searchId)
@@ -1074,7 +1074,7 @@ void InspectorDOMAgent::moveTo(ErrorString* error, int nodeId, int targetElement
     *newNodeId = pushNodePathToFrontend(node);
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result)
+void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>& result)
 {
     String objectGroupName = objectGroup ? *objectGroup : "";
     Node* node = nodeForId(nodeId);
@@ -1087,16 +1087,16 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String
         *error = "Node with given id does not belong to the document";
         return;
     }
-    *result = object;
+    result = object;
 }
 
-void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<InspectorArray>* result)
+void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<InspectorArray>& result)
 {
     Element* element = assertElement(errorString, nodeId);
     if (!element)
         return;
 
-    *result = buildArrayForElementAttributes(element);
+    result = buildArrayForElementAttributes(element);
 }
 
 void InspectorDOMAgent::requestNode(ErrorString*, const String& objectId, int* nodeId)
