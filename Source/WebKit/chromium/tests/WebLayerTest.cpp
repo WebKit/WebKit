@@ -40,7 +40,11 @@
 #include <gmock/gmock.h>
 
 using namespace WebKit;
-using namespace testing;
+using testing::AnyNumber;
+using testing::AtLeast;
+using testing::Mock;
+using testing::Test;
+using testing::_;
 
 namespace {
 

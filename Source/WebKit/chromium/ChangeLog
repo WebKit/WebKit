@@ -1,3 +1,9 @@
+2011-12-19  James Robinson  <jamesr@chromium.org>
+
+        Compile fix for chromium on windows due to collision of testing::NotNull from gtest and NotNull from Vector.h
+
+        * tests/WebLayerTest.cpp:
+
 2011-12-19  Ami Fischman  <fischman@chromium.org>
 
         Teach VideoLayerChromium how to render native texture (to support HW video decode).
