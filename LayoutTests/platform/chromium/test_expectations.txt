@@ -2003,9 +2003,6 @@ BUGCR31623 WIN : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
 // functions.
 BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 
-// New flakiness?
-BUGCR32149 WIN RELEASE : fast/dom/Document/early-document-access.html = PASS TIMEOUT
-
 // Expectations from roll to 53171:53194
 // As of Oct 7, 2010, times out on all platforms when doing DEBUG costing 13 seconds on average. Skipping.
 BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
