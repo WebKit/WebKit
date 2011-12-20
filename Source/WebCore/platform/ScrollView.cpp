@@ -41,8 +41,9 @@ using namespace std;
 
 namespace WebCore {
 
-ScrollView::ScrollView()
-    : m_horizontalScrollbarMode(ScrollbarAuto)
+ScrollView::ScrollView(ScrollableAreaClient *client)
+    : ScrollableArea(client)
+    , m_horizontalScrollbarMode(ScrollbarAuto)
     , m_verticalScrollbarMode(ScrollbarAuto)
     , m_horizontalScrollbarLock(false)
     , m_verticalScrollbarLock(false)

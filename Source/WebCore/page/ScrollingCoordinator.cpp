@@ -56,6 +56,12 @@ ScrollingCoordinator::~ScrollingCoordinator()
     ASSERT(!m_page);
 }
 
+ScrollableAreaClient* ScrollingCoordinator::scrollableAreaClientForFrame(Frame*)
+{
+    // FIXME: Implement.
+    return 0;
+}
+
 void ScrollingCoordinator::pageDestroyed()
 {
     ASSERT(m_page);

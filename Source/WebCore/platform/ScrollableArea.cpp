@@ -42,14 +42,16 @@
 
 namespace WebCore {
 
-ScrollableArea::ScrollableArea()
-    : m_constrainsScrollingToContentEdge(true)
+ScrollableArea::ScrollableArea(ScrollableAreaClient* client)
+    : m_client(client)
+    , m_constrainsScrollingToContentEdge(true)
     , m_inLiveResize(false)
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
     , m_scrollbarOverlayStyle(ScrollbarOverlayStyleDefault)
     , m_scrollOriginChanged(false)
 {
+    // FIXME: If no client was supplied, create a default one.
 }
 
 ScrollableArea::~ScrollableArea()

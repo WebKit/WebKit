@@ -1,3 +1,28 @@
+2011-12-20  Anders Carlsson  <andersca@apple.com>
+
+        ScrollableArea should have an optional ScrollableAreaClient
+        https://bugs.webkit.org/show_bug.cgi?id=74949
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/FrameView.cpp:
+        (WebCore::scrollableAreaClient):
+        (WebCore::FrameView::FrameView):
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::scrollableAreaClientForFrame):
+        * page/ScrollingCoordinator.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea):
+        * platform/ScrollableArea.h:
+        * platform/ScrollableAreaClient.h: Added.
+        (WebCore::ScrollableAreaClient::~ScrollableAreaClient):
+        (WebCore::ScrollableAreaClient::ScrollableAreaClient):
+
 2011-12-19  Adam Klein  <adamk@chromium.org>
 
         Rename Element::setAttributeMap to parserSetAttributeMap and limit its use to the parser

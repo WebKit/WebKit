@@ -36,6 +36,7 @@ class GraphicsContext;
 class PlatformGestureEvent;
 class PlatformWheelEvent;
 class ScrollAnimator;
+class ScrollableAreaClient;
 #if USE(ACCELERATED_COMPOSITING)
 class GraphicsLayer;
 #endif
@@ -43,9 +44,6 @@ class GraphicsLayer;
 class ScrollableArea {
 public:
     enum ZoomAnimationState { ZoomAnimationContinuing, ZoomAnimationFinishing };
-
-    ScrollableArea();
-    virtual ~ScrollableArea();
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void scrollToOffsetWithoutAnimation(const FloatPoint&);
@@ -166,6 +164,9 @@ public:
     void setScrollOffsetFromInternals(const IntPoint&);
 
 protected:
+    explicit ScrollableArea(ScrollableAreaClient* = 0);
+    virtual ~ScrollableArea();
+
     void setScrollOrigin(const IntPoint&);
     void setScrollOriginX(int);
     void setScrollOriginY(int);
@@ -187,6 +188,8 @@ protected:
     bool hasLayerForScrollCorner() const;
 
 private:
+    ScrollableAreaClient* m_client;
+
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;
     void setScrollOffsetFromAnimation(const IntPoint&);

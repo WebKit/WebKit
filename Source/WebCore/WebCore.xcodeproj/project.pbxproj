@@ -519,6 +519,7 @@
 		1ABFE7530CD968D000FE4834 /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ABFE7520CD968D000FE4834 /* SQLTransaction.cpp */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
+		1AC6926A14A1253200BD85F1 /* ScrollableAreaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC6926914A1253100BD85F1 /* ScrollableAreaClient.h */; };
 		1ACD1B630B029739007E5016 /* DOMCSSStyleDeclarationInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711440AC5D5340053270F /* DOMCSSStyleDeclarationInternal.h */; };
 		1ACE53DF0A8D18810022947D /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE53DD0A8D18810022947D /* JSDOMParser.cpp */; };
 		1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACE53DE0A8D18810022947D /* JSDOMParser.h */; };
@@ -7670,6 +7671,7 @@
 		1ABFE7520CD968D000FE4834 /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLTransaction.cpp; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
+		1AC6926914A1253100BD85F1 /* ScrollableAreaClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollableAreaClient.h; sourceTree = "<group>"; };
 		1ACE53DD0A8D18810022947D /* JSDOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMParser.cpp; sourceTree = "<group>"; };
 		1ACE53DE0A8D18810022947D /* JSDOMParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMParser.h; sourceTree = "<group>"; };
 		1ACE53E10A8D18E70022947D /* DOMParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMParser.cpp; sourceTree = "<group>"; };
@@ -20328,6 +20330,7 @@
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
 				BC8AE34C12EA096A00EB3AE6 /* ScrollableArea.cpp */,
 				BC8AE34D12EA096A00EB3AE6 /* ScrollableArea.h */,
+				1AC6926914A1253100BD85F1 /* ScrollableAreaClient.h */,
 				CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */,
 				CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */,
 				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
@@ -24947,6 +24950,7 @@
 				1A2F9D7A14968C740065AC63 /* ScrollingCoordinator.h in Headers */,
 				1AA7160B149BC4DB0016EC19 /* TileCache.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
+				1AC6926A14A1253200BD85F1 /* ScrollableAreaClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

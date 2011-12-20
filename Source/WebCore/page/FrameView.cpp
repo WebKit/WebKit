@@ -84,6 +84,10 @@
 #include "TiledBackingStore.h"
 #endif
 
+#if ENABLE(THREADED_SCROLLING)
+#include "ScrollingCoordinator.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -119,8 +123,21 @@ static inline RenderView* rootRenderer(const FrameView* view)
     return view->frame() ? view->frame()->contentRenderer() : 0;
 }
 
+static inline ScrollableAreaClient* scrollableAreaClient(Frame* frame)
+{
+#if ENABLE(THREADED_SCROLLING)
+    if (Page* page = frame ? frame->page() : 0) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
+            return scrollingCoordinator->scrollableAreaClientForFrame(frame);
+    }
+#endif
+
+    return 0;
+}
+
 FrameView::FrameView(Frame* frame)
-    : m_frame(frame)
+    : ScrollView(scrollableAreaClient(frame))
+    , m_frame(frame)
     , m_canHaveScrollbars(true)
     , m_slowRepaintObjectCount(0)
     , m_fixedObjectCount(0)

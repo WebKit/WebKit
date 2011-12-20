@@ -44,6 +44,7 @@ class Frame;
 class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
+class ScrollableAreaClient;
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
@@ -55,6 +56,9 @@ public:
     ~ScrollingCoordinator();
 
     void pageDestroyed();
+
+    // Return a scrollable area client for the given frame.
+    ScrollableAreaClient* scrollableAreaClientForFrame(Frame*);
 
     // Should be called whenever the scroll layer for the given frame changes.
     void setFrameScrollLayer(Frame*, const GraphicsLayer* scrollLayer);
