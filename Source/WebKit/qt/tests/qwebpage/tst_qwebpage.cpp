@@ -140,6 +140,7 @@ private slots:
     void errorPageExtensionInFrameset();
     void errorPageExtensionLoadFinished();
     void userAgentApplicationName();
+    void userAgentNewlineStripping();
 
     void viewModes();
 
@@ -2670,6 +2671,26 @@ void tst_QWebPage::userAgentApplicationName()
     QVERIFY(page.userAgentForUrl(QUrl()).contains(applicationNameMarker));
 
     QCoreApplication::setApplicationName(oldApplicationName);
+}
+
+class CustomUserAgentWebPage : public QWebPage
+{
+public:
+    static const QLatin1String filteredUserAgent;
+protected:
+    virtual QString userAgentForUrl(const QUrl& url) const
+    {
+        return QString("My User Agent\nX-New-Http-Header: Oh Noes!");
+    }
+};
+const QLatin1String CustomUserAgentWebPage::filteredUserAgent("My User AgentX-New-Http-Header: Oh Noes!");
+
+void tst_QWebPage::userAgentNewlineStripping()
+{
+    CustomUserAgentWebPage page;
+    QWebFrame* mainFrame = page.mainFrame();
+    mainFrame->setHtml("<html><body></body></html>");
+    QCOMPARE(mainFrame->evaluateJavaScript("navigator.userAgent").toString(), CustomUserAgentWebPage::filteredUserAgent);
 }
 
 void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()

@@ -736,7 +736,7 @@ void FrameLoaderClientQt::setTitle(const StringWithDirection& title, const KURL&
 String FrameLoaderClientQt::userAgent(const KURL& url)
 {
     if (m_webFrame) {
-        return m_webFrame->page()->userAgentForUrl(url);
+        return m_webFrame->page()->userAgentForUrl(url).remove(QLatin1Char('\n')).remove(QLatin1Char('\r'));
     }
     return String();
 }

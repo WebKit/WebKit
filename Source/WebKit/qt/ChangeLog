@@ -1,3 +1,22 @@
+2011-12-20  Jarred Nicholls  <jarred@sencha.com>
+
+        [Qt] HTTP header injection via QWebPage::userAgentForUrl()
+        https://bugs.webkit.org/show_bug.cgi?id=68560
+
+        Strip out newline characters from the result of userAgentForUrl() to prevent additional
+        HTTP headers in HTTP requests.
+
+        New QtTest case that validates the user agent, as returned by navigator.userAgent, does not
+        contain any newline characters.
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::userAgent):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (CustomUserAgentWebPage::userAgentForUrl):
+        (tst_QWebPage::userAgentNewlineStripping):
+
 2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Implement favicon support
