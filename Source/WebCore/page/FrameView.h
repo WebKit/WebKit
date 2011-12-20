@@ -343,7 +343,7 @@ private:
     void autoSizeIfEnabled();
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);
-    virtual void contentsResized();
+    virtual void contentsResized() OVERRIDE;
     virtual void visibleContentsResized();
 
     // Override ScrollView methods to do point conversion via renderers, in order to

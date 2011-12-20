@@ -1,3 +1,20 @@
+2011-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Add ScrollableArea::contentsResized and have it call the scroll animator
+        https://bugs.webkit.org/show_bug.cgi?id=74966
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::contentsResized):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::contentsResized):
+        * platform/ScrollableArea.h:
+
 2011-12-20  Simon Fraser  <simon.fraser@apple.com>
 
         requestAnimationFrame on Mac fires at 60fps even when drawing is much slower

@@ -684,7 +684,7 @@ void BuiltInPDFView::scrollbarStyleChanged(int, bool forceUpdate)
     // As size of the content area changes, scrollbars may need to appear or to disappear.
     updateScrollbars();
 
-    scrollAnimator()->contentsResized();
+    ScrollableArea::contentsResized();
 }
 
 IntPoint BuiltInPDFView::convertFromContainingViewToScrollbar(const Scrollbar* scrollbar, const IntPoint& parentPoint) const

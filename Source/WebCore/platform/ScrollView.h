@@ -301,7 +301,6 @@ protected:
     void calculateOverhangAreasForPainting(IntRect& horizontalOverhangRect, IntRect& verticalOverhangRect);
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
-    virtual void contentsResized() = 0;
     virtual void visibleContentsResized() = 0;
 
     IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }

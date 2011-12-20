@@ -86,6 +86,8 @@ public:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
+    virtual void contentsResized();
+
     bool hasOverlayScrollbars() const;
     virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
     ScrollbarOverlayStyle scrollbarOverlayStyle() const { return static_cast<ScrollbarOverlayStyle>(m_scrollbarOverlayStyle); }

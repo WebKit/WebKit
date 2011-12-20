@@ -531,7 +531,7 @@ void FrameView::setContentsSize(const IntSize& size)
     m_deferSetNeedsLayouts++;
 
     ScrollView::setContentsSize(size);
-    scrollAnimator()->contentsResized();
+    ScrollView::contentsResized();
     
     Page* page = frame() ? frame()->page() : 0;
     if (!page)
@@ -1841,7 +1841,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 
 void FrameView::contentsResized()
 {
-    scrollAnimator()->contentsResized();
+    ScrollView::contentsResized();
     setNeedsLayout();
 }
 

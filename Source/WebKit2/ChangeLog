@@ -1,5 +1,15 @@
 2011-12-20  Anders Carlsson  <andersca@apple.com>
 
+        Add ScrollableArea::contentsResized and have it call the scroll animator
+        https://bugs.webkit.org/show_bug.cgi?id=74966
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::scrollbarStyleChanged):
+
+2011-12-20  Anders Carlsson  <andersca@apple.com>
+
         Try to fix the Windows build.
 
         * UIProcess/win/WebPopupMenuProxyWin.cpp:

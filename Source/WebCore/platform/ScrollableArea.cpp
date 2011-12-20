@@ -279,6 +279,11 @@ void ScrollableArea::didAddHorizontalScrollbar(Scrollbar* scrollbar)
     setScrollbarOverlayStyle(scrollbarOverlayStyle());
 }
 
+void ScrollableArea::contentsResized()
+{
+    scrollAnimator()->contentsResized();
+}
+
 void ScrollableArea::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
     scrollAnimator()->willRemoveHorizontalScrollbar(scrollbar);
