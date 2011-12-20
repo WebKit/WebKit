@@ -42,6 +42,7 @@
 #define WTF_ThreadSpecific_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 
 #if USE(PTHREADS)
 #include <pthread.h>

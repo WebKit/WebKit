@@ -1,3 +1,11 @@
+2011-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Qt build.
+
+        Unreviewed.
+
+        * wtf/ThreadSpecific.h: #include!
+
 2011-12-18  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to change the value of an Options variable without recompiling the world
