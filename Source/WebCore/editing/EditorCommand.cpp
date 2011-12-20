@@ -955,6 +955,16 @@ static bool executeScrollPageForward(Frame* frame, Event*, EditorCommandSource, 
     return frame->eventHandler()->logicalScrollRecursively(ScrollBlockDirectionForward, ScrollByPage);
 }
 
+static bool executeScrollLineUp(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    return frame->eventHandler()->scrollRecursively(ScrollUp, ScrollByLine);
+}
+
+static bool executeScrollLineDown(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    return frame->eventHandler()->scrollRecursively(ScrollDown, ScrollByLine);
+}
+
 static bool executeScrollToBeginningOfDocument(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     return frame->eventHandler()->logicalScrollRecursively(ScrollBlockDirectionBackward, ScrollByDocument);
@@ -1514,6 +1524,8 @@ static const CommandMap& createCommandMap()
         { "RemoveFormat", { executeRemoveFormat, supported, enabledRangeInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollPageBackward", { executeScrollPageBackward, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollPageForward", { executeScrollPageForward, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollLineUp", { executeScrollLineUp, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "ScrollLineDown", { executeScrollLineDown, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollToBeginningOfDocument", { executeScrollToBeginningOfDocument, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ScrollToEndOfDocument", { executeScrollToEndOfDocument, supportedFromMenuOrKeyBinding, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SelectAll", { executeSelectAll, supported, enabled, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

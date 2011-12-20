@@ -1,3 +1,16 @@
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
+        Add support for scrollLineDown: and scrollLineUp: NSResponder selectors
+        https://bugs.webkit.org/show_bug.cgi?id=74907
+
+        Reviewed by Dan Bernstein.
+
+        Add ScrollByLineCommands API test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/mac/EditorCommands.mm: Added.
+        * TestWebKitAPI/Tests/WebKit2/simple-tall.html: Added.
+
 2011-12-19  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: remove port.executive, port.filesystem, port.user properties

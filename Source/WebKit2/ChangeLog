@@ -1,5 +1,16 @@
 2011-12-19  Sam Weinig  <sam@webkit.org>
 
+        Add support for scrollLineDown: and scrollLineUp: NSResponder selectors
+        https://bugs.webkit.org/show_bug.cgi?id=74907
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/mac/WKView.mm:
+        Add implementations for scrollLineDown: and scrollLineUp: using our
+        fun macros.
+
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
         More PlatformEvent cleanup
         https://bugs.webkit.org/show_bug.cgi?id=74831
 
