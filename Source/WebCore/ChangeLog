@@ -1,3 +1,32 @@
+2011-12-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Regression(99212): table rows get incorrect height after changing some cells' height
+        https://bugs.webkit.org/show_bug.cgi?id=74303
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/table/resize-table-binding-cell.html
+               fast/table/resize-table-cell.html
+               fast/table/resize-table-row.html
+
+        r99212 wrongly implemented the row's logicalHeight recalculation.
+        The original code would use recalcCells which would properly recalculate a
+        row logicalHeight by iterating over the table's cells but throwing out the
+        existing result.
+
+        Our approach is just to recompute our row's logicalHeight and leave the
+        rest of the section untouched.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::updateLogicalHeightForCell):
+        Added this new helper function to update the RowStruct logicalHeight during
+        |addCell| and |rowLogicalHeightChanged|.
+
+        (WebCore::RenderTableSection::addCell):
+        Replaced the old code with a call to updateLogicalHeightForCell.
+        (WebCore::RenderTableSection::rowLogicalHeightChanged):
+        Added a call to updateLogicalHeightForCell for each cells.
+
 2011-12-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103322.

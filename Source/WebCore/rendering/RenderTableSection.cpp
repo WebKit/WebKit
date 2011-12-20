@@ -56,6 +56,34 @@ static inline void setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(Rende
         row.logicalHeight = Length();
 }
 
+static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row, const RenderTableCell* cell)
+{
+    // We ignore height settings on rowspan cells.
+    if (cell->rowSpan() != 1)
+        return;
+
+    Length logicalHeight = cell->style()->logicalHeight();
+    if (logicalHeight.isPositive() || (logicalHeight.isRelative() && logicalHeight.value() >= 0)) {
+        Length cRowLogicalHeight = row.logicalHeight;
+        switch (logicalHeight.type()) {
+        case Percent:
+            if (!(cRowLogicalHeight.isPercent())
+                || (cRowLogicalHeight.isPercent() && cRowLogicalHeight.percent() < logicalHeight.percent()))
+                row.logicalHeight = logicalHeight;
+            break;
+        case Fixed:
+            if (cRowLogicalHeight.type() < Percent
+                || (cRowLogicalHeight.isFixed() && cRowLogicalHeight.value() < logicalHeight.value()))
+                row.logicalHeight = logicalHeight;
+            break;
+        case Relative:
+        default:
+            break;
+        }
+    }
+}
+
+
 RenderTableSection::RenderTableSection(Node* node)
     : RenderBox(node)
     , m_cCol(0)
@@ -210,28 +238,7 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
     while (m_cCol < nCols && (cellAt(insertionRow, m_cCol).hasCells() || cellAt(insertionRow, m_cCol).inColSpan))
         m_cCol++;
 
-    if (rSpan == 1) {
-        // we ignore height settings on rowspan cells
-        Length logicalHeight = cell->style()->logicalHeight();
-        if (logicalHeight.isPositive() || (logicalHeight.isRelative() && logicalHeight.value() >= 0)) {
-            Length cRowLogicalHeight = m_grid[insertionRow].logicalHeight;
-            switch (logicalHeight.type()) {
-                case Percent:
-                    if (!(cRowLogicalHeight.isPercent()) ||
-                        (cRowLogicalHeight.isPercent() && cRowLogicalHeight.percent() < logicalHeight.percent()))
-                        m_grid[insertionRow].logicalHeight = logicalHeight;
-                        break;
-                case Fixed:
-                    if (cRowLogicalHeight.type() < Percent ||
-                        (cRowLogicalHeight.isFixed() && cRowLogicalHeight.value() < logicalHeight.value()))
-                        m_grid[insertionRow].logicalHeight = logicalHeight;
-                    break;
-                case Relative:
-                default:
-                    break;
-            }
-        }
-    }
+    updateLogicalHeightForCell(m_grid[insertionRow], cell);
 
     ensureRows(insertionRow + rSpan);
 
@@ -1179,9 +1186,17 @@ void RenderTableSection::recalcCells()
     setNeedsLayout(true);
 }
 
+// FIXME: This function could be made O(1) in certain cases (like for the non-most-constrainive cells' case).
 void RenderTableSection::rowLogicalHeightChanged(unsigned rowIndex)
 {
     setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[rowIndex]);
+
+    for (RenderObject* cell = m_grid[rowIndex].rowRenderer->firstChild(); cell; cell = cell->nextSibling()) {
+        if (!cell->isTableCell())
+            continue;
+
+        updateLogicalHeightForCell(m_grid[rowIndex], toRenderTableCell(cell));
+    }
 }
 
 void RenderTableSection::setNeedsCellRecalc()
