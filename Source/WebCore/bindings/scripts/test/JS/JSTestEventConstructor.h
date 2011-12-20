@@ -36,7 +36,7 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestEventConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestEventConstructor> impl)
     {
-        JSTestEventConstructor* ptr = new (JSC::allocateCell<JSTestEventConstructor>(globalObject->globalData().heap)) JSTestEventConstructor(structure, globalObject, impl);
+        JSTestEventConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructor>(globalObject->globalData().heap)) JSTestEventConstructor(structure, globalObject, impl);
         ptr->finishCreation(globalObject->globalData());
         return ptr;
     }
@@ -88,7 +88,7 @@ public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestEventConstructorPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestEventConstructorPrototype* ptr = new (JSC::allocateCell<JSTestEventConstructorPrototype>(globalData.heap)) JSTestEventConstructorPrototype(globalData, globalObject, structure);
+        JSTestEventConstructorPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorPrototype>(globalData.heap)) JSTestEventConstructorPrototype(globalData, globalObject, structure);
         ptr->finishCreation(globalData);
         return ptr;
     }
@@ -114,7 +114,7 @@ public:
     typedef DOMConstructorObject Base;
     static JSTestEventConstructorConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestEventConstructorConstructor* ptr = new (JSC::allocateCell<JSTestEventConstructorConstructor>(*exec->heap())) JSTestEventConstructorConstructor(structure, globalObject);
+        JSTestEventConstructorConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestEventConstructorConstructor>(*exec->heap())) JSTestEventConstructorConstructor(structure, globalObject);
         ptr->finishCreation(exec, globalObject);
         return ptr;
     }

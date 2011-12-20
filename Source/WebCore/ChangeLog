@@ -1,3 +1,37 @@
+2011-12-19  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests results.
+
+        * bindings/scripts/test/JS/JSFloat64Array.h:
+        (WebCore::JSFloat64Array::create):
+        (WebCore::JSFloat64ArrayPrototype::create):
+        (WebCore::JSFloat64ArrayConstructor::create):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (WebCore::JSTestEventConstructor::create):
+        (WebCore::JSTestEventConstructorPrototype::create):
+        (WebCore::JSTestEventConstructorConstructor::create):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::create):
+        (WebCore::JSTestInterfacePrototype::create):
+        (WebCore::JSTestInterfaceConstructor::create):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::create):
+        (WebCore::JSTestMediaQueryListListenerPrototype::create):
+        (WebCore::JSTestMediaQueryListListenerConstructor::create):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (WebCore::JSTestNamedConstructor::create):
+        (WebCore::JSTestNamedConstructorPrototype::create):
+        (WebCore::JSTestNamedConstructorConstructor::create):
+        (WebCore::JSTestNamedConstructorNamedConstructor::create):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::create):
+        (WebCore::JSTestObjPrototype::create):
+        (WebCore::JSTestObjConstructor::create):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::create):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::create):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::create):
+
 2011-12-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCLayerDelegate and WebLayerClient do not need notifySyncRequired

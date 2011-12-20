@@ -34,7 +34,7 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
     {
-        JSTestMediaQueryListListener* ptr = new (JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->globalData().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
+        JSTestMediaQueryListListener* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->globalData().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
         ptr->finishCreation(globalObject->globalData());
         return ptr;
     }
@@ -86,7 +86,7 @@ public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestMediaQueryListListenerPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestMediaQueryListListenerPrototype* ptr = new (JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(globalData.heap)) JSTestMediaQueryListListenerPrototype(globalData, globalObject, structure);
+        JSTestMediaQueryListListenerPrototype* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(globalData.heap)) JSTestMediaQueryListListenerPrototype(globalData, globalObject, structure);
         ptr->finishCreation(globalData);
         return ptr;
     }
@@ -114,7 +114,7 @@ public:
     typedef DOMConstructorObject Base;
     static JSTestMediaQueryListListenerConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestMediaQueryListListenerConstructor* ptr = new (JSC::allocateCell<JSTestMediaQueryListListenerConstructor>(*exec->heap())) JSTestMediaQueryListListenerConstructor(structure, globalObject);
+        JSTestMediaQueryListListenerConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestMediaQueryListListenerConstructor>(*exec->heap())) JSTestMediaQueryListListenerConstructor(structure, globalObject);
         ptr->finishCreation(exec, globalObject);
         return ptr;
     }

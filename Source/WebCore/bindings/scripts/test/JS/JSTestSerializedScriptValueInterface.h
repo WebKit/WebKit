@@ -36,7 +36,7 @@ public:
     typedef JSDOMWrapper Base;
     static JSTestSerializedScriptValueInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestSerializedScriptValueInterface> impl)
     {
-        JSTestSerializedScriptValueInterface* ptr = new (JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->globalData().heap)) JSTestSerializedScriptValueInterface(structure, globalObject, impl);
+        JSTestSerializedScriptValueInterface* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->globalData().heap)) JSTestSerializedScriptValueInterface(structure, globalObject, impl);
         ptr->finishCreation(globalObject->globalData());
         return ptr;
     }
@@ -88,7 +88,7 @@ public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestSerializedScriptValueInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {
-        JSTestSerializedScriptValueInterfacePrototype* ptr = new (JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(globalData.heap)) JSTestSerializedScriptValueInterfacePrototype(globalData, globalObject, structure);
+        JSTestSerializedScriptValueInterfacePrototype* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(globalData.heap)) JSTestSerializedScriptValueInterfacePrototype(globalData, globalObject, structure);
         ptr->finishCreation(globalData);
         return ptr;
     }
@@ -114,7 +114,7 @@ public:
     typedef DOMConstructorObject Base;
     static JSTestSerializedScriptValueInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
-        JSTestSerializedScriptValueInterfaceConstructor* ptr = new (JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(*exec->heap())) JSTestSerializedScriptValueInterfaceConstructor(structure, globalObject);
+        JSTestSerializedScriptValueInterfaceConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(*exec->heap())) JSTestSerializedScriptValueInterfaceConstructor(structure, globalObject);
         ptr->finishCreation(exec, globalObject);
         return ptr;
     }
