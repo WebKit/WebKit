@@ -63,7 +63,8 @@ static void swapInNodePreservingAttributesAndChildren(HTMLElement* newNode, HTML
         ASSERT(!ec);
     }
 
-    newNode->attributes()->setAttributes(*nodeToReplace->attributes());
+    // FIXME: Fix this to send the proper MutationRecords when MutationObservers are present.
+    newNode->setAttributesFromElement(*nodeToReplace);
 
     parentNode->removeChild(nodeToReplace, ec);
     ASSERT(!ec);

@@ -896,7 +896,7 @@ void SVGUseElement::expandSymbolElementsInShadowTree(Node* element)
         RefPtr<SVGSVGElement> svgElement = SVGSVGElement::create(SVGNames::svgTag, document());
 
         // Transfer all attributes from <symbol> to the new <svg> element
-        svgElement->attributes()->setAttributes(*element->attributes());
+        svgElement->setAttributesFromElement(*toElement(element));
 
         // Only clone symbol children, and add them to the new <svg> element    
         ExceptionCode ec = 0;
@@ -1033,24 +1033,13 @@ void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVG
     ASSERT(from);
     ASSERT(to);
 
-    to->attributes()->setAttributes(*from->attributes());
+    to->setAttributesFromElement(*from);
 
-    ExceptionCode ec = 0;
-
-    to->removeAttribute(SVGNames::xAttr, ec);
-    ASSERT(!ec);
-
-    to->removeAttribute(SVGNames::yAttr, ec);
-    ASSERT(!ec);
-
-    to->removeAttribute(SVGNames::widthAttr, ec);
-    ASSERT(!ec);
-
-    to->removeAttribute(SVGNames::heightAttr, ec);
-    ASSERT(!ec);
-
-    to->removeAttribute(XLinkNames::hrefAttr, ec);
-    ASSERT(!ec);
+    to->removeAttribute(SVGNames::xAttr, ASSERT_NO_EXCEPTION);
+    to->removeAttribute(SVGNames::yAttr, ASSERT_NO_EXCEPTION);
+    to->removeAttribute(SVGNames::widthAttr, ASSERT_NO_EXCEPTION);
+    to->removeAttribute(SVGNames::heightAttr, ASSERT_NO_EXCEPTION);
+    to->removeAttribute(XLinkNames::hrefAttr, ASSERT_NO_EXCEPTION);
 }
 
 bool SVGUseElement::selfHasRelativeLengths() const

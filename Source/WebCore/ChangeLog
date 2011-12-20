@@ -1,3 +1,39 @@
+2011-12-19  Adam Klein  <adamk@chromium.org>
+
+        Make all calls to NamedNodeMap::setAttributes go through Element
+        https://bugs.webkit.org/show_bug.cgi?id=74895
+
+        Reviewed by Ryosuke Niwa.
+
+        There are two reasons for this change. One is an optimization: some
+        callers were previously always creating a NamedNodeMap even if the
+        source didn't have any attributes.
+
+        The other reason is forward-looking: setAttributes' behavior is subtly
+        wrong in the presence of MutationObservers. This doesn't matter
+        for most callers since the element on which setAttributesFromElement
+        is called is newly-created. In the editing case, however, it could
+        make a difference in behavior, which I hope to fix in a future change
+        without sacrificing the performance of cloneNode() on an Element
+        (which is what NamedNodeMap::setAttributes is designed for).
+
+        No new tests, no change in behavior.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneElementWithoutChildren): Call setAttributesFromElement.
+        * dom/Element.h:
+        (WebCore::Element::setAttributesFromElement): Create new inline helper method
+        which conditionally forwards to NamedNodeMap::setAttribute.
+        * dom/NamedNodeMap.h: Make setAttributes private (Element is already a friend).
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren): Call setAttributesFromElement.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setNodeName): Call setAttributesFromElement.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree): Call setAttributesFromElement.
+        (WebCore::SVGUseElement::transferUseAttributesToReplacedElement): Call setAttributesFromElement
+        and make use of ASSERT_NO_EXCEPTION to make code easier to read.
+
 2011-12-19  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream the BlackBerry change to ResourceRequestBase.cpp

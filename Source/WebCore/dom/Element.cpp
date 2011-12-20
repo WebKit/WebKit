@@ -163,10 +163,7 @@ PassRefPtr<Element> Element::cloneElementWithoutChildren()
     // This is a sanity check as HTML overloads some of the DOM methods.
     ASSERT(isHTMLElement() == clone->isHTMLElement());
 
-    // Call attributes(true) to force attribute synchronization to occur for SVG and style attributes.
-    if (NamedNodeMap* attributeMap = attributes(true))
-        clone->attributes()->setAttributes(*attributeMap);
-
+    clone->setAttributesFromElement(*this);
     clone->copyNonAttributeProperties(this);
 
     return clone.release();

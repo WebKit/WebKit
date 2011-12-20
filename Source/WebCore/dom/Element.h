@@ -219,6 +219,8 @@ public:
     void setAttributeMap(PassRefPtr<NamedNodeMap>, FragmentScriptingPermission = FragmentScriptingAllowed);
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
 
+    void setAttributesFromElement(const Element&);
+
     virtual void copyNonAttributeProperties(const Element* source);
 
     virtual void attach();
@@ -493,6 +495,12 @@ inline NamedNodeMap* Element::attributes(bool readonly) const
     if (!readonly && !m_attributeMap)
         createAttributeMap();
     return m_attributeMap.get();
+}
+
+inline void Element::setAttributesFromElement(const Element& other)
+{
+    if (NamedNodeMap* attributeMap = other.attributes(true))
+        attributes(false)->setAttributes(*attributeMap);
 }
 
 inline void Element::updateId(const AtomicString& oldId, const AtomicString& newId)

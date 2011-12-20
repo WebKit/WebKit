@@ -63,8 +63,6 @@ public:
 
     // Internal interface.
 
-    void setAttributes(const NamedNodeMap&);
-
     Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }
     Attribute* getAttributeItem(const QualifiedName&) const;
 
@@ -113,6 +111,7 @@ private:
     void detachFromElement();
     Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
     Attribute* getAttributeItemSlowCase(const String& name, bool shouldIgnoreAttributeCase) const;
+    void setAttributes(const NamedNodeMap&);
     void clearAttributes();
     int declCount() const;
 
