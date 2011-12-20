@@ -44,7 +44,6 @@ private:
     void runJavaScriptAlert(const QString& message);
     bool runJavaScriptConfirm(const QString& message);
     QString runJavaScriptPrompt(const QString& message, const QString& defaultValue, bool& ok);
-    void setStatusText(const QString&);
     void runOpenPanel(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, FileChooserType);
     void mouseDidMoveOverElement(const QUrl& linkURL, const QString& linkTitle);
     void permissionRequest(QWebPermissionRequest*);
@@ -53,7 +52,6 @@ private:
     static void runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo);
     static bool runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo);
     static WKStringRef runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo);
-    static void setStatusText(WKPageRef, WKStringRef, const void *clientInfo);
     static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void* clientInfo);
     static void mouseDidMoveOverElement(WKPageRef, WKHitTestResultRef, WKEventModifiers, WKTypeRef userData, const void* clientInfo);
     static void policyForGeolocationPermissionRequest(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKGeolocationPermissionRequestRef, const void*);

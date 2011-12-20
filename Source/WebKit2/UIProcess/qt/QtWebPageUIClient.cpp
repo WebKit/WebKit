@@ -41,7 +41,6 @@ QtWebPageUIClient::QtWebPageUIClient(WKPageRef pageRef, QQuickWebView* webView)
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
-    uiClient.setStatusText = setStatusText;
     uiClient.runOpenPanel = runOpenPanel;
     uiClient.mouseDidMoveOverElement = mouseDidMoveOverElement;
     uiClient.decidePolicyForGeolocationPermissionRequest = policyForGeolocationPermissionRequest;
@@ -66,11 +65,6 @@ QString QtWebPageUIClient::runJavaScriptPrompt(const QString& message, const QSt
 void QtWebPageUIClient::runOpenPanel(WKOpenPanelResultListenerRef listenerRef, const QStringList& selectedFileNames, FileChooserType type)
 {
     m_webView->d_func()->chooseFiles(listenerRef, selectedFileNames, type);
-}
-
-void QtWebPageUIClient::setStatusText(const QString& newMessage)
-{
-    emit m_webView->statusBarMessageChanged(newMessage);
 }
 
 void QtWebPageUIClient::mouseDidMoveOverElement(const QUrl& linkURL, const QString& linkTitle)
@@ -121,12 +115,6 @@ WKStringRef QtWebPageUIClient::runJavaScriptPrompt(WKPageRef, WKStringRef messag
     if (!ok)
         return createNullWKString();
     return WKStringCreateWithQString(result);
-}
-
-void QtWebPageUIClient::setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
-{
-    QString qText = WKStringCopyQString(text);
-    toQtWebPageUIClient(clientInfo)->setStatusText(qText);
 }
 
 void QtWebPageUIClient::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)

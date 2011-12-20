@@ -105,7 +105,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void titleChanged(const QString& title);
-    void statusBarMessageChanged(const QString& message);
     void loadStarted();
     void loadSucceeded();
     void loadFailed(QQuickWebView::ErrorDomain errorDomain, int errorCode, const QUrl& url, const QString& description);

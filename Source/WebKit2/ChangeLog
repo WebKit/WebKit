@@ -1,3 +1,18 @@
+2011-12-20  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][WK2] Remove statusBarMessageChanged
+        https://bugs.webkit.org/show_bug.cgi?id=74405
+
+        Reviewed by Tor Arne Vestbø.
+
+        Removing support for window.status updates from the public
+        QML API. See bug for details.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        (QtWebPageUIClient::QtWebPageUIClient):
+        * UIProcess/qt/QtWebPageUIClient.h:
+
 2011-12-20  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollableArea wrappers for a bunch of ScrollAnimator member functions
