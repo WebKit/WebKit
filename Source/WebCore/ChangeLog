@@ -1,3 +1,14 @@
+2011-12-19  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Upstream the BlackBerry change to NetworkStateNotifier.h
+        https://bugs.webkit.org/show_bug.cgi?id=74904
+
+        Reviewed by Daniel Bates.
+
+        No functionality change to existing code, no new tests.
+
+        * platform/network/NetworkStateNotifier.h:
+
 2011-12-19  Yael Aharon  <yael.aharon@nokia.com>
 
         Update dropzone implementation per spec update

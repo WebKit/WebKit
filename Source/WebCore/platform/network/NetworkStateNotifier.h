@@ -67,6 +67,10 @@ public:
     void setOnLine(bool);
 #endif
 
+#if PLATFORM(BLACKBERRY)
+    void networkStateChange(bool online);
+#endif
+
 private:
     bool m_isOnLine;
     void (*m_networkStateChangedFunction)();
@@ -96,7 +100,7 @@ private:
 #endif
 };
 
-#if !PLATFORM(MAC) && !PLATFORM(WIN) && !(PLATFORM(QT) && !defined(QT_NO_BEARERMANAGEMENT))
+#if !PLATFORM(MAC) && !PLATFORM(WIN) && !(PLATFORM(QT) && !defined(QT_NO_BEARERMANAGEMENT)) && !PLATFORM(BLACKBERRY)
 
 inline NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(true)
