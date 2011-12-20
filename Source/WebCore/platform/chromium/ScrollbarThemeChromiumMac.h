@@ -27,22 +27,63 @@
 #ifndef ScrollbarThemeChromiumMac_h
 #define ScrollbarThemeChromiumMac_h
 
-#include "ScrollbarThemeMac.h"
+#include "ScrollbarOverlayUtilitiesChromiumMac.h"
+#include "ScrollbarThemeComposite.h"
+
+// This file (and its associated .mm file) is a clone of ScrollbarThemeMac.h.
+// See the .mm file for details.
 
 namespace WebCore {
 
-class ScrollbarThemeChromiumMac : public ScrollbarThemeMac {
+class ScrollbarThemeChromiumMac : public ScrollbarThemeComposite {
 public:
     ScrollbarThemeChromiumMac();
     virtual ~ScrollbarThemeChromiumMac();
 
+    void preferencesChanged();
+
+    virtual void updateEnabledState(Scrollbar*);
+
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+
+    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
+
+    virtual bool supportsControlTints() const { return true; }
+    virtual bool usesOverlayScrollbars() const;
+    virtual void updateScrollbarOverlayStyle(Scrollbar*);
+
+    virtual double initialAutoscrollTimerDelay();
+    virtual double autoscrollTimerDelay();
+
+    virtual ScrollbarButtonsPlacement buttonsPlacement() const;
+
+    virtual void registerScrollbar(Scrollbar*);
+    virtual void unregisterScrollbar(Scrollbar*);
+
+    void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
+    WKScrollbarPainterRef painterForScrollbar(Scrollbar*);
 
     virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
     
+protected:
+    virtual bool hasButtons(Scrollbar*);
+    virtual bool hasThumb(Scrollbar*);
+
+    virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
+    virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
+    virtual IntRect trackRect(Scrollbar*, bool painting = false);
+
+    virtual int maxOverlapBetweenPages() { return 40; }
+
+    virtual int minimumThumbLength(Scrollbar*);
+
+    virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
+
 private:
     void paintGivenTickmarks(GraphicsContext*, Scrollbar*, const IntRect&, const Vector<IntRect>&);
 
+private:
     RefPtr<Pattern> m_overhangPattern;
 };
 

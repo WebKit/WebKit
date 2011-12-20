@@ -28,8 +28,8 @@
 
 #if ENABLE(RUBBER_BANDING)
 
-#include "FloatPoint.h"
-#include "FloatSize.h"
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

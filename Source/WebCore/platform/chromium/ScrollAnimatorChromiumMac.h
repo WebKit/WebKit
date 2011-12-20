@@ -23,46 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollAnimatorMac_h
-#define ScrollAnimatorMac_h
+#ifndef ScrollAnimatorChromiumMac_h
+#define ScrollAnimatorChromiumMac_h
 
-#if ENABLE(SMOOTH_SCROLLING)
-
-#include "IntRect.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "IntRect.h"
 #include "ScrollAnimator.h"
-#include "ScrollElasticityController.h"
+#include "ScrollbarOverlayUtilitiesChromiumMac.h"
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
 
 #ifdef __OBJC__
-@class WebScrollAnimationHelperDelegate;
-@class WebScrollbarPainterControllerDelegate;
-@class WebScrollbarPainterDelegate;
+@class ScrollAnimationHelperDelegate;
+@class ScrollbarPainterDelegate;
+@class ScrollbarPainterControllerDelegate;
+@class ScrollbarPainterDelegate;
 #else
-class WebScrollAnimationHelperDelegate;
-class WebScrollbarPainterControllerDelegate;
-class WebScrollbarPainterDelegate;
-#endif
-
-#if USE(SCROLLBAR_PAINTER)
-typedef id ScrollbarPainterController;
-#endif
-
-#if !ENABLE(RUBBER_BANDING)
-class ScrollElasticityControllerClient { };
+class ScrollAnimationHelperDelegate;
+class ScrollbarPainterDelegate;
+class ScrollbarPainterControllerDelegate;
+class ScrollbarPainterDelegate;
 #endif
 
 namespace WebCore {
 
 class Scrollbar;
 
-class ScrollAnimatorMac : public ScrollAnimator, private ScrollElasticityControllerClient {
-
+class ScrollAnimatorChromiumMac : public ScrollAnimator {
 public:
-    ScrollAnimatorMac(ScrollableArea*);
-    virtual ~ScrollAnimatorMac();
+    explicit ScrollAnimatorChromiumMac(ScrollableArea*);
+    virtual ~ScrollAnimatorChromiumMac();
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
@@ -82,11 +73,14 @@ public:
 
     void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);
 
+    void setIsDrawingIntoLayer(bool b) { m_drawingIntoLayer = b; }
+    bool isDrawingIntoLayer() const { return m_drawingIntoLayer; }
+
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
     virtual void setIsActive();
 
-#if USE(SCROLLBAR_PAINTER)
+#if USE(WK_SCROLLBAR_PAINTER)
     void updateScrollerStyle();
 
     bool scrollbarPaintTimerIsActive() const;
@@ -98,16 +92,15 @@ public:
 
 private:
     RetainPtr<id> m_scrollAnimationHelper;
-    RetainPtr<WebScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
+    RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 
-#if USE(SCROLLBAR_PAINTER)
-    RetainPtr<ScrollbarPainterController> m_scrollbarPainterController;
-    RetainPtr<WebScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
-    RetainPtr<WebScrollbarPainterDelegate> m_horizontalScrollbarPainterDelegate;
-    RetainPtr<WebScrollbarPainterDelegate> m_verticalScrollbarPainterDelegate;
+#if USE(WK_SCROLLBAR_PAINTER)
+    RetainPtr<WKScrollbarPainterControllerRef> m_scrollbarPainterController;
+    RetainPtr<ScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
+    RetainPtr<id> m_scrollbarPainterDelegate;
 
-    void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*);
-    Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;
+    void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorChromiumMac>*);
+    Timer<ScrollAnimatorChromiumMac> m_initialScrollbarPaintTimer;
 #endif
     
     virtual void notifyPositionChanged();
@@ -115,8 +108,6 @@ private:
     virtual void mouseEnteredContentArea() const;
     virtual void mouseExitedContentArea() const;
     virtual void mouseMovedInContentArea() const;
-    virtual void mouseEnteredScrollbar(Scrollbar*) const;
-    virtual void mouseExitedScrollbar(Scrollbar*) const;
     virtual void willStartLiveResize();
     virtual void contentsResized() const;
     virtual void willEndLiveResize();
@@ -138,26 +129,37 @@ private:
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
 #if ENABLE(RUBBER_BANDING)
-    /// ScrollElasticityControllerClient member functions.
-    virtual bool isHorizontalScrollerPinnedToMinimumPosition() OVERRIDE;
-    virtual bool isHorizontalScrollerPinnedToMaximumPosition() OVERRIDE;
-    virtual IntSize stretchAmount() OVERRIDE;
-    virtual void startSnapRubberbandTimer() OVERRIDE;
-    virtual void stopSnapRubberbandTimer() OVERRIDE;
-
     bool allowsVerticalStretching() const;
     bool allowsHorizontalStretching() const;
     bool pinnedInDirection(float deltaX, float deltaY);
     void snapRubberBand();
-    void snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*);
+    void snapRubberBandTimerFired(Timer<ScrollAnimatorChromiumMac>*);
     void smoothScrollWithEvent(const PlatformWheelEvent&);
     void beginScrollGesture();
     void endScrollGesture();
 
-    ScrollElasticityController m_scrollElasticityController;
-    Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
-#endif
+    bool m_inScrollGesture;
+    bool m_momentumScrollInProgress;
+    bool m_ignoreMomentumScrolls;
 
+    bool m_scrollerInitiallyPinnedOnLeft;
+    bool m_scrollerInitiallyPinnedOnRight;
+    int m_cumulativeHorizontalScroll;
+    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
+
+    CFTimeInterval m_lastMomentumScrollTimestamp;
+    FloatSize m_overflowScrollDelta;
+    FloatSize m_stretchScrollForce;
+    FloatSize m_momentumVelocity;
+
+    // Rubber band state.
+    CFTimeInterval m_startTime;
+    FloatSize m_startStretch;
+    FloatPoint m_origOrigin;
+    FloatSize m_origVelocity;
+    Timer<ScrollAnimatorChromiumMac> m_snapRubberBandTimer;
+#endif
+    bool m_drawingIntoLayer;
     bool m_haveScrolledSincePageLoad;
     bool m_needsScrollerStyleUpdate;
     IntRect m_visibleScrollerThumbRect;
@@ -165,6 +167,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SMOOTH_SCROLLING)
-
-#endif // ScrollAnimatorMac_h
+#endif // ScrollAnimatorChromiumMac_h

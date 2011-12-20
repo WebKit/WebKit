@@ -34,7 +34,6 @@
 EMPTY_PROTOCOL(NSTableViewDataSource)
 EMPTY_PROTOCOL(NSTableViewDelegate)
 EMPTY_PROTOCOL(NSWindowDelegate)
-EMPTY_PROTOCOL(NSAnimationDelegate)
 
 #endif
 
