@@ -53,6 +53,7 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
+    Q_PROPERTY(QUrl icon READ icon NOTIFY iconChanged FINAL)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY navigationStateChanged FINAL)
@@ -78,6 +79,7 @@ public:
     virtual ~QQuickWebView();
 
     QUrl url() const;
+    QUrl icon() const;
     QString title() const;
     int loadProgress() const;
 
@@ -110,6 +112,7 @@ Q_SIGNALS:
     void loadFailed(QQuickWebView::ErrorDomain errorDomain, int errorCode, const QUrl& url, const QString& description);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
+    void iconChanged(const QUrl& iconURL);
     void linkHovered(const QUrl& url, const QString& title);
     void navigationStateChanged();
     void navigationRequested(QWebNavigationRequest* request);
@@ -132,6 +135,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_onOpenPanelFinished(int result));
     Q_PRIVATE_SLOT(d_func(), void _q_onVisibleChanged());
     Q_PRIVATE_SLOT(d_func(), void _q_onReceivedResponseFromDownload(QWebDownloadItem*));
+    Q_PRIVATE_SLOT(d_func(), void _q_onIconChangedForPageURL(const QUrl&, const QUrl&));
     // Hides QObject::d_ptr allowing us to use the convenience macros.
     QScopedPointer<QQuickWebViewPrivate> d_ptr;
     QQuickWebViewExperimental* m_experimental;

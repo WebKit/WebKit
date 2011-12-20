@@ -25,10 +25,12 @@
 #if defined(HAVE_WEBKIT2)
 #include "qquickwebpage_p.h"
 #include "qquickwebview_p.h"
+#include "qwebiconimageprovider_p.h"
 #include "qwebnavigationrequest_p.h"
 #include "qwebpermissionrequest_p.h"
 #include "qwebpreferences_p.h"
 
+#include <QtDeclarative/qdeclarativeengine.h>
 #include <QtNetwork/qnetworkreply.h>
 #endif
 
@@ -37,6 +39,14 @@ QT_BEGIN_NAMESPACE
 class WebKitQmlPlugin : public QDeclarativeExtensionPlugin {
     Q_OBJECT
 public:
+#if defined(HAVE_WEBKIT2)
+    virtual void initializeEngine(QDeclarativeEngine* engine, const char* uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit"));
+        engine->addImageProvider(QLatin1String("webicon"), new QWebIconImageProvider);
+    }
+#endif
+
     virtual void registerTypes(const char* uri)
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtWebKit"));

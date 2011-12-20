@@ -11,5 +11,6 @@
         <file>qml/MockTouchPoint.qml</file>
         <file>qml/ViewportInfoItem.qml</file>
         <file>useragentlist.txt</file>
+        <file>icons/favicon.png</file>
     </qresource>
 </RCC>

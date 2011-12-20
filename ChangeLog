@@ -1,3 +1,12 @@
+2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Implement favicon support
+        https://bugs.webkit.org/show_bug.cgi?id=71082
+
+        Reviewed by Simon Hausmann.
+
+        * Source/qtwebkit-export.map: Added new classes.
+
 2011-12-18  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rename EditCommandQt to UndoStepQt

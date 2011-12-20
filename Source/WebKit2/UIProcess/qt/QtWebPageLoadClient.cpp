@@ -169,7 +169,9 @@ void QtWebPageLoadClient::didReceiveTitleForFrame(WKPageRef, WKStringRef title, 
 
 void QtWebPageLoadClient::didStartProgress(WKPageRef, const void* clientInfo)
 {
-    toQtWebPageLoadClient(clientInfo)->setLoadProgress(0);
+    QtWebPageLoadClient* client = toQtWebPageLoadClient(clientInfo);
+    client->setLoadProgress(0);
+    client->m_webView->d_func()->setIcon(QUrl());
 }
 
 void QtWebPageLoadClient::didChangeProgress(WKPageRef page, const void* clientInfo)

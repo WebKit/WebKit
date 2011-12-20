@@ -109,6 +109,12 @@ qwk_1.0 {
         *QQuickWebViewPrivate;
         non-virtual?thunk?to?QQuickWebViewPrivate*;
         QQuickWebViewPrivate::*;
+        *QWebIconImageProvider;
+        non-virtual?thunk?to?QWebIconImageProvider*;
+        QWebIconImageProvider::*;
+        *QtWebIconDatabaseClient;
+        non-virtual?thunk?to?QtWebIconDatabaseClient*;
+        QtWebIconDatabaseClient::*;
         *QQuickWebViewPrivateExtension;
         non-virtual?thunk?to?QQuickWebViewPrivateExtension*;
         QQuickWebViewPrivateExtension::*;

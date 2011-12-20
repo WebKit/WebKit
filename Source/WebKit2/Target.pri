@@ -271,6 +271,7 @@ HEADERS += \
     UIProcess/qt/QtSGTileNode.h \
     UIProcess/qt/QtViewportInteractionEngine.h \
     UIProcess/qt/QtWebUndoController.h \
+    UIProcess/qt/QtWebIconDatabaseClient.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebGeolocationProviderQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
@@ -502,6 +503,7 @@ SOURCES += \
     UIProcess/API/qt/qquickwebpage.cpp \
     UIProcess/API/qt/qwebnavigationhistory.cpp \
     UIProcess/API/qt/qquickwebview.cpp \
+    UIProcess/API/qt/qwebiconimageprovider.cpp \
     UIProcess/API/qt/qwebpreferences.cpp \
     UIProcess/API/qt/qwebviewportinfo.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
@@ -602,6 +604,7 @@ SOURCES += \
     UIProcess/qt/WebPageProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
+    UIProcess/qt/QtWebIconDatabaseClient.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Cookies/WebCookieManager.cpp \

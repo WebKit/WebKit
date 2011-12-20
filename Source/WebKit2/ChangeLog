@@ -1,3 +1,60 @@
+2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Implement favicon support
+        https://bugs.webkit.org/show_bug.cgi?id=71082
+
+        Reviewed by Simon Hausmann.
+
+        Added attribute to QQuickWebView named "icon" that should be used
+        as source for QQuickImage in order to display it. All images
+        pointing to it will refresh when the icon is ready. We also use IDs
+        to make it possible to handle different icons for the same page URL
+        at different times (i.e. dynamically changing favicon).
+
+        IconDatabase storage lies on UIProcess and the synchronous call for
+        the icon that happens on WebIconDatabase won't need to send any message
+        to WebProcess. The part of IconDatabase on WebProcess handles the download
+        of the resource whenever it is needed. Then the content downloaded is sent
+        through IPC to the actual database, on UIProcess.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::_q_onIconChangedForPageURL):
+        (QQuickWebViewPrivate::setIcon):
+        (QQuickWebView::icon):
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        * UIProcess/API/qt/qwebiconimageprovider.cpp: Added.
+        (QWebIconImageProvider::QWebIconImageProvider):
+        (QWebIconImageProvider::~QWebIconImageProvider):
+        (QWebIconImageProvider::requestImage):
+        * UIProcess/API/qt/qwebiconimageprovider_p.h: Added.
+        * UIProcess/WebContext.h:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::synchronousIconURLForPageURL):
+        (WebKit::WebIconDatabase::imageForPageURL): Added iconSize parameter
+        and a default value for it to not break the old usage. The support for
+        multiple sizes of favicons is still missing on WebCore.
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::initialize):
+        * UIProcess/qt/QtWebContext.h:
+        (WebKit::QtWebContext::iconDatabase):
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp: Added.
+        (toQtWebIconDatabaseClient):
+        (QtWebIconDatabaseClient::QtWebIconDatabaseClient):
+        (QtWebIconDatabaseClient::~QtWebIconDatabaseClient):
+        (QtWebIconDatabaseClient::didChangeIconForPageURL):
+        (QtWebIconDatabaseClient::iconImageForPageURL):
+        (QtWebIconDatabaseClient::iconURLHashForPageURL):
+        (QtWebIconDatabaseClient::requestIconForPageURL):
+        (QtWebIconDatabaseClient::retainIconForPageURL):
+        (QtWebIconDatabaseClient::releaseIconForPageURL):
+        * UIProcess/qt/QtWebIconDatabaseClient.h: Added.
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (QtWebPageLoadClient::didStartProgress):
+
 2011-12-20  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt] Improve QQuickWebView error handling API

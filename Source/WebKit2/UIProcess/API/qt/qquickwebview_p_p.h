@@ -89,6 +89,7 @@ public:
     void _q_onOpenPanelFinished(int result);
     void _q_onVisibleChanged();
     void _q_onReceivedResponseFromDownload(QWebDownloadItem*);
+    void _q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURLString);
 
     void chooseFiles(WKOpenPanelResultListenerRef, const QStringList& selectedFileNames, QtWebPageUIClient::FileChooserType);
     void runJavaScriptAlert(const QString&);
@@ -97,6 +98,7 @@ public:
 
     void setUseTraditionalDesktopBehaviour(bool enable);
     void setViewInAttachedProperties(QObject*);
+    void setIcon(const QUrl&);
 
     bool navigatorQtObjectEnabled() const;
     void setNavigatorQtObjectEnabled(bool);
@@ -160,6 +162,7 @@ private:
 
     bool useTraditionalDesktopBehaviour;
     bool m_navigatorQtObjectEnabled;
+    QUrl m_iconURL;
 };
 
 #endif // qquickwebview_p_p_h

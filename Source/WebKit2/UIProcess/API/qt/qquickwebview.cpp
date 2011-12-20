@@ -26,6 +26,7 @@
 #include "QtDialogRunner.h"
 #include "QtDownloadManager.h"
 #include "QtWebContext.h"
+#include "QtWebIconDatabaseClient.h"
 #include "QtWebPageEventHandler.h"
 #include "UtilsQt.h"
 #include "WebBackForwardList.h"
@@ -46,6 +47,7 @@
 #include <QFileDialog>
 #include <QtQuick/QQuickCanvas>
 #include <WKOpenPanelResultListener.h>
+#include <wtf/text/WTFString.h>
 
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     : q_ptr(viewport)
@@ -89,6 +91,11 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     pagePolicyClient.reset(new QtWebPagePolicyClient(toAPI(webPageProxy.get()), q_ptr));
     pageUIClient.reset(new QtWebPageUIClient(toAPI(webPageProxy.get()), q_ptr));
     navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(toAPI(webPageProxy.get())));
+
+    RefPtr<QtWebContext> context = QtWebContext::defaultContext();
+    QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
+    QObject::connect(iconDatabase, SIGNAL(iconChangedForPageURL(QUrl, QUrl)), q_ptr, SLOT(_q_onIconChangedForPageURL(QUrl, QUrl)));
+    QObject::connect(q_ptr, SIGNAL(urlChanged(QUrl)), iconDatabase, SLOT(requestIconForPageURL(QUrl)));
 
     // Any page setting should preferrable be set before creating the page.
     setUseTraditionalDesktopBehaviour(false);
@@ -162,6 +169,15 @@ void QQuickWebViewPrivate::didFinishFirstNonEmptyLayout()
         isTransitioningToNewPage = false;
         postTransitionState->apply();
     }
+}
+
+void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURL)
+{
+    Q_Q(QQuickWebView);
+    if (q->url() != pageURL)
+        return;
+
+    setIcon(iconURL);
 }
 
 void QQuickWebViewPrivate::_q_suspend()
@@ -501,6 +517,29 @@ void QQuickWebViewPrivate::setViewInAttachedProperties(QObject* object)
     attached->setView(q);
 }
 
+void QQuickWebViewPrivate::setIcon(const QUrl& iconURL)
+{
+    Q_Q(QQuickWebView);
+    if (m_iconURL == iconURL)
+        return;
+
+    String oldPageURL = QUrl::fromPercentEncoding(m_iconURL.encodedFragment());
+    String newPageURL = webPageProxy->mainFrame()->url();
+
+    if (oldPageURL != newPageURL) {
+        RefPtr<QtWebContext> context = QtWebContext::defaultContext();
+        QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
+        if (!oldPageURL.isEmpty())
+            iconDatabase->releaseIconForPageURL(oldPageURL);
+
+        if (!newPageURL.isEmpty())
+            iconDatabase->retainIconForPageURL(newPageURL);
+    }
+
+    m_iconURL = iconURL;
+    emit q->iconChanged(m_iconURL);
+}
+
 bool QQuickWebViewPrivate::navigatorQtObjectEnabled() const
 {
     return m_navigatorQtObjectEnabled;
@@ -748,6 +787,12 @@ QUrl QQuickWebView::url() const
     if (!mainFrame)
         return QUrl();
     return QUrl(QString(mainFrame->url()));
+}
+
+QUrl QQuickWebView::icon() const
+{
+    Q_D(const QQuickWebView);
+    return d->m_iconURL;
 }
 
 int QQuickWebView::loadProgress() const

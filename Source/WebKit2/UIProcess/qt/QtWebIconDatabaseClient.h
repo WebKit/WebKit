@@ -1,0 +1,66 @@
+/*
+    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
+
+
+#ifndef QtWebIconDatabaseClient_h
+#define QtWebIconDatabaseClient_h
+
+#include "WKIconDatabase.h"
+#include "qwebkitglobal.h"
+#include <QtCore/QObject>
+#include <QtCore/QSize>
+#include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
+
+QT_BEGIN_NAMESPACE
+class QImage;
+class QUrl;
+QT_END_NAMESPACE
+
+namespace WebKit {
+class WebContext;
+class WebIconDatabase;
+
+class QtWebIconDatabaseClient : public QObject {
+    Q_OBJECT
+
+public:
+    QtWebIconDatabaseClient(WebKit::WebContext*);
+    ~QtWebIconDatabaseClient();
+
+    QImage iconImageForPageURL(const String& pageURL, const QSize& iconSize = QSize(32, 32));
+    void retainIconForPageURL(const String&);
+    void releaseIconForPageURL(const String&);
+
+public Q_SLOTS:
+    void requestIconForPageURL(const QUrl&);
+
+public:
+    Q_SIGNAL void iconChangedForPageURL(const QUrl& pageURL, const QUrl& iconURL);
+
+private:
+    unsigned iconURLHashForPageURL(const String&);
+    static void didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo);
+    WebKit::WebIconDatabase* m_iconDatabase;
+    Mutex m_imageLock;
+};
+
+}
+
+#endif

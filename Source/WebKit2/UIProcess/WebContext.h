@@ -171,6 +171,7 @@ public:
 
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
     void setIconDatabasePath(const String&);
+    String iconDatabasePath() const;
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
     String overrideWebInspectorBaseDirectory() const { return m_overrideWebInspectorBaseDirectory; }
@@ -236,7 +237,6 @@ private:
     String databaseDirectory() const;
     String platformDefaultDatabaseDirectory() const;
 
-    String iconDatabasePath() const;
     String platformDefaultIconDatabasePath() const;
 
     String localStorageDirectory() const;

@@ -133,9 +133,14 @@ void WebIconDatabase::synchronousIconDataForPageURL(const String&, CoreIPC::Data
     iconData = CoreIPC::DataReference();
 }
 
-void WebIconDatabase::synchronousIconURLForPageURL(const String&, String& iconURL)
+void WebIconDatabase::synchronousIconURLForPageURL(const String& pageURL, String& iconURL)
 {
-    iconURL = String();
+    if (!m_iconDatabaseImpl) {
+        iconURL = String();
+        return;
+    }
+
+    iconURL = m_iconDatabaseImpl->synchronousIconURLForPageURL(pageURL);
 }
 
 void WebIconDatabase::synchronousIconDataKnownForIconURL(const String&, bool& iconDataKnown) const
@@ -175,14 +180,14 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
     m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID));
 }
 
-Image* WebIconDatabase::imageForPageURL(const String& pageURL)
+Image* WebIconDatabase::imageForPageURL(const String& pageURL, const WebCore::IntSize& iconSize)
 {
     if (!m_webContext || !m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
         return 0;    
 
     // The WebCore IconDatabase ignores the passed in size parameter.
     // If that changes we'll need to rethink how this API is exposed.
-    return m_iconDatabaseImpl->synchronousIconForPageURL(pageURL, WebCore::IntSize(32, 32));
+    return m_iconDatabaseImpl->synchronousIconForPageURL(pageURL, iconSize);
 }
 
 void WebIconDatabase::removeAllIcons()

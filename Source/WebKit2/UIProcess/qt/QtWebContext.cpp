@@ -23,6 +23,7 @@
 
 #include "MutableArray.h"
 #include "QtDownloadManager.h"
+#include "QtWebIconDatabaseClient.h"
 #include "WKAPICast.h"
 #include "WebContext.h"
 #include "WebPageProxy.h"
@@ -93,6 +94,7 @@ void QtWebContext::postMessageToNavigatorQtObject(WebPageProxy* webPageProxy, co
 void QtWebContext::initialize()
 {
     m_downloadManager = adoptPtr(new QtDownloadManager(m_context.get()));
+    m_iconDatabase = adoptPtr(new QtWebIconDatabaseClient(m_context.get()));
     initializeContextInjectedBundleClient();
 }
 
