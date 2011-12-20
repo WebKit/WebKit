@@ -1607,9 +1607,6 @@ BUGCR10458 LINUX : fast/forms/textarea-width.html = FAIL
 BUGCR27486 LINUX WIN : fast/forms/listbox-hit-test-zoomed.html = IMAGE+TEXT
 BUGCR27486 LINUX WIN : fast/forms/range/slider-zoomed.html = TEXT
 
-// Mac flaky failures.
-BUGCR10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = PASS FAIL
-
 // This test isn't just slow -- sometimes it times out indefinitely.
 BUGCR27569 : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = PASS CRASH TIMEOUT
 
