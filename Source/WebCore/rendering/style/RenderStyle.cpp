@@ -44,6 +44,28 @@ using namespace std;
 
 namespace WebCore {
 
+struct SameSizeAsRenderStyle : public RefCounted<SameSizeAsRenderStyle> {
+    unsigned m_bitfields;
+
+    void* dataRefs[7];
+    void* ownPtrs[1];
+#if ENABLE(SVG)
+    void* dataRefSvgStyle;
+#endif
+    struct InheritedFlags {
+        unsigned m_bitfields[2];
+    } inherited_flags;
+
+    struct NonInheritedFlags {
+        unsigned m_bitfields[2];
+    } noninherited_flags;
+};
+
+// FIXME: Enable assert on Windows. https://bugs.webkit.org/show_bug.cgi?id=74876
+#if !OS(WINDOWS)
+COMPILE_ASSERT(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), RenderStyle_should_stay_small);
+#endif
+
 inline RenderStyle* defaultStyle()
 {
     static RenderStyle* s_defaultStyle = RenderStyle::createDefaultStyle().leakRef();
@@ -202,10 +224,10 @@ void RenderStyle::copyNonInheritedFrom(const RenderStyle* other)
     noninherited_flags._position = other->noninherited_flags._position;
     noninherited_flags._floating = other->noninherited_flags._floating;
     noninherited_flags._table_layout = other->noninherited_flags._table_layout;
+    noninherited_flags._unicodeBidi = other->noninherited_flags._unicodeBidi;
     noninherited_flags._page_break_before = other->noninherited_flags._page_break_before;
     noninherited_flags._page_break_after = other->noninherited_flags._page_break_after;
     noninherited_flags._page_break_inside = other->noninherited_flags._page_break_inside;
-    noninherited_flags._unicodeBidi = other->noninherited_flags._unicodeBidi;
 #if ENABLE(SVG)
     if (m_svgStyle != other->m_svgStyle)
         m_svgStyle.access()->copyNonInheritedFrom(other->m_svgStyle.get());

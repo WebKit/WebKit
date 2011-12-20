@@ -179,8 +179,8 @@ protected:
                 && (_text_decorations == other._text_decorations)
                 && (_cursor_style == other._cursor_style)
                 && (_direction == other._direction)
-                && (_border_collapse == other._border_collapse)
                 && (_white_space == other._white_space)
+                && (_border_collapse == other._border_collapse)
                 && (_box_direction == other._box_direction)
                 && (m_rtlOrdering == other.m_rtlOrdering)
                 && (m_printColorAdjust == other.m_printColorAdjust)
@@ -191,30 +191,30 @@ protected:
 
         bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
 
-        unsigned char _empty_cells : 1; // EEmptyCell
-        unsigned char _caption_side : 2; // ECaptionSide
-        unsigned char _list_style_type : 7; // EListStyleType
-        unsigned char _list_style_position : 1; // EListStylePosition
-        unsigned char _visibility : 2; // EVisibility
-        unsigned char _text_align : 4; // ETextAlign
-        unsigned char _text_transform : 2; // ETextTransform
-        unsigned char _text_decorations : ETextDecorationBits;
-        unsigned char _cursor_style : 6; // ECursor
-        unsigned char _direction : 1; // TextDirection
-        unsigned char _border_collapse : 1; // EBorderCollapse
-        unsigned char _white_space : 3; // EWhiteSpace
-        unsigned char _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
-        // 34 bits
+        unsigned _empty_cells : 1; // EEmptyCell
+        unsigned _caption_side : 2; // ECaptionSide
+        unsigned _list_style_type : 7; // EListStyleType
+        unsigned _list_style_position : 1; // EListStylePosition
+        unsigned _visibility : 2; // EVisibility
+        unsigned _text_align : 4; // ETextAlign
+        unsigned _text_transform : 2; // ETextTransform
+        unsigned _text_decorations : ETextDecorationBits;
+        unsigned _cursor_style : 6; // ECursor
+        unsigned _direction : 1; // TextDirection
+        unsigned _white_space : 3; // EWhiteSpace
+        // 32 bits
+        unsigned _border_collapse : 1; // EBorderCollapse
+        unsigned _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
 
         // non CSS2 inherited
-        unsigned char m_rtlOrdering : 1; // Order
-        unsigned char m_printColorAdjust : PrintColorAdjustBits;
-        unsigned char _pointerEvents : 4; // EPointerEvents
-        unsigned char _insideLink : 2; // EInsideLink
+        unsigned m_rtlOrdering : 1; // Order
+        unsigned m_printColorAdjust : PrintColorAdjustBits;
+        unsigned _pointerEvents : 4; // EPointerEvents
+        unsigned _insideLink : 2; // EInsideLink
         // 43 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
-        unsigned char m_writingMode : 2; // WritingMode
+        unsigned m_writingMode : 2; // WritingMode
         // 45 bits
     } inherited_flags;
 
@@ -245,27 +245,38 @@ protected:
 
         bool operator!=(const NonInheritedFlags& other) const { return !(*this == other); }
 
-        unsigned char _effectiveDisplay : 5; // EDisplay
-        unsigned char _originalDisplay : 5; // EDisplay
-        unsigned char _overflowX : 3; // EOverflow
-        unsigned char _overflowY : 3; // EOverflow
-        unsigned char _vertical_align : 4; // EVerticalAlign
-        unsigned char _clear : 2; // EClear
-        unsigned char _position : 2; // EPosition
-        unsigned char _floating : 2; // EFloat
-        unsigned char _table_layout : 1; // ETableLayout
+        unsigned _effectiveDisplay : 5; // EDisplay
+        unsigned _originalDisplay : 5; // EDisplay
+        unsigned _overflowX : 3; // EOverflow
+        unsigned _overflowY : 3; // EOverflow
+        unsigned _vertical_align : 4; // EVerticalAlign
+        unsigned _clear : 2; // EClear
+        unsigned _position : 2; // EPosition
+        unsigned _floating : 2; // EFloat
+        unsigned _table_layout : 1; // ETableLayout
 
-        unsigned char _page_break_before : 2; // EPageBreak
-        unsigned char _page_break_after : 2; // EPageBreak
-        unsigned char _page_break_inside : 2; // EPageBreak
+        unsigned _unicodeBidi : 3; // EUnicodeBidi
+        unsigned _page_break_before : 2; // EPageBreak
+        // 32 bits
+        unsigned _page_break_after : 2; // EPageBreak
+        unsigned _page_break_inside : 2; // EPageBreak
 
-        unsigned char _styleType : 6; // PseudoId
-        bool _affectedByHover : 1;
-        bool _affectedByActive : 1;
-        bool _affectedByDrag : 1;
-        unsigned char _pseudoBits : 7;
-        unsigned char _unicodeBidi : 3; // EUnicodeBidi
-        bool _isLink : 1;
+        unsigned _styleType : 6; // PseudoId
+        unsigned _pseudoBits : 7;
+
+        bool affectedByHover() const { return _affectedByHover; }
+        void setAffectedByHover(bool value) { _affectedByHover = value; }
+        bool affectedByActive() const { return _affectedByActive; }
+        void setAffectedByActive(bool value) { _affectedByActive = value; }
+        bool affectedByDrag() const { return _affectedByDrag; }
+        void setAffectedByDrag(bool value) { _affectedByDrag = value; }
+        bool isLink() const { return _isLink; }
+        void setIsLink(bool value) { _isLink = value; }
+    private:
+        unsigned _affectedByHover : 1;
+        unsigned _affectedByActive : 1;
+        unsigned _affectedByDrag : 1;
+        unsigned _isLink : 1;
         // If you add more style bits here, you will also need to update RenderStyle::copyNonInheritedFrom()
         // 53 bits
     } noninherited_flags;
@@ -285,8 +296,8 @@ protected:
         inherited_flags._text_decorations = initialTextDecoration();
         inherited_flags._cursor_style = initialCursor();
         inherited_flags._direction = initialDirection();
-        inherited_flags._border_collapse = initialBorderCollapse();
         inherited_flags._white_space = initialWhiteSpace();
+        inherited_flags._border_collapse = initialBorderCollapse();
         inherited_flags.m_rtlOrdering = initialRTLOrdering();
         inherited_flags._box_direction = initialBoxDirection();
         inherited_flags.m_printColorAdjust = initialPrintColorAdjust();
@@ -302,16 +313,16 @@ protected:
         noninherited_flags._position = initialPosition();
         noninherited_flags._floating = initialFloating();
         noninherited_flags._table_layout = initialTableLayout();
+        noninherited_flags._unicodeBidi = initialUnicodeBidi();
         noninherited_flags._page_break_before = initialPageBreak();
         noninherited_flags._page_break_after = initialPageBreak();
         noninherited_flags._page_break_inside = initialPageBreak();
         noninherited_flags._styleType = NOPSEUDO;
-        noninherited_flags._affectedByHover = false;
-        noninherited_flags._affectedByActive = false;
-        noninherited_flags._affectedByDrag = false;
         noninherited_flags._pseudoBits = 0;
-        noninherited_flags._unicodeBidi = initialUnicodeBidi();
-        noninherited_flags._isLink = false;
+        noninherited_flags.setAffectedByHover(false);
+        noninherited_flags.setAffectedByActive(false);
+        noninherited_flags.setAffectedByDrag(false);
+        noninherited_flags.setIsLink(false);
     }
 
 private:
@@ -340,13 +351,13 @@ public:
 
     const PseudoStyleCache* cachedPseudoStyles() const { return m_cachedPseudoStyles.get(); }
 
-    bool affectedByHoverRules() const { return noninherited_flags._affectedByHover; }
-    bool affectedByActiveRules() const { return noninherited_flags._affectedByActive; }
-    bool affectedByDragRules() const { return noninherited_flags._affectedByDrag; }
+    bool affectedByHoverRules() const { return noninherited_flags.affectedByHover(); }
+    bool affectedByActiveRules() const { return noninherited_flags.affectedByActive(); }
+    bool affectedByDragRules() const { return noninherited_flags.affectedByDrag(); }
 
-    void setAffectedByHoverRules(bool b) { noninherited_flags._affectedByHover = b; }
-    void setAffectedByActiveRules(bool b) { noninherited_flags._affectedByActive = b; }
-    void setAffectedByDragRules(bool b) { noninherited_flags._affectedByDrag = b; }
+    void setAffectedByHoverRules(bool b) { noninherited_flags.setAffectedByHover(b); }
+    void setAffectedByActiveRules(bool b) { noninherited_flags.setAffectedByActive(b); }
+    void setAffectedByDragRules(bool b) { noninherited_flags.setAffectedByDrag(b); }
 
     bool operator==(const RenderStyle& other) const;
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
@@ -693,7 +704,7 @@ public:
     CursorList* cursors() const { return rareInheritedData->cursorData.get(); }
 
     EInsideLink insideLink() const { return static_cast<EInsideLink>(inherited_flags._insideLink); }
-    bool isLink() const { return noninherited_flags._isLink; }
+    bool isLink() const { return noninherited_flags.isLink(); }
 
     short widows() const { return rareInheritedData->widows; }
     short orphans() const { return rareInheritedData->orphans; }
@@ -1117,7 +1128,7 @@ public:
     void clearCursorList();
 
     void setInsideLink(EInsideLink insideLink) { inherited_flags._insideLink = insideLink; }
-    void setIsLink(bool b) { noninherited_flags._isLink = b; }
+    void setIsLink(bool b) { noninherited_flags.setIsLink(b); }
 
     PrintColorAdjust printColorAdjust() const { return static_cast<PrintColorAdjust>(inherited_flags.m_printColorAdjust); }
     void setPrintColorAdjust(PrintColorAdjust value) { inherited_flags.m_printColorAdjust = value; }

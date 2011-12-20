@@ -1,3 +1,37 @@
+2011-12-20  Tony Chang  <tony@chromium.org>
+
+        RenderStyle::InheritedFlags and RenderStyle::NonInheritedFlags members should be 4 byte aligned
+        https://bugs.webkit.org/show_bug.cgi?id=74880
+
+        Reviewed by Ryosuke Niwa.
+
+        Use unsigned for all types so we get 4 byte boundaries (unsigned char
+        means we try to align to 1 byte boundaries) and add setters and
+        getters for bool members.
+
+        Move some members around to make sure we're aligned to 4 byte boundaries.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::copyNonInheritedFrom):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::NonInheritedFlags::affectedByHover):
+        (WebCore::InheritedFlags::NonInheritedFlags::setAffectedByHover):
+        (WebCore::InheritedFlags::NonInheritedFlags::affectedByActive):
+        (WebCore::InheritedFlags::NonInheritedFlags::setAffectedByActive):
+        (WebCore::InheritedFlags::NonInheritedFlags::affectedByDrag):
+        (WebCore::InheritedFlags::NonInheritedFlags::setAffectedByDrag):
+        (WebCore::InheritedFlags::NonInheritedFlags::isLink):
+        (WebCore::InheritedFlags::NonInheritedFlags::setIsLink):
+        (WebCore::InheritedFlags::setBitDefaults):
+        (WebCore::InheritedFlags::affectedByHoverRules):
+        (WebCore::InheritedFlags::affectedByActiveRules):
+        (WebCore::InheritedFlags::affectedByDragRules):
+        (WebCore::InheritedFlags::setAffectedByHoverRules):
+        (WebCore::InheritedFlags::setAffectedByActiveRules):
+        (WebCore::InheritedFlags::setAffectedByDragRules):
+        (WebCore::InheritedFlags::isLink):
+        (WebCore::InheritedFlags::setIsLink):
+
 2011-12-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Regression(99212): table rows get incorrect height after changing some cells' height
