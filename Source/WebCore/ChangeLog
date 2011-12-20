@@ -1,3 +1,19 @@
+2011-12-20  Adam Klein  <adamk@chromium.org>
+
+        Remove no-op DOMAttr* event dispatch methods from Element
+        https://bugs.webkit.org/show_bug.cgi?id=74946
+
+        Reviewed by Darin Adler.
+
+        The removed methods had their bodies #if 0'd out, so this should have
+        no effect on anything.
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::addAttribute):
+        (WebCore::NamedNodeMap::removeAttribute):
+
 2011-12-20  Anders Carlsson  <andersca@apple.com>
 
         ScrollableArea should have an optional ScrollableAreaClient

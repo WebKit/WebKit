@@ -254,10 +254,8 @@ void NamedNodeMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
     if (m_element) {
         m_element->attributeChanged(attribute.get());
         // Because of our updateStyleAttribute() style modification events are never sent at the right time, so don't bother sending them.
-        if (attribute->name() != styleAttr) {
-            m_element->dispatchAttrAdditionEvent(attribute.get());
+        if (attribute->name() != styleAttr)
             m_element->dispatchSubtreeModifiedEvent();
-        }
     }
 }
 
@@ -290,10 +288,8 @@ void NamedNodeMap::removeAttribute(const QualifiedName& name)
         m_element->attributeChanged(attr.get());
         attr->m_value = value;
     }
-    if (m_element) {
-        m_element->dispatchAttrRemovalEvent(attr.get());
+    if (m_element)
         m_element->dispatchSubtreeModifiedEvent();
-    }
 }
 
 void NamedNodeMap::setClass(const String& classStr) 

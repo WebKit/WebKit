@@ -1373,32 +1373,6 @@ void Element::finishParsingChildren()
         styleSelector->popParent(this);
 }
 
-void Element::dispatchAttrRemovalEvent(Attribute*)
-{
-    ASSERT(!eventDispatchForbidden());
-
-#if 0
-    if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
-        return;
-    ExceptionCode ec = 0;
-    dispatchScopedEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
-        attr->value(), document()->attrName(attr->id()), MutationEvent::REMOVAL), ec);
-#endif
-}
-
-void Element::dispatchAttrAdditionEvent(Attribute*)
-{
-    ASSERT(!eventDispatchForbidden());
-
-#if 0
-    if (!document()->hasListenerType(Document::DOMATTRMODIFIED_LISTENER))
-        return;
-    ExceptionCode ec = 0;
-    dispatchScopedEvent(MutationEvent::create(DOMAttrModifiedEvent, true, attr, attr->value(),
-        attr->value(), document()->attrName(attr->id()), MutationEvent::ADDITION), ec);
-#endif
-}
-
 #ifndef NDEBUG
 void Element::formatForDebugger(char* buffer, unsigned length) const
 {

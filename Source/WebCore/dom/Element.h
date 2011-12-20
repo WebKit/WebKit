@@ -245,9 +245,6 @@ public:
 
     AtomicString computeInheritedLanguage() const;
 
-    void dispatchAttrRemovalEvent(Attribute*);
-    void dispatchAttrAdditionEvent(Attribute*);
-
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 
     virtual bool isURLAttribute(Attribute*) const;
