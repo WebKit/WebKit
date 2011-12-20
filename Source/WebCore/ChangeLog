@@ -1,3 +1,24 @@
+2011-12-20  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in RenderTable::outerBorderAfter
+        http://webkit.org/b/74026
+        <rdar://problem/10552313>
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/table/computeLogicalWidth-table-needsSectionRecalc.html
+
+        RenderBlock can call computeLogicalWidth() before calling layout(). The code in
+        RenderTable::computeLogicalWidth would make the assumption that layout() was called
+        as layout() is responsible for recomputing our sections.
+
+        To prevent the issue, let's just recompute the section if it's needed as this situation
+        shouldn't be an error. Also adding more knowledge of table in RenderBlock seems bad.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeLogicalWidth):
+        Make sure we recalculate our section if it's needed.
+
 2011-12-20  Kentaro Hara  <haraken@chromium.org>
 
         [Refactoring] Replace imp with impl in CodeGeneratorJS.pm

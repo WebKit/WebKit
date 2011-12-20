@@ -215,6 +215,8 @@ void RenderTable::removeChild(RenderObject* oldChild)
 
 void RenderTable::computeLogicalWidth()
 {
+    recalcSectionsIfNeeded();
+
     if (isPositioned())
         computePositionedLogicalWidth();
 
