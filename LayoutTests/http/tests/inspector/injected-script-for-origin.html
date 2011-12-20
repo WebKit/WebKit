@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+
+<script>
+function test()
+{
+    var messages = [];
+    function onMessage(event)
+    {
+        messages.push(event.data);
+        if (messages.length === 2) {
+            top.removeEventListener("message", onMessage, false);
+            messages.sort();
+            InspectorTest.addObject(messages);
+            InspectorTest.completeTest();
+        }
+    }
+    top.addEventListener("message", onMessage, false);
+    InspectorFrontendHost.setInjectedScriptForOrigin("http://127.0.0.1:8000", "window.foo = '127.0.0.1';");
+    InspectorFrontendHost.setInjectedScriptForOrigin("http://localhost:8000", "window.foo = 'localhost';");
+    function addSubframe(url)
+    {
+        var iframe = document.createElement("iframe");
+        iframe.src = url;
+        document.body.appendChild(iframe);
+    }
+    addSubframe("http://127.0.0.1:8000/inspector/resources/injected-script-for-origin-frame.html");
+    addSubframe("http://localhost:8000/inspector/resources/injected-script-for-origin-frame.html");
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that different scripts are injected inso subframes of inspector window depending on the origin
+</p>
+</body>
+</html>

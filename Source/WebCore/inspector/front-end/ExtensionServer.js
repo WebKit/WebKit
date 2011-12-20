@@ -603,8 +603,6 @@ WebInspector.ExtensionServer.prototype = {
      */
     _addExtensions: function(extensions)
     {
-        // See ExtensionAPI.js and ExtensionCommon.js for details.
-        InspectorFrontendHost.setExtensionAPI(this._buildExtensionAPIScript());
         for (var i = 0; i < extensions.length; ++i)
             this._addExtension(extensions[i].startPage, extensions[i].name);
     },
@@ -619,7 +617,12 @@ WebInspector.ExtensionServer.prototype = {
                 console.error("Skipping extension with invalid URL: " + startPage);
                 return false;
             }
-            this._registeredExtensions[originMatch[1]] = { name: name };
+            var extensionOrigin = originMatch[1];
+            if (!this._registeredExtensions[extensionOrigin]) {
+                // See ExtensionAPI.js and ExtensionCommon.js for details.
+                InspectorFrontendHost.setInjectedScriptForOrigin(extensionOrigin, this._buildExtensionAPIScript());
+                this._registeredExtensions[extensionOrigin] = { name: name };
+            }
             var iframe = document.createElement("iframe");
             iframe.src = startPage;
             iframe.style.display = "none";

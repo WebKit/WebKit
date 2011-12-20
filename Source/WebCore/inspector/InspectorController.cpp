@@ -300,9 +300,9 @@ Page* InspectorController::inspectedPage() const
     return m_page;
 }
 
-void InspectorController::setInspectorExtensionAPI(const String& source)
+void InspectorController::setInjectedScriptForOrigin(const String& origin, const String& source)
 {
-    m_inspectorAgent->setInspectorExtensionAPI(source);
+    m_inspectorAgent->setInjectedScriptForOrigin(origin, source);
 }
 
 void InspectorController::dispatchMessageFromFrontend(const String& message)

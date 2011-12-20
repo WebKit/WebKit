@@ -66,7 +66,7 @@ public:
 
     void setAttachedWindowHeight(unsigned height);
     void moveWindowBy(float x, float y) const;
-    void setExtensionAPI(const String& script);
+    void setInjectedScriptForOrigin(const String& origin, const String& script);
 
     String localizedStringsURL();
     String hiddenPanels();

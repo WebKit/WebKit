@@ -85,7 +85,7 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
-    setExtensionAPI: function(script)
+    setInjectedScriptForOrigin: function(origin, script)
     {
     },
 

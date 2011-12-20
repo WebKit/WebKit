@@ -1,3 +1,29 @@
+2011-12-19  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] allow setting extension API per extension security origin
+        https://bugs.webkit.org/show_bug.cgi?id=74868
+
+        Reviewed by Pavel Feldman.
+
+        This replaces InspectorExtensionAPI string within InspectorFrontendHost with a map by extension
+        security origin, so that we can have APIs customized by extension (in particular, this is needed
+        to expose experimental APIs only to certain extensions).
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorAgent::setInjectedScriptForOrigin):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setInjectedScriptForOrigin):
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setInjectedScriptForOrigin):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._addExtensions):
+        (WebInspector.ExtensionServer.prototype._addExtension):
+
 2011-12-20  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGenerator should not use pointers for out params of RefPtr type.

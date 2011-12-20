@@ -95,7 +95,7 @@ public:
     // Generic code called from custom implementations.
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
-    void setInspectorExtensionAPI(const String& source);
+    void setInjectedScriptForOrigin(const String& origin, const String& source);
 
     void inspect(PassRefPtr<InspectorObject> objectToInspect, PassRefPtr<InspectorObject> hints);
 
@@ -116,7 +116,8 @@ private:
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
     pair<RefPtr<InspectorObject>, RefPtr<InspectorObject> > m_pendingInspectData;
-    String m_inspectorExtensionAPI;
+    typedef HashMap<String, String> InjectedScriptForOriginMap;
+    InjectedScriptForOriginMap m_injectedScriptForOrigin;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
     WorkersMap m_workers;

@@ -1,7 +1,0 @@
-Tests that $0 may successfully be used to refer to shadow DOM elements.
-
-
-$0.toString() = "[object Node]"
-$0.firstChild.toString() = "[object HTMLDivElement]"
-$0.firstChild.firstChild.style.width = "42%"
-

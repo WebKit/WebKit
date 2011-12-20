@@ -50,6 +50,7 @@
 #include "ResourceRequest.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -89,8 +90,13 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
     if (world != mainThreadNormalWorld())
         return;
 
-    if (!m_inspectorExtensionAPI.isEmpty())
-        m_injectedScriptManager->injectScript(m_inspectorExtensionAPI, mainWorldScriptState(frame));
+    if (m_injectedScriptForOrigin.isEmpty())
+        return;
+
+    String origin = frame->document()->securityOrigin()->toString();
+    String script = m_injectedScriptForOrigin.get(origin);
+    if (!script.isEmpty())
+        m_injectedScriptManager->injectScript(script, mainWorldScriptState(frame));
 }
 
 void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
@@ -230,9 +236,9 @@ void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script
         m_pendingEvaluateTestCommands.append(pair<long, String>(callId, script));
 }
 
-void InspectorAgent::setInspectorExtensionAPI(const String& source)
+void InspectorAgent::setInjectedScriptForOrigin(const String& origin, const String& source)
 {
-    m_inspectorExtensionAPI = source;
+    m_injectedScriptForOrigin.set(origin, source);
 }
 
 void InspectorAgent::inspect(PassRefPtr<InspectorObject> objectToInspect, PassRefPtr<InspectorObject> hints)
