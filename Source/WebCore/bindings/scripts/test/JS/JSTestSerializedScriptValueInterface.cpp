@@ -131,8 +131,8 @@ JSValue jsTestSerializedScriptValueInterfaceValue(ExecState* exec, JSValue slotB
 {
     JSTestSerializedScriptValueInterface* castedThis = static_cast<JSTestSerializedScriptValueInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestSerializedScriptValueInterface* imp = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
-    JSValue result = imp->value() ? imp->value()->deserialize(exec, castedThis->globalObject()) : jsNull();
+    TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
+    JSValue result = impl->value() ? impl->value()->deserialize(exec, castedThis->globalObject()) : jsNull();
     return result;
 }
 

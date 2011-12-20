@@ -174,8 +174,8 @@ JSValue jsTestEventConstructorAttr1(ExecState* exec, JSValue slotBase, const Ide
 {
     JSTestEventConstructor* castedThis = static_cast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestEventConstructor* imp = static_cast<TestEventConstructor*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->attr1());
+    TestEventConstructor* impl = static_cast<TestEventConstructor*>(castedThis->impl());
+    JSValue result = jsString(exec, impl->attr1());
     return result;
 }
 
@@ -184,8 +184,8 @@ JSValue jsTestEventConstructorAttr2(ExecState* exec, JSValue slotBase, const Ide
 {
     JSTestEventConstructor* castedThis = static_cast<JSTestEventConstructor*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestEventConstructor* imp = static_cast<TestEventConstructor*>(castedThis->impl());
-    JSValue result = jsString(exec, imp->attr2());
+    TestEventConstructor* impl = static_cast<TestEventConstructor*>(castedThis->impl());
+    JSValue result = jsString(exec, impl->attr2());
     return result;
 }
 

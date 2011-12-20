@@ -1,3 +1,143 @@
+2011-12-20  Kentaro Hara  <haraken@chromium.org>
+
+        [Refactoring] Replace imp with impl in CodeGeneratorJS.pm
+        https://bugs.webkit.org/show_bug.cgi?id=74901
+
+        Reviewed by Adam Barth.
+
+        As pointed out in bug 74837, the generated code by CodeGeneratorJS.pm includes
+        both 'imp' and 'impl'. This patch unifies them into 'impl'.
+        I confirmed that "perl -lne 'print if /imp[^a-z]/' CodeGeneratorJS.pm" outputs nothing.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeEventListenerCall):
+        (GenerateEventListenerCall):
+        (GenerateImplementation):
+        (GenerateParametersCheck):
+        (GenerateImplementationFunctionCall):
+        (NativeToJSValue):
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp: Updated run-bindings-tests results.
+        (WebCore::jsFloat64ArrayPrototypeFunctionFoo):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::jsTestEventConstructorAttr1):
+        (WebCore::jsTestEventConstructorAttr2):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceStr1):
+        (WebCore::jsTestInterfaceStr2):
+        (WebCore::jsTestInterfaceStr3):
+        (WebCore::setJSTestInterfaceStr2):
+        (WebCore::setJSTestInterfaceStr3):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::jsTestMediaQueryListListenerPrototypeFunctionMethod):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjReadOnlyIntAttr):
+        (WebCore::jsTestObjReadOnlyStringAttr):
+        (WebCore::jsTestObjReadOnlyTestObjAttr):
+        (WebCore::jsTestObjShortAttr):
+        (WebCore::jsTestObjUnsignedShortAttr):
+        (WebCore::jsTestObjIntAttr):
+        (WebCore::jsTestObjLongLongAttr):
+        (WebCore::jsTestObjUnsignedLongLongAttr):
+        (WebCore::jsTestObjStringAttr):
+        (WebCore::jsTestObjTestObjAttr):
+        (WebCore::jsTestObjXMLObjAttr):
+        (WebCore::jsTestObjCreate):
+        (WebCore::jsTestObjReflectedStringAttr):
+        (WebCore::jsTestObjReflectedIntegralAttr):
+        (WebCore::jsTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::jsTestObjReflectedBooleanAttr):
+        (WebCore::jsTestObjReflectedURLAttr):
+        (WebCore::jsTestObjReflectedNonEmptyURLAttr):
+        (WebCore::jsTestObjReflectedCustomIntegralAttr):
+        (WebCore::jsTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjReflectedCustomURLAttr):
+        (WebCore::jsTestObjReflectedCustomNonEmptyURLAttr):
+        (WebCore::jsTestObjAttrWithGetterException):
+        (WebCore::jsTestObjAttrWithSetterException):
+        (WebCore::jsTestObjStringAttrWithGetterException):
+        (WebCore::jsTestObjStringAttrWithSetterException):
+        (WebCore::jsTestObjScriptStringAttr):
+        (WebCore::jsTestObjConditionalAttr1):
+        (WebCore::jsTestObjConditionalAttr2):
+        (WebCore::jsTestObjConditionalAttr3):
+        (WebCore::jsTestObjCachedAttribute1):
+        (WebCore::jsTestObjCachedAttribute2):
+        (WebCore::jsTestObjDescription):
+        (WebCore::jsTestObjId):
+        (WebCore::jsTestObjHash):
+        (WebCore::setJSTestObjShortAttr):
+        (WebCore::setJSTestObjUnsignedShortAttr):
+        (WebCore::setJSTestObjIntAttr):
+        (WebCore::setJSTestObjLongLongAttr):
+        (WebCore::setJSTestObjUnsignedLongLongAttr):
+        (WebCore::setJSTestObjStringAttr):
+        (WebCore::setJSTestObjTestObjAttr):
+        (WebCore::setJSTestObjXMLObjAttr):
+        (WebCore::setJSTestObjCreate):
+        (WebCore::setJSTestObjReflectedStringAttr):
+        (WebCore::setJSTestObjReflectedIntegralAttr):
+        (WebCore::setJSTestObjReflectedUnsignedIntegralAttr):
+        (WebCore::setJSTestObjReflectedBooleanAttr):
+        (WebCore::setJSTestObjReflectedURLAttr):
+        (WebCore::setJSTestObjReflectedNonEmptyURLAttr):
+        (WebCore::setJSTestObjReflectedCustomIntegralAttr):
+        (WebCore::setJSTestObjReflectedCustomBooleanAttr):
+        (WebCore::setJSTestObjReflectedCustomURLAttr):
+        (WebCore::setJSTestObjReflectedCustomNonEmptyURLAttr):
+        (WebCore::setJSTestObjAttrWithGetterException):
+        (WebCore::setJSTestObjAttrWithSetterException):
+        (WebCore::setJSTestObjStringAttrWithGetterException):
+        (WebCore::setJSTestObjStringAttrWithSetterException):
+        (WebCore::setJSTestObjConditionalAttr1):
+        (WebCore::setJSTestObjConditionalAttr2):
+        (WebCore::setJSTestObjConditionalAttr3):
+        (WebCore::setJSTestObjId):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethod):
+        (WebCore::jsTestObjPrototypeFunctionVoidMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionIntMethod):
+        (WebCore::jsTestObjPrototypeFunctionIntMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionObjMethod):
+        (WebCore::jsTestObjPrototypeFunctionObjMethodWithArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodThatRequiresAllArgsAndThrows):
+        (WebCore::jsTestObjPrototypeFunctionSerializedValue):
+        (WebCore::jsTestObjPrototypeFunctionIdbKey):
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithException):
+        (WebCore::jsTestObjPrototypeFunctionCustomArgsAndException):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrame):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoid):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObj):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateVoidException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptStateObjException):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptExecutionContext):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod1):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod2):
+        (WebCore::jsTestObjPrototypeFunctionConditionalMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod1):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod3):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod4):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod5):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod6):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod7):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::jsTestSerializedScriptValueInterfaceValue):
+
 2011-12-20  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] compositing/shadows tests fail with accelerated painting

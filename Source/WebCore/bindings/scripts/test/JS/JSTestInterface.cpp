@@ -177,8 +177,8 @@ JSValue jsTestInterfaceStr1(ExecState* exec, JSValue slotBase, const Identifier&
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
-    JSValue result = jsString(exec, TestSupplemental::str1(imp));
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    JSValue result = jsString(exec, TestSupplemental::str1(impl));
     return result;
 }
 
@@ -189,8 +189,8 @@ JSValue jsTestInterfaceStr2(ExecState* exec, JSValue slotBase, const Identifier&
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
     UNUSED_PARAM(exec);
-    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
-    JSValue result = jsString(exec, TestSupplemental::str2(imp));
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    JSValue result = jsString(exec, TestSupplemental::str2(impl));
     return result;
 }
 
@@ -200,8 +200,8 @@ JSValue jsTestInterfaceStr2(ExecState* exec, JSValue slotBase, const Identifier&
 JSValue jsTestInterfaceStr3(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(asObject(slotBase));
-    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
-    return castedThis->str3(imp, exec);
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    return castedThis->str3(impl, exec);
 }
 
 #endif
@@ -223,8 +223,8 @@ void JSTestInterface::put(JSCell* cell, ExecState* exec, const Identifier& prope
 void setJSTestInterfaceStr2(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
-    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
-    TestSupplemental::setStr2(imp, ustringToString(value.isEmpty() ? UString() : value.toString(exec)));
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    TestSupplemental::setStr2(impl, ustringToString(value.isEmpty() ? UString() : value.toString(exec)));
 }
 
 #endif
@@ -233,8 +233,8 @@ void setJSTestInterfaceStr2(ExecState* exec, JSObject* thisObject, JSValue value
 void setJSTestInterfaceStr3(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     JSTestInterface* castedThis = static_cast<JSTestInterface*>(thisObject);
-    TestInterface* imp = static_cast<TestInterface*>(castedThis->impl());
-    castedThis->setStr3(imp, exec, value);
+    TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
+    castedThis->setStr3(impl, exec, value);
 }
 
 #endif

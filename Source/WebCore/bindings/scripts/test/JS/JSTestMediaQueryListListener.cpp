@@ -157,13 +157,13 @@ EncodedJSValue JSC_HOST_CALL jsTestMediaQueryListListenerPrototypeFunctionMethod
         return throwVMTypeError(exec);
     JSTestMediaQueryListListener* castedThis = static_cast<JSTestMediaQueryListListener*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestMediaQueryListListener::s_info);
-    TestMediaQueryListListener* imp = static_cast<TestMediaQueryListListener*>(castedThis->impl());
+    TestMediaQueryListListener* impl = static_cast<TestMediaQueryListListener*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
     RefPtr<MediaQueryListListener> listener(MediaQueryListListener::create(ScriptValue(exec->globalData(), MAYBE_MISSING_PARAMETER(exec, 0, MissingIsUndefined))));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    imp->method(listener);
+    impl->method(listener);
     return JSValue::encode(jsUndefined());
 }
 
