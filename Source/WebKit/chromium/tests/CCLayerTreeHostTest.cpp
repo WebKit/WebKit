@@ -103,12 +103,15 @@ class MockLayerTreeHost : public CCLayerTreeHost {
 public:
     static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     {
-        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, rootLayer, settings));
+        RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, settings));
+        layerTreeHost->setRootLayer(rootLayer);
+        bool success = layerTreeHost->initialize();
+        EXPECT_TRUE(success);
 
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
         layerTreeHost->setViewport(IntSize(1, 1));
 
-        return layerTreeHost;
+        return layerTreeHost.release();
     }
 
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
@@ -117,13 +120,10 @@ public:
     }
 
 private:
-    MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
+    MockLayerTreeHost(TestHooks* testHooks, CCLayerTreeHostClient* client, const CCSettings& settings)
         : CCLayerTreeHost(client, settings)
         , m_testHooks(testHooks)
     {
-        setRootLayer(rootLayer);
-        bool success = initialize();
-        EXPECT_TRUE(success);
     }
 
     TestHooks* m_testHooks;
@@ -453,7 +453,7 @@ public:
     virtual void beginTest()
     {
         // Kill the layerTreeHost immediately.
-        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
+        m_layerTreeHost->setRootLayer(0);
         m_layerTreeHost.clear();
 
         endTest();
@@ -486,7 +486,7 @@ public:
         postSetNeedsCommitToMainThread();
 
         // Kill the layerTreeHost immediately.
-        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
+        m_layerTreeHost->setRootLayer(0);
         m_layerTreeHost.clear();
 
         endTest();
@@ -509,7 +509,7 @@ public:
         postSetNeedsRedrawToMainThread();
 
         // Kill the layerTreeHost immediately.
-        m_layerTreeHost->rootLayer()->setLayerTreeHost(0);
+        m_layerTreeHost->setRootLayer(0);
         m_layerTreeHost.clear();
 
         endTest();

@@ -29,6 +29,8 @@
 #include "CCLayerTreeTestCommon.h"
 #include "LayerPainterChromium.h"
 #include "NonCompositedContentHost.h"
+#include "WebCompositor.h"
+#include "cc/CCLayerTreeHost.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -732,6 +734,221 @@ TEST_F(LayerChromiumTest, checkContentsScaleChangeTriggersNeedsDisplay)
 
     EXECUTE_AND_VERIFY_NOTIFY_SYNC_BEHAVIOR(mockDelegate, 1, testLayer->setContentsScale(testLayer->contentsScale() + 1.f));
     EXPECT_TRUE(testLayer->needsDisplay());
+}
+
+class FakeCCLayerTreeHostClient : public CCLayerTreeHostClient {
+public:
+    virtual void animateAndLayout(double frameBeginTime) { }
+    virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) { }
+    virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() { return 0; }
+    virtual void didRecreateGraphicsContext(bool success) { }
+    virtual void didCommitAndDrawFrame() { }
+    virtual void didCompleteSwapBuffers() { }
+    virtual void scheduleComposite() { }
+};
+
+class FakeCCLayerTreeHost : public CCLayerTreeHost {
+public:
+    static PassRefPtr<FakeCCLayerTreeHost> create()
+    {
+        RefPtr<FakeCCLayerTreeHost> host = adoptRef(new FakeCCLayerTreeHost);
+        // The initialize call will fail, since our client doesn't provide a valid GraphicsContext3D, but it doesn't matter in the tests that use this fake so ignore the return value.
+        host->initialize();
+        return host.release();
+    }
+
+private:
+    FakeCCLayerTreeHost()
+        : CCLayerTreeHost(&m_client, CCSettings())
+    {
+    }
+
+    FakeCCLayerTreeHostClient m_client;
+};
+
+void assertLayerTreeHostMatchesForSubtree(LayerChromium* layer, CCLayerTreeHost* host)
+{
+    EXPECT_EQ(host, layer->layerTreeHost());
+
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        assertLayerTreeHostMatchesForSubtree(layer->children()[i].get(), host);
+
+    if (layer->maskLayer())
+        assertLayerTreeHostMatchesForSubtree(layer->maskLayer(), host);
+
+    if (layer->replicaLayer())
+        assertLayerTreeHostMatchesForSubtree(layer->replicaLayer(), host);
+}
+
+
+TEST(LayerChromiumLayerTreeHostTest, enteringTree)
+{
+    WebCompositor::initialize(0);
+    RefPtr<LayerChromium> parent = LayerChromium::create(0);
+    RefPtr<LayerChromium> child = LayerChromium::create(0);
+    RefPtr<LayerChromium> mask = LayerChromium::create(0);
+    RefPtr<LayerChromium> replica = LayerChromium::create(0);
+    RefPtr<LayerChromium> replicaMask = LayerChromium::create(0);
+
+    // Set up a detached tree of layers. The host pointer should be nil for these layers.
+    parent->addChild(child);
+    child->setMaskLayer(mask.get());
+    child->setReplicaLayer(replica.get());
+    replica->setMaskLayer(mask.get());
+
+    assertLayerTreeHostMatchesForSubtree(parent.get(), 0);
+
+    RefPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+    // Setting the root layer should set the host pointer for all layers in the tree.
+    layerTreeHost->setRootLayer(parent.get());
+
+    assertLayerTreeHostMatchesForSubtree(parent.get(), layerTreeHost.get());
+
+    // Clearing the root layer should also clear out the host pointers for all layers in the tree.
+    layerTreeHost->setRootLayer(0);
+
+    assertLayerTreeHostMatchesForSubtree(parent.get(), 0);
+
+    layerTreeHost.clear();
+    WebCompositor::shutdown();
+}
+
+TEST(LayerChromiumLayerTreeHostTest, addingLayerSubtree)
+{
+    WebCompositor::initialize(0);
+    RefPtr<LayerChromium> parent = LayerChromium::create(0);
+    RefPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+
+    layerTreeHost->setRootLayer(parent.get());
+
+    EXPECT_EQ(parent->layerTreeHost(), layerTreeHost.get());
+
+    // Adding a subtree to a layer already associated with a host should set the host pointer on all layers in that subtree.
+    RefPtr<LayerChromium> child = LayerChromium::create(0);
+    RefPtr<LayerChromium> grandChild = LayerChromium::create(0);
+    child->addChild(grandChild);
+
+    // Masks, replicas, and replica masks should pick up the new host too.
+    RefPtr<LayerChromium> childMask = LayerChromium::create(0);
+    child->setMaskLayer(childMask.get());
+    RefPtr<LayerChromium> childReplica = LayerChromium::create(0);
+    child->setReplicaLayer(childReplica.get());
+    RefPtr<LayerChromium> childReplicaMask = LayerChromium::create(0);
+    childReplica->setMaskLayer(childReplicaMask.get());
+
+    parent->addChild(child);
+    assertLayerTreeHostMatchesForSubtree(parent.get(), layerTreeHost.get());
+
+    layerTreeHost->setRootLayer(0);
+    layerTreeHost.clear();
+    WebCompositor::shutdown();
+}
+
+TEST(LayerChromiumLayerTreeHostTest, changeHost)
+{
+    WebCompositor::initialize(0);
+    RefPtr<LayerChromium> parent = LayerChromium::create(0);
+    RefPtr<LayerChromium> child = LayerChromium::create(0);
+    RefPtr<LayerChromium> mask = LayerChromium::create(0);
+    RefPtr<LayerChromium> replica = LayerChromium::create(0);
+    RefPtr<LayerChromium> replicaMask = LayerChromium::create(0);
+
+    // Same setup as the previous test.
+    parent->addChild(child);
+    child->setMaskLayer(mask.get());
+    child->setReplicaLayer(replica.get());
+    replica->setMaskLayer(mask.get());
+
+    RefPtr<FakeCCLayerTreeHost> firstLayerTreeHost = FakeCCLayerTreeHost::create();
+    firstLayerTreeHost->setRootLayer(parent.get());
+
+    assertLayerTreeHostMatchesForSubtree(parent.get(), firstLayerTreeHost.get());
+
+    // Now re-root the tree to a new host (simulating what we do on a context lost event).
+    // This should update the host pointers for all layers in the tree.
+    RefPtr<FakeCCLayerTreeHost> secondLayerTreeHost = FakeCCLayerTreeHost::create();
+    secondLayerTreeHost->setRootLayer(parent.get());
+
+    assertLayerTreeHostMatchesForSubtree(parent.get(), secondLayerTreeHost.get());
+
+    secondLayerTreeHost->setRootLayer(0);
+    firstLayerTreeHost.clear();
+    secondLayerTreeHost.clear();
+    WebCompositor::shutdown();
+}
+
+TEST(LayerChromiumLayerTreeHostTest, changeHostInSubtree)
+{
+    WebCompositor::initialize(0);
+    RefPtr<LayerChromium> firstParent = LayerChromium::create(0);
+    RefPtr<LayerChromium> firstChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> secondParent = LayerChromium::create(0);
+    RefPtr<LayerChromium> secondChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> secondGrandChild = LayerChromium::create(0);
+
+    // First put all children under the first parent and set the first host.
+    firstParent->addChild(firstChild);
+    secondChild->addChild(secondGrandChild);
+    firstParent->addChild(secondChild);
+
+    RefPtr<FakeCCLayerTreeHost> firstLayerTreeHost = FakeCCLayerTreeHost::create();
+    firstLayerTreeHost->setRootLayer(firstParent.get());
+
+    assertLayerTreeHostMatchesForSubtree(firstParent.get(), firstLayerTreeHost.get());
+
+    // Now reparent the subtree starting at secondChild to a layer in a different tree.
+    RefPtr<FakeCCLayerTreeHost> secondLayerTreeHost = FakeCCLayerTreeHost::create();
+    secondLayerTreeHost->setRootLayer(secondParent.get());
+
+    secondParent->addChild(secondChild);
+
+    // The moved layer and its children should point to the new host.
+    EXPECT_EQ(secondLayerTreeHost.get(), secondChild->layerTreeHost());
+    EXPECT_EQ(secondLayerTreeHost.get(), secondGrandChild->layerTreeHost());
+
+    // Test over, cleanup time.
+    firstLayerTreeHost->setRootLayer(0);
+    secondLayerTreeHost->setRootLayer(0);
+    firstLayerTreeHost.clear();
+    secondLayerTreeHost.clear();
+    WebCompositor::shutdown();
+}
+
+TEST(LayerChromiumLayerTreeHostTest, replaceMaskAndReplicaLayer)
+{
+    WebCompositor::initialize(0);
+    RefPtr<LayerChromium> parent = LayerChromium::create(0);
+    RefPtr<LayerChromium> mask = LayerChromium::create(0);
+    RefPtr<LayerChromium> replica = LayerChromium::create(0);
+    RefPtr<LayerChromium> maskChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> replicaChild = LayerChromium::create(0);
+    RefPtr<LayerChromium> maskReplacement = LayerChromium::create(0);
+    RefPtr<LayerChromium> replicaReplacement = LayerChromium::create(0);
+
+    parent->setMaskLayer(mask.get());
+    parent->setReplicaLayer(replica.get());
+    mask->addChild(maskChild);
+    replica->addChild(replicaChild);
+
+    RefPtr<FakeCCLayerTreeHost> layerTreeHost = FakeCCLayerTreeHost::create();
+    layerTreeHost->setRootLayer(parent.get());
+
+    assertLayerTreeHostMatchesForSubtree(parent.get(), layerTreeHost.get());
+
+    // Replacing the mask should clear out the old mask's subtree's host pointers.
+    parent->setMaskLayer(maskReplacement.get());
+    EXPECT_EQ(0, mask->layerTreeHost());
+    EXPECT_EQ(0, maskChild->layerTreeHost());
+
+    // Same for replacing a replica layer.
+    parent->setReplicaLayer(replicaReplacement.get());
+    EXPECT_EQ(0, replica->layerTreeHost());
+    EXPECT_EQ(0, replicaChild->layerTreeHost());
+
+    // Test over, cleanup time.
+    layerTreeHost->setRootLayer(0);
+    layerTreeHost.clear();
+    WebCompositor::shutdown();
 }
 
 } // namespace

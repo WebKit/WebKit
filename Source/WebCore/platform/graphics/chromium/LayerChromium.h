@@ -155,7 +155,7 @@ public:
 
     void setDelegate(CCLayerDelegate* delegate) { m_delegate = delegate; }
 
-    void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; setNeedsCommit(); }
+    void setReplicaLayer(LayerChromium*);
     LayerChromium* replicaLayer() const { return m_replicaLayer.get(); }
 
     // These methods typically need to be overwritten by derived classes.
