@@ -227,6 +227,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
 
+    interpreter->initialize(this->canUseJIT());
+
     heap.notifyIsSafeToCollect();
 }
 

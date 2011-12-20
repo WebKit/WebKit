@@ -94,26 +94,35 @@ namespace JSC {
         friend class CachedCall;
     public:
         Interpreter();
+        
+        void initialize(bool canUseJIT);
 
         RegisterFile& registerFile() { return m_registerFile; }
         
         Opcode getOpcode(OpcodeID id)
         {
-            #if ENABLE(COMPUTED_GOTO_INTERPRETER)
-                return m_opcodeTable[id];
-            #else
-                return id;
-            #endif
+            ASSERT(m_initialized);
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+            return m_opcodeTable[id];
+#else
+            return id;
+#endif
         }
 
         OpcodeID getOpcodeID(Opcode opcode)
         {
-            #if ENABLE(COMPUTED_GOTO_INTERPRETER)
-                ASSERT(isOpcode(opcode));
-                return m_opcodeIDTable.get(opcode);
-            #else
-                return opcode;
-            #endif
+            ASSERT(m_initialized);
+#if ENABLE(COMPUTED_GOTO_INTERPRETER)
+            ASSERT(isOpcode(opcode));
+            if (!m_enabled) {
+                OpcodeID result = static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode));
+                ASSERT(result == m_opcodeIDTable.get(opcode));
+                return result;
+            }
+            return m_opcodeIDTable.get(opcode);
+#else
+            return opcode;
+#endif
         }
 
         bool isOpcode(Opcode);
@@ -186,6 +195,11 @@ namespace JSC {
         Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
+
+#if !ASSERT_DISABLED
+        bool m_initialized;
+#endif
+        bool m_enabled;
     };
 
     // This value must not be an object that would require this conversion (WebCore's global object).

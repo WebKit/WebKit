@@ -1,3 +1,21 @@
+2011-12-19  Filip Pizlo  <fpizlo@apple.com>
+
+        If we detect that we can use the JIT, don't use computed opcode lookups
+        https://bugs.webkit.org/show_bug.cgi?id=74899
+        <rdar://problem/10604551>
+
+        Reviewed by Gavin Barraclough.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::initialize):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC::Interpreter::getOpcode):
+        (JSC::Interpreter::getOpcodeID):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2011-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Qt build.

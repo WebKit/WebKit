@@ -540,13 +540,43 @@ CallFrame* loadVarargs(CallFrame* callFrame, RegisterFile* registerFile, JSValue
 Interpreter::Interpreter()
     : m_sampleEntryDepth(0)
     , m_reentryDepth(0)
+#if !ASSERT_DISABLED
+    , m_initialized(false)
+#endif
+    , m_enabled(false)
+{
+}
+
+void Interpreter::initialize(bool canUseJIT)
 {
 #if ENABLE(COMPUTED_GOTO_INTERPRETER)
-    privateExecute(InitializeAndReturn, 0, 0);
-
-    for (int i = 0; i < numOpcodeIDs; ++i)
-        m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
+    if (canUseJIT) {
+        // If the JIT is present, don't use jump destinations for opcodes.
+        
+        for (int i = 0; i < numOpcodeIDs; ++i) {
+            Opcode opcode = bitwise_cast<void*>(static_cast<uintptr_t>(i));
+            m_opcodeTable[i] = opcode;
+            m_opcodeIDTable.add(opcode, static_cast<OpcodeID>(i));
+        }
+    } else {
+        privateExecute(InitializeAndReturn, 0, 0);
+        
+        for (int i = 0; i < numOpcodeIDs; ++i)
+            m_opcodeIDTable.add(m_opcodeTable[i], static_cast<OpcodeID>(i));
+        
+        m_enabled = true;
+    }
+#else
+    UNUSED_PARAM(canUseJIT);
+#if ENABLE(INTERPRETER)
+    m_enabled = true;
+#else
+    m_enabled = false;
+#endif
 #endif // ENABLE(COMPUTED_GOTO_INTERPRETER)
+#if !ASSERT_DISABLED
+    m_initialized = true;
+#endif
 
 #if ENABLE(OPCODE_SAMPLING)
     enableSampler();
@@ -1652,6 +1682,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         #endif // ENABLE(COMPUTED_GOTO_INTERPRETER)
         return JSValue();
     }
+    
+    ASSERT(m_initialized);
+    ASSERT(m_enabled);
     
 #if ENABLE(JIT)
 #if ENABLE(INTERPRETER)
