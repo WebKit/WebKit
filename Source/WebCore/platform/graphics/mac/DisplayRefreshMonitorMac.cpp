@@ -87,8 +87,10 @@ bool DisplayRefreshMonitor::requestRefreshCallback()
 void DisplayRefreshMonitor::displayLinkFired(double nowSeconds, double outputTimeSeconds)
 {
     MutexLocker lock(m_mutex);
-    if (!m_scheduled)
+    if (!m_scheduled || !m_previousFrameDone)
         return;
+
+    m_previousFrameDone = false;
 
     double webKitNow = currentTime();
     m_timestamp = webKitNow - nowSeconds + outputTimeSeconds;

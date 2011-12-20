@@ -96,9 +96,12 @@ public:
     PlatformDisplayID displayID() const { return m_displayID; }
 
 private:
+    void notifyClients();
+    
     double m_timestamp;
     bool m_active;
     bool m_scheduled;
+    bool m_previousFrameDone;
     PlatformDisplayID m_displayID;
     DisplayRefreshMonitorManager* m_manager;
     Mutex m_mutex;

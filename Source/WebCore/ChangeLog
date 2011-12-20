@@ -1,3 +1,33 @@
+2011-12-20  Simon Fraser  <simon.fraser@apple.com>
+
+        requestAnimationFrame on Mac fires at 60fps even when drawing is much slower
+        https://bugs.webkit.org/show_bug.cgi?id=74964
+
+        Reviewed by Chris Marrin.
+        
+        On Mac requestAnimationFrame uses a CVDisplayLink, sending notifications
+        from the display link thread to the main thread that the display link fired.
+        However, there was no throttling on these notifications; if processing an event
+        took a long time, notifications would pile up, and then get handled after
+        the slow event completed.
+        
+        This would cause JS animations which animate by changing style to report
+        60fps when their display framerate was much lower.
+        
+        Fix by throttling notifications from the display link thread to the web
+        thread; if the previous event hasn't completed yet, don't send any new ones.
+
+        No new tests, since testing this runtime behavior is hard.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::DisplayRefreshMonitor):
+        (WebCore::DisplayRefreshMonitor::refreshDisplayOnMainThread):
+        (WebCore::DisplayRefreshMonitor::notifyClients): Factored out of the
+        static refreshDisplayOnMainThread method so we can use 'this'.
+        * platform/graphics/DisplayRefreshMonitor.h:
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+
 2011-12-20  Greg Billock  <gbillock@google.com>
 
         [Coverity] Fix leak in V8HTMLDocument
