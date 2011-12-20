@@ -607,6 +607,7 @@ namespace WTF {
         bool tryExpandCapacity(size_t newMinCapacity);
         const T* tryExpandCapacity(size_t newMinCapacity, const T*);
         template<typename U> U* expandCapacity(size_t newMinCapacity, U*); 
+        template<typename U> void appendSlowCase(const U&);
 
         size_t m_size;
         Buffer m_buffer;
@@ -953,24 +954,26 @@ namespace WTF {
     template<typename T, size_t inlineCapacity> template<typename U>
     ALWAYS_INLINE void Vector<T, inlineCapacity>::append(const U& val)
     {
-        const U* ptr = &val;
-        if (size() == capacity()) {
-            ptr = expandCapacity(size() + 1, ptr);
-            if (!begin())
-                return;
+        if (size() != capacity()) {
+            new (NotNull, end()) T(val);
+            ++m_size;
+            return;
         }
-            
-#if COMPILER(MSVC7_OR_LOWER)
-        // FIXME: MSVC7 generates compilation errors when trying to assign
-        // a pointer to a Vector of its base class (i.e. can't downcast). So far
-        // I've been unable to determine any logical reason for this, so I can
-        // only assume it is a bug with the compiler. Casting is a bad solution,
-        // however, because it subverts implicit conversions, so a better 
-        // one is needed. 
-        new (NotNull, end()) T(static_cast<T>(*ptr));
-#else
+
+        appendSlowCase(val);
+    }
+
+    template<typename T, size_t inlineCapacity> template<typename U>
+    void Vector<T, inlineCapacity>::appendSlowCase(const U& val)
+    {
+        ASSERT(size() == capacity());
+
+        const U* ptr = &val;
+        ptr = expandCapacity(size() + 1, ptr);
+        if (!begin())
+            return;
+
         new (NotNull, end()) T(*ptr);
-#endif
         ++m_size;
     }
 

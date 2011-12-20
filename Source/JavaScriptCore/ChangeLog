@@ -1,3 +1,22 @@
+2011-12-19  Geoffrey Garen  <ggaren@apple.com>
+
+        Tightened up Vector<T>::append
+        https://bugs.webkit.org/show_bug.cgi?id=74906
+
+        Reviewed by Sam Weinig.
+
+        Not a measurable speedup, but code inspection shows better code generated,
+        and I believe this is a step toward turning off -fomit-frame-pointer.
+
+        * wtf/Vector.h:
+        (WTF::::append):
+        (WTF::::appendSlowCase): Split out the slow case into a separate function
+        to keep unnecessary instructions off the hot path. This means the hot
+        path can now be inlined more often.
+        
+        Removed some old MSVC7 cruft. Hopefully, we don't need to hang on to a
+        compiler work-around from 2007.
+
 2011-12-19  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Temporary GPR should not be lazily allocated in DFG JIT on X86
