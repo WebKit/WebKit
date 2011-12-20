@@ -1,3 +1,83 @@
+2011-12-19  Sailesh Agrawal <sail@chromium.org>
+
+        Merge ScrollAnimatorChromiumMac.mm back to ScrollAnimatorMac
+        https://bugs.webkit.org/show_bug.cgi?id=61144
+
+        Reviewed by Beth Dakin.
+
+        At a high level the main changes are:
+            - replace #ifdefs in ScrollAnimatorMac and ScrollbarThemeMac with run time checks
+            - delete duplicate code in ScrollbarThemeChromiumMac. Keep the paint code since it does tickmarks and SKIA stuff.
+            - delete ScrollAnimatorChromiumMac since ScrollAnimatorMac does the exact same thing
+            - delete ScrollbarOverlayUtilitiesChromiumMac since NSScrollerImpDetails does the same thing
+
+        No new tests. Just refactoring.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/chromium/ScrollAnimatorChromiumMac.h: Removed.
+        * platform/chromium/ScrollAnimatorChromiumMac.mm: Removed.
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h: Removed.
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm: Removed.
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac):
+        (WebCore::scrollbarPainterPaintTrack):
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        * platform/mac/EmptyProtocolDefinitions.h:
+        * platform/mac/NSScrollerImpDetails.h:
+        (WebCore::isScrollbarOverlayAPIAvailable):
+        * platform/mac/NSScrollerImpDetails.mm: Added.
+        (WebCore::isScrollbarOverlayAPIAvailable):
+        (WebCore::recommendedScrollerStyle):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (scrollbarPainterForScrollbar):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::mouseEnteredScrollbar):
+        (WebCore::ScrollAnimatorMac::mouseExitedScrollbar):
+        (WebCore::ScrollAnimatorMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorMac::contentsResized):
+        (WebCore::ScrollAnimatorMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::cancelAnimations):
+        (WebCore::ScrollAnimatorMac::setIsActive):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        (WebCore::ScrollAnimatorMac::initialScrollbarPaintTimerFired):
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[WebScrollbarPrefsObserver appearancePrefsChanged:]):
+        (+[WebScrollbarPrefsObserver behaviorPrefsChanged:]):
+        (WebCore::updateArrowPlacement):
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::setIsCurrentlyDrawingIntoLayer):
+        (WebCore::ScrollbarThemeMac::ScrollbarThemeMac):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::hasButtons):
+        (WebCore::ScrollbarThemeMac::hasThumb):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::scrollbarPartToHIPressedState):
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+        (WebCore::scrollbarPainterPaint):
+        (WebCore::ScrollbarThemeMac::paint):
+
 2011-12-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Set the CCLayerTreeHost pointer on LayerChromium instances eagerly

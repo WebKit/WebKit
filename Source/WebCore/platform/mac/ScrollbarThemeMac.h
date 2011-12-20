@@ -28,9 +28,7 @@
 
 #include "ScrollbarThemeComposite.h"
 
-#if USE(SCROLLBAR_PAINTER)
 typedef id ScrollbarPainter;
-#endif
 
 namespace WebCore {
 
@@ -43,7 +41,9 @@ public:
 
     virtual void updateEnabledState(Scrollbar*);
 
+#if !PLATFORM(CHROMIUM)
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+#endif
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     
@@ -59,12 +59,11 @@ public:
     virtual void registerScrollbar(Scrollbar*);
     virtual void unregisterScrollbar(Scrollbar*);
 
-#if USE(SCROLLBAR_PAINTER)
     void setNewPainterForScrollbar(Scrollbar*, ScrollbarPainter);
     ScrollbarPainter painterForScrollbar(Scrollbar*);
 
     static bool isCurrentlyDrawingIntoLayer();
-#endif
+    static void setIsCurrentlyDrawingIntoLayer(bool);
 
 protected:
     virtual bool hasButtons(Scrollbar*);
@@ -80,6 +79,7 @@ protected:
     
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
+    int scrollbarPartToHIPressedState(ScrollbarPart);
 };
 
 }

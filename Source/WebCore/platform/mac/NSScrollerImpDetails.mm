@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2009 Google Inc. All Rights Reserved.
+ * Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,28 +24,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollbarThemeChromiumMac_h
-#define ScrollbarThemeChromiumMac_h
 
-#include "ScrollbarThemeMac.h"
+#include "config.h"
+#include "NSScrollerImpDetails.h"
 
 namespace WebCore {
 
-class ScrollbarThemeChromiumMac : public ScrollbarThemeMac {
-public:
-    ScrollbarThemeChromiumMac();
-    virtual ~ScrollbarThemeChromiumMac();
+#if PLATFORM(CHROMIUM)
+bool isScrollbarOverlayAPIAvailable()
+{
+    static bool apiAvailable;
+    static bool shouldInitialize = true;
+    if (shouldInitialize) {
+        shouldInitialize = false;
+        Class scrollerImpClass = NSClassFromString(@"NSScrollerImp");
+        Class scrollerImpPairClass = NSClassFromString(@"NSScrollerImpPair");
+        apiAvailable = [scrollerImpClass respondsToSelector:@selector(scrollerImpWithStyle:controlSize:horizontal:replacingScrollerImp:)]
+                       && [scrollerImpPairClass instancesRespondToSelector:@selector(scrollerStyle)];
+    }
+    return apiAvailable;
+}
+#endif
 
-    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
-
-    virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
-    
-private:
-    void paintGivenTickmarks(GraphicsContext*, Scrollbar*, const IntRect&, const Vector<IntRect>&);
-
-    RefPtr<Pattern> m_overhangPattern;
-};
-
+NSScrollerStyle recommendedScrollerStyle() {
+    if ([NSScroller respondsToSelector:@selector(preferredScrollerStyle)])
+        return [NSScroller preferredScrollerStyle];
+    return NSScrollerStyleLegacy;
 }
 
-#endif // ScrollbarThemeChromiumMac_h
+}
