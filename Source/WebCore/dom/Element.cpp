@@ -201,12 +201,6 @@ void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
     }
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    ExceptionCode ec;
-    setAttribute(name, value, ec);
-}
-
 void Element::setBooleanAttribute(const QualifiedName& name, bool b)
 {
     if (b)
@@ -641,7 +635,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
     setAttributeInternal(old, old ? old->name() : QualifiedName(nullAtom, localName, nullAtom), value);
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomicString& value, ExceptionCode&)
+void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
     // Allocate attribute map if necessary.
     Attribute* old = attributes(false)->getAttributeItem(name);
@@ -1502,7 +1496,7 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
     if (scriptingPermission == FragmentScriptingNotAllowed && (isEventHandlerAttribute(qName) || isAttributeToRemove(qName, value)))
         return;
 
-    setAttribute(qName, value, ec);
+    setAttribute(qName, value);
 }
 
 void Element::removeAttribute(const String& name, ExceptionCode& ec)
@@ -1894,8 +1888,7 @@ int Element::getIntegralAttribute(const QualifiedName& attributeName) const
 void Element::setIntegralAttribute(const QualifiedName& attributeName, int value)
 {
     // FIXME: Need an AtomicString version of String::number.
-    ExceptionCode ec;
-    setAttribute(attributeName, String::number(value), ec);
+    setAttribute(attributeName, String::number(value));
 }
 
 unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeName) const
@@ -1906,8 +1899,7 @@ unsigned Element::getUnsignedIntegralAttribute(const QualifiedName& attributeNam
 void Element::setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value)
 {
     // FIXME: Need an AtomicString version of String::number.
-    ExceptionCode ec;
-    setAttribute(attributeName, String::number(value), ec);
+    setAttribute(attributeName, String::number(value));
 }
 
 #if ENABLE(SVG)

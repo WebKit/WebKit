@@ -324,7 +324,7 @@ void XMLTreeBuilder::processAttributes(const AtomicXMLToken& token, NodeStackIte
             newElement->setAttributeNS(XMLNSNames::xmlnsNamespaceURI, xmlnsAtom, attribute->value(), ec);
         else {
             QualifiedName qName(attribute->prefix(), attribute->localName(), stackItem.namespaceForPrefix(attribute->prefix(), nullAtom));
-            newElement->setAttribute(qName, attribute->value(), ec);
+            newElement->setAttribute(qName, attribute->value());
         }
         if (ec) {
             m_parser->stopParsing();

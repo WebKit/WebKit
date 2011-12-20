@@ -112,16 +112,12 @@ static RenderStyle* styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
 
     RefPtr<Element> styleElement = frame->document()->createElement(spanTag, false);
 
-    ExceptionCode ec = 0;
     String styleText = typingStyle->style()->cssText() + " display: inline";
-    styleElement->setAttribute(styleAttr, styleText.impl(), ec);
-    ASSERT(!ec);
+    styleElement->setAttribute(styleAttr, styleText.impl());
 
-    styleElement->appendChild(frame->document()->createEditingTextNode(""), ec);
-    ASSERT(!ec);
+    styleElement->appendChild(frame->document()->createEditingTextNode(""), ASSERT_NO_EXCEPTION);
 
-    position.deprecatedNode()->parentNode()->appendChild(styleElement, ec);
-    ASSERT(!ec);
+    position.deprecatedNode()->parentNode()->appendChild(styleElement, ASSERT_NO_EXCEPTION);
 
     nodeToRemove = styleElement.get();
     return styleElement->renderer() ? styleElement->renderer()->style() : 0;

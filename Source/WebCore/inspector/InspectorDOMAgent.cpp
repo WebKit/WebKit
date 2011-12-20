@@ -540,11 +540,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
         // Add attribute pair
         const Attribute* attribute = attrMap->attributeItem(i);
         foundOriginalAttribute = foundOriginalAttribute || (name && attribute->name().toString() == *name);
-        element->setAttribute(attribute->name(), attribute->value(), ec);
-        if (ec) {
-            *errorString = "Internal error: could not set attribute value";
-            return;
-        }
+        element->setAttribute(attribute->name(), attribute->value());
     }
 
     if (!foundOriginalAttribute && name) {

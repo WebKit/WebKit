@@ -1,3 +1,40 @@
+2011-12-19  Adam Klein  <adamk@chromium.org>
+
+        Remove unused ExceptionCode& argument from Element::setAttribute(QualifiedName)
+        https://bugs.webkit.org/show_bug.cgi?id=74740
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated lots of callers to remove third argument. The list of changes
+        below only lists things other than updating callers.
+
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeNS):
+        (WebCore::Element::setIntegralAttribute):
+        (WebCore::Element::setUnsignedIntegralAttribute):
+        * dom/Element.h: Removed third arg from method, removed old two-arg
+        overload which now has an identical signature.
+        * editing/mac/EditorMac.mm: Updated caller and used
+        ASSERT_NO_EXCEPTION for nearby code.
+        (WebCore::styleForSelectionStart):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setContentEditable):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+        * svg/SVGElement.idl: Removed 'setter raises(DOMException)'
+        * svg/SVGGlyphRefElement.idl: ditto.
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::setType):
+        (WebCore::SVGStyleElement::setMedia):
+        (WebCore::SVGStyleElement::setTitle):
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::processAttributes):
+
 2011-12-19  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

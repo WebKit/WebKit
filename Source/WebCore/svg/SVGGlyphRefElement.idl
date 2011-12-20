@@ -25,8 +25,7 @@ module svg {
         // FIXME: Use [Reflect] after https://bugs.webkit.org/show_bug.cgi?id=64843 is fixed.
         attribute DOMString glyphRef
             setter raises(DOMException);
-        attribute [Reflect] DOMString format
-            setter raises(DOMException);
+        attribute [Reflect] DOMString format;
         attribute float x
             setter raises(DOMException);
         attribute float y

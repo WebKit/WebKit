@@ -356,7 +356,7 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
     } else {
         // FIXME: This should set the 'presentation' value, not the actual 
         // attribute value. Whatever that means in practice.
-        targetElement->setAttribute(attributeName, value, ec);
+        targetElement->setAttribute(attributeName, value);
     }
     
     if (targetElement->isStyled())
@@ -372,7 +372,7 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
         if (attributeIsCSSProperty)
             shadowTreeElement->style()->setProperty(attributeName.localName(), value, "", ec);
         else
-            shadowTreeElement->setAttribute(attributeName, value, ec);
+            shadowTreeElement->setAttribute(attributeName, value);
         (*it)->correspondingUseElement()->setNeedsStyleRecalc();
     }
 }
@@ -630,4 +630,3 @@ void SVGAnimationElement::endedActiveInterval()
 
 }
 #endif // ENABLE(SVG)
-

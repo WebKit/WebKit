@@ -109,7 +109,7 @@ public:
 
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
-    void setAttribute(const QualifiedName&, const AtomicString& value, ExceptionCode&);
+    void setAttribute(const QualifiedName&, const AtomicString& value);
     void removeAttribute(const QualifiedName&, ExceptionCode&);
 
     // Typed getters and setters for language bindings.
@@ -209,8 +209,6 @@ public:
     void normalizeAttributes();
     String nodeNamePreservingCase() const;
 
-    // convenience methods which ignore exceptions
-    void setAttribute(const QualifiedName&, const AtomicString& value);
     void setBooleanAttribute(const QualifiedName& name, bool);
 
     NamedNodeMap* attributes(bool readonly = false) const;

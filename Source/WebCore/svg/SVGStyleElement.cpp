@@ -58,9 +58,9 @@ const AtomicString& SVGStyleElement::type() const
     return n.isNull() ? defaultValue : n;
 }
 
-void SVGStyleElement::setType(const AtomicString& type, ExceptionCode& ec)
+void SVGStyleElement::setType(const AtomicString& type, ExceptionCode&)
 {
-    setAttribute(SVGNames::typeAttr, type, ec);
+    setAttribute(SVGNames::typeAttr, type);
 }
 
 const AtomicString& SVGStyleElement::media() const
@@ -70,9 +70,9 @@ const AtomicString& SVGStyleElement::media() const
     return n.isNull() ? defaultValue : n;
 }
 
-void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode& ec)
+void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode&)
 {
-    setAttribute(SVGNames::mediaAttr, media, ec);
+    setAttribute(SVGNames::mediaAttr, media);
 }
 
 String SVGStyleElement::title() const
@@ -80,9 +80,9 @@ String SVGStyleElement::title() const
     return fastGetAttribute(SVGNames::titleAttr);
 }
 
-void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode& ec)
+void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode&)
 {
-    setAttribute(SVGNames::titleAttr, title, ec);
+    setAttribute(SVGNames::titleAttr, title);
 }
 
 bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)

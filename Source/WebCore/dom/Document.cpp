@@ -839,9 +839,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
             unsigned length = attrs->length();
             for (unsigned i = 0; i < length; i++) {
                 Attribute* attr = attrs->attributeItem(i);
-                newElement->setAttribute(attr->name(), attr->value().impl(), ec);
-                if (ec)
-                    return 0;
+                newElement->setAttribute(attr->name(), attr->value().impl());
             }
         }
 
