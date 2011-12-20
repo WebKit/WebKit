@@ -3122,6 +3122,10 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setWebAudioEnabled(settingsPrivate->enableWebAudio);
 #endif
 
+#if ENABLE(WEB_SOCKETS)
+    coreSettings->setUseHixie76WebSocketProtocol(false);
+#endif
+
     if (Page* page = core(webView))
         page->setTabKeyCyclesThroughElements(settingsPrivate->tabKeyCyclesThroughElements);
 
