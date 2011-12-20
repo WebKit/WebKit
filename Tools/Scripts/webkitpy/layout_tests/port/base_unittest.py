@@ -206,8 +206,8 @@ class PortTest(unittest.TestCase):
 
     def test_layout_tests_skipping(self):
         port = self.make_port()
-        port.filesystem.write_text_file(port.layout_tests_dir() + '/media/video-zoom.html', '')
-        port.filesystem.write_text_file(port.layout_tests_dir() + '/foo/bar.html', '')
+        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/media/video-zoom.html', '')
+        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/foo/bar.html', '')
         port.skipped_layout_tests = lambda: ['foo/bar.html', 'media']
         self.assertTrue(port.skips_layout_test('foo/bar.html'))
         self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
@@ -220,8 +220,8 @@ class PortTest(unittest.TestCase):
 
     def test_test_dirs(self):
         port = self.make_port()
-        port._filesystem.write_text_file(port.layout_tests_dir() + '/canvas/test', '')
-        port._filesystem.write_text_file(port.layout_tests_dir() + '/css2.1/test', '')
+        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/canvas/test', '')
+        port.host.filesystem.write_text_file(port.layout_tests_dir() + '/css2.1/test', '')
         dirs = port.test_dirs()
         self.assertTrue('canvas' in dirs)
         self.assertTrue('css2.1' in dirs)

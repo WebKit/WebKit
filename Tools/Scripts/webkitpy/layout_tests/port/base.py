@@ -100,22 +100,12 @@ class Port(object):
         # FIXME: Ideally we'd have a package-wide way to get a
         # well-formed options object that had all of the necessary
         # options defined on it.
-        self.options = options or DummyOptions()
+        self._options = options or DummyOptions()
 
         self.host = host
-
-        # FIXME: Remove thes accessors once all callers have moved to using self.host.
-        self.executive = self.host.executive
-        self.user = self.host.user
-        self.filesystem = self.host.filesystem
-        self.config = config or port_config.Config(self.executive, self.filesystem)
-
-        # FIXME: Remove all of the old "protected" versions when we can.
-        self._options = self.options
-        self._executive = self.executive
-        self._filesystem = self.filesystem
-        self._user = self.user
-        self._config = self.config
+        self._executive = host.executive
+        self._filesystem = host.filesystem
+        self._config = config or port_config.Config(self._executive, self._filesystem)
 
         self._helper = None
         self._http_server = None
@@ -503,7 +493,7 @@ class Port(object):
         """Return the list of tests found."""
         # When collecting test cases, skip these directories
         skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests', 'reference', 'reftest'])
-        files = find_files.find(self.filesystem, self.layout_tests_dir(), paths, skipped_directories, Port._is_test_file)
+        files = find_files.find(self._filesystem, self.layout_tests_dir(), paths, skipped_directories, Port._is_test_file)
         return set([self.relative_test_filename(f) for f in files])
 
     # When collecting test cases, we include any file with these extensions.
@@ -761,7 +751,7 @@ class Port(object):
     def show_results_html_file(self, results_filename):
         """This routine should display the HTML file pointed at by
         results_filename in a users' browser."""
-        return self._user.open_url(results_filename)
+        return self.host.user.open_url(results_filename)
 
     def create_driver(self, worker_number):
         """Return a newly created Driver subclass for starting/stopping the test driver."""
@@ -837,7 +827,7 @@ class Port(object):
     def test_configuration(self):
         """Returns the current TestConfiguration for the port."""
         if not self._test_configuration:
-            self._test_configuration = TestConfiguration.from_port(self)
+            self._test_configuration = TestConfiguration(self._version, self._architecture, self._options.configuration.lower(), self._graphics_type)
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

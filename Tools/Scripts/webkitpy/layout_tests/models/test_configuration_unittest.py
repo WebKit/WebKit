@@ -93,7 +93,6 @@ class TestConfigurationTest(unittest.TestCase):
         self.assertEquals(TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'cpu'))
         host = MockHost()
         test_port = host.port_factory.get('test-win-xp', None)
-        self.assertEquals(TestConfiguration.from_port(test_port), TestConfiguration('xp', 'x86', 'release', 'cpu'))
         self.assertNotEquals(TestConfiguration('xp', 'x86', 'release', 'gpu'), TestConfiguration('xp', 'x86', 'release', 'cpu'))
         self.assertNotEquals(TestConfiguration('xp', 'x86', 'debug', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'cpu'))
 
@@ -103,12 +102,6 @@ class TestConfigurationTest(unittest.TestCase):
         for value in config.values():
             result_config_values.append(value)
         self.assertEquals(set(['xp', 'x86', 'release', 'cpu']), set(result_config_values))
-
-    def test_from_port(self):
-        host = MockHost()
-        test_port = host.port_factory.get('test-win-xp', None)
-        config = TestConfiguration.from_port(test_port)
-        self.assertEquals('<xp, x86, release, cpu>', str(config))
 
 
 class SpecifierSorterTest(unittest.TestCase):

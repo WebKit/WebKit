@@ -54,7 +54,7 @@ class PerfTestsRunner(object):
         self._host._initialize_scm()
         self._port = self._host.port_factory.get(self._options.platform, self._options)
         self._printer = printing.Printer(self._port, self._options, regular_output, buildbot_output, configure_logging=False)
-        self._webkit_base_dir_len = len(self._port.config.webkit_base_dir())
+        self._webkit_base_dir_len = len(self._port.webkit_base())
 
     def _parse_args(self, args=None):
         print_options = printing.print_options()

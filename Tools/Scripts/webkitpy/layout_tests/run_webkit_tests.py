@@ -127,10 +127,10 @@ def _set_up_derived_options(port, options):
     if options.additional_platform_directory:
         normalized_platform_directories = []
         for path in options.additional_platform_directory:
-            if not port.filesystem.isabs(path):
+            if not port.host.filesystem.isabs(path):
                 warnings.append("--additional-platform-directory=%s is ignored since it is not absolute" % path)
                 continue
-            normalized_platform_directories.append(port.filesystem.normpath(path))
+            normalized_platform_directories.append(port.host.filesystem.normpath(path))
         options.additional_platform_directory = normalized_platform_directories
 
     if not options.http and options.force:

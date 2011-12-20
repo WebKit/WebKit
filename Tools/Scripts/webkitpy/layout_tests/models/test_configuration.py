@@ -36,15 +36,6 @@ class TestConfiguration(object):
         self.graphics_type = graphics_type
 
     @classmethod
-    def from_port(cls, port):
-        assert(port)
-        version = port.version()
-        architecture = port.architecture()
-        build_type = port.options.configuration.lower()
-        graphics_type = port.graphics_type()
-        return TestConfiguration(version, architecture, build_type, graphics_type)
-
-    @classmethod
     def category_order(cls):
         """The most common human-readable order in which the configuration properties are listed."""
         return ['version', 'architecture', 'build_type', 'graphics_type']

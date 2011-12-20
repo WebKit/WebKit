@@ -652,14 +652,15 @@ class HtmlGenerator(object):
                         '<img style="width: 200" src="%(uri)s" /></a></td>')
     HTML_TR = '<tr>%s</tr>'
 
-    def __init__(self, port, target_port, options, platforms, rebaselining_tests):
+    def __init__(self, host, port, target_port, options, platforms, rebaselining_tests):
         self._html_directory = options.html_directory
+        self._host = host
+        self._filesystem = host.filesystem
         self._port = port
         self._target_port = target_port
         self._options = options
         self._platforms = platforms
         self._rebaselining_tests = rebaselining_tests
-        self._filesystem = port._filesystem
         self._html_file = self._filesystem.join(options.html_directory,
                                                 'rebaseline.html')
 
@@ -695,7 +696,7 @@ class HtmlGenerator(object):
         """Launch the rebaselining html in brwoser."""
 
         _log.debug('Launching html: "%s"', self._html_file)
-        self._port._user.open_url(self._html_file)
+        self._host.user.open_url(self._html_file)
         _log.debug('Html launched.')
 
     def _generate_baseline_links(self, test_basename, suffix, platform):
@@ -1030,7 +1031,7 @@ def real_main(host, options, target_options, host_port_obj, target_port_obj, url
 
     _log.debug('')
     log_dashed_string('Rebaselining result comparison started')
-    html_generator = HtmlGenerator(host_port_obj,
+    html_generator = HtmlGenerator(host, host_port_obj,
                                    target_port_obj,
                                    options,
                                    rebaseline_platforms,

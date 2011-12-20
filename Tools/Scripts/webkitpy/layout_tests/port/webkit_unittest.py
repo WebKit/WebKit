@@ -50,7 +50,7 @@ class TestWebKitPort(WebKitPort):
         WebKitPort.__init__(self, host=host, **kwargs)
 
     def all_test_configurations(self):
-        return [TestConfiguration.from_port(self)]
+        return [self.test_configuration()]
 
     def _runtime_feature_list(self):
         return self.feature_list

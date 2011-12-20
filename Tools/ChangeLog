@@ -1,3 +1,49 @@
+2011-12-19  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: remove port.executive, port.filesystem, port.user properties
+        https://bugs.webkit.org/show_bug.cgi?id=74896
+
+        Reviewed by Eric Seidel.
+
+        Following on the refactoring of the port and host objects, this
+        removes the public executive, filesystem, and user properties
+        from the Port interface (protected versions of executive and
+        filesystem still exist). There is still some more clean up to
+        make the code more consistent and rearrange some other files to
+        talk to Hosts directly instead of getting them off of the Port
+        class.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager.results_directory):
+        (Manager._log_worker_stack):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_fallback_path_in_config):
+        * Scripts/webkitpy/layout_tests/controllers/manager_worker_broker.py:
+        (_InlineManager.start_worker):
+        (_InlineWorkerConnection.__init__):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker.safe_init):
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        (TestConfiguration.from_port):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        (Port.tests):
+        (Port.show_results_html_file):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_layout_tests_skipping):
+        (PortTest.test_test_dirs):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        (HtmlGenerator.__init__):
+        (HtmlGenerator.show_html):
+        (real_main):
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        (TestHtmlGenerator.make_generator):
+
 2011-12-19  Daniel Bates  <dbates@webkit.org>
 
         Pass command line arguments to GDB when debugging a Mac WebKit application

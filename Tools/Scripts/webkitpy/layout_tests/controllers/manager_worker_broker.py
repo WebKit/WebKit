@@ -168,7 +168,7 @@ class _InlineManager(_ManagerConnection):
 
     def start_worker(self, worker_number, results_directory):
         self._inline_worker = _InlineWorkerConnection(self._broker, self._port,
-            self._client, self._worker_class, worker_number, results_directory)
+            self._client, self._worker_class, worker_number, results_directory, self._options)
         return self._inline_worker
 
     def run_message_loop(self, delay_secs=None):
@@ -215,8 +215,8 @@ class _WorkerConnection(message_broker.BrokerConnection):
 
 
 class _InlineWorkerConnection(_WorkerConnection):
-    def __init__(self, broker, port, manager_client, worker_class, worker_number, results_directory):
-        _WorkerConnection.__init__(self, broker, worker_class, worker_number, results_directory, port.options)
+    def __init__(self, broker, port, manager_client, worker_class, worker_number, results_directory, options):
+        _WorkerConnection.__init__(self, broker, worker_class, worker_number, results_directory, options)
         self._alive = False
         self._port = port
         self._manager_client = manager_client

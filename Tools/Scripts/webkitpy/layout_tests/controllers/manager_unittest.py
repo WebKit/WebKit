@@ -163,7 +163,7 @@ class ManagerTest(unittest.TestCase):
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard', options=options)
         printer = self.get_printer()
-        manager = Manager(port, port.options, printer)
+        manager = Manager(port, options, printer)
         manager.print_config()
         self.assertTrue('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in printer.output)
 

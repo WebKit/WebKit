@@ -290,7 +290,8 @@ class Manager(object):
           printer: a Printer object to record updates to.
         """
         self._port = port
-        self._fs = port.filesystem
+        # FIXME: Rename to self._filesystem for consistency with other code.
+        self._fs = port.host.filesystem
         self._options = options
         self._printer = printer
         self._message_broker = None
@@ -828,8 +829,8 @@ class Manager(object):
         if not self._retrying:
             return self._results_directory
         else:
-            self._port._filesystem.maybe_make_directory(self._port._filesystem.join(self._results_directory, 'retries'))
-            return self._port._filesystem.join(self._results_directory, 'retries')
+            self._fs.maybe_make_directory(self._fs.join(self._results_directory, 'retries'))
+            return self._fs.join(self._results_directory, 'retries')
 
     def update(self):
         self.update_summary(self._current_result_summary)
@@ -1461,7 +1462,7 @@ class Manager(object):
         self._update_summary_with_result(self._current_result_summary, result)
 
     def _log_worker_stack(self, stack):
-        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._port.filesystem.sep
+        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._fs.sep
         for filename, line_number, function_name, text in stack:
             if filename.startswith(webkitpydir):
                 filename = filename.replace(webkitpydir, '')

@@ -65,7 +65,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         This routine exists so that the mixin can be created and then marshaled
         across into a child process."""
         self._port = port
-        self._filesystem = port.filesystem
+        self._filesystem = port.host.filesystem
         self._batch_count = 0
         self._batch_size = self._options.batch_size or 0
         tests_run_filename = self._filesystem.join(self._results_directory, "tests_run%d.txt" % self._worker_number)

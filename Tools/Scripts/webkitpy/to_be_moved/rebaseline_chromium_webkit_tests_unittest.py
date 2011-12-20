@@ -377,7 +377,7 @@ class TestHtmlGenerator(unittest.TestCase):
             fs.maybe_make_directory(fs.dirname(filename))
             fs.write_binary_file(filename, contents)
         host_port = host.port_factory.get('test', options)
-        generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host_port,
+        generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host, host_port,
             target_port=None, options=options, platforms=['test-mac-leopard'], rebaselining_tests=tests)
         return generator, host_port
 
