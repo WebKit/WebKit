@@ -93,12 +93,12 @@ public:
     void removeScriptToEvaluateOnLoad(ErrorString*, const String& identifier);
     void reload(ErrorString*, const bool* const optionalIgnoreCache, const String* optionalScriptToEvaluateOnLoad);
     void open(ErrorString*, const String& url, const bool* const inNewWindow);
-    void getCookies(ErrorString*, RefPtr<InspectorArray>& cookies, WTF::String* cookiesString);
+    void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
-    void getResourceTree(ErrorString*, RefPtr<InspectorObject>&);
+    void getResourceTree(ErrorString*, RefPtr<InspectorObject>*);
     void getResourceContent(ErrorString*, const String& frameId, const String& url, String* content, bool* base64Encoded);
-    void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>&);
-    void searchInResources(ErrorString*, const String&, const bool* const caseSensitive, const bool* const isRegex, RefPtr<InspectorArray>&);
+    void searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>*);
+    void searchInResources(ErrorString*, const String&, const bool* const caseSensitive, const bool* const isRegex, RefPtr<InspectorArray>*);
 
     // InspectorInstrumentation API
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);

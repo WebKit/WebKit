@@ -64,17 +64,17 @@ public:
                   const bool* const doNotPauseOnExceptions,
                   const String* const frameId,
                   const bool* const returnByValue,
-                  RefPtr<InspectorObject>& result,
+                  RefPtr<InspectorObject>* result,
                   bool* wasThrown);
     void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const RefPtr<InspectorArray>* const optionalArguments,
                         const bool* const returnByValue,
-                        RefPtr<InspectorObject>& result,
+                        RefPtr<InspectorObject>* result,
                         bool* wasThrown);
     void releaseObject(ErrorString*, const String& objectId);
-    void getProperties(ErrorString*, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>& result);
+    void getProperties(ErrorString*, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>* result);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
     void run(ErrorString*);
 

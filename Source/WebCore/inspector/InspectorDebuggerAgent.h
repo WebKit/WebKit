@@ -81,15 +81,15 @@ public:
     // Part of the protocol.
     void setBreakpointsActive(ErrorString*, bool active);
 
-    void setBreakpointByUrl(ErrorString*, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorArray>& locations);
-    void setBreakpoint(ErrorString*, PassRefPtr<InspectorObject> location, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorObject>& actualLocation);
+    void setBreakpointByUrl(ErrorString*, int lineNumber, const String* const optionalURL, const String* const optionalURLRegex, const int* const optionalColumnNumber, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorArray>* locations);
+    void setBreakpoint(ErrorString*, PassRefPtr<InspectorObject> location, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorObject>* actualLocation);
     void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, PassRefPtr<InspectorObject> location);
 
-    void searchInContent(ErrorString*, const String& scriptId, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>&);
-    void setScriptSource(ErrorString*, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>& newCallFrames, RefPtr<InspectorObject>& result);
+    void searchInContent(ErrorString*, const String& scriptId, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>*);
+    void setScriptSource(ErrorString*, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result);
     void getScriptSource(ErrorString*, const String& scriptId, String* scriptSource);
-    void getFunctionLocation(ErrorString*, const String& functionId, RefPtr<InspectorObject>& location);
+    void getFunctionLocation(ErrorString*, const String& functionId, RefPtr<InspectorObject>* location);
     void schedulePauseOnNextStatement(const String& breakReason, PassRefPtr<InspectorObject> data);
     void cancelPauseOnNextStatement();
     void breakProgram(const String& breakReason, PassRefPtr<InspectorObject> data);
@@ -105,7 +105,7 @@ public:
                              const String* const objectGroup,
                              const bool* const includeCommandLineAPI,
                              const bool* const returnByValue,
-                             RefPtr<InspectorObject>& result,
+                             RefPtr<InspectorObject>* result,
                              bool* wasThrown);
 
     class Listener {

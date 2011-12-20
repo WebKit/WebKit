@@ -1,3 +1,78 @@
+2011-12-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103322.
+        http://trac.webkit.org/changeset/103322
+        https://bugs.webkit.org/show_bug.cgi?id=74927
+
+        seven inspector's tests are crashing on qt (Requested by
+        loislo on #webkit).
+
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes.BaseType.is_event_param_check_optional):
+        (RawTypes.Object.is_event_param_check_optional):
+        (RawTypes.Array.is_event_param_check_optional):
+        (RawTypes):
+        (Generator.process_command):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCacheForFrame):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::clearFrontend):
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getInlineStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::getStyleSheet):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::getSupportedCSSProperties):
+        (WebCore::InspectorCSSAgent::stopSelectorProfiler):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::getSearchResults):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::getAttributes):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageEntries):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::searchInContent):
+        (WebCore::InspectorDebuggerAgent::setScriptSource):
+        (WebCore::InspectorDebuggerAgent::getFunctionLocation):
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getDOMNodeCount):
+        * inspector/InspectorMemoryAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::getResourceTree):
+        (WebCore::InspectorPageAgent::searchInResource):
+        (WebCore::InspectorPageAgent::searchInResources):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getProfileHeaders):
+        (WebCore::InspectorProfilerAgent::getProfile):
+        (WebCore::InspectorProfilerAgent::getObjectByHeapObjectId):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::callFunctionOn):
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+
 2011-12-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] allow setting extension API per extension security origin

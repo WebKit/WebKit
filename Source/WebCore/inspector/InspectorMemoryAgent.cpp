@@ -148,7 +148,7 @@ InspectorMemoryAgent::~InspectorMemoryAgent()
 {
 }
 
-void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>& result)
+void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>* result)
 {
     CounterVisitor counterVisitor(m_page);
     ScriptProfiler::visitJSDOMWrappers(&counterVisitor);
@@ -159,7 +159,7 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<InspectorArray>&
             counterVisitor.visitNode(doc);
     }
 
-    result = counterVisitor.counters();
+    *result = counterVisitor.counters();
 }
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent* domAgent)

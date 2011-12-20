@@ -69,9 +69,9 @@ public:
 
     // ApplicationCache API for InspectorFrontend
     void enable(ErrorString*);
-    void getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>& result);
+    void getFramesWithManifests(ErrorString*, RefPtr<InspectorArray>* result);
     void getManifestForFrame(ErrorString*, const String& frameId, String* manifestURL);
-    void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>& applicationCache);
+    void getApplicationCacheForFrame(ErrorString*, const String& frameId, RefPtr<InspectorObject>* applicationCache);
 
 private:
     InspectorApplicationCacheAgent(InstrumentingAgents*, InspectorState*, InspectorPageAgent*);

@@ -409,7 +409,7 @@ static Vector<KURL> allResourcesURLsForFrame(Frame* frame)
     return result;
 }
 
-void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>& cookies, WTF::String* cookiesString)
+void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
     ListHashSet<Cookie> rawCookiesList;
@@ -446,7 +446,7 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>& cookie
     }
 
     if (rawCookiesImplemented)
-        cookies = buildArrayForCookies(rawCookiesList);
+        *cookies = buildArrayForCookies(rawCookiesList);
     else
         *cookiesString = stringCookiesList;
 }
@@ -464,9 +464,9 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
     }
 }
 
-void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<InspectorObject>& object)
+void InspectorPageAgent::getResourceTree(ErrorString*, RefPtr<InspectorObject>* object)
 {
-    object = buildObjectForFrameTree(m_page->mainFrame());
+    *object = buildObjectForFrameTree(m_page->mainFrame());
 }
 
 void InspectorPageAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, String* content, bool* base64Encoded)
@@ -491,9 +491,9 @@ static bool textContentForCachedResource(CachedResource* cachedResource, String*
     return false;
 }
 
-void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>& results)
+void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, const String& url, const String& query, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* results)
 {
-    results = InspectorArray::create();
+    *results = InspectorArray::create();
 
     bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
     bool caseSensitive = optionalCaseSensitive ? *optionalCaseSensitive : false;
@@ -520,7 +520,7 @@ void InspectorPageAgent::searchInResource(ErrorString*, const String& frameId, c
     if (!success)
         return;
 
-    results = ContentSearchUtils::searchInTextByLines(content, query, caseSensitive, isRegex);
+    *results = ContentSearchUtils::searchInTextByLines(content, query, caseSensitive, isRegex);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& frameId, const String& url, int matchesCount)
@@ -533,7 +533,7 @@ static PassRefPtr<InspectorObject> buildObjectForSearchResult(const String& fram
     return result;
 }
 
-void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>& results)
+void InspectorPageAgent::searchInResources(ErrorString*, const String& text, const bool* const optionalCaseSensitive, const bool* const optionalIsRegex, RefPtr<InspectorArray>* results)
 {
     RefPtr<InspectorArray> searchResults = InspectorArray::create();
 
@@ -559,7 +559,7 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
         }
     }
 
-    results = searchResults;
+    *results = searchResults;
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)

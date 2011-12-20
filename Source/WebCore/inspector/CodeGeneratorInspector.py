@@ -251,10 +251,6 @@ class RawTypes(object):
         def is_event_param_check_optional():
             return False
 
-        @staticmethod
-        def get_output_argument_prefix():
-            return "&"
-
     class String(BaseType):
         @classmethod
         def get_c_param_type(cls, param_type, optional):
@@ -376,10 +372,6 @@ class RawTypes(object):
         def is_event_param_check_optional():
             return True
 
-        @staticmethod
-        def get_output_argument_prefix():
-            return ""
-
         _plain_c_type = CParamType("RefPtr<InspectorObject>")
         _ref_c_type = CParamType("PassRefPtr<InspectorObject>")
 
@@ -439,10 +431,6 @@ class RawTypes(object):
         @staticmethod
         def is_event_param_check_optional():
             return True
-
-        @staticmethod
-        def get_output_argument_prefix():
-            return ""
 
         _plain_c_type = CParamType("RefPtr<InspectorArray>")
         _ref_c_type = CParamType("PassRefPtr<InspectorArray>")
@@ -1607,23 +1595,16 @@ class Generator:
             for json_return in json_command["returns"]:
 
                 json_return_name = json_return["name"]
-
-                optional = "optional" in json_return and json_return["optional"]
-
                 raw_type = resolve_param_raw_type(json_return, domain_name)
                 setter_type = raw_type.get_setter_name()
                 initializer = raw_type.get_c_initializer()
                 var_type = raw_type.get_c_param_type(ParamType.OUTPUT, None)
 
                 code = "    %s out_%s = %s;\n" % (var_type.get_text(), json_return_name, initializer)
-                param = ", %sout_%s" % (raw_type.get_output_argument_prefix(), json_return_name)
+                param = ", &out_%s" % json_return_name
                 cook = "        result->set%s(\"%s\", out_%s);\n" % (setter_type, json_return_name, json_return_name)
-                if optional:
-                    if var_type.get_text() == "bool":
-                        cook = ("        if (out_%s)\n    " % json_return_name) + cook
-                    else:
-                        # FIXME: support optionals.
-                        cook = "        // FIXME: support optional here.\n" + cook
+                if var_type.get_text() == "bool" and "optional" in json_return and json_return["optional"]:
+                    cook = ("        if (out_%s)\n    " % json_return_name) + cook
 
                 method_out_code += code
                 agent_call_param_list.append(param)

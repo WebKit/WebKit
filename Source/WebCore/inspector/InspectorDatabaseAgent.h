@@ -64,7 +64,7 @@ public:
     // Called from the front-end.
     void enable(ErrorString*);
     void disable(ErrorString*);
-    void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>& names);
+    void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>* names);
     void executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId);
 
     // Called from the injected script.
