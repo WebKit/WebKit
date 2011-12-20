@@ -2434,9 +2434,6 @@ public:
 
     GPRReg gpr()
     {
-        // In some cases we have lazy allocation.
-        if (m_jit && m_gpr == InvalidGPRReg)
-            m_gpr = m_jit->allocate();
         return m_gpr;
     }
 

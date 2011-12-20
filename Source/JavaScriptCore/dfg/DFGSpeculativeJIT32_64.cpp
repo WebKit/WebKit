@@ -2294,9 +2294,6 @@ void SpeculativeJIT::compile(Node& node)
 
         SpeculateStrictInt32Operand property(this, node.child2());
         StorageOperand storage(this, node.child3());
-        GPRTemporary resultTag(this);
-        GPRTemporary resultPayload(this);
-        
         GPRReg propertyReg = property.gpr();
         GPRReg storageReg = storage.gpr();
         
@@ -2312,6 +2309,9 @@ void SpeculativeJIT::compile(Node& node)
                 speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
             speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
         }
+
+        GPRTemporary resultTag(this);
+        GPRTemporary resultPayload(this);
 
         // FIXME: In cases where there are subsequent by_val accesses to the same base it might help to cache
         // the storage pointer - especially if there happens to be another register free right now. If we do so,

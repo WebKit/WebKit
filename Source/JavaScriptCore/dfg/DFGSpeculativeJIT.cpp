@@ -564,11 +564,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit)
     : m_jit(jit)
     , m_gpr(InvalidGPRReg)
 {
-#if CPU(X86)
-    // we currenty lazily allocate the reg, as the number of regs on X86 is limited.
-#else
     m_gpr = m_jit->allocate();
-#endif
 }
 
 GPRTemporary::GPRTemporary(SpeculativeJIT* jit, GPRReg specific)

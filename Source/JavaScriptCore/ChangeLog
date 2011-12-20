@@ -1,5 +1,32 @@
 2011-12-19  Yuqiang Xian  <yuqiang.xian@intel.com>
 
+        Temporary GPR should not be lazily allocated in DFG JIT on X86
+        https://bugs.webkit.org/show_bug.cgi?id=74908
+
+        Reviewed by Filip Pizlo.
+
+        On X86, we used to allocate a temporary GPR lazily when it's really
+        used rather than defined. This may cause potential issues of
+        allocating registers inside control flow and result in problems in
+        subsequent code generation, for example the DFG JIT may think an
+        operand already being spilled (to satisfy the allocation request) and
+        generate code to read the data from memory, but the allocation and
+        spilling are in a branch which is not taken at runtime, so the
+        generated code is incorrect.
+
+        Although current DFG JIT code doesn't have this problematic pattern,
+        it's better to cut-off the root to avoid any potential issues in the
+        future.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::GPRTemporary::GPRTemporary):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::GPRTemporary::gpr):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-12-19  Yuqiang Xian  <yuqiang.xian@intel.com>
+
         Remove unused code for non-speculative Arith operations from DFG JIT
         https://bugs.webkit.org/show_bug.cgi?id=74905
 
