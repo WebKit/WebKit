@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
 #import "PluginProcessShim.h"
 
 #import <AppKit/AppKit.h>

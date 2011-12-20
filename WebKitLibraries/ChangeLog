@@ -1,3 +1,16 @@
+2011-12-20  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 88316
+
+    2011-06-07  Tim Horton  <timothy_horton@apple.com>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Use correct CFURLStorageSessionRef definition on Snow Leopard
+            https://bugs.webkit.org/show_bug.cgi?id=62223
+
+            * WebKitSystemInterface.h:
+
 2011-08-02  Lucas Forschler  <lforschler@apple.com>
 
         Merge 91616.
