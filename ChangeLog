@@ -1,3 +1,9 @@
+2011-12-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        emacs: unreviewed. add settings for editing js files.
+
+        * .dir-locals.el:
+
 2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Implement favicon support

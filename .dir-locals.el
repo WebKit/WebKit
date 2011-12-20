@@ -8,5 +8,8 @@
  (c++-mode
   (indent-tabs-mode . nil)
   (c-basic-offset . 4))
+ (java-mode
+  (indent-tabs-mode . nil)
+  (c-basic-offset . 4))
  (change-log-mode
   (indent-tabs-mode . nil)))
