@@ -89,7 +89,7 @@ void QtWebProcess::setupChildProcess()
 {
 #if defined(Q_OS_LINUX)
 #ifndef NDEBUG
-    if (getenv("QT_WEBKIT_KEEP_ALIVE_WEB_PROCESS"))
+    if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
         return;
 #endif
     prctl(PR_SET_PDEATHSIG, SIGKILL);

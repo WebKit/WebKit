@@ -161,7 +161,7 @@ Q_DECL_EXPORT int WebProcessMainQt(int argc, char** argv)
     QApplication::setGraphicsSystem(QLatin1String("raster"));
     QApplication* app = new QApplication(argc, argv);
 #ifndef NDEBUG
-    if (!qgetenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH").isEmpty()) {
+    if (qgetenv("QT_WEBKIT2_DEBUG") == "1") {
         qDebug() << "Waiting 3 seconds for debugger";
         sleep(3);
     }

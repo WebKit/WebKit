@@ -77,6 +77,9 @@ void LayoutTestController::invalidateWaitToDumpWatchdogTimer()
 
 void LayoutTestController::initializeWaitToDumpWatchdogTimerIfNeeded()
 {
+    if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
+        return;
+
     if (m_waitToDumpWatchdogTimer.isActive())
         return;
 

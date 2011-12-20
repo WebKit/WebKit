@@ -26,6 +26,8 @@
 
 #include "config.h"
 #include "InjectedBundle.h"
+#include <QByteArray>
+#include <QtGlobal>
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/AlwaysInline.h>
@@ -71,6 +73,9 @@ static NO_RETURN void crashHandler(int signal)
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
+    if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
+        return;
+
 #if HAVE(SIGNAL_H)
     signal(SIGILL, crashHandler);    /* 4:   illegal instruction (not reset when caught) */
     signal(SIGTRAP, crashHandler);   /* 5:   trace trap (not reset when caught) */

@@ -1,3 +1,25 @@
+2011-12-20  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] WK2 Debugging quirks need some improvement
+        https://bugs.webkit.org/show_bug.cgi?id=74859
+
+        Reviewed by Simon Hausmann.
+
+        Improvements added to make debugging WebKit2 more
+        confortable and efficient:
+        1. Unify debugging quirks. From now all of them are controlled
+        by the QT_WEBKIT2_DEBUG environment variable.
+        2. Disable crash handlers for WebKitTestRunner if debugging quirks
+        are used to make it possible to use postmortem debugging via core dumps
+        which is extremely useful for debugging bugs triggered by layout tests.
+        3. Disable test timeout for WebKitTestRunner if debugging quirks
+        are used because that makes debugging impossible.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::QtWebProcess::setupChildProcess):
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2011-12-20  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2]REGRESSION(r103310): It broke tst_QQuickWebView::loadNonexistentFileUrl() API test

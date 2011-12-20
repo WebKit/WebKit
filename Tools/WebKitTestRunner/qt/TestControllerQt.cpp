@@ -55,6 +55,13 @@ void TestController::platformInitialize()
 
 void TestController::platformRunUntil(bool& condition, double timeout)
 {
+    if (qgetenv("QT_WEBKIT2_DEBUG") == "1") {
+        // Never timeout if we are debugging.
+        while (!condition)
+            QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, 50);
+        return;
+    }
+
     int timeoutInMSecs = timeout * 1000;
     QElapsedTimer timer;
     timer.start();
