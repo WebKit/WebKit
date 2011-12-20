@@ -3480,9 +3480,6 @@ BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
 
 BUGWK61326 : fast/storage/storage-detached-iframe.html = CRASH TIMEOUT
 
-// Getting form value is not implemented yet.
-BUGWK13061 : plugins/form-value.html = CRASH TEXT
-
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 SLOW WIN : http/tests/cache/subresource-expiration-2.html = PASS
 
@@ -4039,8 +4036,6 @@ BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = PASS IMA
 // The test hits an ASSERT in Debug.
 BUGWK68859 DEBUG : fast/dynamic/crash-paint-no-documentElement-renderer.html = CRASH
 
-BUGWK74555 : fast/images/move-image-to-new-document.html = TEXT TIMEOUT
-
 BUGWK74662 MAC : fast/text/unicode-variation-selector.html = PASS CRASH
 
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
@@ -4166,6 +4161,3 @@ BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-89-d.html = IMAGE
 BUGWK74427 MAC : fast/borders/border-antialiasing.html = IMAGE
 
 BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
-
-// These probably just need a rebaseline after the test change.
-BUGENNE CPU GPU : media/media-controller-playback.html = TEXT
