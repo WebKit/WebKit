@@ -1,3 +1,21 @@
+2011-12-19  Ami Fischman  <fischman@chromium.org>
+
+        Teach VideoLayerChromium how to render native texture (to support HW video decode).
+        https://bugs.webkit.org/show_bug.cgi?id=73043
+        
+        Reviewed by James Robinson.
+        
+        Fix the life-cycle of video frames handled by VideoLayerChromium/CCVideoLayerImpl.
+        VideoFrameProvider::{get,put}CurrentFrame provide lease semantics.  Previously
+        VideoLayerChromium would acquire the lease for the duration of copying the frame,
+        even if that was only a texture ID, and immediately return the lease, while
+        CCVideoLayerImpl::draw() would come along later and use the (no-longer locked)
+        texture optimistically.  This change makes it so that CCVideoLayerImpl holds
+        the frame's lease for the duration of draw(), guaranteeing the frame is valid to read.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::getCurrentFrame):
+
 2011-12-19  Sam Weinig  <sam@webkit.org>
 
         More PlatformEvent cleanup

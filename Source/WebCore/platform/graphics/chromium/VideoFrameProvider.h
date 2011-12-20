@@ -39,6 +39,14 @@ class VideoFrameProvider {
 public:
     virtual ~VideoFrameProvider() { }
 
+    class Client {
+    public:
+        // Provider will call this method to tell the client to stop using it.
+        virtual void stopUsingProvider() = 0;
+    };
+
+    virtual void setVideoFrameProviderClient(Client*) = 0;
+
     // This function returns a pointer to a VideoFrameChromium, which is
     // the WebCore wrapper for a video frame in Chromium. getCurrentFrame()
     // places a lock on the frame in Chromium. Calls to this method should

@@ -130,7 +130,7 @@ public:
     virtual unsigned droppedFrameCount() const;
     virtual unsigned audioDecodedByteCount() const;
     virtual unsigned videoDecodedByteCount() const;
-    
+
 #if ENABLE(WEB_AUDIO)
     virtual WebCore::AudioSourceProvider* audioSourceProvider();
 #endif
@@ -139,6 +139,7 @@ public:
     virtual bool supportsAcceleratedRendering() const;
 
     // VideoFrameProvider methods:
+    virtual void setVideoFrameProviderClient(VideoFrameProvider::Client*);
     virtual WebCore::VideoFrameChromium* getCurrentFrame();
     virtual void putCurrentFrame(WebCore::VideoFrameChromium*);
 #endif
@@ -161,6 +162,7 @@ private:
     bool acceleratedRenderingInUse();
 #endif
 
+    Mutex m_compositingMutex; // Guards m_currentVideoFrame and m_videoFrameProviderClient.
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
     OwnPtr<WebCore::VideoFrameChromium> m_currentVideoFrame;
@@ -171,6 +173,7 @@ private:
     RefPtr<WebCore::VideoLayerChromium> m_videoLayer;
     bool m_supportsAcceleratedCompositing;
     bool m_opaque;
+    VideoFrameProvider::Client* m_videoFrameProviderClient;
 #endif
     static bool m_isEnabled;
 
@@ -191,13 +194,13 @@ private:
         virtual void setFormat(size_t numberOfChannels, float sampleRate);
 
         void wrap(WebCore::AudioSourceProviderClient* client) { m_client = client; }
-        
+
     private:
         WebCore::AudioSourceProviderClient* m_client;
     };
 
     // AudioSourceProviderImpl wraps a WebAudioSourceProvider.
-    // provideInput() calls into Chromium to get a rendered audio stream. 
+    // provideInput() calls into Chromium to get a rendered audio stream.
 
     class AudioSourceProviderImpl : public WebCore::AudioSourceProvider {
     public:

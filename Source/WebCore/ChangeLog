@@ -1,3 +1,43 @@
+2011-12-19  Ami Fischman  <fischman@chromium.org>
+
+        Teach VideoLayerChromium how to render native texture (to support HW video decode).
+        https://bugs.webkit.org/show_bug.cgi?id=73043
+
+        Reviewed by James Robinson.
+        
+        Fix the life-cycle of video frames handled by VideoLayerChromium/CCVideoLayerImpl.
+        VideoFrameProvider::{get,put}CurrentFrame provide lease semantics.  Previously
+        VideoLayerChromium would acquire the lease for the duration of copying the frame,
+        even if that was only a texture ID, and immediately return the lease, while
+        CCVideoLayerImpl::draw() would come along later and use the (no-longer locked)
+        texture optimistically.  This change makes it so that CCVideoLayerImpl holds
+        the frame's lease for the duration of draw(), guaranteeing the frame is valid to read.
+
+        Existing test coverage (compositing/video/, LayoutTests).  HW render of
+        HW-decoded textures is not yet tested explicitly.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::createCCLayerImpl):
+        (WebCore::VideoLayerChromium::releaseProvider):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::~CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::setProvider):
+        (WebCore::convertVFCFormatToGC3DFormat):
+        (WebCore::CCVideoLayerImpl::draw):
+        (WebCore::CCVideoLayerImpl::copyFrameToTextures):
+        (WebCore::CCVideoLayerImpl::copyPlaneToTexture):
+        (WebCore::computeVisibleSize):
+        (WebCore::CCVideoLayerImpl::reserveTextures):
+        (WebCore::CCVideoLayerImpl::drawYUV):
+        (WebCore::CCVideoLayerImpl::drawCommon):
+        (WebCore::CCVideoLayerImpl::drawRGBA):
+        (WebCore::CCVideoLayerImpl::drawNativeTexture):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-12-19  Sam Weinig  <sam@webkit.org>
 
         More PlatformEvent cleanup

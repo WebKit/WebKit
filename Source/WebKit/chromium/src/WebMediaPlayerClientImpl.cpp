@@ -101,10 +101,10 @@ WebMediaPlayer* WebMediaPlayerClientImpl::mediaPlayer() const
 
 WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl()
 {
-    // VideoLayerChromium may outlive this object so clear the back pointer.
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_videoLayer)
-        m_videoLayer->releaseProvider();
+    MutexLocker locker(m_compositingMutex);
+    if (m_videoFrameProviderClient)
+        m_videoFrameProviderClient->stopUsingProvider();
 #endif
 }
 
@@ -581,8 +581,15 @@ bool WebMediaPlayerClientImpl::acceleratedRenderingInUse()
     return m_videoLayer && m_videoLayer->layerTreeHost();
 }
 
+void WebMediaPlayerClientImpl::setVideoFrameProviderClient(VideoFrameProvider::Client* client)
+{
+    MutexLocker locker(m_compositingMutex);
+    m_videoFrameProviderClient = client;
+}
+
 VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
 {
+    MutexLocker locker(m_compositingMutex);
     ASSERT(!m_currentVideoFrame);
     if (m_webMediaPlayer && !m_currentVideoFrame) {
         WebVideoFrame* webkitVideoFrame = m_webMediaPlayer->getCurrentFrame();
@@ -594,6 +601,7 @@ VideoFrameChromium* WebMediaPlayerClientImpl::getCurrentFrame()
 
 void WebMediaPlayerClientImpl::putCurrentFrame(VideoFrameChromium* videoFrame)
 {
+    MutexLocker locker(m_compositingMutex);
     if (videoFrame && videoFrame == m_currentVideoFrame) {
         if (m_webMediaPlayer) {
             m_webMediaPlayer->putCurrentFrame(
@@ -667,6 +675,7 @@ WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
     , m_videoLayer(0)
     , m_supportsAcceleratedCompositing(false)
     , m_opaque(false)
+    , m_videoFrameProviderClient(0)
 #endif
 {
 }
