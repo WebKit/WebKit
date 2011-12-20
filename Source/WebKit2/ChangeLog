@@ -1,3 +1,15 @@
+2011-12-20  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2]REGRESSION(r103310): It broke tst_QQuickWebView::loadNonexistentFileUrl() API test
+        https://bugs.webkit.org/show_bug.cgi?id=74923
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        Fixing API usage after http://trac.webkit.org/changeset/103310.
+
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::loadNonexistentFileUrl):
+
 2011-12-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Favicon support should work with multiple web contexts

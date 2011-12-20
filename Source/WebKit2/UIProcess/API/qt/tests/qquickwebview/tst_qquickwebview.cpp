@@ -168,7 +168,7 @@ void tst_QQuickWebView::loadNonexistentFileUrl()
     QSignalSpy loadFailedSpy(webView(), SIGNAL(loadStarted()));
 
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/file_that_does_not_exist.html")));
-    QVERIFY(waitForSignal(webView(), SIGNAL(loadFailed(QQuickWebView::ErrorType, int, QUrl))));
+    QVERIFY(waitForSignal(webView(), SIGNAL(loadFailed(QQuickWebView::ErrorDomain, int, QUrl, QString))));
 
     QCOMPARE(loadFailedSpy.size(), 1);
 }
