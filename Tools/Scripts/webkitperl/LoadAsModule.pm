@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
-
+#
 # Copyright (C) 2011 Apple Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,22 +22,21 @@
 # ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Imports Perl scripts into a package for easy unit testing.
 
-# Imports run-leaks into a package for easy unit testing.
-
-package RunLeaks;
+package LoadAsModule;
 
 use strict;
 use warnings;
 
-use English;
 use File::Spec;
 use FindBin;
 use lib File::Spec->catdir($FindBin::Bin, "..", "..");
 use webkitdirs;
 
-use base 'Exporter' ;
-use vars qw( @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION ) ;
+use base 'Exporter';
+use vars qw(@EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION);
 
 @EXPORT = ();
 @EXPORT_OK = ();
@@ -45,14 +45,35 @@ $VERSION = '1.0';
 
 sub readFile($);
 
-my $runLeaksPath = File::Spec->catfile(sourceDir(), "Tools", "Scripts", "run-leaks");
-eval "sub {" . readFile($runLeaksPath) . "}";
+sub import
+{
+    my ($self, $package, $script) = @_;
+    my $scriptPath = File::Spec->catfile(sourceDir(), "Tools", "Scripts", $script);
+    eval "
+        package $package;
 
-sub readFile($) {
-    local $INPUT_RECORD_SEPARATOR = undef; # Read in the whole file at once.
-    open FILE, "<", shift || die $!;
+        use strict;
+        use warnings;
+
+        use base 'Exporter';
+        use vars qw(\@EXPORT \@EXPORT_OK \%EXPORT_TAGS \$VERSION);
+
+        \@EXPORT = ();
+        \@EXPORT_OK = ();
+        \%EXPORT_TAGS = ();
+        \$VERSION = '1.0';
+
+        sub {" . readFile($scriptPath) . "}
+    ";
+}
+
+sub readFile($)
+{
+    my $path = shift;
+    local $/ = undef; # Read in the whole file at once.
+    open FILE, "<", $path or die "Cannot open $path: $!";
     my $contents = <FILE>;
-    close FILE || die $!;
+    close FILE;
     return $contents;
 };
 

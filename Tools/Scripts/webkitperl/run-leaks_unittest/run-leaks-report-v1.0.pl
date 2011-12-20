@@ -27,10 +27,11 @@
 use strict;
 use warnings;
 
+use File::Spec;
 use FindBin;
-use lib $FindBin::Bin;
-use RunLeaks;
+use lib File::Spec->catdir($FindBin::Bin, "..");
 use Test::More;
+use LoadAsModule qw(RunLeaks run-leaks);
 
 my @input = split(/\n/, <<EOF);
 Process 1602: 86671 nodes malloced for 13261 KB

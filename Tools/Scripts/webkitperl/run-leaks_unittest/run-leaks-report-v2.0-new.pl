@@ -28,10 +28,11 @@
 use strict;
 use warnings;
 
+use File::Spec;
 use FindBin;
-use lib $FindBin::Bin;
-use RunLeaks;
+use lib File::Spec->catdir($FindBin::Bin, "..");
 use Test::More;
+use LoadAsModule qw(RunLeaks run-leaks);
 
 my @input = split(/\n/, <<EOF);
 Process:         DumpRenderTree [29903]
@@ -122,4 +123,4 @@ EOF
 my $actualOutput = RunLeaks::parseLeaksOutput(@input);
 
 plan(tests => 1);
-is_deeply($actualOutput, $expectedOutput, "leaks Report Version 2.0 (old)");
+is_deeply($actualOutput, $expectedOutput, "leaks Report Version 2.0 (new)");
