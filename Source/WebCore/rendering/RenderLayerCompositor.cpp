@@ -316,9 +316,8 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     if (needHierarchyUpdate) {
         // Update the hierarchy of the compositing layers.
-        CompositingState compState(updateRoot);
         Vector<GraphicsLayer*> childList;
-        rebuildCompositingLayerTree(updateRoot, compState, childList);
+        rebuildCompositingLayerTree(updateRoot, childList);
 
         // Host the document layer in the RenderView's root layer.
         if (updateRoot == rootRenderLayer()) {
@@ -849,7 +848,7 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo* o) const
 }
 #endif
 
-void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, const CompositingState& compositingState, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer)
+void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer)
 {
     // Make the layer compositing if necessary, and set up clipping and content layers.
     // Note that we can only do work here that is independent of whether the descendant layers
@@ -878,18 +877,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     Vector<GraphicsLayer*> layerChildren;
     Vector<GraphicsLayer*>& childList = layerBacking ? layerChildren : childLayersOfEnclosingLayer;
 
-    CompositingState childState = compositingState;
-    if (layer->isComposited())
-        childState.m_compositingAncestor = layer;
-
-#ifndef NDEBUG
-    ++childState.m_depth;
-#endif
-
-    // The children of this stacking context don't need to composite, unless there is
-    // a compositing layer among them, so start by assuming false.
-    childState.m_subtreeIsCompositing = false;
-
     if (layer->isStackingContext()) {
         ASSERT(!layer->m_zOrderListsDirty);
 
@@ -897,7 +884,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                rebuildCompositingLayerTree(curLayer, childState, childList);
+                rebuildCompositingLayerTree(curLayer, childList);
             }
         }
 
@@ -911,7 +898,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
-            rebuildCompositingLayerTree(curLayer, childState, childList);
+            rebuildCompositingLayerTree(curLayer, childList);
         }
     }
     
@@ -920,7 +907,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                rebuildCompositingLayerTree(curLayer, childState, childList);
+                rebuildCompositingLayerTree(curLayer, childList);
             }
         }
     }

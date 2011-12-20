@@ -1,3 +1,17 @@
+2011-12-20  Iain Merrick  <husky@google.com>
+
+        Remove unused parameter from RenderLayerCompositor::rebuildCompositingLayerTree
+        https://bugs.webkit.org/show_bug.cgi?id=74936
+
+        Reviewed by Simon Fraser.
+
+        Pure refactoring, no change in functionality.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        * rendering/RenderLayerCompositor.h:
+
 2011-12-20  Tony Chang  <tony@chromium.org>
 
         RenderStyle::InheritedFlags and RenderStyle::NonInheritedFlags members should be 4 byte aligned
