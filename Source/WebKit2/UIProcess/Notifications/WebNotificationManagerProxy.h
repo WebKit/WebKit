@@ -43,6 +43,7 @@ namespace WebKit {
 
 class ImmutableArray;
 class WebContext;
+class WebPageProxy;
 
 class WebNotificationManagerProxy : public APIObject {
 public:
@@ -54,7 +55,9 @@ public:
     void clearContext() { m_context = 0; }
 
     void initializeProvider(const WKNotificationProvider*);
-    
+
+    void show(WebPageProxy*, const WTF::String& title, const WTF::String& body, const WTF::String& originIdentifier, uint64_t notificationID);
+
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
     void providerDidCloseNotifications(ImmutableArray* notificationIDs);
@@ -71,7 +74,6 @@ private:
     void didReceiveSyncWebNotificationManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
     
     // Message handlers
-    void show(const WTF::String& title, const WTF::String& body, const WTF::String& originIdentifier, uint64_t notificationID);
     void cancel(uint64_t notificationID);
     void didDestroyNotification(uint64_t notificationID);
     void notificationPermissionLevel(const WTF::String& originIdentifier, uint64_t& permissionLevel);

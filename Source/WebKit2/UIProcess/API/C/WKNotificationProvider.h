@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-typedef void (*WKNotificationProviderShowCallback)(WKNotificationRef notification, const void* clientInfo);
+typedef void (*WKNotificationProviderShowCallback)(WKPageRef page, WKNotificationRef notification, const void* clientInfo);
 typedef void (*WKNotificationProviderCancelCallback)(WKNotificationRef notification, const void* clientInfo);
 typedef void (*WKNotificationProviderDidDestroyNotificationCallback)(WKNotificationRef notification, const void* clientInfo);
 typedef int (*WKNotificationProviderPolicyForNotificationPermissionAtOriginCallback)(WKSecurityOriginRef origin, const void *clientInfo);

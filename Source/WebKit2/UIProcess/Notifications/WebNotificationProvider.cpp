@@ -33,12 +33,12 @@
 
 namespace WebKit {
 
-void WebNotificationProvider::show(WebNotification* notification)
+void WebNotificationProvider::show(WebPageProxy* page, WebNotification* notification)
 {
     if (!m_client.show)
         return;
     
-    m_client.show(toAPI(notification), m_client.clientInfo);
+    m_client.show(toAPI(page), toAPI(notification), m_client.clientInfo);
 }
 
 void WebNotificationProvider::cancel(WebNotification* notification)

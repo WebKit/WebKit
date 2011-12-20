@@ -30,6 +30,7 @@
 #include "WebContext.h"
 #include "WebNotification.h"
 #include "WebNotificationManagerMessages.h"
+#include "WebPageProxy.h"
 #include "WebSecurityOrigin.h"
 #include <WebCore/NotificationContents.h>
 
@@ -68,7 +69,7 @@ void WebNotificationManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* con
     didReceiveSyncWebNotificationManagerProxyMessage(connection, messageID, arguments, reply);
 }
 
-void WebNotificationManagerProxy::show(const String& title, const String& body, const String& originIdentifier, uint64_t notificationID)
+void WebNotificationManagerProxy::show(WebPageProxy* page, const String& title, const String& body, const String& originIdentifier, uint64_t notificationID)
 {
     if (!isNotificationIDValid(notificationID))
         return;
@@ -77,7 +78,7 @@ void WebNotificationManagerProxy::show(const String& title, const String& body, 
 
     RefPtr<WebNotification> notification = WebNotification::create(title, body, originIdentifier, notificationID);
     m_notifications.set(notificationID, notification);
-    m_provider.show(notification.get());
+    m_provider.show(page, notification.get());
 }
 
 void WebNotificationManagerProxy::cancel(uint64_t notificationID)

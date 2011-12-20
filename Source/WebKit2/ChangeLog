@@ -1,3 +1,32 @@
+2011-12-16  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Extend show notification API to include the source page
+        https://bugs.webkit.org/show_bug.cgi?id=74751
+        <rdar://problem/10514541>
+
+        Reviewed by John Sullivan.
+
+        We add the source page that dispatched the notification in the API for convenience. In order to include the page,
+        we move the show() message sent by WebNotificationManager from WebNotificationManagerProxy to WebPageProxy.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): We aim the message at WebPageProxy instead of WebNotificationManagerProxy.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.messages.in: Remove the show() message.
+        * UIProcess/WebPageProxy.messages.in: Add a showNotification() message.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::show): This function is now called from the WebPageProxy.
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+
+        * UIProcess/API/C/WKNotificationProvider.h:
+        * UIProcess/Notifications/WebNotificationProvider.cpp:
+        (WebKit::WebNotificationProvider::show):
+        * UIProcess/Notifications/WebNotificationProvider.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showNotification):
+        * UIProcess/WebPageProxy.h:
+
 2011-12-19  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [Qt][WK2] QWebDownloadItems are leaking

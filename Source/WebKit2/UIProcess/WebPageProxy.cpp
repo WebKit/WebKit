@@ -61,6 +61,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFullScreenManagerProxy.h"
 #include "WebInspectorProxy.h"
+#include "WebNotificationManagerProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroup.h"
@@ -3311,6 +3312,11 @@ void WebPageProxy::requestNotificationPermission(uint64_t requestID, const Strin
     
     if (!m_uiClient.decidePolicyForNotificationPermissionRequest(this, origin.get(), request.get()))
         request->deny();
+}
+
+void WebPageProxy::showNotification(const String& title, const String& body, const String& originIdentifier, uint64_t notificationID)
+{
+    m_process->context()->notificationManagerProxy()->show(this, title, body, originIdentifier, notificationID);
 }
 
 float WebPageProxy::headerHeight(WebFrameProxy* frame)

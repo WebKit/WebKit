@@ -34,11 +34,12 @@ namespace WebKit {
 
 class WebNotification;
 class WebNotificationManagerProxy;
+class WebPageProxy;
 class WebSecurityOrigin;
     
 class WebNotificationProvider : public APIClient<WKNotificationProvider, kWKNotificationProviderCurrentVersion> {
 public:
-    void show(WebNotification*);
+    void show(WebPageProxy*, WebNotification*);
     void cancel(WebNotification*);
     void didDestroyNotification(WebNotification*);
     int policyForNotificationPermissionAtOrigin(WebSecurityOrigin*);
