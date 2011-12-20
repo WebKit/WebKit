@@ -1,3 +1,13 @@
+2011-12-20  Pavel Feldman  <pavel.feldman@gmail.com>
+
+        Web Inspector: reproducible crash after closing web inspector and browser window  (iCab)
+        https://bugs.webkit.org/show_bug.cgi?id=74255
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::releaseFrontend):
+
 2011-12-14  Hajime Morrita  <morrita@chromium.org>
 
         JS_INLINE and WTF_INLINE should be visible from WebCore

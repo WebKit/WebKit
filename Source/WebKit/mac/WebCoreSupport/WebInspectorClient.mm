@@ -121,6 +121,12 @@ void WebInspectorClient::hideHighlight()
     [m_highlighter.get() hideHighlight];
 }
 
+void WebInspectorClient::releaseFrontend()
+{
+    m_frontendClient = 0;
+    m_frontendPage = 0;
+}
+
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, WebInspectorWindowController* windowController, InspectorController* inspectorController, Page* frontendPage, WTF::PassOwnPtr<Settings> settings)
     : InspectorFrontendClientLocal(inspectorController,  frontendPage, settings)
     , m_inspectedWebView(inspectedWebView)
@@ -446,6 +452,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 - (void)destroyInspectorView:(bool)notifyInspectorController
 {
     [[_inspectedWebView.get() inspector] releaseFrontend];
+    _inspectorClient->releaseFrontend();
 
     if (_destroyingInspectorView)
         return;
@@ -459,8 +466,6 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if (notifyInspectorController) {
         if (Page* inspectedPage = [_inspectedWebView.get() page])
             inspectedPage->inspectorController()->disconnectFrontend();
-
-        _inspectorClient->releaseFrontendPage();
     }
 
     [_webView close];

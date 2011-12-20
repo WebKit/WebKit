@@ -69,17 +69,11 @@ public:
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
 
-    void releaseFrontendPage();
-    void releaseFrontendClient();
+    void releaseFrontend();
 
     WebInspectorFrontendClient* frontendClient() { return m_frontendClient; }
 
     void updateHighlight();
-    void frontendClosing()
-    {
-        m_frontendHwnd = 0;
-        releaseFrontendPage();
-    }
 
 private:
     virtual ~WebInspectorClient();

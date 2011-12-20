@@ -71,7 +71,7 @@ public:
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
 
-    void releaseFrontendPage();
+    void releaseFrontend();
 
 private:
     WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();

@@ -107,11 +107,6 @@ void WebInspectorClient::setInspectorStartsAttached(bool attached)
     storeSetting(inspectorStartsAttachedSetting, attached ? "true" : "false");
 }
 
-void WebInspectorClient::releaseFrontendPage()
-{
-    m_frontendPage = 0;
-}
-
 WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {

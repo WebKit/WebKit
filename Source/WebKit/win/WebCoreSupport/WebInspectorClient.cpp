@@ -77,7 +77,6 @@ WebInspectorClient::WebInspectorClient(WebView* webView)
 
 WebInspectorClient::~WebInspectorClient()
 {
-    m_frontendPage = 0;
 }
 
 void WebInspectorClient::inspectorDestroyed()
@@ -218,9 +217,11 @@ void WebInspectorClient::updateHighlight()
         m_highlight->update();
 }
 
-void WebInspectorClient::releaseFrontendClient()
+void WebInspectorClient::releaseFrontend()
 {
     m_frontendClient = 0;
+    m_frontendPage = 0;
+    m_frontendHwnd = 0;
 }
 
 WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView, HWND inspectedWebViewHwnd, HWND frontendHwnd, const COMPtr<WebView>& frontendWebView, HWND frontendWebViewHwnd, WebInspectorClient* inspectorClient, PassOwnPtr<Settings> settings)
@@ -412,19 +413,17 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
 
 void WebInspectorFrontendClient::destroyInspectorView(bool notifyInspectorController)
 {
-    m_inspectorClient->releaseFrontendClient();
+    m_inspectorClient->releaseFrontend();
 
     if (m_destroyingInspectorView)
         return;
     m_destroyingInspectorView = true;
-
 
     closeWindowWithoutNotifications();
 
     if (notifyInspectorController) {
         m_inspectedWebView->page()->inspectorController()->disconnectFrontend();
         m_inspectorClient->updateHighlight();
-        m_inspectorClient->frontendClosing();
     }
     ::DestroyWindow(m_frontendHwnd);
 }
