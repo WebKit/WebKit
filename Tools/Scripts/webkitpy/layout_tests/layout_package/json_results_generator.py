@@ -224,7 +224,7 @@ class JSONResultsGeneratorBase(object):
           master_name: the name of the buildbot master.
         """
         self._port = port
-        self._fs = port._filesystem
+        self._filesystem = port._filesystem
         self._builder_name = builder_name
         self._build_name = build_name
         self._build_number = build_number
@@ -247,15 +247,15 @@ class JSONResultsGeneratorBase(object):
     def generate_json_output(self):
         json_object = self.get_json()
         if json_object:
-            file_path = self._fs.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
-            write_json(self._fs, json_object, file_path)
+            file_path = self._filesystem.join(self._results_directory, self.INCREMENTAL_RESULTS_FILENAME)
+            write_json(self._filesystem, json_object, file_path)
 
     def generate_times_ms_file(self):
         # FIXME: rename to generate_times_ms_file. This needs to be coordinated with
         # changing the calls to this on the chromium build slaves.
         times = test_timings_trie(self._port, self._test_results_map.values())
-        file_path = self._fs.join(self._results_directory, self.TIMES_MS_FILENAME)
-        write_json(self._fs, times, file_path)
+        file_path = self._filesystem.join(self._results_directory, self.TIMES_MS_FILENAME)
+        write_json(self._filesystem, times, file_path)
 
     def get_json(self):
         """Gets the results for the results.json file."""
@@ -317,7 +317,7 @@ class JSONResultsGeneratorBase(object):
                  ("testtype", self._test_type),
                  ("master", self._master_name)]
 
-        files = [(file, self._fs.join(self._results_directory, file))
+        files = [(file, self._filesystem.join(self._results_directory, file))
             for file in json_files]
 
         url = "http://%s/testfile/upload" % self._test_results_server
@@ -384,7 +384,7 @@ class JSONResultsGeneratorBase(object):
         Args:
           in_directory: The directory where svn is to be run.
         """
-        if self._fs.exists(self._fs.join(in_directory, '.svn')):
+        if self._filesystem.exists(self._filesystem.join(in_directory, '.svn')):
             # Note: Not thread safe: http://bugs.python.org/issue2320
             output = subprocess.Popen(["svn", "info", "--xml"],
                                       cwd=in_directory,

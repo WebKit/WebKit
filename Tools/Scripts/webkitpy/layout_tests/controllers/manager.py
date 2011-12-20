@@ -290,8 +290,7 @@ class Manager(object):
           printer: a Printer object to record updates to.
         """
         self._port = port
-        # FIXME: Rename to self._filesystem for consistency with other code.
-        self._fs = port.host.filesystem
+        self._filesystem = port.host.filesystem
         self._options = options
         self._printer = printer
         self._message_broker = None
@@ -333,7 +332,7 @@ class Manager(object):
         """
         paths = self._strip_test_dir_prefixes(args)
         if self._options.test_list:
-            paths += self._strip_test_dir_prefixes(read_test_files(self._fs, self._options.test_list, self._port.TEST_PATH_SEPARATOR))
+            paths += self._strip_test_dir_prefixes(read_test_files(self._filesystem, self._options.test_list, self._port.TEST_PATH_SEPARATOR))
         self._test_files = self._port.tests(paths)
 
     def _strip_test_dir_prefixes(self, paths):
@@ -344,8 +343,8 @@ class Manager(object):
         # the filesystem uses '\\' as a directory separator.
         if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):
             return path[len(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):]
-        if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._fs.sep):
-            return path[len(self.LAYOUT_TESTS_DIRECTORY + self._fs.sep):]
+        if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._filesystem.sep):
+            return path[len(self.LAYOUT_TESTS_DIRECTORY + self._filesystem.sep):]
         return path
 
     def lint(self):
@@ -452,8 +451,8 @@ class Manager(object):
             self._printer.print_expected(extra_msg)
             tests_run_msg += "\n" + extra_msg
             files.extend(test_files[0:extra])
-        tests_run_filename = self._fs.join(self._results_directory, "tests_run.txt")
-        self._fs.write_text_file(tests_run_filename, tests_run_msg)
+        tests_run_filename = self._filesystem.join(self._results_directory, "tests_run.txt")
+        self._filesystem.write_text_file(tests_run_filename, tests_run_msg)
 
         len_skip_chunk = int(len(files) * len(skipped) / float(len(self._test_files)))
         skip_chunk_list = list(skipped)[0:len_skip_chunk]
@@ -829,8 +828,8 @@ class Manager(object):
         if not self._retrying:
             return self._results_directory
         else:
-            self._fs.maybe_make_directory(self._fs.join(self._results_directory, 'retries'))
-            return self._fs.join(self._results_directory, 'retries')
+            self._filesystem.maybe_make_directory(self._filesystem.join(self._results_directory, 'retries'))
+            return self._filesystem.join(self._results_directory, 'retries')
 
     def update(self):
         self.update_summary(self._current_result_summary)
@@ -1036,8 +1035,8 @@ class Manager(object):
         layout_tests_dir = self._port.layout_tests_dir()
         possible_dirs = self._port.test_dirs()
         for dirname in possible_dirs:
-            if self._fs.isdir(self._fs.join(layout_tests_dir, dirname)):
-                self._fs.rmtree(self._fs.join(self._results_directory, dirname))
+            if self._filesystem.isdir(self._filesystem.join(layout_tests_dir, dirname)):
+                self._filesystem.rmtree(self._filesystem.join(self._results_directory, dirname))
 
     def _get_failures(self, result_summary, include_crashes, include_missing):
         """Filters a dict of results and returns only the failures.
@@ -1083,12 +1082,12 @@ class Manager(object):
         _log.debug("Writing JSON files in %s." % self._results_directory)
 
         times_trie = json_results_generator.test_timings_trie(self._port, individual_test_timings)
-        times_json_path = self._fs.join(self._results_directory, "times_ms.json")
-        json_results_generator.write_json(self._fs, times_trie, times_json_path)
+        times_json_path = self._filesystem.join(self._results_directory, "times_ms.json")
+        json_results_generator.write_json(self._filesystem, times_trie, times_json_path)
 
-        full_results_path = self._fs.join(self._results_directory, "full_results.json")
+        full_results_path = self._filesystem.join(self._results_directory, "full_results.json")
         # We write full_results.json out as jsonp because we need to load it from a file url and Chromium doesn't allow that.
-        json_results_generator.write_json(self._fs, summarized_results, full_results_path, callback="ADD_RESULTS")
+        json_results_generator.write_json(self._filesystem, summarized_results, full_results_path, callback="ADD_RESULTS")
 
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
@@ -1105,12 +1104,12 @@ class Manager(object):
 
         generator.upload_json_files(json_files)
 
-        incremental_results_path = self._fs.join(self._results_directory, "incremental_results.json")
+        incremental_results_path = self._filesystem.join(self._results_directory, "incremental_results.json")
 
         # Remove these files from the results directory so they don't take up too much space on the buildbot.
         # The tools use the version we uploaded to the results server anyway.
-        self._fs.remove(times_json_path)
-        self._fs.remove(incremental_results_path)
+        self._filesystem.remove(times_json_path)
+        self._filesystem.remove(incremental_results_path)
 
     def print_config(self):
         """Prints the configuration for the test run."""
@@ -1122,7 +1121,7 @@ class Manager(object):
             p.print_config("Placing new baselines in %s" %
                            self._port.baseline_path())
 
-        fallback_path = [self._fs.split(x)[1] for x in self._port.baseline_search_path()]
+        fallback_path = [self._filesystem.split(x)[1] for x in self._port.baseline_search_path()]
         p.print_config("Baseline search path: %s -> generic" % " -> ".join(fallback_path))
 
         p.print_config("Using %s build" % self._options.configuration)
@@ -1383,10 +1382,10 @@ class Manager(object):
 
     def _copy_results_html_file(self):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
-        results_file = self._fs.join(base_dir, 'results.html')
+        results_file = self._filesystem.join(base_dir, 'results.html')
         # FIXME: What should we do if this doesn't exist (e.g., in unit tests)?
-        if self._fs.exists(results_file):
-            self._fs.copyfile(results_file, self._fs.join(self._results_directory, "results.html"))
+        if self._filesystem.exists(results_file):
+            self._filesystem.copyfile(results_file, self._filesystem.join(self._results_directory, "results.html"))
 
     def _show_results_html_file(self, result_summary):
         """Shows the results.html page."""
@@ -1399,7 +1398,7 @@ class Manager(object):
         if not len(test_files):
             return
 
-        results_filename = self._fs.join(self._results_directory, "results.html")
+        results_filename = self._filesystem.join(self._results_directory, "results.html")
         self._port.show_results_html_file(results_filename)
 
     def name(self):
@@ -1462,7 +1461,7 @@ class Manager(object):
         self._update_summary_with_result(self._current_result_summary, result)
 
     def _log_worker_stack(self, stack):
-        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._fs.sep
+        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._filesystem.sep
         for filename, line_number, function_name, text in stack:
             if filename.startswith(webkitpydir):
                 filename = filename.replace(webkitpydir, '')

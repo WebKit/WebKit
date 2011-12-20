@@ -94,7 +94,6 @@ class Base(unittest.TestCase):
     def __init__(self, testFunc, setUp=None, tearDown=None, description=None):
         host = MockHost()
         self._port = host.port_factory.get('test-win-xp', None)
-        self._fs = host.filesystem
         self._exp = None
         unittest.TestCase.__init__(self, testFunc)
 

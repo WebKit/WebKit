@@ -1,3 +1,37 @@
+2011-12-20  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: rename field references from _fs to _filesystem
+        https://bugs.webkit.org/show_bug.cgi?id=74898
+
+        Reviewed by Adam Barth.
+
+        This is a simple cleanup; most of the code uses
+        self._filesystem, but some used self._fs; this change renames
+        the latter to the former to be more consistent.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager.collect_tests):
+        (Manager._strip_test_dir_prefix):
+        (Manager._split_into_chunks_if_necessary):
+        (Manager.results_directory):
+        (Manager._clobber_old_results):
+        (Manager._upload_json_files):
+        (Manager.print_config):
+        (Manager._copy_results_html_file):
+        (Manager._show_results_html_file):
+        (Manager._log_worker_stack):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator._normalize_results_json):
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase.__init__):
+        (JSONResultsGeneratorBase.generate_json_output):
+        (JSONResultsGeneratorBase.generate_times_ms_file):
+        (JSONResultsGeneratorBase.upload_json_files):
+        (JSONResultsGeneratorBase._get_svn_revision):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (Base.__init__):
+
 2011-12-20  Kentaro Hara  <haraken@chromium.org>
 
         Replace webkitperl/run-leaks_unittest/RunLeaks.pm with webkitperl/LoadAsModule.pm

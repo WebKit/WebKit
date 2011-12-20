@@ -147,9 +147,9 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
             test, test_name, tests)
 
         # Remove tests that don't exist anymore.
-        full_path = self._fs.join(self._port.layout_tests_dir(), test_name)
-        full_path = self._fs.normpath(full_path)
-        if not self._fs.exists(full_path):
+        full_path = self._filesystem.join(self._port.layout_tests_dir(), test_name)
+        full_path = self._filesystem.normpath(full_path)
+        if not self._filesystem.exists(full_path):
             del tests[test_name]
 
     def _get_failure_summary_entry(self, timeline):
