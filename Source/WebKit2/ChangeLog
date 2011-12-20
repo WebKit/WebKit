@@ -1,3 +1,11 @@
+2011-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::setFocusedIndex):
+
 2011-12-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][WK2] Remove statusBarMessageChanged
