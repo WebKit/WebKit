@@ -2011,7 +2011,6 @@ BUGCR32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
 BUGCR32673 LINUX WIN : fast/forms/textarea-scrollbar-height.html = TEXT
 
 // Flaky tests found during the roll.
-BUGCR32689 LINUX MAC DEBUG : http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html = PASS TEXT
 BUGCR32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = PASS TEXT
 
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
