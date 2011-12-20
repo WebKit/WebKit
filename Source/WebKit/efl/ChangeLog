@@ -1,3 +1,17 @@
+2011-12-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Change the behavior of ewk_view_scale_set.
+        https://bugs.webkit.org/show_bug.cgi?id=70078
+
+        Reviewed by Eric Seidel.
+
+        Remove center point basis zoom alignment from ewk_view_scale_set to call
+        Page::setPageScaleFactor without any adjustment.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_scale_set):
+        * ewk/ewk_view.h:
+
 2011-12-19  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Unreviewed; fix the build with ENABLE(TOUCH_EVENTS) after r103167.
