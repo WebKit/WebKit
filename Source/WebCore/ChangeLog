@@ -1,3 +1,23 @@
+2011-12-19  Huang Dongsung  <luxtella@company100.net>
+
+        [QT] WebGL can not make the frame buffer with the stencil buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=74783
+
+        When initializing a framebuffer in OpenGL ES 2, we need to initialize the depth
+        and stencil buffers separately, as opposed to the combined depth-stencil buffer
+        we initialize for desktop GL.
+
+        This makes fast/canvas/webgl/context-attributes-depth-stencil-combination.html
+        work in OpenGL ES 2.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::reshape):
+
 2011-12-19  Ami Fischman  <fischman@chromium.org>
 
         Teach VideoLayerChromium how to render native texture (to support HW video decode).

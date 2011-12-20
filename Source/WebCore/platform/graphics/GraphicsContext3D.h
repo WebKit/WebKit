@@ -933,7 +933,12 @@ public:
 
     GC3Duint m_texture, m_compositorTexture;
     GC3Duint m_fbo;
+#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
+    GC3Duint m_depthBuffer;
+    GC3Duint m_stencilBuffer;
+#else
     GC3Duint m_depthStencilBuffer;
+#endif
     bool m_layerComposited;
     GC3Duint m_internalColorFormat;
 

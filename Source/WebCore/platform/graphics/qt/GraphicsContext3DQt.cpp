@@ -307,7 +307,12 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_texture(0)
     , m_compositorTexture(0)
     , m_fbo(0)
+#if defined(QT_OPENGL_ES_2)
+    , m_depthBuffer(0)
+    , m_stencilBuffer(0)
+#else
     , m_depthStencilBuffer(0)
+#endif
     , m_layerComposited(false)
     , m_internalColorFormat(0)
     , m_boundFBO(0)
@@ -318,9 +323,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_multisampleColorBuffer(0)
     , m_private(adoptPtr(new GraphicsContext3DPrivate(this, hostWindow)))
 {
-#if defined(QT_OPENGL_ES_2)
-    m_attrs.stencil = false;
-#else
+#if !defined(QT_OPENGL_ES_2)
     validateAttributes();
 #endif
 
@@ -364,8 +367,15 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         // Bind canvas FBO.
         glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         m_boundFBO = m_fbo;
+#if defined(QT_OPENGL_ES_2)
+        if (m_attrs.depth)
+            glGenRenderbuffers(1, &m_depthBuffer);
+        if (m_attrs.stencil)
+            glGenRenderbuffers(1, &m_stencilBuffer);
+#else
         if (m_attrs.stencil || m_attrs.depth)
             glGenRenderbuffers(1, &m_depthStencilBuffer);
+#endif
     }
 
 #if !defined(QT_OPENGL_ES_2)
@@ -404,8 +414,16 @@ GraphicsContext3D::~GraphicsContext3D()
         glDeleteFramebuffers(1, &m_multisampleFBO);
         if (m_attrs.stencil || m_attrs.depth)
             glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
-    } else if (m_attrs.stencil || m_attrs.depth)
+    } else if (m_attrs.stencil || m_attrs.depth) {
+#if defined(QT_OPENGL_ES_2)
+        if (m_attrs.depth)
+            glDeleteRenderbuffers(1, &m_depthBuffer);
+        if (m_attrs.stencil)
+            glDeleteRenderbuffers(1, &m_stencilBuffer);
+#else
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
+#endif
+    }
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
@@ -465,27 +483,45 @@ void GraphicsContext3D::reshape(int width, int height)
         glTexImage2D(GraphicsContext3D::TEXTURE_2D, /* level */ 0, GraphicsContext3D::RGB, width, height, /* border */ 0, GraphicsContext3D::RGB, GraphicsContext3D::UNSIGNED_BYTE, /* data */ 0);
     glBindTexture(GraphicsContext3D::TEXTURE_2D, 0);
 
-    if (m_attrs.depth) {
-        // Create depth and stencil buffers.
-        glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    // Create depth and stencil buffers.
 #if defined(QT_OPENGL_ES_2)
+    if (m_attrs.depth) {
+        glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
         glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, width, height);
-#else
-        if (m_attrs.stencil)
-            glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-        else
-            glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT, width, height);
-#endif
         glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
     }
+    if (m_attrs.stencil) {
+        glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+        glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::STENCIL_INDEX8, width, height);
+        glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
+    }
+#else
+    if (m_attrs.depth || m_attrs.stencil) {
+        glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+        if (m_attrs.depth && m_attrs.stencil)
+            glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        else if (m_attrs.depth)
+            glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT, width, height);
+        else if (m_attrs.stencil)
+            glRenderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::STENCIL_INDEX, width, height);
+        glBindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
+    }
+#endif
 
     // Construct canvas FBO.
     glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     glFramebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_texture, 0);
+#if defined(QT_OPENGL_ES_2)
     if (m_attrs.depth)
-        glFramebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-#if !defined(QT_OPENGL_ES_2)
+        glFramebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
     if (m_attrs.stencil)
+        glFramebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+#else
+    if (m_attrs.depth && m_attrs.stencil)
+        glFramebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    else if (m_attrs.depth)
+        glFramebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    else if (m_attrs.stencil)
         glFramebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
 #endif
 
