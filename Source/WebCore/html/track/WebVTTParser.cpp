@@ -359,13 +359,10 @@ void WebVTTParser::constructTreeFromToken(Document* document)
             child = HTMLElement::create(qTag, document);
 
         if (child) {
-            if (m_token.classes().size() > 0) {
-                RefPtr<NamedNodeMap> attributeMap = NamedNodeMap::create();
-                attributeMap->addAttribute(Attribute::createMapped(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size())));
-                child->setAttributeMap(attributeMap.release());
-            }
+            if (m_token.classes().size() > 0)
+                child->setAttribute(classAttr, AtomicString(m_token.classes().data(), m_token.classes().size()));
             if (child->hasTagName(qTag))
-                child->setAttribute(titleAttr, String(m_token.annotation().data(), m_token.annotation().size()));
+                child->setAttribute(titleAttr, AtomicString(m_token.annotation().data(), m_token.annotation().size()));
             m_currentNode->parserAddChild(child);
             m_currentNode = child;
         }

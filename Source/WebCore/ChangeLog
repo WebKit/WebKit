@@ -1,3 +1,42 @@
+2011-12-19  Adam Klein  <adamk@chromium.org>
+
+        Rename Element::setAttributeMap to parserSetAttributeMap and limit its use to the parser
+        https://bugs.webkit.org/show_bug.cgi?id=74885
+
+        Reviewed by Ryosuke Niwa.
+
+        Element::setAttributeMap is currently used by the parser in cases
+        where a NamedNodeMap of attributes has already been allocated and
+        transfers ownership to the Element. Other uses in WebCore don't have
+        this ownership-transfer requirement, and so are more clearly expressed
+        with normal setAttribute calls.
+
+        Eliminating non-parser callers allows the code to make safe
+        assumptions about the state of the Element it's called on: no need to
+        worry about, e.g., updating the id in the document's cache or
+        enqueueing mutation records.
+
+        No new tests, no change in behavior expected.
+
+        * dom/Element.cpp:
+        (WebCore::Element::parserSetAttributeMap): Renamed, added assertions
+        to make sure it's not called unexpectedly, update comments.
+        * dom/Element.h:
+        * html/HTMLViewSourceDocument.cpp: Use setAttribute instead of setAttributeMap.
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::addBase):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * html/parser/HTMLConstructionSite.cpp: Reference new name.
+        (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        (WebCore::HTMLConstructionSite::insertScriptElement):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::constructTreeFromToken): Use setAttribute instead of setAttributeMap.
+        Also get rid of an unnecessary String -> AtomicString conversion.
+
 2011-12-20  Iain Merrick  <husky@google.com>
 
         Remove unused parameter from RenderLayerCompositor::rebuildCompositingLayerTree

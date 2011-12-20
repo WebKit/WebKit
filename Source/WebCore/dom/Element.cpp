@@ -748,22 +748,14 @@ static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& v
     return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
 }
 
-void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
+void Element::parserSetAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
 {
+    ASSERT(!inDocument());
+    ASSERT(!parentNode());
+
     document()->incDOMTreeVersion();
 
-    // If setting the whole map changes the id attribute, we need to call updateId.
-
-    const QualifiedName& idName = document()->idAttributeName();
-    Attribute* oldId = m_attributeMap ? m_attributeMap->getAttributeItem(idName) : 0;
-    Attribute* newId = list ? list->getAttributeItem(idName) : 0;
-
-    if (oldId || newId)
-        updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
-
-    if (m_attributeMap)
-        m_attributeMap->m_element = 0;
-
+    ASSERT(!m_attributeMap);
     m_attributeMap = list;
 
     if (m_attributeMap) {
@@ -790,7 +782,6 @@ void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPe
         m_attributeMap->copyAttributesToVector(attributes);
         for (Vector<RefPtr<Attribute> >::iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
             attributeChanged(iter->get());
-        // FIXME: What about attributes that were in the old map that are not in the new map?
     }
 }
 

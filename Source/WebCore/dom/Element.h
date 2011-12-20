@@ -216,7 +216,9 @@ public:
     // This method is called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
-    void setAttributeMap(PassRefPtr<NamedNodeMap>, FragmentScriptingPermission = FragmentScriptingAllowed);
+    // Only called by the parser immediately after element construction.
+    void parserSetAttributeMap(PassRefPtr<NamedNodeMap>, FragmentScriptingPermission);
+
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
 
     void setAttributesFromElement(const Element&);

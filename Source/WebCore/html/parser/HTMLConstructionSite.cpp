@@ -188,7 +188,7 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& token)
 {
     RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
-    element->setAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
+    element->parserSetAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
     m_openElements.pushHTMLHtmlElement(attach<Element>(m_attachmentRoot, element.get()));
     element->insertedByParser();
     dispatchDocumentElementAvailableIfNeeded();
@@ -324,7 +324,7 @@ void HTMLConstructionSite::insertScriptElement(AtomicHTMLToken& token)
 {
     RefPtr<HTMLScriptElement> element = HTMLScriptElement::create(scriptTag, currentNode()->document(), true);
     if (m_fragmentScriptingPermission == FragmentScriptingAllowed)
-        element->setAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
+        element->parserSetAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
     m_openElements.push(attachToCurrent(element.release()));
 }
 
@@ -382,7 +382,7 @@ PassRefPtr<Element> HTMLConstructionSite::createElement(AtomicHTMLToken& token, 
 {
     QualifiedName tagName(nullAtom, token.name(), namespaceURI);
     RefPtr<Element> element = currentNode()->document()->createElement(tagName, true);
-    element->setAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
+    element->parserSetAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
     return element.release();
 }
 
@@ -393,7 +393,7 @@ PassRefPtr<Element> HTMLConstructionSite::createHTMLElement(AtomicHTMLToken& tok
     // have to pass the current form element.  We should rework form association
     // to occur after construction to allow better code sharing here.
     RefPtr<Element> element = HTMLElementFactory::createHTMLElement(tagName, currentNode()->document(), form(), true);
-    element->setAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
+    element->parserSetAttributeMap(token.takeAttributes(), m_fragmentScriptingPermission);
     ASSERT(element->isHTMLElement());
     return element.release();
 }
