@@ -1427,6 +1427,7 @@ void WebViewImpl::setFocus(bool enable)
 {
     m_page->focusController()->setFocused(enable);
     if (enable) {
+        m_page->focusController()->setActive(true);
         RefPtr<Frame> focusedFrame = m_page->focusController()->focusedFrame();
         if (focusedFrame) {
             Node* focusedNode = focusedFrame->document()->focusedNode();

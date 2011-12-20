@@ -1,3 +1,15 @@
+2011-12-20  Nate Chapin  <japhet@chromium.org>
+
+        Revert code for r96912 and r101905, since they cause
+        regressions in mac scrollbars, caret display in
+        form fields, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=74939
+
+        Reviewed by Eric Seidel.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setFocus):
+
 2011-12-20  Mike Reed  <reed@google.com>
 
         enable USE_SKIA_TEXT by default, replacing GDI for all text drawing
