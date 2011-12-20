@@ -33,8 +33,6 @@
 
 namespace WebKit {
 
-WebIntentServiceInfo::WebIntentServiceInfo() { }
-
 WebURL WebIntentServiceInfo::url() const
 {
     return m_href;

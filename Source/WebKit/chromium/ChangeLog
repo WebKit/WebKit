@@ -1,3 +1,12 @@
+2011-12-20  Greg Billock  <gbillock@google.com>
+
+        Make WebIntentServiceInfo constructor public for testing.
+        https://bugs.webkit.org/show_bug.cgi?id=74764
+
+        Reviewed by Darin Fisher.
+
+        * public/WebIntentServiceInfo.h:
+
 2011-12-19  James Robinson  <jamesr@chromium.org>
 
         Compile fix for chromium on windows due to collision of testing::NotNull from gtest and NotNull from Vector.h

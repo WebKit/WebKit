@@ -41,6 +41,7 @@ namespace WebKit {
 // See spec at http://www.chromium.org/developers/design-documents/webintentsapi
 class WebIntentServiceInfo {
 public:
+    WebIntentServiceInfo() { }
     ~WebIntentServiceInfo() { }
 
     // The location of the handler page registered by the service.
@@ -65,10 +66,6 @@ public:
     // context (the default).
     WEBKIT_EXPORT WebString disposition() const;
     WEBKIT_EXPORT void setDisposition(const WebString&);
-
-#if WEBKIT_IMPLEMENTATION
-    WebIntentServiceInfo();
-#endif
 
 private:
     WebString m_action;
