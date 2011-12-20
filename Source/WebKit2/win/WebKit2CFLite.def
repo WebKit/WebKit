@@ -161,6 +161,7 @@ EXPORTS
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVElement@2@HH_N@Z
         ?removeShadowRoot@Element@WebCore@@QAEXXZ
+        ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
         ?setShouldLayoutFixedElementsRelativeToFrame@FrameView@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z

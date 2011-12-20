@@ -1,3 +1,9 @@
+2011-12-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * win/WebKit2CFLite.def: Add missing export declaration.
+
 2011-12-20  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Build fix for gcc used on WK2 build bot.
