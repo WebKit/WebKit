@@ -3881,9 +3881,6 @@ BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS 
 
 BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
 
-// Fixed ES5 bugs during the V8 roll, upstream in progress.
-BUGMSTARZINGER : fast/js/mozilla/strict/15.4.5.1.html = TEXT
-
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
