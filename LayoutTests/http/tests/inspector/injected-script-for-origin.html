@@ -17,8 +17,8 @@ function test()
         }
     }
     top.addEventListener("message", onMessage, false);
-    InspectorFrontendHost.setInjectedScriptForOrigin("http://127.0.0.1:8000", "window.foo = '127.0.0.1';");
-    InspectorFrontendHost.setInjectedScriptForOrigin("http://localhost:8000", "window.foo = 'localhost';");
+    InspectorFrontendHost.setInjectedScriptForOrigin("http://127.0.0.1:8000", "(function() { window.foo = '127.0.0.1'; return {}})");
+    InspectorFrontendHost.setInjectedScriptForOrigin("http://localhost:8000", "(function() { window.foo = 'localhost'; return {}})");
     function addSubframe(url)
     {
         var iframe = document.createElement("iframe");
