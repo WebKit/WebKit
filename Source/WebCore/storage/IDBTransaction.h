@@ -64,6 +64,8 @@ public:
 
     void registerRequest(IDBRequest*);
     void unregisterRequest(IDBRequest*);
+    void objectStoreCreated(const String&, PassRefPtr<IDBObjectStore>);
+    void objectStoreDeleted(const String&);
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
@@ -105,6 +107,9 @@ private:
     bool m_contextStopped;
 
     ListHashSet<IDBRequest*> m_childRequests;
+
+    typedef HashMap<String, RefPtr<IDBObjectStore> > IDBObjectStoreMap;
+    IDBObjectStoreMap m_objectStoreMap;
 
     EventTargetData m_eventTargetData;
 };

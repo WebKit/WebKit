@@ -81,12 +81,17 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext* context, ExceptionCode& ec) { return count(context, 0, ec); }
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
 
+    void transactionFinished();
+
 private:
     IDBObjectStore(PassRefPtr<IDBObjectStoreBackendInterface>, IDBTransaction*);
     void removeTransactionFromPendingList();
 
     RefPtr<IDBObjectStoreBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_transaction;
+
+    typedef HashMap<String, RefPtr<IDBIndex> > IDBIndexMap;
+    IDBIndexMap m_indexMap;
 };
 
 } // namespace WebCore

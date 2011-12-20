@@ -87,13 +87,31 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
     }
+
+    IDBObjectStoreMap::iterator it = m_objectStoreMap.find(name);
+    if (it != m_objectStoreMap.end())
+        return it->second;
+
     RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name, ec);
     if (!objectStoreBackend) {
         ASSERT(ec);
         return 0;
     }
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend, this);
+    objectStoreCreated(name, objectStore);
     return objectStore.release();
+}
+
+void IDBTransaction::objectStoreCreated(const String& name, PassRefPtr<IDBObjectStore> objectStore)
+{
+    ASSERT(!m_transactionFinished);
+    m_objectStoreMap.set(name, objectStore);
+}
+
+void IDBTransaction::objectStoreDeleted(const String& name)
+{
+    ASSERT(!m_transactionFinished);
+    m_objectStoreMap.remove(name);
 }
 
 void IDBTransaction::abort()
@@ -170,6 +188,11 @@ bool IDBTransaction::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(scriptExecutionContext());
     ASSERT(event->target() == this);
     m_transactionFinished = true;
+
+    // Break reference cycles.
+    for (IDBObjectStoreMap::iterator it = m_objectStoreMap.begin(); it != m_objectStoreMap.end(); ++it)
+        it->second->transactionFinished();
+    m_objectStoreMap.clear();
 
     Vector<RefPtr<EventTarget> > targets;
     targets.append(this);

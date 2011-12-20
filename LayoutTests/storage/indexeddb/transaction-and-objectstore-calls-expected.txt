@@ -12,6 +12,7 @@ trans = event.target.result
 Deleted all object stores.
 db.createObjectStore('a')
 db.createObjectStore('b')
+db.createObjectStore('store').createIndex('index', 'some_path')
 trans.addEventListener('complete', created, true)
 
 trans = db.transaction(['a'])
@@ -107,6 +108,20 @@ Expecting exception from db.transaction([{toString:function(){return 'x';}}])
 PASS Exception was thrown.
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
+trans = db.transaction(['store'])
+PASS trans != null is true
+store = trans.objectStore('store')
+PASS store != null is true
+store.get('some_key')
+transaction complete, ensuring methods fail
+PASS trans != null is true
+PASS store != null is true
+Expecting exception from trans.objectStore('store')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
+Expecting exception from store.index('index')
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 PASS successfullyParsed is true
 
 TEST COMPLETE

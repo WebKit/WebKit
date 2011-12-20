@@ -100,12 +100,15 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     options.get("autoIncrement", autoIncrement);
     // FIXME: Look up evictable and pass that on as well.
 
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_versionChangeTransaction->backend(), ec);
-    if (!objectStore) {
+    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->createObjectStore(name, keyPath, autoIncrement, m_versionChangeTransaction->backend(), ec);
+    if (!objectStoreBackend) {
         ASSERT(ec);
         return 0;
     }
-    return IDBObjectStore::create(objectStore.release(), m_versionChangeTransaction.get());
+
+    RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(objectStoreBackend.release(), m_versionChangeTransaction.get());
+    m_versionChangeTransaction->objectStoreCreated(name, objectStore);
+    return objectStore.release();
 }
 
 void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
@@ -116,6 +119,7 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
     }
 
     m_backend->deleteObjectStore(name, m_versionChangeTransaction->backend(), ec);
+    m_versionChangeTransaction->objectStoreDeleted(name);
 }
 
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)

@@ -163,20 +163,34 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const Strin
 
     // FIXME: When Array-type keyPaths are supported, throw exception if keyPath is Array and multiEntry is true.
 
-    RefPtr<IDBIndexBackendInterface> index = m_backend->createIndex(name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
-    ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
-    if (!index)
+    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->createIndex(name, keyPath, unique, multiEntry, m_transaction->backend(), ec);
+    ASSERT(!indexBackend != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
+    if (!indexBackend)
         return 0;
-    return IDBIndex::create(index.release(), this, m_transaction.get());
+    RefPtr<IDBIndex> index = IDBIndex::create(indexBackend.release(), this, m_transaction.get());
+    m_indexMap.set(name, index);
+    return index.release();
 }
 
 PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
 {
-    RefPtr<IDBIndexBackendInterface> index = m_backend->index(name, ec);
-    ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
-    if (!index)
+    if (m_transaction->finished()) {
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return 0;
-    return IDBIndex::create(index.release(), this, m_transaction.get());
+    }
+
+    IDBIndexMap::iterator it = m_indexMap.find(name);
+    if (it != m_indexMap.end())
+        return it->second;
+
+    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(name, ec);
+    ASSERT(!indexBackend != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
+    if (!indexBackend)
+        return 0;
+
+    RefPtr<IDBIndex> index = IDBIndex::create(indexBackend.release(), this, m_transaction.get());
+    m_indexMap.set(name, index);
+    return index.release();
 }
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
@@ -212,6 +226,15 @@ PassRefPtr<IDBRequest> IDBObjectStore::count(ScriptExecutionContext* context, Pa
     }
     return request.release();
 }
+
+void IDBObjectStore::transactionFinished()
+{
+    ASSERT(m_transaction->finished());
+
+    // Break reference cycles.
+    m_indexMap.clear();
+}
+
 
 } // namespace WebCore
 

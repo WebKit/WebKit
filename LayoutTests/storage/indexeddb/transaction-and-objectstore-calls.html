@@ -37,6 +37,7 @@ function cleanDatabase()
 
     evalAndLog("db.createObjectStore('a')");
     evalAndLog("db.createObjectStore('b')");
+    evalAndLog("db.createObjectStore('store').createIndex('index', 'some_path')");
     evalAndLog("trans.addEventListener('complete', created, true)");
     debug("");
 }
@@ -105,11 +106,28 @@ function created()
     debug("... but you still need to specify a real store:");
     evalAndExpectException("db.transaction([{toString:function(){return 'x';}}])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     evalAndExpectException("db.transaction([{toString:function(){return 'x';}}])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
-
     debug("");
-    done();
+
+    trans = evalAndLog("trans = db.transaction(['store'])");
+    shouldBeTrue("trans != null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.onerror = unexpectedErrorCallback;
+    trans.oncomplete = afterComplete;
+    evalAndLog("store = trans.objectStore('store')");
+    shouldBeTrue("store != null");
+    evalAndLog("store.get('some_key')");
 }
 
+function afterComplete()
+{
+    debug("transaction complete, ensuring methods fail");
+    shouldBeTrue("trans != null");
+    shouldBeTrue("store != null");
+    evalAndExpectException("trans.objectStore('store')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+    evalAndExpectException("store.index('index')", "webkitIDBDatabaseException.NOT_ALLOWED_ERR");
+
+    done();
+}
 
 test();
 

@@ -312,10 +312,10 @@ function onPutTransactionComplete()
     request.onsuccess = onGetSuccess;
     request.onerror = unexpectedError;
 
-    // Note that multiple objectStore (or index) method calls will return different objects (that still
-    // refer to the same objectStore/index on disk).
-    people.someProperty = true;
-    if (currentTransaction.objectStore("people").someProperty)
+    // Note that multiple objectStore (or index) method calls will return the same object, within
+    // a transaction:
+    people.someProperty = "xyz";
+    if (currentTransaction.objectStore("people").someProperty != "xyz")
         logError("Something went wrong.");
 }
 

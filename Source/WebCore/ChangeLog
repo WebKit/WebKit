@@ -1,3 +1,29 @@
+2011-12-19  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB multiple calls to transaction.objectStore(name) should return the same instance
+        https://bugs.webkit.org/show_bug.cgi?id=60208
+
+        Reviewed by Tony Chang.
+
+        Ditto for calls to IDBObjectStore.index(). Calling these methods after the
+        enclosing transaction has finished now consistently throws an error, which
+        allows us to break reference cycles.
+
+        Test: storage/indexeddb/mozilla/object-identity.html
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::transactionFinished):
+        * storage/IDBObjectStore.h:
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::objectStoreCreated):
+        (WebCore::IDBTransaction::dispatchEvent):
+        * storage/IDBTransaction.h:
+
 2011-12-19  Anders Carlsson  <andersca@apple.com>
 
         Send gesture events through the event dispatcher and scrolling coordinator
