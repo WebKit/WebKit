@@ -537,7 +537,7 @@ void WebViewImpl::mouseContextMenu(const WebMouseEvent& event)
     PlatformMouseEventBuilder pme(mainFrameImpl()->frameView(), event);
 
     // Find the right target frame. See issue 1186900.
-    HitTestResult result = hitTestResultForWindowPos(pme.pos());
+    HitTestResult result = hitTestResultForWindowPos(pme.position());
     Frame* targetFrame;
     if (result.innerNonSharedNode())
         targetFrame = result.innerNonSharedNode()->document()->frame();

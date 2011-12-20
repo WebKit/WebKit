@@ -94,14 +94,10 @@ namespace WebCore {
         {
         }
 
-        const IntPoint& pos() const { return m_position; }
-        int x() const { return m_position.x(); }
-        int y() const { return m_position.y(); }
-        int globalX() const { return m_globalPosition.x(); }
-        int globalY() const { return m_globalPosition.y(); }
+        const IntPoint& position() const { return m_position; }
+        const IntPoint& globalPosition() const { return m_globalPosition; }
 #if ENABLE(POINTER_LOCK)
-        int movementX() const { return m_movementDelta.x(); }
-        int movementY() const { return m_movementDelta.y(); }
+        const IntPoint& movementDelta() const { return m_movementDelta; }
 #endif
 
         MouseButton button() const { return m_button; }

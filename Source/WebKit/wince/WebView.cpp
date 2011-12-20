@@ -288,8 +288,8 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     // of the event to be at (MINSHORT, MINSHORT).
     PlatformMouseEvent mouseEvent(hWnd, message, wParam, lParam);
 
-    bool insideThreshold = abs(globalPrevPoint.x() - mouseEvent.pos().x()) < ::GetSystemMetrics(SM_CXDOUBLECLK)
-                           && abs(globalPrevPoint.y() - mouseEvent.pos().y()) < ::GetSystemMetrics(SM_CYDOUBLECLK);
+    bool insideThreshold = abs(globalPrevPoint.x() - mouseEvent.position().x()) < ::GetSystemMetrics(SM_CXDOUBLECLK)
+                           && abs(globalPrevPoint.y() - mouseEvent.position().y()) < ::GetSystemMetrics(SM_CYDOUBLECLK);
     LONG messageTime = 0;
 
     bool handled = false;
@@ -313,7 +313,7 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
             globalClickCount = 1;
         globalPrevMouseDownTime = messageTime;
         globalPrevButton = mouseEvent.button();
-        globalPrevPoint = mouseEvent.pos();
+        globalPrevPoint = mouseEvent.position();
 
         mouseEvent.setClickCount(globalClickCount);
         handled = m_page->mainFrame()->eventHandler()->handleMousePressEvent(mouseEvent);
@@ -324,7 +324,7 @@ bool WebView::handleMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
     } else if (message == WM_LBUTTONUP || message == WM_MBUTTONUP || message == WM_RBUTTONUP) {
         // Record the global position and the button of the up.
         globalPrevButton = mouseEvent.button();
-        globalPrevPoint = mouseEvent.pos();
+        globalPrevPoint = mouseEvent.position();
         mouseEvent.setClickCount(globalClickCount);
         m_page->mainFrame()->eventHandler()->handleMouseReleaseEvent(mouseEvent);
         ReleaseCapture();

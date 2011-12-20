@@ -1,3 +1,14 @@
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
+        More PlatformEvent cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=74831
+
+        Reviewed by Dan Bernstein.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleContextMenuEvent):
+        Update to use new names, access style.
+
 2011-12-16  Jon Lee  <jonlee@apple.com>
 
         [WK2] Extend show notification API to include the source page

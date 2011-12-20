@@ -1,3 +1,75 @@
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
+        More PlatformEvent cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=74831
+
+        Reviewed by Dan Bernstein.
+
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::position):
+        Rename pos -> position(). Remove x() and y() accessors.
+
+        (WebCore::PlatformMouseEvent::globalPosition):
+        Added. Replaces globalX() and globalY() accessors.
+
+        (WebCore::PlatformMouseEvent::movementDelta):
+        Added. Replaces movementX() and movementY() accessors.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::position):
+        Renamed pos -> position().
+
+        (WebCore::PlatformWheelEvent::globalPosition):
+        Renamed globalPos -> globalPosition().
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEventDispatchMediator::WheelEventDispatchMediator):
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::prepareMouseEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::handleDrag):
+        (WebCore::EventHandler::handleTouchEvent):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::mouseDown):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::hitTest):
+        * platform/chromium/PopupContainer.cpp:
+        (WebCore::constructRelativeMouseEvent):
+        (WebCore::constructRelativeWheelEvent):
+        * platform/chromium/PopupListBox.cpp:
+        (WebCore::PopupListBox::handleMouseDownEvent):
+        (WebCore::PopupListBox::handleMouseMoveEvent):
+        (WebCore::PopupListBox::handleMouseReleaseEvent):
+        (WebCore::PopupListBox::handleWheelEvent):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::shouldSnapBackToDragOrigin):
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::hitTest):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::shouldSnapBackToDragOrigin):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::resize):
+        Update to use new names, access style.
+
 2011-12-19  Adam Klein  <adamk@chromium.org>
 
         Remove unused ExceptionCode& argument from Element::setAttribute(QualifiedName)

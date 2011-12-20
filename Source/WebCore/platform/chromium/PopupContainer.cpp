@@ -68,11 +68,11 @@ static PlatformMouseEvent constructRelativeMouseEvent(const PlatformMouseEvent& 
                                                       FramelessScrollView* parent,
                                                       FramelessScrollView* child)
 {
-    IntPoint pos = parent->convertSelfToChild(child, e.pos());
+    IntPoint pos = parent->convertSelfToChild(child, e.position());
 
     // FIXME: This is a horrible hack since PlatformMouseEvent has no setters for x/y.
     PlatformMouseEvent relativeEvent = e;
-    IntPoint& relativePos = const_cast<IntPoint&>(relativeEvent.pos());
+    IntPoint& relativePos = const_cast<IntPoint&>(relativeEvent.position());
     relativePos.setX(pos.x());
     relativePos.setY(pos.y());
     return relativeEvent;
@@ -82,11 +82,11 @@ static PlatformWheelEvent constructRelativeWheelEvent(const PlatformWheelEvent& 
                                                       FramelessScrollView* parent,
                                                       FramelessScrollView* child)
 {
-    IntPoint pos = parent->convertSelfToChild(child, e.pos());
+    IntPoint pos = parent->convertSelfToChild(child, e.position());
 
     // FIXME: This is a horrible hack since PlatformWheelEvent has no setters for x/y.
     PlatformWheelEvent relativeEvent = e;
-    IntPoint& relativePos = const_cast<IntPoint&>(relativeEvent.pos());
+    IntPoint& relativePos = const_cast<IntPoint&>(relativeEvent.position());
     relativePos.setX(pos.x());
     relativePos.setY(pos.y());
     return relativeEvent;

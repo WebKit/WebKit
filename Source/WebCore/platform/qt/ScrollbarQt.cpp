@@ -70,7 +70,7 @@ bool Scrollbar::contextMenu(const PlatformMouseEvent& event)
     QAction* actScrollUp = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Scroll left") : QCoreApplication::translate("QWebPage", "Scroll up"));
     QAction* actScrollDown = menu.addAction(horizontal ? QCoreApplication::translate("QWebPage", "Scroll right") : QCoreApplication::translate("QWebPage", "Scroll down"));
 
-    const QPoint globalPos = QPoint(event.globalX(), event.globalY());
+    const QPoint globalPos = QPoint(event.globalPosition().x(), event.globalPosition().y());
     QAction* actionSelected = menu.exec(globalPos);
 
     if (actionSelected == actScrollHere) {
@@ -79,7 +79,7 @@ bool Scrollbar::contextMenu(const PlatformMouseEvent& event)
         // thumb to the new position
         int position = theme()->trackPosition(this) + theme()->thumbPosition(this) + theme()->thumbLength(this) / 2;
         setPressedPos(position); 
-        const QPoint pos = convertFromContainingWindow(event.pos());
+        const QPoint pos = convertFromContainingWindow(event.position());
         moveThumb(horizontal ? pos.x() : pos.y());
     } else if (actionSelected == actScrollTop)
         scrollableArea()->scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByDocument);

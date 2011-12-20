@@ -196,7 +196,7 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
 ScrollbarPart ScrollbarThemeQt::hitTest(Scrollbar* scrollbar, const PlatformMouseEvent& evt)
 {
     QStyleOptionSlider* opt = styleOptionSlider(scrollbar);
-    const QPoint pos = scrollbar->convertFromContainingWindow(evt.pos());
+    const QPoint pos = scrollbar->convertFromContainingWindow(evt.position());
     opt->rect.moveTo(QPoint(0, 0));
     QStyle::SubControl sc = style()->hitTestComplexControl(QStyle::CC_ScrollBar, opt, pos, 0);
     return scrollbarPart(sc);

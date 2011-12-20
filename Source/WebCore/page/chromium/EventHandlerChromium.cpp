@@ -58,7 +58,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     // greyed out even though we're clicking on the selection.  This looks
     // really strange (having the whole frame be greyed out), so we deselect the
     // selection.
-    IntPoint p = m_frame->view()->windowToContents(mev.event().pos());
+    IntPoint p = m_frame->view()->windowToContents(mev.event().position());
     if (m_frame->selection()->contains(p)) {
         VisiblePosition visiblePos(
             targetNode(mev)->renderer()->positionForPoint(mev.localPoint()));

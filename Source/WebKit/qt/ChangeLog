@@ -1,3 +1,14 @@
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
+        More PlatformEvent cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=74831
+
+        Reviewed by Dan Bernstein.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::swallowContextMenuEvent):
+        Update to use new names, access style.
+
 2011-12-19  Alexander Færøy  <ahf@0x90.dk>
 
         [Qt] Cleanup QTM_NAMESPACE usage in DeviceOrientationProviderQt

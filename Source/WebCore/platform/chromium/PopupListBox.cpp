@@ -83,14 +83,14 @@ PopupListBox::PopupListBox(PopupMenuClient* client, const PopupContainerSettings
 
 bool PopupListBox::handleMouseDownEvent(const PlatformMouseEvent& event)
 {
-    Scrollbar* scrollbar = scrollbarAtPoint(event.pos());
+    Scrollbar* scrollbar = scrollbarAtPoint(event.position());
     if (scrollbar) {
         m_capturingScrollbar = scrollbar;
         m_capturingScrollbar->mouseDown(event);
         return true;
     }
 
-    if (!isPointInBounds(event.pos()))
+    if (!isPointInBounds(event.position()))
         abandon();
 
     return true;
@@ -103,7 +103,7 @@ bool PopupListBox::handleMouseMoveEvent(const PlatformMouseEvent& event)
         return true;
     }
 
-    Scrollbar* scrollbar = scrollbarAtPoint(event.pos());
+    Scrollbar* scrollbar = scrollbarAtPoint(event.position());
     if (m_lastScrollbarUnderMouse != scrollbar) {
         // Send mouse exited to the old scrollbar.
         if (m_lastScrollbarUnderMouse)
@@ -116,10 +116,10 @@ bool PopupListBox::handleMouseMoveEvent(const PlatformMouseEvent& event)
         return true;
     }
 
-    if (!isPointInBounds(event.pos()))
+    if (!isPointInBounds(event.position()))
         return false;
 
-    selectIndex(pointToRowIndex(event.pos()));
+    selectIndex(pointToRowIndex(event.position()));
     return true;
 }
 
@@ -131,12 +131,12 @@ bool PopupListBox::handleMouseReleaseEvent(const PlatformMouseEvent& event)
         return true;
     }
 
-    if (!isPointInBounds(event.pos()))
+    if (!isPointInBounds(event.position()))
         return true;
 
     // Need to check before calling acceptIndex(), because m_popupClient might be removed in acceptIndex() calling because of event handler.
     bool isSelectPopup = m_popupClient->menuStyle().menuType() == PopupMenuStyle::SelectPopup;
-    if (acceptIndex(pointToRowIndex(event.pos())) && m_focusedNode && isSelectPopup) {
+    if (acceptIndex(pointToRowIndex(event.position())) && m_focusedNode && isSelectPopup) {
         m_focusedNode->dispatchMouseEvent(event, eventNames().mouseupEvent);
         m_focusedNode->dispatchMouseEvent(event, eventNames().clickEvent);
 
@@ -149,7 +149,7 @@ bool PopupListBox::handleMouseReleaseEvent(const PlatformMouseEvent& event)
 
 bool PopupListBox::handleWheelEvent(const PlatformWheelEvent& event)
 {
-    if (!isPointInBounds(event.pos())) {
+    if (!isPointInBounds(event.position())) {
         abandon();
         return true;
     }

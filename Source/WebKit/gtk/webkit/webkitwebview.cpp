@@ -326,7 +326,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     mainFrame->view()->setCursor(pointerCursor());
     if (page->frameCount()) {
         HitTestRequest request(HitTestRequest::Active);
-        IntPoint point = mainFrame->view()->windowToContents(event.pos());
+        IntPoint point = mainFrame->view()->windowToContents(event.position());
         MouseEventWithHitTestResults mev = mainFrame->document()->prepareMouseEvent(request, point, event);
 
         Frame* targetFrame = EventHandler::subframeForHitTestResult(mev);
@@ -384,8 +384,8 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
 
     WebKitWebViewPrivate* priv = webView->priv;
     priv->currentMenu = menu;
-    priv->lastPopupXPosition = event.globalX();
-    priv->lastPopupYPosition = event.globalY();
+    priv->lastPopupXPosition = event.globalPosition().x();
+    priv->lastPopupYPosition = event.globalPosition().y();
 
     gtk_menu_popup(menu, 0, 0, &PopupMenuPositionFunc, webView, event.button() + 1, gtk_get_current_event_time());
     return TRUE;
@@ -4785,7 +4785,7 @@ WebKitHitTestResult* webkit_web_view_get_hit_test_result(WebKitWebView* webView,
     PlatformMouseEvent mouseEvent = PlatformMouseEvent(event);
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     HitTestRequest request(HitTestRequest::Active);
-    IntPoint documentPoint = documentPointForWindowPoint(frame, mouseEvent.pos());
+    IntPoint documentPoint = documentPointForWindowPoint(frame, mouseEvent.position());
     MouseEventWithHitTestResults mev = frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
 
     return kit(mev.hitTestResult());

@@ -84,7 +84,7 @@ bool ScrollbarThemeChromiumWin::shouldSnapBackToDragOrigin(Scrollbar* scrollbar,
     rect.inflateY((horz ? kOffSideMultiplier : kOffEndMultiplier) * thickness);
 
     // Convert the event to local coordinates.
-    IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.pos());
+    IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.position());
     mousePosition.move(scrollbar->x(), scrollbar->y());
 
     // We should snap iff the event is outside our calculated rect.

@@ -1,3 +1,15 @@
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
+        More PlatformEvent cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=74831
+
+        Reviewed by Dan Bernstein.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_forward_context_menu_event):
+        (webkit_web_view_get_hit_test_result):
+        Update to use new names, access style.
+
 2011-12-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename registerCommandFor(Undo|Redo) to register(Undo|Redo)Step

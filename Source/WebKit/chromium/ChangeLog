@@ -1,3 +1,14 @@
+2011-12-19  Sam Weinig  <sam@webkit.org>
+
+        More PlatformEvent cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=74831
+
+        Reviewed by Dan Bernstein.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseContextMenu):
+        Update to use new names, access style.
+
 2011-12-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCLayerDelegate and WebLayerClient do not need notifySyncRequired

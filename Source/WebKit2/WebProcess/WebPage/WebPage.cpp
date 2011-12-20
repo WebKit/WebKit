@@ -1161,7 +1161,7 @@ static bool isContextClick(const PlatformMouseEvent& event)
 
 static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, Page* page)
 {
-    IntPoint point = page->mainFrame()->view()->windowToContents(platformMouseEvent.pos());
+    IntPoint point = page->mainFrame()->view()->windowToContents(platformMouseEvent.position());
     HitTestResult result = page->mainFrame()->eventHandler()->hitTestResultAtPoint(point, false);
 
     Frame* frame = page->mainFrame();

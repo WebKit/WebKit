@@ -133,8 +133,8 @@ namespace WebCore {
             return copy;
         }
 
-        const IntPoint& pos() const { return m_position; } // PlatformWindow coordinates.
-        const IntPoint& globalPos() const { return m_globalPosition; } // Screen coordinates.
+        const IntPoint& position() const { return m_position; } // PlatformWindow coordinates.
+        const IntPoint& globalPosition() const { return m_globalPosition; } // Screen coordinates.
 
         float deltaX() const { return m_deltaX; }
         float deltaY() const { return m_deltaY; }

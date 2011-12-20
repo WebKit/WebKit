@@ -1693,7 +1693,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
 
     float zoomFactor = renderer->style()->effectiveZoom();
 
-    LayoutSize newOffset = offsetFromResizeCorner(document->view()->windowToContents(evt.pos()));
+    LayoutSize newOffset = offsetFromResizeCorner(document->view()->windowToContents(evt.position()));
     newOffset.setWidth(newOffset.width() / zoomFactor);
     newOffset.setHeight(newOffset.height() / zoomFactor);
     

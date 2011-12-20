@@ -122,7 +122,7 @@ ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar* scrollbar, const Platf
     if (!scrollbar->enabled())
         return result;
 
-    IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.pos());
+    IntPoint mousePosition = scrollbar->convertFromContainingWindow(evt.position());
     mousePosition.move(scrollbar->x(), scrollbar->y());
     
     if (!scrollbar->frameRect().contains(mousePosition))
