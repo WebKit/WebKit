@@ -1,3 +1,15 @@
+2011-12-20  Tony Chang  <tony@chromium.org>
+
+        [chromium] enable WPO for WebCore libs in official builds
+        https://bugs.webkit.org/show_bug.cgi?id=74947
+
+        Reviewed by James Robinson.
+
+        Also move enable_wexit_time_destructors to the top level variables
+        so we don't have to add it to all targets.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-12-20  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollableArea wrappers for a bunch of ScrollAnimator member functions

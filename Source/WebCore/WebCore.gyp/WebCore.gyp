@@ -45,6 +45,9 @@
     # binary and increasing the speed of gdb.
     'enable_svg%': 1,
 
+    'optimize': 'max',
+    'enable_wexit_time_destructors': 1,
+
     'webcore_include_dirs': [
       '../',
       '../..',
@@ -1029,7 +1032,6 @@
     {
       'target_name': 'webcore_bindings',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'hard_dependency': 1,
       'dependencies': [
         'webcore_bindings_sources',
@@ -1378,7 +1380,6 @@
     {
       'target_name': 'webcore_dom',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1401,7 +1402,6 @@
     {
       'target_name': 'webcore_html',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1416,7 +1416,6 @@
     {
       'target_name': 'webcore_svg',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1431,7 +1430,6 @@
     {
       'target_name': 'webcore_platform',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1699,7 +1697,6 @@
     {
       'target_name': 'webcore_arm_neon',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1724,7 +1721,6 @@
     {
       'target_name': 'webcore_rendering',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1783,7 +1779,6 @@
     {
       'target_name': 'webcore_remaining',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore_prerequisites',
         '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
@@ -1985,7 +1980,6 @@
     {
       'target_name': 'webcore_test_support',
       'type': 'static_library',
-      'variables': { 'enable_wexit_time_destructors': 1, },
       'dependencies': [
         'webcore',
       ],
