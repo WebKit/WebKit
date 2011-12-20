@@ -1,3 +1,20 @@
+2011-12-20  Jarred Nicholls  <jarred@sencha.com>
+
+        Perform case insensitive matching on MIME types in XHR
+        https://bugs.webkit.org/show_bug.cgi?id=74800
+
+        Perform case insensitive matching on responseMIMEType() in didReceiveData().
+        Workaround case sensitive matching by DOMImplementation::isXMLMIMEType() in responseIsXML().
+
+        Reviewed by Darin Adler.
+
+        Tests: http/tests/xmlhttprequest/xmlhttprequest-mimetype-mixed-case.html
+               http/tests/xmlhttprequest/xmlhttprequest-overridemimetype-mixed-case.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveData):
+        (WebCore::XMLHttpRequest::responseIsXML):
+
 2011-12-20  Adam Klein  <adamk@chromium.org>
 
         Remove no-op DOMAttr* event dispatch methods from Element

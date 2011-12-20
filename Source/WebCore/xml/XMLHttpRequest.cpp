@@ -934,7 +934,9 @@ String XMLHttpRequest::responseMIMEType() const
 
 bool XMLHttpRequest::responseIsXML() const
 {
-    return DOMImplementation::isXMLMIMEType(responseMIMEType());
+    // FIXME: Remove the lower() call when DOMImplementation.isXMLMIMEType() is modified
+    //        to do case insensitive MIME type matching.
+    return DOMImplementation::isXMLMIMEType(responseMIMEType().lower());
 }
 
 int XMLHttpRequest::status(ExceptionCode& ec) const
@@ -1062,7 +1064,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
             m_decoder = TextResourceDecoder::create("application/xml");
             // Don't stop on encoding errors, unlike it is done for other kinds of XML resources. This matches the behavior of previous WebKit versions, Firefox and Opera.
             m_decoder->useLenientXMLDecoding();
-        } else if (responseMIMEType() == "text/html")
+        } else if (equalIgnoringCase(responseMIMEType(), "text/html"))
             m_decoder = TextResourceDecoder::create("text/html", "UTF-8");
         else
             m_decoder = TextResourceDecoder::create("text/plain", "UTF-8");
