@@ -95,12 +95,16 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
     // If any exception checks were linked, generate code to lookup a handler.
     if (didLinkExceptionCheck) {
         // lookupExceptionHandler is passed two arguments, exec (the CallFrame*), and
-        // an identifier for the operation that threw the exception, which we can use
-        // to look up handler information. The identifier we use is the return address
-        // of the call out from JIT code that threw the exception; this is still
-        // available on the stack, just below the stack pointer!
+        // the index into the CodeBlock's callReturnIndexVector corresponding to the
+        // call that threw the exception (this was set in nonPreservedNonReturnGPR, when
+        // the exception check was planted).
+        move(GPRInfo::nonPreservedNonReturnGPR, GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        getPCAfterCall(GPRInfo::argumentGPR1);
+#if CPU(X86)
+        // FIXME: should use the call abstraction, but this is currently in the SpeculativeJIT layer!
+        poke(GPRInfo::argumentGPR0);
+        poke(GPRInfo::argumentGPR1, 1);
+#endif
         m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
         // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
         // and the address of the handler in returnValueGPR2.

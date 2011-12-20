@@ -1,3 +1,27 @@
+2011-12-19  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74903
+        Exceptions not thrown correctly from DFG JIT on 32bit
+
+        Reviewed by Oliver Hunt.
+
+        Arguments for lookupExceptionHandler are not setup correctly.
+        In the case of ARMv7 we rely on lr being preserved over a call,
+        this in invalid. On x86 we don't should be poking the arguments onto the stack!
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffsetForCallAtIndex):
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::restoreReturnAddressBeforeReturn):
+        * dfg/DFGGPRInfo.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileBody):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addExceptionCheck):
+        (JSC::DFG::JITCompiler::addFastExceptionCheck):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+
 2011-12-19  Filip Pizlo  <fpizlo@apple.com>
 
         If we detect that we can use the JIT, don't use computed opcode lookups

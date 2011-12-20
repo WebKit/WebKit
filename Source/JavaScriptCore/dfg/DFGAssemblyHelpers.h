@@ -75,11 +75,6 @@ public:
     {
         push(address);
     }
-
-    void getPCAfterCall(GPRReg gpr)
-    {
-          peek(gpr, -1);
-    }
 #endif // CPU(X86_64) || CPU(X86)
 
 #if CPU(ARM)
@@ -96,11 +91,6 @@ public:
     ALWAYS_INLINE void restoreReturnAddressBeforeReturn(Address address)
     {
         loadPtr(address, linkRegister);
-    }
-
-    ALWAYS_INLINE void getPCAfterCall(GPRReg gpr)
-    {
-        move(ARMRegisters::lr, gpr);
     }
 #endif
 

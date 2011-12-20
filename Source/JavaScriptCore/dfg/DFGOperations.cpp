@@ -793,12 +793,12 @@ EncodedJSValue DFG_OPERATION operationNewRegexp(ExecState* exec, void* regexpPtr
     return JSValue::encode(RegExpObject::create(exec->globalData(), exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regexp));
 }
 
-DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
+DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t callIndex)
 {
     JSValue exceptionValue = exec->exception();
     ASSERT(exceptionValue);
 
-    unsigned vPCIndex = exec->codeBlock()->bytecodeOffset(faultLocation);
+    unsigned vPCIndex = exec->codeBlock()->bytecodeOffsetForCallAtIndex(callIndex);
     HandlerInfo* handler = exec->globalData().interpreter->throwException(exec, exceptionValue, vPCIndex);
 
     void* catchRoutine = handler ? handler->nativeCode.executableAddress() : (void*)ctiOpThrowNotCaught;

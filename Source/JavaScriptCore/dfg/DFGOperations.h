@@ -180,7 +180,7 @@ inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
     return DFGHandler(exec, handler).encoded();
 }
 #endif
-DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
+DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState*, uint32_t);
 
 // These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
 double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);

@@ -178,6 +178,7 @@ public:
     // Add a call out from JIT code, with an exception check.
     Call addExceptionCheck(Call functionCall, CodeOrigin codeOrigin)
     {
+        move(TrustedImm32(m_exceptionChecks.size()), GPRInfo::nonPreservedNonReturnGPR);
 #if USE(JSVALUE64)
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
 #elif USE(JSVALUE32_64)
@@ -190,6 +191,7 @@ public:
     // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
     Call addFastExceptionCheck(Call functionCall, CodeOrigin codeOrigin)
     {
+        move(TrustedImm32(m_exceptionChecks.size()), GPRInfo::nonPreservedNonReturnGPR);
         Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
         m_exceptionChecks.append(CallExceptionRecord(functionCall, exceptionCheck, codeOrigin));
         return functionCall;
