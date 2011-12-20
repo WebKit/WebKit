@@ -1,3 +1,13 @@
+2011-12-20  Greg Billock  <gbillock@google.com>
+
+        [Coverity] Fix leak in V8HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=74943
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::openCallback):
+
 2011-12-20  Sailesh Agrawal <sail@chromium.org>
 
         Merge ScrollAnimatorChromiumMac.mm back to ScrollAnimatorMac
