@@ -70,7 +70,7 @@ typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 #endif
 
-#if USE(CFURLSTORAGESESSIONS) && defined(BUILDING_ON_SNOW_LEOPARD)
+#if USE(CFURLSTORAGESESSIONS) && (defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD))
 typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #elif USE(CFURLSTORAGESESSIONS)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
