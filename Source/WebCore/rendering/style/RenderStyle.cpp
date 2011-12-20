@@ -61,10 +61,7 @@ struct SameSizeAsRenderStyle : public RefCounted<SameSizeAsRenderStyle> {
     } noninherited_flags;
 };
 
-// FIXME: Enable assert on Windows. https://bugs.webkit.org/show_bug.cgi?id=74876
-#if !OS(WINDOWS)
 COMPILE_ASSERT(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), RenderStyle_should_stay_small);
-#endif
 
 inline RenderStyle* defaultStyle()
 {
@@ -96,20 +93,7 @@ PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle()
-    : m_affectedByUncommonAttributeSelectors(false)
-    , m_unique(false)
-    , m_affectedByEmpty(false)
-    , m_emptyState(false)
-    , m_childrenAffectedByFirstChildRules(false)
-    , m_childrenAffectedByLastChildRules(false)
-    , m_childrenAffectedByDirectAdjacentRules(false)
-    , m_childrenAffectedByForwardPositionalRules(false)
-    , m_childrenAffectedByBackwardPositionalRules(false)
-    , m_firstChildState(false)
-    , m_lastChildState(false)
-    , m_explicitInheritance(false)
-    , m_childIndex(0)
-    , m_box(defaultStyle()->m_box)
+    : m_box(defaultStyle()->m_box)
     , visual(defaultStyle()->visual)
     , m_background(defaultStyle()->m_background)
     , surround(defaultStyle()->surround)
@@ -126,19 +110,6 @@ ALWAYS_INLINE RenderStyle::RenderStyle()
 }
 
 ALWAYS_INLINE RenderStyle::RenderStyle(bool)
-    : m_affectedByUncommonAttributeSelectors(false)
-    , m_unique(false)
-    , m_affectedByEmpty(false)
-    , m_emptyState(false)
-    , m_childrenAffectedByFirstChildRules(false)
-    , m_childrenAffectedByLastChildRules(false)
-    , m_childrenAffectedByDirectAdjacentRules(false)
-    , m_childrenAffectedByForwardPositionalRules(false)
-    , m_childrenAffectedByBackwardPositionalRules(false)
-    , m_firstChildState(false)
-    , m_lastChildState(false)
-    , m_explicitInheritance(false)
-    , m_childIndex(0)
 {
     setBitDefaults();
 
@@ -168,19 +139,6 @@ ALWAYS_INLINE RenderStyle::RenderStyle(bool)
 
 ALWAYS_INLINE RenderStyle::RenderStyle(const RenderStyle& o)
     : RefCounted<RenderStyle>()
-    , m_affectedByUncommonAttributeSelectors(false)
-    , m_unique(false)
-    , m_affectedByEmpty(false)
-    , m_emptyState(false)
-    , m_childrenAffectedByFirstChildRules(false)
-    , m_childrenAffectedByLastChildRules(false)
-    , m_childrenAffectedByDirectAdjacentRules(false)
-    , m_childrenAffectedByForwardPositionalRules(false)
-    , m_childrenAffectedByBackwardPositionalRules(false)
-    , m_firstChildState(false)
-    , m_lastChildState(false)
-    , m_explicitInheritance(false)
-    , m_childIndex(0)
     , m_box(o.m_box)
     , visual(o.visual)
     , m_background(o.m_background)
