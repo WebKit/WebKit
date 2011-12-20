@@ -210,17 +210,13 @@ String convertDragOperationToDropZoneOperation(DragOperation operation)
 
 bool Clipboard::hasDropZoneType(const String& keyword)
 {
-    if (keyword.length() < 3 || keyword[1] != ':')
-        return false;
-        
-    switch (keyword[0]) {
-    case 'f':
-        return hasFileOfType(keyword.substring(2));
-    case 's':
-        return hasStringOfType(keyword.substring(2));
-    default:
-        return false;
-    }
+    if (keyword.startsWith("file:"))
+        return hasFileOfType(keyword.substring(5));
+                             
+    if (keyword.startsWith("string:"))
+        return hasStringOfType(keyword.substring(7));
+
+    return false;
 }
 
 } // namespace WebCore
