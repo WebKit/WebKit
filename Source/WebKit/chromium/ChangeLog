@@ -1,3 +1,12 @@
+2011-12-20  Mike Reed  <reed@google.com>
+
+        enable USE_SKIA_TEXT by default, replacing GDI for all text drawing
+        https://bugs.webkit.org/show_bug.cgi?id=74928
+
+        Reviewed by Stephen White.
+
+        * features.gypi:
+
 2011-12-20  Greg Billock  <gbillock@google.com>
 
         Make WebIntentServiceInfo constructor public for testing.

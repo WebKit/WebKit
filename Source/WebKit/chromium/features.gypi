@@ -113,7 +113,7 @@
     # through GYP_DEFINES.
     'variables': {
       'use_accelerated_compositing%': 1,
-      'enable_skia_text%': 0,
+      'enable_skia_text%': 1,
       'enable_svg%': 1,
       'enable_viewport%': 0,
       'enable_touch_events%': 1,
