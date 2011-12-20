@@ -30,6 +30,6 @@ WebView {
     onLoadFailed: {
         test.compare(url, testUrl)
         test.compare(errorCode, NetworkReply.ContentNotFoundError)
-        test.compare(errorType, WebView.NetworkError)
+        test.compare(errorDomain, WebView.NetworkErrorDomain)
     }
 }

@@ -34,7 +34,7 @@ QT_END_NAMESPACE
 class QtWebError {
 public:
     enum Type {
-        EngineError,
+        InternalError,
         NetworkError,
         HttpError,
         DownloadError

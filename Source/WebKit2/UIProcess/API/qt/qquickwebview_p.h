@@ -59,7 +59,7 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
     Q_PROPERTY(bool loading READ loading NOTIFY navigationStateChanged FINAL)
     Q_PROPERTY(bool canReload READ canReload NOTIFY navigationStateChanged FINAL)
     Q_ENUMS(NavigationRequestAction)
-    Q_ENUMS(ErrorType)
+    Q_ENUMS(ErrorDomain)
 
 public:
     enum NavigationRequestAction {
@@ -68,11 +68,11 @@ public:
         DownloadRequest
     };
 
-    enum ErrorType {
-        EngineError,
-        NetworkError,
-        HttpError,
-        DownloadError
+    enum ErrorDomain {
+        InternalErrorDomain,
+        NetworkErrorDomain,
+        HttpErrorDomain,
+        DownloadErrorDomain
     };
     QQuickWebView(QQuickItem* parent = 0);
     virtual ~QQuickWebView();
@@ -107,7 +107,7 @@ Q_SIGNALS:
     void statusBarMessageChanged(const QString& message);
     void loadStarted();
     void loadSucceeded();
-    void loadFailed(QQuickWebView::ErrorType errorType, int errorCode, const QUrl& url);
+    void loadFailed(QQuickWebView::ErrorDomain errorDomain, int errorCode, const QUrl& url, const QString& description);
     void loadProgressChanged(int progress);
     void urlChanged(const QUrl& url);
     void linkHovered(const QUrl& url, const QString& title);

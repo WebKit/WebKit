@@ -1,3 +1,19 @@
+2011-12-20  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Improve QQuickWebView error handling API
+        https://bugs.webkit.org/show_bug.cgi?id=73815
+
+        Reviewed by Simon Hausmann.
+
+        Modifying loadFail signal to include the error description
+        and changing the ErrorType enum to ErrorDomain, to stay aligned
+        with ResourceError API itself.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_loadFail.qml:
+        * UIProcess/qt/QtWebPageLoadClient.cpp:
+        (QtWebPageLoadClient::dispatchLoadFailed):
+
 2011-12-19  Sam Weinig  <sam@webkit.org>
 
         Add support for scrollLineDown: and scrollLineUp: NSResponder selectors

@@ -47,7 +47,7 @@ QtWebError::Type QtWebError::type() const
         return QtWebError::HttpError;
     if (errorDomain == "Download")
         return QtWebError::DownloadError;
-    return QtWebError::EngineError;
+    return QtWebError::InternalError;
 }
 
 int QtWebError::errorCode() const

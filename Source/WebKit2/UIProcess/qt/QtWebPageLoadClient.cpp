@@ -98,7 +98,7 @@ void QtWebPageLoadClient::dispatchLoadFailed(WKErrorRef error)
         return;
 
     QtWebError qtError(error);
-    emit m_webView->loadFailed(static_cast<QQuickWebView::ErrorType>(qtError.type()), qtError.errorCode(), qtError.url());
+    emit m_webView->loadFailed(static_cast<QQuickWebView::ErrorDomain>(qtError.type()), qtError.errorCode(), qtError.url(), qtError.description());
 }
 
 void QtWebPageLoadClient::setLoadProgress(int loadProgress)
