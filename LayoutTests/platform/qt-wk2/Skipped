@@ -851,9 +851,13 @@ fast/css/font-face-descending-unicode-range.html
 # https://bugs.webkit.org/show_bug.cgi?id=70935
 fast/transforms/scrollIntoView-transformed.html
 
-# [Qt][WK2] fast/multicol/pagination-v-vertical-lr.html crashes
-# https://bugs.webkit.org/show_bug.cgi?id=73436
-fast/multicol/pagination-v-vertical-lr.html5lib
+# [Qt][WK2] Assertion hit and crash with fast/multicol/pagination-* tests
+# https://bugs.webkit.org/show_bug.cgi?id=74511
+fast/multicol/pagination-h-horizontal-bt.html
+fast/multicol/pagination-h-horizontal-tb.html
+fast/multicol/pagination-h-vertical-rl.html
+fast/multicol/pagination-v-horizontal-bt.html
+fast/multicol/pagination-v-vertical-lr.html
 
 # [Qt][WK2] fast/forms/access-key-for-all-elements.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=73917
