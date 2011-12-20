@@ -39,6 +39,7 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/sandboxed-iframe-navigation-pare
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
+BUGCR24182 SLOW DEBUG : svg/filters/big-sized-filter.svg = PASS
 // See BUGCR104797
 
 BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
@@ -2949,7 +2950,6 @@ BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = TE
 // Slow
 BUGCR76550 SLOW LINUX WIN DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
 BUGCR76550 MAC DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = PASS TIMEOUT
-BUGCR76578 LINUX DEBUG : svg/filters/big-sized-filter.svg = PASS TIMEOUT
 
 // New and flaky
 BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS TEXT
