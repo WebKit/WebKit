@@ -34,14 +34,14 @@ class QUrl;
 QT_END_NAMESPACE
 
 namespace WebKit {
-class WebContext;
+class QtWebContext;
 class WebIconDatabase;
 
 class QtWebIconDatabaseClient : public QObject {
     Q_OBJECT
 
 public:
-    QtWebIconDatabaseClient(WebKit::WebContext*);
+    QtWebIconDatabaseClient(QtWebContext*);
     ~QtWebIconDatabaseClient();
 
     QImage iconImageForPageURL(const String& pageURL, const QSize& iconSize = QSize(32, 32));
@@ -57,6 +57,7 @@ public:
 private:
     unsigned iconURLHashForPageURL(const String&);
     static void didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo);
+    uint64_t m_contextId;
     WebKit::WebIconDatabase* m_iconDatabase;
     Mutex m_imageLock;
 };

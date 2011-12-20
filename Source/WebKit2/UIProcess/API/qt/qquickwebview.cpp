@@ -92,7 +92,6 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     pageUIClient.reset(new QtWebPageUIClient(toAPI(webPageProxy.get()), q_ptr));
     navigationHistory = adoptPtr(QWebNavigationHistoryPrivate::createHistory(toAPI(webPageProxy.get())));
 
-    RefPtr<QtWebContext> context = QtWebContext::defaultContext();
     QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
     QObject::connect(iconDatabase, SIGNAL(iconChangedForPageURL(QUrl, QUrl)), q_ptr, SLOT(_q_onIconChangedForPageURL(QUrl, QUrl)));
     QObject::connect(q_ptr, SIGNAL(urlChanged(QUrl)), iconDatabase, SLOT(requestIconForPageURL(QUrl)));
@@ -527,7 +526,6 @@ void QQuickWebViewPrivate::setIcon(const QUrl& iconURL)
     String newPageURL = webPageProxy->mainFrame()->url();
 
     if (oldPageURL != newPageURL) {
-        RefPtr<QtWebContext> context = QtWebContext::defaultContext();
         QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
         if (!oldPageURL.isEmpty())
             iconDatabase->releaseIconForPageURL(oldPageURL);

@@ -22,6 +22,7 @@
 
 #include "Image.h"
 #include "KURL.h"
+#include "QtWebContext.h"
 #include "SharedBuffer.h"
 #include "WKURLQt.h"
 #include "WebContext.h"
@@ -39,9 +40,11 @@ static inline QtWebIconDatabaseClient* toQtWebIconDatabaseClient(const void* cli
     return reinterpret_cast<QtWebIconDatabaseClient*>(const_cast<void*>(clientInfo));
 }
 
-QtWebIconDatabaseClient::QtWebIconDatabaseClient(WebContext* context)
+QtWebIconDatabaseClient::QtWebIconDatabaseClient(QtWebContext *qtWebContext)
 {
+    m_contextId = qtWebContext->contextID();
     // The setter calls the getter here as it triggers the startup of the icon database.
+    WebContext* context = qtWebContext->context();
     context->setIconDatabasePath(context->iconDatabasePath());
     m_iconDatabase = context->iconDatabase();
 
@@ -96,7 +99,12 @@ void QtWebIconDatabaseClient::requestIconForPageURL(const QUrl& pageURL)
     QUrl url;
     url.setScheme(QStringLiteral("image"));
     url.setHost(QStringLiteral("webicon"));
-    url.setPath(QString::number(iconID).prepend('/'));
+    QString path;
+    path.append(QLatin1Char('/'));
+    path.append(QString::number(m_contextId));
+    path.append(QLatin1Char('/'));
+    path.append(QString::number(iconID));
+    url.setPath(path);
     url.setEncodedFragment(pageURL.toEncoded());
     emit iconChangedForPageURL(pageURL, url);
 }

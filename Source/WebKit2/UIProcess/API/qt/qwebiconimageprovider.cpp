@@ -39,13 +39,23 @@ QWebIconImageProvider::~QWebIconImageProvider()
 
 QImage QWebIconImageProvider::requestImage(const QString& id, QSize* size, const QSize& requestedSize)
 {
-    RefPtr<QtWebContext> context = QtWebContext::defaultContext();
-    QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
-
     QString encodedIconUrl = id;
     encodedIconUrl.remove(0, encodedIconUrl.indexOf('#') + 1);
     String pageURL = QUrl::fromPercentEncoding(encodedIconUrl.toUtf8());
 
+    // The string identifier has the leading image://webicon/ already stripped, so we just
+    // need to truncate from the first slash to get the context id.
+    QString contextIDAsString = id;
+    contextIDAsString.truncate(contextIDAsString.indexOf(QLatin1Char('/')));
+    bool ok = false;
+    uint64_t contextId = contextIDAsString.toUInt(&ok);
+    if (!ok)
+        return QImage();
+    QtWebContext* context = QtWebContext::contextByID(contextId);
+    if (!context)
+        return QImage();
+
+    QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
     QImage icon = requestedSize.isValid() ? iconDatabase->iconImageForPageURL(pageURL, requestedSize) : iconDatabase->iconImageForPageURL(pageURL);
     ASSERT(!icon.isNull());
 

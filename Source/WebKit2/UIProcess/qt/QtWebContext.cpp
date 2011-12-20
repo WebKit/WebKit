@@ -34,17 +34,28 @@
 
 namespace WebKit {
 
+static uint64_t generateContextID()
+{
+    static uint64_t uniqueContextID = 1;
+    return uniqueContextID++;
+}
+
+static HashMap<uint64_t, QtWebContext*> contextMap;
+
 QtWebContext* QtWebContext::s_defaultContext = 0;
 
 QtWebContext::QtWebContext(WebContext* context)
     : m_context(context)
 {
+    m_contextID = generateContextID();
+    contextMap.set(m_contextID, this);
 }
 
 QtWebContext::~QtWebContext()
 {
     if (s_defaultContext == this)
         s_defaultContext = 0;
+    contextMap.remove(m_contextID);
 }
 
 // Used only by WebKitTestRunner. It avoids calling initialize(), so that we don't register any clients.
@@ -91,10 +102,15 @@ void QtWebContext::postMessageToNavigatorQtObject(WebPageProxy* webPageProxy, co
     m_context->postMessageToInjectedBundle(messageName, body.get());
 }
 
+QtWebContext* QtWebContext::contextByID(uint64_t id)
+{
+    return contextMap.get(id);
+}
+
 void QtWebContext::initialize()
 {
     m_downloadManager = adoptPtr(new QtDownloadManager(m_context.get()));
-    m_iconDatabase = adoptPtr(new QtWebIconDatabaseClient(m_context.get()));
+    m_iconDatabase = adoptPtr(new QtWebIconDatabaseClient(this));
     initializeContextInjectedBundleClient();
 }
 
