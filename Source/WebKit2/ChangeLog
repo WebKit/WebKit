@@ -1,3 +1,23 @@
+2011-12-19  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] QWebDownloadItems are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=74618
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        QWebDownloadItems are leaking when WebProcess raises a
+        download failure before sending didReceiveResponse back to UIProcess.
+        This can happen when QtFileDownloader fails in determineFilename(), for instance.
+        It happens when QtDownloadManager::downloadFailed() is reached
+        and has an "empty" downloadItem, which means we never got to
+        QtDownloadManager::downloadReceivedResponse(). At this point
+        QQuickWebView::downloadRequested() signal hasn't been emitted and
+        the downloadItem will have null parent. Therefore, it will leak
+        unless we delete it ourselves.
+
+        * UIProcess/qt/QtDownloadManager.cpp:
+        (WebKit::QtDownloadManager::downloadFailed):
+
 2011-12-19  Anders Carlsson  <andersca@apple.com>
 
         Send gesture events through the event dispatcher and scrolling coordinator

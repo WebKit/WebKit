@@ -89,6 +89,16 @@ void QtDownloadManager::downloadFailed(DownloadProxy* download, const QtWebError
     // Will be called when download fails or is aborted.
     QWebDownloadItem* downloadItem = m_downloads.take(download->downloadID());
     ASSERT(downloadItem);
+
+    // If the parent is null at this point, the download failed before it
+    // received a response and downloadRequested was emitted.
+    // Due to this the item will never be parented and we have to delete it
+    // manually at this point.
+    if (!downloadItem->parent()) {
+        delete downloadItem;
+        return;
+    }
+
     emit downloadItem->failed(error.errorCodeAsDownloadError(), error.url(), error.description());
 }
 
