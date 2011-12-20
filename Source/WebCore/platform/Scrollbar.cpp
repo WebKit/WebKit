@@ -371,13 +371,13 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 void Scrollbar::mouseEntered()
 {
     if (m_scrollableArea)
-        m_scrollableArea->scrollAnimator()->mouseEnteredScrollbar(this);
+        m_scrollableArea->mouseEnteredScrollbar(this);
 }
 
 bool Scrollbar::mouseExited()
 {
     if (m_scrollableArea)
-        m_scrollableArea->scrollAnimator()->mouseExitedScrollbar(this);
+        m_scrollableArea->mouseExitedScrollbar(this);
     setHoveredPart(NoPart);
     return true;
 }
@@ -394,7 +394,7 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
         // to really know if the mouse has exited the scrollbar on a mouseUp.
         ScrollbarPart part = theme()->hitTest(this, mouseEvent);
         if (part == NoPart)
-            m_scrollableArea->scrollAnimator()->mouseExitedScrollbar(this);
+            m_scrollableArea->mouseExitedScrollbar(this);
     }
 
     if (parent() && parent()->isFrameView())

@@ -253,7 +253,7 @@ void BuiltInPDFView::destroy()
 
 void BuiltInPDFView::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
 {
-    scrollAnimator()->contentAreaWillPaint();
+    contentAreaWillPaint();
 
     paintBackground(graphicsContext, dirtyRect);
 
@@ -454,7 +454,7 @@ bool BuiltInPDFView::handleMouseEvent(const WebMouseEvent& event)
 {
     switch (event.type()) {
     case WebEvent::MouseMove:
-        scrollAnimator()->mouseMovedInContentArea();
+        mouseMovedInContentArea();
         // FIXME: Should also notify scrollbar to show hover effect. Should also send mouseExited to hide it.
         break;
     case WebEvent::MouseDown: {
@@ -486,13 +486,13 @@ bool BuiltInPDFView::handleWheelEvent(const WebWheelEvent& event)
 
 bool BuiltInPDFView::handleMouseEnterEvent(const WebMouseEvent&)
 {
-    scrollAnimator()->mouseEnteredContentArea();
+    mouseEnteredContentArea();
     return false;
 }
 
 bool BuiltInPDFView::handleMouseLeaveEvent(const WebMouseEvent&)
 {
-    scrollAnimator()->mouseExitedContentArea();
+    mouseExitedContentArea();
     return false;
 }
 

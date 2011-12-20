@@ -573,9 +573,9 @@ void FocusController::setActive(bool active)
             HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
             for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
                 if (!active)
-                    (*it)->scrollAnimator()->contentAreaDidHide();
+                    (*it)->contentAreaDidHide();
                 else
-                    (*it)->scrollAnimator()->contentAreaDidShow();
+                    (*it)->contentAreaDidShow();
             }
         }
     }

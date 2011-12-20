@@ -72,6 +72,15 @@ public:
     void willStartLiveResize();
     void willEndLiveResize();
 
+    void contentAreaWillPaint() const;
+    void mouseEnteredContentArea() const;
+    void mouseExitedContentArea() const;
+    void mouseMovedInContentArea() const;
+    void mouseEnteredScrollbar(Scrollbar*) const;
+    void mouseExitedScrollbar(Scrollbar*) const;
+    void contentAreaDidShow() const;
+    void contentAreaDidHide() const;
+
     void didAddVerticalScrollbar(Scrollbar*);
     void willRemoveVerticalScrollbar(Scrollbar*);
     virtual void didAddHorizontalScrollbar(Scrollbar*);

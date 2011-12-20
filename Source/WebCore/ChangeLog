@@ -1,3 +1,36 @@
+2011-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Add ScrollableArea wrappers for a bunch of ScrollAnimator member functions
+        https://bugs.webkit.org/show_bug.cgi?id=74951
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didMoveOnscreen):
+        (WebCore::FrameView::willMoveOffscreen):
+        (WebCore::FrameView::notifyPageThatContentAreaWillPaint):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::contentAreaWillPaint):
+        (WebCore::ScrollableArea::mouseEnteredContentArea):
+        (WebCore::ScrollableArea::mouseExitedContentArea):
+        (WebCore::ScrollableArea::mouseMovedInContentArea):
+        (WebCore::ScrollableArea::mouseEnteredScrollbar):
+        (WebCore::ScrollableArea::mouseExitedScrollbar):
+        (WebCore::ScrollableArea::contentAreaDidShow):
+        (WebCore::ScrollableArea::contentAreaDidHide):
+        * platform/ScrollableArea.h:
+        * platform/ScrollableAreaClient.h:
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::mouseEntered):
+        (WebCore::Scrollbar::mouseExited):
+        (WebCore::Scrollbar::mouseUp):
+
 2011-12-20  Jarred Nicholls  <jarred@sencha.com>
 
         Perform case insensitive matching on MIME types in XHR

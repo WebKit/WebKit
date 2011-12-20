@@ -66,6 +66,7 @@
 
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
+#include <wtf/UnusedParam.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -130,6 +131,8 @@ static inline ScrollableAreaClient* scrollableAreaClient(Frame* frame)
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             return scrollingCoordinator->scrollableAreaClientForFrame(frame);
     }
+#else
+    UNUSED_PARAM(frame);
 #endif
 
     return 0;
@@ -881,7 +884,7 @@ void FrameView::didMoveOnscreen()
     RenderView* root = rootRenderer(this);
     if (root)
         root->didMoveOnscreen();
-    scrollAnimator()->contentAreaDidShow();
+    contentAreaDidShow();
 }
 
 void FrameView::willMoveOffscreen()
@@ -889,7 +892,7 @@ void FrameView::willMoveOffscreen()
     RenderView* root = rootRenderer(this);
     if (root)
         root->willMoveOffscreen();
-    scrollAnimator()->contentAreaDidHide();
+    contentAreaDidHide();
 }
 
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
@@ -2645,7 +2648,7 @@ void FrameView::notifyPageThatContentAreaWillPaint() const
 
     HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
     for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it)
-        (*it)->scrollAnimator()->contentAreaWillPaint();
+        (*it)->contentAreaWillPaint();
 }
 
 bool FrameView::scrollAnimatorEnabled() const

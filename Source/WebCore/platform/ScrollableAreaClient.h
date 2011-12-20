@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class Scrollbar;
+
 class ScrollableAreaClient {
 public:
     virtual ~ScrollableAreaClient() { }

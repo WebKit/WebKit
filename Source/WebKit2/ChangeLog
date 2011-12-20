@@ -1,3 +1,16 @@
+2011-12-20  Anders Carlsson  <andersca@apple.com>
+
+        Add ScrollableArea wrappers for a bunch of ScrollAnimator member functions
+        https://bugs.webkit.org/show_bug.cgi?id=74951
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (WebKit::BuiltInPDFView::paint):
+        (WebKit::BuiltInPDFView::handleMouseEvent):
+        (WebKit::BuiltInPDFView::handleMouseEnterEvent):
+        (WebKit::BuiltInPDFView::handleMouseLeaveEvent):
+
 2011-12-20  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.
