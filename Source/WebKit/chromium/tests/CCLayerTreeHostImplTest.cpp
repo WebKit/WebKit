@@ -26,9 +26,9 @@
 
 #include "cc/CCLayerTreeHostImpl.h"
 
+#include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerRendererChromium.h"
-#include "MockWebGraphicsContext3D.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
@@ -155,7 +155,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
     EXPECT_TRUE(m_didRequestCommit);
 }
 
-class BlendStateTrackerContext: public MockWebGraphicsContext3D {
+class BlendStateTrackerContext: public FakeWebGraphicsContext3D {
 public:
     BlendStateTrackerContext() : m_blend(false) { }
 
@@ -289,7 +289,7 @@ TEST_F(CCLayerTreeHostImplTest, blendingOffWhenDrawingOpaqueLayers)
     EXPECT_TRUE(layer2->drawn());
 }
 
-class ReshapeTrackerContext: public MockWebGraphicsContext3D {
+class ReshapeTrackerContext: public FakeWebGraphicsContext3D {
 public:
     ReshapeTrackerContext() : m_reshapeCalled(false) { }
 

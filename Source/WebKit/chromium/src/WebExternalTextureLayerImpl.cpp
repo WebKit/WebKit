@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebExternalTextureLayerImpl.h"
 
-#include "platform/WebLayerClient.h"
 #include "GraphicsContext.h"
 #include "platform/WebCanvas.h"
 
@@ -34,14 +33,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebExternalTextureLayerImpl> WebExternalTextureLayerImpl::create(WebLayerClient* client)
+PassRefPtr<WebExternalTextureLayerImpl> WebExternalTextureLayerImpl::create()
 {
-    return adoptRef(new WebExternalTextureLayerImpl(client));
+    return adoptRef(new WebExternalTextureLayerImpl());
 }
 
-WebExternalTextureLayerImpl::WebExternalTextureLayerImpl(WebLayerClient* client)
+WebExternalTextureLayerImpl::WebExternalTextureLayerImpl()
     : PluginLayerChromium(this)
-    , m_client(client)
 {
     setFlipped(false);
 }
@@ -58,12 +56,6 @@ bool WebExternalTextureLayerImpl::drawsContent() const
 
 void WebExternalTextureLayerImpl::paintContents(GraphicsContext&, const IntRect&)
 {
-}
-
-void WebExternalTextureLayerImpl::notifySyncRequired()
-{
-    if (m_client)
-        m_client->notifyNeedsComposite();
 }
 
 } // namespace WebKit

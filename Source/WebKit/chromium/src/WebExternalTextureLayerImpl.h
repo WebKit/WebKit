@@ -30,20 +30,16 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
-class WebLayerClient;
 
 class WebExternalTextureLayerImpl : public WebCore::PluginLayerChromium, public WebCore::CCLayerDelegate {
 public:
-    static PassRefPtr<WebExternalTextureLayerImpl> create(WebLayerClient*);
+    static PassRefPtr<WebExternalTextureLayerImpl> create();
 
 protected:
-    WebExternalTextureLayerImpl(WebLayerClient*);
+    WebExternalTextureLayerImpl();
     virtual ~WebExternalTextureLayerImpl();
     virtual void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect& clip);
-    virtual void notifySyncRequired();
     virtual bool drawsContent() const;
-
-    WebLayerClient* m_client;
 };
 
 } // namespace WebKit

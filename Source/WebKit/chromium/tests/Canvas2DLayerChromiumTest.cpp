@@ -26,8 +26,8 @@
 
 #include "Canvas2DLayerChromium.h"
 
+#include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
-#include "MockWebGraphicsContext3D.h"
 #include "TextureManager.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -58,7 +58,7 @@ protected:
 
 namespace {
 
-class MockCanvasContext : public MockWebGraphicsContext3D {
+class MockCanvasContext : public FakeWebGraphicsContext3D {
 public:
     MOCK_METHOD0(createFramebuffer, WebGLId());
     MOCK_METHOD0(createTexture, WebGLId());

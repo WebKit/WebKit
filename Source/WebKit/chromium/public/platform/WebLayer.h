@@ -40,6 +40,8 @@ struct WebSize;
 
 class WebLayer {
 public:
+    WEBKIT_EXPORT static WebLayer create();
+    // FIXME: Remove this constructor once downstream clients are updated.
     WEBKIT_EXPORT static WebLayer create(WebLayerClient*);
 
     WebLayer() { }

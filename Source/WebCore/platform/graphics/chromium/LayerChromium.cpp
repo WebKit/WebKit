@@ -129,8 +129,8 @@ void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 
 void LayerChromium::setNeedsCommit()
 {
-    if (m_delegate)
-        m_delegate->notifySyncRequired();
+    if (m_layerTreeHost)
+        m_layerTreeHost->setNeedsCommit();
 }
 
 void LayerChromium::setParent(LayerChromium* layer)

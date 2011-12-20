@@ -26,10 +26,10 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "CompositorFakeGraphicsContext3D.h"
 #include "ContentLayerChromium.h"
-#include "GraphicsContext3DPrivate.h"
+#include "FakeWebGraphicsContext3D.h"
 #include "LayerChromium.h"
-#include "MockWebGraphicsContext3D.h"
 #include "TextureManager.h"
 #include "WebCompositor.h"
 #include "WebKit.h"
@@ -104,9 +104,9 @@ public:
     static PassRefPtr<MockLayerTreeHost> create(TestHooks* testHooks, CCLayerTreeHostClient* client, PassRefPtr<LayerChromium> rootLayer, const CCSettings& settings)
     {
         RefPtr<MockLayerTreeHost> layerTreeHost = adoptRef(new MockLayerTreeHost(testHooks, client, settings));
-        layerTreeHost->setRootLayer(rootLayer);
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
+        layerTreeHost->setRootLayer(rootLayer);
 
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
         layerTreeHost->setViewport(IntSize(1, 1));
@@ -129,24 +129,6 @@ private:
     TestHooks* m_testHooks;
 };
 
-// Test stub for WebGraphicsContext3D. Returns canned values needed for compositor initialization.
-class CompositorMockWebGraphicsContext3D : public MockWebGraphicsContext3D {
-public:
-    static PassOwnPtr<CompositorMockWebGraphicsContext3D> create()
-    {
-        return adoptPtr(new CompositorMockWebGraphicsContext3D());
-    }
-
-    virtual bool makeContextCurrent() { return true; }
-    virtual WebGLId createProgram() { return 1; }
-    virtual WebGLId createShader(WGC3Denum) { return 1; }
-    virtual void getShaderiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
-    virtual void getProgramiv(WebGLId, WGC3Denum, WGC3Dint* value) { *value = 1; }
-
-private:
-    CompositorMockWebGraphicsContext3D() { }
-};
-
 // Implementation of CCLayerTreeHost callback interface.
 class MockLayerTreeHostClient : public CCLayerTreeHostClient {
 public:
@@ -167,10 +149,7 @@ public:
 
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D()
     {
-        OwnPtr<WebGraphicsContext3D> mock = CompositorMockWebGraphicsContext3D::create();
-        GraphicsContext3D::Attributes attrs;
-        RefPtr<GraphicsContext3D> context = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(mock.release(), attrs, 0, GraphicsContext3D::RenderDirectlyToHostWindow, GraphicsContext3DPrivate::ForUseOnAnotherThread);
-        return context;
+        return createCompositorMockGraphicsContext3D(GraphicsContext3D::Attributes());
     }
 
     virtual void didCommitAndDrawFrame()
@@ -757,7 +736,7 @@ public:
         postSetNeedsCommitToMainThread();
     }
 
-    virtual void beginCommitOnCCThread(CCLayerTreeHostImpl* impl)
+    virtual void animateAndLayout(double frameBeginTime)
     {
         LayerChromium* root = m_layerTreeHost->rootLayer();
         if (!m_layerTreeHost->frameNumber())
@@ -942,7 +921,6 @@ public:
 
     virtual bool drawsContent() const { return true; }
     virtual bool preserves3D() { return false; }
-    virtual void notifySyncRequired() { }
 
 private:
     CCLayerTreeHostTest* m_test;

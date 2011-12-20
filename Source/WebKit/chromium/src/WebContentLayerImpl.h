@@ -30,23 +30,20 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
-class WebLayerClient;
 class WebContentLayerClient;
 
 class WebContentLayerImpl : public WebCore::ContentLayerChromium, public WebCore::CCLayerDelegate {
 public:
-    static PassRefPtr<WebContentLayerImpl> create(WebLayerClient*, WebContentLayerClient* contentClient);
+    static PassRefPtr<WebContentLayerImpl> create(WebContentLayerClient* contentClient);
 
     void setDrawsContent(bool);
     virtual bool drawsContent() const;
 
 protected:
-    WebContentLayerImpl(WebLayerClient*, WebContentLayerClient* contentClient);
+    explicit WebContentLayerImpl(WebContentLayerClient* contentClient);
     virtual ~WebContentLayerImpl();
     virtual void paintContents(WebCore::GraphicsContext&, const WebCore::IntRect& clip);
-    virtual void notifySyncRequired();
 
-    WebLayerClient* m_client;
     WebContentLayerClient* m_contentClient;
     bool m_drawsContent;
 };

@@ -31,9 +31,14 @@
 
 namespace WebKit {
 
-WebExternalTextureLayer WebExternalTextureLayer::create(WebLayerClient* client)
+WebExternalTextureLayer WebExternalTextureLayer::create(WebLayerClient*)
 {
-    return WebExternalTextureLayer(WebExternalTextureLayerImpl::create(client));
+    return WebExternalTextureLayer::create();
+}
+
+WebExternalTextureLayer WebExternalTextureLayer::create()
+{
+    return WebExternalTextureLayer(WebExternalTextureLayerImpl::create());
 }
 
 void WebExternalTextureLayer::setTextureId(unsigned id)

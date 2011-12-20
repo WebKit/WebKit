@@ -31,9 +31,14 @@
 
 namespace WebKit {
 
-WebContentLayer WebContentLayer::create(WebLayerClient* client, WebContentLayerClient* contentClient)
+WebContentLayer WebContentLayer::create(WebContentLayerClient* contentClient)
 {
-    return WebContentLayer(WebContentLayerImpl::create(client, contentClient));
+    return WebContentLayer(WebContentLayerImpl::create(contentClient));
+}
+
+WebContentLayer WebContentLayer::create(WebLayerClient*, WebContentLayerClient* contentClient)
+{
+    return WebContentLayer::create(contentClient);
 }
 
 void WebContentLayer::setDrawsContent(bool drawsContent)
