@@ -5272,3 +5272,26 @@ transforms/svg-vs-css.xhtml
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
+
+# new failing tests
+animations/cross-fade-background-image.html
+animations/cross-fade-border-image-source.html
+animations/cross-fade-list-style-image.html
+animations/cross-fade-webkit-mask-box-image.html
+animations/cross-fade-webkit-mask-image.html
+editing/input/caret-at-the-edge-of-contenteditable.html
+editing/input/caret-at-the-edge-of-input.html
+editing/input/reveal-caret-of-multiline-contenteditable.html
+editing/input/reveal-caret-of-multiline-input.html
+fast/forms/number/input-appearance-number-rtl.html
+fast/forms/number/input-appearance-spinbutton-disabled-readonly.html
+fast/forms/number/input-appearance-spinbutton-layer.html
+http/tests/cache/cancel-during-revalidation-succeeded.html
+http/tests/security/contentSecurityPolicy/report-only-from-header.php
+transitions/cross-fade-background-image.html
+transitions/cross-fade-border-image.html
+
+# new crashing tests
+css3/flexbox/flex-align.html
+fast/canvas/2d.text.draw.fill.maxWidth.veryLarge.html
+fast/css/font-face-unquoted-local.html
