@@ -65,8 +65,7 @@ class QWEBKIT_EXPORT QQuickWebView : public QQuickItem {
 public:
     enum NavigationRequestAction {
         AcceptRequest,
-        IgnoreRequest,
-        DownloadRequest
+        IgnoreRequest
     };
 
     enum ErrorDomain {
@@ -178,8 +177,13 @@ class QWEBKIT_EXPORT QQuickWebViewExperimental : public QObject {
     Q_PROPERTY(QWebPreferences* preferences READ preferences CONSTANT FINAL)
     Q_PROPERTY(bool useTraditionalDesktopBehaviour READ useTraditionalDesktopBehaviour WRITE setUseTraditionalDesktopBehaviour)
     Q_PROPERTY(QWebViewportInfo* viewportInfo READ viewportInfo CONSTANT FINAL)
+    Q_ENUMS(NavigationRequestAction)
 
 public:
+    enum NavigationRequestAction {
+        DownloadRequest = 2
+    };
+
     QQuickWebViewExperimental(QQuickWebView* webView);
     virtual ~QQuickWebViewExperimental();
 

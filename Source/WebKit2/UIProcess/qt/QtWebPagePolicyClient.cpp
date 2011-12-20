@@ -21,6 +21,7 @@
 #include "config.h"
 #include "QtWebPagePolicyClient.h"
 
+#include "WKFrame.h"
 #include "WKURLQt.h"
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
@@ -41,18 +42,18 @@ QtWebPagePolicyClient::QtWebPagePolicyClient(WKPageRef pageRef, QQuickWebView* w
     WKPageSetPagePolicyClient(pageRef, &policyClient);
 }
 
-void QtWebPagePolicyClient::decidePolicyForNavigationAction(const QUrl& url, Qt::MouseButton mouseButton, Qt::KeyboardModifiers keyboardModifiers, WKFramePolicyListenerRef listener)
+void QtWebPagePolicyClient::decidePolicyForNavigationAction(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton mouseButton, Qt::KeyboardModifiers keyboardModifiers, WKFramePolicyListenerRef listener)
 {
     // NOTE: even though the C API (and the WebKit2 IPC) supports an asynchronous answer, this is not currently working.
     // We are expected to call the listener immediately. See the patch for https://bugs.webkit.org/show_bug.cgi?id=53785.
-    QWebNavigationRequest navigationRequest(url, mouseButton, keyboardModifiers);
+    QWebNavigationRequest navigationRequest(url, originatingUrl, mouseButton, keyboardModifiers);
     emit m_webView->navigationRequested(&navigationRequest);
 
     switch (QQuickWebView::NavigationRequestAction(navigationRequest.action())) {
     case QQuickWebView::IgnoreRequest:
         WKFramePolicyListenerIgnore(listener);
         return;
-    case QQuickWebView::DownloadRequest:
+    case QQuickWebViewExperimental::DownloadRequest:
         WKFramePolicyListenerDownload(listener);
         return;
     case QQuickWebView::AcceptRequest:
@@ -98,12 +99,13 @@ static Qt::KeyboardModifiers toQtKeyboardModifiers(WKEventModifiers modifiers)
     return qtModifiers;
 }
 
-void QtWebPagePolicyClient::decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
+void QtWebPagePolicyClient::decidePolicyForNavigationAction(WKPageRef, WKFrameRef frame, WKFrameNavigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef, const void* clientInfo)
 {
-    WKURLRef requestURL = WKURLRequestCopyURL(request);
-    QUrl qUrl = WKURLCopyQUrl(requestURL);
-    WKRelease(requestURL);
-    toQtWebPagePolicyClient(clientInfo)->decidePolicyForNavigationAction(qUrl, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers), listener);
+    WKRetainPtr<WKURLRef> frameURL(AdoptWK, WKFrameCopyURL(frame));
+    WKRetainPtr<WKURLRef> requestURL(AdoptWK, WKURLRequestCopyURL(request));
+    QUrl qUrlFrame = WKURLCopyQUrl(frameURL.get());
+    QUrl qUrl = WKURLCopyQUrl(requestURL.get());
+    toQtWebPagePolicyClient(clientInfo)->decidePolicyForNavigationAction(qUrl, qUrlFrame, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers), listener);
 }
 
 void QtWebPagePolicyClient::decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)

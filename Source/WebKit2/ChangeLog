@@ -1,3 +1,28 @@
+2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] Extend QQuickWebview::navigationRequested API
+        https://bugs.webkit.org/show_bug.cgi?id=73818
+
+        Reviewed by Simon Hausmann.
+
+        Added url of the originating frame on QWebNavigationRequest,
+        accessible via 'request.originatingUrl' on QML. Download action
+        was moved to experimental, so in order to use it you should set
+        'request.action = WebViewExperimental.DownloadRequest' on QML.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        * UIProcess/API/qt/qwebnavigationrequest.cpp:
+        (QWebNavigationRequestPrivate::QWebNavigationRequestPrivate):
+        (QWebNavigationRequest::QWebNavigationRequest):
+        (QWebNavigationRequest::originatingUrl):
+        * UIProcess/API/qt/qwebnavigationrequest_p.h:
+        * UIProcess/API/qt/tests/qmltests/DesktopBehavior/tst_navigationRequested.qml:
+        Tests were modified a bit to reuse urls and also added a test case to check
+        originating url once a request is done.
+        * UIProcess/qt/QtWebPagePolicyClient.cpp:
+        (QtWebPagePolicyClient::decidePolicyForNavigationAction):
+        * UIProcess/qt/QtWebPagePolicyClient.h:
+
 2011-12-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] WK2 Debugging quirks need some improvement

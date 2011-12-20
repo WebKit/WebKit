@@ -30,15 +30,17 @@ class QWebNavigationRequestPrivate;
 class QWEBKIT_EXPORT QWebNavigationRequest : public QObject {
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url CONSTANT FINAL)
+    Q_PROPERTY(QUrl originatingUrl READ originatingUrl CONSTANT FINAL)
     Q_PROPERTY(int button READ button CONSTANT FINAL)
     Q_PROPERTY(int modifiers READ modifiers CONSTANT FINAL)
     Q_PROPERTY(int action READ action WRITE setAction NOTIFY actionChanged FINAL)
 
 public:
-    QWebNavigationRequest(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, QObject* parent = 0);
+    QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, QObject* parent = 0);
     ~QWebNavigationRequest();
 
     QUrl url() const;
+    QUrl originatingUrl() const;
     int button() const;
     int modifiers() const;
     int action() const;

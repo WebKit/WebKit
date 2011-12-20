@@ -48,8 +48,8 @@ public:
         qmlRegisterUncreatableType<QWebNavigationListModel>(uri, 3, 0, "NavigationListModel", QObject::tr("Cannot create separate instance of NavigationListModel"));
         qmlRegisterUncreatableType<QWebNavigationHistory>(uri, 3, 0, "NavigationHistory", QObject::tr("Cannot create separate instance of NavigationHistory"));
         qmlRegisterExtendedType<QQuickWebView, QQuickWebViewExperimentalExtension>(uri, 3, 0, "WebView");
-        qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 3, 0, "QQuickWebViewExperimental",
-            QObject::tr("Cannot create separate instance of QQuickWebViewExperimental"));
+        qmlRegisterUncreatableType<QQuickWebViewExperimental>(uri, 3, 0, "WebViewExperimental",
+            QObject::tr("Cannot create separate instance of WebViewExperimental"));
         qmlRegisterUncreatableType<QWebViewportInfo>(uri, 3, 0, "QWebViewportInfo",
             QObject::tr("Cannot create separate instance of QWebViewportInfo"));
     }

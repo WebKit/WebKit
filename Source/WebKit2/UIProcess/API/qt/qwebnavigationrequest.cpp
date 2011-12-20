@@ -25,8 +25,9 @@
 
 class QWebNavigationRequestPrivate {
 public:
-    QWebNavigationRequestPrivate(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+    QWebNavigationRequestPrivate(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
         : url(url)
+        , originatingUrl(originatingUrl)
         , button(button)
         , modifiers(modifiers)
         , action(QQuickWebView::AcceptRequest)
@@ -38,14 +39,15 @@ public:
     }
 
     QUrl url;
+    QUrl originatingUrl;
     Qt::MouseButton button;
     Qt::KeyboardModifiers modifiers;
     int action;
 };
 
-QWebNavigationRequest::QWebNavigationRequest(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, QObject* parent)
+QWebNavigationRequest::QWebNavigationRequest(const QUrl& url, const QUrl& originatingUrl, Qt::MouseButton button, Qt::KeyboardModifiers modifiers, QObject* parent)
     : QObject(parent)
-    , d(new QWebNavigationRequestPrivate(url, button, modifiers))
+    , d(new QWebNavigationRequestPrivate(url, originatingUrl, button, modifiers))
 {
 }
 
@@ -66,6 +68,11 @@ void QWebNavigationRequest::setAction(int action)
 QUrl QWebNavigationRequest::url() const
 {
     return d->url;
+}
+
+QUrl QWebNavigationRequest::originatingUrl() const
+{
+    return d->originatingUrl;
 }
 
 int QWebNavigationRequest::button() const
