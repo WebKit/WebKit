@@ -863,9 +863,6 @@ private:
     void nonSpeculativeValueToInt32(Node&);
     void nonSpeculativeUInt32ToNumber(Node&);
 
-    void nonSpeculativeKnownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
-    void nonSpeculativeBasicArithOp(NodeType op, Node&);
-    
 #if USE(JSVALUE64)
     JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
     void cachedPutById(GPRReg base, GPRReg value, NodeIndex valueIndex, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());

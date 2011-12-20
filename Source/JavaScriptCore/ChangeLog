@@ -1,3 +1,14 @@
+2011-12-19  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Remove unused code for non-speculative Arith operations from DFG JIT
+        https://bugs.webkit.org/show_bug.cgi?id=74905
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        * dfg/DFGSpeculativeJIT64.cpp:
+
 2011-12-19  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=74903
