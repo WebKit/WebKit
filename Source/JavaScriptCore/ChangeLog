@@ -1,3 +1,13 @@
+2011-12-21  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Implement montonicallyIncreasingClock() on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=62159
+
+        Reviewed by Darin Adler.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::monotonicallyIncreasingTime):
+
 2011-12-20  Filip Pizlo  <fpizlo@apple.com>
 
         32_64 baseline JIT should attempt to convert division results to integers, and record when that fails

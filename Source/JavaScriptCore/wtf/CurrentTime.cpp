@@ -66,6 +66,10 @@ extern "C" time_t mktime(struct tm *t);
 #include <sys/time.h>
 #endif
 
+#if PLATFORM(QT)
+#include <QElapsedTimer>
+#endif
+
 #if PLATFORM(CHROMIUM)
 #error Chromium uses a different timer implementation
 #endif
@@ -315,6 +319,15 @@ double monotonicallyIncreasingTime()
 double monotonicallyIncreasingTime()
 {
     return static_cast<double>(g_get_monotonic_time() / 1000000.0);
+}
+
+#elif PLATFORM(QT)
+
+double monotonicallyIncreasingTime()
+{
+    ASSERT(QElapsedTimer::isMonotonic());
+    static QElapsedTimer timer;
+    return timer.elapsed() / msPerSecond;
 }
 
 #else
