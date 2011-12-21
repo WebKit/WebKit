@@ -1,3 +1,17 @@
+2011-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        HTMLMediaElement::configureTextTrackDisplay is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=74945
+
+        Reviewed by Darin Adler.
+
+        Nothing to test, just removing redundant code. Correct behavior tested by 
+        media/track/track-cue-rendering.html and media/track/track-cue-nothing-to-render.html.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureTextTrackDisplay): Don't show and hide track, just call
+            updateTextTrackDisplay and it will do the right thing.
+
 2011-12-21  Anders Carlsson  <andersca@apple.com>
 
         ScrollingCoordinator functions should take FrameView objects

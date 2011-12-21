@@ -3503,15 +3503,11 @@ void HTMLMediaElement::configureTextTrackDisplay()
         return;
     m_haveVisibleTextTrack = haveVisibleTextTrack;
 
-    if (!m_haveVisibleTextTrack) {
-        if (hasMediaControls())
-            mediaControls()->hideTextTrackDisplay();
+    if (!m_haveVisibleTextTrack && !hasMediaControls())
         return;
-    }
-
     if (!hasMediaControls() && !createMediaControls())
         return;
-    mediaControls()->showTextTrackDisplay();
+    mediaControls()->updateTextTrackDisplay();
 }
 #endif
 
