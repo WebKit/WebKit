@@ -41,14 +41,14 @@ public:
 
 private:
     PasswordInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool saveFormControlState(String&) const;
-    virtual void restoreFormControlState(const String&) const;
-    virtual bool shouldUseInputMethod() const;
-    virtual bool shouldResetOnDocumentActivation();
-    virtual bool shouldRespectListAttribute();
-    virtual bool shouldRespectSpeechAttribute();
-    virtual bool isPasswordField() const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool saveFormControlState(String&) const OVERRIDE;
+    virtual void restoreFormControlState(const String&) const OVERRIDE;
+    virtual bool shouldUseInputMethod() const OVERRIDE;
+    virtual bool shouldResetOnDocumentActivation() OVERRIDE;
+    virtual bool shouldRespectListAttribute() OVERRIDE;
+    virtual bool shouldRespectSpeechAttribute() OVERRIDE;
+    virtual bool isPasswordField() const OVERRIDE;
 };
 
 } // namespace WebCore

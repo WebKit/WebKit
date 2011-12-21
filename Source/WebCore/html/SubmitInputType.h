@@ -41,14 +41,14 @@ public:
 
 private:
     SubmitInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool appendFormData(FormDataList&, bool) const;
-    virtual bool supportsRequired() const;
-    virtual void handleDOMActivateEvent(Event*);
-    virtual bool canBeSuccessfulSubmitButton();
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
+    virtual bool supportsRequired() const OVERRIDE;
+    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
+    virtual bool canBeSuccessfulSubmitButton() OVERRIDE;
     virtual String defaultValue() const OVERRIDE;
-    virtual bool isSubmitButton() const;
-    virtual bool isTextButton() const;
+    virtual bool isSubmitButton() const OVERRIDE;
+    virtual bool isTextButton() const OVERRIDE;
 };
 
 } // namespace WebCore

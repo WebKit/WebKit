@@ -46,21 +46,21 @@ public:
 
 private:
     ImageInputType(HTMLInputElement*);
-    virtual const AtomicString& formControlType() const;
-    virtual bool isFormDataAppendable() const;
-    virtual bool appendFormData(FormDataList&, bool) const;
-    virtual bool supportsValidation() const;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-    virtual void handleDOMActivateEvent(Event*);
-    virtual void altAttributeChanged();
-    virtual void srcAttributeChanged();
-    virtual void attach();
-    virtual void willMoveToNewOwnerDocument();
-    virtual bool shouldRespectAlignAttribute();
-    virtual bool canBeSuccessfulSubmitButton();
-    virtual bool isImageButton() const;
-    virtual bool isEnumeratable();
-    virtual bool shouldRespectHeightAndWidthAttributes();
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool isFormDataAppendable() const OVERRIDE;
+    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
+    virtual bool supportsValidation() const OVERRIDE;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
+    virtual void altAttributeChanged() OVERRIDE;
+    virtual void srcAttributeChanged() OVERRIDE;
+    virtual void attach() OVERRIDE;
+    virtual void willMoveToNewOwnerDocument() OVERRIDE;
+    virtual bool shouldRespectAlignAttribute() OVERRIDE;
+    virtual bool canBeSuccessfulSubmitButton() OVERRIDE;
+    virtual bool isImageButton() const OVERRIDE;
+    virtual bool isEnumeratable() OVERRIDE;
+    virtual bool shouldRespectHeightAndWidthAttributes() OVERRIDE;
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
     IntPoint m_clickLocation; // Valid only during HTMLFormElement::prepareForSubmission().

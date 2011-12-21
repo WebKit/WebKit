@@ -43,33 +43,33 @@ public:
 
 private:
     RangeInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual bool isRangeControl() const;
-    virtual const AtomicString& formControlType() const;
-    virtual double valueAsNumber() const;
-    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const;
-    virtual bool supportsRequired() const;
-    virtual bool rangeUnderflow(const String&) const;
-    virtual bool rangeOverflow(const String&) const;
-    virtual bool supportsRangeLimitation() const;
-    virtual double minimum() const;
-    virtual double maximum() const;
-    virtual bool isSteppable() const;
-    virtual bool stepMismatch(const String&, double) const;
-    virtual double stepBase() const;
-    virtual double defaultStep() const;
-    virtual double stepScaleFactor() const;
-    virtual void handleMouseDownEvent(MouseEvent*);
-    virtual void handleKeydownEvent(KeyboardEvent*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-    virtual void createShadowSubtree();
-    virtual double parseToDouble(const String&, double) const;
-    virtual String serialize(double) const;
-    virtual void accessKeyAction(bool sendMouseEvents);
-    virtual void minOrMaxAttributeChanged();
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
+    virtual bool isRangeControl() const OVERRIDE;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual double valueAsNumber() const OVERRIDE;
+    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const OVERRIDE;
+    virtual bool supportsRequired() const OVERRIDE;
+    virtual bool rangeUnderflow(const String&) const OVERRIDE;
+    virtual bool rangeOverflow(const String&) const OVERRIDE;
+    virtual bool supportsRangeLimitation() const OVERRIDE;
+    virtual double minimum() const OVERRIDE;
+    virtual double maximum() const OVERRIDE;
+    virtual bool isSteppable() const OVERRIDE;
+    virtual bool stepMismatch(const String&, double) const OVERRIDE;
+    virtual double stepBase() const OVERRIDE;
+    virtual double defaultStep() const OVERRIDE;
+    virtual double stepScaleFactor() const OVERRIDE;
+    virtual void handleMouseDownEvent(MouseEvent*) OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual void createShadowSubtree() OVERRIDE;
+    virtual double parseToDouble(const String&, double) const OVERRIDE;
+    virtual String serialize(double) const OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual void minOrMaxAttributeChanged() OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
     virtual String fallbackValue() const OVERRIDE;
-    virtual String sanitizeValue(const String& proposedValue) const;
-    virtual bool shouldRespectListAttribute();
+    virtual String sanitizeValue(const String& proposedValue) const OVERRIDE;
+    virtual bool shouldRespectListAttribute() OVERRIDE;
 };
 
 } // namespace WebCore

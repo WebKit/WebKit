@@ -41,12 +41,12 @@ public:
 
 private:
     EmailInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool typeMismatchFor(const String&) const;
-    virtual bool typeMismatch() const;
-    virtual String typeMismatchText() const;
-    virtual bool isEmailField() const;
-    virtual String sanitizeValue(const String&) const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool typeMismatchFor(const String&) const OVERRIDE;
+    virtual bool typeMismatch() const OVERRIDE;
+    virtual String typeMismatchText() const OVERRIDE;
+    virtual bool isEmailField() const OVERRIDE;
+    virtual String sanitizeValue(const String&) const OVERRIDE;
 };
 
 } // namespace WebCore

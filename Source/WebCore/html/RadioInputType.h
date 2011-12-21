@@ -41,18 +41,18 @@ public:
 
 private:
     RadioInputType(HTMLInputElement* element) : BaseCheckableInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool valueMissing(const String&) const;
-    virtual String valueMissingText() const;
-    virtual void handleClickEvent(MouseEvent*);
-    virtual void handleKeydownEvent(KeyboardEvent*);
-    virtual void handleKeyupEvent(KeyboardEvent*);
-    virtual bool isKeyboardFocusable() const;
-    virtual void attach();
-    virtual bool shouldSendChangeEventAfterCheckedChanged();
-    virtual PassOwnPtr<ClickHandlingState> willDispatchClick();
-    virtual void didDispatchClick(Event*, const ClickHandlingState&);
-    virtual bool isRadioButton() const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool valueMissing(const String&) const OVERRIDE;
+    virtual String valueMissingText() const OVERRIDE;
+    virtual void handleClickEvent(MouseEvent*) OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
+    virtual bool isKeyboardFocusable() const OVERRIDE;
+    virtual void attach() OVERRIDE;
+    virtual bool shouldSendChangeEventAfterCheckedChanged() OVERRIDE;
+    virtual PassOwnPtr<ClickHandlingState> willDispatchClick() OVERRIDE;
+    virtual void didDispatchClick(Event*, const ClickHandlingState&) OVERRIDE;
+    virtual bool isRadioButton() const OVERRIDE;
 };
 
 } // namespace WebCore

@@ -42,10 +42,10 @@ public:
 
 private:
     IsIndexInputType(HTMLInputElement* element) : TextFieldInputType(element) { };
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsRequired() const;
-    virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
-    virtual bool shouldRespectListAttribute();
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool supportsRequired() const OVERRIDE;
+    virtual PassRefPtr<HTMLFormElement> formForSubmission() const OVERRIDE;
+    virtual bool shouldRespectListAttribute() OVERRIDE;
 };
 
 } // namespace WebCore

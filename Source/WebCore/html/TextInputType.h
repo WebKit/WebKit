@@ -41,8 +41,8 @@ public:
 
 private:
     TextInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool shouldRespectSpeechAttribute();
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool shouldRespectSpeechAttribute() OVERRIDE;
 };
 
 } // namespace WebCore

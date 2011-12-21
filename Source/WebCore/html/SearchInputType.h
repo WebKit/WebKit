@@ -48,15 +48,15 @@ public:
 
 private:
     SearchInputType(HTMLInputElement*);
-    virtual const AtomicString& formControlType() const;
-    virtual bool shouldRespectSpeechAttribute();
-    virtual bool isSearchField() const;
-    virtual bool needsContainer() const;
-    virtual void createShadowSubtree();
-    virtual void destroyShadowSubtree();
-    virtual HTMLElement* resultsButtonElement() const;
-    virtual HTMLElement* cancelButtonElement() const;
-    virtual void handleKeydownEvent(KeyboardEvent*);
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool shouldRespectSpeechAttribute() OVERRIDE;
+    virtual bool isSearchField() const OVERRIDE;
+    virtual bool needsContainer() const OVERRIDE;
+    virtual void createShadowSubtree() OVERRIDE;
+    virtual void destroyShadowSubtree() OVERRIDE;
+    virtual HTMLElement* resultsButtonElement() const OVERRIDE;
+    virtual HTMLElement* cancelButtonElement() const OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
 
     void searchEventTimerFired(Timer<SearchInputType>*);
 

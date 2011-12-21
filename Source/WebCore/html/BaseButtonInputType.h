@@ -41,14 +41,14 @@ protected:
     BaseButtonInputType(HTMLInputElement* element) : InputType(element) { }
 
 private:
-    virtual bool appendFormData(FormDataList&, bool) const;
-    virtual void handleKeydownEvent(KeyboardEvent*);
-    virtual void handleKeypressEvent(KeyboardEvent*);
-    virtual void handleKeyupEvent(KeyboardEvent*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-    virtual void accessKeyAction(bool sendMouseEvents);
-    virtual bool storesValueSeparateFromAttribute();
-    virtual void setValue(const String&, bool, bool);
+    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual bool storesValueSeparateFromAttribute() OVERRIDE;
+    virtual void setValue(const String&, bool, bool) OVERRIDE;
 };
 
 } // namespace WebCore

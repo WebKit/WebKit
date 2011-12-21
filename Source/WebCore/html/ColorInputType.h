@@ -49,16 +49,16 @@ public:
 
 private:
     ColorInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual bool isColorControl() const;
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsRequired() const;
+    virtual bool isColorControl() const OVERRIDE;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool supportsRequired() const OVERRIDE;
     virtual String fallbackValue() const OVERRIDE;
-    virtual String sanitizeValue(const String&) const;
-    virtual Color valueAsColor() const;
-    virtual void createShadowSubtree();
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
-    virtual void handleDOMActivateEvent(Event*);
-    virtual void detach();
+    virtual String sanitizeValue(const String&) const OVERRIDE;
+    virtual Color valueAsColor() const OVERRIDE;
+    virtual void createShadowSubtree() OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
+    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
+    virtual void detach() OVERRIDE;
 
     void endColorChooser();
     void updateColorSwatch();

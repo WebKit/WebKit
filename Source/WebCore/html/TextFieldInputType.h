@@ -44,41 +44,41 @@ class TextFieldInputType : public InputType {
 protected:
     TextFieldInputType(HTMLInputElement*);
     virtual ~TextFieldInputType();
-    virtual bool canSetSuggestedValue();
-    virtual void handleKeydownEvent(KeyboardEvent*);
+    virtual bool canSetSuggestedValue() OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);
 
-    virtual HTMLElement* containerElement() const;
-    virtual HTMLElement* innerBlockElement() const;
-    virtual HTMLElement* innerTextElement() const;
-    virtual HTMLElement* innerSpinButtonElement() const;
+    virtual HTMLElement* containerElement() const OVERRIDE;
+    virtual HTMLElement* innerBlockElement() const OVERRIDE;
+    virtual HTMLElement* innerTextElement() const OVERRIDE;
+    virtual HTMLElement* innerSpinButtonElement() const OVERRIDE;
 #if ENABLE(INPUT_SPEECH)
-    virtual HTMLElement* speechButtonElement() const;
+    virtual HTMLElement* speechButtonElement() const OVERRIDE;
 #endif
 
 protected:
     virtual bool needsContainer() const;
-    virtual void createShadowSubtree();
-    virtual void destroyShadowSubtree();
-    virtual void disabledAttributeChanged();
-    virtual void readonlyAttributeChanged();
+    virtual void createShadowSubtree() OVERRIDE;
+    virtual void destroyShadowSubtree() OVERRIDE;
+    virtual void disabledAttributeChanged() OVERRIDE;
+    virtual void readonlyAttributeChanged() OVERRIDE;
 
 private:
-    virtual bool isTextField() const;
-    virtual bool valueMissing(const String&) const;
-    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
-    virtual void forwardEvent(Event*);
-    virtual bool shouldSubmitImplicitly(Event*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-    virtual bool shouldUseInputMethod() const;
-    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent);
-    virtual void dispatchChangeEventInResponseToSetValue();
-    virtual String sanitizeValue(const String&) const;
-    virtual bool shouldRespectListAttribute();
-    virtual HTMLElement* placeholderElement() const;
-    virtual void updatePlaceholderText();
-    virtual bool appendFormData(FormDataList&, bool multipart) const;
+    virtual bool isTextField() const OVERRIDE;
+    virtual bool valueMissing(const String&) const OVERRIDE;
+    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*) OVERRIDE;
+    virtual void forwardEvent(Event*) OVERRIDE;
+    virtual bool shouldSubmitImplicitly(Event*) OVERRIDE;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual bool shouldUseInputMethod() const OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, bool sendChangeEvent) OVERRIDE;
+    virtual void dispatchChangeEventInResponseToSetValue() OVERRIDE;
+    virtual String sanitizeValue(const String&) const OVERRIDE;
+    virtual bool shouldRespectListAttribute() OVERRIDE;
+    virtual HTMLElement* placeholderElement() const OVERRIDE;
+    virtual void updatePlaceholderText() OVERRIDE;
+    virtual bool appendFormData(FormDataList&, bool multipart) const OVERRIDE;
 
     RefPtr<HTMLElement> m_container;
     RefPtr<HTMLElement> m_innerBlock;

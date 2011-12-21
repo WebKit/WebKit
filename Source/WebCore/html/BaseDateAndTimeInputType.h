@@ -41,33 +41,33 @@ namespace WebCore {
 class BaseDateAndTimeInputType : public TextFieldInputType {
 protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
-    virtual double parseToDouble(const String&, double) const;
-    virtual bool parseToDateComponents(const String&, DateComponents*) const;
+    virtual double parseToDouble(const String&, double) const OVERRIDE;
+    virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
 
 private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
     virtual DateComponents::Type dateType() const = 0;
-    virtual double valueAsDate() const;
-    virtual void setValueAsDate(double, ExceptionCode&) const;
-    virtual double valueAsNumber() const;
-    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const;
-    virtual bool typeMismatchFor(const String&) const;
-    virtual bool typeMismatch() const;
-    virtual bool rangeUnderflow(const String&) const;
-    virtual bool rangeOverflow(const String&) const;
-    virtual bool supportsRangeLimitation() const;
-    virtual double defaultValueForStepUp() const;
-    virtual bool isSteppable() const;
-    virtual bool stepMismatch(const String&, double) const;
-    virtual double stepBase() const;
-    virtual void handleKeydownEvent(KeyboardEvent*);
-    virtual void handleWheelEvent(WheelEvent*);
-    virtual String serialize(double) const;
+    virtual double valueAsDate() const OVERRIDE;
+    virtual void setValueAsDate(double, ExceptionCode&) const OVERRIDE;
+    virtual double valueAsNumber() const OVERRIDE;
+    virtual void setValueAsNumber(double, bool sendChangeEvent, ExceptionCode&) const OVERRIDE;
+    virtual bool typeMismatchFor(const String&) const OVERRIDE;
+    virtual bool typeMismatch() const OVERRIDE;
+    virtual bool rangeUnderflow(const String&) const OVERRIDE;
+    virtual bool rangeOverflow(const String&) const OVERRIDE;
+    virtual bool supportsRangeLimitation() const OVERRIDE;
+    virtual double defaultValueForStepUp() const OVERRIDE;
+    virtual bool isSteppable() const OVERRIDE;
+    virtual bool stepMismatch(const String&, double) const OVERRIDE;
+    virtual double stepBase() const OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
+    virtual String serialize(double) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
-    virtual String visibleValue() const;
-    virtual String convertFromVisibleValue(const String&) const;
+    virtual String visibleValue() const OVERRIDE;
+    virtual String convertFromVisibleValue(const String&) const OVERRIDE;
 };
 
 } // namespace WebCore

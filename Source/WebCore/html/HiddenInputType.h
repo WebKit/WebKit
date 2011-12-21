@@ -41,16 +41,16 @@ public:
 
 private:
     HiddenInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsValidation() const;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-    virtual void accessKeyAction(bool sendMouseEvents);
-    virtual bool rendererIsNeeded();
-    virtual bool storesValueSeparateFromAttribute();
-    virtual bool isHiddenType() const;
-    virtual bool shouldRespectHeightAndWidthAttributes();
-    virtual void setValue(const String&, bool, bool);
-    virtual bool appendFormData(FormDataList&, bool) const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool supportsValidation() const OVERRIDE;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+    virtual bool rendererIsNeeded() OVERRIDE;
+    virtual bool storesValueSeparateFromAttribute() OVERRIDE;
+    virtual bool isHiddenType() const OVERRIDE;
+    virtual bool shouldRespectHeightAndWidthAttributes() OVERRIDE;
+    virtual void setValue(const String&, bool, bool) OVERRIDE;
+    virtual bool appendFormData(FormDataList&, bool) const OVERRIDE;
 };
 
 } // namespace WebCore

@@ -1,3 +1,42 @@
+2011-12-21  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Add OVERRIDE to WebCore/html/*InputType.h
+        https://bugs.webkit.org/show_bug.cgi?id=74996
+
+        Reviewed by Kent Tamura.
+
+        No new tests. Changes are just for compilation.
+
+        * html/BaseButtonInputType.h: Add OVERRIDE.
+        * html/BaseCheckableInputType.h: Add OVERRIDE.
+        * html/BaseDateAndTimeInputType.h: Add OVERRIDE.
+        * html/BaseTextInputType.h: Add OVERRIDE.
+        * html/ButtonInputType.h: Add OVERRIDE.
+        * html/CheckboxInputType.h: Add OVERRIDE.
+        * html/ColorInputType.h: Add OVERRIDE.
+        * html/DateInputType.h: Add OVERRIDE.
+        * html/DateTimeInputType.h: Add OVERRIDE.
+        * html/DateTimeLocalInputType.h: Add OVERRIDE.
+        * html/EmailInputType.h: Add OVERRIDE.
+        * html/FileInputType.h: Add OVERRIDE.
+        * html/HiddenInputType.h: Add OVERRIDE.
+        * html/ImageInputType.h: Add OVERRIDE.
+        * html/IsIndexInputType.h: Add OVERRIDE.
+        * html/MonthInputType.h: Add OVERRIDE.
+        * html/NumberInputType.h: Add OVERRIDE.
+        * html/PasswordInputType.h: Add OVERRIDE.
+        * html/RadioInputType.h: Add OVERRIDE.
+        * html/RangeInputType.h: Add OVERRIDE.
+        * html/ResetInputType.h: Add OVERRIDE.
+        * html/SearchInputType.h: Add OVERRIDE.
+        * html/SubmitInputType.h: Add OVERRIDE.
+        * html/TelephoneInputType.h: Add OVERRIDE.
+        * html/TextFieldInputType.h: Add OVERRIDE.
+        * html/TextInputType.h: Add OVERRIDE.
+        * html/TimeInputType.h: Add OVERRIDE.
+        * html/URLInputType.h: Add OVERRIDE.
+        * html/WeekInputType.h: Add OVERRIDE.
+
 2011-12-21  Matt Falkenhagen  <falken@chromium.org>
 
         Add all ICU languages to LocaleToScriptMappingDefault.cpp

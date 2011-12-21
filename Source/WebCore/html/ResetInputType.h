@@ -41,11 +41,11 @@ public:
 
 private:
     ResetInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsValidation() const;
-    virtual void handleDOMActivateEvent(Event*);
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual bool supportsValidation() const OVERRIDE;
+    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual String defaultValue() const OVERRIDE;
-    virtual bool isTextButton() const;
+    virtual bool isTextButton() const OVERRIDE;
 };
 
 } // namespace WebCore

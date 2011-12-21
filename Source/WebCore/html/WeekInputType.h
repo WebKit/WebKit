@@ -43,16 +43,16 @@ public:
 
 private:
     WeekInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual DateComponents::Type dateType() const;
-    virtual double minimum() const;
-    virtual double maximum() const;
-    virtual double stepBase() const;
-    virtual double defaultStep() const;
-    virtual double stepScaleFactor() const;
-    virtual bool parsedStepValueShouldBeInteger() const;
-    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const;
+    virtual const AtomicString& formControlType() const OVERRIDE;
+    virtual DateComponents::Type dateType() const OVERRIDE;
+    virtual double minimum() const OVERRIDE;
+    virtual double maximum() const OVERRIDE;
+    virtual double stepBase() const OVERRIDE;
+    virtual double defaultStep() const OVERRIDE;
+    virtual double stepScaleFactor() const OVERRIDE;
+    virtual bool parsedStepValueShouldBeInteger() const OVERRIDE;
+    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
+    virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
 };
 
 } // namespace WebCore
