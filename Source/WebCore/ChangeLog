@@ -1,3 +1,19 @@
+2011-12-20  Ami Fischman  <fischman@chromium.org>
+
+        Don't crash on the second time VideoLayerChromium::createCCVideoLayer() is called
+        https://bugs.webkit.org/show_bug.cgi?id=74963
+
+        Reviewed by James Robinson.
+
+        Manually tested by force-dropping the layer tree in CCLayerTreeHost::didBecomeInvisibleOnImplThread().
+        Crashed before the fix, doesn't crash after.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2011-12-20  Scott Graham  <scottmg@chromium.org>
 
         wouldTaintOrigin m_cleanURLs cache grows very large when data urls used

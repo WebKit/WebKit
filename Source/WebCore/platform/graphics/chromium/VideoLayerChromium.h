@@ -35,15 +35,14 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
-#include "VideoFrameProvider.h"
 
 namespace WebCore {
 
 class CCVideoLayerImpl;
+class VideoFrameProvider;
 
 // A Layer that contains a Video element.
-class VideoLayerChromium : public LayerChromium
-                         , public VideoFrameProvider::Client {
+class VideoLayerChromium : public LayerChromium {
 public:
 
     static PassRefPtr<VideoLayerChromium> create(CCLayerDelegate* = 0,
@@ -54,13 +53,11 @@ public:
 
     virtual bool drawsContent() const { return true; }
 
-    // VideoFrameProvider::Client implementation.
-    virtual void stopUsingProvider();
-
 private:
     VideoLayerChromium(CCLayerDelegate*, VideoFrameProvider*);
 
-    VideoFrameProvider* m_provider; // Only populated between construction and createCCLayerImpl being called.
+    // This pointer is only for passing to CCVideoLayerImpl's constructor. It should never be dereferenced by this class.
+    VideoFrameProvider* m_provider;
 };
 
 }

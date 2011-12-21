@@ -47,24 +47,15 @@ VideoLayerChromium::VideoLayerChromium(CCLayerDelegate* delegate, VideoFrameProv
     , m_provider(provider)
 {
     ASSERT(m_provider);
-    m_provider->setVideoFrameProviderClient(this);
 }
 
 VideoLayerChromium::~VideoLayerChromium()
 {
-    ASSERT(!m_provider);
 }
 
 PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
 {
-    RefPtr<CCVideoLayerImpl> ret = CCVideoLayerImpl::create(m_layerId, m_provider);
-    m_provider = 0;
-    return ret;
-}
-
-void VideoLayerChromium::stopUsingProvider()
-{
-    m_provider = 0;
+    return CCVideoLayerImpl::create(m_layerId, m_provider);
 }
 
 } // namespace WebCore
