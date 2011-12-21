@@ -1,3 +1,21 @@
+2011-12-20  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 89982
+
+    2011-06-28  Adam Langley  <agl@chromium.org>
+
+            Reviewed by Adam Barth.
+
+            Skip cache validation on back with HTTPS.
+            https://bugs.webkit.org/show_bug.cgi?id=63537
+
+            * http/tests/cache/history-only-cached-subresource-loads-max-age-https-expected.txt: Added.
+            * http/tests/cache/history-only-cached-subresource-loads-max-age-https.html: Added.
+            * http/tests/cache/resources/max-age-resource-forward.html: Added.
+            * http/tests/cache/resources/max-age-resource-next.html: Added.
+            * http/tests/cache/resources/max-age-resource.html: Added.
+            * http/tests/cache/resources/random-max-age.cgi: Added.
+
 2011-12-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 98413
