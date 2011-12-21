@@ -45,6 +45,7 @@ WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted
     this.id = id;
     this.url = script.sourceURL;
     this.isContentScript = script.isContentScript;
+    this.sourceMapURL = script.sourceMapURL;
     this._scripts = [script];
     this._formatter = formatter;
     this._formatted = formatted;

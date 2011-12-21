@@ -35,6 +35,7 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
+#include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
@@ -473,12 +474,28 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
     return injectedScript.wrapCallFrames(m_currentCallStack);
 }
 
+String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
+{
+    DEFINE_STATIC_LOCAL(String, sourceMapHttpHeader, ("X-SourceMap"));
+
+    if (script.url.isEmpty())
+        return String();
+
+    InspectorPageAgent* pageAgent = m_instrumentingAgents->inspectorPageAgent();
+    CachedResource* resource = pageAgent->cachedResource(pageAgent->mainFrame(), KURL(ParsedURLString, script.url));
+    if (resource)
+        return resource->response().httpHeaderField(sourceMapHttpHeader);
+    return String();
+}
+
 // JavaScriptDebugListener functions
 
 void InspectorDebuggerAgent::didParseSource(const String& scriptId, const Script& script)
 {
     // Don't send script content to the front end until it's really needed.
-    m_frontend->scriptParsed(scriptId, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, script.isContentScript ? &script.isContentScript : 0);
+    const bool* isContentScript = script.isContentScript ? &script.isContentScript : 0;
+    String sourceMapURL = sourceMapURLForScript(script);
+    m_frontend->scriptParsed(scriptId, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, isContentScript, sourceMapURL);
 
     m_scripts.set(scriptId, script);
 

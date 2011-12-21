@@ -1,3 +1,26 @@
+2011-12-09  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: auto detect source map url.
+        https://bugs.webkit.org/show_bug.cgi?id=74088
+
+        Reviewed by Pavel Feldman.
+
+        Check to see if "X-SourceMap" HTTP response header was sent with script resource.
+        Header value will be used as auto suggestion for source map url in UI.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::sourceMapURLForScript):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.scriptParsed):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+
 2011-12-21  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Mobile theme refinements
