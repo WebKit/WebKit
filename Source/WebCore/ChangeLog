@@ -1,5 +1,17 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94512
+
+    2011-09-04  Abhishek Arya  <inferno@chromium.org>
+
+            Unreviewed. Compile fix for r94511.
+
+            * dom/Range.cpp:
+            (WebCore::Range::processContents):
+            (WebCore::Range::processAncestorsAndTheirSiblings):
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94511
 
     2011-09-04  Abhishek Arya  <inferno@chromium.org>

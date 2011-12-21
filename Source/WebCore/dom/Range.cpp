@@ -56,8 +56,6 @@ using namespace std;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, rangeCounter, ("Range"));
 
-typedef Vector<RefPtr<Node> > NodeVector;
-
 inline Range::Range(PassRefPtr<Document> ownerDocument)
     : m_ownerDocument(ownerDocument)
     , m_start(m_ownerDocument)
@@ -672,6 +670,8 @@ static inline unsigned lengthOfContentsInNode(Node* node)
 
 PassRefPtr<DocumentFragment> Range::processContents(ActionType action, ExceptionCode& ec)
 {
+    typedef Vector<RefPtr<Node> > NodeVector;
+
     RefPtr<DocumentFragment> fragment;
     if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS)
         fragment = DocumentFragment::create(m_ownerDocument.get());
@@ -866,6 +866,8 @@ void Range::processNodes(ActionType action, Vector<RefPtr<Node> >& nodes, PassRe
 
 PassRefPtr<Node> Range::processAncestorsAndTheirSiblings(ActionType action, Node* container, ContentsProcessDirection direction, PassRefPtr<Node> passedClonedContainer, Node* commonRoot, ExceptionCode& ec)
 {
+    typedef Vector<RefPtr<Node> > NodeVector;
+
     RefPtr<Node> clonedContainer = passedClonedContainer;
     Vector<RefPtr<Node> > ancestors;
     for (ContainerNode* n = container->parentNode(); n && n != commonRoot; n = n->parentNode())
