@@ -1,3 +1,16 @@
+2011-12-21  Sam Weinig  <sam@webkit.org>
+
+        Cleanup up clients when deallocating WebKit2 API objects
+        https://bugs.webkit.org/show_bug.cgi?id=75014
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController dealloc]):
+        * UIProcess/API/mac/WKConnection.mm:
+        (-[WKConnection dealloc]):
+        Clear clients on dealloc.
+
 2011-12-21  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt][WK2] Add tests for favicon and fix icon url decoding issue

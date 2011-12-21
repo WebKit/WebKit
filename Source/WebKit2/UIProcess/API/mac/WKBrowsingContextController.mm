@@ -78,6 +78,8 @@ static inline NSURL *autoreleased(WKURLRef url)
 
 - (void)dealloc
 {
+    WKPageSetPageLoaderClient(_data->_pageRef.get(), 0);
+
     [_data release];
     [super dealloc];
 }

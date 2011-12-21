@@ -49,6 +49,8 @@
 
 - (void)dealloc
 {
+    WKConnectionSetConnectionClient(_data->_connectionRef.get(), 0);
+
     [_data release];
     [super dealloc];
 }
