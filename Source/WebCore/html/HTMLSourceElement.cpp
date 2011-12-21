@@ -57,13 +57,15 @@ PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tag
 void HTMLSourceElement::insertedIntoTree(bool deep)
 {
     HTMLElement::insertedIntoTree(deep);
-    if (parentNode() && (parentNode()->hasTagName(audioTag) || parentNode()->hasTagName(videoTag)))
+    Element* parent = parentElement();
+    if (parent && parent->isMediaElement())
         static_cast<HTMLMediaElement*>(parentNode())->sourceWasAdded(this);
 }
 
 void HTMLSourceElement::willRemove()
 {
-    if (parentNode() && (parentNode()->hasTagName(audioTag) || parentNode()->hasTagName(videoTag)))
+    Element* parent = parentElement();
+    if (parent && parent->isMediaElement())
         static_cast<HTMLMediaElement*>(parentNode())->sourceWillBeRemoved(this);
     HTMLElement::willRemove();
 }

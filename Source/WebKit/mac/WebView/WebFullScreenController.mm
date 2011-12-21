@@ -757,7 +757,7 @@ private:
     Node* nextNode = _element.get();
     while (nextNode)
     {
-        if (nextNode->hasTagName(HTMLNames::videoTag)) {
+        if (nextNode->hasTagName(HTMLNames::videoTag) && static_cast<Element*>(nextNode)->isMediaElement()) {
             HTMLMediaElement* element = static_cast<HTMLMediaElement*>(nextNode);
             if (!element->paused() && !element->ended())
                 return YES;
