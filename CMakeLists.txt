@@ -11,8 +11,17 @@ ENDIF ()
 # -----------------------------------------------------------------------------
 # Default library type
 # -----------------------------------------------------------------------------
+SET(ENABLE_WEBCORE On)
+
 IF (NOT ENABLE_WEBKIT AND NOT ENABLE_WEBKIT2)
     SET(ENABLE_WEBKIT On)
+ENDIF ()
+
+OPTION(ONLY_BUILD_JAVASCRIPTCORE "only build JavaScriptCore")
+IF (ONLY_BUILD_JAVASCRIPTCORE)
+    SET(ENABLE_WEBCORE Off)
+    SET(ENABLE_WEBKIT Off)
+    SET(ENABLE_WEBKIT2 Off)
 ENDIF ()
 
 SET(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/Source/JavaScriptCore")

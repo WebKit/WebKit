@@ -1,3 +1,18 @@
+2011-12-21  Daniel Bates  <dbates@webkit.org>
+
+        Add CMake option to only build JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=74979
+
+        Reviewed by Rob Buis.
+
+        Towards adding CMake support to script Tools/Scripts/build-jsc, add a CMake
+        option to only build JavaScriptCore.
+
+        * CMakeLists.txt: Defined ENABLE_WEBCORE to build WebCore. If the option
+        ONLY_BUILD_JAVASCRIPTCORE is specified then don't build WebCore, WebKit, or WebKit2.
+        * Source/CMakeLists.txt:
+        * Source/cmake/WebKitFS.cmake:
+
 2011-12-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         emacs: unreviewed. add settings for editing js files.

@@ -2,7 +2,10 @@
 # Add module directories
 # -----------------------------------------------------------------------------
 ADD_SUBDIRECTORY(JavaScriptCore)
-ADD_SUBDIRECTORY(WebCore)
+
+IF (ENABLE_WEBCORE)
+    ADD_SUBDIRECTORY(WebCore)
+ENDIF ()
 
 IF (ENABLE_WEBKIT)
     ADD_SUBDIRECTORY(WebKit)
@@ -17,7 +20,10 @@ ENDIF ()
 # -----------------------------------------------------------------------------
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WTF_LIBRARY_NAME})
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${JavaScriptCore_LIBRARY_NAME})
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebCore_LIBRARY_NAME})
+
+IF (ENABLE_WEBCORE)
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebCore_LIBRARY_NAME})
+ENDIF ()
 
 IF (ENABLE_WEBKIT)
     WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebKit_LIBRARY_NAME})
