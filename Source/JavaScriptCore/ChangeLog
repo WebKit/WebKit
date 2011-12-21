@@ -1,5 +1,19 @@
 2011-12-20  Gavin Barraclough  <barraclough@apple.com>
 
+        JSC shell should accept utf8 input.
+
+        Reviewed by Filip Pizlo.
+
+        * jsc.cpp:
+        (jscSource):
+        (functionRun):
+        (functionLoad):
+        (functionCheckSyntax):
+        (runWithScripts):
+        (runInteractive):
+
+2011-12-20  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber Stamped by Sam Weinig
 
         * runtime/JSGlobalData.cpp:

@@ -213,6 +213,25 @@ GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure)
 {
 }
 
+static inline SourceCode jscSource(const char* utf8, const UString& filename)
+{
+    // Find the the first non-ascii character, or nul.
+    const char* pos = utf8;
+    while (*pos > 0)
+        pos++;
+    size_t asciiLength = pos - utf8;
+
+    // Fast case - string is all ascii.
+    if (!*pos)
+        return makeSource(UString(utf8, asciiLength), filename);
+
+    // Slow case - contains non-ascii characters, use fromUTF8WithLatin1Fallback.
+    ASSERT(*pos < 0);
+    ASSERT(strlen(utf8) == asciiLength + strlen(pos));
+    String source = String(utf8, asciiLength + strlen(pos));
+    return makeSource(source.impl(), filename);
+}
+
 EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
 {
     for (unsigned i = 0; i < exec->argumentCount(); ++i) {
@@ -267,7 +286,7 @@ EncodedJSValue JSC_HOST_CALL functionRun(ExecState* exec)
 
     StopWatch stopWatch;
     stopWatch.start();
-    evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName));
+    evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script.data(), fileName));
     stopWatch.stop();
 
     return JSValue::encode(jsNumber(stopWatch.getElapsedMS()));
@@ -283,7 +302,7 @@ EncodedJSValue JSC_HOST_CALL functionLoad(ExecState* exec)
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     
     JSValue evaluationException;
-    JSValue result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script.data(), fileName), JSValue(), &evaluationException);
+    JSValue result = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script.data(), fileName), JSValue(), &evaluationException);
     if (evaluationException)
         throwError(exec, evaluationException);
     return JSValue::encode(result);
@@ -302,7 +321,7 @@ EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState* exec)
     stopWatch.start();
 
     JSValue syntaxException;
-    bool validSyntax = checkSyntax(globalObject->globalExec(), makeSource(script.data(), fileName), &syntaxException);
+    bool validSyntax = checkSyntax(globalObject->globalExec(), jscSource(script.data(), fileName), &syntaxException);
     stopWatch.stop();
 
     if (!validSyntax)
@@ -436,7 +455,7 @@ static void cleanupGlobalData(JSGlobalData* globalData)
 
 static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scripts, bool dump)
 {
-    UString script;
+    const char* script;
     UString fileName;
     Vector<char> scriptBuffer;
 
@@ -464,7 +483,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
         globalData.startSampling();
 
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName), JSValue(), &evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(script, fileName), JSValue(), &evaluationException);
         success = success && !evaluationException;
         if (dump) {
             if (evaluationException)
@@ -507,7 +526,7 @@ static void runInteractive(GlobalObject* globalObject)
         if (line[0])
             add_history(line);
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line, interpreterName), JSValue(), &evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(line, interpreterName), JSValue(), &evaluationException);
         free(line);
 #else
         printf("%s", interactivePrompt);
@@ -524,7 +543,7 @@ static void runInteractive(GlobalObject* globalObject)
         line.append('\0');
 
         JSValue evaluationException;
-        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(line.data(), interpreterName), JSValue(), &evaluationException);
+        JSValue returnValue = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), jscSource(line.data(), interpreterName), JSValue(), &evaluationException);
 #endif
         if (evaluationException)
             printf("Exception: %s\n", evaluationException.toString(globalObject->globalExec()).utf8().data());
