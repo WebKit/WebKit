@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x384
+        RenderRuby (inline) {RUBY} at (0,0) size 512x384 [color=#0000FF]
+          RenderInline (generated) at (0,0) size 512x128 [color=#FFA500]
+            RenderText at (0,0) size 512x128
+              text run at (0,0) width 512: "1234"
+          RenderRubyRun (anonymous) at (0,128) size 512x128
+            RenderRubyBase (anonymous) at (0,0) size 512x128
+              RenderText {#text} at (0,0) size 512x128
+                text run at (0,0) width 512: "ABCD"
+          RenderInline (generated) at (0,0) size 512x128 [color=#FFFF00]
+            RenderText at (0,256) size 512x128
+              text run at (0,256) width 512: "4578"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,384) size 784x128 [color=#008000]
+        RenderText {#text} at (0,0) size 512x128
+          text run at (0,0) width 512: "EFGH"
