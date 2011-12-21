@@ -161,7 +161,7 @@ static ScrollingThread& scrollingThread()
     return scrollingThread;
 }
 
-void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, const GraphicsLayer*)
+void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
@@ -172,7 +172,7 @@ void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView*
     // FIXME: Implement.
 }
 
-void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, const GraphicsLayer*)
+void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);

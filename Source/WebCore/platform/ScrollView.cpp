@@ -901,12 +901,22 @@ static void positionScrollbarLayer(GraphicsLayer* graphicsLayer, Scrollbar* scro
 {
     if (!graphicsLayer || !scrollbar)
         return;
-    graphicsLayer->setDrawsContent(true);
+
     IntRect scrollbarRect = scrollbar->frameRect();
     graphicsLayer->setPosition(scrollbarRect.location());
-    if (scrollbarRect.size() != graphicsLayer->size())
-        graphicsLayer->setNeedsDisplay();
+
+    if (scrollbarRect.size() == graphicsLayer->size())
+        return;
+
     graphicsLayer->setSize(scrollbarRect.size());
+
+    if (graphicsLayer->hasContentsLayer()) {
+        graphicsLayer->setContentsRect(IntRect(0, 0, scrollbarRect.width(), scrollbarRect.height()));
+        return;
+    }
+
+    graphicsLayer->setDrawsContent(true);
+    graphicsLayer->setNeedsDisplay();
 }
 
 static void positionScrollCornerLayer(GraphicsLayer* graphicsLayer, const IntRect& cornerRect)

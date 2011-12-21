@@ -1,5 +1,23 @@
 2011-12-21  Anders Carlsson  <andersca@apple.com>
 
+        Make it possible to use contents layers in scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=75044
+
+        Reviewed by Simon Fraser.
+
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange):
+        (WebCore::ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange):
+        Don't pass const GraphicsLayers to these member functions; we need to be able to mutate them.
+
+        * platform/ScrollView.cpp:
+        (positionScrollbarLayer):
+        If the scrollbar layer has a contents layer, just update its contents rect. Otherwise,
+        invalidate the scrollbar layer.
+
+2011-12-21  Anders Carlsson  <andersca@apple.com>
+
         Always reposition the scrollbar layers when the frame view size changes
         https://bugs.webkit.org/show_bug.cgi?id=75035
 
