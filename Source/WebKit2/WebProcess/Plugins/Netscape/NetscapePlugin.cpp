@@ -294,6 +294,11 @@ void NetscapePlugin::popPopupsEnabledState()
     m_popupEnabledStates.removeLast();
 }
 
+double NetscapePlugin::contentsScaleFactor()
+{
+    return controller()->contentsScaleFactor();
+}
+
 String NetscapePlugin::proxiesForURL(const String& urlString)
 {
     return m_pluginController->proxiesForURL(urlString);
@@ -550,11 +555,9 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
 
-#if PLATFORM(MAC)
     // FIXME: We should really call applyDeviceScaleFactor instead of scale, but that ends up calling into WKSI
     // which we currently don't have initiated in the plug-in process.
     context->scale(FloatSize(contentsScaleFactor(), contentsScaleFactor()));
-#endif
 
     context->translate(-m_frameRectInWindowCoordinates.x(), -m_frameRectInWindowCoordinates.y());
     platformPaint(context.get(), m_frameRectInWindowCoordinates, true);
@@ -786,6 +789,16 @@ NPObject* NetscapePlugin::pluginScriptableNPObject()
 #endif    
 
     return scriptableNPObject;
+}
+
+void NetscapePlugin::contentsScaleFactorChanged(float scaleFactor)
+{
+     ASSERT(m_isStarted);
+     
+#if PLUGIN_ARCHITECTURE(MAC)
+     double contentsScaleFactor = scaleFactor; 
+     NPP_SetValue(NPNVcontentsScaleFactor, &contentsScaleFactor); 
+#endif
 }
 
 void NetscapePlugin::privateBrowsingStateChanged(bool privateBrowsingEnabled)

@@ -35,12 +35,10 @@ namespace WebKit {
 PluginCreationParameters::PluginCreationParameters()
     : pluginInstanceID(0)
     , windowNPObjectID(0)
+    , contentsScaleFactor(1)
     , isPrivateBrowsingEnabled(false)
 #if USE(ACCELERATED_COMPOSITING)
     , isAcceleratedCompositingEnabled(false)
-#endif
-#if PLATFORM(MAC)
-    , contentsScaleFactor(1)
 #endif
 {
 }
@@ -51,14 +49,11 @@ void PluginCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(windowNPObjectID);
     encoder->encode(parameters);
     encoder->encode(userAgent);
+    encoder->encode(contentsScaleFactor);
     encoder->encode(isPrivateBrowsingEnabled);
 
 #if USE(ACCELERATED_COMPOSITING)
     encoder->encode(isAcceleratedCompositingEnabled);
-#endif
-
-#if PLATFORM(MAC)
-    encoder->encode(contentsScaleFactor);
 #endif
 }
 
@@ -76,16 +71,14 @@ bool PluginCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginC
     if (!decoder->decode(result.userAgent))
         return false;
 
+    if (!decoder->decode(result.contentsScaleFactor))
+        return false;
+
     if (!decoder->decode(result.isPrivateBrowsingEnabled))
         return false;
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!decoder->decode(result.isAcceleratedCompositingEnabled))
-        return false;
-#endif
-
-#if PLATFORM(MAC)
-    if (!decoder->decode(result.contentsScaleFactor))
         return false;
 #endif
 

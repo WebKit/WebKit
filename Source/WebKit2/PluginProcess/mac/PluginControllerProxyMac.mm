@@ -36,11 +36,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-float PluginControllerProxy::contentsScaleFactor()
-{
-    return m_contentsScaleFactor;
-}
-
 void PluginControllerProxy::platformInitialize()
 {
     CALayer * platformLayer = m_plugin->pluginLayer();

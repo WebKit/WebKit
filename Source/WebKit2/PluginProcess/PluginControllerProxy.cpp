@@ -364,6 +364,11 @@ void PluginControllerProxy::willSendEventToPlugin()
     ASSERT_NOT_REACHED();
 }
 
+float PluginControllerProxy::contentsScaleFactor() 
+{
+    return m_contentsScaleFactor; 
+}
+
 #if PLATFORM(MAC)
 void PluginControllerProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
 {
@@ -449,14 +454,10 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
 
     ASSERT(m_plugin);
 
-#if PLATFORM(MAC)
     if (contentsScaleFactor != m_contentsScaleFactor) {
         m_contentsScaleFactor = contentsScaleFactor;
         m_plugin->contentsScaleFactorChanged(m_contentsScaleFactor);
     }
-#else
-    UNUSED_PARAM(contentsScaleFactor);
-#endif
 
     platformGeometryDidChange();
 

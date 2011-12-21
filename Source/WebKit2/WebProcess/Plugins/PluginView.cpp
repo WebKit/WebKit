@@ -1155,6 +1155,7 @@ mach_port_t PluginView::compositingRenderServerPort()
 {
     return WebProcess::shared().compositingRenderServerPort();
 }
+#endif
 
 float PluginView::contentsScaleFactor()
 {
@@ -1163,7 +1164,6 @@ float PluginView::contentsScaleFactor()
         
     return 1;
 }
-#endif
     
 String PluginView::proxiesForURL(const String& urlString)
 {

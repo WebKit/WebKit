@@ -61,7 +61,6 @@ public:
     void setPluginReturnsNonretainedLayer(bool pluginReturnsNonretainedLayer) { m_pluginReturnsNonretainedLayer = pluginReturnsNonretainedLayer; }
 
     mach_port_t compositingRenderServerPort();
-    double contentsScaleFactor();
 
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
@@ -103,6 +102,7 @@ public:
     void pushPopupsEnabledState(bool enabled);
     void popPopupsEnabledState();
 
+    double contentsScaleFactor();
     String proxiesForURL(const String& urlString);
     String cookiesForURL(const String& urlString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
@@ -186,12 +186,12 @@ private:
     virtual void windowFocusChanged(bool);
     virtual void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     virtual void windowVisibilityChanged(bool);
-    virtual void contentsScaleFactorChanged(float);
 
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
 #endif
 
+    virtual void contentsScaleFactorChanged(float);
     virtual void privateBrowsingStateChanged(bool);
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity);
     virtual bool wantsWindowRelativeCoordinates();
