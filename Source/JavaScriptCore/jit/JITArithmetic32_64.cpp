@@ -1154,7 +1154,32 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     convertInt32ToDouble(regT0, fpRegT0);
     convertInt32ToDouble(regT2, fpRegT1);
     divDouble(fpRegT1, fpRegT0);
+#if ENABLE(VALUE_PROFILER)
+    // Is the result actually an integer? The DFG JIT would really like to know. If it's
+    // not an integer, we increment a count. If this together with the slow case counter
+    // are below threshold then the DFG JIT will compile this division with a specualtion
+    // that the remainder is zero.
+    
+    // As well, there are cases where a double result here would cause an important field
+    // in the heap to sometimes have doubles in it, resulting in double predictions getting
+    // propagated to a use site where it might cause damage (such as the index to an array
+    // access). So if we are DFG compiling anything in the program, we want this code to
+    // ensure that it produces integers whenever possible.
+    
+    // FIXME: This will fail to convert to integer if the result is zero. We should
+    // distinguish between positive zero and negative zero here.
+    
+    JumpList notInteger;
+    branchConvertDoubleToInt32(fpRegT0, regT2, notInteger, fpRegT1);
+    // If we've got an integer, we might as well make that the result of the division.
+    emitStoreInt32(dst, regT2);
+    end.append(jump());
+    notInteger.link(this);
+    add32(Imm32(1), AbsoluteAddress(&m_codeBlock->specialFastCaseProfileForBytecodeOffset(m_bytecodeOffset)->m_counter));
     emitStoreDouble(dst, fpRegT0);
+#else
+    emitStoreDouble(dst, fpRegT0);
+#endif
     end.append(jump());
 
     // Double divide.

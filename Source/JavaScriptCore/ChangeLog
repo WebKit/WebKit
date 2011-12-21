@@ -1,5 +1,16 @@
 2011-12-20  Filip Pizlo  <fpizlo@apple.com>
 
+        32_64 baseline JIT should attempt to convert division results to integers, and record when that fails
+        https://bugs.webkit.org/show_bug.cgi?id=74997
+        <rdar://problem/10612389>
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_div):
+
+2011-12-20  Filip Pizlo  <fpizlo@apple.com>
+
         JavaScriptCore should be consistent about how it reads and writes ArgumentCount
         https://bugs.webkit.org/show_bug.cgi?id=74989
         <rdar://problem/10612006>
