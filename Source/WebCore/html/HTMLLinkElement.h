@@ -53,7 +53,7 @@ public:
 
     CSSStyleSheet* sheet() const { return m_sheet.get(); }
 
-    bool isStyleSheetLoading() const;
+    bool styleSheetIsLoading() const;
 
     bool isDisabled() const { return m_disabledState == Disabled; }
     bool isEnabledViaScript() const { return m_disabledState == EnabledViaScript; }

@@ -1,3 +1,23 @@
+2011-12-21  Renata Hodovan  <reni@webkit.org>
+
+        Fulfill FIXME in  HTMLLinkElement.h.
+        https://bugs.webkit.org/show_bug.cgi?id=74278
+
+        Rename isStyleSheetLoading() method to styleSheetIsLoading().
+        This new one has the correct grammar.
+
+        Reviewed by Darin Adler.
+
+        No new tests because the functionality remains the same.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setDisabledState):
+        (WebCore::HTMLLinkElement::styleSheetIsLoading):
+        (WebCore::HTMLLinkElement::sheetLoaded):
+        * html/HTMLLinkElement.h:
+
 2011-12-21  Yosifumi Inoue  <yosin@chromium.org>
 
         [Forms] Add OVERRIDE to WebCore/html/*InputType.h

@@ -3096,7 +3096,7 @@ void Document::recalcStyleSelector()
                 if (linkElement->isDisabled())
                     continue;
                 enabledViaScript = linkElement->isEnabledViaScript();
-                if (linkElement->isStyleSheetLoading()) {
+                if (linkElement->styleSheetIsLoading()) {
                     // it is loading but we should still decide which style sheet set to use
                     if (!enabledViaScript && !title.isEmpty() && m_preferredStylesheetSet.isEmpty()) {
                         const AtomicString& rel = e->getAttribute(relAttr);

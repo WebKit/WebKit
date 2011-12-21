@@ -90,7 +90,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
     if (oldDisabledState != m_disabledState) {
         // If we change the disabled state while the sheet is still loading, then we have to
         // perform three checks:
-        if (isStyleSheetLoading()) {
+        if (styleSheetIsLoading()) {
             // Check #1: The sheet becomes disabled while loading.
             if (m_disabledState == Disabled)
                 removePendingSheet();
@@ -333,7 +333,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const KURL& baseURL, 
     m_sheet->checkLoaded();
 }
 
-bool HTMLLinkElement::isStyleSheetLoading() const
+bool HTMLLinkElement::styleSheetIsLoading() const
 {
     if (m_loading)
         return true;
@@ -354,7 +354,7 @@ void HTMLLinkElement::linkLoadingErrored()
 
 bool HTMLLinkElement::sheetLoaded()
 {
-    if (!isStyleSheetLoading()) {
+    if (!styleSheetIsLoading()) {
         removePendingSheet();
         return true;
     }
