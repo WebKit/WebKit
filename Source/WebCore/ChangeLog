@@ -1,3 +1,15 @@
+2011-12-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: CSSStyleSheet::cssRules can return 0 and InspectorStyleSheet dosen't check
+        https://bugs.webkit.org/show_bug.cgi?id=74938
+
+        Prevent security checks when retrieving a just-added CSS rule from the "inspector stylesheet".
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::addRule):
+
 2011-12-21  Renata Hodovan  <reni@webkit.org>
 
         Fulfill FIXME in  HTMLLinkElement.h.

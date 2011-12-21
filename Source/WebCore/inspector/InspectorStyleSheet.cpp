@@ -730,7 +730,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector)
     m_pageStyleSheet->addRule(selector, "", ec);
     if (ec)
         return 0;
-    RefPtr<CSSRuleList> rules = m_pageStyleSheet->cssRules();
+    RefPtr<CSSRuleList> rules = CSSRuleList::create(m_pageStyleSheet.get());
     ASSERT(rules->length());
     CSSStyleRule* rule = InspectorCSSAgent::asCSSStyleRule(rules->item(rules->length() - 1));
     ASSERT(rule);
