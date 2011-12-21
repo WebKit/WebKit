@@ -1,3 +1,15 @@
+2011-12-21  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        strong and b should be font-weight: bold, not bolder
+        https://bugs.webkit.org/show_bug.cgi?id=56400
+
+        Test: fast/html/font-weight-bold-for-b-and-strong.html
+
+        * css/html.css:
+        (strong, b):
+
 2011-12-21  Florin Malita  <fmalita@google.com>
 
         Improper handling of foreignobjects nested in svg groups
