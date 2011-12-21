@@ -40,7 +40,6 @@ class NamedNodeMap;
 // The actual Attr with its value as a Text child is allocated only if needed.
 class Attribute : public RefCounted<Attribute> {
     friend class Attr;
-    friend class NamedNodeMap;
 public:
     static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
     {

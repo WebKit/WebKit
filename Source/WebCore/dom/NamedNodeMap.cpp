@@ -122,13 +122,18 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
 
     m_element->willModifyAttribute(attribute->name(), oldAttribute ? oldAttribute->value() : nullAtom, attribute->value());
 
-    // ### slightly inefficient - resizes attribute array twice.
     RefPtr<Attr> oldAttr;
     if (oldAttribute) {
         oldAttr = oldAttribute->createAttrIfNeeded(m_element);
         replaceAttribute(index, attribute);
     } else
         addAttribute(attribute);
+
+    m_element->attributeChanged(attribute);
+
+    if (attribute->name() != styleAttr)
+        m_element->dispatchSubtreeModifiedEvent();
+
     return oldAttr.release();
 }
 
@@ -137,9 +142,6 @@ PassRefPtr<Node> NamedNodeMap::setNamedItemNS(Node* node, ExceptionCode& ec)
     return setNamedItem(node, ec);
 }
 
-// The DOM2 spec doesn't say that removeAttribute[NS] throws NOT_FOUND_ERR
-// if the attribute is not found, but at this level we have to throw NOT_FOUND_ERR
-// because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
 PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, ExceptionCode& ec)
 {
     ASSERT(m_element);
@@ -150,12 +152,24 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
         return 0;
     }
 
-    Attribute* attribute = attributeItem(index);
+    RefPtr<Attribute> attribute = attributeItem(index);
     RefPtr<Attr> attr = attribute->createAttrIfNeeded(m_element);
 
-    m_element->willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
+    if (!attribute->isNull())
+        m_element->willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
 
     removeAttribute(index);
+
+    if (!attribute->isNull()) {
+        AtomicString savedValue = attribute->value();
+        attribute->setValue(nullAtom);
+        m_element->attributeChanged(attribute.get());
+        attribute->setValue(savedValue);
+    }
+
+    if (attribute->name() != styleAttr)
+        m_element->dispatchSubtreeModifiedEvent();
+
     return attr.release();
 }
 
@@ -240,44 +254,21 @@ void NamedNodeMap::setAttributes(const NamedNodeMap& other)
         m_element->attributeChanged(m_attributes[i].get(), true);
 }
 
-void NamedNodeMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
+void NamedNodeMap::addAttribute(PassRefPtr<Attribute> attribute)
 {
-    RefPtr<Attribute> attribute = prpAttribute;
-    
-    // Add the attribute to the list
     m_attributes.append(attribute);
-
-    if (Attr* attr = attribute->attr())
+    if (Attr* attr = m_attributes.last()->attr())
         attr->m_element = m_element;
-
-    // Notify the element that the attribute has been added, and dispatch appropriate mutation events
-    // Note that element may be null here if we are called from insertAttribute() during parsing
-    if (m_element) {
-        m_element->attributeChanged(attribute.get());
-        // Because of our updateStyleAttribute() style modification events are never sent at the right time, so don't bother sending them.
-        if (attribute->name() != styleAttr)
-            m_element->dispatchSubtreeModifiedEvent();
-    }
 }
 
 void NamedNodeMap::removeAttribute(size_t index)
 {
     ASSERT(index < length());
 
-    RefPtr<Attribute> attribute = m_attributes[index];
-    if (Attr* attr = attribute->attr())
+    if (Attr* attr = m_attributes[index]->attr())
         attr->m_element = 0;
 
     m_attributes.remove(index);
-
-    if (m_element && !attribute->m_value.isNull()) {
-        AtomicString value = attribute->m_value;
-        attribute->m_value = nullAtom;
-        m_element->attributeChanged(attribute.get());
-        attribute->m_value = value;
-    }
-    if (m_element)
-        m_element->dispatchSubtreeModifiedEvent();
 }
 
 void NamedNodeMap::replaceAttribute(size_t index, PassRefPtr<Attribute> attribute)
@@ -289,12 +280,6 @@ void NamedNodeMap::replaceAttribute(size_t index, PassRefPtr<Attribute> attribut
     m_attributes[index] = attribute;
     if (Attr* attr = m_attributes[index]->attr())
         attr->m_element = m_element;
-
-    if (m_element) {
-        m_element->attributeChanged(m_attributes[index].get());
-        if (m_attributes[index]->name() != styleAttr)
-            m_element->dispatchSubtreeModifiedEvent();
-    }
 }
 
 void NamedNodeMap::setClass(const String& classStr) 

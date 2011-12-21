@@ -193,13 +193,35 @@ void Element::removeAttribute(const QualifiedName& name)
     if (!m_attributeMap)
         return;
 
-    size_t index = m_attributeMap->getAttributeItemIndex(name);
+    removeAttributeInternal(m_attributeMap->getAttributeItemIndex(name));
+}
+
+inline void Element::removeAttributeInternal(size_t index)
+{
+    ASSERT(m_attributeMap);
     if (index == notFound)
         return;
 
-    willModifyAttribute(name, m_attributeMap->attributeItem(index)->value(), nullAtom);
+    InspectorInstrumentation::willModifyDOMAttr(document(), this);
+
+    RefPtr<Attribute> attribute = m_attributeMap->attributeItem(index);
+
+    if (!attribute->isNull())
+        willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
 
     m_attributeMap->removeAttribute(index);
+
+    if (!attribute->isNull()) {
+        AtomicString savedValue = attribute->value();
+        attribute->setValue(nullAtom);
+        attributeChanged(attribute.get());
+        attribute->setValue(savedValue);
+    }
+
+    InspectorInstrumentation::didRemoveDOMAttr(document(), this, attribute->name().localName());
+
+    if (!isSynchronizingStyleAttribute())
+        dispatchSubtreeModifiedEvent();
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
@@ -641,22 +663,25 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value)
 {
+    if (value.isNull()) {
+        removeAttributeInternal(index);
+        return;
+    }
+
     Attribute* old = index != notFound ? m_attributeMap->attributeItem(index) : 0;
 
-#if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
         InspectorInstrumentation::willModifyDOMAttr(document(), this);
-#endif
 
     document()->incDOMTreeVersion();
 
     willModifyAttribute(name, old ? old->value() : nullAtom, value);
 
-    if (old && value.isNull())
-        m_attributeMap->removeAttribute(index);
-    else if (!old && !value.isNull())
-        m_attributeMap->addAttribute(createAttribute(name, value));
-    else if (old) {
+    if (!old) {
+        RefPtr<Attribute> attribute = createAttribute(name, value);
+        m_attributeMap->addAttribute(attribute);
+        attributeChanged(attribute.get());
+    } else {
         if (Attr* attrNode = old->attr())
             attrNode->setValue(value);
         else
@@ -664,10 +689,10 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         attributeChanged(old);
     }
 
-#if ENABLE(INSPECTOR)
-    if (!isSynchronizingStyleAttribute())
+    if (!isSynchronizingStyleAttribute()) {
         InspectorInstrumentation::didModifyDOMAttr(document(), this, name.localName(), value);
-#endif
+        dispatchSubtreeModifiedEvent();
+    }
 }
 
 PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const AtomicString& value)
@@ -1469,20 +1494,7 @@ void Element::removeAttribute(const String& name)
         return;
 
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    size_t index = m_attributeMap->getAttributeItemIndex(localName, false);
-    if (index == notFound)
-        return;
-
-    Attribute* attribute = m_attributeMap->attributeItem(index);
-
-    InspectorInstrumentation::willModifyDOMAttr(document(), this);
-
-    if (!attribute->isNull())
-        willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
-
-    m_attributeMap->removeAttribute(index);
-
-    InspectorInstrumentation::didRemoveDOMAttr(document(), this, name);
+    removeAttributeInternal(m_attributeMap->getAttributeItemIndex(localName, false));
 }
 
 void Element::removeAttributeNS(const String& namespaceURI, const String& localName)

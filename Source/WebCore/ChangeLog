@@ -1,3 +1,43 @@
+2011-12-20  Adam Klein  <adamk@chromium.org>
+
+        Make calls to willModifyAttribute and attributeChanged symmetrical
+        https://bugs.webkit.org/show_bug.cgi?id=74987
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously, calls to Element::willModifyAttribute sometimes happened
+        in one method while calls to Element::attributeChanged happened in
+        another. This change makes them symmetrical for all the cases I know
+        about: setAttribute, removeAttribute, setNamedItem, removeNamedItem.
+
+        To accomplish this, NamedNodeMap::addAttribute, removeAttribute, and
+        replaceAttribute have been reduced to their pure functionality of
+        manipulating m_attributes, and their callers are left responsible for
+        properly notifying the Element of the underlying changes.
+
+        One other bit of refactoring was done: to simplify
+        Element::setAttribute, it now dispatches to
+        Element::removeAttributeInternal if the incoming value is null.
+
+        No new tests, no change in behavior.
+
+        * dom/Attribute.h:
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::removeAttributeInternal): Added, sharing code
+        between the two removeAttribute overloads.
+        (WebCore::Element::setAttributeInternal):
+        * dom/Element.h:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::addAttribute):
+        (WebCore::NamedNodeMap::removeAttribute):
+        (WebCore::NamedNodeMap::replaceAttribute):
+        * svg/properties/SVGAnimatedPropertySynchronizer.h:
+        Call Element::setAttribute unless the attribute is already present,
+        and add a comment explaining why the code looks the way it does.
+
 2011-12-21  Adrienne Walker  <enne@google.com>
 
         Unreviewed, rolling out r103408.
