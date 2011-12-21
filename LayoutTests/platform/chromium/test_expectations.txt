@@ -3942,7 +3942,8 @@ BUGWK73494 : svg/text/non-bmp-positioning-lists.svg = IMAGE+TEXT IMAGE
 BUGWK73494 : svg/as-image/svg-non-integer-scaled-image.html = IMAGE PASS
 BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
 
-BUGWK73872 : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
+BUGWK73872 WIN : svg/custom/linking-uri-01-b.svg = PASS IMAGE TIMEOUT
+BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
