@@ -1,3 +1,19 @@
+2011-12-21  Florin Malita  <fmalita@google.com>
+
+        Improper handling of foreignobjects nested in svg groups
+        https://bugs.webkit.org/show_bug.cgi?id=69762
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests: svg/foreignObject/repaint-rect-coordinates-expected.html
+               svg/foreignObject/repaint-rect-coordinates.html
+
+        * rendering/svg/RenderSVGForeignObject.h:
+        (WebCore::RenderSVGForeignObject::objectBoundingBox):
+        (WebCore::RenderSVGForeignObject::strokeBoundingBox):
+        (WebCore::RenderSVGForeignObject::repaintRectInLocalCoordinates):
+        Return local coordinates.
+
 2011-12-21  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to use contents layers in scrollbars

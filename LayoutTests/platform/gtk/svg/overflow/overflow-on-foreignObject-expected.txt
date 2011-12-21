@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 500x500
-  RenderSVGRoot {svg} at (200,200) size 300x300
+  RenderSVGRoot {svg} at (100,100) size 300x300
     RenderSVGForeignObject {foreignObject} at (100,100) size 300x300
 layer at (0,0) size 6006x6006 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
   RenderBlock (positioned) {html:div} at (0,0) size 6006x6006 [bgcolor=#008000] [border: (3px solid #000000)]

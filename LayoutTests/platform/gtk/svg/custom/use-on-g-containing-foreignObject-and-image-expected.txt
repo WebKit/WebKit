@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (25,25) size 75x75
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (0,0) size 600x400
+      RenderSVGContainer {g} at (0,0) size 590x390
         RenderSVGForeignObject {foreignObject} at (10,10) size 580x380
         RenderSVGImage {image} at (0,0) size 75x75
     RenderSVGContainer {use} at (25,25) size 75x75

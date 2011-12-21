@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderSVGRoot {svg} at (0,0) size 400x100
+      RenderSVGRoot {svg} at (0,0) size 250x100
         RenderSVGForeignObject {foreignObject} at (0,0) size 100x100
           RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
         RenderSVGForeignObject {foreignObject} at (150,0) size 100x100
