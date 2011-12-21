@@ -2822,11 +2822,12 @@ BUGWK47925 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEX
 BUGWK47949 LINUX WIN : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
 BUGWK47949 MAC : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
-BUGWK47949 MAC CPU-CG : compositing/reflections/reflection-opacity.html = IMAGE
 // The following are flaky on Mac 10.6; occasionally the layers fail to show up.
 BUGWK47949 MAC : compositing/reflections/nested-reflection.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/nested-reflection-transformed.html = IMAGE PASS
+BUGWK47949 MAC : compositing/reflections/reflection-opacity.html = IMAGE PASS
 BUGWK47949 MAC : compositing/reflections/reflection-positioning.html = IMAGE PASS
+BUGWK74949 MAC : compositing/reflections/nested-reflection-transformed2.html = IMAGE PASS
 
 // Flaky because these are a poorly written tests. Need dino's new animation API
 BUGWK54306 : compositing/reflections/animation-inside-reflection.html = PASS IMAGE IMAGE+TEXT
