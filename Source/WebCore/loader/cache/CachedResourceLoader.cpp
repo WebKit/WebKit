@@ -127,7 +127,7 @@ CachedImage* CachedResourceLoader::requestImage(const String& url)
         if (!f->loader()->client()->allowImages(!settings || settings->areImagesEnabled()))
             return 0;
 
-        if (f->loader()->pageDismissalEventBeingDispatched()) {
+        if (f->loader()->pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
             KURL completeURL = m_document->completeURL(url);
             if (completeURL.isValid() && canRequest(CachedResource::ImageResource, completeURL))
                 PingLoader::loadImage(f, completeURL);

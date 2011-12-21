@@ -194,11 +194,22 @@ bool Chrome::canRunModal() const
     return m_client->canRunModal();
 }
 
+static bool canRunModalIfDuringPageDismissal(Page* page, ChromeClient::DialogType dialog, const String& message)
+{
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        FrameLoader::PageDismissalType dismissal = frame->loader()->pageDismissalEventBeingDispatched();
+        if (dismissal != FrameLoader::NoDismissal)
+            return page->chrome()->client()->shouldRunModalDialogDuringPageDismissal(dialog, message, dismissal);
+    }
+    return true;
+}
+
 bool Chrome::canRunModalNow() const
 {
     // If loads are blocked, we can't run modal because the contents
     // of the modal dialog will never show up!
-    return canRunModal() && !ResourceHandle::loadsBlocked();
+    return canRunModal() && !ResourceHandle::loadsBlocked()
+           && canRunModalIfDuringPageDismissal(m_page, ChromeClient::HTMLDialog, String());
 }
 
 void Chrome::runModal() const
@@ -275,15 +286,10 @@ void Chrome::closeWindowSoon()
     m_client->closeWindowSoon();
 }
 
-static inline void willRunModalDialog(const Frame* frame, const ChromeClient::DialogType& dialogType, const ChromeClient* client)
-{
-    if (frame->loader()->pageDismissalEventBeingDispatched())
-        client->willRunModalDialogDuringPageDismissal(dialogType);
-}
-
 void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 {
-    willRunModalDialog(frame, ChromeClient::AlertDialog, m_client);
+    if (!canRunModalIfDuringPageDismissal(m_page, ChromeClient::AlertDialog, message))
+        return;
 
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -295,7 +301,8 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-    willRunModalDialog(frame, ChromeClient::ConfirmDialog, m_client);
+    if (!canRunModalIfDuringPageDismissal(m_page, ChromeClient::ConfirmDialog, message))
+        return false;
 
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -307,7 +314,8 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
 {
-    willRunModalDialog(frame, ChromeClient::PromptDialog, m_client);
+    if (!canRunModalIfDuringPageDismissal(m_page, ChromeClient::PromptDialog, prompt))
+        return false;
 
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
@@ -565,11 +573,6 @@ void Chrome::showContextMenu()
 bool Chrome::requiresFullscreenForVideoPlayback()
 {
     return m_client->requiresFullscreenForVideoPlayback();
-}
-
-void Chrome::willRunModalHTMLDialog(const Frame* frame) const
-{
-    willRunModalDialog(frame, ChromeClient::HTMLDialog, m_client);
 }
 
 } // namespace WebCore

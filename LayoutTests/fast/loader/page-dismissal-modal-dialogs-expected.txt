@@ -1,0 +1,32 @@
+frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+ALERT: mainFrame beforeunload PASS
+CONFIRM: mainFrame beforeunload PASS
+PROMPT: mainFrame beforeunload PASS, default text: PASS
+ALERT: iFrame click PASS
+CONFIRM: iFrame click PASS
+PROMPT: iFrame click PASS, default text: PASS
+ALERT: iFrame beforeunload PASS
+CONFIRM: iFrame beforeunload PASS
+PROMPT: iFrame beforeunload PASS, default text: PASS
+ALERT: mainFrame click PASS
+CONFIRM: mainFrame click PASS
+PROMPT: mainFrame click PASS, default text: PASS
+ALERT: mainFrame pagehide PASS
+CONFIRM: mainFrame pagehide PASS
+PROMPT: mainFrame pagehide PASS, default text: PASS
+ALERT: iFrame click PASS
+CONFIRM: iFrame click PASS
+PROMPT: iFrame click PASS, default text: PASS
+ALERT: mainFrame unload PASS
+CONFIRM: mainFrame unload PASS
+PROMPT: mainFrame unload PASS, default text: PASS
+ALERT: iFrame click PASS
+CONFIRM: iFrame click PASS
+PROMPT: iFrame click PASS, default text: PASS
+ALERT: iFrame pagehide PASS
+CONFIRM: iFrame pagehide PASS
+PROMPT: iFrame pagehide PASS, default text: PASS
+ALERT: iFrame unload PASS
+CONFIRM: iFrame unload PASS
+PROMPT: iFrame unload PASS, default text: PASS
+PASS

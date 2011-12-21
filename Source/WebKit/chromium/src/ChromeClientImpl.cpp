@@ -88,6 +88,7 @@
 #include "WebWindowFeatures.h"
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace WebCore;
@@ -920,9 +921,21 @@ PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuCli
     return adoptRef(new SearchPopupMenuChromium(client));
 }
 
-void ChromeClientImpl::willRunModalDialogDuringPageDismissal(const DialogType& dialogType) const
+bool ChromeClientImpl::shouldRunModalDialogDuringPageDismissal(const DialogType& dialogType, const String& dialogMessage, FrameLoader::PageDismissalType dismissalType) const
 {
-    PlatformBridge::histogramEnumeration("Renderer.ModalDialogsDuringPageDismissal", static_cast<int>(dialogType), static_cast<int>(NumDialogTypes));
+    const char* kDialogs[] = {"alert", "confirm", "prompt", "showModalDialog"};
+    int dialog = static_cast<int>(dialogType);
+    ASSERT(0 <= dialog && dialog < static_cast<int>(arraysize(kDialogs)));
+
+    const char* kDismissals[] = {"beforeunload", "pagehide", "unload"};
+    int dismissal = static_cast<int>(dismissalType) - 1; // Exclude NoDismissal.
+    ASSERT(0 <= dismissal && dismissal < static_cast<int>(arraysize(kDismissals)));
+
+    PlatformBridge::histogramEnumeration("Renderer.ModalDialogsDuringPageDismissal", dismissal * arraysize(kDialogs) + dialog, arraysize(kDialogs) * arraysize(kDismissals));
+
+    m_webView->mainFrame()->addMessageToConsole(WebConsoleMessage(WebConsoleMessage::LevelError, makeString("Blocked ", kDialogs[dialog], "('", dialogMessage, "') during ", kDismissals[dismissal], ".")));
+
+    return false;
 }
 
 } // namespace WebKit

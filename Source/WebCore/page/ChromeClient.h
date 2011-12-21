@@ -25,6 +25,7 @@
 #include "ConsoleTypes.h"
 #include "Cursor.h"
 #include "FocusDirection.h"
+#include "FrameLoader.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "PopupMenu.h"
@@ -34,6 +35,7 @@
 #include "WebCoreKeyboardUIMode.h"
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 
 #ifndef __OBJC__
@@ -321,10 +323,9 @@ namespace WebCore {
             AlertDialog = 0,
             ConfirmDialog = 1,
             PromptDialog = 2,
-            HTMLDialog = 3,
-            NumDialogTypes = 4
+            HTMLDialog = 3
         };
-        virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const { }
+        virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, FrameLoader::PageDismissalType) const { UNUSED_PARAM(dialogMessage); return true; }
 
         virtual void numWheelEventHandlersChanged(unsigned) = 0;
 

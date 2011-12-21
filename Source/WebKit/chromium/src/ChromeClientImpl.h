@@ -194,7 +194,7 @@ public:
     virtual void showContextMenu() { }
 #endif
 
-    virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const;
+    virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, WebCore::FrameLoader::PageDismissalType) const;
 
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
     virtual void numWheelEventHandlersChanged(unsigned) { }
