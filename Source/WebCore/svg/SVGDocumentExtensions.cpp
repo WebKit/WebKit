@@ -227,7 +227,7 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyled
         m_pendingResources.add(id, set);
     }
 
-    element->setHasPendingResources(true);
+    element->setHasPendingResources();
 }
 
 bool SVGDocumentExtensions::hasPendingResources(const AtomicString& id) const
@@ -238,14 +238,30 @@ bool SVGDocumentExtensions::hasPendingResources(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
+bool SVGDocumentExtensions::isElementInPendingResources(SVGStyledElement* element) const
+{
+    ASSERT(element);
+
+    if (m_pendingResources.isEmpty())
+        return false;
+
+    HashMap<AtomicString, SVGPendingElements*>::const_iterator end = m_pendingResources.end();
+    for (HashMap<AtomicString, SVGPendingElements*>::const_iterator it = m_pendingResources.begin(); it != end; ++it) {
+        SVGPendingElements* elements = it->second;
+        ASSERT(elements);
+
+        if (elements->contains(element))
+            return true;
+    }
+    return false;
+}
+
 void SVGDocumentExtensions::removeElementFromPendingResources(SVGStyledElement* element)
 {
     ASSERT(element);
 
     if (m_pendingResources.isEmpty() || !element->hasPendingResources())
         return;
-
-    element->setHasPendingResources(false);
 
     Vector<AtomicString> toBeRemoved;
     HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResources.end();
@@ -258,6 +274,8 @@ void SVGDocumentExtensions::removeElementFromPendingResources(SVGStyledElement* 
         if (elements->isEmpty())
             toBeRemoved.append(it->first);
     }
+
+    element->clearHasPendingResourcesIfPossible();
 
     if (toBeRemoved.isEmpty())
         return;

@@ -50,7 +50,8 @@ public:
     void setInstanceUpdatesBlocked(bool);
 
     bool hasPendingResources() const;
-    void setHasPendingResources(bool);
+    void setHasPendingResources();
+    void clearHasPendingResourcesIfPossible();
 
     AnimatedAttributeType animatedPropertyTypeForCSSProperty(const QualifiedName&);
     static bool isAnimatableCSSProperty(const QualifiedName&);

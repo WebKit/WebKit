@@ -168,7 +168,7 @@ void RenderSVGResourceContainer::registerResource()
     const SVGDocumentExtensions::SVGPendingElements::const_iterator end = clients->end();
     for (SVGDocumentExtensions::SVGPendingElements::const_iterator it = clients->begin(); it != end; ++it) {
         ASSERT((*it)->hasPendingResources());
-        (*it)->setHasPendingResources(false);
+        (*it)->clearHasPendingResourcesIfPossible();
         RenderObject* renderer = (*it)->renderer();
         if (!renderer)
             continue;

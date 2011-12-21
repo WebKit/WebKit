@@ -1,5 +1,22 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94905
+
+    2011-09-10  Ken Buchanan <kenrb@chromium.org>
+
+            Crash due to bad data in SVGDocumentExtensions m_pendingResources.
+            https://bugs.webkit.org/show_bug.cgi?id=67488
+
+            Reviewed by Nikolas Zimmermann.
+
+            Test added: validating that the crash referenced in the bug is not present.
+
+            * svg/dom/SVGStyledElement-pendingResource-crash.html: Added.
+            * svg/dom/SVGStyledElement-pendingResource-crash-expected.txt: Added.
+            * svg/dom/resources/SVGStyledElement-pendingResource-crash.svg: Added.
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94857
 
     2011-09-08  Abhishek Arya  <inferno@chromium.org>
