@@ -203,6 +203,7 @@ public:
 private:
     void exitNode();
     bool handleTextNode();
+    RenderText* handleFirstLetter(int& startOffset, int& offsetInNode);
     bool handleReplacedElement();
     bool handleNonTextNode();
     void emitCharacter(UChar, Node*, int startOffset, int endOffset);
@@ -240,6 +241,9 @@ private:
 
     // Whether m_node has advanced beyond the iteration range (i.e. m_startNode).
     bool m_havePassedStartNode;
+
+    // Should handle first-letter renderer in the next call to handleTextNode.
+    bool m_shouldHandleFirstLetter;
 };
 
 // Builds on the text iterator, adding a character position so we can walk one

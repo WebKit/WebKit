@@ -602,21 +602,30 @@ void TextIterator::handleTextBox()
     }
 }
 
+static inline RenderText* firstRenderTextInFirstLetter(RenderObject* firstLetter)
+{
+    if (!firstLetter)
+        return 0;
+
+    // FIXME: Should this check descendent objects?
+    for (RenderObject* current = firstLetter->firstChild(); current; current = current->nextSibling()) {
+        if (current->isText())
+            return toRenderText(current);
+    }
+    return 0;
+}
+
 void TextIterator::handleTextNodeFirstLetter(RenderTextFragment* renderer)
 {
     if (renderer->firstLetter()) {
         RenderObject* r = renderer->firstLetter();
         if (r->style()->visibility() != VISIBLE && !m_ignoresStyleVisibility)
             return;
-        for (RenderObject *currChild = r->firstChild(); currChild; currChild->nextSibling()) {
-            if (currChild->isText()) {
-                RenderText* firstLetter = toRenderText(currChild);
-                m_handledFirstLetter = true;
-                m_remainingTextBox = m_textBox;
-                m_textBox = firstLetter->firstTextBox();
-                m_firstLetterText = firstLetter;
-                return;
-            }
+        if (RenderText* firstLetter = firstRenderTextInFirstLetter(r)) {
+            m_handledFirstLetter = true;
+            m_remainingTextBox = m_textBox;
+            m_textBox = firstLetter->firstTextBox();
+            m_firstLetterText = firstLetter;
         }
     }
     m_handledFirstLetter = true;
@@ -1042,14 +1051,46 @@ Node* TextIterator::node() const
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
     : m_behavior(TextIteratorDefaultBehavior)
     , m_node(0)
+    , m_offset(0)
+    , m_handledNode(false)
+    , m_handledChildren(false)
+    , m_startNode(0)
+    , m_startOffset(0)
+    , m_endNode(0)
+    , m_endOffset(0)
     , m_positionNode(0)
+    , m_positionStartOffset(0)
+    , m_positionEndOffset(0)
+    , m_textCharacters(0)
+    , m_textLength(0)
+    , m_lastTextNode(0)
+    , m_lastCharacter(0)
+    , m_singleCharacterBuffer(0)
+    , m_havePassedStartNode(false)
+    , m_shouldHandleFirstLetter(false)
 {
 }
 
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r, TextIteratorBehavior behavior)
     : m_behavior(behavior)
     , m_node(0)
+    , m_offset(0)
+    , m_handledNode(false)
+    , m_handledChildren(false)
+    , m_startNode(0)
+    , m_startOffset(0)
+    , m_endNode(0)
+    , m_endOffset(0)
     , m_positionNode(0)
+    , m_positionStartOffset(0)
+    , m_positionEndOffset(0)
+    , m_textCharacters(0)
+    , m_textLength(0)
+    , m_lastTextNode(0)
+    , m_lastCharacter(0)
+    , m_singleCharacterBuffer(0)
+    , m_havePassedStartNode(false)
+    , m_shouldHandleFirstLetter(false)
 {
     ASSERT(m_behavior == TextIteratorDefaultBehavior);
 
@@ -1177,23 +1218,62 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
 {
     m_lastTextNode = m_node;
 
-    RenderText* renderer = toRenderText(m_node->renderer());
-    String str = renderer->text();
+    int startOffset;
+    int offsetInNode;
+    RenderText* renderer = handleFirstLetter(startOffset, offsetInNode);
+    if (!renderer)
+        return true;
 
-    if (!renderer->firstTextBox() && str.length() > 0)
+    String text = renderer->text();
+    if (!renderer->firstTextBox() && text.length() > 0)
         return true;
 
     m_positionEndOffset = m_offset;
-
-    m_offset = (m_node == m_startNode) ? m_startOffset : 0;
+    m_offset = startOffset + offsetInNode;
     m_positionNode = m_node;
     m_positionStartOffset = m_offset;
+
+    ASSERT(0 <= m_positionStartOffset - offsetInNode && m_positionStartOffset - offsetInNode <= static_cast<int>(text.length()));
+    ASSERT(1 <= m_positionEndOffset - offsetInNode && m_positionEndOffset - offsetInNode <= static_cast<int>(text.length()));
+    ASSERT(m_positionStartOffset <= m_positionEndOffset);
+
     m_textLength = m_positionEndOffset - m_positionStartOffset;
-    m_textCharacters = str.characters() + m_positionStartOffset;
+    m_textCharacters = text.characters() + (m_positionStartOffset - offsetInNode);
+    ASSERT(m_textCharacters >= text.characters());
+    ASSERT(m_textCharacters + m_textLength <= text.characters() + static_cast<int>(text.length()));
 
-    m_lastCharacter = str[m_positionEndOffset - 1];
+    m_lastCharacter = text[m_positionEndOffset - 1];
 
-    return true;
+    return !m_shouldHandleFirstLetter;
+}
+
+RenderText* SimplifiedBackwardsTextIterator::handleFirstLetter(int& startOffset, int& offsetInNode)
+{
+    RenderText* renderer = toRenderText(m_node->renderer());
+    startOffset = (m_node == m_startNode) ? m_startOffset : 0;
+
+    if (!renderer->isTextFragment()) {
+        offsetInNode = 0;
+        return renderer;
+    }
+
+    RenderTextFragment* fragment = toRenderTextFragment(renderer);
+    int offsetAfterFirstLetter = fragment->start();
+    if (startOffset >= offsetAfterFirstLetter) {
+        ASSERT(!m_shouldHandleFirstLetter);
+        offsetInNode = offsetAfterFirstLetter;
+        return renderer;
+    }
+
+    if (!m_shouldHandleFirstLetter && offsetAfterFirstLetter < m_offset) {
+        m_shouldHandleFirstLetter = true;
+        offsetInNode = offsetAfterFirstLetter;
+        return renderer;
+    }
+
+    m_shouldHandleFirstLetter = false;
+    offsetInNode = 0;
+    return firstRenderTextInFirstLetter(fragment->firstLetter());
 }
 
 bool SimplifiedBackwardsTextIterator::handleReplacedElement()
