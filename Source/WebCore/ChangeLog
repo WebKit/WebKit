@@ -1,3 +1,38 @@
+2011-12-21  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Mobile theme refinements
+        https://bugs.webkit.org/show_bug.cgi?id=74727
+
+        Mostly to replace most of the rounded-rect-shaped
+        controls with squircle-shaped ones.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests needed.
+
+        * platform/qt/RenderThemeQtMobile.cpp:
+        (WebCore::drawControlBackground):
+        (WebCore::painterScale):
+        (WebCore::borderPen):
+        (WebCore::StylePainterMobile::drawCheckableBackground): Toned down the gradient a bit.
+        (WebCore::StylePainterMobile::findCheckBox):
+        (WebCore::StylePainterMobile::drawRadio):
+        (WebCore::StylePainterMobile::findRadio):
+        (WebCore::StylePainterMobile::drawMultipleComboButton): increase spacing between the dots.
+        (WebCore::StylePainterMobile::drawSimpleComboButton): attempt to improve readability.
+        (WebCore::StylePainterMobile::getButtonImageSize):
+        (WebCore::StylePainterMobile::findComboButton):
+        (WebCore::StylePainterMobile::drawLineEdit):
+        (WebCore::StylePainterMobile::findLineEdit):
+        (WebCore::StylePainterMobile::drawPushButton):
+        (WebCore::StylePainterMobile::findPushButton):
+        (WebCore::StylePainterMobile::drawComboBox):
+        (WebCore::StylePainterMobile::drawProgress):
+        (WebCore::StylePainterMobile::drawSliderThumb):
+        (WebCore::RenderThemeQtMobile::computeSizeBasedOnStyle):
+        (WebCore::RenderThemeQtMobile::paintTextField):
+        * platform/qt/RenderThemeQtMobile.h:
+
 2011-12-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: CSSStyleSheet::cssRules can return 0 and InspectorStyleSheet dosen't check

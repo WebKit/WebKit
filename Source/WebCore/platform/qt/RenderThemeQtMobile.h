@@ -105,10 +105,13 @@ private:
     void drawRadio(QPainter*, const QSize&, bool checked, bool enabled) const;
     QPixmap findRadio(const QSize&, bool checked, bool enabled) const;
 
-    QSize getButtonImageSize(const QSize&, bool multiple) const;
+    QSize getButtonImageSize(int , bool multiple) const;
     void drawSimpleComboButton(QPainter*, const QSize&, const QColor&) const;
     void drawMultipleComboButton(QPainter*, const QSize&, const QColor&) const;
     QPixmap findComboButton(const QSize&, bool multiple, bool enabled) const;
+
+    QPixmap findLineEdit(const QSize&, bool focused) const;
+    QPixmap findPushButton(const QSize&, bool sunken, bool enabled) const;
 
     QSize sizeForPainterScale(const QRect&) const;
 
