@@ -1,5 +1,18 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94508
+
+    2011-09-04  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/10071256> Retain retired custom fonts until the next style recalc
+
+            Reviewed by Darin Adler.
+
+            * fast/css/font-face-used-after-retired-expected.txt: Added.
+            * fast/css/font-face-used-after-retired.html: Added.
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94455
 
     2011-09-02  Dan Bernstein  <mitz@apple.com>

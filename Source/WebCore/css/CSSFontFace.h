@@ -63,6 +63,7 @@ public:
     void addSource(CSSFontFaceSource*);
 
     void fontLoaded(CSSFontFaceSource*);
+    void retireCustomFont(SimpleFontData*);
 
     SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 

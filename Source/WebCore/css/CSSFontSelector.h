@@ -59,6 +59,8 @@ public:
     void fontLoaded();
     virtual void fontCacheInvalidated();
 
+    void retireCustomFont(FontData*);
+
     bool isEmpty() const;
 
     CachedResourceLoader* cachedResourceLoader() const;
