@@ -341,7 +341,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     setCompilerSourceMapping: function(uiSourceCode, sourceMappingURL)
     {
-        var sourceMapping = new WebInspector.ClosureCompilerSourceMapping(sourceMappingURL, uiSourceCode.url);
+        var sourceMapping = new WebInspector.ClosureCompilerSourceMapping(sourceMappingURL);
         uiSourceCode.rawSourceCode.setCompilerSourceMapping(sourceMapping);
     },
 

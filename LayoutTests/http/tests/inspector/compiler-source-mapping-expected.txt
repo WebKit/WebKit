@@ -9,7 +9,5 @@ Running: testEmptyLine
 
 Running: testSections
 
-Running: testResolveSourceMappingURL
-
 Running: testLoad
 
