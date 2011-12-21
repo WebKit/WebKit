@@ -62,6 +62,9 @@ ProcessingInstruction::~ProcessingInstruction()
 
     if (m_cachedSheet)
         m_cachedSheet->removeClient(this);
+
+    if (inDocument())
+        document()->removeStyleSheetCandidateNode(this);
 }
 
 void ProcessingInstruction::setData(const String& data, ExceptionCode&)

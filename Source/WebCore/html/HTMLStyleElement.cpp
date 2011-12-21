@@ -44,8 +44,7 @@ inline HTMLStyleElement::HTMLStyleElement(const QualifiedName& tagName, Document
 
 HTMLStyleElement::~HTMLStyleElement()
 {
-    if (m_sheet)
-        m_sheet->clearOwnerNode();
+    StyleElement::clearDocumentData(document(), this);
 }
 
 PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)

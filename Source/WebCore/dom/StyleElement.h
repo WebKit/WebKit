@@ -44,6 +44,7 @@ protected:
 
     void insertedIntoDocument(Document*, Element*);
     void removedFromDocument(Document*, Element*);
+    void clearDocumentData(Document*, Element*);
     void childrenChanged(Element*);
     void finishParsingChildren(Element*);
 

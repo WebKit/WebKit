@@ -84,6 +84,15 @@ void StyleElement::removedFromDocument(Document* document, Element* element)
         document->styleSelectorChanged(DeferRecalcStyle);
 }
 
+void StyleElement::clearDocumentData(Document* document, Element* element)
+{
+    if (m_sheet)
+        m_sheet->clearOwnerNode();
+
+    if (element->inDocument())
+        document->removeStyleSheetCandidateNode(element);
+}
+
 void StyleElement::childrenChanged(Element* element)
 {
     ASSERT(element);

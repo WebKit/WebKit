@@ -79,6 +79,9 @@ HTMLLinkElement::~HTMLLinkElement()
         removePendingSheet();
     }
     
+    if (inDocument())
+        document()->removeStyleSheetCandidateNode(this); 
+    
 #if ENABLE(LINK_PREFETCH)
     if (m_cachedLinkResource)
         m_cachedLinkResource->removeClient(this);
