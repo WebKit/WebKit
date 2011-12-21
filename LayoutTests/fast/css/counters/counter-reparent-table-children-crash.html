@@ -1,0 +1,31 @@
+<html>
+<style>
+td {
+    counter-increment: list-item;
+}
+</style>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+}
+
+function crash() {
+    document.body.innerHTML = "PASS: Malformed table counters do not cause crash";
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+        layoutTestController.dumpAsText();
+    }
+}
+</script>
+<body onload="crash()">
+    <table>
+        <tbody>
+            <td>
+        </tbody>
+        <ol>re-parent me</ol>
+        <ol>re-parent me</ol>
+            </td>
+        <td></td>
+    </table>
+</body>
+</html>
