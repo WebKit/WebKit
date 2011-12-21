@@ -1,0 +1,24 @@
+<html>
+<style>
+    body { direction: rtl; padding-left: 100%; }
+</style>
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    function runTest() {
+        document.body.innerHTML = "PASS";
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    setTimeout("runTest()", 0);
+</script>
+0<image>
+<span>
+A<div></div>
+</span>
+</html>
