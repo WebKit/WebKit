@@ -2754,6 +2754,8 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         
         // Paint into the context that represents the SourceGraphic of the filter.
         GraphicsContext* sourceGraphicsContext = m_filter->inputContext();
+        if (!sourceGraphicsContext)
+            return;
         
         LayoutPoint layerOrigin;
         convertToLayerCoords(rootLayer, layerOrigin);

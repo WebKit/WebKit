@@ -88,7 +88,7 @@ FilterEffectRenderer::~FilterEffectRenderer()
 
 GraphicsContext* FilterEffectRenderer::inputContext()
 {
-    return sourceImage()->context();
+    return sourceImage() ? sourceImage()->context() : 0;
 }
 
 void FilterEffectRenderer::build(Document* document, const FilterOperations& operations)

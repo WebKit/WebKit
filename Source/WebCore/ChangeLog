@@ -1,3 +1,19 @@
+2011-12-21  Stephen White  <senorblanco@chromium.org>
+
+        Fix CSS filters crash on zero-sized elements.
+        https://bugs.webkit.org/show_bug.cgi?id=75020
+
+        Reviewed by Dean Jackson.
+
+        Test: css3/filters/filter-empty-element-crash.html
+
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::inputContext):
+        Protect against null ImageBuffer.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        Protect against null GraphicsContext.
+
 2011-12-21  Anders Carlsson  <andersca@apple.com>
 
         Inform the scrolling coordinator when scrollbar layers come and go
