@@ -1,3 +1,10 @@
+2011-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix after r103354.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (systemUptime):
+
 2011-12-20  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollableArea::contentsResized and have it call the scroll animator

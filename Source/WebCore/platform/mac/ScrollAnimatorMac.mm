@@ -75,7 +75,9 @@ static ScrollbarPainter scrollbarPainterForScrollbar(Scrollbar* scrollbar)
     return nil;
 }
 
-static NSTimeInterval systemUptime() {
+#if ENABLE(RUBBER_BANDING)
+static NSTimeInterval systemUptime()
+{
     if ([[NSProcessInfo processInfo] respondsToSelector:@selector(systemUptime)])
         return [[NSProcessInfo processInfo] systemUptime];
 
@@ -96,6 +98,7 @@ static NSTimeInterval systemUptime() {
     }
     return 0;
 }
+#endif
 
 @interface NSObject (ScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
