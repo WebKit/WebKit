@@ -1575,7 +1575,7 @@ void JIT::emit_op_get_arguments_length(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int argumentsRegister = currentInstruction[2].u.operand;
     addSlowCase(branch32(NotEqual, tagFor(argumentsRegister), TrustedImm32(JSValue::EmptyValueTag)));
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT0);
+    load32(payloadFor(RegisterFile::ArgumentCount), regT0);
     sub32(TrustedImm32(1), regT0);
     emitStoreInt32(dst, regT0);
 }
@@ -1603,7 +1603,7 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     add32(TrustedImm32(1), regT2);
     // regT2 now contains the integer index of the argument we want, including this
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT3);
+    load32(payloadFor(RegisterFile::ArgumentCount), regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, regT3));
     
     neg32(regT2);

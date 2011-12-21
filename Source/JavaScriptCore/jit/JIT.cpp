@@ -605,7 +605,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
         emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
-        load32(Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))), regT1);
+        load32(payloadFor(RegisterFile::ArgumentCount), regT1);
         branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
 
         JITStubCall(this, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck).call(callFrameRegister);

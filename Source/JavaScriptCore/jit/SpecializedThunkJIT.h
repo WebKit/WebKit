@@ -42,7 +42,7 @@ namespace JSC {
             , m_globalData(globalData)
         {
             // Check that we have the expected number of arguments
-            m_failures.append(branch32(NotEqual, Address(callFrameRegister, RegisterFile::ArgumentCount * (int)sizeof(Register)), TrustedImm32(expectedArgCount + 1)));
+            m_failures.append(branch32(NotEqual, payloadFor(RegisterFile::ArgumentCount), TrustedImm32(expectedArgCount + 1)));
         }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)

@@ -149,7 +149,7 @@ void JIT::compileLoadVarargs(Instruction* instruction)
         emitLoadTag(arguments, regT1);
         slowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::EmptyValueTag)));
 
-        emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT2);
+        load32(payloadFor(RegisterFile::ArgumentCount), regT2);
         slowCase.append(branch32(Above, regT2, TrustedImm32(Arguments::MaxArguments + 1)));
         // regT2: argumentCountIncludingThis
 

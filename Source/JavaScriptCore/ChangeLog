@@ -1,5 +1,25 @@
 2011-12-20  Filip Pizlo  <fpizlo@apple.com>
 
+        JavaScriptCore should be consistent about how it reads and writes ArgumentCount
+        https://bugs.webkit.org/show_bug.cgi?id=74989
+        <rdar://problem/10612006>
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+
+2011-12-20  Filip Pizlo  <fpizlo@apple.com>
+
         Value Profiles for arguments should be more easily accessible to the interpreter
         https://bugs.webkit.org/show_bug.cgi?id=74984
         <rdar://problem/10611364>

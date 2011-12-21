@@ -259,7 +259,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     Label arityCheck = label();
     compileEntry();
 
-    load32(Address(GPRInfo::callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))), GPRInfo::regT1);
+    load32(AssemblyHelpers::payloadFor((VirtualRegister)RegisterFile::ArgumentCount), GPRInfo::regT1);
     branch32(AboveOrEqual, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
