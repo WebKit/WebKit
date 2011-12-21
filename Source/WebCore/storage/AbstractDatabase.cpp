@@ -223,6 +223,7 @@ AbstractDatabase::AbstractDatabase(ScriptExecutionContext* context, const String
 
 AbstractDatabase::~AbstractDatabase()
 {
+    ASSERT(!m_opened);
 }
 
 void AbstractDatabase::closeDatabase()

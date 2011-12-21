@@ -1,3 +1,19 @@
+2011-12-20  Dmitry Lomov  <dslomov@google.com>
+
+        [Chromium] DatabaseTrackerChromium: iterating DatabaseSet races with Database disposal on worker thread 
+        https://bugs.webkit.org/show_bug.cgi?id=74554
+
+        Reviewed by David Levin.
+
+        Covered by existing tests in fast/workers/storage.
+
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::NotifyDatabaseObserverOnCloseTask::create):
+        (WebCore::NotifyDatabaseObserverOnCloseTask::performTask):
+        (WebCore::NotifyDatabaseObserverOnCloseTask::isCleanupTask):
+        (WebCore::NotifyDatabaseObserverOnCloseTask::NotifyDatabaseObserverOnCloseTask):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+
 2011-12-21  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement::configureTextTrackDisplay is unnecessary

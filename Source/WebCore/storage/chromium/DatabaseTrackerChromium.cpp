@@ -97,20 +97,25 @@ void DatabaseTracker::addOpenDatabase(AbstractDatabase* database)
     DatabaseObserver::databaseOpened(database);
 }
 
-class TrackerRemoveOpenDatabaseTask : public ScriptExecutionContext::Task {
+class NotifyDatabaseObserverOnCloseTask : public ScriptExecutionContext::Task {
 public:
-    static PassOwnPtr<TrackerRemoveOpenDatabaseTask> create(PassRefPtr<AbstractDatabase> database)
+    static PassOwnPtr<NotifyDatabaseObserverOnCloseTask> create(PassRefPtr<AbstractDatabase> database)
     {
-        return adoptPtr(new TrackerRemoveOpenDatabaseTask(database));
+        return adoptPtr(new NotifyDatabaseObserverOnCloseTask(database));
     }
 
     virtual void performTask(ScriptExecutionContext* context)
     {
-        DatabaseTracker::tracker().removeOpenDatabase(m_database.get());
+        DatabaseObserver::databaseClosed(m_database.get());
+    }
+
+    virtual bool isCleanupTask() const
+    {
+        return true;
     }
 
 private:
-    TrackerRemoveOpenDatabaseTask(PassRefPtr<AbstractDatabase> database)
+    NotifyDatabaseObserverOnCloseTask(PassRefPtr<AbstractDatabase> database)
         : m_database(database)
     {
     }
@@ -120,11 +125,6 @@ private:
 
 void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
 {
-    if (!database->scriptExecutionContext()->isContextThread()) {
-        database->scriptExecutionContext()->postTask(TrackerRemoveOpenDatabaseTask::create(database));
-        return;
-    }
-
     String originIdentifier = database->securityOrigin()->databaseIdentifier();
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     ASSERT(m_openDatabaseMap);
@@ -151,7 +151,10 @@ void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
         }
     }
 
-    DatabaseObserver::databaseClosed(database);
+    if (!database->scriptExecutionContext()->isContextThread())
+        database->scriptExecutionContext()->postTask(NotifyDatabaseObserverOnCloseTask::create(database));
+    else
+        DatabaseObserver::databaseClosed(database);
 }
 
 void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
