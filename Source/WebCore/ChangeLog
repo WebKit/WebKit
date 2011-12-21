@@ -1,5 +1,27 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 93521
+
+    2011-08-22  Nate Chapin  <japhet@chromium.org>
+
+            Unload events can crash us when they blank out
+            a parent frame.
+            https://bugs.webkit.org/show_bug.cgi?id=64741
+
+            Reviewed by Adam Barth.
+
+            Test: fast/loader/document-destruction-within-unload.html
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::stopLoading): Prevent unload events
+                from going into infinite recursion.
+            (WebCore::FrameLoader::setDocumentLoader): Ensure we don't
+                let set m_documentLoader to a DocumentLoader with a null Frame*.
+            (WebCore::FrameLoader::detachChildren): Save off a vector of
+                children to detach, rather than doing it inline.
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 93514
 
     2011-08-22  Abhishek Arya  <inferno@chromium.org>
