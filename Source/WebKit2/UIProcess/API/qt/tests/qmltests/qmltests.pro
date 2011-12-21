@@ -21,6 +21,7 @@ OTHER_FILES += \
     DesktopBehavior/tst_loadHtml.qml \
     DesktopBehavior/tst_messaging.qml \
     DesktopBehavior/tst_navigationRequested.qml \
+    WebView/tst_favIconLoad.qml \
     WebView/tst_download.qml \
     WebView/tst_geopermission.qml \
     WebView/tst_itemSelector.qml \

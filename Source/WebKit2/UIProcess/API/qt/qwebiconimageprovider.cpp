@@ -39,9 +39,9 @@ QWebIconImageProvider::~QWebIconImageProvider()
 
 QImage QWebIconImageProvider::requestImage(const QString& id, QSize* size, const QSize& requestedSize)
 {
-    QString encodedIconUrl = id;
-    encodedIconUrl.remove(0, encodedIconUrl.indexOf('#') + 1);
-    String pageURL = QUrl::fromPercentEncoding(encodedIconUrl.toUtf8());
+    QString decodedIconUrl = id;
+    decodedIconUrl.remove(0, decodedIconUrl.indexOf('#') + 1);
+    String pageURL = QString::fromUtf8(QUrl(decodedIconUrl).toEncoded());
 
     // The string identifier has the leading image://webicon/ already stripped, so we just
     // need to truncate from the first slash to get the context id.

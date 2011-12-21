@@ -1,3 +1,21 @@
+2011-12-21  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt][WK2] Add tests for favicon and fix icon url decoding issue
+        https://bugs.webkit.org/show_bug.cgi?id=74967
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qwebiconimageprovider.cpp: We already receive the url
+        without the percent encoding and we should access WebIconDatabase with
+        an encoded url. Added a test to cover this behavior.
+        (QWebIconImageProvider::requestImage):
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_favIconLoad.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/favicon.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/favicon.png: Added.
+        * UIProcess/API/qt/tests/qmltests/common/favicon2.html: Added.
+        * UIProcess/API/qt/tests/qmltests/common/small-favicon.png: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+
 2011-12-21  Sam Weinig  <sam@webkit.org>
 
         Exception thrown when running WKBrowsingContextLoadDelegateTest.SimpleLoad test
