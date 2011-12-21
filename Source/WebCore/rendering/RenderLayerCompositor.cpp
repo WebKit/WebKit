@@ -973,7 +973,7 @@ void RenderLayerCompositor::frameViewDidChangeSize()
 
 #if ENABLE(THREADED_SCROLLING)
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->syncFrameGeometry(frameView->frame());
+            scrollingCoordinator->syncFrameViewGeometry(frameView);
 #endif
     }
 }
@@ -1231,7 +1231,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
 
 #if ENABLE(THREADED_SCROLLING)
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->syncFrameGeometry(m_renderView->frameView()->frame());
+        scrollingCoordinator->syncFrameViewGeometry(m_renderView->frameView());
 #endif
 }
 
@@ -1801,7 +1801,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
 #if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->setFrameScrollLayer(m_renderView->frameView()->frame(), m_scrollLayer.get());
+                scrollingCoordinator->setFrameViewScrollLayer(m_renderView->frameView(), m_scrollLayer.get());
 #endif
         }
     } else {

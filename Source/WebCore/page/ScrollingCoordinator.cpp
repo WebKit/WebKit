@@ -62,16 +62,16 @@ void ScrollingCoordinator::pageDestroyed()
     m_page = 0;
 }
 
-void ScrollingCoordinator::syncFrameGeometry(Frame* frame)
+void ScrollingCoordinator::syncFrameViewGeometry(FrameView* frameView)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (frame != m_page->mainFrame())
+    if (frameView->frame() != m_page->mainFrame())
         return;
 
-    IntRect visibleContentRect = frame->view()->visibleContentRect();
-    IntSize contentsSize = frame->view()->contentsSize();
+    IntRect visibleContentRect = frameView->visibleContentRect();
+    IntSize contentsSize = frameView->contentsSize();
 
     MutexLocker locker(m_mainFrameGeometryMutex);
     if (m_mainFrameVisibleContentRect == visibleContentRect && m_mainFrameContentsSize == contentsSize)

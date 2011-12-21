@@ -1,5 +1,22 @@
 2011-12-21  Anders Carlsson  <andersca@apple.com>
 
+        ScrollingCoordinator functions should take FrameView objects
+        https://bugs.webkit.org/show_bug.cgi?id=75023
+
+        Reviewed by Sam Weinig.
+
+        * page/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::syncFrameViewGeometry):
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::setFrameViewScrollLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::RenderLayerCompositor::ensureRootLayer):
+
+2011-12-21  Anders Carlsson  <andersca@apple.com>
+
         Get rid of ScrollableAreaClient
         https://bugs.webkit.org/show_bug.cgi?id=75021
 

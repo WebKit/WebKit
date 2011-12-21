@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-class Frame;
+class FrameView;
 class GraphicsLayer;
 class Page;
 class PlatformWheelEvent;
@@ -56,12 +56,12 @@ public:
 
     void pageDestroyed();
 
-    // Should be called whenever the scroll layer for the given frame changes.
-    void setFrameScrollLayer(Frame*, const GraphicsLayer* scrollLayer);
+    // Should be called whenever the scroll layer for the given frame view changes.
+    void setFrameViewScrollLayer(FrameView*, const GraphicsLayer* scrollLayer);
 
-    // Should be called whenever the geometry of the given frame changes,
+    // Should be called whenever the geometry of the given frame view changes,
     // including the visible content rect and the content size.
-    void syncFrameGeometry(Frame*);
+    void syncFrameViewGeometry(FrameView*);
 
     // Can be called from any thread. Will try to handle the wheel event on the scrolling thread,
     // and return false if the event must be sent again to the WebCore event handler.

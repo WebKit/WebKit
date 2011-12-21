@@ -29,6 +29,7 @@
 
 #import "ScrollingCoordinator.h"
 
+#import "FrameView.h"
 #import "Page.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/Functional.h>
@@ -160,12 +161,12 @@ static ScrollingThread& scrollingThread()
     return scrollingThread;
 }
 
-void ScrollingCoordinator::setFrameScrollLayer(Frame* frame, const GraphicsLayer* scrollLayer)
+void ScrollingCoordinator::setFrameViewScrollLayer(FrameView* frameView, const GraphicsLayer* scrollLayer)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (frame != m_page->mainFrame())
+    if (frameView->frame() != m_page->mainFrame())
         return;
 
     MutexLocker locker(m_mainFrameGeometryMutex);
