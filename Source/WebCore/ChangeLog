@@ -1,5 +1,29 @@
 2011-12-21  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of ScrollableAreaClient
+        https://bugs.webkit.org/show_bug.cgi?id=75021
+
+        Reviewed by Sam Weinig.
+
+        The ScrollableAreaClient interface will just add an extra level of indirection between ScrollableArea and
+        ScrollAnimator, which is unnecessary. Eventually I'd like to rename ScrollAnimator to something that better reflects
+        all the different responsibilities it currently has.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        * page/ScrollingCoordinator.cpp:
+        * page/ScrollingCoordinator.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea):
+        * platform/ScrollableArea.h:
+        * platform/ScrollableAreaClient.h: Removed.
+
+2011-12-21  Anders Carlsson  <andersca@apple.com>
+
         Don't recreate scrollbar layers whenever the frame view size changes
         https://bugs.webkit.org/show_bug.cgi?id=75018
 

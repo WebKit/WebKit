@@ -293,7 +293,7 @@ public:
     void calculateAndPaintOverhangAreas(GraphicsContext*, const IntRect& dirtyRect);
 
 protected:
-    ScrollView(ScrollableAreaClient* = 0);
+    ScrollView();
 
     virtual void repaintContentRectangle(const IntRect&, bool now = false);
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect) = 0;
