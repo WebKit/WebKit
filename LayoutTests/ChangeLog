@@ -1,5 +1,20 @@
 2011-12-20  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 92798
+
+    2011-08-10  Abhishek Arya  <inferno@chromium.org>
+
+            Tests that we do not crash when trying to access a removed
+            m_originatingLine for a float.
+            https://bugs.webkit.org/show_bug.cgi?id=65938
+
+            Reviewed by Dave Hyatt.
+
+            * fast/block/float/float-originating-line-deleted-crash-expected.txt: Added.
+            * fast/block/float/float-originating-line-deleted-crash.html: Added.
+
+2011-12-20  Lucas Forschler  <lforschler@apple.com>
+
     Merge 92744
 
     2011-08-09  Abhishek Arya  <inferno@chromium.org>
