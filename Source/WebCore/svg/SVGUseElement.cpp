@@ -1035,11 +1035,11 @@ void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVG
 
     to->setAttributesFromElement(*from);
 
-    to->removeAttribute(SVGNames::xAttr, ASSERT_NO_EXCEPTION);
-    to->removeAttribute(SVGNames::yAttr, ASSERT_NO_EXCEPTION);
-    to->removeAttribute(SVGNames::widthAttr, ASSERT_NO_EXCEPTION);
-    to->removeAttribute(SVGNames::heightAttr, ASSERT_NO_EXCEPTION);
-    to->removeAttribute(XLinkNames::hrefAttr, ASSERT_NO_EXCEPTION);
+    to->removeAttribute(SVGNames::xAttr);
+    to->removeAttribute(SVGNames::yAttr);
+    to->removeAttribute(SVGNames::widthAttr);
+    to->removeAttribute(SVGNames::heightAttr);
+    to->removeAttribute(XLinkNames::hrefAttr);
 }
 
 bool SVGUseElement::selfHasRelativeLengths() const

@@ -188,24 +188,26 @@ void Element::enqueueAttributesMutationRecordIfRequested(const QualifiedName& at
 }
 #endif
 
-void Element::removeAttribute(const QualifiedName& name, ExceptionCode& ec)
+void Element::removeAttribute(const QualifiedName& name)
 {
-    if (m_attributeMap) {
-        ec = 0;
-        RefPtr<Node> attrNode = m_attributeMap->removeNamedItem(name, ec);
-        if (ec == NOT_FOUND_ERR)
-            ec = 0;
-    }
+    if (!m_attributeMap)
+        return;
+
+    size_t index = m_attributeMap->getAttributeItemIndex(name);
+    if (index == notFound)
+        return;
+
+    willModifyAttribute(name, m_attributeMap->attributeItem(index)->value(), nullAtom);
+
+    m_attributeMap->removeAttribute(index);
 }
 
-void Element::setBooleanAttribute(const QualifiedName& name, bool b)
+void Element::setBooleanAttribute(const QualifiedName& name, bool value)
 {
-    if (b)
+    if (value)
         setAttribute(name, emptyAtom);
-    else {
-        ExceptionCode ex;
-        removeAttribute(name, ex);
-    }
+    else
+        removeAttribute(name);
 }
 
 Node::NodeType Element::nodeType() const
@@ -627,20 +629,20 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
 
-    // Allocate attribute map if necessary.
-    Attribute* old = attributes(false)->getAttributeItem(localName, false);
-    setAttributeInternal(old, old ? old->name() : QualifiedName(nullAtom, localName, nullAtom), value);
+    size_t index = attributes(false)->getAttributeItemIndex(localName, false);
+    const QualifiedName& qName = index != notFound ? m_attributeMap->attributeItem(index)->name() : QualifiedName(nullAtom, localName, nullAtom);
+    setAttributeInternal(index, qName, value);
 }
 
 void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    // Allocate attribute map if necessary.
-    Attribute* old = attributes(false)->getAttributeItem(name);
-    setAttributeInternal(old, name, value);
+    setAttributeInternal(attributes(false)->getAttributeItemIndex(name), name, value);
 }
 
-inline void Element::setAttributeInternal(Attribute* old, const QualifiedName& name, const AtomicString& value)
+inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value)
 {
+    Attribute* old = index != notFound ? m_attributeMap->attributeItem(index) : 0;
+
 #if ENABLE(INSPECTOR)
     if (!isSynchronizingStyleAttribute())
         InspectorInstrumentation::willModifyDOMAttr(document(), this);
@@ -651,7 +653,7 @@ inline void Element::setAttributeInternal(Attribute* old, const QualifiedName& n
     willModifyAttribute(name, old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
-        m_attributeMap->removeAttribute(name);
+        m_attributeMap->removeAttribute(index);
     else if (!old && !value.isNull())
         m_attributeMap->addAttribute(createAttribute(name, value));
     else if (old) {
@@ -1461,25 +1463,31 @@ void Element::setAttributeNS(const AtomicString& namespaceURI, const AtomicStrin
     setAttribute(qName, value);
 }
 
-void Element::removeAttribute(const String& name, ExceptionCode& ec)
+void Element::removeAttribute(const String& name)
 {
-    InspectorInstrumentation::willModifyDOMAttr(document(), this);
+    if (!m_attributeMap)
+        return;
 
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
+    size_t index = m_attributeMap->getAttributeItemIndex(localName, false);
+    if (index == notFound)
+        return;
 
-    if (m_attributeMap) {
-        ec = 0;
-        RefPtr<Node> attrNode = m_attributeMap->removeNamedItem(localName, ec);
-        if (ec == NOT_FOUND_ERR)
-            ec = 0;
-    }
-    
+    Attribute* attribute = m_attributeMap->attributeItem(index);
+
+    InspectorInstrumentation::willModifyDOMAttr(document(), this);
+
+    if (!attribute->isNull())
+        willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
+
+    m_attributeMap->removeAttribute(index);
+
     InspectorInstrumentation::didRemoveDOMAttr(document(), this, name);
 }
 
-void Element::removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
+void Element::removeAttributeNS(const String& namespaceURI, const String& localName)
 {
-    removeAttribute(QualifiedName(nullAtom, localName, namespaceURI), ec);
+    removeAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
 PassRefPtr<Attr> Element::getAttributeNode(const String& name)

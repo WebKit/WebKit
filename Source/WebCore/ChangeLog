@@ -1,3 +1,66 @@
+2011-12-20  Adam Klein  <adamk@chromium.org>
+
+        Avoid unnecessary work when removing attributes from an element
+        https://bugs.webkit.org/show_bug.cgi?id=74953
+
+        Reviewed by Ryosuke Niwa.
+
+        Various codepaths in Element and NamedNodeMap repeatedly search
+        through the list of attributes during a single operation. To avoid
+        this, I've added new getters to NamedNodeMap that return indices
+        rather than Attribute*s (they return WTF::notFound if no match is
+        found). These new methods are now used during removeAttribute
+        operations, as well as setAttribute and NamedNodeMap::setNamedItem
+        (along with a new replaceAttribute helper method).
+
+        The other optimization here involves the creation/destruction
+        of never-references Attr nodes. This is now avoided by calling
+        NamedNodeMap::removeAttribute directly instead of going through
+        NamedNodeMap::removeNamedItem.
+
+        As a cleanup after the above changes, the ExceptionCode argument is
+        gone from Element::removeAttribute and friends (it was never set
+        previously). The bulk of the files mentioned below are simply updating
+        callers to these methods.
+
+        No new tests, no change in behavior expected.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::DatasetDOMStringMap::deleteItem):
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute):
+        (WebCore::Element::setBooleanAttribute):
+        (WebCore::Element::removeAttributeNS):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setAttributeInternal):
+        * dom/Element.h:
+        * dom/Element.idl:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem):
+        (WebCore::NamedNodeMap::removeNamedItem):
+        (WebCore::NamedNodeMap::getAttributeItemIndexSlowCase):
+        (WebCore::NamedNodeMap::replaceAttribute):
+        (WebCore::NamedNodeMap::removeAttribute):
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::getAttributeItem):
+        (WebCore::NamedNodeMap::getAttributeItemIndex):
+        (WebCore::NamedNodeMap::removeAttribute):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::executeApply):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setContentEditable):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setType):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesAsText):
+        (WebCore::InspectorDOMAgent::removeAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferUseAttributesToReplacedElement):
+
 2011-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         WebVTT cues sometimes render when they should not

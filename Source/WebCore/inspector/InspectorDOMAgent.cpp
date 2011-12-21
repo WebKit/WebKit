@@ -528,9 +528,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
 
     const NamedNodeMap* attrMap = toHTMLElement(child)->attributes(true);
     if (!attrMap && name) {
-        element->removeAttribute(*name, ec);
-        if (ec)
-            *errorString = "Could not remove attribute";
+        element->removeAttribute(*name);
         return;
     }
 
@@ -544,9 +542,7 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
     }
 
     if (!foundOriginalAttribute && name) {
-        element->removeAttribute(*name, ec);
-        if (ec)
-            *errorString = "Could not remove attribute";
+        element->removeAttribute(*name);
         return;
     }
 }
@@ -554,12 +550,8 @@ void InspectorDOMAgent::setAttributesAsText(ErrorString* errorString, int elemen
 void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId, const String& name)
 {
     Element* element = assertElement(errorString, elementId);
-    if (element) {
-        ExceptionCode ec = 0;
-        element->removeAttribute(name, ec);
-        if (ec)
-            *errorString = "Exception while removing attribute";
-    }
+    if (element)
+        element->removeAttribute(name);
 }
 
 void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)

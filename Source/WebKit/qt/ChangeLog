@@ -1,3 +1,14 @@
+2011-12-20  Adam Klein  <adamk@chromium.org>
+
+        Avoid unnecessary work when removing attributes from an element
+        https://bugs.webkit.org/show_bug.cgi?id=74953
+
+        Reviewed by Ryosuke Niwa.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::removeAttribute): Updated a caller of
+        WebCore::Element::removeAttribute to remove ExceptionCode argument.
+
 2011-12-20  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] Extend QQuickWebview::navigationRequested API

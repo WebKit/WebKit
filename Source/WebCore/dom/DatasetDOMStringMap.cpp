@@ -199,8 +199,7 @@ void DatasetDOMStringMap::deleteItem(const String& name, ExceptionCode& ec)
         return;
     }
 
-    ExceptionCode dummy;
-    m_element->removeAttribute(convertPropertyNameToAttributeName(name), dummy);
+    m_element->removeAttribute(convertPropertyNameToAttributeName(name));
 }
 
 } // namespace WebCore

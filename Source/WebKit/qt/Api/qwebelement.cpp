@@ -463,8 +463,7 @@ void QWebElement::removeAttribute(const QString &name)
 {
     if (!m_element)
         return;
-    ExceptionCode exception = 0;
-    m_element->removeAttribute(name, exception);
+    m_element->removeAttribute(name);
 }
 
 /*!
@@ -477,8 +476,7 @@ void QWebElement::removeAttributeNS(const QString &namespaceUri, const QString &
 {
     if (!m_element)
         return;
-    WebCore::ExceptionCode exception = 0;
-    m_element->removeAttributeNS(namespaceUri, name, exception);
+    m_element->removeAttributeNS(namespaceUri, name);
 }
 
 /*!
@@ -2134,4 +2132,3 @@ void QtWebElementRuntime::initialize()
     JSC::Bindings::registerCustomType(id, convertJSValueToWebElementVariant, convertWebElementVariantToJSValue);
 #endif
 }
-

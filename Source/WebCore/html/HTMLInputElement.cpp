@@ -532,10 +532,9 @@ void HTMLInputElement::setType(const String& type)
     // We should write a test case to show that setting to the empty string does not remove the
     // attribute in other browsers and then fix this. Note that setting to null *does* remove
     // the attribute and setAttribute implements that.
-    if (type.isEmpty()) {
-        ExceptionCode ec;
-        removeAttribute(typeAttr, ec);
-    } else
+    if (type.isEmpty())
+        removeAttribute(typeAttr);
+    else
         setAttribute(typeAttr, type);
 }
 

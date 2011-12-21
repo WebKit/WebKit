@@ -61,8 +61,7 @@ void SplitElementCommand::executeApply()
         return;
 
     // Delete id attribute from the second element because the same id cannot be used for more than one element
-    m_element2->removeAttribute(HTMLNames::idAttr, ec);
-    ASSERT(!ec);
+    m_element2->removeAttribute(HTMLNames::idAttr);
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)

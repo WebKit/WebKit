@@ -990,9 +990,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             if (!child->contains(targetNode) && elementsToPushDown.size()) {
                 for (size_t i = 0; i < elementsToPushDown.size(); i++) {
                     RefPtr<Element> wrapper = elementsToPushDown[i]->cloneElementWithoutChildren();
-                    ExceptionCode ec = 0;
-                    wrapper->removeAttribute(styleAttr, ec);
-                    ASSERT(!ec);
+                    wrapper->removeAttribute(styleAttr);
                     surroundNodeRangeWithElement(child, child, wrapper);
                 }
             }
