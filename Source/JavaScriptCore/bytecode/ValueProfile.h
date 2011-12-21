@@ -44,6 +44,15 @@ struct ValueProfile {
     static const unsigned bucketIndexMask = numberOfBuckets - 1;
     static const unsigned totalNumberOfBuckets = numberOfBuckets + numberOfSpecFailBuckets;
     
+    ValueProfile()
+        : m_bytecodeOffset(-1)
+        , m_prediction(PredictNone)
+        , m_numberOfSamplesInPrediction(0)
+    {
+        for (unsigned i = 0; i < totalNumberOfBuckets; ++i)
+            m_buckets[i] = JSValue::encode(JSValue());
+    }
+    
     ValueProfile(int bytecodeOffset)
         : m_bytecodeOffset(bytecodeOffset)
         , m_prediction(PredictNone)

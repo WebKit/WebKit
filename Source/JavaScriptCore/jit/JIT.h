@@ -337,6 +337,7 @@ namespace JSC {
 #if ENABLE(VALUE_PROFILER)
         // This assumes that the value to profile is in regT0 and that regT3 is available for
         // scratch.
+        void emitValueProfilingSite(ValueProfile*);
         void emitValueProfilingSite(ValueProfilingSiteKind);
 #else
         void emitValueProfilingSite(ValueProfilingSiteKind) { }

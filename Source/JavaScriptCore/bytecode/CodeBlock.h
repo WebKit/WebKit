@@ -657,26 +657,50 @@ namespace JSC {
 #endif
         
 #if ENABLE(VALUE_PROFILER)
+        void setArgumentValueProfileSize(unsigned size)
+        {
+            m_argumentValueProfiles.resize(size);
+        }
+        unsigned numberOfArgumentValueProfiles()
+        {
+            return m_argumentValueProfiles.size();
+        }
+        ValueProfile* valueProfileForArgument(unsigned argumentIndex)
+        {
+            ValueProfile* result = &m_argumentValueProfiles[argumentIndex];
+            ASSERT(result->m_bytecodeOffset == -1);
+            return result;
+        }
+        
         ValueProfile* addValueProfile(int bytecodeOffset)
         {
+            ASSERT(bytecodeOffset != -1);
             m_valueProfiles.append(ValueProfile(bytecodeOffset));
             return &m_valueProfiles.last();
         }
         unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
-        ValueProfile* valueProfile(int index) { return &m_valueProfiles[index]; }
+        ValueProfile* valueProfile(int index)
+        {
+            ValueProfile* result = &m_valueProfiles[index];
+            ASSERT(result->m_bytecodeOffset != -1);
+            return result;
+        }
         ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
         {
-            return WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
-        }
-        ValueProfile* valueProfileForArgument(int argument)
-        {
-            size_t index = argument;
-            if (index >= m_valueProfiles.size())
-                return 0;
-            ValueProfile* result = valueProfile(index);
-            if (result->m_bytecodeOffset != -1)
-                return 0;
+            ValueProfile* result = WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
+            ASSERT(result->m_bytecodeOffset != -1);
             return result;
+        }
+        
+        unsigned totalNumberOfValueProfiles()
+        {
+            return numberOfArgumentValueProfiles() + numberOfValueProfiles();
+        }
+        ValueProfile* getFromAllValueProfiles(unsigned index)
+        {
+            if (index < numberOfArgumentValueProfiles())
+                return valueProfileForArgument(index);
+            return valueProfile(index - numberOfArgumentValueProfiles());
         }
         
         RareCaseProfile* addRareCaseProfile(int bytecodeOffset)
@@ -1251,6 +1275,7 @@ namespace JSC {
         DFG::ExitProfile m_exitProfile;
 #endif
 #if ENABLE(VALUE_PROFILER)
+        Vector<ValueProfile> m_argumentValueProfiles;
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
         SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
         SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;

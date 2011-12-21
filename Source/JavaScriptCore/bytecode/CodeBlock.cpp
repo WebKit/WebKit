@@ -1835,6 +1835,8 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
 #endif
 
 #if ENABLE(VALUE_PROFILER)
+    for (unsigned profileIndex = 0; profileIndex < numberOfArgumentValueProfiles(); ++profileIndex)
+        valueProfileForArgument(profileIndex)->computeUpdatedPrediction();
     for (unsigned profileIndex = 0; profileIndex < numberOfValueProfiles(); ++profileIndex)
         valueProfile(profileIndex)->computeUpdatedPrediction();
 #endif
@@ -2206,11 +2208,10 @@ bool CodeBlock::shouldOptimizeNow()
     if (m_optimizationDelayCounter >= Options::maximumOptimizationDelay)
         return true;
     
-    unsigned numberOfNonArgumentValueProfiles = 0;
     unsigned numberOfLiveNonArgumentValueProfiles = 0;
     unsigned numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
-    for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
-        ValueProfile* profile = valueProfile(i);
+    for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
+        ValueProfile* profile = getFromAllValueProfiles(i);
         unsigned numSamples = profile->totalNumberOfSamples();
         if (numSamples > ValueProfile::numberOfBuckets)
             numSamples = ValueProfile::numberOfBuckets; // We don't want profiles that are extremely hot to be given more weight.
@@ -2219,18 +2220,17 @@ bool CodeBlock::shouldOptimizeNow()
             profile->computeUpdatedPrediction();
             continue;
         }
-        numberOfNonArgumentValueProfiles++;
         if (profile->numberOfSamples() || profile->m_prediction != PredictNone)
             numberOfLiveNonArgumentValueProfiles++;
         profile->computeUpdatedPrediction();
     }
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    printf("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles, (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
+    printf("Profile hotness: %lf, %lf\n", (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles(), (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles());
 #endif
 
-    if ((!numberOfNonArgumentValueProfiles || (double)numberOfLiveNonArgumentValueProfiles / numberOfNonArgumentValueProfiles >= Options::desiredProfileLivenessRate)
-        && (!numberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / numberOfValueProfiles() >= Options::desiredProfileFullnessRate)
+    if ((!numberOfValueProfiles() || (double)numberOfLiveNonArgumentValueProfiles / numberOfValueProfiles() >= Options::desiredProfileLivenessRate)
+        && (!totalNumberOfValueProfiles() || (double)numberOfSamplesInProfiles / ValueProfile::numberOfBuckets / totalNumberOfValueProfiles() >= Options::desiredProfileFullnessRate)
         && static_cast<unsigned>(m_optimizationDelayCounter) + 1 >= Options::minimumOptimizationDelay)
         return true;
     
@@ -2267,8 +2267,8 @@ void CodeBlock::tallyFrequentExitSites()
 void CodeBlock::dumpValueProfiles()
 {
     fprintf(stderr, "ValueProfile for %p:\n", this);
-    for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
-        ValueProfile* profile = valueProfile(i);
+    for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
+        ValueProfile* profile = getFromAllValueProfiles(i);
         if (profile->m_bytecodeOffset < 0) {
             ASSERT(profile->m_bytecodeOffset == -1);
             fprintf(stderr, "   arg = %u: ", i);

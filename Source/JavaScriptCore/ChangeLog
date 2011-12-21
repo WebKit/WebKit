@@ -1,3 +1,32 @@
+2011-12-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Value Profiles for arguments should be more easily accessible to the interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=74984
+        <rdar://problem/10611364>
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setArgumentValueProfileSize):
+        (JSC::CodeBlock::numberOfArgumentValueProfiles):
+        (JSC::CodeBlock::valueProfileForArgument):
+        (JSC::CodeBlock::addValueProfile):
+        (JSC::CodeBlock::valueProfile):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        (JSC::CodeBlock::totalNumberOfValueProfiles):
+        (JSC::CodeBlock::getFromAllValueProfiles):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfile::ValueProfile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+
 2011-12-20  Gavin Barraclough  <barraclough@apple.com>
 
         JSC shell should accept utf8 input.

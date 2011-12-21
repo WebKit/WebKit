@@ -448,26 +448,16 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
 }
 
 #if ENABLE(VALUE_PROFILER)
-inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
+inline void JIT::emitValueProfilingSite(ValueProfile* valueProfile)
 {
-    if (!shouldEmitProfiling())
-        return;
-    
+    ASSERT(shouldEmitProfiling());
+    ASSERT(valueProfile);
+
     const RegisterID value = regT0;
 #if USE(JSVALUE32_64)
     const RegisterID valueTag = regT1;
 #endif
     const RegisterID scratch = regT3;
-    
-    ValueProfile* valueProfile;
-    if (siteKind == FirstProfilingSite)
-        valueProfile = m_codeBlock->addValueProfile(m_bytecodeOffset);
-    else {
-        ASSERT(siteKind == SubsequentProfilingSite);
-        valueProfile = m_codeBlock->valueProfileForBytecodeOffset(m_bytecodeOffset);
-    }
-    
-    ASSERT(valueProfile);
     
     if (ValueProfile::numberOfBuckets == 1) {
         // We're in a simple configuration: only one bucket, so we can just do a direct
@@ -494,6 +484,22 @@ inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
     store32(value, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
     store32(valueTag, BaseIndex(scratch, bucketCounterRegister, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
 #endif
+}
+
+inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
+{
+    if (!shouldEmitProfiling())
+        return;
+    
+    ValueProfile* valueProfile;
+    if (siteKind == FirstProfilingSite)
+        valueProfile = m_codeBlock->addValueProfile(m_bytecodeOffset);
+    else {
+        ASSERT(siteKind == SubsequentProfilingSite);
+        valueProfile = m_codeBlock->valueProfileForBytecodeOffset(m_bytecodeOffset);
+    }
+    
+    emitValueProfilingSite(valueProfile);
 }
 #endif
 
