@@ -1,5 +1,20 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 95028
+
+    2011-09-12  Sam Weinig  <sam@webkit.org>
+
+            Object.getPrototypeOf should use JSValue::get()
+            https://bugs.webkit.org/show_bug.cgi?id=67973
+
+            Reviewed by Darin Adler.
+
+            * http/tests/security/cross-frame-access-object-getPrototypeOf-expected.txt: Added.
+            * http/tests/security/cross-frame-access-object-getPrototypeOf.html: Added.
+            * http/tests/security/resources/cross-frame-iframe-for-object-getPrototypeOf-test.html: Added.
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94991
 
     2011-09-12  Dan Bernstein  <mitz@apple.com>
