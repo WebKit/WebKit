@@ -63,7 +63,7 @@ WebInspector.NetworkItemView = function(resource)
 WebInspector.NetworkItemView.prototype = {
     wasShown: function()
     {
-        WebInspector.TabbedPane.prototype.wasShown.call();
+        WebInspector.TabbedPane.prototype.wasShown.call(this);
         this._selectTab();
     },
 

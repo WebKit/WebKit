@@ -1689,11 +1689,14 @@ button.edit-source-status-bar-item.toggled-on .glyph {
 
 .tabbed-pane-header {
     height: 23px;
-    padding: 0 10px;
     border-bottom: 1px solid rgb(163, 163, 163);
 }
 
-.tabbed-pane-header li {
+.tabbed-pane-header-tabs {
+    margin: 0 10px;
+}
+
+.tabbed-pane-header-tab {
     display: inline-block;
     margin-top: 2px;
     font-size: 11px;
@@ -1706,9 +1709,16 @@ button.edit-source-status-bar-item.toggled-on .glyph {
     height: 21px;
     border: 1px solid transparent;
     border-bottom: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
-.tabbed-pane-header li.selected {
+.tabbed-pane-header-tab.measuring {
+    visibility: hidden;
+}
+
+.tabbed-pane-header-tab.selected {
     background-color: white;
     border: 1px solid rgb(163, 163, 163);
     border-bottom: none;

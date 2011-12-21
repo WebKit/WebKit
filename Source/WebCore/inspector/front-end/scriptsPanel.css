@@ -202,6 +202,11 @@
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F5F5F5), to(#E5E5E5));
 }
 
+#scripts-navigator-tabbed-pane .tabbed-pane-header-tabs {
+    margin-left: 1px;
+    margin-right: 16px;
+}
+
 #scripts-navigator-tabbed-pane .tabbed-pane-content {
     margin-top: 1px;
 }

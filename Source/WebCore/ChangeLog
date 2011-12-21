@@ -1,3 +1,33 @@
+2011-12-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TabbedPane should use tabElement width measuring to layout tab elements when width is too small to fit them.
+        https://bugs.webkit.org/show_bug.cgi?id=75005
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/tabbed-pane-max-tab-width-calculation.html
+
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView.prototype.wasShown):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane):
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype._createTabElement):
+        (WebInspector.TabbedPane.prototype.onResize):
+        (WebInspector.TabbedPane.prototype._maybeMeasureAndUpdate):
+        (WebInspector.TabbedPane.prototype._measureTab):
+        (WebInspector.TabbedPane.prototype._updateWidths):
+        (WebInspector.TabbedPane.prototype._calculateMaxWidth):
+        (WebInspector.TabbedPaneTab):
+        * inspector/front-end/inspector.css:
+        (.tabbed-pane-header):
+        (.tabbed-pane-header-tabs):
+        (.tabbed-pane-header-tab):
+        (.tabbed-pane-header-tab.measuring):
+        (.tabbed-pane-header-tab.selected):
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-navigator-tabbed-pane .tabbed-pane-header-tabs):
+
 2011-12-09  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: auto detect source map url.
