@@ -1,3 +1,13 @@
+2011-12-21  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix.
+
+        Replace all instances of "WebPropupMenuProxy" with "WebPopupMenuProxy".
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::setFocusedIndex):
+
 2011-12-20  Anders Carlsson  <andersca@apple.com>
 
         Add ScrollableArea::contentsResized and have it call the scroll animator
