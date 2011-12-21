@@ -97,7 +97,7 @@ function test()
                     "offset": { "line": 1, "column": 0 },
                     "map": {
                         "mappings":"AAAA,CAEC",
-                        "sources":["source1.js"]
+                        "sources":["source1.js", "source2.js"]
                     }
                 }, {
                     "offset": { "line": 3, "column": 10 },
@@ -109,10 +109,20 @@ function test()
             ]};
             var mapping = new WebInspector.ClosureCompilerSourceMapping();
             mapping._parseMappingPayload(mappingPayload);
+            InspectorTest.assertEquals(2, mapping.sources().length);
             checkMapping(0, 0, "source1.js", 0, 0, mapping);
             checkMapping(0, 1, "source1.js", 2, 1, mapping);
             checkMapping(2, 10, "source2.js", 0, 0, mapping);
             checkMapping(2, 11, "source2.js", 2, 1, mapping);
+            next();
+        },
+
+        function testResolveSourceMappingURL(next)
+        {
+            var func = WebInspector.ClosureCompilerSourceMapping.prototype._resolveSourceMapURL;
+            InspectorTest.assertEquals("http://example.com/map.json", func("http://example.com/map.json", "http://example.com/script.js"));
+            InspectorTest.assertEquals("http://example.com/map.json", func("/map.json", "http://example.com/script.js"));
+            InspectorTest.assertEquals("http://example.com/scripts/../maps/map.json", func("../maps/map.json", "http://example.com/scripts/script.js"));
             next();
         },
 

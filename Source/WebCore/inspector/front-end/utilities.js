@@ -469,8 +469,10 @@ String.prototype.asParsedURL = function()
 
         // Then take last path component.
         var lastSlashIndex = path.lastIndexOf("/");
-        if (lastSlashIndex !== -1)
+        if (lastSlashIndex !== -1) {
+            result.firstPathComponents = path.substring(0, lastSlashIndex + 1);
             result.lastPathComponent = path.substring(lastSlashIndex + 1);
+        }
     } 
     return result;
 }

@@ -1,3 +1,22 @@
+2011-12-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: fix source map url resolving.
+        https://bugs.webkit.org/show_bug.cgi?id=74305
+
+        Reviewed by Pavel Feldman.
+
+        Also fix the bug with repeated source urls in mapping sections.
+
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.ClosureCompilerSourceMapping):
+        (WebInspector.ClosureCompilerSourceMapping.prototype.sources):
+        (WebInspector.ClosureCompilerSourceMapping.prototype._parseMap):
+        (WebInspector.ClosureCompilerSourceMapping.prototype._resolveSourceMapURL):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.installCompilerSourceMapping):
+        * inspector/front-end/utilities.js:
+        (String.prototype.asParsedURL):
+
 2011-12-21  Renata Hodovan  <reni@webkit.org>
 
         New renderer for SVGRectElement
