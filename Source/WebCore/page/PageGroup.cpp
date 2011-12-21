@@ -76,6 +76,11 @@ PageGroup::~PageGroup()
     removeAllUserContent();
 }
 
+PassOwnPtr<PageGroup> PageGroup::create(Page* page)
+{
+    return adoptPtr(new PageGroup(page));
+}
+
 typedef HashMap<String, PageGroup*> PageGroupMap;
 static PageGroupMap* pageGroups = 0;
 

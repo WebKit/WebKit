@@ -244,6 +244,11 @@ Settings::Settings(Page* page)
     AtomicString::init();
 }
 
+PassOwnPtr<Settings> Settings::create(Page* page)
+{
+    return adoptPtr(new Settings(page));
+} 
+
 const AtomicString& Settings::standardFontFamily(UScriptCode script) const
 {
     return getGenericFontFamilyForScript(m_standardFontFamilyMap, script);

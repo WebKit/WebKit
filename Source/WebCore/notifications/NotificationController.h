@@ -28,6 +28,7 @@
 
 #if ENABLE(NOTIFICATIONS)
 
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -38,12 +39,15 @@ class Page;
 class NotificationController {
     WTF_MAKE_NONCOPYABLE(NotificationController);
 public:
-    NotificationController(Page*, NotificationPresenter*);
     ~NotificationController();
-    
+
+    static PassOwnPtr<NotificationController> create(Page*, NotificationPresenter*);
+
     NotificationPresenter* client() { return m_client; }
     
 private:
+    NotificationController(Page*, NotificationPresenter*);
+
     Page* m_page;
     NotificationPresenter* m_client;
 };

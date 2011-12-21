@@ -71,6 +71,11 @@ Chrome::~Chrome()
     m_client->chromeDestroyed();
 }
 
+PassOwnPtr<Chrome> Chrome::create(Page* page, ChromeClient* client)
+{
+    return adoptPtr(new Chrome(page, client));
+}
+
 void Chrome::invalidateRootView(const IntRect& updateRect, bool immediate)
 {
     m_client->invalidateRootView(updateRect, immediate);

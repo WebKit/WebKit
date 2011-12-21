@@ -84,7 +84,7 @@ class DragCaretController : private CaretBase {
     WTF_MAKE_NONCOPYABLE(DragCaretController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DragCaretController();
+    static PassOwnPtr<DragCaretController> create();
 
     RenderObject* caretRenderer() const;
     void paintDragCaret(Frame*, GraphicsContext*, const LayoutPoint&, const LayoutRect& clipRect) const;
@@ -100,6 +100,8 @@ public:
     void nodeWillBeRemoved(Node*);
 
 private:
+    DragCaretController();
+
     VisiblePosition m_position;
 };
 
@@ -331,4 +333,3 @@ void showTree(const WebCore::FrameSelection*);
 #endif
 
 #endif // FrameSelection_h
-

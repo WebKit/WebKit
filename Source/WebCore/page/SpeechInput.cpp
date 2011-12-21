@@ -36,6 +36,7 @@
 #include "SecurityOrigin.h"
 #include "SpeechInputClient.h"
 #include "SpeechInputListener.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -49,6 +50,11 @@ SpeechInput::SpeechInput(SpeechInputClient* client)
 SpeechInput::~SpeechInput()
 {
     m_client->setListener(0);
+}
+
+PassOwnPtr<SpeechInput> SpeechInput::create(SpeechInputClient* client)
+{
+    return adoptPtr(new SpeechInput(client));
 }
 
 int SpeechInput::registerListener(SpeechInputListener* listener)

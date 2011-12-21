@@ -68,7 +68,7 @@ namespace WebCore {
     class Settings {
         WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
     public:
-        Settings(Page*);
+        static PassOwnPtr<Settings> create(Page*);
 
         void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
         const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
@@ -515,6 +515,8 @@ namespace WebCore {
 #endif
 
     private:
+        Settings(Page*);
+
         Page* m_page;
 
         String m_defaultTextEncodingName;

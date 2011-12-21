@@ -44,6 +44,11 @@ BackForwardController::~BackForwardController()
 {
 }
 
+PassOwnPtr<BackForwardController> BackForwardController::create(Page* page, PassRefPtr<BackForwardList> client)
+{
+    return adoptPtr(new BackForwardController(page, client));
+}
+
 bool BackForwardController::canGoBackOrForward(int distance) const
 {
     return m_page->canGoBackOrForward(distance);

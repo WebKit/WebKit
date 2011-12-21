@@ -63,8 +63,10 @@ class InspectorController {
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorController(Page*, InspectorClient*);
     ~InspectorController();
+
+    static PassOwnPtr<InspectorController> create(Page*, InspectorClient*);
+
     void inspectedPageDestroyed();
 
     bool enabled() const;
@@ -104,6 +106,8 @@ public:
     void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
 private:
+    InspectorController(Page*, InspectorClient*);
+
     friend class PostWorkerNotificationToFrontendTask;
     friend InstrumentingAgents* instrumentationForPage(Page*);
 

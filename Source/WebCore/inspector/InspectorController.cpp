@@ -160,6 +160,11 @@ InspectorController::~InspectorController()
     ASSERT(!m_inspectorClient);
 }
 
+PassOwnPtr<InspectorController> InspectorController::create(Page* page, InspectorClient* client)
+{
+    return adoptPtr(new InspectorController(page, client));
+}
+
 void InspectorController::inspectedPageDestroyed()
 {
     disconnectFrontend();

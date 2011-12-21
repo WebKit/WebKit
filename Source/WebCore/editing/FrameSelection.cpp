@@ -90,6 +90,11 @@ DragCaretController::DragCaretController()
 {
 }
 
+PassOwnPtr<DragCaretController> DragCaretController::create()
+{
+    return adoptPtr(new DragCaretController);
+}
+
 bool DragCaretController::isContentRichlyEditable() const
 {
     return isRichlyEditablePosition(m_position.deepEquivalent());

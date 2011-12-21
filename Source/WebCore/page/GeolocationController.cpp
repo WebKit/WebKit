@@ -47,6 +47,11 @@ GeolocationController::~GeolocationController()
         m_client->geolocationDestroyed();
 }
 
+PassOwnPtr<GeolocationController> GeolocationController::create(Page* page, GeolocationClient* client)
+{
+    return adoptPtr(new GeolocationController(page, client));
+}
+
 void GeolocationController::addObserver(Geolocation* observer, bool enableHighAccuracy)
 {
     // This may be called multiple times with the same observer, though removeObserver()

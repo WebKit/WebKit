@@ -53,8 +53,10 @@ namespace WebCore {
     class DragController {
         WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
     public:
-        DragController(Page*, DragClient*);
         ~DragController();
+
+        static PassOwnPtr<DragController> create(Page*, DragClient*);
+
         DragClient* client() const { return m_client; }
 
         DragSession dragEntered(DragData*);
@@ -93,6 +95,8 @@ namespace WebCore {
         static const float DragImageAlpha;
 
     private:
+        DragController(Page*, DragClient*);
+
         bool dispatchTextInputEventFor(Frame*, DragData*);
         bool canProcessDrag(DragData*);
         bool concludeEditDrag(DragData*);

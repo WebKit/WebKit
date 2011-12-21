@@ -46,6 +46,11 @@ DeviceOrientationController::~DeviceOrientationController()
     m_client->deviceOrientationControllerDestroyed();
 }
 
+PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(Page* page, DeviceOrientationClient* client)
+{
+    return adoptPtr(new DeviceOrientationController(page, client));
+}
+
 void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);

@@ -60,8 +60,9 @@ namespace WebCore {
     
     class Chrome : public HostWindow {
     public:
-        Chrome(Page*, ChromeClient*);
         ~Chrome();
+
+        static PassOwnPtr<Chrome> create(Page*, ChromeClient*);
 
         ChromeClient* client() { return m_client; }
 
@@ -182,6 +183,8 @@ namespace WebCore {
 #endif
 
     private:
+        Chrome(Page*, ChromeClient*);
+
         Page* m_page;
         ChromeClient* m_client;
     };

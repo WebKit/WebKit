@@ -50,8 +50,9 @@ class SpeechInputListener;
 class SpeechInput : public SpeechInputListener {
     WTF_MAKE_NONCOPYABLE(SpeechInput);
 public:
-    SpeechInput(SpeechInputClient*);
     virtual ~SpeechInput();
+
+    static PassOwnPtr<SpeechInput> create(SpeechInputClient*);
 
     // Generates a unique ID for the given listener to be used for speech requests.
     // This should be the first call made by listeners before anything else.
@@ -72,6 +73,8 @@ public:
     virtual void setRecognitionResult(int, const SpeechInputResultArray&);
 
 private:
+    SpeechInput(SpeechInputClient*);
+
     SpeechInputClient* m_client;
     HashMap<int, SpeechInputListener*> m_listeners;
     int m_nextListenerId;

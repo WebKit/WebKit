@@ -1,3 +1,60 @@
+2011-12-20  Greg Billock  <gbillock@google.com>
+
+        Change adoptPtr(new ...) to ...::create in Page.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74457
+
+        Reviewed by Darin Adler.
+
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::create):
+        * dom/DeviceMotionController.h:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::create):
+        * dom/DeviceOrientationController.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::DragCaretController::create):
+        * editing/FrameSelection.h:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::create):
+        * history/BackForwardController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::create):
+        * inspector/InspectorController.h:
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::create):
+        * loader/ProgressTracker.h:
+        * notifications/NotificationController.cpp:
+        (WebCore::NotificationController::create):
+        * notifications/NotificationController.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::create):
+        * page/Chrome.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::create):
+        * page/ContextMenuController.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::create):
+        * page/DragController.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::create):
+        * page/FocusController.h:
+        * page/GeolocationController.cpp:
+        (WebCore::GeolocationController::create):
+        * page/GeolocationController.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::initGroup):
+        (WebCore::Page::speechInput):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::create):
+        * page/PageGroup.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::create):
+        * page/Settings.h:
+        * page/SpeechInput.cpp:
+        (WebCore::SpeechInput::create):
+        * page/SpeechInput.h:
+
 2011-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac build fix after r103354.

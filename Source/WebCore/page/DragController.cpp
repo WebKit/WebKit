@@ -102,6 +102,11 @@ DragController::~DragController()
     m_client->dragControllerDestroyed();
 }
 
+PassOwnPtr<DragController> DragController::create(Page* page, DragClient* client)
+{
+    return adoptPtr(new DragController(page, client));
+}
+
 static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragData, Frame* frame, RefPtr<Range> context,
                                           bool allowPlainText, bool& chosePlainText)
 {

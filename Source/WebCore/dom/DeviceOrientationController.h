@@ -39,8 +39,9 @@ class Page;
 
 class DeviceOrientationController {
 public:
-    DeviceOrientationController(Page*, DeviceOrientationClient*);
     ~DeviceOrientationController();
+
+    static PassOwnPtr<DeviceOrientationController> create(Page*, DeviceOrientationClient*);
 
     void addListener(DOMWindow*);
     void removeListener(DOMWindow*);
@@ -56,6 +57,8 @@ public:
     DeviceOrientationClient* client() const { return m_client; }
 
 private:
+    DeviceOrientationController(Page*, DeviceOrientationClient*);
+
     void timerFired(Timer<DeviceOrientationController>*);
 
     Page* m_page;

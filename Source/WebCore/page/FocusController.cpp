@@ -91,6 +91,11 @@ FocusController::FocusController(Page* page)
 {
 }
 
+PassOwnPtr<FocusController> FocusController::create(Page* page)
+{
+    return adoptPtr(new FocusController(page));
+}
+
 void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
 {
     ASSERT(!frame || frame->page() == m_page);

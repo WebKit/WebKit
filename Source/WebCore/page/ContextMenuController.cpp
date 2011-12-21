@@ -87,6 +87,11 @@ ContextMenuController::~ContextMenuController()
     m_client->contextMenuDestroyed();
 }
 
+PassOwnPtr<ContextMenuController> ContextMenuController::create(Page* page, ContextMenuClient* client)
+{
+    return adoptPtr(new ContextMenuController(page, client));
+}
+
 void ContextMenuController::clearContextMenu()
 {
     m_contextMenu.clear();

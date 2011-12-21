@@ -45,6 +45,11 @@ DeviceMotionController::~DeviceMotionController()
     m_client->deviceMotionControllerDestroyed();
 }
 
+PassOwnPtr<DeviceMotionController> DeviceMotionController::create(DeviceMotionClient* client)
+{
+    return adoptPtr(new DeviceMotionController(client));
+}
+
 void DeviceMotionController::timerFired(Timer<DeviceMotionController>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_timer);

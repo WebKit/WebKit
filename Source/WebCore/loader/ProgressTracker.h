@@ -26,6 +26,7 @@
 #ifndef ProgressTracker_h
 #define ProgressTracker_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -39,9 +40,9 @@ struct ProgressItem;
 class ProgressTracker {
     WTF_MAKE_NONCOPYABLE(ProgressTracker); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProgressTracker();
     ~ProgressTracker();
-    
+
+    static PassOwnPtr<ProgressTracker> create();
     static unsigned long createUniqueIdentifier();
 
     double estimatedProgress() const;
@@ -57,6 +58,8 @@ public:
     long long totalBytesReceived() const { return m_totalBytesReceived; }
 
 private:
+    ProgressTracker();
+
     void reset();
     void finalProgressComplete();
     

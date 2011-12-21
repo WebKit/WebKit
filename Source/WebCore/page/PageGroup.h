@@ -46,9 +46,9 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
         PageGroup(const String& name);
-        PageGroup(Page*);
         ~PageGroup();
 
+        static PassOwnPtr<PageGroup> create(Page*);
         static PageGroup* pageGroup(const String& groupName);
 
         static void closeLocalStorage();
@@ -108,6 +108,8 @@ namespace WebCore {
         GroupSettings* groupSettings() const { return m_groupSettings.get(); }
 
     private:
+        PageGroup(Page*);
+
         void addVisitedLink(LinkHash stringHash);
         void resetUserStyleCacheInAllFrames();
   

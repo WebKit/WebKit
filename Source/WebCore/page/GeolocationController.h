@@ -43,8 +43,9 @@ class Page;
 class GeolocationController {
     WTF_MAKE_NONCOPYABLE(GeolocationController);
 public:
-    GeolocationController(Page*, GeolocationClient*);
     ~GeolocationController();
+
+    static PassOwnPtr<GeolocationController> create(Page*, GeolocationClient*);
 
     void addObserver(Geolocation*, bool enableHighAccuracy);
     void removeObserver(Geolocation*);
@@ -60,6 +61,8 @@ public:
     GeolocationClient* client() { return m_client; }
 
 private:
+    GeolocationController(Page*, GeolocationClient*);
+
     Page* m_page;
     GeolocationClient* m_client;
 

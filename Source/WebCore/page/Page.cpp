@@ -124,27 +124,27 @@ float deviceScaleFactor(Frame* frame)
 }
 
 Page::Page(PageClients& pageClients)
-    : m_chrome(adoptPtr(new Chrome(this, pageClients.chromeClient)))
-    , m_dragCaretController(adoptPtr(new DragCaretController))
+    : m_chrome(Chrome::create(this, pageClients.chromeClient))
+    , m_dragCaretController(DragCaretController::create())
 #if ENABLE(DRAG_SUPPORT)
-    , m_dragController(adoptPtr(new DragController(this, pageClients.dragClient)))
+    , m_dragController(DragController::create(this, pageClients.dragClient))
 #endif
-    , m_focusController(adoptPtr(new FocusController(this)))
+    , m_focusController(FocusController::create(this))
 #if ENABLE(CONTEXT_MENUS)
-    , m_contextMenuController(adoptPtr(new ContextMenuController(this, pageClients.contextMenuClient)))
+    , m_contextMenuController(ContextMenuController::create(this, pageClients.contextMenuClient))
 #endif
 #if ENABLE(INSPECTOR)
-    , m_inspectorController(adoptPtr(new InspectorController(this, pageClients.inspectorClient)))
+    , m_inspectorController(InspectorController::create(this, pageClients.inspectorClient))
 #endif
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    , m_geolocationController(adoptPtr(new GeolocationController(this, pageClients.geolocationClient)))
+    , m_geolocationController(GeolocationController::create(this, pageClients.geolocationClient))
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? adoptPtr(new DeviceMotionController(pageClients.deviceMotionClient)) : nullptr)
-    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? adoptPtr(new DeviceOrientationController(this, pageClients.deviceOrientationClient)) : nullptr)
+    , m_deviceMotionController(RuntimeEnabledFeatures::deviceMotionEnabled() ? DeviceMotionController::create(pageClients.deviceMotionClient) : nullptr)
+    , m_deviceOrientationController(RuntimeEnabledFeatures::deviceOrientationEnabled() ? DeviceOrientationController::create(this, pageClients.deviceOrientationClient) : nullptr)
 #endif
 #if ENABLE(NOTIFICATIONS)
-    , m_notificationController(adoptPtr(new NotificationController(this, pageClients.notificationClient)))
+    , m_notificationController(NotificationController::create(this, pageClients.notificationClient))
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(pageClients.speechInputClient)
@@ -152,9 +152,9 @@ Page::Page(PageClients& pageClients)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaClient(pageClients.userMediaClient)
 #endif
-    , m_settings(adoptPtr(new Settings(this)))
-    , m_progress(adoptPtr(new ProgressTracker))
-    , m_backForwardController(adoptPtr(new BackForwardController(this, pageClients.backForwardClient)))
+    , m_settings(Settings::create(this))
+    , m_progress(ProgressTracker::create())
+    , m_backForwardController(BackForwardController::create(this, pageClients.backForwardClient))
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
     , m_frameCount(0)
@@ -405,7 +405,7 @@ void Page::initGroup()
 {
     ASSERT(!m_singlePageGroup);
     ASSERT(!m_group);
-    m_singlePageGroup = adoptPtr(new PageGroup(this));
+    m_singlePageGroup = PageGroup::create(this);
     m_group = m_singlePageGroup.get();
 }
 
@@ -984,7 +984,7 @@ SpeechInput* Page::speechInput()
 {
     ASSERT(m_speechInputClient);
     if (!m_speechInput.get())
-        m_speechInput = adoptPtr(new SpeechInput(m_speechInputClient));
+        m_speechInput = SpeechInput::create(m_speechInputClient);
     return m_speechInput.get();
 }
 #endif

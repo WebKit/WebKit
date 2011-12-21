@@ -37,8 +37,9 @@ class DeviceMotionClient;
 
 class DeviceMotionController {
 public:
-    DeviceMotionController(DeviceMotionClient*);
     ~DeviceMotionController();
+
+    static PassOwnPtr<DeviceMotionController> create(DeviceMotionClient*);
 
     void addListener(DOMWindow*);
     void removeListener(DOMWindow*);
@@ -52,6 +53,8 @@ public:
     bool isActive() { return !m_listeners.isEmpty(); }
 
 private:
+    DeviceMotionController(DeviceMotionClient*);
+
     void timerFired(Timer<DeviceMotionController>*);
     
     DeviceMotionClient* m_client;
