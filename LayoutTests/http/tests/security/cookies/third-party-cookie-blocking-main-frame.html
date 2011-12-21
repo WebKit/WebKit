@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<title>Checks that a POST resulting in a main frame navigation is not affected by third-party cookie rules</title>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.setAlwaysAcceptCookies(false);
+}
+
+function runTest()
+{
+    document.getElementById('form').submit();
+}
+</script>
+<body onload="runTest()">
+    <div>
+        <form id="form" action="http://localhost:8000/security/cookies/resources/set-a-cookie.php" method="POST">
+          <input type="submit" />
+        </form>
+        <iframe src="javascript:false" name="iframe"></iframe>
+    </div>
+</body>
+</html>

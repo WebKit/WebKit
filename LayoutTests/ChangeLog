@@ -1,5 +1,25 @@
 2011-12-20  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 92142
+
+    2011-08-01  Jochen Eisinger  <jochen@chromium.org>
+
+            Require explicit user action to override the policy URL on form submissions.
+            https://bugs.webkit.org/show_bug.cgi?id=61809
+
+            Reviewed by Adam Barth.
+
+            * http/tests/loading/redirect-methods-expected.txt:
+            * http/tests/security/cookies/resources/set-a-cookie.php: Added.
+            * http/tests/security/cookies/third-party-cookie-blocking-expected.txt: Added.
+            * http/tests/security/cookies/third-party-cookie-blocking-main-frame-expected.txt: Added.
+            * http/tests/security/cookies/third-party-cookie-blocking-main-frame.html: Added.
+            * http/tests/security/cookies/third-party-cookie-blocking-user-action-expected.txt: Added.
+            * http/tests/security/cookies/third-party-cookie-blocking-user-action.html: Added.
+            * http/tests/security/cookies/third-party-cookie-blocking.html: Added.
+
+2011-12-20  Lucas Forschler  <lforschler@apple.com>
+
     Merge 91957
 
     2011-07-28  Adam Barth  <abarth@webkit.org>

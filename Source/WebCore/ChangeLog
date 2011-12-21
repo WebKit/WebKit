@@ -1,5 +1,29 @@
 2011-12-20  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 92142
+
+    2011-08-01  Jochen Eisinger  <jochen@chromium.org>
+
+            Never override the policy URL on form submissions.
+            https://bugs.webkit.org/show_bug.cgi?id=61809
+
+            Reviewed by Adam Barth.
+
+            Tests: http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
+                   http/tests/security/cookies/third-party-cookie-blocking-user-action.html
+                   http/tests/security/cookies/third-party-cookie-blocking.html
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::loadURL):
+            (WebCore::FrameLoader::addExtraFieldsToSubresourceRequest):
+            (WebCore::FrameLoader::addExtraFieldsToMainResourceRequest):
+            (WebCore::FrameLoader::addExtraFieldsToRequest):
+            (WebCore::FrameLoader::loadPostRequest):
+            (WebCore::FrameLoader::loadDifferentDocumentItem):
+            * loader/FrameLoader.h:
+
+2011-12-20  Lucas Forschler  <lforschler@apple.com>
+
     Merge 91957
 
     2011-07-28  Adam Barth  <abarth@webkit.org>

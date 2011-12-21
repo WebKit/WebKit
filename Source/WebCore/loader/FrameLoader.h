@@ -362,7 +362,7 @@ private:
     void updateFirstPartyForCookies();
     void setFirstPartyForCookies(const KURL&);
     
-    void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType loadType, bool isMainResource, bool cookiePolicyURLFromRequest);
+    void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType, bool isMainResource);
 
     // Also not cool.
     void stopLoadingSubframes(ClearProvisionalItemPolicy);
