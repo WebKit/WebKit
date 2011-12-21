@@ -1,5 +1,22 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94095
+
+    2011-08-29  Oliver Hunt  <oliver@apple.com>
+
+            TypedArrays don't ensure that denormalised values are normalised
+            https://bugs.webkit.org/show_bug.cgi?id=67178
+
+            Reviewed by Gavin Barraclough.
+
+            Add test to ensure that we create a non-signalling nan when reading
+            a singaling nan from a typed array.
+
+            * fast/canvas/webgl/webgl-array-invalid-ranges-expected.txt:
+            * fast/canvas/webgl/webgl-array-invalid-ranges.html:
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94001
 
     2011-08-29  Abhishek Arya  <inferno@chromium.org>

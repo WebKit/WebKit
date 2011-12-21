@@ -77,6 +77,7 @@ PASS array.subarray(4, -2147483648).length is 0
 PASS Setting Float32Array from array with out-of-range offset was caught
 PASS Setting Float32Array from fake array with invalid length was caught
 PASS Setting Float32Array from Float32Array with out-of-range offset was caught
+PASS isNaN(floats[0]) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
