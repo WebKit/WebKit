@@ -19,15 +19,15 @@ layer at (0,0) size 480x360
             [feImage image-size="256x256"]
             [feImage image-size="128x128"]
       RenderSVGContainer {g} at (15,15) size 415x334
-        RenderSVGPath {rect} at (15,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=15.00] [width=128.00] [height=128.00]
+        RenderSVGRect {rect} at (15,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=15.00] [width=128.00] [height=128.00]
           [filter="DispMapChecker"] RenderSVGResourceFilter {filter} at (15,15) size 128x128
-        RenderSVGPath {rect} at (20,115) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=115.00] [width=118.00] [height=20.00]
+        RenderSVGRect {rect} at (20,115) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=115.00] [width=118.00] [height=20.00]
         RenderSVGText {text} at (21,118) size 115x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 115x16
             chunk 1 (middle anchor) text run 1 at (21.50,130.00) startOffset 0 endOffset 18 width 115.00: "Checkerboard Image"
-        RenderSVGPath {rect} at (158,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=15.00] [width=128.00] [height=128.00]
+        RenderSVGRect {rect} at (158,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=15.00] [width=128.00] [height=128.00]
           [filter="RotateMap"] RenderSVGResourceFilter {filter} at (158,15) size 128x128
-        RenderSVGPath {rect} at (163,112) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=112.00] [width=118.00] [height=30.00]
+        RenderSVGRect {rect} at (163,112) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=112.00] [width=118.00] [height=30.00]
         RenderSVGText {text} at (169,113) size 105x29 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 102x16
             RenderSVGInlineText {#text} at (0,0) size 102x16
@@ -37,9 +37,9 @@ layer at (0,0) size 480x360
           RenderSVGTSpan {tspan} at (0,0) size 93x16
             RenderSVGInlineText {#text} at (6,13) size 93x16
               chunk 1 (middle anchor) text run 1 at (175.50,138.00) startOffset 0 endOffset 18 width 93.00: "(20 deg. rotation)"
-        RenderSVGPath {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=15.00] [width=128.00] [height=128.00]
+        RenderSVGRect {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=15.00] [width=128.00] [height=128.00]
           [filter="RotateMapTest"] RenderSVGResourceFilter {filter} at (301,15) size 128x128
-        RenderSVGPath {rect} at (323,37) size 84x84 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [x=-1.00] [y=-1.00] [width=2.00] [height=2.00]
+        RenderSVGRect {rect} at (323,37) size 84x84 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [x=-1.00] [y=-1.00] [width=2.00] [height=2.00]
         RenderSVGText {text} at (300,148) size 130x40 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 35x16
             RenderSVGInlineText {#text} at (46,0) size 35x16
@@ -54,15 +54,15 @@ layer at (0,0) size 480x360
           RenderSVGTSpan {tspan} at (0,0) size 124x16
             RenderSVGInlineText {#text} at (3,24) size 123x16
               chunk 1 (middle anchor) text run 1 at (303.50,184.00) startOffset 0 endOffset 23 width 123.00: "rotated blue rectangle)"
-        RenderSVGPath {rect} at (15,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=158.00] [width=128.00] [height=128.00]
+        RenderSVGRect {rect} at (15,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=158.00] [width=128.00] [height=128.00]
           [filter="DispMapChecker"] RenderSVGResourceFilter {filter} at (15,158) size 128x128
-        RenderSVGPath {rect} at (20,258) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=258.00] [width=118.00] [height=20.00]
+        RenderSVGRect {rect} at (20,258) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=258.00] [width=118.00] [height=20.00]
         RenderSVGText {text} at (21,261) size 115x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 115x16
             chunk 1 (middle anchor) text run 1 at (21.50,273.00) startOffset 0 endOffset 18 width 115.00: "Checkerboard Image"
-        RenderSVGPath {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=158.00] [width=128.00] [height=128.00]
+        RenderSVGRect {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=158.00] [width=128.00] [height=128.00]
           [filter="SphereMap"] RenderSVGResourceFilter {filter} at (158,158) size 128x128
-        RenderSVGPath {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=255.00] [width=118.00] [height=30.00]
+        RenderSVGRect {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=255.00] [width=118.00] [height=30.00]
         RenderSVGText {text} at (166,256) size 111x31 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 102x16
             RenderSVGInlineText {#text} at (3,0) size 102x16
@@ -72,7 +72,7 @@ layer at (0,0) size 480x360
           RenderSVGTSpan {tspan} at (0,0) size 111x16
             RenderSVGInlineText {#text} at (0,15) size 111x16
               chunk 1 (middle anchor) text run 1 at (166.50,283.00) startOffset 0 endOffset 22 width 111.00: "(spherical distortion)"
-        RenderSVGPath {rect} at (301,200) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=200.00] [width=128.00] [height=128.00]
+        RenderSVGRect {rect} at (301,200) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=200.00] [width=128.00] [height=128.00]
           [filter="SphereMapTest"] RenderSVGResourceFilter {filter} at (301,200) size 128x128
         RenderSVGText {text} at (347,333) size 35x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 35x16
@@ -80,4 +80,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

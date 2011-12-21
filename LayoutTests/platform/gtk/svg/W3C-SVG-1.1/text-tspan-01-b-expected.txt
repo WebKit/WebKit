@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (130.04,63.75) startOffset 0 endOffset 5 width 33.77: " not "
           RenderSVGInlineText {#text} at (89,0) size 72x18
             chunk 1 text run 1 at (163.80,63.75) startOffset 0 endOffset 9 width 71.18: "a banana."
-        RenderSVGPath {rect} at (47,73) size 312x56 [stroke={[type=SOLID] [color=#000000]}] [x=47.50] [y=74.25] [width=310.50] [height=53.50]
+        RenderSVGRect {rect} at (47,73) size 312x56 [stroke={[type=SOLID] [color=#000000]}] [x=47.50] [y=74.25] [width=310.50] [height=53.50]
         RenderSVGText {text} at (65,76) size 210x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 210x18
             chunk 1 text run 1 at (65.25,90.75) startOffset 0 endOffset 29 width 209.72: "Text: \"You are not a banana.\""
@@ -35,7 +35,7 @@ layer at (0,0) size 480x360
           RenderSVGTSpan {tspan} at (0,0) size 67x19
             RenderSVGInlineText {#text} at (110,25) size 66x18
               chunk 1 text run 1 at (367.78,168.50) startOffset 0 endOffset 9 width 65.83: " a peach!"
-        RenderSVGPath {rect} at (224,178) size 247x55 [stroke={[type=SOLID] [color=#000000]}] [x=225.00] [y=179.00] [width=245.50] [height=53.50]
+        RenderSVGRect {rect} at (224,178) size 247x55 [stroke={[type=SOLID] [color=#000000]}] [x=225.00] [y=179.00] [width=245.50] [height=53.50]
         RenderSVGText {text} at (238,180) size 200x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 200x18
             chunk 1 text run 1 at (238.00,195.00) startOffset 0 endOffset 28 width 199.02: "Text: \"But you are a peach!\""
@@ -66,7 +66,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 1 at (119.38,230.50) startOffset 0 endOffset 1 width 8.00: "z"
               chunk 1 text run 1 at (138.13,230.50) startOffset 0 endOffset 2 width 12.45: "y."
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (17,244) size 337x55 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
+        RenderSVGRect {rect} at (17,244) size 337x55 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
         RenderSVGText {text} at (25,243) size 163x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 163x18
             chunk 1 text run 1 at (25.25,258.00) startOffset 0 endOffset 23 width 162.54: "Text: \"Cute and fuzzy.\""
@@ -79,4 +79,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

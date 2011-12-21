@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(727.49,-171.75)}]
     RenderSVGHiddenContainer {g} at (0,0) size 0x0
-      RenderSVGPath {rect} at (30,148) size 174x95 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=190.00] [width=220.00] [height=120.00]
-      RenderSVGPath {rect} at (31,146) size 172x96 [fill={[type=SOLID] [color=#F0F8FF]}] [x=40.50] [y=188.00] [width=219.00] [height=121.50]
-      RenderSVGPath {rect} at (23,146) size 188x10 [fill={[type=SOLID] [color=#F0F8FF]}] [x=30.00] [y=188.00] [width=240.00] [height=11.50]
+      RenderSVGRect {rect} at (30,148) size 174x95 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=190.00] [width=220.00] [height=120.00]
+      RenderSVGRect {rect} at (31,146) size 172x96 [fill={[type=SOLID] [color=#F0F8FF]}] [x=40.50] [y=188.00] [width=219.00] [height=121.50]
+      RenderSVGRect {rect} at (23,146) size 188x10 [fill={[type=SOLID] [color=#F0F8FF]}] [x=30.00] [y=188.00] [width=240.00] [height=11.50]
       RenderSVGText {text} at (10,44) size 191x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 191x13
           chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 36 width 190.72: "This is oversize content that can be"

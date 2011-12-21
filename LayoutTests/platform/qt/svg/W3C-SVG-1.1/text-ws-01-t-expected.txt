@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (15,101) size 414x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 414x51
           chunk 1 text run 1 at (15.00,140.00) startOffset 0 endOffset 23 width 414.00: "WS with indented lines."
-      RenderSVGPath {rect} at (24,144) size 352x38 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=350.00] [height=36.00]
+      RenderSVGRect {rect} at (24,144) size 352x38 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=350.00] [height=36.00]
       RenderSVGText {text} at (28,136) size 337x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 337x51
           chunk 1 text run 1 at (28.00,175.00) startOffset 0 endOffset 19 width 337.00: "xml:space='default'"
@@ -25,11 +25,11 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (15,221) size 411x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 411x51
           chunk 1 text run 1 at (15.00,260.00) startOffset 0 endOffset 22 width 411.00: "WS non-indented lines."
-      RenderSVGPath {rect} at (24,264) size 352x38 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=350.00] [height=36.00]
+      RenderSVGRect {rect} at (24,264) size 352x38 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=350.00] [height=36.00]
       RenderSVGText {text} at (28,256) size 337x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 337x51
           chunk 1 text run 1 at (28.00,295.00) startOffset 0 endOffset 19 width 337.00: "xml:space='default'"
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

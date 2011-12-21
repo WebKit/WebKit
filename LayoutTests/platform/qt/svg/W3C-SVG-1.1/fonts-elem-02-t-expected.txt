@@ -7,7 +7,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (28,1) size 414x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 414x46
           chunk 1 text run 1 at (28.00,35.00) startOffset 0 endOffset 25 width 414.00: "SVG font element accuracy"
-      RenderSVGPath {rect} at (165,80) size 220x165 [fill={[type=SOLID] [color=#000000]}] [x=165.00] [y=80.00] [width=220.00] [height=165.00]
+      RenderSVGRect {rect} at (165,80) size 220x165 [fill={[type=SOLID] [color=#000000]}] [x=165.00] [y=80.00] [width=220.00] [height=165.00]
       RenderSVGText {text} at (7,112) size 136x25 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 136x25
           chunk 1 text run 1 at (7.00,130.00) startOffset 0 endOffset 15 width 136.00: "SVG over Glyphs"
@@ -39,4 +39,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 270x53
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.4 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

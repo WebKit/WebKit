@@ -36,64 +36,64 @@ layer at (0,0) size 480x360
               RenderSVGText {text} at (-21,-8) size 21x35 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 21x35
                   chunk 1 (end anchor) text run 1 at (-21.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-              RenderSVGPath {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+              RenderSVGRect {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
               RenderSVGText {text} at (-11,-8) size 21x35 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 21x35
                   chunk 1 (middle anchor) text run 1 at (-10.50,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-              RenderSVGPath {rect} at (188,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+              RenderSVGRect {rect} at (188,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
               RenderSVGText {text} at (0,-8) size 21x35 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 21x35
                   chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-              RenderSVGPath {rect} at (218,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
-              RenderSVGPath {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+              RenderSVGRect {rect} at (218,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+              RenderSVGRect {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
           RenderSVGContainer {use} at (139,77) size 102x35
             RenderSVGContainer {g} at (139,77) size 102x35
               RenderSVGContainer {g} at (139,77) size 102x35
                 RenderSVGText {text} at (-21,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 (end anchor) text run 1 at (-21.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
                 RenderSVGText {text} at (-11,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 (middle anchor) text run 1 at (-10.50,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (188,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (188,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
                 RenderSVGText {text} at (0,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (218,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
-                RenderSVGPath {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (218,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (158,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
           RenderSVGContainer {use} at (249,77) size 102x35
             RenderSVGContainer {g} at (249,77) size 102x35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(110.00,0.00)}]
               RenderSVGContainer {g} at (249,77) size 102x35
                 RenderSVGText {text} at (-21,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 (end anchor) text run 1 at (-21.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (268,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (268,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
                 RenderSVGText {text} at (-11,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 (middle anchor) text run 1 at (-10.50,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (298,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (298,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
                 RenderSVGText {text} at (0,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (328,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
-                RenderSVGPath {rect} at (268,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (328,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (268,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
           RenderSVGContainer {use} at (359,77) size 102x35
             RenderSVGContainer {g} at (359,77) size 102x35 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
               RenderSVGContainer {g} at (359,77) size 102x35
                 RenderSVGText {text} at (-21,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 (end anchor) text run 1 at (-21.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (378,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (378,103) size 4x4 [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
                 RenderSVGText {text} at (-11,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 (middle anchor) text run 1 at (-10.50,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (408,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (408,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
                 RenderSVGText {text} at (0,-8) size 21x35 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 21x35
                     chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
-                RenderSVGPath {rect} at (438,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
-                RenderSVGPath {rect} at (378,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (438,103) size 4x4 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,0.00)}] [fill={[type=SOLID] [color=#AAAAAA]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
+                RenderSVGRect {rect} at (378,103) size 4x4 [fill={[type=SOLID] [color=#CC0066]}] [x=-2.00] [y=18.00] [width=4.00] [height=4.00]
           RenderSVGText {text} at (-21,-8) size 21x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 21x35
               chunk 1 (end anchor) text run 1 at (-21.00,20.00) startOffset 0 endOffset 1 width 21.00: "A"
@@ -344,4 +344,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

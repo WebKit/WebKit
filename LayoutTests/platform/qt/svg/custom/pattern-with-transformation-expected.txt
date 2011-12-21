@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (9,9) size 122x102
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="pat"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse] [patternTransform={m=((4.00,0.00)(4.00,4.00)) t=(64.00,32.00)}]
-        RenderSVGPath {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
-        RenderSVGPath {rect} at (5,0) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=0.00] [width=5.00] [height=5.00]
-        RenderSVGPath {rect} at (0,5) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=5.00] [width=5.00] [height=5.00]
-        RenderSVGPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (5,0) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=0.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (0,5) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=5.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
     RenderSVGContainer {g} at (9,9) size 122x102
-      RenderSVGPath {rect} at (9,9) size 122x102 [stroke={[type=PATTERN] [id="pat"]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=10.00] [width=120.00] [height=100.00]
+      RenderSVGRect {rect} at (9,9) size 122x102 [stroke={[type=PATTERN] [id="pat"]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=10.00] [width=120.00] [height=100.00]
       RenderSVGText {text} at (15,22) size 98x63 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 98x63
           chunk 1 text run 1 at (15.00,70.00) startOffset 0 endOffset 4 width 98.00: "Test"

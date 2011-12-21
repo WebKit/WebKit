@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGRoot {svg} at (0,0) size 200x100
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
-            RenderSVGPath {rect} at (0,0) size 200x50 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
+            RenderSVGRect {rect} at (0,0) size 200x50 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
         RenderSVGForeignObject {foreignObject} at (0,0) size 200x100
           RenderBlock {DIV} at (0,0) size 200x50 [bgcolor=#008000]
           RenderBlock {DIV} at (0,50) size 200x50 [bgcolor=#FF0000]

@@ -17,7 +17,7 @@ layer at (0,0) size 480x360
             [feTurbulence type="NOISE" baseFrequency="0.40, 0.40" seed="0.00" numOctaves="4" stitchTiles="0"]
           RenderSVGResourceFilter {filter} [id="Turb6"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feTurbulence type="NOISE" baseFrequency="0.10, 0.10" seed="0.00" numOctaves="1" stitchTiles="0"]
-        RenderSVGPath {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=25.00] [width=100.00] [height=75.00]
+        RenderSVGRect {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=25.00] [width=100.00] [height=75.00]
           [filter="Turb1"] RenderSVGResourceFilter {filter} at (25,25) size 100x75
         RenderSVGText {text} at (42,108) size 66x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 66x12
@@ -28,7 +28,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (44,132) size 61x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x12
             chunk 1 (middle anchor) text run 1 at (44.69,141.00) startOffset 0 endOffset 12 width 60.63: "numOctaves=2"
-        RenderSVGPath {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=25.00] [width=100.00] [height=75.00]
+        RenderSVGRect {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=25.00] [width=100.00] [height=75.00]
           [filter="Turb2"] RenderSVGResourceFilter {filter} at (175,25) size 100x75
         RenderSVGText {text} at (192,108) size 66x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 66x12
@@ -39,7 +39,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (194,132) size 61x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x12
             chunk 1 (middle anchor) text run 1 at (194.69,141.00) startOffset 0 endOffset 12 width 60.63: "numOctaves=2"
-        RenderSVGPath {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=25.00] [width=100.00] [height=75.00]
+        RenderSVGRect {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=25.00] [width=100.00] [height=75.00]
           [filter="Turb3"] RenderSVGResourceFilter {filter} at (325,25) size 100x75
         RenderSVGText {text} at (342,108) size 66x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 66x12
@@ -50,7 +50,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (344,132) size 61x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x12
             chunk 1 (middle anchor) text run 1 at (344.69,141.00) startOffset 0 endOffset 12 width 60.63: "numOctaves=8"
-        RenderSVGPath {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=180.00] [width=100.00] [height=75.00]
+        RenderSVGRect {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=180.00] [width=100.00] [height=75.00]
           [filter="Turb4"] RenderSVGResourceFilter {filter} at (25,180) size 100x75
         RenderSVGText {text} at (39,263) size 72x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 72x12
@@ -61,7 +61,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (44,287) size 61x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x12
             chunk 1 (middle anchor) text run 1 at (44.69,296.00) startOffset 0 endOffset 12 width 60.63: "numOctaves=4"
-        RenderSVGPath {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=180.00] [width=100.00] [height=75.00]
+        RenderSVGRect {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=180.00] [width=100.00] [height=75.00]
           [filter="Turb5"] RenderSVGResourceFilter {filter} at (175,180) size 100x75
         RenderSVGText {text} at (189,263) size 72x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 72x12
@@ -72,7 +72,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (194,287) size 61x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x12
             chunk 1 (middle anchor) text run 1 at (194.69,296.00) startOffset 0 endOffset 12 width 60.63: "numOctaves=4"
-        RenderSVGPath {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=180.00] [width=100.00] [height=75.00]
+        RenderSVGRect {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=180.00] [width=100.00] [height=75.00]
           [filter="Turb6"] RenderSVGResourceFilter {filter} at (325,180) size 100x75
         RenderSVGText {text} at (339,263) size 72x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 72x12
@@ -86,4 +86,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.1 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -8,49 +8,49 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 60 width 458.00: "Test 'overflow'/'clip' on outermost and inner 'svg' elements"
       RenderSVGContainer {g} at (0,0) size 480x360
         RenderSVGContainer {g} at (114,0) size 252x41 [transform={m=((1.00,0.00)(0.00,1.00)) t=(115.00,-20.00)}]
-          RenderSVGPath {rect} at (114,0) size 252x41 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+          RenderSVGRect {rect} at (114,0) size 252x41 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x54 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 217.00: "Outer Clip"
         RenderSVGContainer {g} at (0,149) size 76x62 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-175.00,150.00)}]
-          RenderSVGPath {rect} at (0,149) size 76x62 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+          RenderSVGRect {rect} at (0,149) size 76x62 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x54 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 217.00: "Outer Clip"
         RenderSVGContainer {g} at (404,149) size 76x62 [transform={m=((1.00,0.00)(0.00,1.00)) t=(405.00,150.00)}]
-          RenderSVGPath {rect} at (404,149) size 76x62 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+          RenderSVGRect {rect} at (404,149) size 76x62 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x54 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 217.00: "Outer Clip"
         RenderSVGContainer {g} at (114,329) size 252x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(115.00,330.00)}]
-          RenderSVGPath {rect} at (114,329) size 252x31 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
+          RenderSVGRect {rect} at (114,329) size 252x31 [stroke={[type=SOLID] [color=#FF8888] [stroke width=2.00]}] [fill={[type=SOLID] [color=#CCCCFF]}] [x=0.00] [y=0.00] [width=250.00] [height=60.00]
           RenderSVGText {text} at (15,1) size 217x54 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 217x54
               chunk 1 text run 1 at (15.00,45.00) startOffset 0 endOffset 10 width 217.00: "Outer Clip"
-      RenderSVGPath {rect} at (112,97) size 256x166 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [x=115.00] [y=100.00] [width=250.00] [height=160.00]
+      RenderSVGRect {rect} at (112,97) size 256x166 [stroke={[type=SOLID] [color=#006600] [stroke width=5.00]}] [x=115.00] [y=100.00] [width=250.00] [height=160.00]
       RenderSVGViewportContainer {svg} at (64,82) size 352x194
         RenderSVGContainer {g} at (64,82) size 352x194
           RenderSVGContainer {g} at (164,82) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,-15.00)}]
-            RenderSVGPath {rect} at (164,84) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
+            RenderSVGRect {rect} at (164,84) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
             RenderSVGText {text} at (6,-3) size 138x36 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 138x36
                 chunk 1 text run 1 at (6.00,26.00) startOffset 0 endOffset 10 width 138.00: "Inner Clip"
           RenderSVGContainer {g} at (64,159) size 152x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-50.00,62.50)}]
-            RenderSVGPath {rect} at (64,161) size 152x38 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
+            RenderSVGRect {rect} at (64,161) size 152x38 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
             RenderSVGText {text} at (6,-3) size 138x36 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 138x36
                 chunk 1 text run 1 at (6.00,26.00) startOffset 0 endOffset 10 width 138.00: "Inner Clip"
           RenderSVGContainer {g} at (264,159) size 152x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,62.50)}]
-            RenderSVGPath {rect} at (264,161) size 152x38 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
+            RenderSVGRect {rect} at (264,161) size 152x38 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
             RenderSVGText {text} at (6,-3) size 138x36 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 138x36
                 chunk 1 text run 1 at (6.00,26.00) startOffset 0 endOffset 10 width 138.00: "Inner Clip"
           RenderSVGContainer {g} at (164,237) size 152x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,140.00)}]
-            RenderSVGPath {rect} at (164,239) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
+            RenderSVGRect {rect} at (164,239) size 152x37 [stroke={[type=SOLID] [color=#6666FF] [stroke width=2.00]}] [fill={[type=SOLID] [color=#FFAAAA]}] [x=0.00] [y=0.00] [width=150.00] [height=35.00]
             RenderSVGText {text} at (6,-3) size 138x36 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 138x36
                 chunk 1 text run 1 at (6.00,26.00) startOffset 0 endOffset 10 width 138.00: "Inner Clip"
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.3 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

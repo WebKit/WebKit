@@ -11,7 +11,7 @@ layer at (0,0) size 480x360
               [feOffset dx="4.00" dy="4.00"]
                 [feGaussianBlur stdDeviation="4.00, 4.00"]
                   [SourceAlpha]
-        RenderSVGPath {rect} at (80,110) size 300x180 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [x=1.00] [y=1.00] [width=198.00] [height=118.00]
+        RenderSVGRect {rect} at (80,110) size 300x180 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [x=1.00] [y=1.00] [width=198.00] [height=118.00]
         RenderSVGContainer {g} at (80,110) size 300x180
           [filter="MyFilter"] RenderSVGResourceFilter {filter} at (0,0) size 200x120
           RenderSVGContainer {g} at (80,147) size 300x106
@@ -24,4 +24,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

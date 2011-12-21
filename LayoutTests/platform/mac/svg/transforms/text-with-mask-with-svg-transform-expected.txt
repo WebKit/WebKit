@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,6) size 140x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 140x17
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 139.20: "Test for mask support"
-      RenderSVGPath {rect} at (0,109) size 151x230 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
+      RenderSVGRect {rect} at (0,109) size 151x230 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
       RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceLinearGradient {linearGradient} [id="Grad1"] [gradientUnits=userSpaceOnUse] [start=(60,50)] [end=(60,120)]
             RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
             RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF80]
-        RenderSVGPath {rect} at (80,144) size 98x86 [fill={[type=LINEAR-GRADIENT] [id="Grad1"]}] [x=60.00] [y=50.00] [width=100.00] [height=60.00]
-      RenderSVGPath {rect} at (80,144) size 98x86 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=50.00] [width=100.00] [height=60.00]
+        RenderSVGRect {rect} at (80,144) size 98x86 [fill={[type=LINEAR-GRADIENT] [id="Grad1"]}] [x=60.00] [y=50.00] [width=100.00] [height=60.00]
+      RenderSVGRect {rect} at (80,144) size 98x86 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=50.00] [width=100.00] [height=60.00]
         [masker="mask1"] RenderSVGResourceMasker {mask} at (60,50) size 100x60
       RenderSVGText {text} at (200,54) size 165x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 165x14
@@ -23,21 +23,21 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 141x14
           chunk 1 text run 1 at (200.00,80.00) startOffset 0 endOffset 25 width 140.40: "opacity=1 to opactity=0.5"
       RenderSVGResourceMasker {mask} [id="mask2"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (64,194) size 85x65 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=60.00] [y=120.00] [width=100.00] [height=30.00]
-      RenderSVGPath {rect} at (64,194) size 85x65 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=120.00] [width=100.00] [height=30.00]
+        RenderSVGRect {rect} at (64,194) size 85x65 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=60.00] [y=120.00] [width=100.00] [height=30.00]
+      RenderSVGRect {rect} at (64,194) size 85x65 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=120.00] [width=100.00] [height=30.00]
         [masker="mask2"] RenderSVGResourceMasker {mask} at (60,120) size 100x30
       RenderSVGText {text} at (200,124) size 178x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 178x14
           chunk 1 text run 1 at (200.00,135.00) startOffset 0 endOffset 32 width 177.60: "Mask with uniform opacity of 0.5"
-      RenderSVGPath {rect} at (47,223) size 86x65 [fill={[type=SOLID] [color=#00FF00] [opacity=0.50]}] [x=60.00] [y=160.00] [width=100.00] [height=30.00]
+      RenderSVGRect {rect} at (47,223) size 86x65 [fill={[type=SOLID] [color=#00FF00] [opacity=0.50]}] [x=60.00] [y=160.00] [width=100.00] [height=30.00]
       RenderSVGText {text} at (200,164) size 206x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 206x14
           chunk 1 text run 1 at (200.00,175.00) startOffset 0 endOffset 37 width 205.20: "Rectangle with uniform opacity of 0.5"
       RenderSVGResourceMasker {mask} [id="mask3"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (32,252) size 156x103 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=60.00] [y=200.00] [width=200.00] [height=25.00]
-        RenderSVGPath {rect} at (22,270) size 156x103 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [x=60.00] [y=225.00] [width=200.00] [height=25.00]
-        RenderSVGPath {rect} at (12,288) size 155x103 [fill={[type=SOLID] [color=#FFFFFF]}] [x=60.00] [y=250.00] [width=200.00] [height=25.00]
-        RenderSVGPath {rect} at (1,306) size 156x103 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [x=60.00] [y=275.00] [width=200.00] [height=25.00]
+        RenderSVGRect {rect} at (32,252) size 156x103 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=60.00] [y=200.00] [width=200.00] [height=25.00]
+        RenderSVGRect {rect} at (22,270) size 156x103 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [x=60.00] [y=225.00] [width=200.00] [height=25.00]
+        RenderSVGRect {rect} at (12,288) size 155x103 [fill={[type=SOLID] [color=#FFFFFF]}] [x=60.00] [y=250.00] [width=200.00] [height=25.00]
+        RenderSVGRect {rect} at (1,306) size 156x103 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [x=60.00] [y=275.00] [width=200.00] [height=25.00]
       RenderSVGText {text} at (60,202) size 127x111 contains 1 chunk(s)
         [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
         RenderSVGInlineText {#text} at (0,0) size 127x111
@@ -53,4 +53,4 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 264x46
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.7 $"
-      RenderSVGPath {rect} at (0,83) size 430x460 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+      RenderSVGRect {rect} at (0,83) size 430x460 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

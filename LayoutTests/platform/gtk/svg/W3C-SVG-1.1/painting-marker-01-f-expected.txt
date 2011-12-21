@@ -4,11 +4,11 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (122,17) size 190x271
       RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
-        RenderSVGPath {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
       RenderSVGResourceMarker {marker} [id="marker2"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=auto]
         RenderSVGPath {path} at (0,0) size 2x2 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
       RenderSVGResourceMarker {marker} [id="markerStart"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
-        RenderSVGPath {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
       RenderSVGResourceMarker {marker} [id="markerMiddle"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
         RenderSVGPath {circle} at (0,0) size 2x2 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
       RenderSVGResourceMarker {marker} [id="markerEnd"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
@@ -20,11 +20,11 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (242,32) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
         RenderSVGPath {path} at (250,36) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [data="M 130 40 L 180 40 L 180 90"]
         RenderSVGContainer {g} at (242,32) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(122.00,32.00)}]
-          RenderSVGPath {rect} at (242,32) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+          RenderSVGRect {rect} at (242,32) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGContainer {g} at (292,32) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,32.00)}]
-          RenderSVGPath {rect} at (292,32) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+          RenderSVGRect {rect} at (292,32) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGContainer {g} at (292,82) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,82.00)}]
-          RenderSVGPath {rect} at (292,82) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+          RenderSVGRect {rect} at (292,82) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
       RenderSVGText {text} at (145,112) size 135x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 135x16
           chunk 1 text run 1 at (145.00,125.00) startOffset 0 endOffset 21 width 134.63: "Start, Middle and End"
@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (242,127) size 66x66 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,0.00)}]
         RenderSVGPath {path} at (250,131) size 54x54 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [data="M 130 135 L 180 135 L 180 185"]
         RenderSVGContainer {g} at (242,127) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(122.00,127.00)}]
-          RenderSVGPath {rect} at (242,127) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+          RenderSVGRect {rect} at (242,127) size 16x16 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGContainer {g} at (292,127) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,127.00)}]
           RenderSVGPath {circle} at (292,127) size 16x16 [fill={[type=SOLID] [color=#008000]}] [cx=5.00] [cy=5.00] [r=5.00]
         RenderSVGContainer {g} at (292,177) size 16x16 [transform={m=((1.60,0.00)(0.00,1.60)) t=(172.00,177.00)}]
@@ -52,4 +52,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

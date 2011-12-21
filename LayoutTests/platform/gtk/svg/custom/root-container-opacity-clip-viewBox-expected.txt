@@ -3,4 +3,4 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 166x148 [opacity=0.90]
     RenderSVGViewportContainer {svg} at (0,0) size 166x148
-      RenderSVGPath {rect} at (0,0) size 166x148 [fill={[type=SOLID] [color=#008000]}] [x=-83.00] [y=-84.00] [width=166.00] [height=148.00]
+      RenderSVGRect {rect} at (0,0) size 166x148 [fill={[type=SOLID] [color=#008000]}] [x=-83.00] [y=-84.00] [width=166.00] [height=148.00]

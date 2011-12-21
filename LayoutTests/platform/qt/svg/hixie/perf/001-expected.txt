@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (109,9) size 582x582
-    RenderSVGPath {rect} at (109,9) size 582x582 [stroke={[type=SOLID] [color=#000000]}] [x=-190.00] [y=-190.00] [width=580.00] [height=580.00]
+    RenderSVGRect {rect} at (109,9) size 582x582 [stroke={[type=SOLID] [color=#000000]}] [x=-190.00] [y=-190.00] [width=580.00] [height=580.00]
     RenderSVGText {text} at (-150,-160) size 107x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 107x13
         chunk 1 text run 1 at (-150.00,-150.00) startOffset 0 endOffset 21 width 107.00: "SVG Performance test."

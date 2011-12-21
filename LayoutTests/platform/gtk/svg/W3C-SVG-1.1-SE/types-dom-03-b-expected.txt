@@ -19,7 +19,7 @@ layer at (0,0) size 480x360
           chunk 1 text run 11 at (260.13,30.00) startOffset 31 endOffset 34 width 27.02: "e S"
           chunk 1 text run 12 at (286.39,30.00) startOffset 34 endOffset 35 width 12.01: "V"
           chunk 1 text run 13 at (297.64,30.00) startOffset 35 endOffset 40 width 54.04: "GLoad"
-      RenderSVGPath {rect} at (10,40) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (10,40) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
       RenderSVGText {text} at (1000,985) size 32x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 32x18
           chunk 1 text run 1 at (1000.00,1000.00) startOffset 0 endOffset 1 width 12.01: "A"
@@ -31,4 +31,4 @@ layer at (0,0) size 480x360
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
           chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
           chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

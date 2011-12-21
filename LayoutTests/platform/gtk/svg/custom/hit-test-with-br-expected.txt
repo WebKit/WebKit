@@ -10,6 +10,6 @@ layer at (0,0) size 800x95
       RenderBlock (anonymous) at (0,34) size 784x37
         RenderBR {br} at (0,0) size 0x17
         RenderSVGRoot {svg} at (8,68) size 720x15
-          RenderSVGPath {rect} at (8,68) size 720x15 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=720.00] [height=15.00]
+          RenderSVGRect {rect} at (8,68) size 720x15 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=720.00] [height=15.00]
         RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 3 {br} of body

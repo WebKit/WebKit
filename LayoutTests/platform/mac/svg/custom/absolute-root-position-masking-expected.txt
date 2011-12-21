@@ -9,6 +9,6 @@ layer at (0,100) size 300x300
       [masker="mask"] RenderSVGResourceMasker {svg:mask} at (180,180) size 420x420
     RenderSVGHiddenContainer {svg:defs} at (0,0) size 0x0
       RenderSVGResourcePattern {svg:pattern} [id="pattern"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
-        RenderSVGPath {svg:rect} at (0,100) size 300x300 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]
+        RenderSVGRect {svg:rect} at (0,100) size 300x300 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]
       RenderSVGResourceMasker {svg:mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
-        RenderSVGPath {svg:rect} at (0,100) size 300x300 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]
+        RenderSVGRect {svg:rect} at (0,100) size 300x300 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=600.00] [height=600.00]

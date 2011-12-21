@@ -4,20 +4,20 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (20,20) size 440x247
       RenderSVGResourcePattern {pattern} [id="Pat3a"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGResourcePattern {pattern} [id="Pat3b"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
-      RenderSVGPath {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [id="Pat3a"]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (20,20) size 440x80 [fill={[type=PATTERN] [id="Pat3a"]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
       RenderSVGText {text} at (20,102) size 142x34 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 142x34
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 13 width 142.00: "Pattern fill."
-      RenderSVGPath {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [id="Pat3b"]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (20,150) size 440x80 [fill={[type=PATTERN] [id="Pat3b"]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
       RenderSVGText {text} at (20,232) size 399x34 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 399x34
           chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 31 width 399.00: "Referencing pattern fill below."
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

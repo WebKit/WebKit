@@ -237,4 +237,4 @@ layer at (0,0) size 480x360
           chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 13 width 8.90: "."
           chunk 1 text run 5 at (188.50,340.00) startOffset 13 endOffset 14 width 17.79: "1"
           chunk 1 text run 6 at (202.51,340.00) startOffset 14 endOffset 17 width 44.48: "1 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

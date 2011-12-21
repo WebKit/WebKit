@@ -8,8 +8,8 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 314x45
           chunk 1 text run 1 at (60.00,45.00) startOffset 0 endOffset 18 width 314.00: "Event bubbling - a"
       RenderSVGContainer {g} at (9,59) size 462x242
-        RenderSVGPath {rect} at (9,59) size 462x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=60.00] [width=460.00] [height=120.00]
-        RenderSVGPath {rect} at (9,179) size 462x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=180.00] [width=460.00] [height=120.00]
+        RenderSVGRect {rect} at (9,59) size 462x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=60.00] [width=460.00] [height=120.00]
+        RenderSVGRect {rect} at (9,179) size 462x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=180.00] [width=460.00] [height=120.00]
       RenderSVGContainer {g} at (20,70) size 407x220
         RenderSVGContainer {g} at (20,70) size 100x220
           RenderSVGPath {circle} at (20,70) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=120.00] [r=50.00]
@@ -29,4 +29,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.2 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

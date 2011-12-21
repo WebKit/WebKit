@@ -8,7 +8,7 @@ layer at (0,0) size 800x316
           text run at (0,0) width 730: "The word \"TEST \" should appear twice below, the same size each time."
       RenderBlock (anonymous) at (0,39) size 784x127
         RenderSVGRoot {svg} at (8,49) size 400x120
-          RenderSVGPath {rect} at (8,49) size 400x120 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
+          RenderSVGRect {rect} at (8,49) size 400x120 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
           RenderSVGForeignObject {foreignObject} at (0,0) size 60x10
             RenderBlock {div} at (0,0) size 60x13 [color=#000080]
               RenderText {#text} at (0,0) size 26x13

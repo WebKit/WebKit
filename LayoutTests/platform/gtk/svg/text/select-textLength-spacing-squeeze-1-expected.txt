@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (45,0) size 80x65
       RenderSVGPath {svg:line} at (45,0) size 10x65 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.80] [x2=10.00] [y2=12.40]
       RenderSVGPath {svg:line} at (115,0) size 10x65 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=23.71] [y1=0.80] [x2=23.71] [y2=12.40]
-      RenderSVGPath {svg:rect} at (50,0) size 70x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.80] [width=13.71] [height=11.40]
+      RenderSVGRect {svg:rect} at (50,0) size 70x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.80] [width=13.71] [height=11.40]
     RenderSVGText {text} at (10,0) size 52x13 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 52x13
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"

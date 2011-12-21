@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
     RenderSVGForeignObject {foreignObject} at (0,50) size 300x100
       RenderSVGRoot {svg} at (0,50) size 100x100
-        RenderSVGPath {rect} at (0,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (0,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderText {#text} at (0,0) size 0x0
     RenderSVGForeignObject {foreignObject} at (0,150) size 300x100
       RenderSVGRoot {svg} at (0,150) size 100x100
-        RenderSVGPath {rect} at (0,150) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (0,150) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderText {#text} at (0,0) size 0x0

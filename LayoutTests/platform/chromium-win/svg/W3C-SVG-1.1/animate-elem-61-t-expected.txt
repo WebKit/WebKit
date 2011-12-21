@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (183,13) size 113x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 113x22
         chunk 1 (middle anchor) text run 1 at (183.50,30.00) startOffset 0 endOffset 14 width 113.00: "multiple begin"
@@ -48,52 +48,52 @@ layer at (0,0) size 480x360
               chunk 1 (middle anchor) text run 1 at (-12.50,-20.00) startOffset 0 endOffset 4 width 25.00: "4-5s"
       RenderSVGContainer {g} at (243,113) size 54x164 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,20.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-          RenderSVGPath {rect} at (243,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
         RenderSVGContainer {g} at (243,113) size 54x14
           RenderSVGContainer {use} at (243,113) size 14x14
             RenderSVGContainer {g} at (243,113) size 14x14
-              RenderSVGPath {rect} at (243,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (243,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
           RenderSVGContainer {use} at (283,113) size 14x14
             RenderSVGContainer {g} at (283,113) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
-              RenderSVGPath {rect} at (283,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
-          RenderSVGPath {rect} at (243,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (283,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,113) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
         RenderSVGContainer {g} at (243,138) size 54x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,25.00)}]
           RenderSVGContainer {use} at (243,138) size 14x14
             RenderSVGContainer {g} at (243,138) size 14x14
-              RenderSVGPath {rect} at (243,138) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (243,138) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
           RenderSVGContainer {use} at (283,138) size 14x14
             RenderSVGContainer {g} at (283,138) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
-              RenderSVGPath {rect} at (283,138) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
-          RenderSVGPath {rect} at (243,138) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (283,138) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,138) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
         RenderSVGContainer {g} at (243,163) size 54x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
           RenderSVGContainer {use} at (243,163) size 14x14
             RenderSVGContainer {g} at (243,163) size 14x14
-              RenderSVGPath {rect} at (243,163) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (243,163) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
           RenderSVGContainer {use} at (283,163) size 14x14
             RenderSVGContainer {g} at (283,163) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
-              RenderSVGPath {rect} at (283,163) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
-          RenderSVGPath {rect} at (243,163) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (283,163) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,163) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
         RenderSVGContainer {g} at (243,213) size 54x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
           RenderSVGContainer {use} at (243,213) size 14x14
             RenderSVGContainer {g} at (243,213) size 14x14
-              RenderSVGPath {rect} at (243,213) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (243,213) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
           RenderSVGContainer {use} at (283,213) size 14x14
             RenderSVGContainer {g} at (283,213) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
-              RenderSVGPath {rect} at (283,213) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
-          RenderSVGPath {rect} at (243,213) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (283,213) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,213) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
         RenderSVGContainer {g} at (243,238) size 54x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,125.00)}]
           RenderSVGContainer {use} at (243,238) size 14x14
             RenderSVGContainer {g} at (243,238) size 14x14
-              RenderSVGPath {rect} at (243,238) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (243,238) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
           RenderSVGContainer {use} at (283,238) size 14x14
             RenderSVGContainer {g} at (283,238) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
-              RenderSVGPath {rect} at (283,238) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
-          RenderSVGPath {rect} at (243,238) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (283,238) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,238) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
         RenderSVGContainer {g} at (243,263) size 54x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
           RenderSVGContainer {use} at (243,263) size 14x14
             RenderSVGContainer {g} at (243,263) size 14x14
-              RenderSVGPath {rect} at (243,263) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (243,263) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
           RenderSVGContainer {use} at (283,263) size 14x14
             RenderSVGContainer {g} at (283,263) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,0.00)}]
-              RenderSVGPath {rect} at (283,263) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
-          RenderSVGPath {rect} at (243,263) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+              RenderSVGRect {rect} at (283,263) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]
+          RenderSVGRect {rect} at (243,263) size 14x14 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CC0066]}] [x=-6.00] [y=-6.00] [width=12.00] [height=12.00]

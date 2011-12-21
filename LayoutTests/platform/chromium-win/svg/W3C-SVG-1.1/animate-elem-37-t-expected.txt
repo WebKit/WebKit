@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (129,10) size 221x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 221x19
         chunk 1 (middle anchor) text run 1 at (129.50,25.00) startOffset 0 endOffset 33 width 221.00: "<animateTransform> shape elements"
@@ -16,7 +16,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 44x19
             chunk 1 (middle anchor) text run 1 at (-22.00,60.00) startOffset 0 endOffset 6 width 44.00: "<path>"
       RenderSVGContainer {g} at (149,69) size 62x85 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
-        RenderSVGPath {rect} at (149,69) size 62x42 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-30.00] [y=-20.00] [width=60.00] [height=40.00]
+        RenderSVGRect {rect} at (149,69) size 62x42 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-30.00] [y=-20.00] [width=60.00] [height=40.00]
         RenderSVGText {text} at (-21,45) size 41x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x19
             chunk 1 (middle anchor) text run 1 at (-20.50,60.00) startOffset 0 endOffset 6 width 41.00: "<rect>"

@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (47,4) size 216x57
       RenderSVGPath {svg:line} at (47,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.95] [x2=10.00] [y2=12.17]
       RenderSVGPath {svg:line} at (257,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=51.96] [y1=0.95] [x2=51.96] [y2=12.17]
-      RenderSVGPath {svg:rect} at (50,4) size 210x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.95] [width=41.96] [height=11.17]
+      RenderSVGRect {svg:rect} at (50,4) size 210x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.95] [width=41.96] [height=11.17]
     RenderSVGText {text} at (10,0) size 140x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 140x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 15 width 65.40: "Text to Stretch"

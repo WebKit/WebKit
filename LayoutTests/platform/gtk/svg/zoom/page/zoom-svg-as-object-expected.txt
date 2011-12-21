@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           RenderView at (0,0) size 400x300
         layer at (0,0) size 400x300
           RenderSVGRoot {svg} at (0,0) size 400x300
-            RenderSVGPath {rect} at (0,0) size 400x300 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+            RenderSVGRect {rect} at (0,0) size 400x300 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

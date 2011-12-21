@@ -25,19 +25,19 @@ layer at (0,0) size 480x360
           [feBlend mode="LIGHTEN"]
             [SourceGraphic]
             [feFlood flood-color="#00FF00" flood-opacity="0.50"]
-      RenderSVGPath {rect} at (90,30) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=10.00] [width=120.00] [height=10.00]
+      RenderSVGRect {rect} at (90,30) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=10.00] [width=120.00] [height=10.00]
         [filter="BlendNormal"] RenderSVGResourceFilter {filter} at (30,10) size 120x10
-      RenderSVGPath {rect} at (90,69) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=23.00] [width=120.00] [height=10.00]
+      RenderSVGRect {rect} at (90,69) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=23.00] [width=120.00] [height=10.00]
         [filter="BlendMultiply"] RenderSVGResourceFilter {filter} at (30,23) size 120x10
       RenderSVGContainer {g} at (90,108) size 360x69
         [filter="BlendMultiply"] RenderSVGResourceFilter {filter} at (30,36) size 120x23
-        RenderSVGPath {rect} at (90,108) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=36.00] [width=120.00] [height=10.00]
-        RenderSVGPath {rect} at (90,147) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#FFFF00]}] [x=30.00] [y=49.00] [width=120.00] [height=10.00]
-      RenderSVGPath {rect} at (90,186) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=62.00] [width=120.00] [height=10.00]
+        RenderSVGRect {rect} at (90,108) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=36.00] [width=120.00] [height=10.00]
+        RenderSVGRect {rect} at (90,147) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#FFFF00]}] [x=30.00] [y=49.00] [width=120.00] [height=10.00]
+      RenderSVGRect {rect} at (90,186) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=62.00] [width=120.00] [height=10.00]
         [filter="BlendScreen"] RenderSVGResourceFilter {filter} at (30,62) size 120x10
-      RenderSVGPath {rect} at (90,225) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=75.00] [width=120.00] [height=10.00]
+      RenderSVGRect {rect} at (90,225) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=75.00] [width=120.00] [height=10.00]
         [filter="BlendDarken"] RenderSVGResourceFilter {filter} at (30,75) size 120x10
-      RenderSVGPath {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
+      RenderSVGRect {rect} at (90,264) size 360x30 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
         [filter="BlendLighten"] RenderSVGResourceFilter {filter} at (30,88) size 120x10
       RenderSVGContainer {g} at (15,30) size 75x261
         RenderSVGText {text} at (5,10) size 22x8 contains 1 chunk(s)
@@ -64,4 +64,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (3,101) size 80x14 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 80x14
         chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 79.00: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (2,2) size 476x356 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]
+    RenderSVGRect {rect} at (2,2) size 476x356 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]

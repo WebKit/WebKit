@@ -4,20 +4,20 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (20,0) size 460x360
       RenderSVGPath {circle} at (25,125) size 150x150 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=30.00]}] [cx=100.00] [cy=200.00] [r=60.00]
-      RenderSVGPath {rect} at (20,20) size 180x180 [fill={[type=SOLID] [color=#FFFFFF]}] [x=20.00] [y=20.00] [width=180.00] [height=180.00]
+      RenderSVGRect {rect} at (20,20) size 180x180 [fill={[type=SOLID] [color=#FFFFFF]}] [x=20.00] [y=20.00] [width=180.00] [height=180.00]
       RenderSVGPath {circle} at (110,20) size 180x180 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=20.00]}] [cx=200.00] [cy=110.00] [r=80.00]
       RenderSVGContainer {g} at (320,0) size 160x360
         RenderSVGContainer {a} at (320,0) size 160x180
-          RenderSVGPath {rect} at (320,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [x=320.00] [y=0.00] [width=160.00] [height=180.00]
+          RenderSVGRect {rect} at (320,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [x=320.00] [y=0.00] [width=160.00] [height=180.00]
           RenderSVGText {text} at (330,62) size 96x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 96x35
               chunk 1 text run 1 at (330.00,90.00) startOffset 0 endOffset 7 width 96.00: "Fade in"
         RenderSVGContainer {a} at (320,180) size 160x180
-          RenderSVGPath {rect} at (320,180) size 160x180 [fill={[type=SOLID] [color=#800000]}] [x=320.00] [y=180.00] [width=160.00] [height=180.00]
+          RenderSVGRect {rect} at (320,180) size 160x180 [fill={[type=SOLID] [color=#800000]}] [x=320.00] [y=180.00] [width=160.00] [height=180.00]
           RenderSVGText {text} at (330,252) size 113x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 113x35
               chunk 1 text run 1 at (330.00,280.00) startOffset 0 endOffset 8 width 113.00: "Fade out"
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

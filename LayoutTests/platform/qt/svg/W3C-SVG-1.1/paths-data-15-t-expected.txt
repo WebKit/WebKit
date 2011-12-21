@@ -6,10 +6,10 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (71,114) size 326x75 [transform={m=((1.80,0.00)(0.00,1.80)) t=(36.00,90.00)}]
         RenderSVGPath {path} at (71,114) size 326x24 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 20 20 C 40 13.3333 60 13.3333 80 20 C 100 26.6667 120 26.6667 140 20 C 160 13.3333 180 13.3333 200 20"]
         RenderSVGPath {path} at (72,177) size 108x6 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [data="M 20 50 C 20 50 30 50 50 50 C 70 50 80 50 80 50"]
-        RenderSVGPath {rect} at (71,179) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=50.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (125,179) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=50.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (179,179) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=80.00] [y=50.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (71,179) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=20.00] [y=50.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (125,179) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=50.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (179,179) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=80.00] [y=50.00] [width=4.00] [height=4.00]
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.2 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

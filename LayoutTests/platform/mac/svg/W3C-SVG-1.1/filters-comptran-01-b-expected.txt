@@ -38,25 +38,25 @@ layer at (0,0) size 480x360
                 {blue: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="1.00" offset="0.00"}
                 {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
               [SourceGraphic]
-        RenderSVGPath {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=628.00] [height=418.00]
+        RenderSVGRect {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=628.00] [height=418.00]
         RenderSVGContainer {g} at (15,5) size 450x300
-          RenderSVGPath {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=628.00] [height=418.00]
-          RenderSVGPath {rect} at (22,12) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=10.00] [width=580.00] [height=40.00]
+          RenderSVGRect {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=628.00] [height=418.00]
+          RenderSVGRect {rect} at (22,12) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=10.00] [width=580.00] [height=40.00]
             [filter="Identity"] RenderSVGResourceFilter {filter} at (10,10) size 580x40
           RenderSVGText {text} at (10,50) size 199x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 199x36
               chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 14 width 198.80: "type: identity"
-          RenderSVGPath {rect} at (22,83) size 415x30 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=110.00] [width=580.00] [height=40.00]
+          RenderSVGRect {rect} at (22,83) size 415x30 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=110.00] [width=580.00] [height=40.00]
             [filter="Table"] RenderSVGResourceFilter {filter} at (10,110) size 580x40
           RenderSVGText {text} at (10,150) size 163x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 163x36
               chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 11 width 162.40: "type: table"
-          RenderSVGPath {rect} at (22,155) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=210.00] [width=580.00] [height=40.00]
+          RenderSVGRect {rect} at (22,155) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=210.00] [width=580.00] [height=40.00]
             [filter="Linear"] RenderSVGResourceFilter {filter} at (10,210) size 580x40
           RenderSVGText {text} at (10,250) size 588x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 588x36
               chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 40 width 588.00: "type:linear slope:.5 intercepts:.25/0/.5"
-          RenderSVGPath {rect} at (22,226) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=310.00] [width=580.00] [height=40.00]
+          RenderSVGRect {rect} at (22,226) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=310.00] [width=580.00] [height=40.00]
             [filter="Gamma"] RenderSVGResourceFilter {filter} at (10,310) size 580x40
           RenderSVGText {text} at (10,350) size 573x36 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 573x36
@@ -64,4 +64,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

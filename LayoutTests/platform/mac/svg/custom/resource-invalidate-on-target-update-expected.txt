@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
       RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=objectBoundingBox]
         RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.50] [cy=0.50] [r=0.50]
     RenderSVGContainer {g} at (0,10) size 121x350
-      RenderSVGPath {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
         [masker="mask"] RenderSVGResourceMasker {mask} at (10,10) size 100x100
-      RenderSVGPath {rect} at (10,130) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=130.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (10,130) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=130.00] [width=100.00] [height=100.00]
         [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (10,130) size 100x100
-      RenderSVGPath {rect} at (0,240) size 121x120 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=250.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,240) size 121x120 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=250.00] [width=100.00] [height=100.00]
         [filter="filter"] RenderSVGResourceFilter {filter} at (0,240) size 120x120

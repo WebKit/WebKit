@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (15,101) size 464x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 464x51
           chunk 1 text run 1 at (15.00,140.00) startOffset 0 endOffset 27 width 463.80: " WS   with  indented lines."
-      RenderSVGPath {rect} at (40,240) size 636x63 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=380.00] [height=36.00]
+      RenderSVGRect {rect} at (40,240) size 636x63 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=145.00] [width=380.00] [height=36.00]
       RenderSVGText {text} at (28,136) size 377x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 377x51
           chunk 1 text run 1 at (28.00,175.00) startOffset 0 endOffset 20 width 376.80: "xml:space='preserve'"
@@ -25,13 +25,13 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (15,221) size 416x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 416x51
           chunk 1 text run 1 at (15.00,260.00) startOffset 0 endOffset 22 width 415.20: "WS non-indented lines."
-      RenderSVGPath {rect} at (40,440) size 636x63 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=380.00] [height=36.00]
+      RenderSVGRect {rect} at (40,440) size 636x63 [stroke={[type=SOLID] [color=#000000]}] [x=25.00] [y=265.00] [width=380.00] [height=36.00]
       RenderSVGText {text} at (28,256) size 377x51 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 377x51
           chunk 1 text run 1 at (28.00,295.00) startOffset 0 endOffset 20 width 376.80: "xml:space='preserve'"
     RenderSVGText {text} at (10,301) size 289x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 289x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 288.60: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 29 {svg} of document
 selection end:   position 16 of child 0 {#text} of child 15 {text} of child 29 {svg} of document

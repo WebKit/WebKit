@@ -8,7 +8,7 @@ layer at (0,0) size 800x486
           text run at (0,0) width 595: "There should be a blue circle with the word \"TEST\" in it below."
       RenderBlock (anonymous) at (0,49) size 784x406
         RenderSVGRoot {svg} at (8,72) size 400x400
-          RenderSVGPath {rect} at (8,72) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
+          RenderSVGRect {rect} at (8,72) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
           RenderSVGPath {circle} at (8,72) size 400x400 [fill={[type=SOLID] [color=#000080]}] [cx=200.00] [cy=200.00] [r=200.00]
           RenderSVGForeignObject {foreignObject} at (0,175) size 400x50 [color=#FFFFFF]
             RenderBlock {div} at (0,0) size 400x59

@@ -8,8 +8,8 @@ layer at (0,0) size 450x500
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGPath {path} at (99,0) size 142x1 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
     RenderSVGContainer {g} at (29,49) size 392x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
-      RenderSVGPath {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
-      RenderSVGPath {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
+      RenderSVGRect {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
+      RenderSVGRect {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
       RenderSVGText {text} at (-10,-133) size 227x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x16
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 39 width 226.17: "Text with one textPath child and x=\"10\""
@@ -51,8 +51,8 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 30 at (236.17,-33.38) startOffset 29 endOffset 30 width 2.88: "'"
             chunk 1 (middle anchor) text run 31 at (236.95,-30.03) startOffset 30 endOffset 31 width 4.00: "."
     RenderSVGContainer {g} at (29,194) size 392x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
-      RenderSVGPath {rect} at (29,194) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
-      RenderSVGPath {rect} at (29,214) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
+      RenderSVGRect {rect} at (29,194) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
+      RenderSVGRect {rect} at (29,214) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
       RenderSVGText {text} at (-10,-133) size 234x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 234x16
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 40 width 233.17: "Text with one textPath child and x=\"100\""
@@ -83,8 +83,8 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 19 at (239.89,-6.00) startOffset 18 endOffset 19 width 4.00: " "
             chunk 1 (middle anchor) text run 20 at (239.99,-1.78) startOffset 19 endOffset 20 width 4.45: "t"
     RenderSVGContainer {g} at (29,339) size 392x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
-      RenderSVGPath {rect} at (29,339) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
-      RenderSVGPath {rect} at (29,359) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
+      RenderSVGRect {rect} at (29,339) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
+      RenderSVGRect {rect} at (29,359) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
       RenderSVGText {text} at (-10,-133) size 282x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 282x16
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 48 width 281.66: "Text with one textPath child and x=\"-100\" y=\"10\""

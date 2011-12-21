@@ -7,76 +7,76 @@ layer at (0,0) size 480x360
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (19,34) size 178x260 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,-10.00)}]
         RenderSVGContainer {g} at (19,34) size 178x260 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-          RenderSVGPath {rect} at (19,34) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=5.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,34) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=5.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,5) size 140x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 140x18
               chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 3 width 27.00: "Scr"
               chunk 1 text run 2 at (47.02,20.00) startOffset 3 endOffset 5 width 14.00: "ip"
               chunk 1 text run 3 at (60.95,20.00) startOffset 5 endOffset 17 width 98.06: "ting enabled"
-          RenderSVGPath {rect} at (19,54) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=25.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,54) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=25.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,25) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,40.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,40.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,40.00) startOffset 13 endOffset 17 width 30.02: "t #1"
-          RenderSVGPath {rect} at (19,74) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=45.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,74) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=45.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,45) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,60.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,60.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,60.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,60.00) startOffset 13 endOffset 17 width 30.02: "t #2"
-          RenderSVGPath {rect} at (19,94) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=65.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,94) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=65.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,65) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,80.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,80.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,80.00) startOffset 13 endOffset 17 width 30.02: "t #3"
-          RenderSVGPath {rect} at (19,114) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=85.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,114) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=85.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,85) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,100.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,100.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,100.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,100.00) startOffset 13 endOffset 17 width 30.02: "t #4"
-          RenderSVGPath {rect} at (19,134) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=105.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,134) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=105.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,105) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,120.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,120.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,120.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,120.00) startOffset 13 endOffset 17 width 30.02: "t #5"
-          RenderSVGPath {rect} at (19,154) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=125.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,154) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=125.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,125) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x19
               chunk 1 text run 1 at (20.00,140.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,140.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,140.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,140.00) startOffset 13 endOffset 17 width 30.02: "t #6"
-          RenderSVGPath {rect} at (19,174) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=145.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,174) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=145.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,145) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,160.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,160.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,160.00) startOffset 13 endOffset 17 width 30.02: "t #7"
-          RenderSVGPath {rect} at (19,194) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=165.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,194) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=165.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,165) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,180.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,180.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,180.00) startOffset 13 endOffset 17 width 30.02: "t #8"
-          RenderSVGPath {rect} at (19,214) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=185.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,214) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=185.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,185) size 148x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 148x18
               chunk 1 text run 1 at (20.00,200.00) startOffset 0 endOffset 1 width 12.01: "P"
               chunk 1 text run 2 at (31.50,200.00) startOffset 1 endOffset 11 width 87.05: "assed subt"
               chunk 1 text run 3 at (118.30,200.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,200.00) startOffset 13 endOffset 17 width 30.02: "t #9"
-          RenderSVGPath {rect} at (19,234) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=205.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,234) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=205.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,205) size 157x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 157x18
               chunk 1 text run 1 at (20.00,220.00) startOffset 0 endOffset 1 width 12.01: "P"
@@ -84,7 +84,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 3 at (118.30,220.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,220.00) startOffset 13 endOffset 17 width 30.02: "t #1"
               chunk 1 text run 5 at (166.16,220.00) startOffset 17 endOffset 18 width 10.01: "0"
-          RenderSVGPath {rect} at (19,254) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=225.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,254) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=225.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,225) size 156x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 156x18
               chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 1 width 12.01: "P"
@@ -92,7 +92,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 3 at (118.30,240.00) startOffset 11 endOffset 13 width 19.01: "es"
               chunk 1 text run 4 at (137.25,240.00) startOffset 13 endOffset 17 width 30.02: "t #1"
               chunk 1 text run 5 at (165.15,240.00) startOffset 17 endOffset 18 width 10.01: "1"
-          RenderSVGPath {rect} at (19,274) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=245.00] [width=15.00] [height=15.00]
+          RenderSVGRect {rect} at (19,274) size 17x17 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=245.00] [width=15.00] [height=15.00]
           RenderSVGText {text} at (20,245) size 157x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 157x18
               chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 1 width 12.01: "P"
@@ -107,4 +107,4 @@ layer at (0,0) size 480x360
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
           chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
           chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".5 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

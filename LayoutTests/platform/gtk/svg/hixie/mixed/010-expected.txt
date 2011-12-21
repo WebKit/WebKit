@@ -8,6 +8,6 @@ layer at (0,0) size 800x162
           text run at (0,0) width 241: "There should be a green block below."
       RenderBlock (anonymous) at (0,34) size 784x104
         RenderSVGRoot {svg} at (8,50) size 300x100
-          RenderSVGPath {rect} at (8,50) size 300x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=300.00] [height=100.00]
-          RenderSVGPath {rect} at (8,50) size 300x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=300.00] [height=100.00]
+          RenderSVGRect {rect} at (8,50) size 300x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=300.00] [height=100.00]
+          RenderSVGRect {rect} at (8,50) size 300x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=300.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0

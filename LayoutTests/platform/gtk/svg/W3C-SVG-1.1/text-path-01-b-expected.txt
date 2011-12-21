@@ -55,7 +55,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 10 at (159.74,144.69) startOffset 9 endOffset 10 width 10.00: "t"
               chunk 1 text run 11 at (171.46,152.33) startOffset 10 endOffset 11 width 18.00: "h"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (16,168) size 276x43 [stroke={[type=SOLID] [color=#000000]}] [x=17.00] [y=169.00] [width=274.00] [height=41.00]
+        RenderSVGRect {rect} at (16,168) size 276x43 [stroke={[type=SOLID] [color=#000000]}] [x=17.00] [y=169.00] [width=274.00] [height=41.00]
         RenderSVGText {text} at (19,166) size 224x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 224x23
             chunk 1 text run 1 at (19.00,185.00) startOffset 0 endOffset 25 width 223.33: "'tspan' subelement inside"
@@ -86,7 +86,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 15 at (376.76,233.00) startOffset 14 endOffset 15 width 6.67: "t"
               chunk 1 text run 16 at (386.77,233.00) startOffset 15 endOffset 16 width 13.35: "h"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (117,249) size 262x43 [stroke={[type=SOLID] [color=#000000]}] [x=118.00] [y=250.00] [width=260.00] [height=41.00]
+        RenderSVGRect {rect} at (117,249) size 262x43 [stroke={[type=SOLID] [color=#000000]}] [x=118.00] [y=250.00] [width=260.00] [height=41.00]
         RenderSVGText {text} at (120,248) size 234x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 234x23
             chunk 1 text run 1 at (120.00,267.00) startOffset 0 endOffset 30 width 233.30: "'startOffset' attribute of the"
@@ -96,4 +96,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.9 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

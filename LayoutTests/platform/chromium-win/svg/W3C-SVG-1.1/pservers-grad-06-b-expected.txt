@@ -7,27 +7,27 @@ layer at (0,0) size 480x360
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=0.50] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
-      RenderSVGPath {rect} at (20,20) size 440x50 [fill={[type=LINEAR-GRADIENT] [id="Grad1"]}] [x=20.00] [y=20.00] [width=440.00] [height=50.00]
+      RenderSVGRect {rect} at (20,20) size 440x50 [fill={[type=LINEAR-GRADIENT] [id="Grad1"]}] [x=20.00] [y=20.00] [width=440.00] [height=50.00]
       RenderSVGText {text} at (20,72) size 288x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 288x35
           chunk 1 text run 1 at (20.00,100.00) startOffset 0 endOffset 22 width 288.00: "scale(0.5) on gradient"
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=userSpaceOnUse] [gradientTransform={m=((1.00,0.00)(1.00,1.00)) t=(240.00,155.00)}] [center=(0,0)] [focal=(0,0)] [radius=60.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FFA500]
-      RenderSVGPath {rect} at (20,110) size 440x50 [fill={[type=RADIAL-GRADIENT] [id="Grad2"]}] [x=20.00] [y=110.00] [width=440.00] [height=50.00]
+      RenderSVGRect {rect} at (20,110) size 440x50 [fill={[type=RADIAL-GRADIENT] [id="Grad2"]}] [x=20.00] [y=110.00] [width=440.00] [height=50.00]
       RenderSVGText {text} at (20,162) size 297x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 297x35
           chunk 1 text run 1 at (20.00,190.00) startOffset 0 endOffset 21 width 297.00: "skewX(45) on gradient"
       RenderSVGResourcePattern {pattern} [id="Pat3"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse] [patternTransform={m=((2.00,0.00)(2.00,2.00)) t=(25.00,215.00)}]
-        RenderSVGPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
-      RenderSVGPath {rect} at (20,210) size 440x50 [fill={[type=PATTERN] [id="Pat3"]}] [x=20.00] [y=210.00] [width=440.00] [height=50.00]
+        RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (10,0) size 10x10 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (10,10) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+      RenderSVGRect {rect} at (20,210) size 440x50 [fill={[type=PATTERN] [id="Pat3"]}] [x=20.00] [y=210.00] [width=440.00] [height=50.00]
       RenderSVGText {text} at (20,262) size 403x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 403x35
           chunk 1 text run 1 at (20.00,290.00) startOffset 0 endOffset 30 width 403.00: "scale(2), skewX(45) on pattern"
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

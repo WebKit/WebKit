@@ -29,7 +29,7 @@ layer at (28,83) size 200x200
           RenderSVGContainer {use} at (29,84) size 150x150
             RenderSVGContainer {g} at (29,84) size 150x150
               RenderSVGPath {circle} at (29,84) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
-      RenderSVGPath {rect} at (39,94) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (39,94) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
         [clipPath="clip-circle1"] RenderSVGResourceClipper {clipPath} at (-50,-50) size 200x200
     RenderText {#text} at (0,0) size 0x0
 layer at (28,348) size 200x200
@@ -41,30 +41,30 @@ layer at (28,348) size 200x200
           RenderSVGContainer {use} at (29,349) size 150x150
             RenderSVGContainer {g} at (29,349) size 150x150
               RenderSVGPath {circle} at (29,349) size 150x150 [transform={m=((5.00,0.00)(0.00,5.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [cx=10.00] [cy=10.00] [r=20.00]
-      RenderSVGPath {rect} at (39,359) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (39,359) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
         [clipPath="clip-circle2"] RenderSVGResourceClipper {clipPath} at (-50,-50) size 200x200
     RenderText {#text} at (0,0) size 0x0
 layer at (272,83) size 200x200
   RenderBlock (relative positioned) {div} at (10,65) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (283,94) size 132x188
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {rect} at (273,91) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+        RenderSVGRect {rect} at (273,91) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
         RenderSVGResourceClipper {clipPath} [id="clip-rect1"] [clipPathUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (273,91) size 142x191
             RenderSVGContainer {g} at (273,91) size 142x191
-              RenderSVGPath {rect} at (273,91) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
-      RenderSVGPath {rect} at (283,94) size 132x188 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+              RenderSVGRect {rect} at (273,91) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+      RenderSVGRect {rect} at (283,94) size 132x188 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
         [clipPath="clip-rect1"] RenderSVGResourceClipper {clipPath} at (-141.42,7.07) size 282.84x282.84
     RenderText {#text} at (0,0) size 0x0
 layer at (272,348) size 200x200
   RenderBlock (relative positioned) {div} at (10,330) size 200x200 [bgcolor=#C0C0C0] [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (283,359) size 132x188
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {rect} at (273,356) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+        RenderSVGRect {rect} at (273,356) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
         RenderSVGResourceClipper {clipPath} [id="clip-rect2"] [clipPathUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (273,356) size 142x191
             RenderSVGContainer {g} at (273,356) size 142x191
-              RenderSVGPath {rect} at (273,356) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
-      RenderSVGPath {rect} at (283,359) size 132x188 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
+              RenderSVGRect {rect} at (273,356) size 142x191 [transform={m=((3.54,3.54)(-3.54,3.54)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=40.00] [height=40.00]
+      RenderSVGRect {rect} at (283,359) size 132x188 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=200.00] [height=200.00]
         [clipPath="clip-rect2"] RenderSVGResourceClipper {clipPath} at (-141.42,7.07) size 282.84x282.84
     RenderText {#text} at (0,0) size 0x0

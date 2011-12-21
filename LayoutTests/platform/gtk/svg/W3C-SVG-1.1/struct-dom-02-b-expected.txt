@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,313) size 198x34 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 198x34
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 197.50: "$Revision: 1.1 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (10,28) size 47x34 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 47x34
         chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 3 width 46.67: "xml"

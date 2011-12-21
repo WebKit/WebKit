@@ -14,4 +14,4 @@ layer at (0,0) size 800x600
               text run at (525,21) width 78: "Bug 13976"
           RenderText {#text} at (603,21) size 4x21
             text run at (603,21) width 4: "."
-    RenderSVGPath {rect} at (10,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (10,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=100.00] [height=100.00]

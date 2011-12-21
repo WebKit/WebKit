@@ -141,7 +141,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
       RenderSVGContainer {g} at (300,345) size 100x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,370.00)}]
-        RenderSVGPath {rect} at (308,345) size 84x33 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=-50.00] [y=-25.00] [width=100.00] [height=50.00]
+        RenderSVGRect {rect} at (308,345) size 84x33 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=-50.00] [y=-25.00] [width=100.00] [height=50.00]
           [clipPath="textClip"] RenderSVGResourceClipper {clipPath} at (-42,-28) size 84x36
         RenderSVGText {text} at (-50,1) size 99x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 99x18

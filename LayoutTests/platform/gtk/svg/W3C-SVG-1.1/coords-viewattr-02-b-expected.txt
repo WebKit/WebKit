@@ -13,12 +13,12 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 41x10
             chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 40.74: "Viewport 1"
         RenderSVGContainer {g} at (10,150) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
-          RenderSVGPath {rect} at (10,150) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+          RenderSVGRect {rect} at (10,150) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
         RenderSVGText {text} at (10,171) size 41x10 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x10
             chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 40.74: "Viewport 2"
         RenderSVGContainer {g} at (20,220) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
-          RenderSVGPath {rect} at (20,220) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+          RenderSVGRect {rect} at (20,220) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
         RenderSVGContainer {g} at (120,51) size 120x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]
           RenderSVGText {text} at (0,-29) size 112x10 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 112x10
@@ -27,19 +27,19 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 25x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 25x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 24.00: "xMin*"
-            RenderSVGPath {rect} at (120,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (120,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
             RenderSVGImage {image} at (120,80) size 50x30
           RenderSVGContainer {g} at (190,66) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 25x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 25x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 24.00: "xMid*"
-            RenderSVGPath {rect} at (190,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (190,80) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
             RenderSVGImage {image} at (190,80) size 50x30
           RenderSVGContainer {g} at (120,116) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
             RenderSVGText {text} at (0,-14) size 26x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 26x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 25.50: "xMax*"
-            RenderSVGPath {rect} at (120,130) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (120,130) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
             RenderSVGImage {image} at (120,130) size 50x30
         RenderSVGContainer {g} at (300,51) size 130x89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,50.00)}]
           RenderSVGText {text} at (0,-29) size 124x10 contains 1 chunk(s)
@@ -49,19 +49,19 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 27x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "*YMin"
-            RenderSVGPath {rect} at (300,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (300,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (300,80) size 30x60
           RenderSVGContainer {g} at (350,66) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 27x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "*YMid"
-            RenderSVGPath {rect} at (350,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (350,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (350,80) size 30x60
           RenderSVGContainer {g} at (400,66) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 28x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 28x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 27.50: "*YMax"
-            RenderSVGPath {rect} at (400,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (400,80) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (400,80) size 30x60
         RenderSVGContainer {g} at (120,186) size 130x89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,185.00)}]
           RenderSVGText {text} at (0,-29) size 126x10 contains 1 chunk(s)
@@ -71,19 +71,19 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 25x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 25x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 24.00: "xMin*"
-            RenderSVGPath {rect} at (120,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (120,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (120,215) size 30x60
           RenderSVGContainer {g} at (170,201) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 25x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 25x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 24.00: "xMid*"
-            RenderSVGPath {rect} at (170,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (170,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (170,215) size 30x60
           RenderSVGContainer {g} at (220,201) size 30x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 26x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 26x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 25.50: "xMax*"
-            RenderSVGPath {rect} at (220,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
+            RenderSVGRect {rect} at (220,215) size 30x60 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=29.00] [height=59.00]
             RenderSVGImage {image} at (220,215) size 30x60
         RenderSVGContainer {g} at (300,186) size 120x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,185.00)}]
           RenderSVGText {text} at (0,-29) size 114x10 contains 1 chunk(s)
@@ -93,21 +93,21 @@ layer at (0,0) size 480x360
             RenderSVGText {text} at (0,-14) size 27x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "*YMin"
-            RenderSVGPath {rect} at (300,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (300,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
             RenderSVGImage {image} at (300,215) size 50x30
           RenderSVGContainer {g} at (370,201) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
             RenderSVGText {text} at (0,-14) size 27x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.00: "*YMid"
-            RenderSVGPath {rect} at (370,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (370,215) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
             RenderSVGImage {image} at (370,215) size 50x30
           RenderSVGContainer {g} at (300,251) size 50x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
             RenderSVGText {text} at (0,-14) size 28x10 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 28x10
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 27.50: "*YMax"
-            RenderSVGPath {rect} at (300,265) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+            RenderSVGRect {rect} at (300,265) size 50x30 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
             RenderSVGImage {image} at (300,265) size 50x30
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

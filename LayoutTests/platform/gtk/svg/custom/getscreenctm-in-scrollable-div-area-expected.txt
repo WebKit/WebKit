@@ -6,7 +6,7 @@ layer at (0,0) size 800x550
 layer at (0,0) size 750x550 clip at (0,0) size 734x534 scrollY 1700 scrollHeight 4010
   RenderBlock {div} at (0,0) size 750x550
     RenderSVGRoot {svg} at (266,250) size 268x154
-      RenderSVGPath {rect} at (350,250) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (350,250) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]
       RenderSVGPath {circle} at (350,250) size 100x100 [fill={[type=SOLID] [color=#F08080]}] [cx=400.00] [cy=2000.00] [r=50.00]
       RenderSVGText {text} at (266,2085) size 267x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 267x18

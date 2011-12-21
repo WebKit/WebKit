@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
       [feGaussianBlur stdDeviation="5.00, 1.00"]
         [SourceGraphic]
     RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
-      RenderSVGPath {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+      RenderSVGRect {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
     RenderSVGText {text} at (0,-3) size 344x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 344x21
         chunk 1 text run 1 at (0.00,13.00) startOffset 0 endOffset 46 width 343.80: "The rect should be opaque green, black stroke,"

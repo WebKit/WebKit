@@ -8,7 +8,7 @@ layer at (0,0) size 800x295
           RenderView at (0,0) size 175x275
         layer at (0,0) size 175x275
           RenderSVGRoot {svg} at (0,49) size 175x176
-            RenderSVGPath {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGRect {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
             RenderSVGPath {circle} at (70,119) size 35x36 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (175,261) size 4x17
         text run at (175,261) width 4: " "
@@ -17,7 +17,7 @@ layer at (0,0) size 800x295
           RenderView at (0,0) size 175x275
         layer at (0,0) size 175x275
           RenderSVGRoot {svg} at (0,49) size 175x176
-            RenderSVGPath {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGRect {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
             RenderSVGPath {circle} at (70,119) size 35x36 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (354,261) size 4x17
         text run at (354,261) width 4: " "
@@ -26,7 +26,7 @@ layer at (0,0) size 800x295
           RenderView at (0,0) size 175x275
         layer at (0,0) size 175x275
           RenderSVGRoot {svg} at (0,49) size 175x176
-            RenderSVGPath {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGRect {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
             RenderSVGPath {circle} at (70,119) size 35x36 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (533,261) size 4x17
         text run at (533,261) width 4: " "
@@ -35,6 +35,6 @@ layer at (0,0) size 800x295
           RenderView at (0,0) size 175x275
         layer at (0,0) size 175x275
           RenderSVGRoot {svg} at (0,49) size 175x176
-            RenderSVGPath {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
+            RenderSVGRect {rect} at (0,49) size 175x176 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
             RenderSVGPath {circle} at (70,119) size 35x36 [fill={[type=SOLID] [color=#008000]}] [cx=150.00] [cy=150.00] [r=30.00]
       RenderText {#text} at (0,0) size 0x0

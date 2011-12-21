@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           chunk 1 text run 1 at (65.00,16.00) startOffset 0 endOffset 69 width 335.81: "Link test of the 'view' element and its attributes, 1 of 2, internal."
       RenderSVGContainer {g} at (0,0) size 800x530
         RenderSVGContainer {g} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,75.00)}]
-          RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#AAAAAA]}] [x=300.00] [y=55.00] [width=125.00] [height=85.00]
+          RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#AAAAAA]}] [x=300.00] [y=55.00] [width=125.00] [height=85.00]
           RenderSVGContainer {a} at (0,0) size 0x0
             RenderSVGText {text} at (310,56) size 103x18 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 103x18
@@ -32,11 +32,11 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (315,152) size 88x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 88x15
               chunk 1 text run 1 at (315.00,164.00) startOffset 0 endOffset 19 width 87.75: "to link to its view"
-        RenderSVGPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#800080]}] [x=295.00] [y=36.00] [width=135.00] [height=68.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#800080]}] [x=295.00] [y=36.00] [width=135.00] [height=68.00]
         RenderSVGText {text} at (330,102) size 64x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 64x18
             chunk 1 (middle anchor) text run 1 at (330.63,116.00) startOffset 0 endOffset 9 width 63.75: "Rectangle"
-        RenderSVGPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [x=292.00] [y=29.00] [width=141.00] [height=91.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [x=292.00] [y=29.00] [width=141.00] [height=91.00]
         RenderSVGText {text} at (300,122) size 125x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 125x13
             chunk 1 (middle anchor) text run 1 at (300.34,132.00) startOffset 0 endOffset 29 width 124.31: "No view attributes except id."
@@ -44,7 +44,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (349,281) size 42x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 42x18
             chunk 1 (middle anchor) text run 1 at (349.09,295.00) startOffset 0 endOffset 7 width 41.81: "Ellipse"
-        RenderSVGPath {rect} at (0,78) size 800x444 [stroke={[type=SOLID] [color=#000000]}] [x=295.00] [y=216.00] [width=150.00] [height=82.00]
+        RenderSVGRect {rect} at (0,78) size 800x444 [stroke={[type=SOLID] [color=#000000]}] [x=295.00] [y=216.00] [width=150.00] [height=82.00]
         RenderSVGText {text} at (315,202) size 115x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 115x13
             chunk 1 text run 1 at (315.00,212.00) startOffset 0 endOffset 27 width 114.94: "viewBox, should fill frame."
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (66,102) size 37x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 37x18
             chunk 1 (middle anchor) text run 1 at (66.91,116.00) startOffset 0 endOffset 6 width 36.19: "Circle"
-        RenderSVGPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=29.00] [width=98.00] [height=91.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=29.00] [width=98.00] [height=91.00]
         RenderSVGText {text} at (34,120) size 102x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 102x13
             chunk 1 (middle anchor) text run 1 at (34.09,130.00) startOffset 0 endOffset 21 width 101.81: "viewBox & non-uniform"
@@ -63,7 +63,7 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (59,281) size 52x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 52x18
             chunk 1 (middle anchor) text run 1 at (59.41,295.00) startOffset 0 endOffset 7 width 51.19: "Polygon"
-        RenderSVGPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
+        RenderSVGRect {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
         RenderSVGText {text} at (52,185) size 65x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 65x13
             chunk 1 (middle anchor) text run 1 at (52.56,195.00) startOffset 0 endOffset 14 width 64.88: "viewTarget, no"
@@ -74,5 +74,5 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,309) size 249x40 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 249x40
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 248.06: "$Revision: 1.12 $"
-    RenderSVGPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 caret: position 0 of child 0 {#text} of child 1 {text} of child 5 {a} of child 1 {g} of child 3 {g} of child 25 {g} of child 0 {svg} of document

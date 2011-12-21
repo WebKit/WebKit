@@ -9,9 +9,9 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (145,8) size 189x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 189x15
           chunk 1 (middle anchor) text run 1 at (145.50,20.00) startOffset 0 endOffset 37 width 189.00: "Basic test of feImage filter support."
-      RenderSVGPath {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=480.00] [height=360.00]
+      RenderSVGRect {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=480.00] [height=360.00]
         [filter="image"] RenderSVGResourceFilter {filter} at (-48,-36) size 576x432
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

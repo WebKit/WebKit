@@ -4,16 +4,16 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 480x360
       RenderSVGContainer {g} at (0,0) size 480x360
-        RenderSVGPath {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=240.00] [height=180.00]
-        RenderSVGPath {rect} at (60,45) size 120x90 [fill={[type=SOLID] [color=#008000]}] [x=60.00] [y=45.00] [width=120.00] [height=90.00]
-        RenderSVGPath {rect} at (240,180) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [x=240.00] [y=180.00] [width=240.00] [height=180.00]
+        RenderSVGRect {rect} at (0,0) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=240.00] [height=180.00]
+        RenderSVGRect {rect} at (60,45) size 120x90 [fill={[type=SOLID] [color=#008000]}] [x=60.00] [y=45.00] [width=120.00] [height=90.00]
+        RenderSVGRect {rect} at (240,180) size 240x180 [fill={[type=SOLID] [color=#FF0000]}] [x=240.00] [y=180.00] [width=240.00] [height=180.00]
       RenderSVGContainer {g} at (240,0) size 240x180
-        RenderSVGPath {rect} at (240,0) size 240x180 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=240.00] [height=180.00]
+        RenderSVGRect {rect} at (240,0) size 240x180 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=0.00] [width=240.00] [height=180.00]
       RenderSVGContainer {g} at (76,196) size 72x105
         RenderSVGContainer {g} at (76,196) size 72x105 [transform={m=((0.94,-0.34)(0.34,0.94)) t=(0.00,0.00)}]
-          RenderSVGPath {rect} at (76,196) size 52x53 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=224.00] [width=40.00] [height=40.00]
-          RenderSVGPath {rect} at (95,249) size 53x52 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=280.00] [width=40.00] [height=40.00]
+          RenderSVGRect {rect} at (76,196) size 52x53 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=224.00] [width=40.00] [height=40.00]
+          RenderSVGRect {rect} at (95,249) size 53x52 [fill={[type=SOLID] [color=#FFFF00]}] [x=0.00] [y=280.00] [width=40.00] [height=40.00]
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.4 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

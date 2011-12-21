@@ -14,10 +14,10 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (80,284) size 39x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 39x14
           chunk 1 text run 1 at (80.00,295.00) startOffset 0 endOffset 8 width 38.67: "circle-2"
-      RenderSVGPath {rect} at (0,20) size 322x340 [stroke={[type=SOLID] [color=#000000]}] [x=64.00] [y=227.00] [width=72.00] [height=72.00]
+      RenderSVGRect {rect} at (0,20) size 322x340 [stroke={[type=SOLID] [color=#000000]}] [x=64.00] [y=227.00] [width=72.00] [height=72.00]
       RenderSVGPath {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [cx=340.00] [cy=260.00] [r=50.00]
       RenderSVGText {text} at (320,321) size 39x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 39x14
           chunk 1 text run 1 at (320.00,332.00) startOffset 0 endOffset 8 width 38.67: "circle-3"
     RenderSVGContainer {g} at (0,0) size 480x360
-      RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+      RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -2,29 +2,29 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
-    RenderSVGPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+    RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
     RenderSVGViewportContainer {svg} at (0,0) size 200x200
-      RenderSVGPath {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
-      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGText {text} at (50,84) size 117x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 117x21
         chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 16 width 117.00: "overflow: hidden"
-    RenderSVGPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=0.00] [width=200.00] [height=200.00]
+    RenderSVGRect {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=200.00] [y=0.00] [width=200.00] [height=200.00]
     RenderSVGViewportContainer {svg} at (200,0) size 200x200
-      RenderSVGPath {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
-      RenderSVGPath {rect} at (200,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (200,0) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (200,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGText {text} at (250,84) size 106x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 106x21
         chunk 1 text run 1 at (250.00,100.00) startOffset 0 endOffset 16 width 106.00: "overflow: scroll"
-    RenderSVGPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=200.00] [width=200.00] [height=200.00]
+    RenderSVGRect {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=200.00] [width=200.00] [height=200.00]
     RenderSVGViewportContainer {svg} at (0,200) size 200x200
-      RenderSVGPath {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (0,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
     RenderSVGText {text} at (50,284) size 99x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 99x21
         chunk 1 text run 1 at (50.00,300.00) startOffset 0 endOffset 14 width 99.00: "overflow: auto"
-    RenderSVGPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=200.00] [y=200.00] [width=200.00] [height=200.00]
+    RenderSVGRect {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [x=200.00] [y=200.00] [width=200.00] [height=200.00]
     RenderSVGViewportContainer {svg} at (200,200) size 200x200
-      RenderSVGPath {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+      RenderSVGRect {rect} at (200,200) size 200x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
     RenderSVGText {text} at (250,284) size 114x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 114x21
         chunk 1 text run 1 at (250.00,300.00) startOffset 0 endOffset 17 width 114.00: "overflow: visible"

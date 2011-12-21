@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 300x200
   RenderSVGRoot {svg} at (0,0) size 300x200
     RenderSVGPath {circle} at (100,50) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [cx=150.00] [cy=100.00] [r=50.00]
-    RenderSVGPath {rect} at (0,0) size 300x200 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=300.00] [height=200.00]
+    RenderSVGRect {rect} at (0,0) size 300x200 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=300.00] [height=200.00]
     RenderSVGText {text} at (10,10) size 213x26 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 213x26
         chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 23 width 213.00: "There should be a black"

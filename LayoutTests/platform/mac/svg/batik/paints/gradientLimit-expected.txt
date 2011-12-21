@@ -11,7 +11,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
-        RenderSVGPath {rect} at (35,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [id="closeOffsetsLinearGradient"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (35,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [id="closeOffsetsLinearGradient"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
         RenderSVGText {text} at (13,120) size 123x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 123x18
             chunk 1 (middle anchor) text run 1 at (13.50,135.00) startOffset 0 endOffset 17 width 123.00: "Two close offsets"
@@ -23,7 +23,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
-        RenderSVGPath {rect} at (185,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [id="closeOffsetsLinearGradient2"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (185,80) size 80x40 [fill={[type=LINEAR-GRADIENT] [id="closeOffsetsLinearGradient2"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
         RenderSVGText {text} at (-4,120) size 157x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 157x18
             chunk 1 (middle anchor) text run 1 at (-3.50,135.00) startOffset 0 endOffset 22 width 157.00: "Two very close offsets"
@@ -35,7 +35,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
-        RenderSVGPath {rect} at (35,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [id="closeOffsetsRadialGradient"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (35,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [id="closeOffsetsRadialGradient"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
         RenderSVGText {text} at (13,120) size 123x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 123x18
             chunk 1 (middle anchor) text run 1 at (13.50,135.00) startOffset 0 endOffset 17 width 123.00: "Two close offsets"
@@ -47,7 +47,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#DC143C]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
-        RenderSVGPath {rect} at (185,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [id="closeOffsetsRadialGradient2"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
+        RenderSVGRect {rect} at (185,180) size 80x40 [fill={[type=RADIAL-GRADIENT] [id="closeOffsetsRadialGradient2"]}] [x=35.00] [y=80.00] [width=80.00] [height=40.00]
         RenderSVGText {text} at (-4,120) size 157x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 157x18
             chunk 1 (middle anchor) text run 1 at (-3.50,135.00) startOffset 0 endOffset 22 width 157.00: "Two very close offsets"
@@ -58,7 +58,7 @@ layer at (0,0) size 450x500
         RenderSVGResourceLinearGradient {linearGradient} [id="closeControlsLinearGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(0,0)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
-        RenderSVGPath {rect} at (335,80) size 80x41 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [id="closeControlsLinearGradient"]}] [x=0.35] [y=0.80] [width=0.80] [height=0.40]
+        RenderSVGRect {rect} at (335,80) size 80x41 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=LINEAR-GRADIENT] [id="closeControlsLinearGradient"]}] [x=0.35] [y=0.80] [width=0.80] [height=0.40]
         RenderSVGText {text} at (4,120) size 141x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 141x18
             chunk 1 (middle anchor) text run 1 at (4.50,135.00) startOffset 0 endOffset 20 width 141.00: "Close control points"
@@ -69,7 +69,7 @@ layer at (0,0) size 450x500
         RenderSVGResourceRadialGradient {radialGradient} [id="smallRadiusRadialGradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FFD700]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
-        RenderSVGPath {rect} at (335,180) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="smallRadiusRadialGradient"]}] [x=0.35] [y=0.80] [width=0.80] [height=0.40]
+        RenderSVGRect {rect} at (335,180) size 80x40 [transform={m=((100.00,0.00)(0.00,100.00)) t=(0.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="smallRadiusRadialGradient"]}] [x=0.35] [y=0.80] [width=0.80] [height=0.40]
         RenderSVGText {text} at (27,120) size 96x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 96x18
             chunk 1 (middle anchor) text run 1 at (27.00,135.00) startOffset 0 endOffset 12 width 96.00: "Small Radius"

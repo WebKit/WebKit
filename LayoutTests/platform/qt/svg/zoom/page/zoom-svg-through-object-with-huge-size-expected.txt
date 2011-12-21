@@ -12,7 +12,7 @@ layer at (0,0) size 800x355
             RenderView at (0,0) size 261x261
           layer at (0,0) size 277x277
             RenderSVGRoot {svg} at (0,0) size 277x277
-              RenderSVGPath {rect} at (0,0) size 277x277 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+              RenderSVGRect {rect} at (0,0) size 277x277 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,318) size 790x15
         RenderText {#text} at (0,0) size 93x15

@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (124,4) size 34x57
       RenderSVGPath {svg:line} at (124,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=25.30] [y1=0.95] [x2=25.30] [y2=12.17]
       RenderSVGPath {svg:line} at (152,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=31.04] [y1=0.95] [x2=31.04] [y2=12.17]
-      RenderSVGPath {svg:rect} at (126,4) size 30x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=25.30] [y=0.95] [width=5.74] [height=11.17]
+      RenderSVGRect {svg:rect} at (126,4) size 30x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=25.30] [y=0.95] [width=5.74] [height=11.17]
     RenderSVGText {text} at (10,0) size 50x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 50x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 15 width 73.20: "Text to Squeeze"

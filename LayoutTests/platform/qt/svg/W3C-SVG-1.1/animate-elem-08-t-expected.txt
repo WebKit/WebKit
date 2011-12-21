@@ -8,11 +8,11 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (87.50,25.00) startOffset 0 endOffset 44 width 275.00: "Test rotate='auto' and rotate='auto-reverse'"
       RenderSVGContainer {g} at (0,150) size 445x114
         RenderSVGPath {path} at (24,150) size 152x75 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 25 225 C 25 175 125 150 175 200"]
-        RenderSVGPath {rect} at (8,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=195.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (8,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=195.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (9,228) size 32x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16
             chunk 1 (middle anchor) text run 1 at (9.00,240.00) startOffset 0 endOffset 6 width 32.00: "0 sec."
-        RenderSVGPath {rect} at (158,168) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=160.00] [y=170.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (158,168) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=160.00] [y=170.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (155,203) size 39x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 39x16
             chunk 1 (middle anchor) text run 1 at (155.50,215.00) startOffset 0 endOffset 7 width 39.00: "6+ sec."
@@ -21,11 +21,11 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 79x18
             chunk 1 (middle anchor) text run 1 at (60.50,260.00) startOffset 0 endOffset 13 width 79.00: "rotate='auto'"
         RenderSVGPath {path} at (274,150) size 152x75 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 275 225 C 275 175 375 150 425 200"]
-        RenderSVGPath {rect} at (258,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=260.00] [y=195.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (258,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=260.00] [y=195.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (259,228) size 32x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x16
             chunk 1 (middle anchor) text run 1 at (259.00,240.00) startOffset 0 endOffset 6 width 32.00: "0 sec."
-        RenderSVGPath {rect} at (408,168) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=410.00] [y=170.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (408,168) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=410.00] [y=170.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (405,203) size 39x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 39x16
             chunk 1 (middle anchor) text run 1 at (405.50,215.00) startOffset 0 endOffset 7 width 39.00: "6+ sec."
@@ -36,4 +36,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

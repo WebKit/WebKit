@@ -30,39 +30,39 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (113,12) size 253x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 253x23
         chunk 1 (middle anchor) text run 1 at (113.66,30.00) startOffset 0 endOffset 30 width 252.69: "Gradient 'spreadMethod' values"
-    RenderSVGPath {rect} at (10,60) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadPad"]}] [x=10.00] [y=60.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (10,60) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadPad"]}] [x=10.00] [y=60.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (10,40) size 137x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 137x18
         chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 18 width 136.72: "spreadMethod=\"pad\""
-    RenderSVGPath {rect} at (10,130) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadReflect"]}] [x=10.00] [y=130.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (10,130) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadReflect"]}] [x=10.00] [y=130.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (10,110) size 155x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 155x18
         chunk 1 text run 1 at (10.00,125.00) startOffset 0 endOffset 22 width 154.47: "spreadMethod=\"reflect\""
-    RenderSVGPath {rect} at (10,200) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadRepeat"]}] [x=10.00] [y=200.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (10,200) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadRepeat"]}] [x=10.00] [y=200.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (10,180) size 153x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 153x18
         chunk 1 text run 1 at (10.00,195.00) startOffset 0 endOffset 21 width 152.70: "spreadMethod=\"repeat\""
-    RenderSVGPath {rect} at (10,270) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadDefault"]}] [x=10.00] [y=270.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (10,270) size 225x40 [fill={[type=LINEAR-GRADIENT] [id="lgSpreadDefault"]}] [x=10.00] [y=270.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (10,250) size 159x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 159x18
         chunk 1 text run 1 at (10.00,265.00) startOffset 0 endOffset 22 width 158.04: "spreadMethod=\"default\""
-    RenderSVGPath {rect} at (245,60) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadPad"]}] [x=245.00] [y=60.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (245,60) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadPad"]}] [x=245.00] [y=60.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (245,40) size 137x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 137x18
         chunk 1 text run 1 at (245.00,55.00) startOffset 0 endOffset 18 width 136.72: "spreadMethod=\"pad\""
-    RenderSVGPath {rect} at (245,130) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadReflect"]}] [x=245.00] [y=130.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (245,130) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadReflect"]}] [x=245.00] [y=130.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (245,110) size 155x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 155x18
         chunk 1 text run 1 at (245.00,125.00) startOffset 0 endOffset 22 width 154.47: "spreadMethod=\"reflect\""
-    RenderSVGPath {rect} at (245,200) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadRepeat"]}] [x=245.00] [y=200.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (245,200) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadRepeat"]}] [x=245.00] [y=200.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (245,180) size 153x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 153x18
         chunk 1 text run 1 at (245.00,195.00) startOffset 0 endOffset 21 width 152.70: "spreadMethod=\"repeat\""
-    RenderSVGPath {rect} at (245,270) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadDefault"]}] [x=245.00] [y=270.00] [width=225.00] [height=40.00]
+    RenderSVGRect {rect} at (245,270) size 225x40 [fill={[type=RADIAL-GRADIENT] [id="rgSpreadDefault"]}] [x=245.00] [y=270.00] [width=225.00] [height=40.00]
     RenderSVGText {text} at (245,250) size 159x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 159x18
         chunk 1 text run 1 at (245.00,265.00) startOffset 0 endOffset 22 width 158.04: "spreadMethod=\"default\""
     RenderSVGText {text} at (10,323) size 198x34 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 198x34
         chunk 1 text run 1 at (10.00,350.00) startOffset 0 endOffset 16 width 197.50: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

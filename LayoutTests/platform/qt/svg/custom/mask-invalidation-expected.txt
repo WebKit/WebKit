@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (14,4) size 489x345
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (50,50) size 460x316 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=50.00] [width=460.00] [height=316.00]
+        RenderSVGRect {rect} at (50,50) size 460x316 [fill={[type=SOLID] [color=#FFFFFF]}] [x=50.00] [y=50.00] [width=460.00] [height=316.00]
     RenderSVGContainer {g} at (50,50) size 453x299
-      RenderSVGPath {rect} at (50,50) size 453x299 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=453.00] [height=299.00]
+      RenderSVGRect {rect} at (50,50) size 453x299 [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=453.00] [height=299.00]
         [masker="mask"] RenderSVGResourceMasker {mask} at (50,50) size 460x316
     RenderSVGText {text} at (14,4) size 89x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 89x21

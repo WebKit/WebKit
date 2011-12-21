@@ -1,3 +1,16 @@
+2011-12-21  Renata Hodovan  <reni@webkit.org>
+
+        New renderer for SVGRectElement
+        https://bugs.webkit.org/show_bug.cgi?id=65769
+
+        Rubber-stamped by Zoltan Herczeg.
+
+        Change the return value of RenderSVGRect::renderName() from RenderSVGPath to RenderSVGRect.
+        This is a follow-up patch of r101517 to correct the DRT output.
+
+        * rendering/svg/RenderSVGRect.h:
+        (WebCore::RenderSVGRect::renderName):
+
 2011-12-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TabbedPane should use tabElement width measuring to layout tab elements when width is too small to fit them.

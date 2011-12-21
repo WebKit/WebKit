@@ -9,12 +9,12 @@ layer at (0,0) size 800x584
           text run at (0,18) width 293: "addition, all the assertions below should pass."
       RenderBlock {div} at (0,52) size 800x200
         RenderSVGRoot {svg} at (8,68) size 570x200
-          RenderSVGPath {rect} at (8,78) size 70x160 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=10.00] [width=70.00] [height=160.00]
-          RenderSVGPath {rect} at (78,78) size 100x150 [fill={[type=SOLID] [color=#008000]}] [x=70.00] [y=10.00] [width=100.00] [height=150.00]
-          RenderSVGPath {rect} at (178,78) size 70x140 [fill={[type=SOLID] [color=#FF0000]}] [x=170.00] [y=10.00] [width=70.00] [height=140.00]
-          RenderSVGPath {rect} at (248,78) size 70x130 [fill={[type=SOLID] [color=#008000]}] [x=240.00] [y=10.00] [width=70.00] [height=130.00]
-          RenderSVGPath {rect} at (318,78) size 80x120 [fill={[type=SOLID] [color=#FF0000]}] [x=310.00] [y=10.00] [width=80.00] [height=120.00]
-          RenderSVGPath {rect} at (398,78) size 60x110 [fill={[type=SOLID] [color=#008000]}] [x=390.00] [y=10.00] [width=60.00] [height=110.00]
+          RenderSVGRect {rect} at (8,78) size 70x160 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=10.00] [width=70.00] [height=160.00]
+          RenderSVGRect {rect} at (78,78) size 100x150 [fill={[type=SOLID] [color=#008000]}] [x=70.00] [y=10.00] [width=100.00] [height=150.00]
+          RenderSVGRect {rect} at (178,78) size 70x140 [fill={[type=SOLID] [color=#FF0000]}] [x=170.00] [y=10.00] [width=70.00] [height=140.00]
+          RenderSVGRect {rect} at (248,78) size 70x130 [fill={[type=SOLID] [color=#008000]}] [x=240.00] [y=10.00] [width=70.00] [height=130.00]
+          RenderSVGRect {rect} at (318,78) size 80x120 [fill={[type=SOLID] [color=#FF0000]}] [x=310.00] [y=10.00] [width=80.00] [height=120.00]
+          RenderSVGRect {rect} at (398,78) size 60x110 [fill={[type=SOLID] [color=#008000]}] [x=390.00] [y=10.00] [width=60.00] [height=110.00]
           RenderSVGText {text} at (0,-90) size 570x600 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 570x600
               chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 9 width 510.00: "GGDGGBBBF"

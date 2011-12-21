@@ -9,7 +9,7 @@ layer at (0,0) size 800x536
 layer at (58,84) size 402x402
   RenderBlock {div} at (50,68) size 402x402 [border: (1px solid #000000)]
     RenderSVGRoot {svg} at (148,144) size 358x419
-      RenderSVGPath {rect} at (355,187) size 115x115 [stroke={[type=SOLID] [color=#FFC0CB] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (355,187) size 115x115 [stroke={[type=SOLID] [color=#FFC0CB] [stroke width=5.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=0.00] [width=100.00] [height=100.00]
       RenderSVGText {text} at (150,281) size 139x23 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 139x23
           chunk 1 text run 1 at (150.00,300.00) startOffset 0 endOffset 17 width 138.83: "This is some text"

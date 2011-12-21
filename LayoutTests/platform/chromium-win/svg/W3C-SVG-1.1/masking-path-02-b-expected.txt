@@ -5,15 +5,15 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0.50,0.50) size 479x359
     RenderSVGContainer {g} at (10,10) size 461x277
-      RenderSVGPath {rect} at (10,10) size 430x80 [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
+      RenderSVGRect {rect} at (10,10) size 430x80 [fill={[type=SOLID] [color=#FF0000]}] [clip path="clip1"] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
       RenderSVGText {text} at (20,130) size 451x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 451x35
           chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 31 width 451.00: "clipPathUnits=objectBoundingBox"
-      RenderSVGPath {rect} at (100,115.15) size 169.71x169.71 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#0000FF]}] [clip path="clip2"] [data="M0.00,0.00 L120.00,0.00 L120.00,120.00 L0.00,120.00 Z"]
+      RenderSVGRect {rect} at (100,115.15) size 169.71x169.71 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#0000FF]}] [clip path="clip2"] [data="M0.00,0.00 L120.00,0.00 L120.00,120.00 L0.00,120.00 Z"]
       RenderSVGText {text} at (20,280) size 429x35 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-28) size 429x35
           chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 28 width 429.00: "clipPathUnits=userSpaceOnUse"
     RenderSVGText {text} at (10,340) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,-36) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.4 $"
-    RenderSVGPath {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderSVGRect {rect} at (0.50,0.50) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

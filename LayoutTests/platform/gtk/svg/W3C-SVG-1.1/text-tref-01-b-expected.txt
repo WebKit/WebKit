@@ -9,11 +9,11 @@ layer at (0,0) size 480x360
       RenderSVGText {text}
         RenderSVGInline {tref} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
-      RenderSVGPath {rect} at (72,182) size 262x24 [stroke={[type=SOLID] [color=#000000]}] [x=73.00] [y=183.00] [width=260.00] [height=22.00]
+      RenderSVGRect {rect} at (72,182) size 262x24 [stroke={[type=SOLID] [color=#000000]}] [x=73.00] [y=183.00] [width=260.00] [height=22.00]
       RenderSVGText {text} at (73,206) size 154x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 154x14
           chunk 1 text run 1 at (73.00,217.00) startOffset 0 endOffset 34 width 153.33: "'tref' to a string in another file"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

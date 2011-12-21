@@ -11,26 +11,26 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (180.00,64.00) startOffset 0 endOffset 7 width 88.03: "M and Z"
       RenderSVGContainer {g} at (14,97) size 402x200 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
         RenderSVGPath {path} at (16,99) size 191x165 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0289 138.5 L 62 71 Z"]
-        RenderSVGPath {rect} at (108,97) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=54.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (201,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=111.96] [y=144.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (14,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=8.04] [y=144.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (108,124) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=69.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (178,245) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (37,245) size 9x8 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (108,97) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=54.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (201,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=111.96] [y=144.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (14,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=8.04] [y=144.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (108,124) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=69.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (178,245) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (37,245) size 9x8 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
         RenderSVGText {text} at (42,150) size 41x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x14
             chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 40.08: "stroked"
         RenderSVGPath {path} at (225,100) size 188x163 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
-        RenderSVGPath {rect} at (315,97) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=54.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (408,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=226.96] [y=144.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (221,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=123.04] [y=144.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (315,124) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=69.00] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (385,245) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=213.97] [y=136.50] [width=4.00] [height=4.00]
-        RenderSVGPath {rect} at (244,245) size 9x8 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (315,97) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=54.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (408,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=226.96] [y=144.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (221,259) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=123.04] [y=144.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (315,124) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=69.00] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (385,245) size 8x8 [fill={[type=SOLID] [color=#00C000]}] [x=213.97] [y=136.50] [width=4.00] [height=4.00]
+        RenderSVGRect {rect} at (244,245) size 9x8 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
         RenderSVGText {text} at (162,150) size 26x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x14
             chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 25.14: "filled"
     RenderSVGText {text} at (10,304) size 284x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 284x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.11 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

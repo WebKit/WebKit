@@ -4,11 +4,11 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (64,19) size 352x202
       RenderSVGContainer {g} at (64,19) size 352x202
-        RenderSVGPath {rect} at (64,19) size 352x202 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#DDDDDD]}] [x=65.00] [y=20.00] [width=350.00] [height=200.00]
+        RenderSVGRect {rect} at (64,19) size 352x202 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#DDDDDD]}] [x=65.00] [y=20.00] [width=350.00] [height=200.00]
         RenderSVGText {text} at (120,81) size 209x62 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 209x62
             chunk 1 text run 1 at (120.00,130.00) startOffset 0 endOffset 10 width 209.00: "Start Test"
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.2 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

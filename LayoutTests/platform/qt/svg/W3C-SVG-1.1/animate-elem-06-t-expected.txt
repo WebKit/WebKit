@@ -11,11 +11,11 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (11.00,18.00) startOffset 0 endOffset 17 width 52.00: "'path' attribute."
       RenderSVGContainer {g} at (42,132) size 426x186
         RenderSVGPath {path} at (84,168) size 312x96 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 C 15 43 36 20 65 33"]
-        RenderSVGPath {rect} at (54,192) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=33.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (54,192) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=33.00] [width=10.00] [height=10.00]
         RenderSVGText {text} at (7,42) size 22x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 22x11
             chunk 1 text run 1 at (7.00,50.00) startOffset 0 endOffset 6 width 21.33: "0 sec."
-        RenderSVGPath {rect} at (354,132) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=23.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (354,132) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=23.00] [width=10.00] [height=10.00]
         RenderSVGText {text} at (52,32) size 26x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x11
             chunk 1 text run 1 at (52.00,40.00) startOffset 0 endOffset 7 width 26.00: "6+ sec."
@@ -23,4 +23,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (5,51) size 41x8 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 41x8
         chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 40.50: "$Revision: 1.9 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

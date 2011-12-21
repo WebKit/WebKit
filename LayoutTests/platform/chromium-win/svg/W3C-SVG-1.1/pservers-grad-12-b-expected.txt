@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-      RenderSVGPath {rect} at (10,35) size 460x50 [fill={[type=RADIAL-GRADIENT] [id="Grad1"]}] [x=10.00] [y=35.00] [width=460.00] [height=50.00]
+      RenderSVGRect {rect} at (10,35) size 460x50 [fill={[type=RADIAL-GRADIENT] [id="Grad1"]}] [x=10.00] [y=35.00] [width=460.00] [height=50.00]
       RenderSVGText {text} at (10,88) size 300x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 300x15
           chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 58 width 300.00: "Radial gradient with default attributes (from blue to red)"
@@ -19,7 +19,7 @@ layer at (0,0) size 480x360
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=objectBoundingBox] [center=(0.20,0.20)] [focal=(0.20,0.20)] [radius=0.50]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-      RenderSVGPath {rect} at (10,125) size 460x50 [fill={[type=RADIAL-GRADIENT] [id="Grad2"]}] [x=10.00] [y=125.00] [width=460.00] [height=50.00]
+      RenderSVGRect {rect} at (10,125) size 460x50 [fill={[type=RADIAL-GRADIENT] [id="Grad2"]}] [x=10.00] [y=125.00] [width=460.00] [height=50.00]
       RenderSVGText {text} at (10,178) size 187x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 187x15
           chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 31 width 187.00: "gradientUnits=objectBoundingBox"
@@ -29,7 +29,7 @@ layer at (0,0) size 480x360
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad3"] [gradientUnits=userSpaceOnUse] [center=(25,215)] [focal=(25,215)] [radius=25.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
-      RenderSVGPath {rect} at (10,210) size 460x50 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(10.00,260.00)}] [fill={[type=RADIAL-GRADIENT] [id="Grad3"]}] [x=0.00] [y=0.00] [width=50.00] [height=460.00]
+      RenderSVGRect {rect} at (10,210) size 460x50 [transform={m=((0.00,-1.00)(1.00,0.00)) t=(10.00,260.00)}] [fill={[type=RADIAL-GRADIENT] [id="Grad3"]}] [x=0.00] [y=0.00] [width=50.00] [height=460.00]
       RenderSVGText {text} at (10,263) size 180x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 180x15
           chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 28 width 180.00: "gradientUnits=userSpaceOnUse"
@@ -39,4 +39,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

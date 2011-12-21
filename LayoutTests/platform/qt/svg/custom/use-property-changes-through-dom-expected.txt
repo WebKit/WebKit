@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (50,10) size 277x135
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (50,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,10.00)}]
-      RenderSVGPath {rect} at (50,10) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (50,10) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderSVGContainer {use} at (50,10) size 100x100
         RenderSVGContainer {g} at (50,10) size 100x100
-          RenderSVGPath {rect} at (50,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (50,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
       RenderSVGContainer {use} at (200,10) size 100x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,-50.00)}]
         RenderSVGContainer {g} at (200,10) size 100x100
-          RenderSVGPath {rect} at (200,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (200,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGText {text} at (60,124) size 267x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 267x21
         chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 36 width 267.00: "You should see two green rectangles."

@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGText {text} at (166,9) size 147x21 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 147x21
         chunk 1 (middle anchor) text run 1 at (166.50,25.00) startOffset 0 endOffset 18 width 147.00: "<animateTransform>"
@@ -16,20 +16,20 @@ layer at (0,0) size 480x360
         RenderSVGPath {line} at (0,0) size 1x45 [stroke={[type=SOLID] [color=#C0C0C0]}] [x1=0.00] [y1=-45.00] [x2=0.00] [y2=45.00]
     RenderSVGContainer {g} at (1,56) size 479x244
       RenderSVGContainer {g} at (1,56) size 118x99 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,90.00)}]
-        RenderSVGPath {rect} at (43,73) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGPath {rect} at (26,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (43,73) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (26,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (-59,44) size 118x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 118x21
             chunk 1 (middle anchor) text run 1 at (-59.00,60.00) startOffset 0 endOffset 16 width 118.00: "additive=replace"
       RenderSVGContainer {g} at (126,56) size 108x99 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,90.00)}]
-        RenderSVGPath {rect} at (153,73) size 54x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGPath {rect} at (126,56) size 108x68 [transform={m=((1.15,2.00)(-2.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (153,73) size 54x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (126,56) size 108x68 [transform={m=((1.15,2.00)(-2.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (-48,44) size 95x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 95x21
             chunk 1 (middle anchor) text run 1 at (-47.50,60.00) startOffset 0 endOffset 12 width 95.00: "additive=sum"
       RenderSVGContainer {g} at (236,56) size 128x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,90.00)}]
-        RenderSVGPath {rect} at (283,73) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGPath {rect} at (266,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (283,73) size 34x34 [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (266,56) size 68x68 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (-64,44) size 127x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 127x21
             chunk 1 (middle anchor) text run 1 at (-63.50,60.00) startOffset 0 endOffset 15 width 127.00: "accumulate=none"
@@ -37,8 +37,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 118x21
             chunk 1 (middle anchor) text run 1 at (-59.00,75.00) startOffset 0 endOffset 16 width 118.00: "additive=replace"
       RenderSVGContainer {g} at (359,56) size 121x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,90.00)}]
-        RenderSVGPath {rect} at (411,81) size 18x18 [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
-        RenderSVGPath {rect} at (386,56) size 68x68 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (411,81) size 18x18 [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (386,56) size 68x68 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
         RenderSVGText {text} at (-61,44) size 121x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 121x21
             chunk 1 (middle anchor) text run 1 at (-60.50,60.00) startOffset 0 endOffset 14 width 121.00: "accumulate=sum"
@@ -46,8 +46,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 118x21
             chunk 1 (middle anchor) text run 1 at (-59.00,75.00) startOffset 0 endOffset 16 width 118.00: "additive=replace"
       RenderSVGContainer {g} at (236,186) size 128x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,220.00)}]
-        RenderSVGPath {rect} at (273,203) size 54x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
-        RenderSVGPath {rect} at (246,186) size 108x68 [transform={m=((2.00,0.00)(1.15,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (273,203) size 54x34 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=4.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
+        RenderSVGRect {rect} at (246,186) size 108x68 [transform={m=((2.00,0.00)(1.15,2.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-15.00] [y=-15.00] [width=30.00] [height=30.00]
         RenderSVGText {text} at (-64,44) size 127x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 127x21
             chunk 1 (middle anchor) text run 1 at (-63.50,60.00) startOffset 0 endOffset 15 width 127.00: "accumulate=none"
@@ -55,8 +55,8 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 95x21
             chunk 1 (middle anchor) text run 1 at (-47.50,75.00) startOffset 0 endOffset 12 width 95.00: "additive=sum"
       RenderSVGContainer {g} at (359,186) size 121x114 [transform={m=((1.00,0.00)(0.00,1.00)) t=(420.00,220.00)}]
-        RenderSVGPath {rect} at (406,211) size 28x18 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
-        RenderSVGPath {rect} at (366,186) size 108x68 [transform={m=((4.00,0.00)(2.31,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (406,211) size 28x18 [transform={m=((1.00,0.00)(0.58,1.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#808080] [stroke width=2.00]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (366,186) size 108x68 [transform={m=((4.00,0.00)(2.31,4.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#FFB400] [stroke width=2.00]}] [x=-7.50] [y=-7.50] [width=15.00] [height=15.00]
         RenderSVGText {text} at (-61,44) size 121x21 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 121x21
             chunk 1 (middle anchor) text run 1 at (-60.50,60.00) startOffset 0 endOffset 14 width 121.00: "accumulate=sum"

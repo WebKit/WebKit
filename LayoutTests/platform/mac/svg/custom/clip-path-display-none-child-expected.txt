@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="c"] [clipPathUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+        RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (0,0) size 100x100
       [clipPath="c"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
-      RenderSVGPath {rect} at (0,0) size 200x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,100.00 L0.00,100.00 Z"]
-      RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+      RenderSVGRect {rect} at (0,0) size 200x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,100.00 L0.00,100.00 Z"]
+      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (0,116) size 356x78
       RenderSVGText {text} at (0,130) size 287x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,-14) size 287x18

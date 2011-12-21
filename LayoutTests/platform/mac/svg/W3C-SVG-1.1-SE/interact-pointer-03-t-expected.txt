@@ -19,8 +19,8 @@ layer at (0,0) size 480x360
           chunk 1 text run 11 at (245.18,40.00) startOffset 45 endOffset 49 width 17.34: "er f"
           chunk 1 text run 12 at (262.41,40.00) startOffset 49 endOffset 55 width 31.34: "allbac"
           chunk 1 text run 13 at (293.84,40.00) startOffset 55 endOffset 56 width 6.00: "k"
-      RenderSVGPath {rect} at (10,80) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]
-      RenderSVGPath {rect} at (10,80) size 50x50 [x=10.00] [y=80.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (10,80) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=80.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (10,80) size 50x50 [x=10.00] [y=80.00] [width=50.00] [height=50.00]
       RenderSVGContainer {g} at (10,139) size 254x14
         RenderSVGText {text} at (10,139) size 254x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 254x13
@@ -41,4 +41,4 @@ layer at (0,0) size 480x360
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
           chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
           chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".4 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -41,7 +41,7 @@ public:
 
 private:
     virtual bool isSVGRect() const { return true; }
-    virtual const char* renderName() const { return "RenderSVGPath"; }
+    virtual const char* renderName() const { return "RenderSVGRect"; }
 
     virtual void createShape();
     virtual bool isEmpty() const { return hasPath() ? RenderSVGShape::isEmpty() : m_boundingBox.isEmpty(); };

@@ -21,10 +21,10 @@ layer at (0,0) size 800x563
               RenderView at (0,0) size 176x62
             layer at (0,0) size 176x62
               RenderSVGRoot {svg} at (0,0) size 176x62
-                RenderSVGPath {rect} at (0,0) size 176x62 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=0.00] [width=176.00] [height=62.00]
-                RenderSVGPath {rect} at (2,2) size 174x60 [fill={[type=SOLID] [color=#333333]}] [x=2.00] [y=2.00] [width=174.00] [height=60.00]
-                RenderSVGPath {rect} at (2,2) size 172x58 [fill={[type=SOLID] [color=#FFFFFF]}] [x=2.00] [y=2.00] [width=172.00] [height=58.00]
-                RenderSVGPath {rect} at (86,2) size 88x58 [fill={[type=SOLID] [color=#FFCC33]}] [x=86.00] [y=2.00] [width=88.00] [height=58.00]
+                RenderSVGRect {rect} at (0,0) size 176x62 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=0.00] [width=176.00] [height=62.00]
+                RenderSVGRect {rect} at (2,2) size 174x60 [fill={[type=SOLID] [color=#333333]}] [x=2.00] [y=2.00] [width=174.00] [height=60.00]
+                RenderSVGRect {rect} at (2,2) size 172x58 [fill={[type=SOLID] [color=#FFFFFF]}] [x=2.00] [y=2.00] [width=172.00] [height=58.00]
+                RenderSVGRect {rect} at (86,2) size 88x58 [fill={[type=SOLID] [color=#FFCC33]}] [x=86.00] [y=2.00] [width=88.00] [height=58.00]
                 RenderSVGText {text} at (43,7) size 85x51 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 85x51
                     chunk 1 (middle anchor) text run 1 at (43.50,46.00) startOffset 0 endOffset 3 width 85.00: "SVG"
@@ -44,10 +44,10 @@ layer at (0,0) size 800x563
               RenderView at (0,0) size 176x62
             layer at (0,0) size 176x62
               RenderSVGRoot {svg} at (0,0) size 176x62
-                RenderSVGPath {rect} at (0,0) size 176x62 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=0.00] [width=176.00] [height=62.00]
-                RenderSVGPath {rect} at (2,2) size 174x60 [fill={[type=SOLID] [color=#333333]}] [x=2.00] [y=2.00] [width=174.00] [height=60.00]
-                RenderSVGPath {rect} at (2,2) size 172x58 [fill={[type=SOLID] [color=#FFFFFF]}] [x=2.00] [y=2.00] [width=172.00] [height=58.00]
-                RenderSVGPath {rect} at (86,2) size 88x58 [fill={[type=SOLID] [color=#FFCC33]}] [x=86.00] [y=2.00] [width=88.00] [height=58.00]
+                RenderSVGRect {rect} at (0,0) size 176x62 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=0.00] [width=176.00] [height=62.00]
+                RenderSVGRect {rect} at (2,2) size 174x60 [fill={[type=SOLID] [color=#333333]}] [x=2.00] [y=2.00] [width=174.00] [height=60.00]
+                RenderSVGRect {rect} at (2,2) size 172x58 [fill={[type=SOLID] [color=#FFFFFF]}] [x=2.00] [y=2.00] [width=172.00] [height=58.00]
+                RenderSVGRect {rect} at (86,2) size 88x58 [fill={[type=SOLID] [color=#FFCC33]}] [x=86.00] [y=2.00] [width=88.00] [height=58.00]
                 RenderSVGText {text} at (43,7) size 85x51 contains 1 chunk(s)
                   RenderSVGInlineText {#text} at (0,0) size 85x51
                     chunk 1 (middle anchor) text run 1 at (43.50,46.00) startOffset 0 endOffset 3 width 85.00: "SVG"

@@ -4,7 +4,7 @@ layer at (0,0) size 785x4005
   RenderBlock {html} at (0,0) size 785x4005
     RenderBody {body} at (0,0) size 785x4005
       RenderSVGRoot {svg} at (276,1950) size 248x154
-        RenderSVGPath {rect} at (350,1950) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]
+        RenderSVGRect {rect} at (350,1950) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]
         RenderSVGPath {circle} at (350,1950) size 100x100 [fill={[type=SOLID] [color=#F08080]}] [cx=400.00] [cy=2000.00] [r=50.00]
         RenderSVGText {text} at (276,2085) size 247x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 247x19

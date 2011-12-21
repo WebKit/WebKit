@@ -11,7 +11,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (70,135) size 89x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 89x19
               chunk 1 text run 1 at (70.00,150.00) startOffset 0 endOffset 15 width 89.00: "Click on target"
-          RenderSVGPath {rect} at (60,160) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [x=60.00] [y=160.00] [width=20.00] [height=20.00]
+          RenderSVGRect {rect} at (60,160) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [x=60.00] [y=160.00] [width=20.00] [height=20.00]
           RenderSVGPath {line} at (60,169) size 20x2 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=60.00] [y1=170.00] [x2=80.00] [y2=170.00]
           RenderSVGPath {line} at (69,160) size 2x20 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=70.00] [y1=160.00] [x2=70.00] [y2=180.00]
         RenderSVGContainer {g} at (70,142) size 283x35
@@ -21,4 +21,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 261x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

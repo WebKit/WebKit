@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (10,48) size 429x232
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+        RenderSVGRect {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGImage {image} at (0,0) size 1x1
         RenderSVGResourceRadialGradient {radialGradient} [id="g"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
@@ -19,117 +19,117 @@ layer at (0,0) size 480x360
         RenderSVGResourceFilter {filter} [id="f"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         RenderSVGPath {polygon} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [points=""]
       RenderSVGContainer {g} at (10,48) size 146x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,50.00)}]
-        RenderSVGPath {rect} at (10,51) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,51) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 136x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 136x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 30 width 136.00: "r.x.baseVal.value == 0: PASSED"
       RenderSVGContainer {g} at (10,58) size 301x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,60.00)}]
-        RenderSVGPath {rect} at (10,61) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,61) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 291x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 291x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 57 width 291.00: "r.x.baseVal.unitType == 1 (SVG_LENGTHTYPE_NUMBER): PASSED"
       RenderSVGContainer {g} at (10,68) size 243x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,70.00)}]
-        RenderSVGPath {rect} at (10,71) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,71) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 233x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 233x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 52 width 233.00: "v.width.baseVal.valueInSpecifiedUnits == 100: PASSED"
       RenderSVGContainer {g} at (10,78) size 343x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,80.00)}]
-        RenderSVGPath {rect} at (10,81) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,81) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 333x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 333x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 65 width 333.00: "v.width.baseVal.unitType == 2 (SVG_LENGTHTYPE_PERCENTAGE): PASSED"
       RenderSVGContainer {g} at (10,88) size 301x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,90.00)}]
-        RenderSVGPath {rect} at (10,91) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,91) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 291x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 291x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 65 width 291.00: "tt.textLength.baseVal.value == tt.getComputedTextLength(): PASSED"
       RenderSVGContainer {g} at (10,98) size 142x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,100.00)}]
-        RenderSVGPath {rect} at (10,101) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,101) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 132x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 132x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 29 width 132.00: "s.offset.baseVal == 0: PASSED"
       RenderSVGContainer {g} at (10,108) size 192x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}]
-        RenderSVGPath {rect} at (10,111) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,111) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 182x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 182x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 40 width 182.00: "c.preserveAlpha.baseVal == false: PASSED"
       RenderSVGContainer {g} at (10,118) size 166x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
-        RenderSVGPath {rect} at (10,121) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,121) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 156x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 156x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 33 width 156.00: "c.className.baseVal == \"\": PASSED"
       RenderSVGContainer {g} at (10,128) size 132x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,130.00)}]
-        RenderSVGPath {rect} at (10,131) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,131) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 122x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 122x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 28 width 122.00: "i.href.baseVal == \"\": PASSED"
       RenderSVGContainer {g} at (10,138) size 217x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,140.00)}]
-        RenderSVGPath {rect} at (10,141) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,141) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 207x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 207x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 45 width 207.00: "i.requiredFeatures.numberOfItems == 0: PASSED"
       RenderSVGContainer {g} at (10,148) size 237x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,150.00)}]
-        RenderSVGPath {rect} at (10,151) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,151) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 227x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 227x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 49 width 227.00: "c.kernelMatrix.baseVal.numberOfItems == 0: PASSED"
       RenderSVGContainer {g} at (10,158) size 189x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,160.00)}]
-        RenderSVGPath {rect} at (10,161) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,161) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 179x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 179x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 38 width 179.00: "t.x.baseVal.numberOfItems == 0: PASSED"
       RenderSVGContainer {g} at (10,168) size 175x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,170.00)}]
-        RenderSVGPath {rect} at (10,171) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,171) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 165x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 165x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 35 width 165.00: "p.points.numberOfItems == 0: PASSED"
       RenderSVGContainer {g} at (10,178) size 370x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,180.00)}]
-        RenderSVGPath {rect} at (10,181) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,181) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 360x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 360x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 70 width 360.00: "g.gradientUnits.baseVal == 2 (SVG_UNIT_TYPE_OBJECTBOUNDINGBOX): PASSED"
       RenderSVGContainer {g} at (10,188) size 157x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,190.00)}]
-        RenderSVGPath {rect} at (10,191) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,191) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 147x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 147x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 33 width 147.00: "f.filterResX.baseVal == 0: PASSED"
       RenderSVGContainer {g} at (10,198) size 192x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,200.00)}]
-        RenderSVGPath {rect} at (10,201) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,201) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 182x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 182x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 40 width 182.00: "m.orientAngle.baseVal.value == 0: PASSED"
       RenderSVGContainer {g} at (10,208) size 363x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,210.00)}]
-        RenderSVGPath {rect} at (10,211) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,211) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 353x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 353x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 71 width 353.00: "m.orientAngle.baseVal.unitType == 1 (SVG_ANGLETYPE_UNSPECIFIED): PASSED"
       RenderSVGContainer {g} at (10,218) size 228x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,220.00)}]
-        RenderSVGPath {rect} at (10,221) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,221) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 218x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 218x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 49 width 218.00: "v.viewBox.baseVal.[x,y,width,height] == 0: PASSED"
       RenderSVGContainer {g} at (10,228) size 224x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,230.00)}]
-        RenderSVGPath {rect} at (10,231) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,231) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 214x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 214x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 46 width 214.00: "t.transform.baseVal.numberOfItems == 0: PASSED"
       RenderSVGContainer {g} at (10,238) size 429x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,240.00)}]
-        RenderSVGPath {rect} at (10,241) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,241) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 419x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 419x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 83 width 419.00: "v.preserveAspectRatio.baseVal.align == 6 (SVG_PRESERVEASPECTRATIO_XMIDYMID): PASSED"
       RenderSVGContainer {g} at (10,248) size 390x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,250.00)}]
-        RenderSVGPath {rect} at (10,251) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,251) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 380x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 380x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 77 width 380.00: "v.preserveAspectRatio.baseVal.meetOrSlice == 1 (SVG_MEETORSLICE_MEET): PASSED"
       RenderSVGContainer {g} at (10,258) size 285x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,260.00)}]
-        RenderSVGPath {rect} at (10,261) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,261) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 275x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 275x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 50 width 275.00: "v.zoomAndPan == 2 (SVG_ZOOMANDPAN_MAGNIFY): PASSED"
       RenderSVGContainer {g} at (10,268) size 101x12 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,270.00)}]
-        RenderSVGPath {rect} at (10,271) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+        RenderSVGRect {rect} at (10,271) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
         RenderSVGText {text} at (10,-2) size 91x12 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 91x12
             chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 19 width 91.00: "Test status: PASSED"
@@ -137,9 +137,9 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (10,309) size 231x41 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x41
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.9 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 480x26
-      RenderSVGPath {rect} at (0,0) size 480x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+      RenderSVGRect {rect} at (0,0) size 480x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
       RenderSVGText {text} at (207,-2) size 66x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 66x27
           chunk 1 (middle anchor) text run 1 at (207.00,18.00) startOffset 0 endOffset 5 width 66.00: "DRAFT"

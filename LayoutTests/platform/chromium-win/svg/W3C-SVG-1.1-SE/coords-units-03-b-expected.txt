@@ -5,8 +5,8 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 480x360
       RenderSVGContainer {g} at (0,0) size 480x360
-        RenderSVGPath {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=2000.00] [height=2000.00]
-        RenderSVGPath {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=480.00] [height=360.00]
+        RenderSVGRect {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=2000.00] [height=2000.00]
+        RenderSVGRect {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=480.00] [height=360.00]
       RenderSVGText {text} at (125,8) size 182x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 182x15
           chunk 1 text run 1 at (125.00,20.00) startOffset 0 endOffset 35 width 182.00: "Initial viewport and CSS units test"
@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 176x14
             chunk 1 text run 1 at (230.00,20.00) startOffset 0 endOffset 27 width 156.78: "User space units (no specif"
             chunk 1 text run 2 at (386.75,20.00) startOffset 27 endOffset 31 width 18.77: "ier)"
-        RenderSVGPath {rect} at (20,80) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=200.00] [height=1.00]
+        RenderSVGRect {rect} at (20,80) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=200.00] [height=1.00]
         RenderSVGText {text} at (20,27) size 40x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 40x14
             chunk 1 text run 1 at (20.00,38.00) startOffset 0 endOffset 6 width 39.03: "200 px"
@@ -26,7 +26,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 61x13
             chunk 1 text run 1 at (230.00,40.00) startOffset 0 endOffset 3 width 18.06: "Pix"
             chunk 1 text run 2 at (247.68,40.00) startOffset 3 endOffset 11 width 42.61: "els (px)"
-        RenderSVGPath {rect} at (20,100) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=40.00] [width=200.00] [height=1.00]
+        RenderSVGRect {rect} at (20,100) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=40.00] [width=200.00] [height=1.00]
         RenderSVGText {text} at (20,47) size 187x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 187x13
             chunk 1 text run 1 at (20.00,58.00) startOffset 0 endOffset 17 width 101.53: "20 em = 200 px (f"
@@ -40,7 +40,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 4 at (283.58,60.00) startOffset 10 endOffset 13 width 14.46: "o f"
             chunk 1 text run 5 at (297.91,60.00) startOffset 13 endOffset 26 width 75.13: "ont size (em)"
         RenderSVGContainer {g} at (20,120) size 200x1
-          RenderSVGPath {rect} at (20,120) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=60.00] [width=200.00] [height=1.00]
+          RenderSVGRect {rect} at (20,120) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=60.00] [width=200.00] [height=1.00]
         RenderSVGText {text} at (20,67) size 32x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 32x13
             chunk 1 text run 1 at (20.00,78.00) startOffset 0 endOffset 4 width 25.30: "40 e"
@@ -54,7 +54,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 5 at (297.91,80.00) startOffset 13 endOffset 28 width 83.10: "ont x-height (e"
             chunk 1 text run 6 at (380.64,80.00) startOffset 28 endOffset 30 width 10.83: "x)"
         RenderSVGContainer {g} at (20,140) size 200x1
-          RenderSVGPath {rect} at (20,140) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=80.00] [width=200.00] [height=1.00]
+          RenderSVGRect {rect} at (20,140) size 200x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=80.00] [width=200.00] [height=1.00]
         RenderSVGText {text} at (20,87) size 96x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 96x13
             chunk 1 text run 1 at (20.00,98.00) startOffset 0 endOffset 1 width 7.23: "4"
@@ -67,7 +67,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 2 at (238.26,100.00) startOffset 1 endOffset 3 width 11.56: "er"
             chunk 1 text run 3 at (249.73,100.00) startOffset 3 endOffset 7 width 24.57: "cent"
             chunk 1 text run 4 at (274.29,100.00) startOffset 7 endOffset 14 width 45.51: "age (%)"
-        RenderSVGPath {rect} at (20,160) size 201x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=100.00] [width=200.02] [height=1.00]
+        RenderSVGRect {rect} at (20,160) size 201x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=100.00] [width=200.02] [height=1.00]
         RenderSVGText {text} at (20,107) size 21x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 21x14
             chunk 1 text run 1 at (20.00,118.00) startOffset 0 endOffset 4 width 20.96: "1 in"
@@ -75,7 +75,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 61x13
             chunk 1 text run 1 at (230.00,120.00) startOffset 0 endOffset 3 width 17.34: "Inc"
             chunk 1 text run 2 at (247.36,120.00) startOffset 3 endOffset 11 width 43.34: "hes (in)"
-        RenderSVGPath {rect} at (20,180) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=120.00] [width=96.00] [height=1.00]
+        RenderSVGRect {rect} at (20,180) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=120.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,127) size 83x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 83x14
             chunk 1 text run 1 at (20.00,138.00) startOffset 0 endOffset 3 width 18.07: "2.5"
@@ -86,7 +86,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 2 at (278.27,140.00) startOffset 7 endOffset 8 width 3.61: "t"
             chunk 1 text run 3 at (281.69,140.00) startOffset 8 endOffset 10 width 11.56: "er"
             chunk 1 text run 4 at (293.30,140.00) startOffset 10 endOffset 16 width 36.10: "s (cm)"
-        RenderSVGPath {rect} at (20,200) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=140.00] [width=96.00] [height=1.00]
+        RenderSVGRect {rect} at (20,200) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=140.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,147) size 87x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 87x14
             chunk 1 text run 1 at (20.00,158.00) startOffset 0 endOffset 14 width 86.35: "25.4 mm = 1 in"
@@ -96,7 +96,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 2 at (270.30,160.00) startOffset 7 endOffset 8 width 3.61: "t"
             chunk 1 text run 3 at (273.72,160.00) startOffset 8 endOffset 10 width 11.56: "er"
             chunk 1 text run 4 at (285.33,160.00) startOffset 10 endOffset 16 width 40.43: "s (mm)"
-        RenderSVGPath {rect} at (20,220) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=160.00] [width=96.00] [height=1.00]
+        RenderSVGRect {rect} at (20,220) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=160.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,167) size 61x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 61x13
             chunk 1 text run 1 at (20.00,178.00) startOffset 0 endOffset 1 width 7.23: "7"
@@ -107,14 +107,14 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (230.00,180.00) startOffset 0 endOffset 1 width 8.67: "P"
             chunk 1 text run 2 at (238.31,180.00) startOffset 1 endOffset 9 width 42.63: "oints (p"
             chunk 1 text run 3 at (280.88,180.00) startOffset 9 endOffset 11 width 7.94: "t)"
-        RenderSVGPath {rect} at (20,240) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=180.00] [width=96.00] [height=1.00]
+        RenderSVGRect {rect} at (20,240) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=180.00] [width=96.00] [height=1.00]
         RenderSVGText {text} at (20,187) size 57x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 57x14
             chunk 1 text run 1 at (20.00,198.00) startOffset 0 endOffset 10 width 56.73: "6pc = 1 in"
         RenderSVGText {text} at (230,189) size 58x13 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 58x14
             chunk 1 text run 1 at (230.00,200.00) startOffset 0 endOffset 10 width 57.78: "Picas (pc)"
-        RenderSVGPath {rect} at (20,260) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=200.00] [width=96.00] [height=1.00]
+        RenderSVGRect {rect} at (20,260) size 96x1 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=200.00] [width=96.00] [height=1.00]
     RenderSVGContainer {g} at (10,314) size 227x33
       RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x32
@@ -122,4 +122,4 @@ layer at (0,0) size 480x360
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
           chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
           chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

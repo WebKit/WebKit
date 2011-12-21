@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (41,22) size 309x269
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 33x22
-          RenderSVGPath {rect} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+          RenderSVGRect {rect} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
           RenderSVGPath {circle} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [r=10.00]
           RenderSVGPath {ellipse} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
           RenderSVGPath {line} at (0,8) size 20x4 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x1=0.00] [y1=10.00] [x2=20.00] [y2=10.00]
@@ -13,11 +13,11 @@ layer at (0,0) size 480x360
           RenderSVGPath {polygon} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [points="0 0 20 0 20 20 0 20 0 0"]
           RenderSVGPath {polyline} at (0,0) size 22x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [points="0 0 20 0 20 20"]
           RenderSVGContainer {g} at (0,0) size 22x22
-            RenderSVGPath {rect} at (0,0) size 12x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=20.00]
-            RenderSVGPath {rect} at (8,0) size 14x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=20.00]
+            RenderSVGRect {rect} at (0,0) size 12x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=20.00]
+            RenderSVGRect {rect} at (8,0) size 14x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=20.00]
           RenderSVGContainer {use} at (0,0) size 22x22
             RenderSVGContainer {g} at (0,0) size 22x22
-              RenderSVGPath {rect} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGRect {rect} at (0,0) size 22x22 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
           RenderSVGImage {image} at (0,0) size 20x20
           RenderSVGText {text} at (0,-15) size 30x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 30x18
@@ -61,7 +61,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (150,25) size 200x266 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,25.00)}]
         RenderSVGContainer {use} at (150,25) size 20x20
           RenderSVGContainer {g} at (150,25) size 20x20
-            RenderSVGPath {rect} at (150,25) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+            RenderSVGRect {rect} at (150,25) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
         RenderSVGContainer {use} at (150,55) size 20x20
           RenderSVGContainer {g} at (150,55) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
             RenderSVGPath {circle} at (150,55) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [r=10.00]
@@ -91,13 +91,13 @@ layer at (0,0) size 480x360
         RenderSVGContainer {use} at (330,25) size 20x20
           RenderSVGContainer {g} at (330,25) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,0.00)}]
             RenderSVGContainer {g} at (330,25) size 20x20
-              RenderSVGPath {rect} at (330,25) size 10x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=10.00] [height=20.00]
-              RenderSVGPath {rect} at (340,25) size 10x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=20.00]
+              RenderSVGRect {rect} at (330,25) size 10x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=10.00] [height=20.00]
+              RenderSVGRect {rect} at (340,25) size 10x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=20.00]
         RenderSVGContainer {use} at (330,55) size 20x20
           RenderSVGContainer {g} at (330,55) size 20x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,30.00)}]
             RenderSVGContainer {g} at (330,55) size 20x20
-              RenderSVGPath {rect} at (330,55) size 20x20 [fill={[type=SOLID] [color=#00CC00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+              RenderSVGRect {rect} at (330,55) size 20x20 [fill={[type=SOLID] [color=#00CC00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
     RenderSVGText {text} at (10,304) size 284x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 284x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 283.34: "$Revision: 1.14 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

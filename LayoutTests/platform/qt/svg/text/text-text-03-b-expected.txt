@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 396x42
           chunk 1 text run 1 at (1.00,200.00) startOffset 0 endOffset 27 width 396.00: "Bold, italic and underlined"
       RenderSVGContainer {g} at (81,368) size 638x121
-        RenderSVGPath {rect} at (81,373) size 638x111 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=50.00] [y=225.00] [width=380.00] [height=64.00]
+        RenderSVGRect {rect} at (81,373) size 638x111 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=50.00] [y=225.00] [width=380.00] [height=64.00]
         RenderSVGContainer {g} at (91,368) size 581x121
           RenderSVGText {text} at (55,221) size 344x31 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 344x31
@@ -36,6 +36,6 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (10,301) size 289x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 289x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 288.60: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 32 {svg} of document
 selection end:   position 16 of child 0 {#text} of child 15 {text} of child 32 {svg} of document

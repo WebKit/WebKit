@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (0,25) size 224x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 224x19
           chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 32 width 223.20: "the second row should have them."
-      RenderSVGPath {rect} at (0,82) size 85x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [x=0.00] [y=50.00] [width=50.00] [height=50.00]
+      RenderSVGRect {rect} at (0,82) size 85x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [x=0.00] [y=50.00] [width=50.00] [height=50.00]
       RenderSVGPath {circle} at (90,84) size 86x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [cx=80.00] [cy=76.00] [r=25.00]
       RenderSVGPath {ellipse} at (182,84) size 103x86 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [cx=140.00] [cy=76.00] [rx=30.00] [ry=25.00]
       RenderSVGPath {line} at (0,197) size 3x89 [stroke={[type=SOLID] [color=#000000]}] [start marker=mark] [middle marker=mark] [end marker=mark] [x1=0.00] [y1=120.00] [x2=0.00] [y2=170.00]

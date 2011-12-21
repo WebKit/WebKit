@@ -10,14 +10,14 @@ layer at (0,0) size 800x600
         [feGaussianBlur stdDeviation="4.00, 4.00"]
           [SourceGraphic]
       RenderSVGResourceFilter {filter} [id="filter2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-    RenderSVGPath {rect} at (40,0) size 120x111 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (40,0) size 120x111 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=0.00] [width=100.00] [height=100.00]
       [filter="filter1"] RenderSVGResourceFilter {filter} at (40,-10) size 120x120
-    RenderSVGPath {rect} at (40,140) size 120x120 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=150.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (40,140) size 120x120 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=150.00] [width=100.00] [height=100.00]
       [filter="filter2"] RenderSVGResourceFilter {filter} at (40,140) size 120x120
     RenderSVGPath {line} at (174,0) size 2x250 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=175.00] [y1=0.00] [x2=175.00] [y2=250.00]
     RenderSVGText {text} at (25,285) size 299x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 299x18
         chunk 1 (middle anchor) text run 1 at (25.69,300.00) startOffset 0 endOffset 48 width 298.62: "Both sides of the red line should look identical"
     RenderSVGContainer {g} at (190,0) size 120x111 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
-      RenderSVGPath {rect} at (190,0) size 120x111 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (190,0) size 120x111 [fill={[type=SOLID] [color=#0000FF]}] [x=50.00] [y=0.00] [width=100.00] [height=100.00]
         [filter="filter0"] RenderSVGResourceFilter {filter} at (40,-10) size 120x120

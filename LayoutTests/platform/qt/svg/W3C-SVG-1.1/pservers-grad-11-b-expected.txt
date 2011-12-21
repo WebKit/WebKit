@@ -6,14 +6,14 @@ layer at (0,0) size 480x360
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad1"] [gradientUnits=userSpaceOnUse] [center=(75,100)] [focal=(75,100)] [radius=130.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-      RenderSVGPath {rect} at (10,10) size 210x140 [fill={[type=RADIAL-GRADIENT] [id="Grad1"]}] [x=10.00] [y=10.00] [width=210.00] [height=140.00]
+      RenderSVGRect {rect} at (10,10) size 210x140 [fill={[type=RADIAL-GRADIENT] [id="Grad1"]}] [x=10.00] [y=10.00] [width=210.00] [height=140.00]
       RenderSVGText {text} at (10,153) size 183x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 183x16
           chunk 1 text run 1 at (10.00,165.00) startOffset 0 endOffset 36 width 183.00: "Radial gradient on fill of rectangle"
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad2"] [gradientUnits=userSpaceOnUse] [center=(295,100)] [focal=(295,100)] [radius=150.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
-      RenderSVGPath {rect} at (230,10) size 210x140 [stroke={[type=RADIAL-GRADIENT] [id="Grad2"] [stroke width=40.00]}] [x=250.00] [y=30.00] [width=170.00] [height=100.00]
+      RenderSVGRect {rect} at (230,10) size 210x140 [stroke={[type=RADIAL-GRADIENT] [id="Grad2"] [stroke width=40.00]}] [x=250.00] [y=30.00] [width=170.00] [height=100.00]
       RenderSVGText {text} at (230,153) size 204x16 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 204x16
           chunk 1 text run 1 at (230.00,165.00) startOffset 0 endOffset 38 width 204.00: "Radial gradient on stroke of rectangle"
@@ -38,4 +38,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

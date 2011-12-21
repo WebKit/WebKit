@@ -800,10 +800,10 @@ layer at (0,0) size 800x600
             RenderSVGTSpan {tspan} at (0,0) size 13x23
               RenderSVGInlineText {#text} at (37,10) size 13x23
                 chunk 1 text run 1 at (47.00,275.00) startOffset 0 endOffset 1 width 13.00: "C"
-    RenderSVGPath {rect} at (4,4) size 52x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=50.00] [height=280.00]
-    RenderSVGPath {rect} at (74,4) size 127x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
-    RenderSVGPath {rect} at (74,4) size 127x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
-    RenderSVGPath {rect} at (209,4) size 282x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=5.00] [width=280.00] [height=280.00]
+    RenderSVGRect {rect} at (4,4) size 52x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=50.00] [height=280.00]
+    RenderSVGRect {rect} at (74,4) size 127x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
+    RenderSVGRect {rect} at (74,4) size 127x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
+    RenderSVGRect {rect} at (209,4) size 282x282 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=5.00] [width=280.00] [height=280.00]
     RenderSVGText {text} at (20,302) size 459x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 459x23
         chunk 1 (middle anchor) text run 1 at (20.50,320.00) startOffset 0 endOffset 57 width 459.00: "All text fragments in each red box need to look identical"

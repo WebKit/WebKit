@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (20,40) size 488x88
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 125x30
-        RenderSVGPath {rect} at (0,0) size 125x25 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 125x25 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
         RenderSVGPath {circle} at (40,0) size 40x30 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
     RenderSVGContainer {g} at (245,40) size 130x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(125.00,25.00)}]
       RenderSVGContainer {g} at (245,40) size 130x40
-        RenderSVGPath {rect} at (245,45) size 130x30 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+        RenderSVGRect {rect} at (245,45) size 130x30 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
         RenderSVGPath {circle} at (290,40) size 40x40 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
     RenderSVGText {text} at (10,45) size 244x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 244x19
@@ -16,5 +16,5 @@ layer at (0,0) size 800x600
     RenderSVGContainer {use} at (45,40) size 130x40
       RenderSVGContainer {g} at (45,40) size 130x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
         RenderSVGContainer {g} at (45,40) size 130x40
-          RenderSVGPath {rect} at (45,45) size 130x30 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+          RenderSVGRect {rect} at (45,45) size 130x30 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
           RenderSVGPath {circle} at (90,40) size 40x40 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]

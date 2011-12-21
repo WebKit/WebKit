@@ -48,9 +48,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 296x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 46 width 295.90: "Various values for surfaceScale: 1, 10 and -10"
         RenderSVGContainer {g} at (90,50) size 280x30
-          RenderSVGPath {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (90,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (205,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (320,50) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
         RenderSVGImage {image} at (90,50) size 50x30
           [filter="surfaceScaleA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
         RenderSVGImage {image} at (205,50) size 50x30
@@ -62,9 +62,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 311x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 310.16: "Various values for specularConstants: 0, 1 and 2"
         RenderSVGContainer {g} at (90,120) size 280x30
-          RenderSVGPath {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (90,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (205,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (320,120) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
         RenderSVGImage {image} at (90,120) size 50x30
           [filter="specularConstantA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
         RenderSVGImage {image} at (205,120) size 50x30
@@ -76,9 +76,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 315x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 48 width 314.59: "Various values for specularExponents: 1, 2 and 4"
         RenderSVGContainer {g} at (90,190) size 280x30
-          RenderSVGPath {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (90,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (205,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (320,190) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
         RenderSVGImage {image} at (90,190) size 50x30
           [filter="specularExponentA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
         RenderSVGImage {image} at (205,190) size 50x30
@@ -90,9 +90,9 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 348x18
             chunk 1 text run 1 at (90.00,25.00) startOffset 0 endOffset 55 width 347.91: "Various values for lighting color: red, yellow and blue"
         RenderSVGContainer {g} at (90,260) size 280x30
-          RenderSVGPath {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
-          RenderSVGPath {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (90,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=90.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (205,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=205.00] [y=30.00] [width=50.00] [height=30.00]
+          RenderSVGRect {rect} at (320,260) size 50x30 [fill={[type=SOLID] [color=#000000]}] [x=320.00] [y=30.00] [width=50.00] [height=30.00]
         RenderSVGImage {image} at (90,260) size 50x30
           [filter="lightingColorA"] RenderSVGResourceFilter {filter} at (90,30) size 50x30
         RenderSVGImage {image} at (205,260) size 50x30
@@ -102,4 +102,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.8 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGPath {rect} at (0,0) size 800x600 [x=-1000.00] [y=-1000.00] [width=5000.00] [height=5000.00]
+    RenderSVGRect {rect} at (0,0) size 800x600 [x=-1000.00] [y=-1000.00] [width=5000.00] [height=5000.00]
     RenderSVGText {text} at (50,11) size 339x23 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 339x23
         chunk 1 text run 1 at (50.00,30.00) startOffset 0 endOffset 34 width 338.75: "Demonstration of the SVG Scrollbar"
@@ -42,17 +42,17 @@ layer at (0,0) size 800x600
               chunk 1 (middle anchor) text run 1 at (961.30,386.50) startOffset 0 endOffset 12 width 85.00: "Zervreilasee"
     RenderSVGContainer {g} at (40,60) size 733x173
       RenderSVGContainer {g} at (40,220) size 720x13
-        RenderSVGPath {rect} at (52,220) size 696x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=65.50] [y=250.50] [width=869.00] [height=15.00]
-        RenderSVGPath {rect} at (52,220) size 175x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=65.50] [y=250.50] [width=216.82] [height=15.00]
-        RenderSVGPath {rect} at (40,220) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=50.50] [y=250.50] [width=15.00] [height=15.00]
-        RenderSVGPath {rect} at (747,220) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=934.50] [y=250.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (52,220) size 696x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=65.50] [y=250.50] [width=869.00] [height=15.00]
+        RenderSVGRect {rect} at (52,220) size 175x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=65.50] [y=250.50] [width=216.82] [height=15.00]
+        RenderSVGRect {rect} at (40,220) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=50.50] [y=250.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (747,220) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=934.50] [y=250.50] [width=15.00] [height=15.00]
         RenderSVGPath {path} at (43,223) size 7x7 [fill={[type=SOLID] [color=#696969]}] [data="M 54.5 258.5 L 62.5 254.5 L 62.5 262.5 Z"]
         RenderSVGPath {path} at (750,223) size 8x7 [fill={[type=SOLID] [color=#696969]}] [data="M 946.5 258.5 L 938.5 262.5 L 938.5 254.5 Z"]
       RenderSVGContainer {g} at (760,60) size 13x160
-        RenderSVGPath {rect} at (760,72) size 13x136 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=950.50] [y=65.50] [width=15.00] [height=169.00]
-        RenderSVGPath {rect} at (760,72) size 13x66 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=65.50] [width=15.00] [height=80.38]
-        RenderSVGPath {rect} at (760,60) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=50.50] [width=15.00] [height=15.00]
-        RenderSVGPath {rect} at (760,207) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=234.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (760,72) size 13x136 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=950.50] [y=65.50] [width=15.00] [height=169.00]
+        RenderSVGRect {rect} at (760,72) size 13x66 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=65.50] [width=15.00] [height=80.38]
+        RenderSVGRect {rect} at (760,60) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=50.50] [width=15.00] [height=15.00]
+        RenderSVGRect {rect} at (760,207) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=234.50] [width=15.00] [height=15.00]
         RenderSVGPath {path} at (763,63) size 7x7 [fill={[type=SOLID] [color=#696969]}] [data="M 958 54.5 L 962.5 62.5 L 954.5 62.5 Z"]
         RenderSVGPath {path} at (763,210) size 7x8 [fill={[type=SOLID] [color=#696969]}] [data="M 958 246.5 L 954.5 238.5 L 962.5 238.5 Z"]
     RenderSVGText {text} at (396,268) size 554x14 contains 1 chunk(s)
@@ -63,17 +63,17 @@ layer at (0,0) size 800x600
         RenderSVGImage {image} at (40,300) size 760x300
     RenderSVGContainer {g} at (40,300) size 729x169
       RenderSVGContainer {g} at (40,460) size 720x9
-        RenderSVGPath {rect} at (40,460) size 704x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=50.50] [y=550.50] [width=879.00] [height=10.00]
-        RenderSVGPath {rect} at (40,460) size 179x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=50.50] [y=550.50] [width=222.21] [height=10.00]
-        RenderSVGPath {rect} at (743,460) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=929.50] [y=550.50] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (751,460) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=939.50] [y=550.50] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (40,460) size 704x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=50.50] [y=550.50] [width=879.00] [height=10.00]
+        RenderSVGRect {rect} at (40,460) size 179x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=50.50] [y=550.50] [width=222.21] [height=10.00]
+        RenderSVGRect {rect} at (743,460) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=929.50] [y=550.50] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (751,460) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=939.50] [y=550.50] [width=10.00] [height=10.00]
         RenderSVGPath {path} at (746,462) size 5x6 [fill={[type=SOLID] [color=#696969]}] [data="M 932.5 556.5 L 938.5 553.5 L 938.5 559.5 Z"]
         RenderSVGPath {path} at (754,462) size 5x6 [fill={[type=SOLID] [color=#696969]}] [data="M 948.5 556.5 L 942.5 559.5 L 942.5 553.5 Z"]
       RenderSVGContainer {g} at (760,300) size 9x160
-        RenderSVGPath {rect} at (760,300) size 9x144 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=950.50] [y=350.50] [width=10.00] [height=179.00]
-        RenderSVGPath {rect} at (760,300) size 9x43 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=350.50] [width=10.00] [height=51.96]
-        RenderSVGPath {rect} at (760,443) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=529.50] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (760,451) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=539.50] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (760,300) size 9x144 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [x=950.50] [y=350.50] [width=10.00] [height=179.00]
+        RenderSVGRect {rect} at (760,300) size 9x43 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=350.50] [width=10.00] [height=51.96]
+        RenderSVGRect {rect} at (760,443) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=529.50] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (760,451) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [x=950.50] [y=539.50] [width=10.00] [height=10.00]
         RenderSVGPath {path} at (762,446) size 6x5 [fill={[type=SOLID] [color=#696969]}] [data="M 955.5 532.5 L 959.5 538.5 L 953.5 538.5 Z"]
         RenderSVGPath {path} at (762,454) size 6x5 [fill={[type=SOLID] [color=#696969]}] [data="M 955.5 548.5 L 953.5 542.5 L 959.5 542.5 Z"]
     RenderSVGText {text} at (403,563) size 547x14 contains 1 chunk(s)
@@ -81,17 +81,17 @@ layer at (0,0) size 800x600
         chunk 1 (end anchor) text run 1 at (403.75,575.00) startOffset 0 endOffset 94 width 546.25: "Panorama Chalchtrittli, Tierfed, Linthal, Glarus, Switzerland, taken 2005-09-03 (\x{A9} A. Neumann)"
     RenderSVGContainer {g} at (39,483) size 186x18
       RenderSVGContainer {g} at (39,483) size 90x18
-        RenderSVGPath {rect} at (39,483) size 89x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=49.00] [y=579.00] [width=110.00] [height=20.00]
-        RenderSVGPath {rect} at (40,484) size 89x17 [fill={[type=SOLID] [color=#696969]}] [x=51.00] [y=581.00] [width=110.00] [height=20.00]
-        RenderSVGPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [x=50.00] [y=580.00] [width=110.00] [height=20.00]
+        RenderSVGRect {rect} at (39,483) size 89x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=49.00] [y=579.00] [width=110.00] [height=20.00]
+        RenderSVGRect {rect} at (40,484) size 89x17 [fill={[type=SOLID] [color=#696969]}] [x=51.00] [y=581.00] [width=110.00] [height=20.00]
+        RenderSVGRect {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [x=50.00] [y=580.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (65,584) size 80x14 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 80x14
             RenderSVGInlineText {#text} at (0,0) size 80x14
               chunk 1 (middle anchor) text run 1 at (65.00,595.40) startOffset 0 endOffset 14 width 80.00: "Hide Scrollbar"
       RenderSVGContainer {g} at (135,483) size 90x18
-        RenderSVGPath {rect} at (135,483) size 89x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=169.00] [y=579.00] [width=110.00] [height=20.00]
-        RenderSVGPath {rect} at (136,484) size 89x17 [fill={[type=SOLID] [color=#696969]}] [x=171.00] [y=581.00] [width=110.00] [height=20.00]
-        RenderSVGPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [x=170.00] [y=580.00] [width=110.00] [height=20.00]
+        RenderSVGRect {rect} at (135,483) size 89x17 [fill={[type=SOLID] [color=#FFFFFF]}] [x=169.00] [y=579.00] [width=110.00] [height=20.00]
+        RenderSVGRect {rect} at (136,484) size 89x17 [fill={[type=SOLID] [color=#696969]}] [x=171.00] [y=581.00] [width=110.00] [height=20.00]
+        RenderSVGRect {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [x=170.00] [y=580.00] [width=110.00] [height=20.00]
         RenderSVGText {text} at (174,584) size 102x14 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 102x14
             RenderSVGInlineText {#text} at (0,0) size 102x14

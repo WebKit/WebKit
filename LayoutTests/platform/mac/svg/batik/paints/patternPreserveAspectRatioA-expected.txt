@@ -9,704 +9,704 @@ layer at (0,0) size 450x500
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 1x3
           RenderSVGPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.50] [cy=0.50] [r=0.50]
-          RenderSVGPath {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+          RenderSVGRect {rect} at (0,1) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
           RenderSVGPath {path} at (0,2) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-          RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+          RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
           RenderSVGContainer {use} at (0,0) size 8x24
             RenderSVGContainer {g} at (0,0) size 8x24
               RenderSVGContainer {g} at (0,0) size 8x24
                 RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                 RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
           RenderSVGContainer {use} at (8,0) size 8x24
             RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
               RenderSVGContainer {g} at (8,0) size 8x24
                 RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                 RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
           RenderSVGContainer {use} at (16,0) size 8x24
             RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
               RenderSVGContainer {g} at (16,0) size 8x24
                 RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                 RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-        RenderSVGPath {rect} at (45,5) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+        RenderSVGRect {rect} at (45,5) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
         RenderSVGResourcePattern {pattern} [id="meetXminYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXminYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXminYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXmidYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXmidYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXmidYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXmaxYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXmaxYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetXmaxYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXminYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXminYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXminYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXmidYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXmidYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXmidYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXmaxYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXmaxYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceXmaxYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXminYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXminYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXminYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXmidYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXmidYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXmidYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXmaxYmin"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXmaxYmid"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneXmaxYmax"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="meetNone"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="sliceNone"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
         RenderSVGResourcePattern {pattern} [id="noneNone"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
           RenderSVGContainer {use} at (0,0) size 24x24
             RenderSVGContainer {g} at (0,0) size 24x24
               RenderSVGContainer {g} at (0,0) size 24x24 [transform={m=((8.00,0.00)(0.00,8.00)) t=(0.00,0.00)}]
-                RenderSVGPath {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
+                RenderSVGRect {rect} at (0,0) size 24x24 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=3.00] [height=3.00]
                 RenderSVGContainer {g} at (0,0) size 8x24
                   RenderSVGContainer {g} at (0,0) size 8x24
                     RenderSVGPath {circle} at (0,0) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (0,8) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (0,16) size 8x8 [fill={[type=SOLID] [color=#DC143C]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (8,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(1.00,0.00)}]
                   RenderSVGContainer {g} at (8,0) size 8x24
                     RenderSVGPath {circle} at (8,0) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (8,8) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (8,16) size 8x8 [fill={[type=SOLID] [color=#FFD700]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
                 RenderSVGContainer {g} at (16,0) size 8x24 [transform={m=((1.00,0.00)(0.00,1.00)) t=(2.00,0.00)}]
                   RenderSVGContainer {g} at (16,0) size 8x24
                     RenderSVGPath {circle} at (16,0) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [cx=0.50] [cy=0.50] [r=0.50]
-                    RenderSVGPath {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
+                    RenderSVGRect {rect} at (16,8) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=1.00] [width=1.00] [height=1.00]
                     RenderSVGPath {path} at (16,16) size 8x8 [fill={[type=SOLID] [color=#FFA500]}] [data="M 0 3 L 1 3 L 0.5 2 Z"]
-        RenderSVGPath {rect} at (0,0) size 20x120 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
-        RenderSVGPath {rect} at (20,0) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
-        RenderSVGPath {rect} at (40,0) size 100x40 [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+        RenderSVGRect {rect} at (0,0) size 20x120 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+        RenderSVGRect {rect} at (20,0) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+        RenderSVGRect {rect} at (40,0) size 100x40 [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
         RenderSVGContainer {g} at (0,0) size 41x121
           RenderSVGContainer {use} at (0,0) size 21x121
             RenderSVGContainer {g} at (0,0) size 21x121
-              RenderSVGPath {rect} at (0,0) size 21x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+              RenderSVGRect {rect} at (0,0) size 21x121 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
           RenderSVGContainer {use} at (19,0) size 22x41
             RenderSVGContainer {g} at (19,0) size 22x41
-              RenderSVGPath {rect} at (19,0) size 22x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+              RenderSVGRect {rect} at (19,0) size 22x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
           RenderSVGText {text} at (18,6) size 34x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 34x18
               chunk 1 (middle anchor) text run 1 at (18.00,20.00) startOffset 0 endOffset 4 width 34.00: "yMin"
           RenderSVGContainer {use} at (19,39) size 22x42
             RenderSVGContainer {g} at (19,39) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-              RenderSVGPath {rect} at (19,39) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+              RenderSVGRect {rect} at (19,39) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
           RenderSVGText {text} at (18,46) size 34x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 34x18
               chunk 1 (middle anchor) text run 1 at (18.00,60.00) startOffset 0 endOffset 4 width 34.00: "yMid"
           RenderSVGContainer {use} at (19,79) size 22x42
             RenderSVGContainer {g} at (19,79) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-              RenderSVGPath {rect} at (19,79) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+              RenderSVGRect {rect} at (19,79) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
           RenderSVGText {text} at (16,86) size 37x18 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 37x18
               chunk 1 (middle anchor) text run 1 at (16.50,100.00) startOffset 0 endOffset 4 width 37.00: "yMax"
         RenderSVGContainer {g} at (39,0) size 102x401
           RenderSVGContainer {use} at (39,0) size 102x41
             RenderSVGContainer {g} at (39,0) size 102x41
-              RenderSVGPath {rect} at (39,0) size 102x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,0) size 102x41 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,39) size 102x42
             RenderSVGContainer {g} at (39,39) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-              RenderSVGPath {rect} at (39,39) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,39) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,79) size 102x42
             RenderSVGContainer {g} at (39,79) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-              RenderSVGPath {rect} at (39,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,119) size 102x42
             RenderSVGContainer {g} at (39,119) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-              RenderSVGPath {rect} at (39,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,159) size 102x42
             RenderSVGContainer {g} at (39,159) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-              RenderSVGPath {rect} at (39,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,199) size 102x42
             RenderSVGContainer {g} at (39,199) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
-              RenderSVGPath {rect} at (39,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,239) size 102x42
             RenderSVGContainer {g} at (39,239) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
-              RenderSVGPath {rect} at (39,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,279) size 102x42
             RenderSVGContainer {g} at (39,279) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,280.00)}]
-              RenderSVGPath {rect} at (39,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,319) size 102x42
             RenderSVGContainer {g} at (39,319) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,320.00)}]
-              RenderSVGPath {rect} at (39,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+              RenderSVGRect {rect} at (39,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
           RenderSVGContainer {use} at (39,359) size 102x42
             RenderSVGContainer {g} at (39,359) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,360.00)}]
-              RenderSVGPath {rect} at (39,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
-        RenderSVGPath {rect} at (39,0) size 102x1 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+              RenderSVGRect {rect} at (39,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+        RenderSVGRect {rect} at (39,0) size 102x1 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
       RenderSVGContainer {g} at (49,59) size 342x422 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,80.00)}]
         RenderSVGContainer {use} at (49,79) size 42x122
           RenderSVGContainer {g} at (49,79) size 42x122
             RenderSVGContainer {g} at (49,79) size 42x122
               RenderSVGContainer {g} at (49,79) size 22x122
-                RenderSVGPath {rect} at (49,79) size 22x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+                RenderSVGRect {rect} at (49,79) size 22x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
               RenderSVGContainer {g} at (69,79) size 22x42
-                RenderSVGPath {rect} at (69,79) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,79) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (18,6) size 34x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 34x18
                   chunk 1 (middle anchor) text run 1 at (18.00,20.00) startOffset 0 endOffset 4 width 34.00: "yMin"
               RenderSVGContainer {g} at (69,119) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (69,119) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,119) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (18,46) size 34x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 34x18
                   chunk 1 (middle anchor) text run 1 at (18.00,60.00) startOffset 0 endOffset 4 width 34.00: "yMid"
               RenderSVGContainer {g} at (69,159) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (69,159) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,159) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (16,86) size 37x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 37x18
                   chunk 1 (middle anchor) text run 1 at (16.50,100.00) startOffset 0 endOffset 4 width 37.00: "yMax"
@@ -717,19 +717,19 @@ layer at (0,0) size 450x500
           RenderSVGContainer {g} at (49,199) size 42x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
             RenderSVGContainer {g} at (49,199) size 42x122
               RenderSVGContainer {g} at (49,199) size 22x122
-                RenderSVGPath {rect} at (49,199) size 22x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+                RenderSVGRect {rect} at (49,199) size 22x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
               RenderSVGContainer {g} at (69,199) size 22x42
-                RenderSVGPath {rect} at (69,199) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,199) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (18,6) size 34x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 34x18
                   chunk 1 (middle anchor) text run 1 at (18.00,20.00) startOffset 0 endOffset 4 width 34.00: "yMin"
               RenderSVGContainer {g} at (69,239) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (69,239) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,239) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (18,46) size 34x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 34x18
                   chunk 1 (middle anchor) text run 1 at (18.00,60.00) startOffset 0 endOffset 4 width 34.00: "yMid"
               RenderSVGContainer {g} at (69,279) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (69,279) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,279) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (16,86) size 37x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 37x18
                   chunk 1 (middle anchor) text run 1 at (16.50,100.00) startOffset 0 endOffset 4 width 37.00: "yMax"
@@ -740,19 +740,19 @@ layer at (0,0) size 450x500
           RenderSVGContainer {g} at (49,319) size 42x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
             RenderSVGContainer {g} at (49,319) size 42x122
               RenderSVGContainer {g} at (49,319) size 22x122
-                RenderSVGPath {rect} at (49,319) size 22x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
+                RenderSVGRect {rect} at (49,319) size 22x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=0.00] [y=0.00] [width=20.00] [height=120.00]
               RenderSVGContainer {g} at (69,319) size 22x42
-                RenderSVGPath {rect} at (69,319) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,319) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (18,6) size 34x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 34x18
                   chunk 1 (middle anchor) text run 1 at (18.00,20.00) startOffset 0 endOffset 4 width 34.00: "yMin"
               RenderSVGContainer {g} at (69,359) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (69,359) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,359) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (18,46) size 34x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 34x18
                   chunk 1 (middle anchor) text run 1 at (18.00,60.00) startOffset 0 endOffset 4 width 34.00: "yMid"
               RenderSVGContainer {g} at (69,399) size 22x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (69,399) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
+                RenderSVGRect {rect} at (69,399) size 22x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=20.00] [y=0.00] [width=20.00] [height=40.00]
               RenderSVGText {text} at (16,86) size 37x18 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 37x18
                   chunk 1 (middle anchor) text run 1 at (16.50,100.00) startOffset 0 endOffset 4 width 37.00: "yMax"
@@ -763,80 +763,80 @@ layer at (0,0) size 450x500
           RenderSVGContainer {g} at (89,79) size 102x402
             RenderSVGContainer {g} at (89,79) size 102x402
               RenderSVGContainer {g} at (89,79) size 102x42
-                RenderSVGPath {rect} at (89,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,119) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (89,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,159) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (89,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,199) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-                RenderSVGPath {rect} at (89,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,239) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-                RenderSVGPath {rect} at (89,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,279) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
-                RenderSVGPath {rect} at (89,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,319) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
-                RenderSVGPath {rect} at (89,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,359) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,280.00)}]
-                RenderSVGPath {rect} at (89,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,399) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,320.00)}]
-                RenderSVGPath {rect} at (89,399) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,399) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (89,439) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,360.00)}]
-                RenderSVGPath {rect} at (89,439) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (89,439) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
         RenderSVGContainer {use} at (189,79) size 102x402
           RenderSVGContainer {g} at (189,79) size 102x402 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderSVGContainer {g} at (189,79) size 102x402
               RenderSVGContainer {g} at (189,79) size 102x42
-                RenderSVGPath {rect} at (189,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,119) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (189,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,159) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (189,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,199) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-                RenderSVGPath {rect} at (189,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,239) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-                RenderSVGPath {rect} at (189,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,279) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
-                RenderSVGPath {rect} at (189,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,319) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
-                RenderSVGPath {rect} at (189,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,359) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,280.00)}]
-                RenderSVGPath {rect} at (189,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,399) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,320.00)}]
-                RenderSVGPath {rect} at (189,399) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,399) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (189,439) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,360.00)}]
-                RenderSVGPath {rect} at (189,439) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (189,439) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
         RenderSVGContainer {use} at (289,79) size 102x402
           RenderSVGContainer {g} at (289,79) size 102x402 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
             RenderSVGContainer {g} at (289,79) size 102x402
               RenderSVGContainer {g} at (289,79) size 102x42
-                RenderSVGPath {rect} at (289,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,79) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,119) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (289,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,119) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,159) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (289,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,159) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,199) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
-                RenderSVGPath {rect} at (289,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,199) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,239) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
-                RenderSVGPath {rect} at (289,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,239) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,279) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
-                RenderSVGPath {rect} at (289,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,279) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,319) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
-                RenderSVGPath {rect} at (289,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,319) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFAD2]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,359) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,280.00)}]
-                RenderSVGPath {rect} at (289,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,359) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFF096]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,399) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,320.00)}]
-                RenderSVGPath {rect} at (289,399) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,399) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFEB78]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
               RenderSVGContainer {g} at (289,439) size 102x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,360.00)}]
-                RenderSVGPath {rect} at (289,439) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
+                RenderSVGRect {rect} at (289,439) size 102x42 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=0.00] [width=100.00] [height=40.00]
         RenderSVGContainer {use} at (89,59) size 102x22
           RenderSVGContainer {g} at (89,59) size 102x22
-            RenderSVGPath {rect} at (89,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+            RenderSVGRect {rect} at (89,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
         RenderSVGContainer {use} at (189,59) size 102x22
           RenderSVGContainer {g} at (189,59) size 102x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
-            RenderSVGPath {rect} at (189,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+            RenderSVGRect {rect} at (189,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
         RenderSVGContainer {use} at (289,59) size 102x22
           RenderSVGContainer {g} at (289,59) size 102x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}]
-            RenderSVGPath {rect} at (289,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
+            RenderSVGRect {rect} at (289,59) size 102x22 [stroke={[type=SOLID] [color=#000000]}] [x=40.00] [y=-20.00] [width=100.00] [height=20.00]
         RenderSVGText {text} at (75,-19) size 30x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 30x18
             chunk 1 (middle anchor) text run 1 at (75.00,-5.00) startOffset 0 endOffset 4 width 30.00: "meet"
@@ -846,109 +846,109 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (274,-19) size 31x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 31x18
             chunk 1 (middle anchor) text run 1 at (274.50,-5.00) startOffset 0 endOffset 4 width 31.00: "none"
-        RenderSVGPath {rect} at (49,439) size 42x42 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=360.00] [width=40.00] [height=40.00]
+        RenderSVGRect {rect} at (49,439) size 42x42 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=360.00] [width=40.00] [height=40.00]
         RenderSVGText {text} at (9,366) size 31x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 31x18
             chunk 1 (middle anchor) text run 1 at (9.50,380.00) startOffset 0 endOffset 4 width 31.00: "none"
         RenderSVGContainer {g} at (95,85) size 90x350
           RenderSVGContainer {use} at (95,85) size 90x30
             RenderSVGContainer {g} at (95,85) size 90x30
-              RenderSVGPath {rect} at (95,85) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXminYmin"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (95,85) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXminYmin"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (95,125) size 90x30
             RenderSVGContainer {g} at (95,125) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-              RenderSVGPath {rect} at (95,125) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXminYmid"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (95,125) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXminYmid"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (95,165) size 90x30
             RenderSVGContainer {g} at (95,165) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-              RenderSVGPath {rect} at (95,165) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXminYmax"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (95,165) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXminYmax"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {g} at (95,205) size 90x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
             RenderSVGContainer {use} at (95,205) size 90x30
               RenderSVGContainer {g} at (95,205) size 90x30
-                RenderSVGPath {rect} at (95,205) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmidYmin"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (95,205) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmidYmin"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (95,245) size 90x30
               RenderSVGContainer {g} at (95,245) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (95,245) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmidYmid"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (95,245) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmidYmid"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (95,285) size 90x30
               RenderSVGContainer {g} at (95,285) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (95,285) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmidYmax"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (95,285) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmidYmax"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {g} at (95,325) size 90x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
             RenderSVGContainer {use} at (95,325) size 90x30
               RenderSVGContainer {g} at (95,325) size 90x30
-                RenderSVGPath {rect} at (95,325) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmaxYmin"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (95,325) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmaxYmin"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (95,365) size 90x30
               RenderSVGContainer {g} at (95,365) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
-                RenderSVGPath {rect} at (95,365) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmaxYmid"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (95,365) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmaxYmid"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (95,405) size 90x30
               RenderSVGContainer {g} at (95,405) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}]
-                RenderSVGPath {rect} at (95,405) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmaxYmax"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (95,405) size 90x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [fill={[type=PATTERN] [id="meetXmaxYmax"]}] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
         RenderSVGContainer {g} at (194,84) size 92x352 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
           RenderSVGContainer {use} at (194,84) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (194,84) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (194,84) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXminYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (194,84) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXminYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (194,124) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (194,124) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (194,124) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXminYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (194,124) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXminYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (194,164) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (194,164) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (194,164) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXminYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (194,164) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXminYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {g} at (194,204) size 92x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {use} at (194,204) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (194,204) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (194,204) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmidYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (194,204) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmidYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (194,244) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (194,244) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (194,244) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmidYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (194,244) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmidYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (194,284) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (194,284) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (194,284) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmidYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (194,284) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmidYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {g} at (194,324) size 92x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {use} at (194,324) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (194,324) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (194,324) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmaxYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (194,324) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmaxYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (194,364) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (194,364) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (194,364) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmaxYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (194,364) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmaxYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (194,404) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (194,404) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (194,404) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmaxYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (194,404) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceXmaxYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
         RenderSVGContainer {g} at (294,84) size 92x352 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
           RenderSVGContainer {use} at (294,84) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (294,84) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (294,84) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXminYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (294,84) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXminYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (294,124) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (294,124) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (294,124) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXminYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (294,124) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXminYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (294,164) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (294,164) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (294,164) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXminYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (294,164) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXminYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {g} at (294,204) size 92x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {use} at (294,204) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (294,204) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (294,204) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmidYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (294,204) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmidYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (294,244) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (294,244) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (294,244) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmidYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (294,244) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmidYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (294,284) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (294,284) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (294,284) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmidYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (294,284) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmidYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {g} at (294,324) size 92x112 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {use} at (294,324) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (294,324) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (294,324) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmaxYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (294,324) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmaxYmin"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (294,364) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (294,364) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (294,364) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmaxYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (294,364) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmaxYmid"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
             RenderSVGContainer {use} at (294,404) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGContainer {g} at (294,404) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,80.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-                RenderSVGPath {rect} at (294,404) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmaxYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+                RenderSVGRect {rect} at (294,404) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneXmaxYmax"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
         RenderSVGContainer {g} at (94,444) size 292x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,360.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
           RenderSVGContainer {use} at (94,444) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (94,444) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (94,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="meetNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (94,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="meetNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (194,444) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (194,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (194,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (194,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="sliceNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
           RenderSVGContainer {use} at (294,444) size 92x32 [start marker=startEndMarker] [end marker=startEndMarker]
             RenderSVGContainer {g} at (294,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
-              RenderSVGPath {rect} at (294,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
+              RenderSVGRect {rect} at (294,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
     RenderSVGContainer {use} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 0x0

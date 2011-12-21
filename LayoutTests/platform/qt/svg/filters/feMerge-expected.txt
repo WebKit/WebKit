@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
         [feMerge mergeNodes="2"]
           [feFlood flood-color="#FF0000" flood-opacity="1.00"]
           [feFlood flood-color="#0000FF" flood-opacity="1.00"]
-    RenderSVGPath {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (0,0) size 175x175 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=150.00] [height=150.00]
       [filter="filter_1"] RenderSVGResourceFilter {filter} at (-5,-5) size 180x180
-    RenderSVGPath {rect} at (195,0) size 180x175 [fill={[type=SOLID] [color=#000000]}] [x=210.00] [y=10.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (195,0) size 180x175 [fill={[type=SOLID] [color=#000000]}] [x=210.00] [y=10.00] [width=150.00] [height=150.00]
       [filter="filter_2"] RenderSVGResourceFilter {filter} at (195,-5) size 180x180
-    RenderSVGPath {rect} at (395,0) size 180x175 [fill={[type=SOLID] [color=#000000]}] [x=410.00] [y=10.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (395,0) size 180x175 [fill={[type=SOLID] [color=#000000]}] [x=410.00] [y=10.00] [width=150.00] [height=150.00]
       [filter="filter_3"] RenderSVGResourceFilter {filter} at (395,-5) size 180x180

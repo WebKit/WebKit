@@ -10,7 +10,7 @@ layer at (0,0) size 800x433
       RenderBlock {div} at (0,81) size 144x144 [bgcolor=#000080]
       RenderBlock (anonymous) at (0,248) size 778x151
         RenderSVGRoot {svg} at (11,271) size 144x144
-          RenderSVGPath {rect} at (11,271) size 144x144 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+          RenderSVGRect {rect} at (11,271) size 144x144 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

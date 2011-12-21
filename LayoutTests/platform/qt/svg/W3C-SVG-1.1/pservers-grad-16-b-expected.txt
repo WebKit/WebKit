@@ -11,10 +11,10 @@ layer at (0,0) size 480x360
         RenderSVGGradientStop {stop} [offset=0.25] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=0.50] [color=#008000]
         RenderSVGGradientStop {stop} [offset=0.10] [color=#0000FF]
-      RenderSVGPath {rect} at (19,9) size 442x82 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=LINEAR-GRADIENT] [id="defs1"]}] [x=20.00] [y=10.00] [width=440.00] [height=80.00]
-      RenderSVGPath {rect} at (20,110) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="defs2"]}] [x=20.00] [y=110.00] [width=440.00] [height=80.00]
-      RenderSVGPath {rect} at (20,210) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="defs3"]}] [x=20.00] [y=210.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (19,9) size 442x82 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=LINEAR-GRADIENT] [id="defs1"]}] [x=20.00] [y=10.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (20,110) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="defs2"]}] [x=20.00] [y=110.00] [width=440.00] [height=80.00]
+      RenderSVGRect {rect} at (20,210) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="defs3"]}] [x=20.00] [y=210.00] [width=440.00] [height=80.00]
     RenderSVGText {text} at (10,301) size 285x51 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 285x51
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 285.00: "$Revision: 1.3 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

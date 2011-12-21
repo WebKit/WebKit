@@ -15,4 +15,4 @@ layer at (10,50) size 406x306
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGImage {image} at (13,53) size 403x303
-    RenderSVGPath {rect} at (13,53) size 400x300 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=400.00] [height=300.00]
+    RenderSVGRect {rect} at (13,53) size 400x300 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=0.00] [width=400.00] [height=300.00]

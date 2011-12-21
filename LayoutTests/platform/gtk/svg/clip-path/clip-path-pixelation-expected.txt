@@ -9,5 +9,5 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (52,5) size 195x18 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 195x18
         chunk 1 (middle anchor) text run 1 at (52.68,20.00) startOffset 0 endOffset 30 width 194.65: "This should not look pixelated"
-    RenderSVGPath {rect} at (25,50) size 250x250 [transform={m=((25.00,0.00)(0.00,25.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#008000]}] [x=1.00] [y=2.00] [width=10.00] [height=10.00]
+    RenderSVGRect {rect} at (25,50) size 250x250 [transform={m=((25.00,0.00)(0.00,25.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#008000]}] [x=1.00] [y=2.00] [width=10.00] [height=10.00]
       [clipPath="clip-circle"] RenderSVGResourceClipper {clipPath} at (1,2) size 10x10

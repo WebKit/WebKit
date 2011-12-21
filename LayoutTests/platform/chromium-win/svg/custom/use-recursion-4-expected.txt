@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderSVGContainer {use} at (0,0) size 0x0
           RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 125x25
-        RenderSVGPath {rect} at (0,0) size 125x25 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+        RenderSVGRect {rect} at (0,0) size 125x25 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
         RenderSVGContainer {use} at (0,0) size 0x0
           RenderSVGContainer {g} at (0,0) size 0x0
     RenderSVGText {text} at (10,46) size 137x18 contains 1 chunk(s)

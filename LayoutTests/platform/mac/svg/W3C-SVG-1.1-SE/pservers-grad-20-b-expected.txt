@@ -13,7 +13,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (68,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
         RenderSVGPath {path} at (119,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
         RenderSVGPath {path} at (68,100) size 108x108 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 410 10 L 70 350"]
-        RenderSVGPath {rect} at (49,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
+        RenderSVGRect {rect} at (49,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
       RenderSVGText {text} at (69,235) size 102x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 102x18
           chunk 1 (middle anchor) text run 1 at (69.04,250.00) startOffset 0 endOffset 1 width 16.99: "W"
@@ -26,7 +26,7 @@ layer at (0,0) size 480x360
         RenderSVGPath {path} at (298,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
         RenderSVGPath {path} at (349,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 180 L 480 180"]
         RenderSVGPath {path} at (298,100) size 108x108 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 410 10 L 70 350"]
-        RenderSVGPath {rect} at (279,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
+        RenderSVGRect {rect} at (279,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
       RenderSVGText {text} at (286,235) size 127x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 127x18
           chunk 1 (middle anchor) text run 1 at (286.53,250.00) startOffset 0 endOffset 1 width 16.99: "W"
@@ -41,4 +41,4 @@ layer at (0,0) size 480x360
           chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
           chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
           chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

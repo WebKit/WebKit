@@ -19,14 +19,14 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 292x19
           chunk 1 text run 1 at (60.00,140.00) startOffset 0 endOffset 41 width 291.32: "CSS width/height to user space conversion"
       RenderSVGContainer {g} at (10,115) size 40x40 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,115.00)}]
-        RenderSVGPath {rect} at (10,115) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
-        RenderSVGPath {rect} at (10,135) size 40x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
+        RenderSVGRect {rect} at (10,115) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
+        RenderSVGRect {rect} at (10,135) size 40x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
       RenderSVGText {text} at (60,184) size 336x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 336x19
           chunk 1 text run 1 at (60.00,200.00) startOffset 0 endOffset 48 width 335.64: "Percentage width/height to user space conversion"
       RenderSVGContainer {g} at (10,175) size 40x40 [transform={m=((4.00,0.00)(0.00,4.00)) t=(30.00,175.00)}]
-        RenderSVGPath {rect} at (10,175) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
-        RenderSVGPath {rect} at (10,195) size 40x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
+        RenderSVGRect {rect} at (10,175) size 40x20 [fill={[type=SOLID] [color=#000000]}] [x=-5.00] [y=0.00] [width=10.00] [height=5.00]
+        RenderSVGRect {rect} at (10,195) size 40x20 [fill={[type=SOLID] [color=#FF0000]}] [x=-5.00] [y=5.00] [width=10.00] [height=5.00]
       RenderSVGText {text} at (140,249) size 263x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 263x19
           chunk 1 text run 1 at (140.00,265.00) startOffset 0 endOffset 36 width 262.49: "CSS and percentage length conversion"
@@ -39,4 +39,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

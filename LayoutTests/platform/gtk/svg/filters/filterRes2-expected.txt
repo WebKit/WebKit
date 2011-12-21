@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
       RenderSVGResourceFilter {filter} [id="f3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feOffset dx="0.00" dy="0.00"]
           [SourceGraphic]
-    RenderSVGPath {rect} at (10,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [x=20.00] [y=20.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (10,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [x=20.00] [y=20.00] [width=100.00] [height=100.00]
       [filter="f1"] RenderSVGResourceFilter {filter} at (10,10) size 120x120
-    RenderSVGPath {rect} at (150,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [x=160.00] [y=20.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (150,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [x=160.00] [y=20.00] [width=100.00] [height=100.00]
       [filter="f2"] RenderSVGResourceFilter {filter} at (150,10) size 120x120
-    RenderSVGPath {rect} at (290,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [x=300.00] [y=20.00] [width=100.00] [height=100.00]
+    RenderSVGRect {rect} at (290,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [x=300.00] [y=20.00] [width=100.00] [height=100.00]
       [filter="f3"] RenderSVGResourceFilter {filter} at (290,10) size 120x120

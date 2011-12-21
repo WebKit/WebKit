@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 12 width 71.40 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
             chunk 1 text run 1 at (81.40,80.00) startOffset 0 endOffset 5 width 52.20: "\x{60C} W3C"
       RenderSVGContainer {g} at (16,55) size 207x86
-        RenderSVGPath {svg:rect} at (16,55) size 130x36 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=33.20] [width=77.40] [height=21.00]
-        RenderSVGPath {svg:rect} at (153,55) size 70x36 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=92.20] [y=33.20] [width=41.40] [height=21.00]
-        RenderSVGPath {svg:rect} at (16,105) size 130x36 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=63.20] [width=77.40] [height=21.00]
-        RenderSVGPath {svg:rect} at (153,105) size 70x36 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=92.20] [y=63.20] [width=41.40] [height=21.00]
+        RenderSVGRect {svg:rect} at (16,55) size 130x36 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=33.20] [width=77.40] [height=21.00]
+        RenderSVGRect {svg:rect} at (153,55) size 70x36 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=92.20] [y=33.20] [width=41.40] [height=21.00]
+        RenderSVGRect {svg:rect} at (16,105) size 130x36 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=63.20] [width=77.40] [height=21.00]
+        RenderSVGRect {svg:rect} at (153,105) size 70x36 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=92.20] [y=63.20] [width=41.40] [height=21.00]

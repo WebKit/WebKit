@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
           RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
       RenderSVGContainer {g} at (49,81) size 146x146 [transform={m=((0.30,0.00)(0.00,0.30)) t=(50.00,100.00)}]
-        RenderSVGPath {rect} at (49,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
+        RenderSVGRect {rect} at (49,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
         RenderSVGPath {line} at (50,151) size 144x6 [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=180.00] [x2=480.00] [y2=180.00]
         RenderSVGPath {line} at (68,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=180.00] [x2=480.00] [y2=180.00]
         RenderSVGPath {line} at (119,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [stroke={[type=LINEAR-GRADIENT] [id="grad"] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=180.00] [x2=480.00] [y2=180.00]
@@ -17,15 +17,15 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 73x18
           chunk 1 (middle anchor) text run 1 at (83.78,250.00) startOffset 0 endOffset 11 width 72.45: "Using lines"
       RenderSVGContainer {g} at (279,81) size 146x146 [transform={m=((0.30,0.00)(0.00,0.30)) t=(280.00,100.00)}]
-        RenderSVGPath {rect} at (279,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
-        RenderSVGPath {rect} at (280,151) size 144x6 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
-        RenderSVGPath {rect} at (298,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
-        RenderSVGPath {rect} at (349,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
-        RenderSVGPath {rect} at (298,100) size 108x108 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(-56.98,222.43)}] [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
+        RenderSVGRect {rect} at (279,81) size 146x146 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
+        RenderSVGRect {rect} at (280,151) size 144x6 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
+        RenderSVGRect {rect} at (298,100) size 108x108 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(197.57,-116.98)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
+        RenderSVGRect {rect} at (349,82) size 6x144 [transform={m=((0.00,1.00)(-1.00,0.00)) t=(420.00,-60.00)}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
+        RenderSVGRect {rect} at (298,100) size 108x108 [transform={m=((0.71,-0.71)(0.71,0.71)) t=(-56.98,222.43)}] [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [x=0.00] [y=170.00] [width=480.00] [height=20.00]
       RenderSVGText {text} at (313,235) size 73x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 73x18
           chunk 1 (middle anchor) text run 1 at (313.79,250.00) startOffset 0 endOffset 11 width 72.43: "Using rects"
     RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x45
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.4 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

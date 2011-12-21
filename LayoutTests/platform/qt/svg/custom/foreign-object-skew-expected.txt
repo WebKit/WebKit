@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
         RenderBR {xhtml:br} at (73,0) size 0x21
         RenderButton {xhtml:input} at (2,23) size 12x33 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 0x0
-    RenderSVGPath {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=580.00] [height=380.00]
+    RenderSVGRect {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=580.00] [height=380.00]

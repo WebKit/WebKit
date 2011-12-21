@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (80,52) size 228x129 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 228x129
             chunk 1 text run 1 at (80.00,150.00) startOffset 0 endOffset 4 width 228.00: "CLIP"
-    RenderSVGPath {rect} at (80,52) size 228x129 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=40.00] [width=300.00] [height=300.00]
+    RenderSVGRect {rect} at (80,52) size 228x129 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=40.00] [width=300.00] [height=300.00]
       [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (80,52) size 228x129

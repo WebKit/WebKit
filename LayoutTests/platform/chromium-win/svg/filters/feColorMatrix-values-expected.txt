@@ -23,16 +23,16 @@ layer at (0,0) size 800x600
         [feColorMatrix type="HUEROTATE" values="720.00"]
           [SourceGraphic]
     RenderSVGContainer {g} at (0,0) size 441x441
-      RenderSVGPath {rect} at (0,0) size 441x441 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
+      RenderSVGRect {rect} at (0,0) size 441x441 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
         [filter="satfull"] RenderSVGResourceFilter {filter} at (-40,-40) size 480x480
-      RenderSVGPath {rect} at (2,2) size 196x396 [fill={[type=SOLID] [color=#FF0000]}] [x=2.00] [y=2.00] [width=196.00] [height=396.00]
+      RenderSVGRect {rect} at (2,2) size 196x396 [fill={[type=SOLID] [color=#FF0000]}] [x=2.00] [y=2.00] [width=196.00] [height=396.00]
       RenderSVGText {text} at (10,19) size 168x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 168x27
           chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 17 width 168.00: "Should be default"
       RenderSVGText {text} at (10,49) size 68x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 68x27
           chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 7 width 68.00: "matrix."
-      RenderSVGPath {rect} at (0,0) size 221x115 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=200.00] [height=104.00]
+      RenderSVGRect {rect} at (0,0) size 221x115 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=200.00] [height=104.00]
         [filter="matnull"] RenderSVGResourceFilter {filter} at (-20,-10.40) size 240x124.80
       RenderSVGText {text} at (10,119) size 168x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 168x27
@@ -40,7 +40,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,149) size 82x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 82x27
           chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 9 width 82.00: "saturate."
-      RenderSVGPath {rect} at (0,89) size 221x126 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=100.00] [width=200.00] [height=104.00]
+      RenderSVGRect {rect} at (0,89) size 221x126 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=100.00] [width=200.00] [height=104.00]
         [filter="satnull"] RenderSVGResourceFilter {filter} at (-20,89.60) size 240x124.80
       RenderSVGText {text} at (10,219) size 168x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 168x27
@@ -48,7 +48,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,249) size 105x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 105x27
           chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 10 width 105.00: "hueRotate."
-      RenderSVGPath {rect} at (0,189) size 221x126 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=200.00] [width=200.00] [height=104.00]
+      RenderSVGRect {rect} at (0,189) size 221x126 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=200.00] [width=200.00] [height=104.00]
         [filter="huenull"] RenderSVGResourceFilter {filter} at (-20,189.60) size 240x124.80
       RenderSVGText {text} at (10,319) size 148x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 148x27
@@ -56,9 +56,9 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,349) size 105x27 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 105x27
           chunk 1 text run 1 at (10.00,370.00) startOffset 0 endOffset 10 width 105.00: "hueRotate."
-      RenderSVGPath {rect} at (0,290) size 221x119 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=300.00] [width=200.00] [height=99.00]
+      RenderSVGRect {rect} at (0,290) size 221x119 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=300.00] [width=200.00] [height=99.00]
         [filter="huerange"] RenderSVGResourceFilter {filter} at (-20,290.10) size 240x118.80
-      RenderSVGPath {rect} at (182,0) size 236x108 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=2.00] [width=196.00] [height=96.00]
+      RenderSVGRect {rect} at (182,0) size 236x108 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=2.00] [width=196.00] [height=96.00]
         [filter="matbad"] RenderSVGResourceFilter {filter} at (182.40,-7.60) size 235.20x115.20
       RenderSVGText {text} at (210,19) size 135x27 contains 1 chunk(s)
         [filter="matbad"] RenderSVGResourceFilter {filter} at (196.50,16.30) size 162x32.40
@@ -70,7 +70,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 154x27
           [filter="matbad"] RenderSVGResourceFilter {filter} at (194.60,46.30) size 184.80x32.40
           chunk 1 text run 1 at (210.00,70.00) startOffset 0 endOffset 17 width 154.00: "values attribute."
-      RenderSVGPath {rect} at (182,92) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=102.00] [width=196.00] [height=96.00]
+      RenderSVGRect {rect} at (182,92) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=102.00] [width=196.00] [height=96.00]
         [filter="huebad"] RenderSVGResourceFilter {filter} at (182.40,92.40) size 235.20x115.20
       RenderSVGText {text} at (210,119) size 149x27 contains 1 chunk(s)
         [filter="huebad"] RenderSVGResourceFilter {filter} at (195.10,116.30) size 178.80x32.40
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 154x27
           [filter="huebad"] RenderSVGResourceFilter {filter} at (194.60,146.30) size 184.80x32.40
           chunk 1 text run 1 at (210.00,170.00) startOffset 0 endOffset 17 width 154.00: "values attribute."
-      RenderSVGPath {rect} at (182,192) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=202.00] [width=196.00] [height=96.00]
+      RenderSVGRect {rect} at (182,192) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=202.00] [width=196.00] [height=96.00]
         [filter="satbad"] RenderSVGResourceFilter {filter} at (182.40,192.40) size 235.20x115.20
       RenderSVGText {text} at (210,219) size 172x27 contains 1 chunk(s)
         [filter="satbad"] RenderSVGResourceFilter {filter} at (192.80,216.30) size 206.40x32.40
@@ -94,7 +94,7 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 154x27
           [filter="satbad"] RenderSVGResourceFilter {filter} at (194.60,246.30) size 184.80x32.40
           chunk 1 text run 1 at (210.00,270.00) startOffset 0 endOffset 17 width 154.00: "values attribute."
-      RenderSVGPath {rect} at (182,292) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=302.00] [width=196.00] [height=96.00]
+      RenderSVGRect {rect} at (182,292) size 236x116 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=302.00] [width=196.00] [height=96.00]
         [filter="satrange"] RenderSVGResourceFilter {filter} at (182.40,292.40) size 235.20x115.20
       RenderSVGText {text} at (210,319) size 131x27 contains 1 chunk(s)
         [filter="satrange"] RenderSVGResourceFilter {filter} at (196.90,316.30) size 157.20x32.40

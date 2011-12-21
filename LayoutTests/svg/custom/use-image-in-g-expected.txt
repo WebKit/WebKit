@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (10,10) size 200x170
     RenderSVGContainer {g} at (10,10) size 200x80
-      RenderSVGPath {rect} at (10,10) size 200x80 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=10.00] [width=200.00] [height=80.00]
+      RenderSVGRect {rect} at (10,10) size 200x80 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=10.00] [width=200.00] [height=80.00]
       RenderSVGImage {image} at (20,20) size 180x60
     RenderSVGContainer {use} at (10,100) size 200x80
       RenderSVGContainer {g} at (10,100) size 200x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
         RenderSVGContainer {g} at (10,100) size 200x80
-          RenderSVGPath {rect} at (10,100) size 200x80 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=10.00] [width=200.00] [height=80.00]
+          RenderSVGRect {rect} at (10,100) size 200x80 [fill={[type=SOLID] [color=#CCCCCC]}] [x=10.00] [y=10.00] [width=200.00] [height=80.00]
           RenderSVGImage {image} at (20,110) size 180x60

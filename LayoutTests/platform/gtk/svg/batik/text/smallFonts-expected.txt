@@ -55,7 +55,7 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (5,0) size 2x1
               chunk 1 text run 1 at (6.38,3.20) startOffset 0 endOffset 9 width 1.09: "typeface."
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (44,175) size 204x50 [fill={[type=SOLID] [color=#1E90FF]}] [x=0.90] [y=3.50] [width=4.05] [height=1.00]
+        RenderSVGRect {rect} at (44,175) size 204x50 [fill={[type=SOLID] [color=#1E90FF]}] [x=0.90] [y=3.50] [width=4.05] [height=1.00]
         RenderSVGText {text} at (0,3) size 7x1 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 4x1
             chunk 1 text run 1 at (0.90,4.00) startOffset 0 endOffset 28 width 3.30: "Graphics attributes such as "

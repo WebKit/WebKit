@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,15) size 682x362
     RenderSVGContainer {g} at (0,15) size 682x362
       RenderSVGResourcePattern {pattern} [id="fillPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FF0000]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGResourcePattern {pattern} [id="strokePattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
-        RenderSVGPath {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
-        RenderSVGPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FFFF00]}] [x=5.00] [y=5.00] [width=10.00] [height=10.00]
+        RenderSVGRect {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGText {text} at (-150,9) size 373x76 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 373x76
           chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 15 width 372.83: "Pattern on fill"
