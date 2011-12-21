@@ -182,7 +182,6 @@ BUGWK74459 SKIP : fast/workers/worker-messageport.html = CRASH
 BUGWK74459 SKIP : fast/workers/worker-multi-port.html = CRASH
 
 BUGWK74554 SKIP : fast/workers/storage = CRASH TIMEOUT
-BUGWK74554 SKIP : http/tests/workers/interrupt-database-sync-open-crash.html = CRASH TIMEOUT
 
 BUGWK74449 SKIP : fast/workers/dedicated-worker-lifecycle.html = TIMEOUT
 BUGWK74449 SKIP : fast/workers/worker-close-more.html = TIMEOUT
@@ -659,8 +658,6 @@ BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 // PageAgent can not getCookies from DumpRenderTree.
 BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = FAIL
 
-BUGCR77630 SLOW LINUX WIN DEBUG : inspector/debugger/debugger-activation-crash.html = PASS TEXT
-
 BUGWK60107 WIN RELEASE : inspector/console/console-object-constructor-name.html = PASS TEXT
 BUGWK60107 WIN RELEASE : inspector/console/console-log-before-inspector-open.html = PASS TEXT
 BUGWK60107 WIN RELEASE : inspector/console/console-tests.html = PASS TEXT
@@ -670,7 +667,8 @@ BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-log-before-inspector
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS
 BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS
 
-BUGWK60109 WIN : inspector/elements/edit-dom-actions.html = PASS TEXT TIMEOUT
+BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGWK60109 SLOW WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
 // -----------------------------------------------------------------
 // Editing tests
@@ -2957,8 +2955,6 @@ BUGCR76552 DEBUG : fast/dom/HTMLScriptElement/dont-load-unknown-type.html = PASS
 // Flaky
 BUGCR76610 MAC WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGCR76716 LINUX WIN DEBUG : fast/css/first-child-pseudo-class.html = PASS TEXT
-BUGCR76979 WIN RELEASE : inspector/console/console-dirxml.html = PASS TEXT
-BUGCR76979 SLOW LINUX WIN DEBUG : inspector/console/console-dirxml.html = PASS
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 LINUX WIN : fast/text/emphasis-combined-text.html = IMAGE+TEXT
@@ -3050,8 +3046,7 @@ BUGWK60094 : fast/encoding/parser-tests-120.html = PASS TIMEOUT
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 
-BUGWK57754 LINUX WIN DEBUG : inspector/debugger/xhr-breakpoints.html = PASS CRASH TIMEOUT
-BUGWK57754 LINUX RELEASE : inspector/debugger/xhr-breakpoints.html = PASS CRASH
+BUGWK57754 SLOW WIN DEBUG : inspector/debugger/xhr-breakpoints.html = PASS CRASH
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = PASS CRASH
 BUGCR78326 : fast/filesystem/filesystem-uri-origin.html = PASS CRASH
@@ -3569,12 +3564,7 @@ BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-re
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT TIMEOUT
 
-BUGWK66569 WIN RELEASE : http/tests/inspector/network/network-iframe-load-and-delete.html = TIMEOUT PASS
-BUGWK66569 SLOW LINUX WIN DEBUG : http/tests/inspector/network/network-iframe-load-and-delete.html = PASS
-
 BUGV8_1634 : fast/js/const.html = TEXT
-
-BUGWK66738 WIN LINUX : http/tests/inspector/network/download.html = PASS TEXT TIMEOUT
 
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
@@ -3814,8 +3804,6 @@ BUGWK70988 SNOWLEOPARD : http/tests/navigation/navigation-interrupted-by-fragmen
 BUGWK70988 SNOWLEOPARD : jquery/traversing.html = PASS TIMEOUT
 BUGWK70988 MAC DEBUG SLOW : fast/frames/calculate-fixed.html = PASS
 
-BUGWK71004 : inspector/storage-panel-dom-storage.html = PASS TIMEOUT
-
 BUGWK71209 LINUX MAC : compositing/visibility/visibility-image-layers.html = IMAGE
 
 BUGWK71211 GPU LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
@@ -3832,11 +3820,6 @@ BUGWK71450 MAC DEBUG SLOW : fast/frames/valid.html = PASS
 BUGWK71451 SLOW : fast/frames/sandboxed-iframe-navigation-windowopen.html = PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK71451 LINUX : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
-
-// This test sometimes exceeds 60-second time limit (for SLOW tests) on
-// win/linux debug. Since setting both SLOW and TIMEOUT is not allowed,
-// only TIMEOUT is specified here.
-BUGWK71542 WIN LINUX DEBUG : inspector/styles/styles-formatting.html = PASS TIMEOUT
 
 BUGWK71543 : media/media-element-play-after-eos.html = PASS TIMEOUT
 
@@ -3872,8 +3855,6 @@ BUGWK72052 MAC DEBUG CPU-CG GPU-CG : fast/dom/javascript-url-exception-isolation
 BUGWK72053 MAC DEBUG : fast/borders/inline-mask-overlay-image-outset-vertical-rl.html = PASS CRASH
 BUGWK72053 MAC DEBUG : fast/borders/block-mask-overlay-image-outset.html = PASS CRASH
 
-BUGWK72264 MAC : inspector/debugger/script-formatter.html = TIMEOUT
-
 BUG_SENORBLANCO GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
 BUGWK66953 : transitions/default-timing-function.html = PASS FAIL
@@ -3885,8 +3866,6 @@ BUG_TONY MAC : css3/flexbox/repaint-rtl-column.html = PASS FAIL
 BUGWK73865 : media/track/tracklist-is-reachable.html = TEXT
 BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT
 BUGWK73865 : media/track/text-track-is-reachable.html = TEXT
-
-BUGWK72133 SKIP MAC : http/tests/inspector-enabled/dedicated-workers-list.html = PASS TIMEOUT
 
 // use Skia to draw vertical text directly instead of text-on-path
 BUG_CARYCLARK MAC CPU : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
@@ -3928,7 +3907,7 @@ BUGWK72279 : media/track/track-webvtt-tc004-magic-header.html = TIMEOUT TEXT PAS
 
 BUGWK72376 WIN : fast/forms/file/input-file-label.html = TEXT PASS
 
-BUGWK72434 : inspector/styles/svg-style.xhtml = PASS TEXT TIMEOUT
+BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
 
 // Animations tests use an inherently-flaky timer-based design.
 BUGWK66953 : animations/animation-direction-normal.html = TEXT PASS
@@ -3951,8 +3930,6 @@ BUGWK72631 LINUX : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 MAC DEBUG : fast/filesystem/file-writer-abort.html = CRASH PASS
 BUGWK72631 WIN : fast/filesystem/file-writer-abort-depth.html = CRASH PASS
 
-BUGWK73133 LINUX : inspector/elements/remove-node.html = PASS CRASH
-
 BUGWK72728 LEOPARD CPU-CG : canvas/philip/tests/2d.imageData.put.unchanged.html = TEXT
 BUGWK72728 LEOPARD CPU-CG : fast/canvas/canvas-alphaImageData-behavior.html = TEXT
 
@@ -3968,12 +3945,6 @@ BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
 BUGWK73872 : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
-BUGWK73517 WIN DEBUG : inspector/console/console-command-clear.html = CRASH
-BUGWK73517 DEBUG : inspector/debugger/script-formatter-breakpoints.html = CRASH TIMEOUT TEXT
-BUGWK73517 WIN DEBUG : http/tests/inspector/search/search-in-non-existing-resource.html = CRASH TIMEOUT
-BUGWK73517 WIN DEBUG : inspector/debugger/debugger-activation-crash2.html = CRASH TIMEOUT TEXT
-BUGWK73517 WIN DEBUG : inspector/debugger/debugger-set-breakpoint-regex.html = CRASH TIMEOUT TEXT
-BUGWK73517 WIN DEBUG : inspector/profiler/detailed-heapshots-dominators-expansion-preserved-when-sorting.html = CRASH TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
 
 BUGWK73607 GPU LINUX DEBUG : fast/canvas/canvas-overloads-strokeText.html = TIMEOUT TEXT PASS
