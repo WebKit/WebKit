@@ -608,6 +608,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
     ASSERT(_private->coreFrame->document());
+    RetainPtr<WebFrame> protect(self); // Executing arbitrary JavaScript can destroy the frame.
     
     JSValue result = _private->coreFrame->script()->executeScript(string, forceUserGesture).jsValue();
 
@@ -1204,9 +1205,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // Get the frame frome the global object we've settled on.
     Frame* frame = anyWorldGlobalObject->impl()->frame();
     ASSERT(frame->document());
+    RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
+
     JSValue result = frame->script()->executeScriptInWorld(core(world), string, true).jsValue();
 
-    if (!frame) // In case the script removed our frame from the page.
+    if (!webFrame->_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
 
     // This bizarre set of rules matches behavior from WebKit for Safari 2.0.
