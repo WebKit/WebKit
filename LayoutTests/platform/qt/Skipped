@@ -409,10 +409,7 @@ http/tests/xmlhttprequest/workers/shared-worker-methods.html
 # Fixed in Qt 4.8
 http/tests/xmlhttprequest/re-login.html
 
-# Still fail with Qt 4.7.1
 http/tests/xmlhttprequest/cache-override.html
-http/tests/xmlhttprequest/cross-origin-authorization.html
-http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
 # =========================================================================== #
 #       Failing inserting tests.                                              #
