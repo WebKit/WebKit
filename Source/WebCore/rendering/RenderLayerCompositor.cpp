@@ -1702,12 +1702,14 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
 #endif
 
     if (requiresHorizontalScrollbarLayer()) {
-        m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
-#ifndef NDEBUG
-        m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
-#endif
-        m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
-        layersChanged = true;
+        if (!m_layerForHorizontalScrollbar) {
+            m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
+    #ifndef NDEBUG
+            m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
+    #endif
+            m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
+            layersChanged = true;
+        }
     } else if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
         m_layerForHorizontalScrollbar = nullptr;
@@ -1715,12 +1717,14 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     }
 
     if (requiresVerticalScrollbarLayer()) {
-        m_layerForVerticalScrollbar = GraphicsLayer::create(this);
-#ifndef NDEBUG
-        m_layerForVerticalScrollbar->setName("vertical scrollbar");
-#endif
-        m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
-        layersChanged = true;
+        if (!m_layerForVerticalScrollbar) {
+            m_layerForVerticalScrollbar = GraphicsLayer::create(this);
+    #ifndef NDEBUG
+            m_layerForVerticalScrollbar->setName("vertical scrollbar");
+    #endif
+            m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
+            layersChanged = true;
+        }
     } else if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
         m_layerForVerticalScrollbar = nullptr;
@@ -1728,12 +1732,14 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     }
 
     if (requiresScrollCornerLayer()) {
-        m_layerForScrollCorner = GraphicsLayer::create(this);
-#ifndef NDEBUG
-        m_layerForScrollCorner->setName("scroll corner");
-#endif
-        m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());
-        layersChanged = true;
+        if (!m_layerForScrollCorner) {
+            m_layerForScrollCorner = GraphicsLayer::create(this);
+    #ifndef NDEBUG
+            m_layerForScrollCorner->setName("scroll corner");
+    #endif
+            m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());
+            layersChanged = true;
+        }
     } else if (m_layerForScrollCorner) {
         m_layerForScrollCorner->removeFromParent();
         m_layerForScrollCorner = nullptr;

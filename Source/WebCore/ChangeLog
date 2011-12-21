@@ -1,3 +1,13 @@
+2011-12-21  Anders Carlsson  <andersca@apple.com>
+
+        Don't recreate scrollbar layers whenever the frame view size changes
+        https://bugs.webkit.org/show_bug.cgi?id=75018
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2011-12-20  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extension API] refactor extension API build code, expose experimental APIs conditionally in chromium
