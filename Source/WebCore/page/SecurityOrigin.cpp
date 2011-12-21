@@ -147,6 +147,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
 
 bool SecurityOrigin::isEmpty() const
 {
+    ASSERT(!m_protocol.isEmpty() || m_isUnique);
     return m_protocol.isEmpty();
 }
 
@@ -173,6 +174,7 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
     m_domain = newDomain.lower();
 }
 
+// FIXME: This should move to SchemeRegistry!
 static HashSet<String>& schemesForbiddenFromDomainRelaxation()
 {
     DEFINE_STATIC_LOCAL(HashSet<String>, schemes, ());
@@ -373,8 +375,8 @@ bool SecurityOrigin::isLocal() const
 }
 
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
-{ 
-    // New window created by the application
+{
+    // This origin represents a new window created by the application.
     if (isEmpty())
         return true;
 
@@ -384,9 +386,6 @@ bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
 
 String SecurityOrigin::toString() const
 {
-    if (isEmpty())
-        return "null";
-
     if (isUnique())
         return "null";
 
