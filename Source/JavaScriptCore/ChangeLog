@@ -1,3 +1,10 @@
+2011-12-20  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Sam Weinig
+
+        * runtime/JSGlobalData.cpp:
+            - removed some dead code.
+
 2011-12-19  Geoffrey Garen  <ggaren@apple.com>
 
         Tightened up Vector<T>::append

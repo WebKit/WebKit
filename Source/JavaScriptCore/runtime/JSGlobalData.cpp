@@ -109,15 +109,6 @@ extern const HashTable regExpPrototypeTable;
 extern const HashTable stringTable;
 extern const HashTable stringConstructorTable;
 
-#if COMPILER(GCC)
-// Work around for gcc trying to coalesce our reads of the various cell vptrs
-#define CLOBBER_MEMORY() do { \
-    asm volatile ("" : : : "memory"); \
-} while (false)
-#else
-#define CLOBBER_MEMORY() do { } while (false)
-#endif
-
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
     : globalDataType(globalDataType)
     , clientData(0)
