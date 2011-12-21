@@ -1,3 +1,14 @@
+2011-12-21  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: suppress incremental rendering and use application chrome mode
+
+        https://webkit.org/b/75026
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup): Set suppress incremental rendering and use application chrome mode.
+
 2011-12-21  Sam Weinig  <sam@webkit.org>
 
         Cleanup up clients when deallocating WebKit2 API objects

@@ -1,3 +1,15 @@
+2011-12-21  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: suppress incremental rendering and use application chrome mode
+
+        https://webkit.org/b/75026
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]): Sort the preferences, remove the Leopard font family setting,
+        set suppress incremental rendering and use application chrome mode.
+
 2011-12-20  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: reproducible crash after closing web inspector and browser window  (iCab)

@@ -228,24 +228,21 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
 
     WebPreferences *preferences = [[WebPreferences alloc] init];
-    [preferences setAutosaves:NO];
-    [preferences setLoadsImagesAutomatically:YES];
-    [preferences setAuthorAndUserStylesEnabled:YES];
-    [preferences setJavaScriptEnabled:YES];
     [preferences setAllowsAnimatedImages:YES];
-    [preferences setPlugInsEnabled:NO];
+    [preferences setApplicationChromeModeEnabled:YES];
+    [preferences setAuthorAndUserStylesEnabled:YES];
+    [preferences setAutosaves:NO];
+    [preferences setDefaultFixedFontSize:11];
+    [preferences setFixedFontFamily:@"Menlo"];
     [preferences setJavaEnabled:NO];
-    [preferences setUserStyleSheetEnabled:NO];
-    [preferences setTabsToLinks:NO];
+    [preferences setJavaScriptEnabled:YES];
+    [preferences setLoadsImagesAutomatically:YES];
     [preferences setMinimumFontSize:0];
     [preferences setMinimumLogicalFontSize:9];
-#ifndef BUILDING_ON_LEOPARD
-    [preferences setFixedFontFamily:@"Menlo"];
-    [preferences setDefaultFixedFontSize:11];
-#else
-    [preferences setFixedFontFamily:@"Monaco"];
-    [preferences setDefaultFixedFontSize:10];
-#endif
+    [preferences setPlugInsEnabled:NO];
+    [preferences setSuppressIncrementalRendering:YES];
+    [preferences setTabsToLinks:NO];
+    [preferences setUserStyleSheetEnabled:NO];
 
     _webView = [[WebView alloc] init];
     [_webView setPreferences:preferences];
