@@ -1,3 +1,15 @@
+2011-12-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Add 'Select All' option to context menus in WebKit-EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=74920
+
+        Reviewed by Eric Seidel.
+
+        Enable 'Select All' option to context menus called on input fields in WebKit-EFL
+        as it is enabled in GTK and QT ports.
+
+        * ewk/ewk_contextmenu.h: Add new context menu option 'Select All'.
+
 2011-12-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Change the behavior of ewk_view_scale_set.

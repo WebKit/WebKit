@@ -1,3 +1,21 @@
+2011-12-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] Add 'Select All' option to context menus in WebKit-EFL.
+        https://bugs.webkit.org/show_bug.cgi?id=74920
+
+        Reviewed by Eric Seidel.
+
+        Enable 'Select All' option to context menus called on input fields in WebKit-EFL
+        as it is enabled in GTK and QT ports.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Add 'Select All' option.
+        (WebCore::ContextMenuController::populate): Append 'Select All' item.
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded): Enable 'Select All' option.
+        * platform/ContextMenuItem.h: Add 'Select All' option.
+        * platform/LocalizationStrategy.h: Add constructor for 'Select All' option.
+        * platform/LocalizedStrings.h: Add constructor for 'Select All' option.
+
 2011-12-20  Adam Klein  <adamk@chromium.org>
 
         Make calls to willModifyAttribute and attributeChanged symmetrical

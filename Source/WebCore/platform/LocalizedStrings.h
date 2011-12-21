@@ -70,7 +70,7 @@ namespace WebCore {
     String contextMenuItemTagInputMethods();
     String contextMenuItemTagUnicode();
 #endif
-#if PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
     String contextMenuItemTagSelectAll();
 #endif
     String contextMenuItemTagNoGuessesFound();

@@ -74,7 +74,7 @@ public:
     virtual String contextMenuItemTagInputMethods() = 0;
     virtual String contextMenuItemTagUnicode() = 0;
 #endif
-#if PLATFORM(GTK) || PLATFORM(QT)
+#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
     virtual String contextMenuItemTagSelectAll() = 0;
 #endif
     virtual String contextMenuItemTagNoGuessesFound() = 0;
