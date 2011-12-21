@@ -108,7 +108,7 @@ void InspectorDOMStorageAgent::disable(ErrorString*)
     m_state->setBoolean(DOMStorageAgentState::domStorageAgentEnabled, m_enabled);
 }
 
-void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>* entries)
+void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId, RefPtr<InspectorArray>& entries)
 {
     InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
     if (storageResource) {
@@ -120,7 +120,7 @@ void InspectorDOMStorageAgent::getDOMStorageEntries(ErrorString*, int storageId,
             RefPtr<InspectorArray> entry = InspectorArray::create();
             entry->pushString(name);
             entry->pushString(value);
-            (*entries)->pushArray(entry);
+            entries->pushArray(entry);
         }
     }
 }

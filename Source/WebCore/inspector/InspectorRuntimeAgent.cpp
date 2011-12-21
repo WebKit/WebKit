@@ -71,7 +71,7 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
     m_instrumentingAgents->setInspectorRuntimeAgent(0);
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, const bool* const returnByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, const bool* const returnByValue, RefPtr<InspectorObject>& result, bool* wasThrown)
 {
     ScriptState* scriptState = 0;
     if (frameId) {
@@ -97,7 +97,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     }
 #endif
 
-    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), result, wasThrown);
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, wasThrown);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (pauseStateChanged)
@@ -105,7 +105,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
 #endif
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const returnByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const returnByValue, RefPtr<InspectorObject>& result, bool* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -115,17 +115,17 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     String arguments;
     if (optionalArguments)
         arguments = (*optionalArguments)->toJSONString();
-    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), result, wasThrown);
+    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), &result, wasThrown);
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>* result)
+void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>& result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         *errorString = "Inspected frame has gone";
         return;
     }
-    injectedScript.getProperties(errorString, objectId, ownProperties ? *ownProperties : false, result);
+    injectedScript.getProperties(errorString, objectId, ownProperties ? *ownProperties : false, &result);
 }
 
 void InspectorRuntimeAgent::releaseObject(ErrorString*, const String& objectId)

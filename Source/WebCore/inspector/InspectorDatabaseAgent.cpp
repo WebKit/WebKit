@@ -291,7 +291,7 @@ void InspectorDatabaseAgent::restore()
     m_enabled =  m_state->getBoolean(DatabaseAgentState::databaseAgentEnabled);
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int databaseId, RefPtr<InspectorArray>* names)
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int databaseId, RefPtr<InspectorArray>& names)
 {
     if (!m_enabled) {
         *error = "Database agent is not enabled";
@@ -303,7 +303,7 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int datab
         Vector<String> tableNames = database->tableNames();
         unsigned length = tableNames.size();
         for (unsigned i = 0; i < length; ++i)
-            (*names)->pushString(tableNames[i]);
+            names->pushString(tableNames[i]);
     }
 }
 
