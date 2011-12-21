@@ -1,5 +1,16 @@
 2011-12-20  Mary Wu  <mary.wu@torchmobile.com.cn>
 
+        Upstream PageClientBlackBerry.h into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=74169
+
+        Reviewed by Daniel Bates.
+
+        Initial upstream, no new tests.
+
+        * platform/blackberry/PageClientBlackBerry.h: Added.
+
+2011-12-20  Mary Wu  <mary.wu@torchmobile.com.cn>
+
         Upstream PlatformMouseEvent and LocalizedStrings into WebCore/platform/blackberry
         https://bugs.webkit.org/show_bug.cgi?id=74383
 
