@@ -634,9 +634,6 @@ void MediaControlRootElement::updateTextTrackDisplay()
         createTextTrackDisplay();
 
     CueList activeCues = toParentMediaElement(m_textDisplayContainer)->currentlyActiveCues();
-    if (activeCues.isEmpty())
-        return;
-
     m_textTrackDisplay->removeChildren();
     bool nothingToDisplay = true;
     for (size_t i = 0; i < activeCues.size(); ++i) {

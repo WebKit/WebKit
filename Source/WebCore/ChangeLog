@@ -1,3 +1,16 @@
+2011-12-20  Eric Carlson  <eric.carlson@apple.com>
+
+        WebVTT cues sometimes render when they should not
+        https://bugs.webkit.org/show_bug.cgi?id=74873
+
+        Reviewed by Darin Adler.
+
+        Test: media/track/track-cue-nothing-to-render.html
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::updateTextTrackDisplay): Don't return early if the current
+            cue is empty so the previous cue is removed.
+
 2011-12-20  Ami Fischman  <fischman@chromium.org>
 
         Don't crash on the second time VideoLayerChromium::createCCVideoLayer() is called
