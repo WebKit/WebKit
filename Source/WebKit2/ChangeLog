@@ -1,3 +1,14 @@
+2011-12-21  Sam Weinig  <sam@webkit.org>
+
+        Exception thrown when running WKBrowsingContextLoadDelegateTest.SimpleLoad test
+        https://bugs.webkit.org/show_bug.cgi?id=75012
+
+        Reviewed by Adam Roben.
+
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        (-[WKProcessGroup dealloc]):
+        Clear the WKContext's connection client.
+
 2011-12-21  Michael Brüning  <michael.bruning@nokia.com>
 
         [Qt][WK2] Fix tst_QQuickWebView::scrollRequest() API test

@@ -94,6 +94,8 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 
 - (void)dealloc
 {
+    WKContextSetConnectionClient(_data->_contextRef.get(), 0);
+
     [_data release];
     [super dealloc];
 }
