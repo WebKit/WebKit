@@ -1709,11 +1709,21 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
             layersChanged = true;
+
+#if ENABLE(THREADED_SCROLLING)
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->frameViewHorizontalScrollbarLayerDidChange(m_renderView->frameView(), m_layerForHorizontalScrollbar.get());
+#endif
         }
     } else if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
         m_layerForHorizontalScrollbar = nullptr;
         layersChanged = true;
+
+#if ENABLE(THREADED_SCROLLING)
+        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewHorizontalScrollbarLayerDidChange(m_renderView->frameView(), 0);
+#endif
     }
 
     if (requiresVerticalScrollbarLayer()) {
@@ -1724,11 +1734,21 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
             layersChanged = true;
+
+#if ENABLE(THREADED_SCROLLING)
+            if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+                scrollingCoordinator->frameViewVerticalScrollbarLayerDidChange(m_renderView->frameView(), m_layerForVerticalScrollbar.get());
+#endif
         }
     } else if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
         m_layerForVerticalScrollbar = nullptr;
         layersChanged = true;
+
+#if ENABLE(THREADED_SCROLLING)
+        if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+            scrollingCoordinator->frameViewVerticalScrollbarLayerDidChange(m_renderView->frameView(), 0);
+#endif
     }
 
     if (requiresScrollCornerLayer()) {
@@ -1801,7 +1821,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
 #if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-                scrollingCoordinator->setFrameViewScrollLayer(m_renderView->frameView(), m_scrollLayer.get());
+                scrollingCoordinator->frameViewScrollLayerDidChange(m_renderView->frameView(), m_scrollLayer.get());
 #endif
         }
     } else {

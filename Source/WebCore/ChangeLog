@@ -1,3 +1,17 @@
+2011-12-21  Anders Carlsson  <andersca@apple.com>
+
+        Inform the scrolling coordinator when scrollbar layers come and go
+        https://bugs.webkit.org/show_bug.cgi?id=75028
+
+        Reviewed by Andreas Kling and Simon Fraser.
+
+        * page/ScrollingCoordinator.h:
+        * page/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinator::setFrameViewHorizontalScrollbarLayer):
+        (WebCore::ScrollingCoordinator::setFrameViewVerticalScrollbarLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2011-12-20  Dmitry Lomov  <dslomov@google.com>
 
         [Chromium] DatabaseTrackerChromium: iterating DatabaseSet races with Database disposal on worker thread 

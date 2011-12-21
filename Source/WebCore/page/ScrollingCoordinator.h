@@ -57,7 +57,13 @@ public:
     void pageDestroyed();
 
     // Should be called whenever the scroll layer for the given frame view changes.
-    void setFrameViewScrollLayer(FrameView*, const GraphicsLayer* scrollLayer);
+    void frameViewScrollLayerDidChange(FrameView*, const GraphicsLayer*);
+
+    // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
+    void frameViewHorizontalScrollbarLayerDidChange(FrameView*, const GraphicsLayer*);
+
+    // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
+    void frameViewVerticalScrollbarLayerDidChange(FrameView*, const GraphicsLayer*);
 
     // Should be called whenever the geometry of the given frame view changes,
     // including the visible content rect and the content size.

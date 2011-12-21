@@ -161,7 +161,29 @@ static ScrollingThread& scrollingThread()
     return scrollingThread;
 }
 
-void ScrollingCoordinator::setFrameViewScrollLayer(FrameView* frameView, const GraphicsLayer* scrollLayer)
+void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, const GraphicsLayer*)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+
+    if (frameView->frame() != m_page->mainFrame())
+        return;
+
+    // FIXME: Implement.
+}
+
+void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, const GraphicsLayer*)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_page);
+    
+    if (frameView->frame() != m_page->mainFrame())
+        return;
+
+    // FIXME: Implement.
+}
+
+void ScrollingCoordinator::frameViewScrollLayerDidChange(FrameView* frameView, const GraphicsLayer* scrollLayer)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
