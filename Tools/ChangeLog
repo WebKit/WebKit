@@ -1,5 +1,16 @@
 2011-12-21  Daniel Bates  <dbates@rim.com>
 
+        Teach build-jsc how to build JavaScriptCore for the EFL, BlackBerry, and WinCE ports
+        https://bugs.webkit.org/show_bug.cgi?id=74985
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/build-jsc:
+        * Scripts/webkitdirs.pm:
+        (cmakeBasedPortName): Added.
+
+2011-12-21  Daniel Bates  <dbates@rim.com>
+
         Extract BlackBerry CMake arguments from build-webkit into separate function
         https://bugs.webkit.org/show_bug.cgi?id=74981
 

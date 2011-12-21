@@ -53,6 +53,7 @@ BEGIN {
        &chdirWebKit
        &checkFrameworks
        &cmakeBasedPortArguments
+       &cmakeBasedPortName
        &currentSVNRevision
        &debugSafari
        &passedConfiguration
@@ -1938,6 +1939,14 @@ sub cmakeBasedPortArguments()
     return blackberryCMakeArguments() if isBlackBerry();
     return ('-DCMAKE_WINCE_SDK="STANDARDSDK_500 (ARMV4I)"') if isWinCE();
     return ();
+}
+
+sub cmakeBasedPortName()
+{
+    return "BlackBerry" if isBlackBerry();
+    return "Efl" if isEfl();
+    return "WinCE" if isWinCE();
+    return "";
 }
 
 sub promptUser
