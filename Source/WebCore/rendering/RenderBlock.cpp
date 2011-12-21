@@ -5650,6 +5650,8 @@ void RenderBlock::borderFitAdjust(IntRect& rect) const
     int oldWidth = rect.width();
     adjustForBorderFit(0, left, right);
     if (left != INT_MAX) {
+        left = min(left, oldWidth - (borderRight() + paddingRight()));
+
         left -= (borderLeft() + paddingLeft());
         if (left > 0) {
             rect.move(left, 0);
@@ -5657,6 +5659,8 @@ void RenderBlock::borderFitAdjust(IntRect& rect) const
         }
     }
     if (right != INT_MIN) {
+        right = max(right, borderLeft() + paddingLeft());
+
         right += (borderRight() + paddingRight());
         if (right < oldWidth)
             rect.expand(-(oldWidth - right), 0);
@@ -5670,11 +5674,12 @@ void RenderBlock::clearTruncation()
             setHasMarkupTruncation(false);
             for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
                 box->clearTruncation();
-        }
-        else
-            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
+        } else {
+            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling()) {
                 if (shouldCheckLines(obj))
                     toRenderBlock(obj)->clearTruncation();
+            }
+        }
     }
 }
 
