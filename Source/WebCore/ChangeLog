@@ -1,3 +1,16 @@
+2011-12-20  Florin Malita  <fmalita@google.com>
+
+        td element ignores zero width/height input element
+        https://bugs.webkit.org/show_bug.cgi?id=74636
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/input-zero-width.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+        Relax the attribute test to allow setting widths == 0.
+
 2011-12-20  Adam Klein  <adamk@chromium.org>
 
         Avoid unnecessary work when removing attributes from an element
