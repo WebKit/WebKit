@@ -1,0 +1,15 @@
+<style>
+    ruby { font-family: ahem; font-size: 50px; -webkit-font-smoothing: none; }
+    .float { height: 50px; width: 50px; float: left; background-color: lightblue; }
+</style>
+<div>
+    <ruby>aa<rt>a<div class="float"></div></rt></ruby>
+</div>
+<div>
+    <ruby>aa<rt id="target">a<div class="float"></div></rt></ruby>
+</div>
+<script>
+    document.body.offsetTop;
+    var target = document.getElementById("target");
+    target.parentNode.removeChild(target);
+</script>
