@@ -53,6 +53,7 @@ BEGIN {
        &blackberryTargetArchitecture
        &chdirWebKit
        &checkFrameworks
+       &cmakeBasedPortArguments
        &currentSVNRevision
        &debugSafari
        &passedConfiguration
@@ -1836,6 +1837,12 @@ sub buildCMakeProjectOrExit($$$$@)
     exit($returnCode) if $returnCode;
     $returnCode = exitStatus(buildCMakeGeneratedProject($makeArgs));
     exit($returnCode) if $returnCode;
+}
+
+sub cmakeBasedPortArguments()
+{
+    return ('-DCMAKE_WINCE_SDK="STANDARDSDK_500 (ARMV4I)"') if isWinCE();
+    return ();
 }
 
 sub promptUser
