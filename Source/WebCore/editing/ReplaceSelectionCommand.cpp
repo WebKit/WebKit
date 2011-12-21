@@ -139,7 +139,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     if (!m_fragment->firstChild())
         return;
     
-    Element* editableRoot = selection.rootEditableElement();
+    RefPtr<Element> editableRoot = selection.rootEditableElement();
     ASSERT(editableRoot);
     if (!editableRoot)
         return;
@@ -154,8 +154,8 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         return;
     }
 
-    Node* styleNode = selection.base().deprecatedNode();
-    RefPtr<StyledElement> holder = insertFragmentForTestRendering(styleNode);
+    RefPtr<Node> styleNode = selection.base().deprecatedNode();
+    RefPtr<StyledElement> holder = insertFragmentForTestRendering(styleNode.get());
     
     RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
     String text = plainText(range.get());
@@ -171,7 +171,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
         m_fragment = createFragmentFromText(selection.toNormalizedRange().get(), evt->text());
         if (!m_fragment->firstChild())
             return;
-        holder = insertFragmentForTestRendering(styleNode);
+        holder = insertFragmentForTestRendering(styleNode.get());
     }
     
     removeInterchangeNodes(holder.get());

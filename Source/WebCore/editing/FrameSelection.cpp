@@ -1455,14 +1455,14 @@ void FrameSelection::selectAll()
         }
     }
 
-    Node* root = 0;
+    RefPtr<Node> root = 0;
     Node* selectStartTarget = 0;
     if (isContentEditable()) {
         root = highestEditableRoot(m_selection.start());
         if (Node* shadowRoot = shadowTreeRootNode())
             selectStartTarget = shadowRoot->shadowHost();
         else
-            selectStartTarget = root;
+            selectStartTarget = root.get();
     } else {
         root = shadowTreeRootNode();
         if (root)
@@ -1478,7 +1478,7 @@ void FrameSelection::selectAll()
     if (selectStartTarget && !selectStartTarget->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true)))
         return;
 
-    VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root));
+    VisibleSelection newSelection(VisibleSelection::selectionFromContentsOfNode(root.get()));
 
     if (shouldChangeSelection(newSelection))
         setSelection(newSelection);
