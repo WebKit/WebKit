@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,27 +42,11 @@
     Preferences.exposeWorkersInspection = true;
 })();}
 
-WebInspector.platformExtensionAPI = function(tabId)
+function buildPlatformExtensionAPI(extensionInfo)
 {
-    function getTabId()
-    {
-        return tabId;
-    }
-    webInspector.inspectedWindow.__proto__.__defineGetter__("tabId", getTabId);
-    chrome = window.chrome || {};
-    chrome.experimental = chrome.experimental || {};
-    chrome.experimental.devtools = chrome.experimental.devtools || {};
-
-    var properties = Object.getOwnPropertyNames(webInspector);
-    for (var i = 0; i < properties.length; ++i) {
-        var descriptor = Object.getOwnPropertyDescriptor(webInspector, properties[i]);
-        Object.defineProperty(chrome.experimental.devtools, properties[i], descriptor);
-    }
-}
-
-WebInspector.buildPlatformExtensionAPI = function()
-{
-    return "(" + WebInspector.platformExtensionAPI + ")(" + WebInspector._inspectedTabId + ");";
+    return "var extensionInfo = " + JSON.stringify(extensionInfo) + ";" +
+       "var tabId = " + WebInspector._inspectedTabId + ";" +
+       platformExtensionAPI.toString();
 }
 
 WebInspector.setInspectedTabId = function(tabId)

@@ -917,10 +917,10 @@
                 'script_name': 'scripts/generate_devtools_extension_api.py',
                 'inputs': [
                     '<@(_script_name)',
-                    '<@(webinspector_extension_api_files)',
+                    '<@(devtools_extension_api_files)',
                 ],
                 'outputs': ['<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js'],
-                'action': ['python', '<@(_script_name)', '<@(_outputs)', '<@(webinspector_extension_api_files)'],
+                'action': ['python', '<@(_script_name)', '<@(_outputs)', '<@(devtools_extension_api_files)'],
             }],
         },
         {
@@ -999,7 +999,7 @@
                     '<@(_workers_files)',
                     '<@(webinspector_image_files)',
                     '<@(devtools_image_files)',
-                    '<@(webinspector_extension_api_files)',
+                    '<@(devtools_extension_api_files)',
                 ],
                 'search_path': [
                     '../../WebCore/inspector/front-end',
@@ -1012,7 +1012,7 @@
                 'action': ['python', '<@(_script_name)', '<@(_inspector_html)',
                                      '--devtools-files', '<@(devtools_files)',
                                      '--workers-files', '<@(_workers_files)',
-                                     '--extension-api-files', '<@(webinspector_extension_api_files)',
+                                     '--extension-api-files', '<@(devtools_extension_api_files)',
                                      '--search-path', '<@(_search_path)',
                                      '--js-search-path', '<@(_js_search_path)',
                                      '--output', '<@(_outputs)'],

@@ -6407,6 +6407,7 @@
             'inspector/front-end/ElementsTreeOutline.js',
             'inspector/front-end/EmptyView.js',
             'inspector/front-end/EventListenersSidebarPane.js',
+            'inspector/front-end/ExtensionAPI.js',
             'inspector/front-end/ExtensionAuditCategory.js',
             'inspector/front-end/ExtensionPanel.js',
             'inspector/front-end/ExtensionRegistryStub.js',
@@ -6516,7 +6517,6 @@
             'inspector/front-end/inspectorSyntaxHighlight.css',
             'inspector/front-end/popover.css',
             '<@(webinspector_standalone_css_files)',
-            '<@(webinspector_extension_api_files)',
         ],
         'webinspector_standalone_css_files': [
             'inspector/front-end/auditsPanel.css',
@@ -6535,9 +6535,6 @@
             'inspector/front-end/textPrompt.css',
             'inspector/front-end/textViewer.css',
             'inspector/front-end/timelinePanel.css',
-        ],
-        'webinspector_extension_api_files': [
-            'inspector/front-end/ExtensionAPI.js',
         ],
         'webinspector_uglifyjs_files': [
             'inspector/front-end/UglifyJS/parse-js.js',

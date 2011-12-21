@@ -1,3 +1,20 @@
+2011-12-20  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extension API] refactor extension API build code, expose experimental APIs conditionally in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=74941
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * inspector/front-end/ExtensionAPI.js:
+        (buildPlatformExtensionAPI.platformExtensionAPI):
+        (buildPlatformExtensionAPI):
+        (buildExtensionAPIInjectedScript):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._addExtensions):
+        (WebInspector.ExtensionServer.prototype._addExtension):
+        (window.addExtension):
+
 2011-12-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: fix source map url resolving.

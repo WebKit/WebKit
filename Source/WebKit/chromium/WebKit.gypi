@@ -34,10 +34,15 @@
         # for copying them to resource dir, and for generating 'devtools.html' file.
         'devtools_js_files': [
             'src/js/DevTools.js',
+            'src/js/DevToolsExtensionAPI.js',
             'src/js/Tests.js',
         ],
         'devtools_css_files': [
             'src/js/devTools.css',
+        ],
+        'devtools_extension_api_files': [
+            '../../WebCore/inspector/front-end/ExtensionAPI.js',
+            'src/js/DevToolsExtensionAPI.js'
         ],
         'devtools_image_files': [
             'src/js/Images/segmentChromium.png',

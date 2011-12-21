@@ -806,19 +806,27 @@ var Timeline = declareInterfaceClass(TimelineImpl);
 
 var extensionServer = new ExtensionServerClient();
 
-window.webInspector = new InspectorExtensionAPI();
-window.experimental = window.experimental || {};
-window.experimental.webInspector = window.webInspector;
-
+return new InspectorExtensionAPI();
 }
 
-function buildExtensionAPIInjectedScript(platformAPI)
+// Default implementation; platforms will override.
+function buildPlatformExtensionAPI()
+{
+    function platformExtensionAPI(coreAPI)
+    {
+        window.webInspector = coreAPI;
+    }
+    return platformExtensionAPI.toString();
+}
+
+
+function buildExtensionAPIInjectedScript(extensionInfo)
 {
     return "(function(injectedScriptHost, inspectedWindow, injectedScriptId){ " +
         defineCommonExtensionSymbols.toString() + ";" +
         injectedExtensionAPI.toString() + ";" +
-        "injectedExtensionAPI(injectedScriptId);" +
-        (platformAPI || "") + ";" +
+        buildPlatformExtensionAPI(extensionInfo) + ";" +
+        "platformExtensionAPI(injectedExtensionAPI(injectedScriptId));" +
         "return {};" +
         "})";
 }

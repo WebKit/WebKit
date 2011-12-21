@@ -604,12 +604,14 @@ WebInspector.ExtensionServer.prototype = {
     _addExtensions: function(extensions)
     {
         for (var i = 0; i < extensions.length; ++i)
-            this._addExtension(extensions[i].startPage, extensions[i].name);
+            this._addExtension(extensions[i]);
     },
 
-    _addExtension: function(startPage, name)
+    _addExtension: function(extensionInfo)
     {
         const urlOriginRegExp = new RegExp("([^:]+:\/\/[^/]*)\/"); // Can't use regexp literal here, MinJS chokes on it.
+        var startPage = extensionInfo.startPage;
+        var name = extensionInfo.name;
 
         try {
             var originMatch = urlOriginRegExp.exec(startPage);
@@ -620,7 +622,7 @@ WebInspector.ExtensionServer.prototype = {
             var extensionOrigin = originMatch[1];
             if (!this._registeredExtensions[extensionOrigin]) {
                 // See ExtensionAPI.js and ExtensionCommon.js for details.
-                InspectorFrontendHost.setInjectedScriptForOrigin(extensionOrigin, this._buildExtensionAPIScript());
+                InspectorFrontendHost.setInjectedScriptForOrigin(extensionOrigin, buildExtensionAPIInjectedScript(extensionInfo));
                 this._registeredExtensions[extensionOrigin] = { name: name };
             }
             var iframe = document.createElement("iframe");
@@ -632,12 +634,6 @@ WebInspector.ExtensionServer.prototype = {
             return false;
         }
         return true;
-    },
-
-    _buildExtensionAPIScript: function()
-    {
-        var platformAPI = WebInspector.buildPlatformExtensionAPI ? WebInspector.buildPlatformExtensionAPI() : "";
-        return buildExtensionAPIInjectedScript(platformAPI);
     },
 
     _onWindowMessage: function(event)
@@ -752,4 +748,10 @@ defineCommonExtensionSymbols(WebInspector.extensionAPI);
 
 WebInspector.extensionServer = new WebInspector.ExtensionServer();
 
-window.addExtension = WebInspector.extensionServer._addExtension.bind(WebInspector.extensionServer);
+window.addExtension = function(page, name)
+{
+    WebInspector.extensionServer._addExtension({
+        startPage: page,
+        name: name,
+    });
+}

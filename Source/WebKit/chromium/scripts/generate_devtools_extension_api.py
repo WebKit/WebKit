@@ -39,17 +39,9 @@ def write_devtools_extension_api(output, input_names):
         input = open(input_name, 'r')
         output.write(input.read())
     output.write("""
-        injectedExtensionAPI("remote-" + top.frames.length);
-
-        chrome = window.chrome || {};
-        chrome.experimental = chrome.experimental || {};
-        chrome.experimental.devtools = chrome.experimental.devtools || {};
-
-        var properties = Object.getOwnPropertyNames(webInspector);
-        for (var i = 0; i < properties.length; ++i) {
-            var descriptor = Object.getOwnPropertyDescriptor(webInspector, properties[i]);
-            Object.defineProperty(chrome.experimental.devtools, properties[i], descriptor);
-        }
+        var tabId;
+        var extensionInfo = {};
+        platformExtensionAPI(injectedExtensionAPI("remote-" + top.frames.length));
     })();""")
 
 
