@@ -1,3 +1,21 @@
+2011-12-21  Michael Brüning  <michael.bruning@nokia.com>
+
+        [Qt][WK2] Fix tst_QQuickWebView::scrollRequest() API test
+        https://bugs.webkit.org/show_bug.cgi?id=73994
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a viewport meta tag so that the view is actually scrollable and
+        does not get scaled to not be scrollable. Corrected the style
+        definition for the <div> tag. Removed unneeded text in div
+
+        Rolled back changes some of the changes from the previous patch
+        (r102453) because they weren't necessary.
+
+        * UIProcess/API/qt/tests/html/scroll.html:
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::scrollRequest): Partially rolled back changes.
+
 2011-12-21  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix.

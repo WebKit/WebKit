@@ -273,9 +273,6 @@ void tst_QQuickWebView::removeFromCanvas()
 void tst_QQuickWebView::scrollRequest()
 {
     webView()->setSize(QSizeF(300, 400));
-    m_window->show();
-    webView()->setVisible(true);
-    QTest::qWait(200);
 
     webView()->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
     QVERIFY(waitForSignal(webView(), SIGNAL(loadSucceeded())));
