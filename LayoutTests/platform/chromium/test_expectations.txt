@@ -189,7 +189,7 @@ BUGWK74466 : fast/workers/worker-script-error.html = PASS TIMEOUT FAIL
 
 // Tests timing out because layoutTestController.workerThreadCount is not implemented in DRT
 BUGWK74653 SKIP : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TIMEOUT
-BUGWK74653 SKIP : http/tests/workers/interrupt-database-sync-open-crash.html = TIMEOUT
+//BUGWK74653 SKIP : http/tests/workers/interrupt-database-sync-open-crash.html = TIMEOUT
 BUGWK74653 SKIP : fast/workers/storage/interrupt-database.html = TIMEOUT
 
 BUGWK71968 : fast/files/workers/worker-apply-blob-url-to-xhr.html = TEXT
@@ -3515,7 +3515,7 @@ BUGWK64940 MAC DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = PASS CRASH IMAGE
 
 BUGWK64943 MAC : fast/flexbox/010.html = PASS CRASH IMAGE
 
-BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE
+BUGWK64976 BUGWK75042 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = FAIL
 
 BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
 
@@ -4132,4 +4132,4 @@ BUGWK74427 MAC : fast/borders/border-antialiasing.html = IMAGE
 
 BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
 
-BUGWK75042 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = FAIL
+BUGWK75048 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH
