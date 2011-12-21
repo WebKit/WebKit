@@ -1,5 +1,20 @@
 2011-12-20  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 90980
+
+    2011-07-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+            Web Inspector: if you rename an element into the INPUT element the browser will crash.
+            https://bugs.webkit.org/show_bug.cgi?id=64292
+
+            Reviewed by Joseph Pecoraro.
+
+            * inspector/InspectorDOMAgent.cpp:
+            (WebCore::InspectorDOMAgent::setNodeName):
+            Unnecessary function call copyNonAttributeProperties was removed.
+
+2011-12-20  Lucas Forschler  <lforschler@apple.com>
+
     Merge 90164
 
     2011-06-30  Sreeram Ramachandran  <sreeram@chromium.org>

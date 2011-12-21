@@ -663,7 +663,6 @@ void InspectorDOMAgent::setNodeName(ErrorString*, int nodeId, const String& tagN
 
     // Copy over the original node's attributes.
     Element* oldElem = static_cast<Element*>(oldNode);
-    newElem->copyNonAttributeProperties(oldElem);
     if (oldElem->attributes())
         newElem->attributes()->setAttributes(*(oldElem->attributes(true)));
 
