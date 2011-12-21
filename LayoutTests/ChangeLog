@@ -1,5 +1,18 @@
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 94455
+
+    2011-09-02  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/9755843> anonymous RenderMathMLOperator sets itself as the renderer of its parent mfenced node
+
+            Reviewed by Darin Adler.
+
+            * mathml/operator-hijacks-fenced-node-expected.txt: Added.
+            * mathml/operator-hijacks-fenced-node.xhtml: Added.
+
+2011-12-21  Lucas Forschler  <lforschler@apple.com>
+
     Merge 94112
 
     2011-08-30  Adam Barth  <abarth@webkit.org>
