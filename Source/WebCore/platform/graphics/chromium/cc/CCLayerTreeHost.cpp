@@ -193,8 +193,9 @@ GraphicsContext3D* CCLayerTreeHost::context()
 bool CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 {
     m_triggerIdlePaints = false;
-    return m_proxy->compositeAndReadback(pixels, rect);
+    bool ret = m_proxy->compositeAndReadback(pixels, rect);
     m_triggerIdlePaints = true;
+    return ret;
 }
 
 void CCLayerTreeHost::finishAllRendering()

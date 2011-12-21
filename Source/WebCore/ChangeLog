@@ -1,3 +1,13 @@
+2011-12-20  Eric Penner  <epenner@google.com>
+
+        [chromium] m_triggerIdlePaints not reset after a compositeAndReadback
+        https://bugs.webkit.org/show_bug.cgi?id=74974
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::compositeAndReadback):
+
 2011-12-20  David Levin  <levin@chromium.org>
 
         Move misplaced assert in SQLiteStatement.cpp
