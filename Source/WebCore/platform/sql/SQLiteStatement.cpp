@@ -94,11 +94,10 @@ int SQLiteStatement::prepare()
 
 int SQLiteStatement::step()
 {
-    ASSERT(m_isPrepared);
-
     MutexLocker databaseLock(m_database.databaseMutex());
     if (m_database.isInterrupted())
         return SQLITE_INTERRUPT;
+    ASSERT(m_isPrepared);
 
     if (!m_statement)
         return SQLITE_OK;

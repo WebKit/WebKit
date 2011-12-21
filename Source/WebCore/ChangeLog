@@ -1,3 +1,17 @@
+2011-12-20  David Levin  <levin@chromium.org>
+
+        Move misplaced assert in SQLiteStatement.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=74975
+
+        Reviewed by Dmitry Titov.
+
+        The test is coming with bug 74666.
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::step): If a database was interrupted
+        before the prepare method was called, then m_isPrepared will be
+        false, so I moved the assert to be after the check for interrupted.
+
 2011-12-20  Eric Carlson  <eric.carlson@apple.com>
 
         WebVTT cues sometimes render when they should not
