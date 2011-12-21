@@ -1,3 +1,29 @@
+2011-12-21  Kentaro Hara  <haraken@chromium.org>
+
+        In prepare-ChangeLog, replace constant global variables with "use constant"
+        https://bugs.webkit.org/show_bug.cgi?id=74992
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch replaces the following constant global variables with "use constant"s.
+            - $changeLogTimeZone
+            - $SVN
+            - $GIT
+            - %supportedTestExtensions
+
+        * Scripts/prepare-ChangeLog:
+        (changeLogNameFromArgs):
+        (changeLogEmailAddressFromArgs):
+        (resolveConflictedChangeLogs):
+        (generateNewChangeLogs):
+        (diffCommand):
+        (statusCommand):
+        (createPatchCommand):
+        (findOriginalFileFromSvn):
+        (determinePropertyChanges):
+        (generateFileList):
+        (reviewerAndDescriptionForGitCommit):
+
 2011-12-20  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: rename field references from _fs to _filesystem
