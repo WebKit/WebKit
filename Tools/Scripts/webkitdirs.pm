@@ -50,7 +50,6 @@ BEGIN {
        &XcodeOptionStringNoConfig
        &XcodeOptions
        &baseProductDir
-       &blackberryTargetArchitecture
        &chdirWebKit
        &checkFrameworks
        &cmakeBasedPortArguments
@@ -878,6 +877,101 @@ sub blackberryTargetArchitecture()
             "cpu" => $cpu,
             "cpuDir" => $cpuDir,
             "buSuffix" => $buSuffix);
+}
+
+sub blackberryCMakeArguments()
+{
+    my %archInfo = blackberryTargetArchitecture();
+    my $arch = $archInfo{"arch"};
+    my $cpu = $archInfo{"cpu"};
+    my $cpuDir = $archInfo{"cpuDir"};
+    my $buSuffix = $archInfo{"buSuffix"};
+
+    my @cmakeExtraOptions;
+    if ($cpu eq "a9") {
+        $cpu = $arch . "v7le";
+        push @cmakeExtraOptions, '-DTARGETING_PLAYBOOK=1';
+    }
+
+    my $stageDir = $ENV{"STAGE_DIR"};
+    my $stageLib = File::Spec->catdir($stageDir, $cpuDir, "lib");
+    my $stageUsrLib = File::Spec->catdir($stageDir, $cpuDir, "usr", "lib");
+    my $stageInc = File::Spec->catdir($stageDir, "usr", "include");
+
+    my $qnxHost = $ENV{"QNX_HOST"};
+    my $ccCommand;
+    my $cxxCommand;
+    if ($ENV{"USE_ICECC"}) {
+        chomp($ccCommand = `which icecc`);
+        $cxxCommand = $ccCommand;
+    } else {
+        $ccCommand = File::Spec->catfile($qnxHost, "usr", "bin", "qcc");
+        $cxxCommand = $ccCommand;
+    }
+
+    if ($ENV{"CCWRAP"}) {
+        $ccCommand = $ENV{"CCWRAP"};
+        push @cmakeExtraOptions, "-DCMAKE_C_COMPILER_ARG1=qcc";
+        push @cmakeExtraOptions, "-DCMAKE_CXX_COMPILER_ARG1=qcc";
+    }
+
+    push @cmakeExtraOptions, "-DCMAKE_SKIP_RPATH='ON'" if isDarwin();
+    push @cmakeExtraOptions, "-DENABLE_DRT=1" if $ENV{"ENABLE_DRT"};
+
+    my @includeSystemDirectories;
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia", "skia");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "harfbuzz");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "imf");
+    push @includeSystemDirectories, $stageInc;
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "browser", "platform");
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "browser", "qsk");
+
+    my @cxxFlags;
+    push @cxxFlags, "-Wl,-rpath-link,$stageLib";
+    push @cxxFlags, "-Wl,-rpath-link," . File::Spec->catfile($stageUsrLib, "torch-webkit");
+    push @cxxFlags, "-Wl,-rpath-link,$stageUsrLib";
+    push @cxxFlags, "-L$stageLib";
+    push @cxxFlags, "-L$stageUsrLib";
+
+    if ($ENV{"PROFILE"}) {
+        push @cmakeExtraOptions, "-DPROFILING=1";
+        push @cxxFlags, "-p";
+    }
+
+    my @cmakeArgs;
+    push @cmakeArgs, "-DPUBLIC_BUILD=0";
+    push @cmakeArgs, '-DCMAKE_SYSTEM_NAME="QNX"';
+    push @cmakeArgs, "-DCMAKE_SYSTEM_PROCESSOR=\"$cpuDir\"";
+    push @cmakeArgs, '-DCMAKE_SYSTEM_VERSION="1"';
+    push @cmakeArgs, "-DCMAKE_C_COMPILER=\"$ccCommand\"";
+    push @cmakeArgs, "-DCMAKE_CXX_COMPILER=\"$cxxCommand\"";
+    push @cmakeArgs, "-DCMAKE_C_FLAGS=\"-Vgcc_nto${cpu} -g @cxxFlags\"";
+    push @cmakeArgs, "-DCMAKE_CXX_FLAGS=\"-Vgcc_nto${cpu}_cpp-ne -g -lang-c++ @cxxFlags\"";
+
+    # We cannot use CMAKE_INCLUDE_PATH since this describes the search path for header files in user directories.
+    # And the QNX system headers are in user directories on the host OS (i.e. they aren't installed in the host OS's
+    # system header search path). So, we need to inform g++ that these user directories (@includeSystemDirectories)
+    # are to be taken as the host OS's system header directories when building our port.
+    #
+    # Also, we cannot use CMAKE_SYSTEM_INCLUDE_PATH since that will override the entire system header path.
+    # So, we define the additional system include paths in ADDITIONAL_SYSTEM_INCLUDE_PATH. This list will
+    # be processed in OptionsBlackBerry.cmake.
+    push @cmakeArgs, '-DADDITIONAL_SYSTEM_INCLUDE_PATH="' . join(';', @includeSystemDirectories) . '"';
+
+    # FIXME: Make this more general purpose such that we can pass a list of directories and files.
+    push @cmakeArgs, '-DTHIRD_PARTY_ICU_DIR="' . File::Spec->catdir($stageInc, "unicode") . '"';
+    push @cmakeArgs, '-DTHIRD_PARTY_UNICODE_FILE="' . File::Spec->catfile($stageInc, "unicode.h") . '"';
+
+    push @cmakeArgs, "-DCMAKE_LIBRARY_PATH=\"$stageLib;$stageUsrLib\"";
+    push @cmakeArgs, '-DCMAKE_AR="' . File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ar") . '"';
+    push @cmakeArgs, '-DCMAKE_RANLIB="' . File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ranlib") . '"';
+    push @cmakeArgs, '-DCMAKE_LD="'. File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ld") . '"';
+    push @cmakeArgs, '-DCMAKE_LINKER="' . File::Spec->catfile($qnxHost, "usr", "bin", "nto${buSuffix}-ld") . '"';
+    push @cmakeArgs, "-DECLIPSE_CDT4_GENERATE_SOURCE_PROJECT=TRUE";
+    push @cmakeArgs, '-G"Eclipse CDT4 - Unix Makefiles"';
+    push @cmakeArgs, @cmakeExtraOptions;
+    return @cmakeArgs;
 }
 
 sub determineIsEfl()
@@ -1841,6 +1935,7 @@ sub buildCMakeProjectOrExit($$$$@)
 
 sub cmakeBasedPortArguments()
 {
+    return blackberryCMakeArguments() if isBlackBerry();
     return ('-DCMAKE_WINCE_SDK="STANDARDSDK_500 (ARMV4I)"') if isWinCE();
     return ();
 }

@@ -1,3 +1,25 @@
+2011-12-21  Daniel Bates  <dbates@rim.com>
+
+        Extract BlackBerry CMake arguments from build-webkit into separate function
+        https://bugs.webkit.org/show_bug.cgi?id=74981
+
+        Reviewed by Rob Buis.
+
+        Towards adding support for using Tools/Scripts/build-jsc for the BlackBerry port, move
+        the CMake argument logic from Tools/Scripts/build-webkit to function webkitdirs::blackberryCMakeArguments()
+        and have cmakeBasedPortArguments() call this function for the BlackBerry CMake argument list.
+        This will allow us to get the BlackBerry CMake arguments in Tools/Scripts/build-jsc so
+        that we can pass them to the CMake build system when building JavaScriptCore.
+
+        * Scripts/build-webkit: Move construction of CMake argument list from here to
+        webkitdirs::blackberryCMakeArguments(). Also, remove exported function blackberryTargetArchitecture()
+        since it's only called within webkitdirs.pm now. Formerly we exported this function so that we could
+        call it from build-webkit.
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments): Added.
+        (cmakeBasedPortArguments): Modified to call blackberryCMakeArguments() when building the
+        BlackBerry port.
+
 2011-12-21  Daniel Bates  <dbates@webkit.org>
 
         Extract WinCE CMake arguments from build-webkit into separate function
