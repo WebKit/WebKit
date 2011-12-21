@@ -1,3 +1,17 @@
+2011-12-20  Andreas Kling  <kling@webkit.org>
+
+        HTMLOptionsCollection: Remove incorrect FIXME about having a base class.
+        <http://webkit.org/b/74973>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTMLOptionsCollection should indeed inherit from HTMLCollection according to
+        current HTML5, so remove the comment saying we should change that.
+
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/#htmloptionscollection
+
+        * html/HTMLOptionsCollection.idl:
+
 2011-12-20  Florin Malita  <fmalita@google.com>
 
         td element ignores zero width/height input element

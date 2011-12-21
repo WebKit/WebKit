@@ -20,7 +20,6 @@
 
 module html {
 
-    // FIXME: The W3C spec says that HTMLOptionsCollection should not have a parent class.
     interface [
         GenerateNativeConverter,
         HasCustomIndexSetter
