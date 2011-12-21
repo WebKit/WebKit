@@ -1,3 +1,16 @@
+2011-12-20  Scott Graham  <scottmg@chromium.org>
+
+        wouldTaintOrigin m_cleanURLs cache grows very large when data urls used
+        https://bugs.webkit.org/show_bug.cgi?id=74957
+
+        Reviewed by Kenneth Russell.
+
+        No new tests, but memory usage of CanvasRenderingContext::m_cleanURLs
+        is reduced.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+
 2011-12-20  Greg Billock  <gbillock@google.com>
 
         Change adoptPtr(new ...) to ...::create in Page.cpp
