@@ -1,3 +1,20 @@
+2011-12-20  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        Upstream PlatformMouseEvent and LocalizedStrings into WebCore/platform/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=74383
+
+        Reviewed by Daniel Bates.
+
+        Other Main Contributors:
+        Rob Buis <rbuis@rim.com>
+        Mike Fenton <mifenton@rim.com> 
+
+        Initial upstream, no new tests.
+
+        * PlatformBlackBerry.cmake: Modified to rename Localizations.cpp to LocalizedStringsBlackBerry.cpp
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp: Added.
+        * platform/blackberry/PlatformMouseEventBlackBerry.cpp: Added.
+
 2011-12-20  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGenerator should not use pointers for out params of RefPtr type.
