@@ -1,3 +1,13 @@
+2011-12-20  Eric Carlson  <eric.carlson@apple.com>
+
+        WebVTT cues sometimes render when they should not
+        https://bugs.webkit.org/show_bug.cgi?id=74873
+
+        Not reviewed: update Chromium to pass new test added in r103371.
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::updateTextTrackDisplay):
+
 2011-12-20  Andreas Kling  <kling@webkit.org>
 
         HTMLOptionsCollection: Remove incorrect FIXME about having a base class.
