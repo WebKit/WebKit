@@ -1,3 +1,15 @@
+2011-12-21  Anders Carlsson  <andersca@apple.com>
+
+        Always reposition the scrollbar layers when the frame view size changes
+        https://bugs.webkit.org/show_bug.cgi?id=75035
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        Remove the layersChanged check and unconditionally call positionScrollbarLayers(). This only
+        worked by accident before because we were recreating horizontal and vertical scrollbars on every call.
+
 2011-12-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Add 'Select All' option to context menus in WebKit-EFL.

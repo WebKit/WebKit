@@ -1680,8 +1680,6 @@ bool RenderLayerCompositor::requiresOverhangAreasLayer() const
 
 void RenderLayerCompositor::updateOverflowControlsLayers()
 {
-    bool layersChanged = false;
-  
 #if PLATFORM(CHROMIUM) && ENABLE(RUBBER_BANDING)
     if (requiresOverhangAreasLayer()) {
         if (!m_layerForOverhangAreas) {
@@ -1692,12 +1690,10 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForOverhangAreas->setDrawsContent(false);
             m_layerForOverhangAreas->setSize(m_renderView->frameView()->frameRect().size());
             m_overflowControlsHostLayer->addChild(m_layerForOverhangAreas.get());
-            layersChanged = true;
         }
     } else if (m_layerForOverhangAreas) {
         m_layerForOverhangAreas->removeFromParent();
         m_layerForOverhangAreas = nullptr;
-        layersChanged = true;
     }
 #endif
 
@@ -1708,7 +1704,6 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
-            layersChanged = true;
 
 #if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -1718,7 +1713,6 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     } else if (m_layerForHorizontalScrollbar) {
         m_layerForHorizontalScrollbar->removeFromParent();
         m_layerForHorizontalScrollbar = nullptr;
-        layersChanged = true;
 
 #if ENABLE(THREADED_SCROLLING)
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -1733,7 +1727,6 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForVerticalScrollbar->setName("vertical scrollbar");
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
-            layersChanged = true;
 
 #if ENABLE(THREADED_SCROLLING)
             if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -1743,7 +1736,6 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     } else if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
         m_layerForVerticalScrollbar = nullptr;
-        layersChanged = true;
 
 #if ENABLE(THREADED_SCROLLING)
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -1758,16 +1750,13 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
             m_layerForScrollCorner->setName("scroll corner");
     #endif
             m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());
-            layersChanged = true;
         }
     } else if (m_layerForScrollCorner) {
         m_layerForScrollCorner->removeFromParent();
         m_layerForScrollCorner = nullptr;
-        layersChanged = true;
     }
 
-    if (layersChanged)
-        m_renderView->frameView()->positionScrollbarLayers();
+    m_renderView->frameView()->positionScrollbarLayers();
 }
 
 void RenderLayerCompositor::ensureRootLayer()
