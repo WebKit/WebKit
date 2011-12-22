@@ -2530,3 +2530,7 @@ fast/forms/select-script-onchange.html
 # [Qt] svg/custom/svg-fonts-no-latin-glyph.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=74847
 svg/custom/svg-fonts-no-latin-glyph.html
+
+# [Qt] REGRESSION(r103467): It broke fast/images/animated-gif-restored-from-bfcache.html
+# https://bugs.webkit.org/show_bug.cgi?id=75087
+fast/images/animated-gif-restored-from-bfcache.html
