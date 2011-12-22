@@ -1,3 +1,46 @@
+2011-12-21  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Add efl port's ewk_view files
+        https://bugs.webkit.org/show_bug.cgi?id=61915
+
+        Reviewed by Eric Seidel.
+
+        This is the initial version of WebKit2 EFL port's ewk_view.
+        The ewk_view is Evas_Object to show the rendered web contents.
+
+        * UIProcess/API/efl/ewk_view.cpp: Added.
+        (_ewk_view_smart_changed):
+        (_ewk_view_smart_focus_in):
+        (_ewk_view_smart_focus_out):
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (_ewk_view_smart_key_down):
+        (_ewk_view_smart_key_up):
+        (_ewk_view_on_focus_in):
+        (_ewk_view_on_focus_out):
+        (_ewk_view_on_mouse_wheel):
+        (_ewk_view_on_mouse_down):
+        (_ewk_view_on_mouse_up):
+        (_ewk_view_on_mouse_move):
+        (_ewk_view_on_key_down):
+        (_ewk_view_on_key_up):
+        (_ewk_view_priv_new):
+        (_ewk_view_priv_del):
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_del):
+        (_ewk_view_smart_resize):
+        (_ewk_view_smart_move):
+        (_ewk_view_smart_calculate):
+        (_ewk_view_smart_show):
+        (_ewk_view_smart_hide):
+        (ewk_view_smart_class_init):
+        (_ewk_view_smart_class_new):
+        (ewk_view_add):
+        (ewk_view_page_get):
+        * UIProcess/API/efl/ewk_view.h: Added.
+
 2011-12-21  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: suppress incremental rendering and use application chrome mode
