@@ -1,5 +1,14 @@
 2011-12-22  Daniel Jalkut  <jalkut@red-sweater.com>
 
+        ManualTests HTML template should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=75025
+
+        Reviewed by Ryosuke Niwa.
+
+        * ManualTests/template.html:
+
+2011-12-22  Daniel Jalkut  <jalkut@red-sweater.com>
+
         WebKit editing throws exception when monochrome color dragged onto text
         https://bugs.webkit.org/show_bug.cgi?id=74775
 
