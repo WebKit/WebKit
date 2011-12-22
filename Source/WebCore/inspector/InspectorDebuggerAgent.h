@@ -141,8 +141,6 @@ private:
     bool assertPaused(ErrorString*);
     void clearBreakDetails();
 
-    String sourceMapURLForScript(const Script&);
-
     typedef HashMap<String, Script> ScriptsMap;
     typedef HashMap<String, Vector<String> > BreakpointIdToDebugServerBreakpointIdsMap;
 
