@@ -41,8 +41,8 @@ use VCSUtils;
 sub buildTestTool();
 sub dumpTestsBySuite(\%);
 sub populateTests();
-sub runAllTests();
-sub runTest($$);
+sub runTest($$$);
+sub runTestsBySuite(\%$);
 sub prepareEnvironmentForRunningTestTool();
 sub testToolPath();
 
@@ -92,7 +92,7 @@ if ($dumpTests) {
     exit 0;
 }
 
-if (runAllTests()) {
+if (runTestsBySuite(%testsToRun, $verbose)) {
     exit 1;
 }
 
@@ -113,13 +113,14 @@ sub dumpTestsBySuite(\%)
     print "------------------\n";
 }
 
-sub runAllTests()
+sub runTestsBySuite(\%$)
 {
+    my ($tests, $verbose) = @_;
     my $anyFailures = 0;
-    for my $suite (sort keys %testsToRun) {
+    for my $suite (sort keys %$tests) {
         print "Suite: $suite\n" unless $verbose;
-        for my $test (sort @{$testsToRun{$suite}}) {
-            my $failed = runTest($suite, $test);
+        for my $test (sort @{$tests->{$suite}}) {
+            my $failed = runTest($suite, $test, $verbose);
             if ($failed) {
                 $anyFailures = 1;
             }
@@ -143,9 +144,9 @@ sub runAllTests()
     return $anyFailures;
 }
 
-sub runTest($$)
+sub runTest($$$)
 {
-    my ($suite, $testName) = @_;
+    my ($suite, $testName, $verbose) = @_;
     my $test = $suite . "." . $testName;
 
     my $gtestArg = "--gtest_filter=" . $test;

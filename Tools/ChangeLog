@@ -1,5 +1,18 @@
 2011-12-22  David Kilzer  <ddkilzer@apple.com>
 
+        run-api-tests: runAllTests() and runTest() should not use global variables
+
+        Reviewed by Adam Roben.
+
+        Part of: <http://webkit.org/b/75065> run-api-tests should be able to run individual suites and tests
+
+        * Scripts/run-api-tests:
+        (runTestsBySuite): Rename from runAllTests().  Add arguments for
+        list of tests and $verbose.
+        (runTest): Add $verbose argument.
+
+2011-12-22  David Kilzer  <ddkilzer@apple.com>
+
         run-api-tests: inline runAllTestsInSuite() into runAllTests()
 
         Reviewed by Adam Roben.
