@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x222
+  RenderBlock {HTML} at (0,0) size 800x222
+    RenderBody {BODY} at (8,16) size 784x190
+      RenderBlock {P} at (0,0) size 784x21
+        RenderInline {B} at (0,0) size 207x21
+          RenderText {#text} at (0,0) size 207x21
+            text run at (0,0) width 207: "Should be bold per HTML5."
+      RenderBlock {P} at (0,37) size 784x21
+        RenderInline {B} at (0,0) size 179x21
+          RenderInline {B} at (0,0) size 179x21
+            RenderText {#text} at (0,0) size 179x21
+              text run at (0,0) width 179: "Should be equally bold."
+      RenderBlock {P} at (0,74) size 784x21
+        RenderInline {STRONG} at (0,0) size 207x21
+          RenderText {#text} at (0,0) size 207x21
+            text run at (0,0) width 207: "Should be bold per HTML5."
+      RenderBlock {P} at (0,111) size 784x21
+        RenderInline {STRONG} at (0,0) size 179x21
+          RenderInline {STRONG} at (0,0) size 179x21
+            RenderText {#text} at (0,0) size 179x21
+              text run at (0,0) width 179: "Should be equally bold."
+      RenderBlock {P} at (0,148) size 784x42
+        RenderText {#text} at (0,0) size 756x42
+          text run at (0,0) width 534: "The HTML5 spec says that b and strong should render as font-weight: bold, "
+          text run at (534,0) width 222: "not font-weight: bolder. The text"
+          text run at (0,21) width 273: "above should all render with the same "
+          text run at (273,21) width 69: "boldness."
