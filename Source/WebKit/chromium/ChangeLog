@@ -1,3 +1,15 @@
+2011-12-21  Peter Kotwicz  <pkotwicz@google.com>
+
+        Plumbs refresh rate through WebLayerTreeView::Settings
+        https://bugs.webkit.org/show_bug.cgi?id=74884
+
+        Reviewed by James Robinson.
+
+        * public/platform/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCSettings):
+
 2011-12-20  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extension API] refactor extension API build code, expose experimental APIs conditionally in chromium
