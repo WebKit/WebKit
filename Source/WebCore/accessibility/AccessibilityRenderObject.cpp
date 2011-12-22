@@ -1889,6 +1889,11 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     
     // ignore images seemingly used as spacers
     if (isImage()) {
+        
+        // If the image can take focus, it should not be ignored, lest the user not be able to interact with something important.
+        if (canSetFocusAttribute())
+            return false;
+        
         if (node && node->isElementNode()) {
             Element* elt = static_cast<Element*>(node);
             const AtomicString& alt = elt->getAttribute(altAttr);
@@ -3068,6 +3073,10 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
     
     AccessibilityRole role = ariaRoleToWebCoreRole(ariaRole);
 
+    // ARIA states if an item can get focus, it should not be presentational.
+    if (role == PresentationalRole && canSetFocusAttribute())
+        return UnknownRole;
+    
     if (role == ButtonRole && ariaHasPopup())
         role = PopUpButtonRole;
 
@@ -3264,6 +3273,10 @@ AccessibilityOrientation AccessibilityRenderObject::orientation() const
     
 bool AccessibilityRenderObject::inheritsPresentationalRole() const
 {
+    // ARIA states if an item can get focus, it should not be presentational.
+    if (canSetFocusAttribute())
+        return false;
+    
     // ARIA spec says that when a parent object is presentational, and it has required child elements,
     // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
     // http://www.w3.org/WAI/PF/aria/complete#presentation

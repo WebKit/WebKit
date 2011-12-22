@@ -1,3 +1,20 @@
+2011-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebKit should ignore ARIA role=presentation on focusable elements
+        https://bugs.webkit.org/show_bug.cgi?id=75101
+
+        Reviewed by Darin Adler.
+
+        If an element is focusable, the presentational role must be ignored, lest the user not be able
+        to interact with something important.
+
+        Test: accessibility/presentational-elements-with-focus.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole):
+
 2011-12-22  Anders Carlsson  <andersca@apple.com>
 
         Use immediateScrollBy instead of immediateScrollTo where possible
