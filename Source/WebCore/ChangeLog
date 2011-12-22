@@ -1,3 +1,18 @@
+2011-12-21  Dale Curtis  <dalecurtis@chromium.org>
+
+        [chromium] Scale audio, video tags in MediaDocument to fit in window.
+        https://bugs.webkit.org/show_bug.cgi?id=73948
+
+        Add CSS max-height: 100%, max-width: 100% settings to the audio and
+        video tags when in MediaDocuments.
+
+        Reviewed by Eric Seidel.
+
+        Test: media/video-scales-in-media-document.html
+
+        * css/mediaControlsChromium.css:
+        (audio:-webkit-full-page-media, video:-webkit-full-page-media):
+
 2011-12-21  Konrad Piascik  <kpiascik@rim.com>
 
         Implement the JavaScriptCore bindings for eventListenerHandlerLocation

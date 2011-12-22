@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            function canPlayThrough(event) {
+                var video = event.target;
+                testExpected(video.offsetWidth, 200);
+                testExpected(video.offsetHeight, 163);
+                endTest();
+            }
+
+            function iframeLoad() {
+                var iframe = document.querySelector("iframe");
+                var video = iframe.contentDocument.querySelector("video");
+                video.addEventListener("canplaythrough", canPlayThrough);
+                video.load()
+            }
+
+            function load() {
+                var iframe = document.querySelector("iframe");
+                iframe.onload = iframeLoad;
+                iframe.src = findMediaFile("video", "content/counting");
+            }
+        </script>
+    </head>
+
+    <body onload="load()">
+        <p>Test that video media documents scale to fit undersized containers.</p>
+        <iframe style="width: 200px; height: 200px;"></iframe>
+   </body>
+</html>

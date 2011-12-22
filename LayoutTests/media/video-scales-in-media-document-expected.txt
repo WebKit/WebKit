@@ -1,0 +1,7 @@
+Test that video media documents scale to fit undersized containers.
+
+
+EXPECTED (200 == '200') OK
+EXPECTED (163 == '163') OK
+END OF TEST
+
