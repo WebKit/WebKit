@@ -1,3 +1,18 @@
+2011-12-22  Daniel Jalkut  <jalkut@red-sweater.com>
+
+        WebKit editing throws exception when monochrome color dragged onto text
+        https://bugs.webkit.org/show_bug.cgi?id=74775
+
+        Reviewed by Ryosuke Niwa.
+
+        Handle non-RGB colorspace colors in the Mac platform drag manager. Fixes NSException thrown 
+        when dragging monochrome colors to contentEditable regions.
+
+        Manual test added to trunk/ManualTests/drag-color-to-contenteditable.html
+
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asColor):
+
 2011-12-22  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: generate anonymous types.

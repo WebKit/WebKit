@@ -1,3 +1,12 @@
+2011-12-22  Daniel Jalkut  <jalkut@red-sweater.com>
+
+        WebKit editing throws exception when monochrome color dragged onto text
+        https://bugs.webkit.org/show_bug.cgi?id=74775
+
+        Reviewed by Ryosuke Niwa.
+
+        * ManualTests/drag-color-to-contenteditable.html: Added.
+
 2011-12-21  Daniel Bates  <dbates@webkit.org>
 
         Add CMake option to only build JavaScriptCore
