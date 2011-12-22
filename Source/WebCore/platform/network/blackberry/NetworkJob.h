@@ -20,7 +20,6 @@
 #define NetworkJob_h
 
 #include "DeferredData.h"
-#include "MultipartResponseDelegate.h"
 #include "PlatformString.h"
 #include "ProtectionSpace.h"
 #include "ResourceHandle.h"
@@ -70,9 +69,11 @@ public:
     virtual void notifyWMLOverride();
     void handleNotifyWMLOverride() { m_response.setIsWML(true); }
     virtual void notifyHeaderReceived(const char* key, const char* value);
+    virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
     // Exists only to resolve ambiguity between char* and String parameters
     void notifyStringHeaderReceived(const String& key, const String& value);
     void handleNotifyHeaderReceived(const String& key, const String& value);
+    void handleNotifyMultipartHeaderReceived(const String& key, const String& value);
     void handleSetCookieHeader(const String& value);
     void notifyDataReceivedPlain(const char* buf, size_t len);
     void handleNotifyDataReceived(const char* buf, size_t len);
@@ -108,6 +109,7 @@ private:
 
     // This can cause m_cancelled to be set to true, if it passes up an error to m_handle->client() which causes the job to be cancelled
     void sendResponseIfNeeded();
+    void sendMultipartResponseIfNeeded();
 
     void fireLoadDataTimer(Timer<NetworkJob>*)
     {
@@ -149,7 +151,7 @@ private:
     ResourceResponse m_response;
     Timer<NetworkJob> m_loadDataTimer;
     Timer<NetworkJob> m_loadAboutTimer;
-    OwnPtr<MultipartResponseDelegate> m_multipartDelegate;
+    OwnPtr<ResourceResponse> m_multipartResponse;
     Timer<NetworkJob> m_deleteJobTimer;
     String m_contentType;
     String m_contentDisposition;

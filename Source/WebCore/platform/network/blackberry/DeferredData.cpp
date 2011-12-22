@@ -55,6 +55,12 @@ void DeferredData::deferHeaderReceived(const String& key, const String& value)
     m_headerValues.append(value);
 }
 
+void DeferredData::deferMultipartHeaderReceived(const String& key, const String& value)
+{
+    m_multipartHeaderKeys.append(key);
+    m_multipartheaderValues.append(value);
+}
+
 void DeferredData::deferDataSent(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     m_bytesSent = bytesSent;
@@ -71,6 +77,30 @@ void DeferredData::deferClose(int status)
 {
     m_deferredCloseStatus = status;
     m_deferredClose = true;
+}
+
+bool DeferredData::processHeaders(Vector<String>& headerKeys, Vector<String>& headerValues, HandleHeadersFunction function)
+{
+    size_t numHeaders = headerKeys.size();
+    ASSERT(headerValues.size() == numHeaders);
+    for (size_t i = 0; i < numHeaders; ++i) {
+        (m_job.*function)(headerKeys[i], headerValues[i]);
+
+        if (m_job.isDeferringLoading()) {
+            // Remove all the headers that have already been processed.
+            headerKeys.remove(0, i + 1);
+            headerValues.remove(0, i + 1);
+            return false;
+        }
+
+        if (m_job.isCancelled()) {
+            // Don't bother removing headers; job will be deleted.
+            return false;
+        }
+    }
+    headerKeys.clear();
+    headerValues.clear();
+    return true;
 }
 
 void DeferredData::processDeferredData()
@@ -100,25 +130,9 @@ void DeferredData::processDeferredData()
             return;
     }
 
-    size_t numHeaders = m_headerKeys.size();
-    ASSERT(m_headerValues.size() == numHeaders);
-    for (unsigned i = 0; i < numHeaders; ++i) {
-        m_job.handleNotifyHeaderReceived(m_headerKeys[i], m_headerValues[i]);
-
-        if (m_job.isDeferringLoading()) {
-            // Remove all the headers that have already been processed.
-            m_headerKeys.remove(0, i + 1);
-            m_headerValues.remove(0, i + 1);
-            return;
-        }
-
-        if (m_job.isCancelled()) {
-            // Don't bother removing headers; job will be deleted.
-            return;
-        }
-    }
-    m_headerKeys.clear();
-    m_headerValues.clear();
+    if (!processHeaders(m_headerKeys, m_headerValues, &NetworkJob::handleNotifyHeaderReceived)
+        || !processHeaders(m_multipartHeaderKeys, m_multipartheaderValues, &NetworkJob::handleNotifyMultipartHeaderReceived))
+        return;
 
     // Only process 32k of data at a time to avoid blocking the event loop for too long.
     static const unsigned maxData = 32 * 1024;

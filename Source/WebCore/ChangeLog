@@ -1,3 +1,31 @@
+2011-12-21  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        Upstream the Multipart feature in Blackberry port
+        https://bugs.webkit.org/show_bug.cgi?id=73533
+
+        Reviewed by Rob Buis.
+
+        I refactored Multipart code of Blackberry port. Moved Multipart into
+        Blackerry network layer and removed the dependence of std::string.
+
+        Initial upstream, no new test cases.
+
+        * platform/network/blackberry/DeferredData.cpp:
+        (WebCore::DeferredData::deferMultipartHeaderReceived):
+        (WebCore::DeferredData::processHeaders):
+        (WebCore::DeferredData::processDeferredData):
+        * platform/network/blackberry/DeferredData.h:
+        (WebCore::DeferredData::hasDeferredData):
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::notifyMultipartHeaderReceived):
+        (WebCore::NetworkJob::handleNotifyMultipartHeaderReceived):
+        (WebCore::NetworkJob::handleNotifyDataReceived):
+        (WebCore::NetworkJob::handleNotifyClose):
+        (WebCore::NetworkJob::startNewJobWithRequest):
+        (WebCore::NetworkJob::sendResponseIfNeeded):
+        (WebCore::NetworkJob::sendMultipartResponseIfNeeded):
+        * platform/network/blackberry/NetworkJob.h:
+
 2011-12-21  Eric Carlson  <eric.carlson@apple.com>
 
         Fix text track cue font size and colors

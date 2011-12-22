@@ -37,6 +37,7 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformWebKitCredits.h>
 #include <BuildInformation.h>
+#include <network/MultipartStream.h>
 #include <network/NetworkRequest.h>
 #include <network/NetworkStreamFactory.h>
 #include <wtf/ASCIICType.h>
@@ -279,6 +280,14 @@ void NetworkJob::notifyHeaderReceived(const char* key, const char* value)
     }
 }
 
+void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* value)
+{
+    if (shouldDeferLoading())
+        m_deferredData.deferMultipartHeaderReceived(key, value);
+    else
+        handleNotifyMultipartHeaderReceived(key, value);
+}
+
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
 {
     if (shouldDeferLoading())
@@ -313,6 +322,44 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
         handleFTPHeader(value);
 
     m_response.setHTTPHeaderField(key, value);
+}
+
+void NetworkJob::handleNotifyMultipartHeaderReceived(const String& key, const String& value)
+{
+    if (!m_multipartResponse) {
+        // Create a new response based on the original set of headers + the
+        // replacement headers. We only replace the same few headers that gecko
+        // does. See netwerk/streamconv/converters/nsMultiMixedConv.cpp.
+        m_multipartResponse = adoptPtr(new ResourceResponse);
+        m_multipartResponse->setURL(m_response.url());
+
+        // The list of BlackBerry::Platform::replaceHeaders that we do not copy from the original
+        // response when generating a response.
+        const WebCore::HTTPHeaderMap& map = m_response.httpHeaderFields();
+
+        for (WebCore::HTTPHeaderMap::const_iterator it = map.begin(); it != map.end(); ++it) {
+            bool needsCopyfromOriginalResponse = true;
+            int replaceHeadersIndex = 0;
+            while (BlackBerry::Platform::MultipartStream::replaceHeaders[replaceHeadersIndex]) {
+                if (it->first.lower() == BlackBerry::Platform::MultipartStream::replaceHeaders[replaceHeadersIndex]) {
+                    needsCopyfromOriginalResponse = false;
+                    break;
+                }
+                replaceHeadersIndex++;
+            }
+            if (needsCopyfromOriginalResponse)
+                m_multipartResponse->setHTTPHeaderField(it->first, it->second);
+        }
+
+        m_multipartResponse->setIsMultipartPayload(true);
+    } else {
+        if (key.lower() == "content-type") {
+            String contentType = value.lower();
+            m_multipartResponse->setMimeType(extractMIMETypeFromMediaType(contentType));
+            m_multipartResponse->setTextEncodingName(extractCharsetFromMediaType(contentType));
+        }
+        m_multipartResponse->setHTTPHeaderField(key, value);
+    }
 }
 
 void NetworkJob::handleSetCookieHeader(const String& value)
@@ -350,13 +397,10 @@ void NetworkJob::handleNotifyDataReceived(const char* buf, size_t len)
 
     if (shouldSendClientData()) {
         sendResponseIfNeeded();
+        sendMultipartResponseIfNeeded();
         if (clientIsOk()) {
-            if (m_multipartDelegate)
-                m_multipartDelegate->onReceivedData(buf, len, len);
-            else {
-                RecursionGuard guard(m_callingClient);
-                m_handle->client()->didReceiveData(m_handle.get(), buf, len, len);
-           }
+            RecursionGuard guard(m_callingClient);
+            m_handle->client()->didReceiveData(m_handle.get(), buf, len, len);
         }
     }
 
@@ -419,8 +463,6 @@ void NetworkJob::handleNotifyClose(int status)
 
             sendResponseIfNeeded();
             if (clientIsOk()) {
-                if (m_multipartDelegate)
-                    m_multipartDelegate->onCompletedRequest();
 
                 RecursionGuard guard(m_callingClient);
                 if (isError(m_extendedStatusCode) && !m_dataReceived) {
@@ -439,7 +481,7 @@ void NetworkJob::handleNotifyClose(int status)
 
     // Detach from the ResourceHandle in any case.
     m_handle = 0;
-    m_multipartDelegate = nullptr;
+    m_multipartResponse = nullptr;
 }
 
 bool NetworkJob::shouldNotifyClientFinished()
@@ -487,7 +529,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
     // Pass the ownership of the ResourceHandle to the new NetworkJob.
     RefPtr<ResourceHandle> handle = m_handle;
     m_handle = 0;
-    m_multipartDelegate = nullptr;
+    m_multipartResponse = nullptr;
 
     NetworkManager::instance()->startJob(m_playerId,
         m_pageGroupName,
@@ -582,13 +624,14 @@ void NetworkJob::sendResponseIfNeeded()
     if (clientIsOk()) {
         RecursionGuard guard(m_callingClient);
         m_handle->client()->didReceiveResponse(m_handle.get(), m_response);
+    }
+}
 
-        if (mimeType == "multipart/x-mixed-replace") {
-            std::string boundary;
-            bool isReadBoundary = MultipartResponseDelegate::readMultipartBoundary(m_contentType.lower().utf8().data(), boundary);
-            if (isReadBoundary && !boundary.empty())
-                m_multipartDelegate = adoptPtr(new MultipartResponseDelegate(m_handle, m_response, boundary));
-        }
+void NetworkJob::sendMultipartResponseIfNeeded()
+{
+    if (m_multipartResponse && clientIsOk()) {
+        m_handle->client()->didReceiveResponse(m_handle.get(), *m_multipartResponse);
+        m_multipartResponse = nullptr;
     }
 }
 

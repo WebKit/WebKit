@@ -53,13 +53,14 @@ public:
     void deferOpen(int status, const String& message);
     void deferWMLOverride();
     void deferHeaderReceived(const String& key, const String& value);
+    void deferMultipartHeaderReceived(const String& key, const String& value);
     void deferDataReceived(const char* buf, size_t len);
     void deferDataSent(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     void deferClose(int status);
 
     bool hasDeferredData() const
     {
-        return m_deferredStatusReceived || m_deferredWMLOverride || !m_headerKeys.isEmpty() || !m_dataSegments.isEmpty() || m_deferredClose;
+        return m_deferredStatusReceived || m_deferredWMLOverride || !m_headerKeys.isEmpty() || !m_multipartHeaderKeys.isEmpty() || !m_dataSegments.isEmpty() || m_deferredClose;
     }
 
     void processDeferredData();
@@ -71,6 +72,11 @@ public:
     }
 
 private:
+    typedef void (NetworkJob::*HandleHeadersFunction)(const String& key, const String& value);
+
+    // Returns false if the job is deferred or canceled, otherwise returns true.
+    bool processHeaders(Vector<String>& headerKeys, Vector<String>& headerValues, HandleHeadersFunction);
+
     void fireProcessDataTimer(Timer<DeferredData>*);
     NetworkJob& m_job;
     Timer<DeferredData> m_processDataTimer;
@@ -80,6 +86,8 @@ private:
     bool m_deferredWMLOverride;
     Vector<String> m_headerKeys;
     Vector<String> m_headerValues;
+    Vector<String> m_multipartHeaderKeys;
+    Vector<String> m_multipartheaderValues;
     Deque<Vector<char> > m_dataSegments;
     unsigned long long m_bytesSent;
     unsigned long long m_totalBytesToBeSent;
