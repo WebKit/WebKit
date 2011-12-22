@@ -30,9 +30,9 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
-#include "Locker.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
+#include <wtf/Locker.h>
 
 // These are somewhat arbitrary limits, but we need to do some kind of sanity-checking.
 const unsigned minSampleRate = 8000;
