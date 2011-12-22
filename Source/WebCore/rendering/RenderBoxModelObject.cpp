@@ -2620,9 +2620,10 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 // edges if they are not pixel-aligned. Those are avoided by insetting the clipping path
                 // by one pixel.
                 if (hasOpaqueBackground) {
-                    AffineTransform currentTransformation = context->getCTM();
-                    if (currentTransformation.a() != 1 || (currentTransformation.d() != 1 && currentTransformation.d() != -1)
-                            || currentTransformation.b() || currentTransformation.c())
+                    // FIXME: The function to decide on the policy based on the transform should be a named function.
+                    // FIXME: It's not clear if this check is right. What about integral scale factors?
+                    AffineTransform transform = context->getCTM();
+                    if (transform.a() != 1 || (transform.d() != 1 && transform.d() != -1) || transform.b() || transform.c())
                         rectToClipOut.inflate(-1);
                 }
 
