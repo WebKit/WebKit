@@ -1,3 +1,16 @@
+2011-12-22  David Kilzer  <ddkilzer@apple.com>
+
+        run-api-tests: dumpAllTests() should not use global variables
+
+        Reviewed by Adam Roben.
+
+        Part of: <http://webkit.org/b/75065> run-api-tests should be able to run individual suites and tests
+
+        * Scripts/run-api-tests: Renamed $dump to $dumpTests.
+        (dumpTestsBySuite): Rename from dumpAllTests() and pass in
+        global data as an argument.  Sort suite names and test names
+        alphabetically to match output when running tests.
+
 2011-12-22  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Enable blob for the BlackBerry porting

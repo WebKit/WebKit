@@ -39,7 +39,7 @@ use webkitdirs;
 use VCSUtils;
 
 sub buildTestTool();
-sub dumpAllTests();
+sub dumpTestsBySuite(\%);
 sub populateTests();
 sub runAllTests();
 sub runAllTestsInSuite($);
@@ -55,7 +55,7 @@ my $timeout = 10;
 
 my $showHelp = 0;
 my $verbose = 0;
-my $dump = 0;
+my $dumpTests = 0;
 my $build = 1;
 my $buildDefault = $build ? "build" : "do not build";
 my @testsFailed;
@@ -74,7 +74,7 @@ EOF
 GetOptions(
     'help' => \$showHelp,
     'verbose|v' => \$verbose,
-    'dump|d' => \$dump,
+    'dump|d' => \$dumpTests,
     'build!' => \$build
 );
 
@@ -88,8 +88,8 @@ buildTestTool() if $build;
 setPathForRunningWebKitApp(\%ENV);
 my %testsToRun = populateTests();
 
-if ($dump) {
-    dumpAllTests();
+if ($dumpTests) {
+    dumpTestsBySuite(%testsToRun);
     exit 0;
 }
 
@@ -102,13 +102,14 @@ sub isSupportedPlatform()
     return isAppleMacWebKit() || isAppleWinWebKit() || isChromium();
 }
 
-sub dumpAllTests()
+sub dumpTestsBySuite(\%)
 {
+    my ($testsBySuite) = @_;
     print "Dumping test cases\n";
     print "------------------\n";
-    for my $suite (keys %testsToRun) {
+    for my $suite (sort keys %$testsBySuite) {
         print $suite . ":\n";
-        print map { "   " . $_ . "\n" } @{ $testsToRun{$suite} };
+        print map { "   " . $_ . "\n" } sort @{ $testsBySuite->{$suite} };
     }
     print "------------------\n";
 }
