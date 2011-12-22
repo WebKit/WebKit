@@ -1,3 +1,9 @@
+2011-12-21  Dan Bernstein  <mitz@apple.com>
+
+        OS X build fix after r103488.
+
+        * JavaScriptCore.exp:
+
 2011-12-21  Konrad Piascik  <kpiascik@rim.com>
 
         Implement the JavaScriptCore bindings for eventListenerHandlerLocation
