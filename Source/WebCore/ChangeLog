@@ -1,3 +1,19 @@
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
+        More ScrollAnimatorMac cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=75127
+
+        Reviewed by Andreas Kling.
+
+        Introduce a immediateScrollByWithoutContentEdgeConstraints and use it whenever we want to scroll by an
+        offset instead of doing the setConstrainsScrollingToContentEdge dance.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints):
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+
 2011-12-22  Chris Rogers  <crogers@google.com>
 
         Implement MediaElementAudioSourceNode::setFormat() so numberOfChannels and sampleRate are accounted for

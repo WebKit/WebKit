@@ -124,6 +124,7 @@ private:
 
     void immediateScrollTo(const FloatPoint&);
     void immediateScrollBy(const FloatSize&);
+    void immediateScrollByWithoutContentEdgeConstraints(const FloatSize&);
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
