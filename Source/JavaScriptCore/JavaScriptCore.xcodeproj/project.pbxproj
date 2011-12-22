@@ -141,7 +141,7 @@
 		1429D7D40ED2128200B89619 /* Interpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D7D30ED2128200B89619 /* Interpreter.cpp */; settings = {COMPILER_FLAGS = "-fno-var-tracking"; }; };
 		1429D8780ED21ACD00B89619 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */; };
 		1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8830ED21C3D00B89619 /* SamplingTool.cpp */; };
-		1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8840ED21C3D00B89619 /* SamplingTool.h */; };
+		1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8840ED21C3D00B89619 /* SamplingTool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D8DB0ED2205B00B89619 /* CallFrame.cpp */; };
 		1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8DC0ED2205B00B89619 /* CallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D92D0ED22D7000B89619 /* JIT.cpp */; };
@@ -362,7 +362,7 @@
 		86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */; };
 		86C568E211A213EE0007F7F0 /* MIPSAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C568DF11A213EE0007F7F0 /* MIPSAssembler.h */; };
 		86CA032E1038E8440028A609 /* Executable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CA032D1038E8440028A609 /* Executable.cpp */; };
-		86CAFEE31035DDE60028A609 /* Executable.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CAFEE21035DDE60028A609 /* Executable.h */; settings = {ATTRIBUTES = (); }; };
+		86CAFEE31035DDE60028A609 /* Executable.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CAFEE21035DDE60028A609 /* Executable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86CC85A10EE79A4700288682 /* JITInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 86CC85A00EE79A4700288682 /* JITInlineMethods.h */; };
 		86CC85A30EE79B7400288682 /* JITCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85A20EE79B7400288682 /* JITCall.cpp */; };
 		86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86CC85C30EE7A89400288682 /* JITPropertyAccess.cpp */; };
@@ -402,7 +402,7 @@
 		905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */; };
 		90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D3469B0E285280009492EE /* RefCountedLeakCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93052C320FB792190048FDC3 /* ParserArena.cpp */; };
-		93052C350FB792190048FDC3 /* ParserArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 93052C330FB792190048FDC3 /* ParserArena.h */; settings = {ATTRIBUTES = (); }; };
+		93052C350FB792190048FDC3 /* ParserArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 93052C330FB792190048FDC3 /* ParserArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5BD30822A1C700736975 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		932F5BD60822A1C700736975 /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */; };
 		932F5BD70822A1C700736975 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9322A00306C341D3009067BB /* libicucore.dylib */; };
@@ -428,7 +428,7 @@
 		969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07210ED1CE3300F1F681 /* BytecodeGenerator.h */; };
 		969A072A0ED1CE6900F1F681 /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07270ED1CE6900F1F681 /* Label.h */; };
 		969A072B0ED1CE6900F1F681 /* RegisterID.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07280ED1CE6900F1F681 /* RegisterID.h */; };
-		969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07290ED1CE6900F1F681 /* SegmentedVector.h */; };
+		969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07290ED1CE6900F1F681 /* SegmentedVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
 		969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07910ED1D3AE00F1F681 /* CodeBlock.h */; settings = {ATTRIBUTES = (); }; };
 		969A07980ED1D3AE00F1F681 /* EvalCodeCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07920ED1D3AE00F1F681 /* EvalCodeCache.h */; };
@@ -587,7 +587,7 @@
 		BC18C43B0E16F5CD00B34460 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C43C0E16F5CD00B34460 /* MathObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A86B0255597D01FF60F7 /* MathObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C43E0E16F5CD00B34460 /* MessageQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE798B0D6CA53D00FEA3BA /* MessageQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A86E0255597D01FF60F7 /* Nodes.h */; settings = {ATTRIBUTES = (); }; };
+		BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A86E0255597D01FF60F7 /* Nodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4400E16F5CD00B34460 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4410E16F5CD00B34460 /* NumberConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680C30E16D4E900A06E92 /* NumberConstructor.h */; };
 		BC18C4420E16F5CD00B34460 /* NumberConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */; };
@@ -2584,6 +2584,11 @@
 				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
 				86D3B2C410156BDE002865E7 /* ARMAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
+				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
+				969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */,
+				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
+				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
+				86CAFEE31035DDE60028A609 /* Executable.h in Headers */,
 				145722861437E140005FDE26 /* StrongInlines.h in Headers */,
 				0FD82F4B142806A100179C94 /* BitVector.h in Headers */,
 				0FD82E85141F3FE300179C94 /* BoundsCheckedPointer.h in Headers */,
@@ -2673,7 +2678,6 @@
 				BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */,
 				969A07980ED1D3AE00F1F681 /* EvalCodeCache.h in Headers */,
 				BC18C4000E16F5CD00B34460 /* ExceptionHelpers.h in Headers */,
-				86CAFEE31035DDE60028A609 /* Executable.h in Headers */,
 				A766B44F0EE8DCD1009518CA /* ExecutableAllocator.h in Headers */,
 				A7FEE67614837B32005DC1A6 /* ExportMacros.h in Headers */,
 				E48E0F2D0F82151700A8CA37 /* FastAllocBase.h in Headers */,
@@ -2781,7 +2785,6 @@
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				7EFF00640EC05A9A00AA7C93 /* NodeInfo.h in Headers */,
-				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
 				BC18C4400E16F5CD00B34460 /* Noncopyable.h in Headers */,
 				65E1A3DF122B894500B26097 /* NonCopyingSort.h in Headers */,
 				C0A272630E50A06300E96E15 /* NotFound.h in Headers */,
@@ -2807,7 +2810,6 @@
 				14B3EF0512BC24DD00D29EFF /* PageBlock.h in Headers */,
 				8690231512092D5C00630AF9 /* PageReservation.h in Headers */,
 				BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */,
-				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
 				BCFBE696122560E800309E9D /* PassOwnArrayPtr.h in Headers */,
 				44DD48530FAEA85000D6B4EB /* PassOwnPtr.h in Headers */,
 				BC18C44C0E16F5CD00B34460 /* PassRefPtr.h in Headers */,
@@ -2855,9 +2857,7 @@
 				86D3B3C410159D7F002865E7 /* RepatchBuffer.h in Headers */,
 				869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */,
 				BC18C4600E16F5CD00B34460 /* RetainPtr.h in Headers */,
-				1429D8860ED21C3D00B89619 /* SamplingTool.h in Headers */,
 				BC18C4610E16F5CD00B34460 /* ScopeChain.h in Headers */,
-				969A072C0ED1CE6900F1F681 /* SegmentedVector.h in Headers */,
 				A7C40C0B130B057D00D002A1 /* SentinelLinkedList.h in Headers */,
 				76FB9F0F12E851860051A2EB /* SHA1.h in Headers */,
 				A7C40C0C130B057D00D002A1 /* SinglyLinkedList.h in Headers */,

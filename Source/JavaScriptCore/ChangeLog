@@ -1,3 +1,15 @@
+2011-12-21  Konrad Piascik  <kpiascik@rim.com>
+
+        Implement the JavaScriptCore bindings for eventListenerHandlerLocation
+        https://bugs.webkit.org/show_bug.cgi?id=74313
+
+        Reviewed by Eric Seidel.
+
+        Updated project files to get Windows and Mac builds working.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2011-12-21  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ConvertThis optimizations do not honor the distinction between the global object and the global this object
