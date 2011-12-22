@@ -1,3 +1,12 @@
+2011-12-22  Adam Roben  <aroben@apple.com>
+
+        Snow Leopard test fix
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run_tests): Python 2.6.1 doesn't seem to like specifying testRunner=None to
+        unittest.main, even though that's the default. So now we explicitly specify a
+        TextTestRunner.
+
 2011-12-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: attributed strings do not include AXHeading information when a link is contained within the heading
