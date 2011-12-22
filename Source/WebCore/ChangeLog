@@ -1,3 +1,25 @@
+2011-12-21  Yosifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Selection change by type-ahead doesn't fire 'change' event
+        https://bugs.webkit.org/show_bug.cgi?id=74590
+
+        Reviewed by Kent Tamura.
+
+        This patch changes when onchange event fired in select element for:
+        1 Fire onchange event for type ahead selection.
+        2 Don't fire onchange event for Enter key. We've already fired onchange event for cursor key
+          and type ahead selection. So, onchange for Enter key is redundant. This behavior is 
+          compatible to IE(9.0.8112.16421) and Opera(9.80) on Windows. FF(8.01) doesn't fire onchange
+          by cursor key selection change and type ahead. FF requires Enter key press to fire onchange
+          event.
+
+        Test: fast/forms/select/menulist-type-ahead-find.html
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::menuListDefaultEventHandler): Don't fire onchange event for Entry key.
+        (WebCore::HTMLSelectElement::typeAheadFind): Add DispatchChangeEvent when
+        calling selectOption method.
+
 2011-12-21  Darin Adler  <darin@apple.com>
 
         Tweak and comment some transform-related code

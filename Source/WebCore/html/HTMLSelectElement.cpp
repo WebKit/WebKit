@@ -1113,13 +1113,6 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
             dispatchChangeEventForMenuList();
             handled = true;
         }
-#else
-        int listIndex = optionToListIndex(selectedIndex());
-        if (keyCode == '\r') {
-            // listIndex should already be selected, but this will fire the onchange handler.
-            selectOption(listToOptionIndex(listIndex), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
-            handled = true;
-        }
 #endif
         if (handled)
             event->setDefaultHandled();
@@ -1441,7 +1434,7 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
         // Fold the option string and check if its prefix is equal to the folded prefix.
         String text = toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
         if (stripLeadingWhiteSpace(text).foldCase().startsWith(prefixWithCaseFolded)) {
-            selectOption(listToOptionIndex(index), DeselectOtherOptions | UserDriven);
+            selectOption(listToOptionIndex(index), DeselectOtherOptions | DispatchChangeEvent | UserDriven);
             if (!usesMenuList())
                 listBoxOnChange();
 
