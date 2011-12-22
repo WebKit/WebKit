@@ -4144,7 +4144,7 @@ BUGWK75048 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.ht
 // Needs baselines
 BUGWK75055 : fast/html/font-weight-bold-for-b-and-strong.html = PASS FAIL
 
-BUGWK75098 : LayoutTests/media/track/track-cue-rendering.html = TEXT
+BUGWK75098 : media/track/track-cue-rendering.html = TEXT
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 
 BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TIMEOUT
