@@ -183,8 +183,8 @@ private:
 
     class AudioClientImpl : public WebKit::WebAudioSourceProviderClient {
     public:
-        AudioClientImpl()
-            : m_client(0)
+        AudioClientImpl(WebCore::AudioSourceProviderClient* client)
+            : m_client(client)
         {
         }
 
@@ -192,8 +192,6 @@ private:
 
         // WebAudioSourceProviderClient
         virtual void setFormat(size_t numberOfChannels, float sampleRate);
-
-        void wrap(WebCore::AudioSourceProviderClient* client) { m_client = client; }
 
     private:
         WebCore::AudioSourceProviderClient* m_client;
@@ -220,7 +218,7 @@ private:
 
     private:
         WebAudioSourceProvider* m_webAudioSourceProvider;
-        AudioClientImpl m_client;
+        OwnPtr<AudioClientImpl> m_client;
     };
 
     AudioSourceProviderImpl m_audioSourceProvider;

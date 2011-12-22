@@ -687,14 +687,18 @@ void WebMediaPlayerClientImpl::AudioSourceProviderImpl::wrap(WebAudioSourceProvi
         m_webAudioSourceProvider->setClient(0);
     m_webAudioSourceProvider = provider;
     if (m_webAudioSourceProvider)
-        m_webAudioSourceProvider->setClient(&m_client);
+        m_webAudioSourceProvider->setClient(m_client.get());
 }
 
 void WebMediaPlayerClientImpl::AudioSourceProviderImpl::setClient(AudioSourceProviderClient* client)
 {
-    m_client.wrap(client);
+    if (client)
+        m_client = adoptPtr(new WebMediaPlayerClientImpl::AudioClientImpl(client));
+    else
+        m_client.clear();
+        
     if (m_webAudioSourceProvider)
-        m_webAudioSourceProvider->setClient(&m_client);
+        m_webAudioSourceProvider->setClient(m_client.get());
 }
 
 void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(AudioBus* bus, size_t framesToProcess)
