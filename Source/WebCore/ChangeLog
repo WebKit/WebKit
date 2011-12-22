@@ -1,3 +1,35 @@
+2011-12-21  Kent Tamura  <tkent@chromium.org>
+
+        Change the item type of Document::m_formElementsWithState from Element*
+        to HTMLFormControlElementWithState*.
+        https://bugs.webkit.org/show_bug.cgi?id=74998
+
+        Reviewed by Andreas Kling.
+
+        No new tests. Just refactoring.
+
+        * dom/Document.cpp:
+        (WebCore::Document::formElementsState): Use HTMLFormControlElementWithState*.
+        * dom/Document.h:
+        (WebCore::Document::registerFormElementWithState): Change the argument type.
+        (WebCore::Document::unregisterFormElementWithState): ditto.
+        (WebCore::Document::formElements): Renamed from getFormElements().
+        * dom/Element.h:
+        Removed shouldSaveAndRestoreFormControlState(), saveFormControlState(),
+        and restoreFormControlState() because they are not called for Element
+        anymore.
+        * html/HTMLFormControlElement.h:
+        - Make formControlName() and formControlType() public.
+         They are called from Document class.
+        - Make shouldSaveAndRestoreFormControlState() public, and non-virtual.
+         This is called from Document class, and no other classes override this.
+        (WebCore::HTMLFormControlElementWithState::saveFormControlState):
+        Moved from Element.
+        (WebCore::HTMLFormControlElementWithState::restoreFormControlState): ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateCheckedRadioButtons):
+        Use HTMLFormControlElementWithState* instead of Element*.
+
 2011-12-21  Alexandre Elias  <aelias@google.com>
 
         [chromium] Always use border texels on platforms using pageScaleDelta

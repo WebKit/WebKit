@@ -196,14 +196,13 @@ void HTMLInputElement::updateCheckedRadioButtons()
         }
     } else {
         typedef Document::FormElementListHashSet::const_iterator Iterator;
-        Iterator end = document()->getFormElements()->end();
-        for (Iterator it = document()->getFormElements()->begin(); it != end; ++it) {
-            Element* element = *it;
-            if (element->formControlName() != name())
+        Iterator end = document()->formElements()->end();
+        for (Iterator it = document()->formElements()->begin(); it != end; ++it) {
+            HTMLFormControlElementWithState* control = *it;
+            if (control->formControlName() != name())
                 continue;
-            if (element->formControlType() != type())
+            if (control->formControlType() != type())
                 continue;
-            HTMLFormControlElement* control = static_cast<HTMLFormControlElement*>(element);
             if (control->form())
                 continue;
             control->setNeedsValidityCheck();

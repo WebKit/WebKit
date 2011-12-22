@@ -93,6 +93,7 @@ class HTMLCollection;
 class HTMLAllCollection;
 class HTMLDocument;
 class HTMLElement;
+class HTMLFormControlElementWithState;
 class HTMLFormElement;
 class HTMLFrameOwnerElement;
 class HTMLHeadElement;
@@ -223,9 +224,6 @@ public:
         return adoptRef(new Document(frame, url, true, false));
     }
     virtual ~Document();
-
-    typedef ListHashSet<Element*, 64> FormElementListHashSet;
-    const FormElementListHashSet* getFormElements() const { return &m_formElementsWithState; }    
 
     MediaQueryMatcher* mediaQueryMatcher();
 
@@ -519,12 +517,14 @@ public:
     void setUsesLinkRules(bool b) { m_usesLinkRules = b; }
 
     // Machinery for saving and restoring state when you leave and then go back to a page.
-    void registerFormElementWithState(Element* e) { m_formElementsWithState.add(e); }
-    void unregisterFormElementWithState(Element* e) { m_formElementsWithState.remove(e); }
+    void registerFormElementWithState(HTMLFormControlElementWithState* control) { m_formElementsWithState.add(control); }
+    void unregisterFormElementWithState(HTMLFormControlElementWithState* control) { m_formElementsWithState.remove(control); }
     Vector<String> formElementsState() const;
     void setStateForNewFormElements(const Vector<String>&);
     bool hasStateForNewFormElements() const;
     bool takeStateForFormElement(AtomicStringImpl* name, AtomicStringImpl* type, String& state);
+    typedef ListHashSet<HTMLFormControlElementWithState*, 64> FormElementListHashSet;
+    const FormElementListHashSet* formElements() const { return &m_formElementsWithState; }
 
     void registerFormElementWithFormAttribute(FormAssociatedElement*);
     void unregisterFormElementWithFormAttribute(FormAssociatedElement*);

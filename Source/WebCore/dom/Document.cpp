@@ -4313,10 +4313,10 @@ Vector<String> Document::formElementsState() const
     typedef FormElementListHashSet::const_iterator Iterator;
     Iterator end = m_formElementsWithState.end();
     for (Iterator it = m_formElementsWithState.begin(); it != end; ++it) {
-        Element* elementWithState = *it;
-        String value;
+        HTMLFormControlElementWithState* elementWithState = *it;
         if (!elementWithState->shouldSaveAndRestoreFormControlState())
             continue;
+        String value;
         if (!elementWithState->saveFormControlState(value))
             continue;
         stateVector.append(elementWithState->formControlName().string());
