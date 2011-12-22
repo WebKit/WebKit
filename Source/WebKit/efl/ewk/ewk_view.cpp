@@ -509,7 +509,7 @@ static Eina_Bool _ewk_view_smart_run_javascript_prompt(Ewk_View_Smart_Data* smar
 }
 
 // Event Handling //////////////////////////////////////////////////////
-static void _ewk_view_on_focus_in(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_focus_in(void* data, Evas*, Evas_Object*, void*)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api);
@@ -517,7 +517,7 @@ static void _ewk_view_on_focus_in(void* data, Evas* eventType, Evas_Object* call
     smartData->api->focus_in(smartData);
 }
 
-static void _ewk_view_on_focus_out(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_focus_out(void* data, Evas*, Evas_Object*, void*)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api);
@@ -525,7 +525,7 @@ static void _ewk_view_on_focus_out(void* data, Evas* eventType, Evas_Object* cal
     smartData->api->focus_out(smartData);
 }
 
-static void _ewk_view_on_mouse_wheel(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_mouse_wheel(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Wheel* wheelEvent = static_cast<Evas_Event_Mouse_Wheel*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -534,7 +534,7 @@ static void _ewk_view_on_mouse_wheel(void* data, Evas* eventType, Evas_Object* c
     smartData->api->mouse_wheel(smartData, wheelEvent);
 }
 
-static void _ewk_view_on_mouse_down(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_mouse_down(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Down* downEvent = static_cast<Evas_Event_Mouse_Down*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -543,7 +543,7 @@ static void _ewk_view_on_mouse_down(void* data, Evas* eventType, Evas_Object* ca
     smartData->api->mouse_down(smartData, downEvent);
 }
 
-static void _ewk_view_on_mouse_up(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_mouse_up(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Up* upEvent = static_cast<Evas_Event_Mouse_Up*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -552,7 +552,7 @@ static void _ewk_view_on_mouse_up(void* data, Evas* eventType, Evas_Object* call
     smartData->api->mouse_up(smartData, upEvent);
 }
 
-static void _ewk_view_on_mouse_move(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_mouse_move(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Mouse_Move* moveEvent = static_cast<Evas_Event_Mouse_Move*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -561,7 +561,7 @@ static void _ewk_view_on_mouse_move(void* data, Evas* eventType, Evas_Object* ca
     smartData->api->mouse_move(smartData, moveEvent);
 }
 
-static void _ewk_view_on_key_down(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_key_down(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Key_Down* downEvent = static_cast<Evas_Event_Key_Down*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -570,7 +570,7 @@ static void _ewk_view_on_key_down(void* data, Evas* eventType, Evas_Object* call
     smartData->api->key_down(smartData, downEvent);
 }
 
-static void _ewk_view_on_key_up(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_on_key_up(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Key_Up* upEvent = static_cast<Evas_Event_Key_Up*>(eventInfo);
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);

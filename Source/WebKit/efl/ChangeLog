@@ -1,3 +1,22 @@
+2011-12-22  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL] Remove unused parameter names.
+        https://bugs.webkit.org/show_bug.cgi?id=74702
+
+        Reviewed by Eric Seidel.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_on_focus_in):
+        (_ewk_view_on_focus_out):
+        (_ewk_view_on_mouse_wheel):
+        (_ewk_view_on_mouse_down):
+        (_ewk_view_on_mouse_up):
+        (_ewk_view_on_mouse_move):
+        (_ewk_view_on_key_down):
+        (_ewk_view_on_key_up):
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_on_del):
+
 2011-12-22  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Invalidation request for outside of visible area doesn't seem to occur when tiled view is used.

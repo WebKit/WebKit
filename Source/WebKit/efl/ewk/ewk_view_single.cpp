@@ -31,7 +31,7 @@
 
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
-static void _ewk_view_single_on_del(void* data, Evas* eventType, Evas_Object* callback, void* eventInfo)
+static void _ewk_view_single_on_del(void* data, Evas*, Evas_Object*, void*)
 {
     Evas_Object* clip = (Evas_Object*)data;
     evas_object_del(clip);
