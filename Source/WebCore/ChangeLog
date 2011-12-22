@@ -1,3 +1,111 @@
+2011-12-22  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: generate anonymous types.
+        https://bugs.webkit.org/show_bug.cgi?id=74890
+
+        Reviewed by Yury Semikhatsky.
+
+        Anonymous types are generated. Forward declarations are generated.
+
+        In general it now generates C++ types for anonymous object types from
+        JSON. It takes a name from the type declaration site, usually a
+        parameter name. This all is explained in comments in generated file. Also
+        all generated types now refer to other generated types in setter
+        methods -- but this is commented out in generated code for now. All
+        necessary forward declarations are also added. Anonymous enums are
+        generated, but they are in comments too, because we didn't have
+        solution about form the enums should have in C++ API.
+
+        Internally:
+        The change reorganizes type bindings — a polymorphous "code generator"
+        object is factored out from binding.
+        A helper class Writer is added to allow generating code with ajustable
+        indentations and to support insertion points where additional code can
+        be inserted retroactively.
+        ForwardListener class is used for preparing necessary forward
+        declarations.
+        AdHocTypeContext conception is a speculative abstract class that is
+        needed wherever anonymous type can emerge.
+
+        * inspector/CodeGeneratorInspector.py:
+        (fix_type_name.Result.output_comment):
+        (Writer.__init__):
+        (Writer.newline):
+        (Writer.append):
+        (Writer.newline_multiline):
+        (Writer.append_multiline):
+        (Writer.get_indented):
+        (Writer):
+        (Writer.insert_writer):
+        (TypeBindings.create_named_type_declaration.Helper.write_doc):
+        (TypeBindings.create_named_type_declaration.Helper):
+        (TypeBindings.create_named_type_declaration.Helper.add_to_forward_listener):
+        (TypeBindings.create_named_type_declaration):
+        (TypeBindings.create_ad_hoc_type_declaration.Helper.write_doc):
+        (TypeBindings.create_ad_hoc_type_declaration.Helper):
+        (TypeBindings.create_ad_hoc_type_declaration.Helper.add_to_forward_listener):
+        (TypeBindings.create_ad_hoc_type_declaration):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator.register_use):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator):
+        (TypeBindings.create_type_declaration_.PlainString.get_code_generator.CodeGenerator.generate_type_builder.String):
+        (TypeBindings.create_type_declaration_.PlainString.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.PlainString.get_code_generator.CodeGenerator):
+        (TypeBindings.create_type_declaration_.PlainString.get_code_generator.CodeGenerator.register_use):
+        (TypeBindings.create_type_declaration_.PlainString.get_code_generator):
+        (TypeBindings.create_type_declaration_.PlainString.get_in_c_type_text.name):
+        (TypeBindings.create_type_declaration_.PlainString):
+        (TypeBindings.create_type_declaration_):
+        (TypeBindings.create_type_declaration_.ClassBinding.get_code_generator):
+        (TypeBindings.create_type_declaration_.ClassBinding.get_code_generator.CodeGenerator):
+        (TypeBindings.create_type_declaration_.ClassBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (AdHocTypeContextImpl.__init__):
+        (AdHocTypeContextImpl.get_type_name_fix.NameFix):
+        (AdHocTypeContextImpl.get_type_name_fix.NameFix.output_comment):
+        (AdHocTypeContextImpl.get_type_name_fix):
+        (AdHocTypeContextImpl):
+        (AdHocTypeContextImpl.call_generate_type_builder):
+        (generate_forward_declaration):
+        (register_use):
+        (get_in_c_type_text):
+        (reduce_to_raw_type):
+        (PlainObjectBinding.get_code_generator):
+        (CodeGenerator.generate_type_builder.AdHocTypeContext.get_type_name_fix.NameFix):
+        (CodeGenerator.generate_type_builder.AdHocTypeContext.get_type_name_fix.NameFix.output_comment):
+        (CodeGenerator.generate_type_builder.AdHocTypeContext.get_type_name_fix):
+        (CodeGenerator.generate_type_builder.AdHocTypeContext):
+        (CodeGenerator.generate_type_builder.AdHocTypeContext.call_generate_type_builder):
+        (CodeGenerator.generate_type_builder):
+        (CodeGenerator):
+        (CodeGenerator.register_use):
+        (RawTypesBinding.get_code_generator):
+        (RawTypesBinding.get_in_c_type_text):
+        (RawTypesBinding):
+        (RawTypesBinding.reduce_to_raw_type):
+        (TypeData.__init__):
+        (TypeData.get_json_type):
+        (resolve_param_type):
+        (Generator.go):
+        (Generator.process_event.NoOpForwardListener):
+        (Generator.process_event.NoOpForwardListener.add_type_data):
+        (Generator.process_event.AdHocTypeContext.get_type_name_fix.NameFix):
+        (Generator.process_event.AdHocTypeContext.get_type_name_fix.NameFix.output_comment):
+        (Generator.process_event.AdHocTypeContext.get_type_name_fix):
+        (Generator.process_event.AdHocTypeContext):
+        (Generator.process_event.AdHocTypeContext.call_generate_type_builder):
+        (Generator.process_event):
+        (Generator.process_types.ForwardListener):
+        (Generator.process_types.ForwardListener.add_type_data):
+        (Generator.process_types.generate_all_domains_code.namespace_lazy_generator):
+        (Generator.process_types.generate_all_domains_code):
+        (Generator.process_types.call_type_builder):
+        (Generator.process_types.generate_forward_callback):
+        (Generator):
+        (Generator.process_types):
+        (flatten_list.fill_recursive):
+        (flatten_list):
+
 2011-12-22  Hans Muller  <hmuller@adobe.com>
 
         Onloadend event is not supported in XMLHttpRequest
