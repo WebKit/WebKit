@@ -1,5 +1,18 @@
 2011-12-22  Anders Carlsson  <andersca@apple.com>
 
+        Use immediateScrollBy instead of immediateScrollTo where possible
+        https://bugs.webkit.org/show_bug.cgi?id=75124
+
+        Reviewed by Sam Weinig.
+
+        Instead of computing the position to scroll to, just compute the delta and use scrollBy instead.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
         Remove a private ScrollAnimatorMac getter/setter and just update the member variable directly
         https://bugs.webkit.org/show_bug.cgi?id=75121
 

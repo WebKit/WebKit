@@ -1242,14 +1242,10 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
             m_scrollElasticityController.m_stretchScrollForce.setHeight(m_scrollElasticityController.m_stretchScrollForce.height() + deltaY);
 
             FloatSize dampedDelta(ceilf(elasticDeltaForReboundDelta(m_scrollElasticityController.m_stretchScrollForce.width())), ceilf(elasticDeltaForReboundDelta(m_scrollElasticityController.m_stretchScrollForce.height())));
-            FloatPoint origOrigin = (m_scrollableArea->visibleContentRect().location() + m_scrollableArea->scrollOrigin()) - stretchAmount;
-            FloatPoint newOrigin = origOrigin + dampedDelta;
 
-            if (origOrigin != newOrigin) {
-                m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-                immediateScrollTo(newOrigin);
-                m_scrollableArea->setConstrainsScrollingToContentEdge(true);
-            }
+            m_scrollableArea->setConstrainsScrollingToContentEdge(false);
+            immediateScrollBy(dampedDelta - stretchAmount);
+            m_scrollableArea->setConstrainsScrollingToContentEdge(true);
         }
     }
 
@@ -1359,7 +1355,7 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             FloatPoint newOrigin = m_scrollElasticityController.m_origOrigin + delta;
 
             m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-            immediateScrollTo(newOrigin);
+            immediateScrollBy(FloatSize(delta.x(), delta.y()) - m_scrollableArea->overhangAmount());
             m_scrollableArea->setConstrainsScrollingToContentEdge(true);
 
             FloatSize newStretch = m_scrollableArea->overhangAmount();
