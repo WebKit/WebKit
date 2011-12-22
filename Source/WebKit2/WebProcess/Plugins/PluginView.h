@@ -150,8 +150,8 @@ private:
 #if PLATFORM(MAC)
     virtual void setComplexTextInputEnabled(bool);
     virtual mach_port_t compositingRenderServerPort();
-    virtual float contentsScaleFactor();
 #endif
+    virtual float contentsScaleFactor();
     virtual String proxiesForURL(const String&);
     virtual String cookiesForURL(const String&);
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);
