@@ -111,6 +111,10 @@
     bottom: 0;
 }
 
+.network-item-view.visible {
+    display: -webkit-box;
+}
+
 .network-item-view .tabbed-pane-header {
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(236, 236, 236)), to(rgb(217, 217, 217)));
     border-bottom: 1px solid rgb(163, 163, 163);

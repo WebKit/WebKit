@@ -1,3 +1,13 @@
+2011-12-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Network item view is not displayed.
+        https://bugs.webkit.org/show_bug.cgi?id=75100
+
+        Not reviewed, one line css fix.
+
+        * inspector/front-end/networkPanel.css:
+        (.network-item-view.visible):
+
 2011-12-22  Andreas Kling  <kling@webkit.org>
 
         NamedNodeMap: Get rid of declCount().
