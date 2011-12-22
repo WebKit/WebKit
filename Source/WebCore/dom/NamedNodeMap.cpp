@@ -292,19 +292,6 @@ void NamedNodeMap::setClass(const String& classStr)
     m_classNames.set(classStr, element()->document()->inQuirksMode()); 
 }
 
-int NamedNodeMap::declCount() const
-{
-    int result = 0;
-    for (unsigned i = 0; i < length(); i++) {
-        Attribute* attr = attributeItem(i);
-        if (attr->decl()) {
-            ASSERT(attr->isMappedAttribute());
-            result++;
-        }
-    }
-    return result;
-}
-
 bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
 {
     if (!otherMap)
@@ -326,10 +313,9 @@ bool NamedNodeMap::mapsEquivalent(const NamedNodeMap* otherMap) const
 
 bool NamedNodeMap::mappedMapsEquivalent(const NamedNodeMap* otherMap) const
 {
-    // The # of decls must match.
-    if (declCount() != otherMap->declCount())
+    if (m_mappedAttributeCount != otherMap->m_mappedAttributeCount)
         return false;
-    
+
     // The values for each decl must match.
     for (unsigned i = 0; i < length(); i++) {
         Attribute* attr = attributeItem(i);

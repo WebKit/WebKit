@@ -1,5 +1,20 @@
 2011-12-22  Andreas Kling  <kling@webkit.org>
 
+        NamedNodeMap: Get rid of declCount().
+        <http://webkit.org/b/74948>
+
+        Reviewed by Darin Adler.
+
+        We already have the number of mapped attribute declarations in the map
+        stored in m_mappedAttributeCount (updated by declAdded()/declRemoved())
+        so compare that in mappedMapsEquivalent() to skip one loop over the map.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::mappedMapsEquivalent):
+        * dom/NamedNodeMap.h:
+
+2011-12-22  Andreas Kling  <kling@webkit.org>
+
         SnowLeopard crashes due to thread-unsafe EventListenerIterator ASSERTs
         <http://webkit.org/b/74260>
 

@@ -118,7 +118,6 @@ private:
     void setAttributes(const NamedNodeMap&);
     void clearAttributes();
     void replaceAttribute(size_t index, PassRefPtr<Attribute>);
-    int declCount() const;
 
     int m_mappedAttributeCount;
     SpaceSplitString m_classNames;
