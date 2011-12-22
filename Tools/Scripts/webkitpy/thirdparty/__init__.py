@@ -82,6 +82,8 @@ class AutoinstallImportHook(object):
             self._install_pywebsocket()
         elif '.buildbot' in fullname:
             self._install_buildbot()
+        elif '.xmlrunner' in fullname:
+            self._install_xmlrunner()
 
     def _install_mechanize(self):
         self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
@@ -127,6 +129,10 @@ class AutoinstallImportHook(object):
         installer = AutoInstaller(target_dir=pywebsocket_dir)
         installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.7.tar.gz",
                           url_subpath="pywebsocket-0.7/src/mod_pywebsocket")
+
+    def _install_xmlrunner(self):
+        self._install("http://pypi.python.org/packages/source/u/unittest-xml-reporting/unittest-xml-reporting-1.0.3.tar.gz#md5=cebf83281b0753b5d42bad38c91fd4d6",
+                      "unittest-xml-reporting-1.0.3/src/xmlrunner")
 
     def _install(self, url, url_subpath):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)

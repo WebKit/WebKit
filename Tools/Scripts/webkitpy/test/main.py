@@ -111,10 +111,17 @@ class Tester(object):
             # QueueStatusServer.__init__ has a sys.path import hack due to this code.
             sys.path.extend(set(os.path.dirname(path) for path in external_package_paths))
 
+        if '--xml' in sys.argv:
+            sys.argv.remove('--xml')
+            from webkitpy.thirdparty.autoinstalled.xmlrunner import XMLTestRunner
+            test_runner = XMLTestRunner(output='test-webkitpy-xml-reports')
+        else:
+            test_runner = None
+
         if len(sys_argv) > 1 and not sys_argv[-1].startswith("-"):
             # Then explicit modules or test names were provided, which
             # the unittest module is equipped to handle.
-            unittest.main(argv=sys_argv, module=None)
+            unittest.main(argv=sys_argv, module=None, testRunner=test_runner)
             # No need to return since unitttest.main() exits.
 
         # Otherwise, auto-detect all unit tests.
@@ -166,4 +173,4 @@ class Tester(object):
         # (This would require importing all of the unittest modules from
         # this module.)  See the loadTestsFromName() method of the
         # unittest.TestLoader class for more details on this parameter.
-        unittest.main(argv=sys_argv, module=None)
+        unittest.main(argv=sys_argv, module=None, testRunner=test_runner)

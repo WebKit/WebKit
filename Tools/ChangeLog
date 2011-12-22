@@ -1,3 +1,28 @@
+2011-12-22  Adam Roben  <aroben@apple.com>
+
+        Add a --xml flag to test-webkitpy
+
+        test-webkitpy --xml will, in addition to providing the standard text output on stdout, write
+        JUnit-style XML files to a test-webkitpy-xml-reports subdirectory in the working directory.
+        This is useful for working with tools that consume JUnit-style XML files.
+
+        Fixes <http://webkit.org/b/75090> Would like a way to generate JUnit-style XML files when
+        running test-webkitpy
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run_tests): If the --xml flag is passed, create an XMLTestRunner and pass it to
+        unittest.main(). Otherwise pass no test runner so that unittest will choose its own default.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module):
+        (AutoinstallImportHook._install_xmlrunner):
+        Added code to install unittest-xml-reporting as webkitpy.thirdparty.autoinstalled.xmlrunner.
+        This change is untested because it's basically impossible to get a test to pass when --xml
+        is passed to test-webkitpy (because xmlrunner will already have been imported by the time
+        the test runs).
+
 2011-12-22  David Kilzer  <ddkilzer@apple.com>
 
         TestWebKitAPI: initialize the main thread before running tests
