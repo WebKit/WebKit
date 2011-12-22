@@ -3,48 +3,62 @@ Tests event listeners output in the Elements sidebar panel.
 Inspect Me
 
 ======== click ========
-[expanded] document (anonymous function)
+[expanded] document event-listener-sidebar.html:19
     isAttribute: false
+    lineNumber: 19
     listenerBody: function (event) { console.log("click - document - capturing"); }
     node: HTMLDocument
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: true
-[expanded] button#node (anonymous function)
+[expanded] button#node event-listener-sidebar.html:15
     isAttribute: false
+    lineNumber: 15
     listenerBody: function (event) { console.log("click - button - capturing"); }
     node: HTMLButtonElement
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: true
-[expanded] button#node clickHandler
+[expanded] button#node event-listener-sidebar.html:12
     isAttribute: false
+    lineNumber: 12
     listenerBody: function clickHandler(event) { console.log("click - button - bubbling (registered before attribute)"); }
     node: HTMLButtonElement
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
-[expanded] button#node (anonymous function)
+[expanded] button#node event-listener-sidebar.html:16
     isAttribute: true
+    lineNumber: 16
     listenerBody: function (event) { console.log("click - button - attribute"); }
     node: HTMLButtonElement
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
-[expanded] button#node (anonymous function)
+[expanded] button#node event-listener-sidebar.html:17
     isAttribute: false
+    lineNumber: 17
     listenerBody: function (event) { console.log("click - button - bubbling (registered after attribute)"); }
     node: HTMLButtonElement
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
-[expanded] document documentClickHandler
+[expanded] document event-listener-sidebar.html:6
     isAttribute: true
+    lineNumber: 6
     listenerBody: function documentClickHandler(event) { console.log("click - document - attribute"); }
     node: HTMLDocument
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
 
 ======== hover ========
-[expanded] button#node hoverHandler
+[expanded] button#node event-listener-sidebar.html:14
     isAttribute: false
+    lineNumber: 14
     listenerBody: function hoverHandler(event) { console.log("hover - button - bubbling"); }
     node: HTMLButtonElement
+    sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: hover
     useCapture: false
 
