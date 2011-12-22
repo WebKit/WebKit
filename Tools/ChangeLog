@@ -1,3 +1,18 @@
+2011-12-22  David Kilzer  <ddkilzer@apple.com>
+
+        run-api-tests: inline runAllTestsInSuite() into runAllTests()
+
+        Reviewed by Adam Roben.
+
+        Part of: <http://webkit.org/b/75065> run-api-tests should be able to run individual suites and tests
+
+        In order to make it easy to run one or more individual suites,
+        or one more individual tests, it's easier to call a single
+        method with different data structures than individual methods.
+
+        * Scripts/run-api-tests:
+        (runAllTests): Inline runAllTestsInSuite().
+
 2011-12-22  Adam Roben  <aroben@apple.com>
 
         Add a --xml flag to test-webkitpy

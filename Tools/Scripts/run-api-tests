@@ -42,7 +42,6 @@ sub buildTestTool();
 sub dumpTestsBySuite(\%);
 sub populateTests();
 sub runAllTests();
-sub runAllTestsInSuite($);
 sub runTest($$);
 sub prepareEnvironmentForRunningTestTool();
 sub testToolPath();
@@ -118,9 +117,12 @@ sub runAllTests()
 {
     my $anyFailures = 0;
     for my $suite (sort keys %testsToRun) {
-        my $failed = runAllTestsInSuite($suite);
-        if ($failed) {
-            $anyFailures = 1;
+        print "Suite: $suite\n" unless $verbose;
+        for my $test (sort @{$testsToRun{$suite}}) {
+            my $failed = runTest($suite, $test);
+            if ($failed) {
+                $anyFailures = 1;
+            }
         }
     }
     
@@ -138,22 +140,6 @@ sub runAllTests()
             }
         }
     }
-    return $anyFailures;
-}
-
-sub runAllTestsInSuite($)
-{
-    my ($suite) = @_;
-    print "Suite: $suite\n" unless $verbose;
-
-    my $anyFailures = 0;
-    for my $test (sort @{$testsToRun{$suite}}) {
-        my $failed = runTest($suite, $test);
-        if ($failed) {
-            $anyFailures = 1;
-        }
-    }
-   
     return $anyFailures;
 }
 
