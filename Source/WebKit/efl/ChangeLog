@@ -1,3 +1,25 @@
+2011-12-22  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Invalidation request for outside of visible area doesn't seem to occur when tiled view is used.
+        https://bugs.webkit.org/show_bug.cgi?id=70873
+
+        Reviewed by Anders Carlsson.
+
+        In order to guarantee the paint outside of viewport when ewk_view_tiled is used,
+        ewk_frame_paint_full_set should be called by ewk_frame_view_create_for_view
+        when frame is created because frame view can be created newly as soon as page is created.
+        But for the ewk_view_single, as it doesn't need to paint outside of viewport,
+        ewk_frame_paint_full_set must not be called for ewk_view_single.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::transitionToCommittedForNewPage):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_frame_view_creation_notify):
+        * ewk/ewk_view_tiled.cpp:
+        (_ewk_view_tiled_smart_add):
+        (ewk_view_tiled_smart_set):
+
 2011-12-21  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Add 'Select All' option to context menus in WebKit-EFL.

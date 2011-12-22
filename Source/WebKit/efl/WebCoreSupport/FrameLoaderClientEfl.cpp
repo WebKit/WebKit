@@ -922,8 +922,10 @@ void FrameLoaderClientEfl::transitionToCommittedForNewPage()
 
     ewk_frame_view_create_for_view(m_frame, m_view);
 
-    if (m_frame == ewk_view_frame_main_get(m_view))
+    if (m_frame == ewk_view_frame_main_get(m_view)) {
+        ewk_view_frame_view_creation_notify(m_view);
         ewk_view_frame_main_cleared(m_view);
+    }
 }
 
 void FrameLoaderClientEfl::didSaveToPageCache()

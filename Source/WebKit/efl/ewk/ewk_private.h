@@ -147,6 +147,7 @@ void ewk_view_editor_client_contents_changed(Evas_Object* ewkView);
 void ewk_view_editor_client_selection_changed(Evas_Object* ewkView);
 
 bool ewk_view_focus_can_cycle(Evas_Object* ewkView, Ewk_Focus_Direction direction);
+void ewk_view_frame_view_creation_notify(Evas_Object* ewkView);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void ewk_view_js_window_object_clear(Evas_Object* ewkView, Evas_Object* frame);

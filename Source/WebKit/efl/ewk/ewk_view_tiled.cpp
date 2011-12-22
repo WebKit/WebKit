@@ -78,7 +78,6 @@ static void _ewk_view_tiled_smart_add(Evas_Object* ewkView)
     evas_object_smart_callback_add(
         sd->main_frame, "contents,size,changed",
         _ewk_view_tiled_contents_size_changed_cb, sd);
-    ewk_frame_paint_full_set(sd->main_frame, true);
 }
 
 static Eina_Bool _ewk_view_tiled_smart_scrolls_process(Ewk_View_Smart_Data* smartData)
@@ -239,8 +238,11 @@ Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class* api)
     if (!ewk_view_base_smart_set(api))
         return false;
 
-    if (EINA_UNLIKELY(!_parent_sc.sc.add))
+    if (EINA_UNLIKELY(!_parent_sc.sc.add)) {
+        _parent_sc.sc.name =  "Ewk_View_Tiled";
         ewk_view_base_smart_set(&_parent_sc);
+        api->sc.parent = reinterpret_cast<Evas_Smart_Class*>(&_parent_sc);
+    }
 
     api->sc.add = _ewk_view_tiled_smart_add;
 

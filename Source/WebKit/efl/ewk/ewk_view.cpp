@@ -264,6 +264,12 @@ struct _Ewk_View_Private_Data {
         return __VA_ARGS__;                                     \
     }
 
+#define EWK_VIEW_TILED_TYPE_CHECK_OR_RETURN(ewkView, ...) \
+    if (!evas_object_smart_type_check(ewkView, "Ewk_View_Tiled")) { \
+        INF("object is not a instance of Ewk_View_Tiled"); \
+        return __VA_ARGS__; \
+    }
+
 static void _ewk_view_smart_changed(Ewk_View_Smart_Data* smartData)
 {
     if (smartData->changed.any)
@@ -3183,6 +3189,22 @@ void ewk_view_add_console_message(Evas_Object* ewkView, const char* message, uns
     EINA_SAFETY_ON_NULL_RETURN(smartData->api);
     EINA_SAFETY_ON_NULL_RETURN(smartData->api->add_console_message);
     smartData->api->add_console_message(smartData, message, lineNumber, sourceID);
+}
+
+/**
+ * @internal
+ *
+ * Reports that FrameView object has been created.
+ * Allows to repaint the frame completely even if the areas are out of the screen
+ * when @ewkView is an instance of ewk_view_tiled.
+ *
+ * @param ewkView view object
+ */
+void ewk_view_frame_view_creation_notify(Evas_Object* ewkView)
+{
+    EWK_VIEW_TILED_TYPE_CHECK_OR_RETURN(ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    ewk_frame_paint_full_set(smartData->main_frame, true);
 }
 
 bool ewk_view_focus_can_cycle(Evas_Object* ewkView, Ewk_Focus_Direction direction)
