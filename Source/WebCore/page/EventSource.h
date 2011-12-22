@@ -114,6 +114,7 @@ namespace WebCore {
 
         String m_eventName;
         Vector<UChar> m_data;
+        String m_currentlyParsedEventId;
         String m_lastEventId;
         unsigned long long m_reconnectDelay;
         String m_origin;

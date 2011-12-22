@@ -5,7 +5,7 @@ PASS: state is OPEN
 PASS: got lastEventId "77"
 PASS: state is CONNECTING
 PASS: state is OPEN
-PASS: Last-Event-ID header was correct
+PASS: Last-Event-ID header and the lastEventId property were correct
 PASS: state is CLOSED
 DONE
 

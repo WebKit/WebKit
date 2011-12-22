@@ -8,5 +8,6 @@ else {
     echo "id: 77\n";
     echo "retry: 300\n";
     echo "data: hello\n\n";
+    echo "data: discarded";
 }
 ?>

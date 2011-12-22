@@ -41,10 +41,12 @@ es.onmessage = function (evt) {
         else
             log("FAIL: unexpected lastEventId \"" + evt.lastEventId + "\"");
     } else {
-        if (evt.data == "77")
-            log("PASS: Last-Event-ID header was correct");
-        else
+        if (evt.data != "77")
             log("FAIL: Last-Event-ID header was incorrect/missing");
+        else if (evt.lastEventId != "77")
+            log("FAIL: the lastEventId property was incorrect");
+        else
+            log("PASS: Last-Event-ID header and the lastEventId property were correct");
     }
 };
 

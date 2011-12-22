@@ -250,8 +250,13 @@ void EventSource::didFinishLoading(unsigned long, double)
     ASSERT(m_requestInFlight);
 
     if (m_receiveBuf.size() > 0 || m_data.size() > 0) {
-        append(m_receiveBuf, "\n\n");
         parseEventStream();
+
+        // Discard everything that has not been dispatched by now.
+        m_receiveBuf.clear();
+        m_data.clear();
+        m_eventName = "";
+        m_currentlyParsedEventId = String();
     }
     networkRequestEnded();
 }
@@ -322,6 +327,10 @@ void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int
     if (!lineLength) {
         if (!m_data.isEmpty()) {
             m_data.removeLast();
+            if (!m_currentlyParsedEventId.isNull()) {
+                m_lastEventId.swap(m_currentlyParsedEventId);
+                m_currentlyParsedEventId = String();
+            }
             dispatchEvent(createMessageEvent());
         }
         if (!m_eventName.isEmpty())
@@ -347,7 +356,7 @@ void EventSource::parseEventStreamLine(unsigned int bufPos, int fieldLength, int
         } else if (field == "event")
             m_eventName = valueLength ? String(&m_receiveBuf[bufPos], valueLength) : "";
         else if (field == "id")
-            m_lastEventId = valueLength ? String(&m_receiveBuf[bufPos], valueLength) : "";
+            m_currentlyParsedEventId = valueLength ? String(&m_receiveBuf[bufPos], valueLength) : "";
         else if (field == "retry") {
             if (!valueLength)
                 m_reconnectDelay = defaultReconnectDelay;
