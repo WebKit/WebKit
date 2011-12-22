@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+resources/tests1.dat: PASS

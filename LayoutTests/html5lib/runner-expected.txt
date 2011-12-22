@@ -1,12 +1,3 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
-CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
-CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
-CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
 ALERT: Invalid test: #errors
 #document-fragment
 html
@@ -21,56 +12,6 @@ resources/pending-spec-changes-plain-text-unsafe.dat: PASS
 resources/pending-spec-changes.dat: PASS
 
 resources/plain-text-unsafe.dat: PASS
-
-resources/tests1.dat: PASS
-
-resources/tests2.dat: PASS
-
-resources/tests3.dat: PASS
-
-resources/tests4.dat: PASS
-
-resources/tests5.dat: PASS
-
-resources/tests6.dat: PASS
-
-resources/tests7.dat: PASS
-
-resources/tests8.dat: PASS
-
-resources/tests9.dat: PASS
-
-resources/tests10.dat: PASS
-
-resources/tests11.dat: PASS
-
-resources/tests12.dat: PASS
-
-resources/tests14.dat: PASS
-
-resources/tests15.dat: PASS
-
-resources/tests16.dat: PASS
-
-resources/tests17.dat: PASS
-
-resources/tests18.dat: PASS
-
-resources/tests19.dat: PASS
-
-resources/tests20.dat: PASS
-
-resources/tests21.dat: PASS
-
-resources/tests22.dat: PASS
-
-resources/tests23.dat: PASS
-
-resources/tests24.dat: PASS
-
-resources/tests25.dat: PASS
-
-resources/tests26.dat: PASS
 
 resources/tests_innerHTML_1.dat: PASS
 

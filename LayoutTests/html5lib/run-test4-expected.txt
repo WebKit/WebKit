@@ -1,0 +1,1 @@
+resources/tests4.dat: PASS
