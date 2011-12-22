@@ -30,22 +30,30 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "Locker.h"
+#include "Logging.h"
 #include "MediaPlayer.h"
+
+// These are somewhat arbitrary limits, but we need to do some kind of sanity-checking.
+const unsigned minSampleRate = 8000;
+const unsigned maxSampleRate = 192000;
 
 namespace WebCore {
 
 PassRefPtr<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(AudioContext* context, HTMLMediaElement* mediaElement)
 {
-    return adoptRef(new MediaElementAudioSourceNode(context, mediaElement));      
+    return adoptRef(new MediaElementAudioSourceNode(context, mediaElement));
 }
 
 MediaElementAudioSourceNode::MediaElementAudioSourceNode(AudioContext* context, HTMLMediaElement* mediaElement)
     : AudioSourceNode(context, context->sampleRate())
     , m_mediaElement(mediaElement)
+    , m_sourceNumberOfChannels(0)
+    , m_sourceSampleRate(0)
 {
     // Default to stereo. This could change depending on what the media element .src is set to.
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
-    
+
     setNodeType(NodeTypeMediaElementAudioSource);
 
     initialize();
@@ -57,32 +65,75 @@ MediaElementAudioSourceNode::~MediaElementAudioSourceNode()
     uninitialize();
 }
 
-void MediaElementAudioSourceNode::setFormat(size_t, float)
+void MediaElementAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
-    // FIXME: setup a sample-rate converter if necessary to convert to the AudioContext sample-rate.
-    ASSERT_NOT_REACHED();
+    if (numberOfChannels != m_sourceNumberOfChannels || sourceSampleRate != m_sourceSampleRate) {
+        // FIXME: implement multi-channel greater than stereo.
+        // https://bugs.webkit.org/show_bug.cgi?id=75119
+        if (!numberOfChannels || numberOfChannels > 2 || sourceSampleRate < minSampleRate || sourceSampleRate > maxSampleRate) {
+            // process() will generate silence for these uninitialized values.
+            LOG(Media, "MediaElementAudioSourceNode::setFormat(%u, %f) - unhandled format change", static_cast<unsigned>(numberOfChannels), sourceSampleRate);
+            m_sourceNumberOfChannels = 0;
+            m_sourceSampleRate = 0;
+            return;
+        }
+
+        m_sourceNumberOfChannels = numberOfChannels;
+        m_sourceSampleRate = sourceSampleRate;
+
+        // Synchronize with process().
+        Locker<MediaElementAudioSourceNode> locker(*this);
+
+        if (sourceSampleRate != sampleRate()) {
+            double scaleFactor = sourceSampleRate / sampleRate();
+            m_multiChannelResampler = adoptPtr(new MultiChannelResampler(scaleFactor, numberOfChannels));
+        } else {
+            // Bypass resampling.
+            m_multiChannelResampler.clear();
+        }
+
+        {
+            // The context must be locked when changing the number of output channels.
+            AudioContext::AutoLocker contextLocker(context());
+
+            // Do any necesssary re-configuration to the output's number of channels.
+            output(0)->setNumberOfChannels(numberOfChannels);
+        }
+    }
 }
 
 void MediaElementAudioSourceNode::process(size_t numberOfFrames)
 {
     AudioBus* outputBus = output(0)->bus();
 
-    if (!mediaElement()) {
+    if (!mediaElement() || !m_sourceNumberOfChannels || !m_sourceSampleRate) {
         outputBus->zero();
         return;
     }
-    
+
     // Use a tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the HTMLMediaElement must be in the middle of
     // reconfiguring its playback engine, so we output silence in this case.
     if (m_processLock.tryLock()) {
-        if (AudioSourceProvider* provider = mediaElement()->audioSourceProvider())
-            provider->provideInput(outputBus, numberOfFrames);
-        else
+        if (AudioSourceProvider* provider = mediaElement()->audioSourceProvider()) {
+            if (m_multiChannelResampler.get()) {
+                ASSERT(m_sourceSampleRate != sampleRate());
+                m_multiChannelResampler->process(provider, outputBus, numberOfFrames);
+            } else {
+                // Bypass the resampler completely if the source is at the context's sample-rate.
+                ASSERT(m_sourceSampleRate == sampleRate());
+                provider->provideInput(outputBus, numberOfFrames);
+            }
+        } else {
+            // Either this port doesn't yet support HTMLMediaElement audio stream access,
+            // or the stream is not yet available.
             outputBus->zero();
+        }
         m_processLock.unlock();
-    } else
+    } else {
+        // We failed to acquire the lock.
         outputBus->zero();
+    }
 }
 
 void MediaElementAudioSourceNode::reset()

@@ -30,6 +30,8 @@
 #include "AudioSourceNode.h"
 #include "AudioSourceProviderClient.h"
 #include "HTMLMediaElement.h"
+#include "MultiChannelResampler.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
@@ -60,6 +62,11 @@ private:
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     Mutex m_processLock;
+
+    unsigned m_sourceNumberOfChannels;
+    double m_sourceSampleRate;
+
+    OwnPtr<MultiChannelResampler> m_multiChannelResampler;
 };
 
 } // namespace WebCore

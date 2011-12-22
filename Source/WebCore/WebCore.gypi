@@ -3217,6 +3217,8 @@
             'platform/audio/HRTFKernel.h',
             'platform/audio/HRTFPanner.cpp',
             'platform/audio/HRTFPanner.h',
+            'platform/audio/MultiChannelResampler.cpp',
+            'platform/audio/MultiChannelResampler.h',
             'platform/audio/Panner.cpp',
             'platform/audio/Panner.h',
             'platform/audio/Reverb.cpp',

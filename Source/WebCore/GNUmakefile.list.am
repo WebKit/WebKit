@@ -4829,6 +4829,8 @@ webcore_sources += \
 	Source/WebCore/platform/audio/HRTFKernel.h \
 	Source/WebCore/platform/audio/HRTFPanner.cpp \
 	Source/WebCore/platform/audio/HRTFPanner.h \
+	Source/WebCore/platform/audio/MultiChannelResampler.cpp \
+	Source/WebCore/platform/audio/MultiChannelResampler.h \
 	Source/WebCore/platform/audio/Panner.cpp \
 	Source/WebCore/platform/audio/Panner.h \
 	Source/WebCore/platform/audio/ReverbAccumulationBuffer.cpp \

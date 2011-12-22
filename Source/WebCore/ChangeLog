@@ -1,3 +1,29 @@
+2011-12-22  Chris Rogers  <crogers@google.com>
+
+        Implement MediaElementAudioSourceNode::setFormat() so numberOfChannels and sampleRate are accounted for
+        https://bugs.webkit.org/show_bug.cgi?id=75057
+
+        Reviewed by Eric Carlson.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add MultiChannelResampler source files to makefiles.
+        * platform/audio/MultiChannelResampler.cpp: Added.
+        (WebCore::MultiChannelResampler::MultiChannelResampler):
+        (WebCore::MultiChannelResampler::process):
+        * platform/audio/MultiChannelResampler.h: Added.
+        Add MultiChannelResampler implementation which uses one SincResampler per channel.
+        * webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::create):
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::setFormat):
+        (WebCore::MediaElementAudioSourceNode::process):
+        Implement MediaElementAudioSourceNode::setFormat() so that we can
+        properly setup a sample-rate converter and set the number of channels
+        of the MediaElementAudioSourceNode output.
+        * webaudio/MediaElementAudioSourceNode.h:
+
 2011-12-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebKit should ignore ARIA role=presentation on focusable elements
