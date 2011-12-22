@@ -1,3 +1,14 @@
+2011-12-22  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Upstream the BlackBerry change to ResourceHandle.h
+        https://bugs.webkit.org/show_bug.cgi?id=75061
+
+        Reviewed by George Staikos.
+
+        No functionality change to the existing code, no new tests.
+
+        * platform/network/ResourceHandle.h:
+
 2011-12-22  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Follow up bug to fix issues mentioned in comment 23 from bug 73317
