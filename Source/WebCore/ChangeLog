@@ -1,3 +1,19 @@
+2011-12-21  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Always use border texels on platforms using pageScaleDelta
+        https://bugs.webkit.org/show_bug.cgi?id=74226
+
+        Reviewed by James Robinson.
+
+        On platforms where the root layer can be zoomed in at draw time
+        (pageScaleDelta), we want to turn on border texels in order for
+        scaling to use GL_LINEAR instead of GL_NEAREST.
+
+        No new tests. (Flag flip.)
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+
 2011-12-21  Dale Curtis  <dalecurtis@chromium.org>
 
         [chromium] Scale audio, video tags in MediaDocument to fit in window.

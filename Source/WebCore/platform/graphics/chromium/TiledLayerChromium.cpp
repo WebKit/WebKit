@@ -430,8 +430,16 @@ void TiledLayerChromium::prepareToUpdateTiles(bool idle, int left, int top, int 
 
 void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
 {
-    if (!m_tiler)
-        createTiler(isNonCompositedContent() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
+    if (!m_tiler) {
+        CCLayerTilingData::BorderTexelOption borderTexelOption;
+#if OS(ANDROID)
+        // Always want border texels and GL_LINEAR due to pinch zoom.
+        borderTexelOption = CCLayerTilingData::HasBorderTexels;
+#else
+        borderTexelOption = isNonCompositedContent() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels;
+#endif
+        createTiler(borderTexelOption);
+    }
 
     ASSERT(m_tiler);
 
