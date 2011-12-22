@@ -4133,3 +4133,6 @@ BUGWK74427 MAC : fast/borders/border-antialiasing.html = IMAGE
 BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
 
 BUGWK75048 DEBUG : fast/workers/storage/use-same-database-in-page-and-workers.html = CRASH
+
+// Needs baselines
+BUGWK75055 : fast/html/font-weight-bold-for-b-and-strong.html = PASS FAIL
