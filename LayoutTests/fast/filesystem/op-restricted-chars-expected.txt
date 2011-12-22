@@ -1,36 +1,35 @@
 * Running: RestrictedChars
+PASS Succeeded: "/".getFile("a<b")
+PASS Succeeded: "/".getFile("a>b")
+PASS Succeeded: "/".getFile("a:b")
+PASS Succeeded: "/".getFile("a?b")
+PASS Succeeded: "/".getFile("a*b")
+PASS Succeeded: "/".getFile("a"b")
+PASS Succeeded: "/".getFile("a|b")
+PASS Succeeded: "/".getFile("<ab")
+PASS Succeeded: "/".getFile(":ab")
+PASS Succeeded: "/".getFile("?ab")
+PASS Succeeded: "/".getFile("*ab")
+PASS Succeeded: "/".getFile(""ab")
+PASS Succeeded: "/".getFile("|ab")
+PASS Succeeded: "/".getFile("ab<")
+PASS Succeeded: "/".getFile("ab:")
+PASS Succeeded: "/".getFile("ab?")
+PASS Succeeded: "/".getFile("ab*")
+PASS Succeeded: "/".getFile("ab"")
+PASS Succeeded: "/".getFile("ab|")
+PASS this.expectedErrorCode + "" is "9"
+PASS Succeeded: "/ab".copyTo("/", " a<b")
+PASS Succeeded: "/ab".copyTo("/", " a:b")
+PASS Succeeded: "/ab".copyTo("/", " a?b")
+PASS Succeeded: "/ab".copyTo("/", " a*b")
+PASS Succeeded: "/ab".copyTo("/", " a"b")
+PASS Succeeded: "/ab".copyTo("/", " a|b")
 PASS this.expectedErrorCode + "" is "9"
 PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS Succeeded: "/".getFile("ab")
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
-PASS Verified entry: ENTRY {path:/ab name:ab type:FILE}
+PASS Verified entry: ENTRY {path:/ab name:ab type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/a<b name:a<b type:FILE}
+PASS Verified entry: ENTRY {path:/ a|b name: a|b type:DIRECTORY}
 Finished running tests.
 PASS successfullyParsed is true
 

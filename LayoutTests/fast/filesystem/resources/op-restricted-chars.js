@@ -1,51 +1,52 @@
 var testCases = [
     {
         name: 'RestrictedChars',
-        precondition: [ ],
+        precondition: [
+            {fullPath:'/ab', isDirectory:true},
+        ],
         tests: [
-            // Restricted character in 'path' parameter.
+            // Test for difficult characters in 'path' parameters.
+            function(helper) { helper.getFile('/', 'a<b', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'a>b', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'a:b', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'a?b', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'a*b', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'a"b', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'a|b', {create:true}, 0); },
+
+            function(helper) { helper.getFile('/', '<ab', {create:true}, 0); },
+            function(helper) { helper.getFile('/', ':ab', {create:true}, 0); },
+            function(helper) { helper.getFile('/', '?ab', {create:true}, 0); },
+            function(helper) { helper.getFile('/', '*ab', {create:true}, 0); },
+            function(helper) { helper.getFile('/', '"ab', {create:true}, 0); },
+            function(helper) { helper.getFile('/', '|ab', {create:true}, 0); },
+
+            function(helper) { helper.getFile('/', 'ab<', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'ab:', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'ab?', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'ab*', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'ab"', {create:true}, 0); },
+            function(helper) { helper.getFile('/', 'ab|', {create:true}, 0); },
+
+            // Only '\\' is disallowed.
             function(helper) { helper.getFile('/', 'a\\b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a<b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a>b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a:b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a?b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a*b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a"b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'a|b', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
 
-            function(helper) { helper.getFile('/', '\\ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', '<ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', ':ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', '?ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', '*ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', '"ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', '|ab', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
+            // Test for difficult characters in 'name' parameters.
+            function(helper) { helper.copy('/ab', '/', ' a<b', 0); },
+            function(helper) { helper.copy('/ab', '/', ' a:b', 0); },
+            function(helper) { helper.copy('/ab', '/', ' a?b', 0); },
+            function(helper) { helper.copy('/ab', '/', ' a*b', 0); },
+            function(helper) { helper.copy('/ab', '/', ' a"b', 0); },
+            function(helper) { helper.copy('/ab', '/', ' a|b', 0); },
 
-            function(helper) { helper.getFile('/', 'ab\\', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'ab<', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'ab:', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'ab?', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'ab*', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'ab"', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.getFile('/', 'ab|', {create:true}, FileError.INVALID_MODIFICATION_ERR); },
-
-            // This should succeed.
-            function(helper) { helper.getFile('/', 'ab', {create:true}); },
-
-            // Restricted character in 'name' parameters.
-            function(helper) { helper.copy('/ab', '/', 'a\\b',FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.copy('/ab', '/', 'a<b', FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.copy('/ab', '/', 'a:b', FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.copy('/ab', '/', 'a?b', FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.copy('/ab', '/', 'a*b', FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.copy('/ab', '/', 'a"b', FileError.INVALID_MODIFICATION_ERR); },
-            function(helper) { helper.copy('/ab', '/', 'a|b', FileError.INVALID_MODIFICATION_ERR); },
-
-            // 'Name' parameter cannot contain '/'.
+            // 'Name' parameter cannot contain '/' or '\\'.
             function(helper) { helper.copy('/ab', '/', 'a/b', FileError.INVALID_MODIFICATION_ERR); },
+            function(helper) { helper.copy('/ab', '/', 'a\\b', FileError.INVALID_MODIFICATION_ERR); },
         ],
         postcondition: [
-            {fullPath:'/ab'},
+            {fullPath:'/ab', isDirectory:true},
+            {fullPath:'a<b', isDirectory:false},
+            {fullPath:' a|b', isDirectory:true}
         ],
     },
 ];

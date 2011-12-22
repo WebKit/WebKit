@@ -114,40 +114,28 @@ String DOMFilePath::removeExtraParentReferences(const String& path)
     return result;
 }
 
-// Check the naming restrictions defined in FileSystem API 8.3.
-// http://dev.w3.org/2009/dap/file-system/file-dir-sys.html#naming-restrictions
 bool DOMFilePath::isValidPath(const String& path)
 {
     if (path.isEmpty() || path == DOMFilePath::root)
         return true;
 
-    // Chars 0-31 in UTF-8 prepresentation are not allowed.
-    for (size_t i = 0; i < path.length(); ++i)
-        if (path[i] < 32)
+    // Embedded NULs are not allowed.
+    if (path.find(static_cast<UChar>(0)) != WTF::notFound)
+        return false;
+
+    // While not [yet] restricted by the spec, '\\' complicates implementation for Chromium.
+    if (path.find('\\') != WTF::notFound)
+        return false;
+
+    // This method is only called on fully-evaluated absolute paths. Any sign of ".." or "." is likely an attempt to break out of the sandbox.
+    Vector<String> components;
+    path.split(DOMFilePath::separator, components);
+    for (size_t i = 0; i < components.size(); ++i) {
+        if (components[i] == ".")
             return false;
-
-    // Unallowed names.
-    DEFINE_STATIC_LOCAL(RegularExpression, unallowedNamesRegExp1, ("(/|^)(CON|PRN|AUX|NUL)([\\./]|$)", TextCaseInsensitive));
-    DEFINE_STATIC_LOCAL(RegularExpression, unallowedNamesRegExp2, ("(/|^)(COM|LPT)[1-9]([\\./]|$)", TextCaseInsensitive));
-
-    if (unallowedNamesRegExp1.match(path) >= 0)
-        return false;
-    if (unallowedNamesRegExp2.match(path) >= 0)
-        return false;
-
-    // Names must not end with period or whitespace.
-    DEFINE_STATIC_LOCAL(RegularExpression, endingRegExp, ("[\\.\\s](/|$)", TextCaseInsensitive));
-
-    if (endingRegExp.match(path) >= 0)
-        return false;
-
-    // Unallowed chars: '\', '<', '>', ':', '?', '*', '"', '|'
-    // (We don't check '/' here as this method takes paths as its argument.)
-    DEFINE_STATIC_LOCAL(RegularExpression, unallowedCharsRegExp, ("[\\\\<>:\\?\\*\"|]", TextCaseInsensitive));
-
-    if (unallowedCharsRegExp.match(path) >= 0)
-        return false;
-
+        if (components[i] == "..")
+            return false;
+    }
     return true;
 }
 

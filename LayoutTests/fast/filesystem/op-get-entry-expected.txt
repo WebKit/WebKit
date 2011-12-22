@@ -20,19 +20,20 @@ PASS Verified entry: ENTRY {path:/dummy name:dummy type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b/c/d/e name:e type:FILE}
 * Running: CreateNestedWithRelativePath
 PASS Succeeded: "/a".getDirectory("./b")
+PASS Succeeded: "/a".getDirectory("./...")
 PASS Succeeded: "/a".getDirectory("../b")
 PASS Succeeded: "/a".getDirectory("../../b/c")
 PASS Succeeded: "/a".getDirectory("/a/../../d")
 PASS Succeeded: "/a".getDirectory("/a/../../b/./c/../../../../../e")
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
+PASS Succeeded: "/a".getDirectory(".../f")
+PASS this.expectedErrorCode + "" is "1"
 PASS Succeeded: "/a".getFile("./b.txt")
 PASS Succeeded: "/a".getFile("../b.txt")
 PASS Succeeded: "/a".getFile("../../b/c.txt")
 PASS Succeeded: "/a".getFile("/a/../../d.txt")
 PASS Succeeded: "/a".getFile("/a/../../b/./c/../../../../../e.txt")
-PASS this.expectedErrorCode + "" is "9"
-PASS this.expectedErrorCode + "" is "9"
+PASS Succeeded: "/a".getFile(".../f.txt")
+PASS this.expectedErrorCode + "" is "1"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/b name:b type:DIRECTORY}

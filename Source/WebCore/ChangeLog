@@ -1,3 +1,15 @@
+2011-12-22  Eric Uhrhane  <ericu@chromium.org>
+
+        [filesystem] Remove old filesystem naming restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=62813
+
+        Reviewed by David Levin.
+
+        * fileapi/DOMFilePath.cpp:
+        (WebCore::DOMFilePath::isValidPath): Replace strict restrictions with
+        minimal safety [no files named "." or "..", no use of '\\' or '\0' in
+        paths, no use of '/' in file names].
+
 2011-12-22  Greg Billock  <gbillock@google.com>
 
         [Coverity] Address use-after-free report in MemoryCache
