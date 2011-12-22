@@ -64,8 +64,6 @@ public:
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
 
     // FIXME: These should be pure virtual.
-    virtual void enableDisplayThrottling() { }
-    virtual void disableDisplayThrottling() { }
     virtual void pageBackgroundTransparencyChanged() { }
     virtual void forceRepaint() { }
     virtual void setLayerTreeStateIsFrozen(bool) { }

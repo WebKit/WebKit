@@ -2526,22 +2526,6 @@ IntRect FrameView::windowResizerRect() const
     return page->chrome()->windowResizerRect();
 }
 
-void FrameView::didStartAnimatedScroll() const
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    page->chrome()->client()->didStartAnimatedScroll();
-}
-
-void FrameView::didCompleteAnimatedScroll() const
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    page->chrome()->client()->didCompleteAnimatedScroll();
-}
-
 void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
     Page* page = m_frame->page();

@@ -1,5 +1,18 @@
 2011-12-22  Anders Carlsson  <andersca@apple.com>
 
+        Get rid of didStartAnimatedScroll and didCompleteAnimatedScroll
+        https://bugs.webkit.org/show_bug.cgi?id=75107
+
+        Reviewed by Adam Roben.
+
+        This is another step towards removing the display throttling in WebKit2.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportPropertiesDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
         Remove didStartRubberBand and didCompleteRubberBand callbacks
         https://bugs.webkit.org/show_bug.cgi?id=75102
 

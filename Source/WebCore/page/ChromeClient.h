@@ -311,9 +311,6 @@ namespace WebCore {
 #endif
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
-
-        virtual void didStartAnimatedScroll() const { }
-        virtual void didCompleteAnimatedScroll() const { }
         
         virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
         virtual void recommendedScrollbarStyleDidChange(int /*newStyle*/) { }

@@ -754,16 +754,6 @@ void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArgument
     }
 #endif
 }
-
-void WebChromeClient::didStartAnimatedScroll() const
-{
-    m_page->drawingArea()->disableDisplayThrottling();
-}
-
-void WebChromeClient::didCompleteAnimatedScroll() const
-{
-    m_page->drawingArea()->enableDisplayThrottling();
-}
     
 void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
 {

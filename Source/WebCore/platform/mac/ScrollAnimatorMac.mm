@@ -633,10 +633,8 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
     if ([m_scrollAnimationHelper.get() _isAnimating]) {
         NSPoint targetOrigin = [m_scrollAnimationHelper.get() targetOrigin];
         newPoint = orientation == HorizontalScrollbar ? NSMakePoint(newPos, targetOrigin.y) : NSMakePoint(targetOrigin.x, newPos);
-    } else {
+    } else
         newPoint = orientation == HorizontalScrollbar ? NSMakePoint(newPos, m_currentPosY) : NSMakePoint(m_currentPosX, newPos);
-        m_scrollableArea->didStartAnimatedScroll();
-    }
 
     [m_scrollAnimationHelper.get() scrollToPoint:newPoint];
     return true;
@@ -713,12 +711,7 @@ void ScrollAnimatorMac::immediateScrollByDeltaY(float deltaY)
 void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);
-    CGFloat progress = [m_scrollAnimationHelper.get() _progress];
-    
     immediateScrollToPoint(newPosition);
-
-    if (progress >= 1.0)
-        m_scrollableArea->didCompleteAnimatedScroll();
 }
 
 void ScrollAnimatorMac::notifyPositionChanged()

@@ -205,9 +205,6 @@ private:
     
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const OVERRIDE;
 
-    virtual void didStartAnimatedScroll() const OVERRIDE;
-    virtual void didCompleteAnimatedScroll() const OVERRIDE;
-
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&) OVERRIDE;
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) OVERRIDE;
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const OVERRIDE;

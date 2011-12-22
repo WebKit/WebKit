@@ -141,9 +141,6 @@ public:
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
 
-    virtual void didStartAnimatedScroll() const { }
-    virtual void didCompleteAnimatedScroll() const { }
-    
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }

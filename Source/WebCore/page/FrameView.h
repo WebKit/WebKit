@@ -358,8 +358,6 @@ private:
     virtual bool isActive() const;
     virtual void getTickmarks(Vector<IntRect>&) const;
     virtual void scrollTo(const IntSize&);
-    virtual void didStartAnimatedScroll() const;
-    virtual void didCompleteAnimatedScroll() const;
     virtual void setVisibleScrollerThumbRect(const IntRect&);
     virtual bool isOnActivePage() const;
     virtual ScrollableArea* enclosingScrollableArea() const;
