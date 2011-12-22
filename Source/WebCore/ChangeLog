@@ -1,5 +1,34 @@
 2011-12-22  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Title attribute should not be used in AXTitle
+        https://bugs.webkit.org/show_bug.cgi?id=75027
+
+        Reviewed by Darin Adler.
+
+        Accessibility has been incorrectly exposing the title attribute through AXTitle. The title
+        attribute better corresponds with a help tag for accessibility clients.
+
+        Test: platform/mac/accessibility/title-attribute-not-used-as-axtitle.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title):
+            Don't use the title attribute.
+        (WebCore::AccessibilityRenderObject::exposesTitleUIElement):
+            Change the semantics around when a checkbox or radio button combines it's title ui element. The change
+            makes it so that we will expose the title ui element when the control already has a label. Otherwise
+            the title ui element is hidden, and it's text is used as the AXTitle for the control.
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+            Change this method so it always returns the title ui element, and then leave it up to exposesTitleUIElement
+            to determine whether it should be shown.
+        * accessibility/AccessibilityTableCell.h:
+        (WebCore::AccessibilityTableCell::exposesTitleUIElement):
+            There's no special logic for table cells that have title ui elements, and we don't want to use
+            the logic in AccessibilityRenderObject, hence the override here.
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
+2011-12-22  Chris Fleizach  <cfleizach@apple.com>
+
         AX: aria-describedby should not be part of AXDescription (should be a part of AXHelp)
         https://bugs.webkit.org/show_bug.cgi?id=75052
 

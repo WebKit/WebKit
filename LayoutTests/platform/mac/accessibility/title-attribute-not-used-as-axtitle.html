@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<a id="link" tabindex="0" href="#" title="TITLE">text</a>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that the title attribute is not used as the AXTitle (only as the AXHelp)");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("link").focus();
+        shouldBe("accessibilityController.focusedElement.title", "'AXTitle: text'");
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: TITLE'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

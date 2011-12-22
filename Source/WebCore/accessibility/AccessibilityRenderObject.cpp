@@ -1329,10 +1329,6 @@ String AccessibilityRenderObject::title() const
     if (!node)
         return String();
     
-    const AtomicString& title = getAttribute(titleAttr);
-    if (!title.isEmpty())
-        return title;
-    
     bool isInputTag = node->hasTagName(inputTag);
     if (isInputTag) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
@@ -1342,7 +1338,7 @@ String AccessibilityRenderObject::title() const
     
     if (isInputTag || AccessibilityObject::isARIAInput(ariaRoleAttribute()) || isControl()) {
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
-        if (label && !titleUIElement())
+        if (label && !exposesTitleUIElement())
             return label->innerText();
     }
     
@@ -1687,10 +1683,13 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     if (accessibilityIsIgnored())
         return true;
     
-    // checkbox or radio buttons don't expose the title ui element unless it has a title already
-    if (isCheckboxOrRadio() && getAttribute(titleAttr).isEmpty())
-        return false;
-    
+    // Checkboxes and radio buttons use the text of their title ui element as their own AXTitle.
+    // This code controls whether the title ui element should appear in the AX tree (usually, no).
+    // It should appear if the control already has a label (which will be used as the AXTitle instead).
+    if (isCheckboxOrRadio())
+        return hasTextAlternative();
+
+    // When controls have their own descriptions, the title element should be ignored.
     if (hasTextAlternative())
         return false;
     
@@ -1705,9 +1704,6 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     // if isFieldset is true, the renderer is guaranteed to be a RenderFieldset
     if (isFieldset())
         return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend());
-    
-    if (!exposesTitleUIElement())
-        return 0;
     
     Node* element = m_renderer->node();
     HTMLLabelElement* label = labelForElement(static_cast<Element*>(element));

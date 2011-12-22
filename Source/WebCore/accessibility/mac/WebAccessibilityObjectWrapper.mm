@@ -2255,6 +2255,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
 
     if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
+        if (!m_object->exposesTitleUIElement())
+            return nil;
+        
         AccessibilityObject* obj = m_object->titleUIElement();
         if (obj)
             return obj->wrapper();

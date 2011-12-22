@@ -8,7 +8,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS firstChild.role is 'AXRole: AXStaticText'
 PASS firstChild.title is 'AXTitle: option 1'
 PASS secondChild.role is 'AXRole: AXStaticText'
-PASS secondChild.title is 'AXTitle: label 2'
+PASS secondChild.description is 'AXDescription: label 2'
 PASS firstChild.childrenCount is 0
 PASS secondChild.childrenCount is 0
 PASS successfullyParsed is true

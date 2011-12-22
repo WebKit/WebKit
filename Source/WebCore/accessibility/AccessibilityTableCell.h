@@ -51,13 +51,14 @@ public:
     // fills in the start location and column span of cell
     virtual void columnIndexRange(pair<int, int>& columnRange);
     
-    // if a table cell is not exposed as a table cell, a TH element can
-    // serve as its title ui element
-    AccessibilityObject* titleUIElement() const;
-    
 protected:
     virtual AccessibilityObject* parentTable() const;
     int m_rowIndex;
+
+private:
+    // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.
+    virtual AccessibilityObject* titleUIElement() const;
+    virtual bool exposesTitleUIElement() const { return true; }
 }; 
     
 } // namespace WebCore 

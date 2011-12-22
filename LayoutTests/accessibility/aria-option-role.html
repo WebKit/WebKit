@@ -7,7 +7,7 @@
 
 <div role="listbox">
 <div role="option">option 1</div>
-<div role="option" title="label 2">option 2</div>
+<div role="option" aria-label="label 2">option 2</div>
 </div>
 
 <p id="description"></p>
@@ -29,7 +29,7 @@
           shouldBe("firstChild.title", "'AXTitle: option 1'");
 
           shouldBe("secondChild.role", "'AXRole: AXStaticText'");
-          shouldBe("secondChild.title", "'AXTitle: label 2'");
+          shouldBe("secondChild.description", "'AXDescription: label 2'");
 
           shouldBe("firstChild.childrenCount", "0");
           shouldBe("secondChild.childrenCount", "0");

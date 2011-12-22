@@ -1,3 +1,22 @@
-Test passed
+This test checks that radio buttons expose title ui elements correctly under a variety of cirmcumstances. In general, the should disappear and act as the title for the radio button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS focusedElement.title is 'AXTitle: LABEL'
+PASS !titleUIElement || titleUIElement.title == 'AXTitle: ' is true
+PASS focusedElement.description is 'AXDescription: LABEL2a'
+PASS focusedElement.title is 'AXTitle: '
+PASS !titleUIElement || titleUIElement.title == 'AXTitle: ' is true
+PASS focusedElement.description is 'AXDescription: radio3'
+PASS focusedElement.title is 'AXTitle: '
+PASS titleUIElement.title is 'AXTitle: '
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Test
-LABEL
+LABEL  Test
+LABEL2
+LABEL2a
+Test
+LABEL3
