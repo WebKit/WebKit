@@ -1549,9 +1549,6 @@ editing/pasteboard/emacs-ctrl-k-with-move.html
 # https://bugs.webkit.org/show_bug.cgi?id=74409
 plugins/netscape-plugin-page-cache-works.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=74410
-html5lib/runner.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=75078
 media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
 media/W3C/audio/events/event_canplay.html
