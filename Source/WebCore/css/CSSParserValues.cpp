@@ -95,16 +95,15 @@ CSSParserSelector::~CSSParserSelector()
 {
     if (!m_tagHistory)
         return;
-    Vector<CSSParserSelector*, 16> toDelete;
-    CSSParserSelector* selector = m_tagHistory.leakPtr();
+    Vector<OwnPtr<CSSParserSelector>, 16> toDelete;
+    OwnPtr<CSSParserSelector> selector = m_tagHistory.release();
     while (true) {
-        toDelete.append(selector);
-        CSSParserSelector* next = selector->m_tagHistory.leakPtr();
+        OwnPtr<CSSParserSelector> next = selector->m_tagHistory.release();
+        toDelete.append(selector.release());
         if (!next)
             break;
-        selector = next;
+        selector = next.release();
     }
-    deleteAllValues(toDelete);
 }
 
 void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector)
