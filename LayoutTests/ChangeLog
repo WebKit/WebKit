@@ -1,3 +1,22 @@
+2011-12-21  Oliver Hunt  <oliver@apple.com>
+
+    Merge 103127
+
+    2011-12-16  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit may get confused about where in the scratch buffer it stored a value
+        https://bugs.webkit.org/show_bug.cgi?id=74695
+
+        Rubber stamped by Gavin Barraclough.
+        
+        Wrote a custom fuzzer that does 2048 different combinations of integer and float
+        temporaries and induces a failure whilst all of them are live. If poisoning doesn't
+        work correctly, a large number (>hundred) of the fuzzing cases fail.
+
+        * fast/js/dfg-poison-fuzz-expected.txt: Added.
+        * fast/js/dfg-poison-fuzz.html: Added.
+        * fast/js/script-tests/dfg-poison-fuzz.js: Added.
+
 2011-12-21  Lucas Forschler  <lforschler@apple.com>
 
     Merge 95054
