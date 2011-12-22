@@ -62,27 +62,8 @@ public:
     ScrollAnimatorMac(ScrollableArea*);
     virtual ~ScrollAnimatorMac();
 
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
-    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
-
-#if ENABLE(RUBBER_BANDING)
-    virtual bool handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
-#if ENABLE(GESTURE_EVENTS)
-    virtual void handleGestureEvent(const PlatformGestureEvent&);
-#endif
-#endif
-
-    virtual void cancelAnimations();
-
-    void immediateScrollToPoint(const FloatPoint& newPosition);
-    void immediateScrollByDeltaX(float deltaX);
-    void immediateScrollByDeltaY(float deltaY);
-
     void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);
-
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
-
-    virtual void setIsActive();
 
     void updateScrollerStyle();
 
@@ -103,6 +84,19 @@ private:
 
     void initialScrollbarPaintTimerFired(Timer<ScrollAnimatorMac>*);
     Timer<ScrollAnimatorMac> m_initialScrollbarPaintTimer;
+
+    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
+    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
+
+#if ENABLE(RUBBER_BANDING)
+    virtual bool handleWheelEvent(const PlatformWheelEvent&) OVERRIDE;
+#if ENABLE(GESTURE_EVENTS)
+    virtual void handleGestureEvent(const PlatformGestureEvent&);
+#endif
+#endif
+
+    virtual void cancelAnimations();
+    virtual void setIsActive();
     
     virtual void notifyPositionChanged();
     virtual void contentAreaWillPaint() const;
@@ -130,6 +124,10 @@ private:
     float adjustScrollXPositionIfNecessary(float) const;
     float adjustScrollYPositionIfNecessary(float) const;
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
+
+    void immediateScrollToPoint(const FloatPoint& newPosition);
+    void immediateScrollByDeltaX(float deltaX);
+    void immediateScrollByDeltaY(float deltaY);
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.

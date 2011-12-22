@@ -1,5 +1,16 @@
 2011-12-22  Anders Carlsson  <andersca@apple.com>
 
+        Make some ScrollAnimatorMac member functions private
+        https://bugs.webkit.org/show_bug.cgi?id=75117
+
+        Reviewed by Sam Weinig.
+
+        Make virtual member functions and functions that are only called from ScrollAnimatorMac private.
+
+        * platform/mac/ScrollAnimatorMac.h:
+
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
         Move some member variables out of ScrollElasticityController
         https://bugs.webkit.org/show_bug.cgi?id=75115
 
