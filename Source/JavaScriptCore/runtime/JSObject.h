@@ -133,6 +133,8 @@ namespace JSC {
         double toNumber(ExecState*) const;
         UString toString(ExecState*) const;
 
+        // NOTE: JSObject and its subclasses must be able to gracefully handle ExecState* = 0,
+        // because this call may come from inside the compiler.
         static JSObject* toThisObject(JSCell*, ExecState*);
         JSObject* unwrappedObject();
 

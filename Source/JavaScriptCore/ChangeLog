@@ -1,3 +1,25 @@
+2011-12-21  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ConvertThis optimizations do not honor the distinction between the global object and the global this object
+        https://bugs.webkit.org/show_bug.cgi?id=75058
+        <rdar://problem/10616612>
+        <rdar://problem/10617500>
+
+        Reviewed by Oliver Hunt.
+        
+        Added a call to toThisObject() in the DFG when planting a direct reference to the global this object.
+        Instead of adding a separate toThisObject() method on JSCell which does not take ExecState*, I reascribed
+        a new contract: if you're calling toThisObject() on JSObject or one of its subtypes, then the ExecState*
+        is optional.
+
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::globalThisObjectFor):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSObject.h:
+
 2011-12-21  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Implement montonicallyIncreasingClock() on Qt
