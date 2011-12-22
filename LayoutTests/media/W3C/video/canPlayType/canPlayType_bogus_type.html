@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+ <head>
+  <title>video.canPlayType() - bogus format</title>
+  <script src="../../w3cwrapper.js"></script>
+ </head>
+ <body>
+  <p><a href="http://dev.w3.org/html5/spec/Overview.html#dom-navigator-canplaytype">spec reference</a></p>
+  <video id="v">
+  </video>
+  <div id="log"></div>
+  <script>
+test(function() {
+ assert_equals(
+  document.getElementById("v").canPlayType("application/marks-fantasmagorical-format"),
+  "",
+  "videoElement.canPlayType() should return the empty string on a bogus format");
+});
+  </script>
+ </body>
+</html>

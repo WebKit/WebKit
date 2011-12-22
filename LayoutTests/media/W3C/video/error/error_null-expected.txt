@@ -1,0 +1,11 @@
+video.error - null if no source
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "null" is "null"
+
+TEST COMPLETE
+spec reference
+
+

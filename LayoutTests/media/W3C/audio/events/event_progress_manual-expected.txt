@@ -1,0 +1,11 @@
+setting src attribute on non-autoplay video should trigger progress event
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS true is true
+
+TEST COMPLETE
+spec reference
+
+

@@ -1,0 +1,11 @@
+video.canPlayType() - codecs parameter logic
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "probably" is "probably"
+
+TEST COMPLETE
+spec reference
+
+
