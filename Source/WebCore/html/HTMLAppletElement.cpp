@@ -56,8 +56,48 @@ void HTMLAppletElement::parseMappedAttribute(Attribute* attr)
         attr->name() == mayscriptAttr ||
         attr->name() == objectAttr) {
         // Do nothing.
+    } else if (attr->name() == nameAttr) {
+        const AtomicString& newName = attr->value();
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
+        }
+        m_name = newName;
+    } else if (isIdAttributeName(attr->name())) {
+        const AtomicString& newId = attr->value();
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeExtraNamedItem(m_id);
+            document->addExtraNamedItem(newId);
+        }
+        m_id = newId;
+        // also call superclass
+        HTMLPlugInElement::parseMappedAttribute(attr);
     } else
         HTMLPlugInElement::parseMappedAttribute(attr);
+}
+
+void HTMLAppletElement::insertedIntoDocument()
+{
+    if (document()->isHTMLDocument()) {
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->addNamedItem(m_name);
+        document->addExtraNamedItem(m_id);
+    }
+
+    HTMLPlugInElement::insertedIntoDocument();
+}
+
+void HTMLAppletElement::removedFromDocument()
+{
+    if (document()->isHTMLDocument()) {
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->removeNamedItem(m_name);
+        document->removeExtraNamedItem(m_id);
+    }
+
+    HTMLPlugInElement::removedFromDocument();
 }
 
 bool HTMLAppletElement::rendererIsNeeded(const NodeRenderingContext& context)

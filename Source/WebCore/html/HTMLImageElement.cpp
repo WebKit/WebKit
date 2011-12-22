@@ -133,6 +133,24 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
     else if (attrName == compositeAttr) {
         if (!parseCompositeOperator(attr->value(), m_compositeOperator))
             m_compositeOperator = CompositeSourceOver;
+    } else if (attrName == nameAttr) {
+        const AtomicString& newName = attr->value();
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
+        }
+        m_name = newName;
+    } else if (isIdAttributeName(attr->name())) {
+        const AtomicString& newId = attr->value();
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeExtraNamedItem(m_id);
+            document->addExtraNamedItem(newId);
+        }
+        m_id = newId;
+        // also call superclass
+        HTMLElement::parseMappedAttribute(attr);
     } else
         HTMLElement::parseMappedAttribute(attr);
 }
@@ -179,12 +197,29 @@ void HTMLImageElement::attach()
 
 void HTMLImageElement::insertedIntoDocument()
 {
+    if (document()->isHTMLDocument()) {
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->addNamedItem(m_name);
+        document->addExtraNamedItem(m_id);
+    }
+
     // If we have been inserted from a renderer-less document,
     // our loader may have not fetched the image, so do it now.
     if (!m_imageLoader.image())
         m_imageLoader.updateFromElement();
 
     HTMLElement::insertedIntoDocument();
+}
+
+void HTMLImageElement::removedFromDocument()
+{
+    if (document()->isHTMLDocument()) {
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->removeNamedItem(m_name);
+        document->removeExtraNamedItem(m_id);
+    }
+
+    HTMLElement::removedFromDocument();
 }
 
 void HTMLImageElement::insertedIntoTree(bool deep)

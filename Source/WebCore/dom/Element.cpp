@@ -43,7 +43,6 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
@@ -705,8 +704,6 @@ void Element::attributeChanged(Attribute* attr, bool)
 {
     if (isIdAttributeName(attr->name()))
         idAttributeChanged(attr);
-    else if (attr->name() == HTMLNames::nameAttr)
-        setHasName(!attr->isNull());
     recalcStyleIfNeededAfterAttributeChanged(attr);
     updateAfterAttributeChanged(attr);
 }
@@ -919,32 +916,22 @@ void Element::insertedIntoDocument()
     if (ShadowRoot* shadow = shadowRoot())
         shadow->insertedIntoDocument();
 
-    if (m_attributeMap) {
-        if (hasID()) {
+    if (hasID()) {
+        if (m_attributeMap) {
             Attribute* idItem = m_attributeMap->getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(nullAtom, idItem->value());
-        }
-        if (hasName()) {
-            Attribute* nameItem = m_attributeMap->getAttributeItem(HTMLNames::nameAttr);
-            if (nameItem && !nameItem->isNull())
-                updateName(nullAtom, nameItem->value());
         }
     }
 }
 
 void Element::removedFromDocument()
 {
-    if (m_attributeMap) {
-        if (hasID()) {
+    if (hasID()) {
+        if (m_attributeMap) {
             Attribute* idItem = m_attributeMap->getAttributeItem(document()->idAttributeName());
             if (idItem && !idItem->isNull())
                 updateId(idItem->value(), nullAtom);
-        }
-        if (hasName()) {
-            Attribute* nameItem = m_attributeMap->getAttributeItem(HTMLNames::nameAttr);
-            if (nameItem && !nameItem->isNull())
-                updateName(nameItem->value(), nullAtom);
         }
     }
 
@@ -2004,29 +1991,5 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
     return true;
 }
 #endif
-
-void Element::updateNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName)
-{
-    if (!document()->isHTMLDocument())
-        return;
-
-    if (!oldName.isEmpty())
-        static_cast<HTMLDocument*>(document())->removeNamedItem(oldName);
-
-    if (!newName.isEmpty())
-        static_cast<HTMLDocument*>(document())->addNamedItem(newName);
-}
-
-void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const AtomicString& newId)
-{
-    if (!document()->isHTMLDocument())
-        return;
-
-    if (!oldId.isEmpty())
-        static_cast<HTMLDocument*>(document())->removeExtraNamedItem(oldId);
-
-    if (!newId.isEmpty())
-        static_cast<HTMLDocument*>(document())->addExtraNamedItem(newId);
-}
 
 } // namespace WebCore

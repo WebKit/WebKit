@@ -107,9 +107,7 @@ private:
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
 
-    virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return isDocNamedItem(); }
-    virtual bool shouldRegisterAsExtraNamedItem() const OVERRIDE { return isDocNamedItem(); }
-
+    AtomicString m_id;
     String m_classId;
     bool m_docNamedItem : 1;
     bool m_useFallbackContent : 1;

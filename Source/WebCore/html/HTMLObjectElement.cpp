@@ -114,9 +114,27 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
-    else if (attr->name() == borderAttr)
+    else if (attr->name() == nameAttr) {
+        const AtomicString& newName = attr->value();
+        if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
+        }
+        m_name = newName;
+    } else if (attr->name() == borderAttr)
         applyBorderAttribute(attr);
-    else
+    else if (isIdAttributeName(attr->name())) {
+        const AtomicString& newId = attr->value();
+        if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeExtraNamedItem(m_id);
+            document->addExtraNamedItem(newId);
+        }
+        m_id = newId;
+        // also call superclass
+        HTMLPlugInImageElement::parseMappedAttribute(attr);
+    } else
         HTMLPlugInImageElement::parseMappedAttribute(attr);
 }
 
@@ -328,11 +346,26 @@ bool HTMLObjectElement::rendererIsNeeded(const NodeRenderingContext& context)
 void HTMLObjectElement::insertedIntoDocument()
 {
     HTMLPlugInImageElement::insertedIntoDocument();
+    if (!inDocument())
+        return;
+
+    if (isDocNamedItem() && document()->isHTMLDocument()) {
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->addNamedItem(m_name);
+        document->addExtraNamedItem(m_id);
+    }
+
     FormAssociatedElement::insertedIntoDocument();
 }
 
 void HTMLObjectElement::removedFromDocument()
 {
+    if (isDocNamedItem() && document()->isHTMLDocument()) {
+        HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+        document->removeNamedItem(m_name);
+        document->removeExtraNamedItem(m_id);
+    }
+
     HTMLPlugInImageElement::removedFromDocument();
     FormAssociatedElement::removedFromDocument();
 }
@@ -433,11 +466,11 @@ void HTMLObjectElement::updateDocNamedItem()
     if (isNamedItem != wasNamedItem && document()->isHTMLDocument()) {
         HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
         if (isNamedItem) {
-            document->addNamedItem(fastGetAttribute(nameAttr));
-            document->addExtraNamedItem(getIdAttribute());
+            document->addNamedItem(m_name);
+            document->addExtraNamedItem(m_id);
         } else {
-            document->removeNamedItem(fastGetAttribute(nameAttr));
-            document->removeExtraNamedItem(getIdAttribute());
+            document->removeNamedItem(m_name);
+            document->removeExtraNamedItem(m_id);
         }
     }
     m_docNamedItem = isNamedItem;
@@ -511,8 +544,7 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
 
 const AtomicString& HTMLObjectElement::formControlName() const
 {
-    const AtomicString& name = fastGetAttribute(nameAttr);
-    return name.isNull() ? emptyAtom : name;
+    return m_name.isNull() ? emptyAtom : m_name;
 }
 
 HTMLFormElement* HTMLObjectElement::virtualForm() const

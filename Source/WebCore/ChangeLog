@@ -1,3 +1,50 @@
+2011-12-21  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, rolling out r103473.
+        http://trac.webkit.org/changeset/103473
+        https://bugs.webkit.org/show_bug.cgi?id=74991
+
+        Overestimated my superpowers a bit here.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+        * dom/Element.h:
+        (WebCore::Element::updateId):
+        (WebCore::Element::willModifyAttribute):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setAttributes):
+        * dom/Node.h:
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        (WebCore::HTMLAppletElement::insertedIntoDocument):
+        (WebCore::HTMLAppletElement::removedFromDocument):
+        * html/HTMLAppletElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        (WebCore::HTMLEmbedElement::removedFromDocument):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::insertedIntoDocument):
+        (WebCore::HTMLFormElement::removedFromDocument):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        (WebCore::HTMLImageElement::insertedIntoDocument):
+        (WebCore::HTMLImageElement::removedFromDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::insertedIntoDocument):
+        (WebCore::HTMLObjectElement::removedFromDocument):
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        (WebCore::HTMLObjectElement::formControlName):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInElement.h:
+
 2011-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up RenderLayer code that applies filters and transforms

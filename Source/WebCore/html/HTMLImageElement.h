@@ -98,11 +98,9 @@ private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
-
-    virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
-    virtual bool shouldRegisterAsExtraNamedItem() const OVERRIDE { return true; }
 
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const OVERRIDE;
@@ -111,6 +109,8 @@ private:
 
     HTMLImageLoader m_imageLoader;
     HTMLFormElement* m_form;
+    AtomicString m_name;
+    AtomicString m_id;
     CompositeOperator m_compositeOperator;
 };
 

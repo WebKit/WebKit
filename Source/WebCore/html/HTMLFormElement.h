@@ -131,8 +131,6 @@ private:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
 
-    virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
-
     void submit(Event*, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger);
 
     unsigned formElementIndexWithFormAttribute(Element*);
@@ -169,6 +167,8 @@ private:
 
     bool m_wasMalformed;
     bool m_wasDemoted;
+
+    AtomicString m_name;
 };
 
 } // namespace WebCore

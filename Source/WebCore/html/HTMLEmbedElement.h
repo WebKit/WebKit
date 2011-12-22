@@ -39,6 +39,7 @@ private:
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);
 
     virtual bool isURLAttribute(Attribute*) const;
@@ -56,8 +57,6 @@ private:
     virtual String itemValueText() const OVERRIDE;
     virtual void setItemValueText(const String&, ExceptionCode&) OVERRIDE;
 #endif
-
-    virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
 };
 
 }

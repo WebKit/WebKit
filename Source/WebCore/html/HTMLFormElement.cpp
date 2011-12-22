@@ -132,6 +132,9 @@ bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
 
 void HTMLFormElement::insertedIntoDocument()
 {
+    if (document()->isHTMLDocument())
+        static_cast<HTMLDocument*>(document())->addNamedItem(m_name);
+
     HTMLElement::insertedIntoDocument();
 
     if (hasID())
@@ -140,6 +143,9 @@ void HTMLFormElement::insertedIntoDocument()
 
 void HTMLFormElement::removedFromDocument()
 {
+    if (document()->isHTMLDocument())
+        static_cast<HTMLDocument*>(document())->removeNamedItem(m_name);
+
     HTMLElement::removedFromDocument();
 
     if (hasID())
@@ -378,7 +384,15 @@ void HTMLFormElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attr));
     else if (attr->name() == onresetAttr)
         setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, attr));
-    else
+    else if (attr->name() == nameAttr) {
+        const AtomicString& newName = attr->value();
+        if (inDocument() && document()->isHTMLDocument()) {
+            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            document->removeNamedItem(m_name);
+            document->addNamedItem(newName);
+        }
+        m_name = newName;
+    } else
         HTMLElement::parseMappedAttribute(attr);
 }
 
