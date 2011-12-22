@@ -1,5 +1,5 @@
 <video controls></video>
-<p>Test that QuickTime file with broken content generates an error.<p>
+<p>Test that an invalid video file generates a MEDIA_ERR_SRC_NOT_SUPPORTED error and sets networkState to NETWORK_NO_SOURCE.</p>
 <script src=media-file.js></script>
 <script src=video-test.js></script>
 
@@ -7,6 +7,8 @@
     video.src = findMediaFile("video", "content/garbage");
     waitForEvent("error", function () {
         testExpected("video.error", "[object MediaError]");
+        testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
         endTest();
     });
 </script>

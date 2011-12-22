@@ -1,6 +1,8 @@
-Test that QuickTime file with broken content generates an error.
+Test that an invalid video file generates a MEDIA_ERR_SRC_NOT_SUPPORTED error and sets networkState to NETWORK_NO_SOURCE.
 
 EVENT(error)
 EXPECTED (video.error == '[object MediaError]') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '3') OK
 END OF TEST
 
