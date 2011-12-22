@@ -1,3 +1,14 @@
+2011-12-21  Eric Seidel  <eric@webkit.org>
+
+        Add webkit.review.bot@gmail.com and commit-queue@webkit.org as "contributors"
+        so that they appear in the bugzilla autocomplete CC list.
+        I also removed the "radar" irc nick (which I believe does not exist)
+        and removed the uneeded [] around the radar bugzilla email.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-12-21  Daniel Bates  <dbates@rim.com>
 
         Teach build-jsc how to build JavaScriptCore for the EFL, BlackBerry, and WinCE ports
