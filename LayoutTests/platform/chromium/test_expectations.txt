@@ -3245,8 +3245,6 @@ BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TIM
 BUGCR82281 : fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEXT
 
-BUGCR47036 DEBUG : html5lib/runner.html = PASS TIMEOUT
-
 BUGCR82419 LINUX WIN : svg/custom/fill-opacity-update.svg = IMAGE
 
 // New pixel tests added for bug 58999. These will fail on windows and linux until bug
