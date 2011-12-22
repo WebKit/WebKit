@@ -21,7 +21,7 @@ var skippedProperties = [
     "WebGLRenderingContext", "WebGLActiveInfo", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation",
     "ArrayBuffer",
     "DataView", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array", "Float64Array",
-    "FileError", "FileReader", "WebKitBlobBuilder", "requestFileSystem",
+    "FileError", "FileReader", "WebKitBlobBuilder", "webkitRequestFileSystem",
     "indexedDB", "IDBKeyRange", "IDBCursor", "IDBDatabase", "IDBDatabaseError", "IDBDatabaseException", "IDBErrorEvent", "IDBEvent", "IDBFactory", "IDBIndex", "IDBObjectStore", "IDBRequest", "IDBSuccessEvent", "IDBTransaction",
     "showModalDialog",
     "webkitURL",

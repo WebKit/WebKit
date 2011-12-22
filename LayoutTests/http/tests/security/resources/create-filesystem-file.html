@@ -2,19 +2,24 @@
 <head>
     <script>
         function createFile() {
-            requestFileSystem(TEMPORARY, 100, function(fs) {
+            webkitRequestFileSystem(TEMPORARY, 100, function(fs) {
                 fs.root.getFile("page.html", {create:true}, function(entry) {
                     entry.createWriter(function(writer) {
                         var bb = new WebKitBlobBuilder();
                         bb.append('<div id="innerDiv">Visible Contents</div>\n');
+                        writer.onwrite = function() {
+                            console.log(entry.toURL() + " created.");
+                        };
                         writer.write(bb.getBlob());
-                    })
-                })
+                    });
+                });
             });
         }
 
-        if (window.requestFileSystem)
+        if (window.webkitRequestFileSystem)
             createFile();
+        else
+            console.error("This test requires FileSystem support.");
     </script>
 </head>
 </html>
