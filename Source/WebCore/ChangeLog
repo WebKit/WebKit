@@ -1,3 +1,13 @@
+2011-12-22  Greg Billock  <gbillock@google.com>
+
+        [Coverity] Address use-after-free report in MemoryCache
+        https://bugs.webkit.org/show_bug.cgi?id=74970
+
+        Reviewed by Eric Seidel.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::revalidationSucceeded):
+
 2011-12-22  Tom Sepez  <tsepez@chromium.org>
 
         XSLT-created HTML documents do not inherit first party for cookies from originally loaded XML.

@@ -105,7 +105,12 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
     ASSERT(!resource->inCache());
     ASSERT(resource->isLoaded());
     ASSERT(revalidatingResource->inCache());
-    
+
+    // Calling evict() can potentially delete revalidatingResource, which we use
+    // below. This mustn't be the case since revalidation means it is loaded
+    // and so canDelete() is false.
+    ASSERT(!revalidatingResource->canDelete());
+
     evict(revalidatingResource);
 
     ASSERT(!m_resources.get(resource->url()));
