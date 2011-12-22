@@ -115,6 +115,10 @@ dom/xhtml/level3/core/nodegetbaseuri20.xhtml
 
 editing/deleting
 editing/execCommand
+editing/input/caret-at-the-edge-of-contenteditable.html
+editing/input/caret-at-the-edge-of-input.html
+editing/input/reveal-caret-of-multiline-contenteditable.html
+editing/input/reveal-caret-of-multiline-input.html
 editing/input/scroll-viewport-page-up-down.html
 editing/input/style-change-during-input.html
 editing/inserting
@@ -125,7 +129,9 @@ editing/spelling/markers.html
 editing/spelling/spellcheck-queue.html
 editing/spelling/spellcheck-sequencenum.html
 editing/spelling/spelling-backspace-between-lines.html 
-editing/spelling/spelling.html 
+editing/spelling/spelling.html
+editing/spelling/grammar-paste.html
+editing/spelling/spellcheck-async-mutation.html
 editing/style 
 editing/undo
 editing/unsupported-content
@@ -557,6 +563,17 @@ userscripts/user-script-audio-document.html
 #
 
 # Note: Following are skipped items based on Apple Windows builds:
+
+# HW filters not yet supported on Windows
+css3/filters/effect-blur-hw.html
+css3/filters/effect-combined-hw.html
+css3/filters/effect-drop-shadow-hw.html
+css3/filters/effect-grayscale-hw.html
+css3/filters/effect-hue-rotate-hw.html
+css3/filters/effect-invert-hw.html
+css3/filters/effect-opacity-hw.html
+css3/filters/effect-saturate-hw.html
+css3/filters/effect-sepia-hw.html
 
 # Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html
@@ -1140,6 +1157,9 @@ accessibility/textarea-selected-text-range.html
 accessibility/th-as-title-ui.html
 accessibility/transformed-element.html
 accessibility/visible-elements.html
+
+# Need to implement global addNotificationListener in Windows DRT
+accessibility/loading-iframe-sends-notification.html
 
 # No support for print-to-pdf in Windows DRT
 printing/compositing-layer-printing.html
