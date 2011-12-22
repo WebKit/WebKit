@@ -1,2 +1,6 @@
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
+
+# [Qt] Two http auth tests fail with Qt 4.7.2
+# https://bugs.webkit.org/show_bug.cgi?id=55767
+http/tests/appcache/auth.html
