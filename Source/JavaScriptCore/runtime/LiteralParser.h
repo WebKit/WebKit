@@ -142,7 +142,6 @@ private:
         template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType lexString(LiteralParserToken<CharType>&);
         ALWAYS_INLINE TokenType lexNumber(LiteralParserToken<CharType>&);
         LiteralParserToken<CharType> m_currentToken;
-        UString m_string;
         ParserMode m_mode;
         const CharType* m_ptr;
         const CharType* m_end;
