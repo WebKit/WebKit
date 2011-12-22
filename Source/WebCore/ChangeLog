@@ -1,3 +1,39 @@
+2011-12-22  Hans Muller  <hmuller@adobe.com>
+
+        Onloadend event is not supported in XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=40952
+
+        Reviewed by Julien Chaffraix.
+
+        Added support for the loadend ProgressEvent to XMLHttpRequest and XMLHttpRequestUpload.
+        A new method, dispatchEventAndLoadEnd(), was added to XMLHttpRequestProgressEventThrottle
+        and XMLHttpRequestUpload to foolproof the common case of dispatching a load, abort,
+        or error event followed by a loadend event.
+
+        Tests: http/tests/xmlhttprequest/onloadend-event-after-abort.html
+               http/tests/xmlhttprequest/onloadend-event-after-error.html
+               http/tests/xmlhttprequest/onloadend-event-after-load.html
+               http/tests/xmlhttprequest/onloadend-event-after-sync-requests.html
+               http/tests/xmlhttprequest/upload-onloadend-event-after-abort.html
+               http/tests/xmlhttprequest/upload-onloadend-event-after-load.html
+               http/tests/xmlhttprequest/upload-onloadend-event-after-sync-requests.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::networkError):
+        (WebCore::XMLHttpRequest::abortError):
+        (WebCore::XMLHttpRequest::didSendData):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestProgressEventThrottle.cpp:
+        (WebCore::XMLHttpRequestProgressEventThrottle::dispatchEventAndLoadEnd):
+        * xml/XMLHttpRequestProgressEventThrottle.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::dispatchEventAndLoadEnd):
+        * xml/XMLHttpRequestUpload.h:
+        * xml/XMLHttpRequestUpload.idl:
+
 2011-12-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         [FileSystem API] Entry.getMetadata successCallback is required

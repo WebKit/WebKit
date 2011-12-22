@@ -60,8 +60,11 @@ namespace WebCore {
         DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(load);
+        DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(loadstart);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(progress);
+
+        void dispatchEventAndLoadEnd(PassRefPtr<Event>);
 
     private:
         XMLHttpRequestUpload(XMLHttpRequest*);

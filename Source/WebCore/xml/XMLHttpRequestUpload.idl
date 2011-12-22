@@ -38,6 +38,7 @@ module xml {
         attribute EventListener onabort;
         attribute EventListener onerror;
         attribute EventListener onload;
+        attribute EventListener onloadend;
         attribute EventListener onloadstart;
         attribute EventListener onprogress;
 

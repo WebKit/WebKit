@@ -50,6 +50,7 @@ public:
 
     void dispatchProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
     void dispatchEvent(PassRefPtr<Event>, ProgressEventAction = DoNotFlushProgressEvent);
+    void dispatchEventAndLoadEnd(PassRefPtr<Event>);
 
     void suspend();
     void resume();

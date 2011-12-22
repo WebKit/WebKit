@@ -81,6 +81,14 @@ void XMLHttpRequestProgressEventThrottle::dispatchEvent(PassRefPtr<Event> event,
     m_target->dispatchEvent(event);
 }
 
+void XMLHttpRequestProgressEventThrottle::dispatchEventAndLoadEnd(PassRefPtr<Event> event)
+{
+    ASSERT(event->type() == eventNames().loadEvent || event->type() == eventNames().abortEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().timeoutEvent);
+
+    dispatchEvent(event);
+    dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadendEvent));
+}
+
 void XMLHttpRequestProgressEventThrottle::flushProgressEvent()
 {
     if (!hasEventToDispatch())
