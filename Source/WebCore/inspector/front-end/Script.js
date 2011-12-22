@@ -33,7 +33,7 @@
  * @param {number} endColumn
  * @param {boolean} isContentScript
  */
-WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript)
+WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL)
 {
     this.scriptId = scriptId;
     this.sourceURL = sourceURL;
@@ -42,6 +42,7 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
     this.endLine = endLine;
     this.endColumn = endColumn;
     this.isContentScript = isContentScript;
+    this.sourceMapURL = sourceMapURL;
 }
 
 WebInspector.Script.prototype = {
@@ -96,14 +97,14 @@ WebInspector.Script.prototype = {
             }
             callback(result || []);
         }
-        
+
         if (this.scriptId) {
             // Script failed to parse.
             DebuggerAgent.searchInContent(this.scriptId, query, caseSensitive, isRegex, innerCallback.bind(this));
         } else
             callback([]);
     },
-    
+
     /**
      * @param {string} newSource
      * @param {function(?Protocol.Error, Array.<DebuggerAgent.CallFrame>=)} callback
