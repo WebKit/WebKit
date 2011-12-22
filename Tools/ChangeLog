@@ -1,5 +1,17 @@
 2011-12-22  David Kilzer  <ddkilzer@apple.com>
 
+        TestWebKitAPI: initialize the main thread before running tests
+        <http://webkit.org/b/75064>
+
+        Reviewed by Adam Roben.
+
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::TestsController::TestsController): Call
+        WTF::initializeMainThread() to prevent assertions in Debug
+        builds.
+
+2011-12-22  David Kilzer  <ddkilzer@apple.com>
+
         run-api-tests: dumpAllTests() should not use global variables
 
         Reviewed by Adam Roben.

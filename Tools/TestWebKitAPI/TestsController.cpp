@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestsController.h"
 
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
@@ -38,6 +39,8 @@ TestsController& TestsController::shared()
 
 TestsController::TestsController()
 {
+    WTF::initializeMainThread();
+
     // FIXME: We currently initialize threading here to avoid assertion failures from
     // the ThreadRestrictionVerifier - https://bugs.webkit.org/show_bug.cgi?id=66112
     // We should make sure that all objects tested either initialize threading or inherit from
