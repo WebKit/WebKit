@@ -72,8 +72,9 @@ WebInspector.ClosureCompilerSourceMappingPayload = function()
  * @implements {WebInspector.CompilerSourceMapping}
  * @constructor
  * @param {string} sourceMappingURL
+ * @param {string} sourceURL
  */
-WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL)
+WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL, scriptSourceOrigin)
 {
     if (!WebInspector.ClosureCompilerSourceMapping.prototype._base64Map) {
         const base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -82,8 +83,7 @@ WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL)
             WebInspector.ClosureCompilerSourceMapping.prototype._base64Map[base64Digits.charAt(i)] = i;
     }
 
-    this._sourceMappingURL = sourceMappingURL;
-    this._sources = [];
+    this._sourceMappingURL = this._resolveSourceMapURL(sourceMappingURL, scriptSourceOrigin);
     this._mappings = [];
     this._reverseMappingsBySourceURL = {};
 }
@@ -131,7 +131,10 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
      */
     sources: function()
     {
-        return this._sources;
+        var sources = [];
+        for (var sourceURL in this._reverseMappingsBySourceURL)
+            sources.push(sourceURL);
+        return sources;
     },
 
     /**
@@ -185,19 +188,21 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
 
     _parseMap: function(map, lineNumber, columnNumber)
     {
-        var sourceIndex = this._sources.length;
+        var sourceIndex = 0;
         var sourceLineNumber = 0;
         var sourceColumnNumber = 0;
         var nameIndex = 0;
 
+        var sources = [];
         for (var i = 0; i < map.sources.length; ++i) {
             var url = this._canonicalizeURL(map.sourceRoot, map.sources[i]);
-            this._sources.push(url);
-            this._reverseMappingsBySourceURL[url] = [];
+            sources.push(url);
+            if (!this._reverseMappingsBySourceURL[url])
+                this._reverseMappingsBySourceURL[url] = [];
         }
 
         var stringCharIterator = new WebInspector.ClosureCompilerSourceMapping.StringCharIterator(map.mappings);
-        var sourceURL = this._sources[sourceIndex];
+        var sourceURL = sources[sourceIndex];
         var reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
 
         while (true) {
@@ -218,7 +223,7 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
                 var sourceIndexDelta = this._decodeVLQ(stringCharIterator);
                 if (sourceIndexDelta) {
                     sourceIndex += sourceIndexDelta;
-                    sourceURL = this._sources[sourceIndex];
+                    sourceURL = sources[sourceIndex];
                     reverseMappings = this._reverseMappingsBySourceURL[sourceURL];
                 }
                 sourceLineNumber += this._decodeVLQ(stringCharIterator);
@@ -258,6 +263,21 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
     _canonicalizeURL: function(sourceRoot, sourceURL)
     {
         return sourceRoot ? sourceRoot + "/" + sourceURL : sourceURL;
+    },
+
+    _resolveSourceMapURL: function(sourceMappingURL, scriptSourceOrigin)
+    {
+        if (!sourceMappingURL || !scriptSourceOrigin)
+            return sourceMappingURL;
+
+        if (sourceMappingURL.asParsedURL())
+            return sourceMappingURL;
+
+        var origin = scriptSourceOrigin.asParsedURL();
+        var baseURL = origin.scheme + "://" + origin.host + (origin.port ? ":" + origin.port : "");
+        if (sourceMappingURL[0] === "/")
+            return baseURL + sourceMappingURL;
+        return baseURL + origin.firstPathComponents + sourceMappingURL;
     },
 
     _VLQ_BASE_SHIFT: 5,
