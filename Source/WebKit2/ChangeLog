@@ -1,3 +1,19 @@
+2011-12-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Use HashMap instead of Vector in the builtin bundle
+        https://bugs.webkit.org/show_bug.cgi?id=75112
+
+        Reviewed by Andreas Kling.
+
+        Fix my own FIXME now that HashMap have support to hold OwnPtr as value.
+
+        * WebProcess/qt/QtBuiltinBundle.cpp:
+        (WebKit::QtBuiltinBundle::didCreatePage):
+        (WebKit::QtBuiltinBundle::willDestroyPage):
+        (WebKit::QtBuiltinBundle::handleMessageToNavigatorQtObject):
+        (WebKit::QtBuiltinBundle::handleSetNavigatorQtObjectEnabled):
+        * WebProcess/qt/QtBuiltinBundle.h:
+
 2011-12-22  Anders Carlsson  <andersca@apple.com>
 
         Remove the last of the WebKit2 display throttling

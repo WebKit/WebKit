@@ -29,8 +29,8 @@
 
 #include "WKBundle.h"
 #include "WKBundlePage.h"
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -55,13 +55,10 @@ public:
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
 private:
-    QtBuiltinBundlePage* bundlePageForPageRef(const WKBundlePageRef) const;
-
     void handleMessageToNavigatorQtObject(WKTypeRef messageBody);
     void handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody);
 
-    // FIXME: Can we use HashMap of OwnPtrs? Or something equivalent?
-    Vector<OwnPtr<QtBuiltinBundlePage> > m_pages;
+    HashMap<WKBundlePageRef, OwnPtr<QtBuiltinBundlePage> > m_pages;
     WKBundleRef m_bundle;
 };
 

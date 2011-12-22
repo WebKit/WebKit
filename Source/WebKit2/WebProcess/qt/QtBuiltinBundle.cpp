@@ -80,26 +80,12 @@ void QtBuiltinBundle::didReceiveMessage(WKBundleRef bundle, WKStringRef messageN
 
 void QtBuiltinBundle::didCreatePage(WKBundlePageRef page)
 {
-    m_pages.append(adoptPtr(new QtBuiltinBundlePage(this, page)));
+    m_pages.add(page, adoptPtr(new QtBuiltinBundlePage(this, page)));
 }
 
 void QtBuiltinBundle::willDestroyPage(WKBundlePageRef page)
 {
-    for (size_t i = 0; i < m_pages.size(); ++i) {
-        if (m_pages[i]->page() == page) {
-            m_pages.remove(i);
-            break;
-        }
-    }
-}
-
-QtBuiltinBundlePage* QtBuiltinBundle::bundlePageForPageRef(const WKBundlePageRef page) const
-{
-    for (size_t i = 0; i < m_pages.size(); ++i) {
-        if (m_pages[i]->page() == page)
-            return m_pages[i].get();
-    }
-    return 0;
+    m_pages.remove(page);
 }
 
 void QtBuiltinBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
@@ -123,7 +109,7 @@ void QtBuiltinBundle::handleMessageToNavigatorQtObject(WKTypeRef messageBody)
     WKBundlePageRef page = static_cast<WKBundlePageRef>(WKArrayGetItemAtIndex(body, 0));
     WKStringRef contents = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
 
-    QtBuiltinBundlePage* bundlePage = bundlePageForPageRef(page);
+    QtBuiltinBundlePage* bundlePage = m_pages.get(page);
     if (!bundlePage)
         return;
     bundlePage->didReceiveMessageToNavigatorQtObject(contents);
@@ -142,7 +128,7 @@ void QtBuiltinBundle::handleSetNavigatorQtObjectEnabled(WKTypeRef messageBody)
     WKBundlePageRef page = static_cast<WKBundlePageRef>(WKArrayGetItemAtIndex(body, 0));
     WKBooleanRef enabled = static_cast<WKBooleanRef>(WKArrayGetItemAtIndex(body, 1));
 
-    QtBuiltinBundlePage* bundlePage = bundlePageForPageRef(page);
+    QtBuiltinBundlePage* bundlePage = m_pages.get(page);
     if (!bundlePage)
         return;
     bundlePage->setNavigatorQtObjectEnabled(enabled);
