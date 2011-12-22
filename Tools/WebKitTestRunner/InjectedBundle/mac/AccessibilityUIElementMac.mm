@@ -1377,6 +1377,21 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::accessibilityElementF
     
     return 0;  
 }
+    
+bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef attribute, AccessibilityTextMarkerRange* range)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSAttributedString* string = [m_element accessibilityAttributeValue:@"AXAttributedStringForTextMarkerRange" forParameter:(id)range->platformTextMarkerRange()];
+    if (![string isKindOfClass:[NSAttributedString class]])
+        return false;
+    
+    NSDictionary* attrs = [string attributesAtIndex:0 effectiveRange:nil];
+    if ([attrs objectForKey:[NSString stringWithJSStringRef:attribute]])
+        return true;    
+    END_AX_OBJC_EXCEPTIONS
+    
+    return false;
+}
 
 } // namespace WTR
 

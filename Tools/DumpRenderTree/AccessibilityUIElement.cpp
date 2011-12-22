@@ -492,6 +492,22 @@ static JSValueRef textMarkerRangeForElementCallback(JSContextRef context, JSObje
     return AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->textMarkerRangeForElement(uiElement));
 }
 
+static JSValueRef attributedStringForTextMarkerRangeContainsAttributeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarkerRange* markerRange = 0;
+    JSStringRef attribute = 0;
+    if (argumentCount == 2) {
+        attribute = JSValueToStringCopy(context, arguments[0], exception);
+        markerRange = toTextMarkerRange(JSValueToObject(context, arguments[1], exception));
+    }
+    
+    JSValueRef result = JSValueMakeBoolean(context, toAXElement(thisObject)->attributedStringForTextMarkerRangeContainsAttribute(attribute, markerRange));
+    if (attribute)
+        JSStringRelease(attribute);
+    
+    return result;    
+}
+
 static JSValueRef textMarkerRangeLengthCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityTextMarkerRange* range = 0;
@@ -949,6 +965,11 @@ JSStringRef AccessibilityUIElement::stringForTextMarkerRange(AccessibilityTextMa
     return 0;
 }
 
+bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*)
+{
+    return false;
+}
+
 #endif
 
 // Destruction
@@ -1076,6 +1097,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "addSelection", addSelectionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "removeSelection", removeSelectionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerRangeForElement", textMarkerRangeForElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributedStringForTextMarkerRangeContainsAttribute", attributedStringForTextMarkerRangeContainsAttributeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerRangeForMarkers", textMarkerRangeForMarkersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "startTextMarkerForTextMarkerRange", startTextMarkerForTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "endTextMarkerForTextMarkerRange", endTextMarkerForTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

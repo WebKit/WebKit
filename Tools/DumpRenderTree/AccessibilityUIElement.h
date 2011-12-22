@@ -215,6 +215,7 @@ public:
     AccessibilityUIElement accessibilityElementForTextMarker(AccessibilityTextMarker*);
     JSStringRef stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     int textMarkerRangeLength(AccessibilityTextMarkerRange*);
+    bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     
     // Notifications
     // Function callback should take one argument, the name of the notification.

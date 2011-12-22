@@ -1,5 +1,20 @@
 2011-12-22  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: attributed strings do not include AXHeading information when a link is contained within the heading
+        https://bugs.webkit.org/show_bug.cgi?id=75059
+
+        Reviewed by Darin Adler.
+
+        An attributed string should contain the heading level of an ancestor node if it exists.
+        This change allows the ancestor to be higher up in the hierarchy than just the direct parent.
+
+        Test: platform/mac/accessibility/heading-and-link-attributed-string.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+          (AXAttributeStringSetHeadingLevel):
+
+2011-12-22  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Title attribute should not be used in AXTitle
         https://bugs.webkit.org/show_bug.cgi?id=75027
 

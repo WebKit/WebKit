@@ -1,3 +1,27 @@
+2011-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: attributed strings do not include AXHeading information when a link is contained within the heading
+        https://bugs.webkit.org/show_bug.cgi?id=75059
+
+        Reviewed by Darin Adler.
+
+        Support the ability to check if an arbitrary attribute is present within an
+        attributed string that can be retrieved through an AccessibilityTextMarkerRange.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (attributedStringForTextMarkerRangeContainsAttributeCallback):
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute):
+
 2011-12-22  David Kilzer  <ddkilzer@apple.com>
 
         run-api-tests: runAllTests() and runTest() should not use global variables
