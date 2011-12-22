@@ -1,3 +1,49 @@
+2011-12-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up RenderLayer code that applies filters and transforms
+        https://bugs.webkit.org/show_bug.cgi?id=75032
+        
+        This also fixes:
+            Nested filters not working as expected
+            https://bugs.webkit.org/show_bug.cgi?id=75029
+            
+            Filter region is computed incorrectly
+            https://bugs.webkit.org/show_bug.cgi?id=74889
+
+        Reviewed by James Robinson.
+
+        RenderLayer::paintLayer() had this confusing behavior where,
+        for transforms, it would change the CTM and then re-enter
+        the method with a bit set. This was partially, but incorrectly
+        copied for filters, so things like nested filters didn't work,
+        and the case of a filter + transform was confused.
+        
+        Clean up by making RenderLayer::paintLayer() be a fairly simple
+        method that handles the re-entering with bit set, for both
+        transforms and filters. The bulk of the code in RenderLayer::paintLayer()
+        is now in RenderLayer::paintLayerContents(). There is no
+        behavior change for transforms.
+        
+        There are two fixes for filters. First, instead of just using
+        the layer size to compute the bounds of the filtered region,
+        use transparencyClipBox() which already takes descendents, box
+        decorations etc into account (it's what we use for opacity).
+        Some cleanup of the coordinate math, and separation from transforms
+        code was also achieved.
+        
+        Second, make sure we toggle off the PaintLayerAppliedFilters bit
+        (which was renamed for clarity) for sublayers, so that sublayers
+        paint their filters correctly.
+
+        Tests: css3/filters/filter-region.html
+               css3/filters/nested-filters.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::updateFilterBackingStore):
+        * rendering/RenderLayer.h:
+
 2011-12-21  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         Discard event data not followed by an empty line before eof when parsing an event-stream

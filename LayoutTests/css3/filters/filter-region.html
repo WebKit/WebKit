@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <style>
+    .box {
+      position: absolute;
+      height: 50px;
+      width: 100px;
+      left: 20px;
+      background-color: green;
+      outline: 4px solid black;
+      -webkit-filter: blur(0);
+    }
+    
+    .indicator {
+      top: 50px;
+      background-color: red;
+    }
+  </style>
+  <script>
+    if (window.layoutTestController)
+      window.layoutTestController.dumpAsText(true);
+  </script>
+</head>
+<body>
+
+  <!-- You should see two green rectangles with black outlines, and no red. -->
+  <div class="indicator box"></div>
+  <div class="box">
+    <div class="box" style="top: 50px; left: 0"></div>
+  </div>
+
+</body>
+</html>

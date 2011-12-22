@@ -2720,24 +2720,12 @@ static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
     return false;
 }
 
+
 void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
                         RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
                         PaintLayerFlags paintFlags)
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (isComposited()) {
-        // The updatingControlTints() painting pass goes through compositing layers,
-        // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
-        if (p->updatingControlTints() || (paintBehavior & PaintBehaviorFlattenCompositingLayers))
-            paintFlags |= PaintLayerTemporaryClipRects;
-        else if (!backing()->paintingGoesToWindow() && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)) {
-            // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
-            return;
-        }
-    }
-#endif
-
     if (shouldSuppressPaintingLayer(this))
         return;
     
@@ -2745,55 +2733,9 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (!renderer()->opacity())
         return;
 
-#if ENABLE(CSS_FILTERS)
-    if (!p->paintingDisabled() && paintsWithFilters() && !size().isZero() && !(paintFlags & PaintLayerPaintingFilter)) {
-        // Update the filter's image if necessary.
-        // The filter is always built at this point.
-        updateFilterBackingStore();
-        m_filter->prepare();
-        
-        // Paint into the context that represents the SourceGraphic of the filter.
-        GraphicsContext* sourceGraphicsContext = m_filter->inputContext();
-        if (!sourceGraphicsContext)
-            return;
-        
-        LayoutPoint layerOrigin;
-        convertToLayerCoords(rootLayer, layerOrigin);
-        
-        bool isRootLayer = paintsWithTransform(paintBehavior) && !(paintFlags & PaintLayerAppliedTransform);
-        if (!isRootLayer) {
-            sourceGraphicsContext->save();
-            sourceGraphicsContext->translate(-layerOrigin.x(), -layerOrigin.y());
-        }
-
-        FloatRect paintRect = FloatRect(FloatPoint(), size());
-        sourceGraphicsContext->clearRect(paintRect);
-
-        // Now do the regular paint into the SourceGraphic.
-        // Using PaintLayerAppliedTransform to avoid applying the transform again inside the context.
-        paintLayer(isRootLayer ? this : rootLayer, sourceGraphicsContext, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, 
-                   paintFlags | PaintLayerPaintingFilter | PaintLayerAppliedTransform);
-        
-        if (!isRootLayer)
-            sourceGraphicsContext->restore();
-        
-        m_filter->apply();
-        
-        // Get the filtered output and draw it in place.
-        GraphicsContextStateSaver stateSaver(*p);
-        TransformationMatrix transform(renderableTransform(paintBehavior));
-        transform.translateRight(layerOrigin.x(), layerOrigin.y());
-        p->concatCTM(transform.toAffineTransform());
-        
-        p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), LayoutRect(m_filter->outputRect()), CompositeSourceOver);
-        return;
-    }
-#endif
-
     if (paintsWithTransparency(paintBehavior))
         paintFlags |= PaintLayerHaveTransparency;
 
-    // Apply a transform if we have one.  A reflection is considered to be a transform, since it is a flip and a translate.
     if (paintsWithTransform(paintBehavior) && !(paintFlags & PaintLayerAppliedTransform)) {
         TransformationMatrix layerTransform = renderableTransform(paintBehavior);
         // If the transform can't be inverted, then don't paint anything.
@@ -2841,8 +2783,78 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
         return;
     }
+    
+#if ENABLE(CSS_FILTERS)
+    if (paintsWithFilters() && !(paintFlags & PaintLayerAppliedFilters)) {
+        // Update the filter's image if necessary.
+        // The filter is always built at this point.
+        LayoutRect filterRect = transparencyClipBox(this, rootLayer, paintBehavior);
 
-    PaintLayerFlags localPaintFlags = paintFlags & ~PaintLayerAppliedTransform;
+        FloatRect filterSourceRect = filterRect;
+        filterSourceRect.setLocation(LayoutPoint());
+
+        updateFilterBackingStore(filterSourceRect);
+        m_filter->prepare();
+        
+        // Paint into the context that represents the SourceGraphic of the filter.
+        GraphicsContext* sourceGraphicsContext = m_filter->inputContext();
+        if (!sourceGraphicsContext)
+            return;
+        
+        {
+            GraphicsContextStateSaver sourceSaver(*sourceGraphicsContext);
+            sourceGraphicsContext->translate(-filterRect.x(), -filterRect.y());
+
+            sourceGraphicsContext->clearRect(filterRect);
+
+            // Now paint the layer and its children into the image buffer.
+            paintLayer(rootLayer, sourceGraphicsContext, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags | PaintLayerAppliedFilters);
+        }
+        
+        m_filter->apply();
+        
+        // Get the filtered output and draw it in place.
+        IntRect destRect = m_filter->outputRect();
+        destRect.move(filterRect.x(), filterRect.y());
+        
+        p->drawImageBuffer(m_filter->output(), renderer()->style()->colorSpace(), destRect, CompositeSourceOver);
+        return;
+    }
+#endif
+    
+    paintLayerContents(rootLayer, p, paintDirtyRect, paintBehavior, paintingRoot, region, overlapTestRequests, paintFlags);
+}
+
+void RenderLayer::paintLayerContents(RenderLayer* rootLayer, GraphicsContext* p,
+                        const LayoutRect& paintDirtyRect, PaintBehavior paintBehavior,
+                        RenderObject* paintingRoot, RenderRegion* region, OverlapTestRequestMap* overlapTestRequests,
+                        PaintLayerFlags paintFlags)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (isComposited()) {
+        // The updatingControlTints() painting pass goes through compositing layers,
+        // but we need to ensure that we don't cache clip rects computed with the wrong root in this case.
+        if (p->updatingControlTints() || (paintBehavior & PaintBehaviorFlattenCompositingLayers))
+            paintFlags |= PaintLayerTemporaryClipRects;
+        else if (!backing()->paintingGoesToWindow() && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)) {
+            // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
+            return;
+        }
+    }
+#endif
+
+    if (shouldSuppressPaintingLayer(this))
+        return;
+    
+    // If this layer is totally invisible then there is nothing to paint.
+    if (!renderer()->opacity())
+        return;
+
+    PaintLayerFlags localPaintFlags = paintFlags & ~(PaintLayerAppliedTransform 
+#if ENABLE(CSS_FILTERS)
+        | PaintLayerAppliedFilters
+#endif
+        );
     bool haveTransparency = localPaintFlags & PaintLayerHaveTransparency;
 
     // Paint the reflection first if we have one.
@@ -4476,14 +4488,12 @@ void RenderLayer::updateOrRemoveFilterEffect()
     }
 }
 
-void RenderLayer::updateFilterBackingStore()
+void RenderLayer::updateFilterBackingStore(const FloatRect& filterRect)
 {
-    LayoutSize layoutSize = size();
-    if (!layoutSize.isZero()) {
-        FloatRect size = FloatRect(0, 0, layoutSize.width(), layoutSize.height());
-        FloatRect currentSourceSize = m_filter->sourceImageRect();
-        if (size != currentSourceSize)
-            m_filter->setSourceImageRect(size);
+    if (!filterRect.isZero()) {
+        FloatRect currentSourceRect = m_filter->sourceImageRect();
+        if (filterRect != currentSourceRect)
+            m_filter->setSourceImageRect(filterRect);
     }
 }
 
