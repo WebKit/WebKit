@@ -1,3 +1,52 @@
+2011-12-22  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TabbedPane should support closeable tabs, hiding tabs into drop down menu.
+        https://bugs.webkit.org/show_bug.cgi?id=75085
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/tabbed-pane-tabs-to-show.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane):
+        (WebInspector.TabbedPane.prototype.set shrinkableTabs):
+        (WebInspector.TabbedPane.prototype.set closeableTabs):
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype.closeTab):
+        (WebInspector.TabbedPane.prototype.selectTab):
+        (WebInspector.TabbedPane.prototype.onResize):
+        (WebInspector.TabbedPane.prototype._updateTabElements):
+        (WebInspector.TabbedPane.prototype._showTabElement):
+        (WebInspector.TabbedPane.prototype._hideTabElement):
+        (WebInspector.TabbedPane.prototype._createDropDownButton):
+        (WebInspector.TabbedPane.prototype._updateTabsDropDown):
+        (WebInspector.TabbedPane.prototype._populateDropDownFromIndex):
+        (WebInspector.TabbedPane.prototype._tabsSelectChanged):
+        (WebInspector.TabbedPane.prototype._measureDropDownButton):
+        (WebInspector.TabbedPane.prototype._updateWidths):
+        (WebInspector.TabbedPane.prototype._calculateMaxWidth.var):
+        (WebInspector.TabbedPane.prototype._calculateMaxWidth):
+        (WebInspector.TabbedPane.prototype._hideCurrentTab):
+        (WebInspector.TabbedPaneTab):
+        (WebInspector.TabbedPaneTab.prototype.get id):
+        (WebInspector.TabbedPaneTab.prototype.get tabElement):
+        (WebInspector.TabbedPaneTab.prototype.get measuredWidth):
+        (WebInspector.TabbedPaneTab.prototype.get width):
+        (WebInspector.TabbedPaneTab.prototype.set width):
+        (WebInspector.TabbedPaneTab.prototype._createTabElement):
+        (WebInspector.TabbedPaneTab.prototype._measure):
+        (WebInspector.TabbedPaneTab.prototype._tabSelected):
+        (WebInspector.TabbedPaneTab.prototype._tabClosed):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-navigator-tabbed-pane .tabbed-pane-header-contents):
+        * inspector/front-end/tabbedPane.css: Added.
+
 2011-12-22  Chris Fleizach  <cfleizach@apple.com>
 
         AX: attributed strings do not include AXHeading information when a link is contained within the heading

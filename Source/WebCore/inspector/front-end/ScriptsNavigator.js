@@ -33,6 +33,7 @@
 WebInspector.ScriptsNavigator = function(presentationModel)
 {
     WebInspector.TabbedPane.call(this);
+    this.shrinkableTabs = true;
 
     this._presentationModel = presentationModel;
 

@@ -173,6 +173,7 @@
     <file>resourcesPanel.css</file>
     <file>scriptsPanel.css</file>
     <file>splitView.css</file>
+    <file>tabbedPane.css</file>
     <file>textPrompt.css</file>
     <file>textViewer.css</file>
     <file>timelinePanel.css</file>

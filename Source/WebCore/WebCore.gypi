@@ -6532,6 +6532,7 @@
             'inspector/front-end/resourcesPanel.css',
             'inspector/front-end/scriptsPanel.css',
             'inspector/front-end/splitView.css',
+            'inspector/front-end/tabbedPane.css',
             'inspector/front-end/textPrompt.css',
             'inspector/front-end/textViewer.css',
             'inspector/front-end/timelinePanel.css',
