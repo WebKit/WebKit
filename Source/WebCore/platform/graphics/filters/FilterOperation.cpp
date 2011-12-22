@@ -70,7 +70,7 @@ PassRefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const F
         
     const BasicComponentTransferFilterOperation* fromOp = static_cast<const BasicComponentTransferFilterOperation*>(from);
     double fromAmount = fromOp ? fromOp->amount() : passthroughAmount();
-    return BasicComponentTransferFilterOperation::create(fromAmount + (m_amount - fromAmount) * progress, m_type);
+    return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
 }
 
 double BasicComponentTransferFilterOperation::passthroughAmount() const
@@ -80,6 +80,10 @@ double BasicComponentTransferFilterOperation::passthroughAmount() const
         return 1;
     case INVERT:
         return 0;
+    case CONTRAST:
+        return 1;
+    case BRIGHTNESS:
+        return 1;
     default:
         ASSERT_NOT_REACHED();
         return 0;
@@ -92,15 +96,19 @@ PassRefPtr<FilterOperation> GammaFilterOperation::blend(const FilterOperation* f
         return this;
     
     if (blendToPassthrough)
-        return GammaFilterOperation::create(WebCore::blend(m_amplitude, 1.0, progress),
-            WebCore::blend(m_exponent, 1.0, progress), WebCore::blend(m_offset, 0.0, progress), m_type);
+        return GammaFilterOperation::create(
+            WebCore::blend(m_amplitude, 1.0, progress),
+            WebCore::blend(m_exponent, 1.0, progress),
+            WebCore::blend(m_offset, 0.0, progress), m_type);
         
     const GammaFilterOperation* fromOp = static_cast<const GammaFilterOperation*>(from);
     double fromAmplitude = fromOp ? fromOp->amplitude() : 1;
     double fromExponent = fromOp ? fromOp->exponent() : 1;
     double fromOffset = fromOp ? fromOp->offset() : 0;
-    return GammaFilterOperation::create(WebCore::blend(m_amplitude, fromAmplitude, progress), WebCore::blend(m_exponent, fromExponent, progress),
-        WebCore::blend(m_offset, fromOffset, progress), m_type);
+    return GammaFilterOperation::create(
+        WebCore::blend(fromAmplitude, m_amplitude, progress),
+        WebCore::blend(fromExponent, m_exponent, progress),
+        WebCore::blend(fromOffset, m_offset, progress), m_type);
 }
 
 PassRefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
@@ -138,10 +146,10 @@ PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperati
     Color fromColor = fromOp ? fromOp->color() : Color(Color::transparent);
     
     return DropShadowFilterOperation::create(
-        WebCore::blend(m_x, fromX, progress),
-        WebCore::blend(m_y, fromY, progress),
-        WebCore::blend(m_stdDeviation, fromStdDeviation, progress),
-        WebCore::blend(m_color, fromColor, progress), m_type);
+        WebCore::blend(fromX, m_x, progress),
+        WebCore::blend(fromY, m_y, progress),
+        WebCore::blend(fromStdDeviation, m_stdDeviation, progress),
+        WebCore::blend(fromColor, m_color, progress), m_type);
 }
 
 } // namespace WebCore

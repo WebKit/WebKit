@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: blue;
+        display: inline-block;
+    }
+
+    #grayscale-box {
+      -webkit-animation: grayscale-anim 2s linear
+    }
+
+    #sepia-box {
+      -webkit-animation: sepia-anim 2s linear
+    }
+
+    #saturate-box {
+      -webkit-animation: saturate-anim 2s linear
+    }
+
+    #huerotate-box {
+      -webkit-animation: huerotate-anim 2s linear
+    }
+
+    #invert-box {
+      -webkit-animation: invert-anim 2s linear
+    }
+
+    #opacity-box {
+      -webkit-animation: opacity-anim 2s linear
+    }
+
+    #brightness-box {
+      -webkit-animation: brightness-anim 2s linear
+    }
+
+    #contrast-box {
+      -webkit-animation: contrast-anim 2s linear
+    }
+
+    #blur-box {
+      -webkit-animation: blur-anim 2s linear
+    }
+
+    #dropshadow-box {
+      -webkit-animation: dropshadow-anim 2s linear
+    }
+
+
+    @-webkit-keyframes grayscale-anim {
+        from { }
+        to   { -webkit-filter: grayscale(1); }
+    }
+
+    @-webkit-keyframes sepia-anim {
+        from { }
+        to   { -webkit-filter: sepia(1); }
+    }
+
+    @-webkit-keyframes saturate-anim {
+        from { }
+        to   { -webkit-filter: saturate(0); }
+    }
+
+    @-webkit-keyframes huerotate-anim {
+        from { }
+        to   { -webkit-filter: hue-rotate(180deg); }
+    }
+
+    @-webkit-keyframes invert-anim {
+        from { }
+        to   { -webkit-filter: invert(1); }
+    }
+
+    @-webkit-keyframes opacity-anim {
+        from { }
+        to   { -webkit-filter: opacity(0); }
+    }
+
+    @-webkit-keyframes brightness-anim {
+        from { }
+        to   { -webkit-filter: brightness(0); }
+    }
+
+    @-webkit-keyframes contrast-anim {
+        from { }
+        to   { -webkit-filter: contrast(0); }
+    }
+
+    @-webkit-keyframes blur-anim {
+        from { }
+        to   { -webkit-filter: blur(20px); }
+    }
+
+    @-webkit-keyframes dropshadow-anim {
+        from { }
+        to   { -webkit-filter: drop-shadow(20px 32px 12px black)); }
+    }
+
+  </style>
+  <script src="../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["grayscale-anim",  0.5, "grayscale-box", "webkitFilter", 'grayscale(0.25)', 0.05],
+      ["sepia-anim",  0.5, "sepia-box", "webkitFilter", 'sepia(0.25)', 0.05],
+      ["saturate-anim",  0.5, "saturate-box", "webkitFilter", 'saturate(0.75)', 0.05],
+      ["huerotate-anim",  0.5, "huerotate-box", "webkitFilter", 'huerotate(45deg)', 3],
+      ["invert-anim",  0.5, "invert-box", "webkitFilter", 'invert(0.25)', 0.05],
+      ["opacity-anim",  0.5, "opacity-box", "webkitFilter", 'opacity(0.75)', 0.05],
+      ["brightness-anim",  0.5, "brightness-box", "webkitFilter", 'brightness(0.75)', 0.05],
+      ["contrast-anim",  0.5, "contrast-box", "webkitFilter", 'contrast(0.75)', 0.05],
+      ["blur-anim",  0.5, "blur-box", "webkitFilter", 'blur(5px)', 1],
+      // FIXME when we implement computed filter style for drop-shadow.
+      // ["dropshadow-anim",  1, "dropshadow-box", "webkitFilter", 'drop-shadow(rgba(0, 0, 0, 0.25) 5px 8px 3px )', 2],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="grayscale-box"></div>
+<div class="box" id="sepia-box"></div>
+<div class="box" id="saturate-box"></div>
+<div class="box" id="huerotate-box"></div>
+<div class="box" id="invert-box"></div>
+<div class="box" id="opacity-box"></div>
+<div class="box" id="brightness-box"></div>
+<div class="box" id="contrast-box"></div>
+<div class="box" id="blur-box"></div>
+<!-- <div class="box" id="dropshadow-box"></div> -->
+
+<div id="result">
+</div>
+</body>
+</html>

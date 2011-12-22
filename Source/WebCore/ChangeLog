@@ -1,3 +1,21 @@
+2011-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Animating some CSS filter values is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=75122
+
+        Reviewed by Chris Marrin.
+        
+        Fix some reversed filter animation behavior for brightness,
+        contrast and drop-shadow filters.
+
+        Test: css3/filters/filter-animation-from-none.html
+
+        * platform/graphics/filters/FilterOperation.cpp:
+        (WebCore::BasicComponentTransferFilterOperation::blend): Just use the global blend() function.
+        (WebCore::BasicComponentTransferFilterOperation::passthroughAmount): Add CONTRAST and BRIGHTNESS to the sswitch.
+        (WebCore::GammaFilterOperation::blend): Fix the ordering.
+        (WebCore::DropShadowFilterOperation::blend): Fix the ordering.
+
 2011-12-22  Chris Rogers  <crogers@google.com>
 
         Fix mac build caused by improper include of "Locker.h"

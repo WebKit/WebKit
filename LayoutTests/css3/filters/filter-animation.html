@@ -102,31 +102,23 @@
         to   { -webkit-filter: drop-shadow(20px 30px 10px black)); }
     }
 
-
-
-
-
   </style>
   <script src="../../animations/resources/animation-test-helpers.js"></script>
   <script type="text/javascript">
     const expectedValues = [
-      // [time, element-id, property, expected-value, tolerance]
+      // [animation-name, time, element-id, property, expected-value, tolerance]
       ["grayscale-anim",  1, "grayscale-box", "webkitFilter", 'grayscale(0.5)', 0.05],
       ["sepia-anim",  1, "sepia-box", "webkitFilter", 'sepia(0.5)', 0.05],
       ["saturate-anim",  1, "saturate-box", "webkitFilter", 'saturate(0.5)', 0.05],
       ["huerotate-anim",  1, "huerotate-box", "webkitFilter", 'huerotate(90deg)', 2],
-      ["invert-anim",  1, "invert-box", "webkitFilter", 'invert(0.5)', 2],
-      ["opacity-anim",  1, "opacity-box", "webkitFilter", 'opacity(0.5)', 2],
-      ["brightness-anim",  1, "brightness-box", "webkitFilter", 'brightness(0.5)', 2],
-      ["contrast-anim",  1, "contrast-box", "webkitFilter", 'contrast(0.5)', 2],
-      ["blur-anim",  1, "blur-box", "webkitFilter", 'blur(10px)', 2],
-      // FIXME when we implement drop-shadow.
+      ["invert-anim",  1, "invert-box", "webkitFilter", 'invert(0.5)', 0.05],
+      ["opacity-anim",  1, "opacity-box", "webkitFilter", 'opacity(0.5)', 0.05],
+      ["brightness-anim",  1, "brightness-box", "webkitFilter", 'brightness(0.5)', 0.05],
+      ["contrast-anim",  1, "contrast-box", "webkitFilter", 'contrast(0.5)', 0.05],
+      ["blur-anim",  1, "blur-box", "webkitFilter", 'blur(10px)', 1],
+      // FIXME when we implement computed filter style for drop-shadow.
       // ["dropshadow-anim",  1, "dropshadow-box", "webkitFilter", 'drop-shadow(rgba(0, 0, 0, 0.5) 10px 15px 5px )', 2],
     ];
-    
-    function setupTest()
-    {
-    }
     
     runAnimationTest(expectedValues);
   </script>
