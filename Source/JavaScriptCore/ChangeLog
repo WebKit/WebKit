@@ -1,3 +1,16 @@
+2011-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does exactly the wrong thing when doing strict equality on two known cells
+        https://bugs.webkit.org/show_bug.cgi?id=75138
+        <rdar://problem/10621526>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeStrictEq):
+
 2011-12-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Fix debug build with assertions disabled
