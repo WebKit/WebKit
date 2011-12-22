@@ -1387,10 +1387,13 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
 
 void ScrollAnimatorMac::setIsActive()
 {
-    if (isScrollbarOverlayAPIAvailable()) {
-        if (needsScrollerStyleUpdate())
-            updateScrollerStyle();
-    }
+    if (!isScrollbarOverlayAPIAvailable())
+        return;
+
+    if (!m_needsScrollerStyleUpdate)
+        return;
+
+    updateScrollerStyle();
 }
 
 void ScrollAnimatorMac::updateScrollerStyle()
@@ -1399,13 +1402,13 @@ void ScrollAnimatorMac::updateScrollerStyle()
         return;
 
     if (!scrollableArea()->isOnActivePage()) {
-        setNeedsScrollerStyleUpdate(true);
+        m_needsScrollerStyleUpdate = true;
         return;
     }
 
     ScrollbarThemeMac* macTheme = macScrollbarTheme();
     if (!macTheme) {
-        setNeedsScrollerStyleUpdate(false);
+        m_needsScrollerStyleUpdate = false;
         return;
     }
 
@@ -1447,11 +1450,11 @@ void ScrollAnimatorMac::updateScrollerStyle()
         horizontalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
     }
 
-    // If needsScrollerStyleUpdate() is true, then the page is restoring from the page cache, and 
+    // If m_needsScrollerStyleUpdate is true, then the page is restoring from the page cache, and 
     // a relayout will happen on its own. Otherwise, we must initiate a re-layout ourselves.
-    scrollableArea()->scrollbarStyleChanged(newStyle, !needsScrollerStyleUpdate());
+    scrollableArea()->scrollbarStyleChanged(newStyle, !m_needsScrollerStyleUpdate);
 
-    setNeedsScrollerStyleUpdate(false);
+    m_needsScrollerStyleUpdate = false;
 }
 
 void ScrollAnimatorMac::startScrollbarPaintTimer()
