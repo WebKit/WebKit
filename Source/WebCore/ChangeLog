@@ -1,3 +1,26 @@
+2011-12-22  Andreas Kling  <kling@webkit.org>
+
+        SnowLeopard crashes due to thread-unsafe EventListenerIterator ASSERTs
+        <http://webkit.org/b/74260>
+
+        Reviewed by Darin Adler.
+
+        Guard EventListenerMap::m_activeIteratorCount with a mutex.
+
+        * dom/EventListenerMap.cpp:
+        (WebCore::activeIteratorCountMutex):
+        (WebCore::EventListenerMap::assertNoActiveIterators):
+        (WebCore::EventListenerMap::clear):
+        (WebCore::EventListenerMap::add):
+        (WebCore::EventListenerMap::remove):
+        (WebCore::EventListenerMap::find):
+        (WebCore::EventListenerMap::removeFirstEventListenerCreatedFromMarkup):
+        (WebCore::EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget):
+        (WebCore::EventListenerIterator::EventListenerIterator):
+        (WebCore::EventListenerIterator::~EventListenerIterator):
+        * dom/EventListenerMap.h:
+        (WebCore::EventListenerMap::assertNoActiveIterators):
+
 2011-12-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TabbedPane should support closeable tabs, hiding tabs into drop down menu.

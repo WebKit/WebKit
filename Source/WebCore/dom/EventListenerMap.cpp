@@ -39,9 +39,27 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+#ifndef NDEBUG
+#include <wtf/Threading.h>
+#endif
+
 using namespace WTF;
 
 namespace WebCore {
+
+#ifndef NDEBUG
+static Mutex& activeIteratorCountMutex()
+{
+    DEFINE_STATIC_LOCAL(Mutex, mutex, ());
+    return mutex;
+}
+
+void EventListenerMap::assertNoActiveIterators()
+{
+    MutexLocker locker(activeIteratorCountMutex());
+    ASSERT(!m_activeIteratorCount);
+}
+#endif
 
 EventListenerMap::EventListenerMap()
 #ifndef NDEBUG
@@ -66,7 +84,7 @@ bool EventListenerMap::contains(const AtomicString& eventType) const
 
 void EventListenerMap::clear()
 {
-    ASSERT(!m_activeIteratorCount);
+    assertNoActiveIterators();
 
     if (m_hashMap)
         m_hashMap.clear();
@@ -104,7 +122,7 @@ static bool addListenerToVector(EventListenerVector* vector, PassRefPtr<EventLis
 
 bool EventListenerMap::add(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    ASSERT(!m_activeIteratorCount);
+    assertNoActiveIterators();
 
     if (m_singleEventListenerVector && m_singleEventListenerType != eventType) {
         // We already have a single (first) listener vector, and this event is not
@@ -144,7 +162,7 @@ static bool removeListenerFromVector(EventListenerVector* listenerVector, EventL
 
 bool EventListenerMap::remove(const AtomicString& eventType, EventListener* listener, bool useCapture, size_t& indexOfRemovedListener)
 {
-    ASSERT(!m_activeIteratorCount);
+    assertNoActiveIterators();
 
     if (!m_hashMap) {
         if (m_singleEventListenerType != eventType)
@@ -169,7 +187,7 @@ bool EventListenerMap::remove(const AtomicString& eventType, EventListener* list
 
 EventListenerVector* EventListenerMap::find(const AtomicString& eventType)
 {
-    ASSERT(!m_activeIteratorCount);
+    assertNoActiveIterators();
 
     if (m_hashMap) {
         EventListenerHashMap::iterator it = m_hashMap->find(eventType);
@@ -203,7 +221,7 @@ static void removeFirstListenerCreatedFromMarkup(EventListenerVector* listenerVe
 
 void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomicString& eventType)
 {
-    ASSERT(!m_activeIteratorCount);
+    assertNoActiveIterators();
 
     if (m_hashMap) {
         EventListenerHashMap::iterator result = m_hashMap->find(eventType);
@@ -242,7 +260,7 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomicString& eventT
 
 void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarget* target)
 {
-    ASSERT(!m_activeIteratorCount);
+    assertNoActiveIterators();
 
     if (m_hashMap) {
         EventListenerHashMap::iterator end = m_hashMap->end();
@@ -278,7 +296,10 @@ EventListenerIterator::EventListenerIterator(EventTarget* target)
     m_map = &data->eventListenerMap;
 
 #ifndef NDEBUG
-    m_map->m_activeIteratorCount++;
+    {
+        MutexLocker locker(activeIteratorCountMutex());
+        m_map->m_activeIteratorCount++;
+    }
 #endif
 
     if (m_map->m_hashMap) {
@@ -290,8 +311,10 @@ EventListenerIterator::EventListenerIterator(EventTarget* target)
 #ifndef NDEBUG
 EventListenerIterator::~EventListenerIterator()
 {
-    if (m_map)
+    if (m_map) {
+        MutexLocker locker(activeIteratorCountMutex());
         m_map->m_activeIteratorCount--;
+    }
 }
 #endif
 

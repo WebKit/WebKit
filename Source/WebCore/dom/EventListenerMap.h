@@ -65,6 +65,8 @@ public:
 private:
     friend class EventListenerIterator;
 
+    void assertNoActiveIterators();
+
     struct EventListenerHashMapTraits : HashTraits<WTF::AtomicString> {
         static const int minimumTableSize = 32;
     };
@@ -97,6 +99,10 @@ private:
     EventListenerMap::EventListenerHashMap::iterator m_mapEnd;
     unsigned m_index;
 };
+
+#ifdef NDEBUG
+inline void EventListenerMap::assertNoActiveIterators() { }
+#endif
 
 } // namespace WebCore
 
