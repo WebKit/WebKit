@@ -19,20 +19,23 @@
         var blockedURL;
         var allowedURL;
         var test;
+        var loadedmetadataFired = false;
+        var loadedFired = false;
 
         function logEvent(evt)
         {
             consoleWrite("<br>EVENT('" + evt.type + "')");
         }
-        
+
         function loadedmetadata(evt)
         {
             logEvent(evt);
             consoleWrite("");
-            endTest();
+            loadedmetadataFired = true;
+            checkEndTest();
         }
 
-        function setupSourceTest() 
+        function setupSourceTest()
         {
             consoleWrite("<br>*** Test using the &lt;source&gt; element ***");
             blockedURL = relativeURL(video.src);
@@ -102,12 +105,16 @@
             }
         }
 
-        function loaded(evt) 
+        function loaded(evt)
         {
-            logEvent(evt);
-            testExpected("video.error", null, "!=");
-            testExpected("video.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
-            testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+            loadedFired = true;
+            checkEndTest();
+        };
+
+        function checkEndTest()
+        {
+            if (loadedmetadataFired && loadedFired)
+                endTest();
         };
 
         findMediaElement();
