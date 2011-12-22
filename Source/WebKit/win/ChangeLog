@@ -1,3 +1,19 @@
+2011-12-21  Jessie Berlin  <jberlin@apple.com>
+
+        Expose to Windows the way to allow a scheme access to Local Storage and Databases while
+        Private Browsing is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=75056
+
+        Reviewed by Sam Weinig.
+
+        Add the Windows WebKit API that corresponds to the Mac one added in r99439.
+
+        * WebView.cpp:
+        (WebView::registerURLSchemeAsSecure):
+        (WebView::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing):
+        (WebView::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing):
+        * WebView.h:
+
 2011-12-20  Pavel Feldman  <pavel.feldman@gmail.com>
 
         Web Inspector: reproducible crash after closing web inspector and browser window  (iCab)

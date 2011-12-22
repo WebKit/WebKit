@@ -826,6 +826,8 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE setDomainRelaxationForbiddenForURLScheme(BOOL forbidden, BSTR scheme);
     virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsSecure(BSTR);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(BSTR);
+    virtual HRESULT STDMETHODCALLTYPE registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(BSTR);
 
     virtual HRESULT STDMETHODCALLTYPE nextDisplayIsSynchronous();
 

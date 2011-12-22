@@ -6588,6 +6588,18 @@ HRESULT WebView::registerURLSchemeAsSecure(BSTR scheme)
     return S_OK;
 }
 
+HRESULT WebView::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(BSTR scheme)
+{
+    SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing(toString(scheme));
+    return S_OK;
+}
+
+HRESULT WebView::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(BSTR scheme)
+{
+    SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing(toString(scheme));
+    return S_OK;
+}
+
 HRESULT WebView::nextDisplayIsSynchronous()
 {
     m_nextDisplayIsSynchronous = true;
