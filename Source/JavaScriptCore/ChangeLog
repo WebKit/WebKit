@@ -1,3 +1,16 @@
+2011-12-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Fix debug build with assertions disabled
+        https://bugs.webkit.org/show_bug.cgi?id=75075
+
+        Reviewed by Darin Adler.
+
+        Check whether assertions are disabled instead of NDEBUG
+        where appropriate to avoid "defined but not used" warnings.
+
+        * wtf/DateMath.cpp:
+        (WTF::initializeDates):
+
 2011-12-22  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [EFL] Missing plugins support for efl port

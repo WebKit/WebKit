@@ -1,3 +1,24 @@
+2011-12-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Fix debug build with assertions disabled
+        https://bugs.webkit.org/show_bug.cgi?id=75075
+
+        Reviewed by Darin Adler.
+
+        Check whether assertions are disabled instead of NDEBUG
+        where appropriate to avoid "defined but not used" warnings.
+
+        No change in behaviour so no new tests.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::insertInLRUList):
+        (WebCore::MemoryCache::removeFromLiveDecodedResourcesList):
+        (WebCore::MemoryCache::insertInLiveDecodedResourcesList):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+
 2011-12-22  Anders Carlsson  <andersca@apple.com>
 
         Get rid of didStartAnimatedScroll and didCompleteAnimatedScroll

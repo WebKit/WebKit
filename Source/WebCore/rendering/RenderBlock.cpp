@@ -2043,7 +2043,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     LayoutRect oldRect(child->x(), child->y() , child->width(), child->height());
     LayoutUnit oldLogicalTop = logicalTopForChild(child);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     LayoutSize oldLayoutDelta = view()->layoutDelta();
 #endif
     // Go ahead and position the child as though it didn't collapse with the top.

@@ -310,7 +310,7 @@ LayoutPoint RenderLayer::computeOffsetFromRoot(bool& hasLayerOffset) const
 
 void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerPositionsFlags flags)
 {
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     if (offsetFromRoot) {
         bool hasLayerOffset;
         LayoutPoint computedOffsetFromRoot = computeOffsetFromRoot(hasLayerOffset);
