@@ -19,7 +19,7 @@ function test()
     }
     function createUISouceCode(url)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(0, url, false, null, null);
+        var uiSourceCode = new WebInspector.UISourceCode(0, url, null, null);
         uiSourceCode.requestContent = function(callback)
         {
             InspectorTest.addResult("Source requested for " + url);
@@ -136,7 +136,9 @@ function test()
             var nextId = 0;
             function addOption(url, isContentScript)
             {
-                panel._addOptionToFilesSelect(new WebInspector.UISourceCode(nextId++, url, isContentScript, null, null));
+                var uiSourceCode = new WebInspector.UISourceCode(nextId++, url, null, null);
+                uiSourceCode.isContentScript = isContentScript;
+                panel._addOptionToFilesSelect(uiSourceCode);
             }
             addOption(rootURL + "foo/bar/script.js", false);
             addOption(rootURL + "foo/bar/contentScript2.js?a=1", true);

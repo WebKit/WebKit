@@ -195,7 +195,7 @@ WebInspector.RawSourceCode.prototype = {
             for (var i = 0; i < sourceURLs.length; ++i) {
                 var sourceURL = sourceURLs[i];
                 var contentProvider = new WebInspector.CompilerSourceMappingContentProvider(sourceURL, this._compilerSourceMapping);
-                var uiSourceCode = new WebInspector.UISourceCode(sourceURL, sourceURL, this.isContentScript, this, contentProvider);
+                var uiSourceCode = this._createUISourceCode(sourceURL, sourceURL, contentProvider);
                 uiSourceCodeList.push(uiSourceCode);
             }
             var sourceMapping = new WebInspector.RawSourceCode.CompilerSourceMapping(this, uiSourceCodeList, this._compilerSourceMapping);
@@ -205,7 +205,7 @@ WebInspector.RawSourceCode.prototype = {
 
         var originalContentProvider = this._createContentProvider();
         if (!this._formatted) {
-            var uiSourceCode = new WebInspector.UISourceCode(this.url, this.url, this.isContentScript, this, originalContentProvider);
+            var uiSourceCode = this._createUISourceCode(this.url, this.url, originalContentProvider);
             var sourceMapping = new WebInspector.RawSourceCode.PlainSourceMapping(this, uiSourceCode);
             callback(sourceMapping);
             return;
@@ -226,13 +226,26 @@ WebInspector.RawSourceCode.prototype = {
             function didFormatContent(formattedContent, mapping)
             {
                 var contentProvider = new WebInspector.StaticContentProvider(mimeType, formattedContent)
-                var uiSourceCode = new WebInspector.UISourceCode("deobfuscated:" + this.url, this.url, this.isContentScript, this, contentProvider);
+                var uiSourceCode = this._createUISourceCode("deobfuscated:" + this.url, this.url, contentProvider);
                 var sourceMapping = new WebInspector.RawSourceCode.FormattedSourceMapping(this, uiSourceCode, mapping);
                 callback(sourceMapping);
             }
             this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
         }
         originalContentProvider.requestContent(didRequestContent.bind(this));
+    },
+
+    /**
+     * @param {string} id
+     * @param {string} url
+     * @param {WebInspector.ContentProvider} contentProvider
+     */
+    _createUISourceCode: function(id, url, contentProvider)
+    {
+        var uiSourceCode = new WebInspector.UISourceCode(id, url, this, contentProvider);
+        uiSourceCode.isContentScript = this.isContentScript;
+        uiSourceCode.sourceMapURL = this.sourceMapURL;
+        return uiSourceCode;
     },
 
     /**

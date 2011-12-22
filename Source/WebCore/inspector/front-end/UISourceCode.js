@@ -33,17 +33,17 @@
  * @extends {WebInspector.Object}
  * @param {string} id
  * @param {string} url
- * @param {boolean} isContentScript
  * @param {WebInspector.RawSourceCode} rawSourceCode
  * @param {WebInspector.ContentProvider} contentProvider
  */
-WebInspector.UISourceCode = function(id, url, isContentScript, rawSourceCode, contentProvider)
+WebInspector.UISourceCode = function(id, url, rawSourceCode, contentProvider)
 {
     this._id = id;
     this._url = url;
-    this._isContentScript = isContentScript;
     this._rawSourceCode = rawSourceCode;
     this._contentProvider = contentProvider;
+    this.isContentScript = false;
+    this.sourceMapURL = "";
     /**
      * @type Array.<function(string,string)>
      */
@@ -69,14 +69,6 @@ WebInspector.UISourceCode.prototype = {
     get url()
     {
         return this._url;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    get isContentScript()
-    {
-        return this._isContentScript;
     },
 
     /**

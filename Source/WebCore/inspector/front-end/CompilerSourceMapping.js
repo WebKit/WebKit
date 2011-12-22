@@ -97,6 +97,8 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
         try {
             // FIXME: make sendRequest async.
             var response = InspectorFrontendHost.loadResourceSynchronously(this._sourceMappingURL);
+            if (response.slice(0, 3) === ")]}")
+                response = response.substring(response.indexOf('\n'));
             this._parseMappingPayload(JSON.parse(response));
             return true
         } catch(e) {
@@ -182,7 +184,7 @@ WebInspector.ClosureCompilerSourceMapping.prototype = {
     {
         for (var i = 0; i < sections.length; ++i) {
             var section = sections[i];
-            this._parseMap(section.map, section.offset.line - 1, section.offset.column)
+            this._parseMap(section.map, section.offset.line, section.offset.column)
         }
     },
 

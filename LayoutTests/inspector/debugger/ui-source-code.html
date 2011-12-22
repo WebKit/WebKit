@@ -17,7 +17,7 @@ function test()
     InspectorTest.runTestSuite([
         function testUISourceCode(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode("id", "url", false, null, contentProvider);
+            var uiSourceCode = new WebInspector.UISourceCode("id", "url", null, contentProvider);
             function didRequestContent(callNumber, mimeType, content)
             {
                 InspectorTest.addResult("Callback " + callNumber + " is invoked.");

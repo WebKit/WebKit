@@ -1,3 +1,29 @@
+2011-12-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: add "install source map" to JS source frame context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=74181
+
+        Reviewed by Pavel Feldman.
+
+        Add "install source map" to source frame context menu when source map url is auto detected.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CompilerSourceMapping.js:
+        (WebInspector.ClosureCompilerSourceMapping.prototype.load):
+        (WebInspector.ClosureCompilerSourceMapping.prototype._parseSections):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.installCompilerSourceMapping):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.populateTextAreaContextMenu):
+        (WebInspector.JavaScriptSourceFrame.prototype.cancelEditing):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent.didFormatContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping.didRequestContent):
+        (WebInspector.RawSourceCode.prototype._createSourceMapping):
+        (WebInspector.RawSourceCode.prototype._createUISourceCode):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+
 2011-12-22  Branimir Lambov  <blambov@google.com>
 
         SVG: "filter" race condition may prevent SVG elements from being re-drawn

@@ -13,7 +13,6 @@ function clickButton()
 
 function test()
 {
-
     InspectorTest.runDebuggerTestSuite([
         function testSetBreakpoint(next)
         {
@@ -22,9 +21,9 @@ function test()
             function didShowCompiled(sourceFrame)
             {
                 InspectorTest.addResult("Script source was shown.");
-                sourceFrame._model.setCompilerSourceMapping(sourceFrame._uiSourceCode, "http://localhost:8000/inspector/resources/source-map.json");
+                sourceFrame._uiSourceCode.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
+                sourceFrame._model.installCompilerSourceMapping(sourceFrame._uiSourceCode);
                 InspectorTest.showScriptSource("source1.js", didShowSource1);
-
             }
 
             function didShowSource1(sourceFrame)
