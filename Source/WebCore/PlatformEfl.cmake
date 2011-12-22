@@ -5,14 +5,14 @@ LIST(APPEND WebCore_LINK_FLAGS
 
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${JAVASCRIPTCORE_DIR}/wtf/gobject"
-  "${WEBCORE_DIR}/platform/efl"
-  "${WEBCORE_DIR}/platform/text/efl"
-  "${WEBCORE_DIR}/platform/graphics/efl"
-  "${WEBCORE_DIR}/page/efl"
   "${WEBCORE_DIR}/accessibility/efl"
+  "${WEBCORE_DIR}/page/efl"
+  "${WEBCORE_DIR}/platform/efl"
+  "${WEBCORE_DIR}/platform/graphics/efl"
+  "${WEBCORE_DIR}/platform/text/efl"
+  "${WEBCORE_DIR}/plugins/efl"
   "${WEBKIT_DIR}/efl/WebCoreSupport"
   "${WEBKIT_DIR}/efl/ewk"
-  "${DERIVED_SOURCES_DIR}"
 )
 
 LIST(APPEND WebCore_SOURCES
@@ -72,10 +72,27 @@ LIST(APPEND WebCore_SOURCES
   platform/image-decoders/webp/WEBPImageDecoder.cpp
   platform/posix/FileSystemPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
-  plugins/PluginDataNone.cpp
-  plugins/PluginPackageNone.cpp
-  plugins/PluginViewNone.cpp
 )
+
+IF (ENABLE_NETSCAPE_PLUGIN_API)
+  LIST(APPEND WebCore_SOURCES
+    plugins/PluginDatabase.cpp
+    plugins/PluginDebug.cpp
+    plugins/PluginPackage.cpp
+    plugins/PluginStream.cpp
+    plugins/PluginView.cpp
+
+    plugins/efl/PluginDataEfl.cpp
+    plugins/efl/PluginPackageEfl.cpp
+    plugins/efl/PluginViewEfl.cpp
+  )
+ELSE ()
+  LIST(APPEND WebCore_SOURCES
+    plugins/PluginDataNone.cpp
+    plugins/PluginPackageNone.cpp
+    plugins/PluginViewNone.cpp
+  )
+ENDIF ()
 
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsEfl.css

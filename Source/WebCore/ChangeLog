@@ -1,3 +1,47 @@
+2011-12-22  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        [EFL] Missing plugins support for efl port
+        https://bugs.webkit.org/show_bug.cgi?id=44505
+
+        Reviewed by Anders Carlsson.
+
+        Basic functionality of plugins for efl port.
+
+        Template version, so no new tests are needed.
+
+        * PlatformEfl.cmake:
+        * plugins/PluginView.h:
+        * plugins/efl/PluginDataEfl.cpp: Added. Copied from plugins/gtk/PluginDataGtk.cpp.
+        (WebCore::PluginData::initPlugins): Fill mime/description/extension maps for plugins.
+        (WebCore::PluginData::refresh): Refresh plugin's database.
+        * plugins/efl/PluginPackageEfl.cpp: Added. Copied from plugins/gtk/PluginPackageGtk.cpp.
+        (WebCore::PluginPackage::fetchInfo): Get info from plugin's library about name and mime supported.
+        (WebCore::PluginPackage::NPVersion):
+        (WebCore::PluginPackage::load): Load plugin.
+        * plugins/efl/PluginViewEfl.cpp: Added. Copied from plugins/gtk/PluginViewGtk.cpp.
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleFocusInEvent):
+        (WebCore::PluginView::handleFocusOutEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::updatePluginWidget):
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::show):
+        (WebCore::PluginView::hide):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::setParent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::handlePostReadFile):
+        (WebCore::PluginView::platformGetValueStatic):
+        (WebCore::PluginView::platformGetValue):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::invalidateRegion):
+        (WebCore::PluginView::forceRedraw):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformDestroy):
+
 2011-12-22  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add "install source map" to JS source frame context menu.

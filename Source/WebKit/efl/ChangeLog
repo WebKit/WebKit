@@ -1,3 +1,15 @@
+2011-12-22  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
+
+        [EFL] Missing plugins support for efl port
+        https://bugs.webkit.org/show_bug.cgi?id=44505
+
+        Reviewed by Anders Carlsson.
+
+        Implementation of ewk_frame_plugin_create() - creating PluginView.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_plugin_create):
+
 2011-12-22  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL] Remove unused parameter names.
