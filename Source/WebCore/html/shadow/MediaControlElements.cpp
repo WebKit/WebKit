@@ -1171,8 +1171,8 @@ const AtomicString& MediaControlTextTrackContainerElement::shadowPseudoId() cons
 }
 
 static const float mimimumFontSize = 16;
-static const float videoHeightFontSizeDivisor = 25;
-static const float trackBottomMultiplier = 0.9;
+static const float videoHeightFontSizePercentage = .05;
+static const float trackBottomMultiplier = .9;
     
 void MediaControlTextTrackContainerElement::updateSizes()
 {
@@ -1185,9 +1185,7 @@ void MediaControlTextTrackContainerElement::updateSizes()
         return;
     m_videoDisplaySize = videoBox;
 
-    float fontSize = m_videoDisplaySize.size().height() / videoHeightFontSizeDivisor;
-    if (fontSize < mimimumFontSize)
-        fontSize = mimimumFontSize;
+    float fontSize = m_videoDisplaySize.size().height() * videoHeightFontSizePercentage;
     if (fontSize != m_fontSize) {
         m_fontSize = fontSize;
         ensureInlineStyleDecl()->setProperty(CSSPropertyFontSize, String::number(fontSize) + "px");

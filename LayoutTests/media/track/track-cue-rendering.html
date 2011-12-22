@@ -13,31 +13,26 @@
         var seekedCount = 0;
         var info = [ "Lorem", "ipsum", "dolor", "sit" ];
 
-        function testFontSizes()
+        function testFontSize(width, height)
         {
-            consoleWrite("<br>Test that the cue display font size is resized as the video element resizes.");
-            run("video.width = 320");
-            run("video.height = 240");
+            run("video.width = " + width);
+            run("video.height = " + height);
             document.body.offsetTop;
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "16px");
-
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", parseInt(height * 0.05) + "px");
             consoleWrite("");
-            run("video.width = 640");
-            run("video.height = 480");
-            document.body.offsetTop;
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "19px");
+        }
 
-            consoleWrite("");
-            run("video.width = 1280");
-            run("video.height = 960");
-            document.body.offsetTop;
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "38px");
+        function testCueStyle()
+        {
+            consoleWrite("<br>Test the cue display colors and font.");
+            testFontSize(320, 240);
+            testFontSize(640, 480);
+            testFontSize(1280, 960);
+            testFontSize(2560, 1440);
 
-            consoleWrite("");
-            run("video.width = 2560");
-            run("video.height = 1440");
-            document.body.offsetTop;
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", "58px");
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontFamily", "sans-serif");
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).color", "rgba(255, 255, 255, 0)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video)).backgroundColor", "rgba(0, 0, 0, 0.796875)");
 
             endTest();
         }
@@ -50,7 +45,7 @@
             testExpected("textTrackDisplayElement(video).innerText", info[seekedCount]);
 
             if (++seekedCount == info.length)
-                testFontSizes();
+                testCueStyle();
             else {
                 consoleWrite("");
                 run("video.currentTime = " + (video.currentTime + 1));

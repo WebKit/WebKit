@@ -1,3 +1,20 @@
+2011-12-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Fix text track cue font size and colors
+        https://bugs.webkit.org/show_bug.cgi?id=75051
+
+        Reviewed by Darin Adler.
+
+        No new tests, updated media/track/track-cue-rendering.html for the changes.
+
+        * css/mediaControls.css:
+        (video::-webkit-media-text-track-container): Match WebVTT spec.
+        (video::-webkit-media-text-track-display): Ditto.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes): Change font size from  4% of the
+            video height to 5% as per the spec. Don't enforce a minimum size.
+
 2011-12-21  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, rolling out r103473.

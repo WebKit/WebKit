@@ -195,6 +195,7 @@ video::-webkit-media-text-track-container {
     font-size: 22px;
     font-family: sans-serif;
     text-align: center;
+    color: rgba(255, 255, 255, 0);
     
     letter-spacing: normal;
     word-spacing: normal;
@@ -207,7 +208,7 @@ video::-webkit-media-text-track-container {
 
 video::-webkit-media-text-track-display {
     display: inline;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
     color: yellow;
     padding: 0px 2px;
 }
