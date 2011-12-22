@@ -56,7 +56,6 @@ public:
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual int scrollPosition(Scrollbar*) const;
     virtual void setScrollOffset(const IntPoint&);
-    virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void notifyPageThatContentAreaWillPaint() const;
     virtual bool isScrollCornerVisible() const;
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);

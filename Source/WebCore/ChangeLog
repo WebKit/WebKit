@@ -1,3 +1,24 @@
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Remove didStartRubberBand and didCompleteRubberBand callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=75102
+
+        Reviewed by Adam Roben.
+
+        The code to do display throttling in WebKit2 is complex and doesn't really help us except
+        on an old benchmark that's no longer representative of real-world behavior; let's rip it out instead.
+
+        * page/ChromeClient.h:
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+
 2011-12-22  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] Network item view is not displayed.

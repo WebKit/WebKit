@@ -1792,10 +1792,6 @@ IntSize RenderLayer::overhangAmount() const
     return IntSize();
 }
 
-void RenderLayer::didCompleteRubberBand(const IntSize&) const
-{
-}
-
 bool RenderLayer::isActive() const
 {
     Page* page = renderer()->frame()->page();

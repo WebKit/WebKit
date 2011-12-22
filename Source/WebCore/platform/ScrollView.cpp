@@ -325,10 +325,6 @@ int ScrollView::scrollSize(ScrollbarOrientation orientation) const
     return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
 }
 
-void ScrollView::didCompleteRubberBand(const IntSize&) const
-{
-}
-
 void ScrollView::notifyPageThatContentAreaWillPaint() const
 {
 }

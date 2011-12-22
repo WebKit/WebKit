@@ -755,16 +755,6 @@ void WebChromeClient::dispatchViewportPropertiesDidChange(const ViewportArgument
 #endif
 }
 
-void WebChromeClient::didStartRubberBandForFrame(Frame*, const IntSize&) const
-{
-    m_page->drawingArea()->disableDisplayThrottling();
-}
-
-void WebChromeClient::didCompleteRubberBandForFrame(Frame* frame, const IntSize& initialOverhang) const
-{
-    m_page->drawingArea()->enableDisplayThrottling();
-}
-
 void WebChromeClient::didStartAnimatedScroll() const
 {
     m_page->drawingArea()->disableDisplayThrottling();

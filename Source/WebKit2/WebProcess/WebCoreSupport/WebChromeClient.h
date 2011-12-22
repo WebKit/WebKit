@@ -205,8 +205,6 @@ private:
     
     virtual void dispatchViewportPropertiesDidChange(const WebCore::ViewportArguments&) const OVERRIDE;
 
-    virtual void didStartRubberBandForFrame(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;
-    virtual void didCompleteRubberBandForFrame(WebCore::Frame*, const WebCore::IntSize&) const OVERRIDE;
     virtual void didStartAnimatedScroll() const OVERRIDE;
     virtual void didCompleteAnimatedScroll() const OVERRIDE;
 

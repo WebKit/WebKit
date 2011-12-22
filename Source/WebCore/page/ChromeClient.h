@@ -312,8 +312,6 @@ namespace WebCore {
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 
-        virtual void didStartRubberBandForFrame(Frame*, const IntSize&) const { }
-        virtual void didCompleteRubberBandForFrame(Frame*, const IntSize&) const { }
         virtual void didStartAnimatedScroll() const { }
         virtual void didCompleteAnimatedScroll() const { }
         

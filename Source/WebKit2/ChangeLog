@@ -1,3 +1,16 @@
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Remove didStartRubberBand and didCompleteRubberBand callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=75102
+
+        Reviewed by Adam Roben.
+
+        The code to do display throttling in WebKit2 is complex and doesn't really help us except
+        on an old benchmark that's no longer representative of real-world behavior; let's rip it out instead.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-12-22  Ryuan Choi <ryuan.choi@samsung.com>, Tomasz Morawski <t.morawski@samsung.com>
 
         [EFL][WK2] Add an option to build WebKit2.

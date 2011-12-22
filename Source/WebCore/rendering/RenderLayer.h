@@ -657,7 +657,6 @@ private:
     virtual IntSize contentsSize() const;
     virtual IntSize overhangAmount() const;
     virtual IntPoint currentMousePosition() const;
-    virtual void didCompleteRubberBand(const IntSize&) const;
     virtual bool shouldSuspendScrollAnimations() const;
     virtual bool isOnActivePage() const;
 

@@ -1351,8 +1351,6 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
                 return;
             }
 
-            m_scrollableArea->didStartRubberBand(roundedIntSize(m_scrollElasticityController.m_startStretch));
-            
             m_scrollElasticityController.m_origOrigin = (m_scrollableArea->visibleContentRect().location() + m_scrollableArea->scrollOrigin()) - m_scrollElasticityController.m_startStretch;
             m_scrollElasticityController.m_origVelocity = m_scrollElasticityController.m_momentumVelocity;
 
@@ -1387,8 +1385,6 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             m_scrollElasticityController.m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
             immediateScrollToPoint(m_scrollElasticityController.m_origOrigin);
-
-            m_scrollableArea->didCompleteRubberBand(roundedIntSize(m_scrollElasticityController.m_startStretch));
 
             m_snapRubberBandTimer.stop();
 

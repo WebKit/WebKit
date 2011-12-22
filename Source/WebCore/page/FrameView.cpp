@@ -2526,22 +2526,6 @@ IntRect FrameView::windowResizerRect() const
     return page->chrome()->windowResizerRect();
 }
 
-void FrameView::didStartRubberBand(const IntSize& initialOverhang) const
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    page->chrome()->client()->didCompleteRubberBandForFrame(m_frame.get(), initialOverhang);
-}
-
-void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    page->chrome()->client()->didCompleteRubberBandForFrame(m_frame.get(), initialOverhang);
-}
-
 void FrameView::didStartAnimatedScroll() const
 {
     Page* page = m_frame->page();
