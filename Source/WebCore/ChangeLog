@@ -1,3 +1,101 @@
+2011-12-21  Andreas Kling  <kling@webkit.org>
+
+        Automate elements' registration as document namedItem/extraNamedItem.
+        <http://webkit.org/b/74991>
+
+        Reviewed by Antti Koivisto.
+
+        Remove caching of the "id" and "name" attributes on applet, embed, form,
+        image and object elements. We were caching them to keep the document's
+        map of named and "extra named" (named by id) item counts in sync.
+
+        Instead, add a hook to Element::willModifyAttribute() that detects when
+        the attributes are being changed and handle the registration/unregistration
+        automatically if the element returns true for shouldRegisterAsNamedItem()
+        or shouldRegisterAsExtraNamedItem() respectively.
+
+        This shrinks the elements by two AtomicStrings (8 or 16 bytes) each.
+
+        IFrame elements retain the old mechanism for now, as there are some subtle
+        differences to how that's handled.
+
+        * dom/Node.h:
+        (WebCore::Node::hasName):
+        (WebCore::Node::setHasName):
+
+            Cache whether we have a "name" attribute or not (1 bit on Node.)
+            This is done in order to minimize the overhead added to Element's
+            insertedIntoDocument() and removeFromDocument().
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateNamedItemRegistration):
+        (WebCore::Element::updateExtraNamedItemRegistration):
+
+            Added. Called when the "name" and "id" attributes are changed.
+            Updates the document's named item maps accordingly.
+
+        (WebCore::Element::insertedIntoDocument):
+        (WebCore::Element::removedFromDocument):
+
+            Make sure updateName() is called in addition to updateId() when applicable.
+
+        (WebCore::Element::attributeChanged):
+
+            Update the Node's has-name flag as appropriate.
+
+        * dom/Element.h:
+        (WebCore::Element::shouldRegisterAsNamedItem):
+        (WebCore::Element::shouldRegisterAsExtraNamedItem):
+
+            Added. If an element returns true for these, it will be automatically
+            registered with the document when the name/id attribute changes.
+
+        (WebCore::Element::updateId):
+        (WebCore::Element::updateName):
+
+            Register/unregister from the document's named item maps as appropriate.
+
+        (WebCore::Element::willModifyAttribute):
+
+            Add updateName() hook in addition to the existing updateId() hook.
+
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setAttributes):
+
+            Make sure updateName() is called when we're cloning the attributes
+            from another element.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseMappedAttribute):
+        * html/HTMLAppletElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        (WebCore::HTMLEmbedElement::insertedIntoDocument):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::insertedIntoDocument):
+        (WebCore::HTMLFormElement::removedFromDocument):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        (WebCore::HTMLImageElement::insertedIntoDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::insertedIntoDocument):
+        (WebCore::HTMLObjectElement::removedFromDocument):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInElement.h:
+
+            Remove duplicated code that is now handled by Element.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateDocNamedItem):
+        (WebCore::HTMLObjectElement::formControlName):
+
+            Use fastGetAttribute() since we no longer cache the name.
+
 2011-12-21  Wyatt Carss  <wcarss@chromium.org>
 
         Reviewed by Ryosuke Niwa.

@@ -240,6 +240,12 @@ void NamedNodeMap::setAttributes(const NamedNodeMap& other)
     if (oldId || newId)
         m_element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
 
+    Attribute* oldName = getAttributeItem(HTMLNames::nameAttr);
+    Attribute* newName = other.getAttributeItem(HTMLNames::nameAttr);
+
+    if (oldName || newName)
+        m_element->updateName(oldName ? oldName->value() : nullAtom, newName ? newName->value() : nullAtom);
+
     clearAttributes();
     unsigned newLength = other.length();
     m_attributes.resize(newLength);

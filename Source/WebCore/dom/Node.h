@@ -295,6 +295,7 @@ public:
     virtual bool sheetLoaded() { return true; }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
+    bool hasName() const { return getFlag(HasNameFlag); }
     bool hasID() const { return getFlag(HasIDFlag); }
     bool hasClass() const { return getFlag(HasClassFlag); }
     bool active() const { return getFlag(IsActiveFlag); }
@@ -309,6 +310,7 @@ public:
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
     bool isLink() const { return getFlag(IsLinkFlag); }
 
+    void setHasName(bool f) { setFlag(f, HasNameFlag); }
     void setHasID(bool f) { setFlag(f, HasIDFlag); }
     void setHasClass(bool f) { setFlag(f, HasClassFlag); }
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
@@ -645,6 +647,8 @@ private:
         HasCustomWillOrDidRecalcStyleFlag = 1 << 28,
         HasCustomStyleForRendererFlag = 1 << 29,
 
+        HasNameFlag = 1 << 30,
+
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag
 #else
@@ -652,7 +656,7 @@ private:
 #endif
     };
 
-    // 2 bits remaining
+    // 1 bit remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 

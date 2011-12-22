@@ -27,6 +27,7 @@
 
 #include "Document.h"
 #include "FragmentScriptingPermission.h"
+#include "HTMLNames.h"
 #include "NamedNodeMap.h"
 #include "ScrollTypes.h"
 
@@ -265,6 +266,7 @@ public:
     virtual String title() const;
 
     void updateId(const AtomicString& oldId, const AtomicString& newId);
+    void updateName(const AtomicString& oldName, const AtomicString& newName);
     void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
 
     LayoutSize minimumSizeForResizing() const;
@@ -381,6 +383,9 @@ protected:
     virtual void didRecalcStyle(StyleChange) { }
     virtual PassRefPtr<RenderStyle> customStyleForRenderer();
 
+    virtual bool shouldRegisterAsNamedItem() const { return false; }
+    virtual bool shouldRegisterAsExtraNamedItem() const { return false; }
+
     // The implementation of Element::attributeChanged() calls the following two functions.
     // They are separated to allow a different flow of control in StyledElement::attributeChanged().
     void recalcStyleIfNeededAfterAttributeChanged(Attribute*);
@@ -436,6 +441,9 @@ private:
 #if ENABLE(MUTATION_OBSERVERS)
     void enqueueAttributesMutationRecordIfRequested(const QualifiedName&, const AtomicString& oldValue);
 #endif
+
+    void updateNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
+    void updateExtraNamedItemRegistration(const AtomicString& oldName, const AtomicString& newName);
 
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;
@@ -516,12 +524,29 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         scope->removeElementById(oldId, this);
     if (!newId.isEmpty())
         scope->addElementById(newId, this);
+
+    if (shouldRegisterAsExtraNamedItem())
+        updateExtraNamedItemRegistration(oldId, newId);
+}
+
+inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
+{
+    if (!inDocument())
+        return;
+
+    if (oldName == newName)
+        return;
+
+    if (shouldRegisterAsNamedItem())
+        updateNamedItemRegistration(oldName, newName);
 }
 
 inline void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
 {
     if (isIdAttributeName(name))
         updateId(oldValue, newValue);
+    else if (name == HTMLNames::nameAttr)
+        updateName(oldValue, newValue);
 
     // FIXME: Should probably call InspectorInstrumentation::willModifyDOMAttr here.
 
