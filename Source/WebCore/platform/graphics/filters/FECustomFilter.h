@@ -37,6 +37,10 @@
 #include "FilterEffect.h"
 #include <wtf/RefPtr.h>
 
+namespace JSC {
+class ByteArray;
+}
+
 namespace WebCore {
 
 class CachedShader;
@@ -45,8 +49,9 @@ class CustomFilterShader;
 class Document;
 class DrawingBuffer;
 class GraphicsContext3D;
+class IntSize;
 class Texture;
-    
+
 class FECustomFilter : public FilterEffect {
 public:
     static PassRefPtr<FECustomFilter> create(Filter*, Document*, const String& vertexShader, const String& fragmentShader,
@@ -62,6 +67,11 @@ private:
     FECustomFilter(Filter*, Document*, const String& vertexShader, const String& fragmentShader,
                    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
                    CustomFilterOperation::MeshType);
+    
+    void initializeContext(const IntSize& contextSize);
+    void resizeContext(const IntSize& newContextSize);
+    void bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset);
+    void bindProgramAndBuffers(ByteArray* srcPixelArray);
     
     Document* m_document;
     

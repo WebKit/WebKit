@@ -51,27 +51,26 @@
 
 namespace WebCore {
 
-static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
+static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left, float right, float bottom, float top)
 {
+    ASSERT(matrix.isIdentity());
+    
     float deltaX = right - left;
     float deltaY = top - bottom;
-    TransformationMatrix ortho;
     if (!deltaX || !deltaY)
-        return ortho;
-    ortho.setM11(2.0f / deltaX);
-    ortho.setM41(-(right + left) / deltaX);
-    ortho.setM22(2.0f / deltaY);
-    ortho.setM42(-(top + bottom) / deltaY);
+        return;
+    matrix.setM11(2.0f / deltaX);
+    matrix.setM41(-(right + left) / deltaX);
+    matrix.setM22(2.0f / deltaY);
+    matrix.setM42(-(top + bottom) / deltaY);
 
     // Use big enough near/far values, so that simple rotations of rather large objects will not
     // get clipped. 10000 should cover most of the screen resolutions.
     const float farValue = 10000;
     const float nearValue = -10000;
-    ortho.setM33(-2.0f / (farValue - nearValue));
-    ortho.setM43(- (farValue + nearValue) / (farValue - nearValue));
-    ortho.setM44(1.0f);
-
-    return ortho;
+    matrix.setM33(-2.0f / (farValue - nearValue));
+    matrix.setM43(- (farValue + nearValue) / (farValue - nearValue));
+    matrix.setM44(1.0f);
 }
 
 FECustomFilter::FECustomFilter(Filter* filter, Document* document, const String& vertexShader, const String& fragmentShader,
@@ -85,7 +84,6 @@ FECustomFilter::FECustomFilter(Filter* filter, Document* document, const String&
     , m_meshColumns(meshColumns)
     , m_meshBoxType(meshBoxType)
     , m_meshType(meshType)
-
 {
 }
 
@@ -103,40 +101,72 @@ void FECustomFilter::platformApplySoftware()
         return;
 
     FilterEffect* in = inputEffect(0);
-    IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectADrawingRect);
+    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
+    RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
     
-    IntSize newContextSize(effectADrawingRect.width(), effectADrawingRect.height());
+    IntSize newContextSize(effectDrawingRect.size());
     bool hadContext = m_context;
-    if (!m_context) {
-        GraphicsContext3D::Attributes attributes;
-        attributes.preserveDrawingBuffer = true;
-        attributes.premultipliedAlpha = false;
-        
-        m_context = GraphicsContext3D::create(attributes, m_document->view()->root()->hostWindow(), GraphicsContext3D::RenderOffscreen);
-        m_drawingBuffer = DrawingBuffer::create(m_context.get(), newContextSize, !attributes.preserveDrawingBuffer);
-        
-        m_shader = CustomFilterShader::create(m_context.get(), m_vertexShader, m_fragmentShader);
-        m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
-                                          FloatRect(0, 0, 1, 1),
-                                          m_meshType);
-    }
+    if (!m_context)
+        initializeContext(newContextSize);
     
-    if (!hadContext || m_contextSize != newContextSize) {
-        m_inputTexture = 0;
-        m_drawingBuffer->reset(newContextSize);
-        m_context->reshape(newContextSize.width(), newContextSize.height());
-        m_context->viewport(0, 0, newContextSize.width(), newContextSize.height());
-        m_inputTexture = Texture::create(m_context.get(), Texture::RGBA8, newContextSize.width(), newContextSize.height());
-        m_contextSize = newContextSize;
-    }
+    if (!hadContext || m_contextSize != newContextSize)
+        resizeContext(newContextSize);
     
+    // Do not draw the filter if the input image cannot fit inside a single GPU texture.
     if (m_inputTexture->tiles().numTiles() != 1)
         return;
     
     m_context->clearColor(0, 0, 0, 0);
     m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
     
+    bindProgramAndBuffers(srcPixelArray.get());
+    
+    m_context->drawElements(GraphicsContext3D::TRIANGLES, m_mesh->indicesCount(), GraphicsContext3D::UNSIGNED_SHORT, 0);
+    
+    m_drawingBuffer->commit();
+
+    RefPtr<ImageData> imageData = m_context->paintRenderingResultsToImageData(m_drawingBuffer.get());
+    ByteArray* gpuResult = imageData->data()->data();
+    ASSERT(gpuResult->length() == dstPixelArray->length());
+    memcpy(dstPixelArray->data(), gpuResult->data(), gpuResult->length());
+}
+
+void FECustomFilter::initializeContext(const IntSize& contextSize)
+{
+    GraphicsContext3D::Attributes attributes;
+    attributes.preserveDrawingBuffer = true;
+    attributes.premultipliedAlpha = false;
+    
+    m_context = GraphicsContext3D::create(attributes, m_document->view()->root()->hostWindow(), GraphicsContext3D::RenderOffscreen);
+    m_drawingBuffer = DrawingBuffer::create(m_context.get(), contextSize, !attributes.preserveDrawingBuffer);
+    
+    m_shader = CustomFilterShader::create(m_context.get(), m_vertexShader, m_fragmentShader);
+    m_mesh = CustomFilterMesh::create(m_context.get(), m_meshColumns, m_meshRows, 
+                                      FloatRect(0, 0, 1, 1),
+                                      m_meshType);
+}
+
+void FECustomFilter::resizeContext(const IntSize& newContextSize)
+{
+    m_inputTexture = 0;
+    m_drawingBuffer->reset(newContextSize);
+    m_context->reshape(newContextSize.width(), newContextSize.height());
+    m_context->viewport(0, 0, newContextSize.width(), newContextSize.height());
+    m_inputTexture = Texture::create(m_context.get(), Texture::RGBA8, newContextSize.width(), newContextSize.height());
+    m_contextSize = newContextSize;
+}
+
+void FECustomFilter::bindVertexAttribute(int attributeLocation, unsigned size, unsigned& offset)
+{
+    if (attributeLocation != -1) {
+        m_context->vertexAttribPointer(attributeLocation, 4, GraphicsContext3D::FLOAT, false, m_mesh->bytesPerVertex(), offset);
+        m_context->enableVertexAttribArray(attributeLocation);
+    }
+    offset += size * sizeof(float);
+}
+
+void FECustomFilter::bindProgramAndBuffers(ByteArray* srcPixelArray)
+{
     m_context->useProgram(m_shader->program());
     
     if (m_shader->samplerLocation() != -1) {
@@ -147,7 +177,8 @@ void FECustomFilter::platformApplySoftware()
     }
     
     if (m_shader->projectionMatrixLocation() != -1) {
-        TransformationMatrix projectionMatrix = orthoMatrix(-0.5, 0.5, -0.5, 0.5);
+        TransformationMatrix projectionMatrix; 
+        orthogonalProjectionMatrix(projectionMatrix, -0.5, 0.5, -0.5, 0.5);
         float glProjectionMatrix[16];
         projectionMatrix.toColumnMajorFloatArray(glProjectionMatrix);
         m_context->uniformMatrix4fv(m_shader->projectionMatrixLocation(), false, &glProjectionMatrix[0], 1);
@@ -156,41 +187,12 @@ void FECustomFilter::platformApplySoftware()
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_mesh->verticesBufferObject());
     m_context->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_mesh->elementsBufferObject());
 
-    unsigned vertexSize = m_mesh->bytesPerVertex();
-    
     unsigned offset = 0;
-    
-    if (m_shader->positionAttribLocation() != -1) {
-        m_context->vertexAttribPointer(m_shader->positionAttribLocation(), 4, GraphicsContext3D::FLOAT, false, vertexSize, offset);
-        m_context->enableVertexAttribArray(m_shader->positionAttribLocation());
-    }
-    offset += 4 * sizeof(float);
-    
-    if (m_shader->texAttribLocation() != -1) {
-        m_context->vertexAttribPointer(m_shader->texAttribLocation(), 2, GraphicsContext3D::FLOAT, false, vertexSize, offset);
-        m_context->enableVertexAttribArray(m_shader->texAttribLocation());
-    }
-    offset += 2 * sizeof(float);
-    
-    if (m_shader->meshAttribLocation() != -1) {
-        m_context->vertexAttribPointer(m_shader->meshAttribLocation(), 2, GraphicsContext3D::FLOAT, false, vertexSize, offset);
-        m_context->enableVertexAttribArray(m_shader->meshAttribLocation());
-    }
-    offset += 2 * sizeof(float);
-    
-    if (m_meshType == CustomFilterOperation::DETACHED && m_shader->triangleAttribLocation() != -1) {
-        m_context->vertexAttribPointer(m_shader->triangleAttribLocation(), 3, GraphicsContext3D::FLOAT, false, vertexSize, offset);
-        m_context->enableVertexAttribArray(m_shader->triangleAttribLocation());
-    }
-    
-    m_context->drawElements(GraphicsContext3D::TRIANGLES, m_mesh->indicesCount(), GraphicsContext3D::UNSIGNED_SHORT, 0);
-    
-    m_drawingBuffer->commit();
-
-    RefPtr<ImageData> imageData = m_context->paintRenderingResultsToImageData(m_drawingBuffer.get());
-    ByteArray* gpuResult = imageData->data()->data();
-    ASSERT(gpuResult->length() == dstPixelArray->length());
-    memcpy(dstPixelArray->data(), gpuResult->data(), gpuResult->length());
+    bindVertexAttribute(m_shader->positionAttribLocation(), 4, offset);
+    bindVertexAttribute(m_shader->texAttribLocation(), 2, offset);
+    bindVertexAttribute(m_shader->meshAttribLocation(), 2, offset);
+    if (m_meshType == CustomFilterOperation::DETACHED)
+        bindVertexAttribute(m_shader->triangleAttribLocation(), 3, offset);
 }
 
 void FECustomFilter::dump()

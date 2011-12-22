@@ -64,13 +64,13 @@ function testFilterRule(description, rule, expectedValue, expectedTypes, expecte
 }
 
 testFilterRule("Custom with vertex shader",
-    "custom(url(vertex.shader))", "custom(url(vertex.shader) none, 0 0 filter-box)");
+    "custom(url(vertex.shader))", "custom(url(vertex.shader) none, 1 1 filter-box)");
 
 testFilterRule("Custom with fragment shader",
-    "custom(none url(fragment.shader))", "custom(none url(fragment.shader), 0 0 filter-box)");
+    "custom(none url(fragment.shader))", "custom(none url(fragment.shader), 1 1 filter-box)");
 
 testFilterRule("Custom with both shaders",
-    "custom(url(vertex.shader) url(fragment.shader))", "custom(url(vertex.shader) url(fragment.shader), 0 0 filter-box)");
+    "custom(url(vertex.shader) url(fragment.shader))", "custom(url(vertex.shader) url(fragment.shader), 1 1 filter-box)");
 
 testFilterRule("Custom with mesh size",
     "custom(url(vertex.shader), 10)", "custom(url(vertex.shader) none, 10 10 filter-box)");
@@ -79,28 +79,28 @@ testFilterRule("Custom with both mesh sizes",
     "custom(none url(fragment.shader), 10 20)", "custom(none url(fragment.shader), 10 20 filter-box)");
 
 testFilterRule("Custom with detached mesh",
-    "custom(none url(fragment.shader), detached)", "custom(none url(fragment.shader), 0 0 filter-box detached)");
+    "custom(none url(fragment.shader), detached)", "custom(none url(fragment.shader), 1 1 filter-box detached)");
 
 testFilterRule("Custom with detached and mesh size",
     "custom(none url(fragment.shader), 10 20 detached)", "custom(none url(fragment.shader), 10 20 filter-box detached)");
 
 testFilterRule("Custom with default filter-box",
-    "custom(none url(fragment.shader), filter-box)", "custom(none url(fragment.shader), 0 0 filter-box)");
+    "custom(none url(fragment.shader), filter-box)", "custom(none url(fragment.shader), 1 1 filter-box)");
 
 testFilterRule("Custom with content-box",
-    "custom(none url(fragment.shader), content-box)", "custom(none url(fragment.shader), 0 0 content-box)");
+    "custom(none url(fragment.shader), content-box)", "custom(none url(fragment.shader), 1 1 content-box)");
 
 testFilterRule("Custom with border-box",
-    "custom(none url(fragment.shader), border-box)", "custom(none url(fragment.shader), 0 0 border-box)");
+    "custom(none url(fragment.shader), border-box)", "custom(none url(fragment.shader), 1 1 border-box)");
 
 testFilterRule("Custom with padding-box",
-    "custom(none url(fragment.shader), padding-box)", "custom(none url(fragment.shader), 0 0 padding-box)");
+    "custom(none url(fragment.shader), padding-box)", "custom(none url(fragment.shader), 1 1 padding-box)");
 
 testFilterRule("Custom with mesh-size and padding-box",
     "custom(none url(fragment.shader), 10 padding-box)", "custom(none url(fragment.shader), 10 10 padding-box)");
 
 testFilterRule("Custom with mesh-size and padding-box",
-    "custom(none url(fragment.shader), padding-box detached)", "custom(none url(fragment.shader), 0 0 padding-box detached)");
+    "custom(none url(fragment.shader), padding-box detached)", "custom(none url(fragment.shader), 1 1 padding-box detached)");
 
 testFilterRule("Custom with both mesh-sizes and padding-box",
     "custom(none url(fragment.shader), 10 20 padding-box)", "custom(none url(fragment.shader), 10 20 padding-box)");
@@ -109,13 +109,13 @@ testFilterRule("Custom with both mesh-sizes and padding-box and detached",
     "custom(none url(fragment.shader), 10 20 padding-box detached)", "custom(none url(fragment.shader), 10 20 padding-box detached)");
 
 testFilterRule("Custom with padding-box and detached",
-    "custom(none url(fragment.shader), padding-box detached)", "custom(none url(fragment.shader), 0 0 padding-box detached)");
+    "custom(none url(fragment.shader), padding-box detached)", "custom(none url(fragment.shader), 1 1 padding-box detached)");
 
 testFilterRule("Multiple with fragment shader",
-    "grayscale() custom(none url(fragment.shader)) sepia()", "grayscale(1) custom(none url(fragment.shader), 0 0 filter-box) sepia(1)",
+    "grayscale() custom(none url(fragment.shader)) sepia()", "grayscale(1) custom(none url(fragment.shader), 1 1 filter-box) sepia(1)",
     ["WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE",
     "WebKitCSSFilterValue.CSS_FILTER_CUSTOM",
     "WebKitCSSFilterValue.CSS_FILTER_SEPIA"],
     ["grayscale(1)",
-    "custom(none url(fragment.shader), 0 0 filter-box)",
+    "custom(none url(fragment.shader), 1 1 filter-box)",
     "sepia(1)"]);

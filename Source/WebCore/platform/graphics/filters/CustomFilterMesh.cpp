@@ -30,35 +30,51 @@
 #include "config.h"
 
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-
 #include "CustomFilterMesh.h"
-
 #include "GraphicsContext3D.h"
 
-#define DEBUG_CUSTOM_FILTER_MESH 0
-
 namespace WebCore {
+    
+#ifndef NDEBUG
+// Use "call 'WebCore::s_dumpCustomFilterMeshBuffers' = 1" in GDB to activate printing of the mesh buffers.
+static bool s_dumpCustomFilterMeshBuffers = false;
+#endif
 
 class MeshGenerator {
 public:
-    MeshGenerator(unsigned cols, unsigned rows, const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
+    // Lines and columns are the values passed in CSS. The result is vertex mesh that has 'rows' numbers of rows
+    // and 'columns' number of columns with a total of 'rows + 1' * 'columns + 1' vertices.
+    // MeshBox is the filtered area calculated defined using the border-box, padding-box, content-box or filter-box 
+    // attributes. A value of (0, 0, 1, 1) will cover the entire output surface.
+    MeshGenerator(unsigned columns, unsigned rows, const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
         : m_meshType(meshType)
-        , m_points(cols + 2, rows + 2)
-        , m_tiles(cols + 1, rows + 1)
+        , m_points(columns + 1, rows + 1)
+        , m_tiles(columns, rows)
         , m_tileSizeInPixels(meshBox.width() / m_tiles.width(), meshBox.height() / m_tiles.height())
         , m_tileSizeInDeviceSpace(1.0f / m_tiles.width(), 1.0f / m_tiles.height())
         , m_meshBox(meshBox)
     {
-        m_vertices.reserveCapacity(vertexCount() * floatsPerVertex());
+        // Build the two buffers needed to draw triangles:
+        // * m_vertices has a number of float attributes that will be passed to the vertex shader
+        // for each computed vertex. This number is calculated in floatsPerVertex() based on the meshType.
+        // * m_indices is a buffer that will have 3 indices per triangle. Each index will point inside
+        // the m_vertices buffer.
+        m_vertices.reserveCapacity(verticesCount() * floatsPerVertex());
         m_indices.reserveCapacity(indicesCount());
         
+        // Based on the meshType there can be two types of meshes.
+        // * attached: each triangle uses vertices from the neighbor triangles. This is useful to save some GPU memory
+        // when there's no need to explode the tiles.
+        // * detached: each triangle has its own vertices. This means each triangle can be moved independently and a vec3
+        // attribute is passed, so that each vertex can be uniquely identified.
         if (m_meshType == CustomFilterOperation::ATTACHED)
             generateAttachedMesh();
         else
             generateDetachedMesh();
-
-#if DEBUG_CUSTOM_FILTER_MESH
-        dumpBuffers();
+        
+#ifndef NDEBUG
+        if (s_dumpCustomFilterMeshBuffers)
+            dumpBuffers();
 #endif
     }
 
@@ -90,7 +106,7 @@ public:
         return m_meshType == CustomFilterOperation::ATTACHED ? AttachedMeshVertexSize : DetachedMeshVertexSize;
     }
     
-    unsigned vertexCount() const
+    unsigned verticesCount() const
     {
         return m_meshType == CustomFilterOperation::ATTACHED ? pointsCount() : indicesCount();
     }
@@ -117,13 +133,15 @@ private:
     
     void generateAttachedMesh()
     {
-        for (int j = 0; j < m_points.height(); ++j) 
+        for (int j = 0; j < m_points.height(); ++j) {
             for (int i = 0; i < m_points.width(); ++i)
                 addAttachedMeshVertexAttributes(i, j);
+        }
         
-        for (int j = 0; j < m_tiles.height(); ++j)
+        for (int j = 0; j < m_tiles.height(); ++j) {
             for (int i = 0; i < m_tiles.width(); ++i)
                 addTile<&MeshGenerator::addAttachedMeshIndex>(i, j);
+        }
     }
     
     void addDetachedMeshVertexAndIndex(int quadX, int quadY, int triangleX, int triangleY, int triangle)
@@ -134,9 +152,10 @@ private:
     
     void generateDetachedMesh()
     {
-        for (int j = 0; j < m_tiles.height(); ++j)
+        for (int j = 0; j < m_tiles.height(); ++j) {
             for (int i = 0; i < m_tiles.width(); ++i)
                 addTile<&MeshGenerator::addDetachedMeshVertexAndIndex>(i, j);
+        }
     }
     
     void addPositionAttribute(int quadX, int quadY)
@@ -183,7 +202,7 @@ private:
         addTriangleCoordAttribute(quadX, quadY, triangle);
     }
     
-#ifdef DEBUG_CUSTOM_FILTER_MESH
+#ifndef NDEBUG
     void dumpBuffers() const
     {
         printf("Mesh buffers: Points.width(): %d, Points.height(): %d meshBox: %f, %f, %f, %f, type: %s\n", 
@@ -202,7 +221,6 @@ private:
     }
 #endif
 
-    
 private:
     Vector<float> m_vertices;
     Vector<uint16_t> m_indices;
@@ -215,7 +233,7 @@ private:
     FloatRect m_meshBox;
 };
 
-CustomFilterMesh::CustomFilterMesh(GraphicsContext3D* context, unsigned cols, unsigned rows, 
+CustomFilterMesh::CustomFilterMesh(GraphicsContext3D* context, unsigned columns, unsigned rows, 
                                    const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
     : m_context(context)
     , m_verticesBufferObject(0)
@@ -223,7 +241,7 @@ CustomFilterMesh::CustomFilterMesh(GraphicsContext3D* context, unsigned cols, un
     , m_meshBox(meshBox)
     , m_meshType(meshType)
 {
-    MeshGenerator generator(cols, rows, meshBox, meshType);
+    MeshGenerator generator(columns, rows, meshBox, meshType);
     m_indicesCount = generator.indicesCount();
     m_bytesPerVertex = generator.floatsPerVertex() * sizeof(float);    
 

@@ -99,6 +99,36 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
+Negative single mesh size : custom(url(shader), -10)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative both mesh sizes : custom(url(shader), -10 -10)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative and positive mesh size : custom(url(shader), -10 10)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Zero single mesh size : custom(url(shader), 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Zero both mesh sizes : custom(url(shader), 0 0)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+0 and 1 mesh sizes : custom(url(shader), 0 1)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
 Too many parameter values : custom(url(shader), p1 1 2 3 4 5)
 PASS cssRule.type is 1
 PASS declaration.length is 0
@@ -121,4 +151,3 @@ PASS declaration.getPropertyValue('-webkit-filter') is null
 PASS successfullyParsed is true
 
 TEST COMPLETE
-

@@ -34,6 +34,7 @@
 #include "CachedShader.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -49,9 +50,11 @@ CachedShader::~CachedShader()
 
 const String& CachedShader::shaderString()
 {
-    if (!m_shaderString && m_data) {
-        m_shaderString = m_decoder->decode(m_data->data(), m_data->size());
-        m_shaderString += m_decoder->flush();
+    if (m_shaderString.isNull() && m_data) {
+        StringBuilder builder;
+        builder.append(m_decoder->decode(m_data->data(), m_data->size()));
+        builder.append(m_decoder->flush());
+        m_shaderString = builder.toString();
     }
 
     return m_shaderString;
@@ -59,8 +62,10 @@ const String& CachedShader::shaderString()
 
 void CachedShader::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    if (allDataReceived)
+    if (allDataReceived) {
         m_data = data;
+        return;
+    }
 
     CachedResource::data(data, allDataReceived);
 }

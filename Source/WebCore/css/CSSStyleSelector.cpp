@@ -5094,8 +5094,8 @@ PassRefPtr<CustomFilterOperation> CSSStyleSelector::createCustomFilterOperation(
     RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
     RefPtr<StyleShader> fragmentShader = (shadersList->length() > 1) ? styleShader(shadersList->itemWithoutBoundsCheck(1)) : 0;
     
-    unsigned meshRows = 0;
-    unsigned meshColumns = 0;
+    unsigned meshRows = 1;
+    unsigned meshColumns = 1;
     CustomFilterOperation::MeshBoxType meshBoxType = CustomFilterOperation::FILTER_BOX;
     CustomFilterOperation::MeshType meshType = CustomFilterOperation::ATTACHED;
     

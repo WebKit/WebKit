@@ -1,3 +1,89 @@
+2011-12-22  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Follow up bug to fix issues mentioned in comment 23 from bug 73317
+        https://bugs.webkit.org/show_bug.cgi?id=74840
+        
+        Some comments were added on bug 73317 after the patch was reviewed and committed.
+        This patch is fixing those issues, mostly about coding style and some missing comments.
+        
+        The initial patch had no explanation about the feature in the ChangeLog, so I'm including the description
+        in this patch:
+        
+        CSS Shaders allow a designer to use a pair of WebGL vertex and fragment shaders to alter the final
+        rendering of a specific element. The navigator will render the element inside a texture and map it
+        to a mesh. The mesh is formed by equal sized quads, that depending on the mesh style, attached or detached,
+        can be stitched or separated. The number of quads can be changed from CSS.
+        
+        Usually the vertex shader is changing the vertices of the mesh, while the fragment shader affects only the color
+        that is rendered to screen (for example lighting effects).
+        
+        More info about CSS Shaders can be found in the specification
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/custom/index.html
+        
+        Also a good tutorial is published here
+        http://www.adobe.com/devnet/html5/articles/css-shaders.html
+        
+        Initially we are using the software filter effects pipeline. It uploads the image to the GPU, applies
+        the shaders, reads it back to CPU and continues the rendering. The advantage of using the software pipeline is that
+        it can be enabled on all the platforms that have WebGL support. The obvious disadvantage is performance: copies from CPU
+        memory to GPU memory and the CPU will need to wait the GPU to finish before it could continue. In following 
+        patches the shaders will be integrated in the hardware accelerated pipeline, so that no copies and, most 
+        important, no waits will be required.
+        
+        Also, the new syntax counts total number of the lines and the columns, not just the
+        additional lines and columns, so the minimum accepted and the default value is now 1 by 1.
+
+        Reviewed by Nikolas Zimmermann.
+
+        Some tests were updated for the default mesh size change.
+
+        * css/CSSParser.cpp:
+            Only accept non-zero positive int values for mesh sizes.
+            
+        (WebCore::CSSParser::parseCustomFilter):
+        * css/CSSStyleSelector.cpp:
+            Updated the default mesh size to be 1 column with 1 line.
+            
+        (WebCore::CSSStyleSelector::createCustomFilterOperation):
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::shaderString):
+            Corrected the CachedShader to use a StringBuilder. Also there was an incorrect 
+            cast to bool, which resulted from a copy/paste from CachedScript which still has
+            both same issues.
+            
+        (WebCore::CachedShader::data):
+        * loader/cache/CachedShader.h:
+        * platform/graphics/filters/CustomFilterMesh.cpp:
+        (WebCore::MeshGenerator::MeshGenerator):
+        (WebCore::MeshGenerator::verticesCount):
+        (WebCore::MeshGenerator::generateAttachedMesh):
+        (WebCore::MeshGenerator::generateDetachedMesh):
+        (WebCore::CustomFilterMesh::CustomFilterMesh):
+        * platform/graphics/filters/CustomFilterMesh.h:
+        (WebCore::CustomFilterMesh::create):
+        * platform/graphics/filters/CustomFilterShader.cpp:
+        (WebCore::CustomFilterShader::CustomFilterShader):
+            Exploded the body of the constructor into smaller helper functions.
+            
+        (WebCore::CustomFilterShader::compileShader):
+        (WebCore::CustomFilterShader::linkProgram):
+        (WebCore::CustomFilterShader::initializeParameterLocations):
+        * platform/graphics/filters/CustomFilterShader.h:
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::orthogonalProjectionMatrix):
+            Passing a TransformationMatrix by reference to be filled with the result matrix, instead
+            of returning it by value. Also changed the name of the method.
+            
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::platformApplySoftware):
+            Created some helper functions to make this method shorter.
+            
+        (WebCore::FECustomFilter::initializeContext):
+        (WebCore::FECustomFilter::resizeContext):
+        (WebCore::FECustomFilter::bindVertexAttribute):
+        (WebCore::FECustomFilter::bindProgramAndBuffers):
+        * platform/graphics/filters/FECustomFilter.h:
+
 2011-12-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: fix source map url resolving.

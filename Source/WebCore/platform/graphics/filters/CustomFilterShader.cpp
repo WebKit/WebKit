@@ -30,19 +30,16 @@
 #include "config.h"
 
 #if ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-
-#define SHADER0(Src) #Src
-#define SHADER(Src) SHADER0(Src)
-
 #include "CustomFilterShader.h"
-
 #include "GraphicsContext3D.h"
 
 namespace WebCore {
 
+#define SHADER(Src) (#Src)
+
 String CustomFilterShader::defaultVertexShaderString()
 {
-    return SHADER(
+    DEFINE_STATIC_LOCAL(String, vertexShaderString, SHADER(
         precision mediump float;
         attribute vec4 a_position;
         attribute vec2 a_texCoord;
@@ -53,12 +50,13 @@ String CustomFilterShader::defaultVertexShaderString()
             gl_Position = u_projectionMatrix * a_position;
             v_texCoord = a_texCoord;
         }
-    );
+    ));
+    return vertexShaderString;
 }
 
 String CustomFilterShader::defaultFragmentShaderString()
 {
-    return SHADER(
+    DEFINE_STATIC_LOCAL(String, fragmentShaderString, SHADER(
         precision mediump float;
         varying vec2 v_texCoord;
         uniform sampler2D s_texture;
@@ -66,7 +64,8 @@ String CustomFilterShader::defaultFragmentShaderString()
         {
             gl_FragColor = texture2D(s_texture, v_texCoord);
         }
-    );
+    ));
+    return fragmentShaderString;
 }
 
 CustomFilterShader::CustomFilterShader(GraphicsContext3D* context, const String& vertexShaderString, const String& fragmentShaderString)
@@ -87,46 +86,68 @@ CustomFilterShader::CustomFilterShader(GraphicsContext3D* context, const String&
     , m_contentSamplerLocation(-1)
     , m_isInitialized(false)
 {
-    Platform3DObject vertexShader = m_context->createShader(GraphicsContext3D::VERTEX_SHADER);
-    Platform3DObject fragmentShader = m_context->createShader(GraphicsContext3D::FRAGMENT_SHADER);
-
-    m_context->shaderSource(vertexShader, m_vertexShaderString);
-    m_context->compileShader(vertexShader);
+    Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, m_vertexShaderString);
+    if (!vertexShader)
+        return;
     
-    int compiled = 0;
-    m_context->getShaderiv(vertexShader, GraphicsContext3D::COMPILE_STATUS, &compiled);
-    if (!compiled) {
-        // FIXME: This is an invalid shader. Throw some errors.
-        // https://bugs.webkit.org/show_bug.cgi?id=74416
+    Platform3DObject fragmentShader = compileShader(GraphicsContext3D::FRAGMENT_SHADER, m_fragmentShaderString);
+    if (!fragmentShader) {
+        m_context->deleteShader(vertexShader);
         return;
     }
     
-    m_context->shaderSource(fragmentShader, m_fragmentShaderString);
-    m_context->compileShader(fragmentShader);
-    
-    m_context->getShaderiv(fragmentShader, GraphicsContext3D::COMPILE_STATUS, &compiled);
-    if (!compiled) {
-        // FIXME: This is an invalid shader. Throw some errors.
-        // https://bugs.webkit.org/show_bug.cgi?id=74416
-        return;
-    }
-    
-    m_program = m_context->createProgram();
-    m_context->attachShader(m_program, vertexShader);
-    m_context->attachShader(m_program, fragmentShader);
-    m_context->linkProgram(m_program);
+    m_program = linkProgram(vertexShader, fragmentShader);
     
     m_context->deleteShader(vertexShader);
     m_context->deleteShader(fragmentShader);
     
+    if (!m_program)
+        return;
+    
+    initializeParameterLocations();
+    
+    m_isInitialized = true;
+}
+
+Platform3DObject CustomFilterShader::compileShader(GC3Denum shaderType, const String& shaderString)
+{
+    Platform3DObject shader = m_context->createShader(shaderType);
+    m_context->shaderSource(shader, shaderString);
+    m_context->compileShader(shader);
+    
+    int compiled = 0;
+    m_context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compiled);
+    if (!compiled) {
+        // FIXME: This is an invalid shader. Throw some errors.
+        // https://bugs.webkit.org/show_bug.cgi?id=74416
+        m_context->deleteShader(shader);
+        return 0;
+    }
+    
+    return shader;
+}
+
+Platform3DObject CustomFilterShader::linkProgram(Platform3DObject vertexShader, Platform3DObject fragmentShader)
+{
+    Platform3DObject program = m_context->createProgram();
+    m_context->attachShader(program, vertexShader);
+    m_context->attachShader(program, fragmentShader);
+    m_context->linkProgram(program);
+    
     int linked = 0;
-    m_context->getProgramiv(m_program, GraphicsContext3D::LINK_STATUS, &linked);
+    m_context->getProgramiv(program, GraphicsContext3D::LINK_STATUS, &linked);
     if (!linked) {
         // FIXME: Invalid vertex/fragment shader combination. Throw some errors here.
         // https://bugs.webkit.org/show_bug.cgi?id=74416
-        return;
+        m_context->deleteProgram(program);
+        return 0;
     }
     
+    return program;
+}
+
+void CustomFilterShader::initializeParameterLocations()
+{
     m_positionAttribLocation = m_context->getAttribLocation(m_program, "a_position");
     m_texAttribLocation = m_context->getAttribLocation(m_program, "a_texCoord");
     m_meshAttribLocation = m_context->getAttribLocation(m_program, "a_meshCoord");
@@ -138,8 +159,6 @@ CustomFilterShader::CustomFilterShader(GraphicsContext3D* context, const String&
     m_samplerLocation = m_context->getUniformLocation(m_program, "s_texture");
     m_samplerSizeLocation = m_context->getUniformLocation(m_program, "s_textureSize");
     m_contentSamplerLocation = m_context->getUniformLocation(m_program, "s_contentTexture");
-    
-    m_isInitialized = true;
 }
     
 CustomFilterShader::~CustomFilterShader()
@@ -148,9 +167,5 @@ CustomFilterShader::~CustomFilterShader()
         m_context->deleteProgram(m_program);
 }
 
-
-}
-
+} // namespace WebCore
 #endif // ENABLE(CSS_SHADERS) && ENABLE(WEBGL)
-
-

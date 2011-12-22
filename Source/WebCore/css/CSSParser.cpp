@@ -6696,7 +6696,11 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
     while ((arg = argsList->current())) {
         if (!validUnit(arg, FInteger | FNonNeg, true))
             break;
-        meshSizeList->append(cssValuePool()->createValue(clampToInteger(arg->fValue), CSSPrimitiveValue::CSS_NUMBER));
+        int integerValue = clampToInteger(arg->fValue);
+        // According to the specification we can only accept positive non-zero values.
+        if (integerValue < 1)
+            return 0;
+        meshSizeList->append(cssValuePool()->createValue(integerValue, CSSPrimitiveValue::CSS_NUMBER));
         argsList->next();
     }
     

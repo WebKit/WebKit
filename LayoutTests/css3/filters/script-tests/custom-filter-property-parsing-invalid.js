@@ -41,6 +41,13 @@ testInvalidFilterRule("No mesh parameter", "custom(url(shader), )");
 testInvalidFilterRule("Wrong mesh type - correct identifier is 'detached'", "custom(url(shader), detach)");
 testInvalidFilterRule("No mesh size", "custom(url(shader), , p1 2)");
 
+testInvalidFilterRule("Negative single mesh size", "custom(url(shader), -10)");
+testInvalidFilterRule("Negative both mesh sizes", "custom(url(shader), -10 -10)");
+testInvalidFilterRule("Negative and positive mesh size", "custom(url(shader), -10 10)");
+testInvalidFilterRule("Zero single mesh size", "custom(url(shader), 0)");
+testInvalidFilterRule("Zero both mesh sizes", "custom(url(shader), 0 0)");
+testInvalidFilterRule("0 and 1 mesh sizes", "custom(url(shader), 0 1)");
+
 testInvalidFilterRule("Too many parameter values", "custom(url(shader), p1 1 2 3 4 5)");
 testInvalidFilterRule("Invalid parameter types", "custom(url(shader), p1 1.0 2.0 'text')");
 

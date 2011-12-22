@@ -43,8 +43,8 @@ class GraphicsContext3D;
 
 class CustomFilterMesh : public RefCounted<CustomFilterMesh> {
 public:
-    static PassRefPtr<CustomFilterMesh> create(GraphicsContext3D* context, unsigned cols, unsigned rows, const FloatRect& meshBox, 
-                                               CustomFilterOperation::MeshType meshType) {
+    static PassRefPtr<CustomFilterMesh> create(GraphicsContext3D* context, unsigned cols, unsigned rows, const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
+    {
         return adoptRef(new CustomFilterMesh(context, cols, rows, meshBox, meshType));
     }
     ~CustomFilterMesh();
