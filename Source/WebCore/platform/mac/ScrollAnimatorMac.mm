@@ -647,7 +647,7 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
 void ScrollAnimatorMac::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     [m_scrollAnimationHelper.get() _stopRun];
-    immediateScrollToPoint(offset);
+    immediateScrollTo(offset);
 }
 
 float ScrollAnimatorMac::adjustScrollXPositionIfNecessary(float position) const
@@ -677,7 +677,7 @@ FloatPoint ScrollAnimatorMac::adjustScrollPositionIfNecessary(const FloatPoint& 
     return FloatPoint(newX, newY);
 }
 
-void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
+void ScrollAnimatorMac::immediateScrollTo(const FloatPoint& newPosition)
 {
     FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
  
@@ -690,24 +690,15 @@ void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
     notifyPositionChanged();
 }
 
-void ScrollAnimatorMac::immediateScrollByDeltaX(float deltaX)
+void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
 {
-    float newPosX = adjustScrollXPositionIfNecessary(m_currentPosX + deltaX);
-    
-    if (newPosX == m_currentPosX)
-        return;
-    
-    m_currentPosX = newPosX;
-    notifyPositionChanged();
-}
+    float newPosX = adjustScrollXPositionIfNecessary(m_currentPosX + delta.width());
+    float newPosY = adjustScrollYPositionIfNecessary(m_currentPosY + delta.height());
 
-void ScrollAnimatorMac::immediateScrollByDeltaY(float deltaY)
-{
-    float newPosY = adjustScrollYPositionIfNecessary(m_currentPosY + deltaY);
-    
-    if (newPosY == m_currentPosY)
+    if (newPosX == m_currentPosX && newPosY == m_currentPosY)
         return;
-    
+
+    m_currentPosX = newPosX;
     m_currentPosY = newPosY;
     notifyPositionChanged();
 }
@@ -715,7 +706,7 @@ void ScrollAnimatorMac::immediateScrollByDeltaY(float deltaY)
 void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);
-    immediateScrollToPoint(newPosition);
+    immediateScrollTo(newPosition);
 }
 
 void ScrollAnimatorMac::notifyPositionChanged()
@@ -1204,11 +1195,11 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
         if (!(shouldStretch || isVerticallyStretched || isHorizontallyStretched)) {
             if (deltaY != 0) {
                 deltaY *= scrollWheelMultiplier();
-                immediateScrollByDeltaY(deltaY);
+                immediateScrollBy(FloatSize(0, deltaY));
             }
             if (deltaX != 0) {
                 deltaX *= scrollWheelMultiplier();
-                immediateScrollByDeltaX(deltaX);
+                immediateScrollBy(FloatSize(deltaX, 0));
             }
         } else {
             if (!allowsHorizontalStretching()) {
@@ -1218,7 +1209,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
                 deltaX *= scrollWheelMultiplier();
 
                 m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-                immediateScrollByDeltaX(deltaX);
+                immediateScrollBy(FloatSize(deltaX, 0));
                 m_scrollableArea->setConstrainsScrollingToContentEdge(true);
 
                 deltaX = 0;
@@ -1231,7 +1222,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
                 deltaY *= scrollWheelMultiplier();
 
                 m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-                immediateScrollByDeltaY(deltaY);
+                immediateScrollBy(FloatSize(0, deltaY));
                 m_scrollableArea->setConstrainsScrollingToContentEdge(true);
 
                 deltaY = 0;
@@ -1256,7 +1247,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
 
             if (origOrigin != newOrigin) {
                 m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-                immediateScrollToPoint(newOrigin);
+                immediateScrollTo(newOrigin);
                 m_scrollableArea->setConstrainsScrollingToContentEdge(true);
             }
         }
@@ -1368,7 +1359,7 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             FloatPoint newOrigin = m_scrollElasticityController.m_origOrigin + delta;
 
             m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-            immediateScrollToPoint(newOrigin);
+            immediateScrollTo(newOrigin);
             m_scrollableArea->setConstrainsScrollingToContentEdge(true);
 
             FloatSize newStretch = m_scrollableArea->overhangAmount();
@@ -1376,7 +1367,7 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
             m_scrollElasticityController.m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(newStretch.width()));
             m_scrollElasticityController.m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(newStretch.height()));
         } else {
-            immediateScrollToPoint(m_scrollElasticityController.m_origOrigin);
+            immediateScrollTo(m_scrollElasticityController.m_origOrigin);
 
             m_snapRubberBandTimer.stop();
 

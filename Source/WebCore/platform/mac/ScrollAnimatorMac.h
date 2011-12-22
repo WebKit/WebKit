@@ -125,9 +125,8 @@ private:
     float adjustScrollYPositionIfNecessary(float) const;
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
 
-    void immediateScrollToPoint(const FloatPoint& newPosition);
-    void immediateScrollByDeltaX(float deltaX);
-    void immediateScrollByDeltaY(float deltaY);
+    void immediateScrollTo(const FloatPoint&);
+    void immediateScrollBy(const FloatSize&);
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
