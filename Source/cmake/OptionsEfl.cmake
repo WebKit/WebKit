@@ -53,6 +53,7 @@ SET(WTF_LIBRARY_NAME wtf_efl)
 SET(JavaScriptCore_LIBRARY_NAME javascriptcore_efl)
 SET(WebCore_LIBRARY_NAME webcore_efl)
 SET(WebKit_LIBRARY_NAME ewebkit)
+SET(WebKit2_LIBRARY_NAME ewebkit2)
 
 SET(DATA_INSTALL_DIR "share/${WebKit_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR}" CACHE PATH "Installation path for theme data")
 SET(THEME_BINARY_DIR ${CMAKE_BINARY_DIR}/WebKit/efl/DefaultTheme)
