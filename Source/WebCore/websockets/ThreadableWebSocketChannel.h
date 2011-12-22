@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class Blob;
 class KURL;
 class ScriptExecutionContext;
 class WebSocketChannelClient;

@@ -26,14 +26,16 @@
 #ifndef DataView_h
 #define DataView_h
 
-#include "ArrayBufferView.h"
-#include "ExceptionCode.h"
+#include <wtf/ArrayBufferView.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
+typedef int ExceptionCode;
+
 class DataView : public ArrayBufferView {
 public:
+    static PassRefPtr<DataView> create(unsigned length);
     static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);
 
     virtual bool isDataView() const { return true; }
@@ -70,6 +72,9 @@ public:
     void setFloat32(unsigned byteOffset, float value, bool littleEndian, ExceptionCode&);
     void setFloat64(unsigned byteOffset, double value, ExceptionCode& ec) { setFloat64(byteOffset, value, false, ec); }
     void setFloat64(unsigned byteOffset, double value, bool littleEndian, ExceptionCode&);
+
+protected:
+    virtual void neuter();
 
 private:
     DataView(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);

@@ -34,9 +34,9 @@
 
 #include "JSFileReader.h"
 
-#include "ArrayBuffer.h"
 #include "FileReader.h"
 #include "JSArrayBuffer.h"
+#include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
 

@@ -221,7 +221,7 @@ static void _didExecute(WebScriptObject *obj)
     if (!_private->originRootObject->isValid())
         return false;
 
-    return root->globalObject()->allowsAccessFrom(_private->originRootObject->globalObject());
+    return static_cast<JSDOMWindowBase*>(root->globalObject())->allowsAccessFrom(_private->originRootObject->globalObject());
 }
 
 - (void)dealloc

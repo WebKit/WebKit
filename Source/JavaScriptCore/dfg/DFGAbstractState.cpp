@@ -113,6 +113,22 @@ void AbstractState::initialize(Graph& graph)
             root->valuesAtHead.argument(i).set(PredictByteArray);
         else if (isBooleanPrediction(prediction))
             root->valuesAtHead.argument(i).set(PredictBoolean);
+        else if (isInt8ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictInt8Array);
+        else if (isInt16ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictInt16Array);
+        else if (isInt32ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictInt32Array);
+        else if (isUint8ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictUint8Array);
+        else if (isUint16ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictUint16Array);
+        else if (isUint32ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictUint32Array);
+        else if (isFloat32ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictFloat32Array);
+        else if (isFloat64ArrayPrediction(prediction))
+            root->valuesAtHead.argument(i).set(PredictFloat64Array);
         else
             root->valuesAtHead.argument(i).makeTop();
     }
@@ -133,11 +149,19 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     bool changed = false;
     
     if (mergeMode != DontMerge || !ASSERT_DISABLED) {
-        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument)
+        for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("        Merging state for argument %lu.\n", argument);
+#endif
             changed |= mergeStateAtTail(block->valuesAtTail.argument(argument), m_variables.argument(argument), block->variablesAtTail.argument(argument));
+        }
         
-        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local)
+        for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("        Merging state for local %lu.\n", local);
+#endif
             changed |= mergeStateAtTail(block->valuesAtTail.local(local), m_variables.local(local), block->variablesAtTail.local(local));
+        }
     }
     
     ASSERT(mergeMode != DontMerge || !changed);
@@ -168,7 +192,8 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         return true;
         
     switch (node.op) {
-    case JSConstant: {
+    case JSConstant:
+    case WeakJSConstant: {
         JSValue value = m_graph.valueOfJSConstant(m_codeBlock, nodeIndex);
         if (value.isCell())
             m_haveStructures = true;
@@ -182,6 +207,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
     }
         
     case SetLocal: {
+        if (node.variableAccessData()->shouldUseDoubleFormat()) {
+            forNode(node.child1()).filter(PredictNumber);
+            m_variables.operand(node.local()).set(PredictDouble);
+            break;
+        }
+        
         PredictedType predictedType = node.variableAccessData()->prediction();
         if (isInt32Prediction(predictedType))
             forNode(node.child1()).filter(PredictInt32);
@@ -189,6 +220,22 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(node.child1()).filter(PredictArray);
         else if (isByteArrayPrediction(predictedType))
             forNode(node.child1()).filter(PredictByteArray);
+        else if (isInt8ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictInt8Array);
+        else if (isInt16ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictInt16Array);
+        else if (isInt32ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictInt32Array);
+        else if (isUint8ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictUint8Array);
+        else if (isUint16ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictUint16Array);
+        else if (isUint32ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictUint32Array);
+        else if (isFloat32ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictFloat32Array);
+        else if (isFloat64ArrayPrediction(predictedType))
+            forNode(node.child1()).filter(PredictFloat64Array);
         else if (isBooleanPrediction(predictedType))
             forNode(node.child1()).filter(PredictBoolean);
         
@@ -389,6 +436,55 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(nodeIndex).set(PredictInt32);
             break;
         }
+        
+        if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
+            forNode(node.child1()).filter(PredictInt8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
+            forNode(node.child1()).filter(PredictInt16Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
+            forNode(node.child1()).filter(PredictInt32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
+            forNode(node.child1()).filter(PredictUint8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
+            forNode(node.child1()).filter(PredictUint16Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictInt32);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
+            forNode(node.child1()).filter(PredictUint32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictDouble);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictDouble);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(nodeIndex).set(PredictDouble);
+            break;
+        }
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
         forNode(nodeIndex).makeTop();
@@ -409,6 +505,56 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(node.child3()).filter(PredictNumber);
             break;
         }
+        
+        if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
+            forNode(node.child1()).filter(PredictInt8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
+            forNode(node.child1()).filter(PredictInt16Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
+            forNode(node.child1()).filter(PredictInt32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
+            forNode(node.child1()).filter(PredictUint8Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
+            forNode(node.child1()).filter(PredictUint16Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
+            forNode(node.child1()).filter(PredictUint32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
+            forNode(node.child2()).filter(PredictInt32);
+            forNode(node.child3()).filter(PredictNumber);
+            break;
+        }
+            
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
         break;
@@ -498,7 +644,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             destination = source;
             break;
         }
-            
+        
         if (isOtherPrediction(child.prediction())) {
             source.filter(PredictOther);
             destination.set(PredictObjectOther);
@@ -534,7 +680,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case GetCallee:
-        forNode(nodeIndex).set(PredictObjectOther);
+        forNode(nodeIndex).set(PredictFunction);
         break;
             
     case GetScopeChain:
@@ -550,12 +696,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case GetById:
-    case GetMethod:
         if (!node.prediction()) {
             m_isValid = false;
             break;
         }
-        forNode(node.child1()).filter(PredictCell);
+        if (isCellPrediction(m_graph[node.child1()].prediction()))
+            forNode(node.child1()).filter(PredictCell);
         clobberStructures(nodeIndex);
         forNode(nodeIndex).makeTop();
         break;
@@ -574,6 +720,38 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).filter(PredictByteArray);
         forNode(nodeIndex).set(PredictInt32);
         break;
+    case GetInt8ArrayLength:
+        forNode(node.child1()).filter(PredictInt8Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetInt16ArrayLength:
+        forNode(node.child1()).filter(PredictInt16Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetInt32ArrayLength:
+        forNode(node.child1()).filter(PredictInt32Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetUint8ArrayLength:
+        forNode(node.child1()).filter(PredictUint8Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetUint16ArrayLength:
+        forNode(node.child1()).filter(PredictUint16Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetUint32ArrayLength:
+        forNode(node.child1()).filter(PredictUint32Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetFloat32ArrayLength:
+        forNode(node.child1()).filter(PredictFloat32Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
+    case GetFloat64ArrayLength:
+        forNode(node.child1()).filter(PredictFloat64Array);
+        forNode(nodeIndex).set(PredictInt32);
+        break;
             
     case CheckStructure:
         // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
@@ -586,12 +764,71 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).set(node.structureTransitionData().newStructure);
         m_haveStructures = true;
         break;
-            
     case GetPropertyStorage:
         forNode(node.child1()).filter(PredictCell);
         forNode(nodeIndex).clear(); // The result is not a JS value.
         break;
-            
+    case GetIndexedPropertyStorage: {
+        PredictedType basePrediction = m_graph[node.child2()].prediction();
+        if (!(basePrediction & PredictInt32) && basePrediction) {
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].prediction() == PredictString) {
+            forNode(node.child1()).filter(PredictString);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateByteArray()) {
+            forNode(node.child1()).filter(PredictByteArray);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        
+        if (m_graph[node.child1()].shouldSpeculateInt8Array()) {
+            forNode(node.child1()).filter(PredictInt8Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt16Array()) {
+            forNode(node.child1()).filter(PredictInt16Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateInt32Array()) {
+            forNode(node.child1()).filter(PredictInt32Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint8Array()) {
+            forNode(node.child1()).filter(PredictUint8Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint16Array()) {
+            forNode(node.child1()).filter(PredictUint16Array);
+            forNode(nodeIndex).set(PredictOther);
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateUint32Array()) {
+            forNode(node.child1()).filter(PredictUint32Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat32Array()) {
+            forNode(node.child1()).filter(PredictFloat32Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        if (m_graph[node.child1()].shouldSpeculateFloat64Array()) {
+            forNode(node.child1()).filter(PredictFloat64Array);
+            forNode(nodeIndex).clear();
+            break;
+        }
+        forNode(node.child1()).filter(PredictArray);
+        forNode(nodeIndex).clear();
+        break; 
+    }
     case GetByOffset:
         forNode(node.child1()).filter(PredictCell);
         forNode(nodeIndex).makeTop();
@@ -601,15 +838,8 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         forNode(node.child1()).filter(PredictCell);
         break;
             
-    case CheckMethod:
-        // FIXME: We should be able to propagate the structure sets of constants (i.e. prototypes).
-        forNode(node.child1()).filter(m_graph.m_methodCheckData[node.methodCheckDataIndex()].structure);
-        forNode(nodeIndex).set(PredictObjectOther);
-        m_haveStructures = true;
-        break;
-        
     case CheckFunction:
-        forNode(node.child1()).filter(PredictObjectOther);
+        forNode(node.child1()).filter(PredictFunction);
         // FIXME: Should be able to propagate the fact that we know what the function is.
         break;
             
@@ -633,8 +863,10 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             
     case InstanceOf:
         // Again, sadly, we don't propagate the fact that we've done InstanceOf
-        forNode(node.child1()).filter(PredictCell);
-        forNode(node.child2()).filter(PredictCell);
+        if (!(m_graph[node.child1()].prediction() & ~PredictCell) && !(forNode(node.child1()).m_type & ~PredictCell))
+            forNode(node.child1()).filter(PredictCell);
+        forNode(node.child3()).filter(PredictCell);
+        forNode(nodeIndex).set(PredictBoolean);
         break;
             
     case Phi:
@@ -691,23 +923,36 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     if (!node.refCount())
         return false;
     
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("          It's live, node @%u.\n", nodeIndex);
+#endif
+
     switch (node.op) {
     case Phi:
     case SetArgument:
     case Flush:
         // The block transfers the value from head to tail.
         source = &inVariable;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Transfering from head to tail.\n");
+#endif
         break;
             
     case GetLocal:
         // The block refines the value with additional speculations.
         source = &forNode(nodeIndex);
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Refining.\n");
+#endif
         break;
             
     case SetLocal:
         // The block sets the variable, and potentially refines it, both
         // before and after setting it.
         source = &forNode(node.child1());
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Setting.\n");
+#endif
         break;
         
     default:
@@ -719,6 +964,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     if (destination == *source) {
         // Abstract execution did not change the output value of the variable, for this
         // basic block, on this iteration.
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("          Not changed!\n");
+#endif
         return false;
     }
     
@@ -726,6 +974,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     // this variable after execution of this basic block. Update the state, and return
     // true to indicate that the fixpoint must go on!
     destination = *source;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    printf("          Changed!\n");
+#endif
     return true;
 }
 

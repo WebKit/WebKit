@@ -124,6 +124,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     bool haveUnboxedInt32InRegisterFile = false;
     bool haveUnboxedCellInRegisterFile = false;
     bool haveUnboxedBooleanInRegisterFile = false;
+    bool haveUInt32s = false;
     bool haveFPRs = false;
     bool haveConstants = false;
     bool haveUndefined = false;
@@ -147,6 +148,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 case InGPR:
                 case UnboxedInt32InGPR:
                 case UnboxedBooleanInGPR:
+                case UInt32InGPR:
                 case InPair:
                 case InFPR:
                     if (!poisonedVirtualRegisters[recovery.virtualRegister()]) {
@@ -160,6 +162,10 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             }
             break;
             
+        case UInt32InGPR:
+            haveUInt32s = true;
+            break;
+
         case AlreadyInRegisterFileAsUnboxedInt32:
             haveUnboxedInt32InRegisterFile = true;
             break;
@@ -187,7 +193,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         }
     }
     
-    EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * (numberOfPoisonedVirtualRegisters + ((numberOfDisplacedVirtualRegisters * 2) <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters))));
+    unsigned scratchBufferLengthBeforeUInt32s = numberOfPoisonedVirtualRegisters + ((numberOfDisplacedVirtualRegisters * 2) <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters);
+    EncodedJSValue* scratchBuffer = static_cast<EncodedJSValue*>(m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * (scratchBufferLengthBeforeUInt32s + (haveUInt32s ? 2 : 0))));
 
     // From here on, the code assumes that it is profitable to maximize the distance
     // between when something is computed and when it is stored.
@@ -252,6 +259,49 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
                 m_jit.store32(recovery.payloadGPR(), AssemblyHelpers::payloadFor((VirtualRegister)operand));
             }
             break;
+        case UInt32InGPR: {
+            EncodedJSValue* myScratch = scratchBuffer + scratchBufferLengthBeforeUInt32s;
+            
+            GPRReg addressGPR = GPRInfo::regT0;
+            if (addressGPR == recovery.gpr())
+                addressGPR = GPRInfo::regT1;
+            
+            m_jit.storePtr(addressGPR, myScratch);
+            m_jit.move(AssemblyHelpers::TrustedImmPtr(myScratch + 1), addressGPR);
+            m_jit.storeDouble(FPRInfo::fpRegT0, addressGPR);
+            
+            AssemblyHelpers::Jump positive = m_jit.branch32(AssemblyHelpers::GreaterThanOrEqual, recovery.gpr(), AssemblyHelpers::TrustedImm32(0));
+            
+            m_jit.convertInt32ToDouble(recovery.gpr(), FPRInfo::fpRegT0);
+            m_jit.addDouble(AssemblyHelpers::AbsoluteAddress(&AssemblyHelpers::twoToThe32), FPRInfo::fpRegT0);
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
+                m_jit.move(AssemblyHelpers::TrustedImmPtr(scratchBuffer + scratchIndex), addressGPR);
+                m_jit.storeDouble(FPRInfo::fpRegT0, addressGPR);
+            } else
+                m_jit.storeDouble(FPRInfo::fpRegT0, AssemblyHelpers::addressFor((VirtualRegister)operand));
+            
+            AssemblyHelpers::Jump done = m_jit.jump();
+            
+            positive.link(&m_jit);
+            
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)]) {
+                m_jit.store32(recovery.gpr(), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+                m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::Int32Tag), reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+            } else {
+                m_jit.store32(recovery.gpr(), AssemblyHelpers::payloadFor((VirtualRegister)operand));
+                m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::Int32Tag), AssemblyHelpers::tagFor((VirtualRegister)operand));
+            }
+            
+            done.link(&m_jit);
+            
+            m_jit.move(AssemblyHelpers::TrustedImmPtr(myScratch + 1), addressGPR);
+            m_jit.loadDouble(addressGPR, FPRInfo::fpRegT0);
+            m_jit.loadPtr(myScratch, addressGPR);
+                              
+            if (exit.isVariable(index) && poisonedVirtualRegisters[exit.variableForIndex(index)])
+                scratchIndex++;
+            break;
+        }
         default:
             break;
         }
@@ -378,6 +428,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
 
             case InFPR:
             case InPair:
+            case UInt32InGPR:
                 m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
                 m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), GPRInfo::regT1);
                 m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)virtualRegister));
@@ -451,6 +502,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     //     counter to 0; otherwise we set the counter to
     //     counterValueForOptimizeAfterWarmUp().
     
+    m_jit.add32(AssemblyHelpers::Imm32(1), AssemblyHelpers::AbsoluteAddress(&exit.m_count));
+    
     m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.codeBlock()), GPRInfo::regT0);
     
     m_jit.load32(AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()), GPRInfo::regT2);
@@ -460,21 +513,21 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     m_jit.store32(GPRInfo::regT2, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeFailCounter()));
     m_jit.store32(GPRInfo::regT1, AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfSpeculativeSuccessCounter()));
     
-    m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.codeBlock()->alternative()), GPRInfo::regT0);
+    m_jit.move(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), GPRInfo::regT0);
     
     AssemblyHelpers::Jump fewFails = m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, AssemblyHelpers::Imm32(m_jit.codeBlock()->largeFailCountThreshold()));
-    m_jit.mul32(AssemblyHelpers::Imm32(Heuristics::desiredSpeculativeSuccessFailRatio), GPRInfo::regT2, GPRInfo::regT2);
+    m_jit.mul32(AssemblyHelpers::Imm32(Options::desiredSpeculativeSuccessFailRatio), GPRInfo::regT2, GPRInfo::regT2);
     
     AssemblyHelpers::Jump lowFailRate = m_jit.branch32(AssemblyHelpers::BelowOrEqual, GPRInfo::regT2, GPRInfo::regT1);
     
     // Reoptimize as soon as possible.
-    m_jit.store32(AssemblyHelpers::Imm32(Heuristics::executionCounterValueForOptimizeNextInvocation), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::Imm32(Options::executionCounterValueForOptimizeNextInvocation), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
     AssemblyHelpers::Jump doneAdjusting = m_jit.jump();
     
     fewFails.link(&m_jit);
     lowFailRate.link(&m_jit);
     
-    m_jit.store32(AssemblyHelpers::Imm32(m_jit.codeBlock()->alternative()->counterValueForOptimizeAfterLongWarmUp()), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
+    m_jit.store32(AssemblyHelpers::Imm32(m_jit.baselineCodeBlock()->counterValueForOptimizeAfterLongWarmUp()), AssemblyHelpers::Address(GPRInfo::regT0, CodeBlock::offsetOfExecuteCounter()));
     
     doneAdjusting.link(&m_jit);
     
@@ -487,8 +540,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
     
     // 14) Fix call frame (s).
     
-    ASSERT(m_jit.codeBlock()->alternative()->getJITType() == JITCode::BaselineJIT);
-    m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.codeBlock()->alternative()), AssemblyHelpers::addressFor((VirtualRegister)RegisterFile::CodeBlock));
+    ASSERT(m_jit.baselineCodeBlock()->getJITType() == JITCode::BaselineJIT);
+    m_jit.storePtr(AssemblyHelpers::TrustedImmPtr(m_jit.baselineCodeBlock()), AssemblyHelpers::addressFor((VirtualRegister)RegisterFile::CodeBlock));
     
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; codeOrigin.inlineCallFrame; codeOrigin = codeOrigin.inlineCallFrame->caller) {
         InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame;

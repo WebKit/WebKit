@@ -48,7 +48,7 @@ static const HashTableValue JSTestMediaQueryListListenerTableValues[2] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestMediaQueryListListenerTable = { 2, 1, JSTestMediaQueryListListenerTableValues, 0 };
+static const HashTable JSTestMediaQueryListListenerTable = { 2, 1, JSTestMediaQueryListListenerTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator
@@ -126,7 +126,7 @@ bool JSTestMediaQueryListListenerPrototype::getOwnPropertySlot(ExecState* exec, 
 
 bool JSTestMediaQueryListListenerPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestMediaQueryListListenerPrototype* thisObject = static_cast<JSTestMediaQueryListListenerPrototype*>(object);
+    JSTestMediaQueryListListenerPrototype* thisObject = jsCast<JSTestMediaQueryListListenerPrototype*>(object);
     return getStaticFunctionDescriptor<JSObject>(exec, &JSTestMediaQueryListListenerPrototypeTable, thisObject, propertyName, descriptor);
 }
 
@@ -151,7 +151,7 @@ bool JSTestMediaQueryListListener::getOwnPropertySlot(ExecState* exec, const Ide
 
 bool JSTestMediaQueryListListener::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSTestMediaQueryListListener* thisObject = static_cast<JSTestMediaQueryListListener*>(object);
+    JSTestMediaQueryListListener* thisObject = jsCast<JSTestMediaQueryListListener*>(object);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     return getStaticValueDescriptor<JSTestMediaQueryListListener, Base>(exec, &JSTestMediaQueryListListenerTable, thisObject, propertyName, descriptor);
 }

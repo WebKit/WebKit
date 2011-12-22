@@ -65,9 +65,15 @@ struct CodeOrigin {
     // 2 = inlined one deep, etc.
     unsigned inlineDepth() const;
     
+    // If the code origin corresponds to inlined code, gives you the heap object that
+    // would have owned the code if it had not been inlined. Otherwise returns 0.
+    ExecutableBase* codeOriginOwner() const;
+    
     static unsigned inlineDepthForCallFrame(InlineCallFrame*);
     
     bool operator==(const CodeOrigin& other) const;
+    
+    bool operator!=(const CodeOrigin& other) const { return !(*this == other); }
     
 #ifndef NDEBUG
     // Get the inline stack. This is slow, and is intended for debugging only.
@@ -124,6 +130,13 @@ inline Vector<CodeOrigin> CodeOrigin::inlineStack() const
 inline unsigned getCallReturnOffsetForCodeOrigin(CodeOriginAtCallReturnOffset* data)
 {
     return data->callReturnOffset;
+}
+
+inline ExecutableBase* CodeOrigin::codeOriginOwner() const
+{
+    if (!inlineCallFrame)
+        return 0;
+    return inlineCallFrame->executable.get();
 }
 
 } // namespace JSC

@@ -6,9 +6,9 @@
 
 TEMPLATE = lib
 
-load(javascriptcore)
-
 DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
+
+load(javascriptcore)
 
 CONFIG += javas
 CONFIG += staticlib
@@ -19,9 +19,6 @@ TARGET = $$JAVASCRIPTCORE_TARGET
 DESTDIR = $$JAVASCRIPTCORE_DESTDIR
 QT += core
 QT -= gui
-
-contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
-unix:contains(QT_CONFIG, reduce_relocations):CONFIG += bsymbolic_functions
 
 *-g++*:QMAKE_CXXFLAGS_RELEASE -= -O2
 *-g++*:QMAKE_CXXFLAGS_RELEASE += -O3
@@ -59,6 +56,7 @@ SOURCES += \
     assembler/MacroAssemblerARM.cpp \
     assembler/MacroAssemblerSH4.cpp \
     bytecode/CodeBlock.cpp \
+    bytecode/DFGExitProfile.cpp \
     bytecode/JumpTable.cpp \
     bytecode/Opcode.cpp \
     bytecode/PredictedType.cpp \
@@ -69,10 +67,10 @@ SOURCES += \
     bytecompiler/NodesCodegen.cpp \
     heap/AllocationSpace.cpp \
     heap/ConservativeRoots.cpp \
+    heap/DFGCodeBlocks.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
     heap/Heap.cpp \
-    heap/JettisonedCodeBlocks.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \
@@ -89,9 +87,6 @@ SOURCES += \
     dfg/DFGCorrectableJumpPoint.cpp \
     dfg/DFGDriver.cpp \
     dfg/DFGGraph.cpp \
-    dfg/DFGJITCodeGenerator.cpp \
-    dfg/DFGJITCodeGenerator32_64.cpp \
-    dfg/DFGJITCodeGenerator64.cpp \
     dfg/DFGJITCompiler.cpp \
     dfg/DFGOperations.cpp \
     dfg/DFGOSREntry.cpp \
@@ -155,7 +150,7 @@ SOURCES += \
     runtime/FunctionPrototype.cpp \
     runtime/GCActivityCallback.cpp \
     runtime/GetterSetter.cpp \
-    runtime/Heuristics.cpp \
+    runtime/Options.cpp \
     runtime/Identifier.cpp \
     runtime/InitializeThreading.cpp \
     runtime/InternalFunction.cpp \
@@ -164,6 +159,7 @@ SOURCES += \
     runtime/JSArray.cpp \
     runtime/JSByteArray.cpp \
     runtime/JSCell.cpp \
+    runtime/JSDateMath.cpp \
     runtime/JSFunction.cpp \
     runtime/JSBoundFunction.cpp \
     runtime/JSGlobalData.cpp \

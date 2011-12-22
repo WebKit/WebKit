@@ -26,6 +26,7 @@
 #define RealtimeAnalyser_h
 
 #include "AudioArray.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
@@ -33,11 +34,6 @@ namespace WebCore {
 
 class AudioBus;
 class FFTFrame;
-
-#if ENABLE(WEBGL)
-class Float32Array;
-class Uint8Array;
-#endif
 
 class RealtimeAnalyser {
     WTF_MAKE_NONCOPYABLE(RealtimeAnalyser);

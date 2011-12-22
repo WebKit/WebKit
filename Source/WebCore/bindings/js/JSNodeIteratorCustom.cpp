@@ -31,7 +31,7 @@ namespace WebCore {
 
 void JSNodeIterator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSNodeIterator* thisObject = static_cast<JSNodeIterator*>(cell);
+    JSNodeIterator* thisObject = jsCast<JSNodeIterator*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

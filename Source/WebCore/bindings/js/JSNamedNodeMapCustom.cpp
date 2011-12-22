@@ -48,7 +48,7 @@ JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, const Iden
 
 void JSNamedNodeMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSNamedNodeMap* thisObject = static_cast<JSNamedNodeMap*>(cell);
+    JSNamedNodeMap* thisObject = jsCast<JSNamedNodeMap*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

@@ -36,7 +36,7 @@ namespace JSC {
     class NativeExecutable;
     class VPtrHackExecutable;
     namespace DFG {
-    class JITCodeGenerator;
+    class SpeculativeJIT;
     class JITCompiler;
     }
 
@@ -46,7 +46,7 @@ namespace JSC {
 
     class JSFunction : public JSNonFinalObject {
         friend class JIT;
-        friend class DFG::JITCodeGenerator;
+        friend class DFG::SpeculativeJIT;
         friend class DFG::JITCompiler;
         friend class JSGlobalData;
 
@@ -65,6 +65,7 @@ namespace JSC {
         }
         
         virtual ~JSFunction();
+        virtual void vtableAnchor(); // FIXME: Remove this once optimizations no longer rely on testing vtables
 
         const UString& name(ExecState*);
         const UString displayName(ExecState*);

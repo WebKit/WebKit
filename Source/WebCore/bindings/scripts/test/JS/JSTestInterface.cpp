@@ -47,7 +47,7 @@ static const HashTableValue JSTestInterfaceTableValues[2] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestInterfaceTable = { 2, 1, JSTestInterfaceTableValues, 0 };
+static const HashTable JSTestInterfaceTable = { 2, 1, JSTestInterfaceTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator

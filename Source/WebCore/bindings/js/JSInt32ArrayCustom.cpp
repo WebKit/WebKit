@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSInt32Array.h"
 
-#include "Int32Array.h"
 #include "JSArrayBufferViewHelper.h"
+#include <wtf/Int32Array.h>
 
 using namespace JSC;
 

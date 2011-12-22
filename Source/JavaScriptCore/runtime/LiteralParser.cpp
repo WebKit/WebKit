@@ -338,7 +338,6 @@ template <ParserMode mode, typename CharType, UChar terminator> static inline bo
     return (c >= ' ' && (mode == StrictJSON || c <= 0xff) && c != '\\' && c != terminator) || c == '\t';
 }
 
-// "inline" is required here to help WINSCW compiler resolve specialized argument in templated functions.
 template <typename CharType>
 template <ParserMode mode, char terminator> ALWAYS_INLINE TokenType LiteralParser<CharType>::Lexer::lexString(LiteralParserToken<CharType>& token)
 {

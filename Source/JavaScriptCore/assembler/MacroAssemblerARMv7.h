@@ -544,6 +544,20 @@ private:
             m_assembler.strb(src, address.base, address.u.offset, true, false);
         }
     }
+    
+    void store16(RegisterID src, ArmAddress address)
+    {
+        if (address.type == ArmAddress::HasIndex)
+            m_assembler.strh(src, address.base, address.u.index, address.u.scale);
+        else if (address.u.offset >= 0) {
+            ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12(address.u.offset);
+            ASSERT(armImm.isValid());
+            m_assembler.strh(src, address.base, armImm);
+        } else {
+            ASSERT(address.u.offset >= -255);
+            m_assembler.strh(src, address.base, address.u.offset, true, false);
+        }
+    }
 
 public:
     void load32(ImplicitAddress address, RegisterID dest)
@@ -559,6 +573,11 @@ public:
     void load32WithUnalignedHalfWords(BaseIndex address, RegisterID dest)
     {
         load32(setupArmAddress(address), dest);
+    }
+
+    void load16Unaligned(BaseIndex address, RegisterID dest)
+    {
+        load16(setupArmAddress(address), dest);
     }
 
     void load32(const void* address, RegisterID dest)
@@ -668,6 +687,11 @@ public:
     {
         store8(src, setupArmAddress(address));
     }
+    
+    void store16(RegisterID src, BaseIndex address)
+    {
+        store16(src, setupArmAddress(address));
+    }
 
 
     // Floating-point operations:
@@ -690,6 +714,20 @@ public:
         }
         
         m_assembler.vldr(dest, base, offset);
+    }
+
+    void loadDouble(BaseIndex address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        unreachableForPlatform();
+    }
+    
+    void loadFloat(BaseIndex address, FPRegisterID dest)
+    {
+        UNUSED_PARAM(address);
+        UNUSED_PARAM(dest);
+        unreachableForPlatform();
     }
 
     void moveDouble(FPRegisterID src, FPRegisterID dest)
@@ -723,6 +761,20 @@ public:
     {
         move(ImmPtr(address), addressTempRegister);
         storeDouble(src, addressTempRegister);
+    }
+
+    void storeDouble(FPRegisterID src, BaseIndex address)
+    {
+        move(address.index, addressTempRegister);
+        mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
+        storeDouble(src, Address(addressTempRegister, address.offset));
+    }
+    
+    void storeFloat(FPRegisterID src, BaseIndex address)
+    {
+        move(address.index, addressTempRegister);
+        mul32(TrustedImm32(address.scale), addressTempRegister, addressTempRegister);
+        storeDouble(src, Address(addressTempRegister, address.offset));
     }
 
     void addDouble(FPRegisterID src, FPRegisterID dest)
@@ -820,6 +872,20 @@ public:
         m_assembler.vmov(fpTempRegisterAsSingle(), dataTempRegister);
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle());
     }
+    
+    void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dst);
+        unreachableForPlatform();
+    }
+    
+    void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dst);
+        unreachableForPlatform();
+    }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
@@ -874,6 +940,12 @@ public:
     void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
     {
         m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
+        m_assembler.vmov(dest, fpTempRegisterAsSingle());
+    }
+
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.vcvt_floatingPointToUnsigned(fpTempRegisterAsSingle(), src);
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
     }
     
@@ -1468,6 +1540,11 @@ public:
         return m_assembler.executableOffsetFor(location);
     }
 
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMv7Assembler::readCallTarget(call.dataLocation())));
+    }
+
 protected:
     bool inUninterruptedSequence()
     {
@@ -1561,7 +1638,7 @@ protected:
     {
         return static_cast<ARMv7Assembler::Condition>(cond);
     }
-
+    
 private:
     friend class LinkBuffer;
     friend class RepatchBuffer;

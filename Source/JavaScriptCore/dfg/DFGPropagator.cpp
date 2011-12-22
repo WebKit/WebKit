@@ -301,7 +301,8 @@ private:
         bool changed = false;
         
         switch (op) {
-        case JSConstant: {
+        case JSConstant:
+        case WeakJSConstant: {
             changed |= setPrediction(predictionFromValue(m_graph.valueOfJSConstant(m_codeBlock, m_compileIndex)));
             break;
         }
@@ -449,35 +450,40 @@ private:
                 bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
                 bool isString = isStringPrediction(m_graph[node.child1()].prediction());
                 bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
-                if (isArray || isString || isByteArray)
+                bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
+                bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
+                bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
+                bool isUint8Array = m_graph[node.child1()].shouldSpeculateUint8Array();
+                bool isUint16Array = m_graph[node.child1()].shouldSpeculateUint16Array();
+                bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
+                bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
+                bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
+                if (isArray || isString || isByteArray || isInt8Array || isInt16Array || isInt32Array || isUint8Array || isUint16Array || isUint32Array || isFloat32Array || isFloat64Array)
                     changed |= mergePrediction(PredictInt32);
             }
             break;
         }
             
-        case GetMethod:
         case GetByVal: {
-            if (node.getHeapPrediction())
+            if (m_graph[node.child1()].shouldSpeculateUint32Array() || m_graph[node.child1()].shouldSpeculateFloat32Array() || m_graph[node.child1()].shouldSpeculateFloat64Array())
+                changed |= mergePrediction(PredictDouble);
+            else if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
             
-        case GetPropertyStorage: {
+        case GetPropertyStorage: 
+        case GetIndexedPropertyStorage: {
             changed |= setPrediction(PredictOther);
             break;
         }
-            
+
         case GetByOffset: {
             if (node.getHeapPrediction())
                 changed |= mergePrediction(node.getHeapPrediction());
             break;
         }
             
-        case CheckMethod: {
-            changed |= setPrediction(m_graph.getMethodCheckPrediction(node));
-            break;
-        }
-
         case Call:
         case Construct: {
             if (node.getHeapPrediction())
@@ -526,7 +532,7 @@ private:
         }
             
         case GetCallee: {
-            changed |= setPrediction(PredictObjectOther);
+            changed |= setPrediction(PredictFunction);
             break;
         }
             
@@ -576,6 +582,14 @@ private:
         case ValueToDouble:
         case GetArrayLength:
         case GetByteArrayLength:
+        case GetInt8ArrayLength:
+        case GetInt16ArrayLength:
+        case GetInt32ArrayLength:
+        case GetUint8ArrayLength:
+        case GetUint16ArrayLength:
+        case GetUint32ArrayLength:
+        case GetFloat32ArrayLength:
+        case GetFloat64ArrayLength:
         case GetStringLength: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
@@ -642,6 +656,112 @@ private:
             propagateNodePredictions(m_graph[m_compileIndex]);
     }
     
+    void vote(NodeIndex nodeIndex, VariableAccessData::Ballot ballot)
+    {
+        switch (m_graph[nodeIndex].op) {
+        case ValueToNumber:
+        case ValueToDouble:
+        case ValueToInt32:
+        case UInt32ToNumber:
+            nodeIndex = m_graph[nodeIndex].child1();
+            break;
+        default:
+            break;
+        }
+        
+        if (m_graph[nodeIndex].op == GetLocal)
+            m_graph[nodeIndex].variableAccessData()->vote(ballot);
+    }
+    
+    void vote(Node& node, VariableAccessData::Ballot ballot)
+    {
+        if (node.op & NodeHasVarArgs) {
+            for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                vote(m_graph.m_varArgChildren[childIdx], ballot);
+            return;
+        }
+        
+        if (node.child1() == NoNode)
+            return;
+        vote(node.child1(), ballot);
+        if (node.child2() == NoNode)
+            return;
+        vote(node.child2(), ballot);
+        if (node.child3() == NoNode)
+            return;
+        vote(node.child3(), ballot);
+    }
+    
+    void doRoundOfDoubleVoting()
+    {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("Voting on double uses of locals [%u]\n", m_count);
+#endif
+        for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
+            m_graph.m_variableAccessData[i].find()->clearVotes();
+        for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex) {
+            Node& node = m_graph[m_compileIndex];
+            switch (node.op) {
+            case ValueAdd:
+            case ArithAdd:
+            case ArithSub:
+            case ArithMul:
+            case ArithMin:
+            case ArithMax:
+            case ArithMod:
+            case ArithDiv: {
+                PredictedType left = m_graph[node.child1()].prediction();
+                PredictedType right = m_graph[node.child2()].prediction();
+                
+                VariableAccessData::Ballot ballot;
+                
+                if (isNumberPrediction(left) && isNumberPrediction(right) && !(Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child1()]) && node.canSpeculateInteger()))
+                    ballot = VariableAccessData::VoteDouble;
+                else
+                    ballot = VariableAccessData::VoteValue;
+                
+                vote(node.child1(), ballot);
+                vote(node.child2(), ballot);
+                break;
+            }
+                
+            case ArithAbs:
+                VariableAccessData::Ballot ballot;
+                if (!(m_graph[node.child1()].shouldSpeculateInteger() && node.canSpeculateInteger()))
+                    ballot = VariableAccessData::VoteDouble;
+                else
+                    ballot = VariableAccessData::VoteValue;
+                
+                vote(node.child1(), ballot);
+                break;
+                
+            case ArithSqrt:
+                vote(node.child1(), VariableAccessData::VoteDouble);
+                break;
+                
+            case ValueToNumber:
+            case ValueToDouble:
+                // Don't vote.
+                break;
+                
+            case SetLocal: {
+                PredictedType prediction = m_graph[node.child1()].prediction();
+                if (isDoublePrediction(prediction))
+                    node.variableAccessData()->vote(VariableAccessData::VoteDouble);
+                else if (!isNumberPrediction(prediction) || isInt32Prediction(prediction))
+                    node.variableAccessData()->vote(VariableAccessData::VoteValue);
+                break;
+            }
+                
+            default:
+                vote(node, VariableAccessData::VoteValue);
+                break;
+            }
+        }
+        for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
+            m_changed |= m_graph.m_variableAccessData[i].find()->tallyVotesForShouldUseDoubleFormat();
+    }
+    
     void propagatePredictions()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -653,6 +773,7 @@ private:
             // Forward propagation is near-optimal for both topologically-sorted and
             // DFS-sorted code.
             propagatePredictionsForward();
+            doRoundOfDoubleVoting();
             if (!m_changed)
                 break;
             
@@ -662,6 +783,7 @@ private:
             // found a sound solution and (2) short-circuits backward flow.
             m_changed = false;
             propagatePredictionsBackward();
+            doRoundOfDoubleVoting();
         } while (m_changed);
     }
     
@@ -674,7 +796,7 @@ private:
             m_graph[nodeIndex].op = ValueToDouble;
         }
     }
-    
+
     void fixupNode(Node& node)
     {
         if (!node.shouldGenerate())
@@ -697,11 +819,11 @@ private:
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
             
-            if (left && right && isNumberPrediction(left) && isNumberPrediction(right)) {
-                if (left & PredictDouble)
-                    toDouble(node.child2());
-                if (right & PredictDouble)
-                    toDouble(node.child1());
+            if (left && right
+                && isNumberPrediction(left) && isNumberPrediction(right)
+                && ((left & PredictDouble) || (right & PredictDouble))) {
+                toDouble(node.child1());
+                toDouble(node.child2());
             }
             break;
         }
@@ -722,11 +844,10 @@ private:
             PredictedType left = m_graph[node.child1()].prediction();
             PredictedType right = m_graph[node.child2()].prediction();
             
-            if (left && right) {
-                if (left & PredictDouble)
-                    toDouble(node.child2());
-                if (right & PredictDouble)
-                    toDouble(node.child1());
+            if (left && right
+                && ((left & PredictDouble) || (right & PredictDouble))) {
+                toDouble(node.child1());
+                toDouble(node.child2());
             }
             break;
         }
@@ -749,14 +870,22 @@ private:
         }
             
         case GetById: {
+            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
+                break;
+            if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
+                break;
             bool isArray = isArrayPrediction(m_graph[node.child1()].prediction());
             bool isString = isStringPrediction(m_graph[node.child1()].prediction());
             bool isByteArray = m_graph[node.child1()].shouldSpeculateByteArray();
-            if (!isInt32Prediction(m_graph[m_compileIndex].prediction()))
-                break;
-            if (!isArray && !isString && !isByteArray)
-                break;
-            if (m_codeBlock->identifier(node.identifierNumber()) != m_globalData.propertyNames->length)
+            bool isInt8Array = m_graph[node.child1()].shouldSpeculateInt8Array();
+            bool isInt16Array = m_graph[node.child1()].shouldSpeculateInt16Array();
+            bool isInt32Array = m_graph[node.child1()].shouldSpeculateInt32Array();
+            bool isUint8Array = m_graph[node.child1()].shouldSpeculateUint8Array();
+            bool isUint16Array = m_graph[node.child1()].shouldSpeculateUint16Array();
+            bool isUint32Array = m_graph[node.child1()].shouldSpeculateUint32Array();
+            bool isFloat32Array = m_graph[node.child1()].shouldSpeculateFloat32Array();
+            bool isFloat64Array = m_graph[node.child1()].shouldSpeculateFloat64Array();
+            if (!isArray && !isString && !isByteArray && !isInt8Array && !isInt16Array && !isInt32Array && !isUint8Array && !isUint16Array && !isUint32Array && !isFloat32Array && !isFloat64Array)
                 break;
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -768,11 +897,43 @@ private:
                 node.op = GetStringLength;
             else if (isByteArray)
                 node.op = GetByteArrayLength;
+            else if (isInt8Array)
+                node.op = GetInt8ArrayLength;
+            else if (isInt16Array)
+                node.op = GetInt16ArrayLength;
+            else if (isInt32Array)
+                node.op = GetInt32ArrayLength;
+            else if (isUint8Array)
+                node.op = GetUint8ArrayLength;
+            else if (isUint16Array)
+                node.op = GetUint16ArrayLength;
+            else if (isUint32Array)
+                node.op = GetUint32ArrayLength;
+            else if (isFloat32Array)
+                node.op = GetFloat32ArrayLength;
+            else if (isFloat64Array)
+                node.op = GetFloat64ArrayLength;
             else
                 ASSERT_NOT_REACHED();
             break;
         }
-            
+        case GetIndexedPropertyStorage: {
+            PredictedType basePrediction = m_graph[node.child2()].prediction();
+            if (!(basePrediction & PredictInt32) && basePrediction) {
+                node.op = Phantom;
+                node.children.fixed.child1 = NoNode;
+                node.children.fixed.child2 = NoNode;
+                node.children.fixed.child3 = NoNode;
+            }
+            break;
+        }
+        case GetByVal:
+        case StringCharAt:
+        case StringCharCodeAt: {
+            if (node.child3() != NoNode && m_graph[node.child3()].op == Phantom)
+                node.children.fixed.child3 = NoNode;
+            break;
+        }
         default:
             break;
         }
@@ -921,7 +1082,7 @@ private:
         return isBooleanPrediction(prediction) || !prediction;
     }
     
-    bool byValHasIntBase(Node& node)
+    bool byValIsPure(Node& node)
     {
         PredictedType prediction = m_graph[node.child2()].prediction();
         return (prediction & PredictInt32) || !prediction;
@@ -945,7 +1106,7 @@ private:
         case LogicalNot:
             return !logicalNotIsPure(node);
         case GetByVal:
-            return !byValHasIntBase(node);
+            return !byValIsPure(node);
         default:
             ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.
@@ -1015,13 +1176,21 @@ private:
             Node& node = m_graph[index];
             switch (node.op) {
             case GetByVal:
+                if (!byValIsPure(node))
+                    return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return index;
                 break;
             case PutByVal:
+            case PutByValAlias:
+                if (!byValIsPure(node))
+                    return NoNode;
                 if (node.child1() == child1 && canonicalize(node.child2()) == canonicalize(child2))
                     return node.child3();
-                break;
+                // We must assume that the PutByVal will clobber the location we're getting from.
+                // FIXME: We can do better; if we know that the PutByVal is accessing an array of a
+                // different type than the GetByVal, then we know that they won't clobber each other.
+                return NoNode;
             case PutStructure:
             case PutByOffset:
                 // GetByVal currently always speculates that it's accessing an
@@ -1041,63 +1210,13 @@ private:
         return NoNode;
     }
 
-    NodeIndex getMethodLoadElimination(const MethodCheckData& methodCheckData, unsigned identifierNumber, NodeIndex child1)
-    {
-        NodeIndex start = startIndexForChildren(child1);
-        for (NodeIndex index = m_compileIndex; index-- > start;) {
-            Node& node = m_graph[index];
-            switch (node.op) {
-            case CheckMethod:
-                if (node.child1() == child1
-                    && node.identifierNumber() == identifierNumber
-                    && m_graph.m_methodCheckData[node.methodCheckDataIndex()] == methodCheckData)
-                    return index;
-                break;
-                
-            case PutByOffset:
-                // If a put was optimized to by-offset then it's not changing the structure
-                break;
-                
-            case PutByVal:
-            case PutByValAlias:
-                if (byValHasIntBase(node)) {
-                    // If PutByVal speculates that it's accessing an array with an
-                    // integer index, then it's impossible for it to cause a structure
-                    // change.
-                    break;
-                }
-                return NoNode;
-                
-            case ArrayPush:
-            case ArrayPop:
-                // Pushing and popping cannot despecify a function.
-                break;
-                
-            default:
-                if (clobbersWorld(index))
-                    return NoNode;
-                break;
-            }
-        }
-        return NoNode;
-    }
-
     bool checkFunctionElimination(JSFunction* function, NodeIndex child1)
     {
         NodeIndex start = startIndexForChildren(child1);
-        for (NodeIndex index = m_compileIndex; index-- > start;) {
+        for (NodeIndex index = endIndexForPureCSE(); index-- > start;) {
             Node& node = m_graph[index];
-            switch (node.op) {
-            case CheckFunction:
-                if (node.child1() == child1 && node.function() == function)
-                    return true;
-                break;
-                
-            default:
-                if (clobbersWorld(index))
-                    return false;
-                break;
-            }
+            if (node.op == CheckFunction && node.child1() == child1 && node.function() == function)
+                return true;
         }
         return false;
     }
@@ -1128,7 +1247,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValHasIntBase(node)) {
+                if (byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -1171,7 +1290,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValHasIntBase(node)) {
+                if (byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -1207,7 +1326,7 @@ private:
                 
             case PutByVal:
             case PutByValAlias:
-                if (byValHasIntBase(node)) {
+                if (byValIsPure(node)) {
                     // If PutByVal speculates that it's accessing an array with an
                     // integer index, then it's impossible for it to cause a structure
                     // change.
@@ -1215,6 +1334,44 @@ private:
                 }
                 return NoNode;
                 
+            default:
+                if (clobbersWorld(index))
+                    return NoNode;
+                break;
+            }
+        }
+        return NoNode;
+    }
+
+    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, bool hasIntegerIndexPrediction)
+    {
+        NodeIndex start = startIndexForChildren(child1);
+        for (NodeIndex index = m_compileIndex; index-- > start;) {
+            Node& node = m_graph[index];
+            switch (node.op) {
+            case GetIndexedPropertyStorage: {
+                PredictedType basePrediction = m_graph[node.child2()].prediction();
+                bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
+                if (node.child1() == child1 && hasIntegerIndexPrediction == nodeHasIntegerIndexPrediction)
+                    return index;
+                break;
+            }
+
+            case PutByOffset:
+            case PutStructure:
+                // Changing the structure or putting to the storage cannot
+                // change the property storage pointer.
+                break;
+                
+            case PutByValAlias:
+                // PutByValAlias can't change the indexed storage pointer
+                break;
+                
+            case PutByVal:
+                if (isFixedIndexedStorageObjectPrediction(m_graph[node.child1()].prediction()) && byValIsPure(node))
+                    break;
+                return NoNode;
+
             default:
                 if (clobbersWorld(index))
                     return NoNode;
@@ -1236,7 +1393,7 @@ private:
         return NoNode;
     }
     
-    void performSubstitution(NodeIndex& child)
+    void performSubstitution(NodeIndex& child, bool addRef = true)
     {
         // Check if this operand is actually unused.
         if (child == NoNode)
@@ -1253,7 +1410,8 @@ private:
         // have a replacement.
         ASSERT(m_replacements[child] == NoNode);
         
-        m_graph[child].ref();
+        if (addRef)
+            m_graph[child].ref();
     }
     
     void setReplacement(NodeIndex replacement)
@@ -1292,16 +1450,18 @@ private:
     
     void performNodeCSE(Node& node)
     {
+        bool shouldGenerate = node.shouldGenerate();
+
         if (node.op & NodeHasVarArgs) {
             for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
-                performSubstitution(m_graph.m_varArgChildren[childIdx]);
+                performSubstitution(m_graph.m_varArgChildren[childIdx], shouldGenerate);
         } else {
-            performSubstitution(node.children.fixed.child1);
-            performSubstitution(node.children.fixed.child2);
-            performSubstitution(node.children.fixed.child3);
+            performSubstitution(node.children.fixed.child1, shouldGenerate);
+            performSubstitution(node.children.fixed.child2, shouldGenerate);
+            performSubstitution(node.children.fixed.child3, shouldGenerate);
         }
         
-        if (!node.shouldGenerate())
+        if (!shouldGenerate)
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -1336,6 +1496,14 @@ private:
         case ArithMax:
         case ArithSqrt:
         case GetByteArrayLength:
+        case GetInt8ArrayLength:
+        case GetInt16ArrayLength:
+        case GetInt32ArrayLength:
+        case GetUint8ArrayLength:
+        case GetUint16ArrayLength:
+        case GetUint32ArrayLength:
+        case GetFloat32ArrayLength:
+        case GetFloat64ArrayLength:
         case GetCallee:
         case GetStringLength:
         case StringCharAt:
@@ -1383,17 +1551,13 @@ private:
             break;
             
         case GetByVal:
-            if (byValHasIntBase(node))
+            if (byValIsPure(node))
                 setReplacement(getByValLoadElimination(node.child1(), node.child2()));
             break;
             
         case PutByVal:
-            if (byValHasIntBase(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
+            if (byValIsPure(node) && getByValLoadElimination(node.child1(), node.child2()) != NoNode)
                 node.op = PutByValAlias;
-            break;
-            
-        case CheckMethod:
-            setReplacement(getMethodLoadElimination(m_graph.m_methodCheckData[node.methodCheckDataIndex()], node.identifierNumber(), node.child1()));
             break;
             
         case CheckStructure:
@@ -1405,11 +1569,18 @@ private:
             if (checkFunctionElimination(node.function(), node.child1()))
                 eliminate();
             break;
+                
+        case GetIndexedPropertyStorage: {
+            PredictedType basePrediction = m_graph[node.child2()].prediction();
+            bool nodeHasIntegerIndexPrediction = !(!(basePrediction & PredictInt32) && basePrediction);
+            setReplacement(getIndexedPropertyStorageLoadElimination(node.child1(), nodeHasIntegerIndexPrediction));
+            break;
+        }
 
         case GetPropertyStorage:
             setReplacement(getPropertyStorageLoadElimination(node.child1()));
             break;
-            
+
         case GetByOffset:
             setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1()));
             break;

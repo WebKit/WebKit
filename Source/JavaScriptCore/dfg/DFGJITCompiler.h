@@ -221,24 +221,6 @@ public:
         unsigned constantIndex = graph()[nodeIndex].constantNumber();
         return &(codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex));
     }
-
-    void emitLoadTag(NodeIndex, GPRReg tag);
-    void emitLoadPayload(NodeIndex, GPRReg payload);
-
-    void emitLoad(const JSValue&, GPRReg tag, GPRReg payload);
-    void emitLoad(NodeIndex, GPRReg tag, GPRReg payload);
-    void emitLoad2(NodeIndex index1, GPRReg tag1, GPRReg payload1, NodeIndex index2, GPRReg tag2, GPRReg payload2);
-
-    void emitLoadDouble(NodeIndex, FPRReg value);
-    void emitLoadInt32ToDouble(NodeIndex, FPRReg value);
-
-    void emitStore(NodeIndex, GPRReg tag, GPRReg payload);
-    void emitStore(NodeIndex, const JSValue constant);
-    void emitStoreInt32(NodeIndex, GPRReg payload, bool indexIsInt32 = false);
-    void emitStoreInt32(NodeIndex, TrustedImm32 payload, bool indexIsInt32 = false);
-    void emitStoreCell(NodeIndex, GPRReg payload, bool indexIsCell = false);
-    void emitStoreBool(NodeIndex, GPRReg payload, bool indexIsBool = false);
-    void emitStoreDouble(NodeIndex, FPRReg value);
 #endif
 
     void addPropertyAccess(const PropertyAccessRecord& record)
@@ -246,14 +228,27 @@ public:
         m_propertyAccesses.append(record);
     }
 
-    void addMethodGet(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
+    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, CodeOrigin codeOrigin)
     {
-        m_methodGets.append(MethodGetRecord(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction));
+        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, callType, codeOrigin));
     }
     
-    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, CodeOrigin codeOrigin)
+    void addWeakReference(JSCell* target)
     {
-        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, codeOrigin));
+        m_codeBlock->appendWeakReference(target);
+    }
+    
+    void addWeakReferenceTransition(JSCell* codeOrigin, JSCell* from, JSCell* to)
+    {
+        m_codeBlock->appendWeakReferenceTransition(codeOrigin, from, to);
+    }
+    
+    template<typename T>
+    Jump branchWeakPtr(RelationalCondition cond, T left, JSCell* weakPtr)
+    {
+        Jump result = branchPtr(cond, left, TrustedImmPtr(weakPtr));
+        addWeakReference(weakPtr);
+        return result;
     }
     
     void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
@@ -271,8 +266,11 @@ public:
                 entry->m_expectedValues.argument(argument).makeTop();
         }
         for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
-            if (basicBlock.variablesAtHead.local(local) == NoNode)
+            NodeIndex nodeIndex = basicBlock.variablesAtHead.local(local);
+            if (nodeIndex == NoNode)
                 entry->m_expectedValues.local(local).makeTop();
+            else if (m_graph[nodeIndex].variableAccessData()->shouldUseDoubleFormat())
+                entry->m_localsForcedDouble.set(local);
         }
 #else
         UNUSED_PARAM(basicBlock);
@@ -306,29 +304,12 @@ private:
     Vector<CallLinkRecord> m_calls;
     Vector<CallExceptionRecord> m_exceptionChecks;
     
-    struct MethodGetRecord {
-        MethodGetRecord(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
-            : m_slowCall(slowCall)
-            , m_structToCompare(structToCompare)
-            , m_protoObj(protoObj)
-            , m_protoStructToCompare(protoStructToCompare)
-            , m_putFunction(putFunction)
-        {
-        }
-        
-        Call m_slowCall;
-        DataLabelPtr m_structToCompare;
-        DataLabelPtr m_protoObj;
-        DataLabelPtr m_protoStructToCompare;
-        DataLabelPtr m_putFunction;
-    };
-    
     struct JSCallRecord {
-        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, CodeOrigin codeOrigin)
+        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, CodeOrigin codeOrigin)
             : m_fastCall(fastCall)
             , m_slowCall(slowCall)
             , m_targetToCheck(targetToCheck)
-            , m_isCall(isCall)
+            , m_callType(callType)
             , m_codeOrigin(codeOrigin)
         {
         }
@@ -336,12 +317,11 @@ private:
         Call m_fastCall;
         Call m_slowCall;
         DataLabelPtr m_targetToCheck;
-        bool m_isCall;
+        CallLinkInfo::CallType m_callType;
         CodeOrigin m_codeOrigin;
     };
-
+    
     Vector<PropertyAccessRecord, 4> m_propertyAccesses;
-    Vector<MethodGetRecord, 4> m_methodGets;
     Vector<JSCallRecord, 4> m_jsCalls;
 };
 

@@ -30,6 +30,8 @@
 
 namespace JSC { namespace DFG {
 
+const double AssemblyHelpers::twoToThe32 = (double)0x100000000ull;
+
 Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock == codeBlock->baselineVersion());

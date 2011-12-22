@@ -62,7 +62,7 @@ namespace QUnicodeTables {
 QT_END_NAMESPACE
 
 // ugly hack to make UChar compatible with JSChar in API/JSStringRef.h
-#if defined(Q_OS_WIN) || COMPILER(WINSCW) || (COMPILER(RVCT) && !OS(LINUX))
+#if defined(Q_OS_WIN) || (COMPILER(RVCT) && !OS(LINUX))
 typedef wchar_t UChar;
 #else
 typedef uint16_t UChar;
@@ -371,6 +371,7 @@ inline CharCategory category(UChar32 c)
     return (CharCategory) U_MASK(QChar::category(uint32_t(c)));
 }
 
-} }
+} // namespace Unicode
+} // namespace WTF
 
 #endif // WTF_UNICODE_QT4_H

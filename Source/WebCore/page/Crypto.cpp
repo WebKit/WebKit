@@ -31,7 +31,7 @@
 #include "Crypto.h"
 
 #include "ExceptionCode.h"
-#include "Uint8Array.h"
+#include <wtf/Uint8Array.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {

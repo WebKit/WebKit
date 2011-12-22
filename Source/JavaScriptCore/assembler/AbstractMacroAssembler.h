@@ -597,6 +597,18 @@ protected:
     {
         return AssemblerType::readPointer(dataLabelPtr.dataLocation());
     }
+    
+    static void unreachableForPlatform()
+    {
+#if COMPILER(CLANG)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+        ASSERT_NOT_REACHED();
+#pragma clang diagnostic pop
+#else
+        ASSERT_NOT_REACHED();
+#endif
+    }
 };
 
 } // namespace JSC

@@ -26,9 +26,10 @@
 #include "config.h"
 #include "ConservativeRoots.h"
 
+#include "CodeBlock.h"
+#include "DFGCodeBlocks.h"
 #include "JSCell.h"
 #include "JSObject.h"
-#include "JettisonedCodeBlocks.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -113,9 +114,9 @@ void ConservativeRoots::add(void* begin, void* end)
     genericAddSpan(begin, end, dummyMarkHook);
 }
 
-void ConservativeRoots::add(void* begin, void* end, JettisonedCodeBlocks& jettisonedCodeBlocks)
+void ConservativeRoots::add(void* begin, void* end, DFGCodeBlocks& dfgCodeBlocks)
 {
-    genericAddSpan(begin, end, jettisonedCodeBlocks);
+    genericAddSpan(begin, end, dfgCodeBlocks);
 }
 
 } // namespace JSC

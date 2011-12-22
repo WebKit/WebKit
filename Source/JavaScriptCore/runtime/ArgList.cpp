@@ -32,11 +32,13 @@ namespace JSC {
 
 void ArgList::getSlice(int startIndex, ArgList& result) const
 {
-    if (startIndex <= 0 || static_cast<unsigned>(startIndex) >= m_argCount) {
-        result = ArgList(m_args, 0);
+    if (startIndex <= 0 || startIndex >= m_argCount) {
+        result = ArgList();
         return;
     }
-    result = ArgList(m_args + startIndex, m_argCount - startIndex);
+
+    result.m_args = m_args - startIndex;
+    result.m_argCount =  m_argCount - startIndex;
 }
 
 void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootVisitor, ListSet& markSet)
@@ -44,38 +46,44 @@ void MarkedArgumentBuffer::markLists(HeapRootVisitor& heapRootVisitor, ListSet& 
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         MarkedArgumentBuffer* list = *it;
-        heapRootVisitor.visit(reinterpret_cast<JSValue*>(list->m_buffer), list->m_size);
+        for (int i = 0; i < list->m_size; ++i)
+            heapRootVisitor.visit(reinterpret_cast<JSValue*>(&list->slotFor(i)));
     }
 }
 
 void MarkedArgumentBuffer::slowAppend(JSValue v)
 {
+    int newCapacity = m_capacity * 4;
+    EncodedJSValue* newBuffer = &(new EncodedJSValue[newCapacity])[newCapacity - 1];
+    for (int i = 0; i < m_capacity; ++i)
+        newBuffer[-i] = m_buffer[-i];
+
+    if (EncodedJSValue* base = mallocBase())
+        delete [] base;
+
+    m_buffer = newBuffer;
+    m_capacity = newCapacity;
+
+    slotFor(m_size) = JSValue::encode(v);
+    ++m_size;
+
+    if (m_markSet)
+        return;
+
     // As long as our size stays within our Vector's inline 
     // capacity, all our values are allocated on the stack, and 
     // therefore don't need explicit marking. Once our size exceeds
     // our Vector's inline capacity, though, our values move to the 
     // heap, where they do need explicit marking.
-    if (!m_markSet) {
-        // FIXME: Even if v is not a JSCell*, if previous values in the buffer
-        // are, then they won't be marked!
-        if (Heap* heap = Heap::heap(v)) {
-            ListSet& markSet = heap->markListSet();
-            markSet.add(this);
-            m_markSet = &markSet;
-        }
-    }
+    for (int i = 0; i < m_size; ++i) {
+        Heap* heap = Heap::heap(JSValue::decode(slotFor(i)));
+        if (!heap)
+            continue;
 
-    if (m_vector.size() < m_vector.capacity()) {
-        m_vector.uncheckedAppend(v);
-        return;
+        m_markSet = &heap->markListSet();
+        m_markSet->add(this);
+        break;
     }
-
-    // 4x growth would be excessive for a normal vector, but it's OK for Lists 
-    // because they're short-lived.
-    m_vector.reserveCapacity(m_vector.capacity() * 4);
-    
-    m_vector.uncheckedAppend(v);
-    m_buffer = m_vector.data();
 }
 
 } // namespace JSC

@@ -157,7 +157,7 @@ void BitmapImage::didDecodeProperties() const
     if (m_decodedPropertiesSize == updatedSize)
         return;
     int deltaBytes = updatedSize - m_decodedPropertiesSize;
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     bool overflow = updatedSize > m_decodedPropertiesSize && deltaBytes < 0;
     bool underflow = updatedSize < m_decodedPropertiesSize && deltaBytes > 0;
     ASSERT(!overflow && !underflow);

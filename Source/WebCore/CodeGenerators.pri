@@ -196,6 +196,7 @@ IDL_BINDINGS += \
     html/canvas/DataView.idl \
     html/canvas/Int8Array.idl \
     html/canvas/Float32Array.idl \
+    html/canvas/Float64Array.idl \
     html/canvas/CanvasGradient.idl \
     html/canvas/Int32Array.idl \
     html/canvas/CanvasPattern.idl \

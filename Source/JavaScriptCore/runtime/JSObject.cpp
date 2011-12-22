@@ -52,6 +52,11 @@ const ClassInfo JSObject::s_info = { "Object", 0, 0, 0, CREATE_METHOD_TABLE(JSOb
 
 const ClassInfo JSFinalObject::s_info = { "Object", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFinalObject) };
 
+void JSFinalObject::vtableAnchor()
+{
+    printf("Something Visual Studio can't optimize away.\n");
+}
+
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     // Add properties from the static hashtables of properties
@@ -73,7 +78,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
 
 void JSObject::finalize(JSCell* cell)
 {
-    delete [] static_cast<JSObject*>(cell)->m_propertyStorage.get();
+    delete [] jsCast<JSObject*>(cell)->m_propertyStorage.get();
 }
 
 void JSObject::vtableAnchor()
@@ -82,9 +87,9 @@ void JSObject::vtableAnchor()
 
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSObject* thisObject = static_cast<JSObject*>(cell);
+    JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     bool wasCheckingForDefaultMarkViolation = visitor.m_isCheckingForDefaultMarkViolation;
     visitor.m_isCheckingForDefaultMarkViolation = false;
 #endif
@@ -97,7 +102,7 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     if (thisObject->m_inheritorID)
         visitor.append(&thisObject->m_inheritorID);
 
-#ifndef NDEBUG
+#if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
 }
@@ -111,7 +116,7 @@ UString JSObject::className(const JSObject* object)
 
 bool JSObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    JSObject* thisObject = static_cast<JSObject*>(cell);
+    JSObject* thisObject = jsCast<JSObject*>(cell);
     return thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
 }
 
@@ -123,7 +128,7 @@ static void throwSetterError(ExecState* exec)
 // ECMA 8.6.2.2
 void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSObject* thisObject = static_cast<JSObject*>(cell);
+    JSObject* thisObject = jsCast<JSObject*>(cell);
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
     JSGlobalData& globalData = exec->globalData();
@@ -200,7 +205,7 @@ void JSObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName
 void JSObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
 {
     PutPropertySlot slot;
-    JSObject* thisObject = static_cast<JSObject*>(cell);
+    JSObject* thisObject = jsCast<JSObject*>(cell);
     thisObject->methodTable()->put(thisObject, exec, Identifier::from(exec, propertyName), value, slot);
 }
 
@@ -231,7 +236,7 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 // ECMA 8.6.2.5
 bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSObject* thisObject = static_cast<JSObject*>(cell);
+    JSObject* thisObject = jsCast<JSObject*>(cell);
 
     if (!thisObject->staticFunctionsReified())
         thisObject->reifyStaticFunctionsForDelete(exec);
@@ -262,7 +267,7 @@ bool JSObject::hasOwnProperty(ExecState* exec, const Identifier& propertyName) c
 
 bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned propertyName)
 {
-    JSObject* thisObject = static_cast<JSObject*>(cell);
+    JSObject* thisObject = jsCast<JSObject*>(cell);
     return thisObject->methodTable()->deleteProperty(thisObject, exec, Identifier::from(exec, propertyName));
 }
 

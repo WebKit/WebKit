@@ -46,7 +46,8 @@
 
 namespace WebCore {
 
-    class ThreadableWebSocketChannel;
+class Blob;
+class ThreadableWebSocketChannel;
 
     class WebSocket : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, public WebSocketChannelClient {
     public:

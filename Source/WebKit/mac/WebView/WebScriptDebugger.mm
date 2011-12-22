@@ -62,7 +62,7 @@ static NSString *toNSString(SourceProvider* s)
 {
     if (!s->length())
         return nil;
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s->data()) length:s->length()];
+    return [NSString stringWithCharacters:s->data()->characters() length:s->length()];
 }
 
 // convert UString to NSURL

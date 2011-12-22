@@ -95,11 +95,7 @@ bool RenderSVGResourceClipper::applyResource(RenderObject* object, RenderStyle*,
 {
     ASSERT(object);
     ASSERT(context);
-#ifndef NDEBUG
-    ASSERT(resourceMode == ApplyToDefaultMode);
-#else
-    UNUSED_PARAM(resourceMode);
-#endif
+    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
     return applyClippingToContext(object, object->objectBoundingBox(), object->repaintRectInLocalCoordinates(), context);
 }

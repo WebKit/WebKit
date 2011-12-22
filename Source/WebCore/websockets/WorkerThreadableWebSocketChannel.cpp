@@ -34,6 +34,7 @@
 
 #include "WorkerThreadableWebSocketChannel.h"
 
+#include "Blob.h"
 #include "CrossThreadTask.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
@@ -44,7 +45,7 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
-
+#include <wtf/ArrayBuffer.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 

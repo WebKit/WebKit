@@ -36,7 +36,7 @@ namespace WebCore {
 
 void JSJavaScriptAudioNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSJavaScriptAudioNode* thisObject = static_cast<JSJavaScriptAudioNode*>(cell);
+    JSJavaScriptAudioNode* thisObject = jsCast<JSJavaScriptAudioNode*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

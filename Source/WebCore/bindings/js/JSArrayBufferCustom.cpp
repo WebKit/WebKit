@@ -26,9 +26,9 @@
 #include "config.h"
 #include "JSArrayBuffer.h"
 
-#include "ArrayBuffer.h"
 #include "ExceptionCode.h"
 #include <runtime/Error.h>
+#include <wtf/ArrayBuffer.h>
 
 namespace WebCore {
 

@@ -37,12 +37,21 @@ class JSStringBuilder {
 public:
     JSStringBuilder()
         : m_okay(true)
+        , m_is8Bit(true)
     {
     }
 
     void append(const UChar u)
     {
-        m_okay &= buffer.tryAppend(&u, 1);
+        if (m_is8Bit) {
+            if (u < 0xff) {
+                LChar c = u;
+                m_okay &= buffer8.tryAppend(&c, 1);
+                return;
+            }
+            upConvert();
+        }
+        m_okay &= buffer16.tryAppend(&u, 1);
     }
 
     void append(const char* str)
@@ -52,36 +61,87 @@ public:
 
     void append(const char* str, size_t len)
     {
-        m_okay &= buffer.tryReserveCapacity(buffer.size() + len);
+        if (m_is8Bit) {
+            m_okay &= buffer8.tryAppend(reinterpret_cast<const LChar*>(str), len);
+            return;
+        }
+        m_okay &= buffer8.tryReserveCapacity(buffer16.size() + len);
         for (size_t i = 0; i < len; i++) {
             UChar u = static_cast<unsigned char>(str[i]);
-            m_okay &= buffer.tryAppend(&u, 1);
+            m_okay &= buffer16.tryAppend(&u, 1);
         }
     }
 
+    void append(const LChar* str, size_t len)
+    {
+        if (m_is8Bit) {
+            m_okay &= buffer8.tryAppend(str, len);
+            return;
+        }
+        m_okay &= buffer8.tryReserveCapacity(buffer16.size() + len);
+        for (size_t i = 0; i < len; i++) {
+            UChar u = str[i];
+            m_okay &= buffer16.tryAppend(&u, 1);
+        }
+    }
+    
     void append(const UChar* str, size_t len)
     {
-        m_okay &= buffer.tryAppend(str, len);
+        if (m_is8Bit)
+            upConvert(); // FIXME: We could check character by character its size.
+        m_okay &= buffer16.tryAppend(str, len);
     }
 
     void append(const UString& str)
     {
-        m_okay &= buffer.tryAppend(str.characters(), str.length());
+        unsigned length = str.length();
+
+        if (!length)
+            return;
+
+        if (m_is8Bit) {
+            if (str.is8Bit()) {
+                m_okay &= buffer8.tryAppend(str.characters8(), length);
+                return;
+            }
+            upConvert();
+        }
+        m_okay &= buffer16.tryAppend(str.characters(), length);
+    }
+
+    void upConvert()
+    {
+        ASSERT(m_is8Bit);
+        size_t len = buffer8.size();
+
+        for (size_t i = 0; i < len; i++)
+            buffer16.append(buffer8[i]);
+
+        buffer8.clear();
+        m_is8Bit = false;
     }
 
     JSValue build(ExecState* exec)
     {
         if (!m_okay)
             return throwOutOfMemoryError(exec);
-        buffer.shrinkToFit();
-        if (!buffer.data())
+        if (m_is8Bit) {
+            buffer8.shrinkToFit();
+            if (!buffer8.data())
+                return throwOutOfMemoryError(exec);
+            return jsString(exec, UString::adopt(buffer8));
+        }
+        buffer16.shrinkToFit();
+        if (!buffer16.data())
             return throwOutOfMemoryError(exec);
-        return jsString(exec, UString::adopt(buffer));
+        return jsString(exec, UString::adopt(buffer16));
     }
 
 protected:
-    Vector<UChar, 64> buffer;
+    Vector<LChar, 64> buffer8;
+    Vector<UChar, 64> buffer16;
     bool m_okay;
+    bool m_is8Bit;
 };
 
 template<typename StringType1, typename StringType2>

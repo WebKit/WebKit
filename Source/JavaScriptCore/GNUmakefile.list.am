@@ -85,6 +85,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
 	Source/JavaScriptCore/bytecode/DataFormat.h \
+	Source/JavaScriptCore/bytecode/DFGExitProfile.cpp \
+	Source/JavaScriptCore/bytecode/DFGExitProfile.h \
 	Source/JavaScriptCore/bytecode/EvalCodeCache.h \
 	Source/JavaScriptCore/bytecode/Instruction.h \
 	Source/JavaScriptCore/bytecode/JumpTable.cpp \
@@ -114,6 +116,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \
+	Source/JavaScriptCore/dfg/DFGByteCodeCache.h \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
 	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
 	Source/JavaScriptCore/dfg/DFGCapabilities.cpp \
@@ -128,14 +131,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
 	Source/JavaScriptCore/dfg/DFGGraph.cpp \
 	Source/JavaScriptCore/dfg/DFGGraph.h \
-	Source/JavaScriptCore/dfg/DFGIntrinsic.h \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator32_64.cpp \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator64.cpp \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.cpp \
-	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.h \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
 	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
-	Source/JavaScriptCore/dfg/DFGJITCompilerInlineMethods.h \
 	Source/JavaScriptCore/dfg/DFGNode.h \
 	Source/JavaScriptCore/dfg/DFGOperands.h \
 	Source/JavaScriptCore/dfg/DFGOperations.cpp \
@@ -167,17 +164,18 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
+	Source/JavaScriptCore/heap/DFGCodeBlocks.cpp \
+	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
 	Source/JavaScriptCore/heap/Handle.h \
 	Source/JavaScriptCore/heap/HandleHeap.cpp \
 	Source/JavaScriptCore/heap/HandleHeap.h \
-	Source/JavaScriptCore/heap/JettisonedCodeBlocks.cpp \
-	Source/JavaScriptCore/heap/JettisonedCodeBlocks.h \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
 	Source/JavaScriptCore/heap/HandleTypes.h \
 	Source/JavaScriptCore/heap/Heap.cpp \
 	Source/JavaScriptCore/heap/Heap.h \
+	Source/JavaScriptCore/heap/ListableHandler.h \
 	Source/JavaScriptCore/heap/Local.h \
 	Source/JavaScriptCore/heap/LocalScope.h \
 	Source/JavaScriptCore/heap/MachineStackMarker.cpp \
@@ -193,6 +191,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MarkedSpace.h \
 	Source/JavaScriptCore/heap/Strong.h \
 	Source/JavaScriptCore/heap/StrongInlines.h \
+	Source/JavaScriptCore/heap/UnconditionalFinalizer.h \
 	Source/JavaScriptCore/heap/VTableSpectrum.cpp \
 	Source/JavaScriptCore/heap/VTableSpectrum.h \
 	Source/JavaScriptCore/heap/Weak.h \
@@ -359,14 +358,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/GCActivityCallback.h \
 	Source/JavaScriptCore/runtime/GetterSetter.cpp \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
-	Source/JavaScriptCore/runtime/Heuristics.cpp \
-	Source/JavaScriptCore/runtime/Heuristics.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
 	Source/JavaScriptCore/runtime/Identifier.h \
 	Source/JavaScriptCore/runtime/InitializeThreading.cpp \
 	Source/JavaScriptCore/runtime/InitializeThreading.h \
 	Source/JavaScriptCore/runtime/InternalFunction.cpp \
 	Source/JavaScriptCore/runtime/InternalFunction.h \
+	Source/JavaScriptCore/runtime/Intrinsic.h \
 	Source/JavaScriptCore/runtime/JSActivation.cpp \
 	Source/JavaScriptCore/runtime/JSActivation.h \
 	Source/JavaScriptCore/runtime/JSAPIValueWrapper.cpp \
@@ -377,6 +375,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSByteArray.h \
 	Source/JavaScriptCore/runtime/JSCell.cpp \
 	Source/JavaScriptCore/runtime/JSCell.h \
+	Source/JavaScriptCore/runtime/JSDateMath.cpp \
+	Source/JavaScriptCore/runtime/JSDateMath.h \
 	Source/JavaScriptCore/runtime/JSFunction.cpp \
 	Source/JavaScriptCore/runtime/JSFunction.h \
 	Source/JavaScriptCore/runtime/JSBoundFunction.cpp \
@@ -437,6 +437,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ObjectPrototype.h \
 	Source/JavaScriptCore/runtime/Operations.cpp \
 	Source/JavaScriptCore/runtime/Operations.h \
+	Source/JavaScriptCore/runtime/Options.cpp \
+	Source/JavaScriptCore/runtime/Options.h \
 	Source/JavaScriptCore/runtime/PropertyDescriptor.cpp \
 	Source/JavaScriptCore/runtime/PropertyDescriptor.h \
 	Source/JavaScriptCore/runtime/PropertyMapHashTable.h \
@@ -496,14 +498,18 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
 	Source/JavaScriptCore/wtf/Alignment.h \
 	Source/JavaScriptCore/wtf/AlwaysInline.h \
+	Source/JavaScriptCore/wtf/ArrayBuffer.cpp \
+	Source/JavaScriptCore/wtf/ArrayBuffer.h \
+	Source/JavaScriptCore/wtf/ArrayBufferView.cpp \
+	Source/JavaScriptCore/wtf/ArrayBufferView.h \
 	Source/JavaScriptCore/wtf/ASCIICType.h \
 	Source/JavaScriptCore/wtf/Assertions.cpp \
 	Source/JavaScriptCore/wtf/Assertions.h \
 	Source/JavaScriptCore/wtf/Atomics.h \
 	Source/JavaScriptCore/wtf/AVLTree.h \
+	Source/JavaScriptCore/wtf/Bitmap.h \
 	Source/JavaScriptCore/wtf/BitVector.cpp \
 	Source/JavaScriptCore/wtf/BitVector.h \
-	Source/JavaScriptCore/wtf/Bitmap.h \
 	Source/JavaScriptCore/wtf/BlockStack.h \
 	Source/JavaScriptCore/wtf/BloomFilter.h \
 	Source/JavaScriptCore/wtf/BoundsCheckedPointer.h \
@@ -520,30 +526,30 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/DateMath.h \
 	Source/JavaScriptCore/wtf/DecimalNumber.cpp \
 	Source/JavaScriptCore/wtf/DecimalNumber.h \
-	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc \
-	Source/JavaScriptCore/wtf/dtoa/bignum.cc \
-	Source/JavaScriptCore/wtf/dtoa/cached-powers.cc \
-	Source/JavaScriptCore/wtf/dtoa/diy-fp.cc \
-	Source/JavaScriptCore/wtf/dtoa/double-conversion.cc \
-	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.cc \
-	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.cc \
-	Source/JavaScriptCore/wtf/dtoa/strtod.cc \
-	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.h \
-	Source/JavaScriptCore/wtf/dtoa/bignum.h \
-	Source/JavaScriptCore/wtf/dtoa/cached-powers.h \
-	Source/JavaScriptCore/wtf/dtoa/diy-fp.h \
-	Source/JavaScriptCore/wtf/dtoa/double-conversion.h \
-	Source/JavaScriptCore/wtf/dtoa/double.h \
-	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.h \
-	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.h \
-	Source/JavaScriptCore/wtf/dtoa/strtod.h \
-	Source/JavaScriptCore/wtf/dtoa/utils.h \
 	Source/JavaScriptCore/wtf/Decoder.h \
 	Source/JavaScriptCore/wtf/Deque.h \
 	Source/JavaScriptCore/wtf/DisallowCType.h \
 	Source/JavaScriptCore/wtf/DoublyLinkedList.h \
 	Source/JavaScriptCore/wtf/dtoa.cpp \
 	Source/JavaScriptCore/wtf/dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.cc \
+	Source/JavaScriptCore/wtf/dtoa/bignum-dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/bignum.cc \
+	Source/JavaScriptCore/wtf/dtoa/bignum.h \
+	Source/JavaScriptCore/wtf/dtoa/cached-powers.cc \
+	Source/JavaScriptCore/wtf/dtoa/cached-powers.h \
+	Source/JavaScriptCore/wtf/dtoa/diy-fp.cc \
+	Source/JavaScriptCore/wtf/dtoa/diy-fp.h \
+	Source/JavaScriptCore/wtf/dtoa/double-conversion.cc \
+	Source/JavaScriptCore/wtf/dtoa/double-conversion.h \
+	Source/JavaScriptCore/wtf/dtoa/double.h \
+	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.cc \
+	Source/JavaScriptCore/wtf/dtoa/fast-dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.cc \
+	Source/JavaScriptCore/wtf/dtoa/fixed-dtoa.h \
+	Source/JavaScriptCore/wtf/dtoa/strtod.cc \
+	Source/JavaScriptCore/wtf/dtoa/strtod.h \
+	Source/JavaScriptCore/wtf/dtoa/utils.h \
 	Source/JavaScriptCore/wtf/DynamicAnnotations.cpp \
 	Source/JavaScriptCore/wtf/DynamicAnnotations.h \
 	Source/JavaScriptCore/wtf/Encoder.h \
@@ -551,7 +557,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/FastMalloc.cpp \
 	Source/JavaScriptCore/wtf/FastMalloc.h \
 	Source/JavaScriptCore/wtf/FixedArray.h \
+	Source/JavaScriptCore/wtf/Float32Array.h \
+	Source/JavaScriptCore/wtf/Float64Array.h \
 	Source/JavaScriptCore/wtf/Forward.h \
+	Source/JavaScriptCore/wtf/Functional.h \
 	Source/JavaScriptCore/wtf/GetPtr.h \
 	Source/JavaScriptCore/wtf/gobject/GOwnPtr.cpp \
 	Source/JavaScriptCore/wtf/gobject/GOwnPtr.h \
@@ -569,6 +578,10 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/HashTraits.h \
 	Source/JavaScriptCore/wtf/HexNumber.h \
 	Source/JavaScriptCore/wtf/InlineASM.h \
+	Source/JavaScriptCore/wtf/Int16Array.h \
+	Source/JavaScriptCore/wtf/Int32Array.h \
+	Source/JavaScriptCore/wtf/Int8Array.h \
+	Source/JavaScriptCore/wtf/IntegralTypedArrayBase.h \
 	Source/JavaScriptCore/wtf/ListHashSet.h \
 	Source/JavaScriptCore/wtf/ListRefPtr.h \
 	Source/JavaScriptCore/wtf/Locker.h \
@@ -578,12 +591,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/MathExtras.h \
 	Source/JavaScriptCore/wtf/MD5.cpp \
 	Source/JavaScriptCore/wtf/MD5.h \
+	Source/JavaScriptCore/wtf/MessageQueue.h \
 	Source/JavaScriptCore/wtf/MetaAllocator.cpp \
 	Source/JavaScriptCore/wtf/MetaAllocator.h \
 	Source/JavaScriptCore/wtf/MetaAllocatorHandle.h \
-	Source/JavaScriptCore/wtf/MessageQueue.h \
-	Source/JavaScriptCore/wtf/NonCopyingSort.h \
 	Source/JavaScriptCore/wtf/Noncopyable.h \
+	Source/JavaScriptCore/wtf/NonCopyingSort.h \
 	Source/JavaScriptCore/wtf/NotFound.h \
 	Source/JavaScriptCore/wtf/NullPtr.h \
 	Source/JavaScriptCore/wtf/OSAllocator.h \
@@ -591,24 +604,24 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/OSRandomSource.h \
 	Source/JavaScriptCore/wtf/OwnArrayPtr.h \
 	Source/JavaScriptCore/wtf/OwnFastMallocPtr.h \
-	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/OwnPtr.h \
+	Source/JavaScriptCore/wtf/OwnPtrCommon.h \
 	Source/JavaScriptCore/wtf/PackedIntVector.h \
 	Source/JavaScriptCore/wtf/PageAllocation.h \
 	Source/JavaScriptCore/wtf/PageAllocationAligned.cpp \
 	Source/JavaScriptCore/wtf/PageAllocationAligned.h \
-	Source/JavaScriptCore/wtf/PageReservation.h \
 	Source/JavaScriptCore/wtf/PageBlock.cpp \
 	Source/JavaScriptCore/wtf/PageBlock.h \
-	Source/JavaScriptCore/wtf/PassOwnArrayPtr.h \
-	Source/JavaScriptCore/wtf/PassOwnPtr.h \
-	Source/JavaScriptCore/wtf/PassRefPtr.h \
-	Source/JavaScriptCore/wtf/PassTraits.h \
+	Source/JavaScriptCore/wtf/PageReservation.h \
 	Source/JavaScriptCore/wtf/ParallelJobs.h \
 	Source/JavaScriptCore/wtf/ParallelJobsGeneric.cpp \
 	Source/JavaScriptCore/wtf/ParallelJobsGeneric.h \
 	Source/JavaScriptCore/wtf/ParallelJobsLibdispatch.h \
 	Source/JavaScriptCore/wtf/ParallelJobsOpenMP.h \
+	Source/JavaScriptCore/wtf/PassOwnArrayPtr.h \
+	Source/JavaScriptCore/wtf/PassOwnPtr.h \
+	Source/JavaScriptCore/wtf/PassRefPtr.h \
+	Source/JavaScriptCore/wtf/PassTraits.h \
 	Source/JavaScriptCore/wtf/Platform.h \
 	Source/JavaScriptCore/wtf/PossiblyNull.h \
 	Source/JavaScriptCore/wtf/RandomNumber.cpp \
@@ -638,6 +651,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/TCSpinLock.h \
 	Source/JavaScriptCore/wtf/TCSystemAlloc.cpp \
 	Source/JavaScriptCore/wtf/TCSystemAlloc.h \
+	Source/JavaScriptCore/wtf/TemporaryChange.h \
 	Source/JavaScriptCore/wtf/text/AtomicString.cpp \
 	Source/JavaScriptCore/wtf/text/AtomicString.h \
 	Source/JavaScriptCore/wtf/text/AtomicStringHash.h \
@@ -656,26 +670,30 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/text/TextPosition.h \
 	Source/JavaScriptCore/wtf/text/WTFString.cpp \
 	Source/JavaScriptCore/wtf/text/WTFString.h \
-	Source/JavaScriptCore/wtf/threads/BinarySemaphore.cpp \
-	Source/JavaScriptCore/wtf/threads/BinarySemaphore.h \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.h \
-	Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h \
 	Source/JavaScriptCore/wtf/Threading.cpp \
 	Source/JavaScriptCore/wtf/Threading.h \
 	Source/JavaScriptCore/wtf/ThreadingPrimitives.h \
 	Source/JavaScriptCore/wtf/ThreadingPthreads.cpp \
+	Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h \
+	Source/JavaScriptCore/wtf/threads/BinarySemaphore.cpp \
+	Source/JavaScriptCore/wtf/threads/BinarySemaphore.h \
 	Source/JavaScriptCore/wtf/ThreadSafeRefCounted.h \
 	Source/JavaScriptCore/wtf/ThreadSpecific.h \
+	Source/JavaScriptCore/wtf/TypedArrayBase.h \
 	Source/JavaScriptCore/wtf/TypeTraits.cpp \
 	Source/JavaScriptCore/wtf/TypeTraits.h \
-	Source/JavaScriptCore/wtf/UnionFind.h \
+	Source/JavaScriptCore/wtf/Uint16Array.h \
+	Source/JavaScriptCore/wtf/Uint32Array.h \
+	Source/JavaScriptCore/wtf/Uint8Array.h \
 	Source/JavaScriptCore/wtf/unicode/CharacterNames.h \
-	Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	Source/JavaScriptCore/wtf/unicode/Collator.h \
+	Source/JavaScriptCore/wtf/unicode/CollatorDefault.cpp \
 	Source/JavaScriptCore/wtf/unicode/Unicode.h \
 	Source/JavaScriptCore/wtf/unicode/UTF8.cpp \
 	Source/JavaScriptCore/wtf/unicode/UTF8.h \
+	Source/JavaScriptCore/wtf/UnionFind.h \
 	Source/JavaScriptCore/wtf/UnusedParam.h \
 	Source/JavaScriptCore/wtf/ValueCheck.h \
 	Source/JavaScriptCore/wtf/Vector.h \

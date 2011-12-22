@@ -34,7 +34,6 @@
 
 namespace WebCore {
 
-class ArrayBuffer;
 class Blob;
 class Document;
 class DOMFormData;

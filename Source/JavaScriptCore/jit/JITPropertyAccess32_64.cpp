@@ -146,7 +146,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     match.link(this);
     emitValueProfilingSite(FirstProfilingSite);
     emitStore(dst, regT1, regT0);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_method_check), dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id), dst, regT1, regT0);
     
     // We've already generated the following get_by_id, so make sure it's skipped over.
     m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
@@ -1105,6 +1105,26 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
+}
+
+void JIT::resetPatchGetById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
+{
+    repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_get_by_id);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure), reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset1), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset2), 0);
+    repatchBuffer.relink(stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase), stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall));
+}
+
+void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stubInfo)
+{
+    if (isDirectPutById(stubInfo))
+        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id_direct);
+    else
+        repatchBuffer.relink(stubInfo->callReturnLocation, cti_op_put_by_id);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetPutByIdStructure), reinterpret_cast<void*>(-1));
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset1), 0);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetPutByIdPropertyMapOffset2), 0);
 }
 
 } // namespace JSC

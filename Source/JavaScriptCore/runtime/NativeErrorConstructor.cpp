@@ -39,7 +39,7 @@ NativeErrorConstructor::NativeErrorConstructor(JSGlobalObject* globalObject, Str
 
 void NativeErrorConstructor::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    NativeErrorConstructor* thisObject = static_cast<NativeErrorConstructor*>(cell);
+    NativeErrorConstructor* thisObject = jsCast<NativeErrorConstructor*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

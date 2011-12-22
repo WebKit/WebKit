@@ -282,6 +282,11 @@ public:
     }
 #endif
 
+    void load16Unaligned(BaseIndex address, RegisterID dest)
+    {
+        load16(address, dest);
+    }
+
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabel32 dataLabel(this);
@@ -945,6 +950,11 @@ public:
     void nop()
     {
         m_assembler.nop();
+    }
+
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(reinterpret_cast<void(*)()>(ARMAssembler::readCallTarget(call.dataLocation())));
     }
 
 protected:

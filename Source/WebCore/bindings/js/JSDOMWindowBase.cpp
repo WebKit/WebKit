@@ -43,8 +43,10 @@ namespace WebCore {
 
 const ClassInfo JSDOMWindowBase::s_info = { "Window", &JSDOMGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMWindowBase) };
 
+const GlobalObjectMethodTable JSDOMWindowBase::s_globalObjectMethodTable = { &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript };
+
 JSDOMWindowBase::JSDOMWindowBase(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWindow> window, JSDOMWindowShell* shell)
-    : JSDOMGlobalObject(globalData, structure, shell->world())
+    : JSDOMGlobalObject(globalData, structure, shell->world(), &s_globalObjectMethodTable)
     , m_impl(window)
     , m_shell(shell)
 {
@@ -94,12 +96,13 @@ ExecState* JSDOMWindowBase::globalExec()
     return Base::globalExec();
 }
 
-bool JSDOMWindowBase::supportsProfiling() const
+bool JSDOMWindowBase::supportsProfiling(const JSGlobalObject* object)
 {
 #if !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
     return false;
 #else
-    Frame* frame = impl()->frame();
+    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    Frame* frame = thisObject->impl()->frame();
     if (!frame)
         return false;
 
@@ -111,14 +114,15 @@ bool JSDOMWindowBase::supportsProfiling() const
 #endif
 }
 
-bool JSDOMWindowBase::supportsRichSourceInfo() const
+bool JSDOMWindowBase::supportsRichSourceInfo(const JSGlobalObject* object)
 {
 #if PLATFORM(ANDROID)
     return true;
 #elif !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
     return false;
 #else
-    Frame* frame = impl()->frame();
+    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    Frame* frame = thisObject->impl()->frame();
     if (!frame)
         return false;
 
@@ -127,16 +131,17 @@ bool JSDOMWindowBase::supportsRichSourceInfo() const
         return false;
 
     bool enabled = page->inspectorController()->enabled();
-    ASSERT(enabled || !debugger());
-    ASSERT(enabled || !supportsProfiling());
+    ASSERT(enabled || !thisObject->debugger());
+    ASSERT(enabled || !supportsProfiling(thisObject));
     return enabled;
 #endif
 }
 
-bool JSDOMWindowBase::shouldInterruptScript() const
+bool JSDOMWindowBase::shouldInterruptScript(const JSGlobalObject* object)
 {
-    ASSERT(impl()->frame());
-    Page* page = impl()->frame()->page();
+    const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
+    ASSERT(thisObject->impl()->frame());
+    Page* page = thisObject->impl()->frame()->page();
 
     // See <rdar://problem/5479443>. We don't think that page can ever be NULL
     // in this case, but if it is, we've gotten into a state where we may have
@@ -158,7 +163,7 @@ void JSDOMWindowBase::willRemoveFromWindowShell()
 
 JSObject* JSDOMWindowBase::toThisObject(JSCell* cell, ExecState*)
 {
-    return static_cast<JSDOMWindowBase*>(cell)->shell();
+    return jsCast<JSDOMWindowBase*>(cell)->shell();
 }
 
 JSDOMWindowShell* JSDOMWindowBase::shell() const

@@ -63,84 +63,125 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
 
     ret();
     
-    JumpList callLinkFailures;
-    // (2) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
+    JumpList callSlowCase;
+    JumpList constructSlowCase;
+
     // VirtualCallLink Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT1, regT0 holds callee; callFrame is moved and partially initialized.
     Label virtualCallLinkBegin = align();
-    compileOpCallInitializeCallFrame();
+    callSlowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC for use by lazy linking and exceptions.
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
     restoreArgumentReference();
     Call callLazyLinkCall = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
     restoreReturnAddressBeforeReturn(regT3);
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
 
     // VirtualConstructLink Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT1, regT0 holds callee; callFrame is moved and partially initialized.
     Label virtualConstructLinkBegin = align();
-    compileOpCallInitializeCallFrame();
+    constructSlowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC for use by lazy linking and exeptions.
     preserveReturnAddressAfterCall(regT3);
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
     restoreArgumentReference();
     Call callLazyLinkConstruct = call();
     restoreReturnAddressBeforeReturn(regT3);
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
 
     // VirtualCall Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT1, regT0 holds callee; regT2 will hold the FunctionExecutable.
     Label virtualCallBegin = align();
-    compileOpCallInitializeCallFrame();
+    callSlowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    callSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-
-    Jump hasCodeBlock3 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), TrustedImm32(0));
+    Jump hasCodeBlock1 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForCall)), TrustedImm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
     Call callCompileCall = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    hasCodeBlock3.link(this);
 
+    hasCodeBlock1.link(this);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCodeForCallWithArityCheck)), regT0);
     jump(regT0);
 
     // VirtualConstruct Trampoline
-    // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
+    // regT1, regT0 holds callee; regT2 will hold the FunctionExecutable.
     Label virtualConstructBegin = align();
-    compileOpCallInitializeCallFrame();
+    constructSlowCase.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
+    constructSlowCase.append(emitJumpIfNotType(regT0, regT1, JSFunctionType));
+
+    // Finish canonical initialization before JS function call.
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_scopeChain)), regT1);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-
-    Jump hasCodeBlock4 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), TrustedImm32(0));
+    Jump hasCodeBlock2 = branch32(GreaterThanOrEqual, Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_numParametersForConstruct)), TrustedImm32(0));
     preserveReturnAddressAfterCall(regT3);
     restoreArgumentReference();
-    Call callCompileCconstruct = call();
-    callLinkFailures.append(branchTestPtr(Zero, regT0));
-    emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
+    Call callCompileConstruct = call();
     restoreReturnAddressBeforeReturn(regT3);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
-    hasCodeBlock4.link(this);
 
+    hasCodeBlock2.link(this);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(FunctionExecutable, m_jitCodeForConstructWithArityCheck)), regT0);
     jump(regT0);
-    
-    // If the parser fails we want to be able to be able to keep going,
-    // So we handle this as a parse failure.
-    callLinkFailures.link(this);
-    emitGetFromCallFrameHeaderPtr(RegisterFile::ReturnPC, regT1);
+
+    callSlowCase.link(this);
+    // Finish canonical initialization before JS function call.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2, regT2);
+    emitPutCellToCallFrameHeader(regT2, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC and CodeBlock, like a JS function would.
+    preserveReturnAddressAfterCall(regT3);
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
+    restoreArgumentReference();
+    Call callCallNotJSFunction = call();
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
-    restoreReturnAddressBeforeReturn(regT1);
-    move(TrustedImmPtr(&globalData->exceptionLocation), regT2);
-    storePtr(regT1, regT2);
-    poke(callFrameRegister, 1 + OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
-    poke(TrustedImmPtr(FunctionPtr(ctiVMThrowTrampoline).value()));
+    restoreReturnAddressBeforeReturn(regT3);
+    ret();
+
+    constructSlowCase.link(this);
+    // Finish canonical initialization before JS function call.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2, regT2);
+    emitPutCellToCallFrameHeader(regT2, RegisterFile::ScopeChain);
+
+    // Also initialize ReturnPC and CodeBlock, like a JS function would.
+    preserveReturnAddressAfterCall(regT3);
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
+    restoreArgumentReference();
+    Call callConstructNotJSFunction = call();
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, callFrameRegister);
+    restoreReturnAddressBeforeReturn(regT3);
     ret();
 
     // NativeCall Trampoline
@@ -160,18 +201,21 @@ PassRefPtr<ExecutableMemoryHandle> JIT::privateCompileCTIMachineTrampolines(JSGl
     patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
     patchBuffer.link(callLazyLinkConstruct, FunctionPtr(cti_vm_lazyLinkConstruct));
     patchBuffer.link(callCompileCall, FunctionPtr(cti_op_call_jitCompile));
-    patchBuffer.link(callCompileCconstruct, FunctionPtr(cti_op_construct_jitCompile));
+    patchBuffer.link(callCompileConstruct, FunctionPtr(cti_op_construct_jitCompile));
+    patchBuffer.link(callCallNotJSFunction, FunctionPtr(cti_op_call_NotJSFunction));
+    patchBuffer.link(callConstructNotJSFunction, FunctionPtr(cti_op_construct_NotJSConstruct));
 
     CodeRef finalCode = patchBuffer.finalizeCode();
     RefPtr<ExecutableMemoryHandle> executableMemory = finalCode.executableMemory();
 
+    trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
+    trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);
     trampolines->ctiVirtualCall = patchBuffer.trampolineAt(virtualCallBegin);
     trampolines->ctiVirtualConstruct = patchBuffer.trampolineAt(virtualConstructBegin);
     trampolines->ctiNativeCall = patchBuffer.trampolineAt(nativeCallThunk);
     trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
     trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
-    trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
-    trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);
+
 #if ENABLE(JIT_USE_SOFT_MODULO)
     trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
 #endif
@@ -237,7 +281,7 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -403,7 +447,7 @@ JIT::CodeRef JIT::privateCompileCTINativeCall(JSGlobalData* globalData, NativeFu
     // get to its global data.
     emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
-    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
+    emitPutCellToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
     preserveReturnAddressAfterCall(regT3); // Callee preserved
     emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
@@ -1418,11 +1462,7 @@ void JIT::emit_op_create_arguments(Instruction* currentInstruction)
 
     Jump argsCreated = branch32(NotEqual, tagFor(dst), TrustedImm32(JSValue::EmptyValueTag));
 
-    if (m_codeBlock->m_numParameters == 1)
-        JITStubCall(this, cti_op_create_arguments_no_params).call();
-    else
-        JITStubCall(this, cti_op_create_arguments).call();
-
+    JITStubCall(this, cti_op_create_arguments).call();
     emitStore(dst, regT1, regT0);
     emitStore(unmodifiedArgumentsRegister(dst), regT1, regT0);
 
@@ -1566,24 +1606,9 @@ void JIT::emit_op_get_argument_by_val(Instruction* currentInstruction)
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT3);
     addSlowCase(branch32(AboveOrEqual, regT2, regT3));
     
-    Jump skipOutofLineParams;
-    int numArgs = m_codeBlock->m_numParameters;
-    if (numArgs) {
-        Jump notInInPlaceArgs = branch32(AboveOrEqual, regT2, Imm32(numArgs));
-        addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT1);
-        loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-        loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-        skipOutofLineParams = jump();
-        notInInPlaceArgs.link(this);
-    }
-
-    addPtr(Imm32(static_cast<unsigned>(-(RegisterFile::CallFrameHeaderSize + numArgs) * sizeof(Register))), callFrameRegister, regT1);
-    mul32(TrustedImm32(sizeof(Register)), regT3, regT3);
-    subPtr(regT3, regT1);
-    loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-    loadPtr(BaseIndex(regT1, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
-    if (numArgs)
-        skipOutofLineParams.link(this);
+    neg32(regT2);
+    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT0);
+    loadPtr(BaseIndex(callFrameRegister, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag) + CallFrame::thisArgumentOffset() * static_cast<int>(sizeof(Register))), regT1);
     emitStore(dst, regT1, regT0);
 }
 
@@ -1598,11 +1623,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
 
     linkSlowCase(iter);
     linkSlowCase(iter);
-    if (m_codeBlock->m_numParameters == 1)
-        JITStubCall(this, cti_op_create_arguments_no_params).call();
-    else
-        JITStubCall(this, cti_op_create_arguments).call();
-    
+    JITStubCall(this, cti_op_create_arguments).call();
     emitStore(arguments, regT1, regT0);
     emitStore(unmodifiedArgumentsRegister(arguments), regT1, regT0);
     
@@ -1616,11 +1637,10 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
 #if ENABLE(JIT_USE_SOFT_MODULO)
 void JIT::softModulo()
 {
-    push(regT1);
-    push(regT3);
     move(regT2, regT3);
     move(regT0, regT2);
     move(TrustedImm32(0), regT1);
+    JumpList exitBranch;
 
     // Check for negative result reminder
     Jump positiveRegT3 = branch32(GreaterThanOrEqual, regT3, TrustedImm32(0));
@@ -1636,19 +1656,26 @@ void JIT::softModulo()
     // Save the condition for negative reminder
     push(regT1);
 
-    Jump exitBranch = branch32(LessThan, regT2, regT3);
+    exitBranch.append(branch32(LessThan, regT2, regT3));
 
     // Power of two fast case
     move(regT3, regT0);
     sub32(TrustedImm32(1), regT0);
-    Jump powerOfTwo = branchTest32(NonZero, regT0, regT3);
+    Jump notPowerOfTwo = branchTest32(NonZero, regT0, regT3);
     and32(regT0, regT2);
-    powerOfTwo.link(this);
+    exitBranch.append(jump());
 
-    and32(regT3, regT0);
+    notPowerOfTwo.link(this);
 
-    Jump exitBranch2 = branchTest32(Zero, regT0);
-
+#if CPU(X86) || CPU(X86_64)
+    move(regT2, regT0);
+    m_assembler.cdq();
+    m_assembler.idivl_r(regT3);
+    move(regT1, regT2);
+#elif CPU(MIPS)
+    m_assembler.div(regT2, regT3);
+    m_assembler.mfhi(regT2);
+#else
     countLeadingZeros32(regT2, regT0);
     countLeadingZeros32(regT3, regT1);
     sub32(regT0, regT1);
@@ -1685,9 +1712,9 @@ void JIT::softModulo()
     Jump lower = branch32(Below, regT2, regT3);
     sub32(regT3, regT2);
     lower.link(this);
+#endif
 
     exitBranch.link(this);
-    exitBranch2.link(this);
 
     // Check for negative reminder
     pop(regT1);
@@ -1696,9 +1723,6 @@ void JIT::softModulo()
     positiveResult.link(this);
 
     move(regT2, regT0);
-
-    pop(regT3);
-    pop(regT1);
     ret();
 }
 #endif // ENABLE(JIT_USE_SOFT_MODULO)

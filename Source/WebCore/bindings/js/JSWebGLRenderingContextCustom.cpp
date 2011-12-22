@@ -33,6 +33,7 @@
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "JSFloat32Array.h"
 #include "JSWebKitLoseContext.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
@@ -58,16 +59,16 @@
 #include "OESVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include "WebGLBuffer.h"
-#include "Float32Array.h"
 #include "WebGLExtension.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLGetInfo.h"
-#include "Int32Array.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContext.h"
 #include <runtime/Error.h>
 #include <runtime/JSArray.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Float32Array.h>
+#include <wtf/Int32Array.h>
 #include <wtf/OwnFastMallocPtr.h>
 
 #if ENABLE(VIDEO)
@@ -194,7 +195,7 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
 
 void JSWebGLRenderingContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSWebGLRenderingContext* thisObject = static_cast<JSWebGLRenderingContext*>(cell);
+    JSWebGLRenderingContext* thisObject = jsCast<JSWebGLRenderingContext*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

@@ -43,7 +43,7 @@ JSVariableObject::~JSVariableObject()
 
 bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSVariableObject* thisObject = static_cast<JSVariableObject*>(cell);
+    JSVariableObject* thisObject = jsCast<JSVariableObject*>(cell);
     if (thisObject->symbolTable().contains(propertyName.impl()))
         return false;
 
@@ -52,7 +52,7 @@ bool JSVariableObject::deleteProperty(JSCell* cell, ExecState* exec, const Ident
 
 void JSVariableObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSVariableObject* thisObject = static_cast<JSVariableObject*>(object);
+    JSVariableObject* thisObject = jsCast<JSVariableObject*>(object);
     SymbolTable::const_iterator end = thisObject->symbolTable().end();
     for (SymbolTable::const_iterator it = thisObject->symbolTable().begin(); it != end; ++it) {
         if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))

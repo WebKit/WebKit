@@ -77,7 +77,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
     size_t numBytes = length + m_haveBufferedByte;
     size_t numChars = numBytes / 2;
 
-    StringBuffer buffer(numChars);
+    StringBuffer<UChar> buffer(numChars);
     UChar* q = buffer.characters();
 
     if (m_haveBufferedByte) {

@@ -382,6 +382,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         {
         }
 
+        virtual void vtableAnchor();
+
         static const unsigned StructureFlags = JSObject::StructureFlags;
 
         WriteBarrierBase<Unknown> m_inlineStorage[JSFinalObject_inlineStorageCapacity];
@@ -552,7 +554,7 @@ ALWAYS_INLINE bool JSObject::inlineGetOwnPropertySlot(ExecState* exec, const Ide
 // base class call to this.
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return static_cast<JSObject*>(cell)->inlineGetOwnPropertySlot(exec, propertyName, slot);
+    return jsCast<JSObject*>(cell)->inlineGetOwnPropertySlot(exec, propertyName, slot);
 }
 
 ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

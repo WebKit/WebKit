@@ -32,6 +32,10 @@
 #include "VirtualRegister.h"
 #include <wtf/Platform.h>
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace JSC {
 
 // Describes how to recover a given bytecode virtual register at a given
@@ -43,6 +47,7 @@ enum ValueRecoveryTechnique {
     AlreadyInRegisterFileAsUnboxedInt32,
     AlreadyInRegisterFileAsUnboxedCell,
     AlreadyInRegisterFileAsUnboxedBoolean,
+    AlreadyInRegisterFileAsUnboxedDouble,
     // It's in a register.
     InGPR,
     UnboxedInt32InGPR,
@@ -51,6 +56,7 @@ enum ValueRecoveryTechnique {
     InPair,
 #endif
     InFPR,
+    UInt32InGPR,
     // It's in the register file, but at a different location.
     DisplacedInRegisterFile,
     // It's in the register file, at a different location, and it's unboxed.
@@ -97,6 +103,13 @@ public:
         return result;
     }
     
+    static ValueRecovery alreadyInRegisterFileAsUnboxedDouble()
+    {
+        ValueRecovery result;
+        result.m_technique = AlreadyInRegisterFileAsUnboxedDouble;
+        return result;
+    }
+    
     static ValueRecovery inGPR(MacroAssembler::RegisterID gpr, DataFormat dataFormat)
     {
         ASSERT(dataFormat != DataFormatNone);
@@ -110,6 +123,14 @@ public:
             result.m_technique = UnboxedBooleanInGPR;
         else
             result.m_technique = InGPR;
+        result.m_source.gpr = gpr;
+        return result;
+    }
+    
+    static ValueRecovery uint32InGPR(MacroAssembler::RegisterID gpr)
+    {
+        ValueRecovery result;
+        result.m_technique = UInt32InGPR;
         result.m_source.gpr = gpr;
         return result;
     }
@@ -182,7 +203,7 @@ public:
     
     MacroAssembler::RegisterID gpr() const
     {
-        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR);
+        ASSERT(m_technique == InGPR || m_technique == UnboxedInt32InGPR || m_technique == UnboxedBooleanInGPR || m_technique == UInt32InGPR);
         return m_source.gpr;
     }
     
@@ -234,6 +255,9 @@ public:
         case AlreadyInRegisterFileAsUnboxedBoolean:
             fprintf(out, "(bool)");
             break;
+        case AlreadyInRegisterFileAsUnboxedDouble:
+            fprintf(out, "(double)");
+            break;
         case InGPR:
             fprintf(out, "%%r%d", gpr());
             break;
@@ -243,8 +267,11 @@ public:
         case UnboxedBooleanInGPR:
             fprintf(out, "bool(%%r%d)", gpr());
             break;
+        case UInt32InGPR:
+            fprintf(out, "uint32(%%r%d)", gpr());
+            break;
         case InFPR:
-            fprintf(out, "%%r%d", fpr());
+            fprintf(out, "%%fr%d", fpr());
             break;
 #if USE(JSVALUE32_64)
         case InPair:

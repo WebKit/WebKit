@@ -32,19 +32,12 @@ namespace WTF {
 
     inline void adopted(const void*) { }
 
-#if !COMPILER(WINSCW)
 #if !PLATFORM(QT)
     #define REF_DEREF_INLINE ALWAYS_INLINE
 #else
     // Using ALWAYS_INLINE broke the Qt build. This may be a GCC bug.
     // See https://bugs.webkit.org/show_bug.cgi?id=37253 for details.
     #define REF_DEREF_INLINE inline
-#endif
-#else
-    // No inlining for WINSCW compiler to prevent the compiler agressively resolving
-    // T::ref() and T::deref(), which will fail compiling when PassRefPtr<T> is used as
-    // a class member or function arguments before T is defined.
-    #define REF_DEREF_INLINE
 #endif
 
     template<typename T> REF_DEREF_INLINE void refIfNotNull(T* ptr)
@@ -79,6 +72,9 @@ namespace WTF {
 
         void clear();
         T* leakRef() const WARN_UNUSED_RETURN;
+        
+        // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
+        T* releaseRef() const WARN_UNUSED_RETURN { return leakRef(); }
 
         T& operator*() const { return *m_ptr; }
         T* operator->() const { return m_ptr; }
@@ -98,9 +94,6 @@ namespace WTF {
         template<typename U> PassRefPtr& operator=(const RefPtr<U>&);
 
         friend PassRefPtr adoptRef<T>(T*);
-
-        // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
-        T* releaseRef() const WARN_UNUSED_RETURN { return leakRef(); }
 
     private:
         // adopting constructor
@@ -163,6 +156,8 @@ namespace WTF {
 
         // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
         T* releaseRef() const WARN_UNUSED_RETURN { return leakRef(); }
+
+        NonNullPassRefPtr& operator=(const NonNullPassRefPtr&) { COMPILE_ASSERT(!sizeof(T*), NonNullPassRefPtr_should_never_be_assigned_to); return *this; }
 
     private:
         mutable T* m_ptr;

@@ -28,7 +28,7 @@
 
 #include "AudioContext.h"
 
-#include "ArrayBuffer.h"
+#include "AsyncAudioDecoder.h"
 #include "AudioBuffer.h"
 #include "AudioBufferSourceNode.h"
 #include "AudioChannelMerger.h"
@@ -58,6 +58,8 @@
 #include <stdio.h>
 #endif
 
+#include <wtf/ArrayBuffer.h>
+#include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>

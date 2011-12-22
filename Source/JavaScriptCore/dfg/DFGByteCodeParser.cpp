@@ -67,7 +67,7 @@ public:
         for (int i = 0; i < codeBlock->m_numVars; ++i)
             m_preservedVars.set(i);
     }
-
+    
     // Parse a full CodeBlock of bytecode.
     bool parse();
     
@@ -76,14 +76,14 @@ private:
     void parseCodeBlock();
 
     // Helper for min and max.
-    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg);
+    bool handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis);
     
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
-    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int firstArg, int lastArg, unsigned nextOffset, CodeSpecializationKind);
+    bool handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction*, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
-    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int firstArg, int lastArg, PredictedType prediction);
+    bool handleIntrinsic(bool usesResult, int resultOperand, Intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction);
     // Prepare to parse a block.
     void prepareToParseBlock();
     // Parse a single basic block of bytecode instructions.
@@ -199,7 +199,7 @@ private:
     // Used in implementing get/set, above, where the operand is an argument.
     NodeIndex getArgument(unsigned operand)
     {
-        unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+        unsigned argument = operandToArgument(operand);
         ASSERT(argument < m_numArguments);
 
         NodeIndex nodeIndex = m_currentBlock->variablesAtTail.argument(argument);
@@ -248,7 +248,7 @@ private:
     }
     void setArgument(int operand, NodeIndex value)
     {
-        unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+        unsigned argument = operandToArgument(operand);
         ASSERT(argument < m_numArguments);
 
         m_currentBlock->variablesAtTail.argument(argument) = addToGraph(SetLocal, OpInfo(newVariableAccessData(operand)), value);
@@ -266,7 +266,7 @@ private:
         NodeIndex nodeIndex;
         int index;
         if (operandIsArgument(operand)) {
-            index = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+            index = operandToArgument(operand);
             nodeIndex = m_currentBlock->variablesAtTail.argument(index);
         } else {
             index = operand;
@@ -509,17 +509,11 @@ private:
     
     NodeIndex cellConstant(JSCell* cell)
     {
-        HashMap<JSCell*, unsigned>::iterator iter = m_cellConstants.find(cell);
-        if (iter != m_cellConstants.end())
-            return getJSConstant(iter->second);
+        pair<HashMap<JSCell*, NodeIndex>::iterator, bool> iter = m_cellConstantNodes.add(cell, NoNode);
+        if (iter.second)
+            iter.first->second = addToGraph(WeakJSConstant, OpInfo(cell));
         
-        m_codeBlock->addConstant(cell);
-        m_constants.append(ConstantRecord());
-        ASSERT(m_constants.size() == m_codeBlock->numberOfConstantRegisters());
-        
-        m_cellConstants.add(cell, m_codeBlock->numberOfConstantRegisters() - 1);
-        
-        return getJSConstant(m_codeBlock->numberOfConstantRegisters() - 1);
+        return iter.first->second;
     }
     
     CodeOrigin currentCodeOrigin()
@@ -584,15 +578,17 @@ private:
         
         addVarArgChild(get(currentInstruction[1].u.operand));
         int argCount = currentInstruction[2].u.operand;
+        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
+            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+
         int registerOffset = currentInstruction[3].u.operand;
-        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-        for (int argIdx = firstArg + (op == Construct ? 1 : 0); argIdx < firstArg + argCount; argIdx++)
-            addVarArgChild(get(argIdx));
+        int dummyThisArgument = op == Call ? 0 : 1;
+        for (int i = 0 + dummyThisArgument; i < argCount; ++i)
+            addVarArgChild(get(registerOffset + argumentToOperand(i)));
+
         NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(prediction));
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
             set(putInstruction[1].u.operand, call);
-        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
-            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
         return call;
     }
     
@@ -635,11 +631,13 @@ private:
 
     NodeIndex makeSafe(NodeIndex nodeIndex)
     {
-        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex))
+        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+        printf("Making %s @%u safe at bc#%u because slow-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         switch (m_graph[nodeIndex].op) {
@@ -652,10 +650,19 @@ private:
             break;
             
         case ArithMul:
-            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex))
+            if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)) {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+                printf("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
+#endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
-            else
+            } else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                       || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero)) {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+                printf("Making ArithMul @%u take faster slow case.\n", nodeIndex);
+#endif
                 m_graph[nodeIndex].mergeArithNodeFlags(NodeMayNegZero);
+            }
             break;
             
         default:
@@ -676,9 +683,17 @@ private:
         // care about when the outcome of the division is not an integer, which
         // is what the special fast case counter tells us.
         
-        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex))
+        if (!m_inlineStackTop->m_profiledBlock->likelyToTakeSpecialFastCase(m_currentIndex)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)
+            && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
             return nodeIndex;
         
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        printf("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+#endif
+        
+        // FIXME: It might be possible to make this more granular. The DFG certainly can
+        // distinguish between negative zero and overflow in its exit profiles.
         m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow | NodeMayNegZero);
         
         return nodeIndex;
@@ -722,6 +737,7 @@ private:
     unsigned m_constantNaN;
     unsigned m_constant1;
     HashMap<JSCell*, unsigned> m_cellConstants;
+    HashMap<JSCell*, NodeIndex> m_cellConstantNodes;
 
     // A constant in the constant pool may be represented by more than one
     // node in the graph, depending on the context in which it is being used.
@@ -784,6 +800,8 @@ private:
         VirtualRegister m_calleeVR; // absolute virtual register, not relative to call frame
         
         ScriptExecutable* executable() { return m_codeBlock->ownerExecutable(); }
+        
+        QueryableExitProfile m_exitProfile;
         
         // Remapping of identifier and constant numbers from the code block being
         // inlined (inline callee) to the code block that we're inlining into
@@ -879,21 +897,21 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     enum { ConstantFunction, LinkedFunction, UnknownFunction } callType;
             
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    printf("Slow case count for call at @%lu bc#%u: %u.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+    printf("Slow case count for call at @%lu bc#%u: %u/%u; exit profile: %d.\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_profiledBlock->executionEntryCount(), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
 #endif
             
     if (m_graph.isFunctionConstant(m_codeBlock, callTarget))
         callType = ConstantFunction;
-    else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee && !m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex))
+    else if (!!m_inlineStackTop->m_profiledBlock->getCallLinkInfo(m_currentIndex).lastSeenCallee
+             && !m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+             && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache))
         callType = LinkedFunction;
     else
         callType = UnknownFunction;
     if (callType != UnknownFunction) {
-        int argCount = currentInstruction[2].u.operand;
+        int argumentCountIncludingThis = currentInstruction[2].u.operand;
         int registerOffset = currentInstruction[3].u.operand;
-        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
-        int lastArg = firstArg + argCount - 1;
-                
+
         // Do we have a result?
         bool usesResult = false;
         int resultOperand = 0; // make compiler happy
@@ -907,7 +925,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             nextOffset += OPCODE_LENGTH(op_call_put_result);
         }
         JSFunction* expectedFunction;
-        DFG::Intrinsic intrinsic;
+        Intrinsic intrinsic;
         bool certainAboutExpectedFunction;
         if (callType == ConstantFunction) {
             expectedFunction = m_graph.valueOfFunctionConstant(m_codeBlock, callTarget);
@@ -924,7 +942,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             if (!certainAboutExpectedFunction)
                 addToGraph(CheckFunction, OpInfo(expectedFunction), callTarget);
             
-            if (handleIntrinsic(usesResult, resultOperand, intrinsic, firstArg, lastArg, prediction)) {
+            if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
                 if (!certainAboutExpectedFunction) {
                     // Need to keep the call target alive for OSR. We could easily optimize this out if we wanted
                     // to, since at this point we know that the call target is a constant. It's just that OSR isn't
@@ -934,14 +952,14 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                 
                 return;
             }
-        } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, firstArg, lastArg, nextOffset, kind))
+        } else if (handleInlining(usesResult, currentInstruction[1].u.operand, callTarget, resultOperand, certainAboutExpectedFunction, expectedFunction, registerOffset, argumentCountIncludingThis, nextOffset, kind))
             return;
     }
             
     addCall(interpreter, currentInstruction, op);
 }
 
-bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int firstArg, int lastArg, unsigned nextOffset, CodeSpecializationKind kind)
+bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex callTargetNodeIndex, int resultOperand, bool certainAboutExpectedFunction, JSFunction* expectedFunction, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
 {
     // First, the really simple checks: do we have an actual JS function?
     if (!expectedFunction)
@@ -953,7 +971,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // Does the number of arguments we're passing match the arity of the target? We could
     // inline arity check failures, but for simplicity we currently don't.
-    if (static_cast<int>(executable->parameterCount()) + 1 != lastArg - firstArg + 1)
+    if (static_cast<int>(executable->parameterCount()) + 1 != argumentCountIncludingThis)
         return false;
     
     // Have we exceeded inline stack depth, or are we trying to inline a recursive call?
@@ -961,7 +979,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     unsigned depth = 0;
     for (InlineStackEntry* entry = m_inlineStackTop; entry; entry = entry->m_caller) {
         ++depth;
-        if (depth >= Heuristics::maximumInliningDepth)
+        if (depth >= Options::maximumInliningDepth)
             return false; // Depth exceeded.
         
         if (entry->executable() == executable)
@@ -994,10 +1012,10 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     
     // FIXME: Don't flush constants!
     
-    for (int arg = firstArg + 1; arg <= lastArg; ++arg)
-        flush(arg);
+    for (int i = 1; i < argumentCountIncludingThis; ++i)
+        flush(registerOffset + argumentToOperand(i));
     
-    int inlineCallFrameStart = m_inlineStackTop->remapOperand(lastArg) + 1;
+    int inlineCallFrameStart = m_inlineStackTop->remapOperand(registerOffset) - RegisterFile::CallFrameHeaderSize;
     
     // Make sure that the area used by the call frame is reserved.
     for (int arg = inlineCallFrameStart + RegisterFile::CallFrameHeaderSize + codeBlock->m_numVars; arg-- > inlineCallFrameStart + 1;)
@@ -1117,23 +1135,23 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     return true;
 }
 
-bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int firstArg, int lastArg)
+bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType op, int registerOffset, int argumentCountIncludingThis)
 {
     if (!usesResult)
         return true;
 
-    if (lastArg == firstArg) {
+    if (argumentCountIncludingThis == 1) { // Math.min()
         set(resultOperand, constantNaN());
         return true;
     }
      
-    if (lastArg == firstArg + 1) {
-        set(resultOperand, getToNumber(firstArg + 1));
+    if (argumentCountIncludingThis == 2) { // Math.min(x)
+        set(resultOperand, getToNumber(registerOffset + argumentToOperand(1)));
         return true;
     }
     
-    if (lastArg == firstArg + 2) {
-        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(firstArg + 1), getToNumber(firstArg + 2)));
+    if (argumentCountIncludingThis == 3) { // Math.min(x, y)
+        set(resultOperand, addToGraph(op, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1)), getToNumber(registerOffset + argumentToOperand(2))));
         return true;
     }
     
@@ -1141,7 +1159,9 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
     return false;
 }
 
-bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int firstArg, int lastArg, PredictedType prediction)
+// FIXME: We dead-code-eliminate unused Math intrinsics, but that's invalid because
+// they need to perform the ToNumber conversion, which can have side-effects.
+bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, PredictedType prediction)
 {
     switch (intrinsic) {
     case AbsIntrinsic: {
@@ -1151,10 +1171,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return true;
         }
         
-        // We don't care about the this argument. If we don't have a first
-        // argument then make this JSConstant(NaN).
-        int absArg = firstArg + 1;
-        if (absArg > lastArg) {
+        if (argumentCountIncludingThis == 1) { // Math.abs()
             set(resultOperand, constantNaN());
             return true;
         }
@@ -1162,21 +1179,24 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointAbs())
             return false;
 
-        set(resultOperand, addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(absArg)));
+        NodeIndex nodeIndex = addToGraph(ArithAbs, OpInfo(NodeUseBottom), getToNumber(registerOffset + argumentToOperand(1)));
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow))
+            m_graph[nodeIndex].mergeArithNodeFlags(NodeMayOverflow);
+        set(resultOperand, nodeIndex);
         return true;
     }
-        
+
     case MinIntrinsic:
-        return handleMinMax(usesResult, resultOperand, ArithMin, firstArg, lastArg);
+        return handleMinMax(usesResult, resultOperand, ArithMin, registerOffset, argumentCountIncludingThis);
         
     case MaxIntrinsic:
-        return handleMinMax(usesResult, resultOperand, ArithMax, firstArg, lastArg);
+        return handleMinMax(usesResult, resultOperand, ArithMax, registerOffset, argumentCountIncludingThis);
         
     case SqrtIntrinsic: {
         if (!usesResult)
             return true;
         
-        if (firstArg == lastArg) {
+        if (argumentCountIncludingThis == 1) { // Math.sqrt()
             set(resultOperand, constantNaN());
             return true;
         }
@@ -1184,15 +1204,15 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (!MacroAssembler::supportsFloatingPointSqrt())
             return false;
         
-        set(resultOperand, addToGraph(ArithSqrt, getToNumber(firstArg + 1)));
+        set(resultOperand, addToGraph(ArithSqrt, getToNumber(registerOffset + argumentToOperand(1))));
         return true;
     }
         
     case ArrayPushIntrinsic: {
-        if (firstArg + 1 != lastArg)
+        if (argumentCountIncludingThis != 2)
             return false;
         
-        NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(0), OpInfo(prediction), get(firstArg), get(firstArg + 1));
+        NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
         if (usesResult)
             set(resultOperand, arrayPush);
         
@@ -1200,37 +1220,50 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
     }
         
     case ArrayPopIntrinsic: {
-        if (firstArg != lastArg)
+        if (argumentCountIncludingThis != 1)
             return false;
         
-        NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(0), OpInfo(prediction), get(firstArg));
+        NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(0), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
         if (usesResult)
             set(resultOperand, arrayPop);
         return true;
     }
 
     case CharCodeAtIntrinsic: {
-        if (firstArg + 1 != lastArg)
+        if (argumentCountIncludingThis != 2)
             return false;
 
-        NodeIndex charCode = addToGraph(StringCharCodeAt, get(firstArg), getToInt32(firstArg + 1));
+        int thisOperand = registerOffset + argumentToOperand(0);
+        if (!(m_graph[get(thisOperand)].prediction() & PredictString))
+            return false;
+        
+        int indexOperand = registerOffset + argumentToOperand(1);
+        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(thisOperand), getToInt32(indexOperand));
+        NodeIndex charCode = addToGraph(StringCharCodeAt, get(thisOperand), getToInt32(indexOperand), storage);
+
         if (usesResult)
             set(resultOperand, charCode);
         return true;
     }
 
     case CharAtIntrinsic: {
-        if (firstArg + 1 != lastArg)
+        if (argumentCountIncludingThis != 2)
             return false;
-        
-        NodeIndex charCode = addToGraph(StringCharAt, get(firstArg), getToInt32(firstArg + 1));
+
+        int thisOperand = registerOffset + argumentToOperand(0);
+        if (!(m_graph[get(thisOperand)].prediction() & PredictString))
+            return false;
+
+        int indexOperand = registerOffset + argumentToOperand(1);
+        NodeIndex storage = addToGraph(GetIndexedPropertyStorage, get(thisOperand), getToInt32(indexOperand));
+        NodeIndex charCode = addToGraph(StringCharAt, get(thisOperand), getToInt32(indexOperand), storage);
+
         if (usesResult)
             set(resultOperand, charCode);
         return true;
     }
 
     default:
-        ASSERT(intrinsic == NoIntrinsic);
         return false;
     }
 }
@@ -1239,11 +1272,16 @@ void ByteCodeParser::prepareToParseBlock()
 {
     for (unsigned i = 0; i < m_constants.size(); ++i)
         m_constants[i] = ConstantRecord();
+    m_cellConstantNodes.clear();
 }
 
 bool ByteCodeParser::parseBlock(unsigned limit)
 {
     bool shouldContinueParsing = true;
+    
+    Interpreter* interpreter = m_globalData->interpreter;
+    Instruction* instructionsBegin = m_inlineStackTop->m_codeBlock->instructions().begin();
+    unsigned blockBegin = m_currentIndex;
     
     // If we are the first basic block, introduce markers for arguments. This allows
     // us to track if a use of an argument may use the actual argument passed, as
@@ -1251,16 +1289,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentBlock == m_graph.m_blocks[0].get() && !m_inlineStackTop->m_inlineCallFrame) {
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
-            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argument - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize)));
+            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argumentToOperand(argument))));
             m_graph.m_arguments[argument] = setArgument;
             m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, setArgument);
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
         }
     }
 
-    Interpreter* interpreter = m_globalData->interpreter;
-    Instruction* instructionsBegin = m_inlineStackTop->m_codeBlock->instructions().begin();
-    unsigned blockBegin = m_currentIndex;
     while (true) {
         // Don't extend over jump destinations.
         if (m_currentIndex == limit) {
@@ -1616,8 +1651,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
-
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property);
+            NodeIndex propertyStorage = addToGraph(GetIndexedPropertyStorage, base, property);
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property, propertyStorage);
             set(currentInstruction[1].u.operand, getByVal);
 
             NEXT_OPCODE(op_get_by_val);
@@ -1648,23 +1683,20 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             StructureStubInfo& stubInfo = m_inlineStackTop->m_profiledBlock->getStubInfo(m_currentIndex);
             MethodCallLinkInfo& methodCall = m_inlineStackTop->m_profiledBlock->getMethodCallLinkInfo(m_currentIndex);
             
-            if (methodCall.seen && !!methodCall.cachedStructure && !stubInfo.seen) {
+            if (methodCall.seen
+                && !!methodCall.cachedStructure
+                && !stubInfo.seen
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 // It's monomorphic as far as we can tell, since the method_check was linked
                 // but the slow path (i.e. the normal get_by_id) never fired.
-            
-                NodeIndex checkMethod = addToGraph(CheckMethod, OpInfo(identifier), OpInfo(m_graph.m_methodCheckData.size()), base);
-                set(getInstruction[1].u.operand, checkMethod);
+
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCall.cachedStructure.get())), base);
+                if (methodCall.cachedPrototype.get() != m_inlineStackTop->m_profiledBlock->globalObject()->methodCallDummy())
+                    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCall.cachedPrototypeStructure.get())), cellConstant(methodCall.cachedPrototype.get()));
                 
-                MethodCheckData methodCheckData;
-                methodCheckData.structure = methodCall.cachedStructure.get();
-                methodCheckData.prototypeStructure = methodCall.cachedPrototypeStructure.get();
-                methodCheckData.function = methodCall.cachedFunction.get();
-                methodCheckData.prototype = methodCall.cachedPrototype.get();
-                m_graph.m_methodCheckData.append(methodCheckData);
-            } else {
-                NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(prediction), base);
-                set(getInstruction[1].u.operand, getMethod);
-            }
+                set(getInstruction[1].u.operand, cellConstant(methodCall.cachedFunction.get()));
+            } else
+                set(getInstruction[1].u.operand, addToGraph(GetById, OpInfo(identifier), OpInfo(prediction), base));
             
             m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
             continue;
@@ -1696,9 +1728,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Identifier identifier = m_codeBlock->identifier(identifierNumber);
             StructureStubInfo& stubInfo = m_inlineStackTop->m_profiledBlock->getStubInfo(m_currentIndex);
             
+#if DFG_ENABLE(DEBUG_VERBOSE)
+            printf("Slow case count for GetById @%lu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+#endif
+            
             size_t offset = notFound;
             StructureSet structureSet;
-            if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
+            if (stubInfo.seen
+                && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 switch (stubInfo.accessType) {
                 case access_get_by_id_self: {
                     Structure* structure = stubInfo.u.getByIdSelf.baseObjectStructure.get();
@@ -1786,7 +1824,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             bool alreadyGenerated = false;
             
-            if (stubInfo.seen && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)) {
+#if DFG_ENABLE(DEBUG_VERBOSE)
+            printf("Slow case count for PutById @%lu bc#%u: %u; exit profile: %d\n", m_graph.size(), m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+#endif            
+
+            if (stubInfo.seen
+                && !m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
                 switch (stubInfo.accessType) {
                 case access_put_by_id_replace: {
                     Structure* structure = stubInfo.u.putByIdReplace.baseObjectStructure.get();
@@ -1807,7 +1851,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     break;
                 }
                     
-                case access_put_by_id_transition: {
+                case access_put_by_id_transition_normal:
+                case access_put_by_id_transition_direct: {
                     Structure* previousStructure = stubInfo.u.putByIdTransition.previousStructure.get();
                     Structure* newStructure = stubInfo.u.putByIdTransition.structure.get();
                     
@@ -2172,14 +2217,26 @@ void ByteCodeParser::processPhiStack()
         unsigned varNo = entry.m_varNo;
         VariableAccessData* dataForPhi = m_graph[entry.m_phi].variableAccessData();
 
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+        printf("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
+#endif
+
         for (size_t i = 0; i < predecessors.size(); ++i) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("     Dealing with predecessor block %u.\n", predecessors[i]);
+#endif
+            
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
 
             NodeIndex& var = (stackType == ArgumentPhiStack) ? predecessorBlock->variablesAtTail.argument(varNo) : predecessorBlock->variablesAtTail.local(varNo);
-
+            
             NodeIndex valueInPredecessor = var;
             if (valueInPredecessor == NoNode) {
-                valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? varNo - m_codeBlock->m_numParameters - RegisterFile::CallFrameHeaderSize : varNo)));
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Did not find node, adding phi.\n");
+#endif
+
+                valueInPredecessor = addToGraph(Phi, OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo))));
                 var = valueInPredecessor;
                 if (stackType == ArgumentPhiStack)
                     predecessorBlock->variablesAtHead.setArgumentFirstTime(varNo, valueInPredecessor);
@@ -2187,6 +2244,10 @@ void ByteCodeParser::processPhiStack()
                     predecessorBlock->variablesAtHead.setLocalFirstTime(varNo, valueInPredecessor);
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op == GetLocal) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Found GetLocal @%u.\n", valueInPredecessor);
+#endif
+
                 // We want to ensure that the VariableAccessDatas are identical between the
                 // GetLocal and its block-local Phi. Strictly speaking we only need the two
                 // to be unified. But for efficiency, we want the code that creates GetLocals
@@ -2194,6 +2255,10 @@ void ByteCodeParser::processPhiStack()
                 ASSERT(m_graph[valueInPredecessor].variableAccessData() == m_graph[m_graph[valueInPredecessor].child1()].variableAccessData());
                 
                 valueInPredecessor = m_graph[valueInPredecessor].child1();
+            } else {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Found @%u.\n", valueInPredecessor);
+#endif
             }
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi || m_graph[valueInPredecessor].op == Flush || (m_graph[valueInPredecessor].op == SetArgument && stackType == ArgumentPhiStack));
             
@@ -2202,24 +2267,59 @@ void ByteCodeParser::processPhiStack()
             dataForPredecessor->unify(dataForPhi);
 
             Node* phiNode = &m_graph[entry.m_phi];
-            if (phiNode->refCount())
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Ref count of @%u = %u.\n", entry.m_phi, phiNode->refCount());
+#endif
+            if (phiNode->refCount()) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Reffing @%u.\n", valueInPredecessor);
+#endif
                 m_graph.ref(valueInPredecessor);
+            }
 
             if (phiNode->child1() == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
+#endif
                 phiNode->children.fixed.child1 = valueInPredecessor;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(stdout);
+                printf(".\n");
+#endif
                 continue;
             }
             if (phiNode->child2() == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
+#endif
                 phiNode->children.fixed.child2 = valueInPredecessor;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(stdout);
+                printf(".\n");
+#endif
                 continue;
             }
             if (phiNode->child3() == NoNode) {
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
+#endif
                 phiNode->children.fixed.child3 = valueInPredecessor;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                printf("      Children of @%u: ", entry.m_phi);
+                phiNode->dumpChildren(stdout);
+                printf(".\n");
+#endif
                 continue;
             }
             
             NodeIndex newPhi = addToGraph(Phi, OpInfo(dataForPhi));
             
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
+#endif
+
             phiNode = &m_graph[entry.m_phi]; // reload after vector resize
             Node& newPhiNode = m_graph[newPhi];
             if (phiNode->refCount())
@@ -2229,9 +2329,21 @@ void ByteCodeParser::processPhiStack()
             newPhiNode.children.fixed.child2 = phiNode->child2();
             newPhiNode.children.fixed.child3 = phiNode->child3();
 
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Children of @%u: ", newPhi);
+            newPhiNode.dumpChildren(stdout);
+            printf(".\n");
+#endif
+
             phiNode->children.fixed.child1 = newPhi;
-            phiNode->children.fixed.child1 = valueInPredecessor;
+            phiNode->children.fixed.child2 = valueInPredecessor;
             phiNode->children.fixed.child3 = NoNode;
+
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            printf("      Children of @%u: ", entry.m_phi);
+            phiNode->dumpChildren(stdout);
+            printf(".\n");
+#endif
         }
     }
 }
@@ -2335,6 +2447,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(ByteCodeParser* byteCodeParse
     , m_codeBlock(codeBlock)
     , m_profiledBlock(profiledBlock)
     , m_calleeVR(calleeVR)
+    , m_exitProfile(profiledBlock->exitProfile())
     , m_callsiteBlockHead(callsiteBlockHead)
     , m_returnValue(returnValueVR)
     , m_didReturn(false)
@@ -2493,7 +2606,13 @@ bool ByteCodeParser::parse()
 
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     determineReachability();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    printf("Processing local variable phis.\n");
+#endif
     processPhiStack<LocalPhiStack>();
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+    printf("Processing argument phis.\n");
+#endif
     processPhiStack<ArgumentPhiStack>();
     
     m_graph.m_preservedVars = m_preservedVars;

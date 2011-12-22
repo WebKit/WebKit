@@ -45,7 +45,7 @@ namespace WebCore {
 
 void JSSharedWorker::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSSharedWorker* thisObject = static_cast<JSSharedWorker*>(cell);
+    JSSharedWorker* thisObject = jsCast<JSSharedWorker*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

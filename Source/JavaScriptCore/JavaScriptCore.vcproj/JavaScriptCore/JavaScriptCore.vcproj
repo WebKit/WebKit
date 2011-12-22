@@ -734,14 +734,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Heuristics.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\Heuristics.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>
@@ -795,6 +787,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSCell.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSDateMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSDateMath.h"
 				>
 			</File>
 			<File
@@ -1027,6 +1027,14 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\Operations.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Options.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\Options.h"
 				>
 			</File>
 			<File
@@ -1994,11 +2002,11 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\JettisonedCodeBlocks.cpp"
+                                    RelativePath="..\..\heap\DFGCodeBlocks.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\JettisonedCodeBlocks.h"
+                                    RelativePath="..\..\heap\DFGCodeBlocks.h"
                                     >
                             </File>
                             <File

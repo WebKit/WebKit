@@ -47,7 +47,7 @@ void StringObject::finishCreation(JSGlobalData& globalData, JSString* string)
 
 bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    StringObject* thisObject = static_cast<StringObject*>(cell);
+    StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;
     return JSObject::getOwnPropertySlot(thisObject, exec, propertyName, slot);
@@ -55,7 +55,7 @@ bool StringObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Ident
     
 bool StringObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    StringObject* thisObject = static_cast<StringObject*>(cell);
+    StringObject* thisObject = jsCast<StringObject*>(cell);
     if (thisObject->internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;    
     return JSObject::getOwnPropertySlot(thisObject, exec, Identifier::from(exec, propertyName), slot);
@@ -63,7 +63,7 @@ bool StringObject::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsi
 
 bool StringObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    StringObject* thisObject = static_cast<StringObject*>(object);
+    StringObject* thisObject = jsCast<StringObject*>(object);
     if (thisObject->internalValue()->getStringPropertyDescriptor(exec, propertyName, descriptor))
         return true;    
     return JSObject::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
@@ -78,7 +78,7 @@ void StringObject::put(JSCell* cell, ExecState* exec, const Identifier& property
 
 bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    StringObject* thisObject = static_cast<StringObject*>(cell);
+    StringObject* thisObject = jsCast<StringObject*>(cell);
     if (propertyName == exec->propertyNames().length)
         return false;
     bool isStrictUInt32;
@@ -90,7 +90,7 @@ bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, const Identifie
 
 void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    StringObject* thisObject = static_cast<StringObject*>(object);
+    StringObject* thisObject = jsCast<StringObject*>(object);
     int size = thisObject->internalValue()->length();
     for (int i = 0; i < size; ++i)
         propertyNames.add(Identifier(exec, UString::number(i)));

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGCorrectableJumpPoint.h"
 
+#if ENABLE(DFG_JIT)
+
 #include "CodeBlock.h"
 
 namespace JSC { namespace DFG {
@@ -37,3 +39,5 @@ CodeLocationJump CorrectableJumpPoint::codeLocationForRepatch(CodeBlock* codeBlo
 }
 
 } } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)

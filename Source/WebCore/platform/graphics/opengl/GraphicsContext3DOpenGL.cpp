@@ -29,20 +29,20 @@
 
 #include "GraphicsContext3D.h"
 
-#include "ArrayBuffer.h"
-#include "ArrayBufferView.h"
 #include "WebGLObject.h"
 #include "CanvasRenderingContext.h"
 #include "Extensions3DOpenGL.h"
-#include "Float32Array.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
-#include "Int32Array.h"
 #include "NotImplemented.h"
-#include "Uint8Array.h"
 #include <cstring>
+#include <wtf/ArrayBuffer.h>
+#include <wtf/ArrayBufferView.h>
+#include <wtf/Float32Array.h>
+#include <wtf/Int32Array.h>
+#include <wtf/Uint8Array.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 

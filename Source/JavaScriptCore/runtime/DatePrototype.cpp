@@ -27,6 +27,7 @@
 #include "DateConversion.h"
 #include "DateInstance.h"
 #include "Error.h"
+#include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
@@ -43,7 +44,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <wtf/Assertions.h>
-#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
@@ -60,7 +60,7 @@
 #include <sys/timeb.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -128,7 +128,7 @@ namespace JSC {
 
 enum LocaleDateTimeFormat { LocaleDateAndTime, LocaleDate, LocaleTime };
  
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
 
 // FIXME: Since this is superior to the strftime-based version, why limit this to PLATFORM(MAC)?
 // Instead we should consider using this whenever USE(CF) is true.
@@ -195,7 +195,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     return jsNontrivialString(exec, UString(buffer, length));
 }
 
-#else // !PLATFORM(MAC)
+#else // !PLATFORM(MAC) && !PLATFORM(IOS)
 
 static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, LocaleDateTimeFormat format)
 {
@@ -282,7 +282,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
     return formatLocaleDate(exec, *gregorianDateTime, format);
 }
 
-#endif // !PLATFORM(MAC)
+#endif // !PLATFORM(MAC) && !PLATFORM(IOS)
 
 // Converts a list of arguments sent to a Date member function into milliseconds, updating
 // ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.
@@ -445,12 +445,12 @@ void DatePrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 
 bool DatePrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), static_cast<DatePrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(cell), propertyName, slot);
 }
 
 bool DatePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), static_cast<DatePrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::dateTable(exec), jsCast<DatePrototype*>(object), propertyName, descriptor);
 }
 
 // Functions

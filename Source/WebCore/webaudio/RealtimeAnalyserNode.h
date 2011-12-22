@@ -27,6 +27,7 @@
 
 #include "AudioNode.h"
 #include "RealtimeAnalyser.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

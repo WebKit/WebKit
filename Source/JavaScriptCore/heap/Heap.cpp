@@ -42,7 +42,13 @@ namespace JSC {
 
 namespace { 
 
+#if CPU(X86) || CPU(X86_64)
 static const size_t largeHeapSize = 16 * 1024 * 1024;
+#elif PLATFORM(IOS)
+static const size_t largeHeapSize = 8 * 1024 * 1024;
+#else
+static const size_t largeHeapSize = 512 * 1024;
+#endif
 static const size_t smallHeapSize = 512 * 1024;
 
 #if ENABLE(GC_LOGGING)
@@ -141,15 +147,10 @@ struct GCCounter {
 
 static size_t heapSizeForHint(HeapSize heapSize)
 {
-#if ENABLE(LARGE_HEAP)
     if (heapSize == LargeHeap)
         return largeHeapSize;
     ASSERT(heapSize == SmallHeap);
     return smallHeapSize;
-#else
-    ASSERT_UNUSED(heapSize, heapSize == LargeHeap || heapSize == SmallHeap);
-    return smallHeapSize;
-#endif
 }
 
 static inline bool isValidSharedInstanceThreadState()
@@ -486,16 +487,16 @@ bool Heap::unprotect(JSValue k)
     return m_protectedValues.remove(k.asCell());
 }
 
+void Heap::jettisonDFGCodeBlock(PassOwnPtr<CodeBlock> codeBlock)
+{
+    m_dfgCodeBlocks.jettison(codeBlock);
+}
+
 void Heap::markProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
         heapRootVisitor.visit(&it->first);
-}
-
-void Heap::addJettisonedCodeBlock(PassOwnPtr<CodeBlock> codeBlock)
-{
-    m_jettisonedCodeBlocks.addCodeBlock(codeBlock);
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
@@ -579,12 +580,11 @@ void Heap::markRoots(bool fullGC)
     }
 
     ConservativeRoots registerFileRoots(&m_objectSpace.blocks());
-    m_jettisonedCodeBlocks.clearMarks();
+    m_dfgCodeBlocks.clearMarks();
     {
         GCPHASE(GatherRegisterFileRoots);
-        registerFile().gatherConservativeRoots(registerFileRoots, m_jettisonedCodeBlocks);
+        registerFile().gatherConservativeRoots(registerFileRoots, m_dfgCodeBlocks);
     }
-    m_jettisonedCodeBlocks.deleteUnmarkedCodeBlocks();
 #if ENABLE(GGC)
     MarkedBlock::DirtyCellVector dirtyCells;
     if (!fullGC) {
@@ -668,7 +668,7 @@ void Heap::markRoots(bool fullGC)
     
         {
             GCPHASE(TraceCodeBlocks);
-            m_jettisonedCodeBlocks.traceCodeBlocks(visitor);
+            m_dfgCodeBlocks.traceMarkedCodeBlocks(visitor);
             visitor.donateAndDrain();
         }
     
@@ -684,10 +684,11 @@ void Heap::markRoots(bool fullGC)
     // opaque roots to determine reachability.
     {
         GCPHASE(VisitingWeakHandles);
-        int lastOpaqueRootCount;
-        do {
-            lastOpaqueRootCount = visitor.opaqueRootCount();
+        while (true) {
             m_handleHeap.visitWeakHandles(heapRootVisitor);
+            harvestWeakReferences();
+            if (visitor.isEmpty())
+                break;
             {
                 ParallelModeEnabler enabler(visitor);
                 visitor.donateAndDrain();
@@ -695,15 +696,9 @@ void Heap::markRoots(bool fullGC)
                 visitor.drainFromShared(SlotVisitor::MasterDrain);
 #endif
             }
-            // If the set of opaque roots has grown, more weak handles may have become reachable.
-        } while (lastOpaqueRootCount != visitor.opaqueRootCount());
+        }
     }
     GCCOUNTER(VisitedValueCount, visitor.visitCount());
-
-    {
-        GCPHASE(HarvestWeakReferences);
-        harvestWeakReferences();
-    }
 
     visitor.reset();
     m_sharedData.reset();
@@ -809,6 +804,11 @@ void Heap::collect(SweepToggle sweepToggle)
     {
         GCPHASE(ResetAllocator);
         resetAllocator();
+    }
+    
+    {
+        GCPHASE(DeleteCodeBlocks);
+        m_dfgCodeBlocks.deleteUnmarkedJettisonedCodeBlocks();
     }
 
     if (sweepToggle == DoSweep) {

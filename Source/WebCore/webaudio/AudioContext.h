@@ -42,7 +42,6 @@
 
 namespace WebCore {
 
-class ArrayBuffer;
 class AudioBuffer;
 class AudioBufferSourceNode;
 class AudioChannelMerger;

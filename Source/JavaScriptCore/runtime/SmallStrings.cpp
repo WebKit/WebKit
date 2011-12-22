@@ -59,7 +59,7 @@ private:
 
 SmallStringsStorage::SmallStringsStorage()
 {
-    UChar* characterBuffer = 0;
+    LChar* characterBuffer = 0;
     RefPtr<StringImpl> baseString = StringImpl::createUninitialized(singleCharacterStringCount, characterBuffer);
     for (unsigned i = 0; i < singleCharacterStringCount; ++i) {
         characterBuffer[i] = i;

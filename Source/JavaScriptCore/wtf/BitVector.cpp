@@ -42,7 +42,7 @@ void BitVector::setSlow(const BitVector& other)
     else {
         OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(other.size());
         memcpy(newOutOfLineBits->bits(), other.bits(), byteCount(other.size()));
-        newBitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits);
+        newBitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
     }
     if (!isInline())
         OutOfLineBits::destroy(outOfLineBits());
@@ -91,7 +91,7 @@ void BitVector::resizeOutOfLine(size_t numBits)
     OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(numBits);
     if (isInline()) {
         // Make sure that all of the bits are zero in case we do a no-op resize.
-        *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1));
+        *newOutOfLineBits->bits() = m_bitsOrPointer & ~(static_cast<uintptr_t>(1) << maxInlineBits());
     } else {
         if (numBits > size()) {
             size_t oldNumWords = outOfLineBits()->numWords();
@@ -102,8 +102,7 @@ void BitVector::resizeOutOfLine(size_t numBits)
             memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), newOutOfLineBits->numWords() * sizeof(void*));
         OutOfLineBits::destroy(outOfLineBits());
     }
-    m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits);
-    ASSERT(!isInline());
+    m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
 }
 
 #ifndef NDEBUG

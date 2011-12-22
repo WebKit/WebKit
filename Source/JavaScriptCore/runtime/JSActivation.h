@@ -53,11 +53,11 @@ namespace JSC {
             return activation;
         }
 
-        virtual ~JSActivation();
+        static void finalize(JSCell*);
 
         static void visitChildren(JSCell*, SlotVisitor&);
 
-        virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
+        bool isDynamicScope(bool& requiresDynamicChecks) const;
 
         static bool getOwnPropertySlot(JSCell*, ExecState*, const Identifier&, PropertySlot&);
         static void getOwnPropertyNames(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
@@ -69,7 +69,7 @@ namespace JSC {
 
         static JSObject* toThisObject(JSCell*, ExecState*);
 
-        void copyRegisters(JSGlobalData&);
+        void tearOff(JSGlobalData&);
         
         static const ClassInfo s_info;
 
@@ -89,7 +89,7 @@ namespace JSC {
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
-        int m_numParametersMinusThis;
+        int m_numCapturedArgs;
         int m_numCapturedVars : 31;
         bool m_requiresDynamicChecks : 1;
         int m_argumentsRegister;
@@ -112,6 +112,32 @@ namespace JSC {
     {
         requiresDynamicChecks = m_requiresDynamicChecks;
         return false;
+    }
+
+    inline void JSActivation::tearOff(JSGlobalData& globalData)
+    {
+        ASSERT(!m_registerArray);
+        ASSERT(m_numCapturedVars + m_numCapturedArgs);
+
+        int registerOffset = CallFrame::offsetFor(m_numCapturedArgs + 1);
+        size_t registerArraySize = registerOffset + m_numCapturedVars;
+
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[registerArraySize]);
+        WriteBarrier<Unknown>* registers = registerArray.get() + registerOffset;
+
+        // Copy all arguments that can be captured by name or by the arguments object.
+        for (int i = 0; i < m_numCapturedArgs; ++i) {
+            int index = CallFrame::argumentOffset(i);
+            registers[index].set(globalData, this, m_registers[index].get());
+        }
+
+        // Skip 'this' and call frame.
+
+        // Copy all captured vars.
+        for (int i = 0; i < m_numCapturedVars; ++i)
+            registers[i].set(globalData, this, m_registers[i].get());
+
+        setRegisters(registers, registerArray.release());
     }
 
 } // namespace JSC

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
+ * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +54,11 @@
 
 #if OS(MAC_OS_X) && !defined(BUILDING_ON_LEOPARD)
 #include <objc/objc-auto.h>
+#endif
+
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformMisc.h>
+#include <BlackBerryPlatformSettings.h>
 #endif
 
 namespace WTF {
@@ -146,6 +152,40 @@ void clearPthreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
+#if PLATFORM(BLACKBERRY)
+ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char* threadName)
+{
+    pthread_attr_t attr;
+    if (pthread_attr_init(&attr)) {
+        LOG_ERROR("pthread_attr_init() failed: %d", errno);
+        return 0;
+    }
+
+    void* stackAddr;
+    size_t stackSize;
+    if (pthread_attr_getstack(&attr, &stackAddr, &stackSize))
+        LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
+    else {
+        stackSize = BlackBerry::Platform::Settings::get()->secondaryThreadStackSize();
+        if (pthread_attr_setstack(&attr, stackAddr, stackSize))
+            LOG_ERROR("pthread_attr_getstack() failed: %d", errno);
+    }
+
+    pthread_t threadHandle;
+    if (pthread_create(&threadHandle, &attr, entryPoint, data)) {
+        LOG_ERROR("pthread_create() failed: %d", errno);
+        threadHandle = 0;
+    }
+    pthread_setname_np(threadHandle, threadName);
+
+    pthread_attr_destroy(&attr);
+
+    if (!threadHandle)
+        return 0;
+
+    return establishIdentifierForPthreadHandle(threadHandle);
+}
+#else
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     pthread_t threadHandle;
@@ -156,6 +196,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 
     return establishIdentifierForPthreadHandle(threadHandle);
 }
+#endif
 
 void initializeCurrentThreadInternal(const char* threadName)
 {

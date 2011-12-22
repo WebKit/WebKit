@@ -90,24 +90,24 @@ inline void Recompiler::operator()(JSCell* cell)
 
 namespace JSC {
 
-extern JSC_CONST_HASHTABLE HashTable arrayConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable arrayPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable booleanPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable jsonTable;
-extern JSC_CONST_HASHTABLE HashTable dateTable;
-extern JSC_CONST_HASHTABLE HashTable dateConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable errorPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable globalObjectTable;
-extern JSC_CONST_HASHTABLE HashTable mathTable;
-extern JSC_CONST_HASHTABLE HashTable numberConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable numberPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable objectConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable objectPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable regExpTable;
-extern JSC_CONST_HASHTABLE HashTable regExpConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable regExpPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable stringTable;
-extern JSC_CONST_HASHTABLE HashTable stringConstructorTable;
+extern const HashTable arrayConstructorTable;
+extern const HashTable arrayPrototypeTable;
+extern const HashTable booleanPrototypeTable;
+extern const HashTable jsonTable;
+extern const HashTable dateTable;
+extern const HashTable dateConstructorTable;
+extern const HashTable errorPrototypeTable;
+extern const HashTable globalObjectTable;
+extern const HashTable mathTable;
+extern const HashTable numberConstructorTable;
+extern const HashTable numberPrototypeTable;
+extern const HashTable objectConstructorTable;
+extern const HashTable objectPrototypeTable;
+extern const HashTable regExpTable;
+extern const HashTable regExpConstructorTable;
+extern const HashTable regExpPrototypeTable;
+extern const HashTable stringTable;
+extern const HashTable stringConstructorTable;
 
 void* JSGlobalData::jsFinalObjectVPtr;
 void* JSGlobalData::jsArrayVPtr;
@@ -154,6 +154,20 @@ void JSGlobalData::storeVPtrs()
     JSCell* jsFunction = new (storage) JSFunction(JSCell::VPtrStealingHack);
     CLOBBER_MEMORY();
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
+
+    // Until we fully remove our reliance on vptrs, we need to make sure that everybody that 
+    // we think has a unique virtual pointer actually does.
+    if (jsFinalObjectVPtr == jsArrayVPtr
+        || jsFinalObjectVPtr == jsByteArrayVPtr
+        || jsFinalObjectVPtr == jsStringVPtr
+        || jsFinalObjectVPtr == jsFunctionVPtr
+        || jsArrayVPtr == jsByteArrayVPtr
+        || jsArrayVPtr == jsStringVPtr
+        || jsArrayVPtr == jsFunctionVPtr
+        || jsByteArrayVPtr == jsStringVPtr
+        || jsByteArrayVPtr == jsFunctionVPtr
+        || jsStringVPtr == jsFunctionVPtr)
+        CRASH();
 }
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
@@ -340,7 +354,7 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(stringTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
 
-    deleteAllValues(opaqueJSClassData);
+    opaqueJSClassData.clear();
 
     delete emptyList;
 
@@ -398,13 +412,48 @@ JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 }
 
 #if ENABLE(JIT)
+static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
+{
+    switch (intrinsic) {
+    case CharCodeAtIntrinsic:
+        return charCodeAtThunkGenerator;
+    case CharAtIntrinsic:
+        return charAtThunkGenerator;
+    case FromCharCodeIntrinsic:
+        return fromCharCodeThunkGenerator;
+    case SqrtIntrinsic:
+        return sqrtThunkGenerator;
+    case PowIntrinsic:
+        return powThunkGenerator;
+    case AbsIntrinsic:
+        return absThunkGenerator;
+    case FloorIntrinsic:
+        return floorThunkGenerator;
+    case CeilIntrinsic:
+        return ceilThunkGenerator;
+    case RoundIntrinsic:
+        return roundThunkGenerator;
+    case ExpIntrinsic:
+        return expThunkGenerator;
+    case LogIntrinsic:
+        return logThunkGenerator;
+    default:
+        return 0;
+    }
+}
+
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
 {
+#if ENABLE(INTERPRETER)
+    if (!canUseJIT())
+        return NativeExecutable::create(*this, function, constructor);
+#endif
     return jitStubs->hostFunctionStub(this, function, constructor);
 }
-NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, ThunkGenerator generator, DFG::Intrinsic intrinsic)
+NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, Intrinsic intrinsic)
 {
-    return jitStubs->hostFunctionStub(this, function, generator, intrinsic);
+    ASSERT(canUseJIT());
+    return jitStubs->hostFunctionStub(this, function, intrinsic != NoIntrinsic ? thunkGeneratorForIntrinsic(intrinsic) : 0, intrinsic);
 }
 #else
 NativeExecutable* JSGlobalData::getHostFunction(NativeFunction function, NativeFunction constructor)
@@ -459,7 +508,7 @@ struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
     {
         if (!cell->inherits(&FunctionExecutable::s_info))
             return;
-        FunctionExecutable* executable = static_cast<FunctionExecutable*>(cell);
+        FunctionExecutable* executable = jsCast<FunctionExecutable*>(cell);
         if (currentlyExecutingFunctions.contains(executable))
             return;
         executable->discardCode();

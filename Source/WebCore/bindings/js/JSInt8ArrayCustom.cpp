@@ -26,9 +26,9 @@
 #include "config.h"
 #include "JSInt8Array.h"
 
-#include "Int8Array.h"
 #include "JSArrayBufferViewHelper.h"
 #include <runtime/Error.h>
+#include <wtf/Int8Array.h>
 
 using namespace JSC;
 

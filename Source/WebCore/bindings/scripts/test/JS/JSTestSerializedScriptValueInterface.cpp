@@ -49,7 +49,7 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceTableValues[3] =
 };
 
 #undef THUNK_GENERATOR
-static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceTable = { 4, 3, JSTestSerializedScriptValueInterfaceTableValues, 0 };
+static const HashTable JSTestSerializedScriptValueInterfaceTable = { 4, 3, JSTestSerializedScriptValueInterfaceTableValues, 0 };
 /* Hash table for constructor */
 #if ENABLE(JIT)
 #define THUNK_GENERATOR(generator) , generator

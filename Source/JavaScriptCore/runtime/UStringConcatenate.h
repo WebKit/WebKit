@@ -35,21 +35,37 @@ template<>
 class StringTypeAdapter<JSC::UString> {
 public:
     StringTypeAdapter<JSC::UString>(JSC::UString& string)
-        : m_data(string.characters())
+        : m_string(string)
         , m_length(string.length())
     {
     }
 
     unsigned length() { return m_length; }
 
+    bool is8Bit() { return m_string.isNull() || m_string.is8Bit(); }
+
+    void writeTo(LChar* destination)
+    {
+        const LChar* characters = m_string.characters8();
+        for (unsigned i = 0; i < m_length; ++i)
+            destination[i] = characters[i];
+    }
+
     void writeTo(UChar* destination)
     {
-        for (unsigned i = 0; i < m_length; ++i)
-            destination[i] = m_data[i];
+        if (is8Bit()) {
+            const LChar* characters = m_string.characters8();
+            for (unsigned i = 0; i < m_length; ++i)
+                destination[i] = characters[i];
+        } else {
+            const UChar* characters = m_string.characters16();
+            for (unsigned i = 0; i < m_length; ++i)
+                destination[i] = characters[i];
+        }
     }
 
 private:
-    const UChar* m_data;
+    const JSC::UString& m_string;
     unsigned m_length;
 };
 

@@ -27,7 +27,7 @@
 #include "JSUint8Array.h"
 
 #include "JSArrayBufferViewHelper.h"
-#include "Uint8Array.h"
+#include <wtf/Uint8Array.h>
 
 using namespace JSC;
 

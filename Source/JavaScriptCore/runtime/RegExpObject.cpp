@@ -26,6 +26,7 @@
 #include "JSArray.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
+#include "Lexer.h"
 #include "Lookup.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
@@ -80,7 +81,7 @@ RegExpObject::~RegExpObject()
 
 void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    RegExpObject* thisObject = static_cast<RegExpObject*>(cell);
+    RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -93,12 +94,12 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool RegExpObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), propertyName, slot);
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), propertyName, slot);
 }
 
 bool RegExpObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), static_cast<RegExpObject*>(object), propertyName, descriptor);
+    return getStaticValueDescriptor<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), jsCast<RegExpObject*>(object), propertyName, descriptor);
 }
 
 JSValue regExpObjectGlobal(ExecState*, JSValue slotBase, const Identifier&)
@@ -119,39 +120,82 @@ JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, const Identifier&)
 JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     UString pattern = asRegExpObject(slotBase)->regExp()->pattern();
+    unsigned length = pattern.length();
+    const UChar* characters = pattern.characters();
+    bool previousCharacterWasBackslash = false;
+    bool inBrackets = false;
+    bool shouldEscape = false;
 
-    size_t forwardSlashPosition = pattern.find('/');
-    if (forwardSlashPosition == notFound)
+    // early return for strings that don't contain a forwards slash and LineTerminator
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        if (!previousCharacterWasBackslash) {
+            if (inBrackets) {
+                if (ch == ']')
+                    inBrackets = false;
+            } else {
+                if (ch == '/') {
+                    shouldEscape = true;
+                    break;
+                }
+                if (ch == '[')
+                    inBrackets = true;
+            }
+        }
+
+        if (Lexer<UChar>::isLineTerminator(ch)) {
+            shouldEscape = true;
+            break;
+        }
+
+        if (previousCharacterWasBackslash)
+            previousCharacterWasBackslash = false;
+        else
+            previousCharacterWasBackslash = ch == '\\';
+    }
+
+    if (!shouldEscape)
         return jsString(exec, pattern);
 
-    // 'completed' tracks the length of original pattern already copied
-    // into the result buffer.
-    size_t completed = 0;
+    previousCharacterWasBackslash = false;
+    inBrackets = false;
     UStringBuilder result;
-
-    do {
-        // 'slashesPosition' points to the first (of possibly zero) backslash
-        // prior to the forwards slash.
-        size_t slashesPosition = forwardSlashPosition;
-        while (slashesPosition && pattern[slashesPosition - 1] == '\\')
-            --slashesPosition;
-
-        // Check whether the number of backslashes is odd or even -
-        // if odd, the forwards slash is already escaped, so we mustn't
-        // double escape it.
-        if ((forwardSlashPosition - slashesPosition) & 1)
-            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition - completed + 1));
-        else {
-            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition - completed));
-            result.append("\\/");
+    for (unsigned i = 0; i < length; ++i) {
+        UChar ch = characters[i];
+        if (!previousCharacterWasBackslash) {
+            if (inBrackets) {
+                if (ch == ']')
+                    inBrackets = false;
+            } else {
+                if (ch == '/')
+                    result.append('\\');
+                else if (ch == '[')
+                    inBrackets = true;
+            }
         }
-        completed = forwardSlashPosition + 1;
 
-        forwardSlashPosition = pattern.find('/', completed);
-    } while (forwardSlashPosition != notFound);
+        // escape LineTerminator
+        if (Lexer<UChar>::isLineTerminator(ch)) {
+            if (!previousCharacterWasBackslash)
+                result.append('\\');
 
-    // Copy in the remainder of the pattern to the buffer.
-    result.append(pattern.substringSharingImpl(completed));
+            if (ch == '\n')
+                result.append('n');
+            else if (ch == '\r')
+                result.append('r');
+            else if (ch == 0x2028)
+                result.append("u2028");
+            else
+                result.append("u2029");
+        } else
+            result.append(ch);
+
+        if (previousCharacterWasBackslash)
+            previousCharacterWasBackslash = false;
+        else
+            previousCharacterWasBackslash = ch == '\\';
+    }
+
     return jsString(exec, result.toUString());
 }
 
@@ -162,7 +206,7 @@ JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
 
 void RegExpObject::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), static_cast<RegExpObject*>(cell), slot);
+    lookupPut<RegExpObject, JSObject>(exec, propertyName, value, ExecState::regExpTable(exec), jsCast<RegExpObject*>(cell), slot);
 }
 
 void setRegExpObjectLastIndex(ExecState* exec, JSObject* baseObject, JSValue value)

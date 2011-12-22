@@ -51,6 +51,14 @@ public:
     }
 
     unsigned length() { return 1; }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        *destination = m_buffer;
+    }
+
     void writeTo(UChar* destination) { *destination = m_buffer; }
 
 private:
@@ -66,6 +74,14 @@ public:
     }
 
     unsigned length() { return 1; }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        *destination = m_buffer;
+    }
+
     void writeTo(UChar* destination) { *destination = m_buffer; }
 
 private:
@@ -81,6 +97,15 @@ public:
     }
 
     unsigned length() { return 1; }
+
+    bool is8Bit() { return m_buffer <= 0xff; }
+
+    void writeTo(LChar* destination)
+    {
+        ASSERT(is8Bit());
+        *destination = static_cast<LChar>(m_buffer);
+    }
+
     void writeTo(UChar* destination) { *destination = m_buffer; }
 
 private:
@@ -97,6 +122,14 @@ public:
     }
 
     unsigned length() { return m_length; }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        for (unsigned i = 0; i < m_length; ++i)
+            destination[i] = static_cast<LChar>(m_buffer[i]);
+    }
 
     void writeTo(UChar* destination)
     {
@@ -121,6 +154,13 @@ public:
     }
 
     unsigned length() { return m_length; }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        memcpy(destination, m_buffer, m_length * sizeof(LChar));
+    }
 
     void writeTo(UChar* destination)
     {
@@ -151,9 +191,16 @@ public:
 
     unsigned length() { return m_length; }
 
+    bool is8Bit() { return false; }
+
+    NO_RETURN_DUE_TO_CRASH void writeTo(LChar*)
+    {
+        CRASH();
+    }
+
     void writeTo(UChar* destination)
     {
-        memcpy(destination, m_buffer, static_cast<size_t>(m_length) * sizeof(UChar));
+        memcpy(destination, m_buffer, m_length * sizeof(UChar));
     }
 
 private:
@@ -171,6 +218,13 @@ public:
     }
 
     unsigned length() { return m_length; }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        memcpy(destination, m_buffer, static_cast<size_t>(m_length) * sizeof(LChar));
+    }
 
     void writeTo(UChar* destination)
     {
@@ -193,15 +247,22 @@ public:
         , m_length(strlen(reinterpret_cast<const char*>(buffer)))
     {
     }
-    
+
     unsigned length() { return m_length; }
-    
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        memcpy(destination, m_buffer, static_cast<size_t>(m_length) * sizeof(LChar));
+    }
+
     void writeTo(UChar* destination)
     {
         for (unsigned i = 0; i < m_length; ++i)
             destination[i] = m_buffer[i];
     }
-    
+
 private:
     const LChar* m_buffer;
     unsigned m_length;
@@ -217,12 +278,18 @@ public:
 
     size_t length() { return m_buffer.size(); }
 
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        for (size_t i = 0; i < m_buffer.size(); ++i)
+            destination[i] = static_cast<unsigned char>(m_buffer[i]);
+    }
+
     void writeTo(UChar* destination)
     {
-        for (size_t i = 0; i < m_buffer.size(); ++i) {
-            unsigned char c = m_buffer[i];
-            destination[i] = c;
-        }
+        for (size_t i = 0; i < m_buffer.size(); ++i)
+            destination[i] = static_cast<unsigned char>(m_buffer[i]);
     }
 
 private:
@@ -238,6 +305,14 @@ public:
     }
 
     size_t length() { return m_buffer.size(); }
+
+    bool is8Bit() { return true; }
+
+    void writeTo(LChar* destination)
+    {
+        for (size_t i = 0; i < m_buffer.size(); ++i)
+            destination[i] = m_buffer[i];
+    }
 
     void writeTo(UChar* destination)
     {
@@ -259,13 +334,34 @@ public:
 
     unsigned length() { return m_buffer.length(); }
 
-    void writeTo(UChar* destination)
+    bool is8Bit() { return m_buffer.isNull() || m_buffer.is8Bit(); }
+
+    void writeTo(LChar* destination)
     {
-        const UChar* data = m_buffer.characters();
         unsigned length = m_buffer.length();
+
+        ASSERT(is8Bit());
+        const LChar* data = m_buffer.characters8();
         for (unsigned i = 0; i < length; ++i)
             destination[i] = data[i];
+        
+        WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
+    }
 
+    void writeTo(UChar* destination)
+    {
+        unsigned length = m_buffer.length();
+
+        if (is8Bit()) {
+            const LChar* data = m_buffer.characters8();
+            for (unsigned i = 0; i < length; ++i)
+                destination[i] = data[i];
+        } else {
+            const UChar* data = m_buffer.characters16();
+            for (unsigned i = 0; i < length; ++i)
+                destination[i] = data[i];
+        }
+        
         WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING();
     }
 
@@ -282,6 +378,10 @@ public:
     }
 
     unsigned length() { return m_adapter.length(); }
+
+    bool is8Bit() { return m_adapter.is8Bit(); }
+
+    void writeTo(LChar* destination) { m_adapter.writeTo(destination); }
     void writeTo(UChar* destination) { m_adapter.writeTo(destination); }
 
 private:
@@ -302,12 +402,27 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2)
     StringTypeAdapter<StringType1> adapter1(string1);
     StringTypeAdapter<StringType2> adapter2(string2);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -327,13 +442,30 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType2> adapter2(string2);
     StringTypeAdapter<StringType3> adapter3(string3);
 
-    UChar* buffer = 0;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
     sumWithOverflow(length, adapter3.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer = 0;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -356,7 +488,6 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType3> adapter3(string3);
     StringTypeAdapter<StringType4> adapter4(string4);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
@@ -364,6 +495,26 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter4.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -389,7 +540,6 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType4> adapter4(string4);
     StringTypeAdapter<StringType5> adapter5(string5);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
@@ -398,6 +548,28 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter5.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -426,7 +598,6 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType5> adapter5(string5);
     StringTypeAdapter<StringType6> adapter6(string6);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
@@ -436,6 +607,30 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter6.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+
+        return resultImpl.release();        
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -467,7 +662,6 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType6> adapter6(string6);
     StringTypeAdapter<StringType7> adapter7(string7);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
@@ -478,6 +672,32 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter7.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+        result += adapter6.length();
+        adapter7.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -512,7 +732,6 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType7> adapter7(string7);
     StringTypeAdapter<StringType8> adapter8(string8);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
@@ -524,6 +743,34 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter8.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit() && adapter7.is8Bit() && adapter8.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+        result += adapter6.length();
+        adapter7.writeTo(result);
+        result += adapter7.length();
+        adapter8.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
@@ -561,7 +808,6 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     StringTypeAdapter<StringType8> adapter8(string8);
     StringTypeAdapter<StringType9> adapter9(string9);
 
-    UChar* buffer;
     bool overflow = false;
     unsigned length = adapter1.length();
     sumWithOverflow(length, adapter2.length(), overflow);
@@ -574,6 +820,36 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter9.length(), overflow);
     if (overflow)
         return 0;
+
+    if (adapter1.is8Bit() && adapter2.is8Bit() && adapter3.is8Bit() && adapter4.is8Bit() && adapter5.is8Bit() && adapter6.is8Bit() && adapter7.is8Bit() && adapter8.is8Bit() && adapter9.is8Bit()) {
+        LChar* buffer;
+        RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+        if (!resultImpl)
+            return 0;
+
+        LChar* result = buffer;
+        adapter1.writeTo(result);
+        result += adapter1.length();
+        adapter2.writeTo(result);
+        result += adapter2.length();
+        adapter3.writeTo(result);
+        result += adapter3.length();
+        adapter4.writeTo(result);
+        result += adapter4.length();
+        adapter5.writeTo(result);
+        result += adapter5.length();
+        adapter6.writeTo(result);
+        result += adapter6.length();
+        adapter7.writeTo(result);
+        result += adapter7.length();
+        adapter8.writeTo(result);
+        result += adapter8.length();
+        adapter9.writeTo(result);
+
+        return resultImpl.release();
+    }
+
+    UChar* buffer;
     RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;

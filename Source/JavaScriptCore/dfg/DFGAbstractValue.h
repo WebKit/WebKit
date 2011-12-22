@@ -288,7 +288,7 @@ public:
     }
     
 #ifndef NDEBUG
-    void dump(FILE* out)
+    void dump(FILE* out) const
     {
         if (isTop()) {
             fprintf(out, "TOP");
@@ -467,7 +467,7 @@ struct AbstractValue {
     }
     
 #ifndef NDEBUG
-    void dump(FILE* out)
+    void dump(FILE* out) const
     {
         fprintf(out, "(%s, ", predictionToString(m_type));
         m_structure.dump(out);

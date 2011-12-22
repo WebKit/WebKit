@@ -282,7 +282,15 @@ namespace JSC {
         case Allocated:
             return true;
         case Zapped:
-            return !isZapped(cell);
+            if (isZapped(cell)) {
+                // Object dead in previous collection, not allocated since previous collection: mark bit should not be set.
+                ASSERT(!m_marks.get(atomNumber(cell)));
+                return false;
+            }
+            
+            // Newly allocated objects: mark bit not set.
+            // Objects that survived prior collection: mark bit set.
+            return true;
         case Marked:
             return m_marks.get(atomNumber(cell));
 

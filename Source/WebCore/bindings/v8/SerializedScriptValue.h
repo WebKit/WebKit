@@ -31,6 +31,7 @@
 #ifndef SerializedScriptValue_h
 #define SerializedScriptValue_h
 
+#include "ArrayBuffer.h"
 #include "ScriptValue.h"
 #include <v8.h>
 #include <wtf/Threading.h>
@@ -71,12 +72,16 @@ private:
         StringValue,
         WireData
     };
+    typedef Vector<WTF::ArrayBufferContents, 1> ArrayBufferContentsArray;
 
     SerializedScriptValue();
-    SerializedScriptValue(v8::Handle<v8::Value>, bool& didThrow);
-    explicit SerializedScriptValue(String wireData);
+    SerializedScriptValue(v8::Handle<v8::Value>, MessagePortArray*, ArrayBufferArray*, bool& didThrow);
+    explicit SerializedScriptValue(const String& wireData);
+
+    static PassOwnPtr<ArrayBufferContentsArray> transferArrayBuffers(ArrayBufferArray&, bool& didThrow);
 
     String m_data;
+    OwnPtr<ArrayBufferContentsArray> m_arrayBufferContentsArray;
 };
 
 } // namespace WebCore

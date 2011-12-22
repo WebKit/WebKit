@@ -22,7 +22,6 @@
 
 #ifndef JSString_h
 #define JSString_h
-
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
@@ -85,6 +84,7 @@ namespace JSC {
                     expand();
                 m_jsString->m_fibers[m_index++].set(m_globalData, m_jsString, jsString);
                 m_jsString->m_length += jsString->m_length;
+                m_jsString->m_is8Bit = m_jsString->m_is8Bit && jsString->m_is8Bit;
             }
 
             JSString* release()
@@ -120,6 +120,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = 0;
+            m_is8Bit = true;
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length)
@@ -127,6 +128,7 @@ namespace JSC {
             ASSERT(!m_value.isNull());
             Base::finishCreation(globalData);
             m_length = length;
+            m_is8Bit = m_value.impl()->is8Bit();
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length, size_t cost)
@@ -134,6 +136,7 @@ namespace JSC {
             ASSERT(!m_value.isNull());
             Base::finishCreation(globalData);
             m_length = length;
+            m_is8Bit = m_value.impl()->is8Bit();
             Heap::heap(this)->reportExtraMemoryCost(cost);
         }
 
@@ -141,6 +144,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length();
+            m_is8Bit = (s1->is8Bit() && s2->is8Bit());
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
         }
@@ -149,6 +153,7 @@ namespace JSC {
         {
             Base::finishCreation(globalData);
             m_length = s1->length() + s2->length() + s3->length();
+            m_is8Bit = (s1->is8Bit() && s2->is8Bit() &&  s3->is8Bit());
             m_fibers[0].set(globalData, this, s1);
             m_fibers[1].set(globalData, this, s2);
             m_fibers[2].set(globalData, this, s3);
@@ -244,7 +249,8 @@ namespace JSC {
         }
 
         void resolveRope(ExecState*) const;
-        void resolveRopeSlowCase(ExecState*, UChar*) const;
+        void resolveRopeSlowCase8(LChar*) const;
+        void resolveRopeSlowCase(UChar*) const;
         void outOfMemory(ExecState*) const;
 
         static JSObject* toThisObject(JSCell*, ExecState*);
@@ -256,11 +262,13 @@ namespace JSC {
         static const unsigned s_maxInternalRopeLength = 3;
 
         // A string is represented either by a UString or a rope of fibers.
+        bool m_is8Bit : 1;
         unsigned m_length;
         mutable UString m_value;
         mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
 
         bool isRope() const { return m_value.isNull(); }
+        bool is8Bit() const { return m_is8Bit; }
         UString& string() { ASSERT(!isRope()); return m_value; }
 
         friend JSValue jsString(ExecState*, JSString*, JSString*);
@@ -356,6 +364,21 @@ namespace JSC {
         return jsSubstring(globalData, s->value(exec), offset, length);
     }
 
+    inline JSString* jsSubstring8(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
+    {
+        ASSERT(offset <= static_cast<unsigned>(s.length()));
+        ASSERT(length <= static_cast<unsigned>(s.length()));
+        ASSERT(offset + length <= static_cast<unsigned>(s.length()));
+        if (!length)
+            return globalData->smallStrings.emptyString(globalData);
+        if (length == 1) {
+            UChar c = s[offset];
+            if (c <= maxSingleCharacterString)
+                return globalData->smallStrings.singleCharacterString(globalData, c);
+        }
+        return fixupVPtr(globalData, JSString::createHasOtherOwner(*globalData, StringImpl::create8(s.impl(), offset, length)));
+    }
+
     inline JSString* jsSubstring(JSGlobalData* globalData, const UString& s, unsigned offset, unsigned length)
     {
         ASSERT(offset <= static_cast<unsigned>(s.length()));
@@ -392,6 +415,7 @@ namespace JSC {
     inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->globalData()); }
     inline JSString* jsString(ExecState* exec, const UString& s) { return jsString(&exec->globalData(), s); }
     inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->globalData(), c); }
+    inline JSString* jsSubstring8(ExecState* exec, const UString& s, unsigned offset, unsigned length) { return jsSubstring8(&exec->globalData(), s, offset, length); }
     inline JSString* jsSubstring(ExecState* exec, const UString& s, unsigned offset, unsigned length) { return jsSubstring(&exec->globalData(), s, offset, length); }
     inline JSString* jsNontrivialString(ExecState* exec, const UString& s) { return jsNontrivialString(&exec->globalData(), s); }
     inline JSString* jsNontrivialString(ExecState* exec, const char* s) { return jsNontrivialString(&exec->globalData(), s); }

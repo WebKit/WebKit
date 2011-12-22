@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,27 +23,11 @@
 
 namespace WTF {
 
-    // This specialization is a direct copy of HashMap, with overloaded functions
+    // This specialization is a copy of HashMap for use with RefPtr keys, with overloaded functions
     // to allow for lookup by pointer instead of RefPtr, avoiding ref-count churn.
     
-    // FIXME: Find a better way that doesn't require an entire copy of the HashMap template.
+     // FIXME: Find a way to do this with traits that doesn't require a copy of the HashMap template.
     
-    template<typename RawKeyType, typename ValueType, typename ValueTraits, typename HashFunctions>
-    struct RefPtrHashMapRawKeyTranslator {
-        typedef typename ValueType::first_type KeyType;
-        typedef typename ValueType::second_type MappedType;
-        typedef typename ValueTraits::FirstTraits KeyTraits;
-        typedef typename ValueTraits::SecondTraits MappedTraits;
-
-        static unsigned hash(RawKeyType key) { return HashFunctions::hash(key); }
-        static bool equal(const KeyType& a, RawKeyType b) { return HashFunctions::equal(a, b); }
-        static void translate(ValueType& location, RawKeyType key, const MappedType& mapped)
-        {
-            location.first = key;
-            location.second = mapped;
-        }
-    };
-
     template<typename T, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
     class HashMap<RefPtr<T>, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> {
         WTF_MAKE_FAST_ALLOCATED;
@@ -59,13 +43,19 @@ namespace WTF {
         typedef typename ValueTraits::TraitType ValueType;
 
     private:
+        typedef typename MappedTraits::PassInType MappedPassInType;
+        typedef typename MappedTraits::PassOutType MappedPassOutType;
+        typedef typename MappedTraits::PeekType MappedPeekType;
+
+        typedef typename ReferenceTypeMaker<MappedPassInType>::ReferenceType MappedPassInReferenceType;
+        
         typedef HashArg HashFunctions;
 
         typedef HashTable<KeyType, ValueType, PairFirstExtractor<ValueType>,
             HashFunctions, ValueTraits, KeyTraits> HashTableType;
 
-        typedef RefPtrHashMapRawKeyTranslator<RawKeyType, ValueType, ValueTraits, HashFunctions>
-            RawKeyTranslator;
+        typedef HashMapTranslator<ValueTraits, HashFunctions>
+            Translator;
 
     public:
         typedef HashTableIteratorAdapter<HashTableType, ValueType> iterator;
@@ -89,33 +79,33 @@ namespace WTF {
         const_iterator find(RawKeyType) const;
         bool contains(const KeyType&) const;
         bool contains(RawKeyType) const;
-        MappedType get(const KeyType&) const;
-        MappedType get(RawKeyType) const;
-        MappedType inlineGet(RawKeyType) const;
+        MappedPeekType get(const KeyType&) const;
+        MappedPeekType get(RawKeyType) const;
+        MappedPeekType inlineGet(RawKeyType) const;
 
         // replaces value but not key if key is already present
         // return value is a pair of the iterator to the key location, 
         // and a boolean that's true if a new value was actually added
-        pair<iterator, bool> set(const KeyType&, const MappedType&); 
-        pair<iterator, bool> set(RawKeyType, const MappedType&); 
+        pair<iterator, bool> set(const KeyType&, MappedPassInType); 
+        pair<iterator, bool> set(RawKeyType, MappedPassInType); 
 
         // does nothing if key is already present
         // return value is a pair of the iterator to the key location, 
         // and a boolean that's true if a new value was actually added
-        pair<iterator, bool> add(const KeyType&, const MappedType&); 
-        pair<iterator, bool> add(RawKeyType, const MappedType&); 
+        pair<iterator, bool> add(const KeyType&, MappedPassInType); 
+        pair<iterator, bool> add(RawKeyType, MappedPassInType); 
 
         void remove(const KeyType&);
         void remove(RawKeyType);
         void remove(iterator);
         void clear();
 
-        MappedType take(const KeyType&); // efficient combination of get with remove
-        MappedType take(RawKeyType); // efficient combination of get with remove
+        MappedPassOutType take(const KeyType&); // efficient combination of get with remove
+        MappedPassOutType take(RawKeyType); // efficient combination of get with remove
 
     private:
-        pair<iterator, bool> inlineAdd(const KeyType&, const MappedType&);
-        pair<iterator, bool> inlineAdd(RawKeyType, const MappedType&);
+        pair<iterator, bool> inlineAdd(const KeyType&, MappedPassInReferenceType);
+        pair<iterator, bool> inlineAdd(RawKeyType, MappedPassInReferenceType);
 
         HashTableType m_impl;
     };
@@ -177,7 +167,7 @@ namespace WTF {
     template<typename T, typename U, typename V, typename W, typename X>
     inline typename HashMap<RefPtr<T>, U, V, W, X>::iterator HashMap<RefPtr<T>, U, V, W, X>::find(RawKeyType key)
     {
-        return m_impl.template find<RawKeyType, RawKeyTranslator>(key);
+        return m_impl.template find<Translator>(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -189,7 +179,7 @@ namespace WTF {
     template<typename T, typename U, typename V, typename W, typename X>
     inline typename HashMap<RefPtr<T>, U, V, W, X>::const_iterator HashMap<RefPtr<T>, U, V, W, X>::find(RawKeyType key) const
     {
-        return m_impl.template find<RawKeyType, RawKeyTranslator>(key);
+        return m_impl.template find<Translator>(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
@@ -201,84 +191,83 @@ namespace WTF {
     template<typename T, typename U, typename V, typename W, typename X>
     inline bool HashMap<RefPtr<T>, U, V, W, X>::contains(RawKeyType key) const
     {
-        return m_impl.template contains<RawKeyType, RawKeyTranslator>(key);
+        return m_impl.template contains<Translator>(key);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     inline pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
-    HashMap<RefPtr<T>, U, V, W, X>::inlineAdd(const KeyType& key, const MappedType& mapped) 
+    HashMap<RefPtr<T>, U, V, W, X>::inlineAdd(const KeyType& key, MappedPassInReferenceType mapped) 
     {
-        typedef HashMapTranslator<ValueType, ValueTraits, HashFunctions> TranslatorType;
-        return m_impl.template add<KeyType, MappedType, TranslatorType>(key, mapped);
+        return m_impl.template add<Translator>(key, mapped);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     inline pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
-    HashMap<RefPtr<T>, U, V, W, X>::inlineAdd(RawKeyType key, const MappedType& mapped) 
+    HashMap<RefPtr<T>, U, V, W, X>::inlineAdd(RawKeyType key, MappedPassInReferenceType mapped) 
     {
-        return m_impl.template add<RawKeyType, MappedType, RawKeyTranslator>(key, mapped);
+        return m_impl.template add<Translator>(key, mapped);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
-    HashMap<RefPtr<T>, U, V, W, X>::set(const KeyType& key, const MappedType& mapped) 
+    HashMap<RefPtr<T>, U, V, W, X>::set(const KeyType& key, MappedPassInType mapped) 
     {
         pair<iterator, bool> result = inlineAdd(key, mapped);
         if (!result.second) {
-            // add call above didn't change anything, so set the mapped value
-            result.first->second = mapped;
+            // The inlineAdd call above found an existing hash table entry; we need to set the mapped value.
+            MappedTraits::store(mapped, result.first->second);
         }
         return result;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
-    HashMap<RefPtr<T>, U, V, W, X>::set(RawKeyType key, const MappedType& mapped) 
+    HashMap<RefPtr<T>, U, V, W, X>::set(RawKeyType key, MappedPassInType mapped) 
     {
         pair<iterator, bool> result = inlineAdd(key, mapped);
         if (!result.second) {
-            // add call above didn't change anything, so set the mapped value
-            result.first->second = mapped;
+            // The inlineAdd call above found an existing hash table entry; we need to set the mapped value.
+            MappedTraits::store(mapped, result.first->second);
         }
         return result;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
-    HashMap<RefPtr<T>, U, V, W, X>::add(const KeyType& key, const MappedType& mapped)
+    HashMap<RefPtr<T>, U, V, W, X>::add(const KeyType& key, MappedPassInType mapped)
     {
         return inlineAdd(key, mapped);
     }
 
     template<typename T, typename U, typename V, typename W, typename X>
     pair<typename HashMap<RefPtr<T>, U, V, W, X>::iterator, bool>
-    HashMap<RefPtr<T>, U, V, W, X>::add(RawKeyType key, const MappedType& mapped)
+    HashMap<RefPtr<T>, U, V, W, X>::add(RawKeyType key, MappedPassInType mapped)
     {
         return inlineAdd(key, mapped);
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
+    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedPeekType
     HashMap<RefPtr<T>, U, V, W, MappedTraits>::get(const KeyType& key) const
     {
         ValueType* entry = const_cast<HashTableType&>(m_impl).lookup(key);
         if (!entry)
-            return MappedTraits::emptyValue();
-        return entry->second;
+            return MappedTraits::peek(MappedTraits::emptyValue());
+        return MappedTraits::peek(entry->second);
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
+    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedPeekType
     inline HashMap<RefPtr<T>, U, V, W, MappedTraits>::inlineGet(RawKeyType key) const
     {
-        ValueType* entry = const_cast<HashTableType&>(m_impl).template lookup<RawKeyType, RawKeyTranslator>(key);
+        ValueType* entry = const_cast<HashTableType&>(m_impl).template lookup<Translator>(key);
         if (!entry)
-            return MappedTraits::emptyValue();
-        return entry->second;
+            return MappedTraits::peek(MappedTraits::emptyValue());
+        return MappedTraits::peek(entry->second);
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
+    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedPeekType
     HashMap<RefPtr<T>, U, V, W, MappedTraits>::get(RawKeyType key) const
     {
         return inlineGet(key);
@@ -312,27 +301,25 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
+    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedPassOutType
     HashMap<RefPtr<T>, U, V, W, MappedTraits>::take(const KeyType& key)
     {
-        // This can probably be made more efficient to avoid ref/deref churn.
         iterator it = find(key);
         if (it == end())
-            return MappedTraits::emptyValue();
-        typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType result = it->second;
+            return MappedTraits::passOut(MappedTraits::emptyValue());
+        MappedPassOutType result = MappedTraits::passOut(it->second);
         remove(it);
         return result;
     }
 
     template<typename T, typename U, typename V, typename W, typename MappedTraits>
-    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType
+    typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedPassOutType
     HashMap<RefPtr<T>, U, V, W, MappedTraits>::take(RawKeyType key)
     {
-        // This can probably be made more efficient to avoid ref/deref churn.
         iterator it = find(key);
         if (it == end())
-            return MappedTraits::emptyValue();
-        typename HashMap<RefPtr<T>, U, V, W, MappedTraits>::MappedType result = it->second;
+            return MappedTraits::passOut(MappedTraits::emptyValue());
+        MappedPassOutType result = MappedTraits::passOut(it->second);
         remove(it);
         return result;
     }

@@ -62,25 +62,42 @@ typedef UChar BufferValueType;
 // Serialization format is a sequence of (tag, optional data)
 // pairs. Tag always takes exactly one byte.
 enum SerializationTag {
-    InvalidTag = '!',
-    PaddingTag = '\0',
-    UndefinedTag = '_',
-    NullTag = '0',
-    TrueTag = 'T',
-    FalseTag = 'F',
-    StringTag = 'S',
-    Int32Tag = 'I',
-    Uint32Tag = 'U',
-    DateTag = 'D',
-    NumberTag = 'N',
-    BlobTag = 'b',
-    FileTag = 'f',
-    FileListTag = 'l',
-    ImageDataTag = '#',
-    ArrayTag = '[',
-    ObjectTag = '{',
-    SparseArrayTag = '@',
-    RegExpTag = 'R',
+    InvalidTag = '!', // Causes deserialization to fail.
+    PaddingTag = '\0', // Is ignored (but consumed).
+    UndefinedTag = '_', // -> <undefined>
+    NullTag = '0', // -> <null>
+    TrueTag = 'T', // -> <true>
+    FalseTag = 'F', // -> <false>
+    StringTag = 'S', // string:RawString -> string
+    Int32Tag = 'I', // value:ZigZag-encoded int32 -> Integer
+    Uint32Tag = 'U', // value:uint32_t -> Integer
+    DateTag = 'D', // value:double -> Date (ref)
+    MessagePortTag = 'M', // index:int -> MessagePort. Fills the result with transferred MessagePort.
+    NumberTag = 'N', // value:double -> Number
+    BlobTag = 'b', // url:WebCoreString, type:WebCoreString, size:uint64_t -> Blob (ref)
+    FileTag = 'f', // file:RawFile -> File (ref)
+    FileListTag = 'l', // length:uint32_t, files:RawFile[length] -> FileList (ref)
+    ImageDataTag = '#', // width:uint32_t, height:uint32_t, pixelDataLength:uint32_t, data:byte[pixelDataLength] -> ImageData (ref)
+    ObjectTag = '{', // numProperties:uint32_t -> pops the last object from the open stack;
+                     //                           fills it with the last numProperties name,value pairs pushed onto the deserialization stack
+    SparseArrayTag = '@', // numProperties:uint32_t, length:uint32_t -> pops the last object from the open stack;
+                          //                                            fills it with the last numProperties name,value pairs pushed onto the deserialization stack
+    DenseArrayTag = '$', // numProperties:uint32_t, length:uint32_t -> pops the last object from the open stack;
+                         //                                            fills it with the last length elements and numProperties name,value pairs pushed onto deserialization stack
+    RegExpTag = 'R', // pattern:RawString, flags:uint32_t -> RegExp (ref)
+    ArrayBufferTag = 'B', // byteLength:uint32_t, data:byte[byteLength] -> ArrayBuffer (ref)
+    ArrayBufferTransferTag = 't', // index:uint32_t -> ArrayBuffer. For ArrayBuffer transfer
+    ArrayBufferViewTag = 'V', // subtag:byte, byteOffset:uint32_t, byteLength:uint32_t -> ArrayBufferView (ref). Consumes an ArrayBuffer from the top of the deserialization stack.
+    ObjectReferenceTag = '^', // ref:uint32_t -> reference table[ref]
+    GenerateFreshObjectTag = 'o', // -> empty object allocated an object ID and pushed onto the open stack (ref)
+    GenerateFreshSparseArrayTag = 'a', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
+    GenerateFreshDenseArrayTag = 'A', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
+    ReferenceCountTag = '?', // refTableSize:uint32_t -> If the reference table is not refTableSize big, fails.
+    StringObjectTag = 's', //  string:RawString -> new String(string) (ref)
+    NumberObjectTag = 'n', // value:double -> new Number(value) (ref)
+    TrueObjectTag = 'y', // new Boolean(true) (ref)
+    FalseObjectTag = 'x', // new Boolean(false) (ref)
+    VersionTag = 0xFF // version:uint32_t -> Uses this as the file version.
 };
 
 static bool shouldCheckForCycles(int depth)
@@ -234,6 +251,18 @@ public:
         doWriteUint32(length);
     }
 
+    void writeTransferredArrayBuffer(uint32_t index)
+    {
+        append(ArrayBufferTransferTag);
+        doWriteUint32(index);
+    }
+
+    void writeObjectReference(uint32_t reference)
+    {
+        append(ObjectReferenceTag);
+        doWriteUint32(reference);
+    }
+
     void writeObject(uint32_t numProperties)
     {
         append(ObjectTag);
@@ -340,17 +369,31 @@ public:
     enum Status {
         Success,
         InputError,
+        DataCloneError,
+        InvalidStateError,
         JSException,
         JSFailure
     };
 
-    Serializer(Writer& writer, v8::TryCatch& tryCatch)
+    Serializer(Writer& writer, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, v8::TryCatch& tryCatch)
         : m_writer(writer)
         , m_tryCatch(tryCatch)
         , m_depth(0)
         , m_status(Success)
     {
         ASSERT(!tryCatch.HasCaught());
+        if (messagePorts) {
+            for (size_t i = 0; i < messagePorts->size(); i++)
+                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get()), i);
+        }
+        if (arrayBuffers) {
+            for (size_t i = 0; i < arrayBuffers->size(); i++)  {
+                v8::Handle<v8::Object> v8ArrayBuffer = V8ArrayBuffer::wrap(arrayBuffers->at(i).get());
+                // Coalesce multiple occurences of the same buffer to the first index.
+                if (!m_transferredArrayBuffers.contains(v8ArrayBuffer))
+                    m_transferredArrayBuffers.set(v8ArrayBuffer, i);
+            }
+        }
     }
 
     Status serialize(v8::Handle<v8::Value> value)
@@ -665,13 +708,82 @@ private:
 
     static StateBase* newArrayState(v8::Handle<v8::Array> array, StateBase* next)
     {
-        // FIXME: use plain Array state when we can quickly check that
-        // an array is not sparse and has only indexed properties.
-        return new SparseArrayState(array, next);
+        ASSERT(!object.IsEmpty());
+        ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(object);
+        if (!arrayBufferView)
+            return 0;
+        if (!arrayBufferView->buffer())
+            return handleError(DataCloneError, next);
+        v8::Handle<v8::Value> underlyingBuffer = toV8(arrayBufferView->buffer());
+        if (underlyingBuffer.IsEmpty())
+            return handleError(DataCloneError, next);
+        StateBase* stateOut = doSerialize(underlyingBuffer, 0);
+        if (stateOut)
+            return handleError(DataCloneError, next);
+        m_writer.writeArrayBufferView(*arrayBufferView);
+        // This should be safe: we serialize something that we know to be a wrapper (see
+        // the toV8 call above), so the call to doSerialize above should neither cause
+        // the stack to overflow nor should it have the potential to reach this
+        // ArrayBufferView again. We do need to grey the underlying buffer before we grey
+        // its view, however; ArrayBuffers may be shared, so they need to be given reference IDs,
+        // and an ArrayBufferView cannot be constructed without a corresponding ArrayBuffer
+        // (or without an additional tag that would allow us to do two-stage construction
+        // like we do for Objects and Arrays).
+        greyObject(object);
+        return 0;
     }
 
-    static StateBase* newObjectState(v8::Handle<v8::Object> object, StateBase* next)
+    StateBase* writeArrayBuffer(v8::Handle<v8::Value> value, StateBase* next)
     {
+        ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(value.As<v8::Object>());
+        if (!arrayBuffer)
+            return 0;
+        if (arrayBuffer->isNeutered())
+            return handleError(InvalidStateError, next);
+        ASSERT(!m_transferredArrayBuffers.contains(value.As<v8::Object>()));
+        m_writer.writeArrayBuffer(*arrayBuffer);
+        return 0;
+    }
+
+    StateBase* writeTransferredArrayBuffer(v8::Handle<v8::Value> value, uint32_t index, StateBase* next)
+    {
+        ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(value.As<v8::Object>());
+        if (!arrayBuffer)
+            return 0;
+        if (arrayBuffer->isNeutered())
+            return handleError(DataCloneError, next);
+        m_writer.writeTransferredArrayBuffer(index);
+        return 0;
+    }
+
+    static bool shouldSerializeDensely(uint32_t length, uint32_t propertyCount) 
+    {
+        // Let K be the cost of serializing all property values that are there
+        // Cost of serializing sparsely: 5*propertyCount + K (5 bytes per uint32_t key)
+        // Cost of serializing densely: K + 1*(length - propertyCount) (1 byte for all properties that are not there)
+        // so densely is better than sparsly whenever 6*propertyCount > length
+        return 6 * propertyCount >= length;
+    }
+
+    StateBase* startArrayState(v8::Handle<v8::Array> array, StateBase* next)
+    {
+        v8::Handle<v8::Array> propertyNames = array->GetPropertyNames();
+        if (StateBase* newState = checkException(next))
+            return newState;
+        uint32_t length = array->Length();
+
+        if (shouldSerializeDensely(length, propertyNames->Length())) {
+            m_writer.writeGenerateFreshDenseArray(length);
+            return push(new DenseArrayState(array, propertyNames, next));
+        }
+
+        m_writer.writeGenerateFreshSparseArray(length);
+        return push(new SparseArrayState(array, propertyNames, next));
+    }
+
+    StateBase* startObjectState(v8::Handle<v8::Object> object, StateBase* next)
+    {
+        m_writer.writeGenerateFreshObject();
         // FIXME: check not a wrapper
         return new ObjectState(object, next);
     }
@@ -680,11 +792,29 @@ private:
     v8::TryCatch& m_tryCatch;
     int m_depth;
     Status m_status;
+    typedef V8ObjectMap<v8::Object, uint32_t> ObjectPool;
+    ObjectPool m_objectPool;
+    ObjectPool m_transferredMessagePorts;
+    ObjectPool m_transferredArrayBuffers;
+    uint32_t m_nextObjectReference;
 };
 
 Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, StateBase* next)
 {
-    if (value.IsEmpty())
+    if (m_execDepth + (next ? next->execDepth() : 0) > 1) {
+        m_writer.writeNull();
+        return 0;
+    }
+    m_writer.writeReferenceCount(m_nextObjectReference);
+    uint32_t objectReference;
+    uint32_t arrayBufferIndex;
+    if ((value->IsObject() || value->IsDate() || value->IsRegExp())
+        && m_objectPool.tryGet(value.As<v8::Object>(), &objectReference)) {
+        // Note that IsObject() also detects wrappers (eg, it will catch the things
+        // that we grey and write below).
+        ASSERT(!value->IsString());
+        m_writer.writeObjectReference(objectReference);
+    } else if (value.IsEmpty())
         return reportFailure(next);
     if (value->IsUndefined())
         m_writer.writeUndefined();
@@ -704,20 +834,48 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         m_writer.writeNumber(value.As<v8::Number>()->Value());
     else if (value->IsString())
         writeString(value);
-    else if (value->IsArray())
-        return push(newArrayState(value.As<v8::Array>(), next));
-    else if (V8File::HasInstance(value))
-        writeFile(value);
-    else if (V8Blob::HasInstance(value))
-        writeBlob(value);
-    else if (V8FileList::HasInstance(value))
-        writeFileList(value);
-    else if (V8ImageData::HasInstance(value))
-        writeImageData(value);
-    else if (value->IsRegExp())
-        writeRegExp(value);
-    else if (value->IsObject())
-        return push(newObjectState(value.As<v8::Object>(), next));
+    else if (V8MessagePort::HasInstance(value)) {
+        uint32_t messagePortIndex;
+        if (m_transferredMessagePorts.tryGet(value.As<v8::Object>(), &messagePortIndex))
+                m_writer.writeTransferredMessagePort(messagePortIndex);
+            else
+                return handleError(DataCloneError, next);
+    } else if (V8ArrayBuffer::HasInstance(value) && m_transferredArrayBuffers.tryGet(value.As<v8::Object>(), &arrayBufferIndex))
+        return writeTransferredArrayBuffer(value, arrayBufferIndex, next);
+    else {
+        v8::Handle<v8::Object> jsObject = value.As<v8::Object>();
+        if (jsObject.IsEmpty())
+            return handleError(DataCloneError, next);
+        greyObject(jsObject);
+        if (value->IsDate())
+            m_writer.writeDate(value->NumberValue());
+        else if (value->IsStringObject())
+            writeStringObject(value);
+        else if (value->IsNumberObject())
+            writeNumberObject(value);
+        else if (value->IsBooleanObject())
+            writeBooleanObject(value);
+        else if (value->IsArray()) {
+            return startArrayState(value.As<v8::Array>(), next);
+        } else if (V8File::HasInstance(value))
+            writeFile(value);
+        else if (V8Blob::HasInstance(value))
+            writeBlob(value);
+        else if (V8FileList::HasInstance(value))
+            writeFileList(value);
+        else if (V8ImageData::HasInstance(value))
+            writeImageData(value);
+        else if (value->IsRegExp())
+            writeRegExp(value);
+        else if (V8ArrayBuffer::HasInstance(value))
+            return writeArrayBuffer(value, next);
+        else if (value->IsObject()) {
+            if (isHostObject(jsObject) || jsObject->IsCallable() || value->IsNativeError())
+                return handleError(DataCloneError, next);
+            return startObjectState(jsObject, next);
+        } else
+            return handleError(DataCloneError, next);
+    }
     return 0;
 }
 
@@ -726,9 +884,18 @@ class CompositeCreator {
 public:
     virtual ~CompositeCreator() { }
 
-    virtual bool createArray(uint32_t length, v8::Handle<v8::Value>* value) = 0;
-    virtual bool createObject(uint32_t numProperties, v8::Handle<v8::Value>* value) = 0;
-    virtual bool createSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value) = 0;
+    virtual bool consumeTopOfStack(v8::Handle<v8::Value>*) = 0;
+    virtual uint32_t objectReferenceCount() = 0;
+    virtual void pushObjectReference(const v8::Handle<v8::Value>&) = 0;
+    virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>*) = 0;
+    virtual bool tryGetTransferredMessagePort(uint32_t index, v8::Handle<v8::Value>*) = 0;
+    virtual bool tryGetTransferredArrayBuffer(uint32_t index, v8::Handle<v8::Value>*) = 0;
+    virtual bool newSparseArray(uint32_t length) = 0;
+    virtual bool newDenseArray(uint32_t length) = 0;
+    virtual bool newObject() = 0;
+    virtual bool completeObject(uint32_t numProperties, v8::Handle<v8::Value>*) = 0;
+    virtual bool completeSparseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>*) = 0;
+    virtual bool completeDenseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>*) = 0;
 };
 
 // Reader is responsible for deserializing primitive types and
@@ -834,6 +1001,90 @@ public:
                 return false;
             break;
         }
+        case DenseArrayTag: {
+            uint32_t numProperties;
+            uint32_t length;
+            if (!doReadUint32(&numProperties))
+                return false;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.completeDenseArray(numProperties, length, value))
+                return false;
+            break;
+        }
+        case ArrayBufferViewTag: {
+            if (m_version <= 0)
+                return false;
+            if (!readArrayBufferView(value, creator))
+                return false;
+            creator.pushObjectReference(*value);
+            break;
+        }
+        case ArrayBufferTag: {
+            if (m_version <= 0)
+                return false;
+            if (!readArrayBuffer(value))
+                return false;
+            creator.pushObjectReference(*value);
+            break;
+        }
+        case GenerateFreshObjectTag: {
+            if (m_version <= 0)
+                return false;
+            if (!creator.newObject())
+                return false;
+            return true;
+        }
+        case GenerateFreshSparseArrayTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t length;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.newSparseArray(length))
+                return false;
+            return true;
+        }
+        case GenerateFreshDenseArrayTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t length;
+            if (!doReadUint32(&length))
+                return false;
+            if (!creator.newDenseArray(length))
+                return false;
+            return true;
+        }
+        case MessagePortTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t index;
+            if (!doReadUint32(&index))
+                return false;
+            if (!creator.tryGetTransferredMessagePort(index, value))
+                return false;
+            break;
+        }
+        case ArrayBufferTransferTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t index;
+            if (!doReadUint32(&index))
+                return false;
+            if (!creator.tryGetTransferredArrayBuffer(index, value))
+                return false;
+            break;
+        }
+        case ObjectReferenceTag: {
+            if (m_version <= 0)
+                return false;
+            uint32_t reference;
+            if (!doReadUint32(&reference))
+                return false;
+            if (!creator.tryGetObjectFromObjectReference(reference, value))
+                return false;
+            break;
+        }
         default:
             return false;
         }
@@ -930,6 +1181,109 @@ private:
         m_position += pixelDataLength;
         *value = toV8(imageData.release());
         return true;
+    }
+
+    PassRefPtr<ArrayBuffer> doReadArrayBuffer()
+    {
+        uint32_t byteLength;
+        if (!doReadUint32(&byteLength))
+            return 0;
+        if (m_position + byteLength > m_length)
+            return 0;
+        const void* bufferStart = m_buffer + m_position;
+        RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::create(bufferStart, byteLength);
+        m_position += byteLength;
+        return arrayBuffer.release();
+    }
+
+    bool readArrayBuffer(v8::Handle<v8::Value>* value)
+    {
+        RefPtr<ArrayBuffer> arrayBuffer = doReadArrayBuffer();
+        if (!arrayBuffer)
+            return false;
+        *value = toV8(arrayBuffer.release());
+        return true;
+    }
+
+    bool readArrayBufferView(v8::Handle<v8::Value>* value, CompositeCreator& creator)
+    {
+        ArrayBufferViewSubTag subTag;
+        uint32_t byteOffset;
+        uint32_t byteLength;
+        RefPtr<ArrayBuffer> arrayBuffer;
+        v8::Handle<v8::Value> arrayBufferV8Value;
+        if (!readArrayBufferViewSubTag(&subTag))
+            return false;
+        if (!doReadUint32(&byteOffset))
+            return false;
+        if (!doReadUint32(&byteLength))
+            return false;
+        if (!creator.consumeTopOfStack(&arrayBufferV8Value))
+            return false;
+        if (arrayBufferV8Value.IsEmpty()) 
+            return false;
+        arrayBuffer = V8ArrayBuffer::toNative(arrayBufferV8Value.As<v8::Object>());
+        if (!arrayBuffer)
+            return false;
+        switch (subTag) {
+        case ByteArrayTag:
+            *value = toV8(Int8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        case UnsignedByteArrayTag:
+            *value = toV8(Uint8Array::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        case ShortArrayTag: {
+            uint32_t shortLength = byteLength / sizeof(int16_t);
+            if (shortLength * sizeof(int16_t) != byteLength)
+                return false;
+            *value = toV8(Int16Array::create(arrayBuffer.release(), byteOffset, shortLength));
+            break;
+        }
+        case UnsignedShortArrayTag: {
+            uint32_t shortLength = byteLength / sizeof(uint16_t);
+            if (shortLength * sizeof(uint16_t) != byteLength)
+                return false;
+            *value = toV8(Uint16Array::create(arrayBuffer.release(), byteOffset, shortLength));
+            break;
+        }
+        case IntArrayTag: {
+            uint32_t intLength = byteLength / sizeof(int32_t);
+            if (intLength * sizeof(int32_t) != byteLength)
+                return false;
+            *value = toV8(Int32Array::create(arrayBuffer.release(), byteOffset, intLength));
+            break;
+        }
+        case UnsignedIntArrayTag: {
+            uint32_t intLength = byteLength / sizeof(uint32_t);
+            if (intLength * sizeof(uint32_t) != byteLength)
+                return false;
+            *value = toV8(Uint32Array::create(arrayBuffer.release(), byteOffset, intLength));
+            break;
+        }
+        case FloatArrayTag: {
+            uint32_t floatLength = byteLength / sizeof(float);
+            if (floatLength * sizeof(float) != byteLength)
+                return false;
+            *value = toV8(Float32Array::create(arrayBuffer.release(), byteOffset, floatLength));
+            break;
+        }
+        case DoubleArrayTag: {
+            uint32_t floatLength = byteLength / sizeof(double);
+            if (floatLength * sizeof(double) != byteLength)
+                return false;
+            *value = toV8(Float64Array::create(arrayBuffer.release(), byteOffset, floatLength));
+            break;
+        }
+        case DataViewTag:
+            *value = toV8(DataView::create(arrayBuffer.release(), byteOffset, byteLength));
+            break;
+        default:
+            return false;
+        }
+        // The various *Array::create() methods will return null if the range the view expects is
+        // mismatched with the range the buffer can provide or if the byte offset is not aligned
+        // to the size of the element type.
+        return !value->IsEmpty();
     }
 
     bool readRegExp(v8::Handle<v8::Value>* value)
@@ -1039,10 +1393,18 @@ private:
     unsigned m_position;
 };
 
+
+typedef Vector<WTF::ArrayBufferContents, 1> ArrayBufferContentsArray;
+
 class Deserializer : public CompositeCreator {
 public:
-    explicit Deserializer(Reader& reader)
+    explicit Deserializer(Reader& reader, 
+                          MessagePortArray* messagePorts, ArrayBufferContentsArray* arrayBufferContents)
         : m_reader(reader)
+        , m_transferredMessagePorts(messagePorts)
+        , m_arrayBufferContents(arrayBufferContents)
+        , m_arrayBuffers(arrayBufferContents ? arrayBufferContents->size() : 0)
+        , m_version(0)
     {
     }
 
@@ -1089,6 +1451,73 @@ public:
         return initializeObject(array, numProperties, value);
     }
 
+    virtual bool completeDenseArray(uint32_t numProperties, uint32_t length, v8::Handle<v8::Value>* value)
+    {
+        v8::Local<v8::Array> array;
+        if (m_version > 0) {
+            v8::Local<v8::Value> composite;
+            if (!closeComposite(&composite))
+                return false;
+            array = composite.As<v8::Array>();
+        }
+        if (array.IsEmpty())
+            return false;
+        if (!initializeObject(array, numProperties, value))
+            return false;
+        if (length > stackDepth())
+            return false;
+        for (unsigned i = 0, stackPos = stackDepth() - length; i < length; i++, stackPos++) {
+            v8::Local<v8::Value> elem = element(stackPos);
+            if (!elem->IsUndefined())
+                array->Set(i, elem);
+        }
+        pop(length);
+        return true;
+    }
+
+    virtual void pushObjectReference(const v8::Handle<v8::Value>& object)
+    {
+        m_objectPool.append(object);
+    }
+
+    virtual bool tryGetTransferredMessagePort(uint32_t index, v8::Handle<v8::Value>* object)
+    {
+        if (!m_transferredMessagePorts)
+            return false;
+        if (index >= m_transferredMessagePorts->size())
+            return false;
+        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get());
+        return true;
+    }
+
+    virtual bool tryGetTransferredArrayBuffer(uint32_t index, v8::Handle<v8::Value>* object)
+    {
+        if (!m_arrayBufferContents)
+            return false;
+        if (index >= m_arrayBuffers.size())
+            return false;
+        v8::Handle<v8::Object> result = m_arrayBuffers.at(index);
+        if (result.IsEmpty()) {
+            result = V8ArrayBuffer::wrap(ArrayBuffer::create(m_arrayBufferContents->at(index)).get());
+            m_arrayBuffers[index] = result;
+        }
+        *object = result;
+        return true;
+    }
+
+    virtual bool tryGetObjectFromObjectReference(uint32_t reference, v8::Handle<v8::Value>* object)
+    {
+        if (reference >= m_objectPool.size())
+            return false;
+        *object = m_objectPool[reference];
+        return object;
+    }
+
+    virtual uint32_t objectReferenceCount()
+    {
+        return m_objectPool.size();
+    }
+
 private:
     bool initializeObject(v8::Handle<v8::Object> object, uint32_t numProperties, v8::Handle<v8::Value>* value)
     {
@@ -1133,6 +1562,12 @@ private:
 
     Reader& m_reader;
     Vector<v8::Local<v8::Value> > m_stack;
+    Vector<v8::Handle<v8::Value> > m_objectPool;
+    Vector<uint32_t> m_openCompositeReferenceStack;
+    MessagePortArray* m_transferredMessagePorts;
+    ArrayBufferContentsArray* m_arrayBufferContents;
+    Vector<v8::Handle<v8::Object> > m_arrayBuffers;
+    uint32_t m_version;
 };
 
 } // namespace
@@ -1152,15 +1587,17 @@ void SerializedScriptValue::deserializeAndSetProperty(v8::Handle<v8::Object> obj
     deserializeAndSetProperty(object, propertyName, attribute, value.get());
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value, bool& didThrow)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value,
+                                                                MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
+                                                                bool& didThrow)
 {
-    return adoptRef(new SerializedScriptValue(value, didThrow));
+    return adoptRef(new SerializedScriptValue(value, messagePorts, arrayBuffers, didThrow));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(v8::Handle<v8::Value> value)
 {
     bool didThrow;
-    return adoptRef(new SerializedScriptValue(value, didThrow));
+    return adoptRef(new SerializedScriptValue(value, 0, 0, didThrow));
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::createFromWire(String data)
@@ -1216,14 +1653,60 @@ SerializedScriptValue::SerializedScriptValue()
 {
 }
 
-SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& didThrow)
+static void neuterBinding(void* domObject) 
+{
+    DOMDataList& allStores = DOMDataStore::allStores();
+    for (size_t i = 0; i < allStores.size(); i++) {
+        v8::Handle<v8::Object> obj = allStores[i]->domObjectMap().get(domObject);
+        if (!obj.IsEmpty())
+            obj->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
+    }
+}
+
+PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValue::transferArrayBuffers(ArrayBufferArray& arrayBuffers, bool& didThrow) 
+{
+    for (size_t i = 0; i < arrayBuffers.size(); i++) {
+        if (arrayBuffers[i]->isNeutered()) {
+            throwError(INVALID_STATE_ERR);
+            didThrow = true;
+            return nullptr;
+        }
+    }
+
+    OwnPtr<ArrayBufferContentsArray> contents = adoptPtr(new ArrayBufferContentsArray(arrayBuffers.size()));
+
+    HashSet<ArrayBuffer*> visited;
+    for (size_t i = 0; i < arrayBuffers.size(); i++) {
+        Vector<RefPtr<ArrayBufferView> > neuteredViews;
+
+        if (visited.contains(arrayBuffers[i].get()))
+            continue;
+        visited.add(arrayBuffers[i].get());
+
+        bool result = arrayBuffers[i]->transfer(contents->at(i), neuteredViews);
+        if (!result) {
+            throwError(INVALID_STATE_ERR);
+            didThrow = true;
+            return nullptr;
+        }
+
+        neuterBinding(arrayBuffers[i].get());
+        for (size_t j = 0; j < neuteredViews.size(); j++)
+            neuterBinding(neuteredViews[j].get());
+    }
+    return contents.release();
+}
+
+SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, 
+                                             MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers,
+                                             bool& didThrow)
 {
     didThrow = false;
     Writer writer;
     Serializer::Status status;
     {
         v8::TryCatch tryCatch;
-        Serializer serializer(writer, tryCatch);
+        Serializer serializer(writer, messagePorts, arrayBuffers, tryCatch);
         status = serializer.serialize(value);
         if (status == Serializer::JSException) {
             // If there was a JS exception thrown, re-throw it.
@@ -1238,13 +1721,24 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value, bool& 
         didThrow = true;
         throwError(NOT_SUPPORTED_ERR);
         return;
-    }
-    if (status == Serializer::JSFailure) {
+    case Serializer::InvalidStateError:
+        didThrow = true;
+        throwError(INVALID_STATE_ERR);
+        return;
+    case Serializer::JSFailure:
         // If there was a JS failure (but no exception), there's not
         // much we can do except for unwinding the C++ stack by
         // pretending there was a JS exception.
         didThrow = true;
         return;
+    case Serializer::Success:
+        m_data = String(StringImpl::adopt(writer.data())).isolatedCopy();
+        if (arrayBuffers)
+            m_arrayBufferContentsArray = transferArrayBuffers(*arrayBuffers, didThrow);
+        return;
+    case Serializer::JSException:
+        // We should never get here because this case was handled above.
+        break;
     }
     ASSERT(status == Serializer::Success);
     m_data = String(StringImpl::adopt(writer.data())).crossThreadString();
@@ -1261,7 +1755,7 @@ v8::Handle<v8::Value> SerializedScriptValue::deserialize()
         return v8::Null();
     COMPILE_ASSERT(sizeof(BufferValueType) == 2, BufferValueTypeIsTwoBytes);
     Reader reader(reinterpret_cast<const uint8_t*>(m_data.impl()->characters()), 2 * m_data.length());
-    Deserializer deserializer(reader);
+    Deserializer deserializer(reader, messagePorts, m_arrayBufferContentsArray.get());
     return deserializer.deserialize();
 }
 

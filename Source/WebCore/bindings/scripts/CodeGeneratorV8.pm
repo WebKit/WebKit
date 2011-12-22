@@ -128,6 +128,10 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
+    if (IsTypedArrayType($type)) {
+        AddToImplIncludes("wtf/${type}.h");
+        return;
+    }
     if (!$codeGenerator->IsPrimitiveType($type) and !$codeGenerator->IsStringType($type) and !$codeGenerator->AvoidInclusionOfType($type) and $type ne "Date") {
         # default, include the same named file
         $implIncludes{GetV8HeaderName(${type})} = 1;
@@ -464,6 +468,7 @@ sub GetHeaderClassInclude
     if ($className =~ /SVGPathSeg/) {
         $className =~ s/Abs|Rel//;
     }
+    return "wtf/${className}.h" if IsTypedArrayType($className);
     return "" if ($codeGenerator->AvoidInclusionOfType($className));
     return "${className}.h";
 }
@@ -1703,6 +1708,17 @@ sub GenerateImplementationMasqueradesAsUndefined
     }
 }
 
+sub IsTypedArrayType
+{
+    my $type = shift;
+    return 1 if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView"));
+    return 1 if (($type eq "Uint8Array") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
+    return 1 if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array"));
+    return 1 if (($type eq "Float32Array") or ($type eq "Float64Array"));
+    return 0;
+}
+
+
 sub GenerateImplementation
 {
     my $object = shift;
@@ -2216,6 +2232,28 @@ END
     }
 
     GenerateToV8Converters($dataNode, $interfaceName, $className, $nativeType, $serializedAttribute);
+
+    if (IsSubType($dataNode, "ArrayBufferView") && IsTypedArrayType($interfaceName) && not $interfaceName eq "ArrayBufferView") {
+        push(@implContent, <<END);
+    }
+    namespace WTF {
+    void ${nativeType}::neuterBinding(ScriptExecutionContext*) {
+        v8::Handle<v8::Value> bound = toV8(this);
+        v8::Handle<v8::Object> object(bound.As<v8::Object>());
+        object->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
+    }
+    }
+    namespace WebCore {
+END
+    } elsif (IsSubType($dataNode, "ArrayBufferView") && not $interfaceName eq "ArrayBufferView") {
+        push(@implContent, <<END);
+    void ${nativeType}::neuterBinding(ScriptExecutionContext*) {
+        v8::Handle<v8::Value> bound = toV8(this);
+        v8::Handle<v8::Object> object(bound.As<v8::Object>());
+        object->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
+    }
+END
+    }
 
     push(@implContent, <<END);
 

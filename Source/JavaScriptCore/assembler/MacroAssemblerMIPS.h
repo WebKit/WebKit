@@ -576,6 +576,11 @@ public:
         }
     }
 
+    void load16Unaligned(BaseIndex address, RegisterID dest)
+    {
+        load16(address, dest);
+    }
+
     void load32WithUnalignedHalfWords(BaseIndex address, RegisterID dest)
     {
         if (address.offset >= -32768 && address.offset <= 32764
@@ -1813,6 +1818,11 @@ public:
     void nop()
     {
         m_assembler.nop();
+    }
+
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(reinterpret_cast<void(*)()>(MIPSAssembler::readCallTarget(call.dataLocation())));
     }
 
 private:

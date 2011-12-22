@@ -29,7 +29,6 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
-#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
@@ -49,6 +48,7 @@
 #include "XMLHttpRequest.h"
 #include <runtime/Error.h>
 #include <interpreter/Interpreter.h>
+#include <wtf/ArrayBuffer.h>
 
 using namespace JSC;
 
@@ -56,7 +56,7 @@ namespace WebCore {
 
 void JSXMLHttpRequest::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSXMLHttpRequest* thisObject = static_cast<JSXMLHttpRequest*>(cell);
+    JSXMLHttpRequest* thisObject = jsCast<JSXMLHttpRequest*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

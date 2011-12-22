@@ -27,7 +27,6 @@
 #ifndef JSArrayBufferViewHelper_h
 #define JSArrayBufferViewHelper_h
 
-#include "ArrayBufferView.h"
 #include "ExceptionCode.h"
 #include "JSArrayBuffer.h"
 #include "JSDOMBinding.h"
@@ -36,6 +35,7 @@
 #include <runtime/Error.h>
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
+#include <wtf/ArrayBufferView.h>
 
 namespace WebCore {
 
@@ -51,9 +51,9 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionF
         unsigned offset = 0;
         if (exec->argumentCount() == 2)
             offset = exec->argument(1).toInt32(exec);
-        ExceptionCode ec = 0;
-        impl->set(array, offset, ec);
-        setDOMException(exec, ec);
+        if (!impl->set(array, offset))
+            setDOMException(exec, INDEX_SIZE_ERR);
+
         return JSC::jsUndefined();
     }
 

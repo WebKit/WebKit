@@ -164,7 +164,7 @@ namespace JSC {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
-        bool isCall;
+        CallLinkInfo::CallType callType;
         unsigned bytecodeIndex;
     };
 
@@ -254,6 +254,8 @@ namespace JSC {
             return jit.privateCompileCTINativeCall(globalData, func);
         }
 
+        static void resetPatchGetById(RepatchBuffer&, StructureStubInfo*);
+        static void resetPatchPutById(RepatchBuffer&, StructureStubInfo*);
         static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
         static void patchPutByIdReplace(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress, bool direct);
         static void patchMethodCallProto(JSGlobalData&, CodeBlock* codeblock, MethodCallLinkInfo&, JSObject*, Structure*, JSObject*, ReturnAddressPtr);
@@ -264,7 +266,7 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*, CodeSpecializationKind);
+        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, JSGlobalData*, CodeSpecializationKind);
 
     private:
         struct JSRInfo {
@@ -296,24 +298,26 @@ namespace JSC {
         CodeRef privateCompileCTINativeCall(JSGlobalData*, NativeFunction);
         void privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress);
 
+        static bool isDirectPutById(StructureStubInfo*);
+
         void addSlowCase(Jump);
         void addSlowCase(JumpList);
         void addSlowCase();
         void addJump(Jump, int);
         void emitJumpSlowToHot(Jump, int);
 
-        void compileOpCall(OpcodeID, Instruction* instruction, unsigned callLinkInfoIndex);
-        void compileOpCallVarargs(Instruction* instruction);
-        void compileOpCallInitializeCallFrame();
-        void compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex, OpcodeID opcodeID);
-        void compileOpCallVarargsSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter);
+        void compileOpCall(OpcodeID, Instruction*, unsigned callLinkInfoIndex);
+        void compileOpCallSlowCase(OpcodeID, Instruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
+        void compileLoadVarargs(Instruction*);
+        void compileCallEval();
+        void compileCallEvalSlowCase(Vector<SlowCaseEntry>::iterator&);
 
         enum CompileOpStrictEqType { OpStrictEq, OpNStrictEq };
         void compileOpStrictEq(Instruction* instruction, CompileOpStrictEqType type);
         bool isOperandConstantImmediateDouble(unsigned src);
         
-        void emitLoadDouble(unsigned index, FPRegisterID value);
-        void emitLoadInt32ToDouble(unsigned index, FPRegisterID value);
+        void emitLoadDouble(int index, FPRegisterID value);
+        void emitLoadInt32ToDouble(int index, FPRegisterID value);
         Jump emitJumpIfNotObject(RegisterID structureReg);
         Jump emitJumpIfNotType(RegisterID baseReg, RegisterID scratchReg, JSType);
 
@@ -341,33 +345,32 @@ namespace JSC {
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);
 
-        void emitLoadTag(unsigned index, RegisterID tag);
-        void emitLoadPayload(unsigned index, RegisterID payload);
+        void emitLoadTag(int index, RegisterID tag);
+        void emitLoadPayload(int index, RegisterID payload);
 
         void emitLoad(const JSValue& v, RegisterID tag, RegisterID payload);
-        void emitLoad(unsigned index, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
-        void emitLoad2(unsigned index1, RegisterID tag1, RegisterID payload1, unsigned index2, RegisterID tag2, RegisterID payload2);
+        void emitLoad(int index, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
+        void emitLoad2(int index1, RegisterID tag1, RegisterID payload1, int index2, RegisterID tag2, RegisterID payload2);
 
-        void emitStore(unsigned index, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
-        void emitStore(unsigned index, const JSValue constant, RegisterID base = callFrameRegister);
-        void emitStoreInt32(unsigned index, RegisterID payload, bool indexIsInt32 = false);
-        void emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32 = false);
-        void emitStoreAndMapInt32(unsigned index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength);
-        void emitStoreCell(unsigned index, RegisterID payload, bool indexIsCell = false);
-        void emitStoreBool(unsigned index, RegisterID payload, bool indexIsBool = false);
-        void emitStoreDouble(unsigned index, FPRegisterID value);
+        void emitStore(int index, RegisterID tag, RegisterID payload, RegisterID base = callFrameRegister);
+        void emitStore(int index, const JSValue constant, RegisterID base = callFrameRegister);
+        void emitStoreInt32(int index, RegisterID payload, bool indexIsInt32 = false);
+        void emitStoreInt32(int index, TrustedImm32 payload, bool indexIsInt32 = false);
+        void emitStoreAndMapInt32(int index, RegisterID tag, RegisterID payload, bool indexIsInt32, size_t opcodeLength);
+        void emitStoreCell(int index, RegisterID payload, bool indexIsCell = false);
+        void emitStoreBool(int index, RegisterID payload, bool indexIsBool = false);
+        void emitStoreDouble(int index, FPRegisterID value);
 
         bool isLabeled(unsigned bytecodeOffset);
-        void map(unsigned bytecodeOffset, unsigned virtualRegisterIndex, RegisterID tag, RegisterID payload);
+        void map(unsigned bytecodeOffset, int virtualRegisterIndex, RegisterID tag, RegisterID payload);
         void unmap(RegisterID);
         void unmap();
-        bool isMapped(unsigned virtualRegisterIndex);
-        bool getMappedPayload(unsigned virtualRegisterIndex, RegisterID& payload);
-        bool getMappedTag(unsigned virtualRegisterIndex, RegisterID& tag);
+        bool isMapped(int virtualRegisterIndex);
+        bool getMappedPayload(int virtualRegisterIndex, RegisterID& payload);
+        bool getMappedTag(int virtualRegisterIndex, RegisterID& tag);
 
-        void emitJumpSlowCaseIfNotJSCell(unsigned virtualRegisterIndex);
-        void emitJumpSlowCaseIfNotJSCell(unsigned virtualRegisterIndex, RegisterID tag);
-        void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, unsigned virtualRegisterIndex);
+        void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex);
+        void emitJumpSlowCaseIfNotJSCell(int virtualRegisterIndex, RegisterID tag);
 
         void compileGetByIdHotPath();
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
@@ -814,7 +817,6 @@ namespace JSC {
         void emit_op_jngreatereq(Instruction*);
         void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
-        void emit_op_load_varargs(Instruction*);
         void emit_op_loop(Instruction*);
         void emit_op_loop_hint(Instruction*);
         void emit_op_loop_if_less(Instruction*);
@@ -917,7 +919,6 @@ namespace JSC {
         void emitSlow_op_jngreater(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jngreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_load_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_lesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_greater(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -986,7 +987,7 @@ namespace JSC {
             ASSERT(!iter->from.isSet());
             ++iter;
         }
-        void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int vReg);
+        void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, int virtualRegisterIndex);
 
         Jump checkStructure(RegisterID reg, Structure* structure);
 
@@ -1067,7 +1068,7 @@ namespace JSC {
 #if USE(JSVALUE32_64)
         unsigned m_jumpTargetIndex;
         unsigned m_mappedBytecodeOffset;
-        unsigned m_mappedVirtualRegisterIndex;
+        int m_mappedVirtualRegisterIndex;
         RegisterID m_mappedTag;
         RegisterID m_mappedPayload;
 #else

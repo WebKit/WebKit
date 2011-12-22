@@ -176,7 +176,6 @@ public:
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         // It's not safe to call clearScript until all the cleanup tasks posted by functions initiated by WorkerThreadShutdownStartTask have completed.
         workerContext->clearScript();
-        workerContext->thread()->runLoop().terminate();
     }
 
     virtual bool isCleanupTask() const { return true; }
@@ -233,13 +232,9 @@ void WorkerThread::stop()
 #if ENABLE(DATABASE)
         DatabaseTracker::tracker().interruptAllDatabasesForContext(m_workerContext.get());
 #endif
-
-    // FIXME: Rudely killing the thread won't work when we allow nested workers, because they will try to post notifications of their destruction.
-    // This can likely use the same mechanism as used for databases above.
-
         m_runLoop.postTask(WorkerThreadShutdownStartTask::create());
-    } else
-        m_runLoop.terminate();
+    }
+    m_runLoop.terminate();
 }
 
 } // namespace WebCore

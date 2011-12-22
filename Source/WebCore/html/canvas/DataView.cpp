@@ -27,6 +27,7 @@
 #include "DataView.h"
 
 #include "CheckedInt.h"
+#include "ExceptionCode.h"
 
 namespace {
 
@@ -39,6 +40,14 @@ union Value {
 }
 
 namespace WebCore {
+
+PassRefPtr<DataView> DataView::create(unsigned length)
+{
+    RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(length, sizeof(uint8_t));
+    if (!buffer.get())
+        return 0;
+    return create(buffer, 0, length);
+}
 
 PassRefPtr<DataView> DataView::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned byteLength)
 {
@@ -225,6 +234,12 @@ void DataView::setFloat32(unsigned byteOffset, float value, bool littleEndian, E
 void DataView::setFloat64(unsigned byteOffset, double value, bool littleEndian, ExceptionCode& ec)
 {
     setData<double>(byteOffset, value, littleEndian, ec);
+}
+
+void DataView::neuter()
+{
+    ArrayBufferView::neuter();
+    m_byteLength = 0;
 }
 
 }

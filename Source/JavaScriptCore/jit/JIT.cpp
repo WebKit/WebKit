@@ -78,7 +78,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
     , m_mappedBytecodeOffset((unsigned)-1)
-    , m_mappedVirtualRegisterIndex((unsigned)-1)
+    , m_mappedVirtualRegisterIndex(RegisterFile::ReturnPC)
     , m_mappedTag((RegisterID)-1)
     , m_mappedPayload((RegisterID)-1)
 #else
@@ -99,7 +99,7 @@ void JIT::emitOptimizationCheck(OptimizationCheckKind kind)
     if (!shouldEmitProfiling())
         return;
     
-    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Heuristics::executionCounterIncrementForLoop : Heuristics::executionCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfExecuteCounter()));
+    Jump skipOptimize = branchAdd32(Signed, TrustedImm32(kind == LoopOptimizationCheck ? Options::executionCounterIncrementForLoop : Options::executionCounterIncrementForReturn), AbsoluteAddress(m_codeBlock->addressOfExecuteCounter()));
     JITStubCall stubCall(this, kind == LoopOptimizationCheck ? cti_optimize_from_loop : cti_optimize_from_ret);
     if (kind == LoopOptimizationCheck)
         stubCall.addArgument(Imm32(m_bytecodeOffset));
@@ -289,7 +289,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jngreatereq)
         DEFINE_OP(op_jsr)
         DEFINE_OP(op_jtrue)
-        DEFINE_OP(op_load_varargs)
         DEFINE_OP(op_loop)
         DEFINE_OP(op_loop_hint)
         DEFINE_OP(op_loop_if_less)
@@ -465,7 +464,6 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_jngreater)
         DEFINE_SLOWCASE_OP(op_jngreatereq)
         DEFINE_SLOWCASE_OP(op_jtrue)
-        DEFINE_SLOWCASE_OP(op_load_varargs)
         DEFINE_SLOWCASE_OP(op_loop_if_less)
         DEFINE_SLOWCASE_OP(op_loop_if_lesseq)
         DEFINE_SLOWCASE_OP(op_loop_if_greater)
@@ -531,14 +529,14 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 #if ENABLE(VALUE_PROFILER)
     m_canBeOptimized = m_codeBlock->canCompileWithDFG();
 #endif
-    
+
     // Just add a little bit of randomness to the codegen
     if (m_randomGenerator.getUint32() & 1)
         nop();
 
-    // Could use a pop_m, but would need to offset the following instruction if so.
     preserveReturnAddressAfterCall(regT2);
     emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 
     Label beginLabel(this);
 
@@ -559,18 +557,18 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 #if ENABLE(VALUE_PROFILER)
         ASSERT(m_bytecodeOffset == (unsigned)-1);
         if (shouldEmitProfiling()) {
-            for (int argumentRegister = -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters; argumentRegister < -RegisterFile::CallFrameHeaderSize; ++argumentRegister) {
+            for (int argument = 0; argument < m_codeBlock->m_numParameters; ++argument) {
                 // If this is a constructor, then we want to put in a dummy profiling site (to
                 // keep things consistent) but we don't actually want to record the dummy value.
-                if (m_codeBlock->m_isConstructor
-                    && argumentRegister == -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters)
+                if (m_codeBlock->m_isConstructor && !argument)
                     m_codeBlock->addValueProfile(-1);
                 else {
+                    int offset = CallFrame::argumentOffsetIncludingThis(argument) * static_cast<int>(sizeof(Register));
 #if USE(JSVALUE64)
-                    loadPtr(Address(callFrameRegister, argumentRegister * sizeof(Register)), regT0);
+                    loadPtr(Address(callFrameRegister, offset), regT0);
 #elif USE(JSVALUE32_64)
-                    load32(Address(callFrameRegister, argumentRegister * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
-                    load32(Address(callFrameRegister, argumentRegister * sizeof(Register) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+                    load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+                    load32(Address(callFrameRegister, offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
 #endif
                     emitValueProfilingSite(FirstProfilingSite);
                 }
@@ -578,14 +576,16 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         }
 #endif
 
-        // In the case of a fast linked call, we do not set this up in the caller.
-        emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
-
         addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), callFrameRegister, regT1);
         registerFileCheck = branchPtr(Below, AbsoluteAddress(m_globalData->interpreter->registerFile().addressOfEnd()), regT1);
     }
 
     Label functionBody = label();
+    
+#if ENABLE(VALUE_PROFILER)
+    if (m_canBeOptimized)
+        add32(Imm32(1), AbsoluteAddress(&m_codeBlock->m_executionEntryCount));
+#endif
 
     privateCompileMainPass();
     privateCompileLinkPass();
@@ -604,8 +604,10 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         arityCheck = label();
         preserveReturnAddressAfterCall(regT2);
         emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
-        branch32(Equal, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
-        restoreArgumentReference();
+        emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
+
+        load32(Address(callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))), regT1);
+        branch32(AboveOrEqual, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
 
         JITStubCall(this, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck).call(callFrameRegister);
 
@@ -675,7 +677,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     m_codeBlock->setNumberOfCallLinkInfos(m_callStructureStubCompilationInfo.size());
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.isCall = m_callStructureStubCompilationInfo[i].isCall;
+        info.callType = m_callStructureStubCompilationInfo[i].callType;
         info.bytecodeIndex = m_callStructureStubCompilationInfo[i].bytecodeIndex;
         info.callReturnLocation = CodeLocationLabel(patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation));
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
@@ -713,23 +715,19 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     return JITCode(result, JITCode::BaselineJIT);
 }
 
-void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData, CodeSpecializationKind kind)
+void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, JSGlobalData* globalData, CodeSpecializationKind kind)
 {
     RepatchBuffer repatchBuffer(callerCodeBlock);
 
-    // Currently we only link calls with the exact number of arguments.
-    // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
-    if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
-        ASSERT(!callLinkInfo->isLinked());
-        callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
-        callLinkInfo->lastSeenCallee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
-        repatchBuffer.relink(callLinkInfo->hotPathOther, code);
-        
-        if (calleeCodeBlock)
-            calleeCodeBlock->linkIncomingCall(callLinkInfo);
-    }
+    ASSERT(!callLinkInfo->isLinked());
+    callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
+    callLinkInfo->lastSeenCallee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
+    repatchBuffer.relink(callLinkInfo->hotPathOther, code);
 
-    // patch the call so we do not continue to try to link.
+    if (calleeCodeBlock)
+        calleeCodeBlock->linkIncomingCall(callLinkInfo);
+
+    // Patch the slow patch so we do not continue to try to link.
     if (kind == CodeForCall) {
         repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualCall());
         return;

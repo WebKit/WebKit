@@ -57,9 +57,11 @@ namespace WebCore {
         }
 
         virtual JSC::ExecState* globalExec();
-        virtual bool supportsProfiling() const;
-        virtual bool supportsRichSourceInfo() const;
-        virtual bool shouldInterruptScript() const;
+        static const JSC::GlobalObjectMethodTable s_globalObjectMethodTable;
+
+        static bool supportsProfiling(const JSC::JSGlobalObject*);
+        static bool supportsRichSourceInfo(const JSC::JSGlobalObject*);
+        static bool shouldInterruptScript(const JSC::JSGlobalObject*);
 
         bool allowsAccessFrom(JSC::ExecState*) const;
         bool allowsAccessFromNoErrorMessage(JSC::ExecState*) const;
@@ -67,7 +69,7 @@ namespace WebCore {
         void printErrorMessage(const String&) const;
 
         // Don't call this version of allowsAccessFrom -- it's a slightly incorrect implementation used only by WebScriptObject
-        virtual bool allowsAccessFrom(const JSC::JSGlobalObject*) const;
+        bool allowsAccessFrom(const JSC::JSGlobalObject*) const;
         
         static JSC::JSObject* toThisObject(JSC::JSCell*, JSC::ExecState*);
         JSDOMWindowShell* shell() const;

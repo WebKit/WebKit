@@ -34,12 +34,12 @@
 
 #include "FileReader.h"
 
-#include "ArrayBuffer.h"
 #include "CrossThreadTask.h"
 #include "File.h"
 #include "Logging.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/ArrayBuffer.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 

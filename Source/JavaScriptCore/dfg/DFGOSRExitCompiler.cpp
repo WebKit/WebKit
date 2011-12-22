@@ -53,7 +53,7 @@ void compileOSRExit(ExecState* exec)
         recovery = &codeBlock->speculationRecovery(exit.m_recoveryIndex - 1);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    fprintf(stderr, "Generating OSR exit #%u for code block %p.\n", exitIndex, codeBlock);
+    fprintf(stderr, "Generating OSR exit #%u (bc#%u, @%u, %s) for code block %p.\n", exitIndex, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex, exitKindToString(exit.m_kind), codeBlock);
 #endif
 
     {
@@ -64,11 +64,15 @@ void compileOSRExit(ExecState* exec)
         
         LinkBuffer patchBuffer(*globalData, &jit);
         exit.m_code = patchBuffer.finalizeCode();
+
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        fprintf(stderr, "OSR exit code at [%p, %p).\n", patchBuffer.debugAddress(), static_cast<char*>(patchBuffer.debugAddress()) + patchBuffer.debugSize());
+#endif
     }
     
     {
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(exit.m_check.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code().executableAddress()));
+        repatchBuffer.relink(exit.m_check.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));
     }
     
     globalData->osrExitJumpDestination = exit.m_code.code().executableAddress();

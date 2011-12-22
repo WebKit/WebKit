@@ -42,7 +42,6 @@
 
 namespace WebCore {
 
-class ArrayBuffer;
 class Blob;
 class FileReaderLoaderClient;
 class ScriptExecutionContext;

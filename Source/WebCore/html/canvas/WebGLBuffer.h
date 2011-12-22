@@ -26,14 +26,14 @@
 #ifndef WebGLBuffer_h
 #define WebGLBuffer_h
 
-#include "ArrayBuffer.h"
 #include "WebGLObject.h"
 
+#include <wtf/ArrayBuffer.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-class ArrayBufferView;
 
 class WebGLBuffer : public WebGLObject {
 public:

@@ -63,6 +63,7 @@ void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
     DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
     world->m_cssValueRoots.remove(jsCSSValue->impl());
     uncacheWrapper(world, jsCSSValue->impl(), jsCSSValue);
+    jsCSSValue->clearImpl();
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)

@@ -30,13 +30,13 @@
 
 #include "GraphicsContext3D.h"
 
-#include "ArrayBufferView.h"
 #include "CheckedInt.h"
 #include "DrawingBuffer.h"
 #include "Extensions3D.h"
 #include "Image.h"
 #include "ImageData.h"
 
+#include <wtf/ArrayBufferView.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 

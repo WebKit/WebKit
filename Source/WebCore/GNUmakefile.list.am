@@ -704,6 +704,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSExceptionBase.h \
 	Source/WebCore/bindings/js/JSFileReaderCustom.cpp \
 	Source/WebCore/bindings/js/JSFloat32ArrayCustom.cpp \
+	Source/WebCore/bindings/js/JSFloat64ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSGeolocationCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -1503,10 +1504,6 @@ webcore_sources += \
 	Source/WebCore/html/BaseTextInputType.h \
 	Source/WebCore/html/ButtonInputType.cpp \
 	Source/WebCore/html/ButtonInputType.h \
-	Source/WebCore/html/canvas/ArrayBuffer.cpp \
-	Source/WebCore/html/canvas/ArrayBuffer.h \
-	Source/WebCore/html/canvas/ArrayBufferView.cpp \
-	Source/WebCore/html/canvas/ArrayBufferView.h \
 	Source/WebCore/html/canvas/CanvasContextAttributes.cpp \
 	Source/WebCore/html/canvas/CanvasContextAttributes.h \
 	Source/WebCore/html/canvas/CanvasGradient.cpp \
@@ -1524,22 +1521,6 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CheckedInt.h \
 	Source/WebCore/html/canvas/DataView.cpp \
 	Source/WebCore/html/canvas/DataView.h \
-	Source/WebCore/html/canvas/Float32Array.cpp \
-	Source/WebCore/html/canvas/Float32Array.h \
-	Source/WebCore/html/canvas/Int16Array.cpp \
-	Source/WebCore/html/canvas/Int16Array.h \
-	Source/WebCore/html/canvas/Int32Array.cpp \
-	Source/WebCore/html/canvas/Int32Array.h \
-	Source/WebCore/html/canvas/Int8Array.cpp \
-	Source/WebCore/html/canvas/Int8Array.h \
-	Source/WebCore/html/canvas/IntegralTypedArrayBase.h \
-	Source/WebCore/html/canvas/TypedArrayBase.h \
-	Source/WebCore/html/canvas/Uint16Array.cpp \
-	Source/WebCore/html/canvas/Uint16Array.h \
-	Source/WebCore/html/canvas/Uint32Array.cpp \
-	Source/WebCore/html/canvas/Uint32Array.h \
-	Source/WebCore/html/canvas/Uint8Array.cpp \
-	Source/WebCore/html/canvas/Uint8Array.h \
 	Source/WebCore/html/DOMSettableTokenList.cpp \
 	Source/WebCore/html/DOMSettableTokenList.h \
 	Source/WebCore/html/DOMTokenList.cpp \
@@ -2207,6 +2188,7 @@ webcore_sources += \
 	Source/WebCore/page/MemoryInfo.h \
 	Source/WebCore/page/MouseEventWithHitTestResults.cpp \
 	Source/WebCore/page/MouseEventWithHitTestResults.h \
+	Source/WebCore/page/MouseLockable.h \
 	Source/WebCore/page/Navigator.cpp \
 	Source/WebCore/page/Navigator.h \
 	Source/WebCore/page/NavigatorBase.cpp \

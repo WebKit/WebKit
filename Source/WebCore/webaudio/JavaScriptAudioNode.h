@@ -29,6 +29,7 @@
 #include "AudioNode.h"
 #include "EventListener.h"
 #include "EventTarget.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -38,7 +39,6 @@ namespace WebCore {
 class AudioBuffer;
 class AudioContext;
 class AudioProcessingEvent;
-class Float32Array;
 
 // JavaScriptAudioNode is an AudioNode which allows for arbitrary synthesis or processing directly using JavaScript.
 // The API allows for a variable number of inputs and outputs, although it must have at least one input or output.

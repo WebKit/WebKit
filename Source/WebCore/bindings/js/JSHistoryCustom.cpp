@@ -68,7 +68,7 @@ bool JSHistory::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& pr
     const HashEntry* entry = JSHistoryPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         // Allow access to back(), forward() and go() from any frame.
-        if (entry->attributes() & Function) {
+        if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
                 slot.setCustom(this, nonCachingStaticBackFunctionGetter);
                 return true;
@@ -109,7 +109,7 @@ bool JSHistory::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifi
     if (entry) {
         PropertySlot slot;
         // Allow access to back(), forward() and go() from any frame.
-        if (entry->attributes() & Function) {
+        if (entry->attributes() & JSC::Function) {
             if (entry->function() == jsHistoryPrototypeFunctionBack) {
                 slot.setCustom(this, nonCachingStaticBackFunctionGetter);
                 descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
@@ -148,7 +148,7 @@ bool JSHistory::putDelegate(ExecState* exec, const Identifier&, JSValue, PutProp
 
 bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSHistory* thisObject = static_cast<JSHistory*>(cell);
+    JSHistory* thisObject = jsCast<JSHistory*>(cell);
     // Only allow deleting by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return false;
@@ -157,7 +157,7 @@ bool JSHistory::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& 
 
 void JSHistory::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSHistory* thisObject = static_cast<JSHistory*>(object);
+    JSHistory* thisObject = jsCast<JSHistory*>(object);
     // Only allow the history object to enumerated by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return;

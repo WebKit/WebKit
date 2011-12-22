@@ -34,6 +34,7 @@
 
 #include "WebSocketChannel.h"
 
+#include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
 #include "InspectorInstrumentation.h"

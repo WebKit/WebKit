@@ -76,8 +76,7 @@ AudioBuffer::AudioBuffer(AudioBus* bus)
     m_channels.reserveCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         RefPtr<Float32Array> channelDataArray = Float32Array::create(m_length);
-        ExceptionCode ec;
-        channelDataArray->setRange(bus->channel(i)->data(), m_length, 0, ec);
+        channelDataArray->setRange(bus->channel(i)->data(), m_length, 0);
         m_channels.append(channelDataArray);
     }
 }
@@ -98,10 +97,8 @@ Float32Array* AudioBuffer::getChannelData(unsigned channelIndex)
 void AudioBuffer::zero()
 {
     for (unsigned i = 0; i < m_channels.size(); ++i) {
-        if (getChannelData(i)) {
-            ExceptionCode ec;
-            getChannelData(i)->zeroRange(0, length(), ec);
-        }
+        if (getChannelData(i))
+            getChannelData(i)->zeroRange(0, length());
     }
 }
 

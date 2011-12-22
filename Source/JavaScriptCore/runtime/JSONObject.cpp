@@ -266,13 +266,9 @@ Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
     return Local<Unknown>(m_exec->globalData(), jsString(m_exec, result.toUString()));
 }
 
-void Stringifier::appendQuotedString(UStringBuilder& builder, const UString& value)
+template <typename CharType>
+static void appendStringToUStringBuilder(UStringBuilder& builder, const CharType* data, int length)
 {
-    int length = value.length();
-
-    builder.append('"');
-
-    const UChar* data = value.characters();
     for (int i = 0; i < length; ++i) {
         int start = i;
         while (i < length && (data[i] > 0x1F && data[i] != '"' && data[i] != '\\'))
@@ -281,42 +277,54 @@ void Stringifier::appendQuotedString(UStringBuilder& builder, const UString& val
         if (i >= length)
             break;
         switch (data[i]) {
-            case '\t':
-                builder.append('\\');
-                builder.append('t');
-                break;
-            case '\r':
-                builder.append('\\');
-                builder.append('r');
-                break;
-            case '\n':
-                builder.append('\\');
-                builder.append('n');
-                break;
-            case '\f':
-                builder.append('\\');
-                builder.append('f');
-                break;
-            case '\b':
-                builder.append('\\');
-                builder.append('b');
-                break;
-            case '"':
-                builder.append('\\');
-                builder.append('"');
-                break;
-            case '\\':
-                builder.append('\\');
-                builder.append('\\');
-                break;
-            default:
-                static const char hexDigits[] = "0123456789abcdef";
-                UChar ch = data[i];
-                UChar hex[] = { '\\', 'u', hexDigits[(ch >> 12) & 0xF], hexDigits[(ch >> 8) & 0xF], hexDigits[(ch >> 4) & 0xF], hexDigits[ch & 0xF] };
-                builder.append(hex, WTF_ARRAY_LENGTH(hex));
-                break;
+        case '\t':
+            builder.append('\\');
+            builder.append('t');
+            break;
+        case '\r':
+            builder.append('\\');
+            builder.append('r');
+            break;
+        case '\n':
+            builder.append('\\');
+            builder.append('n');
+            break;
+        case '\f':
+            builder.append('\\');
+            builder.append('f');
+            break;
+        case '\b':
+            builder.append('\\');
+            builder.append('b');
+            break;
+        case '"':
+            builder.append('\\');
+            builder.append('"');
+            break;
+        case '\\':
+            builder.append('\\');
+            builder.append('\\');
+            break;
+        default:
+            static const char hexDigits[] = "0123456789abcdef";
+            UChar ch = data[i];
+            LChar hex[] = { '\\', 'u', hexDigits[(ch >> 12) & 0xF], hexDigits[(ch >> 8) & 0xF], hexDigits[(ch >> 4) & 0xF], hexDigits[ch & 0xF] };
+            builder.append(hex, WTF_ARRAY_LENGTH(hex));
+            break;
         }
     }
+}
+    
+void Stringifier::appendQuotedString(UStringBuilder& builder, const UString& value)
+{
+    int length = value.length();
+
+    builder.append('"');
+
+    if (value.is8Bit())
+        appendStringToUStringBuilder<LChar>(builder, value.characters8(), length);
+    else
+        appendStringToUStringBuilder<UChar>(builder, value.characters16(), length);
 
     builder.append('"');
 }
@@ -340,8 +348,8 @@ inline JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFunctionC
     if (callType == CallTypeNone)
         return value;
 
-    JSValue list[] = { propertyName.value(m_exec) };
-    ArgList args(list, WTF_ARRAY_LENGTH(list));
+    MarkedArgumentBuffer args;
+    args.append(propertyName.value(m_exec));
     return call(m_exec, object, callType, callData, value, args);
 }
 
@@ -354,8 +362,9 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(UStringBuilder&
 
     // Call the replacer function.
     if (m_replacerCallType != CallTypeNone) {
-        JSValue list[] = { propertyName.value(m_exec), value };
-        ArgList args(list, WTF_ARRAY_LENGTH(list));
+        MarkedArgumentBuffer args;
+        args.append(propertyName.value(m_exec));
+        args.append(value);
         value = call(m_exec, m_replacer.get(), m_replacerCallType, m_replacerCallData, holder, args);
         if (m_exec->hadException())
             return StringifyFailed;
@@ -600,12 +609,12 @@ const ClassInfo JSONObject::s_info = { "JSON", &JSNonFinalObject::s_info, 0, Exe
 
 bool JSONObject::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), static_cast<JSONObject*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<JSObject>(exec, ExecState::jsonTable(exec), jsCast<JSONObject*>(cell), propertyName, slot);
 }
 
 bool JSONObject::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), static_cast<JSONObject*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSObject>(exec, ExecState::jsonTable(exec), jsCast<JSONObject*>(object), propertyName, descriptor);
 }
 
 class Walker {
@@ -621,9 +630,10 @@ public:
 private:
     JSValue callReviver(JSObject* thisObj, JSValue property, JSValue unfiltered)
     {
-        JSValue args[] = { property, unfiltered };
-        ArgList argList(args, 2);
-        return call(m_exec, m_function.get(), m_callType, m_callData, thisObj, argList);
+        MarkedArgumentBuffer args;
+        args.append(property);
+        args.append(unfiltered);
+        return call(m_exec, m_function.get(), m_callType, m_callData, thisObj, args);
     }
 
     friend class Holder;

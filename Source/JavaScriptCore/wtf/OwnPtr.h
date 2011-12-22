@@ -41,6 +41,7 @@ namespace WTF {
         typedef ValueType* PtrType;
 
         OwnPtr() : m_ptr(0) { }
+        OwnPtr(std::nullptr_t) : m_ptr(0) { }
 
         // See comment in PassOwnPtr.h for why this takes a const reference.
         template<typename U> OwnPtr(const PassOwnPtr<U>& o);

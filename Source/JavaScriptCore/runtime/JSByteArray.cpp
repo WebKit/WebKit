@@ -56,7 +56,7 @@ Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSGlobalObject
 
 bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
+    JSByteArray* thisObject = jsCast<JSByteArray*>(cell);
     bool ok;
     unsigned index = propertyName.toUInt32(ok);
     if (ok && thisObject->canAccessIndex(index)) {
@@ -68,7 +68,7 @@ bool JSByteArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identi
 
 bool JSByteArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSByteArray* thisObject = static_cast<JSByteArray*>(object);
+    JSByteArray* thisObject = jsCast<JSByteArray*>(object);
     bool ok;
     unsigned index = propertyName.toUInt32(ok);
     if (ok && thisObject->canAccessIndex(index)) {
@@ -80,7 +80,7 @@ bool JSByteArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, co
 
 bool JSByteArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
+    JSByteArray* thisObject = jsCast<JSByteArray*>(cell);
     if (thisObject->canAccessIndex(propertyName)) {
         slot.setValue(thisObject->getIndex(exec, propertyName));
         return true;
@@ -90,7 +90,7 @@ bool JSByteArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsig
 
 void JSByteArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSByteArray* thisObject = static_cast<JSByteArray*>(cell);
+    JSByteArray* thisObject = jsCast<JSByteArray*>(cell);
     bool ok;
     unsigned index = propertyName.toUInt32(ok);
     if (ok) {
@@ -102,12 +102,12 @@ void JSByteArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyN
 
 void JSByteArray::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyName, JSValue value)
 {
-    static_cast<JSByteArray*>(cell)->setIndex(exec, propertyName, value);
+    jsCast<JSByteArray*>(cell)->setIndex(exec, propertyName, value);
 }
 
 void JSByteArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSByteArray* thisObject = static_cast<JSByteArray*>(object);
+    JSByteArray* thisObject = jsCast<JSByteArray*>(object);
     unsigned length = thisObject->m_storage->length();
     for (unsigned i = 0; i < length; ++i)
         propertyNames.add(Identifier::from(exec, i));

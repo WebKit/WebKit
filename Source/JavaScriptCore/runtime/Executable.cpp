@@ -38,12 +38,7 @@ namespace JSC {
 
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0, CREATE_METHOD_TABLE(ExecutableBase) };
 
-void ExecutableBase::clearCode(JSCell* cell)
-{
-    static_cast<ExecutableBase*>(cell)->clearCodeVirtual();
-}
-
-void ExecutableBase::clearCodeVirtual()
+inline void ExecutableBase::clearCode()
 {
 #if ENABLE(JIT)
     m_jitCodeForCall.clear();
@@ -56,9 +51,11 @@ void ExecutableBase::clearCodeVirtual()
 }
 
 #if ENABLE(DFG_JIT)
-DFG::Intrinsic ExecutableBase::intrinsic() const
+Intrinsic ExecutableBase::intrinsic() const
 {
-    return DFG::NoIntrinsic;
+    if (const NativeExecutable* nativeExecutable = jsDynamicCast<const NativeExecutable*>(this))
+        return nativeExecutable->intrinsic();
+    return NoIntrinsic;
 }
 #endif
 
@@ -69,7 +66,7 @@ NativeExecutable::~NativeExecutable()
 }
 
 #if ENABLE(DFG_JIT)
-DFG::Intrinsic NativeExecutable::intrinsic() const
+Intrinsic NativeExecutable::intrinsic() const
 {
     return m_intrinsic;
 }
@@ -85,9 +82,14 @@ static void jettisonCodeBlock(JSGlobalData& globalData, OwnPtr<T>& codeBlock)
     OwnPtr<T> codeBlockToJettison = codeBlock.release();
     codeBlock = static_pointer_cast<T>(codeBlockToJettison->releaseAlternative());
     codeBlockToJettison->unlinkIncomingCalls();
-    globalData.heap.addJettisonedCodeBlock(static_pointer_cast<CodeBlock>(codeBlockToJettison.release()));
+    globalData.heap.jettisonDFGCodeBlock(static_pointer_cast<CodeBlock>(codeBlockToJettison.release()));
 }
 #endif
+
+void NativeExecutable::finalize(JSCell* cell)
+{
+    jsCast<NativeExecutable*>(cell)->clearCode();
+}
 
 const ClassInfo ScriptExecutable::s_info = { "ScriptExecutable", &ExecutableBase::s_info, 0, 0, CREATE_METHOD_TABLE(ScriptExecutable) };
 
@@ -132,6 +134,10 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
     , m_parameters(parameters)
     , m_name(name)
     , m_symbolTable(0)
+{
+}
+
+FunctionExecutable::~FunctionExecutable()
 {
 }
 
@@ -237,7 +243,7 @@ void EvalExecutable::jettisonOptimizedCode(JSGlobalData& globalData)
 
 void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    EvalExecutable* thisObject = static_cast<EvalExecutable*>(cell);
+    EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -256,13 +262,18 @@ void EvalExecutable::unlinkCalls()
 #endif
 }
 
-void EvalExecutable::clearCodeVirtual()
+void EvalExecutable::finalize(JSCell* cell)
+{
+    jsCast<EvalExecutable*>(cell)->clearCode();
+}
+
+inline void EvalExecutable::clearCode()
 {
     if (m_evalCodeBlock) {
         m_evalCodeBlock->clearEvalCache();
         m_evalCodeBlock.clear();
     }
-    Base::clearCodeVirtual();
+    Base::clearCode();
 }
 
 JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
@@ -386,7 +397,7 @@ void ProgramExecutable::unlinkCalls()
 
 void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    ProgramExecutable* thisObject = static_cast<ProgramExecutable*>(cell);
+    ProgramExecutable* thisObject = jsCast<ProgramExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -395,13 +406,18 @@ void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_programCodeBlock->visitAggregate(visitor);
 }
 
-void ProgramExecutable::clearCodeVirtual()
+void ProgramExecutable::finalize(JSCell* cell)
+{
+    jsCast<ProgramExecutable*>(cell)->clearCode();
+}
+
+inline void ProgramExecutable::clearCode()
 {
     if (m_programCodeBlock) {
         m_programCodeBlock->clearEvalCache();
         m_programCodeBlock.clear();
     }
-    Base::clearCodeVirtual();
+    Base::clearCode();
 }
 
 FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
@@ -493,6 +509,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 #if !ENABLE(JIT)
     UNUSED_PARAM(exec);
     UNUSED_PARAM(jitType);
+    UNUSED_PARAM(exec);
 #endif
     ASSERT((jitType == JITCode::bottomTierJIT()) == !m_codeBlockForCall);
     JSObject* exception;
@@ -629,7 +646,7 @@ void FunctionExecutable::jettisonOptimizedCodeForConstruct(JSGlobalData& globalD
 
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    FunctionExecutable* thisObject = static_cast<FunctionExecutable*>(cell);
+    FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -653,10 +670,15 @@ void FunctionExecutable::discardCode()
     if (!m_jitCodeForConstruct && m_codeBlockForConstruct)
         return;
 #endif
-    clearCodeVirtual();
+    clearCode();
 }
 
-void FunctionExecutable::clearCodeVirtual()
+void FunctionExecutable::finalize(JSCell* cell)
+{
+    jsCast<FunctionExecutable*>(cell)->clearCode();
+}
+
+inline void FunctionExecutable::clearCode()
 {
     if (m_codeBlockForCall) {
         m_codeBlockForCall->clearEvalCache();
@@ -666,7 +688,7 @@ void FunctionExecutable::clearCodeVirtual()
         m_codeBlockForConstruct->clearEvalCache();
         m_codeBlockForConstruct.clear();
     }
-    Base::clearCodeVirtual();
+    Base::clearCode();
 }
 
 void FunctionExecutable::unlinkCalls()

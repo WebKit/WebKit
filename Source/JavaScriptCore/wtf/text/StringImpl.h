@@ -139,12 +139,24 @@ private:
     }
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
-    StringImpl(const UChar* characters, unsigned length)
+    StringImpl(const LChar* characters, unsigned length)
         : m_refCount(s_refCountIncrement)
         , m_length(length)
-        , m_data16(characters)
+        , m_data8(characters)
         , m_buffer(0)
-        , m_hashAndFlags(BufferOwned)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferOwned)
+    {
+        ASSERT(m_data8);
+        ASSERT(m_length);
+    }
+
+    // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
+    StringImpl(const UChar* characters, unsigned length)
+    : m_refCount(s_refCountIncrement)
+    , m_length(length)
+    , m_data16(characters)
+    , m_buffer(0)
+    , m_hashAndFlags(BufferOwned)
     {
         ASSERT(m_data16);
         ASSERT(m_length);
@@ -251,8 +263,8 @@ public:
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
 
-    template<size_t inlineCapacity>
-    static PassRefPtr<StringImpl> adopt(Vector<UChar, inlineCapacity>& vector)
+    template<typename CharType, size_t inlineCapacity>
+    static PassRefPtr<StringImpl> adopt(Vector<CharType, inlineCapacity>& vector)
     {
         if (size_t size = vector.size()) {
             ASSERT(vector.data());
@@ -262,13 +274,15 @@ public:
         }
         return empty();
     }
-    static PassRefPtr<StringImpl> adopt(StringBuffer&);
+
+    static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>& buffer);
+    static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>& buffer);
 
     unsigned length() const { return m_length; }
     bool is8Bit() const { return m_hashAndFlags & s_hashFlag8BitBuffer; }
 
     // FIXME: Remove all unnecessary usages of characters()
-    ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); ASSERT_NOT_REACHED(); return m_data8; }
+    ALWAYS_INLINE const LChar* characters8() const { ASSERT(is8Bit()); return m_data8; }
     ALWAYS_INLINE const UChar* characters16() const { ASSERT(!is8Bit()); return m_data16; }
     ALWAYS_INLINE const UChar* characters() const
     {
@@ -277,6 +291,9 @@ public:
 
         return getData16SlowCase();
     }
+
+    template <typename CharType>
+    ALWAYS_INLINE const CharType * getCharacters() const;
 
     size_t cost()
     {
@@ -292,6 +309,7 @@ public:
     }
 
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
+    void upconvertCharacters(unsigned, unsigned) const;
     bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
     void setIsIdentifier(bool isIdentifier)
     {
@@ -457,8 +475,9 @@ public:
     PassRefPtr<StringImpl> simplifyWhiteSpace(IsWhiteSpaceFunctionPtr);
 
     PassRefPtr<StringImpl> removeCharacters(CharacterMatchFunctionPtr);
+    template <typename CharType>
+    ALWAYS_INLINE PassRefPtr<StringImpl> removeCharacters(const CharType* characters, CharacterMatchFunctionPtr);
 
-    // FIXME: Do we need char version, or is it okay to just pass in an ASCII char for 8-bit? Same for reverseFind, replace
     size_t find(UChar, unsigned index = 0);
     size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
@@ -496,7 +515,7 @@ private:
     BufferOwnership bufferOwnership() const { return static_cast<BufferOwnership>(m_hashAndFlags & s_hashMaskBufferOwnership); }
     bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
-    template <class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
+    template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
     NEVER_INLINE const UChar* getData16SlowCase() const;
 
     // The bottom bit in the ref count indicates a static (immortal) string.
@@ -530,13 +549,176 @@ private:
     mutable unsigned m_hashAndFlags;
 };
 
+template <>
+ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
+
+template <>
+ALWAYS_INLINE const UChar* StringImpl::getCharacters<UChar>() const { return characters16(); }
+
 bool equal(const StringImpl*, const StringImpl*);
 bool equal(const StringImpl*, const LChar*);
 inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
 bool equal(const StringImpl*, const LChar*, unsigned);
+inline bool equal(const StringImpl* a, const char* b, unsigned length) { return equal(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
 bool equal(const StringImpl*, const UChar*, unsigned);
+
+// Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
+#if CPU(X86_64)
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+{
+    unsigned dwordLength = length >> 3;
+
+    if (dwordLength) {
+        const uint64_t* aDWordCharacters = reinterpret_cast<const uint64_t*>(a);
+        const uint64_t* bDWordCharacters = reinterpret_cast<const uint64_t*>(b);
+
+        for (unsigned i = 0; i != dwordLength; ++i) {
+            if (*aDWordCharacters++ != *bDWordCharacters++)
+                return false;
+        }
+
+        a = reinterpret_cast<const LChar*>(aDWordCharacters);
+        b = reinterpret_cast<const LChar*>(bDWordCharacters);
+    }
+
+    if (length & 4) {
+        if (*reinterpret_cast<const uint32_t*>(a) != *reinterpret_cast<const uint32_t*>(b))
+            return false;
+
+        a += 4;
+        b += 4;
+    }
+
+    if (length & 2) {
+        if (*reinterpret_cast<const uint16_t*>(a) != *reinterpret_cast<const uint16_t*>(b))
+            return false;
+
+        a += 2;
+        b += 2;
+    }
+
+    if (length & 1 && (*a != *b))
+        return false;
+
+    return true;
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+{
+    unsigned dwordLength = length >> 2;
+    
+    if (dwordLength) {
+        const uint64_t* aDWordCharacters = reinterpret_cast<const uint64_t*>(a);
+        const uint64_t* bDWordCharacters = reinterpret_cast<const uint64_t*>(b);
+
+        for (unsigned i = 0; i != dwordLength; ++i) {
+            if (*aDWordCharacters++ != *bDWordCharacters++)
+                return false;
+        }
+
+        a = reinterpret_cast<const UChar*>(aDWordCharacters);
+        b = reinterpret_cast<const UChar*>(bDWordCharacters);
+    }
+
+    if (length & 2) {
+        if (*reinterpret_cast<const uint32_t*>(a) != *reinterpret_cast<const uint32_t*>(b))
+            return false;
+
+        a += 2;
+        b += 2;
+    }
+
+    if (length & 1 && (*a != *b))
+        return false;
+
+    return true;
+}
+#elif CPU(X86)
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+{
+    const uint32_t* aCharacters = reinterpret_cast<const uint32_t*>(a);
+    const uint32_t* bCharacters = reinterpret_cast<const uint32_t*>(b);
+
+    unsigned wordLength = length >> 2;
+    for (unsigned i = 0; i != wordLength; ++i) {
+        if (*aCharacters++ != *bCharacters++)
+            return false;
+    }
+
+    length &= 3;
+
+    if (length) {
+        const LChar* aRemainder = reinterpret_cast<const LChar*>(aCharacters);
+        const LChar* bRemainder = reinterpret_cast<const LChar*>(bCharacters);
+        
+        for (unsigned i = 0; i <  length; ++i) {
+            if (aRemainder[i] != bRemainder[i])
+                return false;
+        }
+    }
+
+    return true;
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+{
+    const uint32_t* aCharacters = reinterpret_cast<const uint32_t*>(a);
+    const uint32_t* bCharacters = reinterpret_cast<const uint32_t*>(b);
+    
+    unsigned wordLength = length >> 1;
+    for (unsigned i = 0; i != wordLength; ++i) {
+        if (*aCharacters++ != *bCharacters++)
+            return false;
+    }
+    
+    if (length & 1 && *reinterpret_cast<const UChar*>(aCharacters) != *reinterpret_cast<const UChar*>(bCharacters))
+        return false;
+    
+    return true;
+}
+#else
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+{
+    for (unsigned i = 0; i != length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+
+    return true;
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+{
+    for (unsigned i = 0; i != length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+
+    return true;
+}
+#endif
+
+ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
+{
+    for (unsigned i = 0; i != length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+
+    return true;
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length)
+{
+    for (unsigned i = 0; i != length; ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+
+    return true;
+}
 
 bool equalIgnoringCase(StringImpl*, StringImpl*);
 bool equalIgnoringCase(StringImpl*, const LChar*);

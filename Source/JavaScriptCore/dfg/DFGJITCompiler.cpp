@@ -29,7 +29,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
-#include "DFGJITCodeGenerator.h"
 #include "DFGOSRExitCompiler.h"
 #include "DFGOperations.h"
 #include "DFGRegisterBank.h"
@@ -46,7 +45,9 @@ void JITCompiler::linkOSRExits()
         OSRExit& exit = codeBlock()->osrExit(i);
         exit.m_check.initialJump().link(this);
         store32(Imm32(i), &globalData()->osrExitIndex);
+        beginUninterruptedSequence();
         exit.m_check.switchToLateJump(jump());
+        endUninterruptedSequence();
     }
 }
 
@@ -61,6 +62,7 @@ void JITCompiler::compileEntry()
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(GPRInfo::regT2);
     emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
+    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
 }
 
 void JITCompiler::compileBody(SpeculativeJIT& speculative)
@@ -98,7 +100,7 @@ void JITCompiler::compileBody(SpeculativeJIT& speculative)
         // of the call out from JIT code that threw the exception; this is still
         // available on the stack, just below the stack pointer!
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
-        peek(GPRInfo::argumentGPR1, -1);
+        getPCAfterCall(GPRInfo::argumentGPR1);
         m_calls.append(CallLinkRecord(call(), lookupExceptionHandler));
         // lookupExceptionHandler leaves the handler CallFrame* in the returnValueGPR,
         // and the address of the handler in returnValueGPR2.
@@ -155,13 +157,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         CodeLocationCall callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
         info.callReturnLocation = callReturnLocation;
-        info.u.unset.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCheckImmToCall), callReturnLocation);
+        info.deltaCheckImmToCall = differenceBetweenCodePtr(linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCheckImmToCall), callReturnLocation);
         info.deltaCallToStructCheck = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToStructCheck));
 #if USE(JSVALUE64)
-        info.u.unset.deltaCallToLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToLoadOrStore));
+        info.deltaCallToLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToLoadOrStore));
 #else
-        info.u.unset.deltaCallToTagLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToTagLoadOrStore));
-        info.u.unset.deltaCallToPayloadLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToPayloadLoadOrStore));
+        info.deltaCallToTagLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToTagLoadOrStore));
+        info.deltaCallToPayloadLoadOrStore = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToPayloadLoadOrStore));
 #endif
         info.deltaCallToSlowCase = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToSlowCase));
         info.deltaCallToDone = differenceBetweenCodePtr(callReturnLocation, linkBuffer.locationOf(m_propertyAccesses[i].m_deltaCallToDone));
@@ -178,21 +180,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     m_codeBlock->setNumberOfCallLinkInfos(m_jsCalls.size());
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.isCall = m_jsCalls[i].m_isCall;
+        info.callType = m_jsCalls[i].m_callType;
         info.isDFG = true;
         info.callReturnLocation = CodeLocationLabel(linkBuffer.locationOf(m_jsCalls[i].m_slowCall));
         info.hotPathBegin = linkBuffer.locationOf(m_jsCalls[i].m_targetToCheck);
         info.hotPathOther = linkBuffer.locationOfNearCall(m_jsCalls[i].m_fastCall);
-    }
-    
-    m_codeBlock->addMethodCallLinkInfos(m_methodGets.size());
-    for (unsigned i = 0; i < m_methodGets.size(); ++i) {
-        MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
-        info.cachedStructure.setLocation(linkBuffer.locationOf(m_methodGets[i].m_structToCompare));
-        info.cachedPrototypeStructure.setLocation(linkBuffer.locationOf(m_methodGets[i].m_protoStructToCompare));
-        info.cachedFunction.setLocation(linkBuffer.locationOf(m_methodGets[i].m_putFunction));
-        info.cachedPrototype.setLocation(linkBuffer.locationOf(m_methodGets[i].m_protoObj));
-        info.callReturnLocation = linkBuffer.locationOf(m_methodGets[i].m_slowCall);
     }
     
     MacroAssemblerCodeRef osrExitThunk = globalData()->getCTIStub(osrExitGenerationThunkGenerator);
@@ -202,19 +194,21 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         linkBuffer.link(exit.m_check.lateJump(), target);
         exit.m_check.correctLateJump(linkBuffer);
     }
+    
+    codeBlock()->shrinkWeakReferencesToFit();
+    codeBlock()->shrinkWeakReferenceTransitionsToFit();
 }
 
 void JITCompiler::compile(JITCode& entry)
 {
-    // Preserve the return address to the callframe.
     compileEntry();
-    // Generate the body of the program.
     SpeculativeJIT speculative(*this);
     compileBody(speculative);
-    // Link
+
     LinkBuffer linkBuffer(*m_globalData, this);
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
+
     entry = JITCode(linkBuffer.finalizeCode(), JITCode::DFGJIT);
 }
 
@@ -227,8 +221,6 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // If we needed to perform an arity check we will already have moved the return address,
     // so enter after this.
     Label fromArityCheck(this);
-    // Setup a pointer to the codeblock in the CallFrameHeader.
-    emitPutImmediateToCallFrameHeader(m_codeBlock, RegisterFile::CodeBlock);
     // Plant a check that sufficient space is available in the RegisterFile.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56291
     addPtr(Imm32(m_codeBlock->m_numCalleeRegisters * sizeof(Register)), GPRInfo::callFrameRegister, GPRInfo::regT1);
@@ -261,9 +253,10 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
     Label arityCheck = label();
-    preserveReturnAddressAfterCall(GPRInfo::regT2);
-    emitPutToCallFrameHeader(GPRInfo::regT2, RegisterFile::ReturnPC);
-    branch32(Equal, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
+    compileEntry();
+
+    load32(Address(GPRInfo::callFrameRegister, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))), GPRInfo::regT1);
+    branch32(AboveOrEqual, GPRInfo::regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(fromArityCheck, this);
     move(stackPointerRegister, GPRInfo::argumentGPR0);
     poke(GPRInfo::callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
     Call callArityCheck = call();

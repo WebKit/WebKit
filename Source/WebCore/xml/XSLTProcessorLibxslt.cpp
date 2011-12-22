@@ -175,7 +175,7 @@ static int writeToVector(void* context, const char* buffer, int len)
     if (!len)
         return 0;
 
-    StringBuffer stringBuffer(len);
+    StringBuffer<UChar> stringBuffer(len);
     UChar* bufferUChar = stringBuffer.characters();
     UChar* bufferUCharEnd = bufferUChar + len;
 

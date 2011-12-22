@@ -34,13 +34,30 @@
 namespace JSC { namespace DFG {
 
 void dfgRepatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
-void dfgRepatchGetMethod(ExecState*, JSValue, const Identifier&, const PropertySlot&, MethodCallLinkInfo&);
 void dfgBuildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void dfgBuildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
 void dfgRepatchPutByID(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void dfgLinkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr, CodeSpecializationKind);
+void dfgResetGetByID(RepatchBuffer&, StructureStubInfo&);
+void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&);
 
 } } // namespace JSC::DFG
 
-#endif
-#endif
+#else // ENABLE(DFG_JIT)
+
+#include <wtf/Assertions.h>
+
+namespace JSC {
+
+class RepatchBuffer;
+struct StructureStubInfo;
+
+namespace DFG {
+
+inline NO_RETURN_DUE_TO_ASSERT void dfgResetGetByID(RepatchBuffer&, StructureStubInfo&) { ASSERT_NOT_REACHED(); }
+inline NO_RETURN_DUE_TO_ASSERT void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&) { ASSERT_NOT_REACHED(); }
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+#endif // DFGRepatch_h

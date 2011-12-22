@@ -33,7 +33,7 @@
 namespace JSC {
 
 class JSCell;
-class JettisonedCodeBlocks;
+class DFGCodeBlocks;
 class Heap;
 
 class ConservativeRoots {
@@ -42,7 +42,7 @@ public:
     ~ConservativeRoots();
 
     void add(void* begin, void* end);
-    void add(void* begin, void* end, JettisonedCodeBlocks&);
+    void add(void* begin, void* end, DFGCodeBlocks&);
     
     size_t size();
     JSCell** roots();

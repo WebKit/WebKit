@@ -313,19 +313,30 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     return generator.emitConstruct(generator.finalDestinationOrIgnored(dst), func.get(), callArguments, divot(), startOffset(), endOffset());
 }
 
-CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode)
+inline CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode)
     : m_argumentsNode(argumentsNode)
 {
     if (generator.shouldEmitProfileHooks())
         m_profileHookRegister = generator.newTemporary();
-    m_argv.append(generator.newTemporary());
+
+    size_t argumentCountIncludingThis = 1; // 'this' register.
     if (argumentsNode) {
-        for (ArgumentListNode* n = argumentsNode->m_listNode; n; n = n->m_next) {
-            m_argv.append(generator.newTemporary());
-            // op_call requires the arguments to be a sequential range of registers
-            ASSERT(m_argv[m_argv.size() - 1]->index() == m_argv[m_argv.size() - 2]->index() + 1);
-        }
+        for (ArgumentListNode* node = argumentsNode->m_listNode; node; node = node->m_next)
+            ++argumentCountIncludingThis;
     }
+
+    m_argv.grow(argumentCountIncludingThis);
+    for (int i = argumentCountIncludingThis - 1; i >= 0; --i) {
+        m_argv[i] = generator.newTemporary();
+        ASSERT(static_cast<size_t>(i) == m_argv.size() - 1 || m_argv[i]->index() == m_argv[i + 1]->index() + 1);
+    }
+}
+
+inline void CallArguments::newArgument(BytecodeGenerator& generator)
+{
+    RefPtr<RegisterID> tmp = generator.newTemporary();
+    ASSERT(m_argv.isEmpty() || tmp->index() == m_argv.last()->index() + 1); // Calling convention assumes that all arguments are contiguous.
+    m_argv.append(tmp.release());
 }
 
 // ------------------------------ EvalFunctionCallNode ----------------------------------
@@ -425,7 +436,6 @@ RegisterID* CallFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, 
             generator.emitJump(end.get());
 
             m_args->m_listNode = oldList;
-
         } else {
             RefPtr<RegisterID> realFunction = generator.emitMove(generator.tempDestination(dst), base.get());
             CallArguments callArguments(generator, m_args);
@@ -492,26 +502,23 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             }
         } else {
             ASSERT(m_args->m_listNode && m_args->m_listNode->m_next);
-            RefPtr<RegisterID> realFunction = generator.emitMove(generator.newTemporary(), base.get());
-            RefPtr<RegisterID> argsCountRegister = generator.newTemporary();
-            RefPtr<RegisterID> thisRegister = generator.newTemporary();
-            RefPtr<RegisterID> argsRegister = generator.newTemporary();
-            generator.emitNode(thisRegister.get(), m_args->m_listNode->m_expr);
+            RefPtr<RegisterID> profileHookRegister;
+            if (generator.shouldEmitProfileHooks())
+                profileHookRegister = generator.newTemporary();
+            RefPtr<RegisterID> thisRegister = generator.emitNode(m_args->m_listNode->m_expr);
+            RefPtr<RegisterID> argsRegister;
             ArgumentListNode* args = m_args->m_listNode->m_next;
-            bool isArgumentsApply = false;
-            if (args->m_expr->isResolveNode()) {
-                ResolveNode* resolveNode = static_cast<ResolveNode*>(args->m_expr);
-                isArgumentsApply = generator.willResolveToArguments(resolveNode->identifier());
-                if (isArgumentsApply)
-                    generator.emitMove(argsRegister.get(), generator.uncheckedRegisterForArguments());
-            }
-            if (!isArgumentsApply)
-                generator.emitNode(argsRegister.get(), args->m_expr);
+            if (args->m_expr->isResolveNode() && generator.willResolveToArguments(static_cast<ResolveNode*>(args->m_expr)->identifier()))
+                argsRegister = generator.uncheckedRegisterForArguments();
+            else
+                argsRegister = generator.emitNode(args->m_expr);
+
+            // Function.prototype.apply ignores extra arguments, but we still
+            // need to evaluate them for side effects.
             while ((args = args->m_next))
                 generator.emitNode(args->m_expr);
 
-            generator.emitLoadVarargs(argsCountRegister.get(), thisRegister.get(), argsRegister.get());
-            generator.emitCallVarargs(finalDestinationOrIgnored.get(), realFunction.get(), thisRegister.get(), argsCountRegister.get(), divot(), startOffset(), endOffset());
+            generator.emitCallVarargs(finalDestinationOrIgnored.get(), base.get(), thisRegister.get(), argsRegister.get(), generator.newTemporary(), profileHookRegister.get(), divot(), startOffset(), endOffset());
         }
         generator.emitJump(end.get());
     }
@@ -2037,9 +2044,12 @@ RegisterID* FunctionBodyNode::emitBytecode(BytecodeGenerator& generator, Registe
         if (returnValueExpression && returnValueExpression->isSubtract()) {
             ExpressionNode* lhsExpression = static_cast<SubNode*>(returnValueExpression)->lhs();
             ExpressionNode* rhsExpression = static_cast<SubNode*>(returnValueExpression)->rhs();
-            if (lhsExpression->isResolveNode() && rhsExpression->isResolveNode()) {
-                generator.setIsNumericCompareFunction(generator.argumentNumberFor(static_cast<ResolveNode*>(lhsExpression)->identifier()) == 1
-                    && generator.argumentNumberFor(static_cast<ResolveNode*>(rhsExpression)->identifier()) == 2);
+            if (lhsExpression->isResolveNode()
+                && rhsExpression->isResolveNode()
+                && generator.isArgumentNumber(static_cast<ResolveNode*>(lhsExpression)->identifier(), 0)
+                && generator.isArgumentNumber(static_cast<ResolveNode*>(rhsExpression)->identifier(), 1)) {
+                
+                generator.setIsNumericCompareFunction(true);
             }
         }
     }

@@ -135,7 +135,8 @@ struct MemberCheck##member { \
         &ClassName::defineOwnProperty, \
         &ClassName::getOwnPropertyDescriptor, \
     }, \
-    sizeof(ClassName)
+    sizeof(ClassName), \
+    ClassName::TypedArrayStorageType
 
     struct ClassInfo {
         /**
@@ -184,6 +185,8 @@ struct MemberCheck##member { \
         MethodTable methodTable;
 
         size_t cellSize;
+        
+        TypedArrayType typedArrayStorageType;
     };
 
 } // namespace JSC

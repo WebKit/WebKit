@@ -80,6 +80,11 @@ static inline bool nodeCanIgnoreNegativeZero(ArithNodeFlags flags)
     return !(flags & NodeNeedsNegZero);
 }
 
+static inline bool nodeMayOverflow(ArithNodeFlags flags)
+{
+    return !!(flags & NodeMayOverflow);
+}
+
 static inline bool nodeCanSpeculateInteger(ArithNodeFlags flags)
 {
     if (flags & NodeMayOverflow)
@@ -157,8 +162,12 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
 
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
-    /* Nodes for constants. */\
+    /* A constant in the CodeBlock's constant pool. */\
     macro(JSConstant, NodeResultJS) \
+    \
+    /* A constant not in the CodeBlock's constant pool. Uses get patched to jumps that exit the */\
+    /* code block. */\
+    macro(WeakJSConstant, NodeResultJS) \
     \
     /* Nodes for handling functions (both as call and as construct). */\
     macro(ConvertThis, NodeResultJS) \
@@ -224,13 +233,20 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(CheckStructure, NodeMustGenerate) \
     macro(PutStructure, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetPropertyStorage, NodeResultStorage) \
+    macro(GetIndexedPropertyStorage, NodeMustGenerate | NodeResultStorage) \
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate | NodeClobbersWorld) \
     macro(GetArrayLength, NodeResultInt32) \
     macro(GetStringLength, NodeResultInt32) \
     macro(GetByteArrayLength, NodeResultInt32) \
-    macro(GetMethod, NodeResultJS | NodeMustGenerate) \
-    macro(CheckMethod, NodeResultJS | NodeMustGenerate) \
+    macro(GetInt8ArrayLength, NodeResultInt32) \
+    macro(GetInt16ArrayLength, NodeResultInt32) \
+    macro(GetInt32ArrayLength, NodeResultInt32) \
+    macro(GetUint8ArrayLength, NodeResultInt32) \
+    macro(GetUint16ArrayLength, NodeResultInt32) \
+    macro(GetUint32ArrayLength, NodeResultInt32) \
+    macro(GetFloat32ArrayLength, NodeResultInt32) \
+    macro(GetFloat64ArrayLength, NodeResultInt32) \
     macro(GetScopeChain, NodeResultJS) \
     macro(GetScopedVar, NodeResultJS | NodeMustGenerate) \
     macro(PutScopedVar, NodeMustGenerate | NodeClobbersWorld) \
@@ -397,9 +413,14 @@ struct Node {
         return op == JSConstant;
     }
     
+    bool isWeakConstant()
+    {
+        return op == WeakJSConstant;
+    }
+    
     bool hasConstant()
     {
-        return isConstant() || hasMethodCheckData();
+        return isConstant() || isWeakConstant();
     }
 
     unsigned constantNumber()
@@ -408,20 +429,26 @@ struct Node {
         return m_opInfo;
     }
     
-    // NOTE: this only works for JSConstant nodes.
-    JSValue valueOfJSConstantNode(CodeBlock* codeBlock)
+    JSCell* weakConstant()
     {
+        return bitwise_cast<JSCell*>(m_opInfo);
+    }
+    
+    JSValue valueOfJSConstant(CodeBlock* codeBlock)
+    {
+        if (op == WeakJSConstant)
+            return JSValue(weakConstant());
         return codeBlock->constantRegister(FirstConstantRegisterIndex + constantNumber()).get();
     }
 
     bool isInt32Constant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstantNode(codeBlock).isInt32();
+        return isConstant() && valueOfJSConstant(codeBlock).isInt32();
     }
     
     bool isDoubleConstant(CodeBlock* codeBlock)
     {
-        bool result = isConstant() && valueOfJSConstantNode(codeBlock).isDouble();
+        bool result = isConstant() && valueOfJSConstant(codeBlock).isDouble();
         if (result)
             ASSERT(!isInt32Constant(codeBlock));
         return result;
@@ -429,14 +456,14 @@ struct Node {
     
     bool isNumberConstant(CodeBlock* codeBlock)
     {
-        bool result = isConstant() && valueOfJSConstantNode(codeBlock).isNumber();
+        bool result = isConstant() && valueOfJSConstant(codeBlock).isNumber();
         ASSERT(result == (isInt32Constant(codeBlock) || isDoubleConstant(codeBlock)));
         return result;
     }
     
     bool isBooleanConstant(CodeBlock* codeBlock)
     {
-        return isConstant() && valueOfJSConstantNode(codeBlock).isBoolean();
+        return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
     }
     
     bool hasVariableAccessData()
@@ -469,15 +496,13 @@ struct Node {
         return variableAccessData()->local();
     }
 
-#if !ASSERT_DISABLED
+#ifndef NDEBUG
     bool hasIdentifier()
     {
         switch (op) {
         case GetById:
         case PutById:
         case PutByIdDirect:
-        case GetMethod:
-        case CheckMethod:
         case Resolve:
         case ResolveBase:
         case ResolveBaseStrictPut:
@@ -692,7 +717,6 @@ struct Node {
     {
         switch (op) {
         case GetById:
-        case GetMethod:
         case GetByVal:
         case Call:
         case Construct:
@@ -723,17 +747,6 @@ struct Node {
         return mergePrediction(m_opInfo2, prediction);
     }
     
-    bool hasMethodCheckData()
-    {
-        return op == CheckMethod;
-    }
-    
-    unsigned methodCheckDataIndex()
-    {
-        ASSERT(hasMethodCheckData());
-        return m_opInfo2;
-    }
-
     bool hasFunctionCheckData()
     {
         return op == CheckFunction;
@@ -910,6 +923,50 @@ struct Node {
         return !!(prediction() & PredictByteArray);
     }
     
+    bool shouldSpeculateInt8Array()
+    {
+        return prediction() == PredictInt8Array;
+    }
+    
+    bool shouldSpeculateInt16Array()
+    {
+        return prediction() == PredictInt16Array;
+    }
+    
+    bool shouldSpeculateInt32Array()
+    {
+        return prediction() == PredictInt32Array;
+    }
+    
+    bool shouldSpeculateUint8Array()
+    {
+        return prediction() == PredictUint8Array;
+    }
+    
+    bool shouldSpeculateUint16Array()
+    {
+        return prediction() == PredictUint16Array;
+    }
+    
+    bool shouldSpeculateUint32Array()
+    {
+        return prediction() == PredictUint32Array;
+    }
+    
+    bool shouldSpeculateFloat32Array()
+    {
+#if CPU(X86) || CPU(X86_64)
+        return !!(prediction() & PredictFloat32Array);
+#else
+        return false;
+#endif
+    }
+    
+    bool shouldSpeculateFloat64Array()
+    {
+        return prediction() == PredictFloat64Array;
+    }
+    
     bool shouldSpeculateArrayOrOther()
     {
         return isArrayOrOtherPrediction(prediction());
@@ -951,6 +1008,21 @@ struct Node {
     {
         return nodeCanSpeculateInteger(arithNodeFlags());
     }
+    
+#ifndef NDEBUG
+    void dumpChildren(FILE* out)
+    {
+        if (child1() == NoNode)
+            return;
+        fprintf(out, "@%u", child1());
+        if (child2() == NoNode)
+            return;
+        fprintf(out, ", @%u", child2());
+        if (child3() == NoNode)
+            return;
+        fprintf(out, ", @%u", child3());
+    }
+#endif
     
     // This enum value describes the type of the node.
     NodeType op;

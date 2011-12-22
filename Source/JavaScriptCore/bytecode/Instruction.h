@@ -114,7 +114,7 @@ namespace JSC {
             list[0].set(globalData, owner, stubRoutine, firstBase, firstChain, isDirect);
         }
 
-        void visitAggregate(SlotVisitor& visitor, int count)
+        bool visitWeak(int count)
         {
             for (int i = 0; i < count; ++i) {
                 PolymorphicStubInfo& info = list[i];
@@ -124,12 +124,17 @@ namespace JSC {
                     continue;
                 }
                 
-                visitor.append(&info.base);
-                if (info.u.proto && !info.isChain)
-                    visitor.append(&info.u.proto);
-                if (info.u.chain && info.isChain)
-                    visitor.append(&info.u.chain);
+                if (!Heap::isMarked(info.base.get()))
+                    return false;
+                if (info.u.proto && !info.isChain
+                    && !Heap::isMarked(info.u.proto.get()))
+                    return false;
+                if (info.u.chain && info.isChain
+                    && !Heap::isMarked(info.u.chain.get()))
+                    return false;
             }
+            
+            return true;
         }
     };
 

@@ -64,7 +64,7 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& p
 
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-    if (entry && (entry->attributes() & Function)) {
+    if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
             slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
             return true;
@@ -101,7 +101,7 @@ bool JSLocation::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identif
     // Check for the few functions that we allow, even when called cross-domain.
     const HashEntry* entry = JSLocationPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     PropertySlot slot;
-    if (entry && (entry->attributes() & Function)) {
+    if (entry && (entry->attributes() & JSC::Function)) {
         if (entry->function() == jsLocationPrototypeFunctionReplace) {
             slot.setCustom(this, nonCachingStaticReplaceFunctionGetter);
             descriptor.setDescriptor(slot.getValue(exec, propertyName), entry->attributes());
@@ -154,7 +154,7 @@ bool JSLocation::putDelegate(ExecState* exec, const Identifier& propertyName, JS
 
 bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSLocation* thisObject = static_cast<JSLocation*>(cell);
+    JSLocation* thisObject = jsCast<JSLocation*>(cell);
     // Only allow deleting by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return false;
@@ -163,7 +163,7 @@ bool JSLocation::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
 
 void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSLocation* thisObject = static_cast<JSLocation*>(object);
+    JSLocation* thisObject = jsCast<JSLocation*>(object);
     // Only allow the location object to enumerated by frames in the same origin.
     if (!allowsAccessFromFrame(exec, thisObject->impl()->frame()))
         return;

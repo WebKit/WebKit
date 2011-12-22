@@ -56,8 +56,8 @@ public:
 
     void swap(UString& o) { m_impl.swap(o.m_impl); }
 
-    template<size_t inlineCapacity>
-    static UString adopt(Vector<UChar, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
+    template<typename CharType, size_t inlineCapacity>
+    static UString adopt(Vector<CharType, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
 
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || !m_impl->length(); }
@@ -75,7 +75,7 @@ public:
     {
         if (!m_impl)
             return 0;
-        return m_impl->characters16();
+        return m_impl->characters();
     }
 
     const LChar* characters8() const

@@ -34,7 +34,6 @@
 
 #include "FileReaderLoader.h"
 
-#include "ArrayBuffer.h"
 #include "Base64.h"
 #include "Blob.h"
 #include "BlobURL.h"
@@ -45,6 +44,7 @@
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
 #include "ThreadableLoader.h"
+#include <wtf/ArrayBuffer.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

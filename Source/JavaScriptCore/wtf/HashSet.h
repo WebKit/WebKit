@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,13 +26,13 @@
 
 namespace WTF {
 
+    struct IdentityExtractor;
+    
     template<typename Value, typename HashFunctions, typename Traits> class HashSet;
     template<typename Value, typename HashFunctions, typename Traits>
     void deleteAllValues(const HashSet<Value, HashFunctions, Traits>&);
     template<typename Value, typename HashFunctions, typename Traits>
     void fastDeleteAllValues(const HashSet<Value, HashFunctions, Traits>&);
-
-    template<typename T> struct IdentityExtractor;
 
     template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash,
         typename TraitsArg = HashTraits<ValueArg> > class HashSet {
@@ -45,7 +45,7 @@ namespace WTF {
         typedef typename ValueTraits::TraitType ValueType;
 
     private:
-        typedef HashTable<ValueType, ValueType, IdentityExtractor<ValueType>,
+        typedef HashTable<ValueType, ValueType, IdentityExtractor,
             HashFunctions, ValueTraits, ValueTraits> HashTableType;
 
     public:
@@ -69,6 +69,8 @@ namespace WTF {
         // must have the following function members:
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
+        // FIXME: We should reverse the order of the template arguments so that callers
+        // can just pass the translator and let the compiler deduce T.
         template<typename T, typename HashTranslator> iterator find(const T&) const;
         template<typename T, typename HashTranslator> bool contains(const T&) const;
 
@@ -82,6 +84,8 @@ namespace WTF {
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);
+        // FIXME: We should reverse the order of the template arguments so that callers
+        // can just pass the translator and let the compiler deduce T.
         template<typename T, typename HashTranslator> pair<iterator, bool> add(const T&);
 
         void remove(const ValueType&);
@@ -95,15 +99,15 @@ namespace WTF {
         HashTableType m_impl;
     };
 
-    template<typename T> struct IdentityExtractor {
-        static const T& extract(const T& t) { return t; }
+    struct IdentityExtractor {
+        template<typename T> static const T& extract(const T& t) { return t; }
     };
 
-    template<typename ValueType, typename ValueTraits, typename T, typename Translator>
+    template<typename Translator>
     struct HashSetTranslatorAdapter {
-        static unsigned hash(const T& key) { return Translator::hash(key); }
-        static bool equal(const ValueType& a, const T& b) { return Translator::equal(a, b); }
-        static void translate(ValueType& location, const T& key, const T&, unsigned hashCode)
+        template<typename T> static unsigned hash(const T& key) { return Translator::hash(key); }
+        template<typename T, typename U> static bool equal(const T& a, const U& b) { return Translator::equal(a, b); }
+        template<typename T, typename U> static void translate(T& location, const U& key, const U&, unsigned hashCode)
         {
             Translator::translate(location, key, hashCode);
         }
@@ -162,16 +166,14 @@ namespace WTF {
     typename HashSet<Value, HashFunctions, Traits>::iterator
     inline HashSet<Value, HashFunctions, Traits>::find(const T& value) const
     {
-        typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, HashTranslator> Adapter;
-        return m_impl.template find<T, Adapter>(value);
+        return m_impl.template find<HashSetTranslatorAdapter<HashTranslator> >(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename T, typename HashTranslator>
     inline bool HashSet<Value, HashFunctions, Traits>::contains(const T& value) const
     {
-        typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, HashTranslator> Adapter;
-        return m_impl.template contains<T, Adapter>(value);
+        return m_impl.template contains<HashSetTranslatorAdapter<HashTranslator> >(value);
     }
 
     template<typename T, typename U, typename V>
@@ -185,8 +187,7 @@ namespace WTF {
     inline pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool>
     HashSet<Value, HashFunctions, Traits>::add(const T& value)
     {
-        typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, HashTranslator> Adapter;
-        return m_impl.template addPassingHashCode<T, T, Adapter>(value, value);
+        return m_impl.template addPassingHashCode<HashSetTranslatorAdapter<HashTranslator> >(value, value);
     }
 
     template<typename T, typename U, typename V>

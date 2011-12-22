@@ -36,22 +36,24 @@ struct CallFrameClosure {
     JSGlobalData* globalData;
     Register* oldEnd;
     ScopeChainNode* scopeChain;
-    int expectedParams;
-    int providedParams;
+    int parameterCountIncludingThis;
+    int argumentCountIncludingThis;
     
-    void setArgument(int arg, JSValue value)
+    void setThis(JSValue value)
     {
-        if (arg < expectedParams)
-            newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams] = value;
-        else
-            newCallFrame[arg - RegisterFile::CallFrameHeaderSize - expectedParams - providedParams] = value;
+        newCallFrame->setThisValue(value);
+    }
+
+    void setArgument(int argument, JSValue value)
+    {
+        newCallFrame->setArgument(argument, value);
     }
 
     void resetCallFrame()
     {
         newCallFrame->setScopeChain(scopeChain);
-        for (int i = providedParams; i < expectedParams; ++i)
-            newCallFrame[i - RegisterFile::CallFrameHeaderSize - expectedParams] = jsUndefined();
+        for (int i = argumentCountIncludingThis; i < parameterCountIncludingThis; ++i)
+            newCallFrame->setArgument(i, jsUndefined());
     }
 };
 

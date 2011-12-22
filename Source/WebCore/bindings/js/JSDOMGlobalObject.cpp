@@ -42,8 +42,8 @@ namespace WebCore {
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, 0, CREATE_METHOD_TABLE(JSDOMGlobalObject) };
 
-JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWrapperWorld> world)
-    : JSGlobalObject(globalData, structure)
+JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWrapperWorld> world, const GlobalObjectMethodTable* globalObjectMethodTable)
+    : JSGlobalObject(globalData, structure, globalObjectMethodTable)
     , m_currentEvent(0)
     , m_world(world)
 {
@@ -67,7 +67,7 @@ void JSDOMGlobalObject::finishCreation(JSGlobalData& globalData, JSGlobalThis* t
 
 void JSDOMGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSDOMGlobalObject* thisObject = static_cast<JSDOMGlobalObject*>(cell);
+    JSDOMGlobalObject* thisObject = jsCast<JSDOMGlobalObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());

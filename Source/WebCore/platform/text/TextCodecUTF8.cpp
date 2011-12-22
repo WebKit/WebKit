@@ -218,7 +218,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
     // Each input byte might turn into a character.
     // That includes all bytes in the partial-sequence buffer because
     // each byte in an invalid sequence will turn into a replacement character.
-    StringBuffer buffer(m_partialSequenceSize + length);
+    StringBuffer<UChar> buffer(m_partialSequenceSize + length);
 
     const uint8_t* source = reinterpret_cast<const uint8_t*>(bytes);
     const uint8_t* end = source + length;

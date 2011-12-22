@@ -76,6 +76,34 @@ public:
         push(address);
     }
 
+    void getPCAfterCall(GPRReg gpr)
+    {
+          peek(gpr, -1);
+    }
+#endif // CPU(X86_64) || CPU(X86)
+
+#if CPU(ARM)
+    ALWAYS_INLINE void preserveReturnAddressAfterCall(RegisterID reg)
+    {
+        move(linkRegister, reg);
+    }
+
+    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(RegisterID reg)
+    {
+        move(reg, linkRegister);
+    }
+
+    ALWAYS_INLINE void restoreReturnAddressBeforeReturn(Address address)
+    {
+        loadPtr(address, linkRegister);
+    }
+
+    ALWAYS_INLINE void getPCAfterCall(GPRReg gpr)
+    {
+        move(ARMRegisters::lr, gpr);
+    }
+#endif
+
     void emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, GPRReg to)
     {
         loadPtr(Address(GPRInfo::callFrameRegister, entry * sizeof(Register)), to);
@@ -89,7 +117,6 @@ public:
     {
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry * sizeof(Register)));
     }
-#endif // CPU(X86_64) || CPU(X86)
 
     Jump branchIfNotCell(GPRReg reg)
     {
@@ -147,7 +174,7 @@ public:
             move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
             storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
         }
-#if CPU(X86_64)
+#if CPU(X86_64) || CPU(ARM_THUMB2)
         move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
         move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
 #elif CPU(X86)
@@ -188,6 +215,7 @@ public:
     {
         moveDoubleToPtr(fpr, gpr);
         subPtr(GPRInfo::tagTypeNumberRegister, gpr);
+        jitAssertIsJSDouble(gpr);
         return gpr;
     }
     FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
@@ -197,24 +225,35 @@ public:
         movePtrToDouble(gpr, fpr);
         return fpr;
     }
-#elif USE(JSVALUE32_64)
+#endif
+
+#if USE(JSVALUE32_64) && CPU(X86)
     void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
     {
-#if CPU(X86)
         movePackedToInt32(fpr, payloadGPR);
         rshiftPacked(TrustedImm32(32), fpr);
         movePackedToInt32(fpr, tagGPR);
-#endif
     }
     void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
     {
         jitAssertIsJSDouble(tagGPR);
-#if CPU(X86)
         moveInt32ToPacked(payloadGPR, fpr);
         moveInt32ToPacked(tagGPR, scratchFPR);
         lshiftPacked(TrustedImm32(32), scratchFPR);
         orPacked(scratchFPR, fpr);
+    }
 #endif
+
+#if USE(JSVALUE32_64) && CPU(ARM)
+    void boxDouble(FPRReg fpr, GPRReg tagGPR, GPRReg payloadGPR)
+    {
+        m_assembler.vmov(payloadGPR, tagGPR, fpr);
+    }
+    void unboxDouble(GPRReg tagGPR, GPRReg payloadGPR, FPRReg fpr, FPRReg scratchFPR)
+    {
+        jitAssertIsJSDouble(tagGPR);
+        UNUSED_PARAM(scratchFPR);
+        m_assembler.vmov(fpr, payloadGPR, tagGPR);
     }
 #endif
 
@@ -246,14 +285,19 @@ public:
         return codeOrigin.inlineCallFrame->callee->jsExecutable()->isStrictMode();
     }
     
-    CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
+    static CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)
     {
         if (codeOrigin.inlineCallFrame) {
             ExecutableBase* executable = codeOrigin.inlineCallFrame->executable.get();
             ASSERT(executable->structure()->classInfo() == &FunctionExecutable::s_info);
             return static_cast<FunctionExecutable*>(executable)->baselineCodeBlockFor(codeOrigin.inlineCallFrame->isCall ? CodeForCall : CodeForConstruct);
         }
-        return baselineCodeBlock();
+        return baselineCodeBlock;
+    }
+    
+    CodeBlock* baselineCodeBlockFor(const CodeOrigin& codeOrigin)
+    {
+        return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock());
     }
     
     CodeBlock* baselineCodeBlock()
@@ -262,6 +306,8 @@ public:
     }
     
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
+    
+    static const double twoToThe32;
 
 protected:
     JSGlobalData* m_globalData;

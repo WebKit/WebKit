@@ -64,7 +64,7 @@ static void makeCapitalized(String* string, UChar previous)
     if (length >= numeric_limits<unsigned>::max())
         CRASH();
 
-    StringBuffer stringWithPrevious(length + 1);
+    StringBuffer<UChar> stringWithPrevious(length + 1);
     stringWithPrevious[0] = previous == noBreakSpace ? ' ' : previous;
     for (unsigned i = 1; i < length + 1; i++) {
         // Replace &nbsp with a real space since ICU no longer treats &nbsp as a word separator.
@@ -78,7 +78,7 @@ static void makeCapitalized(String* string, UChar previous)
     if (!boundary)
         return;
 
-    StringBuffer data(length);
+    StringBuffer<UChar> data(length);
 
     int32_t endOfWord;
     int32_t startOfWord = textBreakFirst(boundary);

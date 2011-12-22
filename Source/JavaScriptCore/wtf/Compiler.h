@@ -29,6 +29,9 @@
 /* COMPILER() - the compiler being used to build the project */
 #define COMPILER(WTF_FEATURE) (defined WTF_COMPILER_##WTF_FEATURE  && WTF_COMPILER_##WTF_FEATURE)
 
+/* COMPILER_SUPPORTS() - whether the compiler being used to build the project supports the given feature. */
+#define COMPILER_SUPPORTS(WTF_COMPILER_FEATURE) (defined WTF_COMPILER_SUPPORTS_##WTF_COMPILER_FEATURE  && WTF_COMPILER_SUPPORTS_##WTF_COMPILER_FEATURE)
+
 /* ==== COMPILER() - the compiler being used to build the project ==== */
 
 /* COMPILER(CLANG) - Clang  */
@@ -38,6 +41,9 @@
 #ifndef __has_extension
 #define __has_extension __has_feature /* Compatibility with older versions of clang */
 #endif
+
+#define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES __has_feature(cxx_variadic_templates)
+#define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES __has_feature(cxx_rvalue_references)
 
 #endif
 
@@ -90,14 +96,6 @@
         #define WTF_COMPILER_MINGW64 1
     #endif /* __MINGW64_VERSION_MAJOR */
 #endif /* __MINGW32__ */
-
-/* COMPILER(WINSCW) - CodeWarrior for Symbian emulator */
-#if defined(__WINSCW__)
-#define WTF_COMPILER_WINSCW 1
-/* cross-compiling, it is not really windows */
-#undef WIN32
-#undef _WIN32
-#endif
 
 /* COMPILER(INTEL) - Intel C++ Compiler */
 #if defined(__INTEL_COMPILER)

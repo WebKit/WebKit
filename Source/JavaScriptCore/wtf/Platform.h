@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -316,8 +316,20 @@
 #ifdef __APPLE__
 #define WTF_OS_DARWIN 1
 
-/* FIXME: BUILDING_ON_.., and TARGETING... macros should be folded into the OS() system */
+#include <Availability.h>
 #include <AvailabilityMacros.h>
+#include <TargetConditionals.h>
+#endif
+
+/* OS(IOS) - iOS */
+/* OS(MAC_OS_X) - Mac OS X (not including iOS) */
+#if OS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED) \
+    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                 \
+    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
+#define WTF_OS_IOS 1
+#elif OS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
+#define WTF_OS_MAC_OS_X 1
+/* FIXME: BUILDING_ON_.., and TARGETING... macros should be folded into the OS() system */
 #if !defined(MAC_OS_X_VERSION_10_6) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 #define BUILDING_ON_LEOPARD 1
 #elif !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
@@ -332,18 +344,6 @@
 #elif !defined(MAC_OS_X_VERSION_10_8) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_8
 #define TARGETING_LION 1
 #endif
-#include <TargetConditionals.h>
-
-#endif
-
-/* OS(IOS) - iOS */
-/* OS(MAC_OS_X) - Mac OS X (not including iOS) */
-#if OS(DARWIN) && ((defined(TARGET_OS_EMBEDDED) && TARGET_OS_EMBEDDED)  \
-    || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE)                   \
-    || (defined(TARGET_IPHONE_SIMULATOR) && TARGET_IPHONE_SIMULATOR))
-#define WTF_OS_IOS 1
-#elif OS(DARWIN) && defined(TARGET_OS_MAC) && TARGET_OS_MAC
-#define WTF_OS_MAC_OS_X 1
 #endif
 
 /* OS(FREEBSD) - FreeBSD */
@@ -409,6 +409,7 @@
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
 /* PLATFORM(GTK) */
+/* PLATFORM(BLACKBERRY) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
 #if defined(BUILDING_CHROMIUM__)
@@ -419,6 +420,8 @@
 #define WTF_PLATFORM_WX 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
+#elif defined(BUILDING_BLACKBERRY__)
+#define WTF_PLATFORM_BLACKBERRY 1
 #elif OS(DARWIN)
 #define WTF_PLATFORM_MAC 1
 #elif OS(WINDOWS)
@@ -468,6 +471,13 @@
 #define WTF_USE_SKIA 1
 #define WTF_USE_CHROMIUM_NET 1
 #endif
+#endif
+
+#if PLATFORM(BLACKBERRY)
+#define ENABLE_DRAG_SUPPORT 0
+#define USE_SYSTEM_MALLOC 1
+#define WTF_USE_MERSENNE_TWISTER_19937 1
+#define WTF_USE_SKIA 1
 #endif
 
 #if PLATFORM(GTK)
@@ -546,6 +556,10 @@
 #define WTF_USE_WK_SCROLLBAR_PAINTER 1
 #endif
 
+#if PLATFORM(IOS)
+#define DONT_FINALIZE_ON_MAIN_THREAD 1
+#endif
+
 #if PLATFORM(QT) && OS(DARWIN)
 #define WTF_USE_CF 1
 #endif
@@ -561,16 +575,30 @@
 #define ENABLE_FTPDIR 1
 #define ENABLE_GEOLOCATION 1
 #define ENABLE_ICONDATABASE 0
-#define ENABLE_INSPECTOR 0
+#define ENABLE_INSPECTOR 1
 #define ENABLE_JAVA_BRIDGE 0
 #define ENABLE_NETSCAPE_PLUGIN_API 0
 #define ENABLE_ORIENTATION_EVENTS 1
 #define ENABLE_REPAINT_THROTTLING 1
-#define HAVE_READLINE 1
-#define WTF_USE_CF 1
-#define WTF_USE_PTHREADS 1
-#define HAVE_PTHREAD_RWLOCK 1
 #define ENABLE_WEB_ARCHIVE 1
+#define HAVE_NETWORK_CFDATA_ARRAY_CALLBACK 1
+#define HAVE_PTHREAD_RWLOCK 1
+#define HAVE_READLINE 1
+#define HAVE_RUNLOOP_TIMER 0
+#define WTF_USE_CF 1
+#define WTF_USE_CFNETWORK 1
+#define WTF_USE_PTHREADS 1
+
+#if PLATFORM(IOS_SIMULATOR)
+    #define ENABLE_INTERPRETER 1
+    #define ENABLE_JIT 0
+    #define ENABLE_YARR_JIT 0
+#else
+    #define ENABLE_INTERPRETER 1
+    #define ENABLE_JIT 1
+    #define ENABLE_YARR_JIT 1
+#endif
+
 #endif
 
 #if PLATFORM(WIN) && !OS(WINCE)
@@ -582,7 +610,7 @@
 #define WTF_USE_CFNETWORK 1
 #endif
 
-#if USE(CFNETWORK) || PLATFORM(MAC)
+#if USE(CFNETWORK) || PLATFORM(MAC) || PLATFORM(IOS)
 #define WTF_USE_CFURLCACHE 1
 #define WTF_USE_CFURLSTORAGESESSIONS 1
 #endif
@@ -673,6 +701,7 @@
 
 #if PLATFORM(IOS)
 #define HAVE_MADV_FREE 1
+#define HAVE_PTHREAD_SETNAME_NP 1
 #endif
 
 #elif OS(WINDOWS)
@@ -880,11 +909,15 @@
 #define ENABLE_JIT 1
 #endif
 
-/* Enable the DFG JIT on X86 and X86_64.  Only tested on Mac and GNU/Linux.  */
-#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) \
-    && (CPU(X86) || CPU(X86_64)) \
-    && (PLATFORM(MAC) || OS(LINUX))
+#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT)
+/* Enable the DFG JIT on X86 and X86_64.  Only tested on Mac and GNU/Linux. */
+#if (CPU(X86) || CPU(X86_64)) && (PLATFORM(MAC) || OS(LINUX))
 #define ENABLE_DFG_JIT 1
+#endif
+/* Enable the DFG JIT on ARMv7.  Only tested on iOS. */
+#if CPU(ARM_THUMB2) && PLATFORM(IOS)
+#define ENABLE_DFG_JIT 1
+#endif
 #endif
 
 /* Profiling of types and values used by JIT code. DFG_JIT depends on it, but you
@@ -928,6 +961,12 @@
 #endif
 #endif
 
+#if CPU(X86) || CPU(X86_64) || CPU(MIPS)
+#if !defined(ENABLE_JIT_USE_SOFT_MODULO)
+#define ENABLE_JIT_USE_SOFT_MODULO 1
+#endif
+#endif
+
 #if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL __fastcall
 #elif CPU(X86) && COMPILER(GCC)
@@ -961,27 +1000,14 @@
 #if ENABLE(JIT) || ENABLE(YARR_JIT)
 #define ENABLE_ASSEMBLER 1
 #endif
-/* Setting this flag prevents the assembler from using RWX memory; this may improve
-   security but currectly comes at a significant performance cost. */
-#if PLATFORM(IOS)
-#define ENABLE_ASSEMBLER_WX_EXCLUSIVE 1
-#endif
 
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
    On x86-64 we use a single fixed mmap, on other platforms we mmap on demand. */
 #if ENABLE(ASSEMBLER)
-#if CPU(X86_64)
+#if CPU(X86_64) || PLATFORM(IOS)
 #define ENABLE_EXECUTABLE_ALLOCATOR_FIXED 1
 #else
 #define ENABLE_EXECUTABLE_ALLOCATOR_DEMAND 1
-#endif
-#endif
-
-#ifndef ENABLE_LARGE_HEAP
-#if CPU(X86) || CPU(X86_64)
-#define ENABLE_LARGE_HEAP 1
-#else
-#define ENABLE_LARGE_HEAP 0
 #endif
 #endif
 
@@ -1034,7 +1060,7 @@
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
 
 /* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
 #define WTF_USE_PLATFORM_STRATEGIES 1
 #endif
 
@@ -1075,11 +1101,11 @@
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 
-#if !defined(ENABLE_COMPARE_AND_SWAP) && COMPILER(GCC) && (CPU(X86) || CPU(X86_64))
+#if !defined(ENABLE_COMPARE_AND_SWAP) && COMPILER(GCC) && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2))
 #define ENABLE_COMPARE_AND_SWAP 1
 #endif
 
-#if !defined(ENABLE_PARALLEL_GC) && PLATFORM(MAC) && ENABLE(COMPARE_AND_SWAP)
+#if !defined(ENABLE_PARALLEL_GC) && (PLATFORM(MAC) || PLATFORM(IOS)) && ENABLE(COMPARE_AND_SWAP)
 #define ENABLE_PARALLEL_GC 1
 #endif
 

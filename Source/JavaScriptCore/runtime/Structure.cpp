@@ -742,7 +742,7 @@ void Structure::getPropertyNamesFromStructure(JSGlobalData& globalData, Property
 
 void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    Structure* thisObject = static_cast<Structure*>(cell);
+    Structure* thisObject = jsCast<Structure*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     JSCell::visitChildren(thisObject, visitor);

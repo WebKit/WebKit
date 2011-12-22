@@ -88,7 +88,15 @@ void MemoryPressureHandler::uninstall()
         return;
 
     dispatch_source_cancel(_cache_event_source);
+    dispatch_release(_cache_event_source);
     _cache_event_source = 0;
+
+    if (_timer_event_source) {
+        dispatch_source_cancel(_timer_event_source);
+        dispatch_release(_timer_event_source);
+        _timer_event_source = 0;
+    }
+
     m_installed = false;
     
     notify_cancel(_notifyToken);
@@ -105,6 +113,7 @@ void MemoryPressureHandler::holdOff(unsigned seconds)
             dispatch_source_set_timer(_timer_event_source, dispatch_time(DISPATCH_TIME_NOW, seconds * NSEC_PER_SEC), DISPATCH_TIME_FOREVER, 1 * s_secondsBetweenMemoryCleanup);
             dispatch_source_set_event_handler(_timer_event_source, ^{
                 dispatch_source_cancel(_timer_event_source);
+                dispatch_release(_timer_event_source);
                 _timer_event_source = 0;
                 memoryPressureHandler().install();
             });

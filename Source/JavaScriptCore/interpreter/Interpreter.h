@@ -80,7 +80,13 @@ namespace JSC {
         CallFrame* oldCallFrame;
     };
 
-    enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 32 };
+#if PLATFORM(IOS)
+    // We use a smaller reentrancy limit on iPhone because of the high amount of
+    // stack space required on the web thread.
+    enum { MaxLargeThreadReentryDepth = 93, MaxSmallThreadReentryDepth = 16 };
+#else
+    enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 16 };
+#endif // PLATFORM(IOS)
 
     class Interpreter {
         WTF_MAKE_FAST_ALLOCATED;
@@ -115,7 +121,8 @@ namespace JSC {
         JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj);
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&);
-        JSValue execute(EvalExecutable* evalNode, CallFrame*, JSValue thisValue, ScopeChainNode*);
+        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, ScopeChainNode*);
+        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, ScopeChainNode*, int globalRegisterOffset);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;
         JS_EXPORT_PRIVATE JSValue retrieveCaller(CallFrame*, JSFunction*) const;
@@ -125,7 +132,6 @@ namespace JSC {
         
         SamplingTool* sampler() { return m_sampler.get(); }
 
-        NEVER_INLINE JSValue callEval(CallFrame*, RegisterFile*, Register* argv, int argc, int registerOffset);
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
 
@@ -135,11 +141,9 @@ namespace JSC {
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
-        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argCount, ScopeChainNode*);
+        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, JSFunction*, int argumentCountIncludingThis, ScopeChainNode*);
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&);
-
-        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, int globalRegisterOffset, ScopeChainNode*);
 
 #if ENABLE(INTERPRETER)
         NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue& exceptionValue);
@@ -189,6 +193,14 @@ namespace JSC {
     {
         return !thisValue.isObject() || thisValue.toThisObject(exec) == thisValue;
     }
+
+    inline JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue thisValue, ScopeChainNode* scopeChain)
+    {
+        return execute(eval, callFrame, thisValue, scopeChain, m_registerFile.size() + 1 + RegisterFile::CallFrameHeaderSize);
+    }
+
+    JSValue eval(CallFrame*);
+    CallFrame* loadVarargs(CallFrame*, RegisterFile*, JSValue thisValue, JSValue arguments, int firstFreeRegister);
 
 } // namespace JSC
 

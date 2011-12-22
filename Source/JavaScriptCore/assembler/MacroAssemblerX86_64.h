@@ -366,6 +366,10 @@ public:
 
     Jump branchPtr(RelationalCondition cond, RegisterID left, TrustedImmPtr right)
     {
+        if (((cond == Equal) || (cond == NotEqual)) && !right.m_value) {
+            m_assembler.testq_rr(left, left);
+            return Jump(m_assembler.jCC(x86Condition(cond)));
+        }
         move(right, scratchRegister);
         return branchPtr(cond, left, scratchRegister);
     }
@@ -437,6 +441,12 @@ public:
     }
 
 
+    Jump branchAddPtr(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
+    {
+        addPtr(imm, dest);
+        return Jump(m_assembler.jCC(x86Condition(cond)));
+    }
+
     Jump branchAddPtr(ResultCondition cond, RegisterID src, RegisterID dest)
     {
         addPtr(src, dest);
@@ -487,6 +497,11 @@ public:
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return true; }
+    
+    static FunctionPtr readCallTarget(CodeLocationCall call)
+    {
+        return FunctionPtr(X86Assembler::readPointer(call.dataLabelPtrAtOffset(-REPTACH_OFFSET_CALL_R11).dataLocation()));
+    }
 
 private:
     friend class LinkBuffer;

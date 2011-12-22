@@ -56,84 +56,19 @@ namespace WTF {
             if (a->is8Bit()) {
                 if (b->is8Bit()) {
                     // Both a & b are 8 bit.
-                    const LChar* aChars = a->characters8();
-                    const LChar* bChars = b->characters8();
-
-                    unsigned i = 0;
-
-                    // FIXME: perhaps we should have a more abstract macro that indicates when
-                    // going 4 bytes at a time is unsafe
-#if (CPU(X86) || CPU(X86_64))
-                    const unsigned charsPerInt = sizeof(uint32_t) / sizeof(char);
-                    
-                    if (aLength > charsPerInt) {
-                        unsigned stopCount = aLength & ~(charsPerInt - 1);
-                        
-                        const uint32_t* aIntCharacters = reinterpret_cast<const uint32_t*>(aChars);
-                        const uint32_t* bIntCharacters = reinterpret_cast<const uint32_t*>(bChars);
-                        for (unsigned j = 0; i < stopCount; i += charsPerInt, ++j) {
-                            if (aIntCharacters[j] != bIntCharacters[j])
-                                return false;
-                        }
-                    }
-#endif
-                    for (; i < aLength; ++i) {
-                        if (aChars[i] != bChars[i])
-                            return false;
-                    }
-                    
-                    return true;
+                    return WTF::equal(a->characters8(), b->characters8(), aLength);
                 }
 
                 // We know that a is 8 bit & b is 16 bit.
-                const LChar* aChars = a->characters8();
-                const UChar* bChars = b->characters16();
-                for (unsigned i = 0; i != aLength; ++i) {
-                    if (*aChars++ != *bChars++)
-                        return false;
-                }
-
-                return true;
+                return WTF::equal(a->characters8(), b->characters16(), aLength);
             }
 
             if (b->is8Bit()) {
                 // We know that a is 8 bit and b is 16 bit.
-                const UChar* aChars = a->characters16();
-                const LChar* bChars = b->characters8();
-                for (unsigned i = 0; i != aLength; ++i) {
-                    if (*aChars++ != *bChars++)
-                        return false;
-                }
-
-                return true;
+                return WTF::equal(a->characters16(), b->characters8(), aLength);
             }
 
-            // Both a & b are 16 bit.
-            // FIXME: perhaps we should have a more abstract macro that indicates when
-            // going 4 bytes at a time is unsafe
-#if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
-            const UChar* aChars = a->characters16();
-            const UChar* bChars = b->characters16();
-            for (unsigned i = 0; i != aLength; ++i) {
-                if (*aChars++ != *bChars++)
-                    return false;
-            }
-            return true;
-#else
-            /* Do it 4-bytes-at-a-time on architectures where it's safe */
-            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->characters16());
-            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->characters16());
-
-            unsigned halfLength = aLength >> 1;
-            for (unsigned i = 0; i != halfLength; ++i)
-                if (*aChars++ != *bChars++)
-                    return false;
-
-            if (aLength & 1 && *reinterpret_cast<const uint16_t*>(aChars) != *reinterpret_cast<const uint16_t*>(bChars))
-                return false;
-
-            return true;
-#endif
+            return WTF::equal(a->characters16(), b->characters16(), aLength);
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }

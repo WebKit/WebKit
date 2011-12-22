@@ -33,6 +33,7 @@ module html {
         V8CustomConstructor,
     ] ArrayBuffer {
         readonly attribute int byteLength;
+        ArrayBuffer slice(in long begin, in [Optional] long end);
     };
 
 }

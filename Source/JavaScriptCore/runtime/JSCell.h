@@ -45,6 +45,18 @@ namespace JSC {
         IncludeDontEnumProperties
     };
 
+    enum TypedArrayType {
+        TypedArrayNone,
+        TypedArrayInt8,
+        TypedArrayInt16,
+        TypedArrayInt32,
+        TypedArrayUint8,
+        TypedArrayUint16,
+        TypedArrayUint32,
+        TypedArrayFloat32,
+        TypedArrayFloat64
+    };
+
     class JSCell {
         friend class JSValue;
         friend class MarkedBlock;
@@ -131,6 +143,7 @@ namespace JSC {
         Structure* unvalidatedStructure() { return m_structure.unvalidatedGet(); }
 #endif
         
+        static const TypedArrayType TypedArrayStorageType = TypedArrayNone;
     protected:
 
         void finishCreation(JSGlobalData&);
@@ -199,8 +212,7 @@ namespace JSC {
 
     inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
-        JSCell* thisObject = static_cast<JSCell*>(cell);
-        visitor.append(&thisObject->m_structure);
+        visitor.append(&cell->m_structure);
     }
 
     // --- JSValue inlines ----------------------------
@@ -329,6 +341,19 @@ namespace JSC {
     inline bool isZapped(const JSCell* cell)
     {
         return cell->isZapped();
+    }
+
+    template<typename To, typename From>
+    inline To jsCast(From* from)
+    {
+        ASSERT(from->inherits(&WTF::RemovePointer<To>::Type::s_info));
+        return static_cast<To>(from);
+    }
+
+    template<typename To, typename From>
+    inline To jsDynamicCast(From* from)
+    {
+        return from->inherits(&WTF::RemovePointer<To>::Type::s_info) ? static_cast<To>(from) : 0;
     }
 
 } // namespace JSC

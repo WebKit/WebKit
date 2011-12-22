@@ -140,11 +140,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
 {
     ASSERT(object);
     ASSERT(context);
-#ifndef NDEBUG
-    ASSERT(resourceMode == ApplyToDefaultMode);
-#else
-    UNUSED_PARAM(resourceMode);
-#endif
+    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
     // Returning false here, to avoid drawings onto the context. We just want to
     // draw the stored filter output, not the unfiltered object as well.
@@ -263,11 +259,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 {
     ASSERT(object);
     ASSERT(context);
-#ifndef NDEBUG
-    ASSERT(resourceMode == ApplyToDefaultMode);
-#else
-    UNUSED_PARAM(resourceMode);
-#endif
+    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
     FilterData* filterData = m_filter.get(object);
     if (!filterData)

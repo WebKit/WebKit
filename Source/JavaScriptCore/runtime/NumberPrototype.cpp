@@ -85,12 +85,12 @@ void NumberPrototype::finishCreation(ExecState* exec, JSGlobalObject*)
 
 bool NumberPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(cell), propertyName, slot);
+    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), jsCast<NumberPrototype*>(cell), propertyName, slot);
 }
 
 bool NumberPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), static_cast<NumberPrototype*>(object), propertyName, descriptor);
+    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), jsCast<NumberPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -395,12 +395,8 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
     // handled by numberToString.
     ASSERT(isfinite(x));
 
-    char buffer[WTF::NumberToStringBufferLength];
-    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
-    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
-    builder.Reset();
-    converter.ToFixed(x, decimalPlaces, &builder);
-    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
+    NumberToStringBuffer buffer;
+    return JSValue::encode(jsString(exec, UString(numberToFixedWidthString(x, decimalPlaces, buffer))));
 }
 
 // toPrecision converts a number to a string, takeing an argument specifying a
@@ -430,12 +426,8 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
-    char buffer[WTF::NumberToStringBufferLength];
-    DoubleConversionStringBuilder builder(buffer, WTF::NumberToStringBufferLength);
-    const DoubleToStringConverter& converter = DoubleToStringConverter::EcmaScriptConverter();
-    builder.Reset();
-    converter.ToPrecision(x, significantFigures, &builder);
-    return JSValue::encode(jsString(exec, UString(builder.Finalize())));
+    NumberToStringBuffer buffer;
+    return JSValue::encode(jsString(exec, UString(numberToFixedPrecisionString(x, significantFigures, buffer))));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)

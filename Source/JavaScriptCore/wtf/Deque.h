@@ -280,7 +280,7 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     void Deque<T, inlineCapacity>::checkIndexValidity(size_t index) const
     {
-        ASSERT(index <= m_buffer.capacity());
+        ASSERT_UNUSED(index, index <= m_buffer.capacity());
         if (m_start <= m_end) {
             ASSERT(index >= m_start);
             ASSERT(index <= m_end);

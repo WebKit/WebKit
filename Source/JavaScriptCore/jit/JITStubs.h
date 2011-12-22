@@ -31,7 +31,7 @@
 #define JITStubs_h
 
 #include "CallData.h"
-#include "DFGIntrinsic.h"
+#include "Intrinsic.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Register.h"
 #include "ThunkGenerators.h"
@@ -69,6 +69,7 @@ namespace JSC {
 
         JSValue jsValue() { return JSValue::decode(asEncodedJSValue); }
         JSObject* jsObject() { return static_cast<JSObject*>(asPointer); }
+        Register* reg() { return static_cast<Register*>(asPointer); }
         Identifier& identifier() { return *static_cast<Identifier*>(asPointer); }
         int32_t int32() { return asInt32; }
         CodeBlock* codeBlock() { return static_cast<CodeBlock*>(asPointer); }
@@ -299,7 +300,7 @@ namespace JSC {
         MacroAssemblerCodeRef ctiStub(JSGlobalData*, ThunkGenerator);
 
         NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, NativeFunction constructor);
-        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, DFG::Intrinsic);
+        NativeExecutable* hostFunctionStub(JSGlobalData*, NativeFunction, ThunkGenerator, Intrinsic);
 
         void clearHostFunctionStubs();
 
@@ -325,7 +326,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_del_by_val(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_div(STUB_ARGS_DECLARATION);
@@ -402,7 +402,7 @@ extern "C" {
     int JIT_STUB cti_op_jgreater(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jgreatereq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
+    void* JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_has_property(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION);

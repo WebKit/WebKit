@@ -32,16 +32,13 @@
 #include "AudioUtilities.h"
 #include "FFTFrame.h"
 
-#if ENABLE(WEBGL)
-#include "Float32Array.h"
-#include "Uint8Array.h"
-#endif
-
 #include <algorithm>
 #include <limits.h>
 #include <wtf/Complex.h>
+#include <wtf/Float32Array.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Threading.h>
+#include <wtf/Uint8Array.h>
 
 using namespace std;
 

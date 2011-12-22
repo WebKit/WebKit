@@ -35,7 +35,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioProcessingEvent.h"
 #include "Document.h"
-#include "Float32Array.h"
+#include <wtf/Float32Array.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

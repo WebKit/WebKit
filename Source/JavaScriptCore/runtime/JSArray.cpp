@@ -225,9 +225,48 @@ void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
 
     size_t i = 0;
     WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    ArgList::const_iterator end = list.end();
-    for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
-        vector[i].set(globalData, this, *it);
+    for (; i < list.size(); ++i)
+        vector[i].set(globalData, this, list.at(i));
+    for (; i < initialStorage; i++)
+        vector[i].clear();
+
+    checkConsistency();
+
+    Heap::heap(this)->reportExtraMemoryCost(storageSize(initialStorage));
+}
+
+void JSArray::finishCreation(JSGlobalData& globalData, const JSValue* values, size_t length)
+{
+    Base::finishCreation(globalData);
+    ASSERT(inherits(&s_info));
+
+    unsigned initialCapacity = length;
+    unsigned initialStorage;
+    
+    // If the ArgList is empty, allocate space for 3 entries.  This value empirically
+    // works well for benchmarks.
+    if (!initialCapacity)
+        initialStorage = 3;
+    else
+        initialStorage = initialCapacity;
+    
+    m_storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialStorage)));
+    m_storage->m_allocBase = m_storage;
+    m_indexBias = 0;
+    m_storage->m_length = initialCapacity;
+    m_vectorLength = initialStorage;
+    m_storage->m_numValuesInVector = initialCapacity;
+    m_storage->m_sparseValueMap = 0;
+    m_storage->subclassData = 0;
+    m_storage->reportedMapCapacity = 0;
+#if CHECK_ARRAY_CONSISTENCY
+    m_storage->m_inCompactInitialization = false;
+#endif
+
+    size_t i = 0;
+    WriteBarrier<Unknown>* vector = m_storage->m_vector;
+    for ( ; i != length; ++i)
+        vector[i].set(globalData, this, values[i]);
     for (; i < initialStorage; i++)
         vector[i].clear();
 
@@ -247,7 +286,7 @@ JSArray::~JSArray()
 
 bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     ArrayStorage* storage = thisObject->m_storage;
     
     if (i >= storage->m_length) {
@@ -277,7 +316,7 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
 
 bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     if (propertyName == exec->propertyNames().length) {
         slot.setValue(jsNumber(thisObject->length()));
         return true;
@@ -293,7 +332,7 @@ bool JSArray::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier
 
 bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSArray* thisObject = static_cast<JSArray*>(object);
+    JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == exec->propertyNames().length) {
         descriptor.setDescriptor(jsNumber(thisObject->length()), DontDelete | DontEnum);
         return true;
@@ -328,7 +367,7 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
 // ECMA 15.4.5.1
 void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex) {
@@ -351,7 +390,7 @@ void JSArray::put(JSCell* cell, ExecState* exec, const Identifier& propertyName,
 
 void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue value)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     thisObject->checkConsistency();
 
     ArrayStorage* storage = thisObject->m_storage;
@@ -490,7 +529,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
 
 bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(isArrayIndex);
     if (isArrayIndex)
@@ -504,7 +543,7 @@ bool JSArray::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& pr
 
 bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     thisObject->checkConsistency();
 
     ArrayStorage* storage = thisObject->m_storage;
@@ -542,7 +581,7 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
 
 void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSArray* thisObject = static_cast<JSArray*>(object);
+    JSArray* thisObject = jsCast<JSArray*>(object);
     // FIXME: Filling PropertyNameArray with an identifier for every integer
     // is incredibly inefficient for large arrays. We need a different approach,
     // which almost certainly means a different structure for PropertyNameArray.
@@ -881,7 +920,7 @@ void JSArray::unshiftCount(ExecState* exec, int count)
 
 void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSArray* thisObject = static_cast<JSArray*>(cell);
+    JSArray* thisObject = jsCast<JSArray*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -1226,22 +1265,22 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         args.append(get(exec, i));
 }
 
-void JSArray::copyToRegisters(ExecState* exec, Register* buffer, uint32_t maxSize)
+void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t length)
 {
-    ASSERT(m_storage->m_length >= maxSize);
-    UNUSED_PARAM(maxSize);
-    WriteBarrier<Unknown>* vector = m_storage->m_vector;
-    unsigned vectorEnd = min(maxSize, m_vectorLength);
+    ASSERT(length == this->length());
+    UNUSED_PARAM(length);
     unsigned i = 0;
+    WriteBarrier<Unknown>* vector = m_storage->m_vector;
+    unsigned vectorEnd = min(length, m_vectorLength);
     for (; i < vectorEnd; ++i) {
         WriteBarrier<Unknown>& v = vector[i];
         if (!v)
             break;
-        buffer[i] = v.get();
+        callFrame->setArgument(i, v.get());
     }
 
-    for (; i < maxSize; ++i)
-        buffer[i] = get(exec, i);
+    for (; i < length; ++i)
+        callFrame->setArgument(i, get(exec, i));
 }
 
 unsigned JSArray::compactForSorting()

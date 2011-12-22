@@ -43,10 +43,12 @@
 
 namespace WebCore {
 
-    class ScriptExecutionContext;
-    class SocketStreamHandle;
-    class SocketStreamError;
-    class WebSocketChannelClient;
+class Blob;
+class FileReaderLoader;
+class ScriptExecutionContext;
+class SocketStreamHandle;
+class SocketStreamError;
+class WebSocketChannelClient;
 
     class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel {
         WTF_MAKE_FAST_ALLOCATED;

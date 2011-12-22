@@ -84,11 +84,7 @@ bool RenderSVGResourceMasker::applyResource(RenderObject* object, RenderStyle*, 
 {
     ASSERT(object);
     ASSERT(context);
-#ifndef NDEBUG
-    ASSERT(resourceMode == ApplyToDefaultMode);
-#else
-    UNUSED_PARAM(resourceMode);
-#endif
+    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
     if (!m_masker.contains(object))
         m_masker.set(object, new MaskerData);

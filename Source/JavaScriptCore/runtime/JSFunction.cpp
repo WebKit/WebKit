@@ -118,6 +118,11 @@ JSFunction::~JSFunction()
     ASSERT(vptr() == JSGlobalData::jsFunctionVPtr);
 }
 
+void JSFunction::vtableAnchor()
+{
+    fprintf(stderr, "We need something here that Visual Studio can't optimize away.\n");
+}
+
 void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
 {
     JSValue thrower = createTypeErrorFunction(exec, message);
@@ -151,7 +156,7 @@ const UString JSFunction::calculatedDisplayName(ExecState* exec)
 
 void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
@@ -164,7 +169,7 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 CallType JSFunction::getCallData(JSCell* cell, CallData& callData)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
         callData.native.function = thisObject->nativeFunction();
         return CallTypeHost;
@@ -197,7 +202,7 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
 
 bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction())
         return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
@@ -253,7 +258,7 @@ bool JSFunction::getOwnPropertySlot(JSCell* cell, ExecState* exec, const Identif
 
 bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(object);
+    JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (thisObject->isHostFunction())
         return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);
     
@@ -301,7 +306,7 @@ bool JSFunction::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, con
 
 void JSFunction::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(object);
+    JSFunction* thisObject = jsCast<JSFunction*>(object);
     if (!thisObject->isHostFunction() && (mode == IncludeDontEnumProperties)) {
         // Make sure prototype has been reified.
         PropertySlot slot;
@@ -316,7 +321,7 @@ void JSFunction::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 
 void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
         Base::put(thisObject, exec, propertyName, value, slot);
         return;
@@ -341,7 +346,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, const Identifier& propertyNa
 
 bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier& propertyName)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction())
         return Base::deleteProperty(thisObject, exec, propertyName);
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
@@ -352,7 +357,7 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, const Identifier&
 // ECMA 13.2.2 [[Construct]]
 ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& constructData)
 {
-    JSFunction* thisObject = static_cast<JSFunction*>(cell);
+    JSFunction* thisObject = jsCast<JSFunction*>(cell);
     if (thisObject->isHostFunction()) {
         constructData.native.function = thisObject->nativeConstructor();
         return ConstructTypeHost;

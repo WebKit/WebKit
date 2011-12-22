@@ -114,19 +114,19 @@ public:
     bool quickGet(size_t bit) const
     {
         ASSERT(bit < size());
-        return !!(bits()[bit / bitsInPointer()] & (static_cast<uintptr_t>(1) << ((bit & (bitsInPointer() - 1)) + 1)));
+        return !!(bits()[bit / bitsInPointer()] & (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1))));
     }
     
     void quickSet(size_t bit)
     {
         ASSERT(bit < size());
-        bits()[bit / bitsInPointer()] |= (static_cast<uintptr_t>(1) << ((bit & (bitsInPointer() - 1)) + 1));
+        bits()[bit / bitsInPointer()] |= (static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
     }
     
     void quickClear(size_t bit)
     {
         ASSERT(bit < size());
-        bits()[bit / bitsInPointer()] &= ~(static_cast<uintptr_t>(1) << ((bit & (bitsInPointer() - 1)) + 1));
+        bits()[bit / bitsInPointer()] &= ~(static_cast<uintptr_t>(1) << (bit & (bitsInPointer() - 1)));
     }
     
     void quickSet(size_t bit, bool value)
@@ -187,8 +187,8 @@ private:
     
     static uintptr_t makeInlineBits(uintptr_t bits)
     {
-        ASSERT(!(bits & static_cast<uintptr_t>(1)));
-        return bits | static_cast<uintptr_t>(1);
+        ASSERT(!(bits & (static_cast<uintptr_t>(1) << maxInlineBits())));
+        return bits | (static_cast<uintptr_t>(1) << maxInlineBits());
     }
     
     class OutOfLineBits {
@@ -211,10 +211,10 @@ private:
         size_t m_numBits;
     };
     
-    bool isInline() const { return m_bitsOrPointer & static_cast<uintptr_t>(1); }
+    bool isInline() const { return m_bitsOrPointer >> maxInlineBits(); }
     
-    const OutOfLineBits* outOfLineBits() const { return bitwise_cast<const OutOfLineBits*>(m_bitsOrPointer); }
-    OutOfLineBits* outOfLineBits() { return bitwise_cast<OutOfLineBits*>(m_bitsOrPointer); }
+    const OutOfLineBits* outOfLineBits() const { return bitwise_cast<const OutOfLineBits*>(m_bitsOrPointer << 1); }
+    OutOfLineBits* outOfLineBits() { return bitwise_cast<OutOfLineBits*>(m_bitsOrPointer << 1); }
     
     void resizeOutOfLine(size_t numBits);
     void setSlow(const BitVector& other);
@@ -232,10 +232,7 @@ private:
             return &m_bitsOrPointer;
         return outOfLineBits()->bits();
     }
-
-    // The low bit of m_bitsOrPointer is a flag indicating whether this field is
-    // inline bits or a pointer to out of line bits. If the flag is set, the field
-    // is inline bits. This works because the low bit in a pointer is always unset.
+    
     uintptr_t m_bitsOrPointer;
 };
 

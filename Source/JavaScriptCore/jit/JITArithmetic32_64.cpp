@@ -1191,13 +1191,13 @@ void JIT::emitSlow_op_div(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
 /* ------------------------------ BEGIN: OP_MOD ------------------------------ */
 
-#if CPU(X86) || CPU(X86_64) || CPU(MIPS)
-
 void JIT::emit_op_mod(Instruction* currentInstruction)
 {
     unsigned dst = currentInstruction[1].u.operand;
     unsigned op1 = currentInstruction[2].u.operand;
     unsigned op2 = currentInstruction[3].u.operand;
+
+#if ENABLE(JIT_USE_SOFT_MODULO)
 
 #if CPU(X86) || CPU(X86_64)
     // Make sure registers are correct for x86 IDIV instructions.
@@ -1207,74 +1207,6 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     ASSERT(regT3 == X86Registers::ebx);
 #endif
 
-    if (isOperandConstantImmediateInt(op2) && getConstantOperand(op2).asInt32() != 0) {
-        emitLoad(op1, regT1, regT0);
-        move(Imm32(getConstantOperand(op2).asInt32()), regT2);
-        addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-        if (getConstantOperand(op2).asInt32() == -1)
-            addSlowCase(branch32(Equal, regT0, TrustedImm32(0x80000000))); // -2147483648 / -1 => EXC_ARITHMETIC
-    } else {
-        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
-        addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-        addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
-
-        addSlowCase(branch32(Equal, regT0, TrustedImm32(0x80000000))); // -2147483648 / -1 => EXC_ARITHMETIC
-        addSlowCase(branch32(Equal, regT2, TrustedImm32(0))); // divide by 0
-    }
-
-    move(regT0, regT3); // Save dividend payload, in case of 0.
-#if CPU(X86) || CPU(X86_64)
-    m_assembler.cdq();
-    m_assembler.idivl_r(regT2);
-#elif CPU(MIPS)
-    m_assembler.div(regT0, regT2);
-    m_assembler.mfhi(regT1);
-#endif
-
-    // If the remainder is zero and the dividend is negative, the result is -0.
-    Jump storeResult1 = branchTest32(NonZero, regT1);
-    Jump storeResult2 = branchTest32(Zero, regT3, TrustedImm32(0x80000000)); // not negative
-    emitStore(dst, jsNumber(-0.0));
-    Jump end = jump();
-
-    storeResult1.link(this);
-    storeResult2.link(this);
-    emitStoreInt32(dst, regT1, (op1 == dst || op2 == dst));
-    end.link(this);
-}
-
-void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
-
-    if (isOperandConstantImmediateInt(op2) && getConstantOperand(op2).asInt32() != 0) {
-        linkSlowCase(iter); // int32 check
-        if (getConstantOperand(op2).asInt32() == -1)
-            linkSlowCase(iter); // 0x80000000 check
-    } else {
-        linkSlowCase(iter); // int32 check
-        linkSlowCase(iter); // int32 check
-        linkSlowCase(iter); // 0 check
-        linkSlowCase(iter); // 0x80000000 check
-    }
-
-    JITStubCall stubCall(this, cti_op_mod);
-    stubCall.addArgument(op1);
-    stubCall.addArgument(op2);
-    stubCall.call(dst);
-}
-
-#else // CPU(X86) || CPU(X86_64) || CPU(MIPS)
-
-void JIT::emit_op_mod(Instruction* currentInstruction)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned op1 = currentInstruction[2].u.operand;
-    unsigned op2 = currentInstruction[3].u.operand;
-
-#if ENABLE(JIT_USE_SOFT_MODULO)
     emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
     addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
@@ -1311,8 +1243,6 @@ void JIT::emitSlow_op_mod(Instruction* currentInstruction, Vector<SlowCaseEntry>
     ASSERT_NOT_REACHED();
 #endif
 }
-
-#endif // CPU(X86) || CPU(X86_64)
 
 /* ------------------------------ END: OP_MOD ------------------------------ */
 

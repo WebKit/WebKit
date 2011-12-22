@@ -69,6 +69,7 @@ public:
     }
     
     void clear() { clear(0); }
+    void clearToMaxUnsigned() { clear(reinterpret_cast<void*>(-1)); }
 
 protected:
     JITWriteBarrierBase()

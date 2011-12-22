@@ -60,6 +60,7 @@ namespace WTF {
 
         PassOwnPtr<DataType> waitForMessage();
         PassOwnPtr<DataType> tryGetMessage();
+        PassOwnPtr<DataType> tryGetMessageIgnoringKilled();
         template<typename Predicate>
         PassOwnPtr<DataType> waitForMessageFilteredWithTimeout(MessageQueueWaitResult&, Predicate&, double absoluteTime);
 
@@ -161,6 +162,16 @@ namespace WTF {
         MutexLocker lock(m_mutex);
         if (m_killed)
             return nullptr;
+        if (m_queue.isEmpty())
+            return nullptr;
+
+        return adoptPtr(m_queue.takeFirst());
+    }
+
+    template<typename DataType>
+    inline PassOwnPtr<DataType> MessageQueue<DataType>::tryGetMessageIgnoringKilled()
+    {
+        MutexLocker lock(m_mutex);
         if (m_queue.isEmpty())
             return nullptr;
 
