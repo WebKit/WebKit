@@ -1,3 +1,16 @@
+2011-12-22  Tom Sepez  <tsepez@chromium.org>
+
+        XSLT-created HTML documents do not inherit first party for cookies from originally loaded XML.
+        https://bugs.webkit.org/show_bug.cgi?id=74757
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: http/tests/security/cookies/first-party-cookie-allow-xslt.xml
+               http/tests/security/cookies/third-party-cookie-blocking-xslt.xml
+
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2011-12-22  Daniel Jalkut  <jalkut@red-sweater.com>
 
         WebKit editing throws exception when monochrome color dragged onto text
