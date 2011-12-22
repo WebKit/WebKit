@@ -3863,10 +3863,14 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case InlineStart:
+    case Nop:
         ASSERT_NOT_REACHED();
         break;
     }
 
+    if (!m_compileOkay)
+        return;
+    
     if (node.hasResult() && node.mustGenerate())
         use(m_compileIndex);
 }

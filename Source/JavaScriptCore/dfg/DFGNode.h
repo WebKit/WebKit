@@ -178,6 +178,7 @@ static inline const char* arithNodeFlagsAsString(ArithNodeFlags flags)
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, 0) \
     macro(Phantom, NodeMustGenerate) \
+    macro(Nop, 0) \
     macro(Phi, 0) \
     macro(Flush, NodeMustGenerate) \
     \
@@ -833,6 +834,11 @@ struct Node {
     void setRefCount(unsigned refCount)
     {
         m_refCount = refCount;
+    }
+    
+    void deref()
+    {
+        m_refCount--;
     }
     
     NodeIndex child1()

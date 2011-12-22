@@ -60,6 +60,7 @@ public:
         m_registerFormat = DataFormatNone;
         m_spillFormat = DataFormatNone;
         m_canFill = true;
+        ASSERT(m_useCount);
     }
     void initInteger(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
     {
@@ -69,6 +70,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.gpr = gpr;
+        ASSERT(m_useCount);
     }
 #if USE(JSVALUE64)
     void initJSValue(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr, DataFormat format = DataFormatJS)
@@ -81,6 +83,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.gpr = gpr;
+        ASSERT(m_useCount);
     }
 #elif USE(JSVALUE32_64)
     void initJSValue(NodeIndex nodeIndex, uint32_t useCount, GPRReg tagGPR, GPRReg payloadGPR, DataFormat format = DataFormatJS)
@@ -94,6 +97,7 @@ public:
         m_canFill = false;
         u.v.tagGPR = tagGPR;
         u.v.payloadGPR = payloadGPR;
+        ASSERT(m_useCount);
     }
 #endif
     void initCell(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
@@ -104,6 +108,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.gpr = gpr;
+        ASSERT(m_useCount);
     }
     void initBoolean(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
     {
@@ -113,6 +118,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.gpr = gpr;
+        ASSERT(m_useCount);
     }
     void initDouble(NodeIndex nodeIndex, uint32_t useCount, FPRReg fpr)
     {
@@ -123,6 +129,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.fpr = fpr;
+        ASSERT(m_useCount);
     }
     void initStorage(NodeIndex nodeIndex, uint32_t useCount, GPRReg gpr)
     {
@@ -132,6 +139,7 @@ public:
         m_spillFormat = DataFormatNone;
         m_canFill = false;
         u.gpr = gpr;
+        ASSERT(m_useCount);
     }
 
     // Get the index of the node that produced this value.
@@ -142,6 +150,7 @@ public:
     // associated machine registers may be freed.
     bool use()
     {
+        ASSERT(m_useCount);
         return !--m_useCount;
     }
 
