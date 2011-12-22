@@ -40,7 +40,7 @@ module storage {
         readonly attribute DOMString fullPath;
         readonly attribute DOMFileSystem filesystem;
 
-        void getMetadata(in [Optional, Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
+        void getMetadata(in [Callback] MetadataCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void moveTo(in DirectoryEntry parent, in [Optional, ConvertUndefinedOrNullToNullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         void copyTo(in DirectoryEntry parent, in [Optional, ConvertUndefinedOrNullToNullString] DOMString name, in [Optional, Callback] EntryCallback successCallback, in [Optional, Callback] ErrorCallback errorCallback);
         DOMString toURL();

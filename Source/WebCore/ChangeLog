@@ -1,3 +1,14 @@
+2011-12-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [FileSystem API] Entry.getMetadata successCallback is required
+        https://bugs.webkit.org/show_bug.cgi?id=69638
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/filesystem/simple-required-arguments-getmetadata.html
+
+        * fileapi/Entry.idl: remove [Optional] flag from successCallback parameter
+
 2011-12-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed, rolling out r103405.
