@@ -4148,6 +4148,3 @@ BUGWK75098 : media/track/track-cue-rendering.html = TEXT
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 
 BUGWK75111 : fast/workers/storage/use-same-database-in-page-and-workers.html = PASS TIMEOUT
-
-// Leopard bots are broken and need a manual triage.
-BUGRNIWA LEOPARD : fast/repaint/text-emphasis-h.html = IMAGE PASS
