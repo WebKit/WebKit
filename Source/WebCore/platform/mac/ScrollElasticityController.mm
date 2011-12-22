@@ -42,10 +42,6 @@ ScrollElasticityController::ScrollElasticityController(ScrollElasticityControlle
     , m_inScrollGesture(false)
     , m_momentumScrollInProgress(false)
     , m_ignoreMomentumScrolls(false)
-    , m_scrollerInitiallyPinnedOnLeft(false)
-    , m_scrollerInitiallyPinnedOnRight(false)
-    , m_cumulativeHorizontalScroll(0)
-    , m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin(false)
     , m_lastMomentumScrollTimestamp(0)
     , m_startTime(0)
     , m_snapRubberbandTimerIsActive(false)
@@ -59,10 +55,6 @@ void ScrollElasticityController::beginScrollGesture()
     m_ignoreMomentumScrolls = false;
     m_lastMomentumScrollTimestamp = 0;
     m_momentumVelocity = FloatSize();
-    m_scrollerInitiallyPinnedOnLeft = m_client->isHorizontalScrollerPinnedToMinimumPosition();
-    m_scrollerInitiallyPinnedOnRight = m_client->isHorizontalScrollerPinnedToMaximumPosition();
-    m_cumulativeHorizontalScroll = 0;
-    m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = false;
     
     IntSize stretchAmount = m_client->stretchAmount();
     m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));

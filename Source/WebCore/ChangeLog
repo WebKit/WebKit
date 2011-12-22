@@ -1,3 +1,24 @@
+2011-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Move some member variables out of ScrollElasticityController
+        https://bugs.webkit.org/show_bug.cgi?id=75115
+
+        Reviewed by Adam Roben.
+
+        Move a couple of member variables that aren't related to rubberbanding out from
+        ScrollElasticityController and back into ScrollAnimatorMac and remove now unneeded
+        ScrollElasticityControllerClient member functions as well.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        * platform/mac/ScrollElasticityController.h:
+        * platform/mac/ScrollElasticityController.mm:
+        (WebCore::ScrollElasticityController::ScrollElasticityController):
+        (WebCore::ScrollElasticityController::beginScrollGesture):
+
 2011-12-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Fix debug build with assertions disabled

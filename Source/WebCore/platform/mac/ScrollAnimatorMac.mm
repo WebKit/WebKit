@@ -586,6 +586,10 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
 #if ENABLE(RUBBER_BANDING)
     , m_scrollElasticityController(this)
     , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
+    , m_scrollerInitiallyPinnedOnLeft(false)
+    , m_scrollerInitiallyPinnedOnRight(false)
+    , m_cumulativeHorizontalScroll(0)
+    , m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin(false)
 #endif
     , m_haveScrolledSincePageLoad(false)
     , m_needsScrollerStyleUpdate(false)
@@ -990,23 +994,23 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
             // in the opposite direction of the pin location, then we switch the
             // boolean, and rubber band. That is, if we were pinned to the left,
             // and we ended up scrolling to the right, we rubber band.
-            m_scrollElasticityController.m_cumulativeHorizontalScroll += wheelEvent.deltaX();
-            if (m_scrollElasticityController.m_scrollerInitiallyPinnedOnLeft && m_scrollElasticityController.m_cumulativeHorizontalScroll < 0)
-                m_scrollElasticityController.m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = true;
-            if (m_scrollElasticityController.m_scrollerInitiallyPinnedOnRight && m_scrollElasticityController.m_cumulativeHorizontalScroll > 0)
-                m_scrollElasticityController.m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = true;
+            m_cumulativeHorizontalScroll += wheelEvent.deltaX();
+            if (m_scrollerInitiallyPinnedOnLeft && m_cumulativeHorizontalScroll < 0)
+                m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = true;
+            if (m_scrollerInitiallyPinnedOnRight && m_cumulativeHorizontalScroll > 0)
+                m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = true;
         }
 
         // After a gesture begins, we go through:
         // 1+ PlatformWheelEventPhaseNone
         // 0+ PlatformWheelEventPhaseChanged
         // 1 PlatformWheelEventPhaseEnded if there was at least one changed event
-        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseNone && !m_scrollElasticityController.m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin) {
+        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseNone && !m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin) {
             if ((isScrollingLeftAndShouldNotRubberBand(wheelEvent, m_scrollableArea) &&
-                m_scrollElasticityController.m_scrollerInitiallyPinnedOnLeft &&
+                m_scrollerInitiallyPinnedOnLeft &&
                 m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition()) ||
                 (isScrollingRightAndShouldNotRubberBand(wheelEvent, m_scrollableArea) &&
-                m_scrollElasticityController.m_scrollerInitiallyPinnedOnRight &&
+                m_scrollerInitiallyPinnedOnRight &&
                 m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition())) {
                 return ScrollAnimator::handleWheelEvent(wheelEvent);
             }
@@ -1058,16 +1062,6 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
     if ((deltaX != 0 || deltaY != 0) && (limitDelta.width() < 1 && limitDelta.height() < 1))
         return true;
     return false;
-}
-
-bool ScrollAnimatorMac::isHorizontalScrollerPinnedToMinimumPosition()
-{
-    return m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition();
-}
-
-bool ScrollAnimatorMac::isHorizontalScrollerPinnedToMaximumPosition()
-{
-    return m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition();
 }
 
 IntSize ScrollAnimatorMac::stretchAmount()
@@ -1278,7 +1272,12 @@ void ScrollAnimatorMac::smoothScrollWithEvent(const PlatformWheelEvent& wheelEve
 void ScrollAnimatorMac::beginScrollGesture()
 {
     didBeginScrollGesture();
+
+    m_scrollerInitiallyPinnedOnLeft = m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition();
+    m_scrollerInitiallyPinnedOnRight = m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition();
     m_haveScrolledSincePageLoad = true;
+    m_cumulativeHorizontalScroll = 0;
+    m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = false;
 
     m_scrollElasticityController.beginScrollGesture();
 }

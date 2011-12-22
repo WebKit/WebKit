@@ -133,8 +133,6 @@ private:
 
 #if ENABLE(RUBBER_BANDING)
     /// ScrollElasticityControllerClient member functions.
-    virtual bool isHorizontalScrollerPinnedToMinimumPosition() OVERRIDE;
-    virtual bool isHorizontalScrollerPinnedToMaximumPosition() OVERRIDE;
     virtual IntSize stretchAmount() OVERRIDE;
     virtual void startSnapRubberbandTimer() OVERRIDE;
     virtual void stopSnapRubberbandTimer() OVERRIDE;
@@ -150,6 +148,11 @@ private:
 
     ScrollElasticityController m_scrollElasticityController;
     Timer<ScrollAnimatorMac> m_snapRubberBandTimer;
+
+    bool m_scrollerInitiallyPinnedOnLeft;
+    bool m_scrollerInitiallyPinnedOnRight;
+    int m_cumulativeHorizontalScroll;
+    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
 #endif
 
     bool m_haveScrolledSincePageLoad;
