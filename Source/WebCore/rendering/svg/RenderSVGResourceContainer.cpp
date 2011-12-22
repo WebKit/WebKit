@@ -108,19 +108,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
         if (markForInvalidation)
             markClientForInvalidation(client, mode);
 
-        if (needsLayout)
-            client->setNeedsLayout(true);
-
-        // Invalidate resources in ancestor chain, if needed.
-        RenderObject* current = client->parent();
-        while (current) {
-            if (current->isSVGResourceContainer()) {
-                current->toRenderSVGResourceContainer()->removeAllClientsFromCache(markForInvalidation);
-                break;
-            }
-
-            current = current->parent();
-        }
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(client, needsLayout);
     }
     m_isInvalidating = false;
 }

@@ -1,3 +1,33 @@
+2011-12-22  Branimir Lambov  <blambov@google.com>
+
+        SVG: "filter" race condition may prevent SVG elements from being re-drawn
+        https://bugs.webkit.org/show_bug.cgi?id=53088
+
+        Reviewed by Nikolas Zimmermann.
+
+        Added code to explicitly invalidate data cached by filters applied to
+        an invalidated object or one of its parents.
+
+        Test: svg/filters/filter-refresh.svg
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::removeFromFilterCache):
+        (WebCore::RenderSVGResource::markForLayoutAndParentResourceInvalidation):
+        Added code to invalidate any filters applied to any of the parents.
+        * rendering/svg/RenderSVGResource.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        Replaced a duplicate of RenderSVGResource::
+        markForLayoutAndParentResourceInvalidation with a call to the method.
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::clientLayoutChanged):
+        Removed filter invalidation code as this function would not be called if
+        the filter isn't already invalidated.
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        (WebCore::SVGResourcesCache::clientUpdatedFromElement):
+        Replaced filter invalidation with a markForLayoutAndParentResourceInvalidation
+        call as all filters in the ancestor chain need to be invalidated.
+
 2011-12-22  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Upstream the BlackBerry change to ResourceHandle.h

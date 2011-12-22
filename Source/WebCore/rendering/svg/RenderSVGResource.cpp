@@ -26,6 +26,7 @@
 #include "RenderSVGResource.h"
 
 #include "RenderSVGResourceContainer.h"
+#include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -147,16 +148,40 @@ RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()
     return s_sharedSolidPaintingResource;
 }
 
+void RenderSVGResource::removeFromFilterCache(RenderObject* object)
+{
+#if ENABLE(FILTERS)
+    ASSERT(object);
+
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    if (!resources)
+        return;
+
+    RenderSVGResourceFilter* filter = resources->filter();
+    if (!filter)
+        return;
+
+    filter->removeClientFromCache(object);
+#else
+    UNUSED_PARAM(object)
+#endif
+}
+
 void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject* object, bool needsLayout)
 {
     ASSERT(object);
     if (needsLayout)
         object->setNeedsLayout(true);
 
+    removeFromFilterCache(object);
+
     // Invalidate resources in ancestor chain, if needed.
     RenderObject* current = object->parent();
     while (current) {
+        removeFromFilterCache(current);
+
         if (current->isSVGResourceContainer()) {
+            // This will process the rest of the ancestors.
             current->toRenderSVGResourceContainer()->removeAllClientsFromCache();
             break;
         }

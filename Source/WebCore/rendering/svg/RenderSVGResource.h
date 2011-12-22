@@ -82,6 +82,9 @@ public:
     static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void markForLayoutAndParentResourceInvalidation(RenderObject*, bool needsLayout = true);
+
+private:
+    static void removeFromFilterCache(RenderObject*);
 };
 
 }
