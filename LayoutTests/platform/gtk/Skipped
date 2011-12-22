@@ -1123,6 +1123,9 @@ http/tests/inspector/compiler-source-mapping-debug.html
 platform/gtk/accessibility/object-attributes.html
 platform/gtk/accessibility/title-and-alt.html
 
+# [GTK] https://bugs.webkit.org/show_bug.cgi?id=40193
+accessibility/aria-describedby-on-input.html
+
 # fails on 32-bits debug bot
 # https://bugs.webkit.org/show_bug.cgi?id=50389
 media/video-volume.html

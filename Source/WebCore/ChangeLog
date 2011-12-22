@@ -1,3 +1,19 @@
+2011-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: aria-describedby should not be part of AXDescription (should be a part of AXHelp)
+        https://bugs.webkit.org/show_bug.cgi?id=75052
+
+        Reviewed by Darin Adler.
+
+        According to the ARIA spec, aria-describedby is a more detailed description that is akin to help, rather
+        than a description describing the actual object.
+
+        As such, it makes more sense for this attribute to be exposed under help text.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::ariaAccessibilityDescription):
+
 2011-12-22  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [EFL] Missing plugins support for efl port

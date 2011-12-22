@@ -995,6 +995,10 @@ String AccessibilityRenderObject::helpText() const
     if (!ariaHelp.isEmpty())
         return ariaHelp;
     
+    String describedBy = ariaDescribedByAttribute();
+    if (!describedBy.isEmpty())
+        return describedBy;
+    
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->node() && curr->node()->isHTMLElement()) {
             const AtomicString& summary = static_cast<Element*>(curr->node())->getAttribute(summaryAttr);
@@ -1379,10 +1383,6 @@ String AccessibilityRenderObject::ariaAccessibilityDescription() const
     const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
-    
-    String ariaDescription = ariaDescribedByAttribute();
-    if (!ariaDescription.isEmpty())
-        return ariaDescription;
     
     return String();
 }
