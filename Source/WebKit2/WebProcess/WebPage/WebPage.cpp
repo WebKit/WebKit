@@ -1271,13 +1271,6 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
     CurrentEvent currentEvent(wheelEvent);
 
-#if PLATFORM(MAC)
-    if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseBegan || wheelEvent.phase() == WebWheelEvent::PhaseBegan)
-        m_drawingArea->disableDisplayThrottling();
-    else if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseEnded || wheelEvent.phase() == WebWheelEvent::PhaseEnded)
-        m_drawingArea->enableDisplayThrottling();
-#endif
-
     bool handled = handleWheelEvent(wheelEvent, m_page.get());
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
 }
@@ -1285,13 +1278,6 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 void WebPage::wheelEventSyncForTesting(const WebWheelEvent& wheelEvent, bool& handled)
 {
     CurrentEvent currentEvent(wheelEvent);
-
-#if PLATFORM(MAC)
-    if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseBegan || wheelEvent.phase() == WebWheelEvent::PhaseBegan)
-        m_drawingArea->disableDisplayThrottling();
-    else if (wheelEvent.momentumPhase() == WebWheelEvent::PhaseEnded || wheelEvent.phase() == WebWheelEvent::PhaseEnded)
-        m_drawingArea->enableDisplayThrottling();
-#endif
 
     handled = handleWheelEvent(wheelEvent, m_page.get());
 }

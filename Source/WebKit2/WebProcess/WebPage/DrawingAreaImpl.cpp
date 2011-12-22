@@ -65,8 +65,6 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_wantsToExitAcceleratedCompositingMode(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
-    , m_shouldThrottleDisplay(true)
-    , m_lastDisplayTime(0)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::displayTimerFired)
     , m_exitCompositingTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
 {
@@ -199,16 +197,6 @@ void DrawingAreaImpl::forceRepaint()
 
     m_isWaitingForDidUpdate = false;
     display();
-}
-
-void DrawingAreaImpl::enableDisplayThrottling()
-{
-    m_shouldThrottleDisplay = true;
-}
-
-void DrawingAreaImpl::disableDisplayThrottling()
-{
-    m_shouldThrottleDisplay = false;
 }
 
 void DrawingAreaImpl::didInstallPageOverlay()
@@ -549,23 +537,6 @@ void DrawingAreaImpl::scheduleDisplay()
 
 void DrawingAreaImpl::displayTimerFired()
 {
-#if PLATFORM(WIN)
-    // For now we'll cap painting on Windows to 30fps because painting is much slower there for some reason.
-    static const double minimumFrameInterval = 1.0 / 30.0;
-#else
-    static const double minimumFrameInterval = 1.0 / 60.0;
-#endif
-
-    if (m_shouldThrottleDisplay) {
-        double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
-        double timeUntilNextDisplay = minimumFrameInterval - timeSinceLastDisplay;
-
-        if (timeUntilNextDisplay > 0) {
-            m_displayTimer.startOneShot(timeUntilNextDisplay);
-            return;
-        }
-    }
-
     display();
 }
 
@@ -694,8 +665,6 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
     // until the UI process has painted the update, so we stop the timer here.
     m_displayTimer.stop();
-
-    m_lastDisplayTime = currentTime();
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
