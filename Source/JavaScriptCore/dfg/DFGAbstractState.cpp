@@ -402,8 +402,11 @@ bool AbstractState::execute(NodeIndex nodeIndex)
         break;
             
     case GetByVal: {
-        PredictedType indexPrediction = m_graph[node.child2()].prediction();
-        if (!(indexPrediction & PredictInt32) && indexPrediction) {
+        if (!node.prediction() || !m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction()) {
+            m_isValid = false;
+            break;
+        }
+        if (!isActionableArrayPrediction(m_graph[node.child1()].prediction()) || !m_graph[node.child2()].shouldSpeculateInteger()) {
             clobberStructures(nodeIndex);
             forNode(nodeIndex).makeTop();
             break;
@@ -469,6 +472,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(nodeIndex).set(PredictDouble);
             break;
         }
+        ASSERT(m_graph[node.child1()].shouldSpeculateArray());
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
         forNode(nodeIndex).makeTop();
@@ -477,8 +481,12 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             
     case PutByVal:
     case PutByValAlias: {
-        PredictedType indexPrediction = m_graph[node.child2()].prediction();
-        if (!(indexPrediction & PredictInt32) && indexPrediction) {
+        if (!m_graph[node.child1()].prediction() || !m_graph[node.child2()].prediction()) {
+            m_isValid = false;
+            break;
+        }
+        if (!m_graph[node.child2()].shouldSpeculateInteger() || !isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())) {
+            ASSERT(node.op == PutByVal);
             clobberStructures(nodeIndex);
             forNode(nodeIndex).makeTop();
             break;
@@ -538,7 +546,7 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(node.child3()).filter(PredictNumber);
             break;
         }
-            
+        ASSERT(m_graph[node.child1()].shouldSpeculateArray());
         forNode(node.child1()).filter(PredictArray);
         forNode(node.child2()).filter(PredictInt32);
         break;

@@ -1087,8 +1087,10 @@ private:
     
     bool byValIsPure(Node& node)
     {
-        PredictedType prediction = m_graph[node.child2()].prediction();
-        return (prediction & PredictInt32) || !prediction;
+        return m_graph[node.child2()].shouldSpeculateInteger()
+            && ((node.op == PutByVal || node.op == PutByValAlias)
+                ? isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())
+                : isActionableArrayPrediction(m_graph[node.child1()].prediction()));
     }
     
     bool clobbersWorld(NodeIndex nodeIndex)

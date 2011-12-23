@@ -151,6 +151,28 @@ inline bool isFloat64ArrayPrediction(PredictedType value)
     return value == PredictFloat64Array;
 }
 
+inline bool isActionableMutableArrayPrediction(PredictedType value)
+{
+    return isArrayPrediction(value)
+        || isByteArrayPrediction(value)
+        || isInt8ArrayPrediction(value)
+        || isInt16ArrayPrediction(value)
+        || isInt32ArrayPrediction(value)
+        || isUint8ArrayPrediction(value)
+        || isUint16ArrayPrediction(value)
+        || isUint32ArrayPrediction(value)
+#if CPU(X86) || CPU(X86_64)
+        || isFloat32ArrayPrediction(value)
+#endif
+        || isFloat64ArrayPrediction(value);
+}
+
+inline bool isActionableArrayPrediction(PredictedType value)
+{
+    return isStringPrediction(value)
+        || isActionableMutableArrayPrediction(value);
+}
+
 inline bool isArrayOrOtherPrediction(PredictedType value)
 {
     return !!(value & (PredictArray | PredictOther)) && !(value & ~(PredictArray | PredictOther));

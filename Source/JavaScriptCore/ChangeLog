@@ -1,3 +1,44 @@
+2011-12-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not speculate array even when predictions say that the base is not an array
+        https://bugs.webkit.org/show_bug.cgi?id=75160
+        <rdar://problem/10622646>
+        <rdar://problem/10622649>
+
+        Reviewed by Oliver Hunt.
+        
+        Added the ability to call slow path when the base is known to not be an array.
+        Also rationalized the logic for deciding when the index is not an int, and
+        cleaned up the logic for deciding when to speculate typed array.
+        
+        Neutral for the most part, with odd speed-ups and slow-downs. The slow-downs can
+        likely be mitigated by having the notion of a polymorphic array access, where we
+        try, but don't speculate, to access the array one way before either trying some
+        other ways or calling slow path.
+
+        * bytecode/PredictedType.h:
+        (JSC::isActionableMutableArrayPrediction):
+        (JSC::isActionableArrayPrediction):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt8Array):
+        (JSC::DFG::Node::shouldSpeculateInt16Array):
+        (JSC::DFG::Node::shouldSpeculateInt32Array):
+        (JSC::DFG::Node::shouldSpeculateUint8Array):
+        (JSC::DFG::Node::shouldSpeculateUint16Array):
+        (JSC::DFG::Node::shouldSpeculateUint32Array):
+        (JSC::DFG::Node::shouldSpeculateFloat32Array):
+        (JSC::DFG::Node::shouldSpeculateFloat64Array):
+        * dfg/DFGPropagator.cpp:
+        (JSC::DFG::Propagator::byValIsPure):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-12-22  Gavin Barraclough  <barraclough@apple.com>
 
         Unreviewed - fix stylebot issues from last patch.
