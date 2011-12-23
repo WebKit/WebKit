@@ -68,9 +68,6 @@ private:
 
     virtual RenderWidget* renderWidgetForJSBindings() = 0;
 
-protected:
-    AtomicString m_name;
-
 private:
     mutable ScriptInstance m_instance;
 #if ENABLE(NETSCAPE_PLUGIN_API)

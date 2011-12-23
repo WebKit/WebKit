@@ -47,10 +47,8 @@ private:
     void setupApplet() const;
     bool canEmbedJava() const;
 
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
-
-    AtomicString m_id;
+    virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
+    virtual bool shouldRegisterAsExtraNamedItem() const OVERRIDE { return true; }
 };
 
 }

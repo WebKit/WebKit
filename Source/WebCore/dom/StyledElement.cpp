@@ -145,6 +145,9 @@ void StyledElement::destroyInlineStyleDecl()
 
 void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
 {
+    if (attr->name() == HTMLNames::nameAttr)
+        setHasName(!attr->isNull());
+
     if (!attr->isMappedAttribute()) {
         Element::attributeChanged(attr, preserveDecls);
         return;
