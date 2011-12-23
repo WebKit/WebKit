@@ -4150,3 +4150,6 @@ BUGWK75098 : media/track/track-cue-rendering.html = TEXT
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 
 BUGWK75132 : media/track/track-cue-nothing-to-render.html = PASS TEXT
+
+BUGWK75161 GPU : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
+BUGWK75161 CPU : media/video-poster-blocked-by-willsendrequest.html = TEXT
