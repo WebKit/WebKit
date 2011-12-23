@@ -31,6 +31,8 @@
 #include <Evas.h>
 #endif
 
+typedef struct _cairo_surface cairo_surface_t;
+
 namespace WebCore {
 
 class WidgetBackingStorePrivate;

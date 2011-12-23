@@ -1,3 +1,15 @@
+2011-12-23  Ivan Briano  <ivan@profusion.mobi>
+
+        [EFL] Fix building with Glib support disabled
+        https://bugs.webkit.org/show_bug.cgi?id=70990
+
+        Reviewed by Martin Robinson.
+
+        Add forward declaration for cairo_surface_t, missing when building
+        the EFL port with Glib disabled.
+
+        * platform/cairo/WidgetBackingStore.h:
+
 2011-12-23  Adam Klein  <adamk@chromium.org>
 
         Minimize callsites and duplication of before/after advice for attribute mutations
