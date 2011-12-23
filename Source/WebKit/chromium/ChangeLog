@@ -1,3 +1,18 @@
+2011-12-23  Karl Koscher  <supersat@chromium.org>
+
+        Give embedders a chance to handle postMessage calls
+        https://bugs.webkit.org/show_bug.cgi?id=73883
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::willCheckAndDispatchMessageEvent): 
+            interface to give the embedder a chance to handle this postMessage call
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::willCheckAndDispatchMessageEvent): Call 
+            willCheckAndDispatchMessageEvent on WebFrameClient
+        * src/FrameLoaderClientImpl.h:
+
 2011-12-23  Dmitry Lomov  <dslomov@google.com>
 
         [WebWorkers][Chromium] Remove remains of cross-process dedicated worker implementation.

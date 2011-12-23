@@ -1,3 +1,24 @@
+2011-12-23  Karl Koscher  <supersat@chromium.org>
+
+        Give embedders a chance to handle postMessage calls
+        https://bugs.webkit.org/show_bug.cgi?id=73883
+
+        To support cross-process postMessage calls in Chromium (bug 73337), we need to intercept 
+        postMessage calls to proxy windows. Originally we were just going to add a native event
+        listener on the Chromium side, but that required more changes to WebKit and was a bit of
+        a hack. See bug 73359 for a discuss about moving to this approach.
+
+        Reviewed by Adam Barth.
+
+        Test: platform/chromium/fast/events/intercept-postmessage.html
+
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::willCheckAndDispatchPostMessage): new method to allow the
+            embedder to intercept postMessage calls
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired): add a call to
+            FrameLoaderClient::willCheckAndDispatchPostMessage
+
 2011-12-23  Tom Sepez  <tsepez@chromium.org>
 
         XSLT-created HTML documents do not inherit content-security-policy from originally loaded XML.

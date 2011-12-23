@@ -60,6 +60,7 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLFrameOwnerElement.h"
@@ -910,8 +911,16 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
     if (!document())
         return;
 
+    RefPtr<MessageEvent> event = timer->event(document());
+
+    // Give the embedder a chance to intercept this postMessage because this
+    // DOMWindow might be a proxy for another in browsers that support
+    // postMessage calls across WebKit instances.
+    if (isCurrentlyDisplayedInFrame() && m_frame->loader()->client()->willCheckAndDispatchMessageEvent(timer->targetOrigin(), PassRefPtr<MessageEvent>(event).leakRef()))
+        return;
+
     if (timer->targetOrigin()) {
-        // Check target origin now since the target document may have changed since the simer was scheduled.
+        // Check target origin now since the target document may have changed since the timer was scheduled.
         if (!timer->targetOrigin()->isSameSchemeHostPort(document()->securityOrigin())) {
             String message = "Unable to post message to " + timer->targetOrigin()->toString() +
                              ". Recipient has origin " + document()->securityOrigin()->toString() + ".\n";
@@ -920,7 +929,7 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
         }
     }
 
-    dispatchEvent(timer->event(document()));
+    dispatchEvent(event);
 }
 
 DOMSelection* DOMWindow::getSelection()

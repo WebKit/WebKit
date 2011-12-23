@@ -39,6 +39,7 @@
 #include "platform/WebCString.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
+#include "WebDOMMessageEvent.h"
 #include "WebDataSource.h"
 #include "WebDeviceOrientationClientMock.h"
 #include "platform/WebDragData.h"
@@ -1202,6 +1203,16 @@ void WebViewHost::didDetectXSS(WebFrame*, const WebURL&, bool)
 void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
 {
     webkit_support::OpenFileSystem(frame, type, size, create, callbacks);
+}
+
+bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* source, WebSecurityOrigin target, WebDOMMessageEvent event)
+{
+    if (m_shell->layoutTestController()->shouldInterceptPostMessage()) {
+        fputs("intercepted postMessage\n", stdout);
+        return true;
+    }
+
+    return false;
 }
 
 // Public functions -----------------------------------------------------------

@@ -31,9 +31,11 @@
 #ifndef WebFrameClient_h
 #define WebFrameClient_h
 
+#include "WebDOMMessageEvent.h"
 #include "WebIconURL.h"
 #include "WebNavigationPolicy.h"
 #include "WebNavigationType.h"
+#include "WebSecurityOrigin.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextDirection.h"
 #include "platform/WebCommon.h"
@@ -50,6 +52,7 @@ class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
 class WebCookieJar;
 class WebDataSource;
+class WebDOMEvent;
 class WebFormElement;
 class WebFrame;
 class WebIntentServiceInfo;
@@ -58,7 +61,6 @@ class WebMediaPlayer;
 class WebMediaPlayerClient;
 class WebNode;
 class WebPlugin;
-class WebSecurityOrigin;
 class WebSharedWorker;
 class WebStorageQuotaCallbacks;
 class WebString;
@@ -384,6 +386,16 @@ public:
     // Start a Web Intents activity. Replies to this request should be sent to
     // the WebFrame starting the activity.
     virtual void dispatchIntent(WebFrame*, const WebIntent&) { }
+
+    // Messages ------------------------------------------------------
+
+    // Notifies the embedder that a postMessage was issued on this frame, and
+    // gives the embedder a chance to handle it instead of WebKit. Returns true
+    // if the embedder handled it.
+    virtual bool willCheckAndDispatchMessageEvent(
+        WebFrame* source,
+        WebSecurityOrigin target,
+        WebDOMMessageEvent) { return false; }
 
 protected:
     ~WebFrameClient() { }
