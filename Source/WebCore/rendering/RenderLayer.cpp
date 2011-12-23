@@ -2782,6 +2782,8 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     
 #if ENABLE(CSS_FILTERS)
     if (paintsWithFilters() && !(paintFlags & PaintLayerAppliedFilters)) {
+        ASSERT(m_filter);
+        
         // Update the filter's image if necessary.
         // The filter is always built at this point.
         LayoutRect filterRect = transparencyClipBox(this, rootLayer, paintBehavior);
@@ -3937,6 +3939,10 @@ RenderLayerBacking* RenderLayer::ensureBacking()
     if (!m_backing) {
         m_backing = adoptPtr(new RenderLayerBacking(this));
         compositor()->layerBecameComposited(this);
+
+#if ENABLE(CSS_FILTERS)
+        updateOrRemoveFilterEffect();
+#endif
     }
     return m_backing.get();
 }
@@ -3946,6 +3952,11 @@ void RenderLayer::clearBacking()
     if (m_backing && !renderer()->documentBeingDestroyed())
         compositor()->layerBecameNonComposited(this);
     m_backing.clear();
+
+#if ENABLE(CSS_FILTERS)
+    updateOrRemoveFilterEffect();
+#endif
+    
 }
 
 bool RenderLayer::hasCompositedMask() const

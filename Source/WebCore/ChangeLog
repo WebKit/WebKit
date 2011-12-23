@@ -1,3 +1,23 @@
+2011-12-22  Chris Marrin  <cmarrin@apple.com>
+
+        Crash and incorrect behavior when switching between hardware and software CSS filters
+        https://bugs.webkit.org/show_bug.cgi?id=75130
+
+        Reviewed by Simon Fraser.
+
+        Test: css3/filters/crash-hw-sw-switch.html
+
+        Backing store on layer gets fixed up (added or removed) after style change is evaluated
+        so the state of the m_filter variable might not match the current filter state. Added
+        updateOrRemoveFilterEffect() call to ensureBacking() and clearBacking() to get the
+        m_filter property in the right state. Also added an ASSERT() where the crash was
+        occuring.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::ensureBacking):
+        (WebCore::RenderLayer::clearBacking):
+
 2011-12-22  Jon Lee  <jonlee@apple.com>
 
         Radio buttons cut in download movie sheet

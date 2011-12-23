@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<!-- Test passes if doesn't crash. -->
+<style>
+.sw {
+    -webkit-filter: blur(4px);
+}
+.hw {
+    -webkit-filter: blur(3px);
+    -webkit-transform:translateZ(0);
+}
+</style>
+<img class='sw' src="resources/reference.png">
+PASS if test does not crash or cause an ASSERT failure.
+<script>
+    if (window.layoutTestController)
+        window.layoutTestController.dumpAsText(true);
+    // force a layout
+    document.body.offsetTop;
+    var img = document.getElementsByTagName('img')[0];
+    img.className = 'hw';
+    // force a layout
+    document.body.offsetTop;
+    img.className = 'sw';
+</script>
