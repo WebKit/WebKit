@@ -195,14 +195,6 @@ void JSString::outOfMemory(ExecState* exec) const
         throwOutOfMemoryError(exec);
 }
 
-JSValue JSString::replaceCharacter(ExecState* exec, UChar character, const UString& replacement)
-{
-    size_t matchPosition = value(exec).find(character);
-    if (matchPosition == notFound)
-        return JSValue(this);
-    return jsString(exec, m_value.substringSharingImpl(0, matchPosition), replacement, value(exec).substringSharingImpl(matchPosition + 1));
-}
-
 JSString* JSString::getIndexSlowCase(ExecState* exec, unsigned i)
 {
     ASSERT(isRope());

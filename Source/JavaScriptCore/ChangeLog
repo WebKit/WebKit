@@ -1,3 +1,26 @@
+2011-12-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Refactored String.prototype.replace
+        https://bugs.webkit.org/show_bug.cgi?id=75114
+        
+        Reviewed by Darin Adler.
+
+        No performance difference.
+        
+        I think this is a step toward removing -fomit-frame-pointer.
+
+        * runtime/JSString.cpp:
+        * runtime/JSString.h: Removed the test and special case for a single-character
+        search string because the standard path does this test and special case
+        for us. (As an aside, if we do come up with a unique single-character
+        replace optimization in future, it probably belongs in the replace function,
+        and not in JSString.)
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace): Split this mega-sized function into:
+        (JSC::replaceUsingStringSearch): - This reasonably sized function, and
+        (JSC::replaceUsingRegExpSearch): - This still mega-sized function.
+
 2011-12-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] REGRESSION(r103467): It broke fast/images/animated-gif-restored-from-bfcache.html

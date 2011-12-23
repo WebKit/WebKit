@@ -228,8 +228,6 @@ namespace JSC {
         JSString* getIndex(ExecState*, unsigned);
         JSString* getIndexSlowCase(ExecState*, unsigned);
 
-        JSValue replaceCharacter(ExecState*, UChar, const UString& replacement);
-
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
             return Structure::create(globalData, globalObject, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot), &s_info);
