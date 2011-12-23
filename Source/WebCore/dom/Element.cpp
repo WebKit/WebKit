@@ -178,50 +178,12 @@ void Element::copyNonAttributeProperties(const Element*)
 {
 }
 
-#if ENABLE(MUTATION_OBSERVERS)
-void Element::enqueueAttributesMutationRecordIfRequested(const QualifiedName& attributeName, const AtomicString& oldValue)
-{
-    if (isSynchronizingStyleAttribute())
-        return;
-    if (OwnPtr<MutationObserverInterestGroup> mutationRecipients = MutationObserverInterestGroup::createForAttributesMutation(this, attributeName))
-        mutationRecipients->enqueueMutationRecord(MutationRecord::createAttributes(this, attributeName, oldValue));
-}
-#endif
-
 void Element::removeAttribute(const QualifiedName& name)
 {
     if (!m_attributeMap)
         return;
 
-    removeAttributeInternal(m_attributeMap->getAttributeItemIndex(name));
-}
-
-inline void Element::removeAttributeInternal(size_t index)
-{
-    ASSERT(m_attributeMap);
-    if (index == notFound)
-        return;
-
-    InspectorInstrumentation::willModifyDOMAttr(document(), this);
-
-    RefPtr<Attribute> attribute = m_attributeMap->attributeItem(index);
-
-    if (!attribute->isNull())
-        willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
-
-    m_attributeMap->removeAttribute(index);
-
-    if (!attribute->isNull()) {
-        AtomicString savedValue = attribute->value();
-        attribute->setValue(nullAtom);
-        attributeChanged(attribute.get());
-        attribute->setValue(savedValue);
-    }
-
-    InspectorInstrumentation::didRemoveDOMAttr(document(), this, attribute->name().localName());
-
-    if (!isSynchronizingStyleAttribute())
-        dispatchSubtreeModifiedEvent();
+    m_attributeMap->removeAttribute(name);
 }
 
 void Element::setBooleanAttribute(const QualifiedName& name, bool value)
@@ -663,36 +625,26 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value)
 {
+    Attribute* old = index != notFound ? m_attributeMap->attributeItem(index) : 0;
     if (value.isNull()) {
-        removeAttributeInternal(index);
+        if (old)
+            m_attributeMap->removeAttribute(index);
         return;
     }
 
-    Attribute* old = index != notFound ? m_attributeMap->attributeItem(index) : 0;
-
-    if (!isSynchronizingStyleAttribute())
-        InspectorInstrumentation::willModifyDOMAttr(document(), this);
-
-    document()->incDOMTreeVersion();
+    if (!old) {
+        m_attributeMap->addAttribute(createAttribute(name, value));
+        return;
+    }
 
     willModifyAttribute(name, old ? old->value() : nullAtom, value);
 
-    if (!old) {
-        RefPtr<Attribute> attribute = createAttribute(name, value);
-        m_attributeMap->addAttribute(attribute);
-        attributeChanged(attribute.get());
-    } else {
-        if (Attr* attrNode = old->attr())
-            attrNode->setValue(value);
-        else
-            old->setValue(value);
-        attributeChanged(old);
-    }
+    if (Attr* attrNode = old->attr())
+        attrNode->setValue(value);
+    else
+        old->setValue(value);
 
-    if (!isSynchronizingStyleAttribute()) {
-        InspectorInstrumentation::didModifyDOMAttr(document(), this, name.localName(), value);
-        dispatchSubtreeModifiedEvent();
-    }
+    didModifyAttribute(old);
 }
 
 PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const AtomicString& value)
@@ -1494,7 +1446,11 @@ void Element::removeAttribute(const String& name)
         return;
 
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    removeAttributeInternal(m_attributeMap->getAttributeItemIndex(localName, false));
+    size_t index = m_attributeMap->getAttributeItemIndex(localName, false);
+    if (index == notFound)
+        return;
+
+    m_attributeMap->removeAttribute(index);
 }
 
 void Element::removeAttributeNS(const String& namespaceURI, const String& localName)
@@ -1991,5 +1947,52 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
     return true;
 }
 #endif
+
+void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
+{
+    document()->incDOMTreeVersion();
+
+    if (isIdAttributeName(name))
+        updateId(oldValue, newValue);
+
+#if ENABLE(MUTATION_OBSERVERS)
+    if (!isSynchronizingStyleAttribute()) {
+        if (OwnPtr<MutationObserverInterestGroup> recipients = MutationObserverInterestGroup::createForAttributesMutation(this, name))
+            recipients->enqueueMutationRecord(MutationRecord::createAttributes(this, name, oldValue));
+    }
+#endif
+
+#if ENABLE(INSPECTOR)
+    if (!isSynchronizingStyleAttribute())
+        InspectorInstrumentation::willModifyDOMAttr(document(), this);
+#endif
+}
+
+void Element::didModifyAttribute(Attribute* attr)
+{
+    attributeChanged(attr);
+
+    if (!isSynchronizingStyleAttribute()) {
+        InspectorInstrumentation::didModifyDOMAttr(document(), this, attr->name().localName(), attr->value());
+        dispatchSubtreeModifiedEvent();
+    }
+}
+
+void Element::didRemoveAttribute(Attribute* attr)
+{
+    if (attr->isNull())
+        return;
+
+    AtomicString savedValue = attr->value();
+    attr->setValue(nullAtom);
+    attributeChanged(attr);
+    attr->setValue(savedValue);
+
+    if (!isSynchronizingStyleAttribute()) {
+        InspectorInstrumentation::didRemoveDOMAttr(document(), this, attr->name().localName());
+        dispatchSubtreeModifiedEvent();
+    }
+}
+
 
 } // namespace WebCore

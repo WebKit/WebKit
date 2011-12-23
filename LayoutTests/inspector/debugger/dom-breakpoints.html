@@ -18,6 +18,20 @@ function modifyAttribute(elementId, name, value)
     element.setAttribute(name, value);
 }
 
+function modifyAttrNode(elementId, name, value)
+{
+    var element = document.getElementById(elementId);
+    element.attributes[name].value = value;
+}
+
+function setAttrNode(elementId, name, value)
+{
+    var element = document.getElementById(elementId);
+    var attr = document.createAttribute(name);
+    attr.value = value;
+    element.attributes.setNamedItem(attr);
+}
+
 function modifyStyleAttribute(elementId, name, value)
 {
     var element = document.getElementById(elementId);
@@ -80,10 +94,42 @@ function test()
             InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying attribute.");
             pane._setBreakpoint(rootElement, pane._breakpointTypes.AttributeModified, true);
             InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
-            InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'className', 'foo')");
-            InspectorTest.addResult("Modify rootElement className.");
+            InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'data-test', 'foo')");
+            InspectorTest.addResult("Modify rootElement data-test attribute.");
             waitUntilPausedAndDumpStack(step2);
-    
+
+            function step2(callFrames)
+            {
+                pane._removeBreakpoint(rootElement, pane._breakpointTypes.AttributeModified);
+                next();
+            }
+        },
+
+        function testModifyAttrNode(next)
+        {
+            InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying Attr node.");
+            pane._setBreakpoint(rootElement, pane._breakpointTypes.AttributeModified, true);
+            InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
+            InspectorTest.evaluateInPageWithTimeout("modifyAttrNode('rootElement', 'data-test', 'bar')");
+            InspectorTest.addResult("Modify rootElement data-test attribute.");
+            waitUntilPausedAndDumpStack(step2);
+
+            function step2(callFrames)
+            {
+                pane._removeBreakpoint(rootElement, pane._breakpointTypes.AttributeModified);
+                next();
+            }
+        },
+
+        function testSetAttrNode(next)
+        {
+            InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when adding a new Attr node.");
+            pane._setBreakpoint(rootElement, pane._breakpointTypes.AttributeModified, true);
+            InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
+            InspectorTest.evaluateInPageWithTimeout("setAttrNode('rootElement', 'data-foo', 'bar')");
+            InspectorTest.addResult("Modify rootElement data-foo attribute.");
+            waitUntilPausedAndDumpStack(step2);
+
             function step2(callFrames)
             {
                 pane._removeBreakpoint(rootElement, pane._breakpointTypes.AttributeModified);

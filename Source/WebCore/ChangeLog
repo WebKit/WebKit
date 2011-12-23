@@ -1,3 +1,56 @@
+2011-12-23  Adam Klein  <adamk@chromium.org>
+
+        Minimize callsites and duplication of before/after advice for attribute mutations
+        https://bugs.webkit.org/show_bug.cgi?id=75054
+
+        Reviewed by Ryosuke Niwa.
+
+        r103452 helpfully made before and after advice regarding attribute
+        changes symmetrical. This change finishes that work, by pulling
+        together all the before/after work, not just the crumbs previously
+        covered. This includes incrementing Document::domTreeVersion()
+        when an attribute is about to be changed, Inspector instrumentation,
+        and MutationEvent dispatch. This is in addition to the previous code,
+        which handled enqueueing MutationRecords for MutationObservers and
+        updating the Document's list of IDs.
+
+        The only change in behavior should be in InspectorInstrumentation,
+        which causes DOM breakpoints to occur for more cases of Attribute
+        mutation. This seems like more correct behavior, and a test has
+        been included to exercise it.
+
+        Hopefully the last Attribute-related refactor for awhile.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::setValue): Update to call didModifyAttribute instead
+        of attributeChanged.
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute): Got rid of
+        removeAttributeInternal as most of that logic moved back into
+        NamedNodeMap::removeAttribute.
+        (WebCore::Element::setAttributeInternal): Reorganized to read better
+        now that only some cases result in calls to will/didModifyAttribute.
+        (WebCore::Element::willModifyAttribute): Un-inlined and added
+        incDOMTreeVersion and InspectorInstrumentation calls.
+        (WebCore::Element::didModifyAttribute): New method which encapsulates
+        calling attributeChanged, InspectorInstrumentation, and MutationEvents.
+        (WebCore::Element::didRemoveAttribute): New method which encapsulates
+        calling attributeChanged, InspectorInstrumentation, and MutationEvents.
+        Separate from didModifyAttribute because it has special handling of
+        the removed Attribute's value.
+        * dom/Element.h:
+        (WebCore::Element::willRemoveAttribute): New method which delegates to
+        willModifyAttribute as appropriate.
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::setNamedItem): Simplified.
+        (WebCore::NamedNodeMap::removeNamedItem): Simplified.
+        (WebCore::NamedNodeMap::addAttribute): Added calls to will/didModifyAttribute.
+        (WebCore::NamedNodeMap::removeAttribute): ditto.
+        (WebCore::NamedNodeMap::replaceAttribute): ditto.
+        * svg/properties/SVGAnimatedPropertySynchronizer.h: Reverted changes
+        made in r103452 now that addAttribute/removeAttribute once again
+        call attributeChanged appropriately.
+
 2011-12-22  Matt Falkenhagen  <falken@chromium.org>
 
         Map 'lang' and xml:lang attributes to '-webkit-locale' CSS property for use with font fallback and text-transform

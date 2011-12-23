@@ -34,16 +34,18 @@ struct SVGAnimatedPropertySynchronizer<true> {
     static void synchronize(SVGElement* ownerElement, const QualifiedName& attrName, const AtomicString& value)
     {
         // If the attribute already exists on the element, we change the
-        // Attribute directly rather than going through Element::setAttribute to
-        // avoid a call to Element::attributeChanged that could cause the
-        // SVGElement to erroneously reset its properties.
+        // Attribute directly to avoid a call to Element::attributeChanged
+        // that could cause the SVGElement to erroneously reset its properties.
         // svg/dom/SVGStringList-basics.xhtml exercises this behavior.
         NamedNodeMap* namedAttrMap = ownerElement->attributes(false);
         Attribute* old = namedAttrMap->getAttributeItem(attrName);
-        if (old)
+        if (old && value.isNull())
+            namedAttrMap->removeAttribute(old->name());
+        else if (!old && !value.isNull())
+            namedAttrMap->addAttribute(ownerElement->createAttribute(attrName, value));
+        else if (old && !value.isNull())
             old->setValue(value);
-        else
-            ownerElement->setAttribute(attrName, value);
+
     }
 };
 

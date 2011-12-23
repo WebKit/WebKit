@@ -120,19 +120,12 @@ PassRefPtr<Node> NamedNodeMap::setNamedItem(Node* node, ExceptionCode& ec)
         return 0;
     }
 
-    m_element->willModifyAttribute(attribute->name(), oldAttribute ? oldAttribute->value() : nullAtom, attribute->value());
-
     RefPtr<Attr> oldAttr;
     if (oldAttribute) {
         oldAttr = oldAttribute->createAttrIfNeeded(m_element);
         replaceAttribute(index, attribute);
     } else
         addAttribute(attribute);
-
-    m_element->attributeChanged(attribute);
-
-    if (attribute->name() != styleAttr)
-        m_element->dispatchSubtreeModifiedEvent();
 
     return oldAttr.release();
 }
@@ -152,23 +145,9 @@ PassRefPtr<Node> NamedNodeMap::removeNamedItem(const QualifiedName& name, Except
         return 0;
     }
 
-    RefPtr<Attribute> attribute = attributeItem(index);
-    RefPtr<Attr> attr = attribute->createAttrIfNeeded(m_element);
-
-    if (!attribute->isNull())
-        m_element->willModifyAttribute(attribute->name(), attribute->value(), nullAtom);
+    RefPtr<Attr> attr = m_attributes[index]->createAttrIfNeeded(m_element);
 
     removeAttribute(index);
-
-    if (!attribute->isNull()) {
-        AtomicString savedValue = attribute->value();
-        attribute->setValue(nullAtom);
-        m_element->attributeChanged(attribute.get());
-        attribute->setValue(savedValue);
-    }
-
-    if (attribute->name() != styleAttr)
-        m_element->dispatchSubtreeModifiedEvent();
 
     return attr.release();
 }
@@ -254,32 +233,56 @@ void NamedNodeMap::setAttributes(const NamedNodeMap& other)
         m_element->attributeChanged(m_attributes[i].get(), true);
 }
 
-void NamedNodeMap::addAttribute(PassRefPtr<Attribute> attribute)
+void NamedNodeMap::addAttribute(PassRefPtr<Attribute> prpAttribute)
 {
+    RefPtr<Attribute> attribute = prpAttribute;
+
+    if (m_element)
+        m_element->willModifyAttribute(attribute->name(), nullAtom, attribute->value());
+
     m_attributes.append(attribute);
-    if (Attr* attr = m_attributes.last()->attr())
+    if (Attr* attr = attribute->attr())
         attr->m_element = m_element;
+
+    if (m_element)
+        m_element->didModifyAttribute(attribute.get());
 }
 
 void NamedNodeMap::removeAttribute(size_t index)
 {
     ASSERT(index < length());
 
-    if (Attr* attr = m_attributes[index]->attr())
-        attr->m_element = 0;
+    RefPtr<Attribute> attribute = m_attributes[index];
 
+    if (m_element)
+        m_element->willRemoveAttribute(attribute->name(), attribute->value());
+
+    if (Attr* attr = attribute->attr())
+        attr->m_element = 0;
     m_attributes.remove(index);
+
+    if (m_element)
+        m_element->didRemoveAttribute(attribute.get());
 }
 
-void NamedNodeMap::replaceAttribute(size_t index, PassRefPtr<Attribute> attribute)
+void NamedNodeMap::replaceAttribute(size_t index, PassRefPtr<Attribute> prpAttribute)
 {
     ASSERT(index < length());
 
-    if (Attr* attr = m_attributes[index]->attr())
+    RefPtr<Attribute> attribute = prpAttribute;
+    Attribute* old = m_attributes[index].get();
+
+    if (m_element)
+        m_element->willModifyAttribute(attribute->name(), old->value(), attribute->value());
+
+    if (Attr* attr = old->attr())
         attr->m_element = 0;
     m_attributes[index] = attribute;
-    if (Attr* attr = m_attributes[index]->attr())
+    if (Attr* attr = attribute->attr())
         attr->m_element = m_element;
+
+    if (m_element)
+        m_element->didModifyAttribute(attribute.get());
 }
 
 void NamedNodeMap::setClass(const String& classStr) 

@@ -265,7 +265,11 @@ public:
     virtual String title() const;
 
     void updateId(const AtomicString& oldId, const AtomicString& newId);
+
     void willModifyAttribute(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
+    void willRemoveAttribute(const QualifiedName&, const AtomicString& value);
+    void didModifyAttribute(Attribute*);
+    void didRemoveAttribute(Attribute*);
 
     LayoutSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const LayoutSize&);
@@ -392,7 +396,6 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
 
     void setAttributeInternal(size_t index, const QualifiedName&, const AtomicString& value);
-    void removeAttributeInternal(size_t index);
     virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
     
 #ifndef NDEBUG
@@ -428,10 +431,6 @@ private:
     ElementRareData* ensureRareData();
 
     SpellcheckAttributeState spellcheckAttributeState() const;
-
-#if ENABLE(MUTATION_OBSERVERS)
-    void enqueueAttributesMutationRecordIfRequested(const QualifiedName&, const AtomicString& oldValue);
-#endif
 
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;
@@ -514,16 +513,10 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
         scope->addElementById(newId, this);
 }
 
-inline void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
+inline void Element::willRemoveAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (isIdAttributeName(name))
-        updateId(oldValue, newValue);
-
-    // FIXME: Should probably call InspectorInstrumentation::willModifyDOMAttr here.
-
-#if ENABLE(MUTATION_OBSERVERS)
-    enqueueAttributesMutationRecordIfRequested(name, oldValue);
-#endif
+    if (!value.isNull())
+        willModifyAttribute(name, value, nullAtom);
 }
 
 inline bool Element::fastHasAttribute(const QualifiedName& name) const

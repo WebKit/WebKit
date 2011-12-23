@@ -140,7 +140,7 @@ void Attr::setValue(const AtomicString& value, ExceptionCode&)
     setValue(value);
 
     if (m_element)
-        m_element->attributeChanged(m_attribute.get());
+        m_element->didModifyAttribute(m_attribute.get());
 }
 
 void Attr::setNodeValue(const String& v, ExceptionCode& ec)
