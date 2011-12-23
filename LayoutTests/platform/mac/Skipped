@@ -520,9 +520,6 @@ fast/forms/select/menulist-onchange-fired-with-key-up-down.html
 # Tiemout. Needs ChromeClient::hasOpenedPopup() impelementation?
 fast/forms/select/menulist-popup-crash.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=74538
-fast/events/autoscroll-should-not-stop-on-keypress.html
-
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html

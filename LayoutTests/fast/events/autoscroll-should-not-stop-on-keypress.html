@@ -6,14 +6,76 @@
 <script>
 window.jsTestIsAsync = true;
 
+var frame;
 function test() {
+    frame = document.getElementById('frame');
+    var doc = frame.contentDocument.open();
+    var htmlString = "Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> \
+                      Lots of text</br>Lots of text</br> ";
+
+    doc.write(htmlString);
+    doc.close();
+    frame.contentDocument.body.style.height = "2000px";
+
     if (window.eventSender) {
-        var height = document.body.scrollHeight + 100;
+        var xPoint = frame.scrollLeft + 100;
+        var yPoint = frame.scrollTop + 100;
         eventSender.dragMode = false;
-        eventSender.mouseMoveTo(20, 100);
+        eventSender.mouseMoveTo(xPoint, yPoint);
         eventSender.mouseDown();
-        eventSender.mouseMoveTo(20, height);
-        setTimeout(testAutoScroll, 200);
+        eventSender.mouseMoveTo(xPoint, frame.offsetHeight + 100);
+        setTimeout(testAutoScroll, 1500);
         eventSender.keyDown('a');
     } else {
         debug("Test manually that scrolling does not stop if we press a key while autoscroll is happening.");
@@ -21,95 +83,15 @@ function test() {
 }
 
 function testAutoScroll() {
-    shouldBe('document.body.scrollTop + window.innerHeight', 'document.body.scrollHeight');
+    shouldBe('frame.contentDocument.body.scrollTop + frame.clientHeight', 'frame.contentDocument.body.scrollHeight');
     finishJSTest();
 }
 
 successfullyParsed = true;
-</script>
+</script> 
 </head>
 <body onload="test()">
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
-Lots of text</br>Lots of text</br>
+<iframe id="frame" style="height: 400px;" frameborder="0"></iframe>
 <div id="console"></div>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
