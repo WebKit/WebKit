@@ -119,7 +119,7 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    virtual bool requiresLayer() const { return isRelPositioned() || isTransparent() || hasMask(); }
+    virtual bool requiresLayer() const { return isRelPositioned() || isTransparent() || hasMask() || hasFilter(); }
 
     virtual LayoutUnit offsetLeft() const;
     virtual LayoutUnit offsetTop() const;

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            font-size: 18pt;
+        }
+        
+        .filtered {
+            -webkit-filter: blur(10px);
+        }
+        
+        div {
+            display: inline-block;
+            width: 20px;
+            height: 1em;
+            background: green;
+        }
+    </style>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText(true);
+    </script>
+</head>
+<body>
+    <div></div><div></div><span class="filtered"><div></div><div></div></span><div></div><div>
+</body>
+</html>

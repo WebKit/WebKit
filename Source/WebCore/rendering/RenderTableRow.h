@@ -56,7 +56,6 @@ private:
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    // The only time rows get a layer is when they have transparency.
     virtual bool requiresLayer() const { return isTransparent() || hasOverflowClip() || hasTransform() || hasMask() || hasFilter(); }
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
