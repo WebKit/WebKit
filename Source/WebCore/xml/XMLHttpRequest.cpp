@@ -143,6 +143,15 @@ static const XMLHttpRequestStaticData* initializeXMLHttpRequestStaticData()
     return dummy;
 }
 
+static void logConsoleError(ScriptExecutionContext* context, const String& message)
+{
+    if (!context)
+        return;
+    // FIXME: It's not good to report the bad usage without indicating what source line it came from.
+    // We should pass additional parameters so we can tell the console where the mistake occurred.
+    context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
+}
+
 PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
 {
     return adoptRef(new XMLHttpRequest(context, securityOrigin));
@@ -285,6 +294,16 @@ void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& 
 {
     if (m_state != OPENED || m_loader) {
         ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated 
+    // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
+    // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
+    // such as file: and data: still make sense to allow.
+    if (!m_async && scriptExecutionContext()->isDocument() && m_url.protocolIsInHTTPFamily()) {
+        logConsoleError(scriptExecutionContext(), "XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.");
+        ec = INVALID_ACCESS_ERR;
         return;
     }
 
@@ -817,15 +836,6 @@ void XMLHttpRequest::overrideMimeType(const String& override)
     m_mimeTypeOverride = override;
 }
 
-static void reportUnsafeUsage(ScriptExecutionContext* context, const String& message)
-{
-    if (!context)
-        return;
-    // FIXME: It's not good to report the bad usage without indicating what source line it came from.
-    // We should pass additional parameters so we can tell the console where the mistake occurred.
-    context->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
-}
-
 void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& value, ExceptionCode& ec)
 {
     if (m_state != OPENED || m_loader) {
@@ -845,7 +855,7 @@ void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& va
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
     if (!securityOrigin()->canLoadLocalResources() && !isAllowedHTTPHeader(name)) {
-        reportUnsafeUsage(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
+        logConsoleError(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return;
     }
 
@@ -907,12 +917,12 @@ String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode
 
     // See comment in getAllResponseHeaders above.
     if (isSetCookieHeader(name) && !securityOrigin()->canLoadLocalResources()) {
-        reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
+        logConsoleError(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return String();
     }
 
     if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(name)) {
-        reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
+        logConsoleError(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return String();
     }
     return m_response.httpHeaderField(name);
@@ -982,7 +992,7 @@ void XMLHttpRequest::didFail(const ResourceError& error)
 
     // Network failures are already reported to Web Inspector by ResourceLoader.
     if (error.domain() == errorDomainWebKitInternal)
-        reportUnsafeUsage(scriptExecutionContext(), "XMLHttpRequest cannot load " + error.failingURL() + ". " + error.localizedDescription());
+        logConsoleError(scriptExecutionContext(), "XMLHttpRequest cannot load " + error.failingURL() + ". " + error.localizedDescription());
 
     m_exceptionCode = XMLHttpRequestException::NETWORK_ERR;
     networkError();

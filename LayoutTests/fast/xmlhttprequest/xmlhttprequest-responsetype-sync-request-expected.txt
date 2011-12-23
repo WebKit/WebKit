@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: line 1: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+CONSOLE MESSAGE: line 1: XMLHttpRequest.responseType cannot be changed for synchronous HTTP(S) requests made from the window context.
+This tests that the XMLHttpRequest responseType attribute is not modifiable for synchronous HTTP(S) requests.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS xhr.responseType = 'document'; threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
+PASS xhr.responseType = 'document'; threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
+PASS window.location.protocol is "file:"
+xhr.responseType = 'document';
+PASS xhr.responseType is "document"
+xhr.responseType = 'document';
+PASS xhr.responseType is "document"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
