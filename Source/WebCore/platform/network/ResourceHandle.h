@@ -191,6 +191,10 @@ public:
     void setClient(ResourceHandleClient*);
 
     void setDefersLoading(bool);
+
+#if PLATFORM(BLACKBERRY)
+    void pauseLoad(bool);
+#endif
       
     ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;

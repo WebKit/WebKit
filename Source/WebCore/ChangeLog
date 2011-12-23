@@ -1,3 +1,14 @@
+2011-12-23  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        [BlackBerry] Add the BlackBerry specific pauseLoad(bool) to ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=75162
+
+        Reviewed by George Staikos.
+
+        The porting can be built now, no new tests so far.
+
+        * platform/network/ResourceHandle.h:
+
 2011-12-23  Karl Koscher  <supersat@chromium.org>
 
         Give embedders a chance to handle postMessage calls
