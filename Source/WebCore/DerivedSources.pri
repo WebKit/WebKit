@@ -205,6 +205,7 @@ IDL_BINDINGS += \
     fileapi/FileWriter.idl \
     fileapi/FileWriterCallback.idl \
     fileapi/OperationNotAllowedException.idl \
+    fileapi/WebKitFlags.idl \
     fileapi/Metadata.idl \
     fileapi/MetadataCallback.idl \
     fileapi/WebKitBlobBuilder.idl \

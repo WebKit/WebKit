@@ -111,6 +111,7 @@ module threads {
         [EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url, in [Callback, Optional] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
         [EnabledAtRuntime=FileSystem] EntrySync webkitResolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
 
+                 attribute [EnabledAtRuntime=FileSystem] WebKitFlagsConstructor WebKitFlags;
                  attribute [EnabledAtRuntime=FileSystem] FileErrorConstructor FileError;
                  attribute [EnabledAtRuntime=FileSystem] FileExceptionConstructor FileException;
 #endif
