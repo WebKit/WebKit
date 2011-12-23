@@ -55,22 +55,23 @@ function setter4(p, a, b, c) {
 }
 
 var True = true;
+var Empty = "";
 
 var getters = [
     getter1,
-    function(a, b) { a = {f:a}; return eval("getter2(a, b)"); },
-    function(a, b) { a = {f:a}; b = {f:b}; return eval("getter3(a, b)"); },
-    function(a, b) { a = {f:a}; b = {f:b}; return eval("getter4(True, a, b)"); }
+    function(a, b) { a = {f:a}; return eval(Empty + "getter2(a, b)"); },
+    function(a, b) { a = {f:a}; b = {f:b}; return eval(Empty + "getter3(a, b)"); },
+    function(a, b) { a = {f:a}; b = {f:b}; return eval(Empty + "getter4(True, a, b)"); }
 ];
 var setters = [
     setter1,
-    function(a, b, c) { a = {f:a}; return eval("setter2(a, b, c)"); },
-    function(a, b, c) { a = {f:a}; b = {f:b}; c = {f:c}; return eval("setter3(a, b, c)"); },
-    function(a, b, c) { a = {f:a}; b = {f:b}; c = {f:c}; return eval("setter4(True, a, b, c)"); }
+    function(a, b, c) { a = {f:a}; return eval(Empty + "setter2(a, b, c)"); },
+    function(a, b, c) { a = {f:a}; b = {f:b}; c = {f:c}; return eval(Empty + "setter3(a, b, c)"); },
+    function(a, b, c) { a = {f:a}; b = {f:b}; c = {f:c}; return eval(Empty + "setter4(True, a, b, c)"); }
 ];
 
 function safeGetter(a, b) {
-    return eval("a[\"\" + " + b + "] = c");
+    return eval("a[\"\" + " + b + "]");
 }
 
 function safeSetter(a, b, c) {

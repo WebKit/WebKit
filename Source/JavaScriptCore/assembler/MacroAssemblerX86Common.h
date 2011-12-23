@@ -486,6 +486,16 @@ public:
         m_assembler.movzbl_mr(address.offset, address.base, dest);
     }
     
+    void load8Signed(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.movsbl_mr(address.offset, address.base, address.index, address.scale, dest);
+    }
+
+    void load8Signed(ImplicitAddress address, RegisterID dest)
+    {
+        m_assembler.movsbl_mr(address.offset, address.base, dest);
+    }
+    
     void load16(BaseIndex address, RegisterID dest)
     {
         m_assembler.movzwl_mr(address.offset, address.base, address.index, address.scale, dest);
@@ -494,6 +504,16 @@ public:
     void load16(Address address, RegisterID dest)
     {
         m_assembler.movzwl_mr(address.offset, address.base, dest);
+    }
+
+    void load16Signed(BaseIndex address, RegisterID dest)
+    {
+        m_assembler.movswl_mr(address.offset, address.base, address.index, address.scale, dest);
+    }
+    
+    void load16Signed(Address address, RegisterID dest)
+    {
+        m_assembler.movswl_mr(address.offset, address.base, dest);
     }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)

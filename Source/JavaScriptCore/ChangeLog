@@ -1,5 +1,29 @@
 2011-12-23  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG loads from signed 8-bit and 16-bit typed arrays are broken
+        https://bugs.webkit.org/show_bug.cgi?id=75163
+
+        Reviewed by Geoffrey Garen.
+        
+        Added 8-bit and 16-bit signed loads. Because doing so on ARM is less trivial, I'm
+        currently disabling Int8Array and Int16Array optimizations on ARM.
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::load8Signed):
+        (JSC::MacroAssemblerX86Common::load16Signed):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movswl_mr):
+        (JSC::X86Assembler::movsbl_mr):
+        * bytecode/PredictedType.h:
+        (JSC::isActionableMutableArrayPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt8Array):
+        (JSC::DFG::Node::shouldSpeculateInt16Array):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+
+2011-12-23  Filip Pizlo  <fpizlo@apple.com>
+
         DFG does double-to-int conversion incorrectly when storing into int typed arrays
         https://bugs.webkit.org/show_bug.cgi?id=75164
         <rdar://problem/10557547>

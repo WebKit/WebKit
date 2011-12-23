@@ -155,8 +155,10 @@ inline bool isActionableMutableArrayPrediction(PredictedType value)
 {
     return isArrayPrediction(value)
         || isByteArrayPrediction(value)
+#if CPU(X86) || CPU(X86_64)
         || isInt8ArrayPrediction(value)
         || isInt16ArrayPrediction(value)
+#endif
         || isInt32ArrayPrediction(value)
         || isUint8ArrayPrediction(value)
         || isUint16ArrayPrediction(value)
