@@ -163,7 +163,7 @@ void RenderSVGResource::removeFromFilterCache(RenderObject* object)
 
     filter->removeClientFromCache(object);
 #else
-    UNUSED_PARAM(object)
+    UNUSED_PARAM(object);
 #endif
 }
 

@@ -1,3 +1,10 @@
+2011-12-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WinCE build fix after r103539.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::RenderSVGResource::removeFromFilterCache):
+
 2011-12-22  Chris Marrin  <cmarrin@apple.com>
 
         Crash and incorrect behavior when switching between hardware and software CSS filters
