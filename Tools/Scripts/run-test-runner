@@ -30,6 +30,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
+
 setConfiguration();
 
 exit exitStatus(runWebKitTestRunner());

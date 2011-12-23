@@ -33,6 +33,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
+
 setConfiguration();
 
 # Check to see that all the frameworks are built.

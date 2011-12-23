@@ -57,6 +57,7 @@ BEGIN {
        &currentSVNRevision
        &debugSafari
        &passedConfiguration
+       &printHelpAndExitForRunAndDebugWebKitAppIfNeeded
        &productDir
        &runMacWebKitApp
        &safariPath
@@ -2251,6 +2252,24 @@ sub setPathForRunningWebKitApp
     }
 }
 
+sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded()
+{
+    return unless checkForArgumentAndRemoveFromARGV("--help");
+    print STDERR <<EOF;
+Usage: @{[basename($0)]} [options] [args ...]
+  --help                Show this help message
+  --no-saved-state      Disable application resume for the session on Mac OS 10.7
+EOF
+    exit(1);
+}
+
+sub argumentsForRunAndDebugMacWebKitApp()
+{
+    my @args = @ARGV;
+    push @args, ("-ApplePersistenceIgnoreState", "YES") if isLion() && checkForArgumentAndRemoveFromArrayRef("--no-saved-state", \@args);
+    return @args;
+}
+
 sub runMacWebKitApp($;$)
 {
     my ($appPath, $useOpenCommand) = @_;
@@ -2259,12 +2278,12 @@ sub runMacWebKitApp($;$)
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
-        return system("open", "-W", "-a", $appPath, "--args", @ARGV);
+        return system("open", "-W", "-a", $appPath, "--args", argumentsForRunAndDebugMacWebKitApp());
     }
     if (architecture()) {
-        return system "arch", "-" . architecture(), $appPath, @ARGV;
+        return system "arch", "-" . architecture(), $appPath, argumentsForRunAndDebugMacWebKitApp();
     }
-    return system { $appPath } $appPath, @ARGV;
+    return system { $appPath } $appPath, argumentsForRunAndDebugMacWebKitApp();
 }
 
 sub execMacWebKitAppForDebugging($)
@@ -2279,7 +2298,7 @@ sub execMacWebKitAppForDebugging($)
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
     my @architectureFlags = ("-arch", architecture());
-    exec { $gdbPath } $gdbPath, @architectureFlags, $appPath, @ARGV or die;
+    exec { $gdbPath } $gdbPath, @architectureFlags, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
 
 sub debugSafari

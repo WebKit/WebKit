@@ -33,6 +33,8 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
+
 setConfiguration();
 
 die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" unless length($ARGV[0]) > 0;

@@ -1,3 +1,35 @@
+2011-12-23  Daniel Bates  <dbates@webkit.org>
+
+        Provide option to disable Mac OS 10.7 application resume when using
+        {debug, run}-{safari, minibrowser, test-runner, test-webkit-api}, and run-webkit-app
+        https://bugs.webkit.org/show_bug.cgi?id=66902
+
+        Reviewed by David Kilzer.
+
+        Add an optional command line argument --no-saved-state to disable
+        application resume (state restoration) for the session on Mac OS 10.7.
+
+        For instance, when debugging an issue in Safari it is useful to be able
+        to temporarily disable application resume. Currently you can disable
+        application resume when launching Safari from within Xcode. We should
+        expose a similar option in our command line tools.
+
+        * Scripts/debug-minibrowser: Call printHelpAndExitForRunAndDebugWebKitAppIfNeeded()
+        to print a help message and exit() if the command line argument --help was given.
+        * Scripts/debug-safari: Ditto.
+        * Scripts/debug-test-runner: Ditto.
+        * Scripts/run-minibrowser: Ditto.
+        * Scripts/run-safari: Ditto.
+        * Scripts/run-test-runner: Ditto.
+        * Scripts/run-test-webkit-api: Ditto.
+        * Scripts/run-webkit-app: Ditto.
+        * Scripts/webkitdirs.pm:
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded): Added.
+        (argumentsForRunAndDebugMacWebKitApp): Added.
+        (runMacWebKitApp): If the --no-saved-state command line argument was given then
+        disable application resume for the session.
+        (execMacWebKitAppForDebugging): Ditto.
+
 2011-12-23  Dmitry Lomov  <dslomov@google.com>
 
         [WebWorkers][Chromium] Remove remains of cross-process dedicated worker implementation.
