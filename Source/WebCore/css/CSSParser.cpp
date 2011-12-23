@@ -171,6 +171,12 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     return false;
 }
 
+inline void CSSParser::ensureCSSValuePool()
+{
+    if (!m_cssValuePool)
+        m_cssValuePool = CSSValuePool::create();
+}
+
 CSSParser::CSSParser(bool strictParsing)
     : m_strict(strictParsing)
     , m_important(false)
@@ -358,7 +364,7 @@ static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propert
         return true;
     }
     RGBA32 color;
-    if (!CSSParser::parseColor(string, color, strict && string[0] != '#'))
+    if (!CSSParser::fastParseColor(color, string, strict && string[0] != '#'))
         return false;
     CSSProperty property(propertyId, document->cssValuePool()->createColorValue(color), important);
     declaration->addParsedProperty(property);
@@ -494,14 +500,13 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int property
 bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
 {
     // First try creating a color specified by name, rgba(), rgb() or "#" syntax.
-    if (parseColor(string, color, strict))
+    if (fastParseColor(color, string, strict))
         return true;
 
     CSSParser parser(true);
-    RefPtr<CSSMutableStyleDeclaration> dummyStyleDeclaration = CSSMutableStyleDeclaration::create();
 
-    // Now try to create a color from rgba() syntax.
-    if (!parser.parseColor(dummyStyleDeclaration.get(), string))
+    // In case the fast-path parser didn't understand the color, try the full parser.
+    if (!parser.parseColor(string))
         return false;
 
     CSSValue* value = parser.m_parsedProperties[0]->value();
@@ -516,9 +521,11 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
     return true;
 }
 
-bool CSSParser::parseColor(CSSMutableStyleDeclaration* declaration, const String& string)
+bool CSSParser::parseColor(const String& string)
 {
-    setStyleSheet(declaration->parentStyleSheet());
+    // This function may be called without a stylesheet set on the parser, so we need to
+    // make sure that we have a CSSValuePool or we'll crash below cssyyparse().
+    ensureCSSValuePool();
 
     setupParser("@-webkit-decls{color:", string, "} ");
     cssyyparse(this);
@@ -4765,7 +4772,7 @@ static inline bool mightBeRGB(const UChar* characters, unsigned length)
         && (characters[2] | 0x20) == 'b';
 }
 
-bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
+bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
 {
     const UChar* characters = name.characters();
     unsigned length = name.length();
@@ -4934,12 +4941,12 @@ bool CSSParser::parseColorFromValue(CSSParserValue* value, RGBA32& c)
     if (!m_strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000.) {
         String str = String::format("%06d", static_cast<int>((value->fValue+.5)));
-        if (!CSSParser::parseColor(str, c, m_strict))
+        if (!fastParseColor(c, str, m_strict))
             return false;
     } else if (value->unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR ||
                 value->unit == CSSPrimitiveValue::CSS_IDENT ||
                 (!m_strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION)) {
-        if (!CSSParser::parseColor(value->string, c, m_strict && value->unit == CSSPrimitiveValue::CSS_IDENT))
+        if (!fastParseColor(c, value->string, m_strict && value->unit == CSSPrimitiveValue::CSS_IDENT))
             return false;
     } else if (value->unit == CSSParserValue::Function &&
                 value->function->args != 0 &&

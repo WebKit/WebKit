@@ -69,7 +69,6 @@ public:
     static bool parseColor(RGBA32& color, const String&, bool strict = false);
     static bool parseSystemColor(RGBA32& color, const String&, Document*);
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int propId, CSSParserValue*);
-    bool parseColor(CSSMutableStyleDeclaration*, const String&);
     bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* = 0, CSSStyleSheet* contextStyleSheet = 0);
     bool parseMediaQuery(MediaList*, const String&);
 
@@ -151,7 +150,7 @@ public:
     bool parseColorFromValue(CSSParserValue*, RGBA32&);
     void parseSelector(const String&, Document* doc, CSSSelectorList&);
 
-    static bool parseColor(const String&, RGBA32& rgb, bool strict);
+    static bool fastParseColor(RGBA32&, const String&, bool strict);
 
     bool parseFontStyle(bool important);
     bool parseFontVariant(bool important);
@@ -317,6 +316,7 @@ public:
 
 private:
     void setStyleSheet(CSSStyleSheet*);
+    void ensureCSSValuePool();
 
     void recheckAtKeyword(const UChar* str, int len);
 
@@ -347,6 +347,8 @@ private:
 
     bool parseFontFaceSrcURI(CSSValueList*);
     bool parseFontFaceSrcLocal(CSSValueList*);
+
+    bool parseColor(const String&);
 
     UChar* m_data;
     UChar* yytext;

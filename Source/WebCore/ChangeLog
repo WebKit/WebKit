@@ -1,3 +1,25 @@
+2011-12-22  Andreas Kling  <kling@webkit.org>
+
+        CSSParser: Avoid creating dummy declaration in parseColor() slow path.
+        <http://webkit.org/b/75104>
+
+        Reviewed by Darin Adler.
+
+        We only needed the dummy declaration to trigger the instantiation of
+        a CSSValuePool. Added an ensureCSSValuePool() method and have parseColor()
+        call that instead.
+
+        Also renamed the fast-path parseColor() to fastParseColor() and reordered
+        the arguments for consistency with the slow-path parseColor().
+
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::ensureCSSValuePool):
+        (WebCore::CSSParser::fastParseColor):
+        (WebCore::CSSParser::parseColorFromValue):
+        * css/CSSParser.h:
+
 2011-12-21  Andreas Kling  <kling@webkit.org>
 
         Automate elements' registration as document namedItem/extraNamedItem.
