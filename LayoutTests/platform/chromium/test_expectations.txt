@@ -2717,10 +2717,10 @@ BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 BUGWK55745 LEOPARD : fast/gradients/css3-color-stop-units.html = IMAGE
 BUGWK55745 LEOPARD : fast/gradients/css3-color-stops.html = IMAGE
 BUGWK55745 LEOPARD : fast/gradients/css3-linear-angle-gradients.html = IMAGE
-BUGWK55745 MAC : fast/gradients/css3-radial-gradients.html = IMAGE
-BUGWK55745 MAC : fast/gradients/css3-radial-gradients2.html = IMAGE
-BUGWK55745 MAC : fast/gradients/css3-radial-gradients3.html = IMAGE
-BUGWK55745 MAC : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
+BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients.html = IMAGE
+BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients2.html = IMAGE
+BUGWK56736 MAC CPU-CG : fast/gradients/css3-radial-gradients3.html = IMAGE
+BUGWK56736 MAC CPU-CG : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
 BUGWK52082 LEOPARD : fast/text/basic/014.html = IMAGE
