@@ -1,3 +1,15 @@
+2011-12-23  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r97533): Optgroup label is not disabled
+        https://bugs.webkit.org/show_bug.cgi?id=74869
+
+        Reviewed by Alexey Proskuryakov.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemIsEnabled): Added back a line of code that was
+        accidentally deleted as part of the refactoring in r97533. This line of code
+        ensures that any items that are not option elements are disabled.
+
 2011-12-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Add CSSStyleSelector instrumentation calls towards implementing a CSS selector profiler

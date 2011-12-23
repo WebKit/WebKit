@@ -417,6 +417,8 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
     if (listIndex >= listItems.size())
         return false;
     HTMLElement* element = listItems[listIndex];
+    if (!element->hasTagName(optionTag))
+        return false;
 
     bool groupEnabled = true;
     if (Element* parentElement = element->parentElement()) {
