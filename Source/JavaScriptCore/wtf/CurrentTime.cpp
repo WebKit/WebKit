@@ -327,7 +327,7 @@ double monotonicallyIncreasingTime()
 {
     ASSERT(QElapsedTimer::isMonotonic());
     static QElapsedTimer timer;
-    return timer.elapsed() / msPerSecond;
+    return timer.nsecsElapsed() / 1.0e9;
 }
 
 #else
