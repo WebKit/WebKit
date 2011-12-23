@@ -1,3 +1,18 @@
+2011-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Add two (currently unused) new member functions to ScrollElasticityControllerClient
+        https://bugs.webkit.org/show_bug.cgi?id=75179
+
+        Reviewed by Dan Bernstein.
+
+        This is so we'll be able to move more code to ScrollElasticityController.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::pinnedInDirection):
+        (WebCore::ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints):
+        * platform/mac/ScrollElasticityController.h:
+
 2011-12-23  Simon Fraser  <simon.fraser@apple.com>
 
         Blur filter doesn't invalidate enough

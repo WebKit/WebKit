@@ -703,13 +703,6 @@ void ScrollAnimatorMac::immediateScrollBy(const FloatSize& delta)
     notifyPositionChanged();
 }
 
-void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)
-{
-    m_scrollableArea->setConstrainsScrollingToContentEdge(false);
-    immediateScrollBy(delta);
-    m_scrollableArea->setConstrainsScrollingToContentEdge(true);
-}
-
 void ScrollAnimatorMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
 {
     ASSERT(m_scrollAnimationHelper);
@@ -1065,6 +1058,18 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
 IntSize ScrollAnimatorMac::stretchAmount()
 {
     return m_scrollableArea->overhangAmount();
+}
+
+bool ScrollAnimatorMac::pinnedInDirection(const FloatSize& direction)
+{
+    return pinnedInDirection(direction.width(), direction.height());
+}
+
+void ScrollAnimatorMac::immediateScrollByWithoutContentEdgeConstraints(const FloatSize& delta)
+{
+    m_scrollableArea->setConstrainsScrollingToContentEdge(false);
+    immediateScrollBy(delta);
+    m_scrollableArea->setConstrainsScrollingToContentEdge(true);
 }
 
 void ScrollAnimatorMac::startSnapRubberbandTimer()
