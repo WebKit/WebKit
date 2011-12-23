@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        position: relative;
+        height: 200px;
+        width: 200px;
+        background-color: green;
+    }
+    
+    .blurry {
+        margin: 50px;
+        -webkit-filter: blur(10px);
+    }
+    
+    #change {
+        height: 100px;
+        width: 100px;
+        top: 50px;
+        left: 50px;
+        background-color: red;
+    }
+  </style>
+  <script src="../../fast/repaint/resources/repaint.js"></script>
+  <script>
+      if (window.layoutTestController)
+          layoutTestController.dumpAsText(true);
+
+      function repaintTest()
+      {
+          document.getElementById('change').style.backgroundColor = "green";
+      }
+  </script>
+</head>
+<body onload="runRepaintTest()">
+
+  <div class="blurry box">
+      <div id="change" class="box">
+      </div>
+  </div>
+
+</body>
+</html>

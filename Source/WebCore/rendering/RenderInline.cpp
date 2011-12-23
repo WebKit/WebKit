@@ -1063,6 +1063,18 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
         }
     }
 
+#if ENABLE(CSS_FILTERS)
+    if (style()->hasFilterOutsets()) {
+        LayoutUnit topOutset;
+        LayoutUnit rightOutset;
+        LayoutUnit bottomOutset;
+        LayoutUnit leftOutset;
+        style()->filter().getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        rect.move(-leftOutset, -topOutset);
+        rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+    }
+#endif
+
     if (style()->position() == RelativePosition && layer()) {
         // Apply the relative position offset when invalidating a rectangle.  The layer
         // is translated, but the render box isn't, so we need to do this to get the

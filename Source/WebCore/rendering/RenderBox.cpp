@@ -1567,6 +1567,19 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, La
 
     if (isWritingModeRoot() && !isPositioned())
         flipForWritingMode(rect);
+
+#if ENABLE(CSS_FILTERS)
+    if (style()->hasFilterOutsets()) {
+        LayoutUnit topOutset;
+        LayoutUnit rightOutset;
+        LayoutUnit bottomOutset;
+        LayoutUnit leftOutset;
+        style()->filter().getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        rect.move(-leftOutset, -topOutset);
+        rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+    }
+#endif
+
     LayoutPoint topLeft = rect.location();
     topLeft.move(x(), y());
 

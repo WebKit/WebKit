@@ -1,5 +1,22 @@
 2011-12-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Blur filter doesn't invalidate enough
+        https://bugs.webkit.org/show_bug.cgi?id=74891
+
+        Reviewed by Darin Adler.
+        
+        Take the effects of filters into account for repainting; we need
+        to inflate the repaint rect by the outsets provided by the filter.
+        
+        Test: css3/filters/filter-repaint.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeRectForRepaint):
+
+2011-12-23  Simon Fraser  <simon.fraser@apple.com>
+
         Filters should apply to inline elements
         https://bugs.webkit.org/show_bug.cgi?id=75152
 
