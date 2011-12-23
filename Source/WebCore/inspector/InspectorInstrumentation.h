@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+class CSSRule;
+class CSSStyleRule;
 class CharacterData;
 class DOMFileSystem;
 class DOMWindow;
@@ -50,6 +52,7 @@ class Element;
 class EventContext;
 class DocumentLoader;
 class HitTestResult;
+class InspectorCSSAgent;
 class InspectorTimelineAgent;
 class InstrumentingAgents;
 class KURL;
@@ -119,6 +122,10 @@ public:
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculation(Document*);
+    static InspectorInstrumentationCookie willMatchRule(Document*, const CSSStyleRule*);
+    static void didMatchRule(const InspectorInstrumentationCookie&, bool matched);
+    static InspectorInstrumentationCookie willProcessRule(Document*, const CSSRule*);
+    static void didProcessRule(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverride(Frame*, String*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -260,6 +267,10 @@ private:
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
+    static InspectorInstrumentationCookie willMatchRuleImpl(InstrumentingAgents*, const CSSStyleRule*);
+    static void didMatchRuleImpl(const InspectorInstrumentationCookie&, bool matched);
+    static InspectorInstrumentationCookie willProcessRuleImpl(InstrumentingAgents*, const CSSRule*);
+    static void didProcessRuleImpl(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -716,6 +727,46 @@ inline void InspectorInstrumentation::didScheduleStyleRecalculation(Document* do
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didScheduleStyleRecalculationImpl(instrumentingAgents, document);
+#endif
+}
+
+inline InspectorInstrumentationCookie InspectorInstrumentation::willMatchRule(Document* document, const CSSStyleRule* rule)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        return willMatchRuleImpl(instrumentingAgents, rule);
+#endif
+    return InspectorInstrumentationCookie();
+}
+
+inline void InspectorInstrumentation::didMatchRule(const InspectorInstrumentationCookie& cookie, bool matched)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (cookie.first)
+        didMatchRuleImpl(cookie, matched);
+#endif
+}
+
+inline InspectorInstrumentationCookie InspectorInstrumentation::willProcessRule(Document* document, const CSSRule* rule)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
+    if (!rule)
+        return InspectorInstrumentationCookie();
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        return willProcessRuleImpl(instrumentingAgents, rule);
+#endif
+    return InspectorInstrumentationCookie();
+}
+
+inline void InspectorInstrumentation::didProcessRule(const InspectorInstrumentationCookie& cookie)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (cookie.first)
+        didProcessRuleImpl(cookie);
 #endif
 }
 

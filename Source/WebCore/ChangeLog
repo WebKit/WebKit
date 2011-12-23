@@ -1,3 +1,30 @@
+2011-12-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Add CSSStyleSelector instrumentation calls towards implementing a CSS selector profiler
+        https://bugs.webkit.org/show_bug.cgi?id=74863
+
+        Performance checks run on PerformanceTest/Parser/html5-full-render.html did not result in any noticeable
+        perf regression, as the instrumentation calls are inline and bail out early if there are no
+        Web Inspector frontends open.
+
+        Reviewed by Antti Koivisto.
+
+        No new tests, as the functionality is not bound to any user-visible outputs.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+        (WebCore::CSSStyleSelector::applyDeclaration):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willMatchRuleImpl):
+        (WebCore::InspectorInstrumentation::didMatchRuleImpl):
+        (WebCore::InspectorInstrumentation::willProcessRuleImpl):
+        (WebCore::InspectorInstrumentation::didProcessRuleImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willMatchRule):
+        (WebCore::InspectorInstrumentation::didMatchRule):
+        (WebCore::InspectorInstrumentation::willProcessRule):
+        (WebCore::InspectorInstrumentation::didProcessRule):
+
 2011-12-23  Ivan Briano  <ivan@profusion.mobi>
 
         [EFL] Fix building with Glib support disabled

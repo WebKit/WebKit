@@ -66,6 +66,7 @@
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "HTMLTextAreaElement.h"
+#include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LinkHash.h"
 #include "LocaleToScriptMapping.h"
@@ -715,21 +716,31 @@ void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& fir
         const RuleData& ruleData = rules->at(i);
         if (canUseFastReject && m_checker.fastRejectSelector<RuleData::maximumIdentifierCount>(ruleData.descendantSelectorIdentifierHashes()))
             continue;
+
+        CSSStyleRule* rule = ruleData.rule();
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule);
         if (checkSelector(ruleData)) {
-            if (!matchesInTreeScope(m_element->treeScope(), m_checker.hasUnknownPseudoElements()))
+            if (!matchesInTreeScope(m_element->treeScope(), m_checker.hasUnknownPseudoElements())) {
+                InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
+            }
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
-            CSSStyleRule* rule = ruleData.rule();
             CSSMutableStyleDeclaration* decl = rule->declaration();
-            if (!decl || (!decl->length() && !includeEmptyRules))
+            if (!decl || (!decl->length() && !includeEmptyRules)) {
+                InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
-            if (m_sameOriginOnly && !m_checker.document()->securityOrigin()->canRequest(rule->baseURL()))
+            }
+            if (m_sameOriginOnly && !m_checker.document()->securityOrigin()->canRequest(rule->baseURL())) {
+                InspectorInstrumentation::didMatchRule(cookie, false);
                 continue;
+            }
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
             if (m_dynamicPseudo != NOPSEUDO && m_checker.pseudoStyle() == NOPSEUDO) {
-                if (m_checker.isCollectingRulesOnly())
+                if (m_checker.isCollectingRulesOnly()) {
+                    InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
+                }
                 if (m_dynamicPseudo < FIRST_INTERNAL_PSEUDOID)
                     m_style->setHasPseudoStyle(m_dynamicPseudo);
             } else {
@@ -740,8 +751,11 @@ void CSSStyleSelector::matchRulesForList(const Vector<RuleData>* rules, int& fir
 
                 // Add this rule to our list of matched rules.
                 addMatchedRule(&ruleData);
+                InspectorInstrumentation::didMatchRule(cookie, true);
+                continue;
             }
         }
+        InspectorInstrumentation::didMatchRule(cookie, false);
     }
 }
 
@@ -2162,6 +2176,7 @@ static Length convertToFloatLength(CSSPrimitiveValue* primitiveValue, RenderStyl
 template <bool applyFirst>
 void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclaration, bool isImportant, bool inheritedOnly)
 {
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willProcessRule(document(), styleDeclaration->parentRule());
     CSSMutableStyleDeclaration::const_iterator end = styleDeclaration->end();
     for (CSSMutableStyleDeclaration::const_iterator it = styleDeclaration->begin(); it != end; ++it) {
         const CSSProperty& current = *it;
@@ -2193,6 +2208,7 @@ void CSSStyleSelector::applyDeclaration(CSSMutableStyleDeclaration* styleDeclara
         if (property > CSSPropertyLineHeight)
             applyProperty(current.id(), current.value());
     }
+    InspectorInstrumentation::didProcessRule(cookie);
 }
 
 template <bool applyFirst>

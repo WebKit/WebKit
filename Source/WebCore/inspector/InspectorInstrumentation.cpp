@@ -33,6 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "CSSRule.h"
+#include "CSSStyleRule.h"
 #include "DOMFileSystem.h"
 #include "DOMWindow.h"
 #include "Database.h"
@@ -436,6 +438,45 @@ void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAg
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didScheduleStyleRecalculation(document);
+}
+
+InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(InstrumentingAgents* instrumentingAgents, const CSSStyleRule* rule)
+{
+    InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
+    if (cssAgent) {
+        cssAgent->willMatchRule(rule);
+        return InspectorInstrumentationCookie(instrumentingAgents, 1);
+    }
+
+    return InspectorInstrumentationCookie();
+}
+
+void InspectorInstrumentation::didMatchRuleImpl(const InspectorInstrumentationCookie& cookie, bool matched)
+{
+    InspectorCSSAgent* cssAgent = cookie.first->inspectorCSSAgent();
+    if (cssAgent)
+        cssAgent->didMatchRule(matched);
+}
+
+InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, const CSSRule* rule)
+{
+    if (!rule->isStyleRule())
+        return InspectorInstrumentationCookie();
+
+    InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
+    if (cssAgent) {
+        cssAgent->willProcessRule(static_cast<const CSSStyleRule*>(rule));
+        return InspectorInstrumentationCookie(instrumentingAgents, 1);
+    }
+
+    return InspectorInstrumentationCookie();
+}
+
+void InspectorInstrumentation::didProcessRuleImpl(const InspectorInstrumentationCookie& cookie)
+{
+    InspectorCSSAgent* cssAgent = cookie.first->inspectorCSSAgent();
+    if (cssAgent)
+        cssAgent->didProcessRule();
 }
 
 void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents* instrumentingAgents, String* userAgent)
