@@ -423,6 +423,7 @@ protected:
     void addOverflowFromPositionedObjects();
     void addOverflowFromBlockChildren();
     void addOverflowFromInlineChildren();
+    void addVisualOverflowFromTheme();
 
     virtual void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint&);
 

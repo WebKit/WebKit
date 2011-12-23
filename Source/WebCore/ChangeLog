@@ -1,3 +1,34 @@
+2011-12-22  Jon Lee  <jonlee@apple.com>
+
+        Radio buttons cut in download movie sheet
+        https://bugs.webkit.org/show_bug.cgi?id=75128
+        <rdar://problem/9399450>
+
+        Reviewed by Dan Bernstein.
+
+        Test: compositing/overflow/theme-affects-visual-overflow.html
+
+        The clipping comes from the fact the visual overflow rect of the radio button's
+        RenderBlock is not expanded to accommodate for the size of the button on the Mac
+        platform. We use the existing RenderTheme::adjustRepaintRect() to make the
+        appropriate adjustment. This, consequently, makes it unnecessary to have to
+        recalculate it for repaint.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeOverflow): As part of the overflow computation, we
+        make a call to addVisualOverflowFromTheme().
+        (WebCore::RenderBlock::addVisualOverflowFromTheme): Ask the theme to inflate the
+        RenderBlock's rect if necessary, and add that to the visual overflow rect.
+        * rendering/RenderBlock.h: Added addVisualOverflowFromTheme().
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clippedOverflowRectForRepaint): Remove the call to
+        adjustRepaintRect() since the rectangle r already uses the new visual overflow
+        rect.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint): Remove the call to
+        adjustRepaintRect() since the rectangle r already uses the new visual overflow
+        rect.
+
 2011-12-22  Chris Rogers  <crogers@google.com>
 
         Fix mac build breakage - add SincResampler files to WebCore.xcodeproj

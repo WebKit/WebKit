@@ -1510,10 +1510,6 @@ LayoutRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     }
     
     if (style()) {
-        if (style()->hasAppearance())
-            // The theme may wish to inflate the rect used when repainting.
-            theme()->adjustRepaintRect(this, r);
-
         // We have to use maximalOutlineSize() because a child might have an outline
         // that projects outside of our overflowRect.
         if (v) {

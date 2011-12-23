@@ -1452,6 +1452,9 @@ void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeF
         
     // Add visual overflow from box-shadow and border-image-outset.
     addVisualEffectOverflow();
+
+    // Add visual overflow from theme.
+    addVisualOverflowFromTheme();
 }
 
 void RenderBlock::addOverflowFromBlockChildren()
@@ -1491,6 +1494,16 @@ void RenderBlock::addOverflowFromPositionedObjects()
         if (positionedObject->style()->position() != FixedPosition)
             addOverflowFromChild(positionedObject);
     }
+}
+
+void RenderBlock::addVisualOverflowFromTheme()
+{
+    if (!style()->hasAppearance())
+        return;
+
+    IntRect inflatedRect = borderBoxRect();
+    theme()->adjustRepaintRect(this, inflatedRect);
+    addVisualOverflow(inflatedRect);
 }
 
 bool RenderBlock::expandsToEncloseOverhangingFloats() const
