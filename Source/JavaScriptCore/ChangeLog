@@ -1,5 +1,12 @@
 2011-12-22  Gavin Barraclough  <barraclough@apple.com>
 
+        Unreviewed - fix stylebot issues from last patch.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::putSlowCase):
+
+2011-12-22  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=75151
         Add attributes field to JSArray's SparseMap
 

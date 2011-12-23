@@ -448,9 +448,9 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
     
     SparseArrayValueMap* map = storage->m_sparseValueMap;
 
-    if ((map && map->sparseMode()) ||
-        ((i >= MIN_SPARSE_ARRAY_INDEX) &&
-        ((i > MAX_STORAGE_VECTOR_INDEX) || !isDenseEnoughForVector(i + 1, storage->m_numValuesInVector + 1)))) {
+    if ((map && map->sparseMode())
+        || ((i >= MIN_SPARSE_ARRAY_INDEX)
+            && ((i > MAX_STORAGE_VECTOR_INDEX) || !isDenseEnoughForVector(i + 1, storage->m_numValuesInVector + 1)))) {
         // We miss some cases where we could compact the storage, such as a large array that is being filled from the end
         // (which will only be compacted as we reach indices that are less than MIN_SPARSE_ARRAY_INDEX) - but this makes the check much faster.
 
