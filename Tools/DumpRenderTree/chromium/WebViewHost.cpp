@@ -836,7 +836,7 @@ WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& par
     return webkit_support::CreateWebPlugin(frame, params);
 }
 
-WebWorker* WebViewHost::createWorker(WebFrame*, WebWorkerClient*)
+WebWorker* WebViewHost::createWorker(WebFrame*, WebSharedWorkerClient*)
 {
     return new TestWebWorker();
 }
