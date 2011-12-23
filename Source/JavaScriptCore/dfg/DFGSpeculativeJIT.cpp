@@ -1746,10 +1746,17 @@ void SpeculativeJIT::compilePutByValForIntTypedArray(const TypedArrayDescriptor&
         MacroAssembler::Jump fixed = m_jit.jump();
         notNaN.link(&m_jit);
     
+        MacroAssembler::Jump done;
         if (signedness == SignedTypedArray)
-            m_jit.truncateDoubleToInt32(fpr, gpr);
+            done = m_jit.branchTruncateDoubleToInt32(fpr, gpr, MacroAssembler::BranchIfTruncateSuccessful);
         else
-            m_jit.truncateDoubleToUint32(fpr, gpr);
+            done = m_jit.branchTruncateDoubleToUint32(fpr, gpr, MacroAssembler::BranchIfTruncateSuccessful);
+        
+        silentSpillAllRegisters(gpr);
+        callOperation(toInt32, gpr, fpr);
+        silentFillAllRegisters(gpr);
+        
+        done.link(&m_jit);
         fixed.link(&m_jit);
         value.adopt(result);
         valueGPR = gpr;

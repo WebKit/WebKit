@@ -1,3 +1,19 @@
+2011-12-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG does double-to-int conversion incorrectly when storing into int typed arrays
+        https://bugs.webkit.org/show_bug.cgi?id=75164
+        <rdar://problem/10557547>
+
+        Reviewed by Geoffrey Garen.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTruncateDoubleToUint32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTruncateDoubleToUint32):
+        (JSC::MacroAssemblerX86Common::truncateDoubleToUint32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+
 2011-12-23  Geoffrey Garen  <ggaren@apple.com>
 
         Refactored String.prototype.replace
