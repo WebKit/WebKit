@@ -1,3 +1,9 @@
+2011-12-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Unreviewed; fix build with ENABLE(NETSCAPE_PLUGIN_API).
+
+        * ewk/ewk_js.cpp: Include ewk_logging.h for ERR().
+
 2011-12-22  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [EFL] Missing plugins support for efl port
