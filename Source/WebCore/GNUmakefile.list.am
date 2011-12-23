@@ -4386,8 +4386,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileWriterCallback.h \
 	DerivedSources/WebCore/JSFileWriterSync.cpp \
 	DerivedSources/WebCore/JSFileWriterSync.h \
-	DerivedSources/WebCore/JSWebKitFlags.cpp \
-	DerivedSources/WebCore/JSWebKitFlags.h \
 	DerivedSources/WebCore/JSMetadata.cpp \
 	DerivedSources/WebCore/JSMetadata.h \
 	DerivedSources/WebCore/JSMetadataCallback.cpp \

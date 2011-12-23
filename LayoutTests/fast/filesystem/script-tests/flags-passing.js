@@ -1,4 +1,4 @@
-description("Passing Flags parameter tests. This test checks if passing Flags parameters (in Object format or in JSON format) to DirectoryEntry.getFile does not crash and works as expected.");
+description("Passing Flags parameter tests. This test checks if passing Flags parameters to DirectoryEntry.getFile does not crash and works as expected.");
 
 var testFileName = '/non_existent_file';
 var fileSystem = null;
@@ -9,18 +9,18 @@ var unexpected = function(e) { unexpectedCallbacksCount++; };
 
 var testsList = [
     'runObjectTest',
-    'runObjectTestWithExclusive',
     'cleanupAndRunNext',
     'runJSONTest',
     'runJSONTestWithExclusive',
-    'runNullTest'
+    'runNullTest',
+    'runNonObjectTest'
 ];
 var testCounter = 0;
 
 function runNextTest(v) {
     if (testCounter == testsList.length) {
         debug("Finished running tests.");
-        shouldBe('expectedCallbacksCount', '3');
+        shouldBe('expectedCallbacksCount', '1');
         shouldBe('unexpectedCallbacksCount', '0');
         finishJSTest();
     } else
@@ -40,29 +40,18 @@ function runNullTest(v) {
     fileSystem.root.getFile(testFileName, null, runNextTest, errorCallback);
 }
 
-function runObjectTest(v) {
-    debug("* Passing a WebKitFlags object.");
-    var flags = new WebKitFlags();
-    flags.create = false;
+function runNonObjectTest(v) {
+    debug("* Passing a number as a WebKitFlags parameter.");
 
-    fileSystem.root.getFile(testFileName, flags, unexpected, expected);
-
-    debug("* Recycling the same WebKitFlags object.");
-
-    fileSystem.root.getFile(testFileName, flags, unexpected, expected);
-
-    flags.create = true;
-    fileSystem.root.getFile(testFileName, flags, runNextTest, errorCallback);
+    // This should be ok and we treat it as {false, false} Flags.
+    fileSystem.root.getFile(testFileName, 7, runNextTest, errorCallback);
 }
 
-function runObjectTestWithExclusive(v) {
-    debug("* Passing a WebKitFlags object (with exclusive=true).");
-    var flags = new WebKitFlags;
-    flags.create = true;
-    flags.exclusive = true;
-
-    // This should fail.
-    fileSystem.root.getFile(testFileName, flags, errorCallback, runNextTest);
+function runObjectTest(v) {
+    // WebKitFlags no longer has a visible constructor.
+    if (window.WebKitFlags)
+        throw "There should be no constructor for WebKitFlags!";
+    runNextTest();
 }
 
 function runJSONTest(v) {

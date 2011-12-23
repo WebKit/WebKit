@@ -1599,7 +1599,6 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/FileWriterCallback.idl
         fileapi/FileWriter.idl
         fileapi/FileWriterSync.idl
-        fileapi/WebKitFlags.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
     )
