@@ -145,7 +145,7 @@ WebInspector.DebuggerModel.prototype = {
      * @param {number} lineNumber
      * @param {number=} columnNumber
      * @param {string=} condition
-     * @param {function(?DebuggerAgent.BreakpointId, Array.<DebuggerAgent.Location>)=} callback
+     * @param {function(?DebuggerAgent.BreakpointId, Array.<DebuggerAgent.Location>=)=} callback
      */
     setBreakpoint: function(url, lineNumber, columnNumber, condition, callback)
     {
@@ -162,7 +162,7 @@ WebInspector.DebuggerModel.prototype = {
          * @this {WebInspector.DebuggerModel}
          * @param {?Protocol.Error} error
          * @param {DebuggerAgent.BreakpointId} breakpointId
-         * @param {Array.<DebuggerAgent.Location>} locations
+         * @param {Array.<DebuggerAgent.Location>=} locations
          */
         function didSetBreakpoint(error, breakpointId, locations)
         {
@@ -274,7 +274,7 @@ WebInspector.DebuggerModel.prototype = {
      * @param {string} newSource
      * @param {function(?Protocol.Error)} callback
      * @param {?Protocol.Error} error
-     * @param {Array.<DebuggerAgent.CallFrame>} callFrames
+     * @param {Array.<DebuggerAgent.CallFrame>=} callFrames
      */
     _didEditScriptSource: function(scriptId, newSource, callback, error, callFrames)
     {

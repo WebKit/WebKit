@@ -1,3 +1,39 @@
+2011-12-23  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Migrate to native Function.prototype.bind; fix front-end compilation with the
+        version of compiler that respects Function.prototype.bind.
+        https://bugs.webkit.org/show_bug.cgi?id=75170
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ApplicationCacheModel.js:
+        * inspector/front-end/CSSKeywordCompletions.js:
+        (WebInspector.CSSKeywordCompletions.colors):
+        * inspector/front-end/CSSStyleModel.js:
+        * inspector/front-end/CompilerSourceMapping.js:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.pushNodeToFrontend):
+        (WebInspector.DOMAgent.prototype.pushNodeByPathToFrontend):
+        (WebInspector.DOMAgent.prototype._dispatchWhenDocumentAvailable.onDocumentAvailable):
+        (WebInspector.DOMAgent.prototype._dispatchWhenDocumentAvailable):
+        (WebInspector.DOMAgent.prototype._loadNodeAttributes):
+        (WebInspector.DOMAgent.prototype.querySelector):
+        (WebInspector.DOMAgent.prototype.querySelectorAll):
+        * inspector/front-end/DebuggerModel.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        * inspector/front-end/ExtensionAPI.js:
+        (injectedExtensionAPI.InspectorExtensionAPI):
+        (injectedExtensionAPI):
+        * inspector/front-end/ExtensionPanel.js:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.enableResourceTracking):
+        (WebInspector.NetworkManager.prototype.disableResourceTracking):
+        * inspector/front-end/Script.js:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete):
+        * inspector/front-end/utilities.js:
+
 2011-12-23  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         [BlackBerry] Add the BlackBerry specific pauseLoad(bool) to ResourceHandle

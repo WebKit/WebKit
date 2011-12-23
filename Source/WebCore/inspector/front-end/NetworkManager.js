@@ -77,14 +77,20 @@ WebInspector.NetworkManager.prototype = {
 
     enableResourceTracking: function()
     {
-        var networkAgentEnabled = this.dispatchEventToListeners.bind(this, WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled);
-        NetworkAgent.enable(networkAgentEnabled);
+        function callback(error)
+        {
+            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled);
+        }
+        NetworkAgent.enable(callback.bind(this));
     },
 
     disableResourceTracking: function()
     {
-        var networkAgentDisabled = this.dispatchEventToListeners.bind(this, WebInspector.NetworkManager.EventTypes.ResourceTrackingDisabled);
-        NetworkAgent.disable(networkAgentDisabled);
+        function callback(error)
+        {
+            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingDisabled);
+        }
+        NetworkAgent.disable(callback.bind(this));
     },
 
     inflightResourceForURL: function(url)

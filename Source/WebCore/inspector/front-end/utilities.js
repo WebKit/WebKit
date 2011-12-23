@@ -29,20 +29,6 @@
  * http://ejohn.org/files/jsdiff.js (released under the MIT license).
  */
 
-Function.prototype.bind = function(thisObject)
-{
-    var func = this;
-    var args = Array.prototype.slice.call(arguments, 1);
-    function bound()
-    {
-        return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0)));
-    }
-    bound.toString = function() {
-        return "bound: " + func;
-    };
-    return bound;
-}
-
 /**
  * @param {string=} direction
  */

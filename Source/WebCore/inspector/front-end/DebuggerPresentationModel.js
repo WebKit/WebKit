@@ -755,7 +755,7 @@ WebInspector.PresentationCallFrame.prototype = {
      * @param {string} objectGroup
      * @param {boolean} includeCommandLineAPI
      * @param {boolean} returnByValue
-     * @param {function(?RuntimeAgent.RemoteObject, boolean)=} callback
+     * @param {function(?RuntimeAgent.RemoteObject, boolean=)=} callback
      */
     evaluate: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
@@ -763,7 +763,7 @@ WebInspector.PresentationCallFrame.prototype = {
          * @this {WebInspector.PresentationCallFrame}
          * @param {?Protocol.Error} error
          * @param {RuntimeAgent.RemoteObject} result
-         * @param {boolean} wasThrown
+         * @param {boolean=} wasThrown
          */
         function didEvaluateOnCallFrame(error, result, wasThrown)
         {

@@ -72,7 +72,7 @@ WebInspector.ClosureCompilerSourceMappingPayload = function()
  * @implements {WebInspector.CompilerSourceMapping}
  * @constructor
  * @param {string} sourceMappingURL
- * @param {string} sourceURL
+ * @param {string} scriptSourceOrigin
  */
 WebInspector.ClosureCompilerSourceMapping = function(sourceMappingURL, scriptSourceOrigin)
 {

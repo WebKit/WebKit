@@ -277,9 +277,9 @@ WebInspector.ExtensionSidebarPane.prototype = {
     /**
      * @param {string} title
      * @param {function(?string=)} callback
-     * @param {Protocol.Error} error
-     * @param {Object} result
-     * @param {boolean} wasThrown
+     * @param {?Protocol.Error} error
+     * @param {RuntimeAgent.RemoteObject} result
+     * @param {boolean=} wasThrown
      */
     _onEvaluate: function(title, callback, error, result, wasThrown)
     {

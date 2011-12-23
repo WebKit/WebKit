@@ -49,9 +49,9 @@ WebInspector.CSSKeywordCompletions.isColorAwareProperty = function(propertyName)
 
 WebInspector.CSSKeywordCompletions.colors = function()
 {
-    if (!this._colorsKeySet)
-        this._colorsKeySet = this._colors.keySet();
-    return this._colorsKeySet;
+    if (!WebInspector.CSSKeywordCompletions._colorsKeySet)
+        WebInspector.CSSKeywordCompletions._colorsKeySet = WebInspector.CSSKeywordCompletions._colors.keySet();
+    return WebInspector.CSSKeywordCompletions._colorsKeySet;
 }
 
 // Taken from http://www.w3.org/TR/CSS21/propidx.html.

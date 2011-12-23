@@ -44,7 +44,8 @@ var Preferences = {
     exposeWorkersInspection: false,
     applicationTitle: "Web Inspector - %s",
     // FIXME: Remove once navigator is production-ready.
-    useScriptNavigator: false
+    useScriptNavigator: false,
+    showHeapSnapshotObjectsHiddenProperties: false
 }
 
 var Capabilities = {

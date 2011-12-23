@@ -32,6 +32,7 @@
  * @param {number} endLine
  * @param {number} endColumn
  * @param {boolean} isContentScript
+ * @param {string=} sourceMapURL
  */
 WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript, sourceMapURL)
 {

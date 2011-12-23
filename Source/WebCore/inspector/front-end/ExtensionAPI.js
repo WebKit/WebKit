@@ -169,7 +169,7 @@ function InspectorExtensionAPI()
     this.network = new Network();
     defineDeprecatedProperty(this, "webInspector", "resources", "network");
     this.timeline = new Timeline();
-    this.console = new Console();
+    this.console = new ConsoleAPI();
 
     this.onReset = new EventSink(events.Reset);
 }
@@ -187,12 +187,12 @@ InspectorExtensionAPI.prototype = {
 /**
  * @constructor
  */
-function Console()
+function ConsoleAPI()
 {
     this.onMessageAdded = new EventSink(events.ConsoleMessageAdded);
 }
 
-Console.prototype = {
+ConsoleAPI.prototype = {
     getMessages: function(callback)
     {
         extensionServer.sendRequest({ command: commands.GetConsoleMessages }, callback);
@@ -810,7 +810,7 @@ return new InspectorExtensionAPI();
 }
 
 // Default implementation; platforms will override.
-function buildPlatformExtensionAPI()
+function buildPlatformExtensionAPI(extensionInfo)
 {
     function platformExtensionAPI(coreAPI)
     {

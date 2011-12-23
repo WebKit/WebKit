@@ -78,7 +78,7 @@ WebInspector.ApplicationCacheModel.prototype = {
 
     /**
      * @param {string} frameId
-     * @param {string} error
+     * @param {?Protocol.Error} error
      * @param {string} manifestURL
      */
     _manifestForFrameLoaded: function(frameId, error, manifestURL)
@@ -93,7 +93,7 @@ WebInspector.ApplicationCacheModel.prototype = {
     },
     
     /**
-     * @param {string} error
+     * @param {?Protocol.Error} error
      * @param {Array.<ApplicationCacheAgent.FrameWithManifest>} framesWithManifests
      */
     _framesWithManifestsLoaded: function(error, framesWithManifests)
