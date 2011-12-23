@@ -3953,6 +3953,7 @@ BUGWK73494 DEBUG : svg/hixie/perf/007.xml = PASS TIMEOUT
 
 BUGWK73872 WIN : svg/custom/linking-uri-01-b.svg = PASS IMAGE TIMEOUT
 BUGWK73872 LINUX : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
+BUGWK75136 LEOPARD CPU-CG : svg/custom/linking-uri-01-b.svg = PASS TIMEOUT
 
 BUGWK73514 WIN DEBUG : platform/chromium/compositing/lost-compositor-context-permanently.html = TIMEOUT
 BUGWK73549 : fast/text/international/hebrew-vowels.html = IMAGE+TEXT PASS
@@ -4147,3 +4148,5 @@ BUGWK75055 : fast/html/font-weight-bold-for-b-and-strong.html = PASS FAIL
 
 BUGWK75098 : media/track/track-cue-rendering.html = TEXT
 BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
+
+BUGWK75132 : media/track/track-cue-nothing-to-render.html = PASS TEXT
