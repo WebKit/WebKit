@@ -1,3 +1,19 @@
+2011-12-23  Kentaro Hara  <haraken@chromium.org>
+
+        Let parser_unittests.pl call different language parsers
+        https://bugs.webkit.org/show_bug.cgi?id=75081
+
+        Reviewed by David Kilzer.
+
+        We introduced parser_unittests.pl in bug 74994 , but it is implemented
+        to always call get_function_line_ranges_for_perl(). In order to enable unittests
+        for other languages, this patch lets parser_unittests.pl call different language
+        parsers depending on the languages.
+
+        Test: Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests.pl
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+
 2011-12-22  Adam Roben  <aroben@apple.com>
 
         Snow Leopard test fix

@@ -32,35 +32,38 @@ use Test::More;
 use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
-my @testFiles = qw(perl_unittests.pl);
-
-my @inputFiles = map { File::Spec->catdir($FindBin::Bin, "resources", $_) } @testFiles;
-my @expectedFiles = map { s/^(.*)\.[^\.]*$/$1/; File::Spec->catdir($FindBin::Bin, "resources", $_ . "-expected.txt") } @testFiles;
+my %testFiles = ("perl_unittests.pl" => "perl");
 
 my $resetResults;
 GetOptions('reset-results' => \$resetResults);
 
-my $testCount = @testFiles;
-plan(tests => $testCount);
-for (my $index = 0; $index < $testCount; $index++) {
-    my $inputFile = $inputFiles[$index];
-    my $expectedFile = $expectedFiles[$index];
+my @testSet;
+foreach my $testFile (sort keys %testFiles) {
+    my $basename = $testFile;
+    $basename = $1 if $basename =~ /^(.*)\.[^\.]*$/;
+    push @testSet, {language => $testFiles{$testFile},
+                    inputFile => File::Spec->catdir($FindBin::Bin, "resources", $testFile),
+                    expectedFile => File::Spec->catdir($FindBin::Bin, "resources", $basename . "-expected.txt")};
+}
 
-    open FH, "< $inputFile" or die "Cannot open $inputFile: $!";
-    my @actualOutput = PrepareChangeLog::get_function_line_ranges_for_perl(\*FH, $inputFile);
+plan(tests => scalar @testSet);
+foreach my $test (@testSet) {
+    open FH, "< $test->{inputFile}" or die "Cannot open $test->{inputFile}: $!";
+    my $parser = eval "\\&PrepareChangeLog::get_function_line_ranges_for_$test->{language}";
+    my @actualOutput = $parser->(\*FH, $test->{inputFile});;
     close FH;
 
     if ($resetResults) {
-        open FH, "> $expectedFile" or die "Cannot open $expectedFile: $!";
+        open FH, "> $test->{expectedFile}" or die "Cannot open $test->{expectedFile}: $!";
         print FH Data::Dumper->new([\@actualOutput])->Terse(1)->Indent(1)->Dump();
         close FH;
         next;
     }
 
-    open FH, "< $expectedFile" or die "Cannot open $expectedFile: $!";
+    open FH, "< $test->{expectedFile}" or die "Cannot open $test->{expectedFile}: $!";
     local $/ = undef;
     my $expectedOutput = eval <FH>;
     close FH;
 
-    is_deeply(\@actualOutput, $expectedOutput, "Tests $inputFile");
+    is_deeply(\@actualOutput, $expectedOutput, "Tests $test->{inputFile}");
 }
