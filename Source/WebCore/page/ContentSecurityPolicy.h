@@ -44,6 +44,8 @@ public:
     }
     ~ContentSecurityPolicy();
 
+    void copyStateFrom(const ContentSecurityPolicy*);
+
     enum HeaderType {
         ReportOnly,
         EnforcePolicy
@@ -92,6 +94,7 @@ private:
     ScriptExecutionContext* m_scriptExecutionContext;
 
     bool m_reportOnly;
+    String m_header;
     OwnPtr<CSPDirective> m_defaultSrc;
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;

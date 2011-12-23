@@ -494,6 +494,13 @@ ContentSecurityPolicy::~ContentSecurityPolicy()
 {
 }
 
+void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other) 
+{
+    ASSERT(!m_havePolicy);
+    if (other->m_havePolicy)
+        didReceiveHeader(other->m_header, other->m_reportOnly ? ReportOnly : EnforcePolicy);
+}
+
 void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
 {
     if (m_havePolicy)
@@ -501,6 +508,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
 
     parse(header);
     m_havePolicy = true;
+    m_header = header;
 
     switch (type) {
     case ReportOnly:

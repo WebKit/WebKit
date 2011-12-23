@@ -1,3 +1,19 @@
+2011-12-23  Tom Sepez  <tsepez@chromium.org>
+
+        XSLT-created HTML documents do not inherit content-security-policy from originally loaded XML.
+        https://bugs.webkit.org/show_bug.cgi?id=75043
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/contentSecurityPolicy/xsl-img-blocked.php
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::copyStateFrom):
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+        * page/ContentSecurityPolicy.h:
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2011-12-23  Darin Adler  <darin@apple.com>
 
         REGRESSION (r97533): Optgroup label is not disabled
