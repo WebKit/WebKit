@@ -1,3 +1,21 @@
+2011-12-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement a worker for parsing out JavaScript function data
+        https://bugs.webkit.org/show_bug.cgi?id=75166
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/script-extract-outline.html
+
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (onmessage):
+        (format):
+        (getChunkCount):
+        ():
+        (Array.prototype.keySet):
+
 2011-12-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed, rolling out r103624.

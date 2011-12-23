@@ -1,0 +1,4 @@
+Tests the script outline extraction functionality.
+
+{"chunk":[{"line":0,"name":"first","arguments":"(x, y)"},{"line":1,"name":"second","arguments":"(y, z)"},{"line":4,"name":"Object","arguments":"(arg)"},{"line":6,"name":"functionOnPrototype","arguments":"(a, b, c, d, e, f)"},{"line":8,"name":"innerFunction1","arguments":"()"},{"line":9,"name":"innerFunction2","arguments":"(arg1, arg2)"}],"id":1,"total":1,"index":1}
+

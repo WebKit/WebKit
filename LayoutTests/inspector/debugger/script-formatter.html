@@ -26,7 +26,7 @@ var test = function()
                 next();
             };
 
-            worker.postMessage({ mimeType: "text/javascript", content: "var x=0" });
+            worker.postMessage({ method: "format", params: { mimeType: "text/javascript", content: "var x=0" } });
         },
 
         function testSourceMapping(next)
@@ -89,7 +89,7 @@ var test = function()
             };
 
             var content = "<html><body><script>function f(){}<" + "/script><script>function g(){var a;if (a) return;}<" + "/script></body></html>";
-            worker.postMessage({ mimeType: "text/html", content: content, indentString: "**" });
+            worker.postMessage({ method: "format", params: { mimeType: "text/html", content: content, indentString: "**" } });
         }
     ]);
 }

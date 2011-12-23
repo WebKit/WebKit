@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="resources/obfuscated.js"></script>
+
+<script>
+
+var test = function()
+{
+    var worker = new Worker("ScriptFormatterWorker.js");
+    var parsedScript = "function first(x,y) { }\n var second = function(y \n , \nz) { }\n Object = function(arg) {\n}\n Object.prototype.functionOnPrototype = function  (  a,  b  ,  \n  c,  d   ,  \n  e  ,  f )    { function innerFunction1() {\n var innerFunction2 = function(arg1,arg2) {} } }";
+
+    worker.onmessage = InspectorTest.safeWrap(function(event)
+    {
+        InspectorTest.addResult(JSON.stringify(event.data));
+        InspectorTest.completeTest();
+    });
+
+    worker.onerror = function(event)
+    {
+        InspectorTest.addResult("Error in worker: " + event.data);
+        InspectorTest.completeTest();
+    };
+
+    worker.postMessage({ method: "outline", params: { content: parsedScript, id: 1 } });
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests the script outline extraction functionality.
+</p>
+
+</body>
+</html>

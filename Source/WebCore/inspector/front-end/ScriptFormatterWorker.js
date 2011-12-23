@@ -29,19 +29,115 @@
  */
 
 onmessage = function(event) {
+    if (!event.data.method)
+        return;
+
+    self[event.data.method](event.data.params);
+};
+
+function format(params)
+{
     // Default to a 4-space indent.
-    var indentString = event.data.indentString || "    ";
+    var indentString = params.indentString || "    ";
     var result = {};
 
-    if (event.data.mimeType === "text/html") {
+    if (params.mimeType === "text/html") {
         var formatter = new HTMLScriptFormatter(indentString);
-        result = formatter.format(event.data.content);
+        result = formatter.format(params.content);
     } else {
         result.mapping = { original: [0], formatted: [0] };
-        result.content = formatScript(event.data.content, result.mapping, 0, 0, indentString);
+        result.content = formatScript(params.content, result.mapping, 0, 0, indentString);
     }
     postMessage(result);
-};
+}
+
+function getChunkCount(totalLength, chunkSize)
+{
+    if (totalLength <= chunkSize)
+        return 1;
+
+    var remainder = totalLength % chunkSize;
+    var partialLength = totalLength - remainder;
+    return (partialLength / chunkSize) + (remainder ? 1 : 0);
+}
+
+function outline(params)
+{
+    const chunkSize = 100000; // characters per data chunk
+    const totalLength = params.content.length;
+    const lines = params.content.split("\n");
+    const chunkCount = getChunkCount(totalLength, chunkSize);
+    var outlineChunk = [];
+    var previousIdentifier = null;
+    var previousToken = null;
+    var previousTokenType = null;
+    var currentChunk = 1;
+    var processedChunkCharacters = 0;
+    var addedFunction = false;
+    var isReadingArguments = false;
+    var argumentsText = "";
+    var currentFunction = null;
+    var scriptTokenizer = new WebInspector.SourceJavaScriptTokenizer();
+    scriptTokenizer.condition = scriptTokenizer.createInitialCondition();
+
+    for (var i = 0; i < lines.length; ++i) {
+        var line = lines[i];
+        var column = 0;
+        scriptTokenizer.line = line;
+        do {
+            var newColumn = scriptTokenizer.nextToken(column);
+            var tokenType = scriptTokenizer.tokenType;
+            var tokenValue = line.substring(column, newColumn);
+            if (tokenType === "javascript-ident") {
+                previousIdentifier = tokenValue;
+                if (tokenValue && previousToken === "function") {
+                    // A named function: "function f...".
+                    currentFunction = { line: i, name: tokenValue };
+                    addedFunction = true;
+                    previousIdentifier = null;
+                }
+            } else if (tokenType === "javascript-keyword") {
+                if (tokenValue === "function") {
+                    if (previousIdentifier && (previousToken === "=" || previousToken === ":")) {
+                        // Anonymous function assigned to an identifier: "...f = function..."
+                        // or "funcName: function...".
+                        currentFunction = { line: i, name: previousIdentifier };
+                        addedFunction = true;
+                        previousIdentifier = null;
+                    }
+                }
+            } else if (tokenValue === "." && previousTokenType === "javascript-ident")
+                previousIdentifier += ".";
+            else if (tokenValue === "(" && addedFunction)
+                isReadingArguments = true;
+            if (isReadingArguments && tokenValue)
+                argumentsText += tokenValue;
+
+            if (tokenValue === ")" && isReadingArguments) {
+                addedFunction = false;
+                isReadingArguments = false;
+                currentFunction.arguments = argumentsText.replace(/,[\r\n\s]*/g, ", ").replace(/([^,])[\r\n\s]+/g, "$1");
+                argumentsText = "";
+                outlineChunk.push(currentFunction);
+            }
+
+            if (tokenValue.trim().length) {
+                // Skip whitespace tokens.
+                previousToken = tokenValue;
+                previousTokenType = tokenType;
+            }
+            processedChunkCharacters += newColumn - column;
+            column = newColumn;
+
+            if (processedChunkCharacters >= chunkSize) {
+                postMessage({ chunk: outlineChunk, id: params.id, total: chunkCount, index: currentChunk++ });
+                outlineChunk = [];
+                processedChunkCharacters = 0;
+            }
+        } while (column < line.length);
+    }
+    postMessage({ chunk: outlineChunk, id: params.id, total: chunkCount, index: chunkCount });
+}
 
 function formatScript(content, mapping, offset, formattedOffset, indentString)
 {
@@ -59,8 +155,18 @@ function formatScript(content, mapping, offset, formattedOffset, indentString)
 }
 
 WebInspector = {};
+
+Array.prototype.keySet = function()
+{
+    var keys = {};
+    for (var i = 0; i < this.length; ++i)
+        keys[this[i]] = true;
+    return keys;
+};
+
 importScripts("SourceTokenizer.js");
 importScripts("SourceHTMLTokenizer.js");
+importScripts("SourceJavaScriptTokenizer.js");
 
 HTMLScriptFormatter = function(indentString)
 {
