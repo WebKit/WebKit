@@ -4152,4 +4152,4 @@ BUGWK75110 WIN : fast/filesystem/op-restricted-chars.html = TEXT
 BUGWK75132 : media/track/track-cue-nothing-to-render.html = PASS TEXT
 
 // Needs baseline
-BUGWK75128 : compositing/overflow/theme-affects-visual-overflow.html = IMAGE+TEXT
+BUGWK75128 : compositing/overflow/theme-affects-visual-overflow.html = IMAGE+TEXT IMAGE
