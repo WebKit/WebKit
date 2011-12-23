@@ -57,7 +57,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSArray);
 // storage vector or the sparse map.  An array index i will be handled in the following
 // fashion:
 //
-//   * Where (i < MIN_SPARSE_ARRAY_INDEX) the value will be stored in the storage vector.
+//   * Where (i < MIN_SPARSE_ARRAY_INDEX) the value will be stored in the storage vector,
+//     unless the array is in SparseMode in which case all properties go into the map.
 //   * Where (MIN_SPARSE_ARRAY_INDEX <= i <= MAX_STORAGE_VECTOR_INDEX) the value will either
 //     be stored in the storage vector or in the sparse array, depending on the density of
 //     data that would be stored in the vector (a vector being used where at least
@@ -166,7 +167,6 @@ void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength, A
     m_vectorLength = initialCapacity;
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
-    m_storage->reportedMapCapacity = 0;
 
     if (creationMode == CreateCompact) {
 #if CHECK_ARRAY_CONSISTENCY
@@ -213,7 +213,6 @@ void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
     m_storage->m_numValuesInVector = initialCapacity;
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
-    m_storage->reportedMapCapacity = 0;
 #if CHECK_ARRAY_CONSISTENCY
     m_storage->m_inCompactInitialization = false;
 #endif
@@ -253,7 +252,6 @@ void JSArray::finishCreation(JSGlobalData& globalData, const JSValue* values, si
     m_storage->m_numValuesInVector = initialCapacity;
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
-    m_storage->reportedMapCapacity = 0;
 #if CHECK_ARRAY_CONSISTENCY
     m_storage->m_inCompactInitialization = false;
 #endif
@@ -284,6 +282,35 @@ void JSArray::destroy(JSCell* cell)
     jsCast<JSArray*>(cell)->JSArray::~JSArray();
 }
 
+SparseArrayValueMap::iterator SparseArrayValueMap::find(unsigned i)
+{
+    if (i < MIN_SPARSE_ARRAY_INDEX && !sparseMode())
+        return notFound();
+    return m_map.find(i);
+}
+
+inline void SparseArrayValueMap::put(JSGlobalData& globalData, JSArray* array, unsigned i, JSValue value)
+{
+    SparseArrayEntry temp;
+    pair<Map::iterator, bool> result = m_map.add(i, temp);
+    result.first->second.set(globalData, array, value);
+    if (!result.second) // pre-existing entry
+        return;
+
+    size_t capacity = m_map.capacity();
+    if (capacity != m_reportedCapacity) {
+        Heap::heap(array)->reportExtraMemoryCost((capacity - m_reportedCapacity) * (sizeof(unsigned) + sizeof(JSValue)));
+        m_reportedCapacity = capacity;
+    }
+}
+
+inline void SparseArrayValueMap::visitChildren(SlotVisitor& visitor)
+{
+    iterator end = m_map.end();
+    for (iterator it = m_map.begin(); it != end; ++it)
+        visitor.append(&it->second);
+}
+
 bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned i, PropertySlot& slot)
 {
     JSArray* thisObject = jsCast<JSArray*>(cell);
@@ -302,12 +329,10 @@ bool JSArray::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned 
             return true;
         }
     } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        if (i >= MIN_SPARSE_ARRAY_INDEX) {
-            SparseArrayValueMap::iterator it = map->find(i);
-            if (it != map->end()) {
-                slot.setValue(it->second.get());
-                return true;
-            }
+        SparseArrayValueMap::iterator it = map->find(i);
+        if (it != map->notFound()) {
+            slot.setValue(it->second.get());
+            return true;
         }
     }
 
@@ -352,12 +377,10 @@ bool JSArray::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, const 
                 return true;
             }
         } else if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-            if (i >= MIN_SPARSE_ARRAY_INDEX) {
-                SparseArrayValueMap::iterator it = map->find(i);
-                if (it != map->end()) {
-                    descriptor.setDescriptor(it->second.get(), 0);
-                    return true;
-                }
+            SparseArrayValueMap::iterator it = map->find(i);
+            if (it != map->notFound()) {
+                descriptor.setDescriptor(it->second.get(), 0);
+                return true;
             }
         }
     }
@@ -419,38 +442,31 @@ void JSArray::putByIndex(JSCell* cell, ExecState* exec, unsigned i, JSValue valu
 
 NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue value)
 {
+    ASSERT(i >= m_vectorLength);
+
     ArrayStorage* storage = m_storage;
     
     SparseArrayValueMap* map = storage->m_sparseValueMap;
 
-    if (i >= MIN_SPARSE_ARRAY_INDEX) {
+    if ((map && map->sparseMode()) ||
+        ((i >= MIN_SPARSE_ARRAY_INDEX) &&
+        ((i > MAX_STORAGE_VECTOR_INDEX) || !isDenseEnoughForVector(i + 1, storage->m_numValuesInVector + 1)))) {
+        // We miss some cases where we could compact the storage, such as a large array that is being filled from the end
+        // (which will only be compacted as we reach indices that are less than MIN_SPARSE_ARRAY_INDEX) - but this makes the check much faster.
+
         if (i > MAX_ARRAY_INDEX) {
             PutPropertySlot slot;
             methodTable()->put(this, exec, Identifier::from(exec, i), value, slot);
             return;
         }
 
-        // We miss some cases where we could compact the storage, such as a large array that is being filled from the end
-        // (which will only be compacted as we reach indices that are less than MIN_SPARSE_ARRAY_INDEX) - but this makes the check much faster.
-        if ((i > MAX_STORAGE_VECTOR_INDEX) || !isDenseEnoughForVector(i + 1, storage->m_numValuesInVector + 1)) {
-            if (!map) {
-                map = new SparseArrayValueMap;
-                storage->m_sparseValueMap = map;
-            }
-
-            WriteBarrier<Unknown> temp;
-            pair<SparseArrayValueMap::iterator, bool> result = map->add(i, temp);
-            result.first->second.set(exec->globalData(), this, value);
-            if (!result.second) // pre-existing entry
-                return;
-
-            size_t capacity = map->capacity();
-            if (capacity != storage->reportedMapCapacity) {
-                Heap::heap(this)->reportExtraMemoryCost((capacity - storage->reportedMapCapacity) * (sizeof(unsigned) + sizeof(JSValue)));
-                storage->reportedMapCapacity = capacity;
-            }
-            return;
+        if (!map) {
+            map = new SparseArrayValueMap;
+            storage->m_sparseValueMap = map;
         }
+
+        map->put(exec->globalData(), this, i, value);
+        return;
     }
 
     // We have decided that we'll put the new item into the vector.
@@ -512,7 +528,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue valu
             vector[j].clear();
         JSGlobalData& globalData = exec->globalData();
         for (unsigned j = max(vectorLength, MIN_SPARSE_ARRAY_INDEX); j < newVectorLength; ++j)
-            vector[j].set(globalData, this, map->take(j).get());
+            vector[j].set(globalData, this, map->take(j));
     }
 
     ASSERT(i < newVectorLength);
@@ -561,13 +577,11 @@ bool JSArray::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        if (i >= MIN_SPARSE_ARRAY_INDEX) {
-            SparseArrayValueMap::iterator it = map->find(i);
-            if (it != map->end()) {
-                map->remove(it);
-                thisObject->checkConsistency();
-                return true;
-            }
+        SparseArrayValueMap::iterator it = map->find(i);
+        if (it != map->notFound()) {
+            map->remove(it);
+            thisObject->checkConsistency();
+            return true;
         }
     }
 
@@ -595,8 +609,8 @@ void JSArray::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNam
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
+        SparseArrayValueMap::const_iterator end = map->end();
+        for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
             propertyNames.add(Identifier::from(exec, it->first));
     }
 
@@ -724,12 +738,12 @@ void JSArray::setLength(unsigned newLength)
 
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap copy = *map;
-            SparseArrayValueMap::iterator end = copy.end();
-            for (SparseArrayValueMap::iterator it = copy.begin(); it != end; ++it) {
+            SparseArrayValueMap::const_iterator end = copy.end();
+            for (SparseArrayValueMap::const_iterator it = copy.begin(); it != end; ++it) {
                 if (it->first >= newLength)
                     map->remove(it->first);
             }
-            if (map->isEmpty()) {
+            if (map->isEmpty() && !map->sparseMode()) {
                 delete map;
                 storage->m_sparseValueMap = 0;
             }
@@ -770,7 +784,7 @@ JSValue JSArray::pop()
             if (it != map->end()) {
                 result = it->second.get();
                 map->remove(it);
-                if (map->isEmpty()) {
+                if (map->isEmpty() && !map->sparseMode()) {
                     delete map;
                     storage->m_sparseValueMap = 0;
                 }
@@ -932,11 +946,8 @@ void JSArray::visitChildren(JSCell* cell, SlotVisitor& visitor)
     unsigned usedVectorLength = std::min(storage->m_length, thisObject->m_vectorLength);
     visitor.appendValues(storage->m_vector, usedVectorLength);
 
-    if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
-        SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
-            visitor.append(&it->second);
-    }
+    if (SparseArrayValueMap* map = storage->m_sparseValueMap)
+        map->visitChildren(visitor);
 }
 
 static int compareNumbersForQSort(const void* a, const void* b)
@@ -955,6 +966,8 @@ static int compareByStringPairForQSort(const void* a, const void* b)
 
 void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType callType, const CallData& callData)
 {
+    ASSERT(!inSparseMode());
+
     ArrayStorage* storage = m_storage;
 
     unsigned lengthNotIncludingUndefined = compactForSorting();
@@ -988,6 +1001,8 @@ void JSArray::sortNumeric(ExecState* exec, JSValue compareFunction, CallType cal
 
 void JSArray::sort(ExecState* exec)
 {
+    ASSERT(!inSparseMode());
+
     ArrayStorage* storage = m_storage;
 
     unsigned lengthNotIncludingUndefined = compactForSorting();
@@ -1135,6 +1150,8 @@ struct AVLTreeAbstractorForArrayCompare {
 
 void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, const CallData& callData)
 {
+    ASSERT(!inSparseMode());
+
     checkConsistency();
 
     ArrayStorage* storage = m_storage;
@@ -1209,8 +1226,8 @@ void JSArray::sort(ExecState* exec, JSValue compareFunction, CallType callType, 
         
         storage = m_storage;
 
-        SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it) {
+        SparseArrayValueMap::const_iterator end = map->end();
+        for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
             tree.abstractor().m_nodes[numDefined].value = it->second.get();
             tree.insert(numDefined);
             ++numDefined;
@@ -1285,6 +1302,8 @@ void JSArray::copyToArguments(ExecState* exec, CallFrame* callFrame, uint32_t le
 
 unsigned JSArray::compactForSorting()
 {
+    ASSERT(!inSparseMode());
+
     checkConsistency();
 
     ArrayStorage* storage = m_storage;
@@ -1323,8 +1342,8 @@ unsigned JSArray::compactForSorting()
             storage = m_storage;
         }
 
-        SparseArrayValueMap::iterator end = map->end();
-        for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
+        SparseArrayValueMap::const_iterator end = map->end();
+        for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it)
             storage->m_vector[numDefined++].setWithoutWriteBarrier(it->second.get());
 
         delete map;

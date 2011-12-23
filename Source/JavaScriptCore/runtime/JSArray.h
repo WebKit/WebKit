@@ -27,7 +27,74 @@
 
 namespace JSC {
 
-    typedef HashMap<unsigned, WriteBarrier<Unknown> > SparseArrayValueMap;
+    class JSArray;
+
+    struct SparseArrayEntry : public WriteBarrier<Unknown> {
+        SparseArrayEntry() : attributes(0) {}
+        unsigned attributes;
+    };
+
+    class SparseArrayValueMap {
+        typedef HashMap<unsigned, SparseArrayEntry> Map;
+
+        enum Flags {
+            Normal = 0,
+            SparseMode = 1
+        };
+
+    public:
+        typedef Map::iterator iterator;
+        typedef Map::const_iterator const_iterator;
+
+        SparseArrayValueMap()
+            : m_flags(Normal)
+            , m_reportedCapacity(0)
+        {
+        }
+
+        void visitChildren(SlotVisitor&);
+
+        bool sparseMode()
+        {
+            return m_flags & SparseMode;
+        }
+
+        void setSparseMode()
+        {
+            m_flags = (Flags)(m_flags | SparseMode);
+        }
+
+        // These methods may mutate the contents of the map
+        void put(JSGlobalData&, JSArray*, unsigned, JSValue);
+        iterator find(unsigned);
+        // This should ASSERT the remove is valid (check the result of the find).
+        void remove(iterator it) { m_map.remove(it); }
+
+        // These methods do not mutate the contents of the map.
+        iterator notFound() { return m_map.end(); }
+        bool isEmpty() const { return m_map.isEmpty(); }
+        bool contains(unsigned i) const { return m_map.contains(i); }
+        size_t size() const { return m_map.size(); }
+        // Only allow const begin/end iteration.
+        const_iterator begin() const { return m_map.begin(); }
+        const_iterator end() const { return m_map.end(); }
+
+        // These are only used in non-SparseMode paths.
+        JSValue take(unsigned i)
+        {
+            ASSERT(!sparseMode());
+            return m_map.take(i).get();
+        }
+        void remove(unsigned i)
+        {
+            m_map.remove(i);
+        }
+
+    private:
+        Map m_map;
+        Flags m_flags;
+        size_t m_reportedCapacity;
+    };
 
     // This struct holds the actual data values of an array.  A JSArray object points to it's contained ArrayStorage
     // struct by pointing to m_vector.  To access the contained ArrayStorage struct, use the getStorage() and 
@@ -40,7 +107,6 @@ namespace JSC {
         SparseArrayValueMap* m_sparseValueMap;
         void* subclassData; // A JSArray subclass can use this to fill the vector lazily.
         void* m_allocBase; // Pointer to base address returned by malloc().  Keeping this pointer does eliminate false positives from the leak detector.
-        size_t reportedMapCapacity;
 #if CHECK_ARRAY_CONSISTENCY
         bool m_inCompactInitialization;
 #endif
@@ -152,6 +218,12 @@ namespace JSC {
             ASSERT(storage->m_inCompactInitialization);
 #endif
             storage->m_vector[i].set(globalData, this, v);
+        }
+
+        bool inSparseMode()
+        {
+            SparseArrayValueMap* map = m_storage->m_sparseValueMap;
+            return map && map->sparseMode();
         }
 
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
