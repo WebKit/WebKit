@@ -26,6 +26,7 @@
 #include "HTMLElement.h"
 
 #include "Attribute.h"
+#include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ChildListMutationScope.h"
@@ -48,6 +49,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "XMLNames.h"
 #include "markup.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
@@ -168,6 +170,20 @@ void HTMLElement::applyBorderAttribute(Attribute* attr)
     addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
 }
 
+void HTMLElement::mapLanguageAttributeToLocale(Attribute* attribute)
+{
+    ASSERT(attribute && (attribute->name() == langAttr || attribute->name().matches(XMLNames::langAttr)));
+    const AtomicString& value = attribute->value();
+    if (!value.isEmpty()) {
+        // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
+        addCSSProperty(attribute, CSSPropertyWebkitLocale, quoteCSSString(value));
+    } else {
+        // The empty string means the language is explicitly unknown.
+        addCSSProperty(attribute, CSSPropertyWebkitLocale, CSSValueAuto);
+    }
+    setNeedsStyleRecalc();
+}
+
 void HTMLElement::parseMappedAttribute(Attribute* attr)
 {
     if (isIdAttributeName(attr->name()) || attr->name() == classAttr || attr->name() == styleAttr)
@@ -192,8 +208,12 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
             // Clamp tabindex to the range of 'short' to match Firefox's behavior.
             setTabIndexExplicitly(max(static_cast<int>(std::numeric_limits<short>::min()), min(tabindex, static_cast<int>(std::numeric_limits<short>::max()))));
         }
+    } else if (attr->name().matches(XMLNames::langAttr)) {
+        mapLanguageAttributeToLocale(attr);
     } else if (attr->name() == langAttr) {
-        // FIXME: Implement
+        // xml:lang has a higher priority than lang.
+        if (!fastHasAttribute(XMLNames::langAttr))
+            mapLanguageAttributeToLocale(attr);
     } else if (attr->name() == dirAttr) {
         bool dirIsAuto = equalIgnoringCase(attr->value(), "auto");
         if (!dirIsAuto)

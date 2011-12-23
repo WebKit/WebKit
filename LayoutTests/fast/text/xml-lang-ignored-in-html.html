@@ -1,0 +1,28 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css" />
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This tests that the attribute in no namespace with no prefix and with the literal localname "xml:lang" is ignored in HTML. See
+<a href="http://webkit.org/b/67586">bug 67586</a>.</p>
+<div id="console"></div>
+<div xml:lang="ar" id="m1"></div></div>
+<div lang="ko"><div xml:lang="ar" id="n1"></div></div>
+<div lang="ar" id="o1"><div xml:lang="" id="o2"></div></div>
+<script>
+function getLangOfNode(n) {
+    e = document.getElementById(n);
+    return window.getComputedStyle(e).webkitLocale;
+}
+shouldBeEqualToString("getLangOfNode('m1')", "auto");
+shouldBeEqualToString("getLangOfNode('n1')", "ko");
+shouldBeEqualToString("getLangOfNode('o1')", "ar");
+shouldBeEqualToString("getLangOfNode('o2')", "ar");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

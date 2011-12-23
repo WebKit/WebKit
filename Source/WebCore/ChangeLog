@@ -1,3 +1,20 @@
+2011-12-22  Matt Falkenhagen  <falken@chromium.org>
+
+        Map 'lang' and xml:lang attributes to '-webkit-locale' CSS property for use with font fallback and text-transform
+        https://bugs.webkit.org/show_bug.cgi?id=67586
+
+        Original patch by Jungshik Shin <jshin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/text/lang-mapped-to-webkit-locale.xhtml
+               fast/text/xml-lang-ignored-in-html.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+        (WebCore::HTMLElement::parseMappedAttribute): Map 'lang' and 'xml:lang' to -webkit-locale.
+        * html/HTMLElement.h:
+
 2011-12-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         WinCE build fix after r103539.

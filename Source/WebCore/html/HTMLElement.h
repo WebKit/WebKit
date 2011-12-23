@@ -107,6 +107,8 @@ protected:
 private:
     virtual String nodeName() const;
 
+    void mapLanguageAttributeToLocale(Attribute*);
+
     void setContentEditable(Attribute*);
 
     virtual HTMLFormElement* virtualForm() const;
