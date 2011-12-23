@@ -220,22 +220,6 @@ bool AbstractState::execute(NodeIndex nodeIndex)
             forNode(node.child1()).filter(PredictArray);
         else if (isByteArrayPrediction(predictedType))
             forNode(node.child1()).filter(PredictByteArray);
-        else if (isInt8ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictInt8Array);
-        else if (isInt16ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictInt16Array);
-        else if (isInt32ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictInt32Array);
-        else if (isUint8ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictUint8Array);
-        else if (isUint16ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictUint16Array);
-        else if (isUint32ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictUint32Array);
-        else if (isFloat32ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictFloat32Array);
-        else if (isFloat64ArrayPrediction(predictedType))
-            forNode(node.child1()).filter(PredictFloat64Array);
         else if (isBooleanPrediction(predictedType))
             forNode(node.child1()).filter(PredictBoolean);
         
