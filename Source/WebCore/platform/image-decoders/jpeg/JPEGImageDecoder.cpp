@@ -204,10 +204,10 @@ public:
         src->pub.term_source = term_source;
         src->decoder = this;
 
-        // Enable these markers for the ICC color profile.
-        // Apparently there are 16 of these markers.  I don't see anywhere in the header with this constant.
-        for (unsigned i = 0; i < 0xF; ++i)
-            jpeg_save_markers(&m_info, JPEG_APP0 + i, 0xFFFF);
+#if USE(ICCJPEG)
+        // Retain ICC color profile markers for color management.
+        setup_read_icc_profile(&m_info);
+#endif
     }
 
     ~JPEGImageReader()
