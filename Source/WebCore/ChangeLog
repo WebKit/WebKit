@@ -1,3 +1,31 @@
+2011-12-23  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] JPEG image with CMYK ICC color profile renders color-inverted and squashed
+        https://bugs.webkit.org/show_bug.cgi?id=74400
+
+        Reviewed by Adam Barth.
+
+        Use color profiles for GRAYSCALE, RGB, YCbCr, CMYK and YCCK jpeg images only if their
+        embedded color profile is from an RGB color space input device.
+
+        Test:
+           fast/images/ycbcr-with-cmyk-color-profile.html
+               - YCbCr image, with CMYK output device color profile.
+        Existing Tests:
+           fast/images/gray-scale-jpeg-with-color-profile.html
+               - YCbCr image, with GRAY input device color profile.
+           fast/images/cmyk-jpeg-with-color-profile.html
+               - YCCK image, with CMYK output device color profile.
+           fast/images/color-jpeg-with-color-profile.html
+               - YCbCr image, with RGB input device color profile.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::rgbColorProfile): Return true if the profile has an RGB color space.
+        (WebCore::inputDeviceColorProfile): Return true if the profile is from an input device.
+        (WebCore::readColorProfile): Ignore the embedded color profile unless if it is from
+        an RGB color space input device.
+        (WebCore::JPEGImageReader::decode):
+
 2011-12-23  Dan Bernstein  <mitz@apple.com>
 
         Print dlerror() when dyld functions fail unexpectedly

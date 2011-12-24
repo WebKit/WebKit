@@ -111,6 +111,32 @@ struct decoder_source_mgr {
     JPEGImageReader* decoder;
 };
 
+#if USE(ICCJPEG)
+
+#define iccProfileHeaderSize 128
+
+static bool rgbColorProfile(const char* profileData, unsigned profileLength)
+{
+    ASSERT(profileLength >= iccProfileHeaderSize);
+
+    if (!memcmp(&profileData[16], "RGB ", 4))
+        return true;
+    return false;
+}
+
+static bool inputDeviceColorProfile(const char* profileData, unsigned profileLength)
+{
+    ASSERT(profileLength >= iccProfileHeaderSize);
+
+    if (!memcmp(&profileData[12], "mntr", 4))
+        return true;
+    if (!memcmp(&profileData[12], "scnr", 4))
+        return true;
+    return false;
+}
+
+#endif
+
 static ColorProfile readColorProfile(jpeg_decompress_struct* info)
 {
 #if USE(ICCJPEG)
@@ -119,17 +145,20 @@ static ColorProfile readColorProfile(jpeg_decompress_struct* info)
 
     if (!read_icc_profile(info, &profile, &profileLength))
         return ColorProfile();
+
+    // Only accept RGB color profiles from input class devices.
+    bool ignoreProfile = false;
     char* profileData = reinterpret_cast<char*>(profile);
-    // Images with grayscale profiles get "upsampled" by libjpeg. If we use
-    // their color profile, CoreGraphics will "upsample" them
-    // again, resulting in horizontal distortions.
-    if (profileLength >= 20 && !memcmp(&profileData[16], "GRAY", 4)) {
-        free(profile);
-        return ColorProfile();
-    }
+    if (profileLength < iccProfileHeaderSize)
+        ignoreProfile = true;
+    else if (!rgbColorProfile(profileData, profileLength))
+        ignoreProfile = true;
+    else if (!inputDeviceColorProfile(profileData, profileLength))
+        ignoreProfile = true;
 
     ColorProfile colorProfile;
-    colorProfile.append(profileData, profileLength);
+    if (!ignoreProfile)
+        colorProfile.append(profileData, profileLength);
     free(profile);
     return colorProfile;
 #else
@@ -235,10 +264,6 @@ public:
             // Let libjpeg take care of gray->RGB and YCbCr->RGB conversions.
             switch (m_info.jpeg_color_space) {
             case JCS_GRAYSCALE:
-                // Grayscale images get "upsampled" by libjpeg.  If we use
-                // their color profile, CoreGraphics will "upsample" them
-                // again, resulting in horizontal distortions.
-                m_decoder->setIgnoreGammaAndColorProfile(true);
                 m_info.out_color_space = JCS_RGB;
                 break;
             case JCS_RGB:
@@ -247,15 +272,9 @@ public:
                 break;
             case JCS_CMYK:
             case JCS_YCCK:
-                // jpeglib cannot convert these to rgb, but it can convert ycck
-                // to cmyk.
+                // libjpeg can convert YCCK to CMYK, but neither to RGB, so we
+                // manually convert CMKY to RGB.
                 m_info.out_color_space = JCS_CMYK;
-
-                // Same as with grayscale images, we convert CMYK images to RGBA
-                // ones. When we keep the color profiles of these CMYK images,
-                // CoreGraphics will convert their colors again. So, we discard
-                // their color profiles to prevent color corruption.
-                m_decoder->setIgnoreGammaAndColorProfile(true);
                 break;
             default:
                 return m_decoder->setFailed();
@@ -280,8 +299,12 @@ public:
             if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
                 return false;
 
-            if (!m_decoder->ignoresGammaAndColorProfile())
-                m_decoder->setColorProfile(readColorProfile(info()));
+            // Allow color management of the decoded RGBA pixels if possible.
+            if (!m_decoder->ignoresGammaAndColorProfile()) {
+                ColorProfile rgbInputDeviceColorProfile = readColorProfile(info());
+                if (!rgbInputDeviceColorProfile.isEmpty())
+                    m_decoder->setColorProfile(rgbInputDeviceColorProfile);
+            }
 
             if (m_decodingSizeOnly) {
                 // We can stop here.  Reduce our buffer length and available
