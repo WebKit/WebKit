@@ -1,3 +1,15 @@
+2011-12-24  Dan Bernstein  <mitz@apple.com>
+
+        Make build-webkit aware of additional Xcode build location defaults.
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (determineXcodeVersion): Added. This was previously in determineBaseProductDir().
+        (readXcodeUserDefault): Added. Factored out from determineBaseProductDir().
+        (determineBaseProductDir): Changed to check for a custom build location
+        style specified as an absolute location.
+
 2011-12-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, rolling out r103619.

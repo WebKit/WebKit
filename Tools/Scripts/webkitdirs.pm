@@ -98,6 +98,7 @@ my $isChromiumMacMake;
 my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
+my $xcodeVersion;
 
 # Variables for Win32 support
 my $vcBuildPath;
@@ -146,6 +147,30 @@ sub setSourceDir($)
     ($sourceDir) = @_;
 }
 
+sub determineXcodeVersion
+{
+    return if defined $xcodeVersion;
+    my $xcodebuildVersionOutput = `xcodebuild -version`;
+    $xcodeVersion = ($xcodebuildVersionOutput =~ /Xcode ([0-9](\.[0-9]+)*)/) ? $1 : "3.0";
+}
+
+sub readXcodeUserDefault($)
+{
+    my ($unprefixedKey) = @_;
+
+    determineXcodeVersion();
+
+    my $xcodeDefaultsDomain = (eval "v$xcodeVersion" lt v4) ? "com.apple.Xcode" : "com.apple.dt.Xcode";
+    my $xcodeDefaultsPrefix = (eval "v$xcodeVersion" lt v4) ? "PBX" : "IDE";
+    my $devnull = File::Spec->devnull();
+
+    my $value = `defaults read $xcodeDefaultsDomain ${xcodeDefaultsPrefix}${unprefixedKey} 2> ${devnull}`;
+    return if $?;
+
+    chomp $value;
+    return $value;
+}
+
 sub determineBaseProductDir
 {
     return if defined $baseProductDir;
@@ -164,16 +189,21 @@ sub determineBaseProductDir
             unlink($personalPlistFile) || die "Could not delete $personalPlistFile: $!";
         }
 
-        my $xcodebuildVersionOutput = `xcodebuild -version`;
-        my $xcodeVersion = ($xcodebuildVersionOutput =~ /Xcode ([0-9](\.[0-9]+)*)/) ? $1 : "3.0";
-        my $xcodeDefaultsDomain = (eval "v$xcodeVersion" lt v4) ? "com.apple.Xcode" : "com.apple.dt.Xcode";
-        my $xcodeDefaultsPrefix = (eval "v$xcodeVersion" lt v4) ? "PBX" : "IDE";
+        determineXcodeVersion();
 
-        open PRODUCT, "defaults read $xcodeDefaultsDomain ${xcodeDefaultsPrefix}ApplicationwideBuildSettings 2> " . File::Spec->devnull() . " |" or die;
-        $baseProductDir = join '', <PRODUCT>;
-        close PRODUCT;
+        if (eval "v$xcodeVersion" ge v4) {
+            my $buildLocationStyle = join '', readXcodeUserDefault("BuildLocationStyle");
+            if ($buildLocationStyle eq "Custom") {
+                my $buildLocationType = join '', readXcodeUserDefault("CustomBuildLocationType");
+                $baseProductDir = readXcodeUserDefault("CustomBuildProductsPath") if $buildLocationType eq "Absolute";
+            }
+        }
 
-        $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
+        if (!defined($baseProductDir)) {
+            $baseProductDir = join '', readXcodeUserDefault("ApplicationwideBuildSettings");
+            $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
+        }
+
         undef $baseProductDir unless $baseProductDir =~ /^\//;
     } elsif (isChromium()) {
         if (isLinux() || isChromiumAndroid() || isChromiumMacMake()) {
