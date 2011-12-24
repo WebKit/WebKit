@@ -1,3 +1,27 @@
+2011-12-24  Andreas Kling  <awesomekling@apple.com>
+
+        CSSElementStyleDeclarations should never move between elements.
+        <http://webkit.org/b/75198>
+
+        Reviewed by Anders Carlsson.
+
+        Have the CSSElementStyleDeclaration subclasses take a StyledElement* in
+        the constructor and replace setElement(StyledElement*) by clearElement().
+
+        No behavior change, just enforcing the current behavior at compile-time.
+
+        * css/CSSElementStyleDeclaration.h:
+        (WebCore::CSSElementStyleDeclaration::clearElement):
+        (WebCore::CSSElementStyleDeclaration::CSSElementStyleDeclaration):
+        * css/CSSInlineStyleDeclaration.h:
+        (WebCore::CSSInlineStyleDeclaration::create):
+        (WebCore::CSSInlineStyleDeclaration::CSSInlineStyleDeclaration):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::destroyInlineStyleDecl):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::FontFaceStyleDeclaration::FontFaceStyleDeclaration):
+
 2011-12-23  Andreas Kling  <awesomekling@apple.com>
 
         Decouple CSSMappedAttributeDeclaration from element completely.

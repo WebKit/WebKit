@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,14 +35,14 @@ class CSSInlineStyleDeclaration : public CSSElementStyleDeclaration {
 public:
     virtual ~CSSInlineStyleDeclaration() { }
 
-    static PassRefPtr<CSSInlineStyleDeclaration> create()
+    static PassRefPtr<CSSInlineStyleDeclaration> create(StyledElement* element)
     {
-        return adoptRef(new CSSInlineStyleDeclaration);
+        return adoptRef(new CSSInlineStyleDeclaration(element));
     }
 
 private:
-    CSSInlineStyleDeclaration()
-        : CSSElementStyleDeclaration(/* isInline */ true)
+    CSSInlineStyleDeclaration(StyledElement* element)
+        : CSSElementStyleDeclaration(element, /* isInline */ true)
     {
     }
 };

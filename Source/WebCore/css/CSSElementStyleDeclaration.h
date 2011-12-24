@@ -37,14 +37,14 @@ class StyledElement;
 class CSSElementStyleDeclaration : public CSSMutableStyleDeclaration {
 public:
     StyledElement* element() const { return m_element; }
-    void setElement(StyledElement* element) { m_element = element; }
+    void clearElement() { m_element = 0; }
 
     virtual CSSStyleSheet* styleSheet() const;
 
 protected:
-    CSSElementStyleDeclaration(bool isInline)
+    CSSElementStyleDeclaration(StyledElement* element, bool isInline)
         : CSSMutableStyleDeclaration()
-        , m_element(0)
+        , m_element(element)
     {
         m_isElementStyleDeclaration = true;
         m_isInlineStyleDeclaration = isInline;

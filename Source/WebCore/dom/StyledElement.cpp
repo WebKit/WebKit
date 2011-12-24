@@ -130,8 +130,7 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
 void StyledElement::createInlineStyleDecl()
 {
     ASSERT(!m_inlineStyleDecl);
-    m_inlineStyleDecl = CSSInlineStyleDeclaration::create();
-    m_inlineStyleDecl->setElement(this);
+    m_inlineStyleDecl = CSSInlineStyleDeclaration::create(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inQuirksMode());
 }
 
@@ -139,7 +138,7 @@ void StyledElement::destroyInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
         return;
-    m_inlineStyleDecl->setElement(0);
+    m_inlineStyleDecl->clearElement();
     m_inlineStyleDecl = 0;
 }
 

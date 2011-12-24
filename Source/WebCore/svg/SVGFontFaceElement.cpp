@@ -68,9 +68,8 @@ public:
 
 private:
     FontFaceStyleDeclaration(SVGFontFaceElement* element)
-        : CSSElementStyleDeclaration(/* isInline */ false)
+        : CSSElementStyleDeclaration(element, /* isInline */ false)
     {
-        setElement(element);
     }
 };
 
