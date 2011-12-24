@@ -90,8 +90,16 @@ private:
 };
 
 void jitCompile(YarrPattern&, YarrCharSize, JSGlobalData*, YarrCodeBlock& jitObject);
-int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output);
-int execute(YarrCodeBlock& jitObject, const LChar* input, unsigned start, unsigned length, int* output);
+
+inline int execute(YarrCodeBlock& jitObject, const LChar* input, unsigned start, unsigned length, int* output)
+{
+    return jitObject.execute(input, start, length, output);
+}
+
+inline int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
+{
+    return jitObject.execute(input, start, length, output);
+}
 
 } } // namespace JSC::Yarr
 

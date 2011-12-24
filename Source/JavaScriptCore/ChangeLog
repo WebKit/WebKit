@@ -1,3 +1,17 @@
+2011-12-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Inlined Yarr::execute
+        https://bugs.webkit.org/show_bug.cgi?id=75180
+
+        Reviewed reluctantly by Beth Dakin.
+        
+        Tiny speedup on SunSpider string tests. Removes some samples from
+        Instruments. A step toward removing -fomit-frame-pointer.
+
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::execute): ONE LINE FUNCTION, Y U NOT INLINED?!
+
 2011-12-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG loads from signed 8-bit and 16-bit typed arrays are broken
