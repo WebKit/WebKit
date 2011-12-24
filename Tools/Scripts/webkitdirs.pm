@@ -176,6 +176,7 @@ sub determineBaseProductDir
     return if defined $baseProductDir;
     determineSourceDir();
 
+    my $setSharedPrecompsDir;
     $baseProductDir = $ENV{"WEBKITOUTPUTDIR"};
 
     if (!defined($baseProductDir) and isAppleMacWebKit()) {
@@ -195,7 +196,9 @@ sub determineBaseProductDir
             my $buildLocationStyle = join '', readXcodeUserDefault("BuildLocationStyle");
             if ($buildLocationStyle eq "Custom") {
                 my $buildLocationType = join '', readXcodeUserDefault("CustomBuildLocationType");
+                # FIXME: Read CustomBuildIntermediatesPath and set OBJROOT accordingly.
                 $baseProductDir = readXcodeUserDefault("CustomBuildProductsPath") if $buildLocationType eq "Absolute";
+                $setSharedPrecompsDir = 1;
             }
         }
 
@@ -217,6 +220,7 @@ sub determineBaseProductDir
 
     if (!defined($baseProductDir)) { # Port-spesific checks failed, use default
         $baseProductDir = "$sourceDir/WebKitBuild";
+        undef $setSharedPrecompsDir;
     }
 
     if (isBlackBerry()) {
@@ -236,6 +240,7 @@ sub determineBaseProductDir
         die "Can't handle Xcode product directory with a ~ in it.\n" if $baseProductDir =~ /~/;
         die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
         @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir");
+        push(@baseProductDirOption, "SHARED_PRECOMPS_DIR=${baseProductDir}/PrecompiledHeaders") if $setSharedPrecompsDir;
     }
 
     if (isCygwin()) {

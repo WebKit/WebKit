@@ -1,5 +1,14 @@
 2011-12-24  Dan Bernstein  <mitz@apple.com>
 
+        Set SHARED_PRECOMPS_DIR when Xcode is set to use a custom build product path.
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (determineBaseProductDir):
+
+2011-12-24  Dan Bernstein  <mitz@apple.com>
+
         Make build-webkit aware of additional Xcode build location defaults.
 
         Reviewed by Anders Carlsson.
