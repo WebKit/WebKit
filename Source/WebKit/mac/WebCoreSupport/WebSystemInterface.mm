@@ -67,7 +67,9 @@ void InitWebCoreSystemInterface(void)
     INIT(SignedPublicKeyAndChallengeString);
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
+#if PLATFORM(MAC)
     INIT(GetNSEventKeyChar);
+#endif
     INIT(HitTestMediaUIPart);
     INIT(InitializeMaximumHTTPConnectionCountPerHost);
     INIT(MeasureMediaUIPart);
