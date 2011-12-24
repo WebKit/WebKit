@@ -71,7 +71,8 @@ namespace WTF {
         static PassOutType passOut(const T& value) { return value; }
 
         // Type for return value of functions that do not transfer ownership, such as get.
-        // FIXME: We should change this type to const T& for better performance.
+        // FIXME: We could change this type to const T& for better performance if we figured out
+        // a way to handle the return value from emptyValue, which is a temporary.
         typedef T PeekType;
         static PeekType peek(const T& value) { return value; }
     };
@@ -126,10 +127,12 @@ namespace WTF {
     };
 
     template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > {
-        // FIXME: We should change PassInType to PassRefPtr for better performance.
+        typedef PassRefPtr<P> PassInType;
+        static void store(PassRefPtr<P> value, RefPtr<P>& storage) { storage = value; }
+
         // FIXME: We should change PassOutType to PassRefPtr for better performance.
-        // FIXME: We could consider changing PeekType to a raw pointer so callers don't need to
-        // call get; doing so will require updating many call sites.
+        // FIXME: We should consider changing PeekType to a raw pointer for better performance,
+        // but then callers won't need to call get; doing so will require updating many call sites.
     };
 
     template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
