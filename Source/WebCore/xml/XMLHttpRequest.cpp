@@ -377,7 +377,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
 
 void XMLHttpRequest::setWithCredentials(bool value, ExceptionCode& ec)
 {
-    if (m_state != OPENED || m_loader) {
+    if (m_state > OPENED || m_loader) {
         ec = INVALID_STATE_ERR;
         return;
     }
