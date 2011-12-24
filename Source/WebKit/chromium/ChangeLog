@@ -1,3 +1,9 @@
+2011-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Chromium DEPS from 115012 to 115743.
+
+        * DEPS:
+
 2011-12-23  Karl Koscher  <supersat@chromium.org>
 
         Give embedders a chance to handle postMessage calls
