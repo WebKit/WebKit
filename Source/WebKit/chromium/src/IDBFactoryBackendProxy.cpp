@@ -99,7 +99,7 @@ void IDBFactoryBackendProxy::openFromWorker(const String& name, IDBCallbacks* ca
         return;
     }
     WorkerLoaderProxy* workerLoaderProxy = &context->thread()->workerLoaderProxy();
-    WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
+    NewWebWorkerBase* webWorker = static_cast<NewWebWorkerBase*>(workerLoaderProxy);
     WebFrame* webFrame = webWorker->view()->mainFrame();
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir);
 #endif

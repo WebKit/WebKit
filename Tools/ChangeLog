@@ -1,3 +1,17 @@
+2011-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r103619.
+        http://trac.webkit.org/changeset/103619
+        https://bugs.webkit.org/show_bug.cgi?id=66509
+
+        Broke chromium clang build
+
+        * DumpRenderTree/chromium/TestWebWorker.h:
+        (TestWebWorker::createWorker):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createWorker):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-12-23  Daniel Bates  <dbates@webkit.org>
 
         Provide option to disable Mac OS 10.7 application resume when using

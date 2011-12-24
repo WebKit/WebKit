@@ -1,3 +1,97 @@
+2011-12-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r103619.
+        http://trac.webkit.org/changeset/103619
+        https://bugs.webkit.org/show_bug.cgi?id=66509
+
+        Broke chromium clang build
+
+        * WebKit.gyp:
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::postConsoleMessageToWorkerObject):
+        (WebKit::WebCommonWorkerClient::allowFileSystem):
+        (WebKit::WebCommonWorkerClient::openFileSystem):
+        (WebKit::WebCommonWorkerClient::dispatchDevToolsMessage):
+        (WebKit::WebCommonWorkerClient::saveDevToolsAgentState):
+        (WebKit::WebCommonWorkerClient::~WebCommonWorkerClient):
+        * public/WebSharedWorker.h:
+        * public/WebSharedWorkerClient.h: Removed.
+        * public/WebWorkerClient.h:
+        (WebKit::WebWorkerClient::~WebWorkerClient):
+        * src/DatabaseObserver.cpp:
+        (WebKit::AllowDatabaseMainThreadBridge::create):
+        (WebKit::AllowDatabaseMainThreadBridge::AllowDatabaseMainThreadBridge):
+        (WebKit::AllowDatabaseMainThreadBridge::allowDatabaseTask):
+        (WebKit::allowDatabaseForWorker):
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::openFromWorker):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::~WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::client):
+        (WebKit::WebSharedWorker::create):
+        * src/WebSharedWorkerImpl.h:
+        (WebKit::WebSharedWorkerImpl::commonClient):
+        (WebKit::WebSharedWorkerImpl::newCommonClient):
+        * src/WebWorkerBase.cpp:
+        (WebKit::initializeWebKitStaticValues):
+        (WebKit::WebWorkerBase::WebWorkerBase):
+        (WebKit::WebWorkerBase::~WebWorkerBase):
+        (WebKit::WebWorkerBase::stopWorkerThread):
+        (WebKit::WebWorkerBase::initializeLoader):
+        (WebKit::WebWorkerBase::dispatchTaskToMainThread):
+        (WebKit::WebWorkerBase::invokeTaskMethod):
+        (WebKit::WebWorkerBase::didCreateDataSource):
+        (WebKit::WebWorkerBase::createApplicationCacheHost):
+        (WebKit::WebWorkerBase::postMessageToWorkerObject):
+        (WebKit::WebWorkerBase::postMessageTask):
+        (WebKit::WebWorkerBase::postExceptionToWorkerObject):
+        (WebKit::WebWorkerBase::postExceptionTask):
+        (WebKit::WebWorkerBase::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerBase::postConsoleMessageTask):
+        (WebKit::WebWorkerBase::postMessageToPageInspector):
+        (WebKit::WebWorkerBase::postMessageToPageInspectorTask):
+        (WebKit::WebWorkerBase::updateInspectorStateCookie):
+        (WebKit::WebWorkerBase::updateInspectorStateCookieTask):
+        (WebKit::WebWorkerBase::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerBase::confirmMessageTask):
+        (WebKit::WebWorkerBase::reportPendingActivity):
+        (WebKit::WebWorkerBase::reportPendingActivityTask):
+        (WebKit::WebWorkerBase::workerContextClosed):
+        (WebKit::WebWorkerBase::workerContextClosedTask):
+        (WebKit::WebWorkerBase::workerContextDestroyed):
+        (WebKit::WebWorkerBase::workerContextDestroyedTask):
+        (WebKit::WebWorkerBase::postTaskToLoader):
+        (WebKit::WebWorkerBase::postTaskForModeToWorkerContext):
+        * src/WebWorkerBase.h:
+        (WebKit::WebWorkerBase::view):
+        (WebKit::WebWorkerBase::setWorkerThread):
+        (WebKit::WebWorkerBase::workerThread):
+        * src/WebWorkerClientImpl.cpp:
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::newCommonClient):
+        * src/WebWorkerImpl.cpp: Added.
+        (WebKit::WebWorker::create):
+        (WebKit::WebWorkerImpl::WebWorkerImpl):
+        (WebKit::WebWorkerImpl::~WebWorkerImpl):
+        (WebKit::WebWorkerImpl::newCommonClient):
+        (WebKit::WebWorkerImpl::commonClient):
+        (WebKit::WebWorkerImpl::postMessageToWorkerContextTask):
+        (WebKit::WebWorkerImpl::startWorkerContext):
+        (WebKit::WebWorkerImpl::terminateWorkerContext):
+        (WebKit::WebWorkerImpl::postMessageToWorkerContext):
+        (WebKit::WebWorkerImpl::workerObjectDestroyed):
+        (WebKit::WebWorkerImpl::clientDestroyed):
+        * src/WebWorkerImpl.h: Copied from Source/WebKit/chromium/src/WebWorkerBase.cpp.
+        (WebKit::WebWorkerImpl::client):
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread):
+        * src/WorkerFileSystemCallbacksBridge.h:
+
 2011-12-23  Sam Weinig  <sam@webkit.org>
 
         Start extracting platform specific bits out of PlatformEvents
