@@ -1,0 +1,5 @@
+This tests a crashing scenario where an element with a textbox role attribute which also contenteditable has its content changed.
+
+
+Textbox content.
+PASS

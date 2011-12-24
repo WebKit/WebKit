@@ -3427,7 +3427,7 @@ void AccessibilityRenderObject::childrenChanged()
             axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXLiveRegionChanged, true);
         
         // If this element is an ARIA text control, notify the AT of changes.
-        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->isContentEditable())
+        if (parent->isARIATextControl() && !parent->isNativeTextControl() && !parent->node()->rendererIsEditable())
             axObjectCache()->postNotification(parent, parent->document(), AXObjectCache::AXValueChanged, true);
     }
 }

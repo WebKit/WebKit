@@ -1,3 +1,16 @@
+2011-12-23  Alice Boxhall  <aboxhall@chromium.org>
+
+        Fix crash when adding paragraph in contenteditable with role=textbox.
+        https://bugs.webkit.org/show_bug.cgi?id=75159
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: accessibility/textbox-role-on-contenteditable-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::childrenChanged): Use rendererIsEditable() rather than isContentEditable()
+        as this method is called during render layouts, and isContentEditable() triggers a layout update, which crashes.
+
 2011-12-23  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] JPEG image with CMYK ICC color profile renders color-inverted and squashed
