@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,13 +25,15 @@
 #ifndef CSSMappedAttributeDeclaration_h
 #define CSSMappedAttributeDeclaration_h
 
-#include "CSSElementStyleDeclaration.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "MappedAttributeEntry.h"
 #include "QualifiedName.h"
 
 namespace WebCore {
 
-class CSSMappedAttributeDeclaration : public CSSElementStyleDeclaration {
+class StyledElement;
+
+class CSSMappedAttributeDeclaration : public CSSMutableStyleDeclaration {
 public:
     static PassRefPtr<CSSMappedAttributeDeclaration> create()
     {
@@ -47,13 +49,24 @@ public:
         m_attrValue = val;
     }
 
+    void setMappedProperty(StyledElement*, int propertyId, int value);
+    void setMappedProperty(StyledElement*, int propertyId, const String& value);
+    void setMappedImageProperty(StyledElement*, int propertyId, const String& url);
+
+    // NOTE: setMappedLengthProperty() treats integers as pixels! (Needed for conversion of HTML attributes.)
+    void setMappedLengthProperty(StyledElement*, int propertyId, const String& value);
+
+    void removeMappedProperty(StyledElement*, int propertyId);
+
 private:
     CSSMappedAttributeDeclaration()
-        : CSSElementStyleDeclaration(/* isInline */ false)
+        : CSSMutableStyleDeclaration()
         , m_entryType(eNone)
         , m_attrName(anyQName())
     {
     }
+
+    void setNeedsStyleRecalc(StyledElement*);
 
     MappedAttributeEntry m_entryType;
     QualifiedName m_attrName;

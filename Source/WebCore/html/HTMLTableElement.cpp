@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -455,21 +455,18 @@ void HTMLTableElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDecla
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, tableborderAttr, borderValue);
     if (!decl) {
         decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
-        decl->setElement(this);
         ASSERT(!decl->useStrictParsing());
-        
-        int v = m_borderColorAttr ? CSSValueSolid : CSSValueOutset;
-        decl->setProperty(CSSPropertyBorderTopStyle, v, false);
-        decl->setProperty(CSSPropertyBorderBottomStyle, v, false);
-        decl->setProperty(CSSPropertyBorderLeftStyle, v, false);
-        decl->setProperty(CSSPropertyBorderRightStyle, v, false);
+
+        int value = m_borderColorAttr ? CSSValueSolid : CSSValueOutset;
+        decl->setMappedProperty(this, CSSPropertyBorderTopStyle, value);
+        decl->setMappedProperty(this, CSSPropertyBorderBottomStyle, value);
+        decl->setMappedProperty(this, CSSPropertyBorderLeftStyle, value);
+        decl->setMappedProperty(this, CSSPropertyBorderRightStyle, value);
 
         setMappedAttributeDecl(ePersistent, tableborderAttr, borderValue, decl);
-        decl->setElement(0);
         decl->setMappedState(ePersistent, tableborderAttr, borderValue);
     }
-    
-    
+
     results.append(decl);
 }
 
@@ -511,50 +508,48 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, cellborderAttr, cellborderValue);
     if (!decl) {
         decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
-        decl->setElement(this);
         ASSERT(!decl->useStrictParsing());
-        
+
         switch (borders) {
             case SolidBordersColsOnly:
-                decl->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin, false);
-                decl->setProperty(CSSPropertyBorderRightWidth, CSSValueThin, false);
-                decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
+                decl->setMappedProperty(this, CSSPropertyBorderLeftWidth, CSSValueThin);
+                decl->setMappedProperty(this, CSSPropertyBorderRightWidth, CSSValueThin);
+                decl->setMappedProperty(this, CSSPropertyBorderLeftStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderRightStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderColor, "inherit");
                 break;
             case SolidBordersRowsOnly:
-                decl->setProperty(CSSPropertyBorderTopWidth, CSSValueThin, false);
-                decl->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin, false);
-                decl->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
+                decl->setMappedProperty(this, CSSPropertyBorderTopWidth, CSSValueThin);
+                decl->setMappedProperty(this, CSSPropertyBorderBottomWidth, CSSValueThin);
+                decl->setMappedProperty(this, CSSPropertyBorderTopStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderBottomStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderColor, "inherit");
                 break;
             case SolidBorders:
-                decl->setProperty(CSSPropertyBorderWidth, "1px", false);
-                decl->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid, false);
-                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
+                decl->setMappedProperty(this, CSSPropertyBorderWidth, "1px");
+                decl->setMappedProperty(this, CSSPropertyBorderTopStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderBottomStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderLeftStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderRightStyle, CSSValueSolid);
+                decl->setMappedProperty(this, CSSPropertyBorderColor, "inherit");
                 break;
             case InsetBorders:
-                decl->setProperty(CSSPropertyBorderWidth, "1px", false);
-                decl->setProperty(CSSPropertyBorderTopStyle, CSSValueInset, false);
-                decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueInset, false);
-                decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueInset, false);
-                decl->setProperty(CSSPropertyBorderRightStyle, CSSValueInset, false);
-                decl->setProperty(CSSPropertyBorderColor, "inherit", false);
+                decl->setMappedProperty(this, CSSPropertyBorderWidth, "1px");
+                decl->setMappedProperty(this, CSSPropertyBorderTopStyle, CSSValueInset);
+                decl->setMappedProperty(this, CSSPropertyBorderBottomStyle, CSSValueInset);
+                decl->setMappedProperty(this, CSSPropertyBorderLeftStyle, CSSValueInset);
+                decl->setMappedProperty(this, CSSPropertyBorderRightStyle, CSSValueInset);
+                decl->setMappedProperty(this, CSSPropertyBorderColor, "inherit");
                 break;
             case NoBorders:
-                decl->setProperty(CSSPropertyBorderWidth, "0", false);
+                decl->setMappedProperty(this, CSSPropertyBorderWidth, "0");
                 break;
         }
 
         setMappedAttributeDecl(ePersistent, cellborderAttr, *cellBorderNames[borders], decl);
-        decl->setElement(0);
         decl->setMappedState(ePersistent, cellborderAttr, cellborderValue);
     }
-    
+
     results.append(decl);
 }
 
@@ -568,19 +563,17 @@ void HTMLTableElement::addSharedCellPaddingDecl(Vector<CSSMutableStyleDeclaratio
         m_paddingDecl = getMappedAttributeDecl(eUniversal, cellpaddingAttr, paddingValue);
         if (!m_paddingDecl) {
             m_paddingDecl = CSSMappedAttributeDeclaration::create();
-            m_paddingDecl->setElement(this);
             ASSERT(!m_paddingDecl->useStrictParsing());
-            
-            m_paddingDecl->setProperty(CSSPropertyPaddingTop, paddingValue, false);
-            m_paddingDecl->setProperty(CSSPropertyPaddingRight, paddingValue, false);
-            m_paddingDecl->setProperty(CSSPropertyPaddingBottom, paddingValue, false);
-            m_paddingDecl->setProperty(CSSPropertyPaddingLeft, paddingValue, false);
+
+            m_paddingDecl->setMappedProperty(this, CSSPropertyPaddingTop, paddingValue);
+            m_paddingDecl->setMappedProperty(this, CSSPropertyPaddingRight, paddingValue);
+            m_paddingDecl->setMappedProperty(this, CSSPropertyPaddingBottom, paddingValue);
+            m_paddingDecl->setMappedProperty(this, CSSPropertyPaddingLeft, paddingValue);
         }
         setMappedAttributeDecl(eUniversal, cellpaddingAttr, paddingValue, m_paddingDecl.get());
-        m_paddingDecl->setElement(0);
         m_paddingDecl->setMappedState(eUniversal, cellpaddingAttr, paddingValue);
     }
-    
+
     results.append(m_paddingDecl.get());
 }
 
@@ -593,23 +586,21 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, rulesAttr, rulesValue);
     if (!decl) {
         decl = CSSMappedAttributeDeclaration::create().leakRef(); // This single ref pins us in the table until the document dies.
-        decl->setElement(this);
         ASSERT(!decl->useStrictParsing());
-        
+
         if (rows) {
-            decl->setProperty(CSSPropertyBorderTopWidth, CSSValueThin, false);
-            decl->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin, false);
-            decl->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid, false);
-            decl->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid, false);
+            decl->setMappedProperty(this, CSSPropertyBorderTopWidth, CSSValueThin);
+            decl->setMappedProperty(this, CSSPropertyBorderBottomWidth, CSSValueThin);
+            decl->setMappedProperty(this, CSSPropertyBorderTopStyle, CSSValueSolid);
+            decl->setMappedProperty(this, CSSPropertyBorderBottomStyle, CSSValueSolid);
         } else {
-            decl->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin, false);
-            decl->setProperty(CSSPropertyBorderRightWidth, CSSValueThin, false);
-            decl->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid, false);
-            decl->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid, false);
+            decl->setMappedProperty(this, CSSPropertyBorderLeftWidth, CSSValueThin);
+            decl->setMappedProperty(this, CSSPropertyBorderRightWidth, CSSValueThin);
+            decl->setMappedProperty(this, CSSPropertyBorderLeftStyle, CSSValueSolid);
+            decl->setMappedProperty(this, CSSPropertyBorderRightStyle, CSSValueSolid);
         }
 
         setMappedAttributeDecl(ePersistent, rulesAttr, rulesValue, decl);
-        decl->setElement(0);
         decl->setMappedState(ePersistent, rulesAttr, rulesValue);
     }
 

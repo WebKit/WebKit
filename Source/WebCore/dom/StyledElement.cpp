@@ -197,7 +197,6 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
         // Add the decl to the table in the appropriate spot.
         setMappedAttributeDecl(entry, attr, attr->decl());
         attr->decl()->setMappedState(entry, attr->name(), attr->value());
-        attr->decl()->setElement(0);
         if (attributeMap())
             attributeMap()->declAdded();
     }
@@ -262,33 +261,40 @@ CSSStyleDeclaration* StyledElement::style()
     return ensureInlineStyleDecl();
 }
 
+void StyledElement::removeCSSProperty(Attribute* attribute, int id)
+{
+    if (!attribute->decl())
+        createMappedDecl(attribute);
+    attribute->decl()->removeMappedProperty(this, id);
+}
+
 void StyledElement::addCSSProperty(Attribute* attribute, int id, const String &value)
 {
     if (!attribute->decl())
         createMappedDecl(attribute);
-    attribute->decl()->setProperty(id, value, false);
+    attribute->decl()->setMappedProperty(this, id, value);
 }
 
 void StyledElement::addCSSProperty(Attribute* attribute, int id, int value)
 {
     if (!attribute->decl())
         createMappedDecl(attribute);
-    attribute->decl()->setProperty(id, value, false);
+    attribute->decl()->setMappedProperty(this, id, value);
 }
 
 void StyledElement::addCSSImageProperty(Attribute* attribute, int id, const String& url)
 {
     if (!attribute->decl())
         createMappedDecl(attribute);
-    attribute->decl()->setImageProperty(id, url, false);
+    attribute->decl()->setMappedImageProperty(this, id, url);
 }
 
-void StyledElement::addCSSLength(Attribute* attr, int id, const String &value)
+void StyledElement::addCSSLength(Attribute* attribute, int id, const String &value)
 {
     // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
     // length unit and make the appropriate parsed value.
-    if (!attr->decl())
-        createMappedDecl(attr);
+    if (!attribute->decl())
+        createMappedDecl(attribute);
 
     // strip attribute garbage..
     StringImpl* v = value.impl();
@@ -311,12 +317,12 @@ void StyledElement::addCSSLength(Attribute* attr, int id, const String &value)
         }
 
         if (l != v->length()) {
-            attr->decl()->setLengthProperty(id, v->substring(0, l), false);
+            attribute->decl()->setMappedLengthProperty(this, id, v->substring(0, l));
             return;
         }
     }
-    
-    attr->decl()->setLengthProperty(id, value, false);
+
+    attribute->decl()->setMappedLengthProperty(this, id, value);
 }
 
 static String parseColorStringWithCrazyLegacyRules(const String& colorString)
@@ -390,18 +396,17 @@ void StyledElement::addCSSColor(Attribute* attribute, int id, const String& attr
     // If the string is a named CSS color or a 3/6-digit hex color, use that.
     Color parsedColor(colorString);
     if (parsedColor.isValid()) {
-        attribute->decl()->setProperty(id, colorString, false);
+        attribute->decl()->setMappedProperty(this, id, colorString);
         return;
     }
 
-    attribute->decl()->setProperty(id, parseColorStringWithCrazyLegacyRules(colorString), false);
+    attribute->decl()->setMappedProperty(this, id, parseColorStringWithCrazyLegacyRules(colorString));
 }
 
 void StyledElement::createMappedDecl(Attribute* attr)
 {
     RefPtr<CSSMappedAttributeDeclaration> decl = CSSMappedAttributeDeclaration::create();
     attr->setDecl(decl);
-    decl->setElement(this);
     ASSERT(!decl->useStrictParsing());
 }
 

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class StyledElement;
 
-// Base class for CSSInlineStyleDeclaration and CSSMappedAttributeDeclaration.
+// Base class for CSSInlineStyleDeclaration and FontFaceStyleDeclaration (SVG).
 
 class CSSElementStyleDeclaration : public CSSMutableStyleDeclaration {
 public:

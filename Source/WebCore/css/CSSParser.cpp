@@ -332,7 +332,7 @@ static inline bool isColorPropertyID(int propertyId)
     }
 }
 
-static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)
+static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet = 0)
 {
     if (!string.length())
         return false;
@@ -352,7 +352,7 @@ static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propert
         validPrimitive = true;
     }
 
-    CSSStyleSheet* styleSheet = declaration->parentStyleSheet();
+    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->parentStyleSheet();
     if (!styleSheet)
         return false;
     Document* document = styleSheet->findDocument();
@@ -415,7 +415,7 @@ static inline bool isSimpleLengthPropertyID(int propertyId, bool& acceptsNegativ
     }
 }
 
-static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)
+static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict, CSSStyleSheet* contextStyleSheet = 0)
 {
     const UChar* characters = string.characters();
     unsigned length = string.length();
@@ -449,7 +449,7 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
     if (number < 0 && !acceptsNegativeNumbers)
         return false;
 
-    CSSStyleSheet* styleSheet = declaration->parentStyleSheet();
+    CSSStyleSheet* styleSheet = contextStyleSheet ? contextStyleSheet : declaration->parentStyleSheet();
     if (!styleSheet)
         return false;
     Document* document = styleSheet->findDocument();
@@ -458,6 +458,20 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
     CSSProperty property(propertyId, document->cssValuePool()->createValue(number, unit), important);
     declaration->addParsedProperty(property);
     return true;
+}
+
+bool CSSParser::parseMappedAttributeValue(CSSMappedAttributeDeclaration* declaration, StyledElement* element, int propertyId, const String& value)
+{
+    ASSERT(declaration);
+    ASSERT(element);
+    ASSERT(element->document());
+    CSSStyleSheet* elementSheet = element->document()->elementSheet();
+    if (parseSimpleLengthValue(declaration, propertyId, value, false, false, elementSheet))
+        return true;
+    if (parseColorValue(declaration, propertyId, value, false, false, elementSheet))
+        return true;
+    CSSParser parser(false);
+    return parser.parseValue(declaration, propertyId, value, false, elementSheet);
 }
 
 bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)
@@ -470,9 +484,12 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int property
     return parser.parseValue(declaration, propertyId, string, important);
 }
 
-bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important)
+bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, CSSStyleSheet* contextStyleSheet)
 {
-    setStyleSheet(declaration->parentStyleSheet());
+    if (contextStyleSheet)
+        setStyleSheet(contextStyleSheet);
+    else
+        setStyleSheet(declaration->parentStyleSheet());
 
     setupParser("@-webkit-value{", string, "} ");
 

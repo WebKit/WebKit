@@ -768,14 +768,6 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, double value, CSSPr
     return true;
 }
 
-void CSSMutableStyleDeclaration::setImageProperty(int propertyId, const String& url, bool important)
-{
-    ASSERT(!m_iteratorCount);
-
-    setPropertyInternal(CSSProperty(propertyId, CSSImageValue::create(url), important));
-    setNeedsStyleRecalc();
-}
-
 void CSSMutableStyleDeclaration::parseDeclaration(const String& styleDeclaration)
 {
     ASSERT(!m_iteratorCount);
@@ -832,16 +824,6 @@ void CSSMutableStyleDeclaration::addParsedProperty(const CSSProperty& property)
 #if ENABLE(MUTATION_OBSERVERS)
     mutationScope.enqueueMutationRecord();
 #endif
-}
-
-void CSSMutableStyleDeclaration::setLengthProperty(int propertyId, const String& value, bool important)
-{
-    ASSERT(!m_iteratorCount);
-
-    bool parseMode = useStrictParsing();
-    setStrictParsing(false);
-    setProperty(propertyId, value, important);
-    setStrictParsing(parseMode);
 }
 
 unsigned CSSMutableStyleDeclaration::virtualLength() const

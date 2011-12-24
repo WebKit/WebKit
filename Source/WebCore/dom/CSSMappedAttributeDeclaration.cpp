@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,14 +23,60 @@
 #include "config.h"
 #include "CSSMappedAttributeDeclaration.h"
 
+#include "CSSImageValue.h"
+#include "CSSParser.h"
+#include "CSSValuePool.h"
 #include "StyledElement.h"
 
 namespace WebCore {
+
+inline void CSSMappedAttributeDeclaration::setNeedsStyleRecalc(StyledElement* element)
+{
+    ASSERT(element);
+    element->setNeedsStyleRecalc(FullStyleChange);
+}
 
 CSSMappedAttributeDeclaration::~CSSMappedAttributeDeclaration()
 {
     if (m_entryType != ePersistent)
         StyledElement::removeMappedAttributeDecl(m_entryType, m_attrName, m_attrValue);
+}
+
+void CSSMappedAttributeDeclaration::setMappedImageProperty(StyledElement* element, int propertyId, const String& url)
+{
+    setPropertyInternal(CSSProperty(propertyId, CSSImageValue::create(url)));
+    setNeedsStyleRecalc(element);
+}
+
+void CSSMappedAttributeDeclaration::setMappedLengthProperty(StyledElement* element, int propertyId, const String& value)
+{
+    setMappedProperty(element, propertyId, value);
+}
+
+void CSSMappedAttributeDeclaration::setMappedProperty(StyledElement* element, int propertyId, int value)
+{
+    ASSERT(element->document());
+    setPropertyInternal(CSSProperty(propertyId, element->document()->cssValuePool()->createIdentifierValue(value)));
+    setNeedsStyleRecalc(element);
+}
+
+void CSSMappedAttributeDeclaration::setMappedProperty(StyledElement* element, int propertyId, const String& value)
+{
+    if (value.isEmpty()) {
+        removeMappedProperty(element, propertyId);
+        return;
+    }
+
+    if (!CSSParser::parseMappedAttributeValue(this, element, propertyId, value))
+        return;
+
+    setNeedsStyleRecalc(element);
+}
+
+void CSSMappedAttributeDeclaration::removeMappedProperty(StyledElement* element, int propertyId)
+{
+    removeProperty(propertyId, false, false);
+    setNeedsStyleRecalc(element);
 }
 
 }

@@ -752,9 +752,9 @@ void HTMLElement::setContentEditable(Attribute* attr)
         addCSSProperty(attr, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
     } else if (equalIgnoringCase(enabled, "false")) {
         addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadOnly);
-        attr->decl()->removeProperty(CSSPropertyWordWrap);
-        attr->decl()->removeProperty(CSSPropertyWebkitNbspMode);
-        attr->decl()->removeProperty(CSSPropertyWebkitLineBreak);
+        removeCSSProperty(attr, CSSPropertyWordWrap);
+        removeCSSProperty(attr, CSSPropertyWebkitNbspMode);
+        removeCSSProperty(attr, CSSPropertyWebkitLineBreak);
     } else if (equalIgnoringCase(enabled, "plaintext-only")) {
         addCSSProperty(attr, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
         addCSSProperty(attr, CSSPropertyWordWrap, CSSValueBreakWord);

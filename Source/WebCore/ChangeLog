@@ -1,3 +1,69 @@
+2011-12-23  Andreas Kling  <awesomekling@apple.com>
+
+        Decouple CSSMappedAttributeDeclaration from element completely.
+        <http://webkit.org/b/75187>
+
+        Reviewed by Darin Adler.
+
+        Let CSSMappedAttributeDeclaration inherit from CSSMutableDeclaration instead
+        of CSSElementStyleDeclaration. Add methods to CSSMappedAttributeDeclaration
+        for setting properties that also take a StyledElement* and use that mechanism
+        instead of temporarily associating an element with the declaration.
+
+        This reduces the size of mapped attributes by 4/8 bytes, but more importantly
+        opens a number of ways to simplify style declarations in future patches.
+
+        * css/CSSMutableStyleDeclaration.h:
+        * dom/CSSMappedAttributeDeclaration.cpp:
+        (WebCore::CSSMappedAttributeDeclaration::setNeedsStyleRecalc):
+        (WebCore::CSSMappedAttributeDeclaration::setMappedImageProperty):
+        (WebCore::CSSMappedAttributeDeclaration::setMappedLengthProperty):
+        (WebCore::CSSMappedAttributeDeclaration::setMappedProperty):
+        (WebCore::CSSMappedAttributeDeclaration::removeMappedProperty):
+        * dom/CSSMappedAttributeDeclaration.h:
+        (WebCore::CSSMappedAttributeDeclaration::CSSMappedAttributeDeclaration):
+
+            Add/move methods to CSSMappedAttributeDeclaration for setting/removing
+            properties that also take a StyledElement*. That element is used for
+            scheduling style recalc and passing the right document to CSSParser.
+
+        * css/CSSParser.h:
+        * css/CSSParser.cpp:
+        (WebCore::parseColorValue):
+        (WebCore::parseSimpleLengthValue):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseMappedAttributeValue):
+
+            Added a parsedMappedAttributeValue() alternative to parseValue() that
+            takes a StyledElement*.
+
+        * dom/StyledElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setContentEditable):
+
+            Add (and use) a StyledElement::removeCSSProperty() complement to the
+            addCSS*() functions.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::removeCSSProperty):
+        (WebCore::StyledElement::addCSSProperty):
+        (WebCore::StyledElement::addCSSImageProperty):
+        (WebCore::StyledElement::addCSSLength):
+        (WebCore::StyledElement::addCSSColor):
+        (WebCore::StyledElement::createMappedDecl):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+
+            Use the setMapped*Property() functions to plumb the element through.
+
+        * css/CSSElementStyleDeclaration.h:
+
+            Update comment about CSSElementStyleDeclaration's subclasses.
+
 2011-12-24  Jarred Nicholls  <jarred@sencha.com>
 
         Allow XMLHttpRequest withCredentials to be set prior to a call to open()

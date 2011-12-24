@@ -107,10 +107,6 @@ public:
 
     void removeProperty(int propertyID) { removeProperty(propertyID, true, false); }
 
-    // setLengthProperty treats integers as pixels! (Needed for conversion of HTML attributes.)
-    void setLengthProperty(int propertyId, const String& value, bool important);
-    void setImageProperty(int propertyId, const String& url, bool important = false);
-
     // The following parses an entire new style declaration.
     void parseDeclaration(const String& styleDeclaration);
 
@@ -137,6 +133,9 @@ protected:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
     CSSMutableStyleDeclaration();
 
+    void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
+    String removeProperty(int propertyID, bool notifyChanged, bool returnText);
+
 private:
     CSSMutableStyleDeclaration(CSSRule* parentRule, const Vector<CSSProperty>&);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
@@ -160,8 +159,6 @@ private:
     bool setProperty(int propertyID, int value, bool important, bool notifyChanged);
     bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes, bool important, bool notifyChanged);
     bool setProperty(int propertyID, const String& value, bool important, bool notifyChanged);
-    void setPropertyInternal(const CSSProperty&, CSSProperty* slot = 0);
-    String removeProperty(int propertyID, bool notifyChanged, bool returnText);
     bool removeShorthandProperty(int propertyID, bool notifyChanged);
     bool removePropertiesInSet(const int* set, unsigned length, bool notifyChanged);
 

@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class CSSBorderImageSliceValue;
+class CSSMappedAttributeDeclaration;
 class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValuePool;
@@ -50,12 +51,13 @@ class CSSSelectorList;
 class CSSStyleSheet;
 class CSSValue;
 class CSSValueList;
+class CSSWrapShape;
 class Document;
 class MediaList;
 class MediaQueryExp;
+class StyledElement;
 class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
-class CSSWrapShape;
 
 class CSSParser {
 public:
@@ -71,6 +73,8 @@ public:
     PassRefPtr<CSSPrimitiveValue> parseValidPrimitive(int propId, CSSParserValue*);
     bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* = 0, CSSStyleSheet* contextStyleSheet = 0);
     bool parseMediaQuery(MediaList*, const String&);
+
+    static bool parseMappedAttributeValue(CSSMappedAttributeDeclaration*, StyledElement*, int propertyId, const String&);
 
     Document* findDocument() const;
 
@@ -331,7 +335,7 @@ private:
     bool isGeneratedImageValue(CSSParserValue*) const;
     bool parseGeneratedImage(CSSParserValueList*, RefPtr<CSSValue>&);
 
-    bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
+    bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important, CSSStyleSheet* contextStyleSheet = 0);
 
     enum SizeParameterType {
         None,

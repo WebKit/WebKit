@@ -46,6 +46,7 @@ public:
     void addCSSProperty(Attribute*, int id, int value);
     void addCSSImageProperty(Attribute*, int propertyID, const String& url);
     void addCSSColor(Attribute*, int id, const String& color);
+    void removeCSSProperty(Attribute*, int id);
 
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value);
     static void setMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration*);
