@@ -4086,4 +4086,4 @@ BUGWK75132 : media/track/track-cue-nothing-to-render.html = PASS TEXT
 BUGWK75161 GPU : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
 BUGWK75161 CPU : media/video-poster-blocked-by-willsendrequest.html = TEXT
 
-
+BUGRNIWA : fast/images/ycbcr-with-cmyk-color-profile.html = PASS IMAGE
