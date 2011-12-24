@@ -41,8 +41,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformKeyboardEvent.h"
-#include "PlatformWheelEvent.h"
+#include "PlatformEventFactory.h"
 #include "RenderWidget.h"
 #include "RuntimeApplicationChecks.h"
 #include "Scrollbar.h"
@@ -104,9 +103,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
         return false;
 
     CurrentEventScope scope(event);
-
-    PlatformWheelEvent wheelEvent(event, page->chrome()->platformPageClient());
-    return handleWheelEvent(wheelEvent);
+    return handleWheelEvent(PlatformEventFactory::createPlatformWheelEvent(event, page->chrome()->platformPageClient()));
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -116,7 +113,7 @@ bool EventHandler::keyEvent(NSEvent *event)
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
 
     CurrentEventScope scope(event);
-    return keyEvent(PlatformKeyboardEvent(event));
+    return keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -646,7 +643,7 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     NSView *windowView = nil;
     if (Page* page = m_frame->page())
         windowView = page->chrome()->platformPageClient();
-    return PlatformMouseEvent(currentNSEvent(), windowView);
+    return PlatformEventFactory::createPlatformMouseEvent(currentNSEvent(), windowView);
 }
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const

@@ -64,10 +64,17 @@ PlatformMouseEventBuilder::PlatformMouseEventBuilder(Widget* widget, const WebMo
     m_movementDelta = IntPoint(e.movementX, e.movementY);
 #endif
     m_button = static_cast<MouseButton>(e.button);
-    m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);
-    m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
-    m_altKey = (e.modifiers & WebInputEvent::AltKey);
-    m_metaKey = (e.modifiers & WebInputEvent::MetaKey);
+
+    m_modifiers = 0;
+    if (e.modifiers & WebInputEvent::ShiftKey)
+        m_modifiers |= PlatformEvent::ShiftKey;
+    if (e.modifiers & WebInputEvent::ControlKey)
+        m_modifiers |= PlatformEvent::CtrlKey;
+    if (e.modifiers & WebInputEvent::AltKey)
+        m_modifiers |= PlatformEvent::AltKey;
+    if (e.modifiers & WebInputEvent::MetaKey)
+        m_modifiers |= PlatformEvent::MetaKey;
+
     m_modifierFlags = e.modifiers;
     m_timestamp = e.timeStampSeconds;
     m_clickCount = e.clickCount;
@@ -105,10 +112,17 @@ PlatformWheelEventBuilder::PlatformWheelEventBuilder(Widget* widget, const WebMo
         ScrollByPageWheelEvent : ScrollByPixelWheelEvent;
     
     m_type = PlatformEvent::Wheel;
-    m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);
-    m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
-    m_altKey = (e.modifiers & WebInputEvent::AltKey);
-    m_metaKey = (e.modifiers & WebInputEvent::MetaKey);
+
+    m_modifiers = 0;
+    if (e.modifiers & WebInputEvent::ShiftKey)
+        m_modifiers |= PlatformEvent::ShiftKey;
+    if (e.modifiers & WebInputEvent::ControlKey)
+        m_modifiers |= PlatformEvent::CtrlKey;
+    if (e.modifiers & WebInputEvent::AltKey)
+        m_modifiers |= PlatformEvent::AltKey;
+    if (e.modifiers & WebInputEvent::MetaKey)
+        m_modifiers |= PlatformEvent::MetaKey;
+
 #if OS(DARWIN)
     m_hasPreciseScrollingDeltas = e.hasPreciseScrollingDeltas;
     m_phase = static_cast<WebCore::PlatformWheelEventPhase>(e.phase);
@@ -143,10 +157,16 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
     m_deltaX = e.deltaX;
     m_deltaY = e.deltaY;
     m_timestamp = e.timeStampSeconds;
-    m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);
-    m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
-    m_altKey = (e.modifiers & WebInputEvent::AltKey);
-    m_metaKey = (e.modifiers & WebInputEvent::MetaKey);
+
+    m_modifiers = 0;
+    if (e.modifiers & WebInputEvent::ShiftKey)
+        m_modifiers |= PlatformEvent::ShiftKey;
+    if (e.modifiers & WebInputEvent::ControlKey)
+        m_modifiers |= PlatformEvent::CtrlKey;
+    if (e.modifiers & WebInputEvent::AltKey)
+        m_modifiers |= PlatformEvent::AltKey;
+    if (e.modifiers & WebInputEvent::MetaKey)
+        m_modifiers |= PlatformEvent::MetaKey;
 }
 #endif
 
@@ -179,11 +199,17 @@ PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder(const WebKeyboardEven
     m_windowsVirtualKeyCode = e.windowsKeyCode;
     m_nativeVirtualKeyCode = e.nativeKeyCode;
     m_isKeypad = (e.modifiers & WebInputEvent::IsKeyPad);
-    m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);
-    m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
-    m_altKey = (e.modifiers & WebInputEvent::AltKey);
-    m_metaKey = (e.modifiers & WebInputEvent::MetaKey);
     m_isSystemKey = e.isSystemKey;
+
+    m_modifiers = 0;
+    if (e.modifiers & WebInputEvent::ShiftKey)
+        m_modifiers |= PlatformEvent::ShiftKey;
+    if (e.modifiers & WebInputEvent::ControlKey)
+        m_modifiers |= PlatformEvent::CtrlKey;
+    if (e.modifiers & WebInputEvent::AltKey)
+        m_modifiers |= PlatformEvent::AltKey;
+    if (e.modifiers & WebInputEvent::MetaKey)
+        m_modifiers |= PlatformEvent::MetaKey;
 }
 
 void PlatformKeyboardEventBuilder::setKeyType(Type type)
@@ -269,10 +295,17 @@ PlatformTouchPointBuilder::PlatformTouchPointBuilder(Widget* widget, const WebTo
 PlatformTouchEventBuilder::PlatformTouchEventBuilder(Widget* widget, const WebTouchEvent& event)
 {
     m_type = toPlatformTouchEventType(event.type);
-    m_ctrlKey = event.modifiers & WebInputEvent::ControlKey;
-    m_altKey = event.modifiers & WebInputEvent::AltKey;
-    m_shiftKey = event.modifiers & WebInputEvent::ShiftKey;
-    m_metaKey = event.modifiers & WebInputEvent::MetaKey;
+
+    m_modifiers = 0;
+    if (event.modifiers & WebInputEvent::ShiftKey)
+        m_modifiers |= PlatformEvent::ShiftKey;
+    if (event.modifiers & WebInputEvent::ControlKey)
+        m_modifiers |= PlatformEvent::CtrlKey;
+    if (event.modifiers & WebInputEvent::AltKey)
+        m_modifiers |= PlatformEvent::AltKey;
+    if (event.modifiers & WebInputEvent::MetaKey)
+        m_modifiers |= PlatformEvent::MetaKey;
+
     m_timestamp = event.timeStampSeconds;
 
     for (unsigned i = 0; i < event.touchesLength; ++i)

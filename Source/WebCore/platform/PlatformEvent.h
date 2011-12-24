@@ -65,59 +65,59 @@ public:
 #endif
     };
 
-    enum ModifierKey {
-        AltKey = 1 << 0,
-        CtrlKey = 1 << 1,
-        MetaKey = 1 << 2,
-        ShiftKey = 1 << 3
+    enum Modifiers {
+        AltKey      = 1 << 0,
+        CtrlKey     = 1 << 1,
+        MetaKey     = 1 << 2,
+        ShiftKey    = 1 << 3,
     };
 
     Type type() const { return static_cast<Type>(m_type); }
 
-    bool shiftKey() const { return m_shiftKey; }
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool altKey() const { return m_altKey; }
-    bool metaKey() const { return m_metaKey; }
+    bool shiftKey() const { return m_modifiers & ShiftKey; }
+    bool ctrlKey() const { return m_modifiers & CtrlKey; }
+    bool altKey() const { return m_modifiers & AltKey; }
+    bool metaKey() const { return m_modifiers & MetaKey; }
 
-    unsigned modifiers() const
-    {
-        return (altKey() ? AltKey : 0)
-            | (ctrlKey() ? CtrlKey : 0)
-            | (metaKey() ? MetaKey : 0)
-            | (shiftKey() ? ShiftKey : 0);
-    }
+    unsigned modifiers() const { return m_modifiers; }
 
     double timestamp() const { return m_timestamp; }
 
 protected:
     PlatformEvent()
         : m_type(NoType)
-        , m_shiftKey(false)
-        , m_ctrlKey(false)
-        , m_altKey(false)
-        , m_metaKey(false)
+        , m_modifiers(0)
         , m_timestamp(0)
     {
     }
 
     PlatformEvent(Type type)
         : m_type(type)
-        , m_shiftKey(false)
-        , m_ctrlKey(false)
-        , m_altKey(false)
-        , m_metaKey(false)
+        , m_modifiers(0)
         , m_timestamp(0)
+    {
+    }
+
+    PlatformEvent(Type type, Modifiers modifiers, double timestamp)
+        : m_type(type)
+        , m_modifiers(modifiers)
+        , m_timestamp(timestamp)
     {
     }
 
     PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp)
         : m_type(type)
-        , m_shiftKey(shiftKey)
-        , m_ctrlKey(ctrlKey)
-        , m_altKey(altKey)
-        , m_metaKey(metaKey)
+        , m_modifiers(0)
         , m_timestamp(timestamp)
     {
+        if (shiftKey)
+            m_modifiers |= ShiftKey;
+        if (ctrlKey)
+            m_modifiers |= CtrlKey;
+        if (altKey)
+            m_modifiers |= AltKey;
+        if (metaKey)
+            m_modifiers |= MetaKey;
     }
 
     // Explicit protected destructor so that people don't accidentally
@@ -127,10 +127,7 @@ protected:
     }
 
     unsigned m_type;
-    bool m_shiftKey;
-    bool m_ctrlKey;
-    bool m_altKey;
-    bool m_metaKey;
+    unsigned m_modifiers;
     double m_timestamp;
 };
 

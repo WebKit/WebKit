@@ -1,3 +1,23 @@
+2011-12-21  Sam Weinig  <sam@webkit.org>
+
+        Start extracting platform specific bits out of PlatformEvents
+        https://bugs.webkit.org/show_bug.cgi?id=75063
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView menuForEvent:]):
+        (-[WebHTMLView acceptsFirstMouse:]):
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):
+        (currentKeyboardEvent):
+        (-[WebHTMLView flagsChanged:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+        * WebView/WebView.mm:
+
 2011-12-21  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: suppress incremental rendering and use application chrome mode

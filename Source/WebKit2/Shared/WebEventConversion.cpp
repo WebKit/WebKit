@@ -49,10 +49,16 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
+        m_modifiers = 0;
+        if (webEvent.shiftKey())
+            m_modifiers |= ShiftKey;
+        if (webEvent.controlKey())
+            m_modifiers |= CtrlKey;
+        if (webEvent.altKey())
+            m_modifiers |= AltKey;
+        if (webEvent.altKey())
+            m_modifiers |= MetaKey;
+
         m_timestamp = webEvent.timestamp();
 
         // PlatformMouseEvent
@@ -78,13 +84,13 @@ public:
         m_clickCount = webEvent.clickCount();
 
         m_modifierFlags = 0;
-        if (m_shiftKey)
+        if (webEvent.shiftKey())
             m_modifierFlags |= WebEvent::ShiftKey;
-        if (m_ctrlKey)
+        if (webEvent.controlKey())
             m_modifierFlags |= WebEvent::ControlKey;
-        if (m_altKey)
+        if (webEvent.altKey())
             m_modifierFlags |= WebEvent::AltKey;
-        if (m_metaKey)
+        if (webEvent.altKey())
             m_modifierFlags |= WebEvent::MetaKey;
 
 #if PLATFORM(WIN)
@@ -104,10 +110,17 @@ public:
     {
         // PlatformEvent
         m_type = PlatformEvent::Wheel;
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
+
+        m_modifiers = 0;
+        if (webEvent.shiftKey())
+            m_modifiers |= ShiftKey;
+        if (webEvent.controlKey())
+            m_modifiers |= CtrlKey;
+        if (webEvent.altKey())
+            m_modifiers |= AltKey;
+        if (webEvent.altKey())
+            m_modifiers |= MetaKey;
+
         m_timestamp = webEvent.timestamp();
 
         // PlatformWheelEvent
@@ -154,10 +167,16 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
+        m_modifiers = 0;
+        if (webEvent.shiftKey())
+            m_modifiers |= ShiftKey;
+        if (webEvent.controlKey())
+            m_modifiers |= CtrlKey;
+        if (webEvent.altKey())
+            m_modifiers |= AltKey;
+        if (webEvent.altKey())
+            m_modifiers |= MetaKey;
+
         m_timestamp = webEvent.timestamp();
 
         // PlatformKeyboardEvent
@@ -166,14 +185,10 @@ public:
         m_keyIdentifier = webEvent.keyIdentifier();
         m_windowsVirtualKeyCode = webEvent.windowsVirtualKeyCode();
         m_nativeVirtualKeyCode = webEvent.nativeVirtualKeyCode();
+        m_macCharCode = webEvent.macCharCode();
         m_autoRepeat = webEvent.isAutoRepeat();
         m_isKeypad = webEvent.isKeypad();
-        
-#if PLATFORM(WIN)
-        // FIXME: We should make m_isSystemKey available (and false) on all platforms
-        // to avoid this #define. 
         m_isSystemKey = webEvent.isSystemKey();
-#endif
     }
 };
 
@@ -202,10 +217,16 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_shiftKey = webEvent.shiftKey();
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_metaKey = webEvent.metaKey();
+        m_modifiers = 0;
+        if (webEvent.shiftKey())
+            m_modifiers |= ShiftKey;
+        if (webEvent.controlKey())
+            m_modifiers |= CtrlKey;
+        if (webEvent.altKey())
+            m_modifiers |= AltKey;
+        if (webEvent.altKey())
+            m_modifiers |= MetaKey;
+
         m_timestamp = webEvent.timestamp();
 
         // PlatformGestureEvent
@@ -274,10 +295,16 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_ctrlKey = webEvent.controlKey();
-        m_altKey = webEvent.altKey();
-        m_shiftKey = webEvent.shiftKey();
-        m_metaKey = webEvent.metaKey();
+        m_modifiers = 0;
+        if (webEvent.shiftKey())
+            m_modifiers |= ShiftKey;
+        if (webEvent.controlKey())
+            m_modifiers |= CtrlKey;
+        if (webEvent.altKey())
+            m_modifiers |= AltKey;
+        if (webEvent.altKey())
+            m_modifiers |= MetaKey;
+
         m_timestamp = webEvent.timestamp();
 
         // PlatformTouchEvent

@@ -1,3 +1,20 @@
+2011-12-21  Sam Weinig  <sam@webkit.org>
+
+        Start extracting platform specific bits out of PlatformEvents
+        https://bugs.webkit.org/show_bug.cgi?id=75063
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        * UIProcess/API/mac/WKView.mm:
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-12-22  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Use HashMap instead of Vector in the builtin bundle

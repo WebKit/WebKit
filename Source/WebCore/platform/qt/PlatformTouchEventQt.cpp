@@ -46,10 +46,16 @@ PlatformTouchEvent::PlatformTouchEvent(QTouchEvent* event)
     for (int i = 0; i < points.count(); ++i)
         m_touchPoints.append(PlatformTouchPoint(points.at(i)));
 
-    m_ctrlKey = (event->modifiers() & Qt::ControlModifier);
-    m_altKey = (event->modifiers() & Qt::AltModifier);
-    m_shiftKey = (event->modifiers() & Qt::ShiftModifier);
-    m_metaKey = (event->modifiers() & Qt::MetaModifier);
+    m_modifiers = 0;
+    if (event->modifiers()  & Qt::ShiftModifier)
+        m_modifiers |= ShiftKey;
+    if (event->modifiers()  & Qt::ControlModifier)
+        m_modifiers |= CtrlKey;
+    if (event->modifiers()  & Qt::AltModifier)
+        m_modifiers |= AltKey;
+    if (event->modifiers()  & Qt::MetaModifier)
+        m_modifiers |= MetaKey;
+
     m_timestamp = WTF::currentTime();
 }
 

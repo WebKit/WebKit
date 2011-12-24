@@ -552,10 +552,12 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(GdkEventKey* event)
     , m_text(singleCharacterString(event->keyval))
     , m_unmodifiedText(singleCharacterString(event->keyval))
     , m_keyIdentifier(keyIdentifierForGdkKeyCode(event->keyval))
-    , m_autoRepeat(false)
     , m_windowsVirtualKeyCode(windowsKeyCodeForGdkKeyCode(event->keyval))
     , m_nativeVirtualKeyCode(event->keyval)
+    , m_macCharCode(0)
+    , m_autoRepeat(false)
     , m_isKeypad(event->keyval >= GDK_KP_Space && event->keyval <= GDK_KP_9)
+    , m_isSystemKey(false)
     , m_gdkEventKey(event)
 {
 }

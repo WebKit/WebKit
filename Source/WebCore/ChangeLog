@@ -1,3 +1,109 @@
+2011-12-23  Sam Weinig  <sam@webkit.org>
+
+        Start extracting platform specific bits out of PlatformEvents
+        https://bugs.webkit.org/show_bug.cgi?id=75063
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        Update exports.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add factory, remove implementation files for mac PlatformWheelEvent
+        and PlatformMouseEvent.
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::wheelEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::currentPlatformMouseEvent):
+        Switch to use the factory.
+
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::shiftKey):
+        (WebCore::PlatformEvent::ctrlKey):
+        (WebCore::PlatformEvent::altKey):
+        (WebCore::PlatformEvent::metaKey):
+        (WebCore::PlatformEvent::modifiers):
+        (WebCore::PlatformEvent::PlatformEvent):
+        Switch to storing the modifiers as bits on an unsigned
+        instead of as individual bools.
+
+        * platform/PlatformGestureEvent.h:
+        Remove unused timestamp member.
+
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        (WebCore::PlatformKeyboardEvent::keyIdentifier):
+        (WebCore::PlatformKeyboardEvent::macCharCode):
+        (WebCore::PlatformKeyboardEvent::isSystemKey):
+        Give this class a more consistent interface across platforms,
+        and remove constructor that took an NSEvent.
+
+        * platform/PlatformMouseEvent.h:
+        Remove constructor that took an NSEvent (and an unused constructor that took
+        many arguments) as well as some free functions for point conversion.
+
+        * platform/PlatformWheelEvent.h:
+        Remove constructor that took an NSEvent and an unnecessary override of the timestamp()
+        function.
+
+        * platform/mac/KeyEventMac.mm:
+        Removed constructor and moved helpers to PlatformEventFactory.
+
+        * platform/mac/PlatformEventFactory.h: Added.
+        * platform/mac/PlatformEventFactory.mm: Added.
+        (WebCore::globalPoint):
+        (WebCore::globalPointForEvent):
+        (WebCore::pointForEvent):
+        (WebCore::mouseButtonForEvent):
+        (WebCore::mouseEventTypeForEvent):
+        (WebCore::clickCountForEvent):
+        (WebCore::momentumPhaseForEvent):
+        (WebCore::phaseForEvent):
+        (WebCore::gestureEventTypeForEvent):
+        (WebCore::textFromEvent):
+        (WebCore::unmodifiedTextFromEvent):
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::isKeypadEvent):
+        (WebCore::windowsKeyCodeForKeyEvent):
+        (WebCore::isKeyUpEvent):
+        (WebCore::modifiersForEvent):
+        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformMouseEvent):
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformWheelEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformKeyboardEvent):
+        (WebCore::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        (WebCore::PlatformEventFactory::createPlatformGestureEvent):
+        Consolidate platform event creation logic and add factory functions.
+
+        * platform/mac/PlatformMouseEventMac.mm: Removed.
+        * platform/mac/WheelEventMac.mm: Removed.
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Expose wkGetNSEventKeyChar in WebCore.
+
+        * platform/gtk/PlatformKeyboardEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/gtk/PlatformMouseEventGtk.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/gtk/PlatformWheelEventGtk.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/qt/PlatformMouseEventQt.cpp:
+        (WebCore::mouseEventModifiersFromQtKeyboardModifiers):
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/qt/PlatformTouchEventQt.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/WheelEventWin.cpp:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        Update for new variables/names.
+
 2011-12-22  Andreas Kling  <kling@webkit.org>
 
         CSSParser: Avoid creating dummy declaration in parseColor() slow path.

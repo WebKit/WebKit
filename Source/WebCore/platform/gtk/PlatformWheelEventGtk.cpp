@@ -42,6 +42,16 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_type = PlatformEvent::Wheel;
     m_timestamp = currentTime();
 
+    m_modifiers = 0;
+    if (event->state & GDK_SHIFT_MASK)
+        m_modifiers |= ShiftKey;
+    if (event->state & GDK_CONTROL_MASK)
+        m_modifiers |= CtrlKey;
+    if (event->state & GDK_MOD1_MASK)
+        m_modifiers |= AltKey;
+    if (event->state & GDK_META_MASK)
+        m_modifiers |= MetaKey;
+
     m_deltaX = 0;
     m_deltaY = 0;
 
@@ -66,10 +76,6 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_position = IntPoint(static_cast<int>(event->x), static_cast<int>(event->y));
     m_globalPosition = IntPoint(static_cast<int>(event->x_root), static_cast<int>(event->y_root));
     m_granularity = ScrollByPixelWheelEvent;
-    m_shiftKey = event->state & GDK_SHIFT_MASK;
-    m_ctrlKey = event->state & GDK_CONTROL_MASK;
-    m_altKey = event->state & GDK_MOD1_MASK;
-    m_metaKey = event->state & GDK_META_MASK;
     m_directionInvertedFromDevice = false;
 
     // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event

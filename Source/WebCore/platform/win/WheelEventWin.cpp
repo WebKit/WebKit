@@ -113,7 +113,7 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
         m_wheelTicksX = 0;
         m_wheelTicksY = delta;
     }
-    if (isMouseHWheel || m_shiftKey) {
+    if (isMouseHWheel || shiftKey()) {
         m_deltaX = delta * static_cast<float>(horizontalScrollChars()) * cScrollbarPixelsPerLine;
         m_deltaY = 0;
         m_granularity = ScrollByPixelWheelEvent;

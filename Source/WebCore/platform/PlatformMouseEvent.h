@@ -119,12 +119,6 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(MAC)
-#if defined(__OBJC__)
-        PlatformMouseEvent(NSEvent *, NSView *windowView);
-#endif
-        PlatformMouseEvent(int x, int y, int globalX, int globalY, MouseButton, PlatformEvent::Type,
-                           int clickCount, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp,
-                           unsigned modifierFlags, int eventNumber);
         int eventNumber() const { return m_eventNumber; }
 #endif
 
@@ -159,12 +153,6 @@ namespace WebCore {
         bool m_didActivateWebView;
 #endif
     };
-
-#if PLATFORM(MAC) && defined(__OBJC__)
-    IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *);
-    IntPoint pointForEvent(NSEvent *, NSView *windowView);
-    IntPoint globalPointForEvent(NSEvent *);
-#endif
 
 } // namespace WebCore
 

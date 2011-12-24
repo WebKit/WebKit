@@ -104,7 +104,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/Page.h>
-#import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformEventFactory.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RenderView.h>
@@ -3108,7 +3108,7 @@ static void setMenuTargets(NSMenu* menu)
     _private->handlingMouseDownEvent = YES;
     page->contextMenuController()->clearContextMenu();
     coreFrame->eventHandler()->mouseDown(event);
-    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
+    BOOL handledEvent = coreFrame->eventHandler()->sendContextMenuEvent(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome()->platformPageClient()));
     _private->handlingMouseDownEvent = NO;
 
     if (!handledEvent)
@@ -3473,7 +3473,7 @@ static void setMenuTargets(NSMenu* menu)
             [hitHTMLView _setMouseDownEvent:event];
             if ([hitHTMLView _isSelectionEvent:event]) {
                 if (Page* page = coreFrame->page())
-                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
+                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome()->platformPageClient()));
             } else if ([hitHTMLView _isScrollBarEvent:event])
                 result = true;
             [hitHTMLView _setMouseDownEvent:nil];
@@ -3498,7 +3498,7 @@ static void setMenuTargets(NSMenu* menu)
             if (Frame* coreFrame = core([hitHTMLView _frame])) {
                 [hitHTMLView _setMouseDownEvent:event];
                 if (Page* page = coreFrame->page())
-                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformMouseEvent(event, page->chrome()->platformPageClient()));
+                    result = coreFrame->eventHandler()->eventMayStartDrag(PlatformEventFactory::createPlatformMouseEvent(event, page->chrome()->platformPageClient()));
                 [hitHTMLView _setMouseDownEvent:nil];
             }
         }
@@ -3738,12 +3738,12 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     switch ([event type]) {
     case NSKeyDown: {
-        PlatformKeyboardEvent platformEvent(event);
+        PlatformKeyboardEvent platformEvent = PlatformEventFactory::createPlatformKeyboardEvent(event);
         platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         return KeyboardEvent::create(platformEvent, coreFrame->document()->defaultView());
     }
     case NSKeyUp:
-        return KeyboardEvent::create(event, coreFrame->document()->defaultView());
+        return KeyboardEvent::create(PlatformEventFactory::createPlatformKeyboardEvent(event), coreFrame->document()->defaultView());
     default:
         return 0;
     }
@@ -4141,7 +4141,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
     // Don't make an event from the num lock and function keys.
     if (coreFrame && keyCode != 0 && keyCode != 10 && keyCode != 63) {
-        coreFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
+        coreFrame->eventHandler()->keyEvent(PlatformEventFactory::createPlatformKeyboardEvent(event));
         return;
     }
         

@@ -58,7 +58,7 @@
 #import <WebCore/KURL.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
-#import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformEventFactory.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
@@ -959,7 +959,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
             button = [nsEvent buttonNumber];
             break;
         case NSKeyDown: {
-            PlatformKeyboardEvent pe(nsEvent);
+            PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
             pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
             event = KeyboardEvent::create(eventNames().keydownEvent, true, true, 0,
                 pe.keyIdentifier(), pe.windowsVirtualKeyCode(),

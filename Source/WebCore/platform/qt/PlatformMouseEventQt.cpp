@@ -35,12 +35,17 @@
 
 namespace WebCore {
 
-static void mouseEventModifiersFromQtKeyboardModifiers(Qt::KeyboardModifiers keyboardModifiers, bool& altKey, bool& ctrlKey, bool& metaKey, bool& shiftKey)
+static void mouseEventModifiersFromQtKeyboardModifiers(Qt::KeyboardModifiers keyboardModifiers, unsigned& modifiers)
 {
-    altKey = keyboardModifiers & Qt::AltModifier;
-    ctrlKey = keyboardModifiers & Qt::ControlModifier;
-    metaKey = keyboardModifiers & Qt::MetaModifier;
-    shiftKey = keyboardModifiers & Qt::ShiftModifier;
+    modifiers = 0;
+    if (keyboardModifiers & Qt::ShiftModifier)
+        modifiers |= PlatformEvent::ShiftKey;
+    if (keyboardModifiers & Qt::ControlModifier)
+        modifiers |= PlatformEvent::CtrlKey;
+    if (keyboardModifiers & Qt::AltModifier)
+        modifiers |= PlatformEvent::AltKey;
+    if (keyboardModifiers & Qt::MetaModifier)
+        modifiers |= PlatformEvent::MetaKey;
 }
 
 static void mouseEventTypeAndMouseButtonFromQEvent(const QEvent* event, PlatformEvent::Type& mouseEventType, MouseButton& mouseButton)
@@ -121,7 +126,7 @@ PlatformMouseEvent::PlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clic
     m_globalPosition = IntPoint(event->screenPos());
 
     m_clickCount = clickCount;
-    mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_altKey, m_ctrlKey, m_metaKey, m_shiftKey);
+    mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_modifiers);
 }
 #endif // QT_NO_GRAPHICSVIEW
 
@@ -151,7 +156,7 @@ PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
     }
 
     m_clickCount = clickCount;
-    mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_altKey, m_ctrlKey, m_metaKey, m_shiftKey);
+    mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_modifiers);
 }
 
 }

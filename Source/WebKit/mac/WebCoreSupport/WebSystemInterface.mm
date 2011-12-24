@@ -67,6 +67,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SignedPublicKeyAndChallengeString);
     INIT(GetPreferredExtensionForMIMEType);
     INIT(GetWheelEventDeltas);
+    INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);
     INIT(InitializeMaximumHTTPConnectionCountPerHost);
     INIT(MeasureMediaUIPart);

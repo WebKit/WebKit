@@ -154,17 +154,10 @@ namespace WebCore {
         PlatformWheelEvent(const Evas_Event_Mouse_Wheel*);
 #endif
 
-#if PLATFORM(MAC)
-#if defined(__OBJC__)
-        PlatformWheelEvent(NSEvent *, NSView *windowView);
-#endif
-#endif
-
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
         PlatformWheelEventPhase phase() const { return m_phase; }
         PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
         bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
-        double timestamp() const { return m_timestamp; }
 #endif
 
 #if PLATFORM(QT)

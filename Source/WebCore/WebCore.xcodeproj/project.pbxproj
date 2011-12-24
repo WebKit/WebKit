@@ -519,7 +519,6 @@
 		1ABFE7530CD968D000FE4834 /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ABFE7520CD968D000FE4834 /* SQLTransaction.cpp */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
-		1AC6926A14A1253200BD85F1 /* ScrollableAreaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC6926914A1253100BD85F1 /* ScrollableAreaClient.h */; };
 		1ACD1B630B029739007E5016 /* DOMCSSStyleDeclarationInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85E711440AC5D5340053270F /* DOMCSSStyleDeclarationInternal.h */; };
 		1ACE53DF0A8D18810022947D /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE53DD0A8D18810022947D /* JSDOMParser.cpp */; };
 		1ACE53E00A8D18810022947D /* JSDOMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACE53DE0A8D18810022947D /* JSDOMParser.h */; };
@@ -3121,8 +3120,6 @@
 		935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C476D09AC4D6300A6AAB4 /* FoundationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */; };
-		935C477109AC4D7300A6AAB4 /* PlatformMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */; };
-		935C477309AC4D7700A6AAB4 /* WheelEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */; };
 		935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C477409AC4D8D00A6AAB4 /* GapRects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935F45420F7C3B5F00D7C1FB /* JSLazyEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */; };
 		935F45430F7C3B5F00D7C1FB /* JSLazyEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */; };
@@ -5251,6 +5248,8 @@
 		BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */; };
 		BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */; };
 		BCA8CA6011E4E6D100812FB7 /* BackForwardListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCAA486F14A052530088FAC4 /* PlatformEventFactory.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAA486D14A052530088FAC4 /* PlatformEventFactory.mm */; };
+		BCAA487014A052530088FAC4 /* PlatformEventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAA486E14A052530088FAC4 /* PlatformEventFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCAA90C30A7EBA60008B1229 /* Scrollbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */; };
 		BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAB417F13E356E800D8AAF3 /* Region.cpp */; };
 		BCAB418213E356E800D8AAF3 /* Region.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAB418013E356E800D8AAF3 /* Region.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10387,8 +10386,6 @@
 		935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWheelEvent.h; sourceTree = "<group>"; };
 		935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoundationExtras.h; sourceTree = "<group>"; };
 		935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KeyEventMac.mm; sourceTree = "<group>"; };
-		935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformMouseEventMac.mm; sourceTree = "<group>"; };
-		935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WheelEventMac.mm; sourceTree = "<group>"; };
 		935C477409AC4D8D00A6AAB4 /* GapRects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapRects.h; sourceTree = "<group>"; };
 		935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLazyEventListener.cpp; sourceTree = "<group>"; };
 		935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSLazyEventListener.h; sourceTree = "<group>"; };
@@ -12622,6 +12619,8 @@
 		BCA8C81D11E3D36900812FB7 /* BackForwardController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardController.cpp; sourceTree = "<group>"; };
 		BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardListImpl.cpp; sourceTree = "<group>"; };
 		BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardListImpl.h; sourceTree = "<group>"; };
+		BCAA486D14A052530088FAC4 /* PlatformEventFactory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformEventFactory.mm; sourceTree = "<group>"; };
+		BCAA486E14A052530088FAC4 /* PlatformEventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEventFactory.h; sourceTree = "<group>"; };
 		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Scrollbar.cpp; sourceTree = "<group>"; };
 		BCAB417F13E356E800D8AAF3 /* Region.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Region.cpp; sourceTree = "<group>"; };
 		BCAB418013E356E800D8AAF3 /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
@@ -15616,7 +15615,6 @@
 				52F52E1014A0134F00ACC397 /* NSScrollerImpDetails.mm */,
 				A7D3C5230B576B4B002CA450 /* PasteboardHelper.h */,
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
-				935C476F09AC4D7300A6AAB4 /* PlatformMouseEventMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
 				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
@@ -15659,10 +15657,11 @@
 				CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */,
 				CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */,
 				CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */,
-				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 				CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */,
 				CDEA762F146084EE008B31F1 /* PlatformClockCA.h */,
+				BCAA486D14A052530088FAC4 /* PlatformEventFactory.mm */,
+				BCAA486E14A052530088FAC4 /* PlatformEventFactory.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -24965,9 +24964,9 @@
 				1A2F9D7A14968C740065AC63 /* ScrollingCoordinator.h in Headers */,
 				1AA7160B149BC4DB0016EC19 /* TileCache.h in Headers */,
 				C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */,
-				1AC6926A14A1253200BD85F1 /* ScrollableAreaClient.h in Headers */,
 				FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */,
 				FD00D7A514A3F61900734011 /* SincResampler.h in Headers */,
+				BCAA487014A052530088FAC4 /* PlatformEventFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -27081,7 +27080,6 @@
 				4958782112A57DDF007238AC /* PlatformCAAnimationMac.mm in Sources */,
 				4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */,
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
-				935C477109AC4D7300A6AAB4 /* PlatformMouseEventMac.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
@@ -27692,7 +27690,6 @@
 				CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */,
 				F55B3DDF1251F12D003EF269 /* WeekInputType.cpp in Sources */,
 				85031B500A44EFC700F992E0 /* WheelEvent.cpp in Sources */,
-				935C477309AC4D7700A6AAB4 /* WheelEventMac.mm in Sources */,
 				9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */,
 				9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */,
 				939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */,
@@ -27874,6 +27871,7 @@
 				52F52E1114A0134F00ACC397 /* NSScrollerImpDetails.mm in Sources */,
 				FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */,
 				FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */,
+				BCAA486F14A052530088FAC4 /* PlatformEventFactory.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

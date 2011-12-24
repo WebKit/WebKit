@@ -67,7 +67,7 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/PlatformEventFactory.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Region.h>
 #import <WebKitSystemInterface.h>

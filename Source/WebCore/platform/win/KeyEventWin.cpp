@@ -194,9 +194,10 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
     , m_text((type == PlatformEvent::Char) ? singleCharacterString(code) : String())
     , m_unmodifiedText((type == PlatformEvent::Char) ? singleCharacterString(code) : String())
     , m_keyIdentifier((type == PlatformEvent::Char) ? String() : keyIdentifierForWindowsKeyCode(code))
-    , m_autoRepeat(HIWORD(keyData) & KF_REPEAT)
     , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? code : 0)
     , m_nativeVirtualKeyCode(m_windowsVirtualKeyCode)
+    , m_macCharCode(0)
+    , m_autoRepeat(HIWORD(keyData) & KF_REPEAT)
     , m_isKeypad(isKeypadEvent(code, keyData, type))
     , m_isSystemKey(systemKey)
 {

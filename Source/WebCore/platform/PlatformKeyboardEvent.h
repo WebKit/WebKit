@@ -70,19 +70,32 @@ namespace WebCore {
     public:
         PlatformKeyboardEvent()
             : PlatformEvent(PlatformEvent::KeyDown)
-            , m_autoRepeat(false)
             , m_windowsVirtualKeyCode(0)
             , m_nativeVirtualKeyCode(0)
+            , m_macCharCode(0)
+            , m_autoRepeat(false)
             , m_isKeypad(false)
-#if PLATFORM(WIN) || PLATFORM(CHROMIUM)
             , m_isSystemKey(false)
-#endif
 #if PLATFORM(GTK)
             , m_gdkEventKey(0)
 #endif
 #if PLATFORM(QT)
             , m_qtEvent(0)
 #endif
+        {
+        }
+
+        PlatformKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, int macCharCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)
+            : PlatformEvent(type, modifiers, timestamp)
+            , m_text(text)
+            , m_unmodifiedText(unmodifiedText)
+            , m_keyIdentifier(keyIdentifier)
+            , m_windowsVirtualKeyCode(windowsVirtualKeyCode)
+            , m_nativeVirtualKeyCode(nativeVirtualKeyCode)
+            , m_macCharCode(macCharCode)
+            , m_autoRepeat(isAutoRepeat)
+            , m_isKeypad(isKeypad)
+            , m_isSystemKey(isSystemKey)
         {
         }
 
@@ -101,24 +114,24 @@ namespace WebCore {
         // Otherwise, same as text().
         String unmodifiedText() const { return m_unmodifiedText; }
 
+        String keyIdentifier() const { return m_keyIdentifier; }
+
         // Most compatible Windows virtual key code associated with the event.
         // Zero for Char events.
         int windowsVirtualKeyCode() const { return m_windowsVirtualKeyCode; }
         void setWindowsVirtualKeyCode(int code) { m_windowsVirtualKeyCode = code; }
 
         int nativeVirtualKeyCode() const { return m_nativeVirtualKeyCode; }
-        void setNativeVirtualKeyCode(int code) { m_nativeVirtualKeyCode = code; }
+        int macCharCode() const { return m_macCharCode; }
 
-        String keyIdentifier() const { return m_keyIdentifier; }
         bool isAutoRepeat() const { return m_autoRepeat; }
-        void setIsAutoRepeat(bool in) { m_autoRepeat = in; }
         bool isKeypad() const { return m_isKeypad; }
+        bool isSystemKey() const { return m_isSystemKey; }
 
         static bool currentCapsLockState();
         static void getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey);
 
 #if PLATFORM(MAC)
-        PlatformKeyboardEvent(NSEvent*);
         NSEvent* macEvent() const { return m_macEvent.get(); }
 #endif
 
@@ -147,10 +160,6 @@ namespace WebCore {
         PlatformKeyboardEvent(wxKeyEvent&);
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(CHROMIUM)
-        bool isSystemKey() const { return m_isSystemKey; }
-#endif
-
 #if PLATFORM(EFL)
         PlatformKeyboardEvent(const Evas_Event_Key_Down*);
         PlatformKeyboardEvent(const Evas_Event_Key_Up*);
@@ -160,16 +169,15 @@ namespace WebCore {
         String m_text;
         String m_unmodifiedText;
         String m_keyIdentifier;
-        bool m_autoRepeat;
         int m_windowsVirtualKeyCode;
         int m_nativeVirtualKeyCode;
+        int m_macCharCode;
+        bool m_autoRepeat;
         bool m_isKeypad;
+        bool m_isSystemKey;
 
 #if PLATFORM(MAC)
         RetainPtr<NSEvent> m_macEvent;
-#endif
-#if PLATFORM(WIN) || PLATFORM(CHROMIUM)
-        bool m_isSystemKey;
 #endif
 #if PLATFORM(GTK)
         GdkEventKey* m_gdkEventKey;

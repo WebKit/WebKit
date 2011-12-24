@@ -60,7 +60,6 @@ public:
 protected:
     IntPoint m_position;
     IntPoint m_globalPosition;
-    double m_timestamp;
     float m_deltaX;
     float m_deltaY;
 };

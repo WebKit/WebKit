@@ -1,3 +1,17 @@
+2011-12-23  Sam Weinig  <sam@webkit.org>
+
+        Start extracting platform specific bits out of PlatformEvents
+        https://bugs.webkit.org/show_bug.cgi?id=75063
+
+        Reviewed by Anders Carlsson.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        (WebKit::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebKit::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+
 2011-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Chromium DEPS from 115012 to 115743.

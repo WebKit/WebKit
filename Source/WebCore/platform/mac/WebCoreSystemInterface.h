@@ -172,6 +172,7 @@ extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response)
 extern NSDate *(*wkGetNSURLResponseLastModifiedDate)(NSURLResponse *response);
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
+extern UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
 extern BOOL (*wkHitTestMediaUIPart)(int part, int themeStyle, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 extern NSView *(*wkCreateMediaUIBackgroundView)(void);
