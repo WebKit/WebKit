@@ -523,3 +523,15 @@ fast/forms/select/menulist-popup-crash.html
 # Frame::findString does nothing on pages that prevent selection
 # https://bugs.webkit.org/show_bug.cgi?id=40361
 editing/text-iterator/findString-selection-disabled.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=75184
+media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_1.html
+media/W3C/audio/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+media/W3C/video/canPlayType/canPlayType_codecs_order_2.html
+media/W3C/video/canPlayType/canPlayType_codecs_order_3.html
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_2.html
+media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_3.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_3.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_4.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_5.html
+media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html
