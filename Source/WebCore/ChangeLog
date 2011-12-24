@@ -1,3 +1,18 @@
+2011-12-24  Andreas Kling  <awesomekling@apple.com>
+
+        RenderStyle: Inline the destructor.
+        <http://webkit.org/b/75188>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The (empty) RenderStyle destructor gets a little hot sometimes, reaching up
+        to 0.4% when loading the full HTML5 spec. Inline it to remove the pointless
+        function call.
+
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyleBitfields::~RenderStyle):
+
 2011-12-23  Noel Gordon  <noel.gordon@gmail.com>
 
         JPEG decoders should only save color profile markers if color management is enabled

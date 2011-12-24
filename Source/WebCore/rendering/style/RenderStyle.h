@@ -387,7 +387,7 @@ public:
     static PassRefPtr<RenderStyle> createAnonymousStyle(const RenderStyle* parentStyle);
     static PassRefPtr<RenderStyle> clone(const RenderStyle*);
 
-    ~RenderStyle();
+    ~RenderStyle() { }
 
     void inheritFrom(const RenderStyle* inheritParent);
     void copyNonInheritedFrom(const RenderStyle*);

@@ -193,10 +193,6 @@ void RenderStyle::copyNonInheritedFrom(const RenderStyle* other)
     ASSERT(zoom() == initialZoom());
 }
 
-RenderStyle::~RenderStyle()
-{
-}
-
 bool RenderStyle::operator==(const RenderStyle& o) const
 {
     // compare everything except the pseudoStyle pointer
