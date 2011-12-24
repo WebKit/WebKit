@@ -1,5 +1,14 @@
 2011-12-24  Andreas Kling  <awesomekling@apple.com>
 
+        Remove empty inline RenderStyle destructor.
+        <http://webkit.org/b/75188>
+
+        Rubber-stamped by Anders "Ordvits" Carlsson.
+
+        * rendering/style/RenderStyle.h:
+
+2011-12-24  Andreas Kling  <awesomekling@apple.com>
+
         RenderStyle: Inline the destructor.
         <http://webkit.org/b/75188>
 
