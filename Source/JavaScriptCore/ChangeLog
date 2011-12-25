@@ -1,3 +1,17 @@
+2011-12-25  Andreas Kling  <awesomekling@apple.com>
+
+        Yarr: Avoid copying vectors in CharacterClassConstructor.
+        <http://webkit.org/b/75206>
+
+        Reviewed by Darin Adler.
+
+        Yarr::CharacterClassConstructor::charClass() was hot when loading twitter
+        feeds (1.2%), replace the usage of Vector::append() by swap() since we're
+        always clearing the source vector afterwards anyway.
+
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+
 2011-12-24  Darin Adler  <darin@apple.com>
 
         Specialize HashTraits for RefPtr to use PassRefPtr as "pass type" to reduce reference count churn

@@ -144,12 +144,10 @@ public:
     {
         CharacterClass* characterClass = new CharacterClass(0);
 
-        characterClass->m_matches.append(m_matches);
-        characterClass->m_ranges.append(m_ranges);
-        characterClass->m_matchesUnicode.append(m_matchesUnicode);
-        characterClass->m_rangesUnicode.append(m_rangesUnicode);
-
-        reset();
+        characterClass->m_matches.swap(m_matches);
+        characterClass->m_ranges.swap(m_ranges);
+        characterClass->m_matchesUnicode.swap(m_matchesUnicode);
+        characterClass->m_rangesUnicode.swap(m_rangesUnicode);
 
         return characterClass;
     }
