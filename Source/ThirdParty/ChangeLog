@@ -1,3 +1,7 @@
+2011-12-25  Darin Adler  <darin@apple.com>
+
+        * gtest/xcode/gtest.xcodeproj: Added property svn:ignore.
+
 2011-11-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         100,000 !!!
