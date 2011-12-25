@@ -1,3 +1,16 @@
+2011-12-25  Darin Adler  <darin@apple.com>
+
+        Change CSS canvas code that does HashMap get/set to use the more efficient add idiom
+        https://bugs.webkit.org/show_bug.cgi?id=75204
+
+        Reviewed by Dan Bernstein.
+
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext): Change local variable name of element to
+        element; it's not the function result, so not good to name it result.
+        (WebCore::Document::getCSSCanvasElement): Use add instead of get/set so we only do
+        one hash table lookup.
+
 2011-12-24  Andreas Kling  <awesomekling@apple.com>
 
         CSSElementStyleDeclarations should never move between elements.

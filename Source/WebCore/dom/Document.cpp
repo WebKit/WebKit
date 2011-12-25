@@ -4674,21 +4674,19 @@ void Document::detachRange(Range* range)
 
 CanvasRenderingContext* Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
 {
-    HTMLCanvasElement* result = getCSSCanvasElement(name);
-    if (!result)
+    HTMLCanvasElement* element = getCSSCanvasElement(name);
+    if (!element)
         return 0;
-    result->setSize(IntSize(width, height));
-    return result->getContext(type);
+    element->setSize(IntSize(width, height));
+    return element->getContext(type);
 }
 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)
 {
-    RefPtr<HTMLCanvasElement> result = m_cssCanvasElements.get(name).get();
-    if (!result) {
-        result = HTMLCanvasElement::create(this);
-        m_cssCanvasElements.set(name, result);
-    }
-    return result.get();
+    RefPtr<HTMLCanvasElement>& element = m_cssCanvasElements.add(name, 0).first->second;
+    if (!element)
+        element = HTMLCanvasElement::create(this);
+    return element.get();
 }
 
 void Document::initDNSPrefetch()
