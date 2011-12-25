@@ -33,7 +33,8 @@ use lib File::Spec->catdir($FindBin::Bin, "..");
 use LoadAsModule qw(PrepareChangeLog prepare-ChangeLog);
 
 my %testFiles = ("perl_unittests.pl" => "perl",
-                 "python_unittests.py" => "python");
+                 "python_unittests.py" => "python",
+                 "java_unittests.java" => "java");
 
 my $resetResults;
 GetOptions('reset-results' => \$resetResults);

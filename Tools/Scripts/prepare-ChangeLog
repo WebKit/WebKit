@@ -909,6 +909,7 @@ sub get_function_line_ranges_for_java($$)
     my $in_braces = 0;
     my $in_non_block_braces = 0;
     my $class_or_interface_just_seen = 0;
+    my $in_class_declaration = 0;
 
     my $word = "";
 
@@ -977,6 +978,8 @@ sub get_function_line_ranges_for_java($$)
 
             # Open brace.
             if ($1 eq "{") {
+                $in_class_declaration = 0;
+
                 # Promote potential name to real function name at the
                 # start of the outer level set of braces (function/class/interface body?).
                 if (!$in_non_block_braces
@@ -1045,7 +1048,10 @@ sub get_function_line_ranges_for_java($$)
                 next;
             }
 
-            if ($1 eq "class" or $1 eq "interface") {
+            if ($1 eq "class") {
+                $in_class_declaration = 1;
+            }
+            if ($1 eq "class" or (!$in_class_declaration and $1 eq "interface")) {
                 $class_or_interface_just_seen = 1;
                 next;
             }

@@ -1,5 +1,73 @@
 2011-12-24  Kentaro Hara  <haraken@chromium.org>
 
+        Add unittests for the Java parser of prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=75195
+
+        Reviewed by Ryosuke Niwa.
+
+        java_unittests.java is unittest cases for get_function_line_ranges_for_java()
+        of prepare-ChangeLog.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_java): Fixed a parser bug.
+
+            interface I
+            {
+                void f()
+                {
+                }
+            }
+
+        should be recognized as "I.f", and
+
+            class C interface I
+            {
+                void f()
+                {
+                }
+            }
+
+        should be recognized as "C.f".
+        Without this patch, both are recognized as "I.f".
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/java_unittests-expected.txt: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/java_unittests.java: Added.
+        (Simple):
+        (Simple.func1):
+        (Simple.func2):
+        (Simple.func3):
+        (Simple.func4):
+        (Simple.func5):
+        (Simple.func6):
+        (Simple.func7):
+        (Simple.func8):
+        (Simple.func9):
+        (Simple.func10):
+        (Simple.funcOverloaded):
+        (Simple.func11):
+        (Simple.func12):
+        (Simple.func13):
+        (Simple.func14):
+        (Simple.func15):
+        (Simple.func16):
+        (Simple.func17):
+        (Simple.func18):
+        (Simple.func19):
+        (Simple.func20):
+        (Simple.func21):
+        (Derived1):
+        (Derived1.Derived1):
+        (Derived1.func22):
+        (Interface1):
+        (Interface2):
+        (Interface2.func23):
+        (Derived2):
+        (Derived2.Derived2):
+        (Derived2.func23):
+
+2011-12-24  Kentaro Hara  <haraken@chromium.org>
+
         Add unittests for the Python parser of prepare-ChangeLog
         https://bugs.webkit.org/show_bug.cgi?id=75197
 
