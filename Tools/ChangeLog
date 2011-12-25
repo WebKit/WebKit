@@ -1,3 +1,31 @@
+2011-12-24  Kentaro Hara  <haraken@chromium.org>
+
+        Add unittests for the Python parser of prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=75197
+
+        Reviewed by Ryosuke Niwa.
+
+        python_unittests.py is the unittest for get_function_line_ranges_for_python()
+        of prepare-ChangeLog. The unittest just contains classes and defs that are not nested.
+        This is because the current python parser is wrong, and it cannot correctly parse nested
+        classes and defs (even one def in a class), nor class inheritance.
+        We will fix it in another patch.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_python): Ignores comment lines that starts from #.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests-expected.txt: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests.py: Added.
+        (func1):
+        (func2):
+        (func3):
+        (funcInsideComment):
+        (func4):
+        (func5):
+        (func6):
+        (funcOverloaded):
+        (Class1):
+
 2011-12-24  Dan Bernstein  <mitz@apple.com>
 
         Set SHARED_PRECOMPS_DIR when Xcode is set to use a custom build product path.

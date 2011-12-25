@@ -1319,7 +1319,7 @@ sub get_function_line_ranges_for_python($$)
 
     my @scopeStack = ({ line => 0, indent => -1, name => undef });
     while (<$fileHandle>) {
-        next unless /^(\s*)(\S.*)$/;
+        next unless /^(\s*)([^#].*)$/;
         my $indent = length $1;
         my $rest = $2;
 
