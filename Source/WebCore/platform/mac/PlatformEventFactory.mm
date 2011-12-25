@@ -427,7 +427,7 @@ public:
         // PlatformWheelEvent
         m_position                          = pointForEvent(event, windowView);
         m_globalPosition                    = globalPointForEvent(event);
-        m_granularity                       = ScrollByPageWheelEvent;
+        m_granularity                       = ScrollByPixelWheelEvent;
 
         BOOL continuous;
         wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);

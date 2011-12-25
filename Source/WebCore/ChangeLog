@@ -1,3 +1,16 @@
+2011-12-25  Sam Weinig  <sam@webkit.org>
+
+        Fix tests failing as a result of r103643
+        https://bugs.webkit.org/show_bug.cgi?id=75209
+
+        Reviewed by Dan Bernstein.
+
+        Switch accidental switch of default scroll granularity from 
+        ScrollByPageWheelEvent back to ScrollByPixelWheelEvent.
+
+        * platform/mac/PlatformEventFactory.mm:
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+
 2011-12-25  Darin Adler  <darin@apple.com>
 
         Change CSS canvas code that does HashMap get/set to use the more efficient add idiom
