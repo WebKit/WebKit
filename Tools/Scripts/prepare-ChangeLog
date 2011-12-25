@@ -82,7 +82,7 @@ sub generateFunctionLists($$$$$);
 sub generateNewChangeLogs($$$$$$$$$$$);
 sub getLatestChangeLogs($);
 sub get_function_line_ranges($$);
-sub get_function_line_ranges_for_c($$);
+sub get_function_line_ranges_for_cpp($$);
 sub get_function_line_ranges_for_java($$);
 sub get_function_line_ranges_for_javascript($$);
 sub get_function_line_ranges_for_perl($$);
@@ -551,7 +551,7 @@ sub get_function_line_ranges($$)
 
     # Try to determine the source language based on the file extension.
 
-    return get_function_line_ranges_for_c($file_handle, $file_name) if $file_name =~ /\.(c|cpp|m|mm|h)$/;
+    return get_function_line_ranges_for_cpp($file_handle, $file_name) if $file_name =~ /\.(c|cpp|m|mm|h)$/;
     return get_function_line_ranges_for_java($file_handle, $file_name) if $file_name =~ /\.java$/;
     return get_function_line_ranges_for_javascript($file_handle, $file_name) if $file_name =~ /\.js$/;
     return get_selector_line_ranges_for_css($file_handle, $file_name) if $file_name =~ /\.css$/;
@@ -607,7 +607,7 @@ sub method_decl_to_selector($)
 #
 # Result is a list of triples: [ start_line, end_line, function_name ].
 
-sub get_function_line_ranges_for_c($$)
+sub get_function_line_ranges_for_cpp($$)
 {
     my ($file_handle, $file_name) = @_;
 

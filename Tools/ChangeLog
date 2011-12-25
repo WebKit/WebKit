@@ -1,5 +1,60 @@
 2011-12-24  Kentaro Hara  <haraken@chromium.org>
 
+        Add unittests for the C++ parser of prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=75191
+
+        Reviewed by Ryosuke Niwa.
+
+        cpp_unittests.cpp is the unittests for get_function_line_ranges_for_cpp()
+        of prepare-ChangeLog.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges): Renames get_function_line_ranges_for_c()
+        to get_function_line_ranges_for_cpp().
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/parser_unittests.pl:
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests-expected.txt: Added.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/cpp_unittests.cpp: Added.
+        (func1):
+        (func2):
+        (func3):
+        (func4):
+        (func5):
+        (func6):
+        (func7):
+        (func8):
+        (func9):
+        (func10):
+        (func11):
+        (func12):
+        (func13):
+        (func14):
+        (func15):
+        (funcOverloaded):
+        (Class::func16):
+        (Class1::Class2::func17):
+        (Class2::func18):
+        (Class2::func19):
+        (Class2::func20):
+        (Class2::func21):
+        (Class2::func22):
+        (func23):
+        (func24):
+        (Class2::func25):
+        (Class1::func26):
+        (Class2::func27):
+        (Class3::func28):
+        (Class7::operator+):
+        (Class100::Class100):
+        (Class101::~Class101):
+        (Class102::Class102):
+        (Class103::Class103):
+        (Struct1::func29):
+        (Struct2::func30):
+        (NameSpace1::func30):
+        (NameSpace1::NameSpace2::func31):
+
+2011-12-24  Kentaro Hara  <haraken@chromium.org>
+
         Add unittests for the Java parser of prepare-ChangeLog
         https://bugs.webkit.org/show_bug.cgi?id=75195
 
