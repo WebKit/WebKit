@@ -1,3 +1,53 @@
+2011-12-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement "Go to Function" dialog for JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=75092
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/JavaScriptOutlineDialog.js: Added.
+        (WebInspector.JavaScriptOutlineDialog.onMouseDown):
+        (WebInspector.JavaScriptOutlineDialog):
+        (WebInspector.JavaScriptOutlineDialog.didAddChunk):
+        (WebInspector.JavaScriptOutlineDialog.install):
+        (WebInspector.JavaScriptOutlineDialog._show):
+        (WebInspector.JavaScriptOutlineDialog.createShortcut):
+        (WebInspector.JavaScriptOutlineDialog.prototype._resizeWindow):
+        (WebInspector.JavaScriptOutlineDialog.prototype._appendItemElements):
+        (WebInspector.JavaScriptOutlineDialog.prototype._createSearchRegExp):
+        (WebInspector.JavaScriptOutlineDialog.prototype._filterFunctions):
+        (WebInspector.JavaScriptOutlineDialog.prototype._selectFirstItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype._hide):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onBlur):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onKeyDown.previousItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onKeyDown.nextItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onKeyDown):
+        (WebInspector.JavaScriptOutlineDialog.prototype._scheduleFilter):
+        (WebInspector.JavaScriptOutlineDialog.prototype._updateSelection):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onClick):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onMouseMove):
+        (WebInspector.JavaScriptOutlineDialog.prototype._highlightFunctionLine):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.get uiSourceCode):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._didBuildOutlineChunk):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype.requestVisibleScriptOutline):
+        (WebInspector.ScriptsPanel.prototype._createEditorToolbar):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/javaScriptOutlineDialog.css: Added.
+        (.js-outline-dialog):
+        (.js-outline-dialog > input):
+        (.js-outline-dialog > div.progress):
+        (.js-outline-dialog > div.container):
+        (.js-outline-dialog > .container > div.item):
+        (.js-outline-dialog > .container > div.item.selected):
+
 2011-12-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make SDK compilation component self-contained.

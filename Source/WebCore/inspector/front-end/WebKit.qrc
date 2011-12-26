@@ -72,6 +72,7 @@
     <file>InspectorView.js</file>
     <file>JavaScriptContextManager.js</file>
     <file>JavaScriptFormatter.js</file>
+    <file>JavaScriptOutlineDialog.js</file>
     <file>JavaScriptSourceFrame.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
@@ -164,6 +165,7 @@
     <file>inspector.css</file>
     <file>inspectorCommon.css</file>
     <file>inspectorSyntaxHighlight.css</file>
+    <file>javaScriptOutlineDialog.css</file>
     <file>networkLogView.css</file>
     <file>networkPanel.css</file>
     <file>panelEnablerView.css</file>

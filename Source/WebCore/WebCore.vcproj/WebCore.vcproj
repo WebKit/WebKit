@@ -71745,6 +71745,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\JavaScriptOutlineDialog.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\javaScriptOutlineDialog.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\JavaScriptSourceFrame.js"
 					>
 				</File>

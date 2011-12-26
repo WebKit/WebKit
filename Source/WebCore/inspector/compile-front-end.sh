@@ -110,7 +110,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/UIUtils.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/WelcomeView.js \
-    --module jsmodule_components:15:jsmodule_sdk,jsmodule_ui \
+    --module jsmodule_components:16:jsmodule_sdk,jsmodule_ui \
         --js Source/WebCore/inspector/front-end/ConsoleMessage.js \
         --js Source/WebCore/inspector/front-end/BreakpointsSidebarPane.js \
         --js Source/WebCore/inspector/front-end/DOMBreakpointsSidebarPane.js \
@@ -119,6 +119,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/EventListenersSidebarPane.js \
         --js Source/WebCore/inspector/front-end/GoToLineDialog.js \
         --js Source/WebCore/inspector/front-end/JavaScriptContextManager.js \
+        --js Source/WebCore/inspector/front-end/JavaScriptOutlineDialog.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
         --js Source/WebCore/inspector/front-end/SourceFrame.js \

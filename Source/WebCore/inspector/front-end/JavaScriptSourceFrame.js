@@ -53,6 +53,11 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, model, uiSourceCode)
 }
 
 WebInspector.JavaScriptSourceFrame.prototype = {
+    get uiSourceCode()
+    {
+        return this._uiSourceCode;
+    },
+
     // View events
     willHide: function()
     {

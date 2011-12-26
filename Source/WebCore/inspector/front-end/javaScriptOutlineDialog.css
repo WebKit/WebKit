@@ -1,0 +1,55 @@
+.js-outline-dialog {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    z-index: 1900;
+    overflow: hidden;
+
+    background-color: whitesmoke;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    -webkit-box-shadow: rgb(40,40,40) 0px 0px 50px;
+
+    font-size: 11px;
+    font-family: 'Lucida Grande', sans-serif;
+}
+
+.js-outline-dialog > input {
+    font-size: 11px;
+    width: 100%;
+    height: 24px;
+}
+
+.js-outline-dialog > div.progress {
+    position: absolute;
+    top: 35px;
+    left: 10px;
+    right: 10px;
+    height: 2px;
+}
+
+.js-outline-dialog > div.container {
+    position: absolute;
+    top: 38px;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    overflow-y: auto;
+    border: 1px solid rgb(187, 187, 187);
+    background-color: white;
+}
+
+.js-outline-dialog > .container > div.item {
+    padding: 2px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: rgb(105, 105, 105);
+}
+
+.js-outline-dialog > .container > div.item.selected {
+    background-color: rgb(224, 224, 224);
+}
