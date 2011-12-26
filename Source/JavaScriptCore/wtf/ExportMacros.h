@@ -84,6 +84,7 @@
 #endif
 
 #define WTF_EXPORT_HIDDEN WTF_HIDDEN
-#define WTF_INLINE WTF_EXPORT_HIDDEN inline
+
+#define HIDDEN_INLINE WTF_EXPORT_HIDDEN inline
 
 #endif // ExportMacros_h

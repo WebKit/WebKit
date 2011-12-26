@@ -70,6 +70,4 @@
 
 #endif // USE(EXPORT_MACROS)
 
-#define JS_INLINE JS_EXPORT_HIDDEN inline
-
 #endif // JSExportMacros_h

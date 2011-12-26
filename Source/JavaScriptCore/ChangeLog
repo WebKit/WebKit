@@ -1,3 +1,13 @@
+2011-12-26  Hajime Morrita  <morrita@google.com>
+
+        Rename WTF_INLINE, JS_INLINE to HIDDEN_INLINE
+        https://bugs.webkit.org/show_bug.cgi?id=74990
+
+        Reviewed by Kevin Ollivier.
+
+        * runtime/JSExportMacros.h: Removed JS_INLINE
+        * wtf/ExportMacros.h: Renamed WTF_INLINE to HIDDEN_INLINE
+
 2011-12-24  Filip Pizlo  <fpizlo@apple.com>
 
         The ArgumentCount field in the CallFrame should have its tag left blank for other uses
