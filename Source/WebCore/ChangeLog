@@ -1,3 +1,62 @@
+2011-12-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract FileSelector from ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=75173
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator):
+        (WebInspector.ScriptsNavigator.prototype.get defaultFocusedElement):
+        (WebInspector.ScriptsNavigator.prototype.show):
+        (WebInspector.ScriptsNavigator.prototype.setScriptSourceIsDirty):
+        (WebInspector.ScriptsNavigator.prototype.replaceUISourceCodes):
+        (WebInspector.ScriptsNavigator.prototype.scriptSelected):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.get defaultFocusedElement):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded.get if):
+        (WebInspector.ScriptsPanel.prototype.setScriptSourceIsBeingEdited):
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype._showSourceLine):
+        (WebInspector.ScriptsPanel.prototype._showAndRevealInFileSelector):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._updateExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._scriptSelected):
+        (WebInspector.ScriptsPanel.FileSelector):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.get defaultFocusedElement):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.show):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.addUISourceCode):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.isScriptSourceAdded):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.revealUISourceCode):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.setScriptSourceIsDirty):
+        (WebInspector.ScriptsPanel.FileSelector.prototype.replaceUISourceCodes):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.get defaultFocusedElement):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.show):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.showDebugSidebarResizeWidget):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.addUISourceCode):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.isScriptSourceAdded):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.revealUISourceCode):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._innerRevealUISourceCode):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addToHistory):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.replaceUISourceCodes):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._showScriptFoldersSettingChanged):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._reset):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype.setScriptSourceIsDirty):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._createEditorToolbar):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addOptionToFilesSelect.get var):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addOptionToFilesSelect.insertOrdered.optionCompare):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addOptionToFilesSelect.insertOrdered):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._resetFilesSelect):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._updateBackAndForwardButtons):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._goBack):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._goForward):
+        (WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype._filesSelectChanged):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-12-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Implement "Go to Function" dialog for JavaScript

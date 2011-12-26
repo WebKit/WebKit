@@ -27,17 +27,20 @@
  */
 
 /**
- * @extends {WebInspector.TabbedPane}
+ * @implements {WebInspector.ScriptsPanel.FileSelector}
+ * @extends {WebInspector.Object}
  * @constructor
  */
 WebInspector.ScriptsNavigator = function(presentationModel)
 {
-    WebInspector.TabbedPane.call(this);
-    this.shrinkableTabs = true;
+    WebInspector.Object.call(this);
+    
+    this._tabbedPane = new WebInspector.TabbedPane();
+    this._tabbedPane.shrinkableTabs = true;
 
     this._presentationModel = presentationModel;
 
-    this.element.id = "scripts-navigator-tabbed-pane";
+    this._tabbedPane.element.id = "scripts-navigator-tabbed-pane";
   
     this._navigatorScriptsTreeElement = document.createElement("ol");
     var scriptsView = new WebInspector.View();
@@ -45,8 +48,8 @@ WebInspector.ScriptsNavigator = function(presentationModel)
     scriptsView.element.addStyleClass("navigator");
     scriptsView.element.appendChild(this._navigatorScriptsTreeElement);
     this._navigatorScriptsTree = new WebInspector.NavigatorTreeOutline(this._navigatorScriptsTreeElement);
-    this.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Scripts"), scriptsView);
-    this.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
+    this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Scripts"), scriptsView);
+    this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
 
     this._navigatorContentScriptsTreeElement = document.createElement("ol");
     var contentScriptsView = new WebInspector.View();
@@ -54,7 +57,7 @@ WebInspector.ScriptsNavigator = function(presentationModel)
     contentScriptsView.element.addStyleClass("navigator");
     contentScriptsView.element.appendChild(this._navigatorContentScriptsTreeElement);
     this._navigatorContentScriptsTree = new WebInspector.NavigatorTreeOutline(this._navigatorContentScriptsTreeElement);
-    this.appendTab(WebInspector.ScriptsNavigator.ContentScriptsTab, WebInspector.UIString("Content scripts"), contentScriptsView);
+    this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ContentScriptsTab, WebInspector.UIString("Content scripts"), contentScriptsView);
 
     this._folderTreeElements = {};
     
@@ -69,16 +72,33 @@ WebInspector.ScriptsNavigator = function(presentationModel)
 WebInspector.ScriptsNavigator.ScriptsTab = "scripts";
 WebInspector.ScriptsNavigator.ContentScriptsTab = "contentScripts";
 
-WebInspector.ScriptsNavigator.Events = {
-    ScriptSelected: "ScriptSelected"
-}
-
 WebInspector.ScriptsNavigator.prototype = {
+    /**
+     * @type {Element}
+     */
+    get defaultFocusedElement()
+    {
+        return this._tabbedPane.element;
+    },
+
+    /**
+     * @param {Element} element
+     */
+    show: function(element)
+    {
+        this._tabbedPane.show(element);
+    },
+
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
     addUISourceCode: function(uiSourceCode)
     {
+        if (this._scriptTreeElementsByUISourceCode.get(uiSourceCode))
+            return;
+        
+        // FIXME: We should have a separate section for anonymous scripts.
+        
         var scriptTitle = uiSourceCode.displayName ? uiSourceCode.displayName : WebInspector.UIString("(program)");
         var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, scriptTitle);
         this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
@@ -89,21 +109,51 @@ WebInspector.ScriptsNavigator.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {boolean}
+     */
+    isScriptSourceAdded: function(uiSourceCode)
+    {
+        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        return !!scriptTreeElement;
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
      */
     revealUISourceCode: function(uiSourceCode)
     {
         this._lastSelectedUISourceCode = uiSourceCode;
-        this.selectTab(uiSourceCode.isContentScript ? WebInspector.ScriptsNavigator.ContentScriptsTab : WebInspector.ScriptsNavigator.ScriptsTab);
-        this._scriptTreeElementsByUISourceCode.get(uiSourceCode).revealAndSelect();
+        this._tabbedPane.selectTab(uiSourceCode.isContentScript ? WebInspector.ScriptsNavigator.ContentScriptsTab : WebInspector.ScriptsNavigator.ScriptsTab);
+
+        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        scriptTreeElement.revealAndSelect();
     },
-    
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean} isDirty
+     */
+    setScriptSourceIsDirty: function(uiSourceCode, isDirty)
+    {
+        // FIXME: implement
+    },
+
+    /**
+     * @param {Array.<WebInspector.UISourceCode>} oldUISourceCodeList
+     * @param {Array.<WebInspector.UISourceCode>} uiSourceCodeList
+     */
+    replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList)
+    {
+        // FIXME: implement
+    },
+
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
     scriptSelected: function(uiSourceCode)
     {
         this._lastSelectedUISourceCode = uiSourceCode;
-        this.dispatchEventToListeners(WebInspector.ScriptsNavigator.Events.ScriptSelected, uiSourceCode);
+        this.dispatchEventToListeners(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, uiSourceCode);
     },
     
     /**
@@ -186,7 +236,7 @@ WebInspector.ScriptsNavigator.prototype = {
     }
 }
 
-WebInspector.ScriptsNavigator.prototype.__proto__ = WebInspector.TabbedPane.prototype;
+WebInspector.ScriptsNavigator.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor

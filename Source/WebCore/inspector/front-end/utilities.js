@@ -1170,6 +1170,14 @@ Map.prototype = {
         delete this._map[key.__identifier];
     },
     
+    keys: function()
+    {
+        var result = [];
+        for (var key in this._map)
+            result.push(key);
+        return result;
+    },
+    
     /**
      * @param {Object} key
      */

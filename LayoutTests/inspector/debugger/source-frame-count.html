@@ -14,7 +14,7 @@ function test()
         function testSourceFramesCount(next)
         {
             var panel = WebInspector.panels.scripts;
-            var select = panel._filesSelectElement;
+            var select = panel._fileSelector._filesSelectElement;
             var sourceFrameCount = 0;
 
             InspectorTest.showScriptSource("source-frame-count.html", didShowScriptSource);

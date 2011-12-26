@@ -30,12 +30,12 @@ function test()
 
     function showSourceFrame(panel, fileName)
     {
-        var select = panel._filesSelectElement;
+        var select = panel._fileSelector._filesSelectElement;
         for (var i = 0; i < select.length; ++i) {
             if (select[i].text.indexOf(fileName) === -1)
                 continue;
             select.selectedIndex = i;
-            panel._filesSelectChanged();
+            panel._fileSelector._filesSelectChanged();
             break;
         }
     }
@@ -52,7 +52,7 @@ function test()
             panel._uiSourceCodeAdded({ data: createUISouceCode("baz.js") });
 
             InspectorTest.addResult("Dump files select:");
-            var select = panel._filesSelectElement;
+            var select = panel._fileSelector._filesSelectElement;
             for (var i = 0; i < select.length; ++i)
                 InspectorTest.addResult(select[i].text.replace(/\u00a0/g, " "));
 
@@ -62,7 +62,7 @@ function test()
 
             // Select "baz.js".
             select.selectedIndex = 1;
-            panel._filesSelectChanged();
+            panel._fileSelector._filesSelectChanged();
             panel.detach();
 
             next();
@@ -80,8 +80,8 @@ function test()
 
             function checkCurrentlySelectedFileName(fileName)
             {
-                var index = panel._filesSelectElement.selectedIndex;
-                var text = panel._filesSelectElement[index].text;
+                var index = panel._fileSelector._filesSelectElement.selectedIndex;
+                var text = panel._fileSelector._filesSelectElement[index].text;
                 InspectorTest.assertTrue(text.indexOf(fileName) !== -1,
                     "Wrong option text. Expected <" + fileName + ">, found <" + text + ">.");
             }
@@ -89,37 +89,37 @@ function test()
             for (var i = 0; i < files.length; ++i)
                 showSourceFrame(panel, files[i]);
             checkCurrentlySelectedFileName("script3.js");
-            InspectorTest.assertEquals(true, panel.forwardButton.disabled, "Forward should be disabled.");
+            InspectorTest.assertEquals(true, panel._fileSelector.forwardButton.disabled, "Forward should be disabled.");
 
-            panel.backButton.click();
+            panel._fileSelector.backButton.click();
             checkCurrentlySelectedFileName("script2.js");
-            InspectorTest.assertEquals(false, panel.forwardButton.disabled, "Forward should be enabled after back button click.");
+            InspectorTest.assertEquals(false, panel._fileSelector.forwardButton.disabled, "Forward should be enabled after back button click.");
 
-            panel.forwardButton.click();
+            panel._fileSelector.forwardButton.click();
             checkCurrentlySelectedFileName("script3.js");
-            InspectorTest.assertEquals(true, panel.forwardButton.disabled, "Forward should be disabled after forward button click.");
+            InspectorTest.assertEquals(true, panel._fileSelector.forwardButton.disabled, "Forward should be disabled after forward button click.");
 
-            panel.backButton.click();
+            panel._fileSelector.backButton.click();
             checkCurrentlySelectedFileName("script2.js");
 
-            panel.backButton.click();
+            panel._fileSelector.backButton.click();
             checkCurrentlySelectedFileName("script1.js");
 
-            panel.backButton.click();
+            panel._fileSelector.backButton.click();
             checkCurrentlySelectedFileName("index.html");
 
-            panel.forwardButton.click();
-            panel.forwardButton.click();
+            panel._fileSelector.forwardButton.click();
+            panel._fileSelector.forwardButton.click();
             checkCurrentlySelectedFileName("script2.js");
 
             showSourceFrame(panel, "script1.js");
             checkCurrentlySelectedFileName("script1.js");
-            InspectorTest.assertEquals(true, panel.forwardButton.disabled);
+            InspectorTest.assertEquals(true, panel._fileSelector.forwardButton.disabled);
 
-            panel.backButton.click();
+            panel._fileSelector.backButton.click();
             checkCurrentlySelectedFileName("script2.js");
 
-            panel.backButton.click();
+            panel._fileSelector.backButton.click();
             checkCurrentlySelectedFileName("index.html");
 
             panel.detach();
@@ -138,7 +138,7 @@ function test()
             {
                 var uiSourceCode = new WebInspector.UISourceCode(nextId++, url, null, null);
                 uiSourceCode.isContentScript = isContentScript;
-                panel._addOptionToFilesSelect(uiSourceCode);
+                panel._fileSelector._addOptionToFilesSelect(uiSourceCode);
             }
             addOption(rootURL + "foo/bar/script.js", false);
             addOption(rootURL + "foo/bar/contentScript2.js?a=1", true);
@@ -151,7 +151,7 @@ function test()
             addOption("?a=b", false);
             addOption("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);
 
-            var select = panel._filesSelectElement;
+            var select = panel._fileSelector._filesSelectElement;
             for (var i = 0; i < select.length; ++i) {
                 var option = select[i];
                 var text = option.text.replace(/.*LayoutTests/, "LayoutTests");
@@ -174,20 +174,20 @@ function test()
             var compiledSourceCode = createUISouceCode("compiled.js");
             panel._uiSourceCodeAdded({ data: compiledSourceCode });
 
-            InspectorTest.assertEquals(2, panel._filesSelectElement.length);
+            InspectorTest.assertEquals(2, panel._fileSelector._filesSelectElement.length);
 
             // Plug compiler source mapping.
             var source1SourceCode = createUISouceCode("source1.js");
             var source2SourceCode = createUISouceCode("source2.js");
             panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [compiledSourceCode], uiSourceCodeList: [source1SourceCode, source2SourceCode] }});
 
-            InspectorTest.assertEquals(3, panel._filesSelectElement.length);
+            InspectorTest.assertEquals(3, panel._fileSelector._filesSelectElement.length);
             showSourceFrame(panel, "source2.js");
             showSourceFrame(panel, "source1.js");
 
             // Unplug compiler source mapping.
             panel._uiSourceCodeReplaced({ data: { oldUISourceCodeList: [source1SourceCode, source2SourceCode], uiSourceCodeList: [compiledSourceCode] }});
-            InspectorTest.assertEquals(2, panel._filesSelectElement.length);
+            InspectorTest.assertEquals(2, panel._fileSelector._filesSelectElement.length);
 
             panel.detach();
             next();

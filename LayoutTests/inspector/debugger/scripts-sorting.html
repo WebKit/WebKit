@@ -59,14 +59,14 @@ function test()
     {
         var uiSourceCode = new WebInspector.UISourceCode(nextId++, url, null, null);
         uiSourceCode.isContentScript = isContentScript;
-        WebInspector.panels.scripts._addOptionToFilesSelect(uiSourceCode);
+        WebInspector.panels.scripts._fileSelector._addOptionToFilesSelect(uiSourceCode);
     }
 
     function dumpScriptsList()
     {
         InspectorTest.addResult("");
         InspectorTest.addResult("WebInspector.settings.showScriptFolders = " + WebInspector.settings.showScriptFolders.get());
-        var select = WebInspector.panels.scripts._filesSelectElement;
+        var select = WebInspector.panels.scripts._fileSelector._filesSelectElement;
         for (var i = 0; i < select.length; ++i) {
             if (select[i]._uiSourceCode && select[i]._uiSourceCode.url.indexOf("LayoutTests/") !== -1)
                 continue;
