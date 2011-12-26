@@ -30,6 +30,8 @@ use strict;
 
 use Digest::MD5;
 
+use constant FileNamePrefix => "V8";
+
 my ($codeGenerator, $IMPL, $HEADER);
 
 my $module = "";
@@ -110,8 +112,9 @@ sub GenerateInterface
     my $name = $dataNode->name;
 
     # Open files for writing
-    my $headerFileName = "$outputHeadersDir/V8$name.h";
-    my $implFileName = "$outputDir/V8$name.cpp";
+    my $prefix = FileNamePrefix;
+    my $headerFileName = "$outputHeadersDir/$prefix$name.h";
+    my $implFileName = "$outputDir/$prefix$name.cpp";
 
     open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
     open($HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";

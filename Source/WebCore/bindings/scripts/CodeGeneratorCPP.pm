@@ -25,6 +25,8 @@
 
 package CodeGeneratorCPP;
 
+use constant FileNamePrefix => "WebDOM";
+
 # Global Variables
 my $module = "";
 my $outputDir = "";
@@ -126,7 +128,7 @@ sub GenerateInterface
     $object->GenerateImplementation($dataNode);
 
     # Write changes.
-    $object->WriteData("WebDOM" . $name);
+    $object->WriteData(FileNamePrefix . $name);
 }
 
 # Params: 'idlDocument' struct

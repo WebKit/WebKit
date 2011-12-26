@@ -151,6 +151,18 @@ sub ProcessDocument
     $codeGenerator->finish();
 }
 
+sub FileNamePrefix
+{
+    my $object = shift;
+
+    my $ifaceName = "CodeGenerator" . $useGenerator;
+    require $ifaceName . ".pm";
+
+    # Dynamically load external code generation perl module
+    $codeGenerator = $ifaceName->new($object, $useOutputDir, $useOutputHeadersDir, $useLayerOnTop, $preprocessor, $writeDependencies, $verbose);
+    return $codeGenerator->FileNamePrefix();
+}
+
 sub ForAllParents
 {
     my $object = shift;

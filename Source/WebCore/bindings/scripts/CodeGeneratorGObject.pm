@@ -22,6 +22,8 @@
 
 package CodeGeneratorGObject;
 
+use constant FileNamePrefix => "WebKitDOM";
+
 # Global Variables
 my %implIncludes = ();
 my %hdrIncludes = ();
@@ -1404,7 +1406,7 @@ sub GenerateInterface {
     $object->Generate($dataNode);
 
     # Write changes
-    my $fname = "WebKitDOM_" . $name;
+    my $fname = FileNamePrefix . $name;
     $fname =~ s/_//g;
     $object->WriteData($fname);
 }

@@ -26,6 +26,8 @@
 
 package CodeGeneratorObjC;
 
+use constant FileNamePrefix => "DOM";
+
 # Global Variables
 my $module = "";
 my $outputDir = "";
@@ -311,7 +313,7 @@ sub GenerateInterface
     $object->GenerateImplementation($dataNode) unless $noImpl;
 
     # Write changes.
-    $object->WriteData("DOM" . $name);
+    $object->WriteData(FileNamePrefix . $name);
 
     # Check for missing public API
     if (keys %publicInterfaces > 0) {

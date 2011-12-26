@@ -28,6 +28,8 @@ package CodeGeneratorJS;
 
 use strict;
 
+use constant FileNamePrefix => "JS";
+
 my ($codeGenerator, $IMPL, $HEADER, $DEPS);
 
 my $module = "";
@@ -120,9 +122,10 @@ sub GenerateInterface
     my $name = $dataNode->name;
 
     # Open files for writing
-    my $headerFileName = "$outputDir/JS$name.h";
-    my $implFileName = "$outputDir/JS$name.cpp";
-    my $depsFileName = "$outputDir/JS$name.dep";
+    my $prefix = FileNamePrefix;
+    my $headerFileName = "$outputDir/$prefix$name.h";
+    my $implFileName = "$outputDir/$prefix$name.cpp";
+    my $depsFileName = "$outputDir/$prefix$name.dep";
 
     # Remove old dependency file.
     unlink($depsFileName);
