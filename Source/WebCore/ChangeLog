@@ -1,3 +1,28 @@
+2011-12-26  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make SDK compilation component self-contained.
+        https://bugs.webkit.org/show_bug.cgi?id=75172
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl):
+        (WebInspector.ConsoleMessageImpl.prototype.get stackTrace):
+        (WebInspector.ConsoleMessageImpl.prototype.clone):
+        * inspector/front-end/ConsoleModel.js:
+        (WebInspector.ConsoleModel.prototype._messageRepeatCountUpdated):
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype.isErrorOrWarning):
+        (WebInspector.ConsoleMessage.prototype.updateRepeatCount):
+        (WebInspector.ConsoleMessage.prototype.clone):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._consoleMessageAdded):
+        * inspector/front-end/ResourceUtils.js:
+        * inspector/front-end/UIUtils.js:
+        (WebInspector.resetToolbarColors):
+        (WebInspector.populateHrefContextMenu):
+
 2011-12-26  Hajime Morrita  <morrita@google.com>
 
         Unreviewed bad merge fix.

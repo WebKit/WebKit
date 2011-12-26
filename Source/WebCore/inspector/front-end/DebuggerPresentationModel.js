@@ -82,7 +82,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     /**
      * @param {WebInspector.PresentationCallFrame} callFrame
-     * @return {WebInspector.Placard}
+     * @return {WebInspector.DebuggerPresentationModel.CallFramePlacard}
      */
     createPlacard: function(callFrame)
     {
@@ -350,7 +350,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _consoleMessageAdded: function(event)
     {
         var message = /** @type {WebInspector.ConsoleMessage} */ event.data;
-        if (!message.url || !message.isErrorOrWarning() || !message.message)
+        if (!message.url || !message.isErrorOrWarning())
             return;
 
         var rawSourceCode = this._rawSourceCodeForScriptWithURL(message.url);

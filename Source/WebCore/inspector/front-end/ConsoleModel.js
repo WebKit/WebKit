@@ -121,8 +121,10 @@ WebInspector.ConsoleModel.prototype = {
             this._incrementErrorWarningCount(msg);
             this.dispatchEventToListeners(WebInspector.ConsoleModel.Events.RepeatCountUpdated, msg);
         } else {
-            var msgCopy = WebInspector.ConsoleMessage.create(msg.source, msg.level, msg._messageText, msg.type, msg.url, msg.line, count - prevRepeatCount, msg._parameters, msg._stackTrace, msg._request);
+            var msgCopy = msg.clone();
             msgCopy.totalRepeatCount = count;
+            msgCopy.repeatCount = (count - prevRepeatCount) || 1;
+            msgCopy.repeatDelta = msgCopy.repeatCount;
             this.addMessage(msgCopy);
         }
     }
@@ -132,29 +134,40 @@ WebInspector.ConsoleModel.prototype.__proto__ = WebInspector.Object.prototype;
 
 /**
  * @constructor
+ * @param {string} source
+ * @param {string} level
+ * @param {string=} url
+ * @param {number=} line
+ * @param {number=} repeatCount
  */
-WebInspector.ConsoleMessage = function()
+WebInspector.ConsoleMessage = function(source, level, url, line, repeatCount)
 {
-    this.repeatDelta = 0;
-    this.repeatCount = 0;
-    this._totalRepeatCount = 0;
+    this.source = source;
+    this.level = level;
+    this.url = url || null;
+    this.line = line || 0;
+
+    repeatCount = repeatCount || 1;
+    this.repeatCount = repeatCount;
+    this.repeatDelta = repeatCount;
+    this.totalRepeatCount = repeatCount;
 }
 
 WebInspector.ConsoleMessage.prototype = {
-    /**
-     * @return {number}
-     */
-    get totalRepeatCount()
+    isErrorOrWarning: function()
     {
-        return this._totalRepeatCount;
-    },
-
-    set totalRepeatCount(totalRepeatCount)
-    {
-        this._totalRepeatCount = totalRepeatCount;
+        return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);
     },
 
     updateRepeatCount: function()
+    {
+        // Implemented by concrete instances
+    },
+
+    /**
+     * @return {WebInspector.ConsoleMessage}
+     */
+    clone: function()
     {
         // Implemented by concrete instances
     }
