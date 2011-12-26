@@ -234,7 +234,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     for (int i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
         CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->itemWithoutBoundsCheck(i));
-        CSSFontFaceSource* source = 0;
+        OwnPtr<CSSFontFaceSource> source;
 
 #if ENABLE(SVG_FONTS)
         foundSVGFont = item->isSVGFontFaceSrc() || item->svgFontFaceElement();
@@ -246,7 +246,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 ResourceRequest request(m_document->completeURL(item->resource()));
                 CachedFont* cachedFont = m_document->cachedResourceLoader()->requestFont(request);
                 if (cachedFont) {
-                    source = new CSSFontFaceSource(item->resource(), cachedFont);
+                    source = adoptPtr(new CSSFontFaceSource(item->resource(), cachedFont));
 #if ENABLE(SVG_FONTS)
                     if (foundSVGFont)
                         source->setHasExternalSVGFont(true);
@@ -254,7 +254,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 }
             }
         } else {
-            source = new CSSFontFaceSource(item->resource());
+            source = adoptPtr(new CSSFontFaceSource(item->resource()));
         }
 
         if (!fontFace)
@@ -264,7 +264,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 #if ENABLE(SVG_FONTS)
             source->setSVGFontFaceElement(item->svgFontFaceElement());
 #endif
-            fontFace->addSource(source);
+            fontFace->addSource(source.release());
         }
     }
 
@@ -332,7 +332,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
                 for (unsigned i = 0; i < numLocallyInstalledFaces; ++i) {
                     RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]), true);
-                    locallyInstalledFontFace->addSource(new CSSFontFaceSource(familyName));
+                    locallyInstalledFontFace->addSource(adoptPtr(new CSSFontFaceSource(familyName)));
                     ASSERT(locallyInstalledFontFace->isValid());
                     familyLocallyInstalledFaces->append(locallyInstalledFontFace);
                 }

@@ -1,3 +1,29 @@
+2011-12-25  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr for CSSFontFace::m_sources
+        https://bugs.webkit.org/show_bug.cgi?id=75219
+
+        Reviewed by Dan Bernstein.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::isLoaded): Use the same size_t idiom here as in the rest
+        of the functions.
+        (WebCore::CSSFontFace::isValid): Ditto. Also removed unneeded empty special casing.
+        (WebCore::CSSFontFace::addSource): Changed to take a PassOwnPtr. Reordered so the
+        PassOwnPtr zeroing does not cause trouble.
+        (WebCore::CSSFontFace::getFontData): Added call to get.
+        (WebCore::CSSFontFace::hasSVGFontFaceSource): Use the same size_t idiom here as in
+        the rest of the functions.
+
+        * css/CSSFontFace.h: Use PassOwnPtr for addSource argument, and Vector<OwnPtr> for
+        the m_sources vector.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Use OwnPtr and PassOwnPtr for font face
+        sources that are passed to addSource.
+
+        * css/CSSSegmentedFontFace.cpp: Added a now-needed include.
+
 2011-12-24  Jarred Nicholls  <jarred@sencha.com>
 
         Allow XMLHttpRequest responseType to be set at any state up to and including HEADERS_RECEIVED

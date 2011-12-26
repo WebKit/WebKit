@@ -27,6 +27,7 @@
 #include "CSSSegmentedFontFace.h"
 
 #include "CSSFontFace.h"
+#include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "Document.h"
 #include "FontDescription.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,15 +34,10 @@
 
 namespace WebCore {
 
-CSSFontFace::~CSSFontFace()
-{
-    deleteAllValues(m_sources);
-}
-
 bool CSSFontFace::isLoaded() const
 {
-    unsigned size = m_sources.size();
-    for (unsigned i = 0; i < size; i++) {
+    size_t size = m_sources.size();
+    for (size_t i = 0; i < size; i++) {
         if (!m_sources[i]->isLoaded())
             return false;
     }
@@ -51,10 +46,8 @@ bool CSSFontFace::isLoaded() const
 
 bool CSSFontFace::isValid() const
 {
-    unsigned size = m_sources.size();
-    if (!size)
-        return false;
-    for (unsigned i = 0; i < size; i++) {
+    size_t size = m_sources.size();
+    for (size_t i = 0; i < size; i++) {
         if (m_sources[i]->isValid())
             return true;
     }
@@ -71,10 +64,10 @@ void CSSFontFace::removedFromSegmentedFontFace(CSSSegmentedFontFace* segmentedFo
     m_segmentedFontFaces.remove(segmentedFontFace);
 }
 
-void CSSFontFace::addSource(CSSFontFaceSource* source)
+void CSSFontFace::addSource(PassOwnPtr<CSSFontFaceSource> source)
 {
-    m_sources.append(source);
     source->setFontFace(this);
+    m_sources.append(source);
 }
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
@@ -110,7 +103,7 @@ SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription,
     size_t size = m_sources.size();
     for (size_t i = 0; i < size; ++i) {
         if (SimpleFontData* result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
-            m_activeSource = m_sources[i];
+            m_activeSource = m_sources[i].get();
             return result;
         }
     }
@@ -121,7 +114,8 @@ SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription,
 #if ENABLE(SVG_FONTS)
 bool CSSFontFace::hasSVGFontFaceSource() const
 {
-    for (unsigned i = 0; i < m_sources.size(); i++) {
+    size_t size = m_sources.size();
+    for (size_t i = 0; i < size; i++) {
         if (m_sources[i]->isSVGFontFaceSource())
             return true;
     }
@@ -130,4 +124,3 @@ bool CSSFontFace::hasSVGFontFaceSource() const
 #endif
 
 }
-

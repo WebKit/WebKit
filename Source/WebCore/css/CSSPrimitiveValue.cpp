@@ -146,18 +146,19 @@ static const AtomicString& valueOrPropertyName(int valueOrPropertyID)
         return nullAtom;
 
     if (valueOrPropertyID < numCSSValueKeywords) {
-        static AtomicString* cssValueKeywordStrings[numCSSValueKeywords];
-        if (!cssValueKeywordStrings[valueOrPropertyID])
-            cssValueKeywordStrings[valueOrPropertyID] = new AtomicString(getValueName(valueOrPropertyID));
-        return *cssValueKeywordStrings[valueOrPropertyID];
+        static AtomicString* keywordStrings = new AtomicString[numCSSValueKeywords]; // Leaked intentionally.
+        AtomicString& keywordString = keywordStrings[valueOrPropertyID];
+        if (keywordString.isNull())
+            keywordString = getValueName(valueOrPropertyID);
+        return keywordString;
     }
 
     if (valueOrPropertyID >= firstCSSProperty && valueOrPropertyID < firstCSSProperty + numCSSProperties) {
-        static AtomicString* cssPropertyStrings[numCSSProperties];
-        int propertyIndex = valueOrPropertyID - firstCSSProperty;
-        if (!cssPropertyStrings[propertyIndex])
-            cssPropertyStrings[propertyIndex] = new AtomicString(getPropertyName(static_cast<CSSPropertyID>(valueOrPropertyID)));
-        return *cssPropertyStrings[propertyIndex];
+        static AtomicString* propertyStrings = new AtomicString[numCSSProperties]; // Leaked intentionally.
+        AtomicString& propertyString = propertyStrings[valueOrPropertyID - firstCSSProperty];
+        if (propertyString.isNull())
+            propertyString = getPropertyName(static_cast<CSSPropertyID>(valueOrPropertyID));
+        return propertyString;
     }
 
     return nullAtom;
