@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 329x18
+          text run at (0,0) width 329: "Test correct colorspace for yuv420, i.e. YU12 video"
+      RenderBlock (anonymous) at (0,34) size 784x128
+        RenderText {#text} at (0,92) size 4x18
+          text run at (0,92) width 4: " "
+        RenderBR {BR} at (210,106) size 0x0
+        RenderText {#text} at (0,110) size 36x18
+          text run at (0,110) width 36: "FAIL"
+layer at (12,42) size 206x106
+  RenderVideo {VIDEO} at (4,0) size 206x106 [border: (3px solid #FF0000)]
