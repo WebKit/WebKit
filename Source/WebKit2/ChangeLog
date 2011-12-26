@@ -1,3 +1,20 @@
+2011-12-25  Dan Bernstein  <mitz@apple.com>
+
+        Find indicators overlap when a match spans multiple text boxes
+        https://bugs.webkit.org/show_bug.cgi?id=75220
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::findIndicatorsForTextRectsOverlap): Added this helper function that checks for
+        pairwise intersections between all indicator rects.
+        (WebKit::FindIndicator::FindIndicator): Changed to use a single rect (the union of all text
+        rects) if any two indicator rects would otherwise overlap. This is similar to what Safari
+        does, and it eliminates overlapping rects for adjacent text boxes. In rare cases (such as when
+        a match spans two lines and adjacent text boxes on one of those lines) it results in a find
+        indicator that is too large and obscures some non-match text.
+        * UIProcess/FindIndicator.h:
+
 2011-12-21  Sam Weinig  <sam@webkit.org>
 
         Start extracting platform specific bits out of PlatformEvents

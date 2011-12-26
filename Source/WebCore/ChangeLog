@@ -1,3 +1,16 @@
+2011-12-25  Dan Bernstein  <mitz@apple.com>
+
+        WebCore changes for: Find indicators overlap when a match spans multiple text boxes
+        https://bugs.webkit.org/show_bug.cgi?id=75220
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Exported new unionRect(const Vector<FloatRect>&) and existing
+        FloatRect::intersects().
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::unionRect): Added.
+        * platform/graphics/FloatRect.h:
+
 2011-12-25  Darin Adler  <darin@apple.com>
 
         Use OwnPtr for CSSFontFace::m_sources

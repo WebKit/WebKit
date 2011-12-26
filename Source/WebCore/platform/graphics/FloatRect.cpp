@@ -137,6 +137,17 @@ void FloatRect::scale(float sx, float sy)
     m_size.setHeight(height() * sy);
 }
 
+FloatRect unionRect(const Vector<FloatRect>& rects)
+{
+    FloatRect result;
+
+    size_t count = rects.size();
+    for (size_t i = 0; i < count; ++i)
+        result.unite(rects[i]);
+
+    return result;
+}
+
 void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1)
 {
     float left = min(p0.x(), p1.x());

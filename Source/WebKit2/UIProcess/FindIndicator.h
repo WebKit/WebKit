@@ -46,8 +46,6 @@ public:
     WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_selectionRectInWindowCoordinates; }
     WebCore::FloatRect frameRect() const;
 
-    const Vector<WebCore::FloatRect>& textRects() const { return m_textRectsInSelectionRectCoordinates; }
-
     ShareableBitmap* contentImage() const { return m_contentImage.get(); }
 
     void draw(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);

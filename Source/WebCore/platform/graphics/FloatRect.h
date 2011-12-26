@@ -28,6 +28,7 @@
 #define FloatRect_h
 
 #include "FloatPoint.h"
+#include <wtf/Vector.h>
 
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 typedef struct CGRect CGRect;
@@ -238,6 +239,8 @@ inline FloatRect unionRect(const FloatRect& a, const FloatRect& b)
     c.unite(b);
     return c;
 }
+
+FloatRect unionRect(const Vector<FloatRect>&);
 
 inline FloatRect& operator+=(FloatRect& a, const FloatRect& b)
 {
