@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
@@ -417,25 +417,11 @@ Node::~Node()
         doc->guardDeref();
 }
 
-#ifdef NDEBUG
-
-static inline void setWillMoveToNewDocumentWasCalled(bool)
-{
-}
-
-static inline void setDidMoveToNewDocumentWasCalled(bool)
-{
-}
-
-#else
+#ifndef NDEBUG
 
 static bool didMoveToNewDocumentWasCalled;
+static Document* oldDocumentDidMoveToNewDocumentWasCalledWith;
 
-static void setDidMoveToNewDocumentWasCalled(bool wasCalled)
-{
-    didMoveToNewDocumentWasCalled = wasCalled;
-}
-    
 #endif
     
 void Node::setDocument(Document* document)
@@ -454,8 +440,13 @@ void Node::setDocument(Document* document)
     Document* oldDocument = m_document;
     m_document = document;
 
-    setDidMoveToNewDocumentWasCalled(false);
+#ifndef NDEBUG
+    didMoveToNewDocumentWasCalled = false;
+    oldDocumentDidMoveToNewDocumentWasCalledWith = oldDocument;
+#endif
+
     didMoveToNewDocument(oldDocument);
+
     ASSERT(didMoveToNewDocumentWasCalled);
 }
 
@@ -2491,7 +2482,11 @@ void Node::removedFromDocument()
 void Node::didMoveToNewDocument(Document* oldDocument)
 {
     ASSERT(!didMoveToNewDocumentWasCalled);
-    setDidMoveToNewDocumentWasCalled(true);
+    ASSERT_UNUSED(oldDocument, oldDocument == oldDocumentDidMoveToNewDocumentWasCalledWith);
+
+#ifndef NDEBUG
+    didMoveToNewDocumentWasCalled = true;
+#endif
 
     // FIXME: Event listener types for this node should be set on the new owner document here.
 
@@ -2507,8 +2502,6 @@ void Node::didMoveToNewDocument(Document* oldDocument)
             document()->addMutationObserverTypes((*iter)->mutationTypes());
         }
     }
-#else
-    UNUSED_PARAM(oldDocument);
 #endif
 }
 

@@ -1,3 +1,19 @@
+2011-12-26  Darin Adler  <darin@apple.com>
+
+        Fix mutation observer build after didMoveToNewDocument change
+        https://bugs.webkit.org/show_bug.cgi?id=75224
+
+        Reviewed by Hajime Morita.
+
+        * dom/Node.cpp:
+        (WebCore::willCallDidMoveToNewDocument): Added.
+        (WebCore::didMoveToNewDocumentWasCalled): Added.
+        (WebCore::Node::setDocument): Call new debugging function.
+        (WebCore::Node::didMoveToNewDocument): Ditto. Also use ASSERT_UNUSED
+        unconditionally rather than UNUSED_PARAM inside and #if. Also added
+        a new assertion that checks that hte old document was passed through
+        properly.
+
 2011-12-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Scripts] Implement iterative match highlighting in the "Go to Function" dialog item list
