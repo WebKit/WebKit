@@ -1,3 +1,27 @@
+2011-12-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Scripts] Implement iterative match highlighting in the "Go to Function" dialog item list
+        https://bugs.webkit.org/show_bug.cgi?id=75226
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/JavaScriptOutlineDialog.js:
+        (WebInspector.JavaScriptOutlineDialog):
+        (WebInspector.JavaScriptOutlineDialog.prototype._createSearchRegExp):
+        (WebInspector.JavaScriptOutlineDialog.prototype._filterFunctions):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onKeyDown.previousItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onKeyDown.nextItem):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onKeyDown):
+        (WebInspector.JavaScriptOutlineDialog.prototype._updateSelection):
+        (WebInspector.JavaScriptOutlineDialog.prototype._onScroll):
+        (WebInspector.JavaScriptOutlineDialog.MatchHighlighter):
+        (WebInspector.JavaScriptOutlineDialog.MatchHighlighter.prototype.highlightViewportItems):
+        (WebInspector.JavaScriptOutlineDialog.MatchHighlighter.prototype.clearHighlight):
+        (WebInspector.JavaScriptOutlineDialog.MatchHighlighter.prototype._highlightItem):
+        (WebInspector.JavaScriptOutlineDialog.MatchHighlighter.prototype._viewportRowRange):
+        * inspector/front-end/javaScriptOutlineDialog.css:
+        (.js-outline-dialog > .container > div.item > span.highlight):
+
 2011-12-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract FileSelector from ScriptsPanel.

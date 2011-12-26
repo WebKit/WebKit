@@ -81,6 +81,7 @@ WebInspector.JavaScriptOutlineDialog = function(panel, view)
 
     this._functionItemContainer = document.createElement("div");
     this._functionItemContainer.className = "container monospace";
+    this._functionItemContainer.addEventListener("scroll", this._onScroll.bind(this), false);
 
     this._panel = panel;
     this._view = view;
@@ -91,6 +92,8 @@ WebInspector.JavaScriptOutlineDialog = function(panel, view)
     this._previousFocusElement = WebInspector.currentFocusElement();
     WebInspector.setCurrentFocusElement(this._promptElement);
     this._promptElement.select();
+
+    this._highlighter = new WebInspector.JavaScriptOutlineDialog.MatchHighlighter(this);
 }
 
 /**
@@ -204,7 +207,6 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
     {
         var trimmedQuery = query.trim();
         var regExpString = trimmedQuery.escapeForRegExp().replace(/\\\*/g, ".*").replace(/(?!^)([A-Z])/g, "[^A-Z]*$1");
-        console.log(regExpString);
         var isSuffix = (query.charAt(query.length - 1) === " ");
         if (isSuffix)
             regExpString += "$";
@@ -226,9 +228,12 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
                 this._visibleElements.push(element);
             }
             this._updateSelection(this._functionItemContainer.firstChild);
+            delete this._query;
+            this._highlighter.clearHighlight();
             return;
         }
 
+        this._query = query;
         var regExp = this._createSearchRegExp(query);
         var firstElement;
         var newVisibleElements = [];
@@ -244,6 +249,7 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
             }
             this._visibleElements = newVisibleElements;
             this._updateSelection(firstElement);
+            this._highlighter.highlightViewportItems(query);
             return;
         }
 
@@ -259,6 +265,7 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         }
         this._visibleElements = newVisibleElements;
         this._updateSelection(firstElement);
+        this._highlighter.highlightViewportItems(query);
     },
 
     _selectFirstItem: function()
@@ -302,16 +309,18 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         {
             var scrollItemsLeft = isPageScroll && this._rowsPerViewport ? this._rowsPerViewport : 1;
             var candidate = itemElement;
+            var lastVisibleCandidate = candidate;
             do {
                 candidate = candidate.previousSibling;
                 if (!candidate) {
                     if (isPageScroll)
-                        return this._functionItemContainer.firstChild;
+                        return lastVisibleCandidate;
                     else
                         candidate = this._functionItemContainer.lastChild;
                 }
                 if (candidate.style.display === "none")
                     continue;
+                lastVisibleCandidate = candidate;
                 --scrollItemsLeft;
             } while (scrollItemsLeft && candidate !== this._selectedElement);
 
@@ -322,16 +331,18 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         {
             var scrollItemsLeft = isPageScroll && this._rowsPerViewport ? this._rowsPerViewport : 1;
             var candidate = itemElement;
+            var lastVisibleCandidate = candidate;
             do {
                 candidate = candidate.nextSibling;
                 if (!candidate) {
                     if (isPageScroll)
-                        return this._functionItemContainer.lastChild;
+                        return lastVisibleCandidate;
                     else
                         candidate = this._functionItemContainer.firstChild;
                 }
                 if (candidate.style.display === "none")
                     continue;
+                lastVisibleCandidate = candidate;
                 --scrollItemsLeft;
             } while (scrollItemsLeft && candidate !== this._selectedElement);
 
@@ -396,8 +407,10 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         if (newSelectedElement) {
             newSelectedElement.addStyleClass("selected");
             newSelectedElement.scrollIntoViewIfNeeded(false);
-            if (!this._rowsPerViewport)
-                this._rowsPerViewport = Math.floor(this._functionItemContainer.offsetHeight / newSelectedElement.offsetHeight);
+            if (!this._itemHeight) {
+                this._itemHeight = newSelectedElement.offsetHeight;
+                this._rowsPerViewport = Math.floor(this._functionItemContainer.offsetHeight / this._itemHeight);
+            }
         }
     },
 
@@ -419,10 +432,77 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         this._updateSelection(itemElement);
     },
 
+    _onScroll: function()
+    {
+        this._highlighter.highlightViewportItems(this._query);
+    },
+
     _highlightFunctionLine: function()
     {
         var lineNumber = this._selectedElement._line;
         if (!isNaN(lineNumber) && lineNumber >= 0)
             this._view.highlightLine(lineNumber);
+    }
+}
+
+/**
+* @constructor
+*/
+WebInspector.JavaScriptOutlineDialog.MatchHighlighter = function(dialog)
+{
+    this._dialog = dialog;
+}
+
+WebInspector.JavaScriptOutlineDialog.MatchHighlighter.prototype = {
+    highlightViewportItems: function(query)
+    {
+        var regex = this._dialog._createSearchRegExp(query, true);
+        var range = this._viewportRowRange();
+        var visibleElements = this._dialog._visibleElements;
+        for (var i = range[0]; i < range[1]; ++i)
+            this._highlightItem(visibleElements[i], regex);
+    },
+
+    clearHighlight: function()
+    {
+        var range = this._viewportRowRange();
+        var visibleElements = this._dialog._visibleElements;
+        for (var i = range[0]; i < range[1]; ++i) {
+            var element = visibleElements[i];
+            if (element._domChanges) {
+                revertDomChanges(element._domChanges);
+                delete element._domChanges;
+            }
+        }
+    },
+
+    _highlightItem: function(element, regex)
+    {
+        if (element._domChanges) {
+            revertDomChanges(element._domChanges);
+            delete element._domChanges;
+        }
+
+        var text = element._text;
+        var ranges = [];
+
+        var match;
+        while ((match = regex.exec(text)) !== null) {
+            ranges.push({ offset: match.index, length: regex.lastIndex - match.index });
+        }
+
+        var changes = [];
+        highlightRangesWithStyleClass(element, ranges, "highlight", changes);
+
+        if (changes.length)
+            element._domChanges = changes;
+    },
+
+    _viewportRowRange: function()
+    {
+        var dialog = this._dialog;
+        var startIndex = Math.floor(dialog._functionItemContainer.scrollTop / dialog._itemHeight);
+        var endIndex = Math.min(dialog._visibleElements.length, startIndex + dialog._rowsPerViewport + 1);
+        return [startIndex, endIndex];
     }
 }
