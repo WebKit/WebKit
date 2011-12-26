@@ -895,7 +895,6 @@ void SpeculativeJIT::emitCall(Node& node)
     int numPassedArgs = node.numChildren() - 1;
 
     m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs + dummyThisArgument), callFramePayloadSlot(RegisterFile::ArgumentCount));
-    m_jit.store32(MacroAssembler::TrustedImm32(JSValue::Int32Tag), callFrameTagSlot(RegisterFile::ArgumentCount));
     m_jit.storePtr(GPRInfo::callFrameRegister, callFramePayloadSlot(RegisterFile::CallerFrame));
     m_jit.store32(calleePayloadGPR, callFramePayloadSlot(RegisterFile::Callee));
     m_jit.store32(calleeTagGPR, callFrameTagSlot(RegisterFile::Callee));

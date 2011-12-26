@@ -160,7 +160,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int registerOffset = instruction[3].u.operand;
 
         addPtr(TrustedImm32(registerOffset * sizeof(Register)), callFrameRegister, regT1);
-        storePtr(TrustedImmPtr(JSValue::encode(jsNumber(argCount))), Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
+        store32(TrustedImm32(argCount), Address(regT1, RegisterFile::ArgumentCount * static_cast<int>(sizeof(Register))));
     } // regT1 holds newCallFrame with ArgumentCount initialized.
     emitGetVirtualRegister(callee, regT0); // regT0 holds callee.
 

@@ -1,3 +1,37 @@
+2011-12-24  Filip Pizlo  <fpizlo@apple.com>
+
+        The ArgumentCount field in the CallFrame should have its tag left blank for other uses
+        https://bugs.webkit.org/show_bug.cgi?id=75199
+        <rdar://problem/10625105>
+        <rdar://problem/10625106>
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::argumentPayloadSlot):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::argumentCountIncludingThis):
+        (JSC::ExecState::setArgumentCountIncludingThis):
+        * interpreter/Register.h:
+        (JSC::Register::unboxedInt32):
+        (JSC::Register::unboxedBoolean):
+        (JSC::Register::unboxedCell):
+        (JSC::Register::payload):
+        (JSC::Register::tag):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileLoadVarargs):
+        (JSC::JIT::compileOpCall):
+
 2011-12-25  Andreas Kling  <awesomekling@apple.com>
 
         Yarr: Avoid copying vectors in CharacterClassConstructor.

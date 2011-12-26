@@ -924,7 +924,7 @@ void SpeculativeJIT::emitCall(Node& node)
     // receiver (method call). subsequent children are the arguments.
     int numPassedArgs = node.numChildren() - 1;
     
-    m_jit.storePtr(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(numPassedArgs + dummyThisArgument))), callFrameSlot(RegisterFile::ArgumentCount));
+    m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs + dummyThisArgument), callFramePayloadSlot(RegisterFile::ArgumentCount));
     m_jit.storePtr(GPRInfo::callFrameRegister, callFrameSlot(RegisterFile::CallerFrame));
     m_jit.storePtr(calleeGPR, callFrameSlot(RegisterFile::Callee));
     
