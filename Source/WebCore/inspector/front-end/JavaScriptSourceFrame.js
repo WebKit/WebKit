@@ -78,7 +78,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     suggestedFileName: function()
     {
-        return this._uiSourceCode.displayName || "untitled.js";
+        return this._uiSourceCode.fileName || "untitled.js";
     },
 
     editContent: function(newContent, callback)

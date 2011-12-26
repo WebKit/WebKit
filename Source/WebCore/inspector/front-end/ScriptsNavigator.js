@@ -99,7 +99,7 @@ WebInspector.ScriptsNavigator.prototype = {
         
         // FIXME: We should have a separate section for anonymous scripts.
         
-        var scriptTitle = uiSourceCode.displayName ? uiSourceCode.displayName : WebInspector.UIString("(program)");
+        var scriptTitle = uiSourceCode.displayName;
         var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, scriptTitle);
         this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
         

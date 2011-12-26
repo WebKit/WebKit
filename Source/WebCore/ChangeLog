@@ -1,3 +1,41 @@
+2011-12-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Extract FileEditor from ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=75229
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.suggestedFileName):
+        * inspector/front-end/ScriptsNavigator.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._reset):
+        (WebInspector.ScriptsPanel.prototype.get visibleView):
+        (WebInspector.ScriptsPanel.prototype._updateScriptViewStatusBarItems):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeReplaced.get if):
+        (WebInspector.ScriptsPanel.EditorContainer):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.get currentSourceFrame):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.show):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.showSourceFrame):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.isSourceFrameOpen):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.replaceSourceFrames):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.setSourceFrameIsDirty):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.reset):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.get currentSourceFrame):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.show):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.showSourceFrame):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.isSourceFrameOpen):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.replaceSourceFrames):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.setSourceFrameIsDirty):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.reset):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.get domain):
+        (WebInspector.UISourceCode.prototype.get folderName):
+        (WebInspector.UISourceCode.prototype.get fileName):
+        (WebInspector.UISourceCode.prototype.get displayName):
+        (WebInspector.UISourceCode.prototype._parseURL):
+
 2011-12-26  Darin Adler  <darin@apple.com>
 
         Fix mutation observer build after didMoveToNewDocument change

@@ -120,7 +120,7 @@ WebInspector.UISourceCode.prototype = {
      */
     get domain()
     {
-        if (!this._domain)
+        if (typeof(this._domain) === "undefined")
             this._parseURL();
         
         return this._domain;
@@ -131,7 +131,7 @@ WebInspector.UISourceCode.prototype = {
      */
     get folderName()
     {
-        if (!this._folderName)
+        if (typeof(this._folderName) === "undefined")
             this._parseURL();
         
         return this._folderName;
@@ -140,9 +140,20 @@ WebInspector.UISourceCode.prototype = {
     /**
      * @type {string}
      */
+    get fileName()
+    {
+        if (typeof(this._fileName) === "undefined")
+            this._parseURL();
+        
+        return this._fileName;
+    },
+    
+    /**
+     * @type {string}
+     */
     get displayName()
     {
-        if (!this._displayName)
+        if (typeof(this._displayName) === "undefined")
             this._parseURL();
         
         return this._displayName;
@@ -154,19 +165,22 @@ WebInspector.UISourceCode.prototype = {
         var url = parsedURL ? parsedURL.path : this.url;
 
         var folderName = "";
-        var displayName = url;
+        var fileName = url;
 
-        var pathLength = displayName.indexOf("?");
+        var pathLength = fileName.indexOf("?");
         if (pathLength === -1)
-            pathLength = displayName.length;
+            pathLength = fileName.length;
 
-        var fromIndex = displayName.lastIndexOf("/", pathLength - 2);
+        var fromIndex = fileName.lastIndexOf("/", pathLength - 2);
         if (fromIndex !== -1) {
-            folderName = displayName.substring(0, fromIndex);
-            displayName = displayName.substring(fromIndex + 1);
+            folderName = fileName.substring(0, fromIndex);
+            fileName = fileName.substring(fromIndex + 1);
         }
 
-        if (displayName.length > 80)
+        var displayName = fileName;
+        if (!displayName)
+            displayName = WebInspector.UIString("(program)");
+        else if (displayName.length > 80)
             displayName = "\u2026" + displayName.substring(displayName.length - 80);
 
         if (folderName.length > 80)
@@ -174,6 +188,7 @@ WebInspector.UISourceCode.prototype = {
 
         this._domain = parsedURL ? parsedURL.host : "";
         this._folderName = folderName;
+        this._fileName = fileName;
         this._displayName = displayName;
     },
 
