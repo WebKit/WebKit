@@ -502,6 +502,11 @@ private:
             m_assembler.ldrh(dest, address.base, address.u.offset, true, false);
         }
     }
+    
+    void load16Signed(ArmAddress, RegisterID)
+    {
+        unreachableForPlatform();
+    }
 
     void load8(ArmAddress address, RegisterID dest)
     {
@@ -515,6 +520,11 @@ private:
             ASSERT(address.u.offset >= -255);
             m_assembler.ldrb(dest, address.base, address.u.offset, true, false);
         }
+    }
+    
+    void load8Signed(ArmAddress, RegisterID)
+    {
+        unreachableForPlatform();
     }
 
     void store32(RegisterID src, ArmAddress address)
@@ -591,11 +601,21 @@ public:
         load8(setupArmAddress(address), dest);
     }
 
+    void load8Signed(ImplicitAddress, RegisterID)
+    {
+        unreachableForPlatform();
+    }
+
     void load8(BaseIndex address, RegisterID dest)
     {
         load8(setupArmAddress(address), dest);
     }
     
+    void load8Signed(BaseIndex, RegisterID)
+    {
+        unreachableForPlatform();
+    }
+
     DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
     {
         DataLabel32 label = moveWithPatch(TrustedImm32(address.offset), dataTempRegister);
@@ -631,6 +651,11 @@ public:
         m_assembler.ldrh(dest, makeBaseIndexBase(address), address.index, address.scale);
     }
     
+    void load16Signed(BaseIndex, RegisterID)
+    {
+        unreachableForPlatform();
+    }
+    
     void load16(ImplicitAddress address, RegisterID dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12(address.offset);
@@ -640,6 +665,11 @@ public:
             move(TrustedImm32(address.offset), dataTempRegister);
             m_assembler.ldrh(dest, address.base, dataTempRegister);
         }
+    }
+    
+    void load16Signed(ImplicitAddress, RegisterID)
+    {
+        unreachableForPlatform();
     }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)

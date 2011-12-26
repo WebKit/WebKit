@@ -1,3 +1,11 @@
+2011-12-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed build fix for ARMv7.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load16Signed):
+        (JSC::MacroAssemblerARMv7::load8Signed):
+
 2011-12-26  Hajime Morrita  <morrita@google.com>
 
         Rename WTF_INLINE, JS_INLINE to HIDDEN_INLINE
