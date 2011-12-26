@@ -1,3 +1,65 @@
+2011-12-26  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr and OwnArrayPtr in a couple more places
+        https://bugs.webkit.org/show_bug.cgi?id=75211
+
+        Reviewed by Andreas Kling.
+
+        I had a patch with some changes from a while back from going through all sorts of
+        classes and changing code to use adoptPtr. Most were landed long ago, these are the
+        ones that still apply.
+
+        There are six pieces here that could each be landed separately.
+        The big one is CSSParser.
+
+        * css/CSSGrammar.y: Update for members and functions that now
+        return PassOwnPtr instead of raw pointers.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser): Remove explicit construction
+        for m_valueList and m_data since OwnPtr and OwnArrayPtr initialize
+        to zero without it.
+        (WebCore::CSSParser::~CSSParser): Removed delete m_valueList and
+        fastFree(m_data) since OwnPtr and OwnArrayPtr handle that.
+        (WebCore::CSSParser::setupParser): Use adoptArrayPtr and new for
+        the character array instead of fastFree/fastMalloc. Added get
+        function calls as needed.
+        (WebCore::CSSParser::parseValue): Added get function calls as needed.
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::CSSParser::parseFillProperty): Ditto.
+        (WebCore::CSSParser::parseTransformOriginShorthand): Ditto.
+        (WebCore::CSSParser::parseBorderImage): Ditto.
+        (WebCore::CSSParser::parseTransformOrigin): Ditto.
+        (WebCore::CSSParser::parsePerspectiveOrigin): Ditto.
+        (WebCore::CSSParser::sinkFloatingValueList): Changed to return PassOwnPtr.
+        The adoptPtr call is here.
+        (WebCore::CSSParser::sinkFloatingFunction): Ditto.
+        (WebCore::CSSParser::markSelectorListStart): Added get function calls as needed.
+        (WebCore::CSSParser::markSelectorListEnd): Ditto.
+        (WebCore::CSSParser::markRuleBodyStart): Ditto.
+        (WebCore::CSSParser::markRuleBodyEnd): Ditto.
+        (WebCore::CSSParser::markPropertyStart): Ditto.
+        (WebCore::CSSParser::markPropertyEnd): Ditto.
+        * css/CSSParser.h: Moved conditional includes to their own paragraph.
+        Made sinkFloatingValueList and sinkFloatingFunction return PassOwnPtr.
+        Made m_valueList an OwnPtr and m_data an OwnArrayPtr.
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue): Added a call to the get function.
+
+        * html/PluginDocument.h: Made isPluginDocument private. Also marked all the
+        functions that are overriding here as OVERRIDE since I was touching the header.
+
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLTokenTypes::DoctypeData::DoctypeData): Removed an unneeded line
+        explicitly initializing the base class.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::RefCountedPropertyWrapper::RefCountedPropertyWrapper): Fixed indent.
+
+        * rendering/style/RenderStyle.h: Moved conditional includes to their own paragraph.
+
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::MarkupTokenBase::beginDOCTYPE): Removed unneeded parentheses.
+
 2011-12-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Extract FileEditor from ScriptsPanel.

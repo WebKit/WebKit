@@ -329,8 +329,7 @@ webkit_value:
             int oldParsedProperties = p->m_numParsedProperties;
             if (!p->parseValue(p->m_id, p->m_important))
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
-            delete p->m_valueList;
-            p->m_valueList = 0;
+            p->m_valueList = nullptr;
         }
     }
 ;
@@ -1307,8 +1306,7 @@ declaration:
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
             else
                 isPropertyParsed = true;
-            delete p->m_valueList;
-            p->m_valueList = 0;
+            p->m_valueList = nullptr;
         }
         p->markPropertyEnd($5, isPropertyParsed);
     }
@@ -1479,7 +1477,7 @@ function:
         CSSParser* p = static_cast<CSSParser*>(parser);
         CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
-        f->args = adoptPtr(p->sinkFloatingValueList($3));
+        f->args = p->sinkFloatingValueList($3);
         $$.id = 0;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
@@ -1488,7 +1486,7 @@ function:
         CSSParser* p = static_cast<CSSParser*>(parser);
         CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
-        f->args = adoptPtr(p->sinkFloatingValueList($3));
+        f->args = p->sinkFloatingValueList($3);
         $$.id = 0;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
@@ -1498,7 +1496,7 @@ function:
         CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
         CSSParserValueList* valueList = p->createFloatingValueList();
-        f->args = adoptPtr(p->sinkFloatingValueList(valueList));
+        f->args = p->sinkFloatingValueList(valueList);
         $$.id = 0;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
@@ -1616,7 +1614,7 @@ calc_function:
         CSSParser* p = static_cast<CSSParser*>(parser);
         CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
-        f->args = adoptPtr(p->sinkFloatingValueList($3));
+        f->args = p->sinkFloatingValueList($3);
         $$.id = 0;
         $$.unit = CSSParserValue::Function;
         $$.function = f;
@@ -1641,7 +1639,7 @@ min_or_max_function:
         CSSParser* p = static_cast<CSSParser*>(parser);
         CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
-        f->args = adoptPtr(p->sinkFloatingValueList($3));
+        f->args = p->sinkFloatingValueList($3);
         $$.id = 0;
         $$.unit = CSSParserValue::Function;
         $$.function = f;

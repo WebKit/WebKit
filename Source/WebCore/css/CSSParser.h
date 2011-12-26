@@ -29,13 +29,15 @@
 #include "CSSSelector.h"
 #include "Color.h"
 #include "MediaQuery.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/AtomicString.h>
+
 #if ENABLE(CSS_FILTERS)
 #include "WebKitCSSFilterValue.h"
 #endif
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -225,10 +227,10 @@ public:
     PassOwnPtr<Vector<OwnPtr<CSSParserSelector> > > sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >*);
 
     CSSParserValueList* createFloatingValueList();
-    CSSParserValueList* sinkFloatingValueList(CSSParserValueList*);
+    PassOwnPtr<CSSParserValueList> sinkFloatingValueList(CSSParserValueList*);
 
     CSSParserFunction* createFloatingFunction();
-    CSSParserFunction* sinkFloatingFunction(CSSParserFunction*);
+    PassOwnPtr<CSSParserFunction> sinkFloatingFunction(CSSParserFunction*);
 
     CSSParserValue& sinkFloatingValue(CSSParserValue&);
 
@@ -278,7 +280,7 @@ public:
     RefPtr<CSSRule> m_rule;
     RefPtr<WebKitCSSKeyframeRule> m_keyframe;
     OwnPtr<MediaQuery> m_mediaQuery;
-    CSSParserValueList* m_valueList;
+    OwnPtr<CSSParserValueList> m_valueList;
     CSSProperty** m_parsedProperties;
     CSSSelectorList* m_selectorListForParseSelector;
 
@@ -354,7 +356,7 @@ private:
 
     bool parseColor(const String&);
 
-    UChar* m_data;
+    OwnArrayPtr<UChar> m_data;
     UChar* yytext;
     UChar* yy_c_buf_p;
     UChar yy_hold_char;

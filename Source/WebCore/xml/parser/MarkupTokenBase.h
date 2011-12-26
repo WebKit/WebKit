@@ -153,7 +153,7 @@ public:
     {
         ASSERT(m_type == TypeSet::Uninitialized);
         m_type = TypeSet::DOCTYPE;
-        m_doctypeData = adoptPtr(new DoctypeData());
+        m_doctypeData = adoptPtr(new DoctypeData);
     }
 
     void beginDOCTYPE(UChar character)

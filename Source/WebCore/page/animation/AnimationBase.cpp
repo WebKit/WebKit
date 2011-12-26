@@ -377,8 +377,8 @@ template <typename T>
 class RefCountedPropertyWrapper : public PropertyWrapperGetter<T*> {
 public:
     RefCountedPropertyWrapper(int prop, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<T>))
-    : PropertyWrapperGetter<T*>(prop, getter)
-    , m_setter(setter)
+        : PropertyWrapperGetter<T*>(prop, getter)
+        , m_setter(setter)
     {
     }
 

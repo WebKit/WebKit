@@ -272,7 +272,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         if (id == CSSValueNone)
             valid_primitive = true;
         else {
-            RefPtr<CSSValueList> shadowValueList = parseShadow(m_valueList, propId);
+            RefPtr<CSSValueList> shadowValueList = parseShadow(m_valueList.get(), propId);
             if (shadowValueList) {
                 addProperty(propId, shadowValueList.release(), important);
                 m_valueList->next();

@@ -46,8 +46,7 @@ public:
         WTF_MAKE_NONCOPYABLE(DoctypeData);
     public:
         DoctypeData()
-            : DoctypeDataBase()
-            , m_forceQuirks(false)
+            : m_forceQuirks(false)
         {
         }
 
