@@ -292,7 +292,7 @@ ArrayBuffer* XMLHttpRequest::responseArrayBuffer(ExceptionCode& ec)
 
 void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& ec)
 {
-    if (m_state != OPENED || m_loader) {
+    if (m_state >= LOADING) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -434,7 +434,6 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     State previousState = m_state;
     m_state = UNSENT;
     m_error = false;
-    m_responseTypeCode = ResponseTypeDefault;
     m_uploadComplete = false;
 
     // clear stuff from possible previous load
@@ -456,6 +455,16 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     if (!scriptExecutionContext()->contentSecurityPolicy()->allowConnectFromSource(url)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
+        return;
+    }
+
+    // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated 
+    // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
+    // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
+    // such as file: and data: still make sense to allow.
+    if (!async && scriptExecutionContext()->isDocument() && url.protocolIsInHTTPFamily() && m_responseTypeCode != ResponseTypeDefault) {
+        logConsoleError(scriptExecutionContext(), "Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.");
+        ec = INVALID_ACCESS_ERR;
         return;
     }
 

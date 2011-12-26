@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: line 1: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+CONSOLE MESSAGE: line 1: Synchronous HTTP(S) requests made from the window context cannot have XMLHttpRequest.responseType set.
+This tests that XMLHttpRequest open() disallows synchronous HTTP(S) requests when a non-default responseType is set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+xhr.responseType = 'document';
+PASS xhr.open('GET', 'http://mydomain/', false); threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
+xhr.responseType = 'document';
+PASS xhr.open('GET', 'https://mysecuredomain/', false); threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
+PASS window.location.protocol is "file:"
+xhr.responseType = 'document';
+xhr.open('GET', window.location.href, false);
+PASS xhr.responseType is "document"
+xhr.responseType = 'document';
+xhr.open('GET', dataUrl, false);
+PASS xhr.responseType is "document"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

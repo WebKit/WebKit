@@ -1,3 +1,29 @@
+2011-12-24  Jarred Nicholls  <jarred@sencha.com>
+
+        Allow XMLHttpRequest responseType to be set at any state up to and including HEADERS_RECEIVED
+        https://bugs.webkit.org/show_bug.cgi?id=75190
+
+        XMLHttpRequest.responseType should be modifiable at any state up to and including the
+        HEADERS_RECEIVED state. Therefore, subsequent calls to open() should not reset responseType
+        to its default value, and calls to open() must follow the same spec mandate set forth in
+        setResponseType() for synchronous HTTP(S) requests made from the window context.
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests: fast/xmlhttprequest/xmlhttprequest-responsetype-before-open-sync-request.html
+               fast/xmlhttprequest/xmlhttprequest-responsetype-before-open.html
+               fast/xmlhttprequest/xmlhttprequest-responsetype-set-at-headers-received.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setResponseType):
+        Prevent setting the value only when in LOADING and DONE states. No longer check if
+        m_loader is present, which is instantiated on a call to send(), because responseType
+        can be safely changed after a request is sent.
+        (WebCore::XMLHttpRequest::open):
+        Do not reset m_responseTypeCode to the default value, and prevent calls to open()
+        for synchronous HTTP(S) requests made from the window context when m_responseTypeCode
+        is not the default value.
+
 2011-12-25  Sam Weinig  <sam@webkit.org>
 
         Fix tests failing as a result of r103643
