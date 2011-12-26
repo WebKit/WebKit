@@ -1,3 +1,14 @@
+2011-12-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Fix a crash in WebProcess when starting a download not initiated by a WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=75225
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadRequest): Check initiatingPage is not
+        NULL before using it.
+
 2011-12-25  Dan Bernstein  <mitz@apple.com>
 
         Find indicators overlap when a match spans multiple text boxes
