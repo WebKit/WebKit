@@ -52,11 +52,11 @@ ValidityState* FormAssociatedElement::validity()
     return m_validityState.get();
 }
 
-void FormAssociatedElement::willMoveToNewOwnerDocument()
+void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)
 {
     HTMLElement* element = toHTMLElement(this);
-    if (element->fastHasAttribute(formAttr))
-        element->document()->unregisterFormElementWithFormAttribute(this);
+    if (oldDocument && element->fastHasAttribute(formAttr))
+        oldDocument->unregisterFormElementWithFormAttribute(this);
 }
 
 void FormAssociatedElement::insertedIntoDocument()

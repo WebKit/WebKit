@@ -106,7 +106,7 @@ private:
     }
 
     virtual ~ImageDocumentElement();
-    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     ImageDocument* m_imageDocument;
 };
@@ -407,13 +407,13 @@ ImageDocumentElement::~ImageDocumentElement()
         m_imageDocument->disconnectImageElement();
 }
 
-void ImageDocumentElement::willMoveToNewOwnerDocument()
+void ImageDocumentElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (m_imageDocument) {
         m_imageDocument->disconnectImageElement();
         m_imageDocument = 0;
     }
-    HTMLImageElement::willMoveToNewOwnerDocument();
+    HTMLImageElement::didMoveToNewDocument(oldDocument);
 }
 
 }

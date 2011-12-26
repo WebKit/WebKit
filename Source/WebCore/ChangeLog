@@ -1,3 +1,72 @@
+2011-12-25  Hajime Morrita  <morrita@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=74067
+        Refactoring: Unitfy willMoveToNewDocument() and didMoveToNewDocument()
+
+        Reviewed by Darin Adler.
+
+        No new tests. No behavior change.
+
+        This change combines two method Node::willMoveToNewOwnerDocument() and Node::didMoveToNewOwnerDocument()
+        into Node::didMoveToNewDocument(Document* oldDocument).
+
+        The intention of this change is:
+        - Making upcoming refactoring (Bug 59816) possible. The refactoring will turn Node::m_document into
+          Node::m_treeScope, and we will no longer have Node::setDocument() where we can invoke both
+          willMoveToNewDocument() and didMoveToNewDocument() at once.
+        - Killing one extra virtual method call.
+        - Making the concept of "move" clearer by keeping such an operation into the single method.
+
+        * dom/Node.cpp:
+        (WebCore::setWillMoveToNewDocumentWasCalled):
+        (WebCore::setDidMoveToNewDocumentWasCalled):
+        (WebCore::Node::setDocument):
+        (WebCore::Node::didMoveToNewDocument):
+        * dom/Node.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::didMoveToNewDocument):
+        * html/FormAssociatedElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::didMoveToNewDocument):
+        (WebCore::HTMLFormControlElementWithState::didMoveToNewDocument):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::didMoveToNewDocument):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::didMoveToNewDocument):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didMoveToNewDocument):
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didMoveToNewDocument):
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::didMoveToNewDocument):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didMoveToNewDocument):
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::didMoveToNewDocument):
+        * html/HTMLVideoElement.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::didMoveToNewDocument):
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::willMoveToNewDocument):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::elementDidMoveToNewDocument):
+        * loader/ImageLoader.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::didMoveToNewDocument):
+        * svg/SVGImageElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::didMoveToNewDocument):
+        * svg/SVGSVGElement.h:
+
 2011-12-25  Kentaro Hara  <haraken@chromium.org>
 
         REGRESSION(r102987): Fix the filename prefix of the generated empty .h

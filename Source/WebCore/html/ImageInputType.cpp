@@ -146,7 +146,7 @@ void ImageInputType::willMoveToNewOwnerDocument()
 {
     BaseButtonInputType::willMoveToNewOwnerDocument();
     if (m_imageLoader)
-        m_imageLoader->elementWillMoveToNewOwnerDocument();
+        m_imageLoader->elementDidMoveToNewDocument();
 }
 
 bool ImageInputType::shouldRespectAlignAttribute()

@@ -80,7 +80,7 @@ public:
 protected:
     HTMLImageElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
-    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
 private:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;

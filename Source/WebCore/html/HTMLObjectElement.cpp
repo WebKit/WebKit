@@ -476,10 +476,10 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
         addSubresourceURL(urls, document()->completeURL(useMap));
 }
 
-void HTMLObjectElement::willMoveToNewOwnerDocument()
+void HTMLObjectElement::didMoveToNewDocument(Document* oldDocument)
 {
-    FormAssociatedElement::willMoveToNewOwnerDocument();
-    HTMLPlugInImageElement::willMoveToNewOwnerDocument();
+    FormAssociatedElement::didMoveToNewDocument(oldDocument);
+    HTMLPlugInImageElement::didMoveToNewDocument(oldDocument);
 }
 
 void HTMLObjectElement::insertedIntoTree(bool deep)

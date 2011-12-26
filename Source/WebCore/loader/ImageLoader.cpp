@@ -349,7 +349,7 @@ void ImageLoader::dispatchPendingLoadEvents()
     loadEventSender().dispatchPendingEvents();
 }
 
-void ImageLoader::elementWillMoveToNewOwnerDocument()
+void ImageLoader::elementDidMoveToNewDocument()
 {
     setImage(0);
 }

@@ -106,16 +106,15 @@ SVGSVGElement::~SVGSVGElement()
     document()->accessSVGExtensions()->removeTimeContainer(this);
 }
 
-void SVGSVGElement::willMoveToNewOwnerDocument()
-{
-    document()->unregisterForPageCacheSuspensionCallbacks(this);
-    SVGStyledLocatableElement::willMoveToNewOwnerDocument();
-}
-
-void SVGSVGElement::didMoveToNewOwnerDocument()
+void SVGSVGElement::didMoveToNewDocument(Document* oldDocument)
 {
     document()->registerForPageCacheSuspensionCallbacks(this);
-    SVGStyledLocatableElement::didMoveToNewOwnerDocument();
+    SVGStyledLocatableElement::didMoveToNewDocument(oldDocument);
+
+    if (oldDocument)
+        oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
+    document()->registerForPageCacheSuspensionCallbacks(this);
+    SVGStyledLocatableElement::didMoveToNewDocument(oldDocument);
 }
 
 const AtomicString& SVGSVGElement::contentScriptType() const

@@ -419,27 +419,21 @@ Node::~Node()
 
 #ifdef NDEBUG
 
-static inline void setWillMoveToNewOwnerDocumentWasCalled(bool)
+static inline void setWillMoveToNewDocumentWasCalled(bool)
 {
 }
 
-static inline void setDidMoveToNewOwnerDocumentWasCalled(bool)
+static inline void setDidMoveToNewDocumentWasCalled(bool)
 {
 }
 
 #else
-    
-static bool willMoveToNewOwnerDocumentWasCalled;
-static bool didMoveToNewOwnerDocumentWasCalled;
 
-static void setWillMoveToNewOwnerDocumentWasCalled(bool wasCalled)
-{
-    willMoveToNewOwnerDocumentWasCalled = wasCalled;
-}
+static bool didMoveToNewDocumentWasCalled;
 
-static void setDidMoveToNewOwnerDocumentWasCalled(bool wasCalled)
+static void setDidMoveToNewDocumentWasCalled(bool wasCalled)
 {
-    didMoveToNewOwnerDocumentWasCalled = wasCalled;
+    didMoveToNewDocumentWasCalled = wasCalled;
 }
     
 #endif
@@ -452,20 +446,17 @@ void Node::setDocument(Document* document)
 
     document->guardRef();
 
-    setWillMoveToNewOwnerDocumentWasCalled(false);
-    willMoveToNewOwnerDocument();
-    ASSERT(willMoveToNewOwnerDocumentWasCalled);
-
     if (m_document) {
         m_document->moveNodeIteratorsToNewDocument(this, document);
         m_document->guardDeref();
     }
 
+    Document* oldDocument = m_document;
     m_document = document;
 
-    setDidMoveToNewOwnerDocumentWasCalled(false);
-    didMoveToNewOwnerDocument();
-    ASSERT(didMoveToNewOwnerDocumentWasCalled);
+    setDidMoveToNewDocumentWasCalled(false);
+    didMoveToNewDocument(oldDocument);
+    ASSERT(didMoveToNewDocumentWasCalled);
 }
 
 TreeScope* Node::treeScope() const
@@ -2497,16 +2488,10 @@ void Node::removedFromDocument()
     clearInDocument();
 }
 
-void Node::willMoveToNewOwnerDocument()
+void Node::didMoveToNewDocument(Document* oldDocument)
 {
-    ASSERT(!willMoveToNewOwnerDocumentWasCalled);
-    setWillMoveToNewOwnerDocumentWasCalled(true);
-}
-
-void Node::didMoveToNewOwnerDocument()
-{
-    ASSERT(!didMoveToNewOwnerDocumentWasCalled);
-    setDidMoveToNewOwnerDocumentWasCalled(true);
+    ASSERT(!didMoveToNewDocumentWasCalled);
+    setDidMoveToNewDocumentWasCalled(true);
 
     // FIXME: Event listener types for this node should be set on the new owner document here.
 
@@ -2522,6 +2507,8 @@ void Node::didMoveToNewOwnerDocument()
             document()->addMutationObserverTypes((*iter)->mutationTypes());
         }
     }
+#else
+    UNUSED_PARAM(oldDocument);
 #endif
 }
 

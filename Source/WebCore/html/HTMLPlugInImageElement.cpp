@@ -202,23 +202,17 @@ void HTMLPlugInImageElement::finishParsingChildren()
         setNeedsStyleRecalc();    
 }
 
-void HTMLPlugInImageElement::willMoveToNewOwnerDocument()
+void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (m_needsDocumentActivationCallbacks)
-        document()->unregisterForPageCacheSuspensionCallbacks(this);
+    if (m_needsDocumentActivationCallbacks) {
+        if (oldDocument)
+            oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
+        document()->registerForPageCacheSuspensionCallbacks(this);
+    }
 
     if (m_imageLoader)
-        m_imageLoader->elementWillMoveToNewOwnerDocument();
-
-    HTMLPlugInElement::willMoveToNewOwnerDocument();
-}
-
-void HTMLPlugInImageElement::didMoveToNewOwnerDocument()
-{
-    if (m_needsDocumentActivationCallbacks)
-        document()->registerForPageCacheSuspensionCallbacks(this);   
-    
-    HTMLPlugInElement::didMoveToNewOwnerDocument();
+        m_imageLoader->elementDidMoveToNewDocument();
+    HTMLPlugInElement::didMoveToNewDocument(oldDocument);
 }
 
 void HTMLPlugInImageElement::documentWillSuspendForPageCache()

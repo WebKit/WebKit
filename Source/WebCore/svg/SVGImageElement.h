@@ -63,7 +63,7 @@ private:
     virtual bool haveLoadedRequiredResources();
 
     virtual bool selfHasRelativeLengths() const;
-    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGImageElement)
         DECLARE_ANIMATED_LENGTH(X, x)

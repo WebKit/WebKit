@@ -46,7 +46,7 @@ public:
     // doesn't change; starts new load unconditionally (matches Firefox and Opera behavior).
     void updateFromElementIgnoringPreviousError();
 
-    void elementWillMoveToNewOwnerDocument();
+    void elementDidMoveToNewDocument();
 
     Element* element() const { return m_element; }
     bool imageComplete() const { return m_imageComplete; }

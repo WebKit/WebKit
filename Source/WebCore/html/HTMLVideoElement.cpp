@@ -271,11 +271,11 @@ bool HTMLVideoElement::webkitDisplayingFullscreen()
     return isFullscreen();
 }
 
-void HTMLVideoElement::willMoveToNewOwnerDocument()
+void HTMLVideoElement::didMoveToNewDocument(Document* oldDocument)
 {
     if (m_imageLoader)
-        m_imageLoader->elementWillMoveToNewOwnerDocument();
-    HTMLMediaElement::willMoveToNewOwnerDocument();
+        m_imageLoader->elementDidMoveToNewDocument();
+    HTMLMediaElement::didMoveToNewDocument(oldDocument);
 }
 
 #if ENABLE(MEDIA_STATISTICS)

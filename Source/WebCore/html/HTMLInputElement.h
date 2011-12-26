@@ -249,8 +249,7 @@ private:
     enum AutoCompleteSetting { Uninitialized, On, Off };
     enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
 
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;

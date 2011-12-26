@@ -632,18 +632,15 @@ void HTMLFormElement::documentDidResumeFromPageCache()
     }
 }
 
-void HTMLFormElement::willMoveToNewOwnerDocument()
+void HTMLFormElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (!shouldAutocomplete())
-        document()->unregisterForPageCacheSuspensionCallbacks(this);
-    HTMLElement::willMoveToNewOwnerDocument();
-}
-
-void HTMLFormElement::didMoveToNewOwnerDocument()
-{
-    if (!shouldAutocomplete())
+    if (!shouldAutocomplete()) {
+        if (oldDocument)
+            oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
         document()->registerForPageCacheSuspensionCallbacks(this);
-    HTMLElement::didMoveToNewOwnerDocument();
+    }
+
+    HTMLElement::didMoveToNewDocument(oldDocument);
 }
 
 bool HTMLFormElement::shouldAutocomplete() const

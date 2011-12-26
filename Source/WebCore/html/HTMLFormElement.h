@@ -128,8 +128,7 @@ private:
 
     virtual void documentDidResumeFromPageCache();
 
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual bool shouldRegisterAsNamedItem() const OVERRIDE { return true; }
 

@@ -126,8 +126,7 @@ public:
     Element* getElementById(const AtomicString&) const;
 
 protected:
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
 private:
     SVGSVGElement(const QualifiedName&, Document*);

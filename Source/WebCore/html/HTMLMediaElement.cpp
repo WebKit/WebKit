@@ -277,25 +277,29 @@ HTMLMediaElement::~HTMLMediaElement()
     removeElementFromDocumentMap(this, document());
 }
 
-void HTMLMediaElement::willMoveToNewOwnerDocument()
+void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
 {
-    if (m_isWaitingUntilMediaCanStart)
-        document()->removeMediaCanStartListener(this);
-    setShouldDelayLoadEvent(false);
-    document()->unregisterForMediaVolumeCallbacks(this);
-    removeElementFromDocumentMap(this, document());
-    HTMLElement::willMoveToNewOwnerDocument();
-}
-
-void HTMLMediaElement::didMoveToNewOwnerDocument()
-{
-    if (m_isWaitingUntilMediaCanStart)
+    if (m_isWaitingUntilMediaCanStart) {
+        if (oldDocument)
+            oldDocument->removeMediaCanStartListener(this);
         document()->addMediaCanStartListener(this);
-    if (m_readyState < HAVE_CURRENT_DATA)
-        setShouldDelayLoadEvent(true);
+    }
+
+    if (m_shouldDelayLoadEvent) {
+        if (oldDocument)
+            oldDocument->decrementLoadEventDelayCount();
+        document()->incrementLoadEventDelayCount();
+    }
+
+    if (oldDocument) {
+        oldDocument->unregisterForMediaVolumeCallbacks(this);
+        removeElementFromDocumentMap(this, oldDocument);
+    }
+
     document()->registerForMediaVolumeCallbacks(this);
     addElementToDocumentMap(this, document());
-    HTMLElement::didMoveToNewOwnerDocument();
+
+    HTMLElement::didMoveToNewDocument(oldDocument);
 }
 
 bool HTMLMediaElement::supportsFocus() const

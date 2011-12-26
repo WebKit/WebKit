@@ -1502,24 +1502,21 @@ void HTMLInputElement::documentDidResumeFromPageCache()
     reset();
 }
 
-void HTMLInputElement::willMoveToNewOwnerDocument()
+void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
 {
     m_inputType->willMoveToNewOwnerDocument();
+    bool needsSuspensionCallback = this->needsSuspensionCallback();
+    if (oldDocument) {
+        // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
+        if (needsSuspensionCallback)
+            oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
+        oldDocument->checkedRadioButtons().removeButton(this);
+    }
 
-    // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
-    if (needsSuspensionCallback())
-        document()->unregisterForPageCacheSuspensionCallbacks(this);
+    if (needsSuspensionCallback)
+        document()->registerForPageCacheSuspensionCallbacks(this);
 
-    document()->checkedRadioButtons().removeButton(this);
-
-    HTMLTextFormControlElement::willMoveToNewOwnerDocument();
-}
-
-void HTMLInputElement::didMoveToNewOwnerDocument()
-{
-    registerForSuspensionCallbackIfNeeded();
-
-    HTMLTextFormControlElement::didMoveToNewOwnerDocument();
+    HTMLTextFormControlElement::didMoveToNewDocument(oldDocument);
 }
 
 void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

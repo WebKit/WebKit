@@ -182,7 +182,7 @@ void StyledElement::attributeChanged(Attribute* attr, bool preserveDecls)
     }
 
     // parseMappedAttribute() might create a CSSMappedAttributeDeclaration on the attribute.  
-    // Normally we would be concerned about reseting the parent of those declarations in StyledElement::didMoveToNewOwnerDocument().
+    // Normally we would be concerned about reseting the parent of those declarations in StyledElement::didMoveToNewDocument().
     // But currently we always clear its parent and node below when adding it to the decl table.  
     // If that changes for some reason moving between documents will be buggy.
     // webarchive/adopt-attribute-styled-node-webarchive.html should catch any resulting crashes.

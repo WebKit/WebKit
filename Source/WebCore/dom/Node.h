@@ -678,8 +678,7 @@ protected:
     };
     Node(Document*, ConstructionType);
 
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument);
     
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const { }
     void setTabIndexExplicitly(short);

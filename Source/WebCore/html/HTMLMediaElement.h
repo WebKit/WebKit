@@ -282,8 +282,7 @@ protected:
     virtual bool isURLAttribute(Attribute*) const;
     virtual void attach();
 
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     enum DisplayMode { Unknown, None, Poster, PosterWaitingForVideo, Video };
     DisplayMode displayMode() const { return m_displayMode; }
@@ -434,7 +433,6 @@ private:
     virtual void mediaCanStart();
 
     void setShouldDelayLoadEvent(bool);
-
     void invalidateCachedTime();
     void refreshCachedTime() const;
 

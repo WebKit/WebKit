@@ -74,8 +74,7 @@ protected:
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
-    virtual void willMoveToNewOwnerDocument() OVERRIDE;
-    virtual void didMoveToNewOwnerDocument() OVERRIDE;
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
     
     virtual void documentWillSuspendForPageCache() OVERRIDE;
     virtual void documentDidResumeFromPageCache() OVERRIDE;

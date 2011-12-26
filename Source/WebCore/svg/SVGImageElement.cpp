@@ -215,10 +215,10 @@ void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     addSubresourceURL(urls, document()->completeURL(href()));
 }
 
-void SVGImageElement::willMoveToNewOwnerDocument()
+void SVGImageElement::didMoveToNewDocument(Document* oldDocument)
 {
-    m_imageLoader.elementWillMoveToNewOwnerDocument();
-    SVGStyledTransformableElement::willMoveToNewOwnerDocument();
+    m_imageLoader.elementDidMoveToNewDocument();
+    SVGStyledTransformableElement::didMoveToNewDocument(oldDocument);
 }
 
 }

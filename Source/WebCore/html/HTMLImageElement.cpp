@@ -349,10 +349,10 @@ void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
     addSubresourceURL(urls, document()->completeURL(getAttribute(usemapAttr)));
 }
 
-void HTMLImageElement::willMoveToNewOwnerDocument()
+void HTMLImageElement::didMoveToNewDocument(Document* oldDocument)
 {
-    m_imageLoader.elementWillMoveToNewOwnerDocument();
-    HTMLElement::willMoveToNewOwnerDocument();
+    m_imageLoader.elementDidMoveToNewDocument();
+    HTMLElement::didMoveToNewDocument(oldDocument);
 }
 
 bool HTMLImageElement::isServerMap() const

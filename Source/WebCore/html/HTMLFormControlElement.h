@@ -120,7 +120,7 @@ protected:
     virtual void removedFromTree(bool deep);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 
     virtual bool supportsFocus() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
@@ -185,8 +185,7 @@ protected:
 
     virtual bool shouldAutocomplete() const;
     virtual void finishParsingChildren();
-    virtual void willMoveToNewOwnerDocument();
-    virtual void didMoveToNewOwnerDocument();
+    virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 };
 
 } // namespace
