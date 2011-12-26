@@ -108,9 +108,6 @@ SVGSVGElement::~SVGSVGElement()
 
 void SVGSVGElement::didMoveToNewDocument(Document* oldDocument)
 {
-    document()->registerForPageCacheSuspensionCallbacks(this);
-    SVGStyledLocatableElement::didMoveToNewDocument(oldDocument);
-
     if (oldDocument)
         oldDocument->unregisterForPageCacheSuspensionCallbacks(this);
     document()->registerForPageCacheSuspensionCallbacks(this);

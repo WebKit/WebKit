@@ -1,3 +1,10 @@
+2011-12-26  Hajime Morrita  <morrita@google.com>
+
+        Unreviewed bad merge fix.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::didMoveToNewDocument):
+
 2011-12-25  Hajime Morrita  <morrita@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=74067
