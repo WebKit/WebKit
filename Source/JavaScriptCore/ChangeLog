@@ -1,3 +1,20 @@
+2011-12-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix miss-commit of utf8 change.
+
+        Reviewed by Filip Pizlo
+
+        Eeep, patch as landed a while ago had no effect! - acidentally landed
+        modified version of patch used for performance testing.
+
+        (This isn't covered by layout tests because layour tests don't use jsc,
+        and the tests/mozilla tests use latin1, which was already supported!)
+
+        Landing changes as intended (and as originally reviewed).
+
+        * jsc.cpp:
+        (jscSource):
+
 2011-12-26  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed build fix for ARMv7.

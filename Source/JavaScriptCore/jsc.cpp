@@ -228,7 +228,7 @@ static inline SourceCode jscSource(const char* utf8, const UString& filename)
     // Slow case - contains non-ascii characters, use fromUTF8WithLatin1Fallback.
     ASSERT(*pos < 0);
     ASSERT(strlen(utf8) == asciiLength + strlen(pos));
-    String source = String(utf8, asciiLength + strlen(pos));
+    String source = String::fromUTF8WithLatin1Fallback(utf8, asciiLength + strlen(pos));
     return makeSource(source.impl(), filename);
 }
 
