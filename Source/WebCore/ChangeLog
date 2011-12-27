@@ -1,5 +1,11 @@
 2011-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed web inspector localizedStrings.js fix.
+
+        * English.lproj/localizedStrings.js:
+
+2011-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Introduce support for experimental settings.
         https://bugs.webkit.org/show_bug.cgi?id=75250
 
