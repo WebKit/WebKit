@@ -852,7 +852,7 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
      * @param {WebInspector.Resource} resource
      * @param {string} content
      * @param {boolean} majorChange
-     * @param {function(?Protocol.Error)} userCallback
+     * @param {function(?string)} userCallback
      */
     setContent: function(resource, content, majorChange, userCallback)
     {
@@ -871,21 +871,22 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {string} content
-     * @param {function(?Protocol.Error)} userCallback
-     * @param {string} oldContent
+     * @param {function(?string)} userCallback
+     * @param {?string} oldContent
+     * @param {?string} oldContentEncoded
      */
-    _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent)
+    _setContentWithInitialContent: function(uiSourceCode, content, userCallback, oldContent, oldContentEncoded)
     {
         /**
          * @this {WebInspector.DebuggerPresentationModelResourceBinding}
-         * @param {?Protocol.Error} error
+         * @param {?string} error
          */
         function callback(error)
         {
             if (userCallback)
                 userCallback(error);
             if (!error)
-                this._presentationModel._updateBreakpointsAfterLiveEdit(uiSourceCode, oldContent, content);
+                this._presentationModel._updateBreakpointsAfterLiveEdit(uiSourceCode, oldContent || "", content);
         }
         this._presentationModel.setScriptSource(uiSourceCode, content, callback.bind(this));
     }

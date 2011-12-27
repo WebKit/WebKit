@@ -25,6 +25,8 @@
 
 /**
  * @constructor
+ * @param {string} title
+ * @param {string} subtitle
  */
 WebInspector.Placard = function(title, subtitle)
 {
@@ -47,6 +49,7 @@ WebInspector.Placard = function(title, subtitle)
 }
 
 WebInspector.Placard.prototype = {
+    /** @return {string} */
     get title()
     {
         return this._title;
@@ -60,6 +63,7 @@ WebInspector.Placard.prototype = {
         this.titleElement.textContent = x;
     },
 
+    /** @return {string} */
     get subtitle()
     {
         return this._subtitle;
@@ -73,6 +77,7 @@ WebInspector.Placard.prototype = {
         this.subtitleElement.textContent = x;
     },
 
+    /** @return {boolean} */
     get selected()
     {
         return this._selected;

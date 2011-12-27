@@ -37,11 +37,17 @@ WebInspector.ResourceCategory = function(name, title, color)
 }
 
 WebInspector.ResourceCategory.prototype = {
+    /**
+     * @return {string}
+     */
     toString: function()
     {
         return this.title;
     },
 
+    /**
+     * @return {string}
+     */
     get title()
     {
         return WebInspector.UIString(this._title);

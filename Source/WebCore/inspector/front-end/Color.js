@@ -45,13 +45,16 @@ WebInspector.Color.fromRGBA = function(r, g, b, a)
 }
 
 WebInspector.Color.prototype = {
+    /**
+     * @return {string}
+     */
     get shorthex()
     {
         if ("_short" in this)
             return this._short;
 
         if (!this.simple)
-            return null;
+            return "";
 
         var hex = this.hex;
         if (hex.charAt(0) === hex.charAt(1) && hex.charAt(2) === hex.charAt(3) && hex.charAt(4) === hex.charAt(5))
@@ -62,10 +65,13 @@ WebInspector.Color.prototype = {
         return this._short;
     },
 
+    /**
+     * @return {string}
+     */
     get hex()
     {
         if (!this.simple)
-            return null;
+            return "";
 
         return this._hex;
     },
@@ -75,9 +81,12 @@ WebInspector.Color.prototype = {
         this._hex = x;
     },
 
+    /**
+     * @return {Array.<number>}
+     */
     get rgb()
     {
-        if ("_rgb" in this)
+        if (this._rgb)
             return this._rgb;
 
         if (this.simple)
@@ -95,9 +104,12 @@ WebInspector.Color.prototype = {
         this._rgb = x;
     },
 
+    /**
+     * @return {Array.<number>}
+     */
     get hsl()
     {
-        if ("_hsl" in this)
+        if (this._hsl)
             return this._hsl;
 
         this._hsl = this._rgbToHSL(this.rgb);
@@ -109,12 +121,15 @@ WebInspector.Color.prototype = {
         this._hsl = x;
     },
 
+    /**
+     * @return {string}
+     */
     get nickname()
     {
         if (typeof this._nickname !== "undefined") // would be set on parse if there was a nickname
             return this._nickname;
         else
-            return null;
+            return "";
     },
 
     set nickname(x)
@@ -122,6 +137,9 @@ WebInspector.Color.prototype = {
         this._nickname = x;
     },
 
+    /**
+     * @return {Array.<number>}
+     */
     get rgba()
     {
         return this._rgba;
@@ -132,6 +150,9 @@ WebInspector.Color.prototype = {
         this._rgba = x;
     },
 
+    /**
+     * @return {Array.<number>}
+     */
     get hsla()
     {
         return this._hsla;
@@ -142,12 +163,18 @@ WebInspector.Color.prototype = {
         this._hsla = x;
     },
 
+    /**
+     * @return {boolean}
+     */
     hasShortHex: function()
     {
         var shorthex = this.shorthex;
-        return (shorthex && shorthex.length === 3);
+        return (!!shorthex && shorthex.length === 3);
     },
 
+    /**
+     * @return {string}
+     */
     toString: function(format)
     {
         if (!format)
@@ -177,6 +204,9 @@ WebInspector.Color.prototype = {
         throw "invalid color format";
     },
 
+    /**
+     * @return {Object}
+     */
     toProtocolRGBA: function()
     {
         if (this._protocolRGBA)
@@ -192,6 +222,12 @@ WebInspector.Color.prototype = {
         return this._protocolRGBA;
     },
 
+    /**
+     * @param {number} value
+     * @param {number} min
+     * @param {number} max
+     * @return {number}
+     */
     _clamp: function(value, min, max)
     {
         if (value < min)
@@ -201,6 +237,10 @@ WebInspector.Color.prototype = {
         return value;
     },
 
+    /**
+     * @param {number|string} rgbValue
+     * @return {number}
+     */
     _individualRGBValueToFloatValue: function(rgbValue)
     {
         if (typeof rgbValue === "number")
@@ -208,13 +248,17 @@ WebInspector.Color.prototype = {
 
         if (rgbValue.indexOf("%") === -1) {
             var intValue = parseInt(rgbValue, 10);
-            return this._clamp(rgbValue, 0, 255);
+            return this._clamp(intValue, 0, 255);
         }
 
         var percentValue = parseFloat(rgbValue);
         return this._clamp(percentValue, 0, 100) * 2.55;
     },
 
+    /**
+     * @param {number|string} rgbValue
+     * @return {string}
+     */
     _individualRGBValueToHexValue: function(rgbValue)
     {
         var floatValue = this._individualRGBValueToFloatValue(rgbValue);
@@ -224,6 +268,22 @@ WebInspector.Color.prototype = {
         return hex;
     },
 
+    /**
+     * @param {Array.<string>} rgb
+     * @return {string}
+     */
+    _rgbStringsToHex: function(rgb)
+    {
+        var r = this._individualRGBValueToHexValue(rgb[0]);
+        var g = this._individualRGBValueToHexValue(rgb[1]);
+        var b = this._individualRGBValueToHexValue(rgb[2]);
+        return (r + g + b).toUpperCase();
+    },
+
+    /**
+     * @param {Array.<number>} rgb
+     * @return {string}
+     */
     _rgbToHex: function(rgb)
     {
         var r = this._individualRGBValueToHexValue(rgb[0]);
@@ -232,6 +292,10 @@ WebInspector.Color.prototype = {
         return (r + g + b).toUpperCase();
     },
 
+    /**
+     * @param {string} hex
+     * @return {Array.<number>}
+     */
     _hexToRGB: function(hex)
     {
         var r = parseInt(hex.substring(0,2), 16);
@@ -241,6 +305,10 @@ WebInspector.Color.prototype = {
         return [r, g, b];
     },
 
+    /**
+     * @param {Array.<string|number>} rgb
+     * @return {Array.<number>}
+     */
     _rgbToHSL: function(rgb)
     {
         var r = this._individualRGBValueToFloatValue(rgb[0]) / 255;
@@ -278,6 +346,10 @@ WebInspector.Color.prototype = {
         return [h, s, l];
     },
 
+    /**
+     * @param {Array.<number>} hsl
+     * @return {Array.<number>}
+     */
     _hslToRGB: function(hsl)
     {
         var h = parseFloat(hsl[0]) / 360;
@@ -320,6 +392,10 @@ WebInspector.Color.prototype = {
         }
     },
 
+    /**
+     * @param {Array.<number>} rgba
+     * @return {Array.<number>}
+     */
     _rgbaToHSLA: function(rgba, alpha)
     {
         var hsl = this._rgbToHSL(rgba)
@@ -327,6 +403,11 @@ WebInspector.Color.prototype = {
         return hsl;
     },
 
+    /**
+     * @param {Array.<number>} hsla
+     * @param {number} alpha
+     * @return {Array.<number>}
+     */
     _hslaToRGBA: function(hsla, alpha)
     {
         var rgb = this._hslToRGB(hsla);
@@ -368,7 +449,7 @@ WebInspector.Color.prototype = {
                 this.format = "rgb";
                 var rgb = match[2].split(/\s*,\s*/);
                 this.rgb = rgb;
-                this.hex = this._rgbToHex(rgb);
+                this.hex = this._rgbStringsToHex(rgb);
             } else if (match[3]) { // nickname
                 var nickname = match[3].toLowerCase();
                 if (nickname in WebInspector.Color.Nicknames) {

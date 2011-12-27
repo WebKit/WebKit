@@ -38,11 +38,13 @@ WebInspector.Database = function(id, domain, name, version)
 }
 
 WebInspector.Database.prototype = {
+    /** @return {string} */
     get id()
     {
         return this._id;
     },
 
+    /** @return {string} */
     get name()
     {
         return this._name;
@@ -53,6 +55,7 @@ WebInspector.Database.prototype = {
         this._name = x;
     },
 
+    /** @return {string} */
     get version()
     {
         return this._version;
@@ -63,6 +66,7 @@ WebInspector.Database.prototype = {
         this._version = x;
     },
 
+    /** @return {string} */
     get domain()
     {
         return this._domain;
@@ -73,11 +77,15 @@ WebInspector.Database.prototype = {
         this._domain = x;
     },
 
+    /** @return {string} */
     get displayDomain()
     {
         return WebInspector.Resource.prototype.__lookupGetter__("displayDomain").call(this);
     },
 
+    /**
+     * @param {function(Array.<string>)} callback
+     */
     getTableNames: function(callback)
     {
         function sortingCallback(error, names)
@@ -88,6 +96,11 @@ WebInspector.Database.prototype = {
         DatabaseAgent.getDatabaseTableNames(this._id, sortingCallback);
     },
 
+    /**
+     * @param {string} query
+     * @param {function(Array.<string>, Array.<*>)} onSuccess
+     * @param {function(DatabaseAgent.Error)} onError
+     */
     executeSql: function(query, onSuccess, onError)
     {
         function callback(error, success, transactionId)
@@ -117,6 +130,9 @@ WebInspector.DatabaseDispatcher = function()
 WebInspector.DatabaseDispatcher._callbacks = {};
 
 WebInspector.DatabaseDispatcher.prototype = {
+    /**
+     * @param {DatabaseAgent.Database} payload
+     */
     addDatabase: function(payload)
     {
         var database = new WebInspector.Database(
@@ -127,23 +143,32 @@ WebInspector.DatabaseDispatcher.prototype = {
         WebInspector.panels.resources.addDatabase(database);
     },
 
+    /**
+     * @param {number} transactionId
+     * @param {Array.<string>} columnNames
+     * @param {Array.<*>} values
+     */
     sqlTransactionSucceeded: function(transactionId, columnNames, values)
     {
         if (!WebInspector.DatabaseDispatcher._callbacks[transactionId])
             return;
 
-        var callback = WebInspector.DatabaseDispatcher._callbacks[transactionId].onSuccess;
+        var callback = WebInspector.DatabaseDispatcher._callbacks[transactionId]["onSuccess"];
         delete WebInspector.DatabaseDispatcher._callbacks[transactionId];
         if (callback)
             callback(columnNames, values);
     },
 
+    /**
+     * @param {number} transactionId
+     * @param {?DatabaseAgent.Error} errorObj
+     */
     sqlTransactionFailed: function(transactionId, errorObj)
     {
         if (!WebInspector.DatabaseDispatcher._callbacks[transactionId])
             return;
 
-        var callback = WebInspector.DatabaseDispatcher._callbacks[transactionId].onError;
+        var callback = WebInspector.DatabaseDispatcher._callbacks[transactionId]["onError"];
         delete WebInspector.DatabaseDispatcher._callbacks[transactionId];
         if (callback)
              callback(errorObj);

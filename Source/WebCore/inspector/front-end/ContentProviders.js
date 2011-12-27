@@ -36,7 +36,7 @@ WebInspector.ScriptContentProvider = function(script)
 {
     this._mimeType = "text/javascript";
     this._script = script;
-};
+}
 
 WebInspector.ScriptContentProvider.prototype = {
     /**
@@ -73,7 +73,7 @@ WebInspector.ConcatenatedScriptsContentProvider = function(scripts)
 {
     this._mimeType = "text/html";
     this._scripts = scripts;
-};
+}
 
 WebInspector.ConcatenatedScriptsContentProvider.scriptOpenTag = "<script>";
 WebInspector.ConcatenatedScriptsContentProvider.scriptCloseTag = "</script>";
@@ -248,7 +248,7 @@ WebInspector.CompilerSourceMappingContentProvider = function(sourceURL, compiler
     this._mimeType = "text/javascript";
     this._sourceURL = sourceURL;
     this._compilerSourceMapping = compilerSourceMapping;
-};
+}
 
 WebInspector.CompilerSourceMappingContentProvider.prototype = {
     /**
@@ -282,7 +282,7 @@ WebInspector.StaticContentProvider = function(mimeType, content)
 {
     this._mimeType = mimeType;
     this._content = content;
-};
+}
 
 WebInspector.StaticContentProvider.prototype = {
     /**

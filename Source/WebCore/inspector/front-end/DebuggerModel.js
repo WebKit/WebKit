@@ -60,10 +60,14 @@ WebInspector.DebuggerPausedDetails = function(callFrames, reason, auxData)
 
 /**
  * @constructor
+ * @extends {DebuggerAgent.Location}
+ * @param {number} lineNumber
+ * @param {number} columnNumber
  */
-WebInspector.DebuggerModel.Location = function()
+WebInspector.DebuggerModel.Location = function(lineNumber, columnNumber)
 {
-    this.scriptId = null;
+    this.lineNumber = lineNumber;
+    this.columnNumber = columnNumber;
 }
 
 WebInspector.DebuggerModel.Events = {
@@ -341,7 +345,7 @@ WebInspector.DebuggerModel.prototype = {
      */
     _failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)
     {
-        var script = new WebInspector.Script(null, sourceURL, startingLine, 0, 0, 0, false);
+        var script = new WebInspector.Script("", sourceURL, startingLine, 0, 0, 0, false);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, script);
     }
 }

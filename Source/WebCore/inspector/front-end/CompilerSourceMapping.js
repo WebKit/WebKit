@@ -46,7 +46,7 @@ WebInspector.CompilerSourceMapping.prototype = {
     /**
      * @param {string} sourceURL
      * @param {number} lineNumber
-     * @return {Object}
+     * @return {DebuggerAgent.Location}
      */
     sourceLocationToCompiledLocation: function(sourceURL, lineNumber) { },
 

@@ -114,7 +114,7 @@ WebInspector.RawSourceCode.prototype = {
 
     /**
      * @param {number} lineNumber
-     * @param {number} columnNumber
+     * @param {number=} columnNumber
      * @return {WebInspector.Script}
      */
     _scriptForRawLocation: function(lineNumber, columnNumber)
@@ -364,7 +364,7 @@ WebInspector.RawSourceCode.FormattedSourceMapping.prototype = {
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber)
     {
         console.assert(uiSourceCode === this._uiSourceCodeList[0]);
-        var rawLocation = this._mapping.formattedToOriginal({ lineNumber: lineNumber, columnNumber: columnNumber });
+        var rawLocation = this._mapping.formattedToOriginal(new WebInspector.DebuggerModel.Location(lineNumber, columnNumber));
         rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
         return rawLocation;
     },
@@ -416,7 +416,7 @@ WebInspector.RawSourceCode.CompilerSourceMapping.prototype = {
     {
         var rawLocation = this._mapping.sourceLocationToCompiledLocation(uiSourceCode.url, lineNumber);
         rawLocation.scriptId = this._rawSourceCode._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
-        return /** @type {DebuggerAgent.Location} */ rawLocation;
+        return rawLocation;
     },
 
     /**

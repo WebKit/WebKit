@@ -960,7 +960,7 @@
             {
                 "name": "addDOMStorage",
                 "parameters": [
-                    { "name": "storage", "type": "object" }
+                    { "name": "storage", "$ref": "Entry" }
                 ]
             },
             {

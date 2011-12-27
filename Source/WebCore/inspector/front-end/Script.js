@@ -25,7 +25,7 @@
 
 /**
  * @constructor
- * @param {?string} scriptId
+ * @param {string} scriptId
  * @param {string} sourceURL
  * @param {number} startLine
  * @param {number} startColumn
@@ -130,8 +130,11 @@ WebInspector.Script.prototype = {
             callback("Script failed to parse");
     },
 
+    /**
+     * @return {boolean}
+     */
     isInlineScript: function()
     {
-        return this.sourceURL && this.lineOffset !== 0 && this.columnOffset !== 0;
+        return !!this.sourceURL && this.lineOffset !== 0 && this.columnOffset !== 0;
     }
 }

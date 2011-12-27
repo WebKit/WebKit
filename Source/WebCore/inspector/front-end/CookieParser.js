@@ -42,16 +42,36 @@ WebInspector.CookieParser = function()
 {
 }
 
+/**
+ * @constructor
+ * @param {string} key
+ * @param {string|undefined} value
+ * @param {number} position
+ */
+WebInspector.CookieParser.KeyValue = function(key, value, position)
+{
+    this.key = key;
+    this.value = value;
+    this.position = position;
+}
+
 WebInspector.CookieParser.prototype = {
+    /**
+     * @return {Array.<WebInspector.Cookie>}
+     */
     get cookies()
     {
         return this._cookies;
     },
 
+    /**
+     * @param {string|undefined} cookieHeader
+     * @return {?Array.<WebInspector.Cookie>}
+     */
     parseCookie: function(cookieHeader)
     {
         if (!this._initialize(cookieHeader))
-            return;
+            return null;
 
         for (var kv = this._extractKeyValue(); kv; kv = this._extractKeyValue()) {
             if (kv.key.charAt(0) === "$" && this._lastCookie)
@@ -64,10 +84,14 @@ WebInspector.CookieParser.prototype = {
         return this._cookies;
     },
 
+    /**
+     * @param {string|undefined} setCookieHeader
+     * @return {?Array.<WebInspector.Cookie>}
+     */
     parseSetCookie: function(setCookieHeader)
     {
         if (!this._initialize(setCookieHeader))
-            return;
+            return null;
         for (var kv = this._extractKeyValue(); kv; kv = this._extractKeyValue()) {
             if (this._lastCookie)
                 this._lastCookie.addAttribute(kv.key, kv.value);
@@ -80,6 +104,10 @@ WebInspector.CookieParser.prototype = {
         return this._cookies;
     },
 
+    /**
+     * @param {string|undefined} headerValue
+     * @return {boolean}
+     */
     _initialize: function(headerValue)
     {
         this._input = headerValue;
@@ -98,6 +126,9 @@ WebInspector.CookieParser.prototype = {
         this._lastCookie = null;
     },
 
+    /**
+     * @return {WebInspector.CookieParser.KeyValue}
+     */
     _extractKeyValue: function()
     {
         if (!this._input || !this._input.length)
@@ -113,15 +144,14 @@ WebInspector.CookieParser.prototype = {
             return null;
         }
 
-        var result = {
-            key: keyValueMatch[1],
-            value: keyValueMatch[2] && keyValueMatch[2].trim(),
-            position: this._originalInputLength - this._input.length
-        };
+        var result = new WebInspector.CookieParser.KeyValue(keyValueMatch[1], keyValueMatch[2] && keyValueMatch[2].trim(), this._originalInputLength - this._input.length);
         this._input = this._input.slice(keyValueMatch[0].length);
         return result;
     },
 
+    /**
+     * @return {boolean}
+     */
     _advanceAndCheckCookieDelimiter: function()
     {
         var match = /^\s*[\n;]\s*/.exec(this._input);
@@ -131,6 +161,10 @@ WebInspector.CookieParser.prototype = {
         return match[0].match("\n") !== null;
     },
 
+    /**
+     * @param {WebInspector.CookieParser.KeyValue} keyValue
+     * @param {number} type
+     */
     _addCookie: function(keyValue, type)
     {
         if (this._lastCookie)
@@ -144,11 +178,19 @@ WebInspector.CookieParser.prototype = {
     }
 };
 
+/**
+ * @param {string|undefined} header
+ * @return {?Array.<WebInspector.Cookie>}
+ */
 WebInspector.CookieParser.parseCookie = function(header)
 {
     return (new WebInspector.CookieParser()).parseCookie(header);
 }
 
+/**
+ * @param {string|undefined} header
+ * @return {?Array.<WebInspector.Cookie>}
+ */
 WebInspector.CookieParser.parseSetCookie = function(header)
 {
     return (new WebInspector.CookieParser()).parseSetCookie(header);
@@ -166,16 +208,25 @@ WebInspector.Cookie = function(name, value, type)
 }
 
 WebInspector.Cookie.prototype = {
+    /**
+     * @return {boolean}
+     */ 
     get httpOnly()
     {
         return "httponly" in this._attributes;
     },
 
+    /**
+     * @return {boolean}
+     */ 
     get secure()
     {
         return "secure" in this._attributes;
     },
 
+    /**
+     * @return {boolean}
+     */ 
     get session()
     {
         // RFC 2965 suggests using Discard attribute to mark session cookies, but this does not seem to be widely used.
@@ -183,27 +234,43 @@ WebInspector.Cookie.prototype = {
         return  !("expries" in this._attributes || "max-age" in this._attributes);
     },
 
+    /**
+     * @return {string}
+     */ 
     get path()
     {
         return this._attributes["path"];
     },
 
+    /**
+     * @return {string}
+     */ 
     get domain()
     {
         return this._attributes["domain"];
     },
 
+    /**
+     * @return {Date}
+     */ 
     expires: function(requestDate)
     {
         return this._attributes["expires"] ? new Date(this._attributes["expires"]) :
             (this._attributes["max-age"] ? new Date(requestDate.getTime() + 1000 * this._attributes["max-age"]) : null);
     },
 
+    /**
+     * @return {Object}
+     */ 
     get attributes()
     {
         return this._attributes;
     },
 
+    /**
+     * @param {string} key 
+     * @param {string} value 
+     */ 
     addAttribute: function(key, value)
     {
         this._attributes[key.toLowerCase()] = value;

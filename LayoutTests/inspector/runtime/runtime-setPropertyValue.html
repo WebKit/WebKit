@@ -106,7 +106,7 @@ function test()
 
             function step1(error)
             {
-                InspectorTest.dump(error);
+                InspectorTest.addResult(error);
                 InspectorTest.evaluateInPage("dumpObject('Set exception')", next);
             }
         }

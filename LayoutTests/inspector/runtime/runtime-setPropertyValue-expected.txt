@@ -40,9 +40,5 @@ Running: testSetNull
 Running: testSetEmptyString
 
 Running: testSetException
-{
-    type : "string"
-    value : "exception"
-    description : "exception"
-}
+exception
 

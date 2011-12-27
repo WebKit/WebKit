@@ -57,6 +57,9 @@ window.getComputedStyle = function(element) {}
 /** @param {boolean=} onlyFirst */
 Array.prototype.remove = function(obj, onlyFirst) {}
 Array.prototype.keySet = function() {}
+/** @return {number} */
+Array.prototype.upperBound = function(anchor) {}
+
 
 DOMApplicationCache.prototype.UNCACHED = 0;
 DOMApplicationCache.prototype.IDLE = 1;
@@ -89,11 +92,6 @@ WebInspector.panels = {};
  * @type {WebInspector.InspectorView}
  */
 WebInspector.inspectorView;
-
-/**
- * @type {WebInspector.ScriptsPanel}
- */
-WebInspector.panels.scripts = null;
 
 /**
  * @param {WebInspector.View} view

@@ -1,3 +1,83 @@
+2011-12-27  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: add more annotations on SDK classes.
+        https://bugs.webkit.org/show_bug.cgi?id=75247
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ApplicationCacheModel.js:
+        (WebInspector.ApplicationCacheDispatcher.prototype.networkStateUpdated):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._breakpoint):
+        * inspector/front-end/Color.js:
+        (WebInspector.Color.prototype.get shorthex):
+        (WebInspector.Color.prototype.get hex):
+        (WebInspector.Color.prototype.get rgb):
+        (WebInspector.Color.prototype.get hsl):
+        (WebInspector.Color.prototype.get nickname):
+        (WebInspector.Color.prototype.hasShortHex):
+        (WebInspector.Color.prototype._individualRGBValueToFloatValue):
+        (WebInspector.Color.prototype._rgbStringsToHex):
+        (WebInspector.Color.prototype._parse.this.nickname.set 2):
+        (WebInspector.Color.prototype._parse.this.hsla.set 1):
+        (WebInspector.Color.prototype._parse.this.rgba.set 0):
+        (WebInspector.Color.prototype._parse.set WebInspector):
+        (WebInspector.Color.prototype._parse):
+        * inspector/front-end/CompilerSourceMapping.js:
+        * inspector/front-end/ConsoleModel.js:
+        * inspector/front-end/ContentProviders.js:
+        (WebInspector.ScriptContentProvider):
+        (WebInspector.ConcatenatedScriptsContentProvider):
+        (WebInspector.CompilerSourceMappingContentProvider):
+        (WebInspector.StaticContentProvider):
+        * inspector/front-end/CookieParser.js:
+        (WebInspector.CookieParser.KeyValue):
+        (WebInspector.CookieParser.prototype.parseCookie):
+        (WebInspector.CookieParser.prototype.parseSetCookie):
+        (WebInspector.CookieParser.prototype._extractKeyValue):
+        * inspector/front-end/DOMStorage.js:
+        * inspector/front-end/Database.js:
+        (WebInspector.DatabaseDispatcher.prototype.sqlTransactionSucceeded):
+        (WebInspector.DatabaseDispatcher.prototype.sqlTransactionFailed):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.Location):
+        (WebInspector.DebuggerModel.prototype._failedToParseScriptSource):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype._setContentWithInitialContent):
+        * inspector/front-end/ElementsTreeOutline.js:
+        * inspector/front-end/HAREntry.js:
+        * inspector/front-end/NetworkLog.js:
+        (WebInspector.NetworkLog.prototype._mainFrameNavigated):
+        * inspector/front-end/Placard.js:
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode.FormattedSourceMapping.prototype.uiLocationToRawLocation):
+        (WebInspector.RawSourceCode.CompilerSourceMapping.prototype.uiLocationToRawLocation):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.prototype.setPropertyValue.propertySetCallback):
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        (WebInspector.LocalJSONObject.prototype.get hasChildren):
+        (WebInspector.LocalJSONObject.prototype._children):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.restoreRevisions):
+        (WebInspector.Resource.prototype.get queryParameters):
+        (WebInspector.Resource.prototype.get formParameters):
+        (WebInspector.Resource.prototype.isHttpFamily):
+        * inspector/front-end/ResourceCategory.js:
+        * inspector/front-end/ResourceUtils.js:
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.isInlineScript):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.positionToLocation):
+        * inspector/front-end/WelcomeView.js:
+        (WebInspector.WelcomeView.prototype.addMessage):
+        * inspector/front-end/externs.js:
+        (Array.prototype.upperBound):
+
 2011-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts panel tabbed editor does not reopen closed tabs.

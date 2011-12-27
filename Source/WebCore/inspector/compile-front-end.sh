@@ -91,7 +91,6 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/PanelEnablerView.js \
         --js Source/WebCore/inspector/front-end/Popover.js \
         --js Source/WebCore/inspector/front-end/PropertiesSection.js \
-        --js Source/WebCore/inspector/front-end/PropertiesSidebarPane.js \
         --js Source/WebCore/inspector/front-end/SearchController.js \
         --js Source/WebCore/inspector/front-end/Section.js \
         --js Source/WebCore/inspector/front-end/SidebarPane.js \
@@ -99,6 +98,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/ShortcutsScreen.js \
         --js Source/WebCore/inspector/front-end/ShowMoreDataGridNode.js \
         --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
+        --js Source/WebCore/inspector/front-end/SourceTokenizer.js \
         --js Source/WebCore/inspector/front-end/SplitView.js \
         --js Source/WebCore/inspector/front-end/StatusBarButton.js \
         --js Source/WebCore/inspector/front-end/TabbedPane.js \
@@ -122,8 +122,8 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/JavaScriptOutlineDialog.js \
         --js Source/WebCore/inspector/front-end/ObjectPopoverHelper.js \
         --js Source/WebCore/inspector/front-end/ObjectPropertiesSection.js \
+        --js Source/WebCore/inspector/front-end/PropertiesSidebarPane.js \
         --js Source/WebCore/inspector/front-end/SourceFrame.js \
-        --js Source/WebCore/inspector/front-end/SourceTokenizer.js \
         --js Source/WebCore/inspector/front-end/TimelineAgent.js \
         --js Source/WebCore/inspector/front-end/TimelineGrid.js \
         --js Source/WebCore/inspector/front-end/TimelineManager.js \

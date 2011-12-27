@@ -65,6 +65,9 @@ WebInspector.ApplicationCacheModel.prototype = {
         ApplicationCacheAgent.getManifestForFrame(frame.id, this._manifestForFrameLoaded.bind(this, frame.id));
     },
     
+    /**
+     * @param {WebInspector.Event} event
+     */
     _frameDetached: function(event)
     {
         var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
@@ -246,5 +249,5 @@ WebInspector.ApplicationCacheDispatcher.prototype = {
     networkStateUpdated: function(isNowOnline)
     {
         this._applicationCacheModel._networkStateUpdated(isNowOnline);
-    },
+    }
 }

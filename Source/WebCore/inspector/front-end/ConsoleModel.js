@@ -104,6 +104,9 @@ WebInspector.ConsoleModel.prototype = {
         this._interruptRepeatCount = true;
     },
 
+    /**
+     * @param {number} count
+     */
     _messageRepeatCountUpdated: function(count)
     {
         var msg = this._previousMessage;
@@ -154,6 +157,9 @@ WebInspector.ConsoleMessage = function(source, level, url, line, repeatCount)
 }
 
 WebInspector.ConsoleMessage.prototype = {
+    /**
+     * @return {boolean}
+     */
     isErrorOrWarning: function()
     {
         return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);

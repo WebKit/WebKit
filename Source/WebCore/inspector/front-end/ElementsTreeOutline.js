@@ -650,7 +650,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _createTooltipForNode: function()
     {
-        var node = this.representedObject;
+        var node = /** @type {WebInspector.DOMNode} */ this.representedObject;
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 

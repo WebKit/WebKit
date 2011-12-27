@@ -36,6 +36,7 @@
 
 /**
  * @constructor
+ * @param {WebInspector.Resource} resource
  */
 WebInspector.HAREntry = function(resource)
 {
@@ -43,6 +44,9 @@ WebInspector.HAREntry = function(resource)
 }
 
 WebInspector.HAREntry.prototype = {
+    /**
+     * @return {Object}
+     */
     build: function()
     {
         return {
@@ -56,6 +60,9 @@ WebInspector.HAREntry.prototype = {
         };
     },
 
+    /**
+     * @return {Object}
+     */
     _buildRequest: function()
     {
         var res = {
@@ -74,6 +81,9 @@ WebInspector.HAREntry.prototype = {
         return res;
     },
 
+    /**
+     * @return {Object}
+     */
     _buildResponse: function()
     {
         return {
@@ -89,6 +99,9 @@ WebInspector.HAREntry.prototype = {
         };
     },
 
+    /**
+     * @return {Object}
+     */
     _buildContent: function()
     {
         return {
@@ -99,6 +112,9 @@ WebInspector.HAREntry.prototype = {
         };
     },
 
+    /**
+     * @return {Object}
+     */
     _buildTimings: function()
     {
         var waitForConnection = this._interval("connectStart", "connectEnd");
@@ -132,6 +148,9 @@ WebInspector.HAREntry.prototype = {
         };
     },
 
+    /**
+     * @return {Object}
+     */
     _buildHeaders: function(headers)
     {
         var result = [];
@@ -140,6 +159,9 @@ WebInspector.HAREntry.prototype = {
         return result;
     },
 
+    /**
+     * @return {Object}
+     */
     _buildPostData: function()
     {
         var res = {
@@ -151,21 +173,37 @@ WebInspector.HAREntry.prototype = {
         return res;
     },
 
+    /**
+     * @param {Array.<Object>} parameters
+     * @return {Array.<Object>}
+     */
     _buildParameters: function(parameters)
     {
         return parameters.slice();
     },
 
+    /**
+     * @param {string} url
+     * @return {string}
+     */
     _buildRequestURL: function(url)
     {
         return url.split("#", 2)[0];
     },
 
+    /**
+     * @param {Array.<WebInspector.Cookie>} cookies
+     * @return {Array.<Object>}
+     */
     _buildCookies: function(cookies)
     {
         return cookies.map(this._buildCookie.bind(this));
     },
 
+    /**
+     * @param {WebInspector.Cookie} cookie
+     * @return {Object}
+     */
     _buildCookie: function(cookie)
     {
         return {
@@ -179,6 +217,11 @@ WebInspector.HAREntry.prototype = {
         };
     },
 
+    /**
+     * @param {string} start
+     * @param {string} end
+     * @return {number}
+     */
     _interval: function(start, end)
     {
         var timing = this._resource.timing;
@@ -188,22 +231,35 @@ WebInspector.HAREntry.prototype = {
         return typeof startTime !== "number" || startTime === -1 ? -1 : Math.round(timing[end] - startTime);
     },
 
+    /**
+     * @return {number}
+     */
     get requestBodySize()
     {
         return !this._resource.requestFormData ? 0 : this._resource.requestFormData.length;
     },
 
+    /**
+     * @return {number}
+     */
     get responseBodySize()
     {
         return this._resource.transferSize - this._resource.responseHeadersSize
     },
 
+    /**
+     * @return {number}
+     */
     get responseCompression()
     {
         return this._resource.resourceSize - (this._resource.transferSize - this._resource.responseHeadersSize);
     }
 }
 
+/**
+ * @param {number} time
+ * @return {number}
+ */
 WebInspector.HAREntry._toMilliseconds = function(time)
 {
     return time === -1 ? -1 : Math.round(time * 1000);
@@ -211,6 +267,7 @@ WebInspector.HAREntry._toMilliseconds = function(time)
 
 /**
  * @constructor
+ * @param {Array.<WebInspector.Resource>} resources
  */
 WebInspector.HARLog = function(resources)
 {
@@ -218,6 +275,9 @@ WebInspector.HARLog = function(resources)
 }
 
 WebInspector.HARLog.prototype = {
+    /**
+     * @return {Object}
+     */
     build: function()
     {
         var webKitVersion = /AppleWebKit\/([^ ]+)/.exec(window.navigator.userAgent);
@@ -233,6 +293,9 @@ WebInspector.HARLog.prototype = {
         }
     },
 
+    /**
+     * @return {Array}
+     */
     _buildPages: function()
     {
         return [
@@ -245,6 +308,9 @@ WebInspector.HARLog.prototype = {
         ];
     },
 
+    /**
+     * @return {Object}
+     */
     buildMainResourceTimings: function()
     {
         return {
@@ -253,11 +319,19 @@ WebInspector.HARLog.prototype = {
         }
     },
 
+    /**
+     * @param {WebInspector.Resource} resource
+     * @return {Object}
+     */
     _convertResource: function(resource)
     {
         return (new WebInspector.HAREntry(resource)).build();
     },
 
+    /**
+     * @param {number} time
+     * @return {number}
+     */
     _pageEventTime: function(time)
     {
         var startTime = WebInspector.mainResourceStartTime;

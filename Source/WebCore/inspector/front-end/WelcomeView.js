@@ -61,11 +61,14 @@ WebInspector.WelcomeView = function(identifier, headingText, instructionsText)
 }
 
 WebInspector.WelcomeView.prototype = {
+    /**
+     * @param {string|Element} message
+     */
     addMessage: function(message)
     {
         var messageElement = document.createElement("div");
         messageElement.className = "message";
-        if (typeof message == "string")
+        if (typeof message === "string")
             messageElement.textContent = message;
         else
             messageElement.appendChild(message);

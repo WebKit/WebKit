@@ -56,9 +56,12 @@ WebInspector.NetworkLog.prototype = {
         return this._mainResourceStartTime;
     },
 
+    /**
+     * @param {WebInspector.Event} event
+     */
     _mainFrameNavigated: function(event)
     {
-        var mainFrame = event.data;
+        var mainFrame = /** type {WebInspector.ResourceTreeFrame} */ event.data;
         this._mainResourceStartTime = null;
         // Preserve resources from the new session.
         var oldResources = this._resources.splice(0, this._resources.length);
