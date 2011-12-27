@@ -1,5 +1,11 @@
 2011-12-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Errk! OS X build fix.
+
+        * JavaScriptCore.exp:
+
+2011-12-26  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
