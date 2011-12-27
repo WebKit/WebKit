@@ -4097,3 +4097,4 @@ BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-65-t.svg = PASS CRASH
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-81-t.svg = PASS CRASH
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-82-t.svg = PASS CRASH
 
+BUGWK75237 SNOWLEOPARD CPU : compositing/reflections/reflection-on-composited.html = PASS IMAGE
