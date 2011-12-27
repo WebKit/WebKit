@@ -1,3 +1,18 @@
+2011-12-27  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: Rolling out r103703 for breaking Canvas2DLayerChromiumTest.testFullLifecycle.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        (WebCore::Canvas2DLayerChromium::setTextureManager):
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        (WebCore::Canvas2DLayerChromium::pushPropertiesTo):
+        (WebCore::Canvas2DLayerChromium::unreserveContentsTexture):
+        (WebCore::Canvas2DLayerChromium::cleanupResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+
 2011-12-22  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Bypass the shadow texture copy for accelerated

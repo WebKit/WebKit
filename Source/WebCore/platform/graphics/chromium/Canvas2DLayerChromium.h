@@ -71,10 +71,6 @@ private:
     IntSize m_size;
     unsigned m_backTextureId;
     Platform3DObject m_fbo;
-    // When m_useDoubleBuffering is true, the compositor will draw using a copy of the
-    // canvas' backing texture. This option should be used with the compositor doesn't
-    // synchronize its draws with the canvas updates.
-    bool m_useDoubleBuffering;
     OwnPtr<ManagedTexture> m_frontTexture;
 };
 
