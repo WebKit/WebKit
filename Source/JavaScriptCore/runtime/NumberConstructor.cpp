@@ -83,6 +83,11 @@ bool NumberConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* ex
     return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(object), propertyName, descriptor);
 }
 
+void NumberConstructor::put(JSCell* cell, ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
+{
+    lookupPut<NumberConstructor, InternalFunction>(exec, propertyName, value, ExecState::numberConstructorTable(exec), jsCast<NumberConstructor*>(cell), slot);
+}
+
 static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&)
 {
     return jsNaN();

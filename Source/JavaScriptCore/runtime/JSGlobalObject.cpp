@@ -148,7 +148,7 @@ void JSGlobalObject::put(JSCell* cell, ExecState* exec, const Identifier& proper
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
+    if (thisObject->symbolTablePut(exec, propertyName, value, slot.isStrictMode()))
         return;
     JSVariableObject::put(thisObject, exec, propertyName, value, slot);
 }

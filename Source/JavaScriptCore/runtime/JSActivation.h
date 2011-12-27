@@ -83,7 +83,7 @@ namespace JSC {
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertyDescriptor&);
         bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        bool symbolTablePut(JSGlobalData&, const Identifier&, JSValue);
+        bool symbolTablePut(ExecState*, const Identifier&, JSValue, bool shouldThrow);
         bool symbolTablePutWithAttributes(JSGlobalData&, const Identifier&, JSValue, unsigned attributes);
 
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);

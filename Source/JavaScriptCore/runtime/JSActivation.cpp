@@ -97,15 +97,19 @@ inline bool JSActivation::symbolTableGet(const Identifier& propertyName, Propert
     return true;
 }
 
-inline bool JSActivation::symbolTablePut(JSGlobalData& globalData, const Identifier& propertyName, JSValue value)
+inline bool JSActivation::symbolTablePut(ExecState* exec, const Identifier& propertyName, JSValue value, bool shouldThrow)
 {
+    JSGlobalData& globalData = exec->globalData();
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
     if (entry.isNull())
         return false;
-    if (entry.isReadOnly())
+    if (entry.isReadOnly()) {
+        if (shouldThrow)
+            throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
         return true;
+    }
     if (entry.getIndex() >= m_numCapturedVars)
         return false;
 
@@ -173,7 +177,7 @@ void JSActivation::put(JSCell* cell, ExecState* exec, const Identifier& property
     JSActivation* thisObject = jsCast<JSActivation*>(cell);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
+    if (thisObject->symbolTablePut(exec, propertyName, value, slot.isStrictMode()))
         return;
 
     // We don't call through to JSObject because __proto__ and getter/setter 

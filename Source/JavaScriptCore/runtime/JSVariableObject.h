@@ -90,7 +90,7 @@ namespace JSC {
         bool symbolTableGet(const Identifier&, PropertySlot&);
         bool symbolTableGet(const Identifier&, PropertyDescriptor&);
         bool symbolTableGet(const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        bool symbolTablePut(JSGlobalData&, const Identifier&, JSValue);
+        bool symbolTablePut(ExecState*, const Identifier&, JSValue, bool shouldThrow);
         bool symbolTablePutWithAttributes(JSGlobalData&, const Identifier&, JSValue, unsigned attributes);
 
         SymbolTable* m_symbolTable; // Maps name -> offset from "r" in register file.
@@ -119,15 +119,19 @@ namespace JSC {
         return false;
     }
 
-    inline bool JSVariableObject::symbolTablePut(JSGlobalData& globalData, const Identifier& propertyName, JSValue value)
+    inline bool JSVariableObject::symbolTablePut(ExecState* exec, const Identifier& propertyName, JSValue value, bool shouldThrow)
     {
+        JSGlobalData& globalData = exec->globalData();
         ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
         if (entry.isNull())
             return false;
-        if (entry.isReadOnly())
+        if (entry.isReadOnly()) {
+            if (shouldThrow)
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
+        }
         registerAt(entry.getIndex()).set(globalData, this, value);
         return true;
     }

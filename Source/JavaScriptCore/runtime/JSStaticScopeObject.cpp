@@ -72,7 +72,7 @@ void JSStaticScopeObject::put(JSCell* cell, ExecState* exec, const Identifier& p
             return;
         }
     }
-    if (thisObject->symbolTablePut(exec->globalData(), propertyName, value))
+    if (thisObject->symbolTablePut(exec, propertyName, value, slot.isStrictMode()))
         return;
     
     ASSERT_NOT_REACHED();

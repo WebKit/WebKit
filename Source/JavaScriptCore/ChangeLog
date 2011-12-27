@@ -1,5 +1,33 @@
 2011-12-26  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=75231
+        Fail to throw in strict mode on assign to read only static properties
+
+        Reviewed by Filip Pizlo.
+
+        There are three bugs here:
+        * symbolTablePut should throw for strict mode accesses.
+        * lookupPut should throw for strict mode accesses.
+        * NumberConstructor should override put to call lookupPut, to trap assignment to readonly properties.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::put):
+        * runtime/JSActivation.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::put):
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::symbolTablePut):
+        * runtime/Lookup.h:
+        (JSC::lookupPut):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::put):
+        * runtime/NumberConstructor.h:
+
+2011-12-26  Gavin Barraclough  <barraclough@apple.com>
+
         Fix miss-commit of utf8 change.
 
         Reviewed by Filip Pizlo
