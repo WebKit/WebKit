@@ -1090,21 +1090,6 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 // Rebaseline once native aa-clipping has landed
-BUGWK70748 CPU : fast/borders/borderRadiusDotted01.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDotted02.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDotted03.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDotted04.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDotted05.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDotted06.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble01.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble02.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble03.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble04.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble05.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble06.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble07.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble08.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDouble09.html = IMAGE
 BUGWK70748 CPU : fast/borders/border-radius-groove-01.html = IMAGE
 BUGWK70748 CPU : fast/borders/borderRadiusGroove01.html = IMAGE
 BUGWK70748 CPU : fast/borders/border-radius-groove-02.html = IMAGE
