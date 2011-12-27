@@ -1,3 +1,13 @@
+2011-12-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] Go to Function dialog always has a minimal height
+        https://bugs.webkit.org/show_bug.cgi?id=75254
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/scriptsPanel.css:
+        (.script-view):
+
 2011-12-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Create tabbed editor for scripts panel.
