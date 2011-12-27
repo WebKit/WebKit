@@ -6491,6 +6491,7 @@
             'inspector/front-end/SplitView.js',
             'inspector/front-end/StatusBarButton.js',
             'inspector/front-end/StylesSidebarPane.js',
+            'inspector/front-end/TabbedEditorContainer.js',
             'inspector/front-end/TabbedPane.js',
             'inspector/front-end/TestController.js',
             'inspector/front-end/TextEditorHighlighter.js',

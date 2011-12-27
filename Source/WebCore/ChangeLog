@@ -1,3 +1,41 @@
+2011-12-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Create tabbed editor for scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=75230
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype.replaceUISourceCodes.get if):
+        (WebInspector.ScriptsNavigator.prototype.replaceUISourceCodes):
+        (WebInspector.NavigatorScriptTreeElement.prototype.ondblclick):
+        (WebInspector.NavigatorScriptTreeElement.prototype.onenter):
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/TabbedEditorContainer.js: Added.
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.get visibleView):
+        (WebInspector.TabbedPane.prototype.get selectedTabId):
+        (WebInspector.TabbedPane.prototype.closeAllTabs):
+        (WebInspector.TabbedPane.prototype.changeTabTitle):
+        (WebInspector.TabbedPane.prototype.changeTabView):
+        (WebInspector.TabbedPaneTab):
+        (WebInspector.TabbedPaneTab.prototype.get title):
+        (WebInspector.TabbedPaneTab.prototype.set title):
+        (WebInspector.TabbedPaneTab.prototype.get view):
+        (WebInspector.TabbedPaneTab.prototype.set view):
+        (WebInspector.TabbedPaneTab.prototype._createTabElement):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/scriptsPanel.css:
+        (.scripts-views-container):
+        (.script-view):
+        (#scripts-editor-container-tabbed-pane .tabbed-pane-header):
+        (#scripts-editor-container-tabbed-pane .tabbed-pane-header-contents):
+        (#scripts-editor-container-tabbed-pane .tabbed-pane-content):
+
 2011-12-27  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: Rolling out r103703 for breaking Canvas2DLayerChromiumTest.testFullLifecycle.

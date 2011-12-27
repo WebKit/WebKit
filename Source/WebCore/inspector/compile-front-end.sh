@@ -151,10 +151,11 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
         --js Source/WebCore/inspector/front-end/DatabaseTableView.js \
         --js Source/WebCore/inspector/front-end/DOMStorageItemsView.js \
         --js Source/WebCore/inspector/front-end/ResourcesPanel.js \
-    --module jsmodule_scripts:9:jsmodule_components \
+    --module jsmodule_scripts:10:jsmodule_components \
         --js Source/WebCore/inspector/front-end/CallStackSidebarPane.js \
         --js Source/WebCore/inspector/front-end/ScopeChainSidebarPane.js \
         --js Source/WebCore/inspector/front-end/JavaScriptSourceFrame.js \
+        --js Source/WebCore/inspector/front-end/TabbedEditorContainer.js \
         --js Source/WebCore/inspector/front-end/ScriptsNavigator.js \
         --js Source/WebCore/inspector/front-end/ScriptsPanel.js \
         --js Source/WebCore/inspector/front-end/ScriptsSearchScope.js \

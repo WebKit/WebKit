@@ -135,7 +135,11 @@ WebInspector.ScriptsNavigator.prototype = {
      */
     setScriptSourceIsDirty: function(uiSourceCode, isDirty)
     {
-        // FIXME: implement
+        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+        var title = uiSourceCode.displayName;
+        if (isDirty)
+            title += "*";
+        scriptTreeElement.titleText = title;
     },
 
     /**
@@ -144,7 +148,22 @@ WebInspector.ScriptsNavigator.prototype = {
      */
     replaceUISourceCodes: function(oldUISourceCodeList, uiSourceCodeList)
     {
-        // FIXME: implement
+        var selected = false;
+        for (var i = 0; i < oldUISourceCodeList.length; ++i) {
+            var uiSourceCode = oldUISourceCodeList[i];
+            var treeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
+            if (treeElement) {
+                if (this._lastSelectedUISourceCode && this._lastSelectedUISourceCode === uiSourceCode)
+                    selected = true;
+                this.removeUISourceCode(uiSourceCode);
+            }
+        }
+            
+        for (var i = 0; i < uiSourceCodeList.length; ++i)
+            this.addUISourceCode(uiSourceCodeList[i]);
+
+        if (selected)
+            this.revealUISourceCode(uiSourceCodeList[0]);
     },
 
     /**
@@ -436,13 +455,16 @@ WebInspector.NavigatorScriptTreeElement.prototype = {
     },
 
     /**
-     * @param {TreeElement} treeElement
-     * @param {boolean=} selectedByUser
+     * @param {Event} event
      */
-    onselect: function(treeElement, selectedByUser)
+    ondblclick: function(event)
     {
-        if (selectedByUser)
-            this._navigator.scriptSelected(this.uiSourceCode);
+        this._navigator.scriptSelected(this.uiSourceCode);
+    },
+
+    onenter: function()
+    {
+        this._navigator.scriptSelected(this.uiSourceCode);
     }
 }
 

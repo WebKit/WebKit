@@ -72029,6 +72029,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TabbedEditorContainer.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\tabbedPane.css"
 					>
 				</File>

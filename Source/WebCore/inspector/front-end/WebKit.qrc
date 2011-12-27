@@ -132,6 +132,7 @@
     <file>SplitView.js</file>
     <file>StatusBarButton.js</file>
     <file>StylesSidebarPane.js</file>
+    <file>TabbedEditorContainer.js</file>
     <file>TabbedPane.js</file>
     <file>TestController.js</file>
     <file>TextEditorHighlighter.js</file>

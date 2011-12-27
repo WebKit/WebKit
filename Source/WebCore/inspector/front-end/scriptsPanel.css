@@ -153,14 +153,17 @@
     background-position: center;
 }
 
+.scripts-views-container {
+    position: absolute;
+    top: 23px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
 .script-view {
     display: none;
     overflow: hidden;
-    position: absolute;
-    top: 23px;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
 
 .script-view.visible {
@@ -208,6 +211,19 @@
 }
 
 #scripts-navigator-tabbed-pane .tabbed-pane-content {
+    margin-top: 1px;
+}
+
+#scripts-editor-container-tabbed-pane .tabbed-pane-header {
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F5F5F5), to(#E5E5E5));
+}
+
+#scripts-editor-container-tabbed-pane .tabbed-pane-header-contents {
+    margin-left: 1px;
+    margin-right: 16px;
+}
+
+#scripts-editor-container-tabbed-pane .tabbed-pane-content {
     margin-top: 1px;
 }
 

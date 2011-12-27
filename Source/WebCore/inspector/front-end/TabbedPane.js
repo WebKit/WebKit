@@ -50,6 +50,22 @@ WebInspector.TabbedPane = function()
 
 WebInspector.TabbedPane.prototype = {
     /**
+     * @type {WebInspector.View}
+     */
+    get visibleView()
+    {
+        return this._currentTab ? this._currentTab.view : null;
+    },
+
+    /**
+     * @type {string}
+     */
+    get selectedTabId()
+    {
+        return this._currentTab ? this._currentTab.id : null;
+    },
+
+    /**
      * @type {boolean} shrinkableTabs
      */
     set shrinkableTabs(shrinkableTabs)
@@ -105,6 +121,12 @@ WebInspector.TabbedPane.prototype = {
         return true;
     },
 
+    closeAllTabs: function()
+    {
+        for (var i = 0; i < this._tabs.length; ++i)
+            this.closeTab(this._tabs[i].id, false);
+    },
+
     /**
      * @param {string} id
      * @param {boolean=} userGesture
@@ -129,6 +151,32 @@ WebInspector.TabbedPane.prototype = {
         var event = {tabId: id, view: tab.view, isUserGesture: userGesture};
         this.dispatchEventToListeners("tab-selected", event);
         return true;
+    },
+
+    /**
+     * @param {string} id
+     * @param {string} tabTitle
+     */
+    changeTabTitle: function(id, tabTitle)
+    {
+        var tab = this._tabsById[id];
+        tab.title = tabTitle;
+        this._updateTabElements();
+    },
+
+    /**
+     * @param {string} id
+     * @param {WebInspector.View} view
+     */
+    changeTabView: function(id, view)
+    {
+        var tab = this._tabsById[id];
+        if (this._currentTab && this._currentTab.id === tab.id) {
+            this._hideTab(tab);
+            tab.view = view;
+            this._showTab(tab);
+        } else
+            tab.view = view;
     },
 
     onResize: function()
@@ -372,8 +420,8 @@ WebInspector.TabbedPaneTab = function(tabbedPane, measureElement, id, title, clo
     this._tabbedPane = tabbedPane;
     this._measureElement = measureElement;
     this._id = id;
-    this.title = title;
-    this.view = view;
+    this._title = title;
+    this._view = view;
     this.shown = false;
 }
 
@@ -384,6 +432,35 @@ WebInspector.TabbedPaneTab.prototype = {
     get id()
     {
         return this._id;
+    },
+
+    /**
+     * @type {string}
+     */
+    get title()
+    {
+        return this._title;
+    },
+
+    set title(title)
+    {
+        this._title = title;
+        if (this._titleElement)
+            this._titleElement.textContent = title;
+        delete this._measuredWidth;
+    },
+
+    /**
+     * @type {WebInspector.View}
+     */
+    get view()
+    {
+        return this._view;
+    },
+
+    set view(view)
+    {
+        this._view = view;
     },
 
     /**
@@ -432,8 +509,10 @@ WebInspector.TabbedPaneTab.prototype = {
         var tabElement = document.createElement("div");
         tabElement.addStyleClass("tabbed-pane-header-tab");
         
-        var tabTitleElement = tabElement.createChild("span", "tabbed-pane-header-tab-title");
-        tabTitleElement.textContent = this.title;
+        var titleElement = tabElement.createChild("span", "tabbed-pane-header-tab-title");
+        titleElement.textContent = this.title;
+        if (!measuring)
+            this._titleElement = titleElement;
 
         if (this._closeable) {
             var closeButtonSpan = tabElement.createChild("span", "tabbed-pane-header-tab-close-button");
