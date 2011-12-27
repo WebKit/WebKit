@@ -56,7 +56,7 @@ public:
             m_modifiers |= CtrlKey;
         if (webEvent.altKey())
             m_modifiers |= AltKey;
-        if (webEvent.altKey())
+        if (webEvent.metaKey())
             m_modifiers |= MetaKey;
 
         m_timestamp = webEvent.timestamp();
@@ -90,7 +90,7 @@ public:
             m_modifierFlags |= WebEvent::ControlKey;
         if (webEvent.altKey())
             m_modifierFlags |= WebEvent::AltKey;
-        if (webEvent.altKey())
+        if (webEvent.metaKey())
             m_modifierFlags |= WebEvent::MetaKey;
 
 #if PLATFORM(WIN)
@@ -118,7 +118,7 @@ public:
             m_modifiers |= CtrlKey;
         if (webEvent.altKey())
             m_modifiers |= AltKey;
-        if (webEvent.altKey())
+        if (webEvent.metaKey())
             m_modifiers |= MetaKey;
 
         m_timestamp = webEvent.timestamp();
@@ -174,7 +174,7 @@ public:
             m_modifiers |= CtrlKey;
         if (webEvent.altKey())
             m_modifiers |= AltKey;
-        if (webEvent.altKey())
+        if (webEvent.metaKey())
             m_modifiers |= MetaKey;
 
         m_timestamp = webEvent.timestamp();
@@ -224,7 +224,7 @@ public:
             m_modifiers |= CtrlKey;
         if (webEvent.altKey())
             m_modifiers |= AltKey;
-        if (webEvent.altKey())
+        if (webEvent.metaKey())
             m_modifiers |= MetaKey;
 
         m_timestamp = webEvent.timestamp();
@@ -302,7 +302,7 @@ public:
             m_modifiers |= CtrlKey;
         if (webEvent.altKey())
             m_modifiers |= AltKey;
-        if (webEvent.altKey())
+        if (webEvent.metaKey())
             m_modifiers |= MetaKey;
 
         m_timestamp = webEvent.timestamp();

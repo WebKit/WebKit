@@ -1,3 +1,19 @@
+2011-12-26  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/75196> REGRESSION(r103643): Command-clicking a link no longer opens a new tab.
+
+        r103643 contained some botched copy-paste code that caused the state of the Command key
+        to be lost when translating from a WebKit2 event to a WebCore event.
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent): Test for the correct modifier.
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent): Ditto.
+        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent): Ditto.
+        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent): Ditto.
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent): Ditto.
+
 2011-12-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Fix a crash in WebProcess when starting a download not initiated by a WebPage
