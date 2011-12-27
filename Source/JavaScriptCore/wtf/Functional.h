@@ -196,6 +196,27 @@ template<typename T> struct RefAndDeref<T*, true> {
     static void deref(T* t) { t->deref(); }
 };
 
+template<typename T> struct ParamStorageTraits {
+    typedef T StorageType;
+
+    static StorageType wrap(const T& value) { return value; }
+    static const T& unwrap(const StorageType& value) { return value; }
+};
+
+template<typename T> struct ParamStorageTraits<PassRefPtr<T> > {
+    typedef RefPtr<T> StorageType;
+
+    static StorageType wrap(PassRefPtr<T> value) { return value; }
+    static T* unwrap(const StorageType& value) { return value.get(); }
+};
+
+template<typename T> struct ParamStorageTraits<RefPtr<T> > {
+    typedef RefPtr<T> StorageType;
+
+    static StorageType wrap(RefPtr<T> value) { return value.release();  }
+    static T* unwrap(const StorageType& value) { return value.get(); }
+};
+
 class FunctionImplBase : public ThreadSafeRefCounted<FunctionImplBase> {
 public:
     virtual ~FunctionImplBase() { }
@@ -234,7 +255,7 @@ template<typename FunctionWrapper, typename R, typename P0> class BoundFunctionI
 public:
     BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0)
         : m_functionWrapper(functionWrapper)
-        , m_p0(p0)
+        , m_p0(ParamStorageTraits<P0>::wrap(p0))
     {
         RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
     }
@@ -246,20 +267,20 @@ public:
 
     virtual R operator()()
     {
-        return m_functionWrapper(m_p0);
+        return m_functionWrapper(ParamStorageTraits<P0>::unwrap(m_p0));
     }
 
 private:
     FunctionWrapper m_functionWrapper;
-    P0 m_p0;
+    typename ParamStorageTraits<P0>::StorageType m_p0;
 };
 
 template<typename FunctionWrapper, typename R, typename P0, typename P1> class BoundFunctionImpl<FunctionWrapper, R (P0, P1)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 public:
     BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1)
         : m_functionWrapper(functionWrapper)
-        , m_p0(p0)
-        , m_p1(p1)
+        , m_p0(ParamStorageTraits<P0>::wrap(p0))
+        , m_p1(ParamStorageTraits<P1>::wrap(p1))
     {
         RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
     }
@@ -271,22 +292,22 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        return m_functionWrapper(m_p0, m_p1);
+        return m_functionWrapper(ParamStorageTraits<P0>::unwrap(m_p0), ParamStorageTraits<P1>::unwrap(m_p1));
     }
 
 private:
     FunctionWrapper m_functionWrapper;
-    P0 m_p0;
-    P1 m_p1;
+    typename ParamStorageTraits<P0>::StorageType m_p0;
+    typename ParamStorageTraits<P1>::StorageType m_p1;
 };
 
 template<typename FunctionWrapper, typename R, typename P0, typename P1, typename P2> class BoundFunctionImpl<FunctionWrapper, R (P0, P1, P2)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 public:
     BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1, const P2& p2)
         : m_functionWrapper(functionWrapper)
-        , m_p0(p0)
-        , m_p1(p1)
-        , m_p2(p2)
+        , m_p0(ParamStorageTraits<P0>::wrap(p0))
+        , m_p1(ParamStorageTraits<P1>::wrap(p1))
+        , m_p2(ParamStorageTraits<P2>::wrap(p2))
     {
         RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
     }
@@ -298,14 +319,14 @@ public:
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        return m_functionWrapper(m_p0, m_p1, m_p2);
+        return m_functionWrapper(ParamStorageTraits<P0>::unwrap(m_p0), ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2));
     }
 
 private:
     FunctionWrapper m_functionWrapper;
-    P0 m_p0;
-    P1 m_p1;
-    P2 m_p2;
+    typename ParamStorageTraits<P0>::StorageType m_p0;
+    typename ParamStorageTraits<P1>::StorageType m_p1;
+    typename ParamStorageTraits<P2>::StorageType m_p2;
 };
 
 class FunctionBase {

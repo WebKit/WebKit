@@ -1,3 +1,18 @@
+2011-12-27  Anders Carlsson  <andersca@apple.com>
+
+        Function should handle wrapping/unwrapping RefPtr and PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=75266
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/Functional.cpp:
+        (TestWebKitAPI::Number::create):
+        (TestWebKitAPI::Number::~Number):
+        (TestWebKitAPI::Number::value):
+        (TestWebKitAPI::Number::Number):
+        (TestWebKitAPI::multiplyNumberByTwo):
+        (TestWebKitAPI::TEST):
+
 2011-12-24  Kentaro Hara  <haraken@chromium.org>
 
         Add unittests for the C++ parser of prepare-ChangeLog

@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <wtf/RefCounted.h>
 #include <wtf/Functional.h>
 
 namespace TestWebKitAPI {
@@ -149,6 +150,49 @@ TEST(FunctionalTest, MemberFunctionBindRefDeref)
     ASSERT_TRUE(b.m_numRefCalls == b.m_numDerefCalls);
     ASSERT_GT(b.m_numRefCalls, 0);
 
+}
+
+class Number : public RefCounted<Number> {
+public:
+    static PassRefPtr<Number> create(int value)
+    {
+        return adoptRef(new Number(value));
+    }
+
+    ~Number()
+    {
+        m_value = 0;
+    }
+
+    int value() const { return m_value; }
+
+private:
+    explicit Number(int value)
+        : m_value(value)
+    {
+    }
+
+    int m_value;
+};
+
+static int multiplyNumberByTwo(Number* number)
+{
+    return number->value() * 2;
+}
+
+TEST(FunctionalTest, RefCountedStorage)
+{
+    RefPtr<Number> five = Number::create(5);
+    Function<int ()> multiplyFiveByTwoFunction = bind(multiplyNumberByTwo, five);
+    ASSERT_EQ(10, multiplyFiveByTwoFunction());
+
+    Function<int ()> multiplyFourByTwoFunction = bind(multiplyNumberByTwo, Number::create(4));
+    ASSERT_EQ(8, multiplyFourByTwoFunction());
+
+    RefPtr<Number> six = Number::create(6);
+    Function<int ()> multiplySixByTwoFunction = bind(multiplyNumberByTwo, six.release());
+    ASSERT_FALSE(six);
+    ASSERT_EQ(12, multiplySixByTwoFunction());
 }
 
 namespace RefAndDerefTests {

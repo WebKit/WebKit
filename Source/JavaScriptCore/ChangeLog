@@ -1,3 +1,18 @@
+2011-12-27  Anders Carlsson  <andersca@apple.com>
+
+        Function should handle wrapping/unwrapping RefPtr and PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=75266
+
+        Reviewed by Sam Weinig.
+
+        Add ParamStorageTraits that can be used for deciding how bound parameters should be stored
+        and peeked at. For RefPtr we want to use the raw pointer when "peeking" to avoid ref-churn.
+        For PassRefPtr, we want to use RefPtr for storage but still use the raw pointer when peeking.
+
+        * wtf/Functional.h:
+        (WTF::ParamStorageTraits::wrap):
+        (WTF::ParamStorageTraits::unwrap):
+
 2011-12-27  Tony Chang  <tony@chromium.org>
 
         [chromium] really enable wpo for WebCore libs and for WTF
