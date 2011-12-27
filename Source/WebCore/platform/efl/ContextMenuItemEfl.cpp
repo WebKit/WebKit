@@ -41,58 +41,91 @@ void* ContextMenuItem::nativeMenuItem() const
     return 0;
 }
 #else
-ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu*)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu*)
 {
-    notImplemented();
+    m_platformDescription.type = type;
+    m_platformDescription.action = action;
+    m_platformDescription.title = title;
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, Vector<ContextMenuItem>& subMenuItems)
+{
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenu*)
+{
+}
+
+ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription)
+{
+}
+
+ContextMenuItem::ContextMenuItem(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, WTF::String const&, bool, bool)
+{
 }
 
 ContextMenuItem::~ContextMenuItem()
 {
-    notImplemented();
+}
+
+void ContextMenuItem::setType(ContextMenuItemType type)
+{
+    m_platformDescription.type = type;
 }
 
 ContextMenuItemType ContextMenuItem::type() const
 {
-    notImplemented();
-    return ActionType;
+    return m_platformDescription.type;
 }
 
-void ContextMenuItem::setAction(ContextMenuAction)
+void ContextMenuItem::setAction(ContextMenuAction action)
 {
-    notImplemented();
+    m_platformDescription.action = action;
 }
 
 ContextMenuAction ContextMenuItem::action() const
 {
-    notImplemented();
-    return ContextMenuItemTagNoAction;
+    return m_platformDescription.action;
 }
 
-void ContextMenuItem::setChecked(bool)
+void ContextMenuItem::setTitle(const String& title)
 {
-    notImplemented();
+    m_platformDescription.title = title;
+}
+
+String ContextMenuItem::title() const
+{
+    return m_platformDescription.title;
+}
+
+void ContextMenuItem::setChecked(bool checked)
+{
+    m_platformDescription.checked = checked;
 }
 
 bool ContextMenuItem::checked() const
 {
-    notImplemented();
-    return 0;
+    return m_platformDescription.checked;
 }
 
-void ContextMenuItem::setEnabled(bool)
+void ContextMenuItem::setEnabled(bool enabled)
 {
-    notImplemented();
+    m_platformDescription.enabled = enabled;
 }
 
 bool ContextMenuItem::enabled() const
 {
-    notImplemented();
-    return false;
+    return m_platformDescription.enabled;
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu*)
 {
     notImplemented();
 }
+
+PlatformMenuDescription ContextMenuItem::platformSubMenu() const
+{                                                                                       
+    return 0;
+}  
 #endif
 }

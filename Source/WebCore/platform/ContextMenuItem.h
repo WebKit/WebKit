@@ -206,7 +206,7 @@ namespace WebCore {
         bool checked;
         bool enabled;
     };
-#elif PLATFORM(CHROMIUM)
+#elif PLATFORM(CHROMIUM) || PLATFORM(EFL)
     struct PlatformMenuItemDescription {
         PlatformMenuItemDescription()
             : type(ActionType)

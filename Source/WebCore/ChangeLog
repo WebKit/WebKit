@@ -1,3 +1,42 @@
+2011-12-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Implement context menu for EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=74995
+
+        Reviewed by Anders Carlsson.
+
+        Implement missing ContextMenuEfl class in order to support WK2's context menu.
+        Because WK2's context menu still needs WebCore's context menu implementation.
+        And of course, this patch also can be used for WK1 without CROSS_PLATFORM_CONTEXT_MENU
+        option.
+
+        * platform/ContextMenu.h:
+        * platform/ContextMenuItem.h:
+        * platform/PlatformMenuDescription.h:
+        * platform/efl/ContextMenuEfl.cpp:
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::appendItem):
+        (WebCore::ContextMenu::insertItem):
+        (WebCore::ContextMenu::itemCount):
+        (WebCore::ContextMenu::setPlatformDescription):
+        (WebCore::ContextMenu::platformDescription):
+        (WebCore::ContextMenu::releasePlatformDescription):
+        (WebCore::platformMenuDescription):
+        (WebCore::contextMenuItemVector):
+        * platform/efl/ContextMenuItemEfl.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::~ContextMenuItem):
+        (WebCore::ContextMenuItem::setType):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::checked):
+        (WebCore::ContextMenuItem::setEnabled):
+        (WebCore::ContextMenuItem::enabled):
+
 2011-12-26  Hajime Morrita  <morrita@chromium.org>
 
         [Refactoring] Node::setTreeScopeRecursively() doesn't need includeRoot parameter
