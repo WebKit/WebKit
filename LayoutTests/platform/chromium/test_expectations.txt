@@ -3960,17 +3960,6 @@ BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = FAIL
 
 BUGWK73838 LEOPARD DEBUG : animations/animation-add-events-in-handler.html = CRASH
 
-// Need rebaseline on Linux and Win GPU
-BUGWK73905 GPU LINUX : media/video-layer-crash.html = IMAGE+TEXT
-BUGWK73905 GPU GPU-CG : media/video-transformed.html = IMAGE
-BUGWK73905 GPU LINUX : media/video-zoom-controls.html = IMAGE
-BUGWK73905 GPU WIN : media/video-layer-crash.html = TEXT
-
-// Need rebaseline on all platforms
-BUGENNE : compositing/color-matching/image-color-matching.html = FAIL
-BUGENNE : compositing/geometry/vertical-scroll-composited.html = FAIL
-BUGENNE : compositing/scaling/tiled-layer-recursion.html = FAIL
-
 BUGWK73933 DEBUG : svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg = TIMEOUT PASS
 
 BUGWK73991 WIN7 VISTA RELEASE : fast/text/international/complex-character-based-fallback.html = IMAGE+TEXT
