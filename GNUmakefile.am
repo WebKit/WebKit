@@ -55,6 +55,7 @@ IDL_BINDINGS :=
 TEST_PROGS :=
 POFILES :=
 MOFILES :=
+dom_binding_idls :=
 javascriptcore_h_api :=
 javascriptcore_cppflags:=
 javascriptcore_cflags :=

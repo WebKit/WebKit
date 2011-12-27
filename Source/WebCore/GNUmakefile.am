@@ -259,15 +259,6 @@ endif # END ENABLE_FILE_SYSTEM
 if ENABLE_QUOTA
 FEATURE_DEFINES += ENABLE_QUOTA=1
 webcore_cppflags += -DENABLE_QUOTA=1
-webcore_built_sources += \
-	DerivedSources/WebCore/JSStorageInfo.cpp \
-	DerivedSources/WebCore/JSStorageInfo.h \
-	DerivedSources/WebCore/JSStorageInfoErrorCallback.cpp \
-	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
-	DerivedSources/WebCore/JSStorageInfoQuotaCallback.cpp \
-	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
-	DerivedSources/WebCore/JSStorageInfoUsageCallback.cpp \
-	DerivedSources/WebCore/JSStorageInfoUsageCallback.h
 endif # END ENABLE_QUOTA
 
 # ----
@@ -672,14 +663,19 @@ USER_AGENT_STYLE_SHEETS = \
 	$(WebCore)/css/fullscreen.css
 
 # new-style JavaScript bindings
-SCRIPTS_BINDINGS = \
+SCRIPTS_FOR_GENERATE_BINDINGS = \
 	$(WebCore)/bindings/scripts/CodeGenerator.pm \
+	$(WebCore)/bindings/scripts/CodeGeneratorJS.pm \
 	$(WebCore)/bindings/scripts/IDLParser.pm \
 	$(WebCore)/bindings/scripts/IDLStructure.pm \
 	$(WebCore)/bindings/scripts/InFilesCompiler.pm \
 	$(WebCore)/bindings/scripts/InFilesParser.pm \
 	$(WebCore)/bindings/scripts/generate-bindings.pl \
 	$(WebCore)/bindings/scripts/preprocessor.pm
+
+SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL = \
+	$(WebCore)/bindings/scripts/IDLParser.pm \
+	$(WebCore)/bindings/scripts/resolve-supplemental.pl
 
 DerivedSources/WebCore/UserAgentStyleSheetsData.cpp: DerivedSources/WebCore/UserAgentStyleSheets.h
 DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS)
@@ -775,9 +771,18 @@ vpath %.idl $(IDL_PATH)
 # it includes an empty command list (the semicolon).
 DerivedSources/WebCore/JS%.cpp: DerivedSources/WebCore/JS%.h;
 
+SUPPLEMENTAL_DEPENDENCY_FILE = $(top_builddir)/DerivedSources/WebCore/supplemental_dependency.tmp
+IDL_FILES_TMP = $(top_builddir)/DerivedSources/WebCore/idl_files.tmp
+
 .SECONDARY:
-DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_BINDINGS) $(WebCore)/bindings/scripts/CodeGeneratorJS.pm
-	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS $<
+$(SUPPLEMENTAL_DEPENDENCY_FILE): $(SCRIPTS_FOR_RESOLVE_SUPPLEMENTAL) $(dom_binding_idls)
+	echo -n > $(IDL_FILES_TMP)
+	($(foreach idl, $(dom_binding_idls), echo $(idl) &&) echo -n) >> $(IDL_FILES_TMP)
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/resolve-supplemental.pl --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --idlFilesList $(IDL_FILES_TMP) --supplementalDependencyFile $@
+
+.SECONDARY:
+DerivedSources/WebCore/JS%.h: %.idl $(SCRIPTS_FOR_GENERATE_BINDINGS) $(SUPPLEMENTAL_DEPENDENCY_FILE)
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $(WebCore)/bindings/scripts/generate-bindings.pl $(IDL_PATH:%=--include "%") --outputDir "$(GENSOURCES_WEBCORE)" --defines "LANGUAGE_JAVASCRIPT=1 $(FEATURE_DEFINES)" --generator JS --supplementalDependencyFile $(SUPPLEMENTAL_DEPENDENCY_FILE) $<
 
 noinst_LTLIBRARIES += \
 	libWebCore.la
