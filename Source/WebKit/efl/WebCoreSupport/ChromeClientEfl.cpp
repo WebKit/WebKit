@@ -511,7 +511,7 @@ void ChromeClientEfl::invalidateContentsForSlowScroll(const IntRect& updateRect,
 
 void ChromeClientEfl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    ewk_view_scroll(m_view, scrollDelta.width(), scrollDelta.height(), rectToScroll.x(), rectToScroll.y(), rectToScroll.width(), rectToScroll.height(), clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height(), EINA_TRUE);
+    ewk_view_scroll(m_view, scrollDelta.width(), scrollDelta.height(), rectToScroll.x(), rectToScroll.y(), rectToScroll.width(), rectToScroll.height(), clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
 }
 
 void ChromeClientEfl::cancelGeolocationPermissionRequestForFrame(Frame*)

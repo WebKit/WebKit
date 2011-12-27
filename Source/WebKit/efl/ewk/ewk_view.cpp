@@ -336,7 +336,7 @@ static Eina_Bool _ewk_view_scrolls_resize(Ewk_View_Private_Data* priv, size_t si
     return true;
 }
 
-static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord deltaX, Evas_Coord deltaY, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height, Eina_Bool mainScroll)
+static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord deltaX, Evas_Coord deltaY, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
 {
     Ewk_Scroll_Request* rect;
     Ewk_Scroll_Request* rect_end;
@@ -383,7 +383,6 @@ static void _ewk_view_scroll_add(Ewk_View_Private_Data* priv, Evas_Coord deltaX,
     rect->y2 = y2;
     rect->dx = deltaX;
     rect->dy = deltaY;
-    rect->main_scroll = mainScroll;
     DBG("add scroll in region: %d, %d+%dx%d %+03d, %+03d", x, y, width, height, deltaX, deltaY);
 
     Eina_Rectangle* pr;
@@ -3352,7 +3351,7 @@ void ewk_view_repaint(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coo
     _ewk_view_smart_changed(smartData);
 }
 
-void ewk_view_scroll(Evas_Object* ewkView, Evas_Coord deltaX, Evas_Coord deltaY, Evas_Coord scrollX, Evas_Coord scrollY, Evas_Coord scrollWidth, Evas_Coord scrollHeight, Evas_Coord centerX, Evas_Coord centerY, Evas_Coord centerWidth, Evas_Coord centerHeight, bool mainFrame)
+void ewk_view_scroll(Evas_Object* ewkView, Evas_Coord deltaX, Evas_Coord deltaY, Evas_Coord scrollX, Evas_Coord scrollY, Evas_Coord scrollWidth, Evas_Coord scrollHeight, Evas_Coord centerX, Evas_Coord centerY, Evas_Coord centerWidth, Evas_Coord centerHeight)
 {
     DBG("ewkView=%p, delta: %d,%d, scroll: %d,%d+%dx%d, clip: %d,%d+%dx%d",
         ewkView, deltaX, deltaY, scrollX, scrollY, scrollWidth, scrollHeight, centerX, centerY, centerWidth, centerHeight);
@@ -3365,7 +3364,7 @@ void ewk_view_scroll(Evas_Object* ewkView, Evas_Coord deltaX, Evas_Coord deltaY,
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
     EINA_SAFETY_ON_TRUE_RETURN(!deltaX && !deltaY);
 
-    _ewk_view_scroll_add(priv, deltaX, deltaY, scrollX, scrollY, scrollWidth, scrollHeight, mainFrame);
+    _ewk_view_scroll_add(priv, deltaX, deltaY, scrollX, scrollY, scrollWidth, scrollHeight);
 
     _ewk_view_smart_changed(smartData);
 }

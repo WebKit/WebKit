@@ -278,7 +278,6 @@ typedef struct _Ewk_Scroll_Request Ewk_Scroll_Request;
 struct _Ewk_Scroll_Request {
     Evas_Coord dx, dy;
     Evas_Coord x, y, w, h, x2, y2;
-    Eina_Bool main_scroll;
 };
 
 /**
