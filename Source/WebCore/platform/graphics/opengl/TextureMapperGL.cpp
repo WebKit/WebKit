@@ -310,12 +310,16 @@ void TextureMapperGL::initializeShaders()
 #ifndef TEXMAP_OPENGL_ES_2
 #define OES2_PRECISION_DEFINITIONS \
     "#define lowp\n#define highp\n"
+#define OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
 #else
 #define OES2_PRECISION_DEFINITIONS
+#define OES2_FRAGMENT_SHADER_DEFAULT_PRECISION \
+    "precision mediump float; \n"
 #endif
 
     const char* fragmentShaderSourceOpacityAndMask =
             OES2_PRECISION_DEFINITIONS
+            OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
 "               uniform sampler2D SourceTexture, MaskTexture;                       \n"
 "               uniform lowp float Opacity;                                         \n"
 "               varying highp vec2 OutTexCoordSource, OutTexCoordMask;              \n"
@@ -341,6 +345,7 @@ void TextureMapperGL::initializeShaders()
 
     const char* fragmentShaderSourceSimple =
             OES2_PRECISION_DEFINITIONS
+            OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
 "               uniform sampler2D SourceTexture;                                    \n"
 "               uniform lowp float Opacity;                                         \n"
 "               varying highp vec2 OutTexCoordSource;                               \n"
@@ -362,6 +367,7 @@ void TextureMapperGL::initializeShaders()
 "               }                                                           \n";
 
     const char* fragmentShaderSourceClip =
+            OES2_FRAGMENT_SHADER_DEFAULT_PRECISION
 "               void main(void) { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0); }                                ";
 
     const char* vertexShaderSourceClip =

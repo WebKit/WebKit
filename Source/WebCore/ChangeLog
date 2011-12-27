@@ -1,3 +1,16 @@
+2011-12-27  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap][QT] The fragment shader in OpenGL ES2 requires the default precision
+        qualifier.
+        https://bugs.webkit.org/show_bug.cgi?id=75168
+
+        Reviewed by Noam Rosenthal.
+
+        No new functionality so no new tests.
+
+        * platform/graphics/opengl/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::initializeShaders):
+
 2011-12-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Chromium] uninitialized variable in fakeMouseMoveEventTimerFired
