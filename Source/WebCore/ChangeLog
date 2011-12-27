@@ -1,3 +1,18 @@
+2011-12-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: report per document JS event listener count
+        https://bugs.webkit.org/show_bug.cgi?id=74298
+
+        This patch adds JS event listener count to the memory agent
+        report.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/dom-statistics.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorMemoryAgent.cpp:
+
 2011-12-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [REGRESSION] Go to Function dialog always has a minimal height

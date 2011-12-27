@@ -59,13 +59,23 @@
                 "description": "Number of nodes with given name."
             },
             {
+                "id": "ListenerCount",
+                "type": "object",
+                "properties": [
+                    { "name": "type", "type": "string" },
+                    { "name": "count", "type": "integer" }
+                ],
+                "description": "Number of JS event listeners by event type."
+            },
+            {
                 "id": "DOMGroup",
                 "type": "object",
                 "properties": [
                     { "name": "size", "type": "integer" },
                     { "name": "title", "type": "string" },
                     { "name": "documentURI", "type": "string", "optional": true },
-                    { "name": "nodeCount", "type": "array", "items": { "$ref": "NodeCount" }}
+                    { "name": "nodeCount", "type": "array", "items": { "$ref": "NodeCount" }},
+                    { "name": "listenerCount", "type": "array", "items": { "$ref": "ListenerCount" }}
                 ]
             }
         ],

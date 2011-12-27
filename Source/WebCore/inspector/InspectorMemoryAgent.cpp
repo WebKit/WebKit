@@ -35,6 +35,7 @@
 
 #include "DOMWrapperVisitor.h"
 #include "Document.h"
+#include "EventListenerMap.h"
 #include "Frame.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
@@ -81,13 +82,16 @@ private:
     static void collectTreeStatistics(Node* rootNode, InspectorObject* result)
     {
         unsigned count = 0;
+        HashMap<AtomicString, int> eventTypeToCount;
         HashMap<String, int> nameToCount;
         Node* currentNode = rootNode;
+        collectListenersInfo(rootNode, eventTypeToCount);
         while ((currentNode = currentNode->traverseNextNode(rootNode))) {
             ++count;
             String name = nodeName(currentNode);
             int currentCount = nameToCount.get(name);
             nameToCount.set(name, currentCount + 1);
+            collectListenersInfo(currentNode, eventTypeToCount);
         }
 
         RefPtr<InspectorArray> childrenStats = InspectorArray::create();
@@ -98,8 +102,39 @@ private:
             childrenStats->pushObject(nodeCount);
         }
 
+        RefPtr<InspectorArray> listenerStats = InspectorArray::create();
+        for (HashMap<AtomicString, int>::iterator it = eventTypeToCount.begin(); it != eventTypeToCount.end(); ++it) {
+            RefPtr<InspectorObject> eventCount = InspectorObject::create();
+            eventCount->setString("type", it->first);
+            eventCount->setNumber("count", it->second);
+            listenerStats->pushObject(eventCount);
+        }
+
         result->setNumber("size", count);
         result->setArray("nodeCount", childrenStats);
+        result->setArray("listenerCount", listenerStats);
+    }
+
+    static void collectListenersInfo(Node* node, HashMap<AtomicString, int>& result)
+    {
+        EventTargetData* d = node->eventTargetData();
+        if (!d)
+            return;
+        EventListenerMap& eventListenerMap = d->eventListenerMap;
+        if (eventListenerMap.isEmpty())
+            return;
+        Vector<AtomicString> eventNames = eventListenerMap.eventTypes();
+        for (Vector<AtomicString>::iterator it = eventNames.begin(); it != eventNames.end(); ++it) {
+            AtomicString name = *it;
+            EventListenerVector* listeners = eventListenerMap.find(name);
+            int count = 0;
+            for (EventListenerVector::iterator j = listeners->begin(); j != listeners->end(); ++j) {
+                if (j->listener->type() == EventListener::JSEventListenerType)
+                    ++count;
+            }
+            if (count)
+                result.set(name, result.get(name) + count);
+        }
     }
 
     static String nodeName(Node* node)
