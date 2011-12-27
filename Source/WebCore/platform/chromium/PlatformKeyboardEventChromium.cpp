@@ -100,6 +100,10 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
     altKey = currentModifiers & ::optionKey;
     metaKey = currentModifiers & ::cmdKey;
 #else
+    shiftKey = false;
+    ctrlKey = false;
+    altKey = false;
+    metaKey = false;
     notImplemented();
 #endif
 }
