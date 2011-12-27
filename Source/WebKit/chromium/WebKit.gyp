@@ -841,6 +841,12 @@
                         }],
                     ],
                 }],
+                ['clang==1', {
+                    'cflags': ['-Wglobal-constructors'],
+                    'xcode_settings': {
+                        'WARNING_CFLAGS': ['-Wglobal-constructors'],
+                    },
+                }],
             ],
         },
         {

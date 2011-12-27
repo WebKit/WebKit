@@ -339,6 +339,14 @@
         },  # target webkit_system_interface
       ],  # targets
     }],  # condition OS == "mac"
+    ['clang==1', {
+      'target_defaults': {
+        'cflags': ['-Wglobal-constructors'],
+        'xcode_settings': {
+          'WARNING_CFLAGS': ['-Wglobal-constructors'],
+        },
+      },
+    }],
   ],  # conditions
 
   'targets': [
