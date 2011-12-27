@@ -1,3 +1,19 @@
+2011-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts panel tabbed editor does not reopen closed tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=75245
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.closeTab):
+        (WebInspector.TabbedPane.prototype.selectTab):
+
 2011-12-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: report per document JS event listener count

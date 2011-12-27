@@ -48,6 +48,11 @@ WebInspector.TabbedPane = function()
     this._dropDownButton = this._createDropDownButton();
 }
 
+WebInspector.TabbedPane.EventTypes = {
+    TabSelected: "TabSelected",
+    TabClosed: "TabClosed"
+}
+
 WebInspector.TabbedPane.prototype = {
     /**
      * @type {WebInspector.View}
@@ -118,6 +123,8 @@ WebInspector.TabbedPane.prototype = {
         else
             this._updateTabElements();
 
+        var eventData = { tabId: id, view: tab.view, isUserGesture: userGesture };
+        this.dispatchEventToListeners(WebInspector.TabbedPane.EventTypes.TabClosed, eventData);
         return true;
     },
 
@@ -148,8 +155,8 @@ WebInspector.TabbedPane.prototype = {
         
         this._updateTabElements();
         
-        var event = {tabId: id, view: tab.view, isUserGesture: userGesture};
-        this.dispatchEventToListeners("tab-selected", event);
+        var eventData = { tabId: id, view: tab.view, isUserGesture: userGesture };
+        this.dispatchEventToListeners(WebInspector.TabbedPane.EventTypes.TabSelected, eventData);
         return true;
     },
 

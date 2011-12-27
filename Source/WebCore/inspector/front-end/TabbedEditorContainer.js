@@ -36,6 +36,8 @@ WebInspector.TabbedEditorContainer = function()
     this._tabbedPane.closeableTabs = true;
     this._tabbedPane.element.id = "scripts-editor-container-tabbed-pane";
 
+    this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
+
     this._titles = new Map();
     this._tabIds = new Map();  
 }
@@ -90,11 +92,18 @@ WebInspector.TabbedEditorContainer.prototype = {
     {
         var tabId = this._tabIds.get(sourceFrame);
         
-        if (tabId) {
+        if (tabId)
             this._tabbedPane.closeTab(tabId);
-            this._tabIds.remove(sourceFrame);
-            this._titles.remove(sourceFrame);
-        }
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _tabClosed: function(event)
+    {
+        var sourceFrame = /** @type {WebInspector.UISourceCode} */ event.data.view;
+        this._tabIds.remove(sourceFrame);
+        this._titles.remove(sourceFrame);
     },
 
     /**
