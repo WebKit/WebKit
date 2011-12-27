@@ -1090,19 +1090,6 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 // Rebaseline once native aa-clipping has landed
-BUGWK70748 CPU : fast/box-shadow/basic-shadows.html = IMAGE
-BUGWK70748 WIN CPU : fast/box-shadow/border-radius-big.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/inset-box-shadows.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/inset.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/spread.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/spread-multiple-inset.html = IMAGE
-BUGWK70748 CPU : fast/box-shadow/spread-multiple-normal.html = IMAGE
-BUGWK70748 CPU : fast/clip/overflow-border-radius-clip.html = IMAGE
-BUGWK70748 CPU : fast/css/box-shadow-and-border-radius.html = IMAGE
-BUGWK70748 CPU : fast/css/nested-rounded-corners.html = IMAGE
-BUGWK70748 CPU : fast/css/text-input-with-webkit-border-radius.html = IMAGE
-BUGWK70748 CPU : fast/forms/validation-message-appearance.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
