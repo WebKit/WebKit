@@ -459,10 +459,10 @@ TreeScope* Node::treeScope() const
     return scope ? scope : m_document;
 }
 
-void Node::setTreeScopeRecursively(TreeScope* newTreeScope, bool includeRoot)
+void Node::setTreeScopeRecursively(TreeScope* newTreeScope)
 {
     ASSERT(this);
-    ASSERT(!includeRoot || !isDocumentNode());
+    ASSERT(!isDocumentNode());
     ASSERT(newTreeScope);
     ASSERT(!m_deletionHasBegun);
 
@@ -479,7 +479,7 @@ void Node::setTreeScopeRecursively(TreeScope* newTreeScope, bool includeRoot)
     if (currentDocument && currentDocument != newDocument)
         currentDocument->incDOMTreeVersion();
 
-    for (Node* node = includeRoot ? this : traverseNextNode(this); node; node = node->traverseNextNode(this)) {
+    for (Node* node = this; node; node = node->traverseNextNode(this)) {
         if (newTreeScope == newDocument) {
             if (node->hasRareData())
                 node->rareData()->setTreeScope(0);

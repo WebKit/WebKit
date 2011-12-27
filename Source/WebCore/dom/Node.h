@@ -384,7 +384,7 @@ public:
     TreeScope* treeScope() const;
 
     // Used by the basic DOM methods (e.g., appendChild()).
-    void setTreeScopeRecursively(TreeScope*, bool includeRoot = true);
+    void setTreeScopeRecursively(TreeScope*);
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.
