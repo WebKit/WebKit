@@ -336,6 +336,7 @@ EXPORTS
     ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@PAV21@@Z
     ?throwSyntaxError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
     ?throwTypeError@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
+    ?throwTypeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
     ?tlsKeyCount@WTF@@YAAAJXZ
     ?tlsKeys@WTF@@YAPAKXZ

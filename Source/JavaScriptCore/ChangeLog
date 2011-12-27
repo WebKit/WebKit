@@ -1,5 +1,12 @@
 2011-12-26  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSObject.h:
+
+2011-12-26  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=75231
         Fail to throw in strict mode on assign to read only static properties
 

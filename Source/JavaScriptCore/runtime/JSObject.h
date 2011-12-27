@@ -56,7 +56,7 @@ namespace JSC {
     struct HashTable;
 
     JSObject* throwTypeError(ExecState*, const UString&);
-    extern const char* StrictModeReadonlyPropertyWriteError;
+    extern JS_EXPORTDATA const char* StrictModeReadonlyPropertyWriteError;
 
     // ECMA 262-3 8.6.1
     // Property attributes
