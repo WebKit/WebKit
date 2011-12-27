@@ -104,6 +104,7 @@
       'target_name': 'wtf',
       'type': 'static_library',
       'msvs_guid': 'AA8A5A85-592B-4357-BC60-E0E91E026AF6',
+      'variables': { 'optimize': 'max' },
       'dependencies': [
         'wtf_config',
         '<(chromium_src_dir)/third_party/icu/icu.gyp:icui18n',
@@ -205,6 +206,7 @@
         }],
       ],
       'msvs_guid': '49909552-0B0C-4C14-8CF6-DB8A2ADE0934',
+      'variables': { 'optimize': 'max' },
       'actions': [
         {
           'action_name': 'retgen',

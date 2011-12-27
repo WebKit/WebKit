@@ -45,7 +45,6 @@
     # binary and increasing the speed of gdb.
     'enable_svg%': 1,
 
-    'optimize': 'max',
     'enable_wexit_time_destructors': 1,
 
     'webcore_include_dirs': [
@@ -261,6 +260,12 @@
       }],
     ],
   },  # variables
+
+  'target_defaults': {
+    'variables': {
+      'optimize': 'max',
+    },
+  },
 
   'conditions': [
     ['OS!="win" and remove_webcore_debug_symbols==1', {
