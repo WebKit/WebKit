@@ -65,7 +65,6 @@
             'target_name': 'webkit',
             'type': 'static_library',
             'variables': { 'enable_wexit_time_destructors': 1, },
-            'msvs_guid': '5ECEC9E5-8F23-47B6-93E0-C3B328B3BE65',
             'dependencies': [
                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
@@ -1156,7 +1155,6 @@
                 {
                     'target_name': 'webkit_unit_tests',
                     'type': 'executable',
-                    'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
                     'dependencies': [
                         'webkit',
                         '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
