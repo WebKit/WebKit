@@ -1090,25 +1090,6 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 // Rebaseline once native aa-clipping has landed
-BUGWK70748 CPU : fast/borders/border-radius-groove-01.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusGroove01.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-groove-02.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusGroove02.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-groove-03.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusInset01.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-inset-outset.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusOutset01.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusRidge01.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-split-inline.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-wide-border-01.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-wide-border-02.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-wide-border-03.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-wide-border-04.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-styles-split.html = IMAGE
-BUGWK70748 CPU : fast/borders/different-color-borders.html = IMAGE
-BUGWK70748 CPU : fast/borders/fieldsetBorderRadius.html = IMAGE
-BUGWK70748 CPU : fast/borders/mixed-border-styles-radius2.html = IMAGE
-BUGWK70748 CPU : fast/borders/mixed-border-styles-radius.html = IMAGE
 BUGWK70748 CPU : fast/box-shadow/basic-shadows.html = IMAGE
 BUGWK70748 WIN CPU : fast/box-shadow/border-radius-big.html = IMAGE
 BUGWK70748 CPU : fast/box-shadow/inset-box-shadows.html = IMAGE
