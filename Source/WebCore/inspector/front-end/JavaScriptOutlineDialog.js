@@ -434,7 +434,10 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
 
     _onScroll: function()
     {
-        this._highlighter.highlightViewportItems(this._query);
+        if (this._query)
+            this._highlighter.highlightViewportItems(this._query);
+        else
+            this._highlighter.clearHighlight();
     },
 
     _highlightFunctionLine: function()

@@ -1,3 +1,13 @@
+2011-12-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: exception when scrolling in JavaScriptOutline dialog with empty query
+        https://bugs.webkit.org/show_bug.cgi?id=75255
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/JavaScriptOutlineDialog.js:
+        (WebInspector.JavaScriptOutlineDialog.prototype._onScroll):
+
 2011-12-27  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: add more annotations on SDK classes.
