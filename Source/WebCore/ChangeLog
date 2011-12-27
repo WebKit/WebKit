@@ -1,3 +1,30 @@
+2011-12-22  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Bypass the shadow texture copy for accelerated
+        canvas when running the compositor in single threaded mode.
+        https://bugs.webkit.org/show_bug.cgi?id=75146
+
+        The texture copy fails on Windows as glCopyTexImage2D() doesn't
+        support BGRA source textures. 
+        This change also modified Canvas2DLayerChromium::updateCompositorResources
+        to call glCopyTexSubImage2D() instead of glCopyTexImage2D() so that
+        the copy can work with texture allocated via the glTexStorage2D
+        extension.
+
+        Reviewed by James Robinson.
+
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::paintContentsIfDirty):
+        (WebCore::Canvas2DLayerChromium::setTextureManager):
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        (WebCore::Canvas2DLayerChromium::pushPropertiesTo):
+        (WebCore::Canvas2DLayerChromium::unreserveContentsTexture):
+        (WebCore::Canvas2DLayerChromium::cleanupResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+
 2011-12-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Implement context menu for EFL port.
