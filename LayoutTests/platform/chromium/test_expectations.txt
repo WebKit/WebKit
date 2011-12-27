@@ -1338,7 +1338,7 @@ BUGCR8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
 
 // text fields wrong width
 BUGCR10363 MAC : tables/mozilla/bugs/bug53690-1.html = FAIL
-BUGCR10363 MAC : tables/mozilla/bugs/bug9024.html = FAIL
+BUGCR10363 LEOPARD : tables/mozilla/bugs/bug9024.html = FAIL
 
 // We ignore tab/option-tab distinctions (may be other problems too).
 BUGCR94274 MAC : fast/events/option-tab.html = TEXT
@@ -2421,7 +2421,6 @@ BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = PASS TIMEOUT TEXT
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
-BUGCR62741 WIN LINUX SNOWLEOPARD DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
 BUGWK68270 LEOPARD CPU DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = IMAGE CRASH
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
@@ -4021,56 +4020,6 @@ BUGWK74746 : http/tests/filesystem/workers/resolve-url-sync.html = PASS CRASH
 BUGWK74746 : http/tests/filesystem/workers/resolve-url.html = PASS CRASH
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods.html = FAIL
 BUGWK74746 WIN : http/tests/xmlhttprequest/workers/methods-async.html = FAIL
-
-// Will pick up rebaselining images from bots
-BUGWK74427 MAC WIN : css2.1/20110323/border-conflict-style-079.htm = IMAGE
-BUGWK74427 MAC WIN : css2.1/20110323/floating-replaced-height-008.htm = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-05-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-06-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-07-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-08-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-15-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-16-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-17-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-18-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-51-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-52-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-53-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-54-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-55-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-56-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-57-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-58-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-59-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-61-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-62-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-63-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-64-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-65-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-66-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-67-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-68-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-69-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-71-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-72-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-73-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-74-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-75-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-76-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-77-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-78-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-79-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-81-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-82-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-83-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-84-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-85-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-86-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-87-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-88-d.html = IMAGE
-BUGWK74427 MAC WIN : css2.1/t170602-bdr-conflct-w-89-d.html = IMAGE
-// WIN also affected, but duplicated above in BUGCR99500
-BUGWK74427 MAC : fast/borders/border-antialiasing.html = IMAGE
 
 BUGWK74881 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE
 
