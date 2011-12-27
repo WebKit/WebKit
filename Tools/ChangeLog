@@ -1,3 +1,22 @@
+2011-12-27  Dmitry Lomov  <dslomov@google.com>
+
+
+        [WebWorkers][Chromium] Remove remains of cross-process dedicated worker implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=66509
+        Just renames, merges and removal of dead code. Here are the list of renames:
+          - WebCommonWorkerClient merged with WebWorkerClient and renamed to WebSharedWorkerClient
+          - NewWebCommonWorkerClient renamed to WebCommonWorkerClient
+          - WebWorkerBase merged into WebSharedWorkerImpl
+          - NewWebWorkerBase renamed into WebWorkerBase
+ 
+        Reviewed by David Levin.
+
+        * DumpRenderTree/chromium/TestWebWorker.h:
+        (TestWebWorker::createWorker):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createWorker):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-12-27  Anders Carlsson  <andersca@apple.com>
 
         Function should handle wrapping/unwrapping RefPtr and PassRefPtr
