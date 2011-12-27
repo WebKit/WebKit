@@ -59,7 +59,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
     this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
     this.splitView.installResizer(this.debugSidebarResizeWidgetElement);
 
-    if (Preferences.useScriptNavigator) {
+    if (WebInspector.experimentsSettings.useScriptsNavigator.isEnabled()) {
         const initialNavigatorWidth = 225;
         const minimalViewsContainerWidthPercent = 50;
         this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);

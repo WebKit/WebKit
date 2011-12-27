@@ -1,3 +1,34 @@
+2011-12-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Introduce support for experimental settings.
+        https://bugs.webkit.org/show_bug.cgi?id=75250
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        (WebInspector.ExperimentsSettings.prototype.get experiments):
+        (WebInspector.ExperimentsSettings.prototype.get experimentsEnabled):
+        (WebInspector.ExperimentsSettings.prototype._createExperiment):
+        (WebInspector.ExperimentsSettings.prototype.set _cleanUpSetting.get var):
+        (WebInspector.ExperimentsSettings.prototype.set _cleanUpSetting):
+        (set WebInspector.Experiment):
+        (WebInspector.Experiment.prototype.get name):
+        (WebInspector.Experiment.prototype.get title):
+        (WebInspector.Experiment.prototype.isEnabled):
+        (WebInspector.Experiment.prototype.setEnabled):
+        (set WebInspector):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        (WebInspector.SettingsScreen.prototype._createExperimentsWarningSubsection):
+        (WebInspector.SettingsScreen.prototype._createExperimentCheckbox.listener):
+        (WebInspector.SettingsScreen.prototype._createExperimentCheckbox):
+        * inspector/front-end/helpScreen.css:
+        (.settings-experiments-warning-subsection-warning):
+        (.settings-experiments-warning-subsection-message):
+
 2011-12-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: exception when scrolling in JavaScriptOutline dialog with empty query

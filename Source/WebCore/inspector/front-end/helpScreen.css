@@ -188,6 +188,15 @@ body.platform-mac .help-key {
     color: yellow;
 }
 
+.settings-experiments-warning-subsection-warning {
+    color: rgb(200, 0, 0);
+}
+
+.settings-experiments-warning-subsection-message {
+    color: rgb(150, 150, 150);
+}
+
+
 .help-content input[type=checkbox] {
     height: 13px;
     width: 13px;
