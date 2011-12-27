@@ -4010,6 +4010,7 @@ BUGWK74662 MAC : fast/text/unicode-variation-selector.html = PASS CRASH
 
 BUGWK74634 WIN : compositing/absolute-position-changed-with-composited-parent-layer.html = IMAGE
 
+// Needs a new baseline. See https://bugs.webkit.org/show_bug.cgi?id=74688
 BUGWK74688 : fast/css/bidi-override-in-anonymous-block.html = TEXT
 
 BUGWK74731 : compositing/reflections/reflection-positioning2.html = PASS IMAGE

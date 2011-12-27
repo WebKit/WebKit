@@ -92,4 +92,3 @@ BUGWK74432 : css2.1/t170602-bdr-conflct-w-89-d.html = IMAGE
 BUGWK74432 : fast/borders/border-antialiasing.html = IMAGE
 
 BUGWK75235 : media/video-scales-in-media-document.html = TEXT
-BUGWK75236 : fast/css/bidi-override-in-anonymous-block.html = TEXT
