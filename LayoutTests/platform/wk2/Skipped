@@ -842,6 +842,7 @@ fast/history/nested-visited-test.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 fast/loader/stateobjects/state-url-sets-links-visited.html
+platform/mac/accessibility/search-predicate.html
 
 # [WK2] CSP reporting doesn't work
 # https://bugs.webkit.org/show_bug.cgi?id=59192
