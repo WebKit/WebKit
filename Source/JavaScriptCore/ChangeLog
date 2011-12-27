@@ -1,3 +1,19 @@
+2011-12-27  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75260
+        Null name for host function can result in dereference of uninitialize memory
+
+        Reviewed by Filip Pizlo.
+
+        This is a recent regression in ToT, if the name passed to finishCreation of a host function is null,
+        we are currently skipping the putDirect, which leaves memory uninitialized. This patch reverts the
+        aspect of the change that introduced the issue.  It might be better if functions that don't have a
+        name don't have this property at all, but that's change should be separate from fixing the bug.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+            - Always initialize the name property.
+
 2011-12-27  Anders Carlsson  <andersca@apple.com>
 
         Function should handle wrapping/unwrapping RefPtr and PassRefPtr

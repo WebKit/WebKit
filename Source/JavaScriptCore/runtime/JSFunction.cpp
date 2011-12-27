@@ -92,8 +92,7 @@ void JSFunction::finishCreation(ExecState* exec, NativeExecutable* executable, i
     Base::finishCreation(exec->globalData());
     ASSERT(inherits(&s_info));
     m_executable.set(exec->globalData(), this, executable);
-    if (!name.isNull())
-        putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 

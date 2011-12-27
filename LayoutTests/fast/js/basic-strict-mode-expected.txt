@@ -205,6 +205,7 @@ PASS (function () {'use strict';  try { throw 1; } catch (e) { aGlobal = true; }
 PASS try { throw 1; } catch (e) { aGlobal = true; } is true
 PASS (function () { try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal; is true
 PASS (function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal; is true
+PASS String(Object.getOwnPropertyDescriptor(function() { "use strict"; }, "caller").get) is 'function () {\n    [native code]\n}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

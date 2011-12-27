@@ -203,3 +203,6 @@ aGlobal = false;
 shouldBeTrue("(function () { try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
 aGlobal = false;
 shouldBeTrue("(function () {try { throw 1; } catch (e) { aGlobal = true; }})(); aGlobal;");
+
+// Make sure this doesn't crash!
+shouldBe('String(Object.getOwnPropertyDescriptor(function() { "use strict"; }, "caller").get)', "'function () {\\n    [native code]\\n}'");
