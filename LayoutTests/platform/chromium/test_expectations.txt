@@ -959,7 +959,6 @@ BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
 BUGCR10296 LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
-BUGCR10296 LINUX : svg/batik/text/textLength.svg = FAIL
 
 // The failures listed below have never passed in Chromium and need to be
 // investigated, categorized, and (one hopes) fixed.
@@ -1090,20 +1089,7 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 // This test is overly-finicky about pixel values.
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
-
 // Rebaseline once native aa-clipping has landed
-BUGWK70748 CPU : css2.1/t0805-c5517-brdr-s-00-c.html = IMAGE
-BUGWK70748 CPU : fast/backgrounds/border-radius-split-background-image.html = IMAGE
-BUGWK70748 CPU WIN : fast/backgrounds/gradient-background-leakage.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusAllStylesAllCorners.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusArcs01.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-complex-inner.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDashed01.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDashed02.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDashed03.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDashed04.html = IMAGE
-BUGWK70748 CPU : fast/borders/borderRadiusDashed05.html = IMAGE
-BUGWK70748 CPU : fast/borders/border-radius-different-width-001.html = IMAGE
 BUGWK70748 CPU : fast/borders/borderRadiusDotted01.html = IMAGE
 BUGWK70748 CPU : fast/borders/borderRadiusDotted02.html = IMAGE
 BUGWK70748 CPU : fast/borders/borderRadiusDotted03.html = IMAGE
