@@ -180,7 +180,11 @@ v8::Handle<v8::Array> V8CSSStyleDeclaration::namedPropertyEnumerator(const v8::A
 v8::Handle<v8::Integer> V8CSSStyleDeclaration::namedPropertyQuery(v8::Local<v8::String> v8Name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.CSSStyleDeclaration.NamedPropertyQuery");
-    return v8::Integer::New(v8::None);
+
+    if (cssPropertyInfo(v8Name))
+        return v8::Integer::New(v8::None);
+
+    return v8::Handle<v8::Integer>();
 }
 
 v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)

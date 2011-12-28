@@ -18,6 +18,9 @@
         shouldBeTrue("'borderTopColor' in document.body.style");
         shouldBeTrue("'border' in document.body.style");
         shouldBeTrue("'font' in document.body.style");
+        shouldBeTrue("'webkitTransform' in document.body.style");
+        shouldBeTrue("'WebkitTransform' in document.body.style");
+        shouldBeFalse("'bogus-random-String' in document.body.style");
         shouldBeTrue("'cssText' in document.body.style");
         shouldBeTrue("'getPropertyCSSValue' in document.body.style");
 

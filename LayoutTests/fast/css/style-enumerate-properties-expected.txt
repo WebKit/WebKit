@@ -6,6 +6,9 @@ PASS 'textDecoration' in document.body.style is true
 PASS 'borderTopColor' in document.body.style is true
 PASS 'border' in document.body.style is true
 PASS 'font' in document.body.style is true
+PASS 'webkitTransform' in document.body.style is true
+PASS 'WebkitTransform' in document.body.style is true
+PASS 'bogus-random-String' in document.body.style is false
 PASS 'cssText' in document.body.style is true
 PASS 'getPropertyCSSValue' in document.body.style is true
 PASS The CSS property order is correct
