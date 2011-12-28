@@ -29,10 +29,9 @@
  */
 
 #include "config.h"
+#include "HarfBuzzSkia.h"
 
 #include "FontPlatformData.h"
-#include <wtf/HashMap.h>
-#include <wtf/OwnArrayPtr.h>
 
 #include "SkFontHost.h"
 #include "SkPaint.h"
@@ -40,6 +39,9 @@
 #include "SkPoint.h"
 #include "SkRect.h"
 #include "SkUtils.h"
+
+#include <wtf/HashMap.h>
+#include <wtf/OwnArrayPtr.h>
 
 extern "C" {
 #include "harfbuzz-shaper.h"
@@ -215,7 +217,7 @@ HB_Error harfbuzzSkiaGetTable(void* voidface, const HB_Tag tag, HB_Byte* buffer,
     const size_t tableSize = SkFontHost::GetTableSize(font->uniqueID(), tag);
     if (!tableSize)
         return HB_Err_Invalid_Argument;
-    // If Harfbuzz specified a NULL buffer then it's asking for the size of the table.
+    // If Harfbuzz specified a 0 buffer then it's asking for the size of the table.
     if (!buffer) {
         *len = tableSize;
         return HB_Err_Ok;
@@ -269,4 +271,4 @@ HarfbuzzFace::~HarfbuzzFace()
     releaseCachedHarfbuzzFace(m_uniqueID);
 }
 
-}  // namespace WebCore
+} // namespace WebCore

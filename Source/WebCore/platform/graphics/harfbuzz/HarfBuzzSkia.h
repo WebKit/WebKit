@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HarfbuzzSkia_h
-#define HarfbuzzSkia_h
+#ifndef HarfBuzzSkia_h
+#define HarfBuzzSkia_h
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -63,6 +63,6 @@ private:
 // We'll remove this once we move to the new Harfbuzz API.
 HB_Font_* allocHarfbuzzFont();
 
-}  // namespace WebCore
+} // namespace WebCore
 
 #endif

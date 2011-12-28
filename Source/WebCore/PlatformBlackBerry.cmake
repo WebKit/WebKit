@@ -8,7 +8,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/blackberry/CookieDatabaseBackingStore"
     "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/platform/graphics/blackberry/skia"
-    "${WEBCORE_DIR}/platform/graphics/chromium" # For font subsystem
+    "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/opentype/"
     "${WEBCORE_DIR}/platform/graphics/skia"
     "${WEBCORE_DIR}/platform/image-decoders/skia"
@@ -42,12 +42,12 @@ LIST(APPEND WebCore_SOURCES
 # Skia font backend sources
 LIST(APPEND WebCore_SOURCES
     platform/graphics/blackberry/skia/PlatformBridge.cpp
-    platform/graphics/chromium/ComplexTextControllerLinux.cpp
-    platform/graphics/chromium/FontCacheLinux.cpp
-    platform/graphics/chromium/FontLinux.cpp
-    platform/graphics/chromium/FontPlatformDataLinux.cpp
-    platform/graphics/chromium/HarfbuzzSkia.cpp
-    platform/graphics/chromium/SimpleFontDataLinux.cpp
+    platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
+    platform/graphics/harfbuzz/FontHarfBuzz.cpp
+    platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp
+    platform/graphics/harfbuzz/HarfBuzzSkia.cpp
+    platform/graphics/harfbuzz/SimpleFontDataHarfBuzz.cpp
+    platform/graphics/skia/FontCacheSkia.cpp
     platform/graphics/skia/GlyphPageTreeNodeSkia.cpp
 )
 

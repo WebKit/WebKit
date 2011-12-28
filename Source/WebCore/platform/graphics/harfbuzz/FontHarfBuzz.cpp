@@ -31,11 +31,11 @@
 #include "config.h"
 #include "Font.h"
 
-#include "ComplexTextControllerLinux.h"
+#include "ComplexTextControllerHarfBuzz.h"
 #include "FloatRect.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
-#include "HarfbuzzSkia.h"
+#include "HarfBuzzSkia.h"
 #include "NotImplemented.h"
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"

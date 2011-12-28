@@ -32,7 +32,7 @@
 #include "GlyphPageTreeNode.h"
 
 #include "Font.h"
-#include "HarfbuzzSkia.h"
+#include "HarfBuzzSkia.h"
 #include "SimpleFontData.h"
 
 #include "SkTemplates.h"

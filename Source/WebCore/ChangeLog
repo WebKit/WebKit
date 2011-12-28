@@ -1,3 +1,31 @@
+2011-12-27  Tony Chang  <tony@chromium.org>
+
+        Move HarfBuzz files into their own directory
+        https://bugs.webkit.org/show_bug.cgi?id=72780
+
+        Reviewed by Daniel Bates.
+
+        FontCacheLinux.cpp got moved to platform/graphics/skia/FontCacheSkia.cpp since it wasn't HarfBuzz specific.
+
+        I used HarfBuzz in filenames since that seems to be how the name is capitalized on the project home page.
+
+        Fixed some style errors caught by the style checker.
+
+        * PlatformBlackBerry.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/graphics/chromium/FontPlatformData.h:
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp: Renamed from Source/WebCore/platform/graphics/chromium/ComplexTextControllerLinux.cpp.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.h: Renamed from Source/WebCore/platform/graphics/chromium/ComplexTextControllerLinux.h.
+        * platform/graphics/harfbuzz/FontHarfBuzz.cpp: Renamed from Source/WebCore/platform/graphics/chromium/FontLinux.cpp.
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp: Renamed from Source/WebCore/platform/graphics/chromium/FontPlatformDataLinux.cpp.
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h: Renamed from Source/WebCore/platform/graphics/chromium/FontPlatformDataLinux.h.
+        * platform/graphics/harfbuzz/HarfBuzzSkia.cpp: Renamed from Source/WebCore/platform/graphics/chromium/HarfbuzzSkia.cpp.
+        * platform/graphics/harfbuzz/HarfBuzzSkia.h: Renamed from Source/WebCore/platform/graphics/chromium/HarfbuzzSkia.h.
+        * platform/graphics/harfbuzz/SimpleFontDataSkia.cpp: Renamed from Source/WebCore/platform/graphics/chromium/SimpleFontDataLinux.cpp.
+        * platform/graphics/skia/FontCacheSkia.cpp: Renamed from Source/WebCore/platform/graphics/chromium/FontCacheLinux.cpp.
+        * platform/graphics/skia/GlyphPageTreeNodeSkia.cpp:
+
 2011-12-27  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap][QT] The fragment shader in OpenGL ES2 requires the default precision

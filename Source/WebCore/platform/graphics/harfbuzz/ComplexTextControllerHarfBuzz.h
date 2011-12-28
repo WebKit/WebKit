@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ComplexTextControllerLinux_h
-#define ComplexTextControllerLinux_h
+#ifndef ComplexTextControllerHarfBuzz_h
+#define ComplexTextControllerHarfBuzz_h
 
-#include "HarfbuzzSkia.h"
+#include "HarfBuzzSkia.h"
 #include "SkPoint.h"
 #include "SkScalar.h"
 #include "TextRun.h"
@@ -57,7 +57,7 @@ class SimpleFontData;
 // only ever done with script runs since the shapers only know how to deal with
 // a single script.
 //
-// Iteration is always in logical (aka reading) order.  For RTL text that means
+// Iteration is always in logical (aka reading) order. For RTL text that means
 // the rightmost part of the text will be first.
 //
 // Once you have setup the object, call |nextScriptRun| to get the first script
@@ -161,4 +161,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ComplexTextControllerLinux_h
+#endif // ComplexTextControllerHarfBuzz_h

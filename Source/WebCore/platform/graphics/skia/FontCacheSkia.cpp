@@ -182,4 +182,4 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     return result;
 }
 
-}  // namespace WebCore
+} // namespace WebCore

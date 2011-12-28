@@ -34,7 +34,7 @@
 #if OS(WINDOWS)
 #include "FontPlatformDataChromiumWin.h"
 #elif OS(UNIX) && !OS(DARWIN)
-#include "FontPlatformDataLinux.h"
+#include "FontPlatformDataHarfBuzz.h"
 #endif
 
 #endif  // FontPlatformData_h

@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "ComplexTextControllerLinux.h"
+#include "ComplexTextControllerHarfBuzz.h"
 
 #include "FloatRect.h"
 #include "Font.h"

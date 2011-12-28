@@ -32,8 +32,8 @@
 #include "FontPlatformData.h"
 
 #include "NotImplemented.h"
-#include "PlatformSupport.h"
 #include "PlatformString.h"
+#include "PlatformSupport.h"
 
 #include "SkAdvancedTypefaceMetrics.h"
 #include "SkPaint.h"
@@ -181,7 +181,7 @@ SkFontID FontPlatformData::uniqueID() const
 
 bool FontPlatformData::operator==(const FontPlatformData& a) const
 {
-    // If either of the typeface pointers are invalid (either NULL or the
+    // If either of the typeface pointers are invalid (either 0 or the
     // special deleted value) then we test for pointer equality. Otherwise, we
     // call SkTypeface::Equal on the valid pointers.
     bool typefacesEqual;
@@ -248,4 +248,4 @@ void FontPlatformData::querySystemForRenderStyle()
     PlatformSupport::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
 }
 
-}  // namespace WebCore
+} // namespace WebCore

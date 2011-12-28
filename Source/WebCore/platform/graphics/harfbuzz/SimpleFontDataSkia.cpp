@@ -31,18 +31,17 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#include "FloatRect.h"
 #include "Font.h"
 #include "FontCache.h"
-#include "FloatRect.h"
 #include "FontDescription.h"
 #include "Logging.h"
-#include "VDMXParser.h"
-
 #include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkTime.h"
 #include "SkTypeface.h"
 #include "SkTypes.h"
+#include "VDMXParser.h"
 
 namespace WebCore {
 
@@ -50,7 +49,7 @@ namespace WebCore {
 static const float smallCapsFraction = 0.7f;
 static const float emphasisMarkFraction = .5;
 // This is the largest VDMX table which we'll try to load and parse.
-static const size_t maxVDMXTableSize = 1024 * 1024;  // 1 MB
+static const size_t maxVDMXTableSize = 1024 * 1024; // 1 MB
 
 void SimpleFontData::platformInit()
 {
@@ -137,8 +136,8 @@ void SimpleFontData::platformInit()
         GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
 
         if (glyphPageZero) {
-            static const UChar32 x_char = 'x';
-            const Glyph xGlyph = glyphPageZero->glyphDataForCharacter(x_char).glyph;
+            static const UChar32 xChar = 'x';
+            const Glyph xGlyph = glyphPageZero->glyphDataForCharacter(xChar).glyph;
 
             if (xGlyph)
                 m_avgCharWidth = widthForGlyph(xGlyph);
@@ -196,8 +195,8 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
         // textToGlyphs takes a byte count so we double the character count.
         int count = paint.textToGlyphs(characters, n * 2, glyphs);
         for (int i = 0; i < count; i++) {
-            if (0 == glyphs[i])
-                return false;       // missing glyph
+            if (!glyphs[i])
+                return false; // missing glyph
         }
 
         characters += n;
@@ -222,7 +221,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     if (!m_platformData.size())
         return 0;
 
-    SkASSERT(sizeof(glyph) == 2);   // compile-time assert
+    SkASSERT(sizeof(glyph) == 2); // compile-time assert
 
     SkPaint paint;
 
@@ -242,4 +241,4 @@ void SimpleFontData::updateGlyphWithVariationSelector(UChar32 character, UChar32
     // FIXME: Implement.
 }
 
-}  // namespace WebCore
+} // namespace WebCore

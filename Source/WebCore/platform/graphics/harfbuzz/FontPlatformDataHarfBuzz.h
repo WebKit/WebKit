@@ -28,18 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FontPlatformDataLinux_h
-#define FontPlatformDataLinux_h
+#ifndef FontPlatformDataHarfBuzz_h
+#define FontPlatformDataHarfBuzz_h
 
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
-#include "HarfbuzzSkia.h"
+#include "HarfBuzzSkia.h"
+#include "SkPaint.h"
 #include "TextOrientation.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringImpl.h>
-#include <SkPaint.h>
 
 class SkTypeface;
 typedef uint32_t SkFontID;
@@ -58,8 +58,8 @@ public:
     // Used for deleted values in the font cache's hash tables. The hash table
     // will create us with this structure, and it will compare other values
     // to this "Deleted" one. It expects the Deleted one to be differentiable
-    // from the NULL one (created with the empty constructor), so we can't just
-    // set everything to NULL.
+    // from the 0 one (created with the empty constructor), so we can't just
+    // set everything to 0.
     FontPlatformData(WTF::HashTableDeletedValueType)
         : m_typeface(hashTableDeletedFontValue())
         , m_textSize(0)
@@ -155,6 +155,6 @@ private:
     SkTypeface* hashTableDeletedFontValue() const { return reinterpret_cast<SkTypeface*>(-1); }
 };
 
-}  // namespace WebCore
+} // namespace WebCore
 
-#endif  // ifdef FontPlatformData_h
+#endif // ifdef FontPlatformDataHarfBuzz_h
