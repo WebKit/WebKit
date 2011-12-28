@@ -1,0 +1,117 @@
+Test to make sure border shorthand properties returns CSSValueList properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedStyle.getPropertyValue('border-bottom') is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-bottom').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-bottom').cssText is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-bottom').length is 3
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-bottom') is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-bottom').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-bottom').cssText is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-bottom').length is 3
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 320
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyValue('border-bottom') is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-bottom').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-bottom').cssText is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-bottom').length is 3
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(1).getStringValue() is 'none'
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS computedStyle.getPropertyCSSValue('border-bottom').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-top') is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-top').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-top').cssText is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-top').length is 3
+PASS computedStyle.getPropertyCSSValue('border-top').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('border-top').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-top') is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-top').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-top').cssText is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-top').length is 3
+PASS computedStyle.getPropertyCSSValue('border-top').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 320
+PASS computedStyle.getPropertyCSSValue('border-top').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyValue('border-top') is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-top').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-top').cssText is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-top').length is 3
+PASS computedStyle.getPropertyCSSValue('border-top').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('border-top').item(1).getStringValue() is 'none'
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS computedStyle.getPropertyCSSValue('border-top').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-right') is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-right').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-right').cssText is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-right').length is 3
+PASS computedStyle.getPropertyCSSValue('border-right').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('border-right').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-right') is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-right').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-right').cssText is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-right').length is 3
+PASS computedStyle.getPropertyCSSValue('border-right').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 320
+PASS computedStyle.getPropertyCSSValue('border-right').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyValue('border-right') is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-right').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-right').cssText is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-right').length is 3
+PASS computedStyle.getPropertyCSSValue('border-right').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('border-right').item(1).getStringValue() is 'none'
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS computedStyle.getPropertyCSSValue('border-right').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-left') is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-left').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-left').cssText is '10px solid rgb(255, 0, 0)'
+PASS computedStyle.getPropertyCSSValue('border-left').length is 3
+PASS computedStyle.getPropertyCSSValue('border-left').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
+PASS computedStyle.getPropertyCSSValue('border-left').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyValue('border-left') is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-left').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-left').cssText is '320px solid rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('border-left').length is 3
+PASS computedStyle.getPropertyCSSValue('border-left').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 320
+PASS computedStyle.getPropertyCSSValue('border-left').item(1).getStringValue() is 'solid'
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS computedStyle.getPropertyValue('border-left') is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-left').toString() is '[object CSSValueList]'
+PASS computedStyle.getPropertyCSSValue('border-left').cssText is '0px none rgb(0, 128, 0)'
+PASS computedStyle.getPropertyCSSValue('border-left').length is 3
+PASS computedStyle.getPropertyCSSValue('border-left').item(0).getFloatValue(CSSPrimitiveValue.CSS_PX) is 0
+PASS computedStyle.getPropertyCSSValue('border-left').item(1).getStringValue() is 'none'
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS computedStyle.getPropertyCSSValue('border-left').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
