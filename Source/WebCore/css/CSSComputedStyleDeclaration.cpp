@@ -2144,8 +2144,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
                                         CSSPropertyBorderBottomColor };
             return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
         }
-        case CSSPropertyBorderColor:
-            break;
+        case CSSPropertyBorderColor: {
+            const int properties[4] = { CSSPropertyBorderTopColor, CSSPropertyBorderRightColor,
+                                        CSSPropertyBorderBottomColor, CSSPropertyBorderLeftColor };
+            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+        }
         case CSSPropertyBorderLeft: {
             const int properties[3] = { CSSPropertyBorderLeftWidth, CSSPropertyBorderLeftStyle,
                                         CSSPropertyBorderLeftColor };

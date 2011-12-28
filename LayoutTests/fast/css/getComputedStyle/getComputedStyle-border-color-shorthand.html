@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test to make sure border-color shorthand property returns CSSValueList properly.")
+
+var testContainer = document.createElement("div");
+testContainer.contentEditable = true;
+document.body.appendChild(testContainer);
+
+testContainer.innerHTML = '<div id="test">hello</div>';
+
+e = document.getElementById('test');
+computedStyle = window.getComputedStyle(e, null);
+
+e.style.borderColor = "red blue green white";
+shouldBe("computedStyle.getPropertyValue('border-color')", "'rgb(255, 0, 0) rgb(0, 0, 255) rgb(0, 128, 0) rgb(255, 255, 255)'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').length", "4");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').cssText", "'rgb(255, 0, 0) rgb(0, 0, 255) rgb(0, 128, 0) rgb(255, 255, 255)'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "128");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "255");
+
+e.style.borderColor = "black";
+shouldBe("computedStyle.getPropertyValue('border-color')", "'rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0)'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').length", "4");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').cssText", "'rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0)'");;
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+
+e.style.borderColor = "rgb(102, 102, 102)";
+shouldBe("computedStyle.getPropertyValue('border-color')", "'rgb(102, 102, 102) rgb(102, 102, 102) rgb(102, 102, 102) rgb(102, 102, 102)'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').length", "4");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').cssText", "'rgb(102, 102, 102) rgb(102, 102, 102) rgb(102, 102, 102) rgb(102, 102, 102)'");;
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "102");
+
+e.style.borderColor = "";
+e.style.color = "black";
+e.style.border = "solid";
+shouldBe("computedStyle.getPropertyValue('border-color')", "'rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0)'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').length", "4");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').cssText", "'rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0)'");;
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(0).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(1).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(2).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+shouldBe("computedStyle.getPropertyCSSValue('border-color').item(3).getRGBColorValue().blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER)", "0");
+document.body.removeChild(testContainer);
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

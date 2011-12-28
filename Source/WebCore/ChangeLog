@@ -1,3 +1,17 @@
+2011-12-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        getComputedStyle for border-color is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=75324
+
+        Reviewed by Andreas Kling.
+
+        Implement getComputedStyle for border-color.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-border-color-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2011-12-28  Darin Adler  <darin@apple.com>
 
         Use OwnPtr to handle lifetime and deletion of FontFace objects
