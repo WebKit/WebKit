@@ -1,3 +1,38 @@
+2011-12-28  Kentaro Hara  <haraken@chromium.org>
+
+        Enable the [Supplemental] IDL on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=75274
+
+        Reviewed by Adam Barth.
+
+        This patch enables the [Supplemental] IDL on Qt by changing the build
+        flow of Qt as follows.
+
+        - Previous build flow:
+            foreach $idl (all IDL files) {
+                generate-bindings.pl depends on $idl;
+                generate-bindings.pl reads $idl;
+                generate-bindings.pl generates .h and .cpp files for $idl;
+            }
+
+        - New build flow (See the discussions in bug 72138 for more details):
+            resolve-supplemental.pl depends on all IDL files;
+            resolve-supplemental.pl reads all IDL files;
+            resolve-supplemental.pl resolves the dependency of [Supplemental=XXXX];
+            resolve-supplemental.pl outputs supplemental_dependency.tmp;
+            foreach $idl (all IDL files) {
+                generate-bindings.pl depends on $idl and supplemental_dependency.tmp;
+                generate-bindings.pl reads $idl;
+                generate-bindings.pl reads supplemental_dependency.tmp;
+                generate-bindings.pl generates .h and .cpp files for $idl,
+                    including all attributes in the IDL files that are implementing $idl;
+            }
+
+        Tests: Confirm that build succeeds.
+               http/tests/websocket/tests/*
+
+        * DerivedSources.pri: Described the above build flow.
+
 2011-12-28  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Use HashMap<OwnPtr> in OriginAccessMap

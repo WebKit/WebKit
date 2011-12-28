@@ -415,11 +415,13 @@ IDL_BINDINGS += \
     webaudio/AudioSourceNode.idl \
     webaudio/ConvolverNode.idl \
     webaudio/DelayNode.idl \
+    webaudio/DOMWindowWebAudio.idl \
     webaudio/HighPass2FilterNode.idl \
     webaudio/JavaScriptAudioNode.idl \
     webaudio/LowPass2FilterNode.idl \
     webaudio/RealtimeAnalyserNode.idl \
     websockets/CloseEvent.idl \
+    websockets/DOMWindowWebSocket.idl \
     websockets/WebSocket.idl \
     workers/AbstractWorker.idl \
     workers/DedicatedWorkerContext.idl \
@@ -650,44 +652,65 @@ cssvalues.depends = ${QMAKE_FILE_NAME} $${EXTRACSSVALUES} $$cssvalues.script
 cssvalues.clean = ${QMAKE_FILE_OUT} ${QMAKE_FUNC_FILE_OUT_PATH}/${QMAKE_FILE_BASE}.h
 GENERATORS += cssvalues
 
-# GENERATOR 1: IDL compiler
-idl.input = IDL_BINDINGS
-idl.script = $$PWD/bindings/scripts/generate-bindings.pl
+# GENERATOR 0: Resolve [Supplemental] dependency in IDLs
+SUPPLEMENTAL_DEPENDENCY_FILE = supplemental_dependency.tmp
+IDL_FILES_TMP = ${QMAKE_FUNC_FILE_OUT_PATH}/idl_files.tmp
+RESOLVE_SUPPLEMENTAL_SCRIPT = $$PWD/bindings/scripts/resolve-supplemental.pl
+
+resolveSupplemental.input = RESOLVE_SUPPLEMENTAL_SCRIPT # dummy input to fire this rule
+resolveSupplemental.script = $$RESOLVE_SUPPLEMENTAL_SCRIPT
+resolveSupplemental.commands = echo $(addprefix $${ROOT_WEBKIT_DIR}/Source/WebCore/, $$IDL_BINDINGS) | sed \'s/\\s/\\n/g\' > $$IDL_FILES_TMP && \
+                               perl -I$$PWD/bindings/scripts $$resolveSupplemental.script \
+                               --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
+                               --idlFilesList $$IDL_FILES_TMP \
+                               --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
+                               --preprocessor \"$${QMAKE_MOC} -E\"
+resolveSupplemental.output = $$SUPPLEMENTAL_DEPENDENCY_FILE
+resolveSupplemental.add_output_to_sources = false
+resolveSupplemental.depends = $$PWD/bindings/scripts/IDLParser.pm
+GENERATORS += resolveSupplemental
+
+# GENERATOR 1: Generate .h and .cpp from IDLs
+generateBindings.input = IDL_BINDINGS
+generateBindings.script = $$PWD/bindings/scripts/generate-bindings.pl
 v8: generator = V8
 else: generator = JS
-idl.commands = perl -I$$PWD/bindings/scripts $$idl.script \
-               --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
-               --generator $$generator \
-               --include $$PWD/dom \
-               --include $$PWD/fileapi \
-               --include $$PWD/html \
-               --include $$PWD/xml \
-               --include $$PWD/svg \
-               --include $$PWD/storage \
-               --include $$PWD/css \
-               --include $$PWD/testing \
-               --include $$PWD/webaudio \
-               --include $$PWD/workers \
-               --outputDir ${QMAKE_FUNC_FILE_OUT_PATH} \
-               --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.script \
+                            --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
+                            --generator $$generator \
+                            --include $$PWD/dom \
+                            --include $$PWD/fileapi \
+                            --include $$PWD/html \
+                            --include $$PWD/xml \
+                            --include $$PWD/svg \
+                            --include $$PWD/storage \
+                            --include $$PWD/css \
+                            --include $$PWD/testing \
+                            --include $$PWD/webaudio \
+                            --include $$PWD/workers \
+                            --outputDir ${QMAKE_FUNC_FILE_OUT_PATH} \
+                            --supplementalDependencyFile ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
+                            --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 v8 {
-    idl.output = V8${QMAKE_FILE_BASE}.cpp
-    idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
-                  $$PWD/bindings/scripts/CodeGeneratorV8.pm \
-                  $$PWD/bindings/scripts/IDLParser.pm \
-                  $$PWD/bindings/scripts/IDLStructure.pm \
-                  $$PWD/bindings/scripts/InFilesParser.pm \
-                  $$PWD/bindings/scripts/preprocessor.pm
+    generateBindings.output = V8${QMAKE_FILE_BASE}.cpp
+    generateBindings.depends = ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
+                               $$PWD/bindings/scripts/CodeGenerator.pm \
+                               $$PWD/bindings/scripts/CodeGeneratorV8.pm \
+                               $$PWD/bindings/scripts/IDLParser.pm \
+                               $$PWD/bindings/scripts/IDLStructure.pm \
+                               $$PWD/bindings/scripts/InFilesParser.pm \
+                               $$PWD/bindings/scripts/preprocessor.pm
 } else {
-    idl.output = JS${QMAKE_FILE_BASE}.cpp
-    idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
-                  $$PWD/bindings/scripts/CodeGeneratorJS.pm \
-                  $$PWD/bindings/scripts/IDLParser.pm \
-                  $$PWD/bindings/scripts/IDLStructure.pm \
-                  $$PWD/bindings/scripts/InFilesParser.pm \
-                  $$PWD/bindings/scripts/preprocessor.pm
+    generateBindings.output = JS${QMAKE_FILE_BASE}.cpp
+    generateBindings.depends = ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY_FILE \
+                               $$PWD/bindings/scripts/CodeGenerator.pm \
+                               $$PWD/bindings/scripts/CodeGeneratorJS.pm \
+                               $$PWD/bindings/scripts/IDLParser.pm \
+                               $$PWD/bindings/scripts/IDLStructure.pm \
+                               $$PWD/bindings/scripts/InFilesParser.pm \
+                               $$PWD/bindings/scripts/preprocessor.pm
 }
-GENERATORS += idl
+GENERATORS += generateBindings
 
 # GENERATOR 2: inspector idl compiler
 inspectorValidate.output = InspectorProtocolVersion.h
