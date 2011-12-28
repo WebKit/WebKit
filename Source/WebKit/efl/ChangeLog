@@ -1,3 +1,17 @@
+2011-12-27  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Remove duplicate code and remove entry after freeing the matrix.
+        https://bugs.webkit.org/show_bug.cgi?id=75073
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove duplicate ewk_tile_unused_cache_freeze code.
+        Entry matrix should free first before removing entry in inlist,
+        because in eina_matrixsparce_free callback entry pointer is referenced to decrease the reference count.
+
+        * ewk/ewk_tiled_matrix.cpp:
+        (ewk_tile_matrix_free):
+
 2011-12-26  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Last parameter of ewk_view_scroll is always true.
