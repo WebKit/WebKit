@@ -469,11 +469,6 @@ public:
         m_titleTextDirection.set(dir == WebKit::WebTextDirectionLeftToRight ? "ltr" : "rtl");
     }
 
-    bool shouldInterceptPostMessage()
-    {
-        return m_interceptPostMessage.isBool() && m_interceptPostMessage.toBoolean();
-    }
-
     void setIsPrinting(bool value) { m_isPrinting = value; }
     bool isPrinting() { return m_isPrinting; }
 
@@ -684,9 +679,6 @@ private:
 
     // Bound variable to return the name of this platform (chromium).
     CppVariant m_platformName;
-
-    // Bound variable to set whether postMessages should be intercepted or not
-    CppVariant m_interceptPostMessage;
 
     WebKit::WebURL m_userStyleSheetLocation;
 

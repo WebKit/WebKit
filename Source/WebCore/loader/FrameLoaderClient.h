@@ -79,7 +79,6 @@ namespace WebCore {
     class HTMLPlugInElement;
     class IntSize;
     class KURL;
-    class MessageEvent;
     class NavigationAction;
     class Page;
     class ProtectionSpace;
@@ -320,9 +319,6 @@ namespace WebCore {
         virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() = 0;
 
         virtual bool shouldPaintBrokenImage(const KURL&) const { return true; }
-
-        // Returns true if the embedder intercepted the postMessage call
-        virtual bool willCheckAndDispatchMessageEvent(SecurityOrigin* /*target*/, MessageEvent*) const { return false; }
     };
 
 } // namespace WebCore

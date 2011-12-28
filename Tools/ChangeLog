@@ -1,3 +1,18 @@
+2011-12-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103620.
+        http://trac.webkit.org/changeset/103620
+        https://bugs.webkit.org/show_bug.cgi?id=75316
+
+        Causes many crashes (Requested by abarth on #webkit).
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-12-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103734.

@@ -250,7 +250,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("webHistoryItemCount", &m_webHistoryItemCount);
     bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("platformName", &m_platformName);
-    bindProperty("interceptPostMessage", &m_interceptPostMessage);
 }
 
 LayoutTestController::~LayoutTestController()
@@ -638,7 +637,6 @@ void LayoutTestController::reset()
     m_webHistoryItemCount.set(0);
     m_titleTextDirection.set("ltr");
     m_platformName.set("chromium");
-    m_interceptPostMessage.set(false);
     m_userStyleSheetLocation = WebURL();
     m_isPrinting = false;
 

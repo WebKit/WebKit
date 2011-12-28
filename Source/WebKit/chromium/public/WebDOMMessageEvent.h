@@ -35,8 +35,7 @@
 #include "platform/WebSerializedScriptValue.h"
 
 #if WEBKIT_IMPLEMENTATION
-#include "Event.h"
-#include "MessageEvent.h"
+namespace WebCore { class Event; }
 #endif
 
 namespace WebKit {
@@ -50,10 +49,6 @@ public:
 
     WEBKIT_EXPORT WebSerializedScriptValue data() const;
     WEBKIT_EXPORT WebString origin() const;
-
-#if WEBKIT_IMPLEMENTATION
-    explicit WebDOMMessageEvent(const WTF::PassRefPtr<WebCore::MessageEvent>& e) : WebDOMEvent(e) { }
-#endif
 };
 
 } // namespace WebKit

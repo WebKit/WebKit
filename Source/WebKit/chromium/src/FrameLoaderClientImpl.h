@@ -206,7 +206,6 @@ public:
     virtual void didNotAllowPlugins();
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
-    virtual bool willCheckAndDispatchMessageEvent(WebCore::SecurityOrigin* target, WebCore::MessageEvent*) const;
 
 private:
     void makeDocumentView();
