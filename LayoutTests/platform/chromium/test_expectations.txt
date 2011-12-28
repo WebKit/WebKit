@@ -1481,9 +1481,8 @@ BUGCR104128 CPU : svg/css/shadow-with-large-radius.svg = IMAGE
 BUGCR104128 CPU : svg/css/shadow-with-negative-offset.svg = IMAGE
 BUGCR104128 CPU : transitions/svg-text-shadow-transition.html = IMAGE
 
-// rebaseline after skia rev. 2735 lands (improved luminance computation)
+// Appears to be a regression from Skia rev. 2735 (improved luminance computation)
 BUGCR105271 WIN CPU : fast/css/shadow-multiple.html = IMAGE
-BUGCR105271 WIN CPU : fast/multicol/shadow-breaking.html = IMAGE
 
 // Linux pixeltest failure: alpha=0.5 red (1,0,0) atop yellow (1,1,0) is
 // coming out with with a slightly-less-than-100% red channel. This test fails
