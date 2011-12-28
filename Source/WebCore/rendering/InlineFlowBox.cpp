@@ -78,6 +78,14 @@ IntRect InlineFlowBox::roundedFrameRect() const
     return IntRect(snappedX, snappedY, snappedMaxX - snappedX, snappedMaxY - snappedY);
 }
 
+static void setHasTextDescendantsOnAncestors(InlineFlowBox* box)
+{
+    while (box && !box->hasTextDescendants()) {
+        box->setHasTextDescendants();
+        box = box->parent();
+    }
+}
+
 void InlineFlowBox::addToLine(InlineBox* child) 
 {
     ASSERT(!child->parent());
@@ -99,10 +107,10 @@ void InlineFlowBox::addToLine(InlineBox* child)
     if (child->isText()) {
         if (child->renderer()->parent() == renderer())
             m_hasTextChildren = true;
-        m_hasTextDescendants = true;
+        setHasTextDescendantsOnAncestors(this);
     } else if (child->isInlineFlowBox()) {
         if (toInlineFlowBox(child)->hasTextDescendants())
-            m_hasTextDescendants = true;
+            setHasTextDescendantsOnAncestors(this);
     }
 
     if (descendantsHaveSameLineHeightAndBaseline() && !child->renderer()->isPositioned()) {

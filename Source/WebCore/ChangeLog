@@ -1,3 +1,25 @@
+2011-12-28  Robert Hogan  <robert@webkit.org>
+
+        Inline flow not learning height of all text descendants
+        https://bugs.webkit.org/show_bug.cgi?id=75305
+
+        Reviewed by Dan Bernstein.
+
+        Tests: fast/inline/nested-text-descendants-expected.html
+               fast/inline/nested-text-descendants.html
+
+        The root inline box would only learn it had text descendants if its first grandchild
+        was text. It wasn't informed of subsequent text grandchildren so could not factor them 
+        into its calculation of the line height.
+        To fix this, propagate the existence of a text descendant to the root inline box
+        by walking up through the text child's ancestors.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::setHasTextDescendantsOnAncestors):
+        (WebCore::InlineFlowBox::addToLine):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::setHasTextDescendants):
+
 2011-12-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103620.
