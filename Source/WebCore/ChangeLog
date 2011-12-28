@@ -1,3 +1,19 @@
+2011-12-27  Dominic Cooney  <dominicc@chromium.org>
+
+        Remove initWebKitAnimationEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=71698
+
+        Reviewed by Ojan Vafai.
+
+        Now that WebKitAnimationEvent has a constructor, we don't need
+        this
+        method. <https://www.w3.org/Bugs/Public/show_bug.cgi?id=15338> is
+        tracking the change to the CSS Animations spec.
+
+        * dom/WebKitAnimationEvent.cpp:
+        * dom/WebKitAnimationEvent.h:
+        * dom/WebKitAnimationEvent.idl:
+
 2011-12-27  Dominic Cooney   <dominicc@chromium.org>
 
         Remove initWebKitTransitionEvent method

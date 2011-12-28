@@ -30,12 +30,6 @@ module events {
     ] WebKitAnimationEvent : Event {
         readonly attribute [InitializedByConstructor] DOMString animationName;
         readonly attribute [InitializedByConstructor] double elapsedTime;
-
-        void initWebKitAnimationEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
-                                      in [Optional=CallWithDefaultValue] boolean canBubbleArg,
-                                      in [Optional=CallWithDefaultValue] boolean cancelableArg,
-                                      in [Optional=CallWithDefaultValue] DOMString animationNameArg,
-                                      in [Optional=CallWithDefaultValue] double elapsedTimeArg);
 };
 
 }

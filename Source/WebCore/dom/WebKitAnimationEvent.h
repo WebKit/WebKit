@@ -54,12 +54,6 @@ public:
 
     virtual ~WebKitAnimationEvent();
 
-    void initWebKitAnimationEvent(const AtomicString& type,
-                                  bool canBubbleArg,
-                                  bool cancelableArg,
-                                  const String& animationName,
-                                  double elapsedTime);
-
     const String& animationName() const;
     double elapsedTime() const;
 
