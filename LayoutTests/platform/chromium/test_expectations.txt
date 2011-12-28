@@ -1945,9 +1945,6 @@ BUGCR32308 SKIP DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
 BUGCR32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
 BUGCR32673 LINUX WIN : fast/forms/textarea-scrollbar-height.html = TEXT
 
-// Flaky tests found during the roll.
-BUGCR32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = PASS TEXT
-
 BUGCR33293 SKIP : fast/media/lifetime.html = TIMEOUT
 
 // WebKit roll 53655 -> 53704
@@ -2612,7 +2609,7 @@ BUGCR66923 MAC : fast/css/focus-ring-multiline.html = IMAGE
 
 // The test is just too slow and has never passed since on Dbg build.
 BUG_YURYS SLOW DEBUG : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-BUGCR67139 DEBUG : storage/close-during-stress-test.html = PASS CRASH
+BUGCR67139 : storage/close-during-stress-test.html = PASS TEXT
 
 // WebKit roll 74255:74308
 BUGCR67416 LINUX WIN : fast/text/emphasis.html = IMAGE+TEXT
