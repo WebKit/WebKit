@@ -1,3 +1,16 @@
+2011-12-27  Dan Bernstein  <mitz@apple.com>
+
+        [mac] Stop using bootstrap_look_up2
+        https://bugs.webkit.org/show_bug.cgi?id=75280
+
+        Reviewed by Mark Rowe.
+
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Changed to use bootstrap_look_up() instead of
+        bootstrap_look_up2().
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Ditto.
+
 2011-12-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Make the inputMethodEvent set or confirm the composition

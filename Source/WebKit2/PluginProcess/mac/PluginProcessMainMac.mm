@@ -42,9 +42,6 @@
 #import <wtf/text/WTFString.h>
 #include <stdio.h>
 
-// FIXME: We should be doing this another way.
-extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
-
 #define SHOW_CRASH_REPORTER 1
 
 namespace WebKit {
@@ -76,9 +73,9 @@ int PluginProcessMain(const CommandLine& commandLine)
     
     // Get the server port.
     mach_port_t serverPort;
-    kern_return_t kr = bootstrap_look_up2(bootstrap_port, serviceName.utf8().data(), &serverPort, 0, 0);
+    kern_return_t kr = bootstrap_look_up(bootstrap_port, serviceName.utf8().data(), &serverPort);
     if (kr) {
-        printf("bootstrap_look_up2 result: %x", kr);
+        printf("bootstrap_look_up result: %x", kr);
         return EXIT_FAILURE;
     }
 
