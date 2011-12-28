@@ -1699,9 +1699,9 @@ PassRefPtr<RenderStyle> Document::styleForPage(int pageIndex)
     return style.release();
 }
 
-void Document::registerCustomFont(FontData* fontData)
+void Document::registerCustomFont(PassOwnPtr<FontData> fontData)
 {
-    m_customFonts.append(adoptPtr(fontData));
+    m_customFonts.append(fontData);
 }
 
 void Document::deleteCustomFonts()

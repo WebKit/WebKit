@@ -89,11 +89,11 @@ FontData* CSSSegmentedFontFace::getFontData(const FontDescription& fontDescripti
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
     unsigned hashKey = ((fontDescription.computedPixelSize() + 1) << (FontTraitsMaskWidth + 1)) | ((fontDescription.orientation() == Vertical ? 1 : 0) << FontTraitsMaskWidth) | desiredTraitsMask;
 
-    SegmentedFontData* fontData = m_fontDataTable.get(hashKey);
+    SegmentedFontData*& fontData = m_fontDataTable.add(hashKey, 0).first->second;
     if (fontData)
         return fontData;
 
-    fontData = new SegmentedFontData();
+    OwnPtr<SegmentedFontData> newFontData = adoptPtr(new SegmentedFontData);
 
     unsigned size = m_fontFaces.size();
     for (unsigned i = 0; i < size; i++) {
@@ -107,21 +107,19 @@ FontData* CSSSegmentedFontFace::getFontData(const FontDescription& fontDescripti
             const Vector<CSSFontFace::UnicodeRange>& ranges = m_fontFaces[i]->ranges();
             unsigned numRanges = ranges.size();
             if (!numRanges)
-                fontData->appendRange(FontDataRange(0, 0x7FFFFFFF, faceFontData));
+                newFontData->appendRange(FontDataRange(0, 0x7FFFFFFF, faceFontData));
             else {
                 for (unsigned j = 0; j < numRanges; ++j)
-                    fontData->appendRange(FontDataRange(ranges[j].from(), ranges[j].to(), faceFontData));
+                    newFontData->appendRange(FontDataRange(ranges[j].from(), ranges[j].to(), faceFontData));
             }
         }
     }
-    if (fontData->numRanges()) {
-        m_fontDataTable.set(hashKey, fontData);
+    if (newFontData->numRanges()) {
         ASSERT(m_fontSelector->document());
-        if (Document* doc = m_fontSelector->document())
-            doc->registerCustomFont(fontData);
-    } else {
-        delete fontData;
-        fontData = 0;
+        if (Document* document = m_fontSelector->document()) {
+            fontData = newFontData.get();
+            document->registerCustomFont(newFontData.release());
+        }
     }
 
     return fontData;

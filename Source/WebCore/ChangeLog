@@ -1,3 +1,20 @@
+2011-12-28  Darin Adler  <darin@apple.com>
+
+        Use OwnPtr to handle lifetime and deletion of FontFace objects
+        https://bugs.webkit.org/show_bug.cgi?id=75221
+
+        Reviewed by Daniel Bates.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Use add instead of get/set to read and
+        then later fill a cache. Use new version of registerCustomFont that takes PassOwnPtr.
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::getFontData): Ditto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerCustomFont): Take a PassOwnPtr instead of raw pointer.
+        * dom/Document.h: Ditto.
+
 2011-12-28  Adam Barth  <abarth@webkit.org>
 
         "Fake" insertion mode in HTMLTreeBuilder doesn't do anything

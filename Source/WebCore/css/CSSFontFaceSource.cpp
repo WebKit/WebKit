@@ -101,11 +101,11 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     if (!isValid())
         return 0;
 
+    if (!m_font
 #if ENABLE(SVG_FONTS)
-    if (!m_font && !m_svgFontFaceElement) {
-#else
-    if (!m_font) {
+            && !m_svgFontFaceElement
 #endif
+    ) {
         // We're local. Just return a SimpleFontData from the normal cache.
         return fontCache()->getCachedFontData(fontDescription, m_string);
     }
@@ -113,7 +113,9 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     // See if we have a mapping in our FontData cache.
     unsigned hashKey = (fontDescription.computedPixelSize() + 1) << 6 | fontDescription.widthVariant() << 4
                        | (fontDescription.textOrientation() == TextOrientationUpright ? 8 : 0) | (fontDescription.orientation() == Vertical ? 4 : 0) | (syntheticBold ? 2 : 0) | (syntheticItalic ? 1 : 0);
-    if (SimpleFontData* cachedData = m_fontDataTable.get(hashKey))
+
+    SimpleFontData*& cachedData = m_fontDataTable.add(hashKey, 0).first->second;
+    if (cachedData)
         return cachedData;
 
     OwnPtr<SimpleFontData> fontData;
@@ -185,13 +187,12 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         fontData = adoptPtr(new SimpleFontData(temporaryFont->platformData(), true, true));
     }
 
-    SimpleFontData* fontDataRawPtr = fontData.leakPtr();
-    m_fontDataTable.set(hashKey, fontDataRawPtr);
-    ASSERT(fontSelector->document());
-    if (Document* doc = fontSelector->document())
-        doc->registerCustomFont(fontDataRawPtr);
+    if (Document* document = fontSelector->document()) {
+        cachedData = fontData.get();
+        document->registerCustomFont(fontData.release());
+    }
 
-    return fontDataRawPtr;
+    return cachedData;
 }
 
 #if ENABLE(SVG_FONTS)
