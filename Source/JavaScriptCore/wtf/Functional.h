@@ -40,7 +40,8 @@ namespace WTF {
 
 // Helper class template to determine whether a given type has ref and deref member functions
 // with the right type signature.
-template<typename T> class HasRefAndDeref {
+template<typename T>
+class HasRefAndDeref {
     typedef char YesType;
     struct NoType {
         char padding[8];
@@ -70,9 +71,11 @@ public:
 
 // A FunctionWrapper is a class template that can wrap a function pointer or a member function pointer and
 // provide a unified interface for calling that function.
-template<typename> class FunctionWrapper;
+template<typename>
+class FunctionWrapper;
 
-template<typename R> class FunctionWrapper<R (*)()> {
+template<typename R>
+class FunctionWrapper<R (*)()> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
@@ -91,45 +94,48 @@ private:
     R (*m_function)();
 };
 
-template<typename R, typename P0> class FunctionWrapper<R (*)(P0)> {
+template<typename R, typename P1>
+class FunctionWrapper<R (*)(P1)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
 
-    explicit FunctionWrapper(R (*function)(P0))
+    explicit FunctionWrapper(R (*function)(P1))
         : m_function(function)
     {
     }
 
-    R operator()(P0 p0)
+    R operator()(P1 p1)
     {
-        return m_function(p0);
+        return m_function(p1);
     }
 
 private:
-    R (*m_function)(P0);
+    R (*m_function)(P1);
 };
 
-template<typename R, typename P0, typename P1> class FunctionWrapper<R (*)(P0, P1)> {
+template<typename R, typename P1, typename P2>
+class FunctionWrapper<R (*)(P1, P2)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = false;
 
-    explicit FunctionWrapper(R (*function)(P0, P1))
+    explicit FunctionWrapper(R (*function)(P1, P2))
         : m_function(function)
     {
     }
 
-    R operator()(P0 p0, P1 p1)
+    R operator()(P1 p1, P2 p2)
     {
-        return m_function(p0, p1);
+        return m_function(p1, p2);
     }
 
 private:
-    R (*m_function)(P0, P1);
+    R (*m_function)(P1, P2);
 };
 
-template<typename R, typename C> class FunctionWrapper<R (C::*)()> {
+template<typename R, typename C>
+class FunctionWrapper<R (C::*)()> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
@@ -148,42 +154,84 @@ private:
     R (C::*m_function)();
 };
 
-template<typename R, typename C, typename P0> class FunctionWrapper<R (C::*)(P0)> {
+template<typename R, typename C, typename P1>
+class FunctionWrapper<R (C::*)(P1)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
 
-    explicit FunctionWrapper(R (C::*function)(P0))
+    explicit FunctionWrapper(R (C::*function)(P1))
         : m_function(function)
     {
     }
 
-    R operator()(C* c, P0 p0)
+    R operator()(C* c, P1 p1)
     {
-        return (c->*m_function)(p0);
+        return (c->*m_function)(p1);
     }
 
 private:
-    R (C::*m_function)(P0);
+    R (C::*m_function)(P1);
 };
 
-template<typename R, typename C, typename P0, typename P1> class FunctionWrapper<R (C::*)(P0, P1)> {
+template<typename R, typename C, typename P1, typename P2>
+class FunctionWrapper<R (C::*)(P1, P2)> {
 public:
     typedef R ResultType;
     static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
 
-    explicit FunctionWrapper(R (C::*function)(P0, P1))
+    explicit FunctionWrapper(R (C::*function)(P1, P2))
         : m_function(function)
     {
     }
 
-    R operator()(C* c, P0 p0, P1 p1)
+    R operator()(C* c, P1 p1, P2 p2)
     {
-        return (c->*m_function)(p0, p1);
+        return (c->*m_function)(p1, p2);
     }
 
 private:
-    R (C::*m_function)(P0, P1);
+    R (C::*m_function)(P1, P2);
+};
+
+template<typename R, typename C, typename P1, typename P2, typename P3>
+class FunctionWrapper<R (C::*)(P1, P2, P3)> {
+public:
+    typedef R ResultType;
+    static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
+
+    explicit FunctionWrapper(R (C::*function)(P1, P2, P3))
+        : m_function(function)
+    {
+    }
+
+    R operator()(C* c, P1 p1, P2 p2, P3 p3)
+    {
+        return (c->*m_function)(p1, p2, p3);
+    }
+
+private:
+    R (C::*m_function)(P1, P2, P3);
+};
+
+template<typename R, typename C, typename P1, typename P2, typename P3, typename P4>
+class FunctionWrapper<R (C::*)(P1, P2, P3, P4)> {
+public:
+    typedef R ResultType;
+    static const bool shouldRefFirstParameter = HasRefAndDeref<C>::value;
+
+    explicit FunctionWrapper(R (C::*function)(P1, P2, P3, P4))
+        : m_function(function)
+    {
+    }
+
+    R operator()(C* c, P1 p1, P2 p2, P3 p3, P4 p4)
+    {
+        return (c->*m_function)(p1, p2, p3, p4);
+    }
+
+private:
+    R (C::*m_function)(P1, P2, P3, P4);
 };
 
 template<typename T, bool shouldRefAndDeref> struct RefAndDeref {
@@ -234,7 +282,8 @@ public:
 template<typename FunctionWrapper, typename FunctionType>
 class BoundFunctionImpl;
 
-template<typename FunctionWrapper, typename R> class BoundFunctionImpl<FunctionWrapper, R ()> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+template<typename FunctionWrapper, typename R>
+class BoundFunctionImpl<FunctionWrapper, R ()> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 public:
     explicit BoundFunctionImpl(FunctionWrapper functionWrapper)
         : m_functionWrapper(functionWrapper)
@@ -250,83 +299,150 @@ private:
     FunctionWrapper m_functionWrapper;
 };
 
-template<typename FunctionWrapper, typename R, typename P0> class BoundFunctionImpl<FunctionWrapper, R (P0)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+template<typename FunctionWrapper, typename R, typename P1>
+class BoundFunctionImpl<FunctionWrapper, R (P1)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 
 public:
-    BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0)
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P1& p1)
         : m_functionWrapper(functionWrapper)
-        , m_p0(ParamStorageTraits<P0>::wrap(p0))
+        , m_p1(ParamStorageTraits<P1>::wrap(p1))
     {
-        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::ref(m_p1);
     }
 
     ~BoundFunctionImpl()
     {
-        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::deref(m_p0);
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::deref(m_p1);
     }
 
     virtual R operator()()
     {
-        return m_functionWrapper(ParamStorageTraits<P0>::unwrap(m_p0));
+        return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1));
     }
 
 private:
     FunctionWrapper m_functionWrapper;
-    typename ParamStorageTraits<P0>::StorageType m_p0;
-};
-
-template<typename FunctionWrapper, typename R, typename P0, typename P1> class BoundFunctionImpl<FunctionWrapper, R (P0, P1)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
-public:
-    BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1)
-        : m_functionWrapper(functionWrapper)
-        , m_p0(ParamStorageTraits<P0>::wrap(p0))
-        , m_p1(ParamStorageTraits<P1>::wrap(p1))
-    {
-        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
-    }
-    
-    ~BoundFunctionImpl()
-    {
-        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::deref(m_p0);
-    }
-
-    virtual typename FunctionWrapper::ResultType operator()()
-    {
-        return m_functionWrapper(ParamStorageTraits<P0>::unwrap(m_p0), ParamStorageTraits<P1>::unwrap(m_p1));
-    }
-
-private:
-    FunctionWrapper m_functionWrapper;
-    typename ParamStorageTraits<P0>::StorageType m_p0;
     typename ParamStorageTraits<P1>::StorageType m_p1;
 };
 
-template<typename FunctionWrapper, typename R, typename P0, typename P1, typename P2> class BoundFunctionImpl<FunctionWrapper, R (P0, P1, P2)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+template<typename FunctionWrapper, typename R, typename P1, typename P2>
+class BoundFunctionImpl<FunctionWrapper, R (P1, P2)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
 public:
-    BoundFunctionImpl(FunctionWrapper functionWrapper, const P0& p0, const P1& p1, const P2& p2)
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P1& p1, const P2& p2)
         : m_functionWrapper(functionWrapper)
-        , m_p0(ParamStorageTraits<P0>::wrap(p0))
         , m_p1(ParamStorageTraits<P1>::wrap(p1))
         , m_p2(ParamStorageTraits<P2>::wrap(p2))
     {
-        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::ref(m_p0);
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::ref(m_p1);
     }
     
     ~BoundFunctionImpl()
     {
-        RefAndDeref<P0, FunctionWrapper::shouldRefFirstParameter>::deref(m_p0);
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::deref(m_p1);
     }
 
     virtual typename FunctionWrapper::ResultType operator()()
     {
-        return m_functionWrapper(ParamStorageTraits<P0>::unwrap(m_p0), ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2));
+        return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2));
     }
 
 private:
     FunctionWrapper m_functionWrapper;
-    typename ParamStorageTraits<P0>::StorageType m_p0;
     typename ParamStorageTraits<P1>::StorageType m_p1;
     typename ParamStorageTraits<P2>::StorageType m_p2;
+};
+
+template<typename FunctionWrapper, typename R, typename P1, typename P2, typename P3>
+class BoundFunctionImpl<FunctionWrapper, R (P1, P2, P3)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+public:
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P1& p1, const P2& p2, const P3& p3)
+        : m_functionWrapper(functionWrapper)
+        , m_p1(ParamStorageTraits<P1>::wrap(p1))
+        , m_p2(ParamStorageTraits<P2>::wrap(p2))
+        , m_p3(ParamStorageTraits<P3>::wrap(p3))
+    {
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::ref(m_p1);
+    }
+    
+    ~BoundFunctionImpl()
+    {
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::deref(m_p1);
+    }
+
+    virtual typename FunctionWrapper::ResultType operator()()
+    {
+        return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3));
+    }
+
+private:
+    FunctionWrapper m_functionWrapper;
+    typename ParamStorageTraits<P1>::StorageType m_p1;
+    typename ParamStorageTraits<P2>::StorageType m_p2;
+    typename ParamStorageTraits<P3>::StorageType m_p3;
+};
+
+template<typename FunctionWrapper, typename R, typename P1, typename P2, typename P3, typename P4>
+class BoundFunctionImpl<FunctionWrapper, R (P1, P2, P3, P4)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+public:
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P1& p1, const P2& p2, const P3& p3, const P4& p4)
+        : m_functionWrapper(functionWrapper)
+        , m_p1(ParamStorageTraits<P1>::wrap(p1))
+        , m_p2(ParamStorageTraits<P2>::wrap(p2))
+        , m_p3(ParamStorageTraits<P3>::wrap(p3))
+        , m_p4(ParamStorageTraits<P4>::wrap(p4))
+    {
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::ref(m_p1);
+    }
+    
+    ~BoundFunctionImpl()
+    {
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::deref(m_p1);
+    }
+
+    virtual typename FunctionWrapper::ResultType operator()()
+    {
+        return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3), ParamStorageTraits<P4>::unwrap(m_p4));
+    }
+
+private:
+    FunctionWrapper m_functionWrapper;
+    typename ParamStorageTraits<P1>::StorageType m_p1;
+    typename ParamStorageTraits<P2>::StorageType m_p2;
+    typename ParamStorageTraits<P3>::StorageType m_p3;
+    typename ParamStorageTraits<P4>::StorageType m_p4;
+};
+
+template<typename FunctionWrapper, typename R, typename P1, typename P2, typename P3, typename P4, typename P5>
+class BoundFunctionImpl<FunctionWrapper, R (P1, P2, P3, P4, P5)> : public FunctionImpl<typename FunctionWrapper::ResultType ()> {
+public:
+    BoundFunctionImpl(FunctionWrapper functionWrapper, const P1& p1, const P2& p2, const P3& p3, const P4& p4, const P5& p5)
+        : m_functionWrapper(functionWrapper)
+        , m_p1(ParamStorageTraits<P1>::wrap(p1))
+        , m_p2(ParamStorageTraits<P2>::wrap(p2))
+        , m_p3(ParamStorageTraits<P3>::wrap(p3))
+        , m_p4(ParamStorageTraits<P4>::wrap(p4))
+        , m_p5(ParamStorageTraits<P5>::wrap(p5))
+    {
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::ref(m_p1);
+    }
+    
+    ~BoundFunctionImpl()
+    {
+        RefAndDeref<P1, FunctionWrapper::shouldRefFirstParameter>::deref(m_p1);
+    }
+
+    virtual typename FunctionWrapper::ResultType operator()()
+    {
+        return m_functionWrapper(ParamStorageTraits<P1>::unwrap(m_p1), ParamStorageTraits<P2>::unwrap(m_p2), ParamStorageTraits<P3>::unwrap(m_p3), ParamStorageTraits<P4>::unwrap(m_p4), ParamStorageTraits<P5>::unwrap(m_p5));
+    }
+
+private:
+    FunctionWrapper m_functionWrapper;
+    typename ParamStorageTraits<P1>::StorageType m_p1;
+    typename ParamStorageTraits<P2>::StorageType m_p2;
+    typename ParamStorageTraits<P3>::StorageType m_p3;
+    typename ParamStorageTraits<P4>::StorageType m_p4;
+    typename ParamStorageTraits<P5>::StorageType m_p5;
 };
 
 class FunctionBase {
@@ -355,7 +471,8 @@ private:
     RefPtr<FunctionImplBase> m_impl;
 };
 
-template<typename> class Function;
+template<typename>
+class Function;
 
 template<typename R>
 class Function<R ()> : public FunctionBase {
@@ -369,7 +486,7 @@ public:
     {
     }
 
-    R operator()()
+    R operator()() const
     {
         ASSERT(!isNull());
 
@@ -399,6 +516,18 @@ template<typename FunctionType, typename A1, typename A2, typename A3>
 Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1, const A2& a2, const A3& a3)
 {
     return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1, A2, A3)>(FunctionWrapper<FunctionType>(function), a1, a2, a3)));
+}
+
+template<typename FunctionType, typename A1, typename A2, typename A3, typename A4>
+Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1, const A2& a2, const A3& a3, const A4& a4)
+{
+    return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1, A2, A3, A4)>(FunctionWrapper<FunctionType>(function), a1, a2, a3, a4)));
+}
+
+template<typename FunctionType, typename A1, typename A2, typename A3, typename A4, typename A5>
+Function<typename FunctionWrapper<FunctionType>::ResultType ()> bind(FunctionType function, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5)
+{
+    return Function<typename FunctionWrapper<FunctionType>::ResultType ()>(adoptRef(new BoundFunctionImpl<FunctionWrapper<FunctionType>, typename FunctionWrapper<FunctionType>::ResultType (A1, A2, A3, A4, A5)>(FunctionWrapper<FunctionType>(function), a1, a2, a3, a4, a5)));
 }
 
 }
