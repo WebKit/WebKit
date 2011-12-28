@@ -1706,6 +1706,8 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
         return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend());
     
     Node* element = m_renderer->node();
+    if (!element)
+        return 0;
     HTMLLabelElement* label = labelForElement(static_cast<Element*>(element));
     if (label && label->renderer())
         return axObjectCache()->getOrCreate(label->renderer());

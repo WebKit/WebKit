@@ -1,3 +1,18 @@
+2011-12-27  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Crash in the WebKit accessibility code while attempting to retrieve the title UI element.
+        https://bugs.webkit.org/show_bug.cgi?id=75279
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a crash in the the WebKit accessibility code which occurs while retrieving
+        the title UI clement. The fix is to NULL check the RenderObject::node return value.
+
+        No test added as there is no reduction.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+
 2011-12-27  Dominic Cooney  <dominicc@chromium.org>
 
         Remove initWebKitAnimationEvent method
