@@ -78,7 +78,6 @@ ProgressTracker::ProgressTracker()
 
 ProgressTracker::~ProgressTracker()
 {
-    deleteAllValues(m_progressItems);
 }
 
 PassOwnPtr<ProgressTracker> ProgressTracker::create()
@@ -93,7 +92,6 @@ double ProgressTracker::estimatedProgress() const
 
 void ProgressTracker::reset()
 {
-    deleteAllValues(m_progressItems);
     m_progressItems.clear();    
 
     m_totalPageAndResourceBytesToLoad = 0;
@@ -176,7 +174,7 @@ void ProgressTracker::incrementProgress(unsigned long identifier, const Resource
         item->bytesReceived = 0;
         item->estimatedLength = estimatedLength;
     } else
-        m_progressItems.set(identifier, adoptPtr(new ProgressItem(estimatedLength)).leakPtr());
+        m_progressItems.set(identifier, adoptPtr(new ProgressItem(estimatedLength)));
 }
 
 void ProgressTracker::incrementProgress(unsigned long identifier, const char*, int length)
@@ -254,10 +252,8 @@ void ProgressTracker::completeProgress(unsigned long identifier)
     // Adjust the total expected bytes to account for any overage/underage.
     long long delta = item->bytesReceived - item->estimatedLength;
     m_totalPageAndResourceBytesToLoad += delta;
-    item->estimatedLength = item->bytesReceived;
-    
+
     m_progressItems.remove(identifier);
-    delete item;
 }
 
 unsigned long ProgressTracker::createUniqueIdentifier()

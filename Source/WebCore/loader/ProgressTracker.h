@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -76,7 +77,7 @@ private:
     RefPtr<Frame> m_originatingProgressFrame;
     
     int m_numProgressTrackedFrames;
-    HashMap<unsigned long, ProgressItem*> m_progressItems;
+    HashMap<unsigned long, OwnPtr<ProgressItem> > m_progressItems;
 };
     
 }
