@@ -2060,9 +2060,6 @@ BUGCR43497 MAC WIN : svg/custom/repaint-stroke-width-changes.svg = PASS IMAGE
 // Flaky tests
 BUGCR43890 WIN : http/tests/loading/basic.html = PASS TEXT
 
-// Flaky crashing test. Started crashing around Chromium r47220
-BUGCR44150 LINUX : fast/forms/input-text-paste-maxlength.html = PASS CRASH
-
 // The following tests fail on all platforms and need further investigation.
 // Many of these are skipped on the Mac platform
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
@@ -2980,9 +2977,6 @@ BUGWK57593 : fast/preloader/document-write.html = TEXT
 
 BUGWK57754 SLOW WIN DEBUG : inspector/debugger/xhr-breakpoints.html = PASS CRASH
 
-BUGCR78326 : fast/filesystem/filesystem-reference.html = PASS CRASH
-BUGCR78326 : fast/filesystem/filesystem-uri-origin.html = PASS CRASH
-
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
 BUGWK58008 SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
@@ -3184,9 +3178,6 @@ BUGCR82881 LINUX MAC VISTA XP : http/tests/appcache/interrupted-update.html = PA
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
 BUGCR82950 WIN : http/tests/navigation/post-302-response.html = TEXT
 BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
-
-// Random crashes started between: http://trac.webkit.org/log/?verbose=on&rev=86756&stop_rev=86755
-BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = PASS CRASH
 
 // Random timeouts and failures going back a week.
 BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS TIMEOUT TEXT
