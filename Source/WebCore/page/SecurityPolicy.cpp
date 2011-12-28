@@ -33,8 +33,6 @@
 #include <wtf/MainThread.h>
 #include "OriginAccessEntry.h"
 #include "SecurityOrigin.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -42,7 +40,7 @@ namespace WebCore {
 static SecurityPolicy::LocalLoadPolicy localLoadPolicy = SecurityPolicy::AllowLocalLoadsForLocalOnly;
 
 typedef Vector<OriginAccessEntry> OriginAccessWhiteList;
-typedef HashMap<String, OwnPtr<OriginAccessWhiteList> > OriginAccessMap;
+typedef HashMap<String, OriginAccessWhiteList*> OriginAccessMap;
 
 static OriginAccessMap& originAccessMap()
 {
@@ -131,11 +129,11 @@ void SecurityPolicy::addOriginAccessWhitelistEntry(const SecurityOrigin& sourceO
         return;
 
     String sourceString = sourceOrigin.toString();
-    pair<OriginAccessMap::iterator, bool> result = originAccessMap().add(sourceString, nullptr);
+    pair<OriginAccessMap::iterator, bool> result = originAccessMap().add(sourceString, 0);
     if (result.second)
-        result.first->second = adoptPtr(new OriginAccessWhiteList);
+        result.first->second = new OriginAccessWhiteList;
 
-    OriginAccessWhiteList* list = result.first->second.get();
+    OriginAccessWhiteList* list = result.first->second;
     list->append(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));
 }
 
@@ -152,7 +150,7 @@ void SecurityPolicy::removeOriginAccessWhitelistEntry(const SecurityOrigin& sour
     if (it == map.end())
         return;
 
-    OriginAccessWhiteList* list = it->second.get();
+    OriginAccessWhiteList* list = it->second;
     size_t index = list->find(OriginAccessEntry(destinationProtocol, destinationDomain, allowDestinationSubdomains ? OriginAccessEntry::AllowSubdomains : OriginAccessEntry::DisallowSubdomains));
     if (index == notFound)
         return;
@@ -169,7 +167,9 @@ void SecurityPolicy::removeOriginAccessWhitelistEntry(const SecurityOrigin& sour
 void SecurityPolicy::resetOriginAccessWhitelists()
 {
     ASSERT(isMainThread());
-    originAccessMap().clear();
+    OriginAccessMap& map = originAccessMap();
+    deleteAllValues(map);
+    map.clear();
 }
 
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2011-12-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103782.
+        http://trac.webkit.org/changeset/103782
+        https://bugs.webkit.org/show_bug.cgi?id=75328
+
+        broke origin-whitelisting-removal.html (Requested by kling on
+        #webkit).
+
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::resetOriginAccessWhitelists):
+
 2011-12-28  Kentaro Hara  <haraken@chromium.org>
 
         Enable the [Supplemental] IDL on Qt
