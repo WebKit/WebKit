@@ -1510,13 +1510,6 @@ BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 // This test also started failing with the merge of March 25th 2009
 BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = PASS TEXT
 
-// Merge 41768:41807
-// Perhaps just needs new baseline?
-// These tests were rebaselined with failure long ago. We shouldn't do this, and
-// instead work upstream to improve tests so that they don't fail.
-// Just need rebaseline
-BUGCR10458 LINUX : fast/forms/textarea-width.html = FAIL
-
 // New failures from merge
 BUGCR27486 LINUX WIN : fast/forms/listbox-hit-test-zoomed.html = IMAGE+TEXT
 BUGCR27486 LINUX WIN : fast/forms/range/slider-zoomed.html = TEXT
