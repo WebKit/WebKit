@@ -6570,6 +6570,7 @@
             'inspector/front-end/Images/disclosureTriangleSmallRightDownBlack.png',
             'inspector/front-end/Images/disclosureTriangleSmallRightDownWhite.png',
             'inspector/front-end/Images/disclosureTriangleSmallRightWhite.png',
+            'inspector/front-end/Images/domain.png',
             'inspector/front-end/Images/errorIcon.png',
             'inspector/front-end/Images/errorMediumIcon.png',
             'inspector/front-end/Images/errorRedDot.png',
