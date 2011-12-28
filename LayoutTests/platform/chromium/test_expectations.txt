@@ -1506,10 +1506,6 @@ BUGCR10426 LINUX : fast/lists/drag-into-marker.html = FAIL
 // x-height correct and we're still one px off.
 BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
-// May need rebaseline or expectations change (Linux looks like Mac but is using
-// expectations from Windows instead).
-BUGCR10430 LINUX WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
-
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
 BUGCR10441 MAC WIN : transitions/transition-end-event-transform.html = PASS TEXT
