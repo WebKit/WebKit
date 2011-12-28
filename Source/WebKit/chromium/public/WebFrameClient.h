@@ -69,7 +69,7 @@ class WebURLLoader;
 class WebURLRequest;
 class WebURLResponse;
 class WebWorker;
-class WebSharedWorkerClient;
+class WebWorkerClient;
 struct WebPluginParams;
 struct WebRect;
 struct WebSize;
@@ -83,7 +83,7 @@ public:
     virtual WebPlugin* createPlugin(WebFrame*, const WebPluginParams&) { return 0; }
 
     // May return null.
-    virtual WebWorker* createWorker(WebFrame*, WebSharedWorkerClient*) { return 0; }
+    virtual WebWorker* createWorker(WebFrame*, WebWorkerClient*) { return 0; }
 
     // May return null.
     virtual WebSharedWorker* createSharedWorker(WebFrame*, const WebURL&, const WebString&, unsigned long long) { return 0; }

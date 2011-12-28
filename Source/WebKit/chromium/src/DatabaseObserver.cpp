@@ -64,7 +64,7 @@ static const char allowDatabaseMode[] = "allowDatabaseMode";
 // call back to the worker context.
 class AllowDatabaseMainThreadBridge : public ThreadSafeRefCounted<AllowDatabaseMainThreadBridge> {
 public:
-    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
+    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
     {
         return adoptRef(new AllowDatabaseMainThreadBridge(workerLoaderProxy, mode, commonClient, frame, name, displayName, estimatedSize));
     }
@@ -91,7 +91,7 @@ public:
     }
 
 private:
-    AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
+    AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const String& name, const String& displayName, unsigned long estimatedSize)
         : m_workerLoaderProxy(workerLoaderProxy)
     {
         WebWorkerBase::dispatchTaskToMainThread(
@@ -101,7 +101,7 @@ private:
                                this));
     }
 
-    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, const String mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const String name, const String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
+    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, const String mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const String name, const String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
     {
         bool allowDatabase = commonClient ? commonClient->allowDatabase(frame, name, displayName, estimatedSize) : false;
         bridge->signalCompleted(mode, allowDatabase);
@@ -117,7 +117,7 @@ private:
     WebCore::WorkerLoaderProxy* m_workerLoaderProxy;
 };
 
-bool allowDatabaseForWorker(WebCommonWorkerClient* commonClient, WebFrame* frame, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
+bool allowDatabaseForWorker(NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
 {
     WebCore::WorkerScriptController* controller = WebCore::WorkerScriptController::controllerForContext();
     WebCore::WorkerContext* workerContext = controller->workerContext();
@@ -164,8 +164,8 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
 #if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
-        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        return allowDatabaseForWorker(webWorker->commonClient(), webWorker->view()->mainFrame(), name, displayName, estimatedSize);
+        NewWebWorkerBase* webWorker = static_cast<NewWebWorkerBase*>(workerLoaderProxy);
+        return allowDatabaseForWorker(webWorker->newCommonClient(), webWorker->view()->mainFrame(), name, displayName, estimatedSize);
 #else
         ASSERT_NOT_REACHED();
 #endif

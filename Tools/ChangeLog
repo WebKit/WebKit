@@ -1,3 +1,17 @@
+2011-12-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103734.
+        http://trac.webkit.org/changeset/103734
+        https://bugs.webkit.org/show_bug.cgi?id=75278
+
+        Broke cr-mac (Requested by dslomov on #webkit).
+
+        * DumpRenderTree/chromium/TestWebWorker.h:
+        (TestWebWorker::createWorker):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createWorker):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-12-27  Dmitry Lomov  <dslomov@google.com>
 
 
