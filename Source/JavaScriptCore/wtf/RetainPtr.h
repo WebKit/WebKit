@@ -100,7 +100,7 @@ namespace WTF {
         template<typename U> RetainPtr& operator=(RetainPtr<U>&&);
 #endif
 
-#if !HAVE(NULLPTR)
+#if !COMPILER_SUPPORTS(CXX_NULLPTR)
         RetainPtr& operator=(std::nullptr_t) { clear(); return *this; }
 #endif
 

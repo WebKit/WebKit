@@ -1,3 +1,24 @@
+2011-12-27  Sam Weinig  <sam@webkit.org>
+
+        Continue moving compiler feature checks to use the COMPILER_SUPPORTS() macro
+        https://bugs.webkit.org/show_bug.cgi?id=75268
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Compiler.h:
+        Add support for COMPILER_SUPPORTS(CXX_NULLPTR) and COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS).
+
+        * wtf/Noncopyable.h:
+        Use COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS).
+
+        * wtf/NullPtr.cpp:
+        * wtf/NullPtr.h:
+        Use COMPILER_SUPPORTS(CXX_NULLPTR). Remove support for HAVE(NULLPTR).
+
+        * wtf/RefPtr.h:
+        * wtf/RetainPtr.h:
+        Switch from HAVE(NULLPTR) to COMPILER_SUPPORTS(CXX_NULLPTR).
+
 2011-12-27  Anders Carlsson  <andersca@apple.com>
 
         Misc fixes and cleanups in Functional.h

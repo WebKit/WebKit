@@ -31,13 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // nullptr_t type and nullptr object. They are defined in the same namespaces they
 // would be in compiler and library that had the support.
 
-#ifndef __has_feature
-    #define __has_feature(feature) 0
-#endif
-
-#if __has_feature(cxx_nullptr) || (GCC_VERSION_AT_LEAST(4, 6, 0) && defined(__GXX_EXPERIMENTAL_CXX0X__)) || (defined(_MSC_VER) && _MSC_VER >= 1600 && !COMPILER(INTEL))
-
-#define HAVE_NULLPTR 1
+#if COMPILER_SUPPORTS(CXX_NULLPTR)
 
 #include <cstddef>
 

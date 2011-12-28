@@ -21,11 +21,9 @@
 #ifndef WTF_Noncopyable_h
 #define WTF_Noncopyable_h
 
-#ifndef __has_feature
-    #define __has_feature(x) 0
-#endif
+#include "Compiler.h"
 
-#if __has_feature(cxx_deleted_functions)
+#if COMPILER_SUPPORTS(CXX_DELETED_FUNCTIONS)
     #define WTF_MAKE_NONCOPYABLE(ClassName) \
         _Pragma("clang diagnostic push") \
         _Pragma("clang diagnostic ignored \"-Wunknown-pragmas\"") \

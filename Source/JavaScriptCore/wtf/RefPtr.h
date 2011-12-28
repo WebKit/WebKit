@@ -75,7 +75,7 @@ namespace WTF {
         RefPtr& operator=(T*);
         RefPtr& operator=(const PassRefPtr<T>&);
         RefPtr& operator=(const NonNullPassRefPtr<T>&);
-#if !HAVE(NULLPTR)
+#if !COMPILER_SUPPORTS(CXX_NULLPTR)
         RefPtr& operator=(std::nullptr_t) { clear(); return *this; }
 #endif
         template<typename U> RefPtr& operator=(const RefPtr<U>&);
