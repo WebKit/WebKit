@@ -54,12 +54,6 @@ public:
 
     virtual ~WebKitTransitionEvent();
 
-    void initWebKitTransitionEvent(const AtomicString& type, 
-                                   bool canBubbleArg,
-                                   bool cancelableArg,
-                                   const String& propertyName,
-                                   double elapsedTime);
-
     const String& propertyName() const;
     double elapsedTime() const;
 

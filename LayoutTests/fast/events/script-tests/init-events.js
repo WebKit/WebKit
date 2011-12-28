@@ -191,14 +191,4 @@ shouldBe("testInitEvent('WebKitAnimation', '\"a\", false, false, \"b\", 1001').a
 shouldBe("testInitEvent('WebKitAnimation', '\"a\", false, false, null, 1001').animationName", "'null'");
 shouldBe("testInitEvent('WebKitAnimation', '\"a\", false, false, \"b\", 1001').elapsedTime", "1001");
 
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, \"b\", 1001').type", "'a'");
-shouldBe("testInitEvent('WebKitTransition', 'null, false, false, \"b\", 1001').type", "'null'");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, \"b\", 1001').bubbles", "false");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", true, false, \"b\", 1001').bubbles", "true");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, \"b\", 1001').cancelable", "false");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, true, \"b\", 1001').cancelable", "true");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, \"b\", 1001').propertyName", "'b'");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, null, 1001').propertyName", "'null'");
-shouldBe("testInitEvent('WebKitTransition', '\"a\", false, false, \"b\", 1001').elapsedTime", "1001");
-
 // WheelEvent has no init function yet; roughly speaking, we are waiting for that part of DOM 3 to stabilize.

@@ -173,15 +173,6 @@ PASS testInitEvent('WebKitAnimation', '"a", false, true, "b", 1001').cancelable 
 PASS testInitEvent('WebKitAnimation', '"a", false, false, "b", 1001').animationName is 'b'
 PASS testInitEvent('WebKitAnimation', '"a", false, false, null, 1001').animationName is 'null'
 PASS testInitEvent('WebKitAnimation', '"a", false, false, "b", 1001').elapsedTime is 1001
-PASS testInitEvent('WebKitTransition', '"a", false, false, "b", 1001').type is 'a'
-PASS testInitEvent('WebKitTransition', 'null, false, false, "b", 1001').type is 'null'
-PASS testInitEvent('WebKitTransition', '"a", false, false, "b", 1001').bubbles is false
-PASS testInitEvent('WebKitTransition', '"a", true, false, "b", 1001').bubbles is true
-PASS testInitEvent('WebKitTransition', '"a", false, false, "b", 1001').cancelable is false
-PASS testInitEvent('WebKitTransition', '"a", false, true, "b", 1001').cancelable is true
-PASS testInitEvent('WebKitTransition', '"a", false, false, "b", 1001').propertyName is 'b'
-PASS testInitEvent('WebKitTransition', '"a", false, false, null, 1001').propertyName is 'null'
-PASS testInitEvent('WebKitTransition', '"a", false, false, "b", 1001').elapsedTime is 1001
 PASS successfullyParsed is true
 
 TEST COMPLETE

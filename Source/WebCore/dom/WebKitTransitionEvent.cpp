@@ -60,21 +60,6 @@ WebKitTransitionEvent::~WebKitTransitionEvent()
 {
 }
 
-void WebKitTransitionEvent::initWebKitTransitionEvent(const AtomicString& type, 
-                                            bool canBubbleArg,
-                                            bool cancelableArg,
-                                            const String& propertyName,
-                                            double elapsedTime)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubbleArg, cancelableArg);
-
-    m_propertyName = propertyName;
-    m_elapsedTime = elapsedTime;
-}
-
 const String& WebKitTransitionEvent::propertyName() const
 {
     return m_propertyName;
