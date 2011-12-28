@@ -1517,19 +1517,6 @@ BUGCR27486 LINUX WIN : fast/forms/range/slider-zoomed.html = TEXT
 // This test isn't just slow -- sometimes it times out indefinitely.
 BUGCR27569 : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = PASS CRASH TIMEOUT
 
-// These tests were affected by rolling out WebKit i8n patches.
-// Was only WIN, also fail on LINUX since merge 43346:43361
-BUGCR9768 LINUX WIN : fast/forms/select-initial-position.html = FAIL
-// Was only WIN, also fail on LINUX since merge 43346:43361
-BUGCR9768 LINUX WIN : fast/forms/select-visual-hebrew.html = FAIL
-// Was only WIN, also fail on LINUX since merge 43346:43361
-BUGCR9768 LINUX WIN : fast/forms/visual-hebrew-text-field.html = FAIL
-// Linux looks ok, rebaselined.
-BUGCR9768 WIN : fast/text/cg-fallback-bolding.html = FAIL
-BUGCR9768 WIN : fast/text/international/001.html = FAIL
-BUGCR9768 WIN : fast/text/international/002.html = FAIL
-BUGCR9768 WIN : fast/text/international/wrap-CJK-001.html = FAIL
-
 // Merge WebKit 42200:42244 regressions
 BUGCR9786 : fast/dom/Window/dom-access-from-closure-iframe.html = FAIL
 BUGCR9786 : fast/dom/Window/dom-access-from-closure-window.html = FAIL

@@ -10,11 +10,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,54) size 784x20
         RenderText {#text} at (0,0) size 363x19
           text run at (0,0) width 363 LTR override: "Text on the pop-up and in the list should look like this: \x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-      RenderBlock (anonymous) at (0,90) size 784x20
-        RenderMenuList {SELECT} at (0,0) size 56x20 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+      RenderBlock (anonymous) at (0,90) size 784x24
+        RenderMenuList {SELECT} at (2,2) size 56x20 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 54x18
             RenderText at (4,1) size 31x16
               text run at (4,1) width 31 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
-        RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
