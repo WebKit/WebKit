@@ -1089,27 +1089,9 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 // This test is overly-finicky about pixel values.
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
-// Rebaseline once native aa-clipping has landed
 BUGWK75276 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-
-BUGWK70748 CPU : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-clipped-evenodd-twice.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-clipped-nonzero.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-clipped.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-objectBoundingBox.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-on-clipped-use.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-on-g-and-child.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-on-g.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-on-svg-and-child.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-on-svg.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-transform-2.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-use-as-child.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
-BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
-BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 
 // Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
 // the image change should be very slight (only in low-bits of color components)
