@@ -132,13 +132,14 @@
 #scripts-debug-sidebar-resizer-widget {
     position: absolute;
     top: 0;
-    bottom: 0;
+    height: 23px;
     right: 0;
     width: 16px;
     cursor: ew-resize;
     background-image: url(Images/statusbarResizerHorizontal.png);
     background-repeat: no-repeat;
     background-position: center;
+    z-index: 13;
 }
 
 #scripts-navigator-resizer-widget {

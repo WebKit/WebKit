@@ -1,3 +1,14 @@
+2011-12-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts panel: add debug sidebar resizer to TabbedEditorContainer.
+        https://bugs.webkit.org/show_bug.cgi?id=75300
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-debug-sidebar-resizer-widget):
+
 2011-12-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Introduce a Profiler launcher view similar to that in the Audits panel

@@ -82,7 +82,6 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this._editorContainer.show(this.editorView.mainElement);
     } else {
         this._fileSelector = new WebInspector.ScriptsPanel.ComboBoxFileSelector(this._presentationModel);
-        this._fileSelector.showDebugSidebarResizeWidget(this.debugSidebarResizeWidgetElement);
         this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ScriptSelected, this._scriptSelected, this);
         this._fileSelector.addEventListener(WebInspector.ScriptsPanel.FileSelector.Events.ReleasedFocusAfterSelection, this._fileSelectorReleasedFocus, this);
         this._fileSelector.show(this.splitView.mainElement);
@@ -90,6 +89,7 @@ WebInspector.ScriptsPanel = function(presentationModel)
         this._editorContainer = new WebInspector.ScriptsPanel.SingleFileEditorContainer();
         this._editorContainer.show(this.splitView.mainElement);
     }
+    this.splitView.mainElement.appendChild(this.debugSidebarResizeWidgetElement);
 
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
@@ -1143,14 +1143,6 @@ WebInspector.ScriptsPanel.ComboBoxFileSelector.prototype = {
     show: function(element)
     {
         element.appendChild(this.editorToolbar);
-    },
-    
-    /**
-     * @param {Element} debugSidebarResizeWidgetElement
-     */
-    showDebugSidebarResizeWidget: function(debugSidebarResizeWidgetElement)
-    {
-        this.editorToolbar.appendChild(debugSidebarResizeWidgetElement);
     },
     
     /**
