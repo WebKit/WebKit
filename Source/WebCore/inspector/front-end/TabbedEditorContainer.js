@@ -97,7 +97,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     },
 
     /**
-     * @param {Event} event
+     * @param {WebInspector.Event} event
      */
     _tabClosed: function(event)
     {

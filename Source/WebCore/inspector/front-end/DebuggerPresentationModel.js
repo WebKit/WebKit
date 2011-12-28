@@ -124,7 +124,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
      */
     _addScript: function(script)
     {
-        var resource;
+        var resource = null;
         var isInlineScript = false;
         if (script.isInlineScript()) {
             resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);

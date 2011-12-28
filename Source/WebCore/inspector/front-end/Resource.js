@@ -72,7 +72,7 @@ WebInspector.MIMETypes = {
  *
  * @param {NetworkAgent.RequestId} requestId
  * @param {string} url
- * @param {?string} frameId
+ * @param {string} frameId
  * @param {?NetworkAgent.LoaderId} loaderId
  */
 WebInspector.Resource = function(requestId, url, frameId, loaderId)
@@ -100,7 +100,7 @@ WebInspector.Resource = function(requestId, url, frameId, loaderId)
  */
 WebInspector.Resource.displayName = function(url)
 {
-    return new WebInspector.Resource("fake-transient-resource", url, null, null).displayName;
+    return new WebInspector.Resource("fake-transient-resource", url, "", null).displayName;
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -555,7 +555,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {NetworkAgent.ResourceTiming}
+     * @return {NetworkAgent.ResourceTiming|undefined}
      */
     get timing()
     {
@@ -718,7 +718,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Array.<WebInspector.Cookie>}
+     * @type {Array.<WebInspector.Cookie>}
      */
     get requestCookies()
     {
@@ -728,7 +728,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string|undefined}
      */
     get requestFormData()
     {
@@ -742,7 +742,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string|undefined}
+     * @type {string|undefined}
      */
     get requestHttpVersion()
     {
@@ -752,7 +752,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Object}
+     * @type {Object}
      */
     get responseHeaders()
     {
@@ -769,7 +769,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get responseHeadersText()
     {
@@ -789,7 +789,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get responseHeadersSize()
     {
@@ -797,7 +797,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Array.<Object>}
+     * @type {Array.<Object>}
      */
     get sortedResponseHeaders()
     {
@@ -822,7 +822,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Array.<WebInspector.Cookie>}
+     * @type {Array.<WebInspector.Cookie>}
      */
     get responseCookies()
     {
@@ -832,7 +832,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {?Array.<Object>}
+     * @type {?Array.<Object>}
      */
     get queryParameters()
     {
@@ -847,7 +847,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {?Array.<Object>}
+     * @type {?Array.<Object>}
      */
     get formParameters()
     {
@@ -863,7 +863,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string|undefined}
+     * @type {string|undefined}
      */
     get responseHttpVersion()
     {
@@ -907,7 +907,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {Array.<WebInspector.ConsoleMessage>}
+     * @type {Array.<WebInspector.ConsoleMessage>}
      */
     get messages()
     {
@@ -929,7 +929,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get errors()
     {
@@ -942,7 +942,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get warnings()
     {
@@ -963,7 +963,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get content()
     {
@@ -971,7 +971,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get contentEncoded()
     {
@@ -979,7 +979,7 @@ WebInspector.Resource.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get contentTimestamp()
     {
@@ -1177,7 +1177,7 @@ WebInspector.ResourceRevision = function(resource, content, timestamp)
 
 WebInspector.ResourceRevision.prototype = {
     /**
-     * @return {WebInspector.Resource}
+     * @type {WebInspector.Resource}
      */
     get resource()
     {
@@ -1185,7 +1185,7 @@ WebInspector.ResourceRevision.prototype = {
     },
 
     /**
-     * @return {number}
+     * @type {number}
      */
     get timestamp()
     {
@@ -1193,7 +1193,7 @@ WebInspector.ResourceRevision.prototype = {
     },
 
     /**
-     * @return {string}
+     * @type {string}
      */
     get content()
     {

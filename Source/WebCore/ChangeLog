@@ -1,3 +1,24 @@
+2011-12-27  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: complete annotating SDK component.
+        https://bugs.webkit.org/show_bug.cgi?id=75259
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype._cacheDisabledSettingChanged):
+        (WebInspector.NetworkDispatcher.prototype._isNull):
+        (WebInspector.NetworkDispatcher.prototype.webSocketCreated):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.displayName):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._onResourceUpdated):
+        (WebInspector.ResourceTreeModel.prototype._consoleMessageAdded):
+        (WebInspector.ResourceTreeFrame.prototype.get name):
+        * inspector/front-end/TabbedEditorContainer.js:
+
 2011-12-27  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Crash in the WebKit accessibility code while attempting to retrieve the title UI element.

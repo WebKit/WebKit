@@ -242,7 +242,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             type = InspectorPageAgent::cachedResourceType(*cachedResource);
             cachedResourceSize = cachedResource->encodedSize();
             // Use mime type from cached resource in case the one in response is empty.
-            if (response.mimeType().isEmpty())
+            if (resourceResponse && response.mimeType().isEmpty())
                 resourceResponse->setString("mimeType", cachedResource->response().mimeType());
 
             m_resourcesData->addCachedResource(requestId, cachedResource);
