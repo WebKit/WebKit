@@ -1,3 +1,41 @@
+2011-12-28  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: generate enum types.
+        https://bugs.webkit.org/show_bug.cgi?id=74954
+
+        Reviewed by Yury Semikhatsky.
+
+        Internal map of string contants is created. C enums are created for
+        each JSON enum.
+
+        * inspector/CodeGeneratorInspector.py:
+        (EnumConstants.add_constant):
+        (EnumConstants):
+        (EnumConstants.get_enum_constant_code):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_code_generator.CodeGenerator.generate_type_builder):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_in_c_type_text):
+        (TypeBindings.create_type_declaration_.EnumBinding.get_setter_value_expression_pattern):
+        (TypeBindings.create_type_declaration_.PlainString.reduce_to_raw_type):
+        (TypeBindings.create_type_declaration_.PlainString.get_setter_value_expression_pattern):
+        (get_in_c_type_text):
+        (get_setter_value_expression_pattern):
+        (PlainObjectBinding.get_in_c_type_text):
+        (PlainObjectBinding.get_setter_value_expression_pattern):
+        (RawTypesBinding.get_in_c_type_text):
+        (RawTypesBinding.get_setter_value_expression_pattern):
+        (get_annotated_type_text):
+        (MethodGenerateModes.get_modes):
+        (MethodGenerateModes.StrictParameterMode.get_c_param_type_text):
+        (MethodGenerateModes.StrictParameterMode):
+        (MethodGenerateModes.StrictParameterMode.get_setter_value_expression):
+        (MethodGenerateModes.RawParameterMode.get_c_param_type_text):
+        (MethodGenerateModes.RawParameterMode):
+        (MethodGenerateModes.RawParameterMode.get_setter_value_expression):
+        (MethodGenerateModes.CombinedMode.get_c_param_type_text):
+        (MethodGenerateModes):
+        (MethodGenerateModes.CombinedMode):
+        (MethodGenerateModes.CombinedMode.get_setter_value_expression):
+
 2011-12-28  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: IDBKeyRange constructor should throw when lower > upper
