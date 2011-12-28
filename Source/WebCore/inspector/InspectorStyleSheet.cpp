@@ -800,7 +800,7 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForRule(CSSStyleRule
     RefPtr<InspectorObject> result = InspectorObject::create();
     result->setString("selectorText", rule->selectorText());
     // "sourceURL" is present only for regular rules, otherwise "origin" should be used in the frontend.
-    if (!m_origin.length())
+    if (m_origin == "regular")
         result->setString("sourceURL", finalURL());
     result->setNumber("sourceLine", rule->sourceLine());
     result->setString("origin", m_origin);

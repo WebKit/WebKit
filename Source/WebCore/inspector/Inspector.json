@@ -1555,7 +1555,7 @@
                     { "name": "selectorText", "type": "string", "description": "Rule selector."},
                     { "name": "sourceURL", "type": "string", "optional": true, "description": "Parent stylesheet resource URL (for regular rules)."},
                     { "name": "sourceLine", "type": "integer", "description": "Line ordinal of the rule selector start character in the resource."},
-                    { "name": "origin", "type": "string", "enum": ["user", "user-agent", "inspector", ""], "description": "The parent stylesheet type: \"user\" for user stylesheets, \"user-agent\" for user-agent stylesheets, \"inspector\" for stylesheets created by the inspector (i.e. those holding new rules created with <code>addRule()</code>), \"\" for regular stylesheets."},
+                    { "name": "origin", "type": "string", "enum": ["user", "user-agent", "inspector", "regular"], "description": "The parent stylesheet type: \"user\" for user stylesheets, \"user-agent\" for user-agent stylesheets, \"inspector\" for stylesheets created by the inspector (i.e. those holding new rules created with <code>addRule()</code>), \"regular\" for regular stylesheets."},
                     { "name": "style", "$ref": "CSSStyle", "description": "Associated style declaration." },
                     { "name": "selectorRange", "$ref": "SourceRange", "optional": true, "description": "The rule selector range in the underlying resource (if available)." },
                     { "name": "media", "type": "array", "items": { "$ref": "CSSMedia" }, "optional": true, "description": "Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards." }

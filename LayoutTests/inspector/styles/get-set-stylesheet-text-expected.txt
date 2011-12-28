@@ -35,6 +35,6 @@ h1: [user-agent]
 ['font-weight':'bold'] @[undefined-undefined] style
 
 rule
-h1: []
+h1: [regular]
 ['COLOR':'Red'] @[1-12] active
 

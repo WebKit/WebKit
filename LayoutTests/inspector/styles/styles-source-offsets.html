@@ -15,7 +15,7 @@ function test()
         var style;
         var header = "";
         if (isRule) {
-            if (ruleOrStyle.origin !== "")
+            if (ruleOrStyle.origin !== "regular")
                 return;
             style = ruleOrStyle.style;
             header = ruleOrStyle.selectorText + ": [" + (ruleOrStyle.selectorRange ? ruleOrStyle.selectorRange.start + "-" + ruleOrStyle.selectorRange.end : "")  + "]";

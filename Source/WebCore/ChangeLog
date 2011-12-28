@@ -1,3 +1,19 @@
+2011-12-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [protocol] empty enum constant should be replaced with identifier
+        https://bugs.webkit.org/show_bug.cgi?id=75273
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::detectOrigin):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::buildObjectForRule):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSRule.prototype.get isRegular):
+
 2011-12-27  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: complete annotating SDK component.

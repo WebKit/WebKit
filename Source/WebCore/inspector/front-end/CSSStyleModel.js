@@ -538,7 +538,7 @@ WebInspector.CSSRule.prototype = {
 
     get isRegular()
     {
-        return this.origin === "";
+        return this.origin === "regular";
     }
 }
 

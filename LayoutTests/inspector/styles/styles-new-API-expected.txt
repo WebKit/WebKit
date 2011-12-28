@@ -17,15 +17,15 @@ body: [user-agent]
 ['margin-left':'8px'] @[undefined-undefined] style
 
 rule
-body: []
+body: [regular]
 ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 rule
-body: []
+body: [regular]
 ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 rule
-body: []
+body: [regular]
 ['font-size':'12px'] @[5-21] active
 ['foo':'bar !
 
@@ -37,12 +37,12 @@ body: []
 ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
 
 rule
-body.main1: []
+body.main1: [regular]
 ['color':'#F00BAA'] @[13-28] active
 ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
 
 rule
-body.main2: []
+body.main2: [regular]
 ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
 ['background-image':'initial' is-important] @[undefined-undefined] style
 ['background-repeat-x':'initial' is-important] @[undefined-undefined] style
@@ -55,12 +55,12 @@ body.main2: []
 ['background-color':'green' is-important] @[undefined-undefined] style
 
 rule
-body.mainpage: []
+body.mainpage: [regular]
 ['text-decoration':'none'] @[5-27] active
 ['badproperty':'1badvalue1' non-parsed] @[108-132] active
 
 rule
-body.mainpage: []
+body.mainpage: [regular]
 ['prop1':'val1' non-parsed] @[5-17] active
 ['prop2':'val2' non-parsed] @[22-34] active
 
@@ -68,7 +68,7 @@ body.mainpage: []
 PseudoId=4
 
 rule
-body::after: []
+body::after: [regular]
 ['content':'"After body"'] @[5-27] active
 
 === Inherited styles for body ===
@@ -79,7 +79,7 @@ html: [user-agent]
 ['display':'block'] @[undefined-undefined] style
 
 rule
-html: []
+html: [regular]
 ['font-weight':'400'] @[5-22] active
 
 === Inline style for body ===
@@ -133,11 +133,11 @@ h1 {
 '
 
 rule
-html: []
+html: [regular]
 ['font-weight':'400'] @[5-22] active
 
 rule
-body: []
+body: [regular]
 ['font-size':'12px'] @[5-21] active
 ['foo':'bar !
 
@@ -149,12 +149,12 @@ body: []
 ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
 
 rule
-body.main1: []
+body.main1: [regular]
 ['color':'#F00BAA'] @[13-28] active
 ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
 
 rule
-body.main2: []
+body.main2: [regular]
 ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
 ['background-image':'initial' is-important] @[undefined-undefined] style
 ['background-repeat-x':'initial' is-important] @[undefined-undefined] style
@@ -167,11 +167,11 @@ body.main2: []
 ['background-color':'green' is-important] @[undefined-undefined] style
 
 rule
-body::after: []
+body::after: [regular]
 ['content':'"After body"'] @[5-27] active
 
 rule
-h1: []
+h1: [regular]
 ['height':'100%'] @[5-20] active
 ['border':'1px solid'] @[21-39] active
 ['border-width':'2px'] @[40-58] inactive
@@ -219,10 +219,10 @@ body {
 '
 
 rule
-#absent-id: []
+#absent-id: [regular]
 
 rule
-body: []
+body: [regular]
 ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 StyleSheet: '@import url(styles-new-API-1.css);
@@ -253,10 +253,10 @@ body {
 '
 
 rule
-#absent-id: []
+#absent-id: [regular]
 
 rule
-body: []
+body: [regular]
 ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 StyleSheet: '
@@ -275,12 +275,12 @@ body.mainpage {
 '
 
 rule
-body.mainpage: []
+body.mainpage: [regular]
 ['text-decoration':'none'] @[5-27] active
 ['badproperty':'1badvalue1' non-parsed] @[108-132] active
 
 rule
-body.mainpage: []
+body.mainpage: [regular]
 ['prop1':'val1' non-parsed] @[5-17] active
 ['prop2':'val2' non-parsed] @[22-34] active
 
@@ -289,12 +289,12 @@ body.mainpage: []
 StyleSheet: 'body.mainpage {    text-decoration: strikethrough;    badproperty: 2badvalue2;}body {    text-align: justify;}'
 
 rule
-body.mainpage: []
+body.mainpage: [regular]
 ['text-decoration':'strikethrough' non-parsed] @[4-35] active
 ['badproperty':'2badvalue2' non-parsed] @[39-63] active
 
 rule
-body: []
+body: [regular]
 ['text-align':'justify'] @[4-24] active
 
 === After selector set ===
@@ -302,12 +302,12 @@ body: []
 StyleSheet: 'html *, body[foo="bar"] {    text-decoration: strikethrough;    badproperty: 2badvalue2;}body {    text-align: justify;}'
 
 rule
-html *, body[foo="bar"]: []
+html *, body[foo="bar"]: [regular]
 ['text-decoration':'strikethrough' non-parsed] @[4-35] active
 ['badproperty':'2badvalue2' non-parsed] @[39-63] active
 
 rule
-body: []
+body: [regular]
 ['text-align':'justify'] @[4-24] active
 
 === After style text set ===
@@ -317,7 +317,7 @@ StyleSheet: 'html *, body[foo="bar"] {
 }body {    text-align: justify;}'
 
 rule
-html *, body[foo="bar"]: []
+html *, body[foo="bar"]: [regular]
 ['color':'white'] @[5-18] active
 ['background':'black'] @[19-37] active
 ['background-image':'initial'] @[undefined-undefined] style
@@ -331,7 +331,7 @@ html *, body[foo="bar"]: []
 ['background-color':'black'] @[undefined-undefined] style
 
 rule
-body: []
+body: [regular]
 ['text-align':'justify'] @[4-24] active
 
 === Matched rules after rule added ===
@@ -345,15 +345,15 @@ body: [user-agent]
 ['margin-left':'8px'] @[undefined-undefined] style
 
 rule
-body: []
+body: [regular]
 ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 rule
-body: []
+body: [regular]
 ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 rule
-body: []
+body: [regular]
 ['font-size':'12px'] @[5-21] active
 ['foo':'bar !
 
@@ -365,7 +365,7 @@ body: []
 ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
 
 rule
-html *, body[foo="bar"]: []
+html *, body[foo="bar"]: [regular]
 ['color':'white'] @[5-18] active
 ['background':'black'] @[19-37] active
 ['background-image':'initial'] @[undefined-undefined] style
@@ -379,7 +379,7 @@ html *, body[foo="bar"]: []
 ['background-color':'black'] @[undefined-undefined] style
 
 rule
-body: []
+body: [regular]
 ['text-align':'justify'] @[4-24] active
 
 rule
@@ -387,12 +387,12 @@ body: [inspector]
 ['font-family':'serif'] @[5-24] active
 
 rule
-body.main1: []
+body.main1: [regular]
 ['color':'#F00BAA'] @[13-28] active
 ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
 
 rule
-body.main2: []
+body.main2: [regular]
 ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
 ['background-image':'initial' is-important] @[undefined-undefined] style
 ['background-repeat-x':'initial' is-important] @[undefined-undefined] style

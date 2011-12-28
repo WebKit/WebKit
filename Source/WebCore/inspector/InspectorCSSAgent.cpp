@@ -52,84 +52,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
-// Currently implemented model:
-//
-// cssProperty = {
-//    name          : <string>,
-//    value         : <string>,
-//    priority      : <string>, // "" for non-parsedOk properties
-//    implicit      : <boolean>,
-//    parsedOk      : <boolean>, // whether property is understood by WebCore
-//    status        : <string>, // "disabled" | "active" | "inactive" | "style"
-//    shorthandName : <string>,
-//    startOffset   : <number>, // Optional - property text start offset in enclosing style declaration. Absent for computed styles and such.
-//    endOffset     : <number>, // Optional - property text end offset in enclosing style declaration. Absent for computed styles and such.
-// }
-//
-// name + value + priority : present when the property is enabled
-// text                    : present when the property is disabled
-//
-// For disabled properties, startOffset === endOffset === insertion point for the property.
-//
-// status:
-// "disabled" == property disabled by user
-// "active" == property participates in the computed style calculation
-// "inactive" == property does no participate in the computed style calculation (i.e. overridden by a subsequent property with the same name)
-// "style" == property is active and originates from the WebCore CSSStyleDeclaration rather than CSS source code (e.g. implicit longhand properties)
-//
-// cssStyle = {
-//    styleId            : <string>, // Optional
-//    cssProperties      : [
-//                          #cssProperty,
-//                          ...
-//                          #cssProperty
-//                         ],
-//    shorthandEntries   : [
-//                          #shorthandEntry,
-//                          ...
-//                          #shorthandEntry
-//                         ],
-//    cssText            : <string>, // Optional - declaration text
-//    properties         : {
-//                          width,
-//                          height,
-//                          startOffset, // Optional - for source-based styles only
-//                          endOffset, // Optional - for source-based styles only
-//                         }
-// }
-//
-// shorthandEntry = {
-//    name: <string>,
-//    value: <string>
-// }
-//
-// cssRule = {
-//    ruleId       : <string>, // Optional
-//    selectorText : <string>,
-//    sourceURL    : <string>,
-//    sourceLine   : <string>,
-//    origin       : <string>, // "" || "user-agent" || "user" || "inspector"
-//    style        : #cssStyle,
-//    selectorRange: { start: <number>, end: <number> } // Optional - for source-based rules only
-// }
-//
-// cssStyleSheetInfo = {
-//    styleSheetId : <number>
-//    sourceURL    : <string>
-//    title        : <string>
-//    disabled     : <boolean>
-// }
-//
-// cssStyleSheet = {
-//    styleSheetId : <number>
-//    rules        : [
-//                       #cssRule,
-//                       ...
-//                       #cssRule
-//                   ]
-//    text         : <string> // Optional - whenever the text is available for a text-based stylesheet
-// }
-
 namespace CSSAgentState {
 static const char cssAgentEnabled[] = "cssAgentEnabled";
 static const char isSelectorProfiling[] = "isSelectorProfiling";
@@ -632,7 +554,7 @@ InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Elem
             return 0;
 
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        RefPtr<InspectorStyleSheetForInlineStyle> inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(newStyleSheetId, element, "");
+        RefPtr<InspectorStyleSheetForInlineStyle> inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(newStyleSheetId, element, "regular");
         m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet);
         m_nodeToInspectorStyleSheet.set(element, inspectorStyleSheet);
         return inspectorStyleSheet.get();
@@ -739,7 +661,7 @@ String InspectorCSSAgent::detectOrigin(CSSStyleSheet* pageStyleSheet, Document* 
     DEFINE_STATIC_LOCAL(String, user, ("user"));
     DEFINE_STATIC_LOCAL(String, inspector, ("inspector"));
 
-    String origin("");
+    String origin("regular");
     if (pageStyleSheet && !pageStyleSheet->ownerNode() && pageStyleSheet->href().isEmpty())
         origin = userAgent;
     else if (pageStyleSheet && pageStyleSheet->ownerNode() && pageStyleSheet->ownerNode()->nodeName() == "#document")
