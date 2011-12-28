@@ -3902,6 +3902,7 @@ BUGWK74788 DEBUG : svg/W3C-SVG-1.1/animate-elem-44-t.svg = PASS CRASH
 // Conflicts with BUGCR99500 above, so split out expectations
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-41-t.svg = PASS CRASH
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-46-t.svg = PASS CRASH
+BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-52-t.svg = PASS CRASH
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-63-t.svg = PASS CRASH
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-64-t.svg = PASS CRASH
 BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-65-t.svg = PASS CRASH
