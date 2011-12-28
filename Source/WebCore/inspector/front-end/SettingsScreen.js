@@ -168,7 +168,7 @@ WebInspector.SettingsScreen.prototype = {
         var p = document.createElement("p");
         var label = document.createElement("label");
         label.appendChild(input);
-        label.appendChild(document.createTextNode(experiment.title));
+        label.appendChild(document.createTextNode(WebInspector.UIString(experiment.title)));
         p.appendChild(label);
         return p;
     },
