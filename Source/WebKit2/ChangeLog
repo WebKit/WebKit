@@ -1,3 +1,17 @@
+2011-12-28  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Crash in ~WebGraphicsLayer when running fast/multicol/pagination-* tests
+        https://bugs.webkit.org/show_bug.cgi?id=75000
+
+        Reviewed by Noam Rosenthal.
+
+        Don't adopt a tile client that belongs to a parent layer.
+        This is unnecessary and also unsafe because we can live
+        through that client.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::WebGraphicsLayer::syncCompositingStateForThisLayerOnly):
+
 2011-12-27  Dan Bernstein  <mitz@apple.com>
 
         [mac] Stop using bootstrap_look_up2

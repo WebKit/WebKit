@@ -401,8 +401,6 @@ WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
 
 void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
-    if (!m_layerTreeTileClient)
-        m_layerTreeTileClient = layerTreeTileClient();
     updateContentBuffers();
 
     if (!m_modified)
@@ -433,10 +431,12 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     for (size_t i = 0; i < children().size(); ++i)
         m_layerInfo.children.append(toWebLayerID(children()[i]));
 
+    WebLayerTreeTileClient* tileClient = layerTreeTileClient();
+    ASSERT(tileClient);
     if (m_layerInfo.imageIsUpdated && m_image && !m_layerInfo.imageBackingStoreID)
-        m_layerInfo.imageBackingStoreID = layerTreeTileClient()->adoptImageBackingStore(m_image.get());
+        m_layerInfo.imageBackingStoreID = tileClient->adoptImageBackingStore(m_image.get());
 
-    m_layerTreeTileClient->didSyncCompositingStateForLayer(m_layerInfo);
+    tileClient->didSyncCompositingStateForLayer(m_layerInfo);
     m_modified = false;
     m_layerInfo.imageIsUpdated = false;
     if (m_hasPendingAnimations)
