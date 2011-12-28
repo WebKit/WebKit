@@ -697,26 +697,26 @@ PASS event.target.result.key is testData[0]
 PASS event.target.result is null
 
 Next test: lower open bound is 6; upper open bound is 6; sorted ascending.
-PASS event.target.result is null
+Skipping illegal key range.
 
 Next test: lower open bound is 6; upper bound is 6; sorted ascending.
-PASS event.target.result is null
+Skipping illegal key range.
 
 Next test: lower bound is 6; upper open bound is 6; sorted ascending.
-PASS event.target.result is null
+Skipping illegal key range.
 
 Next test: lower bound is 6; upper bound is 6; sorted ascending.
 PASS event.target.result.key is testData[6]
 PASS event.target.result is null
 
 Next test: lower open bound is 6; upper open bound is 6; sorted descending.
-PASS event.target.result is null
+Skipping illegal key range.
 
 Next test: lower open bound is 6; upper bound is 6; sorted descending.
-PASS event.target.result is null
+Skipping illegal key range.
 
 Next test: lower bound is 6; upper open bound is 6; sorted descending.
-PASS event.target.result is null
+Skipping illegal key range.
 
 Next test: lower bound is 6; upper bound is 6; sorted descending.
 PASS event.target.result.key is testData[6]

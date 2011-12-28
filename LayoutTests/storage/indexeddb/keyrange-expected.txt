@@ -219,6 +219,23 @@ Passing an invalid key into bound({},null)
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
 Passing an invalid key into bound({}, {})
 PASS Caught exception: Error: DATA_ERR: DOM IDBDatabase Exception 5
+Lower key greater than higher key, bound(4, 3)
+Expecting exception from webkitIDBKeyRange.bound(4, 3)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+Equal keys, either of the bounds is open, bound(4, 4, true, false)
+Expecting exception from webkitIDBKeyRange.bound(4, 4, true, false)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+Equal keys, either of the bounds is open, bound(4, 4, false, true)
+Expecting exception from webkitIDBKeyRange.bound(4, 4, false, true)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+Equal keys, either of the bounds is open, bound(4, 4, true, true)
+Expecting exception from webkitIDBKeyRange.bound(4, 4, true, true)
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
+Equal keys, none of the bounds is open, bound(4, 4, false, false)
 PASS successfullyParsed is true
 
 TEST COMPLETE

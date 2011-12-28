@@ -1,3 +1,18 @@
+2011-12-28  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: IDBKeyRange constructor should throw when lower > upper
+        https://bugs.webkit.org/show_bug.cgi?id=74705
+
+        Reviewed by Tony Chang.
+
+        Make IDBKeyRange throw an exception when lower > upper,
+        or lower == upper and one or both of the bounds is open.
+
+        Tested in storage/indexeddb/keyrange.html.
+
+        * storage/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::bound):
+
 2011-12-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [protocol] empty enum constant should be replaced with identifier

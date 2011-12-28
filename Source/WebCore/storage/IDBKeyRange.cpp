@@ -78,6 +78,14 @@ PassRefPtr<IDBKeyRange> IDBKeyRange::bound(PassRefPtr<IDBKey> lower, PassRefPtr<
         ec = IDBDatabaseException::DATA_ERR;
         return 0;
     }
+    if (lower && upper && upper->isLessThan(lower.get())) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
+    if (lower && upper && upper->isEqual(lower.get()) && (lowerOpen || upperOpen)) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return 0;
+    }
 
     return IDBKeyRange::create(lower, upper, lowerOpen ? LowerBoundOpen : LowerBoundClosed, upperOpen ? UpperBoundOpen : UpperBoundClosed);
 }

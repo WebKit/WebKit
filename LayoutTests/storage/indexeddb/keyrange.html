@@ -171,6 +171,21 @@ function test()
     } catch (e) {
         testPassed("Caught exception: " + e.toString());
     }
+
+    debug("Lower key greater than higher key, bound(4, 3)");
+    evalAndExpectException("webkitIDBKeyRange.bound(4, 3)", "webkitIDBDatabaseException.DATA_ERR");
+
+    debug("Equal keys, either of the bounds is open, bound(4, 4, true, false)");
+    evalAndExpectException("webkitIDBKeyRange.bound(4, 4, true, false)", "webkitIDBDatabaseException.DATA_ERR");
+
+    debug("Equal keys, either of the bounds is open, bound(4, 4, false, true)");
+    evalAndExpectException("webkitIDBKeyRange.bound(4, 4, false, true)", "webkitIDBDatabaseException.DATA_ERR");
+
+    debug("Equal keys, either of the bounds is open, bound(4, 4, true, true)");
+    evalAndExpectException("webkitIDBKeyRange.bound(4, 4, true, true)", "webkitIDBDatabaseException.DATA_ERR");
+
+    debug("Equal keys, none of the bounds is open, bound(4, 4, false, false)");
+    webkitIDBKeyRange.bound(4, 4, false, false);
 }
 
 test();

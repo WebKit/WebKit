@@ -78,12 +78,7 @@ request = index.count(IDBKeyRange.bound(test.lower, test.upper, test.lowerOpen, 
 PASS typeof request.result == 'number' is true
 PASS request.result is 1
 
-test = {"lower":0,"lowerOpen":true,"upper":0,"upperOpen":true,"expected":0}
-request = index.count(IDBKeyRange.bound(test.lower, test.upper, test.lowerOpen, test.upperOpen))
-PASS typeof request.result == 'number' is true
-PASS request.result is 0
-
-test = {"lower":20,"lowerOpen":true,"upper":10,"upperOpen":true,"expected":0}
+test = {"lower":500,"lowerOpen":false,"upper":500,"upperOpen":false,"expected":0}
 request = index.count(IDBKeyRange.bound(test.lower, test.upper, test.lowerOpen, test.upperOpen))
 PASS typeof request.result == 'number' is true
 PASS request.result is 0

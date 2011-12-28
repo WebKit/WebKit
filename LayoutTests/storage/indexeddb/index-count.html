@@ -95,8 +95,7 @@ function verifyCountWithRange()
         { lower: 0, lowerOpen: false, upper: 100, upperOpen: false, expected: 100 },
         { lower: 10, lowerOpen: false, upper: 100, upperOpen: false, expected: 90 },
         { lower: 0, lowerOpen: false, upper: 0, upperOpen: false, expected: 1 },
-        { lower: 0, lowerOpen: true, upper: 0, upperOpen: true, expected: 0 },
-        { lower: 20, lowerOpen: true, upper: 10, upperOpen: true, expected: 0 }
+        { lower: 500, lowerOpen: false, upper: 500, upperOpen: false, expected: 0 }
     ];
 
     function nextTest() {

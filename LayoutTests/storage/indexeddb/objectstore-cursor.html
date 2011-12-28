@@ -144,6 +144,12 @@ function runNextTest()
     }
     testWithinBounds();
  
+    if (testData[lower] === testData[upper] && (lowerIsOpen || upperIsOpen)) {
+        debug("Skipping illegal key range.");
+        runNextTest();
+        return;
+    }
+
     var keyRange;
     if (lower !== null && upper !== null)
         keyRange = webkitIDBKeyRange.bound(testData[lower], testData[upper], lowerIsOpen, upperIsOpen);
