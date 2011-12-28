@@ -1,3 +1,13 @@
+2011-12-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Make the inputMethodEvent set or confirm the composition
+        https://bugs.webkit.org/show_bug.cgi?id=75256
+
+        Reviewed by Chang Shu.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (QtWebPageEventHandler::inputMethodEvent):
+
 2011-12-26  Mark Rowe  <mrowe@apple.com>
 
         <http://webkit.org/b/75196> REGRESSION(r103643): Command-clicking a link no longer opens a new tab.

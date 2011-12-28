@@ -321,6 +321,9 @@ void QtWebPageEventHandler::inputMethodEvent(QInputMethodEvent* ev)
     QString commit = ev->commitString();
     QString composition = ev->preeditString();
 
+    int replacementStart = ev->replacementStart();
+    int replacementLength = ev->replacementLength();
+
     // NOTE: We might want to handle events of one char as special
     // and resend them as key events to make web site completion work.
 
@@ -361,17 +364,20 @@ void QtWebPageEventHandler::inputMethodEvent(QInputMethodEvent* ev)
                 selectionStart = attr.start;
                 selectionLength = attr.length;
 
-                ASSERT_UNUSED(selectionStart, selectionStart >= 0);
-                ASSERT_UNUSED(selectionLength, selectionLength >= 0);
+                ASSERT(selectionStart >= 0);
+                ASSERT(selectionLength >= 0);
                 break;
             }
         }
 
-        // FIXME: Confirm the composition here.
+        m_webPageProxy->confirmComposition(commit, selectionStart, selectionLength);
     } else {
-        ASSERT_UNUSED(cursorPositionWithinComposition, cursorPositionWithinComposition >= 0);
+        ASSERT(cursorPositionWithinComposition >= 0);
+        ASSERT(replacementStart >= 0);
 
-        // FIXME: Set the composition here.
+        m_webPageProxy->setComposition(composition, underlines,
+            cursorPositionWithinComposition, cursorPositionWithinComposition,
+            replacementStart, replacementLength);
     }
 
     ev->accept();
