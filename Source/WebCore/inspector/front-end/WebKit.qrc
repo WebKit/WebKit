@@ -89,6 +89,7 @@
     <file>Placard.js</file>
     <file>Popover.js</file>
     <file>ProfileDataGridTree.js</file>
+    <file>ProfileLauncherView.js</file>
     <file>ProfilesPanel.js</file>
     <file>ProfileView.js</file>
     <file>PropertiesSection.js</file>
@@ -153,7 +154,6 @@
     <file>utilities.js</file>
     <file>View.js</file>
     <file>WatchExpressionsSidebarPane.js</file>
-    <file>WelcomeView.js</file>
     <file>WorkerManager.js</file>
     <file>WorkersSidebarPane.js</file>
     <file>UglifyJS/parse-js.js</file>

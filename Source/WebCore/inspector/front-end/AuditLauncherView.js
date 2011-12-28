@@ -35,12 +35,14 @@
 WebInspector.AuditLauncherView = function(runnerCallback, stopCallback)
 {
     WebInspector.View.call(this);
+
     this._runnerCallback = runnerCallback;
     this._stopCallback = stopCallback;
     this._categoryIdPrefix = "audit-category-item-";
     this._auditRunning = false;
 
     this.element.addStyleClass("audit-launcher-view");
+    this.element.addStyleClass("panel-enabler-view");
 
     this._contentElement = document.createElement("div");
     this._contentElement.className = "audit-launcher-view-content";

@@ -75,7 +75,7 @@ InspectorTest.waitUntilProfileViewIsShown = function(title, callback)
     callback = InspectorTest.safeWrap(callback);
 
     var profilesPanel = WebInspector.panels.profiles;
-    if (profilesPanel.visibleView && profilesPanel.visibleView.profile.title === title)
+    if (profilesPanel.visibleView && profilesPanel.visibleView.profile && profilesPanel.visibleView.profile.title === title)
         callback(profilesPanel.visibleView);
     else
         InspectorTest._waitUntilProfileViewIsShownCallback = { title: title, callback: callback };

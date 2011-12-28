@@ -35,6 +35,7 @@
 WebInspector.AuditsPanel = function()
 {
     WebInspector.Panel.call(this, "audits");
+    this.registerRequiredCSS("panelEnablerView.css");
     this.registerRequiredCSS("auditsPanel.css");
 
     this.createSplitViewWithSidebarTree();

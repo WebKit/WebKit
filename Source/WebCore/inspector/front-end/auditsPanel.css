@@ -64,14 +64,11 @@
     padding: 0 0 0 16px;
     white-space: nowrap;
     display: -webkit-box;
+    text-align: left;
     -webkit-box-orient: vertical;
 }
 
 .audit-launcher-view h1 {
-    color: rgb(110, 116, 128);
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: normal;
     padding-top: 15px;
 }
 
@@ -88,9 +85,6 @@
     width: 100%;
     padding: 16px 0;
 }
-.audit-launcher-view .flexible-space {
-    -webkit-box-flex: 1;
-}
 
 .audit-launcher-view div.audit-categories-container {
     position: relative;
@@ -101,19 +95,6 @@
 }
 
 .audit-launcher-view button {
-    color: rgb(6, 6, 6);
-    background-color: transparent;
-    border: 1px solid rgb(165, 165, 165);
-    background-color: rgb(237, 237, 237);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
-    -webkit-border-radius: 12px;
-    -webkit-appearance: none;
-}
-
-.audit-launcher-view button {
-    font-size: 13px;
-    padding: 3px 20px;
-    height: 24px;
     margin: 0 5px 0 0;
 }
 
@@ -122,47 +103,17 @@
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(194, 194, 194)), to(rgb(239, 239, 239)));
 }
 
-body.inactive .audit-launcher-view button, .audit-launcher-view button:disabled {
-    color: rgb(130, 130, 130);
-    border-color: rgb(212, 212, 212);
-    background-color: rgb(239, 239, 239);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(250, 250, 250)), to(rgb(235, 235, 235)));
-}
-
-.audit-launcher-view label {
-    position: relative;
-    display: block;
-    text-align: left;
-    word-break: break-word;
+.panel-enabler-view.audit-launcher-view label {
     padding: 0 0 5px 0;
+    margin: 0;
 }
 
-.audit-launcher-view label.disabled {
+.panel-enabler-view.audit-launcher-view label.disabled {
     color: rgb(130, 130, 130);
 }
 
 .audit-launcher-view input[type="checkbox"] {
     margin-left: 0;
-}
-
-.audit-launcher-view input[type="radio"] {
-    height: 17px;
-    width: 17px;
-    border: 1px solid rgb(165, 165, 165);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
-    -webkit-border-radius: 8px;
-    -webkit-appearance: none;
-    vertical-align: middle;
-    margin: 0 5px 5px 0;
-}
-
-.audit-launcher-view input[type="radio"]:active:not(:disabled) {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(194, 194, 194)), to(rgb(239, 239, 239)));
-}
-
-.audit-launcher-view input[type="radio"]:checked:not(:disabled), .audit-launcher-view input[type="radio"]:checked:disabled {
-    background: url(Images/radioDot.png) center no-repeat,
-                -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
 }
 
 .audit-launcher-view .resource-progress > img {

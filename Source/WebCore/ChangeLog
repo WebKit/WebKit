@@ -1,3 +1,80 @@
+2011-12-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Introduce a Profiler launcher view similar to that in the Audits panel
+        https://bugs.webkit.org/show_bug.cgi?id=75228
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotProfileType):
+        (WebInspector.DetailedHeapshotProfileType.prototype.get treeItemTitle):
+        (WebInspector.DetailedHeapshotProfileType.prototype.get description):
+        * inspector/front-end/ProfileLauncherView.js: Added.
+        (WebInspector.ProfileLauncherView):
+        (WebInspector.ProfileLauncherView.prototype.setUpEventListeners):
+        (WebInspector.ProfileLauncherView.prototype.addProfileType):
+        (WebInspector.ProfileLauncherView.prototype._controlButtonClicked):
+        (WebInspector.ProfileLauncherView.prototype._updateControls):
+        (WebInspector.ProfileLauncherView.prototype._profileTypeChanged):
+        (WebInspector.ProfileLauncherView.prototype._onProfileStarted):
+        (WebInspector.ProfileLauncherView.prototype._onProfileFinished):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileType):
+        (WebInspector.CPUProfileType.prototype.get treeItemTitle):
+        (WebInspector.CPUProfileType.prototype.get description):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileType.prototype.get treeItemTitle):
+        (WebInspector.ProfileType.prototype.get description):
+        (WebInspector.ProfilesPanel.prototype.get statusBarItems):
+        (WebInspector.ProfilesPanel.prototype.toggleRecordButton):
+        (WebInspector.ProfilesPanel.prototype._onProfileTypeSelected):
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype._showLauncherView):
+        (WebInspector.ProfilesPanel.prototype._registerProfileType):
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype._updateInterface):
+        (WebInspector.ProfileTypeTreeElement):
+        (WebInspector.ProfileTypeTreeElement.prototype.collapse):
+        (WebInspector.ProfilesSidebarTreeElement):
+        (WebInspector.ProfilesSidebarTreeElement.prototype.onattach):
+        (WebInspector.ProfilesSidebarTreeElement.prototype.onselect):
+        (WebInspector.ProfilesSidebarTreeElement.prototype.get selectable):
+        (WebInspector.ProfilesSidebarTreeElement.prototype.refresh):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/WelcomeView.js: Removed.
+        * inspector/front-end/auditsPanel.css:
+        (.audit-launcher-view .audit-launcher-view-content):
+        (.audit-launcher-view div.button-container):
+        (.panel-enabler-view.audit-launcher-view label):
+        (.panel-enabler-view.audit-launcher-view label.disabled):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/panelEnablerView.css:
+        (.panel-enabler-view img):
+        (.panel-enabler-view .flexible-space):
+        (.panel-enabler-view button:not(.status-bar-item)):
+        (body.inactive .panel-enabler-view button, .panel-enabler-view button:disabled):
+        (.panel-enabler-view input[type="radio"]):
+        (.panel-enabler-view input[type="radio"]:active:not(:disabled)):
+        (.panel-enabler-view input[type="radio"]:checked):
+        (.panel-enabler-view input[type="radio"]:checked:active):
+        * inspector/front-end/profilesPanel.css:
+        (.profile-launcher-view-tree-item > .icon):
+        (.profile-launcher-view-content):
+        (.profile-launcher-view-content h1):
+        (.panel-enabler-view.profile-launcher-view form):
+        (.panel-enabler-view.profile-launcher-view label):
+        (.profile-launcher-view-content p):
+        (.panel-enabler-view.profile-launcher-view button:not(.status-bar-item)):
+        (.profile-launcher-view-content button.running:not(.status-bar-item)):
+        (body.inactive .profile-launcher-view-content button.running:not(.status-bar-item)):
+
 2011-12-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103763.

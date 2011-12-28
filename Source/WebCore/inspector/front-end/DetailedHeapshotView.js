@@ -1297,7 +1297,7 @@ WebInspector.settings.showHeapSnapshotObjectsHiddenProperties = WebInspector.set
 
 WebInspector.DetailedHeapshotProfileType = function()
 {
-    WebInspector.ProfileType.call(this, WebInspector.DetailedHeapshotProfileType.TypeId, WebInspector.UIString("HEAP SNAPSHOTS"));
+    WebInspector.ProfileType.call(this, WebInspector.DetailedHeapshotProfileType.TypeId, WebInspector.UIString("Take Heap Snapshot"));
 }
 
 WebInspector.DetailedHeapshotProfileType.TypeId = "HEAP";
@@ -1318,9 +1318,14 @@ WebInspector.DetailedHeapshotProfileType.prototype = {
         WebInspector.panels.profiles.takeHeapSnapshot();
     },
 
-    get welcomeMessage()
+    get treeItemTitle()
     {
-        return WebInspector.UIString("Get a heap snapshot by pressing the %s button on the status bar.");
+        return WebInspector.UIString("HEAP SNAPSHOTS");
+    },
+
+    get description()
+    {
+        return WebInspector.UIString("Heap snapshot profiles show memory distribution among your page's JavaScript objects and related DOM nodes.");
     },
 
     createSidebarTreeElementForProfile: function(profile)

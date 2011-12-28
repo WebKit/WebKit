@@ -71837,6 +71837,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ProfileLauncherView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ProfilesPanel.js"
 					>
 				</File>
@@ -72126,10 +72130,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\WatchExpressionsSidebarPane.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\WelcomeView.js"
 					>
 				</File>
 				<File

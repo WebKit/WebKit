@@ -47,6 +47,12 @@
     margin-left: -1px;
 }
 
+.profile-launcher-view-tree-item > .icon {
+    padding: 15px;
+    background-image: url(Images/toolbarIcons.png);
+    background-position-x: -160px;
+}
+
 .profile-sidebar-tree-item .icon {
     content: url(Images/profileIcon.png);
 }
@@ -139,4 +145,49 @@
 
 .reset-profile-status-bar-item .glyph {
     -webkit-mask-position: 0 0;
+}
+
+.profile-launcher-view-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0 0 0 16px;
+    display: -webkit-box;
+    text-align: left;
+    -webkit-box-orient: vertical;
+}
+
+.profile-launcher-view-content h1 {
+    padding: 15px 0 10px;
+}
+
+.panel-enabler-view.profile-launcher-view form {
+    padding: 0;
+    font-size: 13px;
+    width: 100%;
+}
+
+.panel-enabler-view.profile-launcher-view label {
+    margin: 0;
+}
+
+.profile-launcher-view-content p {
+    color: grey;
+    margin-top: 1px;
+    margin-left: 22px;
+}
+
+.panel-enabler-view.profile-launcher-view button:not(.status-bar-item) {
+    color: rgb(6, 6, 6);
+    margin: 16px 0;
+}
+
+.profile-launcher-view-content button.running:not(.status-bar-item) {
+    color: red;
+}
+
+body.inactive .profile-launcher-view-content button.running:not(.status-bar-item) {
+    color: rgb(220, 130, 130);
 }
