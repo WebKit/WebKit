@@ -2238,27 +2238,6 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
     }
 }
 
-class HTMLTreeBuilder::FakeInsertionMode {
-    WTF_MAKE_NONCOPYABLE(FakeInsertionMode);
-public:
-    FakeInsertionMode(HTMLTreeBuilder* treeBuilder, InsertionMode mode)
-        : m_treeBuilder(treeBuilder)
-        , m_originalMode(treeBuilder->insertionMode())
-    {
-        m_treeBuilder->setFakeInsertionMode(mode);
-    }
-
-    ~FakeInsertionMode()
-    {
-        if (m_treeBuilder->isFakeInsertionMode())
-            m_treeBuilder->setInsertionMode(m_originalMode);
-    }
-
-private:
-    HTMLTreeBuilder* m_treeBuilder;
-    InsertionMode m_originalMode;
-};
-
 void HTMLTreeBuilder::processComment(AtomicHTMLToken& token)
 {
     ASSERT(token.type() == HTMLTokenTypes::Comment);

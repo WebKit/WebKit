@@ -89,7 +89,6 @@ public:
     static bool pluginsEnabled(Frame*);
 
 private:
-    class FakeInsertionMode;
     class ExternalCharacterTokenBuffer;
     // Represents HTML5 "insertion mode"
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#insertion-mode
@@ -188,18 +187,7 @@ private:
     void parseError(AtomicHTMLToken&);
 
     InsertionMode insertionMode() const { return m_insertionMode; }
-    void setInsertionMode(InsertionMode mode)
-    {
-        m_insertionMode = mode;
-        m_isFakeInsertionMode = false;
-    }
-
-    bool isFakeInsertionMode() { return m_isFakeInsertionMode; }
-    void setFakeInsertionMode(InsertionMode mode)
-    {
-        m_insertionMode = mode;
-        m_isFakeInsertionMode = true;
-    }
+    void setInsertionMode(InsertionMode mode) { m_insertionMode = mode; }
 
     void resetInsertionModeAppropriately();
 
@@ -230,12 +218,11 @@ private:
 
     bool m_reportErrors;
     bool m_isPaused;
-    bool m_isFakeInsertionMode;
 
-    // FIXME: InsertionModes should be a separate object to prevent direct
-    // manipulation of these variables.  For now, be careful to always use
-    // setInsertionMode and never set m_insertionMode directly.
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#insertion-mode
     InsertionMode m_insertionMode;
+
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/parsing.html#original-insertion-mode
     InsertionMode m_originalInsertionMode;
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#pending-table-character-tokens

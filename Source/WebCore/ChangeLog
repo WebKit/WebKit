@@ -1,3 +1,17 @@
+2011-12-28  Adam Barth  <abarth@webkit.org>
+
+        "Fake" insertion mode in HTMLTreeBuilder doesn't do anything
+        https://bugs.webkit.org/show_bug.cgi?id=75322
+
+        Reviewed by Darin Adler.
+
+        This machinery isn't needed anymore now that we're using the new
+        foreign content hotness.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::setInsertionMode):
+
 2011-12-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for border-style is not implemented.
