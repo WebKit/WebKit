@@ -1090,17 +1090,10 @@ WONTFIX GPU : canvas/philip/tests/2d.shadow.blur.low.html = PASS TIMEOUT
 BUGWK64876 LINUX WIN GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
 
 // Rebaseline once native aa-clipping has landed
-BUGWK70748 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGWK70748 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGWK70748 CPU : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGWK70748 CPU : fast/transforms/shadows.html = IMAGE
-BUGWK70748 CPU : fast/writing-mode/border-styles-vertical-lr.html = IMAGE
-BUGWK70748 CPU : fast/writing-mode/border-styles-vertical-rl.html = IMAGE
-BUGWK70748 CPU : fast/writing-mode/box-shadow-horizontal-bt.html = IMAGE
-BUGWK70748 CPU : fast/writing-mode/box-shadow-vertical-lr.html = IMAGE
-BUGWK70748 CPU : fast/writing-mode/box-shadow-vertical-rl.html = IMAGE
-BUGWK70748 CPU : fullscreen/full-screen-stacking-context.html = IMAGE
+BUGWK75276 CPU : fast/repaint/shadow-multiple-horizontal.html = IMAGE
+BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
+BUGWK75276 CPU : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
+
 BUGWK70748 CPU : svg/clip-path/clip-in-mask-objectBoundingBox.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-in-mask-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-clipped-evenodd-twice.svg = IMAGE
@@ -1116,8 +1109,6 @@ BUGWK70748 CPU : svg/clip-path/clip-path-transform-2.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-use-as-child.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-userSpaceOnUse.svg = IMAGE
 BUGWK70748 CPU : svg/clip-path/clip-path-with-text-clipped.svg = IMAGE
-BUGWK70748 CPU : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
-BUGWK70748 CPU : svg/custom/use-on-clip-path-with-transformation.svg = IMAGE
 BUGWK70748 CPU LEOPARD : svg/W3C-SVG-1.1/masking-path-05-f.svg = IMAGE
 
 // Rebaseline after SK_ENABLE_FAST_SHADERMASK is enabled in skia.gyp
