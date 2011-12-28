@@ -1,3 +1,12 @@
+2011-12-27  Anders Carlsson  <andersca@apple.com>
+
+        Add a new WTF::bind overload that takes 6 parameters
+        https://bugs.webkit.org/show_bug.cgi?id=75287
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Functional.h:
+
 2011-12-27  Sam Weinig  <sam@webkit.org>
 
         Continue moving compiler feature checks to use the COMPILER_SUPPORTS() macro
