@@ -49,8 +49,8 @@ using namespace HTMLNames;
 
 RenderTable::RenderTable(Node* node)
     : RenderBlock(node)
-    , m_head(0)
-    , m_foot(0)
+    , m_header(0)
+    , m_footer(0)
     , m_firstBody(0)
     , m_currentBorder(0)
     , m_collapsedBordersValid(false)
@@ -125,9 +125,9 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     } else if (child->isTableSection()) {
         switch (child->style()->display()) {
             case TABLE_HEADER_GROUP:
-                resetSectionPointerIfNotBefore(m_head, beforeChild);
-                if (!m_head) {
-                    m_head = toRenderTableSection(child);
+                resetSectionPointerIfNotBefore(m_header, beforeChild);
+                if (!m_header) {
+                    m_header = toRenderTableSection(child);
                 } else {
                     resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                     if (!m_firstBody) 
@@ -136,9 +136,9 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
                 wrapInAnonymousSection = false;
                 break;
             case TABLE_FOOTER_GROUP:
-                resetSectionPointerIfNotBefore(m_foot, beforeChild);
-                if (!m_foot) {
-                    m_foot = toRenderTableSection(child);
+                resetSectionPointerIfNotBefore(m_footer, beforeChild);
+                if (!m_footer) {
+                    m_footer = toRenderTableSection(child);
                     wrapInAnonymousSection = false;
                     break;
                 }
@@ -376,10 +376,10 @@ void RenderTable::layout()
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isTableSection())
             // FIXME: Distribute extra height between all table body sections instead of giving it all to the first one.
-            toRenderTableSection(child)->layoutRows(child == m_firstBody ? max<LayoutUnit>(0, computedLogicalHeight - totalSectionLogicalHeight) : 0);
+            toRenderTableSection(child)->layoutRows(child == firstBody() ? max<LayoutUnit>(0, computedLogicalHeight - totalSectionLogicalHeight) : 0);
     }
 
-    if (!m_firstBody && computedLogicalHeight > totalSectionLogicalHeight && !document()->inQuirksMode()) {
+    if (!firstBody() && computedLogicalHeight > totalSectionLogicalHeight && !document()->inQuirksMode()) {
         // Completely empty tables (with no sections or anything) should at least honor specified height
         // in strict mode.
         setLogicalHeight(logicalHeight() + computedLogicalHeight);
@@ -747,8 +747,10 @@ RenderTableCol* RenderTable::colElement(unsigned col, bool* startEdge, bool* end
 
 void RenderTable::recalcSections() const
 {
-    m_head = 0;
-    m_foot = 0;
+    ASSERT(needsSectionRecalc());
+
+    m_header = 0;
+    m_footer = 0;
     m_firstBody = 0;
     m_hasColElements = false;
 
@@ -764,8 +766,8 @@ void RenderTable::recalcSections() const
             case TABLE_HEADER_GROUP:
                 if (child->isTableSection()) {
                     RenderTableSection* section = toRenderTableSection(child);
-                    if (!m_head)
-                        m_head = section;
+                    if (!m_header)
+                        m_header = section;
                     else if (!m_firstBody)
                         m_firstBody = section;
                     section->recalcCellsIfNeeded();
@@ -774,8 +776,8 @@ void RenderTable::recalcSections() const
             case TABLE_FOOTER_GROUP:
                 if (child->isTableSection()) {
                     RenderTableSection* section = toRenderTableSection(child);
-                    if (!m_foot)
-                        m_foot = section;
+                    if (!m_footer)
+                        m_footer = section;
                     else if (!m_firstBody)
                         m_firstBody = section;
                     section->recalcCellsIfNeeded();
@@ -964,8 +966,8 @@ LayoutUnit RenderTable::outerBorderAfter() const
         return 0;
     LayoutUnit borderWidth = 0;
     RenderTableSection* bottomSection;
-    if (m_foot)
-        bottomSection = m_foot;
+    if (footer())
+        bottomSection = footer();
     else {
         RenderObject* child;
         for (child = lastChild(); child && !child->isTableSection(); child = child->previousSibling()) { }
@@ -1046,17 +1048,17 @@ RenderTableSection* RenderTable::sectionAbove(const RenderTableSection* section,
 {
     recalcSectionsIfNeeded();
 
-    if (section == m_head)
+    if (section == header())
         return 0;
 
-    RenderObject* prevSection = section == m_foot ? lastChild() : section->previousSibling();
+    RenderObject* prevSection = section == footer() ? lastChild() : section->previousSibling();
     while (prevSection) {
-        if (prevSection->isTableSection() && prevSection != m_head && prevSection != m_foot && (skipEmptySections == DoNotSkipEmptySections || toRenderTableSection(prevSection)->numRows()))
+        if (prevSection->isTableSection() && prevSection != header() && prevSection != footer() && (skipEmptySections == DoNotSkipEmptySections || toRenderTableSection(prevSection)->numRows()))
             break;
         prevSection = prevSection->previousSibling();
     }
-    if (!prevSection && m_head && (skipEmptySections == DoNotSkipEmptySections || m_head->numRows()))
-        prevSection = m_head;
+    if (!prevSection && header() && (skipEmptySections == DoNotSkipEmptySections || header()->numRows()))
+        prevSection = header();
     return toRenderTableSection(prevSection);
 }
 
@@ -1064,17 +1066,17 @@ RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section,
 {
     recalcSectionsIfNeeded();
 
-    if (section == m_foot)
+    if (section == footer())
         return 0;
 
-    RenderObject* nextSection = section == m_head ? firstChild() : section->nextSibling();
+    RenderObject* nextSection = section == header() ? firstChild() : section->nextSibling();
     while (nextSection) {
-        if (nextSection->isTableSection() && nextSection != m_head && nextSection != m_foot && (skipEmptySections  == DoNotSkipEmptySections || toRenderTableSection(nextSection)->numRows()))
+        if (nextSection->isTableSection() && nextSection != header() && nextSection != footer() && (skipEmptySections  == DoNotSkipEmptySections || toRenderTableSection(nextSection)->numRows()))
             break;
         nextSection = nextSection->nextSibling();
     }
-    if (!nextSection && m_foot && (skipEmptySections == DoNotSkipEmptySections || m_foot->numRows()))
-        nextSection = m_foot;
+    if (!nextSection && footer() && (skipEmptySections == DoNotSkipEmptySections || footer()->numRows()))
+        nextSection = footer();
     return toRenderTableSection(nextSection);
 }
 
