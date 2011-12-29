@@ -1,5 +1,21 @@
 2011-12-28  Andreas Kling  <awesomekling@apple.com>
 
+        Reduce memory used by NamedNodeMap.
+        <http://webkit.org/b/75333>
+
+        Reviewed by Sam Weinig.
+
+        Give NamedNodeMap's attribute vector an inline capacity of 4. The vast majority
+        of elements have <= 4 attributes, and if they don't have any we normally don't
+        allocate an attribute map at all.
+
+        This reduces memory consumption by 1.2MB (on 64-bit) when loading the full HTML5
+        spec at <http://whatwg.org/c>.
+
+        * dom/NamedNodeMap.h:
+
+2011-12-28  Andreas Kling  <awesomekling@apple.com>
+
         Reduce memory used by SpaceSplitString.
         <http://webkit.org/b/75315>
 

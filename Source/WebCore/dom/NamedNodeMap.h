@@ -122,7 +122,7 @@ private:
     int m_mappedAttributeCount;
     SpaceSplitString m_classNames;
     Element* m_element;
-    Vector<RefPtr<Attribute> > m_attributes;
+    Vector<RefPtr<Attribute>, 4> m_attributes;
     AtomicString m_idForStyleResolution;
 };
 
