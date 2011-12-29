@@ -1,3 +1,15 @@
+2011-12-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Use HashMap<OwnPtr> in OriginAccessMap
+        https://bugs.webkit.org/show_bug.cgi?id=75327
+
+        Reviewed by Andreas Kling.
+
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::addOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry):
+        (WebCore::SecurityPolicy::resetOriginAccessWhitelists):
+
 2011-12-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: support sourceMappingURL magic comment.
