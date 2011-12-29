@@ -359,8 +359,7 @@ WebInspector.TextPrompt.prototype = {
                 shouldExit = true;
         }
         if (shouldExit) {
-            if (this.isSuggestBoxVisible())
-                this._suggestBox.hide();
+            this.hideSuggestBox();
             return;
         }
 
@@ -391,8 +390,7 @@ WebInspector.TextPrompt.prototype = {
     _completionsReady: function(selection, auto, originalWordPrefixRange, reverse, completions)
     {
         if (!completions || !completions.length) {
-            if (this.isSuggestBoxVisible())
-                this._suggestBox.hide();
+            this.hideSuggestBox();
             return;
         }
 
@@ -535,11 +533,16 @@ WebInspector.TextPrompt.prototype = {
         selection.removeAllRanges();
         selection.addRange(finalSelectionRange);
 
-        if (this._suggestBox)
-            this._suggestBox.hide();
+        this.hideSuggestBox();
         this.dispatchEventToListeners(WebInspector.TextPrompt.Events.ItemAccepted);
 
         return true;
+    },
+
+    hideSuggestBox: function()
+    {
+        if (this.isSuggestBoxVisible())
+            this._suggestBox.hide();
     },
 
     isSuggestBoxVisible: function()
@@ -1107,7 +1110,7 @@ WebInspector.TextPrompt.SuggestBox.prototype = {
         this._updateItems(completions);
         this._updateBoxPosition(anchorBox);
         if (this.contentElement.children.length && this.contentElement.children.length > 1) {
-            // Will not be shown if a sole suggestion is equal to the user input.
+            // Will not be shown for a sole suggestion or no suggestions.
             this._element.addStyleClass("visible");
         } else
             this.hide();
