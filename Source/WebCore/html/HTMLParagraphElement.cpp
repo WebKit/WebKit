@@ -56,7 +56,6 @@ bool HTMLParagraphElement::mapToEntry(const QualifiedName& attrName, MappedAttri
 void HTMLParagraphElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == alignAttr) {
-        String v = attr->value();
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
             addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalIgnoringCase(attr->value(), "left"))
@@ -64,7 +63,7 @@ void HTMLParagraphElement::parseMappedAttribute(Attribute* attr)
         else if (equalIgnoringCase(attr->value(), "right"))
             addCSSProperty(attr, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addCSSProperty(attr, CSSPropertyTextAlign, v);
+            addCSSProperty(attr, CSSPropertyTextAlign, attr->value());
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

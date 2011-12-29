@@ -1,5 +1,15 @@
 2011-12-29  Andreas Kling  <awesomekling@apple.com>
 
+        HTMLParagraphElement: Remove unnecessary variable in parseMappedAttribute().
+        <http://webkit.org/b/75362>
+
+        Reviewed by Daniel Bates.
+
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::parseMappedAttribute):
+
+2011-12-29  Andreas Kling  <awesomekling@apple.com>
+
         Use HashMap<OwnPtr> for Document's named item collection caches.
         <http://webkit.org/b/75335>
 
