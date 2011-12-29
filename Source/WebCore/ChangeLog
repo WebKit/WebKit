@@ -1,3 +1,23 @@
+2011-12-29  Andreas Kling  <awesomekling@apple.com>
+
+        Use HashMap<OwnPtr> for Document's named item collection caches.
+        <http://webkit.org/b/75335>
+
+        Reviewed by Daniel Bates.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+
+            Remove now-unneeded deleteAllValues() loop.
+
+        (WebCore::Document::nameCollectionInfo):
+
+            Use add() instead of find()/add() to avoid one extra hash lookup.
+
+        * dom/Document.h:
+
+            Switch the value type of m_nameCollectionInfo to use OwnPtr.
+
 2011-12-29  David Barton  <dbarton@mathscribe.com>
 
         mfenced skips the first separator if the separators attribute contains multiple separators

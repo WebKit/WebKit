@@ -1372,7 +1372,7 @@ private:
     RefPtr<HTMLCollection> m_collections[NumUnnamedDocumentCachedTypes];
     RefPtr<HTMLAllCollection> m_allCollection;
 
-    typedef HashMap<AtomicStringImpl*, CollectionCache*> NamedCollectionMap;
+    typedef HashMap<AtomicStringImpl*, OwnPtr<CollectionCache> > NamedCollectionMap;
     FixedArray<CollectionCache, NumUnnamedDocumentCachedTypes> m_collectionInfo;
     FixedArray<NamedCollectionMap, NumNamedDocumentCachedTypes> m_nameCollectionInfo;
 

@@ -542,9 +542,6 @@ Document::~Document()
 
     m_decoder = 0;
 
-    for (size_t i = 0; i < m_nameCollectionInfo.size(); ++i)
-        deleteAllValues(m_nameCollectionInfo[i]);
-
     if (m_styleSheets)
         m_styleSheets->documentDestroyed();
 
@@ -4271,12 +4268,11 @@ CollectionCache* Document::nameCollectionInfo(CollectionType type, const AtomicS
     unsigned index = type - FirstNamedDocumentCachedType;
     ASSERT(index < NumNamedDocumentCachedTypes);
 
-    NamedCollectionMap& map = m_nameCollectionInfo[index];
-    NamedCollectionMap::iterator iter = map.find(name.impl());
-    if (iter == map.end())
-        iter = map.add(name.impl(), new CollectionCache).first;
-    iter->second->checkConsistency();
-    return iter->second;
+    OwnPtr<CollectionCache>& cache = m_nameCollectionInfo[index].add(name.impl(), nullptr).first->second;
+    if (!cache)
+        cache = adoptPtr(new CollectionCache);
+    cache->checkConsistency();
+    return cache.get();
 }
 
 void Document::finishedParsing()
