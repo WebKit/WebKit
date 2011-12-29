@@ -1,3 +1,17 @@
+2011-12-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        getComputedStyle for padding is not implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=75352
+
+        Reviewed by Andreas Kling.
+
+        Implement getComputedStyle for padding shorthand property.
+
+        Test: fast/css/getComputedStyle/getComputedStyle-padding-shorthand.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+
 2011-12-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Use HashMap<OwnPtr> in OriginAccessMap

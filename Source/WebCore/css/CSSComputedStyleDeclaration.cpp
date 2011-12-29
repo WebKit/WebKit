@@ -2180,9 +2180,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
         case CSSPropertyOutline:
-        case CSSPropertyPadding:
             break;
-
+        case CSSPropertyPadding: {
+            const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
+                                        CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
+            return getCSSPropertyValuesForShorthandProperties(properties, WTF_ARRAY_LENGTH(properties));
+        }
         /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:
