@@ -1,3 +1,26 @@
+2011-12-28  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] Fix compilation issue when selecting opengl for Accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=75309
+
+        Reviewed by Martin Robinson.
+
+        Add TextureMapperGL and TextureMapperGLCairo files.
+        They define new classes required to implement TextureMapperGL for GTK port.
+
+        No new tests required.
+
+        * GNUmakefile.list.am:
+        * platform/graphics/cairo/TextureMapperGLCairo.cpp: Added.
+        (WebCore::BGRA32PremultimpliedBufferCairo::BGRA32PremultimpliedBufferCairo):
+        (WebCore::BGRA32PremultimpliedBufferCairo::~BGRA32PremultimpliedBufferCairo):
+        (WebCore::BGRA32PremultimpliedBufferCairo::beginPaint):
+        (WebCore::BGRA32PremultimpliedBufferCairo::data):
+        (WebCore::BGRA32PremultimpliedBufferCairo::endPaint):
+        (WebCore::uidForImage):
+        (WebCore::BGRA32PremultimpliedBuffer::create):
+        * platform/graphics/cairo/TextureMapperGLCairo.h: Added.
+
 2011-12-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103782.
