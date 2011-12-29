@@ -30,10 +30,16 @@
 WebInspector.SidebarSectionTreeElement = function(title, representedObject, hasChildren)
 {
     TreeElement.call(this, title.escapeHTML(), representedObject || {}, hasChildren);
+    this.expand();
 }
 
 WebInspector.SidebarSectionTreeElement.prototype = {
     selectable: false,
+
+    collapse: function()
+    {
+        // Should not collapse as it is not selectable.
+    },
 
     get smallChildren()
     {

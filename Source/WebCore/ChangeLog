@@ -1,3 +1,23 @@
+2011-12-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Tree views can be collapsed/hidden using the keyboard arrows
+        https://bugs.webkit.org/show_bug.cgi?id=46272
+
+        Reviewed by Yury Semikhatsky.
+
+        WebInspector.SidebarSectionTreeElement which is not selectable has also been made non-collapsible
+        and expanded by default.
+
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._registerProfileType):
+        * inspector/front-end/SidebarTreeElement.js:
+        (WebInspector.SidebarSectionTreeElement):
+        (WebInspector.SidebarSectionTreeElement.prototype.selectable.false.collapse):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+
 2011-12-29  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [chromium] pass dock to side request to the embedder.

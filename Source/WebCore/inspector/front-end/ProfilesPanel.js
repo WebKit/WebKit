@@ -273,7 +273,7 @@ WebInspector.ProfilesPanel.prototype = {
     {
         this._profileTypesByIdMap[profileType.id] = profileType;
         this._launcherView.addProfileType(profileType);
-        profileType.treeElement = new WebInspector.ProfileTypeTreeElement(profileType.treeItemTitle);
+        profileType.treeElement = new WebInspector.SidebarSectionTreeElement(profileType.treeItemTitle, null, true);
         profileType.treeElement.hidden = true;
         this.sidebarTree.appendChild(profileType.treeElement);
     },
@@ -904,21 +904,6 @@ WebInspector.ProfilerDispatcher.prototype = {
         this._profiler._reportHeapSnapshotProgress(done, total);
     }
 }
-
-WebInspector.ProfileTypeTreeElement = function(title)
-{
-    WebInspector.SidebarSectionTreeElement.call(this, title, null, true);
-    this.expand();
-}
-
-WebInspector.ProfileTypeTreeElement.prototype = {
-    collapse: function()
-    {
-        // Should not collapse.
-    }
-}
-
-WebInspector.ProfileTypeTreeElement.prototype.__proto__ = WebInspector.SidebarSectionTreeElement.prototype;
 
 WebInspector.ProfileSidebarTreeElement = function(profile, titleFormat, className)
 {

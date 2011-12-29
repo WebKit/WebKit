@@ -42,7 +42,6 @@ WebInspector.AuditsPanel = function()
     this.auditsTreeElement = new WebInspector.SidebarSectionTreeElement("", {}, true);
     this.sidebarTree.appendChild(this.auditsTreeElement);
     this.auditsTreeElement.listItemElement.addStyleClass("hidden");
-    this.auditsTreeElement.expand();
 
     this.auditsItemTreeElement = new WebInspector.AuditsSidebarTreeElement();
     this.auditsTreeElement.appendChild(this.auditsItemTreeElement);

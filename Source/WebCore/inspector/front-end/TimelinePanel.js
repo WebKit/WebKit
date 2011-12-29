@@ -51,7 +51,6 @@ WebInspector.TimelinePanel = function()
     this._containerElement.addEventListener("scroll", this._onScroll.bind(this), false);
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);
-    itemsTreeElement.expanded = true;
     this.sidebarTree.appendChild(itemsTreeElement);
 
     this._sidebarListElement = document.createElement("div");
