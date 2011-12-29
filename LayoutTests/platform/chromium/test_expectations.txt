@@ -756,7 +756,6 @@ BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = PASS CRASH
 // This test seems to hang on Vista, in addition to the other problems.
 BUGCR61799 BUGWK64319 SKIP : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TIMEOUT TEXT
 BUGCR37962 MAC : plugins/iframe-shims.html = PASS TIMEOUT TEXT
-BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
 BUGCR50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
@@ -1206,9 +1205,6 @@ BUGCR10349 LINUX : fast/forms/select-style.html = FAIL
 // Linux pixeltest failure: The text suggests that the radios should not
 // overlap, but it's very close and quite different from the Windows version
 BUGCR10350 LINUX : fast/replaced/width100percent-radio.html = FAIL
-
-// Skip because we throw an exception before we get to dumpAsText.
-BUGCR10351 SKIP MAC : http/tests/plugins/geturlnotify-from-npp-destroystream.html = FAIL
 
 // NEW FOR MERGE 36102:37604
 
