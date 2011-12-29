@@ -1,3 +1,24 @@
+2011-12-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r93614): Safari Reader doesn't repaint correctly when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=67100
+
+        Reviewed by Dan Bernstein.
+
+        Tests: fast/layers/scroll-with-transform-composited-layer-expected.html
+               fast/layers/scroll-with-transform-composited-layer.html
+               fast/layers/scroll-with-transform-layer-expected.html
+               fast/layers/scroll-with-transform-layer.html
+
+        The regression came from a previous optimization that was wrongly kept after r93614.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        Remove the early return for transformed layer. This change worked as we used
+        to call updateLayerPositions from scrollTo which would call updateLayerPosition on
+        all our descendants. After r93614, this is no longer the case and we explicitely need
+        to call updateLayerPosition on our descendants from updateLayerPositionsAfterScroll.
+
 2011-12-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Tree views can be collapsed/hidden using the keyboard arrows
