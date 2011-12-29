@@ -478,7 +478,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var sourceFrame = this._sourceFramesByUISourceCode.get(uiSourceCode) || this._createSourceFrame(uiSourceCode);
 
-        this._editorContainer.showSourceFrame(uiSourceCode.displayName, sourceFrame);
+        this._editorContainer.showSourceFrame(uiSourceCode.displayName, sourceFrame, uiSourceCode.url);
         this._updateScriptViewStatusBarItems();
 
         if (uiSourceCode.url)
@@ -579,7 +579,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (shouldReplace) {
                 var newUISourceCode = uiSourceCodeList[0];
                 var sourceFrame = this._sourceFramesByUISourceCode.get(newUISourceCode) || this._createSourceFrame(newUISourceCode);
-                this._editorContainer.replaceSourceFrames(sourceFrames, newUISourceCode.displayName, sourceFrame);
+                this._editorContainer.replaceSourceFrames(sourceFrames, newUISourceCode.displayName, sourceFrame, newUISourceCode.url);
             }
         }
     },
@@ -1088,8 +1088,9 @@ WebInspector.ScriptsPanel.EditorContainer.prototype = {
     /**
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    showSourceFrame: function(title, sourceFrame) { },
+    showSourceFrame: function(title, sourceFrame, tooltip) { },
 
     /**
      * @param {WebInspector.SourceFrame} sourceFrame
@@ -1101,8 +1102,9 @@ WebInspector.ScriptsPanel.EditorContainer.prototype = {
      * @param {Array.<WebInspector.SourceFrame>} oldSourceFrames
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame) { },
+    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame, tooltip) { },
 
     /**
      * @param {WebInspector.SourceFrame} sourceFrame
@@ -1492,8 +1494,9 @@ WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
     /**
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    showSourceFrame: function(title, sourceFrame)
+    showSourceFrame: function(title, sourceFrame, tooltip)
     {
         if (this._currentSourceFrame === sourceFrame)
             return;
@@ -1520,8 +1523,9 @@ WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype = {
      * @param {Array.<WebInspector.SourceFrame>} oldSourceFrames
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame)
+    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame, tooltip)
     {
         this._currentSourceFrame.detach();
         this._currentSourceFrame = null;

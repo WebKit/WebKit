@@ -97,9 +97,7 @@ WebInspector.ScriptsNavigator.prototype = {
         if (this._scriptTreeElementsByUISourceCode.get(uiSourceCode))
             return;
         
-        // FIXME: We should have a separate section for anonymous scripts.
-        
-        var scriptTitle = uiSourceCode.displayName;
+        var scriptTitle = uiSourceCode.fileName || WebInspector.UIString("(program)");
         var scriptTreeElement = new WebInspector.NavigatorScriptTreeElement(this, uiSourceCode, scriptTitle);
         this._scriptTreeElementsByUISourceCode.put(uiSourceCode, scriptTreeElement);
         
@@ -135,11 +133,7 @@ WebInspector.ScriptsNavigator.prototype = {
      */
     setScriptSourceIsDirty: function(uiSourceCode, isDirty)
     {
-        var scriptTreeElement = this._scriptTreeElementsByUISourceCode.get(uiSourceCode);
-        var title = uiSourceCode.displayName;
-        if (isDirty)
-            title += "*";
-        scriptTreeElement.titleText = title;
+        // Do nothing.
     },
 
     /**

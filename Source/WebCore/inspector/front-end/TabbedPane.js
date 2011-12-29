@@ -90,10 +90,11 @@ WebInspector.TabbedPane.prototype = {
      * @param {string} id
      * @param {string} tabTitle
      * @param {WebInspector.View} view
+     * @param {string=} tabTooltip
      */
-    appendTab: function(id, tabTitle, view)
+    appendTab: function(id, tabTitle, view, tabTooltip)
     {
-        var tab = new WebInspector.TabbedPaneTab(this, this._tabsElement, id, tabTitle, this._closeableTabs, view);
+        var tab = new WebInspector.TabbedPaneTab(this, this._tabsElement, id, tabTitle, this._closeableTabs, view, tabTooltip);
 
         this._tabs.push(tab);
         this._tabsById[id] = tab;
@@ -184,6 +185,16 @@ WebInspector.TabbedPane.prototype = {
             this._showTab(tab);
         } else
             tab.view = view;
+    },
+
+    /**
+     * @param {string} id
+     * @param {string=} tabTooltip
+     */
+    changeTabTooltip: function(id, tabTooltip)
+    {
+        var tab = this._tabsById[id];
+        tab.tooltip = tabTooltip;
     },
 
     onResize: function()
@@ -420,14 +431,16 @@ WebInspector.TabbedPane.prototype.__proto__ = WebInspector.View.prototype;
  * @param {string} title
  * @param {boolean} closeable
  * @param {WebInspector.View} view
+ * @param {string=} tooltip
  */
-WebInspector.TabbedPaneTab = function(tabbedPane, measureElement, id, title, closeable, view)
+WebInspector.TabbedPaneTab = function(tabbedPane, measureElement, id, title, closeable, view, tooltip)
 {
     this._closeable = closeable;
     this._tabbedPane = tabbedPane;
     this._measureElement = measureElement;
     this._id = id;
     this._title = title;
+    this._tooltip = tooltip;
     this._view = view;
     this.shown = false;
 }
@@ -468,6 +481,21 @@ WebInspector.TabbedPaneTab.prototype = {
     set view(view)
     {
         this._view = view;
+    },
+
+    /**
+     * @type {string=}
+     */
+    get tooltip()
+    {
+        return this._tooltip;
+    },
+
+    set tooltip(tooltip)
+    {
+        this._tooltip = tooltip;
+        if (this._titleElement)
+            this._titleElement.title = tooltip || "";
     },
 
     /**
@@ -518,6 +546,7 @@ WebInspector.TabbedPaneTab.prototype = {
         
         var titleElement = tabElement.createChild("span", "tabbed-pane-header-tab-title");
         titleElement.textContent = this.title;
+        titleElement.title = this.tooltip || "";
         if (!measuring)
             this._titleElement = titleElement;
 

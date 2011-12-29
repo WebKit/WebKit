@@ -510,6 +510,13 @@ String.prototype.trimMiddle = function(maxLength)
     return this.substr(0, leftHalf) + "\u2026" + this.substr(this.length - rightHalf, rightHalf);
 }
 
+String.prototype.trimEnd = function(maxLength)
+{
+    if (this.length <= maxLength)
+        return this;
+    return this.substr(0, maxLength - 1) + "\u2026";
+}
+
 String.prototype.trimURL = function(baseURLDomain)
 {
     var result = this.replace(/^(https|http|file):\/\//i, "");

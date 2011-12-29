@@ -39,6 +39,7 @@ WebInspector.TabbedEditorContainer = function()
     this._tabbedPane.addEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
 
     this._titles = new Map();
+    this._tooltips = new Map();
     this._tabIds = new Map();  
 }
 
@@ -64,24 +65,27 @@ WebInspector.TabbedEditorContainer.prototype = {
     /**
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    showSourceFrame: function(title, sourceFrame)
+    showSourceFrame: function(title, sourceFrame, tooltip)
     {
-        var tabId = this._tabIds.get(sourceFrame) || this._appendSourceFrameTab(title, sourceFrame);
+        var tabId = this._tabIds.get(sourceFrame) || this._appendSourceFrameTab(title, sourceFrame, tooltip);
         this._tabbedPane.selectTab(tabId);
     },
 
     /**
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    _appendSourceFrameTab: function(title, sourceFrame)
+    _appendSourceFrameTab: function(title, sourceFrame, tooltip)
     {
         var tabId = this._generateTabId();
         this._tabIds.put(sourceFrame, tabId)
         this._titles.put(sourceFrame, title)
+        this._tooltips.put(sourceFrame, tooltip)
         
-        this._tabbedPane.appendTab(tabId, title, sourceFrame);
+        this._tabbedPane.appendTab(tabId, title, sourceFrame, tooltip);
         return tabId;
     },
 
@@ -104,25 +108,31 @@ WebInspector.TabbedEditorContainer.prototype = {
         var sourceFrame = /** @type {WebInspector.UISourceCode} */ event.data.view;
         this._tabIds.remove(sourceFrame);
         this._titles.remove(sourceFrame);
+        this._tooltips.remove(sourceFrame);
     },
 
     /**
+     * @param {WebInspector.SourceFrame} oldSourceFrame
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    _replaceSourceFrameTab: function(oldSourceFrame, title, sourceFrame)
+    _replaceSourceFrameTab: function(oldSourceFrame, title, sourceFrame, tooltip)
     {
         var tabId = this._tabIds.get(oldSourceFrame);
         
         if (tabId) {
             this._tabIds.remove(oldSourceFrame);
             this._titles.remove(oldSourceFrame);
+            this._tooltips.remove(oldSourceFrame);
 
             this._tabIds.put(sourceFrame, tabId);
             this._titles.put(sourceFrame, title);
+            this._tooltips.put(sourceFrame, tooltip);
 
             this._tabbedPane.changeTabTitle(tabId, title);
             this._tabbedPane.changeTabView(tabId, sourceFrame);
+            this._tabbedPane.changeTabTooltip(tabId, tooltip);
         }
     },
 
@@ -139,8 +149,9 @@ WebInspector.TabbedEditorContainer.prototype = {
      * @param {Array.<WebInspector.SourceFrame>} oldSourceFrames
      * @param {string} title
      * @param {WebInspector.SourceFrame} sourceFrame
+     * @param {string} tooltip
      */
-    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame)
+    replaceSourceFrames: function(oldSourceFrames, title, sourceFrame, tooltip)
     {
         var mainSourceFrame;
         for (var i = 0; i < oldSourceFrames.length; ++i) {
@@ -152,7 +163,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         }
         
         if (mainSourceFrame)
-            this._replaceSourceFrameTab(mainSourceFrame, title, sourceFrame);
+            this._replaceSourceFrameTab(mainSourceFrame, title, sourceFrame, tooltip);
         
         for (var i = 0; i < oldSourceFrames.length; ++i)
             this._removeSourceFrameTab(oldSourceFrames[i]);
@@ -177,6 +188,7 @@ WebInspector.TabbedEditorContainer.prototype = {
     {
         this._tabbedPane.closeAllTabs();
         this._titles = new Map();
+        this._tooltips = new Map();
         this._tabIds = new Map();  
     },
 

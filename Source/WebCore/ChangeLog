@@ -1,3 +1,39 @@
+2011-12-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts navigator should trim long file names and show full url in tooltip.
+        https://bugs.webkit.org/show_bug.cgi?id=75343
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/ui-source-code-display-name.html
+
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator.prototype.setScriptSourceIsDirty):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.showSourceFrame):
+        (WebInspector.ScriptsPanel.EditorContainer.prototype.replaceSourceFrames):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.showSourceFrame):
+        (WebInspector.ScriptsPanel.SingleFileEditorContainer.prototype.replaceSourceFrames):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer):
+        (WebInspector.TabbedEditorContainer.prototype._appendSourceFrameTab):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.prototype._replaceSourceFrameTab.get if):
+        (WebInspector.TabbedEditorContainer.prototype._replaceSourceFrameTab):
+        (WebInspector.TabbedEditorContainer.prototype.get replaceSourceFrames):
+        (WebInspector.TabbedEditorContainer.prototype.reset):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.appendTab):
+        (WebInspector.TabbedPane.prototype.changeTabTooltip):
+        (WebInspector.TabbedPaneTab):
+        (WebInspector.TabbedPaneTab.prototype.get tooltip):
+        (WebInspector.TabbedPaneTab.prototype.set tooltip):
+        (WebInspector.TabbedPaneTab.prototype._createTabElement):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._parseURL):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-12-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for margin is not implemented.

@@ -17,7 +17,7 @@ Source requested for script3.js
 
 Running: testFilesSelect
     ?a=b(?a=b)
-    ...oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url(very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url)
+    very_looooooooo...oooooooong_url(very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url)
 — example.com —
     ?a=b(http://example.com/?a=b)
 — localhost —

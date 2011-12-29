@@ -176,11 +176,21 @@ WebInspector.UISourceCode.prototype = {
             fileName = fileName.substring(fromIndex + 1);
         }
 
-        var displayName = fileName;
+        var indexOfQuery = fileName.indexOf("?");
+        if (indexOfQuery === -1)
+            indexOfQuery = fileName.length;
+        var lastPathComponent = fileName.substring(0, indexOfQuery);
+        var queryParams = fileName.substring(indexOfQuery, fileName.length);
+        
+        const maxDisplayNameLength = 30;
+        const minDisplayQueryParamLength = 5;
+        
+        var maxDisplayQueryParamLength = Math.max(minDisplayQueryParamLength, maxDisplayNameLength - lastPathComponent.length);
+        var displayQueryParams = queryParams.trimEnd(maxDisplayQueryParamLength);
+        var displayLastPathComponent = lastPathComponent.trimMiddle(maxDisplayNameLength - displayQueryParams.length);
+        var displayName = displayLastPathComponent + displayQueryParams;
         if (!displayName)
             displayName = WebInspector.UIString("(program)");
-        else if (displayName.length > 80)
-            displayName = "\u2026" + displayName.substring(displayName.length - 80);
 
         if (folderName.length > 80)
             folderName = "\u2026" + folderName.substring(folderName.length - 80);

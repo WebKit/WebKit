@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    function dumpUISourceCodeDisplayName(url)
+    {
+        var uiSourceCode = new WebInspector.UISourceCode("id", url, null, null);
+        InspectorTest.addResult("UISourceCode display name for url \"" + url + "\" is \"" + uiSourceCode.displayName + "\".");
+    }
+
+    const baseURL = "http://localhost:8080/folder/";
+    dumpUISourceCodeDisplayName(baseURL + "filename?parameter=value&nnn=1");
+    dumpUISourceCodeDisplayName(baseURL + "very-long-filename-123456?nn=1");
+    dumpUISourceCodeDisplayName(baseURL + "too-long-filename-1234567890?nn=1");
+    dumpUISourceCodeDisplayName(baseURL + "long-filename?parameter=value&nnn=1");
+    dumpUISourceCodeDisplayName(baseURL + "too-long-filename-1234567890?parameter=value&nnn=1");
+    InspectorTest.completeTest();
+};
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests UISourceCode display name.</p>
+</body>
+</html>
