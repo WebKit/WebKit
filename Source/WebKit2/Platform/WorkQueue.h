@@ -168,7 +168,6 @@ private:
     HANDLE m_timerQueue;
 #elif PLATFORM(QT)
     class WorkItemQt;
-    HashMap<QObject*, WorkItemQt*> m_signalListeners;
     QThread* m_workThread;
     friend class WorkItemQt;
 #elif PLATFORM(GTK)

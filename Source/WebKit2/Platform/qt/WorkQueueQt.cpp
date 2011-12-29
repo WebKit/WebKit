@@ -105,7 +105,6 @@ void WorkQueue::platformInvalidate()
     m_workThread->exit();
     m_workThread->wait();
     delete m_workThread;
-    deleteAllValues(m_signalListeners);
 }
 
 void WorkQueue::dispatch(const Function<void()>& function)

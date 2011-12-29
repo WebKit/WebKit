@@ -1,3 +1,16 @@
+2011-12-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Remove unused m_signalListeners from WorkQueue
+        https://bugs.webkit.org/show_bug.cgi?id=75354
+
+        Reviewed by Andreas Kling.
+
+        This is unused since r76507.
+
+        * Platform/WorkQueue.h:
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::platformInvalidate):
+
 2011-12-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Context menu is hidden right after showing it when first menu item is not disabled
