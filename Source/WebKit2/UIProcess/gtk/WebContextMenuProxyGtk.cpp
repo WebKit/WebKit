@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebContextMenuProxyGtk.h"
 
+#include "NativeWebMouseEvent.h"
 #include "WebContextMenuItemData.h"
 #include "WebPageProxy.h"
 #include <WebCore/ContextMenu.h>
@@ -81,7 +82,10 @@ void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, 
     m_popupPosition = convertWidgetPointToScreenPoint(m_webView, position);
 
     // Display menu initiated by right click (mouse button pressed = 3).
-    gtk_menu_popup(m_popup, 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 3, GDK_CURRENT_TIME);
+    NativeWebMouseEvent* mouseEvent = m_page->currentlyProcessedMouseDownEvent();
+    const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : 0;
+    gtk_menu_popup(m_popup, 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this,
+                   event ? event->button.button : 3, event ? event->button.time : GDK_CURRENT_TIME);
 }
 
 void WebContextMenuProxyGtk::hideContextMenu()

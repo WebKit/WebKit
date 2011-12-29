@@ -1,5 +1,29 @@
 2011-12-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Context menu is hidden right after showing it when first menu item is not disabled
+        https://bugs.webkit.org/show_bug.cgi?id=75357
+
+        Reviewed by Martin Robinson.
+
+        The problem is that we are passing GDK_CURRENT_TIME (which is 0)
+        to gtk_popup_menu, because the events are async and
+        gtk_get_current_event is NULL when calling gtk_menu_popup. GtkMenu
+        has a timeout to decide whether the press-release was fast enough
+        and ignore the button release event in that case. That way, a
+        normal right click shows the menu while a long press hides the
+        menu when the button is released. So, we need to know the real time
+        when the right button was pressed and pass it to gtk_popup_menu.
+
+        * UIProcess/WebPageProxy.h: Make
+        currentlyProcessedMouseDownEvent() public.
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::showContextMenu): Use
+        WebPageProxy::currentlyProcessedMouseDownEvent() to get the
+        current mouse event and pass its button number and time to
+        gtk_popup_menu.
+
+2011-12-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix several conding style issues in WebKit2 GTK+ code
         https://bugs.webkit.org/show_bug.cgi?id=75339
 
