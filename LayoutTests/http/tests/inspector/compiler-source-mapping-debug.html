@@ -13,15 +13,6 @@ function clickButton()
 
 function test()
 {
-    WebInspector.OriginalScript = WebInspector.Script;
-    WebInspector.Script = function()
-    {
-        WebInspector.OriginalScript.apply(this, arguments);
-        if (this.sourceURL.indexOf("compiled.js") !== -1)
-            this.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
-    }
-    WebInspector.Script.prototype = WebInspector.OriginalScript.prototype;
-
     InspectorTest.runDebuggerTestSuite([
         function testSetBreakpoint(next)
         {

@@ -44,6 +44,8 @@ RegularExpression createSearchRegex(const String& query, bool caseSensitive, boo
 int countRegularExpressionMatches(const RegularExpression&, const String&);
 PassRefPtr<InspectorArray> searchInTextByLines(const String& text, const String& query, const bool caseSensitive, const bool isRegex);
 
+String findSourceMapURL(const String& content);
+
 } // namespace ContentSearchUtils
 } // namespace WebCore
 

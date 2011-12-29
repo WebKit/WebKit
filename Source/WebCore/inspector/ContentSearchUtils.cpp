@@ -34,6 +34,9 @@
 #include "InspectorValues.h"
 #include "RegularExpression.h"
 
+#include <wtf/BumpPointerAllocator.h>
+#include <yarr/Yarr.h>
+
 using namespace std;
 
 namespace WebCore {
@@ -135,6 +138,26 @@ PassRefPtr<InspectorArray> searchInTextByLines(const String& text, const String&
         result->pushValue(buildObjectForSearchMatch(it->first, it->second));
 
     return result;
+}
+
+String findSourceMapURL(const String& content)
+{
+    DEFINE_STATIC_LOCAL(String, patternString, ("//@[\040\t]sourceMappingURL=[\040\t]*([^\\s\'\"]*)"));
+    const char* error;
+    JSC::Yarr::YarrPattern pattern(JSC::UString(patternString.impl()), false, false, &error);
+    ASSERT(!error);
+    BumpPointerAllocator regexAllocator;
+    OwnPtr<JSC::Yarr::BytecodePattern> bytecodePattern = JSC::Yarr::byteCompile(pattern, &regexAllocator);
+    ASSERT(bytecodePattern);
+
+    ASSERT(pattern.m_numSubpatterns == 1);
+    Vector<int, 4> matches;
+    matches.resize(4);
+    int result = JSC::Yarr::interpret(bytecodePattern.get(), JSC::UString(content.impl()), 0, content.length(), matches.data());
+    if (result < 0)
+        return String();
+    ASSERT(matches[2] > 0 && matches[3] > 0);
+    return content.substring(matches[2], matches[3]);
 }
 
 } // namespace ContentSearchUtils

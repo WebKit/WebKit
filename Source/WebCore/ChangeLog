@@ -1,3 +1,16 @@
+2011-12-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: support sourceMappingURL magic comment.
+        https://bugs.webkit.org/show_bug.cgi?id=75356
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/ContentSearchUtils.cpp:
+        (WebCore::ContentSearchUtils::findSourceMapURL):
+        * inspector/ContentSearchUtils.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::sourceMapURLForScript):
+
 2011-12-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Suggest pop-over doesn't hide on tab switch
