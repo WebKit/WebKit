@@ -1615,3 +1615,6 @@ media/W3C/video/readyState/readyState_during_canplaythrough.html
 media/W3C/video/readyState/readyState_during_loadeddata.html
 media/W3C/video/readyState/readyState_during_loadedmetadata.html
 media/W3C/video/readyState/readyState_during_playing.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=75079
+media/video-scales-in-media-document.html
