@@ -124,11 +124,11 @@ WebInspector.ElementsPanel.prototype = {
 
     wasShown: function()
     {
-        WebInspector.Panel.prototype.wasShown.call(this);
-
         // Attach heavy component lazily
         if (this.treeOutline.element.parentElement !== this.contentElement)
             this.contentElement.appendChild(this.treeOutline.element);
+
+        WebInspector.Panel.prototype.wasShown.call(this);
 
         this.updateBreadcrumb();
         this.treeOutline.updateSelection();
