@@ -7,7 +7,7 @@ InspectorTest.startProfilerTest = function(callback)
     function startTest()
     {
         InspectorTest.addResult("Profiler was enabled.");
-        InspectorTest.addSniffer(WebInspector.panels.profiles, "_addProfileHeader", InspectorTest._profileHeaderAdded, true);
+        InspectorTest.addSniffer(WebInspector.panels.profiles, "addProfileHeader", InspectorTest._profileHeaderAdded, true);
         InspectorTest.addSniffer(WebInspector.CPUProfileView.prototype, "refresh", InspectorTest._profileViewRefresh, true);
         InspectorTest.safeWrap(callback)();
     }

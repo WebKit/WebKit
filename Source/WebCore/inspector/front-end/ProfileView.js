@@ -582,11 +582,6 @@ WebInspector.CPUProfileType.prototype = {
         return this._recording ? WebInspector.UIString("Stop CPU profiling.") : WebInspector.UIString("Start CPU profiling.");
     },
 
-    get buttonStyle()
-    {
-        return this._recording ? "record-cpu-profile-status-bar-item status-bar-item toggled-on" : "record-cpu-profile-status-bar-item status-bar-item";
-    },
-
     buttonClicked: function()
     {
         if (this._recording) {

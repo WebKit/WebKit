@@ -126,11 +126,6 @@
     color: white;
 }
 
-/* FIXME: should have its own glyph. */
-.heap-snapshot-status-bar-item .glyph {
-    -webkit-mask-position: -96px 0;
-}
-
 .percent-time-status-bar-item .glyph {
     -webkit-mask-position: -192px -24px;
 }

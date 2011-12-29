@@ -6387,6 +6387,7 @@
             'inspector/front-end/CookiesTable.js',
             'inspector/front-end/CSSCompletions.js',
             'inspector/front-end/CSSKeywordCompletions.js',
+            'inspector/front-end/CSSSelectorProfileView.js',
             'inspector/front-end/CSSStyleModel.js',
             'inspector/front-end/Database.js',
             'inspector/front-end/DatabaseQueryView.js',

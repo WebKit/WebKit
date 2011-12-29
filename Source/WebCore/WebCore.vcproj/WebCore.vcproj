@@ -71533,6 +71533,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CSSSelectorProfileView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CSSStyleModel.js"
 					>
 				</File>

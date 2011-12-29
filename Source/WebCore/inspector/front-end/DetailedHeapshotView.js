@@ -1308,11 +1308,6 @@ WebInspector.DetailedHeapshotProfileType.prototype = {
         return WebInspector.UIString("Take heap snapshot.");
     },
 
-    get buttonStyle()
-    {
-        return "heap-snapshot-status-bar-item status-bar-item";
-    },
-
     buttonClicked: function()
     {
         WebInspector.panels.profiles.takeHeapSnapshot();

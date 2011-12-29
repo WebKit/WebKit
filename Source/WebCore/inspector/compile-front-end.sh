@@ -193,6 +193,7 @@ java -jar ~/closure/compiler.jar --summary_detail_level 3 --compilation_level SI
 # To be compiled...
 # 
 # [Profiler]
+# CSSSelectorProfileView
 # BottomUpProfileDataGridTree
 # DetailedHeapshotGridNodes
 # DetailedHeapshotView

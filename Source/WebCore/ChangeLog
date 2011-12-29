@@ -1,3 +1,62 @@
+2011-12-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Implement CSS selector profiler
+        https://bugs.webkit.org/show_bug.cgi?id=74004
+
+        Reviewed by Pavel Feldman.
+
+        This implementation of CSS selector profiler measures the total time required to match a certain selector
+        against DOM nodes and apply the style declaration properties to the particular element,
+        as well as the number of selector  matches (i.e. the number of nodes that matched the selector.)
+        The results are approximate due to internal matching algorithm optimizations (shared styles et al.)
+        Multiple selectors with the same selectorText are coalesced into a single record.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/CSSSelectorProfileView.js: Added.
+        (WebInspector.CSSSelectorDataGridNode):
+        (WebInspector.CSSSelectorDataGridNode.prototype.get rawData):
+        (WebInspector.CSSSelectorProfileView):
+        (WebInspector.CSSSelectorProfileView.prototype.get statusBarItems):
+        (WebInspector.CSSSelectorProfileView.prototype.get profile):
+        (WebInspector.CSSSelectorProfileView.prototype.set profile):
+        (WebInspector.CSSSelectorProfileView.prototype._createProfileNodes):
+        (WebInspector.CSSSelectorProfileView.prototype.rebuildGridItems):
+        (WebInspector.CSSSelectorProfileView.prototype.refreshData):
+        (WebInspector.CSSSelectorProfileView.prototype.refreshShowAsPercents):
+        (WebInspector.CSSSelectorProfileView.prototype._sortProfile.get selectorComparator):
+        (WebInspector.CSSSelectorProfileView.prototype._sortProfile.timeComparator):
+        (WebInspector.CSSSelectorProfileView.prototype._sortProfile.matchesComparator):
+        (WebInspector.CSSSelectorProfileView.prototype._sortProfile):
+        (WebInspector.CSSSelectorProfileType):
+        (WebInspector.CSSSelectorProfileType.prototype.get buttonTooltip):
+        (WebInspector.CSSSelectorProfileType.prototype.buttonClicked):
+        (WebInspector.CSSSelectorProfileType.prototype.get treeItemTitle):
+        (WebInspector.CSSSelectorProfileType.prototype.get description):
+        (WebInspector.CSSSelectorProfileType.prototype.reset):
+        (WebInspector.CSSSelectorProfileType.prototype.isRecordingProfile):
+        (WebInspector.CSSSelectorProfileType.prototype.setRecordingProfile):
+        (WebInspector.CSSSelectorProfileType.prototype.startRecordingProfile):
+        (WebInspector.CSSSelectorProfileType.prototype.stopRecordingProfile):
+        (WebInspector.CSSSelectorProfileType.prototype.createSidebarTreeElementForProfile):
+        (WebInspector.CSSSelectorProfileType.prototype.createView):
+        * inspector/front-end/DetailedHeapshotView.js:
+        * inspector/front-end/ProfileView.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfileType.prototype.reset):
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype.addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype._removeTemporaryProfile):
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile):
+        (WebInspector.ProfilesPanel.prototype.takeHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        (WebInspector.ProfilerDispatcher.prototype.addProfileHeader):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/profilesPanel.css:
+
 2011-12-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103798.

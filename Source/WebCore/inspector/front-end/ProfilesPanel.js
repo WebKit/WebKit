@@ -39,16 +39,6 @@ WebInspector.ProfileType.prototype = {
         return "";
     },
 
-    get buttonStyle()
-    {
-        return undefined;
-    },
-
-    get buttonCaption()
-    {
-        return this.name;
-    },
-
     get id()
     {
         return this._id;
@@ -73,6 +63,10 @@ WebInspector.ProfileType.prototype = {
         if (!profile._profileView)
             profile._profileView = this.createView(profile);
         return profile._profileView;
+    },
+
+    reset: function()
+    {
     },
 
     get description()
@@ -148,6 +142,7 @@ WebInspector.ProfilesPanel = function()
     this._launcherView.setUpEventListeners();
 
     this._registerProfileType(new WebInspector.CPUProfileType());
+    this._registerProfileType(new WebInspector.CSSSelectorProfileType());
     if (Capabilities.heapProfilerPresent)
         this._registerProfileType(new WebInspector.DetailedHeapshotProfileType());
 
@@ -231,9 +226,11 @@ WebInspector.ProfilesPanel.prototype = {
         this.searchCanceled();
 
         for (var id in this._profileTypesByIdMap) {
-            var treeElement = this._profileTypesByIdMap[id].treeElement;
+            var profileType = this._profileTypesByIdMap[id];
+            var treeElement = profileType.treeElement;
             treeElement.removeChildren();
             treeElement.hidden = true;
+            profileType.reset();
         }
 
         this._profiles = [];
@@ -283,10 +280,10 @@ WebInspector.ProfilesPanel.prototype = {
         return escape(text) + '/' + escape(profileTypeId);
     },
 
-    _addProfileHeader: function(profile)
+    addProfileHeader: function(profile)
     {
         if (this.hasTemporaryProfile(profile.typeId))
-            this._removeProfileHeader(this._temporaryRecordingProfile);
+            this._removeTemporaryProfile();
 
         var typeId = profile.typeId;
         var profileType = this.getProfileType(typeId);
@@ -356,6 +353,12 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         this.recordButton.title = this._selectedProfileType.buttonTooltip;
+    },
+
+    _removeTemporaryProfile: function()
+    {
+        this._removeProfileHeader(this._temporaryRecordingProfile);
+        delete this._temporaryRecordingProfile;
     },
 
     _removeProfileHeader: function(profile)
@@ -799,7 +802,7 @@ WebInspector.ProfilesPanel.prototype = {
             var profileHeadersLength = profileHeaders.length;
             for (var i = 0; i < profileHeadersLength; ++i)
                 if (!this.hasProfile(profileHeaders[i]))
-                   this._addProfileHeader(profileHeaders[i]);
+                   this.addProfileHeader(profileHeaders[i]);
         }
 
         ProfilerAgent.getProfileHeaders(populateCallback.bind(this));
@@ -827,13 +830,11 @@ WebInspector.ProfilesPanel.prototype = {
                 };
             }
             if (isProfiling) {
-                this._addProfileHeader(this._temporaryRecordingProfile);
+                this.addProfileHeader(this._temporaryRecordingProfile);
                 if (profileType === WebInspector.CPUProfileType.TypeId)
                     WebInspector.userMetrics.ProfilesCPUProfileTaken.record();
-            } else {
-                this._removeProfileHeader(this._temporaryRecordingProfile);
-                delete this._temporaryRecordingProfile;
-            }
+            } else
+                this._removeTemporaryProfile()
         }
     },
 
@@ -848,7 +849,7 @@ WebInspector.ProfilesPanel.prototype = {
                     isTemporary: true
                 };
             }
-            this._addProfileHeader(this._temporaryRecordingProfile);
+            this.addProfileHeader(this._temporaryRecordingProfile);
         }
         ProfilerAgent.takeHeapSnapshot();
         WebInspector.userMetrics.ProfilesHeapProfileTaken.record();
@@ -860,7 +861,7 @@ WebInspector.ProfilesPanel.prototype = {
             this._temporaryRecordingProfile.sidebarElement.subtitle = WebInspector.UIString("%.2f%%", (done / total) * 100);
             this._temporaryRecordingProfile.sidebarElement.wait = true;
             if (done >= total)
-                this._removeProfileHeader(this._temporaryRecordingProfile);
+                this._removeTemporaryProfile();
         }
     }
 }
@@ -881,7 +882,7 @@ WebInspector.ProfilerDispatcher.prototype = {
 
     addProfileHeader: function(profile)
     {
-        this._profiler._addProfileHeader(profile);
+        this._profiler.addProfileHeader(profile);
     },
 
     addHeapSnapshotChunk: function(uid, chunk)
