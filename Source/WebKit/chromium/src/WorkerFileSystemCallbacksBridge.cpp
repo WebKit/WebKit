@@ -156,7 +156,7 @@ void WorkerFileSystemCallbacksBridge::stop()
     }
 }
 
-void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(NewWebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, const String& mode)
+void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, const String& mode)
 {
     dispatchTaskToMainThread(
         createCallbackTask(&openFileSystemOnMainThread,
@@ -251,7 +251,7 @@ void WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread(WebFileSyste
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, NewWebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     if (!commonClient)
         bridge->didFailOnMainThread(WebFileErrorAbort, mode);
