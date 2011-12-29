@@ -31,12 +31,12 @@
     function animationStarted()
     {
       if (window.layoutTestController) {
-        var paused = layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 3, "target");
-        var result = "";
+        var paused = layoutTestController.pauseAnimationAtTimeOnElementWithId("anim", 1, "target");
+        var result;
         if (paused)
           result = "PASS: correctly paused animation";
         else
-          result = "PASS: correctly paused animation";
+          result = "FAIL: failed to pause animation";
 
         document.getElementById('results').innerText = result;
         layoutTestController.notifyDone();
