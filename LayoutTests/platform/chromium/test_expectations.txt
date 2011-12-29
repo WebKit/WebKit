@@ -3900,3 +3900,6 @@ BUGWK75237 SNOWLEOPARD CPU : compositing/reflections/reflection-on-composited.ht
 
 BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
 BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
+
+// Crashes due to an OOM error on V8.
+BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
