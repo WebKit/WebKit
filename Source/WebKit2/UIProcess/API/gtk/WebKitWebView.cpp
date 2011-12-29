@@ -37,6 +37,7 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKURL.h>
+#include <glib/gi18n-lib.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -100,7 +101,6 @@ static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, Gt
     return dialog;
 }
 
-
 static gboolean webkitWebViewScriptAlert(WebKitWebView* webView, const char* message)
 {
     GtkWidget* dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, GTK_RESPONSE_CLOSE, message);
@@ -129,7 +129,6 @@ static gboolean webkitWebViewScriptPrompt(WebKitWebView* webView, const char* me
     *text = (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) ? g_strdup(gtk_entry_get_text(GTK_ENTRY(entry))) : 0;
     return TRUE;
 }
-
 
 static void webkitWebViewSetLoaderClient(WebKitWebView* webView, WebKitWebLoaderClient* loaderClient, WKPageRef wkPage)
 {
@@ -245,25 +244,25 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     g_object_class_install_property(gObjectClass,
                                     PROP_WEB_CONTEXT,
                                     g_param_spec_object("web-context",
-                                                        "Web Context",
-                                                        "The web context for the view",
+                                                        _("Web Context"),
+                                                        _("The web context for the view"),
                                                         WEBKIT_TYPE_WEB_CONTEXT,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
      * WebKitWebView:title:
-     * 
-     * The main frame document title of this #WebKitWebView. If 
+     *
+     * The main frame document title of this #WebKitWebView. If
      * the title has not been received yet, it will be %NULL.
      */
     g_object_class_install_property(gObjectClass,
                                     PROP_TITLE,
                                     g_param_spec_string("title",
-                                                        "Title",
-                                                        "Main frame document title",
+                                                        _("Title"),
+                                                        _("Main frame document title"),
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
-    
+
     /**
      * WebKitWebView:estimated-load-progress:
      *
@@ -278,8 +277,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     g_object_class_install_property(gObjectClass,
                                     PROP_ESTIMATED_LOAD_PROGRESS,
                                     g_param_spec_double("estimated-load-progress",
-                                                        "Estimated Load Progress",
-                                                        "An estimate of the percent completion for a document load",
+                                                        _("Estimated Load Progress"),
+                                                        _("An estimate of the percent completion for a document load"),
                                                         0.0, 1.0, 0.0,
                                                         WEBKIT_PARAM_READABLE));
     /**
@@ -291,8 +290,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     g_object_class_install_property(gObjectClass,
                                     PROP_URI,
                                     g_param_spec_string("uri",
-                                                        "URI",
-                                                        "The current active URI of the view",
+                                                        _("URI"),
+                                                        _("The current active URI of the view"),
                                                         0,
                                                         WEBKIT_PARAM_READABLE));
 
@@ -435,7 +434,7 @@ void webkitWebViewSetTitle(WebKitWebView* webView, const CString& title)
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->title == title)
         return;
-    
+
     priv->title = title;
     g_object_notify(G_OBJECT(webView), "title");
 }
@@ -612,11 +611,11 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
  * @content: The HTML string to load
  * @base_uri: (allow-none): The base URI for relative locations or %NULL
  *
- * Load the given @content string with the specified @base_uri. 
+ * Load the given @content string with the specified @base_uri.
  * Relative URLs in the @content will be resolved against @base_uri.
- * When @base_uri is %NULL, it defaults to "about:blank". The mime type 
- * of the document will be "text/html". You can monitor the status of 
- * the load operation using the #WebKitWebLoaderClient of @web_view. 
+ * When @base_uri is %NULL, it defaults to "about:blank". The mime type
+ * of the document will be "text/html". You can monitor the status of
+ * the load operation using the #WebKitWebLoaderClient of @web_view.
  * See webkit_web_view_get_loader_client().
  */
 void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, const gchar* baseURI)
@@ -636,8 +635,8 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
  * @plain_text: The plain text to load
  *
  * Load the specified @plain_text string into @web_view. The mime type of
- * document will be "text/plain". You can monitor  the status of the load 
- * operation using the #WebKitWebLoaderClient of @web_view. 
+ * document will be "text/plain". You can monitor  the status of the load
+ * operation using the #WebKitWebLoaderClient of @web_view.
  * See webkit_web_view_get_loader_client().
  */
 void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainText)
@@ -703,9 +702,9 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 /**
  * webkit_web_view_get_title:
  * @web_view: a #WebKitWebView
- * 
+ *
  * Gets the value of the #WebKitWebView:title property.
- * You can connect to notify::title signal of @web_view to 
+ * You can connect to notify::title signal of @web_view to
  * be notified when the title has been received.
  *
  * Returns: The main frame document title of @web_view.

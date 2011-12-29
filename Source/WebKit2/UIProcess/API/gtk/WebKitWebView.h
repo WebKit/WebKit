@@ -107,13 +107,13 @@ webkit_web_view_load_uri                     (WebKitWebView             *web_vie
                                               const gchar               *uri);
 
 WEBKIT_API void
-webkit_web_view_load_html                    (WebKitWebView         *web_view,
-                                              const gchar           *content,
-                                              const gchar           *base_uri);
+webkit_web_view_load_html                    (WebKitWebView             *web_view,
+                                              const gchar               *content,
+                                              const gchar               *base_uri);
 
 WEBKIT_API void
-webkit_web_view_load_plain_text              (WebKitWebView         *web_view,
-                                              const gchar           *plain_text);
+webkit_web_view_load_plain_text              (WebKitWebView             *web_view,
+                                              const gchar               *plain_text);
 
 WEBKIT_API void
 webkit_web_view_load_alternate_html          (WebKitWebView             *web_view,
@@ -127,7 +127,7 @@ webkit_web_view_load_request                 (WebKitWebView             *web_vie
 WEBKIT_API void
 webkit_web_view_stop_loading                 (WebKitWebView             *web_view);
 
-WEBKIT_API const gchar * 
+WEBKIT_API const gchar *
 webkit_web_view_get_title                    (WebKitWebView             *web_view);
 
 WEBKIT_API void

@@ -1,30 +1,30 @@
 /*
  * Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
- * Redistributions of source code must retain the above copyright notice, 
+ * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * Redistributions in binary form must reproduce the above copyright notice, 
- * this list of conditions and the following disclaimer in the documentation and/or 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
  * other materials provided with the distribution.
  *
- * Neither the name of Motorola Mobility, Inc. nor the names of its contributors may 
- * be used to endorse or promote products derived from this software without 
+ * Neither the name of Motorola Mobility, Inc. nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
  * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -161,108 +161,108 @@ webkit_settings_set_enable_hyperlink_auditing                  (WebKitSettings *
                                                                 gboolean        enabled);
 
 WEBKIT_API const gchar *
-webkit_settings_get_default_font_family                        (WebKitSettings* settings);
+webkit_settings_get_default_font_family                        (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_default_font_family                        (WebKitSettings* settings,
-                                                                const gchar* default_font_family);
+webkit_settings_set_default_font_family                        (WebKitSettings *settings,
+                                                                const gchar    *default_font_family);
 
 WEBKIT_API const gchar *
-webkit_settings_get_monospace_font_family                      (WebKitSettings* settings);
+webkit_settings_get_monospace_font_family                      (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_monospace_font_family                      (WebKitSettings* settings,
-                                                                const gchar* monospace_font_family);
+webkit_settings_set_monospace_font_family                      (WebKitSettings *settings,
+                                                                const gchar    *monospace_font_family);
 
 WEBKIT_API const gchar *
-webkit_settings_get_serif_font_family                          (WebKitSettings* settings);
+webkit_settings_get_serif_font_family                          (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_serif_font_family                          (WebKitSettings* settings,
-                                                                const gchar* serif_font_family);
+webkit_settings_set_serif_font_family                          (WebKitSettings *settings,
+                                                                const gchar    *serif_font_family);
 
 WEBKIT_API const gchar *
-webkit_settings_get_sans_serif_font_family                     (WebKitSettings* settings);
+webkit_settings_get_sans_serif_font_family                     (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_sans_serif_font_family                     (WebKitSettings* settings,
-                                                                const gchar* sans_serif_font_family);
+webkit_settings_set_sans_serif_font_family                     (WebKitSettings *settings,
+                                                                const gchar    *sans_serif_font_family);
 
 WEBKIT_API const gchar *
-webkit_settings_get_cursive_font_family                        (WebKitSettings* settings);
+webkit_settings_get_cursive_font_family                        (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_cursive_font_family                        (WebKitSettings* settings,
-                                                                const gchar* cursive_font_family);
+webkit_settings_set_cursive_font_family                        (WebKitSettings *settings,
+                                                                const gchar    *cursive_font_family);
 
 WEBKIT_API const gchar *
-webkit_settings_get_fantasy_font_family                        (WebKitSettings* settings);
+webkit_settings_get_fantasy_font_family                        (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_fantasy_font_family                        (WebKitSettings* settings,
-                                                                const gchar* fantasy_font_family);
+webkit_settings_set_fantasy_font_family                        (WebKitSettings *settings,
+                                                                const gchar    *fantasy_font_family);
 
 WEBKIT_API const gchar *
-webkit_settings_get_pictograph_font_family                     (WebKitSettings* settings);
+webkit_settings_get_pictograph_font_family                     (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_pictograph_font_family                     (WebKitSettings* settings,
-                                                                const gchar* pictograph_font_family);
+webkit_settings_set_pictograph_font_family                     (WebKitSettings *settings,
+                                                                const gchar    *pictograph_font_family);
 
 WEBKIT_API guint32
-webkit_settings_get_default_font_size                          (WebKitSettings* settings);
+webkit_settings_get_default_font_size                          (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_default_font_size                          (WebKitSettings* settings,
-                                                                guint32 font_size);
+webkit_settings_set_default_font_size                          (WebKitSettings *settings,
+                                                                guint32         font_size);
 
 WEBKIT_API guint32
-webkit_settings_get_default_monospace_font_size                (WebKitSettings* settings);
+webkit_settings_get_default_monospace_font_size                (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_default_monospace_font_size                (WebKitSettings* settings,
-                                                                guint32 font_size);
+webkit_settings_set_default_monospace_font_size                (WebKitSettings *settings,
+                                                                guint32         font_size);
 
 WEBKIT_API guint32
-webkit_settings_get_minimum_font_size                          (WebKitSettings* settings);
+webkit_settings_get_minimum_font_size                          (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_minimum_font_size                          (WebKitSettings* settings,
-                                                                guint32 font_size);
+webkit_settings_set_minimum_font_size                          (WebKitSettings *settings,
+                                                                guint32         font_size);
 
 WEBKIT_API const gchar *
-webkit_settings_get_default_charset                            (WebKitSettings* settings);
+webkit_settings_get_default_charset                            (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_default_charset                            (WebKitSettings* settings,
-                                                                const gchar* default_charset);
+webkit_settings_set_default_charset                            (WebKitSettings *settings,
+                                                                const gchar    *default_charset);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_private_browsing                    (WebKitSettings* settings);
+webkit_settings_get_enable_private_browsing                    (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_private_browsing                    (WebKitSettings* settings,
+webkit_settings_set_enable_private_browsing                    (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_developer_extras                    (WebKitSettings* settings);
+webkit_settings_get_enable_developer_extras                    (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_developer_extras                    (WebKitSettings* settings,
+webkit_settings_set_enable_developer_extras                    (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_resizable_text_areas                (WebKitSettings* settings);
+webkit_settings_get_enable_resizable_text_areas                (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_resizable_text_areas                (WebKitSettings* settings,
+webkit_settings_set_enable_resizable_text_areas                (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_tabs_to_links                       (WebKitSettings* settings);                              
+webkit_settings_get_enable_tabs_to_links                       (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_tabs_to_links                       (WebKitSettings* settings,
+webkit_settings_set_enable_tabs_to_links                       (WebKitSettings *settings,
                                                                 gboolean        enabled);
 
 WEBKIT_API gboolean
@@ -273,19 +273,19 @@ webkit_settings_set_enable_dns_prefetching                     (WebKitSettings *
                                                                 gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_caret_browsing                      (WebKitSettings* settings);
+webkit_settings_get_enable_caret_browsing                      (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_caret_browsing                      (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_caret_browsing                      (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 WEBKIT_API gboolean
-webkit_settings_get_enable_fullscreen                          (WebKitSettings* settings);
+webkit_settings_get_enable_fullscreen                          (WebKitSettings *settings);
 
 WEBKIT_API void
-webkit_settings_set_enable_fullscreen                          (WebKitSettings* settings,
-                                                                gboolean enabled);
+webkit_settings_set_enable_fullscreen                          (WebKitSettings *settings,
+                                                                gboolean        enabled);
 
 G_END_DECLS
 
-#endif /* webkitwebsettings_h */
+#endif /* WebKitSettings_h */

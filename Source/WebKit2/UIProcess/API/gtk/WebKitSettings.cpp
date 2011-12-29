@@ -1,30 +1,30 @@
 /*
  * Copyright (c) 2011 Motorola Mobility, Inc.  All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
- * Redistributions of source code must retain the above copyright notice, 
+ * Redistributions of source code must retain the above copyright notice,
  * this list of conditions and the following disclaimer.
  *
- * Redistributions in binary form must reproduce the above copyright notice, 
- * this list of conditions and the following disclaimer in the documentation and/or 
+ * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
  * other materials provided with the distribution.
  *
- * Neither the name of Motorola Mobility, Inc. nor the names of its contributors may 
- * be used to endorse or promote products derived from this software without 
+ * Neither the name of Motorola Mobility, Inc. nor the names of its contributors may
+ * be used to endorse or promote products derived from this software without
  * specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY 
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -55,9 +55,9 @@ struct _WebKitSettingsPrivate {
  * SECTION:WebKitSettings
  * @short_description: Control the behaviour of a #WebKitWebView
  *
- * #WebKitSettings can be applied to a #WebKitWebView to control text charset, 
- * color, font sizes, printing mode, script support, loading of images and various other things. 
- * After creation, a #WebKitSettings object contains default settings. 
+ * #WebKitSettings can be applied to a #WebKitWebView to control text charset,
+ * color, font sizes, printing mode, script support, loading of images and various other things.
+ * After creation, a #WebKitSettings object contains default settings.
  *
  * <informalexample><programlisting>
  * /<!-- -->* Create a new #WebKitSettings and disable JavaScript. *<!-- -->/
@@ -505,10 +505,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:default-font-family
-    *
-    * The font family to use as the default for content that does not specify a font.
-    */
+     * WebKitWebSettings:default-font-family:
+     *
+     * The font family to use as the default for content that does not specify a font.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_DEFAULT_FONT_FAMILY,
                                     g_param_spec_string("default-font-family",
@@ -518,11 +518,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:monospace-font-family
-    *
-    * The font family used as the default for content using a monospace font.
-    *
-    */
+     * WebKitWebSettings:monospace-font-family:
+     *
+     * The font family used as the default for content using a monospace font.
+     *
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_MONOSPACE_FONT_FAMILY,
                                     g_param_spec_string("monospace-font-family",
@@ -532,10 +532,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:serif-font-family
-    *
-    * The font family used as the default for content using a serif font.
-    */
+     * WebKitWebSettings:serif-font-family:
+     *
+     * The font family used as the default for content using a serif font.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_SERIF_FONT_FAMILY,
                                     g_param_spec_string("serif-font-family",
@@ -545,10 +545,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:sans-serif-font-family
-    *
-    * The font family used as the default for content using a sans-serif font.
-    */
+     * WebKitWebSettings:sans-serif-font-family:
+     *
+     * The font family used as the default for content using a sans-serif font.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_SANS_SERIF_FONT_FAMILY,
                                     g_param_spec_string("sans-serif-font-family",
@@ -558,10 +558,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:cursive-font-family
-    *
-    * The font family used as the default for content using a cursive font.
-    */
+     * WebKitWebSettings:cursive-font-family:
+     *
+     * The font family used as the default for content using a cursive font.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_CURSIVE_FONT_FAMILY,
                                     g_param_spec_string("cursive-font-family",
@@ -571,10 +571,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:fantasy-font-family
-    *
-    * The font family used as the default for content using a fantasy font.
-    */
+     * WebKitWebSettings:fantasy-font-family:
+     *
+     * The font family used as the default for content using a fantasy font.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_FANTASY_FONT_FAMILY,
                                     g_param_spec_string("fantasy-font-family",
@@ -584,10 +584,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:pictograph-font-family
-    *
-    * The font family used as the default for content using a pictograph font.
-    */
+     * WebKitWebSettings:pictograph-font-family:
+     *
+     * The font family used as the default for content using a pictograph font.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_PICTOGRAPH_FONT_FAMILY,
                                     g_param_spec_string("pictograph-font-family",
@@ -597,11 +597,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                         readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:default-font-size
-    *
-    * The default font size in pixels to use for content displayed if
-    * no font size is specified.
-    */
+     * WebKitWebSettings:default-font-size:
+     *
+     * The default font size in pixels to use for content displayed if
+     * no font size is specified.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_DEFAULT_FONT_SIZE,
                                     g_param_spec_uint("default-font-size",
@@ -611,11 +611,11 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                       readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:default-monospace-font-size
-    *
-    * The default font size in pixels to use for content displayed in
-    * monospace font if no font size is specified.
-    */
+     * WebKitWebSettings:default-monospace-font-size:
+     *
+     * The default font size in pixels to use for content displayed in
+     * monospace font if no font size is specified.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_DEFAULT_MONOSPACE_FONT_SIZE,
                                     g_param_spec_uint("default-monospace-font-size",
@@ -625,12 +625,12 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                       readWriteConstructParamFlags));
 
     /**
-    * WebKitWebSettings:minimum-font-size
-    *
-    * The minimum font size in points used to display text. This setting 
-    * controls the absolute smallest size. Values other than 0 can 
-    * potentially break page layouts.
-    */
+     * WebKitWebSettings:minimum-font-size:
+     *
+     * The minimum font size in points used to display text. This setting
+     * controls the absolute smallest size. Values other than 0 can
+     * potentially break page layouts.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_MINIMUM_FONT_SIZE,
                                     g_param_spec_uint("minimum-font-size",
@@ -640,10 +640,10 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                       readWriteConstructParamFlags));
 
     /**
-    * WebKitSettings:default-charset
-    *
-    * The default text charset used when interpreting content with an unspecified charset.
-    */
+     * WebKitSettings:default-charset:
+     *
+     * The default text charset used when interpreting content with an unspecified charset.
+     */
     g_object_class_install_property(gObjectClass,
                                     PROP_DEFAULT_CHARSET,
                                     g_param_spec_string("default-charset",
@@ -695,8 +695,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
      * WebKitSettings:enable-tabs-to-links:
      *
-     * Determines whether the tab key cycles through the elements on the page. 
-     * When this setting is enabled, users will be able to focus the next element 
+     * Determines whether the tab key cycles through the elements on the page.
+     * When this setting is enabled, users will be able to focus the next element
      * in the page by pressing the tab key. If the selected element is editable,
      * then pressing tab key will insert the tab character.
      */
@@ -1695,26 +1695,6 @@ void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gbool
 }
 
 /**
- * webkit_settings_set_enable_fullscreen
- * @settings: a #WebKitSettings
- * @enabled: Value to be set
- *
- * Set the #WebKitSettings:enable-fullscreen property.
- */
-void webkit_settings_set_enable_fullscreen(WebKitSettings* settings, gboolean enabled)
-{
-    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
-
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = WKPreferencesGetFullScreenEnabled(priv->preferences.get());
-    if (currentValue == enabled)
-        return;
-
-    WKPreferencesSetFullScreenEnabled(priv->preferences.get(), enabled);
-    g_object_notify(G_OBJECT(settings), "enable-fullscreen");
-}
-
-/**
  * webkit_settings_get_enable_developer_extras:
  * @settings: a #WebKitSettings
  *
@@ -1902,4 +1882,24 @@ gboolean webkit_settings_get_enable_fullscreen(WebKitSettings* settings)
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
     return WKPreferencesGetFullScreenEnabled(settings->priv->preferences.get());
+}
+
+/**
+ * webkit_settings_set_enable_fullscreen
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-fullscreen property.
+ */
+void webkit_settings_set_enable_fullscreen(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = WKPreferencesGetFullScreenEnabled(priv->preferences.get());
+    if (currentValue == enabled)
+        return;
+
+    WKPreferencesSetFullScreenEnabled(priv->preferences.get(), enabled);
+    g_object_notify(G_OBJECT(settings), "enable-fullscreen");
 }

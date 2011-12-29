@@ -1,3 +1,40 @@
+2011-12-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix several conding style issues in WebKit2 GTK+ code
+        https://bugs.webkit.org/show_bug.cgi?id=75339
+
+        Reviewed by Martin Robinson.
+
+        In addition to the WebKit coding style, code in UIProcess/API/gtk
+        should follow style and conventions described here
+        http://trac.webkit.org/wiki/WebKitGTK/AddingNewWebKit2API
+
+        * UIProcess/API/gtk/WebKitSettings.cpp: Remove trailing whitespaces.
+        (webkit_settings_class_init): Remove trailing whitespaces, fix
+        indentation issues in API doc comments, add missing trailing to
+        some properties.
+        (webkit_settings_set_enable_fullscreen): Move the code after
+        get_enable_fullscreen() for consistency.
+        * UIProcess/API/gtk/WebKitSettings.h: Remove trailing
+        whitespaces. Fix * placement and line up parameters.
+        * UIProcess/API/gtk/WebKitWebView.cpp: Remove several empty lines.
+        (webkit_web_view_class_init): Mark property nicks and blurbs for translation.
+        (webkitWebViewSetTitle): Remove trailing whitespaces.
+        * UIProcess/API/gtk/WebKitWebView.h: Line up parameters.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Use the angle-bracket
+        form for including file from WebCore and wtf. Use GRefPtr for
+        GtkIMContext and bool instead of gboolean. Use the placement new
+        syntax for private struct instead of new/delete.
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseFinalize):
+        (webkit_web_view_base_init):
+        (webkitWebViewBaseFocusInEvent):
+        (webkitWebViewBaseFocusOutEvent):
+        (webkitWebViewBaseKeyPressEvent): Remove trailing whitespaces.
+        (webkitWebViewBaseKeyReleaseEvent):
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseGetIMContext):
+
 2011-12-28  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Crash in ~WebGraphicsLayer when running fast/multicol/pagination-* tests
