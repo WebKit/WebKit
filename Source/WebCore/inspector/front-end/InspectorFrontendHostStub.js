@@ -65,11 +65,15 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         this._windowVisible = false;
     },
 
-    attach: function()
+    requestAttachWindow: function()
     {
     },
 
-    detach: function()
+    requestDetachWindow: function()
+    {
+    },
+
+    requestSetDockSide: function()
     {
     },
 

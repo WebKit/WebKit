@@ -41,6 +41,7 @@ module core {
 
         void requestAttachWindow();
         void requestDetachWindow();
+        void requestSetDockSide(in DOMString side);
         void setAttachedWindowHeight(in unsigned long height);
         void moveWindowBy(in float x, in float y);
         void setInjectedScriptForOrigin(in DOMString origin, in DOMString script);

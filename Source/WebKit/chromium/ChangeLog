@@ -1,3 +1,16 @@
+2011-12-29  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [chromium] pass dock to side request to the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=75344
+
+        Reviewed by Yury Semikhatsky.
+
+        * public/WebDevToolsFrontendClient.h:
+        (WebKit::WebDevToolsFrontendClient::requestSetDockSide):
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::requestSetDockSide):
+        * src/InspectorFrontendClientImpl.h:
+
 2011-12-28  Dmitry Lomov  <dslomov@google.com>
 
         [WebWorkers][Chromium] Remove remains of cross-process dedicated worker implementation.

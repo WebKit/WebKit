@@ -1,3 +1,25 @@
+2011-12-29  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [chromium] pass dock to side request to the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=75344
+
+        Reviewed by Yury Semikhatsky.
+
+        I'd like to enable dock-to-right for the front-end window. This is a background work
+        to pass control flow from the front-end to the front-end host.
+
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.h:
+        (WebCore::InspectorFrontendClientLocal::requestSetDockSide):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::requestSetDockSide):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestAttachWindow):
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestDetachWindow):
+        (.WebInspector.InspectorFrontendHostStub.prototype.requestSetDockSide):
+
 2011-12-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add "enable source maps" checkbox setting.

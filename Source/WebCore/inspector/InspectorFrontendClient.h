@@ -56,6 +56,7 @@ public:
 
     virtual void requestAttachWindow() = 0;
     virtual void requestDetachWindow() = 0;
+    virtual void requestSetDockSide(const String&) = 0;
     virtual void changeAttachedWindowHeight(unsigned) = 0;
     virtual bool canSaveAs() = 0;
     virtual void saveAs(const WTF::String& fileName, const WTF::String& content) = 0;

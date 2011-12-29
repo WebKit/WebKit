@@ -114,6 +114,11 @@ void InspectorFrontendClientImpl::requestDetachWindow()
     m_client->requestUndockWindow();
 }
 
+void InspectorFrontendClientImpl::requestSetDockSide(const String& side)
+{
+    m_client->requestSetDockSide(side);
+}
+
 void InspectorFrontendClientImpl::changeAttachedWindowHeight(unsigned)
 {
     // Do nothing;

@@ -47,6 +47,7 @@ public:
     virtual void closeWindow() { }
     virtual void requestDockWindow() { }
     virtual void requestUndockWindow() { }
+    virtual void requestSetDockSide(const WebString& side) { }
     virtual void moveWindowBy(const WebFloatPoint&) { }
     virtual void saveAs(const WebString& fileName, const WebString& content) { }
 

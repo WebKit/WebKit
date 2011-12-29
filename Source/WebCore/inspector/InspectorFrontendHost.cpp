@@ -161,6 +161,12 @@ void InspectorFrontendHost::requestDetachWindow()
         m_client->requestDetachWindow();
 }
 
+void InspectorFrontendHost::requestSetDockSide(const String& side)
+{
+    if (m_client)
+        m_client->requestSetDockSide(side);
+}
+
 void InspectorFrontendHost::closeWindow()
 {
     if (m_client) {

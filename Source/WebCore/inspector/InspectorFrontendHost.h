@@ -60,6 +60,7 @@ public:
     void loaded();
     void requestAttachWindow();
     void requestDetachWindow();
+    void requestSetDockSide(const String&);
     void closeWindow();
     void bringToFront();
     void inspectedURLChanged(const String&);
