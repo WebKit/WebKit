@@ -3366,8 +3366,6 @@ BUGCR88911 LEOPARD : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
 // V8 now follows spec on toisostring, test needs to be fixed.
 BUGCR88936 : fast/js/date-toisostring.html = TEXT
 
-BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = PASS MISSING
-
 BUGWK70630 SNOWLEOPARD : fast/js/call-base-resolution.html = PASS TEXT CRASH
 BUGCR89474 LEOPARD WIN LINUX : fast/js/call-base-resolution.html = PASS TEXT
 
@@ -3911,3 +3909,5 @@ BUGWK74788 MAC LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-82-t.svg = PASS CRASH
 
 BUGWK75237 SNOWLEOPARD CPU : compositing/reflections/reflection-on-composited.html = PASS IMAGE
 
+BUGWK75367 : svg/css/composite-shadow-example.html = PASS TEXT
+BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
