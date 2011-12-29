@@ -465,6 +465,11 @@ void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrol
         // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
         computeRepaintRects();
         flags |= HasSeenFixedPositionedAncestor;
+    } else if (renderer()->hasTransform() && !renderer()->isRenderView()) {
+        // Transforms act as fixed position containers, so nothing inside a
+        // transformed element can be fixed relative to the viewport if the
+        // transformed element is not fixed itself or child of a fixed element.
+        return;
     } else if ((flags & HasSeenAncestorWithOverflowClip) && !m_canSkipRepaintRectsUpdateOnScroll) {
         // If we have seen an overflow clip, we should update our repaint rects as clippedOverflowRectForRepaint
         // intersects it with our ancestor overflow clip that may have moved.
