@@ -1,3 +1,16 @@
+2011-12-29  David Barton  <dbarton@mathscribe.com>
+
+        mfenced skips the first separator if the separators attribute contains multiple separators
+        https://bugs.webkit.org/show_bug.cgi?id=57697
+
+        Reviewed by Dan Bernstein.
+
+        Added 2 test cases.
+
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::addChild):
+            - Thanks to Xun Sun <xun.sun@intel.com> for the off-by-one error fix.
+
 2011-12-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         Enable the [Supplemental] IDL on Qt.

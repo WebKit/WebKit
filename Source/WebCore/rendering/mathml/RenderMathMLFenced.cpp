@@ -119,7 +119,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject*)
             if ((count - 1) >= m_separators.get()->length())
                 separator = (*m_separators.get())[m_separators.get()->length() - 1];
             else
-                separator = (*m_separators.get())[count - 1];
+                separator = (*m_separators.get())[count - 2];
                 
             RenderObject* separatorObj = new (renderArena()) RenderMathMLOperator(node(), separator);
             separatorObj->setStyle(makeOperatorStyle().release());
