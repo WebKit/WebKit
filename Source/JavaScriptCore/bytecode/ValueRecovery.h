@@ -62,6 +62,8 @@ enum ValueRecoveryTechnique {
     // It's in the register file, at a different location, and it's unboxed.
     Int32DisplacedInRegisterFile,
     DoubleDisplacedInRegisterFile,
+    CellDisplacedInRegisterFile,
+    BooleanDisplacedInRegisterFile,
     // It's a constant.
     Constant,
     // Don't know how to recover it.
@@ -166,6 +168,14 @@ public:
             result.m_technique = DoubleDisplacedInRegisterFile;
             break;
 
+        case DataFormatCell:
+            result.m_technique = CellDisplacedInRegisterFile;
+            break;
+            
+        case DataFormatBoolean:
+            result.m_technique = BooleanDisplacedInRegisterFile;
+            break;
+            
         default:
             ASSERT(dataFormat != DataFormatNone && dataFormat != DataFormatStorage);
             result.m_technique = DisplacedInRegisterFile;
@@ -229,7 +239,7 @@ public:
     
     VirtualRegister virtualRegister() const
     {
-        ASSERT(m_technique == DisplacedInRegisterFile || m_technique == Int32DisplacedInRegisterFile || m_technique == DoubleDisplacedInRegisterFile);
+        ASSERT(m_technique == DisplacedInRegisterFile || m_technique == Int32DisplacedInRegisterFile || m_technique == DoubleDisplacedInRegisterFile || m_technique == CellDisplacedInRegisterFile || m_technique == BooleanDisplacedInRegisterFile);
         return m_source.virtualReg;
     }
     
@@ -286,6 +296,12 @@ public:
             break;
         case DoubleDisplacedInRegisterFile:
             fprintf(out, "*double(%d)", virtualRegister());
+            break;
+        case CellDisplacedInRegisterFile:
+            fprintf(out, "*cell(%d)", virtualRegister());
+            break;
+        case BooleanDisplacedInRegisterFile:
+            fprintf(out, "*bool(%d)", virtualRegister());
             break;
         case Constant:
             fprintf(out, "[%s]", constant().description());

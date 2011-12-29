@@ -195,8 +195,9 @@ public:
     
     bool isUnknownJS()
     {
-        return registerFormat() == DataFormatNone || registerFormat() == DataFormatJS
-            || spillFormat() == DataFormatNone || spillFormat() == DataFormatJS;
+        return spillFormat() == DataFormatNone
+            ? registerFormat() == DataFormatJS || registerFormat() == DataFormatNone
+            : spillFormat() == DataFormatJS;
     }
 
     // Get the machine resister currently holding the value.
@@ -230,12 +231,6 @@ public:
         ASSERT(m_spillFormat == DataFormatNone);
         // We should only be spilling values that are currently in machine registers.
         ASSERT(m_registerFormat != DataFormatNone);
-        // We only spill values that have been boxed as a JSValue because historically
-        // we assumed that the GC would want to be able to precisely identify heap
-        // pointers. This is not true anymore, but we still assume, in the fill code,
-        // that any spill slot for a JS value is boxed. For storage pointers, there is
-        // nothing we can do to box them, so we allow that to be an exception.
-        ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatStorage || spillFormat == DataFormatInteger || spillFormat == DataFormatDouble);
 
         m_registerFormat = DataFormatNone;
         m_spillFormat = spillFormat;

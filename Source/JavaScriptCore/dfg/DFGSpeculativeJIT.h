@@ -481,14 +481,27 @@ private:
         if (node.hasConstant()) {
             JSValue v = valueOfJSConstant(nodeIndex);
             m_jit.move(info.tagGPR() == target ? Imm32(v.tag()) : Imm32(v.payload()), target);
-        } else if (info.spillFormat() == DataFormatInteger) {
-            ASSERT(registerFormat == DataFormatJSInteger);
-            if (info.payloadGPR() == target) 
-                m_jit.load32(JITCompiler::payloadFor(spillMe), target);
-            else
+        } else if (info.payloadGPR() == target)
+            m_jit.load32(JITCompiler::payloadFor(spillMe), target);
+        else { // Fill the Tag
+            switch (info.spillFormat()) {
+            case DataFormatInteger:
+                ASSERT(registerFormat == DataFormatJSInteger);
                 m_jit.move(TrustedImm32(JSValue::Int32Tag), target);
-        } else
-            m_jit.load32(info.tagGPR() == target ? JITCompiler::tagFor(spillMe) : JITCompiler::payloadFor(spillMe), target);
+                break;
+            case DataFormatCell:
+                ASSERT(registerFormat == DataFormatJSCell);
+                m_jit.move(TrustedImm32(JSValue::CellTag), target);
+                break;
+            case DataFormatBoolean:
+                ASSERT(registerFormat == DataFormatJSBoolean);
+                m_jit.move(TrustedImm32(JSValue::BooleanTag), target);
+                break;
+            default:
+                m_jit.load32(JITCompiler::tagFor(spillMe), target);
+                break;
+            }
+        }
 #endif
     }
 
@@ -636,6 +649,12 @@ private:
             return;
         }
 
+        case DataFormatInteger: {
+            m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
+            info.spill(DataFormatInteger);
+            return;
+        }
+
 #if USE(JSVALUE64)
         case DataFormatDouble: {
             m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
@@ -643,12 +662,6 @@ private:
             return;
         }
             
-        case DataFormatInteger: {
-            m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
-            info.spill(DataFormatInteger);
-            return;
-        }
-
         default:
             // The following code handles JSValues, int32s, and cells.
             ASSERT(spillFormat == DataFormatCell || spillFormat & DataFormatJS);
@@ -664,6 +677,13 @@ private:
             info.spill((DataFormat)(spillFormat | DataFormatJS));
             return;
 #elif USE(JSVALUE32_64)
+        case DataFormatCell:
+        case DataFormatBoolean: {
+            m_jit.store32(info.gpr(), JITCompiler::payloadFor(spillMe));
+            info.spill(spillFormat);
+            return;
+        }
+
         case DataFormatDouble:
         case DataFormatJSDouble: {
             // On JSVALUE32_64 boxing a double is a no-op.
@@ -671,25 +691,13 @@ private:
             info.spill(DataFormatJSDouble);
             return;
         }
-        default:
-            // The following code handles JSValues, int32s, cells and booleans.
-            ASSERT(spillFormat == DataFormatInteger || spillFormat == DataFormatCell || spillFormat == DataFormatBoolean || (spillFormat & DataFormatJS));
 
-            if (spillFormat & DataFormatJS) { // JSValue
-                m_jit.store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
-                m_jit.store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
-            } else {
-                GPRReg reg = info.gpr();
-                m_jit.store32(reg, JITCompiler::payloadFor(spillMe));
-                // We need to box int32s, booleans and cells.
-                if (spillFormat == DataFormatInteger)
-                    m_jit.store32(TrustedImm32(JSValue::Int32Tag), JITCompiler::tagFor(spillMe));
-                else if (spillFormat == DataFormatCell)
-                    m_jit.store32(TrustedImm32(JSValue::CellTag), JITCompiler::tagFor(spillMe));
-                else
-                    m_jit.store32(TrustedImm32(JSValue::BooleanTag), JITCompiler::tagFor(spillMe));
-            }
-            info.spill((DataFormat)(spillFormat | DataFormatJS));
+        default:
+            // The following code handles JSValues.
+            ASSERT(spillFormat & DataFormatJS);
+            m_jit.store32(info.tagGPR(), JITCompiler::tagFor(spillMe));
+            m_jit.store32(info.payloadGPR(), JITCompiler::payloadFor(spillMe));
+            info.spill(spillFormat);
             return;
 #endif
         }
@@ -705,6 +713,7 @@ private:
     bool isKnownNotNumber(NodeIndex);
 
     bool isKnownBoolean(NodeIndex);
+    bool isKnownNotBoolean(NodeIndex);
 
     bool isKnownNotCell(NodeIndex);
     

@@ -133,6 +133,9 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
         const ValueRecovery& recovery = exit.valueRecovery(index);
         switch (recovery.technique()) {
         case DisplacedInRegisterFile:
+        case Int32DisplacedInRegisterFile:
+        case CellDisplacedInRegisterFile:
+        case BooleanDisplacedInRegisterFile:
             numberOfDisplacedVirtualRegisters++;
             ASSERT((int)recovery.virtualRegister() >= 0);
             
@@ -346,19 +349,42 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             unsigned displacementIndex = 0;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
-                m_jit.load32(AssemblyHelpers::tagFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                    m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    m_jit.load32(AssemblyHelpers::tagFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    break;
+                case Int32DisplacedInRegisterFile:
+                    m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    m_jit.move(AssemblyHelpers::TrustedImm32(JSValue::Int32Tag), GPRInfo::toRegister(displacementIndex++));
+                    break;
+                case CellDisplacedInRegisterFile:
+                    m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    m_jit.move(AssemblyHelpers::TrustedImm32(JSValue::CellTag), GPRInfo::toRegister(displacementIndex++));
+                    break;
+                case BooleanDisplacedInRegisterFile:
+                    m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::toRegister(displacementIndex++));
+                    m_jit.move(AssemblyHelpers::TrustedImm32(JSValue::BooleanTag), GPRInfo::toRegister(displacementIndex++));
+                    break;
+                default:
+                    break;
+                }
             }
         
             displacementIndex = 0;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                m_jit.store32(GPRInfo::toRegister(displacementIndex++), AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
-                m_jit.store32(GPRInfo::toRegister(displacementIndex++), AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                case Int32DisplacedInRegisterFile:
+                case CellDisplacedInRegisterFile:
+                case BooleanDisplacedInRegisterFile:
+                    m_jit.store32(GPRInfo::toRegister(displacementIndex++), AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
+                    m_jit.store32(GPRInfo::toRegister(displacementIndex++), AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
+                    break;
+                default:
+                    break;
+                }
             }
         } else {
             // FIXME: This should use the shuffling algorithm that we use
@@ -381,25 +407,54 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, SpeculationRecovery* reco
             unsigned scratchIndex = numberOfPoisonedVirtualRegisters;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::regT0);
-                m_jit.load32(AssemblyHelpers::tagFor(recovery.virtualRegister()), GPRInfo::regT1);
-                m_jit.store32(GPRInfo::regT0, reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-                m_jit.store32(GPRInfo::regT1, reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-                scratchIndex++;
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                    m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    m_jit.load32(AssemblyHelpers::tagFor(recovery.virtualRegister()), GPRInfo::regT1);
+                    m_jit.store32(GPRInfo::regT0, reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+                    m_jit.store32(GPRInfo::regT1, reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
+                    scratchIndex++;
+                    break;
+                case Int32DisplacedInRegisterFile:
+                case CellDisplacedInRegisterFile:
+                case BooleanDisplacedInRegisterFile:
+                    m_jit.load32(AssemblyHelpers::payloadFor(recovery.virtualRegister()), GPRInfo::regT0);
+                    m_jit.store32(GPRInfo::regT0, reinterpret_cast<char*>(scratchBuffer + scratchIndex++) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
+                    break;
+                default:
+                    break;
+                }
             }
         
             scratchIndex = numberOfPoisonedVirtualRegisters;
             for (int index = 0; index < exit.numberOfRecoveries(); ++index) {
                 const ValueRecovery& recovery = exit.valueRecovery(index);
-                if (recovery.technique() != DisplacedInRegisterFile)
-                    continue;
-                m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
-                m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), GPRInfo::regT1);
-                m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
-                m_jit.store32(GPRInfo::regT1, AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
-                scratchIndex++;
+                switch (recovery.technique()) {
+                case DisplacedInRegisterFile:
+                    m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                    m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag), GPRInfo::regT1);
+                    m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
+                    m_jit.store32(GPRInfo::regT1, AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
+                    scratchIndex++;
+                    break;
+                case Int32DisplacedInRegisterFile:
+                    m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex++) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                    m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::Int32Tag), AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
+                    m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
+                    break;
+                case CellDisplacedInRegisterFile:
+                    m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex++) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                    m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
+                    m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
+                    break;
+                case BooleanDisplacedInRegisterFile:
+                    m_jit.load32(reinterpret_cast<char*>(scratchBuffer + scratchIndex++) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload), GPRInfo::regT0);
+                    m_jit.store32(AssemblyHelpers::TrustedImm32(JSValue::BooleanTag), AssemblyHelpers::tagFor((VirtualRegister)exit.operandForIndex(index)));
+                    m_jit.store32(GPRInfo::regT0, AssemblyHelpers::payloadFor((VirtualRegister)exit.operandForIndex(index)));
+                    break;
+                default:
+                    break;
+                }
             }
         
             ASSERT(scratchIndex == numberOfPoisonedVirtualRegisters + numberOfDisplacedVirtualRegisters);

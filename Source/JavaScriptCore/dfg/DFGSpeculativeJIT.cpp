@@ -199,6 +199,16 @@ bool SpeculativeJIT::isKnownBoolean(NodeIndex nodeIndex)
     return info.isJSBoolean();
 }
 
+bool SpeculativeJIT::isKnownNotBoolean(NodeIndex nodeIndex)
+{
+    Node& node = m_jit.graph()[nodeIndex];
+    VirtualRegister virtualRegister = node.virtualRegister();
+    GenerationInfo& info = m_generationInfo[virtualRegister];
+    if (node.hasConstant() && !valueOfJSConstant(nodeIndex).isBoolean())
+        return true;
+    return !(info.isJSBoolean() || info.isUnknownJS());
+}
+
 void SpeculativeJIT::writeBarrier(MacroAssembler& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)
 {
     UNUSED_PARAM(jit);
