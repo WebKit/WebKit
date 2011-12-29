@@ -45,9 +45,12 @@ function TreeOutline(listNode)
     this.selected = false;
     this.treeOutline = this;
     this.comparator = null;
+    this.searchable = false;
+    this.searchInputElement = null;
 
     this._childrenListNode.tabIndex = 0;
     this._childrenListNode.addEventListener("keydown", this._treeKeyDown.bind(this), true);
+    this._childrenListNode.addEventListener("keypress", this._treeKeyPress.bind(this), true);
     
     this._treeElementsMap = new Map();
     this._expandedStateMap = new Map();
@@ -321,6 +324,21 @@ TreeOutline.prototype.treeElementFromPoint = function(x, y)
     return null;
 }
 
+TreeOutline.prototype._treeKeyPress = function(event)
+{
+    if (!this.searchable)
+        return;
+    
+    var searchText = String.fromCharCode(event.charCode);
+    // Ignore whitespace.
+    if (searchText.trim() !== searchText)
+        return;
+
+    this._startSearch(searchText);
+    event.preventDefault();
+    event.stopPropagation();
+}
+
 TreeOutline.prototype._treeKeyDown = function(event)
 {
     if (event.target !== this._childrenListNode)
@@ -426,6 +444,167 @@ TreeOutline.prototype.select = function()
 TreeOutline.prototype.revealAndSelect = function(omitFocus)
 {
     // this is the root, do nothing
+}
+
+/**
+ * @param {string} searchText
+ */
+TreeOutline.prototype._startSearch = function(searchText)
+{
+    if (!this.searchInputElement || !this.searchable)
+        return;
+    
+    this._searching = true;
+
+    if (this.searchStarted)
+        this.searchStarted();
+    
+    this.searchInputElement.value = searchText;
+    
+    function focusSearchInput()
+    {
+        this.searchInputElement.focus();
+    }
+    window.setTimeout(focusSearchInput.bind(this), 0);
+    this._searchTextChanged();
+    this._boundSearchTextChanged = this._searchTextChanged.bind(this);
+    this.searchInputElement.addEventListener("paste", this._boundSearchTextChanged);
+    this.searchInputElement.addEventListener("cut", this._boundSearchTextChanged);
+    this.searchInputElement.addEventListener("keypress", this._boundSearchTextChanged);
+    this._boundSearchInputKeyDown = this._searchInputKeyDown.bind(this);
+    this.searchInputElement.addEventListener("keydown", this._boundSearchInputKeyDown);
+    this._boundSearchInputBlur = this._searchInputBlur.bind(this);
+    this.searchInputElement.addEventListener("blur", this._boundSearchInputBlur);
+}
+
+TreeOutline.prototype._searchTextChanged = function()
+{
+    function updateSearch()
+    {
+        var nextSelectedElement = this._nextSearchMatch(this.searchInputElement.value, this.selectedTreeElement, false);
+        if (!nextSelectedElement)
+            nextSelectedElement = this._nextSearchMatch(this.searchInputElement.value, this.children[0], false);
+        this._showSearchMatchElement(nextSelectedElement);
+    }
+    
+    window.setTimeout(updateSearch.bind(this), 0);
+}
+
+TreeOutline.prototype._showSearchMatchElement = function(treeElement)
+{
+    this._currentSearchMatchElement = treeElement;
+    if (treeElement) {
+        this._childrenListNode.classList.add("search-match-found");
+        this._childrenListNode.classList.remove("search-match-not-found");
+        treeElement.revealAndSelect(true);
+    } else {
+        this._childrenListNode.classList.remove("search-match-found");
+        this._childrenListNode.classList.add("search-match-not-found");
+    }
+}
+
+TreeOutline.prototype._searchInputKeyDown = function(event)
+{
+    if (event.shiftKey || event.metaKey || event.ctrlKey || event.altKey)
+        return;
+
+    var handled = false;
+    var nextSelectedElement;
+    if (event.keyIdentifier === "Down") {
+        nextSelectedElement = this._nextSearchMatch(this.searchInputElement.value, this.selectedTreeElement, true);
+        handled = true;
+    } else if (event.keyIdentifier === "Up") {
+        nextSelectedElement = this._previousSearchMatch(this.searchInputElement.value, this.selectedTreeElement);
+        handled = true;
+    } else if (event.keyCode === 27 /* Esc */) {
+        this._searchFinished();
+        handled = true;
+    } else if (isEnterKey(event)) {
+        var lastSearchMatchElement = this._currentSearchMatchElement;
+        this._searchFinished();
+        if (lastSearchMatchElement && lastSearchMatchElement.onenter)
+            lastSearchMatchElement.onenter();
+        handled = true;
+    }
+
+    if (nextSelectedElement)
+        this._showSearchMatchElement(nextSelectedElement);
+        
+    if (handled) {
+        event.preventDefault();
+        event.stopPropagation();
+    } else
+       window.setTimeout(this._boundSearchTextChanged, 0); 
+}
+
+/**
+ * @param {string} searchText
+ * @param {TreeElement=} startTreeElement
+ * @param {boolean} skipStartTreeElement
+ */
+TreeOutline.prototype._nextSearchMatch = function(searchText, startTreeElement, skipStartTreeElement)
+{
+    var currentTreeElement = startTreeElement;
+    var skipCurrentTreeElement = skipStartTreeElement;
+    while (currentTreeElement && (skipCurrentTreeElement || !currentTreeElement.matchesSearchText || !currentTreeElement.matchesSearchText(searchText))) {
+        currentTreeElement = currentTreeElement.traverseNextTreeElement(true, null, true);
+        skipCurrentTreeElement = false;
+    }
+
+    return currentTreeElement;
+}
+
+/**
+ * @param {string} searchText
+ * @param {TreeElement=} startTreeElement
+ */
+TreeOutline.prototype._previousSearchMatch = function(searchText, startTreeElement)
+{
+    var currentTreeElement = startTreeElement;
+    var skipCurrentTreeElement = true;
+    while (currentTreeElement && (skipCurrentTreeElement || !currentTreeElement.matchesSearchText || !currentTreeElement.matchesSearchText(searchText))) {
+        currentTreeElement = currentTreeElement.traversePreviousTreeElement(true, true);
+        skipCurrentTreeElement = false;
+    }
+
+    return currentTreeElement;
+}
+
+TreeOutline.prototype._searchInputBlur = function(event)
+{
+    this._searchFinished();
+}
+
+TreeOutline.prototype._searchFinished = function()
+{
+    if (!this._searching)
+        return;
+    
+    delete this._searching;
+    this._childrenListNode.classList.remove("search-match-found");
+    this._childrenListNode.classList.remove("search-match-not-found");
+    delete this._currentSearchMatchElement;
+
+    this.searchInputElement.value = "";
+    this.searchInputElement.removeEventListener("paste", this._boundSearchTextChanged);
+    this.searchInputElement.removeEventListener("cut", this._boundSearchTextChanged);
+    delete this._boundSearchTextChanged;
+
+    this.searchInputElement.removeEventListener("keydown", this._boundSearchInputKeyDown);
+    delete this._boundSearchInputKeyDown;
+    
+    this.searchInputElement.removeEventListener("blur", this._boundSearchInputBlur);
+    delete this._boundSearchInputBlur;
+    
+    if (this.searchFinished)
+        this.searchFinished();
+    
+    this.treeOutline._childrenListNode.focus();
+}
+
+TreeOutline.prototype.stopSearch = function()
+{
+    this._searchFinished();
 }
 
 /**

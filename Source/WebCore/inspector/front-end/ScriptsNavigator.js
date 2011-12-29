@@ -42,12 +42,15 @@ WebInspector.ScriptsNavigator = function(presentationModel)
 
     this._tabbedPane.element.id = "scripts-navigator-tabbed-pane";
   
+    this._treeSearchBox = document.createElement("div");
+    this._treeSearchBox.id = "scripts-navigator-tree-search-box";
+
     this._navigatorScriptsTreeElement = document.createElement("ol");
     var scriptsView = new WebInspector.View();
     scriptsView.element.addStyleClass("outline-disclosure");
     scriptsView.element.addStyleClass("navigator");
     scriptsView.element.appendChild(this._navigatorScriptsTreeElement);
-    this._navigatorScriptsTree = new WebInspector.NavigatorTreeOutline(this._navigatorScriptsTreeElement);
+    this._navigatorScriptsTree = new WebInspector.NavigatorTreeOutline(this, this._navigatorScriptsTreeElement);
     this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ScriptsTab, WebInspector.UIString("Scripts"), scriptsView);
     this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
 
@@ -56,7 +59,7 @@ WebInspector.ScriptsNavigator = function(presentationModel)
     contentScriptsView.element.addStyleClass("outline-disclosure");
     contentScriptsView.element.addStyleClass("navigator");
     contentScriptsView.element.appendChild(this._navigatorContentScriptsTreeElement);
-    this._navigatorContentScriptsTree = new WebInspector.NavigatorTreeOutline(this._navigatorContentScriptsTreeElement);
+    this._navigatorContentScriptsTree = new WebInspector.NavigatorTreeOutline(this, this._navigatorContentScriptsTreeElement);
     this._tabbedPane.appendTab(WebInspector.ScriptsNavigator.ContentScriptsTab, WebInspector.UIString("Content scripts"), contentScriptsView);
 
     this._folderTreeElements = {};
@@ -78,7 +81,7 @@ WebInspector.ScriptsNavigator.prototype = {
      */
     get defaultFocusedElement()
     {
-        return this._tabbedPane.element;
+        return this._navigatorScriptsTreeElement
     },
 
     /**
@@ -87,6 +90,7 @@ WebInspector.ScriptsNavigator.prototype = {
     show: function(element)
     {
         this._tabbedPane.show(element);
+        element.appendChild(this._treeSearchBox);
     },
 
     /**
@@ -201,7 +205,9 @@ WebInspector.ScriptsNavigator.prototype = {
     
     _reset: function()
     {
+        this._navigatorScriptsTree.stopSearch();
         this._navigatorScriptsTree.removeChildren();
+        this._navigatorContentScriptsTree.stopSearch();
         this._navigatorContentScriptsTree.removeChildren();
         this._folderTreeElements = {};
     },
@@ -256,10 +262,16 @@ WebInspector.ScriptsNavigator.prototype.__proto__ = WebInspector.Object.prototyp
  * @extends {TreeOutline}
  * @param {Element} element
  */
-WebInspector.NavigatorTreeOutline = function(element)
+WebInspector.NavigatorTreeOutline = function(navigator, element)
 {
     TreeOutline.call(this, element);
+
+    this._navigator = navigator;
+    
     this.comparator = WebInspector.NavigatorTreeOutline._treeElementsCompare;
+
+    this.searchable = true;
+    this.searchInputElement = document.createElement("input");
 }
 
 WebInspector.NavigatorTreeOutline._treeElementsCompare = function compare(treeElement1, treeElement2)
@@ -305,7 +317,19 @@ WebInspector.NavigatorTreeOutline.prototype = {
            }
        }
        return result;
-   }
+   },
+   
+   searchStarted: function()
+   {
+       this._navigator._treeSearchBox.appendChild(this.searchInputElement);
+       this._navigator._treeSearchBox.addStyleClass("visible");
+   },
+
+   searchFinished: function()
+   {
+       this._navigator._treeSearchBox.removeChild(this.searchInputElement);
+       this._navigator._treeSearchBox.removeStyleClass("visible");
+   },
 }
 
 WebInspector.NavigatorTreeOutline.prototype.__proto__ = TreeOutline.prototype;
@@ -358,7 +382,7 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
     onreveal: function()
     {
         if (this.listItemElement)
-            this.listItemElement.scrollIntoViewIfNeeded(false);
+            this.listItemElement.scrollIntoViewIfNeeded(true);
     },
 
     /**
@@ -373,6 +397,14 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
     {
         this._titleText = titleText || "";
         this._titleTextNode.textContent = this._titleText;
+    },
+    
+    /**
+     * @param {string} searchText
+     */
+    matchesSearchText: function(searchText)
+    {
+        return this.titleText.match(new RegExp("^" + searchText.escapeForRegExp(), "i"));
     }
 }
 

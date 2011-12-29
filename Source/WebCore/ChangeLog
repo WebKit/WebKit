@@ -1,5 +1,51 @@
 2011-12-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Scripts navigator should support incremental search by typing.
+        https://bugs.webkit.org/show_bug.cgi?id=75349
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.ScriptsNavigator):
+        (WebInspector.ScriptsNavigator.prototype.get defaultFocusedElement):
+        (WebInspector.ScriptsNavigator.prototype.show):
+        (WebInspector.ScriptsNavigator.prototype._reset):
+        (WebInspector.NavigatorTreeOutline):
+        (WebInspector.NavigatorTreeOutline.prototype.scriptTreeElements):
+        (WebInspector.NavigatorTreeOutline.prototype.searchStarted):
+        (WebInspector.NavigatorTreeOutline.prototype.searchFinished):
+        (WebInspector.BaseNavigatorTreeElement.prototype.onreveal):
+        (WebInspector.BaseNavigatorTreeElement.prototype.set titleText):
+        (WebInspector.BaseNavigatorTreeElement.prototype.matchesSearchText):
+        * inspector/front-end/inspector.css:
+        (.outline-disclosure ol.search-match-not-found li.selected .selection):
+        (.outline-disclosure ol.search-match-found li.selected):
+        (.outline-disclosure ol.search-match-found li.selected *):
+        (.outline-disclosure ol.search-match-found li.parent.selected::before):
+        (.outline-disclosure ol.search-match-found li.parent.expanded.selected::before):
+        * inspector/front-end/scriptsPanel.css:
+        (#scripts-navigator-tree-search-box):
+        (#scripts-navigator-tree-search-box.visible):
+        (#scripts-navigator-tree-search-box > input):
+        (.scripts.panel .navigator .search-match-found li.selected .selection):
+        (.scripts.panel .navigator .search-match-not-found li.selected .selection):
+        (.scripts.panel .navigator .searching li.selected .selection):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline):
+        (TreeOutline.prototype._treeKeyPress):
+        (TreeOutline.prototype._startSearch.focusSearchInput):
+        (TreeOutline.prototype._startSearch):
+        (TreeOutline.prototype._searchTextChanged):
+        (TreeOutline.prototype._showSearchMatchElement):
+        (TreeOutline.prototype._searchInputKeyDown):
+        (TreeOutline.prototype._nextSearchMatch):
+        (TreeOutline.prototype._previousSearchMatch):
+        (TreeOutline.prototype._searchInputBlur):
+        (TreeOutline.prototype._searchFinished):
+        (TreeOutline.prototype.stopSearch):
+
+2011-12-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Scripts navigator should trim long file names and show full url in tooltip.
         https://bugs.webkit.org/show_bug.cgi?id=75343
 

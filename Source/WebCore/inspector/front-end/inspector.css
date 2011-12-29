@@ -1013,6 +1013,11 @@ iframe.panel.extension {
     background-color: rgb(56, 121, 217);
 }
 
+.outline-disclosure ol.search-match-not-found li.selected .selection {
+    border: 1px solid rgb(56, 121, 217);
+    background-color: white;
+}
+
 .outline-disclosure {
     font-size: 11px;
 }
@@ -1050,7 +1055,15 @@ iframe.panel.extension {
     color: white;
 }
 
+.outline-disclosure ol.search-match-found li.selected {
+    color: white;
+}
+
 .outline-disclosure ol:focus li.selected * {
+    color: inherit;
+}
+
+.outline-disclosure ol.search-match-found li.selected * {
     color: inherit;
 }
 
@@ -1079,11 +1092,19 @@ iframe.panel.extension {
     content: url(Images/treeRightTriangleWhite.png);
 }
 
+.outline-disclosure ol.search-match-found li.parent.selected::before {
+    content: url(Images/treeRightTriangleWhite.png);
+}
+
 .outline-disclosure li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
 .outline-disclosure ol:focus li.parent.expanded.selected::before {
+    content: url(Images/treeDownTriangleWhite.png);
+}
+
+.outline-disclosure ol.search-match-found li.parent.expanded.selected::before {
     content: url(Images/treeDownTriangleWhite.png);
 }
 
