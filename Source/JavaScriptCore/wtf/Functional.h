@@ -31,12 +31,14 @@
 #include "RefPtr.h"
 #include "ThreadSafeRefCounted.h"
 
+#if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+#include <objc/objc-runtime.h>
+#endif
+
 namespace WTF {
 
 // Functional.h provides a very simple way to bind a function pointer and arguments together into a function object
 // that can be stored, copied and invoked, similar to how boost::bind and std::bind in C++11.
-// The implementation is currently very simple, but the goal is to replace WorkItem in WebKit2 and make it easier to
-// package up and invoke function calls inside WebCore.
 
 // Helper class template to determine whether a given type has ref and deref member functions
 // with the right type signature.
@@ -547,6 +549,33 @@ public:
 
         return impl<R ()>()->operator()();
     }
+
+#if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
+    typedef void (^BlockType)();
+    operator BlockType() const
+    {
+        // Declare a RefPtr here so we'll be sure that the underlying FunctionImpl object's
+        // lifecycle is managed correctly.
+        RefPtr<FunctionImpl<R ()> > functionImpl = impl<R ()>();
+        BlockType block = ^{
+           functionImpl->operator()();
+        };
+
+        // This is equivalent to:
+        //
+        //   return [[block copy] autorelease];
+        //
+        // We're using manual objc_msgSend calls here because we don't want to make the entire
+        // file Objective-C. It's useful to be able to implicitly convert a Function to
+        // a block even in C++ code, since that allows us to do things like:
+        //
+        //   dispatch_async(queue, bind(...));
+        //
+        id copiedBlock = objc_msgSend((id)block, sel_registerName("copy"));
+        id autoreleasedBlock = objc_msgSend(copiedBlock, sel_registerName("autorelease"));
+        return (BlockType)autoreleasedBlock;
+    }
+#endif
 };
 
 template<typename FunctionType>

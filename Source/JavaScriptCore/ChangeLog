@@ -1,3 +1,17 @@
+2011-12-28  Anders Carlsson  <andersca@apple.com>
+
+        Add an implicit block conversion operator to WTF::Function
+        https://bugs.webkit.org/show_bug.cgi?id=75325
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Compiler.h:
+        Add a define for COMPILER_SUPPORTS(BLOCKS). It's only defined for clang, since the gcc blocks implementation
+        is buggy, especially when it comes to C++.
+
+        * wtf/Functional.h:
+        Add a block conversion operator that creates and returns an autoreleased block that will call the function when executed.
+
 2011-12-27  Anders Carlsson  <andersca@apple.com>
 
         Add a new WTF::bind overload that takes 6 parameters
