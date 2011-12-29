@@ -32,8 +32,8 @@
 #define TestWebWorker_h
 
 #include "WebMessagePortChannel.h"
-#include "WebSharedWorkerClient.h"
 #include "WebWorker.h"
+#include "WebWorkerClient.h"
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
@@ -43,7 +43,7 @@ class WebURL;
 }
 
 class TestWebWorker : public WebKit::WebWorker,
-                      public WebKit::WebSharedWorkerClient,
+                      public WebKit::WebWorkerClient,
                       public WTF::RefCounted<TestWebWorker> {
 public:
     TestWebWorker()
@@ -80,7 +80,7 @@ public:
         // Releases the reference held for worker context object.
         deref();
     }
-    virtual WebKit::WebWorker* createWorker(WebKit::WebSharedWorkerClient*) { return 0; }
+    virtual WebKit::WebWorker* createWorker(WebKit::WebWorkerClient*) { return 0; }
     virtual WebKit::WebNotificationPresenter* notificationPresenter() { return 0; }
     virtual WebKit::WebApplicationCacheHost* createApplicationCacheHost(WebKit::WebApplicationCacheHostClient*) { return 0; }
     virtual bool allowDatabase(WebKit::WebFrame*, const WebKit::WebString&, const WebKit::WebString&, unsigned long) { return true; }

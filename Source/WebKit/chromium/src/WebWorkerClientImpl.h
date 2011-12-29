@@ -58,8 +58,8 @@ class WebFrameImpl;
 // In essence, this class wraps WorkerMessagingProxy.
 class WebWorkerClientImpl : public WebCore::WorkerContextProxy
                           , public WebCore::WorkerObjectProxy
-                          , public WebWorkerBase
-                          , public WebCommonWorkerClient {
+                          , public NewWebWorkerBase
+                          , public NewWebCommonWorkerClient {
 public:
     // WebCore::WorkerContextProxy Factory.
     static WebCore::WorkerContextProxy* createWorkerContextProxy(WebCore::Worker*);
@@ -107,7 +107,7 @@ public:
                                 WebFileSystemCallbacks*);
 
     // WebCommentWorkerBase methods:
-    virtual WebCommonWorkerClient* commonClient() { return this; }
+    virtual NewWebCommonWorkerClient* newCommonClient() { return this; }
     virtual WebView* view() const;
 
 private:

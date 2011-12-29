@@ -35,26 +35,138 @@
 
 #include "ScriptExecutionContext.h"
 #include "WebCommonWorkerClient.h"
+#include "WebFrameClient.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
+#include "WorkerThread.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+class WorkerThread;
+}
 
 namespace WebKit {
+class WebApplicationCacheHost;
+class WebApplicationCacheHostClient;
+class WebCommonWorkerClient;
+class WebSecurityOrigin;
+class WebString;
+class WebURL;
 class WebView;
+class WebWorker;
+class WebWorkerClient;
 
 // Base class for WebSharedWorkerImpl, WebWorkerClientImpl and (defunct) WebWorkerImpl
 // containing common interface for shared workers and dedicated in-proc workers implementation.
 //
 // FIXME: Rename this class into WebWorkerBase, merge existing WebWorkerBase and WebSharedWorker.
-class WebWorkerBase : public WebCore::WorkerLoaderProxy {
+class NewWebWorkerBase : public WebCore::WorkerLoaderProxy {
 public:
-    virtual WebCommonWorkerClient* commonClient() = 0;
+    virtual NewWebCommonWorkerClient* newCommonClient() = 0;
     virtual WebView* view() const = 0;
+};
+
+// Base class for WebSharedWorkerImpl and WebWorkerImpl. It contains common
+// code used by both implementation classes, including implementations of the
+// WorkerObjectProxy and WorkerLoaderProxy interfaces.
+class WebWorkerBase : public WebCore::WorkerObjectProxy
+                    , public NewWebWorkerBase
+                    , public WebFrameClient {
+public:
+    WebWorkerBase();
+    virtual ~WebWorkerBase();
+
+    // WebCommonWorkerBase methods:
+    virtual void postMessageToWorkerObject(
+        PassRefPtr<WebCore::SerializedScriptValue>,
+        PassOwnPtr<WebCore::MessagePortChannelArray>);
+    virtual void postExceptionToWorkerObject(
+        const WTF::String&, int, const WTF::String&);
+    virtual void postConsoleMessageToWorkerObject(
+        WebCore::MessageSource, WebCore::MessageType,
+        WebCore::MessageLevel, const WTF::String&, int, const WTF::String&);
+    virtual void postMessageToPageInspector(const WTF::String&);
+    virtual void updateInspectorStateCookie(const WTF::String&);
+    virtual void confirmMessageFromWorkerObject(bool);
+    virtual void reportPendingActivity(bool);
+    virtual void workerContextClosed();
+    virtual void workerContextDestroyed();
+    virtual WebView* view() const { return m_webView; }
+
+    // WebCore::WorkerLoaderProxy methods:
+    virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
+    virtual void postTaskForModeToWorkerContext(
+        PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const WTF::String& mode);
+
+    // WebFrameClient methods to support resource loading thru the 'shadow page'.
+    virtual void didCreateDataSource(WebFrame*, WebDataSource*);
+    virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*);
 
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
+
+protected:
+    virtual WebCommonWorkerClient* commonClient() = 0;
+    virtual WebWorkerClient* client() = 0;
+
+    void setWorkerThread(PassRefPtr<WebCore::WorkerThread> thread) { m_workerThread = thread; }
+    WebCore::WorkerThread* workerThread() { return m_workerThread.get(); }
+
+    // Shuts down the worker thread.
+    void stopWorkerThread();
+
+    // Creates the shadow loader used for worker network requests.
+    void initializeLoader(const WebURL&);
+
+private:
+    // Function used to invoke tasks on the main thread.
+    static void invokeTaskMethod(void*);
+
+    // Tasks that are run on the main thread.
+    static void postMessageTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr,
+        WTF::String message,
+        PassOwnPtr<WebCore::MessagePortChannelArray> channels);
+    static void postExceptionTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr,
+        const WTF::String& message,
+        int lineNumber,
+        const WTF::String& sourceURL);
+    static void postConsoleMessageTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr,
+        int source,
+        int type,
+        int level,
+        const WTF::String& message,
+        int lineNumber,
+        const WTF::String& sourceURL);
+    static void postMessageToPageInspectorTask(WebCore::ScriptExecutionContext*, WebWorkerBase*, const WTF::String&);
+    static void updateInspectorStateCookieTask(WebCore::ScriptExecutionContext*, WebWorkerBase* thisPtr, const WTF::String& cookie);
+    static void confirmMessageTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr,
+        bool hasPendingActivity);
+    static void reportPendingActivityTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr,
+        bool hasPendingActivity);
+    static void workerContextClosedTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr);
+    static void workerContextDestroyedTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerBase* thisPtr);
+
+    // 'shadow page' - created to proxy loading requests from the worker.
+    RefPtr<WebCore::ScriptExecutionContext> m_loadingDocument;
+    WebView* m_webView;
+    bool m_askedToTerminate;
+
+    RefPtr<WebCore::WorkerThread> m_workerThread;
 };
 
 } // namespace WebKit

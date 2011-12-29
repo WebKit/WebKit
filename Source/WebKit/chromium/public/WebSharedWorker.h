@@ -41,7 +41,7 @@ namespace WebKit {
 
 class WebString;
 class WebMessagePortChannel;
-class WebSharedWorkerClient;
+class WebCommonWorkerClient;
 class WebURL;
 
 // This is the interface to a SharedWorker thread.
@@ -49,7 +49,7 @@ class WebURL;
 class WebSharedWorker {
 public:
     // Invoked from the worker thread to instantiate a WebSharedWorker that interacts with the WebKit worker components.
-    WEBKIT_EXPORT static WebSharedWorker* create(WebSharedWorkerClient*);
+    WEBKIT_EXPORT static WebSharedWorker* create(WebCommonWorkerClient*);
 
     virtual ~WebSharedWorker() {};
 

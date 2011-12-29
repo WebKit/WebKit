@@ -44,7 +44,7 @@ class WebString;
 class WebWorker;
 class WebWorkerClient;
 
-class WebCommonWorkerClient {
+class NewWebCommonWorkerClient {
 public:
     // Called on the main webkit thread before opening a web database.
     virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) = 0;
@@ -56,6 +56,66 @@ public:
     virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*) = 0;
 };
 
+// Provides an interface back to the in-page script object for a worker.
+// This interface contains common APIs used by both shared and dedicated
+// workers.
+// All functions are expected to be called back on the thread that created
+// the Worker object, unless noted.
+class WebCommonWorkerClient : public NewWebCommonWorkerClient {
+public:
+    virtual void postExceptionToWorkerObject(
+        const WebString& errorString, int lineNumber,
+        const WebString& sourceURL) = 0;
+
+    // FIXME: the below is for compatibility only and should be   
+    // removed once Chromium is updated to remove message
+    // destination parameter <http://webkit.org/b/37155>.
+    virtual void postConsoleMessageToWorkerObject(int, int sourceIdentifier, int messageType, int messageLevel,
+                                                  const WebString& message, int lineNumber, const WebString& sourceURL) = 0;
+
+    virtual void postConsoleMessageToWorkerObject(int sourceIdentifier, int messageType, int messageLevel,
+                                                  const WebString& message, int lineNumber, const WebString& sourceURL)
+    {
+        postConsoleMessageToWorkerObject(0, sourceIdentifier, messageType, messageLevel,
+                                         message, lineNumber, sourceURL);
+    }
+
+    virtual void workerContextClosed() = 0;
+    virtual void workerContextDestroyed() = 0;
+
+    // Returns the notification presenter for this worker context.  Pointer
+    // is owned by the object implementing WebCommonWorkerClient.
+    virtual WebNotificationPresenter* notificationPresenter() = 0;
+
+    // This can be called on any thread to create a nested WebWorker.
+    // WebSharedWorkers are not instantiated via this API - instead
+    // they are created via the WebSharedWorkerRepository.
+    virtual WebWorker* createWorker(WebWorkerClient* client) = 0;
+
+    // Called on the main webkit thread in the worker process during initialization.
+    virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) = 0;
+
+    // Called on the main webkit thread before opening a web database.
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) = 0;
+
+    // Called on the main webkit thread before opening a file system.
+    virtual bool allowFileSystem()
+    {
+        return true;
+    }
+
+    // Called on the main webkit thread before opening a file system.
+    virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
+    }
+
+    virtual void dispatchDevToolsMessage(const WebString&) { }
+    virtual void saveDevToolsAgentState(const WebString&) { }
+
+protected:
+    ~WebCommonWorkerClient() { }
+};
 
 } // namespace WebKit
 

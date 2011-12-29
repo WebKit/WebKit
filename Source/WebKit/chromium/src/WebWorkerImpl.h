@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebSharedWorkerImpl_h
-#define WebSharedWorkerImpl_h
+#ifndef WebWorkerImpl_h
+#define WebWorkerImpl_h
 
-#include "WebSharedWorker.h"
+#include "WebWorker.h"
 
-#if ENABLE(SHARED_WORKERS)
+#if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
 
@@ -41,46 +41,44 @@
 
 namespace WebKit {
 
-// This class is used by the worker process code to talk to the WebCore::SharedWorker implementation.
-// It can't use it directly since it uses WebKit types, so this class converts the data types.
-// When the WebCore::SharedWorker object wants to call WebCore::WorkerReportingProxy, this class will
-// convert to Chrome data types first and then call the supplied WebCommonWorkerClient.
-class WebSharedWorkerImpl : public WebWorkerBase, public WebSharedWorker {
+// This class is used by the worker process code to talk to the WebCore::Worker
+// implementation.  It can't use it directly since it uses WebKit types, so this
+// class converts the data types.  When the WebCore::Worker object wants to call
+// WebCore::WorkerObjectProxy, this class will conver to Chrome data types first
+// and then call the supplied WebWorkerClient.
+class WebWorkerImpl : public WebWorkerBase, public WebWorker {
 public:
-    explicit WebSharedWorkerImpl(WebCommonWorkerClient* client);
+    explicit WebWorkerImpl(WebWorkerClient* client);
 
-    // WebSharedWorker methods:
-    virtual bool isStarted();
-    virtual void startWorkerContext(const WebURL&, const WebString& name, const WebString& userAgent, const WebString& sourceCode, long long);
-    virtual void connect(WebMessagePortChannel*, ConnectListener*);
+    // WebWorker methods:
+    virtual void startWorkerContext(const WebURL&, const WebString&, const WebString&);
     virtual void terminateWorkerContext();
+    virtual void postMessageToWorkerContext(const WebString&, const WebMessagePortChannelArray&);
+    virtual void workerObjectDestroyed();
     virtual void clientDestroyed();
 
-    virtual void pauseWorkerContextOnStart();
-    virtual void resumeWorkerContext();
-    virtual void attachDevTools();
-    virtual void reattachDevTools(const WebString& savedState);
-    virtual void detachDevTools();
-    virtual void dispatchDevToolsMessage(const WebString&);
-
     // WebWorkerBase methods:
-    WebWorkerClient* client();
-    WebCommonWorkerClient* commonClient() { return m_client; }
+    virtual WebWorkerClient* client() { return m_client; }
+    virtual WebCommonWorkerClient* commonClient();
 
     // NewWebWorkerBase methods:
-    NewWebCommonWorkerClient* newCommonClient() { return m_client; }
+    virtual NewWebCommonWorkerClient* newCommonClient();
 
 private:
-    virtual ~WebSharedWorkerImpl();
+    virtual ~WebWorkerImpl();
 
-    static void connectTask(WebCore::ScriptExecutionContext*, PassOwnPtr<WebCore::MessagePortChannel>);
+    // Tasks that are run on the worker thread.
+    static void postMessageToWorkerContextTask(
+        WebCore::ScriptExecutionContext* context,
+        WebWorkerImpl* thisPtr,
+        const WTF::String& message,
+        PassOwnPtr<WebCore::MessagePortChannelArray> channels);
 
-    WebCommonWorkerClient* m_client;
-    bool m_pauseWorkerContextOnStart;
+    WebWorkerClient* m_client;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(SHARED_WORKERS)
+#endif // ENABLE(WORKERS)
 
 #endif
