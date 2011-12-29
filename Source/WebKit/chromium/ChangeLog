@@ -1,3 +1,87 @@
+2011-12-28  Dmitry Lomov  <dslomov@google.com>
+
+        [WebWorkers][Chromium] Remove remains of cross-process dedicated worker implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=66509
+        Just renames, merges and removal of dead code. Here are the list of renames:
+          - WebCommonWorkerClient merged with WebWorkerClient and renamed to WebSharedWorkerClient
+          - NewWebCommonWorkerClient renamed to WebCommonWorkerClient
+          - WebWorkerBase merged into WebSharedWorkerImpl
+          - NewWebWorkerBase renamed into WebWorkerBase
+        WebWorkerClient.h has a "#define WebWorkerClient WebSharedWorkerClient" to keep chromium building.
+        Will be removed after coordinated patch in chromium.
+
+        Reviewed by David Levin.
+
+        * WebKit.gyp:
+        * public/WebCommonWorkerClient.h:
+        * public/WebSharedWorker.h:
+        * public/WebSharedWorkerClient.h: Copied from Source/WebKit/chromium/public/WebCommonWorkerClient.h.
+        (WebKit::WebSharedWorkerClient::postConsoleMessageToWorkerObject):
+        (WebKit::WebSharedWorkerClient::allowFileSystem):
+        (WebKit::WebSharedWorkerClient::openFileSystem):
+        (WebKit::WebSharedWorkerClient::dispatchDevToolsMessage):
+        (WebKit::WebSharedWorkerClient::saveDevToolsAgentState):
+        (WebKit::WebSharedWorkerClient::~WebSharedWorkerClient):
+        * public/WebWorkerClient.h:
+        * src/DatabaseObserver.cpp:
+        (WebKit::AllowDatabaseMainThreadBridge::create):
+        (WebKit::AllowDatabaseMainThreadBridge::AllowDatabaseMainThreadBridge):
+        (WebKit::AllowDatabaseMainThreadBridge::allowDatabaseTask):
+        (WebKit::allowDatabaseForWorker):
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::openFromWorker):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::initializeWebKitStaticValues):
+        (WebKit::WebSharedWorkerImpl::WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::~WebSharedWorkerImpl):
+        (WebKit::WebSharedWorkerImpl::stopWorkerThread):
+        (WebKit::WebSharedWorkerImpl::initializeLoader):
+        (WebKit::WebSharedWorkerImpl::didCreateDataSource):
+        (WebKit::WebSharedWorkerImpl::createApplicationCacheHost):
+        (WebKit::WebSharedWorkerImpl::postMessageToWorkerObject):
+        (WebKit::WebSharedWorkerImpl::postMessageTask):
+        (WebKit::WebSharedWorkerImpl::postExceptionToWorkerObject):
+        (WebKit::WebSharedWorkerImpl::postExceptionTask):
+        (WebKit::WebSharedWorkerImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebSharedWorkerImpl::postConsoleMessageTask):
+        (WebKit::WebSharedWorkerImpl::postMessageToPageInspector):
+        (WebKit::WebSharedWorkerImpl::postMessageToPageInspectorTask):
+        (WebKit::WebSharedWorkerImpl::updateInspectorStateCookie):
+        (WebKit::WebSharedWorkerImpl::updateInspectorStateCookieTask):
+        (WebKit::WebSharedWorkerImpl::confirmMessageFromWorkerObject):
+        (WebKit::WebSharedWorkerImpl::confirmMessageTask):
+        (WebKit::WebSharedWorkerImpl::reportPendingActivity):
+        (WebKit::WebSharedWorkerImpl::reportPendingActivityTask):
+        (WebKit::WebSharedWorkerImpl::workerContextClosed):
+        (WebKit::WebSharedWorkerImpl::workerContextClosedTask):
+        (WebKit::WebSharedWorkerImpl::workerContextDestroyed):
+        (WebKit::WebSharedWorkerImpl::workerContextDestroyedTask):
+        (WebKit::WebSharedWorkerImpl::postTaskToLoader):
+        (WebKit::WebSharedWorkerImpl::postTaskForModeToWorkerContext):
+        (WebKit::WebSharedWorker::create):
+        * src/WebSharedWorkerImpl.h:
+        (WebKit::WebSharedWorkerImpl::view):
+        (WebKit::WebSharedWorkerImpl::commonClient):
+        (WebKit::WebSharedWorkerImpl::client):
+        (WebKit::WebSharedWorkerImpl::setWorkerThread):
+        (WebKit::WebSharedWorkerImpl::workerThread):
+        * src/WebWorkerBase.cpp:
+        (WebKit::invokeTaskMethod):
+        (WebKit::WebWorkerBase::dispatchTaskToMainThread):
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.cpp:
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::commonClient):
+        * src/WebWorkerImpl.cpp: Removed.
+        * src/WebWorkerImpl.h: Removed.
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread):
+        * src/WorkerFileSystemCallbacksBridge.h:
+
 2011-12-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103785.

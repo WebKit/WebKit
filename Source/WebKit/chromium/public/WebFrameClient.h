@@ -36,6 +36,7 @@
 #include "WebNavigationType.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextDirection.h"
+#include "WebWorkerClient.h"
 #include "platform/WebCommon.h"
 #include "platform/WebFileSystem.h"
 #include "platform/WebURLError.h"
@@ -67,7 +68,7 @@ class WebURLLoader;
 class WebURLRequest;
 class WebURLResponse;
 class WebWorker;
-class WebWorkerClient;
+class WebSharedWorkerClient;
 struct WebPluginParams;
 struct WebRect;
 struct WebSize;
@@ -81,7 +82,7 @@ public:
     virtual WebPlugin* createPlugin(WebFrame*, const WebPluginParams&) { return 0; }
 
     // May return null.
-    virtual WebWorker* createWorker(WebFrame*, WebWorkerClient*) { return 0; }
+    virtual WebWorker* createWorker(WebFrame*, WebSharedWorkerClient*) { return 0; }
 
     // May return null.
     virtual WebSharedWorker* createSharedWorker(WebFrame*, const WebURL&, const WebString&, unsigned long long) { return 0; }
