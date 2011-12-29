@@ -113,24 +113,14 @@ namespace JSC {
         WriteBarrier<Unknown> m_vector[1];
     };
 
-    // The CreateCompact creation mode is used for fast construction of arrays
-    // whose size and contents are known at time of creation.
-    //
-    // There are two obligations when using this mode:
-    //
-    //   - uncheckedSetIndex() must be used when initializing the array.
-    //   - setLength() must be called after initialization.
-
-    enum ArrayCreationMode { CreateCompact, CreateInitialized };
-
     class JSArray : public JSNonFinalObject {
         friend class Walker;
 
     protected:
         explicit JSArray(JSGlobalData&, Structure*);
 
-        void finishCreation(JSGlobalData&);
-        void finishCreation(JSGlobalData&, unsigned initialLength, ArrayCreationMode);
+        void finishCreation(JSGlobalData&, unsigned initialLength = 0);
+        JSArray* tryFinishCreationUninitialized(JSGlobalData&, unsigned initialLength);
         void finishCreation(JSGlobalData&, const ArgList&);
         void finishCreation(JSGlobalData&, const JSValue*, size_t length);
     
@@ -140,18 +130,22 @@ namespace JSC {
         ~JSArray();
         static void destroy(JSCell*);
 
-        static JSArray* create(JSGlobalData& globalData, Structure* structure)
+        static JSArray* create(JSGlobalData& globalData, Structure* structure, unsigned initialLength = 0)
         {
             JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
-            array->finishCreation(globalData);
+            array->finishCreation(globalData, initialLength);
             return array;
         }
 
-        static JSArray* create(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode createMode)
+        // tryCreateUninitialized is used for fast construction of arrays whose size and
+        // contents are known at time of creation. Clients of this interface must:
+        //   - null-check the result (indicating out of memory, or otherwise unable to allocate vector).
+        //   - call 'initializeIndex' for all properties in sequence, for 0 <= i < initialLength.
+        //   - called 'completeInitialization' after all properties have been initialized.
+        static JSArray* tryCreateUninitialized(JSGlobalData& globalData, Structure* structure, unsigned initialLength)
         {
             JSArray* array = new (NotNull, allocateCell<JSArray>(globalData.heap)) JSArray(globalData, structure);
-            array->finishCreation(globalData, initialLength, createMode);
-            return array;
+            return array->tryFinishCreationUninitialized(globalData, initialLength);
         }
 
         static JSArray* create(JSGlobalData& globalData, Structure* structure, const ArgList& initialValues)
@@ -210,14 +204,33 @@ namespace JSC {
             x.set(globalData, this, v);
         }
         
-        void uncheckedSetIndex(JSGlobalData& globalData, unsigned i, JSValue v)
+        inline void initializeIndex(JSGlobalData& globalData, unsigned i, JSValue v)
         {
             ASSERT(canSetIndex(i));
             ArrayStorage *storage = m_storage;
 #if CHECK_ARRAY_CONSISTENCY
             ASSERT(storage->m_inCompactInitialization);
 #endif
-            storage->m_vector[i].set(globalData, this, v);
+            // Check that we are initializing the next index in sequence.
+            ASSERT_UNUSED(i, i == storage->m_length);
+            // tryCreateUninitialized set m_numValuesInVector to the initialLength,
+            // check we do not try to initialize more than this number of properties.
+            ASSERT(storage->m_length < storage->m_numValuesInVector);
+            // It is improtant that we increment length here, so that all newly added
+            // values in the array still get marked during the initialization phase.
+            storage->m_vector[storage->m_length++].set(globalData, this, v);
+        }
+
+        inline void completeInitialization(unsigned newLength)
+        {
+            // Check that we have initialized as meny properties as we think we have.
+            ASSERT_UNUSED(newLength, newLength == m_storage->m_length);
+            // Check that the number of propreties initialized matches the initialLength.
+            ASSERT(m_storage->m_length == m_storage->m_numValuesInVector);
+#if CHECK_ARRAY_CONSISTENCY
+            ASSERT(m_storage->m_inCompactInitialization);
+            m_storage->m_inCompactInitialization = false;
+#endif
         }
 
         bool inSparseMode()

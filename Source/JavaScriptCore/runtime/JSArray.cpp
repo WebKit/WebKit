@@ -129,65 +129,69 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
+    , m_storage(0)
 {
 }
 
-void JSArray::finishCreation(JSGlobalData& globalData)
+void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength)
 {
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
 
-    unsigned initialCapacity = 0;
+    unsigned initialVectorLength = BASE_VECTOR_LEN;
+    unsigned initialStorageSize = storageSize(initialVectorLength);
 
-    m_storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
-    m_storage->m_allocBase = m_storage;
-    m_indexBias = 0;
-    m_vectorLength = initialCapacity;
-
-    checkConsistency();
-
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(0));
-}
-
-void JSArray::finishCreation(JSGlobalData& globalData, unsigned initialLength, ArrayCreationMode creationMode)
-{
-    Base::finishCreation(globalData);
-    ASSERT(inherits(&s_info));
-
-    unsigned initialCapacity;
-    if (creationMode == CreateCompact)
-        initialCapacity = initialLength;
-    else
-        initialCapacity = min(BASE_VECTOR_LEN, MIN_SPARSE_ARRAY_INDEX);
-    
-    m_storage = static_cast<ArrayStorage*>(fastMalloc(storageSize(initialCapacity)));
+    m_storage = static_cast<ArrayStorage*>(fastMalloc(initialStorageSize));
     m_storage->m_allocBase = m_storage;
     m_storage->m_length = initialLength;
     m_indexBias = 0;
-    m_vectorLength = initialCapacity;
+    m_vectorLength = initialVectorLength;
     m_storage->m_sparseValueMap = 0;
     m_storage->subclassData = 0;
+    m_storage->m_numValuesInVector = 0;
+#if CHECK_ARRAY_CONSISTENCY
+    m_storage->m_inCompactInitialization = false;
+#endif
 
-    if (creationMode == CreateCompact) {
-#if CHECK_ARRAY_CONSISTENCY
-        m_storage->m_inCompactInitialization = !!initialCapacity;
-#endif
-        m_storage->m_length = 0;
-        m_storage->m_numValuesInVector = initialCapacity;
-    } else {
-#if CHECK_ARRAY_CONSISTENCY
-        storage->m_inCompactInitialization = false;
-#endif
-        m_storage->m_length = initialLength;
-        m_storage->m_numValuesInVector = 0;
-        WriteBarrier<Unknown>* vector = m_storage->m_vector;
-        for (size_t i = 0; i < initialCapacity; ++i)
-            vector[i].clear();
-    }
+    WriteBarrier<Unknown>* vector = m_storage->m_vector;
+    for (size_t i = 0; i < initialVectorLength; ++i)
+        vector[i].clear();
 
     checkConsistency();
     
-    Heap::heap(this)->reportExtraMemoryCost(storageSize(initialCapacity));
+    Heap::heap(this)->reportExtraMemoryCost(initialStorageSize);
+}
+
+JSArray* JSArray::tryFinishCreationUninitialized(JSGlobalData& globalData, unsigned initialLength)
+{
+    Base::finishCreation(globalData);
+    ASSERT(inherits(&s_info));
+
+    // Check for lengths larger than we can handle with a vector.
+    if (initialLength > MAX_STORAGE_VECTOR_LENGTH)
+        return 0;
+
+    unsigned initialVectorLength = max(initialLength, BASE_VECTOR_LEN);
+    unsigned initialStorageSize = storageSize(initialVectorLength);
+
+    m_storage = static_cast<ArrayStorage*>(fastMalloc(initialStorageSize));
+    m_storage->m_allocBase = m_storage;
+    m_storage->m_length = 0;
+    m_indexBias = 0;
+    m_vectorLength = initialVectorLength;
+    m_storage->m_sparseValueMap = 0;
+    m_storage->subclassData = 0;
+    m_storage->m_numValuesInVector = initialLength;
+#if CHECK_ARRAY_CONSISTENCY
+    m_storage->m_inCompactInitialization = true;
+#endif
+
+    WriteBarrier<Unknown>* vector = m_storage->m_vector;
+    for (size_t i = initialLength; i < initialVectorLength; ++i)
+        vector[i].clear();
+
+    Heap::heap(this)->reportExtraMemoryCost(initialStorageSize);
+    return this;
 }
 
 void JSArray::finishCreation(JSGlobalData& globalData, const ArgList& list)
@@ -271,8 +275,12 @@ void JSArray::finishCreation(JSGlobalData& globalData, const JSValue* values, si
 JSArray::~JSArray()
 {
     ASSERT(jsCast<JSArray*>(this));
-    checkConsistency(DestructorConsistencyCheck);
 
+    // If we are unable to allocate memory for m_storage then this may be null.
+    if (!m_storage)
+        return;
+
+    checkConsistency(DestructorConsistencyCheck);
     delete m_storage->m_sparseValueMap;
     fastFree(m_storage->m_allocBase);
 }
@@ -712,19 +720,13 @@ bool JSArray::increaseVectorPrefixLength(unsigned newLength)
     
     return true;
 }
-    
 
 void JSArray::setLength(unsigned newLength)
 {
+    checkConsistency();
+
     ArrayStorage* storage = m_storage;
     
-#if CHECK_ARRAY_CONSISTENCY
-    if (!storage->m_inCompactInitialization)
-        checkConsistency();
-    else
-        storage->m_inCompactInitialization = false;
-#endif
-
     unsigned length = storage->m_length;
 
     if (newLength < length) {
@@ -1377,6 +1379,8 @@ void JSArray::setSubclassData(void* d)
 void JSArray::checkConsistency(ConsistencyCheckType type)
 {
     ArrayStorage* storage = m_storage;
+
+    ASSERT(!storage->m_inCompactInitialization);
 
     ASSERT(storage);
     if (type == SortConsistencyCheck)

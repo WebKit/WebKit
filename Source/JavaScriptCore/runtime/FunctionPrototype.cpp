@@ -187,10 +187,13 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncBind(ExecState* exec)
 
     // Let A be a new (possibly empty) internal list of all of the argument values provided after thisArg (arg1, arg2 etc), in order.
     size_t numBoundArgs = exec->argumentCount() > 1 ? exec->argumentCount() - 1 : 0;
-    JSArray* boundArgs = JSArray::create(exec->globalData(), globalObject->arrayStructure(), numBoundArgs, CreateCompact);
+    JSArray* boundArgs = JSArray::tryCreateUninitialized(exec->globalData(), globalObject->arrayStructure(), numBoundArgs);
+    if (!boundArgs)
+        return JSValue::encode(throwOutOfMemoryError(exec));
+
     for (size_t i = 0; i < numBoundArgs; ++i)
-        boundArgs->uncheckedSetIndex(exec->globalData(), i, exec->argument(i + 1));
-    boundArgs->setLength(numBoundArgs);
+        boundArgs->initializeIndex(exec->globalData(), i, exec->argument(i + 1));
+    boundArgs->completeInitialization(numBoundArgs);
 
     // If the [[Class]] internal property of Target is "Function", then ...
     // Else set the length own property of F to 0.

@@ -127,7 +127,7 @@ RegExpMatchesArray::RegExpMatchesArray(ExecState* exec)
 
 void RegExpMatchesArray::finishCreation(JSGlobalData& globalData, RegExpConstructorPrivate* data)
 {
-    Base::finishCreation(globalData, data->lastNumSubPatterns + 1, CreateInitialized);
+    Base::finishCreation(globalData, data->lastNumSubPatterns + 1);
     RegExpConstructorPrivate* d = new RegExpConstructorPrivate;
     d->input = data->lastInput;
     d->lastInput = data->lastInput;

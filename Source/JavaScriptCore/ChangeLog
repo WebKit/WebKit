@@ -1,3 +1,67 @@
+2011-12-29  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75140
+
+        Reviewed by Oliver Hunt.
+
+        Start cleaning up JSArray construction. JSArray has a set of create methods,
+        one of which (currently) takes a 'creation mode' enum parameter. Based on that
+        parameter, the constructor does one of two completely different things. If the
+        parameter is 'CreateInitialized' it creates an array, setting the length, but
+        does not eagerly allocate a storage vector of the specified length. A small
+        (BASE_VECTOR_LEN sized) initial vector will be allocated, and cleared, property
+        access to the vector will read the hole value (return undefined). The alternate
+        usage of this method ('CreateCompact') does something very different. It tries
+        to create an array of the requested length, and also allocates a storage vector
+        large enough to hold all properties. It does not clear the storage vector,
+        leaving the memory uninitialized and requiring the user to call a method
+        'uncheckedSetIndex' to initialize values in the vector.
+
+        This patch factors out these two behaviours, moving the 'CreateCompact' mode
+        into its own method, 'tryCreateUninitialized' (matching the naming for this
+        functionality in the string classes). 'tryCreateUninitialized' may return 0 if
+        memory allocation fails during construction of the object. The construction
+        pattern changes such that values added during initialization will be marked if
+        a GC is triggered during array allocation. 'CreateInitialized' no longer need
+        be passed to create a normal, fully constructed array with a length, and this
+        method is merged with the version of 'create' that does not take an initial
+        length (length parameter defaults to 0).
+
+        * JavaScriptCore.exp:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+            - removed 'CreateInitialized' argument
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSplice):
+            - changed to call 'tryCreateUninitialized'
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+            - changed to call 'tryCreateUninitialized'
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+            - initialize m_storage to null; if construction fails, make destruction safe
+        (JSC::JSArray::finishCreation):
+            - merge versions of this method, takes an initialLength parameter defaulting to zero
+        (JSC::JSArray::tryFinishCreationUninitialized):
+            - version of 'finishCreation' that tries to eagerly allocate storage; may fail & return 0
+        (JSC::JSArray::~JSArray):
+            - check for null m_storage, in case array construction failed.
+        (JSC::JSArray::increaseVectorPrefixLength):
+        * runtime/JSArray.h:
+        (JSC::JSArray::create):
+            - merge versions of this method, takes an initialLength parameter defaulting to zero
+        (JSC::JSArray::tryCreateUninitialized):
+            - version of 'create' that tries to eagerly allocate storage; may fail & return 0
+        (JSC::JSArray::initializeIndex):
+        (JSC::JSArray::completeInitialization):
+            - used in conjunction with 'tryCreateUninitialized' to initialize the array
+        * runtime/JSGlobalObject.h:
+        (JSC::constructEmptyArray):
+            - removed 'CreateInitialized' argument
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpMatchesArray::finishCreation):
+            - removed 'CreateInitialized' argument
+
 2011-12-29  Anders Carlsson  <andersca@apple.com>
 
         Add a retainPtr function template

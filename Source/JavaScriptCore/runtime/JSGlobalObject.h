@@ -444,7 +444,7 @@ namespace JSC {
 
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength)
     {
-        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), initialLength, CreateInitialized);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), initialLength);
     }
 
     inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)

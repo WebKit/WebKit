@@ -612,17 +612,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* resObj = JSArray::create(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
+    JSArray* resObj = JSArray::tryCreateUninitialized(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), deleteCount);
+    if (!resObj)
+        return JSValue::encode(throwOutOfMemoryError(exec));
+
     JSValue result = resObj;
     JSGlobalData& globalData = exec->globalData();
     for (unsigned k = 0; k < deleteCount; k++) {
         JSValue v = getProperty(exec, thisObj, k + begin);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        resObj->uncheckedSetIndex(globalData, k, v);
+        resObj->initializeIndex(globalData, k, v);
     }
-
-    resObj->setLength(deleteCount);
+    resObj->completeInitialization(deleteCount);
 
     unsigned additionalArgs = std::max<int>(exec->argumentCount() - 2, 0);
     if (additionalArgs != deleteCount) {
