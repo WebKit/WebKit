@@ -1,3 +1,16 @@
+2011-12-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Enable the [Supplemental] IDL on Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=75274
+
+        Reviewed by Andreas Kling.
+
+        http://trac.webkit.org/changeset/103783 broke the Qt SL bot.
+        This patch fixes the problem by using 'tr' rather than 'sed' which
+        seems to be more consistent between Mac and Linux.
+
+        * DerivedSources.pri:
+
 2011-12-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts navigator should support incremental search by typing.

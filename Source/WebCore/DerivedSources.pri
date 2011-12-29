@@ -659,7 +659,8 @@ RESOLVE_SUPPLEMENTAL_SCRIPT = $$PWD/bindings/scripts/resolve-supplemental.pl
 
 resolveSupplemental.input = RESOLVE_SUPPLEMENTAL_SCRIPT # dummy input to fire this rule
 resolveSupplemental.script = $$RESOLVE_SUPPLEMENTAL_SCRIPT
-resolveSupplemental.commands = echo $(addprefix $${ROOT_WEBKIT_DIR}/Source/WebCore/, $$IDL_BINDINGS) | sed \'s/\\s/\\n/g\' > $$IDL_FILES_TMP && \
+# FIXME : We need to use only perl at some point.
+resolveSupplemental.commands = echo $(addprefix $${ROOT_WEBKIT_DIR}/Source/WebCore/, $$IDL_BINDINGS) | tr \' \' \'\n\' > $$IDL_FILES_TMP && \
                                perl -I$$PWD/bindings/scripts $$resolveSupplemental.script \
                                --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" \
                                --idlFilesList $$IDL_FILES_TMP \
