@@ -768,9 +768,8 @@ BUGCR48550 SKIP : plugins/return-negative-one-from-write.html = TIMEOUT
 BUGCR38353 : http/tests/plugins/plugin-document-has-focus.html = TIMEOUT TEXT
 
 // Tests differences from switching to webkit.org's test netscape plugin rather
-// than chromium's old forked copy.  We can remove the PASS on these once we
-// switch.
-BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
+// than chromium's old forked copy.
+BUGCR108833 WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = PASS CRASH
 
 // Expectations for this test changed upstream. We should fix this test, but
