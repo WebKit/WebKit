@@ -1,3 +1,16 @@
+2011-12-29  Anders Carlsson  <andersca@apple.com>
+
+        Add a retainPtr function template
+        https://bugs.webkit.org/show_bug.cgi?id=75365
+
+        Reviewed by Dan Bernstein.
+
+        This makes it easier to make a RetainPtr using template argument deduction, which
+        is useful when passing RetainPtr objects as function arguments.
+
+        * wtf/RetainPtr.h:
+        (WTF::retainPtr):
+
 2011-12-28  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         spill unboxed values in DFG 32_64

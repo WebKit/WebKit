@@ -267,6 +267,13 @@ namespace WTF {
         return RetainPtr<T>(AdoptNS, o);
     }
 
+    // Helper function for creating a RetainPtr using template argument deduction.
+    template<typename T> inline RetainPtr<T> retainPtr(T) WARN_UNUSED_RETURN;
+    template<typename T> inline RetainPtr<T> retainPtr(T o)
+    {
+        return RetainPtr<T>(o);
+    }
+
     template<typename P> struct HashTraits<RetainPtr<P> > : SimpleClassHashTraits<RetainPtr<P> > { };
     
     template<typename P> struct PtrHash<RetainPtr<P> > : PtrHash<typename RetainPtr<P>::PtrType> {
