@@ -885,11 +885,3 @@ WebInspector._toolbarItemClicked = function(event)
     var toolbarItem = event.currentTarget;
     WebInspector.inspectorView.setCurrentPanel(toolbarItem.panel);
 }
-
-WebInspector.installSourceMappingForTest = function(url)
-{
-    // FIXME: remove this method when it's possible to set compiler source mappings via UI.
-    var sourceMapping = new WebInspector.ClosureCompilerSourceMapping(url);
-    var uiSourceCode = WebInspector.panels.scripts.visibleView._uiSourceCode;
-    uiSourceCode.rawSourceCode.setCompilerSourceMapping(sourceMapping);
-}

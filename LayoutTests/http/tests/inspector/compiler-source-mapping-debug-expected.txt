@@ -5,6 +5,7 @@ Tests installing compiler source map in scripts panel.
 Debugger was enabled.
 
 Running: testSetBreakpoint
+Page reloaded.
 Script source was shown.
 Script execution paused.
 Call stack:

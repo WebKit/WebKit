@@ -56,9 +56,9 @@ function test()
         return formatter;
       };
 
-    function createRawSourceCode(script, resource, formatted)
+    function createRawSourceCode(script, resource, formatted, compilerSourceMapping)
     {
-        var rawSourceCode = new WebInspector.RawSourceCode("id", script, resource, createScriptFormatterMock(), !!formatted);
+        var rawSourceCode = new WebInspector.RawSourceCode("id", script, resource, createScriptFormatterMock(), !!formatted, compilerSourceMapping);
         rawSourceCode.addEventListener(WebInspector.RawSourceCode.Events.SourceMappingUpdated, defaultSourceMappingUpdatedHandler);
         return rawSourceCode;
     }
@@ -359,25 +359,20 @@ function test()
 
             var script = createScriptMock("compiled.js", 0, 0, true, "<script source>");
             var resource = createPendingResourceMock("script", "<resource content>");
-            var rawSourceCode = createRawSourceCode(script, resource);
+            var rawSourceCode = createRawSourceCode(script, resource, false, compilerSourceMappingMock);
             var uiSourceCodeList;
 
-            waitForSourceMappingEvent(rawSourceCode, checkMapping);
-            rawSourceCode.setCompilerSourceMapping(compilerSourceMappingMock);
-            function checkMapping()
-            {
-                var sourceMapping = rawSourceCode.sourceMapping;
-                uiSourceCodeList = sourceMapping.uiSourceCodeList();
-                var uiSourceCodeByURL = {};
-                for (var i = 0; i < uiSourceCodeList.length; ++i)
-                    uiSourceCodeByURL[uiSourceCodeList[i].url] = uiSourceCodeList[i];
-                checkUILocation(uiSourceCodeByURL["source1.js"], 2, 4, sourceMapping.rawLocationToUILocation(createRawLocation(1, 2)));
-                checkUILocation(uiSourceCodeByURL["source2.js"], 10, 40, sourceMapping.rawLocationToUILocation(createRawLocation(15, 20)));
-                checkRawLocation(script, 1, 0, sourceMapping.uiLocationToRawLocation(uiSourceCodeByURL["source1.js"], 2, 0));
-                checkRawLocation(script, 15, 0, sourceMapping.uiLocationToRawLocation(uiSourceCodeByURL["source2.js"], 10, 0));
+            var sourceMapping = rawSourceCode.sourceMapping;
+            uiSourceCodeList = sourceMapping.uiSourceCodeList();
+            var uiSourceCodeByURL = {};
+            for (var i = 0; i < uiSourceCodeList.length; ++i)
+                uiSourceCodeByURL[uiSourceCodeList[i].url] = uiSourceCodeList[i];
+            checkUILocation(uiSourceCodeByURL["source1.js"], 2, 4, sourceMapping.rawLocationToUILocation(createRawLocation(1, 2)));
+            checkUILocation(uiSourceCodeByURL["source2.js"], 10, 40, sourceMapping.rawLocationToUILocation(createRawLocation(15, 20)));
+            checkRawLocation(script, 1, 0, sourceMapping.uiLocationToRawLocation(uiSourceCodeByURL["source1.js"], 2, 0));
+            checkRawLocation(script, 15, 0, sourceMapping.uiLocationToRawLocation(uiSourceCodeByURL["source2.js"], 10, 0));
 
-                uiSourceCodeList[0].requestContent(didRequestContent1);
-            }
+            uiSourceCodeList[0].requestContent(didRequestContent1);
 
             function didRequestContent1(mimeType, content)
             {
@@ -399,17 +394,10 @@ function test()
             var compilerSourceMappingMock = { load: function() { return false; } };
 
             var script = createScriptMock("compiled.js", 0, 0, true, "<script source>");
-            var rawSourceCode = createRawSourceCode(script, null);
-            var uiSourceCodeList;
+            var rawSourceCode = createRawSourceCode(script, null, false, compilerSourceMappingMock);
 
-            waitForSourceMappingEvent(rawSourceCode, checkMapping);
-            rawSourceCode.setCompilerSourceMapping(compilerSourceMappingMock);
-
-            function checkMapping()
-            {
-                InspectorTest.assertTrue(false, "Should not be reached.");
-            }
-
+            InspectorTest.assertEquals(1, rawSourceCode.sourceMapping.uiSourceCodeList().length);
+            InspectorTest.assertEquals("compiled.js", rawSourceCode.sourceMapping.uiSourceCodeList()[0].url);
             next();
         }
     ]);

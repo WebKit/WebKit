@@ -157,14 +157,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             contextMenu.appendItem(addToWatchLabel, this._scriptsPanel.addToWatch.bind(this._scriptsPanel, selection.toString()));
             var evaluateLabel = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Evaluate in console" : "Evaluate in Console");
             contextMenu.appendItem(evaluateLabel, WebInspector.evaluateInConsole.bind(WebInspector, selection.toString()));
-            contextMenu.appendSeparator();
         }
-
-        if (this._uiSourceCode.sourceMapURL) {
-            var installSourceMapLabel = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Install source map" : "Install Source Map");
-            contextMenu.appendItem(installSourceMapLabel, this._model.installCompilerSourceMapping.bind(this._model, this._uiSourceCode));
-        }
-
     },
 
     afterTextChanged: function(oldRange, newRange)

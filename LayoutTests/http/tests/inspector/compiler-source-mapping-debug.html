@@ -13,21 +13,29 @@ function clickButton()
 
 function test()
 {
+    WebInspector.OriginalScript = WebInspector.Script;
+    WebInspector.Script = function()
+    {
+        WebInspector.OriginalScript.apply(this, arguments);
+        if (this.sourceURL.indexOf("compiled.js") !== -1)
+            this.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
+    }
+    WebInspector.Script.prototype = WebInspector.OriginalScript.prototype;
+
     InspectorTest.runDebuggerTestSuite([
         function testSetBreakpoint(next)
         {
-            InspectorTest.showScriptSource("compiled.js", didShowCompiled);
+            WebInspector.settings.sourceMapsEnabled.set(true);
+            InspectorTest.reloadPage(pageReloaded);
 
-            function didShowCompiled(sourceFrame)
+            function pageReloaded()
             {
-                InspectorTest.addResult("Script source was shown.");
-                sourceFrame._uiSourceCode.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json";
-                sourceFrame._model.installCompilerSourceMapping(sourceFrame._uiSourceCode);
-                InspectorTest.showScriptSource("source1.js", didShowSource1);
+                InspectorTest.showScriptSource("source1.js", didShowSource);
             }
 
-            function didShowSource1(sourceFrame)
+            function didShowSource(sourceFrame)
             {
+                InspectorTest.addResult("Script source was shown.");
                 InspectorTest.setBreakpoint(sourceFrame, 14, "", true);
                 InspectorTest.waitUntilPaused(paused);
                 InspectorTest.evaluateInPage("setTimeout(clickButton, 0)");

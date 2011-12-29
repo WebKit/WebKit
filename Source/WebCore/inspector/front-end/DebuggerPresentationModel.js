@@ -89,7 +89,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return new WebInspector.DebuggerPresentationModel.CallFramePlacard(callFrame);
     },
 
-    /*
+    /**
      * @param {DebuggerAgent.Location} rawLocation
      * @return {?WebInspector.UILocation}
      */
@@ -139,7 +139,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
             }
         }
 
-        rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource);
+        var compilerSourceMapping = null;
+        if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL)
+            compilerSourceMapping = new WebInspector.ClosureCompilerSourceMapping(script.sourceMapURL, script.sourceURL);
+
+        rawSourceCode = new WebInspector.RawSourceCode(script.scriptId, script, resource, this._formatter, this._formatSource, compilerSourceMapping);
         this._bindScriptToRawSourceCode(script, rawSourceCode);
 
         if (isInlineScript)
@@ -333,15 +337,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._breakpointManager.reset();
         for (var id in this._rawSourceCodeForScriptId)
             this._rawSourceCodeForScriptId[id].setFormatted(this._formatSource);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    installCompilerSourceMapping: function(uiSourceCode)
-    {
-        var sourceMapping = new WebInspector.ClosureCompilerSourceMapping(uiSourceCode.sourceMapURL, uiSourceCode.url);
-        uiSourceCode.rawSourceCode.setCompilerSourceMapping(sourceMapping);
     },
 
     /**

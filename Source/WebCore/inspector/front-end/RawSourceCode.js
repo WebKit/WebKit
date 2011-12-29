@@ -39,20 +39,21 @@
  * @param {WebInspector.Resource} resource
  * @param {WebInspector.ScriptFormatter} formatter
  * @param {boolean} formatted
+ * @param {WebInspector.CompilerSourceMapping} compilerSourceMapping
  */
-WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted)
+WebInspector.RawSourceCode = function(id, script, resource, formatter, formatted, compilerSourceMapping)
 {
     this.id = id;
     this.url = script.sourceURL;
     this.isContentScript = script.isContentScript;
-    this.sourceMapURL = script.sourceMapURL;
     this._scripts = [script];
     this._formatter = formatter;
     this._formatted = formatted;
+    this._compilerSourceMapping = compilerSourceMapping;
     this._resource = resource;
     this.messages = [];
 
-    this._useTemporaryContent = this._resource && !this._resource.finished;
+    this._useTemporaryContent = !this._compilerSourceMapping && this._resource && !this._resource.finished;
     this._hasNewScripts = true;
     if (!this._useTemporaryContent)
         this._updateSourceMapping();
@@ -90,18 +91,8 @@ WebInspector.RawSourceCode.prototype = {
         if (this._formatted === formatted)
             return;
         this._formatted = formatted;
-        this._updateSourceMapping();
-    },
-
-    /**
-     * @param {WebInspector.CompilerSourceMapping} compilerSourceMapping
-     */
-    setCompilerSourceMapping: function(compilerSourceMapping)
-    {
-        if (compilerSourceMapping)
-            this._useTemporaryContent = false;
-        this._compilerSourceMapping = compilerSourceMapping;
-        this._updateSourceMapping();
+        if (!this._compilerSourceMapping)
+            this._updateSourceMapping();
     },
 
     _resourceFinished: function()
@@ -160,9 +151,7 @@ WebInspector.RawSourceCode.prototype = {
         function didCreateSourceMapping(sourceMapping)
         {
             this._updatingSourceMapping = false;
-            if (!sourceMapping)
-                return;
-            if (!this._updateNeeded)
+            if (sourceMapping && !this._updateNeeded)
                 this._saveSourceMapping(sourceMapping);
             else
                 this._updateSourceMapping();
@@ -244,7 +233,6 @@ WebInspector.RawSourceCode.prototype = {
     {
         var uiSourceCode = new WebInspector.UISourceCode(id, url, this, contentProvider);
         uiSourceCode.isContentScript = this.isContentScript;
-        uiSourceCode.sourceMapURL = this.sourceMapURL;
         return uiSourceCode;
     },
 

@@ -1,3 +1,31 @@
+2011-12-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: add "enable source maps" checkbox setting.
+        https://bugs.webkit.org/show_bug.cgi?id=75311
+
+        Reviewed by Pavel Feldman.
+
+        When "enable source maps" is on, all auto detected source maps are silently applied.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.populateTextAreaContextMenu):
+        * inspector/front-end/RawSourceCode.js:
+        (WebInspector.RawSourceCode):
+        (WebInspector.RawSourceCode.prototype.setFormatted):
+        (WebInspector.RawSourceCode.prototype._updateSourceMapping.didCreateSourceMapping):
+        (WebInspector.RawSourceCode.prototype._updateSourceMapping):
+        (WebInspector.RawSourceCode.prototype._createUISourceCode):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        * inspector/front-end/inspector.js:
+        (WebInspector._toolbarItemClicked):
+
 2011-12-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Tighten our checks for needsSectionRecalc in RenderTable
