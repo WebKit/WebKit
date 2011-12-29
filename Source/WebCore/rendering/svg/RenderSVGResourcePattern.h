@@ -44,7 +44,6 @@ struct PatternData {
 class RenderSVGResourcePattern : public RenderSVGResourceContainer {
 public:
     RenderSVGResourcePattern(SVGPatternElement*);
-    virtual ~RenderSVGResourcePattern();
 
     virtual const char* renderName() const { return "RenderSVGResourcePattern"; }
 
@@ -67,7 +66,7 @@ private:
 
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;
-    HashMap<RenderObject*, PatternData*> m_pattern;
+    HashMap<RenderObject*, OwnPtr<PatternData> > m_patternMap;
 };
 
 }

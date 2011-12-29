@@ -40,22 +40,9 @@ RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement* node)
 {
 }
 
-RenderSVGResourcePattern::~RenderSVGResourcePattern()
-{
-    if (m_pattern.isEmpty())
-        return;
-
-    deleteAllValues(m_pattern);
-    m_pattern.clear();
-}
-
 void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidation)
 {
-    if (!m_pattern.isEmpty()) {
-        deleteAllValues(m_pattern);
-        m_pattern.clear();
-    }
-
+    m_patternMap.clear();
     m_shouldCollectPatternAttributes = true;
     markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
@@ -63,10 +50,7 @@ void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidatio
 void RenderSVGResourcePattern::removeClientFromCache(RenderObject* client, bool markForInvalidation)
 {
     ASSERT(client);
-
-    if (m_pattern.contains(client))
-        delete m_pattern.take(client);
-
+    m_patternMap.remove(client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
@@ -99,10 +83,10 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
     if (m_attributes.patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && objectBoundingBox.isEmpty())
         return false;
 
-    if (!m_pattern.contains(object))
-        m_pattern.set(object, new PatternData);
+    OwnPtr<PatternData>& patternData = m_patternMap.add(object, nullptr).first->second;
+    if (!patternData)
+        patternData = adoptPtr(new PatternData);
 
-    PatternData* patternData = m_pattern.get(object);
     if (!patternData->pattern) {
         // If we couldn't determine the pattern content element root, stop here.
         if (!m_attributes.patternContentElement())

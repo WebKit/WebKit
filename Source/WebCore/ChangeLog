@@ -1,3 +1,18 @@
+2011-12-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Use HashMap<OwnPtr> in RenderSVGResourcePattern
+        https://bugs.webkit.org/show_bug.cgi?id=75361
+
+        Reviewed by Andreas Kling.
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::removeAllClientsFromCache):
+        (WebCore::RenderSVGResourcePattern::removeClientFromCache):
+        (WebCore::RenderSVGResourcePattern::applyResource): use HashMap::add() to avoid
+        looking up the hash twice.
+        * rendering/svg/RenderSVGResourcePattern.h: rename m_pattern to m_patternMap to
+        improve readability a little bit.
+
 2011-12-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         getComputedStyle for padding is not implemented.
