@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,16 +43,15 @@ static bool hasNonASCIIOrUpper(const String& string)
     return hasUpper || (ored & ~0x7F);
 }
 
-void SpaceSplitStringData::createVector()
+void SpaceSplitStringData::createVector(const String& inputString, bool shouldFoldCase)
 {
-    ASSERT(!m_createdVector);
-    ASSERT(m_vector.isEmpty());
+    String string(inputString);
 
-    if (m_shouldFoldCase && hasNonASCIIOrUpper(m_string))
-        m_string = m_string.foldCase();
+    if (shouldFoldCase && hasNonASCIIOrUpper(inputString))
+        string = inputString.foldCase();
 
-    const UChar* characters = m_string.characters();
-    unsigned length = m_string.length();
+    const UChar* characters = string.characters();
+    unsigned length = string.length();
     unsigned start = 0;
     while (true) {
         while (start < length && isHTMLSpace(characters[start]))
@@ -67,15 +66,10 @@ void SpaceSplitStringData::createVector()
 
         start = end + 1;
     }
-
-    m_string = String();
-    m_createdVector = true;
 }
 
 bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
 {
-    ensureVector();
-    other.ensureVector();
     size_t thisSize = m_vector.size();
     size_t otherSize = other.m_vector.size();
     for (size_t i = 0; i < otherSize; ++i) {
@@ -101,8 +95,6 @@ void SpaceSplitStringData::add(const AtomicString& string)
 
 void SpaceSplitStringData::remove(const AtomicString& string)
 {
-    ensureVector();
-
     size_t position = 0;
     while (position < m_vector.size()) {
         if (m_vector[position] == string)

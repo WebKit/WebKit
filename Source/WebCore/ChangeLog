@@ -1,3 +1,32 @@
+2011-12-28  Andreas Kling  <awesomekling@apple.com>
+
+        Reduce memory used by SpaceSplitString.
+        <http://webkit.org/b/75315>
+
+        Reviewed by Sam Weinig.
+
+        Split the string upon creation instead of waiting until it's accessed.
+        This allows us to get rid of all data members except the substring vector.
+        Since we're storing AtomicStrings, this is way more memory-efficient than
+        the previous implementation in the majority of cases.
+
+        Also reduced the inline capcity of the vector to 2 (from 8), after testing
+        showed this to cover 90% of the cases on the Alexa top sites.
+
+        All in all this reduces memory consumption by 1.1MB (on 64-bit) when
+        loading the full HTML5 spec at <http://whatwg.org/c>. On that same page,
+        less than 2ms is spent (on my MBP) splitting the ~20000 strings.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::createVector):
+        (WebCore::SpaceSplitStringData::containsAll):
+        (WebCore::SpaceSplitStringData::remove):
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitStringData::SpaceSplitStringData):
+        (WebCore::SpaceSplitStringData::contains):
+        (WebCore::SpaceSplitStringData::size):
+        (WebCore::SpaceSplitStringData::operator[]):
+
 2011-12-28  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Fix compilation issue when selecting opengl for Accelerated compositing

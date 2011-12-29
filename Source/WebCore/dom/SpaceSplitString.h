@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,13 +32,12 @@ namespace WebCore {
         WTF_MAKE_NONCOPYABLE(SpaceSplitStringData); WTF_MAKE_FAST_ALLOCATED;
     public:
         SpaceSplitStringData(const String& string, bool shouldFoldCase)
-            : m_string(string), m_shouldFoldCase(shouldFoldCase), m_createdVector(false)
         {
+            createVector(string, shouldFoldCase);
         }
 
         bool contains(const AtomicString& string)
         {
-            ensureVector();
             size_t size = m_vector.size();
             for (size_t i = 0; i < size; ++i) {
                 if (m_vector[i] == string)
@@ -52,18 +51,13 @@ namespace WebCore {
         void add(const AtomicString&);
         void remove(const AtomicString&);
 
-        size_t size() { ensureVector(); return m_vector.size(); }
-        const AtomicString& operator[](size_t i) { ensureVector(); ASSERT(i < size()); return m_vector[i]; }
+        size_t size() const { return m_vector.size(); }
+        const AtomicString& operator[](size_t i) { ASSERT(i < size()); return m_vector[i]; }
 
     private:
-        void ensureVector() { if (!m_createdVector) createVector(); }
-        void createVector();
+        void createVector(const String&, bool shouldFoldCase);
 
-        typedef Vector<AtomicString, 8> StringVector;
-        String m_string;
-        StringVector m_vector;
-        bool m_shouldFoldCase;
-        bool m_createdVector;
+        Vector<AtomicString, 2> m_vector;
     };
 
     class SpaceSplitString {
