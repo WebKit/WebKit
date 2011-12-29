@@ -281,9 +281,9 @@ void PageGroup::addUserScriptToWorld(DOMWrapperWorld* world, const String& sourc
     OwnPtr<UserScript> userScript = adoptPtr(new UserScript(source, url, whitelist, blacklist, injectionTime, injectedFrames));
     if (!m_userScripts)
         m_userScripts = adoptPtr(new UserScriptMap);
-    UserScriptVector*& scriptsInWorld = m_userScripts->add(world, 0).first->second;
+    OwnPtr<UserScriptVector>& scriptsInWorld = m_userScripts->add(world, nullptr).first->second;
     if (!scriptsInWorld)
-        scriptsInWorld = new UserScriptVector;
+        scriptsInWorld = adoptPtr(new UserScriptVector);
     scriptsInWorld->append(userScript.release());
 }
 
@@ -298,9 +298,9 @@ void PageGroup::addUserStyleSheetToWorld(DOMWrapperWorld* world, const String& s
     OwnPtr<UserStyleSheet> userStyleSheet = adoptPtr(new UserStyleSheet(source, url, whitelist, blacklist, injectedFrames, level));
     if (!m_userStyleSheets)
         m_userStyleSheets = adoptPtr(new UserStyleSheetMap);
-    UserStyleSheetVector*& styleSheetsInWorld = m_userStyleSheets->add(world, 0).first->second;
+    OwnPtr<UserStyleSheetVector>& styleSheetsInWorld = m_userStyleSheets->add(world, nullptr).first->second;
     if (!styleSheetsInWorld)
-        styleSheetsInWorld = new UserStyleSheetVector;
+        styleSheetsInWorld = adoptPtr(new UserStyleSheetVector);
     styleSheetsInWorld->append(userStyleSheet.release());
 
     if (injectionTime == InjectInExistingDocuments)
@@ -318,17 +318,14 @@ void PageGroup::removeUserScriptFromWorld(DOMWrapperWorld* world, const KURL& ur
     if (it == m_userScripts->end())
         return;
     
-    UserScriptVector* scripts = it->second;
+    UserScriptVector* scripts = it->second.get();
     for (int i = scripts->size() - 1; i >= 0; --i) {
         if (scripts->at(i)->url() == url)
             scripts->remove(i);
     }
     
-    if (!scripts->isEmpty())
-        return;
-    
-    delete it->second;
-    m_userScripts->remove(it);
+    if (scripts->isEmpty())
+        m_userScripts->remove(it);
 }
 
 void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const KURL& url)
@@ -343,7 +340,7 @@ void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const KURL
     if (it == m_userStyleSheets->end())
         return;
     
-    UserStyleSheetVector* stylesheets = it->second;
+    UserStyleSheetVector* stylesheets = it->second.get();
     for (int i = stylesheets->size() - 1; i >= 0; --i) {
         if (stylesheets->at(i)->url() == url) {
             stylesheets->remove(i);
@@ -354,10 +351,8 @@ void PageGroup::removeUserStyleSheetFromWorld(DOMWrapperWorld* world, const KURL
     if (!sheetsChanged)
         return;
 
-    if (!stylesheets->isEmpty()) {
-        delete it->second;
+    if (stylesheets->isEmpty())
         m_userStyleSheets->remove(it);
-    }
 
     resetUserStyleCacheInAllFrames();
 }
@@ -373,7 +368,6 @@ void PageGroup::removeUserScriptsFromWorld(DOMWrapperWorld* world)
     if (it == m_userScripts->end())
         return;
        
-    delete it->second;
     m_userScripts->remove(it);
 }
 
@@ -388,7 +382,6 @@ void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
     if (it == m_userStyleSheets->end())
         return;
     
-    delete it->second;
     m_userStyleSheets->remove(it);
 
     resetUserStyleCacheInAllFrames();
@@ -396,13 +389,9 @@ void PageGroup::removeUserStyleSheetsFromWorld(DOMWrapperWorld* world)
 
 void PageGroup::removeAllUserContent()
 {
-    if (m_userScripts) {
-        deleteAllValues(*m_userScripts);
-        m_userScripts.clear();
-    }
+    m_userScripts.clear();
 
     if (m_userStyleSheets) {
-        deleteAllValues(*m_userStyleSheets);
         m_userStyleSheets.clear();
         resetUserStyleCacheInAllFrames();
     }

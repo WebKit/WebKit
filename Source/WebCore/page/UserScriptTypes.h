@@ -37,7 +37,7 @@ class DOMWrapperWorld;
 class UserScript;
 
 typedef Vector<OwnPtr<UserScript> > UserScriptVector;
-typedef HashMap<RefPtr<DOMWrapperWorld>, UserScriptVector*> UserScriptMap;
+typedef HashMap<RefPtr<DOMWrapperWorld>, OwnPtr<UserScriptVector> > UserScriptMap;
 
 } // namespace WebCore
  

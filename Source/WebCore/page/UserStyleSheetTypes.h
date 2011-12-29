@@ -38,7 +38,7 @@ class DOMWrapperWorld;
 class UserStyleSheet;
 
 typedef Vector<OwnPtr<UserStyleSheet> > UserStyleSheetVector;
-typedef HashMap<RefPtr<DOMWrapperWorld>, UserStyleSheetVector*> UserStyleSheetMap;
+typedef HashMap<RefPtr<DOMWrapperWorld>, OwnPtr<UserStyleSheetVector> > UserStyleSheetMap;
 
 } // namespace WebCore
  
