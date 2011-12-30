@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "EventListenerMap.h"
 #include "Frame.h"
+#include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
@@ -47,9 +48,109 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/StringBuilder.h>
 
+using WebCore::TypeBuilder::Memory::DOMGroup;
+using WebCore::TypeBuilder::Memory::ListenerCount;
+using WebCore::TypeBuilder::Memory::NodeCount;
+
 namespace WebCore {
 
 namespace {
+
+String nodeName(Node* node)
+{
+    if (node->document()->isXHTMLDocument())
+         return node->nodeName();
+    return node->nodeName().lower();
+}
+
+typedef HashSet<StringImpl*, PtrHash<StringImpl*> > StringImplIdentitySet;
+
+class DOMTreeStatistics {
+public:
+    DOMTreeStatistics(Node* rootNode) : m_totalNodeCount(0)
+    {
+        collectTreeStatistics(rootNode);
+    }
+
+    int totalNodeCount() { return m_totalNodeCount; }
+
+    PassRefPtr<InspectorArray> nodeCount()
+    {
+        RefPtr<InspectorArray> childrenStats = InspectorArray::create();
+        for (HashMap<String, int>::iterator it = m_nodeNameToCount.begin(); it != m_nodeNameToCount.end(); ++it) {
+            RefPtr<NodeCount> nodeCount = NodeCount::create().setNodeName(it->first)
+                                                             .setCount(it->second);
+            childrenStats->pushObject(nodeCount);
+        }
+        return childrenStats.release();
+    }
+
+    PassRefPtr<InspectorArray> listenerCount()
+    {
+        RefPtr<InspectorArray> listenerStats = InspectorArray::create();
+        for (HashMap<AtomicString, int>::iterator it = m_eventTypeToCount.begin(); it != m_eventTypeToCount.end(); ++it) {
+            RefPtr<ListenerCount> listenerCount = ListenerCount::create().setType(it->first)
+                                                                         .setCount(it->second);
+            listenerStats->pushObject(listenerCount);
+        }
+        return listenerStats.release();
+    }
+
+private:
+    void collectTreeStatistics(Node* rootNode)
+    {
+        Node* currentNode = rootNode;
+        collectListenersInfo(rootNode);
+        while ((currentNode = currentNode->traverseNextNode(rootNode))) {
+            ++m_totalNodeCount;
+            collectNodeStatistics(currentNode);
+        }
+    }
+    void collectNodeStatistics(Node* node)
+    {
+        collectCharacterData(node);
+        collectNodeNameInfo(node);
+        collectListenersInfo(node);
+    }
+    
+    void collectCharacterData(Node* node)
+    {
+    }
+
+    void collectNodeNameInfo(Node* node)
+    {
+        String name = nodeName(node);
+        int currentCount = m_nodeNameToCount.get(name);
+        m_nodeNameToCount.set(name, currentCount + 1);
+    }
+
+    void collectListenersInfo(Node* node)
+    {
+        EventTargetData* d = node->eventTargetData();
+        if (!d)
+            return;
+        EventListenerMap& eventListenerMap = d->eventListenerMap;
+        if (eventListenerMap.isEmpty())
+            return;
+        Vector<AtomicString> eventNames = eventListenerMap.eventTypes();
+        for (Vector<AtomicString>::iterator it = eventNames.begin(); it != eventNames.end(); ++it) {
+            AtomicString name = *it;
+            EventListenerVector* listeners = eventListenerMap.find(name);
+            int count = 0;
+            for (EventListenerVector::iterator j = listeners->begin(); j != listeners->end(); ++j) {
+                if (j->listener->type() == EventListener::JSEventListenerType)
+                    ++count;
+            }
+            if (count)
+                m_eventTypeToCount.set(name, m_eventTypeToCount.get(name) + count);
+        }
+    }
+
+    int m_totalNodeCount;
+    HashMap<AtomicString, int> m_eventTypeToCount;
+    HashMap<String, int> m_nodeNameToCount;
+    StringImplIdentitySet m_domStringImplSet;
+};
 
 class CounterVisitor : public DOMWrapperVisitor {
 public:
@@ -70,80 +171,20 @@ public:
             return;
         m_roots.add(rootNode);
 
-        RefPtr<InspectorObject> entry = InspectorObject::create();
-        entry->setString("title", rootNode->nodeType() == Node::ELEMENT_NODE ? elementTitle(static_cast<Element*>(rootNode)) : rootNode->nodeName());
+        DOMTreeStatistics domTreeStats(rootNode);
+
+        RefPtr<DOMGroup> domGroup = DOMGroup::create()
+            .setSize(domTreeStats.totalNodeCount())
+            .setTitle(rootNode->nodeType() == Node::ELEMENT_NODE ? elementTitle(static_cast<Element*>(rootNode)) : rootNode->nodeName())
+            .setNodeCount(domTreeStats.nodeCount())
+            .setListenerCount(domTreeStats.listenerCount());
         if (rootNode->nodeType() == Node::DOCUMENT_NODE)
-            entry->setString("documentURI", static_cast<Document*>(rootNode)->documentURI());
-        collectTreeStatistics(rootNode, entry.get());
-        m_counters->pushObject(entry);
+            domGroup->setDocumentURI(static_cast<Document*>(rootNode)->documentURI());
+
+        m_counters->pushObject(domGroup);
     }
 
 private:
-    static void collectTreeStatistics(Node* rootNode, InspectorObject* result)
-    {
-        unsigned count = 0;
-        HashMap<AtomicString, int> eventTypeToCount;
-        HashMap<String, int> nameToCount;
-        Node* currentNode = rootNode;
-        collectListenersInfo(rootNode, eventTypeToCount);
-        while ((currentNode = currentNode->traverseNextNode(rootNode))) {
-            ++count;
-            String name = nodeName(currentNode);
-            int currentCount = nameToCount.get(name);
-            nameToCount.set(name, currentCount + 1);
-            collectListenersInfo(currentNode, eventTypeToCount);
-        }
-
-        RefPtr<InspectorArray> childrenStats = InspectorArray::create();
-        for (HashMap<String, int>::iterator it = nameToCount.begin(); it != nameToCount.end(); ++it) {
-            RefPtr<InspectorObject> nodeCount = InspectorObject::create();
-            nodeCount->setString("nodeName", it->first);
-            nodeCount->setNumber("count", it->second);
-            childrenStats->pushObject(nodeCount);
-        }
-
-        RefPtr<InspectorArray> listenerStats = InspectorArray::create();
-        for (HashMap<AtomicString, int>::iterator it = eventTypeToCount.begin(); it != eventTypeToCount.end(); ++it) {
-            RefPtr<InspectorObject> eventCount = InspectorObject::create();
-            eventCount->setString("type", it->first);
-            eventCount->setNumber("count", it->second);
-            listenerStats->pushObject(eventCount);
-        }
-
-        result->setNumber("size", count);
-        result->setArray("nodeCount", childrenStats);
-        result->setArray("listenerCount", listenerStats);
-    }
-
-    static void collectListenersInfo(Node* node, HashMap<AtomicString, int>& result)
-    {
-        EventTargetData* d = node->eventTargetData();
-        if (!d)
-            return;
-        EventListenerMap& eventListenerMap = d->eventListenerMap;
-        if (eventListenerMap.isEmpty())
-            return;
-        Vector<AtomicString> eventNames = eventListenerMap.eventTypes();
-        for (Vector<AtomicString>::iterator it = eventNames.begin(); it != eventNames.end(); ++it) {
-            AtomicString name = *it;
-            EventListenerVector* listeners = eventListenerMap.find(name);
-            int count = 0;
-            for (EventListenerVector::iterator j = listeners->begin(); j != listeners->end(); ++j) {
-                if (j->listener->type() == EventListener::JSEventListenerType)
-                    ++count;
-            }
-            if (count)
-                result.set(name, result.get(name) + count);
-        }
-    }
-
-    static String nodeName(Node* node)
-    {
-        if (node->document()->isXHTMLDocument())
-             return node->nodeName();
-        return node->nodeName().lower();
-    }
-
     String elementTitle(Element* element)
     {
         StringBuilder result;

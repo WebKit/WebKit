@@ -1,3 +1,17 @@
+2011-12-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: use typed front-end API in the memory agent
+        https://bugs.webkit.org/show_bug.cgi?id=75382
+
+        Memory agent now uses generate C++ API for communicating to the front-end.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::DOMTreeStatistics::CounterVisitor::CounterVisitor):
+        (WebCore::DOMTreeStatistics::CounterVisitor::counters):
+        (WebCore::DOMTreeStatistics::CounterVisitor::visitNode):
+
 2011-12-30  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: migrate from "attached" to "compact" styles.
