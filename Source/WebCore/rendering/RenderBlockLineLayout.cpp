@@ -193,6 +193,7 @@ public:
         , m_isEmpty(true)
         , m_previousLineBrokeCleanly(true)
         , m_floatPaginationStrut(0)
+        , m_runsFromLeadingWhitespace(0)
     { }
 
     bool isFirstLine() const { return m_isFirstLine; }
@@ -200,6 +201,9 @@ public:
     bool isEmpty() const { return m_isEmpty; }
     bool previousLineBrokeCleanly() const { return m_previousLineBrokeCleanly; }
     LayoutUnit floatPaginationStrut() const { return m_floatPaginationStrut; }
+    unsigned runsFromLeadingWhitespace() const { return m_runsFromLeadingWhitespace; }
+    void resetRunsFromLeadingWhitespace() { m_runsFromLeadingWhitespace = 0; }
+    void incrementRunsFromLeadingWhitespace() { m_runsFromLeadingWhitespace++; }
 
     void setFirstLine(bool firstLine) { m_isFirstLine = firstLine; }
     void setLastLine(bool lastLine) { m_isLastLine = lastLine; }
@@ -224,6 +228,7 @@ private:
     bool m_isEmpty;
     bool m_previousLineBrokeCleanly;
     LayoutUnit m_floatPaginationStrut;
+    unsigned m_runsFromLeadingWhitespace;
 };
 
 static inline LayoutUnit borderPaddingMarginStart(RenderInline* child)
@@ -479,10 +484,11 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
 
     bool rootHasSelectedChildren = false;
     InlineFlowBox* parentBox = 0;
+    int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
         // Create a box for our object.
-        bool isOnlyRun = (bidiRuns.runCount() == 1);
-        if (bidiRuns.runCount() == 2 && !r->m_object->isListMarker())
+        bool isOnlyRun = (runCount == 1);
+        if (runCount == 2 && !r->m_object->isListMarker())
             isOnlyRun = (!style()->isLeftToRightDirection() ? bidiRuns.lastRun() : bidiRuns.firstRun())->m_object->isListMarker();
 
         InlineBox* box = createInlineBoxForRenderer(r->m_object, false, isOnlyRun);
@@ -1226,6 +1232,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         lineMidpointState.reset();
 
         layoutState.lineInfo().setEmpty(true);
+        layoutState.lineInfo().resetRunsFromLeadingWhitespace();
 
         const InlineIterator oldEnd = end;
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
@@ -1874,9 +1881,13 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject* object = resolver.position().m_obj;
-        if (object->isPositioned())
+        if (object->isPositioned()) {
             setStaticPositions(m_block, toRenderBox(object));
-        else if (object->isFloating())
+            if (object->style()->isOriginalDisplayInlineType()) {
+                resolver.runs().addRun(createRun(0, 1, object, resolver));
+                lineInfo.incrementRunsFromLeadingWhitespace();
+            }
+        } else if (object->isFloating())
             m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
         resolver.increment();
     }
