@@ -1,3 +1,16 @@
+2011-12-30  Anders Carlsson  <andersca@apple.com>
+
+        Add a ParamStorageTraits specialization for RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=75392
+
+        Reviewed by Daniel Bates.
+
+        * wtf/Functional.h:
+        Add a partial specialization of ParamStorageTraits for RetainPtr<T>.
+
+        * wtf/RetainPtr.h:
+        Bring in the retainPtr function template from WTF.
+
 2011-12-29  Sam Weinig  <sam@webkit.org>
 
         It should be easier to iterate a Vector backwards

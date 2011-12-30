@@ -294,5 +294,6 @@ using WTF::AdoptNS;
 using WTF::adoptCF;
 using WTF::adoptNS;
 using WTF::RetainPtr;
+using WTF::retainPtr;
 
 #endif // WTF_RetainPtr_h

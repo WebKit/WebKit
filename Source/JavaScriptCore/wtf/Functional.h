@@ -287,6 +287,16 @@ template<typename T> struct ParamStorageTraits<RefPtr<T> > {
     static T* unwrap(const StorageType& value) { return value.get(); }
 };
 
+
+template<typename> class RetainPtr;
+
+template<typename T> struct ParamStorageTraits<RetainPtr<T> > {
+    typedef RetainPtr<T> StorageType;
+
+    static StorageType wrap(const RetainPtr<T>& value) { return value; }
+    static typename RetainPtr<T>::PtrType unwrap(const StorageType& value) { return value.get(); }
+};
+
 class FunctionImplBase : public ThreadSafeRefCounted<FunctionImplBase> {
 public:
     virtual ~FunctionImplBase() { }
