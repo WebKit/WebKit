@@ -1,3 +1,19 @@
+2011-12-29  Raymond Liu  <raymond.liu@intel.com>
+
+        Use IDL overloads in AudioContext.idl for createBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=75293
+
+        Reviewed by Adam Barth.
+
+        No new tests required.
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createBuffer):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+
 2011-12-29  Andreas Kling  <awesomekling@apple.com>
 
         HTMLDivElement: Remove unnecessary variable in parseMappedAttribute().

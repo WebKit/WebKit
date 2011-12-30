@@ -96,8 +96,8 @@ public:
     double currentTime() { return m_destinationNode->currentTime(); }
     float sampleRate() { return m_destinationNode->sampleRate(); }
 
-    PassRefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
-    PassRefPtr<AudioBuffer> createBuffer(ArrayBuffer* arrayBuffer, bool mixToMono);
+    PassRefPtr<AudioBuffer> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode&);
+    PassRefPtr<AudioBuffer> createBuffer(ArrayBuffer*, bool mixToMono, ExceptionCode&);
 
     // Asynchronous audio file data decoding.
     void decodeAudioData(ArrayBuffer*, PassRefPtr<AudioBufferCallback>, PassRefPtr<AudioBufferCallback>, ExceptionCode& ec);

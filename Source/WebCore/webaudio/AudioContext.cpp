@@ -300,18 +300,32 @@ void AudioContext::refBuffer(PassRefPtr<AudioBuffer> buffer)
     m_allocatedBuffers.append(buffer);
 }
 
-PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
 {
-    return AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
+    RefPtr<AudioBuffer> audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
+    if (!audioBuffer.get()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    return audioBuffer;
 }
 
-PassRefPtr<AudioBuffer> AudioContext::createBuffer(ArrayBuffer* arrayBuffer, bool mixToMono)
+PassRefPtr<AudioBuffer> AudioContext::createBuffer(ArrayBuffer* arrayBuffer, bool mixToMono, ExceptionCode& ec)
 {
     ASSERT(arrayBuffer);
-    if (!arrayBuffer)
+    if (!arrayBuffer) {
+        ec = SYNTAX_ERR;
         return 0;
-    
-    return AudioBuffer::createFromAudioFileData(arrayBuffer->data(), arrayBuffer->byteLength(), mixToMono, sampleRate());
+    }
+
+    RefPtr<AudioBuffer> audioBuffer = AudioBuffer::createFromAudioFileData(arrayBuffer->data(), arrayBuffer->byteLength(), mixToMono, sampleRate());
+    if (!audioBuffer.get()) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
+
+    return audioBuffer;
 }
 
 void AudioContext::decodeAudioData(ArrayBuffer* audioData, PassRefPtr<AudioBufferCallback> successCallback, PassRefPtr<AudioBufferCallback> errorCallback, ExceptionCode& ec)

@@ -45,10 +45,9 @@ module webaudio {
         // All panning is relative to this listener.
         readonly attribute AudioListener listener;
 
-        // FIXME: Switch from [Custom] to using IDL overloads.
-        // AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-        // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
-        [Custom] AudioBuffer createBuffer()
+        AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate)
+            raises(DOMException);
+        AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono)
             raises(DOMException);
 
         // Asynchronous audio file data decoding.

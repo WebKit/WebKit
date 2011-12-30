@@ -104,56 +104,6 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), audioContext.get())));
 }
 
-JSValue JSAudioContext::createBuffer(ExecState* exec)
-{
-    if (exec->argumentCount() < 2)
-        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
-
-    AudioContext* audioContext = static_cast<AudioContext*>(impl());
-    ASSERT(audioContext);
-
-    // AudioBuffer createBuffer(in ArrayBuffer buffer, in boolean mixToMono);
-    JSValue val = exec->argument(0);
-    if (val.inherits(&JSArrayBuffer::s_info)) {
-        ArrayBuffer* arrayBuffer = toArrayBuffer(val);
-        ASSERT(arrayBuffer);
-        if (arrayBuffer) {
-            bool mixToMono = exec->argument(1).toBoolean(exec);
-
-            RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(arrayBuffer, mixToMono);
-            if (!audioBuffer.get())
-                return throwError(exec, createSyntaxError(exec, "Error decoding audio file data"));
-
-            return toJS(exec, globalObject(), audioBuffer.get());
-        }
-
-        return jsUndefined();
-    }
-    
-    // AudioBuffer createBuffer(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
-    if (exec->argumentCount() < 3)
-        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
-    
-    int32_t numberOfChannels = exec->argument(0).toInt32(exec);
-    int32_t numberOfFrames = exec->argument(1).toInt32(exec);
-    float sampleRate = exec->argument(2).toFloat(exec);
-
-    if (numberOfChannels <= 0 || numberOfChannels > 10)
-        return throwError(exec, createSyntaxError(exec, "Invalid number of channels"));
-
-    if (numberOfFrames <= 0)
-        return throwError(exec, createSyntaxError(exec, "Invalid number of frames"));
-
-    if (sampleRate <= 0)
-        return throwError(exec, createSyntaxError(exec, "Invalid sample rate"));
-
-    RefPtr<AudioBuffer> audioBuffer = audioContext->createBuffer(numberOfChannels, numberOfFrames, sampleRate);
-    if (!audioBuffer.get())
-        return throwError(exec, createSyntaxError(exec, "Error creating AudioBuffer"));
-
-    return toJS(exec, globalObject(), audioBuffer.get());
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)
