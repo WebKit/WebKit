@@ -41,7 +41,7 @@ public:
     static bool isPropertyName(const String&);
 
     CSSRule* parentRule() const { return m_parentRule; }
-    void setParentRule(CSSRule* rule) { m_parentRule = rule; }
+    void clearParentRule() { m_parentRule = 0; }
 
     CSSStyleSheet* parentStyleSheet() const;
 

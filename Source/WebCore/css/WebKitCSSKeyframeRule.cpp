@@ -38,7 +38,7 @@ WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(CSSStyleSheet* parent)
 WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
 {
     if (m_style)
-        m_style->setParentRule(0);
+        m_style->clearParentRule();
 }
 
 String WebKitCSSKeyframeRule::cssText() const

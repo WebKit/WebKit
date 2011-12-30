@@ -1,5 +1,24 @@
 2011-12-30  Andreas Kling  <awesomekling@apple.com>
 
+        CSSStyleDeclaration: Only allow setting parent rule at construction.
+        <http://webkit.org/b/75391>
+
+        Reviewed by Dan Bernstein.
+
+        A CSSStyleDeclaration should only ever belong to one CSSRule. Enforce this
+        at compile-time by replacing setParentRule(CSSRule*) with clearParentRule().
+
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::~CSSFontFaceRule):
+        * css/CSSStyleDeclaration.h:
+        (WebCore::CSSStyleDeclaration::clearParentRule):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::~CSSStyleRule):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule):
+
+2011-12-30  Andreas Kling  <awesomekling@apple.com>
+
         WebKitCSSKeyframeRule.style.parentRule should point to the keyframe rule.
         <http://webkit.org/b/75336>
 

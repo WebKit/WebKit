@@ -47,7 +47,7 @@ CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent, int sourceLine, CSSRule::Type 
 CSSStyleRule::~CSSStyleRule()
 {
     if (m_style)
-        m_style->setParentRule(0);
+        m_style->clearParentRule();
     cleanup();
 }
 
