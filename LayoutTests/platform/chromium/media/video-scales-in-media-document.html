@@ -1,7 +1,7 @@
 <html>
     <head>
-        <script src="media-file.js"></script>
-        <script src="video-test.js"></script>
+        <script src="../../../media/media-file.js"></script>
+        <script src="../../../media/video-test.js"></script>
         <script>
             function canPlayThrough(event) {
                 var video = event.target;
@@ -20,7 +20,7 @@
             function load() {
                 var iframe = document.querySelector("iframe");
                 iframe.onload = iframeLoad;
-                iframe.src = findMediaFile("video", "content/counting");
+                iframe.src = findMediaFile("video", "../../../media/content/counting");
             }
         </script>
     </head>
