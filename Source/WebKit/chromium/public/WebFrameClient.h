@@ -36,7 +36,6 @@
 #include "WebNavigationType.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextDirection.h"
-#include "WebWorkerClient.h"
 #include "platform/WebCommon.h"
 #include "platform/WebFileSystem.h"
 #include "platform/WebURLError.h"

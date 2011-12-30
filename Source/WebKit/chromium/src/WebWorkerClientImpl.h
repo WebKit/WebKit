@@ -41,7 +41,6 @@
 
 #include "platform/WebFileSystem.h"
 #include "WebWorkerBase.h"
-#include "WebWorkerClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
