@@ -28,38 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebWorkerBase.h"
+#ifndef WebWorkerClient_h
+#define WebWorkerClient_h
 
-#include "CrossThreadTask.h"
+#include "WebSharedWorkerClient.h"
 
-#include "WebWorkerClient.h"
+#define WebWorkerClient WebSharedWorkerClient
 
-#include "WorkerContext.h"
-#include "WorkerLoaderProxy.h"
-#include "WorkerThread.h"
-#include <wtf/MainThread.h>
-
-using namespace WebCore;
-
-namespace WebKit {
-
-#if ENABLE(WORKERS)
-
-static void invokeTaskMethod(void* param)
-{
-    ScriptExecutionContext::Task* task =
-        static_cast<ScriptExecutionContext::Task*>(param);
-    task->performTask(0);
-    delete task;
-}
-
-
-void WebWorkerBase::dispatchTaskToMainThread(PassOwnPtr<ScriptExecutionContext::Task> task)
-{
-    callOnMainThread(invokeTaskMethod, task.leakPtr());
-}
-
-#endif // ENABLE(WORKERS)
-
-} // namespace WebKit
+#endif

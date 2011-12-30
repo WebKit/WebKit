@@ -265,6 +265,7 @@
                 'public/WebWidget.h',
                 'public/WebWidgetClient.h',
                 'public/WebWorker.h',
+                'public/WebWorkerClient.h',
                 'public/WebWorkerRunLoop.h',
                 'public/android/WebInputEventFactory.h',
                 'public/android/WebSandboxSupport.h',
