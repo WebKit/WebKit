@@ -86,7 +86,7 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
     // Search for the value without a trailing colon, seeing if the original input ends with it.
     match = strstr(componentStart, searchValue);
     while (match != NULL) {
-        if (match[searchLength + 1] == '\0')
+        if (match[searchLength] == '\0')
             break;
         match = strstr(match + 1, searchValue);
     }

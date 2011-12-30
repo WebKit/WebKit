@@ -1,3 +1,14 @@
+2011-12-30  Dan Bernstein  <mitz@apple.com>
+
+        EnvironmentUtilities::stripValuesEndingWithString fails when the variable ends with the search value
+        https://bugs.webkit.org/show_bug.cgi?id=75389
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/unix/EnvironmentUtilities.cpp:
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString): Fixed an off-by-1 error when
+        examining the character after the match.
+
 2011-12-29  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Remove unused m_signalListeners from WorkQueue
