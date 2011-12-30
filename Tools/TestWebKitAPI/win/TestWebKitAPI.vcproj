@@ -656,6 +656,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\Vector.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\VectorBasic.cpp"
 					>
 				</File>

@@ -38,6 +38,7 @@
             'Tests/WTF/StringBuilder.cpp',
             'Tests/WTF/StringOperators.cpp',
             'Tests/WTF/TemporaryChange.cpp',
+            'Tests/WTF/Vector.cpp',
             'Tests/WTF/VectorBasic.cpp',
             'Tests/WTF/VectorReverse.cpp',
         ],

@@ -1,3 +1,19 @@
+2011-12-29  Sam Weinig  <sam@webkit.org>
+
+        It should be easier to iterate a Vector backwards
+        https://bugs.webkit.org/show_bug.cgi?id=75359
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Add new Vector test.
+
+        * TestWebKitAPI/Tests/Vector.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Test Vector iterators, reverse_iterators and new reversed proxy.
+
 2011-12-28  Dmitry Lomov  <dslomov@google.com>
 
         [WebWorkers][Chromium] Remove remains of cross-process dedicated worker implementation.

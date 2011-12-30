@@ -1,3 +1,32 @@
+2011-12-29  Sam Weinig  <sam@webkit.org>
+
+        It should be easier to iterate a Vector backwards
+        https://bugs.webkit.org/show_bug.cgi?id=75359
+
+        Reviewed by Anders Carlsson.
+
+        Adds Vector::rbegin(), Vector::rend(), and Vector::reversed(),
+        a new proxy driven way to access a vector backwards. One can use
+        reversed() in a range-based for loop like so:
+
+            for (auto val: myVector.reversed())
+                doSomething(val)
+
+        * wtf/Vector.h:
+        (WTF::Vector::~Vector):
+        Fix style.
+
+        (WTF::Vector::rbegin):
+        (WTF::Vector::rend):
+        Added using standard adaptor std::reverse_iterator.
+
+        (WTF::Vector::reversed):
+        (WTF::Vector::VectorReverseProxy::begin):
+        (WTF::Vector::VectorReverseProxy::end):
+        Add proxy similar to one used in HashMap for keys() and values()
+        which allows access to a Vector backwards for use in range-based
+        for loops.
+
 2011-12-29  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75140
