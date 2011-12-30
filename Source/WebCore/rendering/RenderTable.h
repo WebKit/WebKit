@@ -136,9 +136,9 @@ public:
 
     Vector<ColumnStruct>& columns() { return m_columns; }
     Vector<LayoutUnit>& columnPositions() { return m_columnPos; }
-    RenderTableSection* header() const { ASSERT(!needsSectionRecalc()); return m_header; }
-    RenderTableSection* footer() const { ASSERT(!needsSectionRecalc()); return m_footer; }
-    RenderTableSection* firstBody() const { ASSERT(!needsSectionRecalc()); return m_firstBody; }
+    RenderTableSection* header() const { return m_head; }
+    RenderTableSection* footer() const { return m_foot; }
+    RenderTableSection* firstBody() const { return m_firstBody; }
 
     // This function returns 0 if the table has no section.
     RenderTableSection* topSection() const;
@@ -202,7 +202,7 @@ public:
     }
     const CollapsedBorderValue* currentBorderValue() const { return m_currentBorder; }
     
-    bool hasSections() const { return header() || footer() || firstBody(); }
+    bool hasSections() const { return m_head || m_foot || m_firstBody; }
 
     void recalcSectionsIfNeeded() const
     {
@@ -253,8 +253,8 @@ private:
     mutable Vector<ColumnStruct> m_columns;
 
     mutable Vector<RenderBlock*> m_captions;
-    mutable RenderTableSection* m_header;
-    mutable RenderTableSection* m_footer;
+    mutable RenderTableSection* m_head;
+    mutable RenderTableSection* m_foot;
     mutable RenderTableSection* m_firstBody;
 
     OwnPtr<TableLayout> m_tableLayout;
@@ -274,11 +274,11 @@ private:
 
 inline RenderTableSection* RenderTable::topSection() const
 {
-    if (header())
-        return header();
-    if (firstBody())
-        return firstBody();
-    return footer();
+    if (m_head)
+        return m_head;
+    if (m_firstBody)
+        return m_firstBody;
+    return m_foot;
 }
 
 inline RenderTable* toRenderTable(RenderObject* object)

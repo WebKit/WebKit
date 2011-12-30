@@ -1,3 +1,27 @@
+2011-12-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r103794.
+        http://trac.webkit.org/changeset/103794
+        https://bugs.webkit.org/show_bug.cgi?id=75379
+
+        the ASSERT is triggered by several tests (Requested by
+        jchaffraix on #webkit).
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::recalcSections):
+        (WebCore::RenderTable::outerBorderAfter):
+        (WebCore::RenderTable::sectionAbove):
+        (WebCore::RenderTable::sectionBelow):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::header):
+        (WebCore::RenderTable::footer):
+        (WebCore::RenderTable::firstBody):
+        (WebCore::RenderTable::hasSections):
+        (WebCore::RenderTable::topSection):
+
 2011-12-29  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: enable dock-to-right view (still need embedders to support it).
