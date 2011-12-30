@@ -1,3 +1,18 @@
+2011-12-29  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=75373
+        [Chromium] Remove WebWorkerClient.h
+        After coordinated patch in chromium, WebWorkerClient alias for WebSharedWorkerClient is no longer needed.
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        * public/WebFrameClient.h:
+        * public/WebWorkerClient.h: Removed.
+        * src/WebSharedWorkerImpl.h:
+        * src/WebWorkerBase.cpp:
+        * src/WebWorkerClientImpl.h:
+
 2011-12-29  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [chromium] pass dock to side request to the embedder.
