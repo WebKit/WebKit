@@ -39,6 +39,11 @@ WebInspector.SettingsScreen = function()
     this._leftColumnElement = document.createElement("td");
     this._rightColumnElement = document.createElement("td");
 
+    if (Preferences.showDockToRight) {
+        var p = this._appendSection(WebInspector.UIString("General"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Dock to right"), WebInspector.settings.dockToRight));
+    }
+
     var p = this._appendSection(WebInspector.UIString("Elements"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Word wrap"), WebInspector.settings.domWordWrap));
 

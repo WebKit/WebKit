@@ -1,3 +1,12 @@
+2011-12-29  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: enable dock-to-right view (still need embedders to support it).
+        https://bugs.webkit.org/show_bug.cgi?id=75360
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/DevTools.js:
+
 2011-12-29  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75373

@@ -43,7 +43,8 @@ var Preferences = {
     exposeDisableCache: false,
     exposeWorkersInspection: false,
     applicationTitle: "Web Inspector - %s",
-    showHeapSnapshotObjectsHiddenProperties: false
+    showHeapSnapshotObjectsHiddenProperties: false,
+    showDockToRight: false
 }
 
 var Capabilities = {
@@ -86,6 +87,7 @@ WebInspector.Settings = function()
     this.overrideUserAgent = this.createSetting("overrideUserAgent", "");
     this.userAgent = this.createSetting("userAgent", "");
     this.showScriptFolders = this.createSetting("showScriptFolders", true);
+    this.dockToRight = this.createSetting("dockToRight", false);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

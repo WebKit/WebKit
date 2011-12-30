@@ -182,19 +182,23 @@ var WebInspector = {
 
         this._attached = x;
 
-        var body = document.body;
+        if (this._dockToggleButton) {
+            this._dockToggleButton.title = this._dockButtonTitle();
+            this._dockToggleButton.toggled = !x;
+        }
 
+        this._renderAsAttached(x && !WebInspector.settings.dockToRight.get());
+    },
+
+    _renderAsAttached: function(x)
+    {
+        var body = document.body;
         if (x) {
             body.removeStyleClass("detached");
             body.addStyleClass("attached");
         } else {
             body.removeStyleClass("attached");
             body.addStyleClass("detached");
-        }
-
-        if (this._dockToggleButton) {
-            this._dockToggleButton.title = this._dockButtonTitle();
-            this._dockToggleButton.toggled = !x;
         }
 
         // This may be called before doLoadedDone, hence the bulk of inspector objects may
@@ -414,14 +418,39 @@ WebInspector._doLoadedDoneWithCapabilities = function()
             WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
     }
 
+    WebInspector._installDockToRight();
+
     InspectorAgent.enable(showInitialPanel);
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
 
-
     WebInspector.CSSCompletions.requestCSSNameCompletions();
     WebInspector.WorkerManager.loadCompleted();
     InspectorFrontendAPI.loadCompleted();
+}
+
+WebInspector._installDockToRight = function()
+{
+    // Re-use Settings infrastructure for the dock-to-right settings UI
+    WebInspector.settings.dockToRight.set(WebInspector.queryParamsObject.dockSide === "right");
+    WebInspector.settings.dockToRight.addChangeListener(listener.bind(this));
+    updateToolbar();
+
+    function updateToolbar()
+    {
+        if (WebInspector.attached)
+            WebInspector._renderAsAttached(!WebInspector.settings.dockToRight.get());
+    }
+
+    function listener(event)
+    {
+        var value = WebInspector.settings.dockToRight.get();
+        if (value)
+            InspectorFrontendHost.requestSetDockSide("right");
+        else
+            InspectorFrontendHost.requestSetDockSide("bottom");
+        updateToolbar();
+    }
 }
 
 WebInspector.addPanel = function(panel)
