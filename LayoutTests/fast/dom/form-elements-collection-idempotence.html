@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test verifies that HTMLFormElement.elements returns the same collection when called repeatedly.");
+
+var formElement = document.createElement("form");
+
+shouldBe("formElement.elements", "formElement.elements");
+shouldBeTrue("formElement.elements === formElement.elements");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

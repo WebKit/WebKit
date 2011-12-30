@@ -1,5 +1,42 @@
 2011-12-30  Andreas Kling  <awesomekling@apple.com>
 
+        Cache and reuse the HTMLFormElement.elements collection.
+        <http://webkit.org/b/75375>
+
+        Reviewed by Anders Carlsson.
+
+        Let HTMLFormElement::elements() cache the returned collection and tie it to the
+        lifetime of the form. This reduces memory consumption by ~70 kB (on 64-bit) when
+        viewing your average popular post on reddit.com.
+
+        Test: fast/dom/form-elements-collection-idempotence.html
+              fast/dom/gc-9.html
+
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elements):
+
+            Cache the HTMLFormCollection returned by elements() on the HTMLFormElement.
+            Remove the per-form CollectionCache and let the collection manage that.
+
+        * html/HTMLCollection.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+
+            Have the HTMLCollection constructor take a bool argument that decides whether
+            we retain the base node pointer or not. This mechanism is a temporary measure
+            until all collection types are owned by their respective base nodes.
+
+        * html/HTMLFormCollection.h:
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        (WebCore::HTMLFormCollection::create):
+
+            Tell the base class constructor to not retain the back-pointer to the form.
+
+2011-12-30  Andreas Kling  <awesomekling@apple.com>
+
         Unreviewed buildfix after r103841.
 
         * inspector/InspectorMemoryAgent.cpp:

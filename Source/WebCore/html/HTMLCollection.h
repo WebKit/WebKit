@@ -62,7 +62,7 @@ public:
     CollectionType type() const { return static_cast<CollectionType>(m_type); }
 
 protected:
-    HTMLCollection(PassRefPtr<Node> base, CollectionType, CollectionCache* = 0);
+    HTMLCollection(Node* base, CollectionType, CollectionCache* = 0, bool retainBaseNode = true);
     HTMLCollection(Document*, CollectionType);
 
     CollectionCache* info() const { return m_info; }

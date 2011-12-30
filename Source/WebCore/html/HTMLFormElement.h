@@ -41,8 +41,6 @@ class HTMLInputElement;
 class HTMLFormCollection;
 class TextEncoding;
 
-struct CollectionCache;
-
 class HTMLFormElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLFormElement> create(Document*);
@@ -151,7 +149,7 @@ private:
 
     FormSubmission::Attributes m_attributes;
     OwnPtr<AliasMap> m_elementAliases;
-    OwnPtr<CollectionCache> m_collectionCache;
+    RefPtr<HTMLFormCollection> m_elementsCollection;
 
     CheckedRadioButtons m_checkedRadioButtons;
 

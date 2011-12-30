@@ -46,15 +46,16 @@ HTMLCollection::HTMLCollection(Document* document, CollectionType type)
 {
 }
 
-HTMLCollection::HTMLCollection(PassRefPtr<Node> base, CollectionType type, CollectionCache* info)
-    : m_baseIsRetained(true)
+HTMLCollection::HTMLCollection(Node* base, CollectionType type, CollectionCache* info, bool retainBaseNode)
+    : m_baseIsRetained(retainBaseNode)
     , m_includeChildren(shouldIncludeChildren(type))
     , m_ownsInfo(false)
     , m_type(type)
-    , m_base(base.get())
+    , m_base(base)
     , m_info(info)
 {
-    m_base->ref();
+    if (m_baseIsRetained)
+        m_base->ref();
 }
 
 bool HTMLCollection::shouldIncludeChildren(CollectionType type)
@@ -96,7 +97,7 @@ PassRefPtr<HTMLCollection> HTMLCollection::createForCachingOnDocument(Document* 
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(PassRefPtr<Node> base, CollectionType type)
 {
-    return adoptRef(new HTMLCollection(base, type));
+    return adoptRef(new HTMLCollection(base.get(), type));
 }
 
 HTMLCollection::~HTMLCollection()

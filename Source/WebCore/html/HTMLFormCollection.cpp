@@ -36,19 +36,12 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-inline CollectionCache* HTMLFormCollection::formCollectionInfo(HTMLFormElement* form)
-{
-    if (!form->m_collectionCache)
-        form->m_collectionCache = adoptPtr(new CollectionCache);
-    return form->m_collectionCache.get();
-}
-
-HTMLFormCollection::HTMLFormCollection(PassRefPtr<HTMLFormElement> form)
-    : HTMLCollection(form.get(), OtherCollection, formCollectionInfo(form.get()))
+HTMLFormCollection::HTMLFormCollection(HTMLFormElement* form)
+    : HTMLCollection(form, OtherCollection, 0, /* retainBaseNode */ false)
 {
 }
 
-PassRefPtr<HTMLFormCollection> HTMLFormCollection::create(PassRefPtr<HTMLFormElement> form)
+PassRefPtr<HTMLFormCollection> HTMLFormCollection::create(HTMLFormElement* form)
 {
     return adoptRef(new HTMLFormCollection(form));
 }

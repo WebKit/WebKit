@@ -23,7 +23,7 @@ PASS: document.links.myCustomProperty should be 1 and is.
 PASS: document.forms.myCustomProperty should be 1 and is.
 PASS: document.anchors.myCustomProperty should be 1 and is.
 PASS: document.scripts.myCustomProperty should be 1 and is.
-PASS: document.getElementsByTagName('form')[0].elements.myCustomProperty should be undefined and is.
+PASS: document.getElementsByTagName('form')[0].elements.myCustomProperty should be 1 and is.
 PASS: document.getElementsByTagName('table')[0].rows.myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('table')[0].rows[0].cells.myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('table')[0].tBodies.myCustomProperty should be undefined and is.
@@ -59,7 +59,7 @@ PASS: document.links.myCustomProperty should be 1 and is.
 PASS: document.forms.myCustomProperty should be 1 and is.
 PASS: document.anchors.myCustomProperty should be 1 and is.
 PASS: document.scripts.myCustomProperty should be 1 and is.
-PASS: document.getElementsByTagName('form')[0].elements.myCustomProperty should be undefined and is.
+PASS: document.getElementsByTagName('form')[0].elements.myCustomProperty should be 1 and is.
 PASS: document.getElementsByTagName('table')[0].rows.myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('table')[0].rows[0].cells.myCustomProperty should be undefined and is.
 PASS: document.getElementsByTagName('table')[0].tBodies.myCustomProperty should be undefined and is.
