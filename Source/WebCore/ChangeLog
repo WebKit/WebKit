@@ -1,3 +1,15 @@
+2011-12-30  Raymond Liu  <raymond.liu@intel.com>
+
+        Remove unnecessary [Custom] attribute in CanvasRenderingContext2D.idl
+        https://bugs.webkit.org/show_bug.cgi?id=75376
+
+        Reviewed by Adam Barth.
+
+        No new tests required.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2011-12-30  Andreas Kling  <awesomekling@apple.com>
 
         Cache and reuse the HTMLFormElement.elements collection.

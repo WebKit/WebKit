@@ -91,55 +91,6 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
     context->setFillStyle(toHTMLCanvasStyle(exec, value));
 }
 
-JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec)
-{ 
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-
-    JSValue value = exec->argument(0);
-    if (!value.isObject()) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
-        return jsUndefined();
-    }
-    JSObject* o = asObject(value);
-
-    if (o->inherits(&JSHTMLImageElement::s_info)) {
-        ExceptionCode ec;
-        JSValue pattern = toJS(exec, globalObject(), 
-            context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl()),
-                                   valueToStringWithNullCheck(exec, exec->argument(1)), ec).get());
-        setDOMException(exec, ec);
-        return pattern;
-    }
-    if (o->inherits(&JSHTMLCanvasElement::s_info)) {
-        ExceptionCode ec;
-        JSValue pattern = toJS(exec, globalObject(), 
-            context->createPattern(static_cast<HTMLCanvasElement*>(static_cast<JSHTMLElement*>(o)->impl()),
-                valueToStringWithNullCheck(exec, exec->argument(1)), ec).get());
-        setDOMException(exec, ec);
-        return pattern;
-    }
-    setDOMException(exec, TYPE_MISMATCH_ERR);
-    return jsUndefined();
-}
-
-JSValue JSCanvasRenderingContext2D::createImageData(ExecState* exec)
-{
-    // createImageData has two variants
-    // createImageData(ImageData)
-    // createImageData(width, height)
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    RefPtr<ImageData> imageData = 0;
-
-    ExceptionCode ec = 0;
-    if (exec->argumentCount() == 1)
-        imageData = context->createImageData(toImageData(exec->argument(0)), ec);
-    else if (exec->argumentCount() == 2)
-        imageData = context->createImageData(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec), ec);
-
-    setDOMException(exec, ec);
-    return toJS(exec, globalObject(), WTF::getPtr(imageData));
-}
-
 JSValue JSCanvasRenderingContext2D::webkitLineDash(ExecState* exec) const
 {
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());

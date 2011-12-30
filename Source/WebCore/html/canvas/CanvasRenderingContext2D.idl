@@ -207,7 +207,6 @@ module html {
         void putImageData(in ImageData imagedata, in float dx, in float dy, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight)
             raises(DOMException);
 
-#if defined(V8_BINDING) && V8_BINDING
         CanvasPattern createPattern(in HTMLCanvasElement canvas, in [ConvertNullToNullString] DOMString repetitionType)
             raises (DOMException);
         CanvasPattern createPattern(in HTMLImageElement image, in [ConvertNullToNullString] DOMString repetitionType)
@@ -216,11 +215,6 @@ module html {
             raises (DOMException);
         ImageData createImageData(in float sw, in float sh)
             raises (DOMException);
-#else
-        // FIXME: Remove 'else' once JSC supports overloads too.
-        [Custom] void createPattern(/* 2 */);
-        [Custom] ImageData createImageData(/* 3 */);
-#endif // defined(V8_BINDING)
 
         attribute [Custom] custom strokeStyle;
         attribute [Custom] custom fillStyle;
