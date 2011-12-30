@@ -7829,7 +7829,7 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
 
     RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create(m_styleSheet);
     keyframe->setKeyText(keyString);
-    keyframe->setDeclaration(CSSMutableStyleDeclaration::create(0, m_parsedProperties, m_numParsedProperties));
+    keyframe->setDeclaration(CSSMutableStyleDeclaration::create(keyframe.get(), m_parsedProperties, m_numParsedProperties));
 
     clearProperties();
 

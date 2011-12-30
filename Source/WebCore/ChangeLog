@@ -1,3 +1,31 @@
+2011-12-30  Andreas Kling  <awesomekling@apple.com>
+
+        WebKitCSSKeyframeRule.style.parentRule should point to the keyframe rule.
+        <http://webkit.org/b/75336>
+
+        Reviewed by Antti Koivisto.
+
+        Let CSS animation keyframe rules .style.parentRule point back to the keyframe
+        board, rather than the keyframes rule containing it.
+
+        Test: fast/css/css-keyframe-style-parentRule.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createKeyframeRule):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::setDeclaration):
+
+            Set the CSSMutableStyleDeclaration's parent rule when creating it instead
+            of in WebKitCSSKeyframeRule::setDeclaration(). Add assertion to make sure
+            it's only called with declarations already parented to the keyframe rule.
+
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::~WebKitCSSKeyframesRule):
+        (WebCore::WebKitCSSKeyframesRule::append):
+        (WebCore::WebKitCSSKeyframesRule::deleteRule):
+
+            Stop reparenting keyframe rules' style declarations to the keyframes rule.
+
 2011-12-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: use typed front-end API in the memory agent
