@@ -1,5 +1,11 @@
 2011-12-30  Andreas Kling  <awesomekling@apple.com>
 
+        Unreviewed buildfix after r103841.
+
+        * inspector/InspectorMemoryAgent.cpp:
+
+2011-12-30  Andreas Kling  <awesomekling@apple.com>
+
         CSSStyleDeclaration: Only allow setting parent rule at construction.
         <http://webkit.org/b/75391>
 

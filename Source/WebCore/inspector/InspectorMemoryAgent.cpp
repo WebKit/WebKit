@@ -112,8 +112,8 @@ private:
         collectNodeNameInfo(node);
         collectListenersInfo(node);
     }
-    
-    void collectCharacterData(Node* node)
+
+    void collectCharacterData(Node*)
     {
     }
 
