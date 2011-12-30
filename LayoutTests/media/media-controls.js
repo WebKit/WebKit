@@ -33,9 +33,9 @@ function mediaControlsButtonCoordinates(element, id)
     return new Array(x, y);
 }
 
-function textTrackDisplayElement(parentElement)
+function textTrackDisplayElement(parentElement, id)
 {
-    var controlID = "-webkit-media-text-track-display";
+    var controlID = "-webkit-media-text-track-" + id;
     var displayElement = mediaControlsElement(internals.shadowRoot(parentElement).firstChild, controlID);
     if (!displayElement)
         throw "Failed to find media control element ID '" + controlID + "'";

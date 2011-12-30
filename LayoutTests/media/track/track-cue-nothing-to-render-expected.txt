@@ -3,46 +3,46 @@ Test that cues are rendered and removed.
 EVENT(canplaythrough)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '0.5') OK
-EXPECTED (textTrackDisplayElement(video).innerText == '') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 
 RUN(video.currentTime = 1.5)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '1.5') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'Lorem ipsum dolor sit amet,') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'Lorem ipsum dolor sit amet,') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem ipsum dolor sit amet,') OK
 
 RUN(video.currentTime = 2.5)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '2.5') OK
-EXPECTED (textTrackDisplayElement(video).innerText == '') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 
 RUN(video.currentTime = 3.3)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '3.3') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'consectetuer adipiscing elit,') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'consectetuer adipiscing elit,') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'consectetuer adipiscing elit,') OK
 
 RUN(video.currentTime = 0.6)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '0.6') OK
-EXPECTED (textTrackDisplayElement(video).innerText == '') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 
 RUN(video.currentTime = 5.9)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '5.9') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'sed diam nonummy nibh euismod tincidunt') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'sed diam nonummy nibh euismod tincidunt') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'sed diam nonummy nibh euismod tincidunt') OK
 
 RUN(video.currentTime = 4.4)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '4.4') OK
-EXPECTED (textTrackDisplayElement(video).innerText == '') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == '') OK
 
 RUN(video.currentTime = 7.9)
 EVENT(seeked)
 EXPECTED (video.currentTime.toFixed(1) == '7.9') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'ut laoreet dolore magna aliquam erat volutpat.') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'ut laoreet dolore magna aliquam erat volutpat.') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'ut laoreet dolore magna aliquam erat volutpat.') OK
 
 END OF TEST
 

@@ -18,7 +18,7 @@
             run("video.width = " + width);
             run("video.height = " + height);
             document.body.offsetTop;
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", parseInt(height * 0.05) + "px");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'container')).fontSize", parseInt(height * 0.05) + "px");
             consoleWrite("");
         }
 
@@ -30,19 +30,26 @@
             testFontSize(1280, 960);
             testFontSize(2560, 1440);
 
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontFamily", "sans-serif");
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).color", "rgba(255, 255, 255, 0)");
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).backgroundColor", "rgba(0, 0, 0, 0.796875)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'container')).fontFamily", "sans-serif");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'container')).color", "rgba(255, 255, 255, 0)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'display')).backgroundColor", "rgba(0, 0, 0, 0.796875)");
 
             endTest();
+
+            // Resize the video so it is easier to interact with it manually, if necessary.
+            video.width = 320;
+            video.height = 240;
         }
 
         function seeked()
         {
+            if (testEnded)
+                return;
+
             testExpected("video.currentTime", seekedCount + .5);
             testExpected("testTrack.track.activeCues.length", 1);
             testExpected("testTrack.track.activeCues[0].getCueAsSource()", info[seekedCount]);
-            testExpected("textTrackDisplayElement(video).innerText", info[seekedCount]);
+            testExpected("textTrackDisplayElement(video, 'display').innerText", info[seekedCount]);
 
             if (++seekedCount == info.length)
                 testCueStyle();
@@ -57,7 +64,7 @@
         {
             consoleWrite("Test that TextTrack's cues are rendered correctly.");
             findMediaElement();
-            testTrack = document.querySelectorAll('track')[0];
+            testTrack = document.querySelector('track');
             video.src = findMediaFile('video', '../content/test');
             waitForEvent('seeked', seeked);
             waitForEvent('canplaythrough', function() { video.currentTime = .5; });

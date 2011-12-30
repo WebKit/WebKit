@@ -4,48 +4,48 @@ EVENT(seeked)
 EXPECTED (video.currentTime == '0.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'Lorem') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'Lorem') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
 
 RUN(video.currentTime = 1.5)
 EVENT(seeked)
 EXPECTED (video.currentTime == '1.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'ipsum') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'ipsum') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'ipsum') OK
 
 RUN(video.currentTime = 2.5)
 EVENT(seeked)
 EXPECTED (video.currentTime == '2.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'dolor') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'dolor') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'dolor') OK
 
 RUN(video.currentTime = 3.5)
 EVENT(seeked)
 EXPECTED (video.currentTime == '3.5') OK
 EXPECTED (testTrack.track.activeCues.length == '1') OK
 EXPECTED (testTrack.track.activeCues[0].getCueAsSource() == 'sit') OK
-EXPECTED (textTrackDisplayElement(video).innerText == 'sit') OK
+EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'sit') OK
 
 Test the cue display colors and font.
 RUN(video.width = 320)
 RUN(video.height = 240)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '12px') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'container')).fontSize == '12px') OK
 
 RUN(video.width = 640)
 RUN(video.height = 480)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '24px') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'container')).fontSize == '24px') OK
 
 RUN(video.width = 1280)
 RUN(video.height = 960)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '48px') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'container')).fontSize == '48px') OK
 
 RUN(video.width = 2560)
 RUN(video.height = 1440)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '72px') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'container')).fontSize == '72px') OK
 
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontFamily == 'sans-serif') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).color == 'rgba(255, 255, 255, 0)') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).backgroundColor == 'rgba(0, 0, 0, 0.796875)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'container')).fontFamily == 'sans-serif') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'container')).color == 'rgba(255, 255, 255, 0)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'display')).backgroundColor == 'rgba(0, 0, 0, 0.796875)') OK
 END OF TEST
 
