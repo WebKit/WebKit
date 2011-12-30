@@ -45,9 +45,9 @@ WebInspector.Toolbar = function()
 }
 
 WebInspector.Toolbar.prototype = {
-    set attached(attached)
+    set compact(compact)
     {
-        if (attached)
+        if (compact)
             this.element.addStyleClass("toolbar-small");
         else
             this.element.removeStyleClass("toolbar-small");
@@ -67,7 +67,7 @@ WebInspector.Toolbar.prototype = {
 
     _toolbarDragStart: function(event)
     {
-        if ((!WebInspector.attached && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
+        if ((!WebInspector.isCompactMode() && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacLeopard && WebInspector.platformFlavor() !== WebInspector.PlatformFlavor.MacSnowLeopard) || WebInspector.port() == "qt")
             return;
 
         var target = event.target;
@@ -80,7 +80,7 @@ WebInspector.Toolbar.prototype = {
         this.element.lastScreenX = event.screenX;
         this.element.lastScreenY = event.screenY;
 
-        WebInspector.elementDragStart(this.element, this._toolbarDrag.bind(this), this._toolbarDragEnd.bind(this), event, (WebInspector.attached ? "row-resize" : "default"));
+        WebInspector.elementDragStart(this.element, this._toolbarDrag.bind(this), this._toolbarDragEnd.bind(this), event, (WebInspector.isCompactMode() ? "row-resize" : "default"));
     },
 
     _toolbarDragEnd: function(event)
@@ -93,7 +93,7 @@ WebInspector.Toolbar.prototype = {
 
     _toolbarDrag: function(event)
     {
-        if (WebInspector.attached) {
+        if (WebInspector.isCompactMode()) {
             var height = window.innerHeight - (event.screenY - this.element.lastScreenY);
 
             InspectorFrontendHost.setAttachedWindowHeight(height);

@@ -2,7 +2,7 @@
     line-height: 120%;
 }
 
-body.attached #toolbar {
+body.compact #toolbar {
     height: 34px;
     border-top: 1px solid rgb(100, 100, 100);
     cursor: default; /* overriden */

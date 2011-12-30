@@ -1,3 +1,44 @@
+2011-12-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: migrate from "attached" to "compact" styles.
+        https://bugs.webkit.org/show_bug.cgi?id=75381
+
+        When front-end is docked to right, it should look like "detached", but is still "attached".
+        Use "compact" mode instead of "attached" mode in the styles to mitigate it.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.updateSearchLabel):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.Toolbar.prototype.set compact):
+        (WebInspector.Toolbar.prototype._toolbarDragStart):
+        (WebInspector.Toolbar.prototype._toolbarDrag):
+        * inspector/front-end/helpScreen.css:
+        (body.compact .help-window-outer):
+        (body.compact .help-window-main):
+        (body.compact .help-window-caption):
+        (body.compact .help-close-button):
+        (body.compact .help-content):
+        * inspector/front-end/inspector.css:
+        (body.compact #toolbar):
+        (body.compact.port-qt #toolbar):
+        (body.compact.inactive #toolbar):
+        (body.compact #search-toolbar-label):
+        (body.compact #toolbar-dropdown-arrow):
+        (body.compact #search):
+        (body.compact.port-qt .toolbar-item.close-left, body.compact.port-qt .toolbar-item.close-right):
+        (body.compact #main):
+        * inspector/front-end/inspector.js:
+        (WebInspector.set attached):
+        (WebInspector.get isCompactMode):
+        (WebInspector.get _setCompactMode):
+        (WebInspector._installDockToRight.listener.get if):
+        (WebInspector._installDockToRight.listener):
+        * inspector/front-end/inspectorCommon.css:
+        (body.dock-to-right):
+        (body.dock-to-right.inactive):
+
 2011-12-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r103794.

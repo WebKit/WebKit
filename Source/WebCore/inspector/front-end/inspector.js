@@ -187,24 +187,29 @@ var WebInspector = {
             this._dockToggleButton.toggled = !x;
         }
 
-        this._renderAsAttached(x && !WebInspector.settings.dockToRight.get());
+        this._setCompactMode(x && !WebInspector.settings.dockToRight.get());
     },
 
-    _renderAsAttached: function(x)
+    isCompactMode: function()
+    {
+        return this.attached && !WebInspector.settings.dockToRight.get();
+    },
+
+    _setCompactMode: function(x)
     {
         var body = document.body;
         if (x) {
             body.removeStyleClass("detached");
-            body.addStyleClass("attached");
+            body.addStyleClass("compact");
         } else {
-            body.removeStyleClass("attached");
+            body.removeStyleClass("compact");
             body.addStyleClass("detached");
         }
 
         // This may be called before doLoadedDone, hence the bulk of inspector objects may
         // not be created yet.
         if (WebInspector.toolbar)
-            WebInspector.toolbar.attached = x;
+            WebInspector.toolbar.compact = x;
 
         if (WebInspector.searchController)
             WebInspector.searchController.updateSearchLabel();
@@ -389,8 +394,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this._createPanels();
     this._createGlobalStatusBarItems();
 
+
     this.toolbar = new WebInspector.Toolbar();
-    this.toolbar.attached = WebInspector.attached;
+    WebInspector._installDockToRight();
 
     for (var panelName in this.panels)
         this.addPanel(this.panels[panelName]);
@@ -418,8 +424,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
             WebInspector.showPanel(WebInspector.settings.lastActivePanel.get());
     }
 
-    WebInspector._installDockToRight();
-
     InspectorAgent.enable(showInitialPanel);
     DatabaseAgent.enable();
     DOMStorageAgent.enable();
@@ -433,23 +437,27 @@ WebInspector._installDockToRight = function()
 {
     // Re-use Settings infrastructure for the dock-to-right settings UI
     WebInspector.settings.dockToRight.set(WebInspector.queryParamsObject.dockSide === "right");
-    WebInspector.settings.dockToRight.addChangeListener(listener.bind(this));
-    updateToolbar();
 
-    function updateToolbar()
-    {
-        if (WebInspector.attached)
-            WebInspector._renderAsAttached(!WebInspector.settings.dockToRight.get());
-    }
+    if (WebInspector.settings.dockToRight.get())
+        document.body.addStyleClass("dock-to-right");
+
+    if (WebInspector.attached)
+        WebInspector._setCompactMode(!WebInspector.settings.dockToRight.get());
+
+    WebInspector.settings.dockToRight.addChangeListener(listener.bind(this));
 
     function listener(event)
     {
         var value = WebInspector.settings.dockToRight.get();
-        if (value)
+        if (value) {
             InspectorFrontendHost.requestSetDockSide("right");
-        else
+            document.body.addStyleClass("dock-to-right");
+        } else {
             InspectorFrontendHost.requestSetDockSide("bottom");
-        updateToolbar();
+            document.body.removeStyleClass("dock-to-right");
+        }
+        if (WebInspector.attached)
+            WebInspector._setCompactMode(!value);
     }
 }
 

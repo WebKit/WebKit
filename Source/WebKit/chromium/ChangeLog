@@ -1,3 +1,16 @@
+2011-12-30  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: migrate from "attached" to "compact" styles.
+        https://bugs.webkit.org/show_bug.cgi?id=75381
+
+        Reviewed by Yury Semikhatsky.
+
+        When front-end is docked to right, it should look like "detached", but is still "attached".
+        Use "compact" mode instead of "attached" mode in the styles to mitigate it.
+
+        * src/js/devTools.css:
+        (body.compact #toolbar):
+
 2011-12-30  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=75373

@@ -17,6 +17,14 @@ body {
     -webkit-user-select: none;
 }
 
+body.dock-to-right {
+    border-left: 1px solid rgb(80, 80, 80);
+}
+
+body.dock-to-right.inactive {
+    border-left: 1px solid rgb(64%, 64%, 64%);
+}
+
 * {
     -webkit-box-sizing: border-box;
 }

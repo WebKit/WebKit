@@ -7,7 +7,7 @@
     z-index: 2000;
 }
 
-body.attached .help-window-outer {
+body.compact .help-window-outer {
     top: 32px;
     left: 0;
     width: 100%;
@@ -25,12 +25,12 @@ body.attached .help-window-outer {
     -webkit-box-shadow: 10px 10px 8px rgba(40, 40, 40, 0.40);
 }
 
-body.attached .help-window-main {
+body.compact .help-window-main {
     height: 100%;
     padding: 10px;
 }
 
-body.attached .help-window-main {
+body.compact .help-window-main {
     border-radius: 0;
     -webkit-box-shadow: 0 0 0;
 }
@@ -39,7 +39,7 @@ body.attached .help-window-main {
     margin: 8px 8px 0 8px;
 }
 
-body.attached .help-window-caption {
+body.compact .help-window-caption {
     margin: 0;
 }
 
@@ -94,11 +94,11 @@ body.attached .help-window-caption {
     width: 16px;
 }
 
-body.attached .help-close-button {
+body.compact .help-close-button {
     margin: 0;
 }
 
-body.attached .help-content {
+body.compact .help-content {
     margin: 8px 0 0 8px;
 }
 
@@ -195,7 +195,6 @@ body.platform-mac .help-key {
 .settings-experiments-warning-subsection-message {
     color: rgb(150, 150, 150);
 }
-
 
 .help-content input[type=checkbox] {
     height: 13px;

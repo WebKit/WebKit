@@ -67,7 +67,7 @@ WebInspector.SearchController.prototype = {
         if (!panelName)
             return;
         var newLabel = WebInspector.UIString("Search %s", panelName);
-        if (WebInspector.attached)
+        if (WebInspector.isCompactMode())
             this.element.setAttribute("placeholder", newLabel);
         else {
             this.element.removeAttribute("placeholder");

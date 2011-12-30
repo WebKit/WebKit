@@ -63,18 +63,18 @@ body.detached.platform-mac-snowleopard #toolbar {
     background: transparent;
 }
 
-body.attached #toolbar {
+body.compact #toolbar {
     height: 34px;
     border-top: 1px solid rgb(100, 100, 100);
     cursor: ns-resize;
     padding-left: 0;
 }
 
-body.attached.port-qt #toolbar {
+body.compact.port-qt #toolbar {
     cursor: auto;
 }
 
-body.attached.inactive #toolbar {
+body.compact.inactive #toolbar {
     border-top: 1px solid rgb(64%, 64%, 64%);
 }
 
@@ -135,7 +135,7 @@ body.attached.inactive #toolbar {
     top: 2px;
 }
 
-body.attached #search-toolbar-label {
+body.compact #search-toolbar-label {
     display: none;
 }
 
@@ -155,7 +155,7 @@ body.attached #search-toolbar-label {
     text-shadow: none;
 }
 
-body.attached #toolbar-dropdown-arrow {
+body.compact #toolbar-dropdown-arrow {
     font-size: 14px;
     padding-bottom: 4px;
 }
@@ -267,7 +267,7 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
     font-size: 16px;
 }
 
-body.attached #search {
+body.compact #search {
     font-size: 11px;
 }
 
@@ -362,7 +362,7 @@ body.detached .toolbar-item.close-left, body.detached .toolbar-item.close-right 
     display: none;
 }
 
-body.attached.port-qt .toolbar-item.close-left, body.attached.port-qt .toolbar-item.close-right {
+body.compact.port-qt .toolbar-item.close-left, body.compact.port-qt .toolbar-item.close-right {
     display: none;
 }
 
@@ -389,7 +389,7 @@ body:not(.platform-mac) .toolbar-item.close-left {
     background-color: white;
 }
 
-body.attached #main {
+body.compact #main {
     top: 34px;
 }
 
