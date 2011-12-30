@@ -2333,7 +2333,7 @@ sub execMacWebKitAppForDebugging($)
     $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
     my @architectureFlags = ("-arch", architecture());
-    exec { $gdbPath } $gdbPath, @architectureFlags, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
+    exec { $gdbPath } $gdbPath, @architectureFlags, "--args", $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
 
 sub debugSafari

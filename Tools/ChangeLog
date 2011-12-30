@@ -1,3 +1,14 @@
+2011-12-29  Dan Bernstein  <mitz@apple.com>
+
+        debug-safari --no-saved-state fails to start the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=75374
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkitdirs.pm:
+        (execMacWebKitAppForDebugging): Pass the --args option to gdb so that it passes arguments to
+        the executable being debugged.
+
 2011-12-29  Sam Weinig  <sam@webkit.org>
 
         It should be easier to iterate a Vector backwards
