@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
@@ -1388,10 +1388,11 @@ void CSSStyleSelector::keyframeStylesForAnimation(Element* e, const RenderStyle*
 
     m_keyframesRuleMap.checkConsistency();
 
-    if (!m_keyframesRuleMap.contains(list.animationName().impl()))
+    KeyframesRuleMap::iterator it = m_keyframesRuleMap.find(list.animationName().impl());
+    if (it == m_keyframesRuleMap.end())
         return;
 
-    const WebKitCSSKeyframesRule* rule = m_keyframesRuleMap.find(list.animationName().impl()).get()->second.get();
+    const WebKitCSSKeyframesRule* rule = it->second.get();
 
     // Construct and populate the style for each keyframe
     for (unsigned i = 0; i < rule->length(); ++i) {

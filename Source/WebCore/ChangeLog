@@ -1,5 +1,15 @@
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
+        CSSStyleSelector: Avoid double hash lookup in keyframeStylesForAnimation().
+        <http://webkit.org/b/75408>
+
+        Reviewed by Anders Carlsson.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::keyframeStylesForAnimation):
+
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
         KeyframeAnimation: Use hash lookups to determine if property is animated.
         <http://webkit.org/b/75407>
 
