@@ -3431,7 +3431,7 @@ void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo
 }
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
-void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;
     if (!isValid()) {
@@ -3441,10 +3441,10 @@ void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, Pass
     
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
-    process()->send(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
+    process()->send(Messages::WebPage::DrawRectToPDF(frame->frameID(), printInfo, rect, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t count, PassRefPtr<DataCallback> prpCallback)
+void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, const PrintInfo& printInfo, uint32_t first, uint32_t count, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;
     if (!isValid()) {
@@ -3454,7 +3454,7 @@ void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t
     
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
-    process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
+    process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), printInfo, first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 #endif
 

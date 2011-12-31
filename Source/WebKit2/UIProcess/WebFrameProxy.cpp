@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,14 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
     // FIXME: This check should be moved to somewhere in WebCore.
     // FIXME: This returns false when displaying a web archive.
     return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType);
+}
+
+bool WebFrameProxy::isDisplayingPDFDocument() const
+{
+    if (m_MIMEType.isEmpty())
+        return false;
+
+    return WebContext::pdfAndPostScriptMIMETypes().contains(m_MIMEType);
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)

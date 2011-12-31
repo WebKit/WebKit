@@ -1,3 +1,14 @@
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        WebCore changes for <rdar://problem/8750356> REGRESSION (WebKit2): Printing a subframe containing a PDF prints the on-screen view instead of the entire PDF document
+        <http://webkit.org/b/75232>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in: Exported PluginDocument::pluginWidget().
+        * WebCore.xcodeproj/project.pbxproj: Promoted PluginDocument.h to private.
+        * html/PluginDocument.h: Fixed a typo in a comment.
+
 2011-12-30  Andreas Kling  <awesomekling@apple.com>
 
         Cache and reuse the HTMLTableElement.rows collection.

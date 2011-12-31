@@ -1,3 +1,56 @@
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/8750356> REGRESSION (WebKit2): Printing a subframe containing a PDF prints the on-screen view instead of the entire PDF document
+        <http://webkit.org/b/75232>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageDrawPagesToPDF): Added WKPrintInfo parameter, which is passed through as a PrintInfo
+        to the WebPageProxy.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]): Changed to pass the PrintInfo
+        down to WebPageProxy::drawPagesToPDF.
+        (-[WKPrintingView _drawPreview:]): Changed to pass the PrintInfo down to
+        WebPageProxy::drawRectToPDF.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView canChangeFrameLayout:]): Changed to use WebFrameProxy::isDisplayingPDFDocument, which
+        works for subframes as well.
+        (-[WKView printOperationWithPrintInfo:forFrame:]): Added a FIXME.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::isDisplayingPDFDocument): Added.
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::drawRectToPDF): Added a PrintInfo parameter, which is passed through to
+        the Web process.
+        (WebKit::WebPageProxy::drawPagesToPDF): Ditto.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        Added an override of pdfDocumentForPrinting() which returns the PDFDocument.
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::pdfDocumentForPrinting): Added. This base class implementation returns 0.
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::pdfDocumentForPrinting): Added. Calls through to the Plugin.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::pdfDocumentForPrintingFrame): Added this helper function. If the frame is displaying
+        a plug-in document, allows the plug-in to provide a PDF document for printing.
+        (WebKit::WebPage::beginPrinting): Added an early return if the frame provides a PDF document
+        for printing.
+        (WebKit::WebPage::computePagesForPrinting): If the frame provides a PDF document for printing,
+        create for each page in the PDF document a page rect with the size available for printing.
+        (WebKit::drawPDFPage): Added this helper function, which draws a page from the PDF document
+        into one of the aforementioned page rects. It rotates the PDF page 90 degrees if necessary to
+        better match the aspect ratio of the paper, then it centers it on the paper. This matches the
+        behavior of a PDFView when printed with default settings.
+        (WebKit::WebPage::drawRectToPDF): If the frame provides a PDF document for printing, draw the
+        PDF pages falling within the requested rect.
+        (WebKit::WebPage::drawPagesToPDF): If the frame provides a PDF document for printing, draw
+        the requested pages.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added a PrintInfo parameter to DrawRectToPDF and
+        DrawPagesToPDF.
+
 2011-12-30  Dan Bernstein  <mitz@apple.com>
 
         EnvironmentUtilities::stripValuesEndingWithString fails when the variable ends with the search value

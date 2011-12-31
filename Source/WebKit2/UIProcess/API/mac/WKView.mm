@@ -2717,7 +2717,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
 {
     // PDF documents are already paginated, so we can't change them to add headers and footers.
-    return !toImpl(frameRef)->isMainFrame() || !_data->_pdfViewController;
+    return !toImpl(frameRef)->isDisplayingPDFDocument();
 }
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
@@ -2730,6 +2730,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
             return 0;
         return _data->_pdfViewController->makePrintOperation(printInfo);
     } else {
+        // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
+        // printing), this function should return nil.
         RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
         // NSPrintOperation takes ownership of the view.
         NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get()];

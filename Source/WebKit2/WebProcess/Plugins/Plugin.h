@@ -30,6 +30,7 @@
 #include <WebCore/KURL.h>
 #include <WebCore/ScrollTypes.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 struct NPObject;
@@ -217,6 +218,10 @@ public:
     // FIXME: This code should be in PluginView or its base class, not in individual plug-ins.
     virtual WebCore::Scrollbar* horizontalScrollbar() = 0;
     virtual WebCore::Scrollbar* verticalScrollbar() = 0;
+
+#if USE(CG)
+    virtual RetainPtr<CGPDFDocumentRef> pdfDocumentForPrinting() const { return 0; }
+#endif
 
 protected:
     Plugin();

@@ -646,9 +646,9 @@ void WKPageBeginPrinting(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo
     toImpl(page)->beginPrinting(toImpl(frame), printInfoFromWKPrintInfo(printInfo));
 }
 
-void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context)
+void WKPageDrawPagesToPDF(WKPageRef page, WKFrameRef frame, WKPrintInfo printInfo, uint32_t first, uint32_t count, WKPageDrawToPDFFunction callback, void* context)
 {
-    toImpl(page)->drawPagesToPDF(toImpl(frame), first, count, DataCallback::create(context, callback));
+    toImpl(page)->drawPagesToPDF(toImpl(frame), printInfoFromWKPrintInfo(printInfo), first, count, DataCallback::create(context, callback));
 }
 #endif
 

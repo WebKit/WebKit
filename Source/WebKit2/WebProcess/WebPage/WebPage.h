@@ -428,8 +428,8 @@ public:
     void endPrinting();
     void computePagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
 #if PLATFORM(MAC) || PLATFORM(WIN)
-    void drawRectToPDF(uint64_t frameID, const WebCore::IntRect&, uint64_t callbackID);
-    void drawPagesToPDF(uint64_t frameID, uint32_t first, uint32_t count, uint64_t callbackID);
+    void drawRectToPDF(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, uint64_t callbackID);
+    void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
 #endif
 
     bool mainFrameHasCustomRepresentation() const;

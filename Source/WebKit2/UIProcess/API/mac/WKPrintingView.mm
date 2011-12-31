@@ -252,8 +252,9 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
     ASSERT(firstPage <= lastPage);
     LOG(View, "WKPrintingView requesting PDF data for pages %u...%u", firstPage, lastPage);
 
+    PrintInfo printInfo([_printOperation printInfo]);
     // Return to printing mode if we're already back to screen (e.g. due to window resizing).
-    _webFrame->page()->beginPrinting(_webFrame.get(), PrintInfo([_printOperation printInfo]));
+    _webFrame->page()->beginPrinting(_webFrame.get(), printInfo);
 
     IPCCallbackContext* context = new IPCCallbackContext;
     RefPtr<DataCallback> callback = DataCallback::create(context, pageDidDrawToPDF);
@@ -262,7 +263,7 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
     context->view = self;
     context->callbackID = callback->callbackID();
 
-    _webFrame->page()->drawPagesToPDF(_webFrame.get(), firstPage - 1, lastPage - firstPage + 1, callback.get());
+    _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, callback.get());
 }
 
 static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, WKErrorRef, void* untypedContext)
@@ -452,7 +453,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
                 context->view = self;
                 context->callbackID = callback->callbackID();
 
-                _webFrame->page()->drawRectToPDF(_webFrame.get(), rect, callback.get());
+                _webFrame->page()->drawRectToPDF(_webFrame.get(), PrintInfo([_printOperation printInfo]), rect, callback.get());
                 return;
             }
         }

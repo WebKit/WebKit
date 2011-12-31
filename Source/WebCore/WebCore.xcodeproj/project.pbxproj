@@ -3264,7 +3264,7 @@
 		97205AB71239291000B17380 /* MediaDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB31239291000B17380 /* MediaDocument.cpp */; };
 		97205AB81239291000B17380 /* MediaDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205AB41239291000B17380 /* MediaDocument.h */; };
 		97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB91239292700B17380 /* PluginDocument.cpp */; };
-		97205ABC1239292700B17380 /* PluginDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205ABA1239292700B17380 /* PluginDocument.h */; };
+		97205ABC1239292700B17380 /* PluginDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205ABA1239292700B17380 /* PluginDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9728C3111268E4390041E89B /* MarkupAccumulator.cpp */; };
 		9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9728C3121268E4390041E89B /* MarkupAccumulator.h */; };
 		973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */; };
