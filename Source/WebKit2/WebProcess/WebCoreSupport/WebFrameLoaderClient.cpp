@@ -1274,7 +1274,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     }
 #endif
 
-    RefPtr<Plugin> plugin = webPage->createPlugin(parameters);
+    RefPtr<Plugin> plugin = webPage->createPlugin(m_frame, parameters);
     if (!plugin)
         return 0;
     

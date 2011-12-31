@@ -1,5 +1,42 @@
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/10463059> Cannot print USPS shipping labels
+        http://webkit.org/b/72801
+
+        Reviewed by Anders Carlsson and Alexey Proskuryakov.
+
+        * WebProcess/Plugins/PDF/BuiltInPDFView.cpp:
+        (appendValuesInPDFNameSubtreeToVector): Copied from WebKit/mac/WebView/WebPDFDocumentExtras.mm.
+        (getAllValuesInPDFNameTree): Ditto.
+        (getAllScriptsInPDFDocument): Copied allScriptsInPDFDocument() from WebPDFDocumentExtras.mm
+        and changed it to append to a Vector<RetainPtr<CFStringRef> >.
+        (WebKit::BuiltInPDFView::create): Changed to take a WebFrame* rather than a Page*.
+        (WebKit::BuiltInPDFView::BuiltInPDFView): Ditto. Updated initializer accordingly.
+        (WebKit::BuiltInPDFView::pdfDocumentDidLoad): Copied and adapted code from
+        -[WebPDFRepresentation finishedLoadingWithDataSource:] to run scripts from the PDF with a
+        Doc object as the this object.
+        (WebKit::BuiltInPDFView::initialize): Adapted for the change from having a Page* to having
+        a WebFrame*.
+        (WebKit::BuiltInPDFView::destroy): Ditto.
+        (WebKit::BuiltInPDFView::isActive): Ditto.
+        (WebKit::jsPDFDocInitialize): Added. Refs the BuiltInPDFView which is the private object for
+        this Doc.
+        (WebKit::jsPDFDocFinalize): Added. Derefs the BuiltInPDFView for this Doc.
+        (WebKit::BuiltInPDFView::jsPDFDocPrint): Added. Calls WebCore::Chrome::print().
+        (WebKit::BuiltInPDFView::makeJSPDFDoc): Copied from WebKit/mac/WebView/WebJSPDFDoc.mm and
+        modified to use this BuiltInPDFView as the private object of the Doc being made.
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        (WebKit::BuiltInPDFView::disconnectFromPage): Adapted for the change from having a Page* to
+        having a WebFrame*.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin): Pass the WebFrame to WebPage::createPlugin().
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Added a WebFrame* parameter, which is used when creating
+        a BuiltInPDFView.
+        * WebProcess/WebPage/WebPage.h:
+
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/8553040> REGRESSION (WebKit2): Safari status text doesn't change when you change the modifier keys without moving the mouse
         https://bugs.webkit.org/show_bug.cgi?id=75404
 

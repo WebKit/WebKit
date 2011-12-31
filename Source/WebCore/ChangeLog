@@ -1,5 +1,14 @@
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
+        WebCore change for <rdar://problem/10463059> Cannot print USPS shipping labels
+        http://webkit.org/b/72801
+
+        Reviewed by Anders Carlsson and Alexey Proskuryakov.
+
+        * WebCore.exp.in: Exported Chrome::print().
+
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
         WebCore changes for <rdar://problem/8750356> REGRESSION (WebKit2): Printing a subframe containing a PDF prints the on-screen view instead of the entire PDF document
         <http://webkit.org/b/75232>
 

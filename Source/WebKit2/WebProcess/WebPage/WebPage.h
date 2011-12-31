@@ -237,7 +237,7 @@ public:
     WebCore::Frame* mainFrame() const; // May return 0.
     WebCore::FrameView* mainFrameView() const; // May return 0.
 
-    PassRefPtr<Plugin> createPlugin(const Plugin::Parameters&);
+    PassRefPtr<Plugin> createPlugin(WebFrame*, const Plugin::Parameters&);
 
     EditorState editorState() const;
 

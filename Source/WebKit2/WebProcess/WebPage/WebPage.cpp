@@ -345,7 +345,7 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 }
 #endif
 
-PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
+PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, const Plugin::Parameters& parameters)
 {
     String pluginPath;
 
@@ -359,7 +359,9 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 #if PLATFORM(MAC)
         if (parameters.mimeType == "application/pdf"
             || (parameters.mimeType.isEmpty() && parameters.url.path().lower().endsWith(".pdf")))
-            return BuiltInPDFView::create(m_page.get());
+            return BuiltInPDFView::create(frame);
+#else
+        UNUSED_PARAM(frame);
 #endif
         return 0;
     }

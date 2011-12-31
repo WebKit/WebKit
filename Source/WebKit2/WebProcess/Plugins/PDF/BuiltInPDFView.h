@@ -30,24 +30,28 @@
 #include <WebCore/ScrollableArea.h>
 #include <wtf/RetainPtr.h>
 
+typedef const struct OpaqueJSContext* JSContextRef;
+typedef struct OpaqueJSValue* JSObjectRef;
+typedef const struct OpaqueJSValue* JSValueRef;
+
 namespace WebCore {
-    class Page;
     struct PluginInfo;
 }
 
 namespace WebKit {
 
 class PluginView;
+class WebFrame;
 
 class BuiltInPDFView : public Plugin, private WebCore::ScrollableArea {
 public:
-    static PassRefPtr<BuiltInPDFView> create(WebCore::Page*);
+    static PassRefPtr<BuiltInPDFView> create(WebFrame*);
     ~BuiltInPDFView();
 
     static WebCore::PluginInfo pluginInfo();
 
 private:
-    explicit BuiltInPDFView(WebCore::Page*);
+    explicit BuiltInPDFView(WebFrame*);
 
     // Regular plug-ins don't need access to view, but we add scrollbars to embedding FrameView for proper event handling.
     PluginView* pluginView();
@@ -134,13 +138,16 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar() const  { return m_horizontalScrollbar.get(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
     virtual bool isOnActivePage() const;
-    virtual void disconnectFromPage() { m_page = 0; }
+    virtual void disconnectFromPage() { m_frame = 0; }
     virtual bool shouldSuspendScrollAnimations() const { return false; } // If we return true, ScrollAnimatorMac will keep cycling a timer forever, waiting for a good time to animate.
     virtual void scrollbarStyleChanged(int newStyle, bool forceUpdate);
     virtual void zoomAnimatorTransformChanged(float, float, float, ZoomAnimationState) { }
 
     // FIXME: Implement the other conversion functions; this one is enough to get scrollbar hit testing working.
     virtual WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar*, const WebCore::IntPoint& parentPoint) const;
+
+    JSObjectRef makeJSPDFDoc(JSContextRef);
+    static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     WebCore::IntSize m_pluginSize;
 
@@ -156,7 +163,7 @@ private:
     RefPtr<WebCore::Scrollbar> m_horizontalScrollbar;
     RefPtr<WebCore::Scrollbar> m_verticalScrollbar;
 
-    WebCore::Page* m_page; // Needed to register and unregister ScrollableArea.
+    WebFrame* m_frame;
 
     WebCore::IntSize m_scrollOffset;
 };
