@@ -1,5 +1,15 @@
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
+        RenderThemeMac: Avoid double hash lookup in systemColor().
+        <http://webkit.org/b/75409>
+
+        Reviewed by Anders Carlsson.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor):
+
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
         CSSStyleSelector: Avoid double hash lookup in keyframeStylesForAnimation().
         <http://webkit.org/b/75408>
 
