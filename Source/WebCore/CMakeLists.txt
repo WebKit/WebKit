@@ -369,6 +369,7 @@ SET(WebCore_IDL_FILES
     webaudio/AudioProcessingEvent.idl
     webaudio/AudioSourceNode.idl
     webaudio/ConvolverNode.idl
+    webaudio/DOMWindowWebAudio.idl
     webaudio/DelayNode.idl
     webaudio/HighPass2FilterNode.idl
     webaudio/JavaScriptAudioNode.idl
@@ -376,6 +377,7 @@ SET(WebCore_IDL_FILES
     webaudio/RealtimeAnalyserNode.idl
 
     websockets/CloseEvent.idl
+    websockets/DOMWindowWebSocket.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
@@ -2218,12 +2220,17 @@ IF (ENABLE_REQUEST_ANIMATION_FRAME)
 ENDIF ()
 
 # Modules that the bindings generator scripts may use
+SET(SCRIPTS_RESOLVE_SUPPLEMENTAL
+    ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
+)
 SET(SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
     ${WEBCORE_DIR}/bindings/scripts/IDLStructure.pm
     ${WEBCORE_DIR}/bindings/scripts/InFilesParser.pm
     ${WEBCORE_DIR}/bindings/scripts/preprocessor.pm
 )
+SET(IDL_FILES_TMP ${DERIVED_SOURCES_WEBCORE_DIR}/idl_files.tmp)
+SET(SUPPLEMENTAL_DEPENDENCY_FILE ${DERIVED_SOURCES_WEBCORE_DIR}/supplemental_dependency.tmp)
 
 INCLUDE(${WEBCORE_DIR}/UseJSC.cmake)
 
