@@ -327,7 +327,9 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
 
 PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 {
-    return HTMLOptionsCollection::create(this);
+    if (!m_optionsCollection)
+        m_optionsCollection = HTMLOptionsCollection::create(this);
+    return m_optionsCollection;
 }
 
 void HTMLSelectElement::updateListItemSelectedStates()
@@ -680,8 +682,8 @@ void HTMLSelectElement::setRecalcListItems()
     m_activeSelectionAnchorIndex = -1;
     setOptionsChangedOnRenderer();
     setNeedsStyleRecalc();
-    if (!inDocument())
-        m_collectionInfo.reset();
+    if (!inDocument() && m_optionsCollection)
+        m_optionsCollection->invalidateCache();
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const

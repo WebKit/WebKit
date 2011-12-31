@@ -1,3 +1,39 @@
+2011-12-30  Andreas Kling  <awesomekling@apple.com>
+
+        Cache and reuse the HTMLSelectElement.options collection.
+        <http://webkit.org/b/75399>
+
+        Reviewed by Anders Carlsson.
+
+        Let HTMLSelectElement::options() cache the returned collection and tie it to the
+        lifetime of the form. This shrinks HTMLSelectElement by sizeof(CollectionCache)
+        minus one pointer.
+
+        Test: fast/dom/select-options-collection-idempotence.html
+              fast/gc-9.html
+
+        * html/HTMLSelectElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::options):
+
+            Cache the HTMLOptionsCollection returned by options() on the HTMLSelectElement.
+            Remove the per-select CollectionCache and let the collection manage that.
+
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+
+            Tell the base class constructor to not retain the back-pointer to the element.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setRecalcListItems):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::invalidateCache):
+
+            Added so HTMLSelectElement can invalidate the collection without triggering
+            unnecessary instantiation of a CollectionCache.
+
 2011-12-30  Kentaro Hara  <haraken@chromium.org>
 
         Enable the [Supplemental] IDL on CMake

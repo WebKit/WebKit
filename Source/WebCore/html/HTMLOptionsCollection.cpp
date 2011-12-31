@@ -27,12 +27,12 @@
 
 namespace WebCore {
 
-HTMLOptionsCollection::HTMLOptionsCollection(PassRefPtr<HTMLSelectElement> select)
-    : HTMLCollection(select.get(), SelectOptions, select->collectionInfo())
+HTMLOptionsCollection::HTMLOptionsCollection(HTMLSelectElement* select)
+    : HTMLCollection(select, SelectOptions, 0, /* retainBaseNode */ false)
 {
 }
 
-PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(PassRefPtr<HTMLSelectElement> select)
+PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(HTMLSelectElement* select)
 {
     return adoptRef(new HTMLOptionsCollection(select));
 }
@@ -85,6 +85,12 @@ void HTMLOptionsCollection::setSelectedIndex(int index)
 void HTMLOptionsCollection::setLength(unsigned length, ExceptionCode& ec)
 {
     toHTMLSelectElement(base())->setLength(length, ec);
+}
+
+void HTMLOptionsCollection::invalidateCache()
+{
+    if (info())
+        info()->reset();
 }
 
 } //namespace
