@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -249,14 +249,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
 
 bool KeyframeAnimation::hasAnimationForProperty(int property) const
 {
-    // FIXME: why not just m_keyframes.containsProperty()?
-    HashSet<int>::const_iterator end = m_keyframes.endProperties();
-    for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != end; ++it) {
-        if (*it == property)
-            return true;
-    }
-    
-    return false;
+    return m_keyframes.containsProperty(property);
 }
 
 bool KeyframeAnimation::startAnimation(double timeOffset)
@@ -389,12 +382,7 @@ void KeyframeAnimation::resumeOverriddenAnimations()
 
 bool KeyframeAnimation::affectsProperty(int property) const
 {
-    HashSet<int>::const_iterator end = m_keyframes.endProperties();
-    for (HashSet<int>::const_iterator it = m_keyframes.beginProperties(); it != end; ++it) {
-        if (*it == property)
-            return true;
-    }
-    return false;
+    return m_keyframes.containsProperty(property);
 }
 
 void KeyframeAnimation::validateTransformFunctionList()

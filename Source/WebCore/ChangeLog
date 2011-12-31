@@ -1,3 +1,17 @@
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
+        KeyframeAnimation: Use hash lookups to determine if property is animated.
+        <http://webkit.org/b/75407>
+
+        Reviewed by Anders Carlsson.
+
+        Clean out an old FIXME about using hash lookups instead of iterating over
+        the properties.
+
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::hasAnimationForProperty):
+        (WebCore::KeyframeAnimation::affectsProperty):
+
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
         WebCore change for <rdar://problem/10463059> Cannot print USPS shipping labels
