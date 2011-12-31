@@ -1,5 +1,20 @@
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/8553040> REGRESSION (WebKit2): Safari status text doesn't change when you change the modifier keys without moving the mouse
+        https://bugs.webkit.org/show_bug.cgi?id=75404
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]): Remove the flags changed event monitor.
+        (-[WKView _postFakeMouseMovedEventForFlagsChangedEvent:]): Added. Similarly to
+        -[WebHTMLView _postFlagsChangedEvent:], creates a mouse moved event and passes it to
+        -mouseMoved:.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]): Create a local event monitor for flags
+        changed events.
+
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/8750356> REGRESSION (WebKit2): Printing a subframe containing a PDF prints the on-screen view instead of the entire PDF document
         <http://webkit.org/b/75232>
 

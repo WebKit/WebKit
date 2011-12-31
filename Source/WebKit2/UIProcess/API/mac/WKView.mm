@@ -118,12 +118,13 @@ struct WKViewInterpretKeyEventsParameters {
 };
 
 @interface WKView ()
+- (void)_accessibilityRegisterUIProcessTokens;
+- (void)_disableComplexTextInputIfNecessary;
 - (float)_intrinsicDeviceScaleFactor;
+- (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_setDrawingAreaSize:(NSSize)size;
 - (void)_setPluginComplexTextInputState:(PluginComplexTextInputState)pluginComplexTextInputState;
-- (void)_disableComplexTextInputIfNecessary;
 - (BOOL)_shouldUseTiledDrawingArea;
-- (void)_accessibilityRegisterUIProcessTokens;
 @end
 
 @interface WKViewData : NSObject {
@@ -169,6 +170,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _ignoringMouseDraggedEvents;
     BOOL _dragHasStarted;
 
+    id _flagsChangedEventMonitor;
 #if ENABLE(GESTURE_EVENTS)
     id _endGestureMonitor;
 #endif
@@ -223,6 +225,7 @@ struct WKViewInterpretKeyEventsParameters {
 - (void)dealloc
 {
     _data->_page->close();
+    [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
 
     ASSERT(!_data->_inSecureInputState);
 
@@ -2067,6 +2070,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     return hitView;
 }
 
+- (void)_postFakeMouseMovedEventForFlagsChangedEvent:(NSEvent *)flagsChangedEvent
+{
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]]
+        modifierFlags:[flagsChangedEvent modifierFlags] timestamp:[flagsChangedEvent timestamp] windowNumber:[flagsChangedEvent windowNumber]
+        context:[flagsChangedEvent context] eventNumber:0 clickCount:0 pressure:0];
+    [self mouseMoved:fakeEvent];
+}
+
 - (NSInteger)conversationIdentifier
 {
     return (NSInteger)self;
@@ -2692,6 +2703,10 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 #endif
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
+    _data->_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSFlagsChangedMask handler:^(NSEvent *flagsChangedEvent) {
+        [self _postFakeMouseMovedEventForFlagsChangedEvent:flagsChangedEvent];
+        return flagsChangedEvent;
+    }];
 
     [self _registerDraggedTypes];
 
