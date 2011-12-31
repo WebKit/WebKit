@@ -1,3 +1,16 @@
+2011-12-30  Ami Fischman  <fischman@chromium.org>
+
+        Allow disabling accelerated compositing in WebMediaPlayerClient (so audio-only <video> isn't accelerated).
+        https://bugs.webkit.org/show_bug.cgi?id=75261
+
+        Reviewed by Darin Fisher.
+
+        * public/WebMediaPlayerClient.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::disableAcceleratedCompositing):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::setClient):
+        * src/WebMediaPlayerClientImpl.h:
+
 2011-12-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

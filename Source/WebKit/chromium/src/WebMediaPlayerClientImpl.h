@@ -86,6 +86,7 @@ public:
     virtual WebMediaPlayer::Preload preload() const;
     virtual void sourceOpened();
     virtual WebKit::WebURL sourceURL() const;
+    virtual void disableAcceleratedCompositing();
 
     // MediaPlayerPrivateInterface methods:
     virtual void load(const WTF::String& url);

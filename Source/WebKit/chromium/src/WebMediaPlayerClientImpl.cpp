@@ -225,6 +225,11 @@ WebKit::WebURL WebMediaPlayerClientImpl::sourceURL() const
 #endif
 }
 
+void WebMediaPlayerClientImpl::disableAcceleratedCompositing()
+{
+    m_supportsAcceleratedCompositing = false;
+}
+
 // MediaPlayerPrivateInterface -------------------------------------------------
 
 void WebMediaPlayerClientImpl::load(const String& url)
@@ -696,7 +701,7 @@ void WebMediaPlayerClientImpl::AudioSourceProviderImpl::setClient(AudioSourcePro
         m_client = adoptPtr(new WebMediaPlayerClientImpl::AudioClientImpl(client));
     else
         m_client.clear();
-        
+
     if (m_webAudioSourceProvider)
         m_webAudioSourceProvider->setClient(m_client.get());
 }

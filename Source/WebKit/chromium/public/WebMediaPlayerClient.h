@@ -56,6 +56,7 @@ public:
     virtual WebMediaPlayer::Preload preload() const = 0;
     virtual void sourceOpened() = 0;
     virtual WebKit::WebURL sourceURL() const = 0;
+    virtual void disableAcceleratedCompositing() = 0;
 protected:
     ~WebMediaPlayerClient() { }
 };
