@@ -1,5 +1,32 @@
 2011-12-30  Andreas Kling  <awesomekling@apple.com>
 
+        Cache and reuse the HTMLTableElement.rows collection.
+        <http://webkit.org/b/75398>
+
+        Reviewed by Anders Carlsson.
+
+        Let HTMLTableElement::rows() cache the returned collection and tie it to the
+        lifetime of the form.
+
+        Test: fast/dom/table-rows-collection-idempotence.html
+              fast/dom/gc-9.html
+
+        * html/HTMLTableElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+
+            Cache the HTMLTableRowsCollection returned by rows() on the HTMLTableElement.
+            Remove the per-table CollectionCache and let the collection manage that.
+
+        * html/HTMLTableRowsCollection.h:
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        (WebCore::HTMLTableRowsCollection::create):
+
+            Tell the base class constructor to not retain the back-pointer to the table.
+
+2011-12-30  Andreas Kling  <awesomekling@apple.com>
+
         Cache and reuse the HTMLSelectElement.options collection.
         <http://webkit.org/b/75399>
 

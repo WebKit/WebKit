@@ -38,13 +38,13 @@ class HTMLTableRowElement;
 
 class HTMLTableRowsCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLTableRowsCollection> create(PassRefPtr<HTMLTableElement>);
+    static PassRefPtr<HTMLTableRowsCollection> create(HTMLTableElement*);
 
     static HTMLTableRowElement* rowAfter(HTMLTableElement*, HTMLTableRowElement*);
     static HTMLTableRowElement* lastRow(HTMLTableElement*);
 
 private:
-    HTMLTableRowsCollection(PassRefPtr<HTMLTableElement>);
+    HTMLTableRowsCollection(HTMLTableElement*);
 
     virtual Element* itemAfter(Element*) const;
 };
