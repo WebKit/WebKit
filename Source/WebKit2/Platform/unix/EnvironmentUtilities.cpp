@@ -66,7 +66,7 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
         char* nextColon = strstr(componentStart, ":");
         while (nextColon && nextColon < match) {
             componentStart = nextColon;
-            nextColon = strstr(componentStart, ":");
+            nextColon = strstr(componentStart + 1, ":");
         }
                 
         // Copy over everything right of the match to the current component start, and search from there again.
@@ -97,7 +97,7 @@ void stripValuesEndingWithString(const char* environmentVariable, const char* se
         char* nextColon = strstr(componentStart, ":");
         while (nextColon && nextColon < match) {
             componentStart = nextColon;
-            nextColon = strstr(componentStart, ":");
+            nextColon = strstr(componentStart + 1, ":");
         }
         
         // Whether componentStart points to the original string or the last colon, putting the null terminator there will get us the desired result.

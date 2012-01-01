@@ -1,5 +1,16 @@
 2012-01-01  Dan Bernstein  <mitz@apple.com>
 
+        EnvironmentUtilities::stripValuesEndingWithString enters an infinite loop if the search value
+        occurs a component other than the first.
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/unix/EnvironmentUtilities.cpp:
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString): Changed to start the search for
+        the next colon after the current colon.
+
+2012-01-01  Dan Bernstein  <mitz@apple.com>
+
         Improved reproting of kernel return codes.
 
         Reviewed by Anders Carlsson.
