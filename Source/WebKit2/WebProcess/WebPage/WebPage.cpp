@@ -2681,7 +2681,7 @@ static void drawPDFPage(CGPDFDocumentRef pdfDocument, CFIndex pageIndex, CGConte
         CGContextTranslateCTM(context, roundCGFloat(widthDifference / 2), roundCGFloat(heightDifference / 2));
 
     if (shouldRotate) {
-        CGContextRotateCTM(context, M_PI_2);
+        CGContextRotateCTM(context, static_cast<CGFloat>(piOverTwoDouble));
         CGContextTranslateCTM(context, 0, -cropBox.size.width);
     }
 

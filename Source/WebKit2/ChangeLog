@@ -1,5 +1,12 @@
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
+        Start trying to fix the Windows build after r103858.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::drawPDFPage):
+
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/10463059> Cannot print USPS shipping labels
         http://webkit.org/b/72801
 
