@@ -256,4 +256,3 @@ BUGWK74888 : fast/css/caption-width-fixed-position.htm = TEXT
 BUGWK74888 : fast/css/caption-width-relative-position-offset-top.htm = TEXT
 BUGWK74888 : fast/css/caption-width-relative-position.htm = TEXT
 BUGWK74888 : fast/table/frame-and-rules.html = TEXT
-BUGWK74888 : css2.1/20110323/border-collapse-offset-002.htm = IMAGE
