@@ -827,7 +827,7 @@ void HTMLElement::setTabIndex(int value)
 
 PassRefPtr<HTMLCollection> HTMLElement::children()
 {
-    return HTMLCollection::create(this, NodeChildren);
+    return ensureCachedHTMLCollection(NodeChildren);
 }
 
 bool HTMLElement::rendererIsNeeded(const NodeRenderingContext& context)

@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLNameCollection::HTMLNameCollection(Document* document, CollectionType type, const AtomicString& name)
-    : HTMLCollection(document, type, /* retainBaseNode */ false)
+    : HTMLCollection(document, type)
     , m_name(name)
 {
 }

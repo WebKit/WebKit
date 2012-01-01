@@ -43,6 +43,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -122,6 +123,16 @@ Element::~Element()
     removeShadowRoot();
     if (m_attributeMap)
         m_attributeMap->detachFromElement();
+
+    if (hasRareData()) {
+        ElementRareData* elementRareData = rareData();
+        if (elementRareData->hasCachedHTMLCollections()) {
+            for (unsigned type = 0; type < NumNodeCollectionTypes; ++type) {
+                if (HTMLCollection* collection = elementRareData->cachedHTMLCollection(static_cast<CollectionType>(FirstNodeCollectionType + type)))
+                    collection->detachFromNode();
+            }
+        }
+    }
 }
 
 inline ElementRareData* Element::rareData() const
@@ -2030,6 +2041,11 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
 
     if (!newId.isEmpty())
         static_cast<HTMLDocument*>(document())->addExtraNamedItem(newId);
+}
+
+HTMLCollection* Element::ensureCachedHTMLCollection(CollectionType type)
+{
+    return ensureRareData()->ensureCachedHTMLCollection(this, type);
 }
 
 } // namespace WebCore

@@ -1,3 +1,64 @@
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
+        Move the remaining collections to caching on their respective base nodes.
+        <http://webkit.org/b/75416>
+
+        Reviewed by Anders Carlsson.
+
+        Add a (lazily-allocated) array of HTMLCollections to ElementRareData and cache
+        the various collections on their base node rather than recreating them every time.
+
+        Test: fast/dom/collection-idempotence.html
+              fast/dom/gc-9.html
+
+        * html/CollectionType.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::hasCachedHTMLCollections):
+        (WebCore::ElementRareData::cachedHTMLCollection):
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+        * dom/Element.h:
+        * dom/Element.cpp:
+        (WebCore::Element::ensureCachedHTMLCollection):
+
+            Plumbing to cache HTMLCollections on ElementRareData.
+
+        (WebCore::Element::~Element):
+
+            Detach any cached collections from an element when it's destroyed.
+
+        * html/HTMLCollection.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+        (WebCore::HTMLCollection::~HTMLCollection):
+        (WebCore::HTMLCollection::detachFromNode):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        * dom/Document.cpp:
+        (WebCore::Document::cachedCollection):
+
+            Consolidate the HTMLCollection constructors and get rid of the hacks to
+            optionally retain the base node.
+
+        * html/HTMLDataListElement.cpp:
+        (WebCore::HTMLDataListElement::options):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::tBodies):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::cells):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::rows):
+
+            Cached collections!
+
 2012-01-01  Raymond Liu  <raymond.liu@intel.com>
 
         Use overload methods to implement [Optional] parameters in AudioNode.idl

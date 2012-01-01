@@ -38,7 +38,6 @@ enum CollectionType {
     DocScripts,   // all <script> elements
 
     DocAll,       // "all" elements (IE)
-    NodeChildren, // first-level children (IE)
 
     // named collection types cached in the document
 
@@ -47,6 +46,7 @@ enum CollectionType {
 
     // types not cached in the document; these are types that can't be used on a document
 
+    NodeChildren, // first-level children (IE)
     TableTBodies, // all <tbody> elements in this table
     TSectionRows, // all row elements in this table section
     TRCells,      // all cells in this row
@@ -62,7 +62,10 @@ enum CollectionType {
 };
 
 static const CollectionType FirstUnnamedDocumentCachedType = DocImages;
-static const unsigned NumUnnamedDocumentCachedTypes = NodeChildren - DocImages + 1;
+static const unsigned NumUnnamedDocumentCachedTypes = WindowNamedItems - DocImages + 1;
+
+static const CollectionType FirstNodeCollectionType = NodeChildren;
+static const unsigned NumNodeCollectionTypes = OtherCollection - NodeChildren + 1;
 
 } // namespace
 

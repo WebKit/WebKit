@@ -25,6 +25,7 @@
 #ifndef Element_h
 #define Element_h
 
+#include "CollectionType.h"
 #include "Document.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLNames.h"
@@ -392,6 +393,8 @@ protected:
     void updateAfterAttributeChanged(Attribute*);
     
     void idAttributeChanged(Attribute*);
+
+    HTMLCollection* ensureCachedHTMLCollection(CollectionType);
 
 private:
     void scrollByUnits(int units, ScrollGranularity);

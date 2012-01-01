@@ -633,7 +633,7 @@ PassRefPtr<HTMLCollection> HTMLTableElement::rows()
 
 PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return HTMLCollection::create(this, TableTBodies);
+    return ensureCachedHTMLCollection(TableTBodies);
 }
 
 String HTMLTableElement::rules() const

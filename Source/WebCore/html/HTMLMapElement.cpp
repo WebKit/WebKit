@@ -128,7 +128,7 @@ void HTMLMapElement::parseMappedAttribute(Attribute* attribute)
 
 PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 {
-    return HTMLCollection::create(this, MapAreas);
+    return ensureCachedHTMLCollection(MapAreas);
 }
 
 void HTMLMapElement::insertedIntoDocument()

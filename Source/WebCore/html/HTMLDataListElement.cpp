@@ -49,7 +49,7 @@ PassRefPtr<HTMLDataListElement> HTMLDataListElement::create(const QualifiedName&
 
 PassRefPtr<HTMLCollection> HTMLDataListElement::options()
 {
-    return HTMLCollection::create(this, DataListOptions);
+    return ensureCachedHTMLCollection(DataListOptions);
 }
 
 }  // namespace WebCore

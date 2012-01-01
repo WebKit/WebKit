@@ -152,7 +152,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 // table to get at the collection cache. Order of argument evaluation is undefined and can
 // differ between compilers.
 HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement* table)
-    : HTMLCollection(table, OtherCollection, /* retainBaseNode */ false)
+    : HTMLCollection(table, OtherCollection)
 {
 }
 

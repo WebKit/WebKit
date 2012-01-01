@@ -40,10 +40,9 @@ struct CollectionCache;
 
 class HTMLCollection : public RefCounted<HTMLCollection> {
 public:
-    static PassRefPtr<HTMLCollection> create(PassRefPtr<Node> base, CollectionType);
-    static PassRefPtr<HTMLCollection> createForCachingOnDocument(Document*, CollectionType);
+    static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
     virtual ~HTMLCollection();
-    
+
     unsigned length() const;
     
     virtual Node* item(unsigned index) const;
@@ -64,8 +63,7 @@ public:
     void detachFromNode();
 
 protected:
-    HTMLCollection(Node* base, CollectionType, bool retainBaseNode = true);
-    HTMLCollection(Document*, CollectionType);
+    HTMLCollection(Node* base, CollectionType);
 
     CollectionCache* info() const { return m_info; }
     void resetCollectionInfo() const;
@@ -81,7 +79,6 @@ private:
 
     bool isAcceptableElement(Element*) const;
 
-    bool m_baseIsRetained : 1;
     bool m_includeChildren : 1;
     mutable bool m_ownsInfo : 1;
     unsigned m_type : 5; // CollectionType

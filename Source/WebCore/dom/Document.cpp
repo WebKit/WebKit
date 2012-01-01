@@ -4203,7 +4203,7 @@ const RefPtr<HTMLCollection>& Document::cachedCollection(CollectionType type)
 {
     ASSERT(static_cast<unsigned>(type) < NumUnnamedDocumentCachedTypes);
     if (!m_collections[type])
-        m_collections[type] = HTMLCollection::createForCachingOnDocument(this, type);
+        m_collections[type] = HTMLCollection::create(this, type);
     return m_collections[type];
 }
 

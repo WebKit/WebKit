@@ -37,7 +37,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormCollection::HTMLFormCollection(HTMLFormElement* form)
-    : HTMLCollection(form, OtherCollection, /* retainBaseNode */ false)
+    : HTMLCollection(form, OtherCollection)
 {
 }
 

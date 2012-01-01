@@ -37,26 +37,13 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLCollection::HTMLCollection(Document* document, CollectionType type)
-    : m_baseIsRetained(false)
-    , m_includeChildren(shouldIncludeChildren(type))
-    , m_ownsInfo(false)
-    , m_type(type)
-    , m_base(document)
-    , m_info(0)
-{
-}
-
-HTMLCollection::HTMLCollection(Node* base, CollectionType type, bool retainBaseNode)
-    : m_baseIsRetained(retainBaseNode)
-    , m_includeChildren(shouldIncludeChildren(type))
+HTMLCollection::HTMLCollection(Node* base, CollectionType type)
+    : m_includeChildren(shouldIncludeChildren(type))
     , m_ownsInfo(false)
     , m_type(type)
     , m_base(base)
     , m_info(0)
 {
-    if (m_baseIsRetained)
-        m_base->ref();
 }
 
 bool HTMLCollection::shouldIncludeChildren(CollectionType type)
@@ -91,28 +78,20 @@ bool HTMLCollection::shouldIncludeChildren(CollectionType type)
     return false;
 }
 
-PassRefPtr<HTMLCollection> HTMLCollection::createForCachingOnDocument(Document* document, CollectionType type)
+PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
 {
-    return adoptRef(new HTMLCollection(document, type));
-}
-
-PassRefPtr<HTMLCollection> HTMLCollection::create(PassRefPtr<Node> base, CollectionType type)
-{
-    return adoptRef(new HTMLCollection(base.get(), type));
+    return adoptRef(new HTMLCollection(base, type));
 }
 
 HTMLCollection::~HTMLCollection()
 {
     if (m_ownsInfo)
         delete m_info;
-    if (m_baseIsRetained)
-        m_base->deref();
 }
 
 void HTMLCollection::detachFromNode()
 {
     m_base = 0;
-    m_baseIsRetained = false;
 }
 
 void HTMLCollection::resetCollectionInfo() const
