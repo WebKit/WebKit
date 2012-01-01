@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,7 +37,7 @@ using namespace HTMLNames;
 // calculation every time if anything has changed.
 
 HTMLFormCollection::HTMLFormCollection(HTMLFormElement* form)
-    : HTMLCollection(form, OtherCollection, 0, /* retainBaseNode */ false)
+    : HTMLCollection(form, OtherCollection, /* retainBaseNode */ false)
 {
 }
 

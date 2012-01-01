@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,7 +152,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 // table to get at the collection cache. Order of argument evaluation is undefined and can
 // differ between compilers.
 HTMLTableRowsCollection::HTMLTableRowsCollection(HTMLTableElement* table)
-    : HTMLCollection(table, OtherCollection, 0, /* retainBaseNode */ false)
+    : HTMLCollection(table, OtherCollection, /* retainBaseNode */ false)
 {
 }
 

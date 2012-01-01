@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,13 +47,13 @@ HTMLCollection::HTMLCollection(Document* document, CollectionType type)
 {
 }
 
-HTMLCollection::HTMLCollection(Node* base, CollectionType type, CollectionCache* info, bool retainBaseNode)
+HTMLCollection::HTMLCollection(Node* base, CollectionType type, bool retainBaseNode)
     : m_baseIsRetained(retainBaseNode)
     , m_includeChildren(shouldIncludeChildren(type))
     , m_ownsInfo(false)
     , m_type(type)
     , m_base(base)
-    , m_info(info)
+    , m_info(0)
 {
     if (m_baseIsRetained)
         m_base->ref();

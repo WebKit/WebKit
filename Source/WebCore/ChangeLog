@@ -1,3 +1,25 @@
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
+        HTMLCollection: Remove the constructor's custom CollectionCache* argument.
+        <http://webkit.org/b/75414>
+
+        Reviewed by Anders Carlsson.
+
+        We no longer need to initialize HTMLCollections with a custom CollectionCache,
+        so remove the argument from the constructor.
+
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        * html/HTMLCollection.h:
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::HTMLFormCollection):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
         WebCore changes for: REGRESSION (WebKit2): Cursor, hover states not updated when page scrolls under stationary mouse pointer
