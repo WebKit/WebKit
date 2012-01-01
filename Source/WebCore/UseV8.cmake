@@ -67,7 +67,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8ArrayBufferCustom.cpp
     bindings/v8/custom/V8ArrayBufferViewCustom.cpp
     bindings/v8/custom/V8AudioContextCustom.cpp
-    bindings/v8/custom/V8AudioNodeCustom.cpp
     bindings/v8/custom/V8CSSRuleCustom.cpp
     bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp
     bindings/v8/custom/V8CSSStyleSheetCustom.cpp

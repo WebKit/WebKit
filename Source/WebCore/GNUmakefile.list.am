@@ -5200,7 +5200,6 @@ if ENABLE_WEB_AUDIO
 webcore_sources += \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
-	Source/WebCore/bindings/js/JSAudioNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSConvolverNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSWaveShaperNodeCustom.cpp \

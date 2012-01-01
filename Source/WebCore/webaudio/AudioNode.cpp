@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include "ExceptionCode.h"
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 
@@ -113,42 +114,53 @@ AudioNodeOutput* AudioNode::output(unsigned i)
     return 0;
 }
 
-bool AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex)
+void AudioNode::connect(AudioNode* destination, unsigned outputIndex, unsigned inputIndex, ExceptionCode& ec)
 {
     ASSERT(isMainThread()); 
     AudioContext::AutoLocker locker(context());
-    
-    // Sanity check input and output indices.
-    if (outputIndex >= numberOfOutputs())
-        return false;
-    if (destination && inputIndex >= destination->numberOfInputs())
-        return false;
 
-    AudioNodeOutput* output = this->output(outputIndex);
     if (!destination) {
-        // Disconnect output from any inputs it may be currently connected to.
-        output->disconnectAllInputs();
-        return true;
+        ec = SYNTAX_ERR;
+        return;
     }
-    
-    if (context() != destination->context())
-        return false;
+
+    // Sanity check input and output indices.
+    if (outputIndex >= numberOfOutputs()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    if (destination && inputIndex >= destination->numberOfInputs()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    if (context() != destination->context()) {
+        ec = SYNTAX_ERR;
+        return;
+    }
 
     AudioNodeInput* input = destination->input(inputIndex);
+    AudioNodeOutput* output = this->output(outputIndex);
     input->connect(output);
 
     // Let context know that a connection has been made.
     context()->incrementConnectionCount();
-
-    return true;
 }
 
-bool AudioNode::disconnect(unsigned outputIndex)
+void AudioNode::disconnect(unsigned outputIndex, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     AudioContext::AutoLocker locker(context());
-    
-    return connect(0, outputIndex);
+
+    // Sanity check input and output indices.
+    if (outputIndex >= numberOfOutputs()) {
+        ec = INDEX_SIZE_ERR;
+        return;
+    }
+
+    AudioNodeOutput* output = this->output(outputIndex);
+    output->disconnectAllInputs();
 }
 
 void AudioNode::processIfNecessary(size_t framesToProcess)

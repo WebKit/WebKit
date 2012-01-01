@@ -38,6 +38,8 @@ class AudioContext;
 class AudioNodeInput;
 class AudioNodeOutput;
 
+typedef int ExceptionCode;
+
 // An AudioNode is the basic building block for handling audio within an AudioContext.
 // It may be an audio source, an intermediate processing module, or an audio destination.
 // Each AudioNode can have inputs and/or outputs. An AudioSourceNode has no inputs and a single output.
@@ -112,10 +114,9 @@ public:
     AudioNodeInput* input(unsigned);
     AudioNodeOutput* output(unsigned);
 
-    // connect() / disconnect() return true on success.
     // Called from main thread by corresponding JavaScript methods.
-    bool connect(AudioNode* destination, unsigned outputIndex = 0, unsigned inputIndex = 0);
-    bool disconnect(unsigned outputIndex = 0);
+    void connect(AudioNode*, unsigned outputIndex, unsigned inputIndex, ExceptionCode&);
+    void disconnect(unsigned outputIndex, ExceptionCode&);
 
     float sampleRate() const { return m_sampleRate; }
 

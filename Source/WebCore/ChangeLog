@@ -1,3 +1,24 @@
+2012-01-01  Raymond Liu  <raymond.liu@intel.com>
+
+        Use overload methods to implement [Optional] parameters in AudioNode.idl
+        https://bugs.webkit.org/show_bug.cgi?id=75402
+
+        Reviewed by Adam Barth.
+
+        No new tests required.
+
+        * GNUmakefile.list.am:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioNodeCustom.cpp: Removed.
+        * bindings/v8/custom/V8AudioNodeCustom.cpp: Removed.
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        * webaudio/AudioNode.h:
+        * webaudio/AudioNode.idl:
+
 2011-12-20  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: border-collapse-offset-002.htm fails
