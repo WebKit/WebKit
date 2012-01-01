@@ -1,5 +1,13 @@
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
+        Continue trying to fix the ASSERT-enabled Windows build after r103858.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToPDF):
+        (WebKit::WebPage::drawPagesToPDF):
+
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
         Start trying to fix the Windows build after r103858.
 
         * WebProcess/WebPage/WebPage.cpp:
