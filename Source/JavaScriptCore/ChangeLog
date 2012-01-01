@@ -1,3 +1,9 @@
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        Start trying to fix the Windows build after r103823.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-12-30  Anders Carlsson  <andersca@apple.com>
 
         Add a ParamStorageTraits specialization for RetainPtr
