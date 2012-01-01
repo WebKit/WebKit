@@ -21,6 +21,7 @@
 #include "config.h"
 #include "HTMLOptionsCollection.h"
 
+#include "CollectionCache.h"
 #include "ExceptionCode.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"

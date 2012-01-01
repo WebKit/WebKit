@@ -23,6 +23,7 @@
 #include "config.h"
 #include "HTMLCollection.h"
 
+#include "CollectionCache.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -42,7 +43,7 @@ HTMLCollection::HTMLCollection(Document* document, CollectionType type)
     , m_ownsInfo(false)
     , m_type(type)
     , m_base(document)
-    , m_info(document->collectionInfo(type))
+    , m_info(0)
 {
 }
 

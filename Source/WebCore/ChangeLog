@@ -1,5 +1,22 @@
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
+        Remove Document::collectionInfo() and let collections manage their caches.
+        <http://webkit.org/b/75401>
+
+        Reviewed by Anders Carlsson.
+
+        Remove the CollectionCaches from Document and have the document's collections
+        create and manage the caches on-demand instead. This is a step towards merging
+        CollectionCache into HTMLCollection.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        * html/HTMLOptionsCollection.cpp:
+
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
         RenderThemeMac: Avoid double hash lookup in systemColor().
         <http://webkit.org/b/75409>
 

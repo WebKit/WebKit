@@ -29,7 +29,6 @@
 #define Document_h
 
 #include "CheckedRadioButtons.h"
-#include "CollectionCache.h"
 #include "CollectionType.h"
 #include "Color.h"
 #include "DOMTimeStamp.h"
@@ -137,6 +136,8 @@ class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
+
+struct CollectionCache;
 
 #if ENABLE(SVG)
 class SVGDocumentExtensions;
@@ -423,15 +424,6 @@ public:
     PassRefPtr<HTMLCollection> documentNamedItems(const String& name);
 
     PassRefPtr<HTMLAllCollection> all();
-
-    CollectionCache* collectionInfo(CollectionType type)
-    {
-        ASSERT(type >= FirstUnnamedDocumentCachedType);
-        unsigned index = type - FirstUnnamedDocumentCachedType;
-        ASSERT(index < NumUnnamedDocumentCachedTypes);
-        m_collectionInfo[index].checkConsistency();
-        return &m_collectionInfo[index]; 
-    }
 
     CollectionCache* nameCollectionInfo(CollectionType, const AtomicString& name);
 
@@ -1373,7 +1365,6 @@ private:
     RefPtr<HTMLAllCollection> m_allCollection;
 
     typedef HashMap<AtomicStringImpl*, OwnPtr<CollectionCache> > NamedCollectionMap;
-    FixedArray<CollectionCache, NumUnnamedDocumentCachedTypes> m_collectionInfo;
     FixedArray<NamedCollectionMap, NumNamedDocumentCachedTypes> m_nameCollectionInfo;
 
     RefPtr<XPathEvaluator> m_xpathEvaluator;

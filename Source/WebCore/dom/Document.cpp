@@ -41,6 +41,7 @@
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CollectionCache.h"
 #include "Comment.h"
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
