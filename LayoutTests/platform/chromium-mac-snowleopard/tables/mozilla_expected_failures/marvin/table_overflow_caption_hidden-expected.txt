@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x138
+  RenderBlock {HTML} at (0,0) size 800x138
+    RenderBody {BODY} at (8,8) size 784x122
+      RenderTable {TABLE} at (0,0) size 200x122 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,13) size 198x108
+          RenderTableRow {TR} at (0,2) size 198x104
+            RenderTableCell {TD} at (2,43) size 97x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 21x18
+                text run at (2,2) width 21: "foo"
+            RenderTableCell {TD} at (101,43) size 95x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 20x18
+                text run at (2,2) width 20: "bar"
+layer at (8,8) size 200x12 scrollWidth 397 scrollHeight 403
+  RenderBlock {CAPTION} at (0,0) size 200x12
+    RenderBlock {DIV} at (94,0) size 12x12 [border: (1px solid #008000)]
+      RenderBlock {DIV} at (1,1) size 302x402 [border: (1px solid #FF0000)]
+        RenderText {#text} at (147,1) size 8x18
+          text run at (147,1) width 8: "d"

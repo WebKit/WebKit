@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 66x98 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 64x40 [color=#008000] [bgcolor=#FFFFE0]
-          RenderText {#text} at (5,0) size 58x39
-            text run at (5,0) width 54: "Where is"
-            text run at (3,20) width 58: "the table?"
+        RenderBlock {CAPTION} at (0,0) size 66x40 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (6,0) size 58x39
+            text run at (6,0) width 54: "Where is"
+            text run at (4,20) width 58: "the table?"
         RenderTableSection {THEAD} at (1,41) size 64x28
           RenderTableRow {TR} at (0,2) size 64x24
             RenderTableCell {TD} at (2,2) size 60x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -32,10 +32,10 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 56: "Kibology"
       RenderBlock {HR} at (0,182) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,192) size 66x98 [border: (1px outset #808080)]
-        RenderBlock {CAPTION} at (0,0) size 64x40 [color=#008000] [bgcolor=#FFFFE0]
-          RenderText {#text} at (10,0) size 52x39
-            text run at (10,0) width 44: "Here is"
-            text run at (6,20) width 52: "the table"
+        RenderBlock {CAPTION} at (0,0) size 66x40 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (0,0) size 66x39
+            text run at (0,0) width 66: "Here is the"
+            text run at (18,20) width 30: "table"
         RenderTableSection {THEAD} at (1,41) size 64x28
           RenderTableRow {TR} at (0,2) size 64x24
             RenderTableCell {TD} at (2,2) size 60x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -52,10 +52,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 60x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 45x19
                 text run at (2,2) width 45: "Header"
-        RenderBlock {CAPTION} at (0,0) size 64x40 [color=#008000] [bgcolor=#FFFFE0]
-          RenderText {#text} at (5,0) size 58x39
-            text run at (5,0) width 54: "Where is"
-            text run at (3,20) width 58: "the table?"
+        RenderBlock {CAPTION} at (0,0) size 66x40 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (6,0) size 58x39
+            text run at (6,0) width 54: "Where is"
+            text run at (4,20) width 58: "the table?"
         RenderTableSection {TBODY} at (1,69) size 64x28
           RenderTableRow {TR} at (0,2) size 64x24
             RenderTableCell {TD} at (2,2) size 60x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -80,10 +80,10 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 60x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 45x19
                 text run at (2,2) width 45: "Header"
-        RenderBlock {CAPTION} at (0,0) size 64x40 [color=#008000] [bgcolor=#FFFFE0]
-          RenderText {#text} at (10,0) size 52x39
-            text run at (10,0) width 44: "Here is"
-            text run at (6,20) width 52: "the table"
+        RenderBlock {CAPTION} at (0,0) size 66x40 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (0,0) size 66x39
+            text run at (0,0) width 66: "Here is the"
+            text run at (18,20) width 30: "table"
         RenderTableSection {TBODY} at (1,69) size 64x28
           RenderTableRow {TR} at (0,2) size 64x24
             RenderTableCell {TD} at (2,2) size 60x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

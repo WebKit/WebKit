@@ -1,0 +1,91 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 70x90 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 70x36 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (7,0) size 60x36
+            text run at (7,0) width 56: "Where is"
+            text run at (5,18) width 60: "the table?"
+        RenderTableSection {THEAD} at (1,37) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x18
+                text run at (2,2) width 46: "Header"
+        RenderTableSection {TBODY} at (1,63) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x18
+                text run at (2,2) width 60: "Kibology"
+      RenderBlock {HR} at (0,98) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,108) size 70x54 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x18
+                text run at (2,2) width 46: "Header"
+        RenderTableSection {TBODY} at (1,27) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x18
+                text run at (2,2) width 60: "Kibology"
+      RenderBlock {HR} at (0,170) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,180) size 70x90 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 70x36 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (1,0) size 68x36
+            text run at (1,0) width 68: "Here is the"
+            text run at (20,18) width 30: "table"
+        RenderTableSection {THEAD} at (1,37) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x18
+                text run at (2,2) width 46: "Header"
+        RenderTableSection {TBODY} at (1,63) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x18
+                text run at (2,2) width 60: "Kibology"
+      RenderTable {TABLE} at (0,270) size 70x90 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,37) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x18
+                text run at (2,2) width 46: "Header"
+        RenderBlock {CAPTION} at (0,0) size 70x36 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (7,0) size 60x36
+            text run at (7,0) width 56: "Where is"
+            text run at (5,18) width 60: "the table?"
+        RenderTableSection {TBODY} at (1,63) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x18
+                text run at (2,2) width 60: "Kibology"
+      RenderBlock {HR} at (0,368) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,378) size 70x54 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,1) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x18
+                text run at (2,2) width 46: "Header"
+        RenderTableSection {TBODY} at (1,27) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x18
+                text run at (2,2) width 60: "Kibology"
+      RenderBlock {HR} at (0,440) size 784x2 [border: (1px inset #000000)]
+      RenderTable {TABLE} at (0,450) size 70x90 [border: (1px outset #808080)]
+        RenderTableSection {THEAD} at (1,37) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 46x18
+                text run at (2,2) width 46: "Header"
+        RenderBlock {CAPTION} at (0,0) size 70x36 [color=#008000] [bgcolor=#FFFFE0]
+          RenderText {#text} at (1,0) size 68x36
+            text run at (1,0) width 68: "Here is the"
+            text run at (20,18) width 30: "table"
+        RenderTableSection {TBODY} at (1,63) size 68x26
+          RenderTableRow {TR} at (0,2) size 68x22
+            RenderTableCell {TD} at (2,2) size 64x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x18
+                text run at (2,2) width 60: "Kibology"

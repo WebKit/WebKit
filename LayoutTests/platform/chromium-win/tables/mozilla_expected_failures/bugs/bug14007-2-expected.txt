@@ -9,9 +9,9 @@ layer at (0,0) size 785x1438
             text run at (258,0) width 253: "Build 1999/10/27/08 Win95 - Daily Build"
           RenderBR {BR} at (510,15) size 1x0
         RenderTable {TABLE} at (76,20) size 616x1258 [border: (10px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 596x20
-            RenderText {#text} at (257,0) size 82x19
-              text run at (257,0) width 82: "January 2000"
+          RenderBlock {CAPTION} at (0,0) size 616x20
+            RenderText {#text} at (267,0) size 82x19
+              text run at (267,0) width 82: "January 2000"
           RenderTableSection {TBODY} at (10,30) size 596x1218
             RenderTableRow {TR} at (0,0) size 596x468
               RenderTableCell {TD} at (0,0) size 85x24 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

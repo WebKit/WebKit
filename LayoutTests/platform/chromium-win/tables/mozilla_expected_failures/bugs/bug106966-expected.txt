@@ -4,9 +4,9 @@ layer at (0,0) size 785x1453
   RenderBlock {HTML} at (0,0) size 785x1453
     RenderBody {BODY} at (8,8) size 769x1437
       RenderTable {TABLE} at (0,0) size 200x122 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (22,0) size 106x19
-            text run at (22,0) width 106: "clip at table-outer"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (47,0) size 106x19
+            text run at (47,0) width 106: "clip at table-outer"
         RenderTableSection {TBODY} at (25,45) size 150x52
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -18,9 +18,9 @@ layer at (0,0) size 785x1453
       RenderBlock (anonymous) at (0,122) size 769x20
         RenderBR {BR} at (0,0) size 0x19
       RenderTable {TABLE} at (0,264) size 200x159 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (50,0) size 50x19
-            text run at (50,0) width 50: "clip at tr"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (75,0) size 50x19
+            text run at (75,0) width 50: "clip at tr"
         RenderTableSection {TBODY} at (25,45) size 150x89
           RenderTableRow {TR} at (0,52) size 150x22
             RenderTableCell {TD} at (15,52) size 52x22 [bgcolor=#FFFF00] [r=1 c=0 rs=1 cs=1]
@@ -33,9 +33,9 @@ layer at (0,0) size 785x1453
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (41,0) size 68x19
-            text run at (41,0) width 68: "clip column"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (66,0) size 68x19
+            text run at (66,0) width 68: "clip column"
         RenderTableSection {TBODY} at (25,45) size 150x89
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -56,9 +56,9 @@ layer at (0,0) size 785x1453
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (23,0) size 104x19
-            text run at (23,0) width 104: "clip columngroup"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (48,0) size 104x19
+            text run at (48,0) width 104: "clip columngroup"
         RenderTableSection {TBODY} at (25,45) size 150x89
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -75,9 +75,9 @@ layer at (0,0) size 785x1453
               RenderText {#text} at (1,1) size 123x19
                 text run at (1,1) width 123: "contentwithoutspace"
       RenderTable {TABLE} at (0,741) size 200x174 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (46,0) size 58x19
-            text run at (46,0) width 58: "clip thead"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (71,0) size 58x19
+            text run at (71,0) width 58: "clip thead"
         RenderTableSection {TBODY} at (25,97) size 150x52
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -87,9 +87,9 @@ layer at (0,0) size 785x1453
               RenderText {#text} at (1,1) size 123x19
                 text run at (1,1) width 123: "contentwithoutspace"
       RenderTable {TABLE} at (0,915) size 200x174 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (45,0) size 60x19
-            text run at (45,0) width 60: "clip tbody"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (70,0) size 60x19
+            text run at (70,0) width 60: "clip tbody"
         RenderTableSection {THEAD} at (25,45) size 150x52
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -99,9 +99,9 @@ layer at (0,0) size 785x1453
               RenderText {#text} at (1,1) size 123x19
                 text run at (1,1) width 123: "contentwithoutspace"
       RenderTable {TABLE} at (0,1089) size 200x174 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (48,0) size 54x19
-            text run at (48,0) width 54: "clip tfoot"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (73,0) size 54x19
+            text run at (73,0) width 54: "clip tfoot"
         RenderTableSection {TBODY} at (25,45) size 150x52
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -111,9 +111,9 @@ layer at (0,0) size 785x1453
               RenderText {#text} at (1,1) size 123x19
                 text run at (1,1) width 123: "contentwithoutspace"
       RenderTable {TABLE} at (0,1263) size 200x174 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-        RenderBlock {CAPTION} at (0,0) size 150x20
-          RenderText {#text} at (56,0) size 38x19
-            text run at (56,0) width 38: "clip td"
+        RenderBlock {CAPTION} at (0,0) size 200x20
+          RenderText {#text} at (81,0) size 38x19
+            text run at (81,0) width 38: "clip td"
         RenderTableSection {TBODY} at (25,45) size 150x52
           RenderTableRow {TR} at (0,15) size 150x22
             RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
@@ -124,9 +124,9 @@ layer at (0,0) size 785x1453
                 text run at (1,1) width 123: "contentwithoutspace"
 layer at (8,150) size 200x122 clip at (18,150) size 180x122 scrollWidth 221
   RenderTable {TABLE} at (0,142) size 200x122 [bgcolor=#FFA500] [border: (10px solid #0000FF)]
-    RenderBlock {CAPTION} at (0,0) size 150x20
-      RenderText {#text} at (40,0) size 70x19
-        text run at (40,0) width 70: "clip at table"
+    RenderBlock {CAPTION} at (0,0) size 200x20
+      RenderText {#text} at (65,0) size 70x19
+        text run at (65,0) width 70: "clip at table"
     RenderTableSection {TBODY} at (25,45) size 150x52
       RenderTableRow {TR} at (0,15) size 150x22
         RenderTableCell {TD} at (15,15) size 52x22 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]

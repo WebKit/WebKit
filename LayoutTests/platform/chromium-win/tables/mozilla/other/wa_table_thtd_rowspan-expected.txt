@@ -174,14 +174,14 @@ layer at (0,0) size 785x2464
         RenderBR {BR} at (0,20) size 0x19
       RenderBlock {UL} at (0,837) size 769x284
         RenderTable {TABLE} at (40,0) size 473x284 [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 471x20
-            RenderText {#text} at (102,0) size 39x19
-              text run at (102,0) width 39: "Table "
+          RenderBlock {CAPTION} at (0,0) size 473x20
+            RenderText {#text} at (103,0) size 39x19
+              text run at (103,0) width 39: "Table "
             RenderInline {B} at (0,0) size 89x19
-              RenderText {#text} at (140,0) size 89x19
-                text run at (140,0) width 89: "Header Cells"
-            RenderText {#text} at (228,0) size 141x19
-              text run at (228,0) width 141: " spanning multiple rows"
+              RenderText {#text} at (141,0) size 89x19
+                text run at (141,0) width 89: "Header Cells"
+            RenderText {#text} at (229,0) size 141x19
+              text run at (229,0) width 141: " spanning multiple rows"
           RenderTableSection {TBODY} at (1,21) size 471x262
             RenderTableRow {TR} at (0,2) size 471x24
               RenderTableCell {TH} at (2,5) size 99x44 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
@@ -533,14 +533,14 @@ layer at (0,0) size 785x2464
         RenderBR {BR} at (0,20) size 0x19
       RenderBlock {UL} at (0,1419) size 769x284
         RenderTable {TABLE} at (40,0) size 473x284 [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 471x20
-            RenderText {#text} at (111,0) size 38x19
-              text run at (111,0) width 38: "Table "
+          RenderBlock {CAPTION} at (0,0) size 473x20
+            RenderText {#text} at (112,0) size 38x19
+              text run at (112,0) width 38: "Table "
             RenderInline {B} at (0,0) size 71x19
-              RenderText {#text} at (149,0) size 71x19
-                text run at (149,0) width 71: "Data Cells"
-            RenderText {#text} at (220,0) size 140x19
-              text run at (220,0) width 140: " spanning multiple rows"
+              RenderText {#text} at (150,0) size 71x19
+                text run at (150,0) width 71: "Data Cells"
+            RenderText {#text} at (221,0) size 140x19
+              text run at (221,0) width 140: " spanning multiple rows"
           RenderTableSection {TBODY} at (1,21) size 471x262
             RenderTableRow {TR} at (0,2) size 471x24
               RenderTableCell {TH} at (2,2) size 41x24 [bgcolor=#EE82EE] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -896,19 +896,19 @@ layer at (0,0) size 785x2464
         RenderBR {BR} at (0,20) size 0x19
       RenderBlock {UL} at (0,1874) size 769x484
         RenderTable {TABLE} at (40,0) size 473x484 [border: (1px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 471x20
-            RenderText {#text} at (33,0) size 86x19
-              text run at (33,0) width 86: "Nested Table "
+          RenderBlock {CAPTION} at (0,0) size 473x20
+            RenderText {#text} at (34,0) size 86x19
+              text run at (34,0) width 86: "Nested Table "
             RenderInline {B} at (0,0) size 88x19
-              RenderText {#text} at (119,0) size 88x19
-                text run at (119,0) width 88: "Header Cells"
-            RenderText {#text} at (207,0) size 20x19
-              text run at (207,0) width 20: " & "
+              RenderText {#text} at (120,0) size 88x19
+                text run at (120,0) width 88: "Header Cells"
+            RenderText {#text} at (208,0) size 20x19
+              text run at (208,0) width 20: " & "
             RenderInline {B} at (0,0) size 71x19
-              RenderText {#text} at (227,0) size 71x19
-                text run at (227,0) width 71: "Data Cells"
-            RenderText {#text} at (298,0) size 140x19
-              text run at (298,0) width 140: " spanning multiple rows"
+              RenderText {#text} at (228,0) size 71x19
+                text run at (228,0) width 71: "Data Cells"
+            RenderText {#text} at (299,0) size 140x19
+              text run at (299,0) width 140: " spanning multiple rows"
           RenderTableSection {TBODY} at (1,21) size 471x462
             RenderTableRow {TR} at (0,2) size 471x44
               RenderTableCell {TH} at (2,130) size 81x64 [bgcolor=#FFE4C4] [border: (1px inset #808080)] [r=0 c=0 rs=7 cs=1]
