@@ -28,7 +28,6 @@
 
 #include "Event.h"
 #include "HTMLFormControlElement.h"
-#include "HTMLOptionsCollection.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -39,6 +38,8 @@ class HTMLOptionsCollection;
 class HTMLSelectElement : public HTMLFormControlElementWithState {
 public:
     static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
+
+    virtual ~HTMLSelectElement();
 
     int selectedIndex() const;
     void setSelectedIndex(int);

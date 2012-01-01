@@ -54,6 +54,12 @@ HTMLTableElement::HTMLTableElement(const QualifiedName& tagName, Document* docum
     ASSERT(hasTagName(tableTag));
 }
 
+HTMLTableElement::~HTMLTableElement()
+{
+    if (m_rowsCollection)
+        m_rowsCollection->detachFromNode();
+}
+
 PassRefPtr<HTMLTableElement> HTMLTableElement::create(Document* document)
 {
     return adoptRef(new HTMLTableElement(tableTag, document));

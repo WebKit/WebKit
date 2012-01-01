@@ -123,6 +123,9 @@ void HTMLPropertiesCollection::findPropetiesOfAnItem(Node* root) const
 
 unsigned HTMLPropertiesCollection::length() const
 {
+    if (!base())
+        return 0;
+
     if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
         return 0;
 
@@ -133,6 +136,9 @@ unsigned HTMLPropertiesCollection::length() const
 
 Node* HTMLPropertiesCollection::item(unsigned index) const
 {
+    if (!base())
+        return 0;
+
     if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
         return 0;
 
@@ -150,6 +156,9 @@ PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
 {
     m_properties.clear();
     m_propertyNames->clear();
+
+    if (!base())
+        return 0;
 
     if (!base()->isHTMLElement() || !toHTMLElement(base())->fastHasAttribute(itemscopeAttr))
         return m_propertyNames;

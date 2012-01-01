@@ -109,8 +109,16 @@ HTMLCollection::~HTMLCollection()
         m_base->deref();
 }
 
+void HTMLCollection::detachFromNode()
+{
+    m_base = 0;
+    m_baseIsRetained = false;
+}
+
 void HTMLCollection::resetCollectionInfo() const
 {
+    ASSERT(m_base);
+
     uint64_t docversion = static_cast<HTMLDocument*>(m_base->document())->domTreeVersion();
 
     if (!m_info) {
@@ -184,6 +192,8 @@ static Node* nextNodeOrSibling(Node* base, Node* node, bool includeChildren)
 
 Element* HTMLCollection::itemAfter(Element* previous) const
 {
+    ASSERT(m_base);
+
     Node* current;
     if (!previous)
         current = m_base->firstChild();
@@ -203,6 +213,8 @@ Element* HTMLCollection::itemAfter(Element* previous) const
 
 unsigned HTMLCollection::calcLength() const
 {
+    ASSERT(m_base);
+
     unsigned len = 0;
     for (Element* current = itemAfter(0); current; current = itemAfter(current))
         ++len;
@@ -213,6 +225,9 @@ unsigned HTMLCollection::calcLength() const
 // calculation every time if anything has changed
 unsigned HTMLCollection::length() const
 {
+    if (!m_base)
+        return 0;
+
     resetCollectionInfo();
     if (!m_info->hasLength) {
         m_info->length = calcLength();
@@ -223,6 +238,9 @@ unsigned HTMLCollection::length() const
 
 Node* HTMLCollection::item(unsigned index) const
 {
+    if (!m_base)
+        return 0;
+
      resetCollectionInfo();
      if (m_info->current && m_info->position == index)
          return m_info->current;
@@ -249,8 +267,9 @@ Node* HTMLCollection::firstItem() const
 
 Node* HTMLCollection::nextItem() const
 {
+     ASSERT(m_base);
      resetCollectionInfo();
- 
+
      // Look for the 'second' item. The first one is currentItem, already given back.
      Element* retval = itemAfter(m_info->current);
      m_info->current = retval;
@@ -288,6 +307,9 @@ bool HTMLCollection::checkForNameMatch(Element* element, bool checkName, const A
 
 Node* HTMLCollection::namedItem(const AtomicString& name) const
 {
+    if (!m_base)
+        return 0;
+
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
     // attribute. If a match is not found, the method then searches for an
@@ -315,9 +337,11 @@ Node* HTMLCollection::namedItem(const AtomicString& name) const
 
 void HTMLCollection::updateNameCache() const
 {
+    ASSERT(m_base);
+
     if (m_info->hasNameCache)
         return;
-    
+
     for (Element* element = itemAfter(0); element; element = itemAfter(element)) {
         if (!element->isHTMLElement())
             continue;
@@ -335,6 +359,9 @@ void HTMLCollection::updateNameCache() const
 
 bool HTMLCollection::hasNamedItem(const AtomicString& name) const
 {
+    if (!m_base)
+        return false;
+
     if (name.isEmpty())
         return false;
 
@@ -357,8 +384,10 @@ bool HTMLCollection::hasNamedItem(const AtomicString& name) const
 
 void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >& result) const
 {
+    if (!m_base)
+        return;
+
     ASSERT(result.isEmpty());
-    
     if (name.isEmpty())
         return;
 
@@ -378,6 +407,9 @@ void HTMLCollection::namedItems(const AtomicString& name, Vector<RefPtr<Node> >&
 
 PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
 {
+    if (!m_base)
+        return 0;
+
     return m_base->getElementsByTagName(name);
 }
 

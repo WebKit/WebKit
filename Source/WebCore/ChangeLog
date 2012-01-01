@@ -1,5 +1,71 @@
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
+        Make HTMLCollections play nice after their base node is gone.
+        <http://webkit.org/b/75410>
+
+        Reviewed by Anders Carlsson.
+
+        Added HTMLCollection::detachFromNode() and call that from destructors of nodes
+        with cached collections.
+
+        Sprinkled checks/assertions where applicable to make sure HTMLCollections are
+        empty after their associated node has been destroyed.
+
+        This is a slight change in behavior, as collections would previously keep
+        their nodes alive indefinitely. Added a test to document this.
+
+        Test: fast/dom/htmlcollection-zombies.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * html/HTMLAllCollection.cpp:
+        (WebCore::HTMLAllCollection::namedItemWithIndex):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::detachFromNode):
+        (WebCore::HTMLCollection::resetCollectionInfo):
+        (WebCore::HTMLCollection::itemAfter):
+        (WebCore::HTMLCollection::calcLength):
+        (WebCore::HTMLCollection::length):
+        (WebCore::HTMLCollection::item):
+        (WebCore::HTMLCollection::nextItem):
+        (WebCore::HTMLCollection::namedItem):
+        (WebCore::HTMLCollection::updateNameCache):
+        (WebCore::HTMLCollection::hasNamedItem):
+        (WebCore::HTMLCollection::namedItems):
+        (WebCore::HTMLCollection::tags):
+        * html/HTMLCollection.h:
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::calcLength):
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::getNamedItem):
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        (WebCore::HTMLFormCollection::namedItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::itemAfter):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        (WebCore::HTMLOptionsCollection::remove):
+        (WebCore::HTMLOptionsCollection::selectedIndex):
+        (WebCore::HTMLOptionsCollection::setSelectedIndex):
+        (WebCore::HTMLOptionsCollection::setLength):
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::length):
+        (WebCore::HTMLPropertiesCollection::item):
+        (WebCore::HTMLPropertiesCollection::names):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::~HTMLSelectElement):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::~HTMLTableElement):
+        * html/HTMLTableElement.h:
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::itemAfter):
+
+2012-01-01  Andreas Kling  <awesomekling@apple.com>
+
         HTMLCollection: Remove the constructor's custom CollectionCache* argument.
         <http://webkit.org/b/75414>
 

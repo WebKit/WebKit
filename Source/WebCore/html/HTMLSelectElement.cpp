@@ -92,6 +92,12 @@ HTMLSelectElement::HTMLSelectElement(const QualifiedName& tagName, Document* doc
     ASSERT(hasTagName(selectTag));
 }
 
+HTMLSelectElement::~HTMLSelectElement()
+{
+    if (m_optionsCollection)
+        m_optionsCollection->detachFromNode();
+}
+
 PassRefPtr<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
     ASSERT(tagName.matches(selectTag));

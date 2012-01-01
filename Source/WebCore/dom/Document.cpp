@@ -566,6 +566,14 @@ Document::~Document()
 
     if (m_mediaQueryMatcher)
         m_mediaQueryMatcher->documentDestroyed();
+
+    for (unsigned i = 0; i < NumUnnamedDocumentCachedTypes; ++i) {
+        if (m_collections[i])
+            m_collections[i]->detachFromNode();
+    }
+
+    if (m_allCollection)
+        m_allCollection->detachFromNode();
 }
 
 void Document::removedLastRef()

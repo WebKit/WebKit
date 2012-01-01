@@ -47,6 +47,9 @@ HTMLAllCollection::~HTMLAllCollection()
 
 Node* HTMLAllCollection::namedItemWithIndex(const AtomicString& name, unsigned index) const
 {
+    if (!base())
+        return 0;
+
     resetCollectionInfo();
     updateNameCache();
     info()->checkConsistency();

@@ -91,6 +91,9 @@ PassRefPtr<HTMLFormElement> HTMLFormElement::create(const QualifiedName& tagName
 
 HTMLFormElement::~HTMLFormElement()
 {
+    if (m_elementsCollection)
+        m_elementsCollection->detachFromNode();
+
     if (!shouldAutocomplete())
         document()->unregisterForPageCacheSuspensionCallbacks(this);
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<select id="selectElement">
+<option name="foo"/>
+<option name="bar"/>
+</select>
+<form id="formElement">
+<input name="foo"/>
+<input name="bar"/>
+</form>
+<table id="tableElement">
+<tr name="foo"></tr>
+<tr name="bar"></tr>
+</table>
+<script>
+
+description("This test tests the behavior of collections after their base node has been destroyed.");
+
+var element;
+var collection;
+
+function testZombieBehavior(id, collectionGetterName)
+{
+    debug("Testing " + id + "'s " + collectionGetterName + " collection.");
+
+    element = document.getElementById(id);
+    collection = eval("element." + collectionGetterName);
+
+    shouldBe("collection.length", "2");
+    shouldBe("collection[0].getAttribute('name')", "'foo'");
+    shouldBe("collection[1].getAttribute('name')", "'bar'");
+
+    debug("Destroying " + id);
+    document.body.removeChild(element);
+    element = null;
+    gc();
+
+    shouldBe("collection.length", "0");
+    shouldBe("collection[0]", "undefined");
+}
+
+testZombieBehavior("selectElement", "options");
+testZombieBehavior("formElement", "elements");
+testZombieBehavior("tableElement", "rows");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

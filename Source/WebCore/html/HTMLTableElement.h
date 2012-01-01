@@ -40,6 +40,8 @@ public:
     static PassRefPtr<HTMLTableElement> create(Document*);
     static PassRefPtr<HTMLTableElement> create(const QualifiedName&, Document*);
 
+    virtual ~HTMLTableElement();
+
     HTMLTableCaptionElement* caption() const;
     void setCaption(PassRefPtr<HTMLTableCaptionElement>, ExceptionCode&);
 

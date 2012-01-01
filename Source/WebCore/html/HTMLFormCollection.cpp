@@ -52,11 +52,15 @@ HTMLFormCollection::~HTMLFormCollection()
 
 unsigned HTMLFormCollection::calcLength() const
 {
+    ASSERT(base());
     return static_cast<HTMLFormElement*>(base())->length();
 }
 
 Node* HTMLFormCollection::item(unsigned index) const
 {
+    if (!base())
+        return 0;
+
     resetCollectionInfo();
 
     if (info()->current && info()->position == index)
@@ -93,6 +97,9 @@ Node* HTMLFormCollection::item(unsigned index) const
 
 Element* HTMLFormCollection::getNamedItem(const QualifiedName& attrName, const AtomicString& name) const
 {
+    if (!base())
+        return 0;
+
     info()->position = 0;
     return getNamedFormItem(attrName, name, 0);
 }
@@ -100,6 +107,9 @@ Element* HTMLFormCollection::getNamedItem(const QualifiedName& attrName, const A
 Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, const String& name, int duplicateNumber) const
 {
     HTMLFormElement* form = static_cast<HTMLFormElement*>(base());
+
+    if (!form)
+        return 0;
 
     bool foundInputElements = false;
     for (unsigned i = 0; i < form->m_associatedElements.size(); ++i) {
@@ -134,6 +144,9 @@ Node* HTMLFormCollection::nextItem() const
 
 Node* HTMLFormCollection::namedItem(const AtomicString& name) const
 {
+    if (!base())
+        return 0;
+
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
     // attribute. If a match is not found, the method then searches for an
@@ -149,6 +162,9 @@ Node* HTMLFormCollection::namedItem(const AtomicString& name) const
 
 void HTMLFormCollection::updateNameCache() const
 {
+    if (!base())
+        return;
+
     if (info()->hasNameCache)
         return;
 

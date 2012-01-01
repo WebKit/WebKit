@@ -163,6 +163,7 @@ PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(HTMLTableEle
 
 Element* HTMLTableRowsCollection::itemAfter(Element* previous) const
 {
+    ASSERT(base());
     ASSERT(!previous || previous->hasLocalName(trTag));
     return rowAfter(static_cast<HTMLTableElement*>(base()), static_cast<HTMLTableRowElement*>(previous));
 }

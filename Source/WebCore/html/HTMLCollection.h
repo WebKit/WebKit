@@ -61,6 +61,8 @@ public:
     Node* base() const { return m_base; }
     CollectionType type() const { return static_cast<CollectionType>(m_type); }
 
+    void detachFromNode();
+
 protected:
     HTMLCollection(Node* base, CollectionType, bool retainBaseNode = true);
     HTMLCollection(Document*, CollectionType);
