@@ -75,7 +75,7 @@ int PluginProcessMain(const CommandLine& commandLine)
     mach_port_t serverPort;
     kern_return_t kr = bootstrap_look_up(bootstrap_port, serviceName.utf8().data(), &serverPort);
     if (kr) {
-        printf("bootstrap_look_up result: %x", kr);
+        fprintf(stderr, "bootstrap_look_up result: %s (%x)", mach_error_string(kr), kr);
         return EXIT_FAILURE;
     }
 

@@ -96,7 +96,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     mach_vm_address_t address;
     kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, round_page(size), VM_FLAGS_ANYWHERE);
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes) [error code: %x]", size, kr); 
+        LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr); 
         return 0;
     }
 
@@ -106,7 +106,7 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, address, VM_PROT_DEFAULT, &port, MACH_PORT_NULL);
 
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Failed to create a mach port for shared memory [error code: %x]", kr);
+        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
         mach_vm_deallocate(mach_task_self(), address, round_page(size));
         return 0;
     }

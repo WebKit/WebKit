@@ -404,7 +404,7 @@ void Connection::exceptionSourceEventHandler()
     // Now send along the message.
     kern_return_t kr = mach_msg(header, MACH_SEND_MSG, header->msgh_size, 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
     if (kr != KERN_SUCCESS) {
-        LOG_ERROR("Failed to send message to real exception port, error %x", kr);
+        LOG_ERROR("Failed to send message to real exception port. %s (%x)", mach_error_string(kr), kr);
         ASSERT_NOT_REACHED();
     }
 

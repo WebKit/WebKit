@@ -1,3 +1,18 @@
+2012-01-01  Dan Bernstein  <mitz@apple.com>
+
+        Improved reproting of kernel return codes.
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::exceptionSourceEventHandler): Added the error string to the log message.
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create): Ditto.
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Ditto. Also changed to log to stderr.
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Ditto.
+
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
         Continue trying to fix the ASSERT-enabled Windows build after r103858.
