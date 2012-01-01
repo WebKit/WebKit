@@ -3955,8 +3955,8 @@ BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/bugs/bug3166-5.html 
 BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/bugs/bug3166-6.html = IMAGE+TEXT
 BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/bugs/bug3166-9.html = IMAGE+TEXT
 BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/bugs/bug91057.html = IMAGE+TEXT
-BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/core/captions1.html = IMAGE+TEXT
-BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/core/captions2.html = IMAGE+TEXT
+BUGWK74888 WIN LINUX : tables/mozilla_expected_failures/core/captions1.html = IMAGE+TEXT
+BUGWK74888 WIN LINUX : tables/mozilla_expected_failures/core/captions2.html = IMAGE+TEXT
 BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/core/captions3.html = IMAGE+TEXT
 BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html = IMAGE+TEXT
 BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html = IMAGE+TEXT
@@ -4006,4 +4006,11 @@ BUGWK74888 MAC WIN LINUX : tables/mozilla_expected_failures/marvin/table_frame_r
 BUGWK74888 MAC WIN LINUX : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWK74888 MAC WIN LINUX : fast/dom/HTMLTableElement/colSpan.html = IMAGE+TEXT
 BUGWK74888 MAC WIN LINUX : fast/dom/HTMLTableElement/createCaption.html = IMAGE+TEXT
-BUGWK74888 MAC WIN LINUX : fast/repaint/table-section-repaint.html = TEXT
+BUGWK74888 WIN LINUX : fast/repaint/table-section-repaint.html = TEXT
+BUGWK74888 MAC WIN : fast/css/caption-width-absolute-position-offset-top.htm = TEXT
+BUGWK74888 MAC WIN : fast/css/caption-width-absolute-position.htm = TEXT
+BUGWK74888 MAC WIN : fast/css/caption-width-fixed-position-offset-top.htm = TEXT
+BUGWK74888 MAC WIN : fast/css/caption-width-fixed-position.htm = TEXT
+BUGWK74888 MAC WIN : fast/css/caption-width-relative-position-offset-top.htm = TEXT
+BUGWK74888 MAC WIN : fast/css/caption-width-relative-position.htm = TEXT
+BUGWK74888 MAC WIN : fast/table/frame-and-rules.html = TEXT
