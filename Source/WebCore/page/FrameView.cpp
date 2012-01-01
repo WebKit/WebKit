@@ -1735,6 +1735,7 @@ void FrameView::scrollPositionChangedViaPlatformWidget()
 void FrameView::scrollPositionChanged()
 {
     frame()->eventHandler()->sendScrollEvent();
+    frame()->eventHandler()->dispatchFakeMouseMoveEventSoon();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (RenderView* root = rootRenderer(this)) {

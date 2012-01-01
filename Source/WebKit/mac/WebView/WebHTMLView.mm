@@ -518,8 +518,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     
     WebDataSource *dataSource;
     WebCore::CachedImage* promisedDragTIFFDataSource;
-    
-    CFRunLoopTimerRef updateMouseoverTimer;
 
     SEL selectorForDoCommandBySelector;
 
@@ -578,7 +576,6 @@ static NSCellStateValue kit(TriState state)
 
     ASSERT(!autoscrollTimer);
     ASSERT(!autoscrollTriggerEvent);
-    ASSERT(!updateMouseoverTimer);
     
     [mouseDownEvent release];
     [keyDownEvent release];
@@ -1047,15 +1044,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     _private->mouseDownEvent = event;
 }
 
-- (void)_cancelUpdateMouseoverTimer
-{
-    if (_private->updateMouseoverTimer) {
-        CFRunLoopTimerInvalidate(_private->updateMouseoverTimer);
-        CFRelease(_private->updateMouseoverTimer);
-        _private->updateMouseoverTimer = NULL;
-    }
-}
-
 - (WebHTMLView *)_topHTMLView
 {
     // FIXME: this can fail if the dataSource is nil, which happens when the WebView is tearing down from the window closing.
@@ -1190,8 +1178,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 - (void)_updateMouseoverWithFakeEvent
 {
-    [self _cancelUpdateMouseoverTimer];
-    
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
         location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
         modifierFlags:[[NSApp currentEvent] modifierFlags]
@@ -1201,13 +1187,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         eventNumber:0 clickCount:0 pressure:0];
     
     [self _updateMouseoverWithEvent:fakeEvent];
-}
-
-static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
-{
-    WebHTMLView *view = (WebHTMLView *)info;
-    
-    [view _updateMouseoverWithFakeEvent];
 }
 
 - (void)_frameOrBoundsChanged
@@ -1231,16 +1210,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     }
     _private->lastScrollPosition = origin;
 
-    if ([self window] && !_private->closed && !_private->updateMouseoverTimer) {
-        CFRunLoopTimerContext context = { 0, self, NULL, NULL, NULL };
-        
-        // Use a 100ms delay so that the synthetic mouse over update doesn't cause cursor thrashing when pages are loading
-        // and scrolling rapidly back to back.
-        _private->updateMouseoverTimer = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent() + 0.1, 0, 0, 0,
-                                                              _updateMouseoverTimerCallback, &context);
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), _private->updateMouseoverTimer, kCFRunLoopDefaultMode);
-    }
-    
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
     [self _updateLayerHostingViewPosition];
 #endif
@@ -1902,7 +1871,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
     _private->closed = YES;
 
-    [self _cancelUpdateMouseoverTimer];
     [self _clearLastHitViewIfSelf];
     [self _removeMouseMovedObserverUnconditionally];
     [self _removeWindowObservers];
@@ -2910,7 +2878,6 @@ WEBCORE_COMMAND(yankAndSelect)
     [self _removeMouseMovedObserverUnconditionally];
     [self _removeWindowObservers];
     [self _removeSuperviewObservers];
-    [self _cancelUpdateMouseoverTimer];
 
     // FIXME: This accomplishes the same thing as the call to setCanStartMedia(false) in
     // WebView. It would be nice to have a single mechanism instead of two.
@@ -3533,9 +3500,6 @@ static void setMenuTargets(NSMenu* menu)
     // We don't want to pass them along to KHTML a second time.
     if (!([event modifierFlags] & NSControlKeyMask)) {
         _private->ignoringMouseDraggedEvents = NO;
-
-        // Don't do any mouseover while the mouse is down.
-        [self _cancelUpdateMouseoverTimer];
 
         // Let WebCore get a chance to deal with the event. This will call back to us
         // to start the autoscroll timer if appropriate.

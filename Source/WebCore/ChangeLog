@@ -1,3 +1,16 @@
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        WebCore changes for: REGRESSION (WebKit2): Cursor, hover states not updated when page scrolls under stationary mouse pointer
+        https://bugs.webkit.org/show_bug.cgi?id=75405
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/events/frame-scroll-fake-mouse-move.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollPositionChanged): Added a call to
+        EventHandler::dispatchFakeMouseMoveEventSoon().
+
 2012-01-01  Andreas Kling  <awesomekling@apple.com>
 
         Cache named item collections on Document, not just their caches.

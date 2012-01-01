@@ -1,3 +1,23 @@
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
+        WebKit/mac changes for: REGRESSION (WebKit2): Cursor, hover states not updated when page scrolls under stationary mouse pointer
+        https://bugs.webkit.org/show_bug.cgi?id=75405
+
+        Reviewed by Anders Carlsson.
+
+        Removed the WebKit/mac mechanism for dispatching fake mouse moved events
+        when an HTML frame scrolls, since FrameView now does this.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]): Removed an assertion about a removed ivar.
+        (-[WebHTMLView _updateMouseoverWithFakeEvent]): Removed call to
+        -_cancelUpdateMouseoverTimer.
+        (-[WebHTMLView _frameOrBoundsChanged]): Removed code to schedule a timer
+        for dispatching a mouse moved event on scroll.
+        (-[WebHTMLView close]): Removed call to _cancelUpdateMouseoverTimer.
+        (-[WebHTMLView viewWillMoveToWindow:]): Ditto.
+        (-[WebHTMLView mouseDown:]): Ditto.
+
 2011-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Mac build fix.
