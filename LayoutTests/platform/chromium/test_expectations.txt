@@ -3904,3 +3904,5 @@ BUGWK75367 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
 
 // Crashes due to an OOM error on V8.
 BUGCR108832 SKIP : fast/js/array-splice.html = CRASH
+
+BUGWK75418 : css2.1/20110323/border-collapse-offset-002.htm = MISSING
