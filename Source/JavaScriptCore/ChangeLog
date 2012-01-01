@@ -1,5 +1,11 @@
 2011-12-31  Dan Bernstein  <mitz@apple.com>
 
+        Continue trying to fix the Windows build after r103823.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-12-31  Dan Bernstein  <mitz@apple.com>
+
         Start trying to fix the Windows build after r103823.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

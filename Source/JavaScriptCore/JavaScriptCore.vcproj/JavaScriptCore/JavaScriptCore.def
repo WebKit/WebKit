@@ -184,6 +184,7 @@ EXPORTS
     ?finishCreation@DateInstance@JSC@@IAEXAAVJSGlobalData@2@N@Z
     ?finishCreation@InternalFunction@JSC@@IAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
     ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@ABVArgList@2@@Z
+    ?finishCreation@JSArray@JSC@@IAEXAAVJSGlobalData@2@I@Z
     ?finishCreation@RegExpObject@JSC@@IAEXPAVJSGlobalObject@2@@Z
     ?finishCreation@StringObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSString@2@@Z
     ?focus@Profile@JSC@@QAEXPBVProfileNode@2@@Z
